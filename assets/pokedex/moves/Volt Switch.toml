@@ -1,0 +1,6 @@
+name = "Volt Switch"
+pokemon_type = "Electric"
+category = "Special"
+power = 70
+accuracy = 100
+pp = 20

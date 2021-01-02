@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 167
+name = "Spinarak"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "String"
+height = 0.5
+weight = 8.5
+[base_stats]
+hp = 40
+atk = 60
+def = 40
+sp_atk = 40
+sp_def = 40
+speed = 30
+[[moves]]
+move_id = "Poison Sting"
+level = 1
+
+[[moves]]
+move_id = "String Shot"
+level = 1
+
+[[moves]]
+move_id = "Psychic"
+level = 53
+
+[[moves]]
+move_id = "Agility"
+level = 45
+
+[[moves]]
+move_id = "Night Shade"
+level = 17
+
+[[moves]]
+move_id = "Constrict"
+level = 11
+
+[[moves]]
+move_id = "Leech Life"
+level = 23
+
+[[moves]]
+move_id = "Fury Swipes"
+level = 30
+
+[[moves]]
+move_id = "Spider Web"
+level = 37
+
+[[moves]]
+move_id = "Scary Face"
+level = 6

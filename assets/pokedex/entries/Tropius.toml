@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 357
+name = "Tropius"
+primary_type = "Grass"
+secondary_type = "Flying"
+species = "Fruit"
+height = 2.0
+weight = 100.0
+[base_stats]
+hp = 99
+atk = 68
+def = 83
+sp_atk = 72
+sp_def = 87
+speed = 51
+[[moves]]
+move_id = "Gust"
+level = 1
+
+[[moves]]
+move_id = "Whirlwind"
+level = 27
+
+[[moves]]
+move_id = "Stomp"
+level = 17
+
+[[moves]]
+move_id = "Body Slam"
+level = 37
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Growth"
+level = 7
+
+[[moves]]
+move_id = "Razor Leaf"
+level = 11
+
+[[moves]]
+move_id = "Solar Beam"
+level = 41
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 21
+
+[[moves]]
+move_id = "Synthesis"
+level = 47
+
+[[moves]]
+move_id = "Magical Leaf"
+level = 31

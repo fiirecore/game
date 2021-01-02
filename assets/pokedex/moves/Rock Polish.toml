@@ -1,0 +1,4 @@
+name = "Rock Polish"
+pokemon_type = "Rock"
+category = "Status"
+pp = 20

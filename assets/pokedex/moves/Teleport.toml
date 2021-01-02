@@ -1,0 +1,4 @@
+name = "Teleport"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 20

@@ -1,0 +1,4 @@
+name = "Snatch"
+pokemon_type = "Dark"
+category = "Status"
+pp = 10

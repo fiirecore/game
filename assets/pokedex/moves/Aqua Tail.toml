@@ -1,0 +1,6 @@
+name = "Aqua Tail"
+pokemon_type = "Water"
+category = "Physical"
+power = 90
+accuracy = 90
+pp = 10

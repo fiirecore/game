@@ -1,0 +1,6 @@
+name = "Flame Burst"
+pokemon_type = "Fire"
+category = "Special"
+power = 70
+accuracy = 100
+pp = 15

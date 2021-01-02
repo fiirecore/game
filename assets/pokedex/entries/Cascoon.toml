@@ -1,0 +1,21 @@
+[pokedex_data]
+number = 268
+name = "Cascoon"
+primary_type = "Bug"
+species = "Cocoon"
+height = 0.7
+weight = 11.5
+[base_stats]
+hp = 50
+atk = 35
+def = 55
+sp_atk = 25
+sp_def = 25
+speed = 15
+[[moves]]
+move_id = "Harden"
+level = 1
+
+[[moves]]
+move_id = "Harden"
+level = 7

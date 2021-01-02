@@ -1,0 +1,6 @@
+name = "Hurricane"
+pokemon_type = "Flying"
+category = "Special"
+power = 110
+accuracy = 70
+pp = 10

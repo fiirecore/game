@@ -1,0 +1,6 @@
+name = "Tackle"
+pokemon_type = "Normal"
+category = "Physical"
+power = 40
+accuracy = 100
+pp = 35

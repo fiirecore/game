@@ -1,0 +1,4 @@
+name = "Nasty Plot"
+pokemon_type = "Dark"
+category = "Status"
+pp = 20

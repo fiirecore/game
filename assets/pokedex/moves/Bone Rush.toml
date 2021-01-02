@@ -1,0 +1,6 @@
+name = "Bone Rush"
+pokemon_type = "Ground"
+category = "Physical"
+power = 25
+accuracy = 90
+pp = 10

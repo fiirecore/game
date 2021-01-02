@@ -1,0 +1,6 @@
+name = "Thunderbolt"
+pokemon_type = "Electric"
+category = "Special"
+power = 90
+accuracy = 100
+pp = 15

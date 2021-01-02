@@ -1,0 +1,46 @@
+[pokedex_data]
+number = 178
+name = "Xatu"
+primary_type = "Psychic"
+secondary_type = "Flying"
+species = "Mystic"
+height = 1.5
+weight = 15.0
+[base_stats]
+hp = 65
+atk = 75
+def = 70
+sp_atk = 95
+sp_def = 70
+speed = 95
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Psychic"
+level = 65
+
+[[moves]]
+move_id = "Teleport"
+level = 20
+
+[[moves]]
+move_id = "Night Shade"
+level = 10
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 50
+
+[[moves]]
+move_id = "Future Sight"
+level = 35
+
+[[moves]]
+move_id = "Wish"
+level = 35

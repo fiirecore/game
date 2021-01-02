@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 358
+name = "Chimecho"
+primary_type = "Psychic"
+species = "Wind"
+height = 0.6
+weight = 1.0
+[base_stats]
+hp = 75
+atk = 50
+def = 80
+sp_atk = 95
+sp_def = 90
+speed = 65
+[[moves]]
+move_id = "Wrap"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 17
+
+[[moves]]
+move_id = "Double-Edge"
+level = 33
+
+[[moves]]
+move_id = "Growl"
+level = 6
+
+[[moves]]
+move_id = "Confusion"
+level = 14
+
+[[moves]]
+move_id = "Psychic"
+level = 46
+
+[[moves]]
+move_id = "Psywave"
+level = 30
+
+[[moves]]
+move_id = "Heal Bell"
+level = 38
+
+[[moves]]
+move_id = "Safeguard"
+level = 41
+
+[[moves]]
+move_id = "Uproar"
+level = 22
+
+[[moves]]
+move_id = "Yawn"
+level = 25
+
+[[moves]]
+move_id = "Astonish"
+level = 9

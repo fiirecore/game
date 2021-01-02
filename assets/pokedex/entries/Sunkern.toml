@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 191
+name = "Sunkern"
+primary_type = "Grass"
+species = "Seed"
+height = 0.3
+weight = 1.8
+[base_stats]
+hp = 30
+atk = 30
+def = 30
+sp_atk = 30
+sp_def = 30
+speed = 30
+[[moves]]
+move_id = "Absorb"
+level = 1
+
+[[moves]]
+move_id = "Mega Drain"
+level = 13
+
+[[moves]]
+move_id = "Growth"
+level = 6
+
+[[moves]]
+move_id = "Giga Drain"
+level = 42
+
+[[moves]]
+move_id = "Synthesis"
+level = 37
+
+[[moves]]
+move_id = "Sunny Day"
+level = 30
+
+[[moves]]
+move_id = "Ingrain"
+level = 18
+
+[[moves]]
+move_id = "Endeavor"
+level = 25

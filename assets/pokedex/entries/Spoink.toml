@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 325
+name = "Spoink"
+primary_type = "Psychic"
+species = "Bounce"
+height = 0.7
+weight = 30.6
+[base_stats]
+hp = 60
+atk = 25
+def = 35
+sp_atk = 70
+sp_def = 80
+speed = 60
+[[moves]]
+move_id = "Psybeam"
+level = 16
+
+[[moves]]
+move_id = "Psychic"
+level = 34
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 25
+
+[[moves]]
+move_id = "Psywave"
+level = 7
+
+[[moves]]
+move_id = "Splash"
+level = 1
+
+[[moves]]
+move_id = "Rest"
+level = 37
+
+[[moves]]
+move_id = "Snore"
+level = 37
+
+[[moves]]
+move_id = "Psych Up"
+level = 19
+
+[[moves]]
+move_id = "Magic Coat"
+level = 28
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 10
+
+[[moves]]
+move_id = "Bounce"
+level = 43

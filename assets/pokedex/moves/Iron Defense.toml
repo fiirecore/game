@@ -1,0 +1,4 @@
+name = "Iron Defense"
+pokemon_type = "Steel"
+category = "Status"
+pp = 15

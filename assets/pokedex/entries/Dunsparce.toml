@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 206
+name = "Dunsparce"
+primary_type = "Normal"
+species = "Land"
+height = 1.5
+weight = 14.0
+[base_stats]
+hp = 100
+atk = 70
+def = 70
+sp_atk = 65
+sp_def = 65
+speed = 45
+[[moves]]
+move_id = "Take Down"
+level = 41
+
+[[moves]]
+move_id = "Rage"
+level = 1
+
+[[moves]]
+move_id = "Screech"
+level = 34
+
+[[moves]]
+move_id = "Defense Curl"
+level = 4
+
+[[moves]]
+move_id = "Glare"
+level = 14
+
+[[moves]]
+move_id = "Flail"
+level = 44
+
+[[moves]]
+move_id = "Spite"
+level = 24
+
+[[moves]]
+move_id = "Rollout"
+level = 21
+
+[[moves]]
+move_id = "Pursuit"
+level = 31
+
+[[moves]]
+move_id = "Yawn"
+level = 11
+
+[[moves]]
+move_id = "Endeavor"
+level = 51

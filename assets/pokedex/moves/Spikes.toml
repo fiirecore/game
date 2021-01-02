@@ -1,0 +1,4 @@
+name = "Spikes"
+pokemon_type = "Ground"
+category = "Status"
+pp = 20

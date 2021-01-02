@@ -1,0 +1,4 @@
+name = "Mirror Move"
+pokemon_type = "Flying"
+category = "Status"
+pp = 20

@@ -1,0 +1,6 @@
+name = "Crabhammer"
+pokemon_type = "Water"
+category = "Physical"
+power = 100
+accuracy = 90
+pp = 10

@@ -1,0 +1,41 @@
+[pokedex_data]
+number = 273
+name = "Seedot"
+primary_type = "Grass"
+species = "Acorn"
+height = 0.5
+weight = 4.0
+[base_stats]
+hp = 40
+atk = 40
+def = 50
+sp_atk = 30
+sp_def = 30
+speed = 30
+[[moves]]
+move_id = "Growth"
+level = 7
+
+[[moves]]
+move_id = "Harden"
+level = 3
+
+[[moves]]
+move_id = "Bide"
+level = 1
+
+[[moves]]
+move_id = "Explosion"
+level = 43
+
+[[moves]]
+move_id = "Synthesis"
+level = 21
+
+[[moves]]
+move_id = "Sunny Day"
+level = 31
+
+[[moves]]
+move_id = "Nature Power"
+level = 13

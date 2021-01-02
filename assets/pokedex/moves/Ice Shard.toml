@@ -1,0 +1,6 @@
+name = "Ice Shard"
+pokemon_type = "Ice"
+category = "Physical"
+power = 40
+accuracy = 100
+pp = 30

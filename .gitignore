@@ -1,0 +1,11 @@
+/target
+/Cargo.lock
+
+/.cargo
+/*.lib
+/*.dll
+
+/.vscode
+
+/Extra Assets and Old Files
+/.git_old

@@ -1,0 +1,18 @@
+[pokedex_data]
+number = 225
+name = "Delibird"
+primary_type = "Ice"
+secondary_type = "Flying"
+species = "Delivery"
+height = 0.9
+weight = 16.0
+[base_stats]
+hp = 45
+atk = 55
+def = 45
+sp_atk = 65
+sp_def = 45
+speed = 75
+[[moves]]
+move_id = "Present"
+level = 1

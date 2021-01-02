@@ -1,0 +1,4 @@
+name = "Soft-Boiled"
+pokemon_type = "Normal"
+category = "Status"
+pp = 10

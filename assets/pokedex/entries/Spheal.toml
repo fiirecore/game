@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 363
+name = "Spheal"
+primary_type = "Ice"
+secondary_type = "Water"
+species = "Clap"
+height = 0.8
+weight = 39.5
+[base_stats]
+hp = 70
+atk = 40
+def = 50
+sp_atk = 55
+sp_def = 50
+speed = 25
+[[moves]]
+move_id = "Body Slam"
+level = 19
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Blizzard"
+level = 43
+
+[[moves]]
+move_id = "Aurora Beam"
+level = 25
+
+[[moves]]
+move_id = "Defense Curl"
+level = 1
+
+[[moves]]
+move_id = "Rest"
+level = 37
+
+[[moves]]
+move_id = "Snore"
+level = 37
+
+[[moves]]
+move_id = "Powder Snow"
+level = 1
+
+[[moves]]
+move_id = "Encore"
+level = 7
+
+[[moves]]
+move_id = "Hail"
+level = 31
+
+[[moves]]
+move_id = "Ice Ball"
+level = 13
+
+[[moves]]
+move_id = "Sheer Cold"
+level = 49

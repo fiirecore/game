@@ -1,0 +1,70 @@
+[pokedex_data]
+number = 6
+name = "Charizard"
+primary_type = "Fire"
+secondary_type = "Flying"
+species = "Flame"
+height = 1.7
+weight = 90.5
+[base_stats]
+hp = 78
+atk = 84
+def = 78
+sp_atk = 109
+sp_def = 85
+speed = 100
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Wing Attack"
+level = 36
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 7
+
+[[moves]]
+move_id = "Flamethrower"
+level = 34
+
+[[moves]]
+move_id = "Dragon Rage"
+level = 54
+
+[[moves]]
+move_id = "Fire Spin"
+level = 64
+
+[[moves]]
+move_id = "Smokescreen"
+level = 20
+
+[[moves]]
+move_id = "Slash"
+level = 44
+
+[[moves]]
+move_id = "Scary Face"
+level = 27
+
+[[moves]]
+move_id = "Metal Claw"
+level = 1
+
+[[moves]]
+move_id = "Metal Claw"
+level = 13
+
+[[moves]]
+move_id = "Heat Wave"
+level = 1

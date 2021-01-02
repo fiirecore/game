@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 216
+name = "Teddiursa"
+primary_type = "Normal"
+species = "Little"
+height = 0.6
+weight = 8.8
+[base_stats]
+hp = 60
+atk = 80
+def = 50
+sp_atk = 50
+sp_def = 50
+speed = 40
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Thrash"
+level = 49
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Lick"
+level = 7
+
+[[moves]]
+move_id = "Fury Swipes"
+level = 13
+
+[[moves]]
+move_id = "Rest"
+level = 31
+
+[[moves]]
+move_id = "Slash"
+level = 37
+
+[[moves]]
+move_id = "Snore"
+level = 43
+
+[[moves]]
+move_id = "Feint Attack"
+level = 25
+
+[[moves]]
+move_id = "Fake Tears"
+level = 19

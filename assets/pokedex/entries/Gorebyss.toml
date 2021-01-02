@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 368
+name = "Gorebyss"
+primary_type = "Water"
+species = "South"
+height = 1.8
+weight = 22.6
+[base_stats]
+hp = 55
+atk = 84
+def = 105
+sp_atk = 114
+sp_def = 75
+speed = 52
+[[moves]]
+move_id = "Hydro Pump"
+level = 50
+
+[[moves]]
+move_id = "Confusion"
+level = 8
+
+[[moves]]
+move_id = "Psychic"
+level = 36
+
+[[moves]]
+move_id = "Agility"
+level = 15
+
+[[moves]]
+move_id = "Amnesia"
+level = 29
+
+[[moves]]
+move_id = "Baton Pass"
+level = 43
+
+[[moves]]
+move_id = "Whirlpool"
+level = 1
+
+[[moves]]
+move_id = "Water Pulse"
+level = 22

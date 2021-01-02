@@ -1,0 +1,12 @@
+[identifier]
+world_id = "emerald"
+
+[jigsaw_map]
+piece_index = 3
+x = 0
+y = 0
+connections = [19]
+
+[gba_map]
+map_file = "0.3_RUSTBORO CITY.map"
+

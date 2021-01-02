@@ -1,0 +1,62 @@
+[pokedex_data]
+number = 329
+name = "Vibrava"
+primary_type = "Ground"
+secondary_type = "Dragon"
+species = "Vibration"
+height = 1.1
+weight = 15.3
+[base_stats]
+hp = 50
+atk = 70
+def = 50
+sp_atk = 50
+sp_def = 50
+speed = 70
+[[moves]]
+move_id = "Sand Attack"
+level = 1
+
+[[moves]]
+move_id = "Sand Attack"
+level = 9
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Hyper Beam"
+level = 57
+
+[[moves]]
+move_id = "Screech"
+level = 41
+
+[[moves]]
+move_id = "Feint Attack"
+level = 1
+
+[[moves]]
+move_id = "Feint Attack"
+level = 17
+
+[[moves]]
+move_id = "Sandstorm"
+level = 49
+
+[[moves]]
+move_id = "Dragon Breath"
+level = 35
+
+[[moves]]
+move_id = "Crunch"
+level = 33
+
+[[moves]]
+move_id = "Sand Tomb"
+level = 1
+
+[[moves]]
+move_id = "Sand Tomb"
+level = 25

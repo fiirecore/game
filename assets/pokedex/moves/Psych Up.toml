@@ -1,0 +1,4 @@
+name = "Psych Up"
+pokemon_type = "Normal"
+category = "Status"
+pp = 10

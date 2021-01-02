@@ -1,0 +1,69 @@
+[pokedex_data]
+number = 254
+name = "Sceptile"
+primary_type = "Grass"
+species = "Forest"
+height = 1.7
+weight = 52.2
+[base_stats]
+hp = 70
+atk = 85
+def = 65
+sp_atk = 105
+sp_def = 85
+speed = 120
+[[moves]]
+move_id = "Pound"
+level = 1
+
+[[moves]]
+move_id = "Slam"
+level = 43
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Absorb"
+level = 1
+
+[[moves]]
+move_id = "Absorb"
+level = 6
+
+[[moves]]
+move_id = "Agility"
+level = 35
+
+[[moves]]
+move_id = "Quick Attack"
+level = 1
+
+[[moves]]
+move_id = "Quick Attack"
+level = 11
+
+[[moves]]
+move_id = "Screech"
+level = 23
+
+[[moves]]
+move_id = "Detect"
+level = 51
+
+[[moves]]
+move_id = "False Swipe"
+level = 59
+
+[[moves]]
+move_id = "Fury Cutter"
+level = 16
+
+[[moves]]
+move_id = "Pursuit"
+level = 17
+
+[[moves]]
+move_id = "Leaf Blade"
+level = 29

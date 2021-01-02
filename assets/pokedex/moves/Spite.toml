@@ -1,0 +1,5 @@
+name = "Spite"
+pokemon_type = "Ghost"
+category = "Status"
+accuracy = 100
+pp = 10

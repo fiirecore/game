@@ -1,0 +1,62 @@
+[pokedex_data]
+number = 248
+name = "Tyranitar"
+primary_type = "Rock"
+secondary_type = "Dark"
+species = "Armor"
+height = 2.0
+weight = 202.0
+[base_stats]
+hp = 100
+atk = 134
+def = 110
+sp_atk = 95
+sp_def = 100
+speed = 61
+[[moves]]
+move_id = "Thrash"
+level = 29
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Hyper Beam"
+level = 75
+
+[[moves]]
+move_id = "Earthquake"
+level = 61
+
+[[moves]]
+move_id = "Screech"
+level = 1
+
+[[moves]]
+move_id = "Screech"
+level = 15
+
+[[moves]]
+move_id = "Rock Slide"
+level = 22
+
+[[moves]]
+move_id = "Scary Face"
+level = 38
+
+[[moves]]
+move_id = "Sandstorm"
+level = 1
+
+[[moves]]
+move_id = "Sandstorm"
+level = 8
+
+[[moves]]
+move_id = "Crunch"
+level = 47

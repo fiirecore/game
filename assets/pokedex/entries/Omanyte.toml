@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 138
+name = "Omanyte"
+primary_type = "Rock"
+secondary_type = "Water"
+species = "Spiral"
+height = 0.4
+weight = 7.5
+[base_stats]
+hp = 35
+atk = 40
+def = 100
+sp_atk = 90
+sp_def = 55
+speed = 35
+[[moves]]
+move_id = "Leer"
+level = 31
+
+[[moves]]
+move_id = "Bite"
+level = 13
+
+[[moves]]
+move_id = "Water Gun"
+level = 19
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 55
+
+[[moves]]
+move_id = "Withdraw"
+level = 1
+
+[[moves]]
+move_id = "Constrict"
+level = 1
+
+[[moves]]
+move_id = "Protect"
+level = 37
+
+[[moves]]
+move_id = "Ancient Power"
+level = 49
+
+[[moves]]
+move_id = "Tickle"
+level = 43
+
+[[moves]]
+move_id = "Mud Shot"
+level = 25

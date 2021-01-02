@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 196
+name = "Espeon"
+primary_type = "Psychic"
+species = "Sun"
+height = 0.9
+weight = 26.5
+[base_stats]
+hp = 65
+atk = 65
+def = 60
+sp_atk = 130
+sp_def = 95
+speed = 110
+[[moves]]
+move_id = "Sand Attack"
+level = 8
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Psybeam"
+level = 36
+
+[[moves]]
+move_id = "Confusion"
+level = 16
+
+[[moves]]
+move_id = "Psychic"
+level = 47
+
+[[moves]]
+move_id = "Quick Attack"
+level = 23
+
+[[moves]]
+move_id = "Swift"
+level = 30
+
+[[moves]]
+move_id = "Morning Sun"
+level = 52
+
+[[moves]]
+move_id = "Psych Up"
+level = 42
+
+[[moves]]
+move_id = "Helping Hand"
+level = 1

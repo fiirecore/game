@@ -1,0 +1,65 @@
+[pokedex_data]
+number = 51
+name = "Dugtrio"
+primary_type = "Ground"
+species = "Mole"
+height = 0.7
+weight = 33.3
+[base_stats]
+hp = 35
+atk = 100
+def = 50
+sp_atk = 50
+sp_def = 70
+speed = 120
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Sand Attack"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 5
+
+[[moves]]
+move_id = "Earthquake"
+level = 51
+
+[[moves]]
+move_id = "Fissure"
+level = 64
+
+[[moves]]
+move_id = "Dig"
+level = 17
+
+[[moves]]
+move_id = "Fury Swipes"
+level = 21
+
+[[moves]]
+move_id = "Tri Attack"
+level = 1
+
+[[moves]]
+move_id = "Slash"
+level = 38
+
+[[moves]]
+move_id = "Mud-Slap"
+level = 25
+
+[[moves]]
+move_id = "Magnitude"
+level = 9
+
+[[moves]]
+move_id = "Sand Tomb"
+level = 26

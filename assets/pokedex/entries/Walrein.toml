@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 365
+name = "Walrein"
+primary_type = "Ice"
+secondary_type = "Water"
+species = "Ice"
+height = 1.4
+weight = 150.6
+[base_stats]
+hp = 110
+atk = 80
+def = 90
+sp_atk = 95
+sp_def = 90
+speed = 65
+[[moves]]
+move_id = "Body Slam"
+level = 19
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Blizzard"
+level = 50
+
+[[moves]]
+move_id = "Aurora Beam"
+level = 25
+
+[[moves]]
+move_id = "Defense Curl"
+level = 1
+
+[[moves]]
+move_id = "Rest"
+level = 39
+
+[[moves]]
+move_id = "Snore"
+level = 39
+
+[[moves]]
+move_id = "Powder Snow"
+level = 1
+
+[[moves]]
+move_id = "Encore"
+level = 7
+
+[[moves]]
+move_id = "Hail"
+level = 31
+
+[[moves]]
+move_id = "Ice Ball"
+level = 13
+
+[[moves]]
+move_id = "Sheer Cold"
+level = 61

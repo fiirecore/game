@@ -1,0 +1,6 @@
+name = "Incinerate"
+pokemon_type = "Fire"
+category = "Special"
+power = 60
+accuracy = 100
+pp = 15

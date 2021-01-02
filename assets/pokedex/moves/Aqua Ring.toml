@@ -1,0 +1,4 @@
+name = "Aqua Ring"
+pokemon_type = "Water"
+category = "Status"
+pp = 20

@@ -1,0 +1,6 @@
+name = "Drill Run"
+pokemon_type = "Ground"
+category = "Physical"
+power = 80
+accuracy = 95
+pp = 10

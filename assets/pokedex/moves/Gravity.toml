@@ -1,0 +1,4 @@
+name = "Gravity"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 5

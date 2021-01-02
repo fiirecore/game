@@ -1,0 +1,6 @@
+name = "Absorb"
+pokemon_type = "Grass"
+category = "Special"
+power = 20
+accuracy = 100
+pp = 25

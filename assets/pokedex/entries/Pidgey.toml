@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 16
+name = "Pidgey"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Tiny"
+height = 0.3
+weight = 1.8
+[base_stats]
+hp = 40
+atk = 45
+def = 40
+sp_atk = 35
+sp_def = 35
+speed = 56
+[[moves]]
+move_id = "Gust"
+level = 9
+
+[[moves]]
+move_id = "Wing Attack"
+level = 25
+
+[[moves]]
+move_id = "Whirlwind"
+level = 19
+
+[[moves]]
+move_id = "Sand Attack"
+level = 5
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Agility"
+level = 39
+
+[[moves]]
+move_id = "Quick Attack"
+level = 13
+
+[[moves]]
+move_id = "Mirror Move"
+level = 47
+
+[[moves]]
+move_id = "Feather Dance"
+level = 31

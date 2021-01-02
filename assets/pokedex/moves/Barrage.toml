@@ -1,0 +1,6 @@
+name = "Barrage"
+pokemon_type = "Normal"
+category = "Physical"
+power = 15
+accuracy = 85
+pp = 20

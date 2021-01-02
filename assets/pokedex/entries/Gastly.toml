@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 92
+name = "Gastly"
+primary_type = "Ghost"
+secondary_type = "Poison"
+species = "Gas"
+height = 1.3
+weight = 0.1
+[base_stats]
+hp = 30
+atk = 35
+def = 30
+sp_atk = 100
+sp_def = 35
+speed = 80
+[[moves]]
+move_id = "Hypnosis"
+level = 1
+
+[[moves]]
+move_id = "Night Shade"
+level = 16
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 21
+
+[[moves]]
+move_id = "Lick"
+level = 1
+
+[[moves]]
+move_id = "Dream Eater"
+level = 28
+
+[[moves]]
+move_id = "Nightmare"
+level = 41
+
+[[moves]]
+move_id = "Curse"
+level = 13
+
+[[moves]]
+move_id = "Spite"
+level = 8
+
+[[moves]]
+move_id = "Destiny Bond"
+level = 33
+
+[[moves]]
+move_id = "Mean Look"
+level = 48
+
+[[moves]]
+move_id = "Shadow Ball"
+level = 36

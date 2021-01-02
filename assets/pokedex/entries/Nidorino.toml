@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 33
+name = "Nidorino"
+primary_type = "Poison"
+species = "Poison"
+height = 0.9
+weight = 19.5
+[base_stats]
+hp = 61
+atk = 72
+def = 57
+sp_atk = 55
+sp_def = 55
+speed = 65
+[[moves]]
+move_id = "Double Kick"
+level = 12
+
+[[moves]]
+move_id = "Horn Attack"
+level = 22
+
+[[moves]]
+move_id = "Fury Attack"
+level = 34
+
+[[moves]]
+move_id = "Horn Drill"
+level = 53
+
+[[moves]]
+move_id = "Poison Sting"
+level = 18
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Focus Energy"
+level = 8
+
+[[moves]]
+move_id = "Flatter"
+level = 43
+
+[[moves]]
+move_id = "Helping Hand"
+level = 26

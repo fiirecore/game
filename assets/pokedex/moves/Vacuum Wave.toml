@@ -1,0 +1,6 @@
+name = "Vacuum Wave"
+pokemon_type = "Fighting"
+category = "Special"
+power = 40
+accuracy = 100
+pp = 30

@@ -1,0 +1,74 @@
+[pokedex_data]
+number = 176
+name = "Togetic"
+primary_type = "Fairy"
+secondary_type = "Flying"
+species = "Happiness"
+height = 0.6
+weight = 3.2
+[base_stats]
+hp = 55
+atk = 40
+def = 85
+sp_atk = 80
+sp_def = 105
+speed = 40
+[[moves]]
+move_id = "Double-Edge"
+level = 37
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Metronome"
+level = 1
+
+[[moves]]
+move_id = "Metronome"
+level = 4
+
+[[moves]]
+move_id = "Sweet Kiss"
+level = 1
+
+[[moves]]
+move_id = "Sweet Kiss"
+level = 9
+
+[[moves]]
+move_id = "Charm"
+level = 1
+
+[[moves]]
+move_id = "Safeguard"
+level = 33
+
+[[moves]]
+move_id = "Baton Pass"
+level = 41
+
+[[moves]]
+move_id = "Encore"
+level = 17
+
+[[moves]]
+move_id = "Ancient Power"
+level = 21
+
+[[moves]]
+move_id = "Follow Me"
+level = 25
+
+[[moves]]
+move_id = "Wish"
+level = 29
+
+[[moves]]
+move_id = "Yawn"
+level = 13
+
+[[moves]]
+move_id = "Magical Leaf"
+level = 1

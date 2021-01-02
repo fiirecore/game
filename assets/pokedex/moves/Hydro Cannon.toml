@@ -1,0 +1,6 @@
+name = "Hydro Cannon"
+pokemon_type = "Water"
+category = "Special"
+power = 150
+accuracy = 90
+pp = 5

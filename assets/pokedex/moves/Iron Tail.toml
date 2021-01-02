@@ -1,0 +1,6 @@
+name = "Iron Tail"
+pokemon_type = "Steel"
+category = "Physical"
+power = 100
+accuracy = 75
+pp = 15

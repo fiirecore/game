@@ -1,0 +1,6 @@
+name = "Thunder Fang"
+pokemon_type = "Electric"
+category = "Physical"
+power = 65
+accuracy = 95
+pp = 15

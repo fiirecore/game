@@ -1,0 +1,46 @@
+{
+	"identifier": {
+		"npc_type": "Trainer",
+		"sprite": 80
+	},
+	"location": {
+		"x": 6,
+		"y": 5,
+		"direction": 1
+	},
+	"trainer": {
+		"pokemon": [
+		  {
+			"pokemon_id": 74,
+			"level": 10,
+			"ivs": {
+			"hp": 15,
+			"atk": 15,
+			"def": 15,
+			"sp_atk": 15,
+			"sp_def": 15,
+			"speed": 15
+			},
+			"evs": {
+			"hp": 0,
+			"atk": 0,
+			"def": 0,
+			"sp_atk": 0,
+			"sp_def": 0,
+			"speed": 0
+          },
+        "moves": [
+          {
+            "name": "Tackle",
+            "pp": 35
+          },
+          null,
+          null,
+          null
+        ],
+        "exp": 0,
+        "friendship": 70
+      }
+    ]
+	}	
+}

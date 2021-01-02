@@ -1,0 +1,73 @@
+[pokedex_data]
+number = 262
+name = "Mightyena"
+primary_type = "Dark"
+species = "Bite"
+height = 1.0
+weight = 37.0
+[base_stats]
+hp = 70
+atk = 90
+def = 70
+sp_atk = 60
+sp_def = 60
+speed = 70
+[[moves]]
+move_id = "Sand Attack"
+level = 1
+
+[[moves]]
+move_id = "Sand Attack"
+level = 9
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 37
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 13
+
+[[moves]]
+move_id = "Roar"
+level = 22
+
+[[moves]]
+move_id = "Thief"
+level = 52
+
+[[moves]]
+move_id = "Scary Face"
+level = 32
+
+[[moves]]
+move_id = "Swagger"
+level = 27
+
+[[moves]]
+move_id = "Crunch"
+level = 47
+
+[[moves]]
+move_id = "Taunt"
+level = 42
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 17
+
+[[moves]]
+move_id = "Howl"
+level = 1
+
+[[moves]]
+move_id = "Howl"
+level = 5

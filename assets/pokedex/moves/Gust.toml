@@ -1,0 +1,6 @@
+name = "Gust"
+pokemon_type = "Flying"
+category = "Special"
+power = 40
+accuracy = 100
+pp = 35

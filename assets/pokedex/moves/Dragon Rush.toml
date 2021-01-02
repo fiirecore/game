@@ -1,0 +1,6 @@
+name = "Dragon Rush"
+pokemon_type = "Dragon"
+category = "Physical"
+power = 100
+accuracy = 75
+pp = 10

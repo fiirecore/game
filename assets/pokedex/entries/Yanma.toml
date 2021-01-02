@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 193
+name = "Yanma"
+primary_type = "Bug"
+secondary_type = "Flying"
+species = "Clear"
+height = 1.2
+weight = 38.0
+[base_stats]
+hp = 65
+atk = 65
+def = 45
+sp_atk = 75
+sp_def = 45
+speed = 95
+[[moves]]
+move_id = "Wing Attack"
+level = 39
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 45
+
+[[moves]]
+move_id = "Sonic Boom"
+level = 17
+
+[[moves]]
+move_id = "Hypnosis"
+level = 23
+
+[[moves]]
+move_id = "Quick Attack"
+level = 6
+
+[[moves]]
+move_id = "Screech"
+level = 50
+
+[[moves]]
+move_id = "Double Team"
+level = 12
+
+[[moves]]
+move_id = "Foresight"
+level = 1
+
+[[moves]]
+move_id = "Detect"
+level = 28
+
+[[moves]]
+move_id = "Uproar"
+level = 34

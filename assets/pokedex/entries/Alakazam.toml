@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 65
+name = "Alakazam"
+primary_type = "Psychic"
+species = "Psi"
+height = 1.5
+weight = 48.0
+[base_stats]
+hp = 55
+atk = 50
+def = 45
+sp_atk = 135
+sp_def = 95
+speed = 120
+[[moves]]
+move_id = "Disable"
+level = 18
+
+[[moves]]
+move_id = "Psybeam"
+level = 21
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 16
+
+[[moves]]
+move_id = "Psychic"
+level = 36
+
+[[moves]]
+move_id = "Teleport"
+level = 1
+
+[[moves]]
+move_id = "Recover"
+level = 25
+
+[[moves]]
+move_id = "Reflect"
+level = 23
+
+[[moves]]
+move_id = "Kinesis"
+level = 1
+
+[[moves]]
+move_id = "Future Sight"
+level = 30
+
+[[moves]]
+move_id = "Trick"
+level = 43
+
+[[moves]]
+move_id = "Calm Mind"
+level = 33

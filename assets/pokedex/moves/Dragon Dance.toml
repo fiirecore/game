@@ -1,0 +1,4 @@
+name = "Dragon Dance"
+pokemon_type = "Dragon"
+category = "Status"
+pp = 20

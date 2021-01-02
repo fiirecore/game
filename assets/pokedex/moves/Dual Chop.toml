@@ -1,0 +1,6 @@
+name = "Dual Chop"
+pokemon_type = "Dragon"
+category = "Physical"
+power = 40
+accuracy = 90
+pp = 15

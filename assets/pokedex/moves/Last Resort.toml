@@ -1,0 +1,6 @@
+name = "Last Resort"
+pokemon_type = "Normal"
+category = "Physical"
+power = 140
+accuracy = 100
+pp = 5

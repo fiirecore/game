@@ -1,0 +1,5 @@
+name = "Soak"
+pokemon_type = "Water"
+category = "Status"
+accuracy = 100
+pp = 20

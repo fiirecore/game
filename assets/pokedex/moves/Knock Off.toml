@@ -1,0 +1,6 @@
+name = "Knock Off"
+pokemon_type = "Dark"
+category = "Physical"
+power = 65
+accuracy = 100
+pp = 20

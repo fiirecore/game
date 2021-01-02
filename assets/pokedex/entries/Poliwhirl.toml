@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 61
+name = "Poliwhirl"
+primary_type = "Water"
+species = "Tadpole"
+height = 1.0
+weight = 20.0
+[base_stats]
+hp = 65
+atk = 65
+def = 65
+sp_atk = 50
+sp_def = 50
+speed = 90
+[[moves]]
+move_id = "Double Slap"
+level = 19
+
+[[moves]]
+move_id = "Body Slam"
+level = 35
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 13
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 51
+
+[[moves]]
+move_id = "Hypnosis"
+level = 1
+
+[[moves]]
+move_id = "Hypnosis"
+level = 7
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Belly Drum"
+level = 43
+
+[[moves]]
+move_id = "Rain Dance"
+level = 27

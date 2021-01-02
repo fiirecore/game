@@ -1,0 +1,73 @@
+[pokedex_data]
+number = 297
+name = "Hariyama"
+primary_type = "Fighting"
+species = "Arm"
+height = 2.3
+weight = 253.8
+[base_stats]
+hp = 144
+atk = 120
+def = 60
+sp_atk = 40
+sp_def = 60
+speed = 50
+[[moves]]
+move_id = "Whirlwind"
+level = 22
+
+[[moves]]
+move_id = "Sand Attack"
+level = 1
+
+[[moves]]
+move_id = "Sand Attack"
+level = 4
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Seismic Toss"
+level = 51
+
+[[moves]]
+move_id = "Focus Energy"
+level = 1
+
+[[moves]]
+move_id = "Reversal"
+level = 55
+
+[[moves]]
+move_id = "Belly Drum"
+level = 40
+
+[[moves]]
+move_id = "Endure"
+level = 44
+
+[[moves]]
+move_id = "Vital Throw"
+level = 13
+
+[[moves]]
+move_id = "Fake Out"
+level = 19
+
+[[moves]]
+move_id = "Smelling Salts"
+level = 33
+
+[[moves]]
+move_id = "Knock Off"
+level = 29
+
+[[moves]]
+move_id = "Arm Thrust"
+level = 1
+
+[[moves]]
+move_id = "Arm Thrust"
+level = 10

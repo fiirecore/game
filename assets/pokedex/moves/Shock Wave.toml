@@ -1,0 +1,5 @@
+name = "Shock Wave"
+pokemon_type = "Electric"
+category = "Special"
+power = 60
+pp = 20

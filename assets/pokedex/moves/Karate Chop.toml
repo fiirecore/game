@@ -1,0 +1,6 @@
+name = "Karate Chop"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 50
+accuracy = 100
+pp = 25

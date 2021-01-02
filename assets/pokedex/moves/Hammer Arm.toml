@@ -1,0 +1,6 @@
+name = "Hammer Arm"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 100
+accuracy = 90
+pp = 10

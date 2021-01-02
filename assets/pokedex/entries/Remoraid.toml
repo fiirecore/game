@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 223
+name = "Remoraid"
+primary_type = "Water"
+species = "Jet"
+height = 0.6
+weight = 12.0
+[base_stats]
+hp = 35
+atk = 65
+def = 35
+sp_atk = 65
+sp_def = 35
+speed = 65
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Ice Beam"
+level = 44
+
+[[moves]]
+move_id = "Psybeam"
+level = 22
+
+[[moves]]
+move_id = "Bubble Beam"
+level = 22
+
+[[moves]]
+move_id = "Aurora Beam"
+level = 22
+
+[[moves]]
+move_id = "Hyper Beam"
+level = 55
+
+[[moves]]
+move_id = "Focus Energy"
+level = 33
+
+[[moves]]
+move_id = "Lock-On"
+level = 11

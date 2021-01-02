@@ -1,0 +1,21 @@
+[pokedex_data]
+number = 10
+name = "Caterpie"
+primary_type = "Bug"
+species = "Worm"
+height = 0.3
+weight = 2.9
+[base_stats]
+hp = 45
+atk = 30
+def = 35
+sp_atk = 20
+sp_def = 20
+speed = 45
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "String Shot"
+level = 1

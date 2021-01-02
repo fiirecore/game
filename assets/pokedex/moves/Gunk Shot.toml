@@ -1,0 +1,6 @@
+name = "Gunk Shot"
+pokemon_type = "Poison"
+category = "Physical"
+power = 120
+accuracy = 80
+pp = 5

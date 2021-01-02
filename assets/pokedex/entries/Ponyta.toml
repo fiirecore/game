@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 77
+name = "Ponyta"
+primary_type = "Fire"
+species = "Fire"
+height = 1.0
+weight = 30.0
+[base_stats]
+hp = 50
+atk = 85
+def = 55
+sp_atk = 65
+sp_def = 65
+speed = 90
+[[moves]]
+move_id = "Stomp"
+level = 19
+
+[[moves]]
+move_id = "Take Down"
+level = 31
+
+[[moves]]
+move_id = "Tail Whip"
+level = 9
+
+[[moves]]
+move_id = "Growl"
+level = 5
+
+[[moves]]
+move_id = "Ember"
+level = 14
+
+[[moves]]
+move_id = "Fire Spin"
+level = 25
+
+[[moves]]
+move_id = "Agility"
+level = 38
+
+[[moves]]
+move_id = "Quick Attack"
+level = 1
+
+[[moves]]
+move_id = "Fire Blast"
+level = 53
+
+[[moves]]
+move_id = "Bounce"
+level = 45

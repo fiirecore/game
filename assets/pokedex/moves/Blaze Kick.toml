@@ -1,0 +1,6 @@
+name = "Blaze Kick"
+pokemon_type = "Fire"
+category = "Physical"
+power = 85
+accuracy = 90
+pp = 10

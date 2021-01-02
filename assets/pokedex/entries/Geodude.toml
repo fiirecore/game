@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 74
+name = "Geodude"
+primary_type = "Rock"
+secondary_type = "Ground"
+species = "Rock"
+height = 0.4
+weight = 20.0
+[base_stats]
+hp = 40
+atk = 80
+def = 100
+sp_atk = 30
+sp_def = 30
+speed = 20
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Double-Edge"
+level = 46
+
+[[moves]]
+move_id = "Rock Throw"
+level = 11
+
+[[moves]]
+move_id = "Earthquake"
+level = 36
+
+[[moves]]
+move_id = "Defense Curl"
+level = 1
+
+[[moves]]
+move_id = "Self-Destruct"
+level = 21
+
+[[moves]]
+move_id = "Explosion"
+level = 41
+
+[[moves]]
+move_id = "Rollout"
+level = 26
+
+[[moves]]
+move_id = "Magnitude"
+level = 16
+
+[[moves]]
+move_id = "Mud Sport"
+level = 6
+
+[[moves]]
+move_id = "Rock Blast"
+level = 31

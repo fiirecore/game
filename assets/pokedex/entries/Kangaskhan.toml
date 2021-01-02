@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 115
+name = "Kangaskhan"
+primary_type = "Normal"
+species = "Parent"
+height = 2.2
+weight = 80.0
+[base_stats]
+hp = 105
+atk = 95
+def = 80
+sp_atk = 40
+sp_def = 80
+speed = 90
+[[moves]]
+move_id = "Comet Punch"
+level = 1
+
+[[moves]]
+move_id = "Mega Punch"
+level = 25
+
+[[moves]]
+move_id = "Tail Whip"
+level = 13
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 7
+
+[[moves]]
+move_id = "Rage"
+level = 31
+
+[[moves]]
+move_id = "Dizzy Punch"
+level = 43
+
+[[moves]]
+move_id = "Reversal"
+level = 49
+
+[[moves]]
+move_id = "Endure"
+level = 37
+
+[[moves]]
+move_id = "Fake Out"
+level = 19

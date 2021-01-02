@@ -1,0 +1,6 @@
+name = "Giga Impact"
+pokemon_type = "Normal"
+category = "Physical"
+power = 150
+accuracy = 90
+pp = 5

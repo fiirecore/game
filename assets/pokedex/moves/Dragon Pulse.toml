@@ -1,0 +1,6 @@
+name = "Dragon Pulse"
+pokemon_type = "Dragon"
+category = "Special"
+power = 85
+accuracy = 100
+pp = 10

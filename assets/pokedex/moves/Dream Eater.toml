@@ -1,0 +1,6 @@
+name = "Dream Eater"
+pokemon_type = "Psychic"
+category = "Special"
+power = 100
+accuracy = 100
+pp = 15

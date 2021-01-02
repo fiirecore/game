@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 346
+name = "Cradily"
+primary_type = "Rock"
+secondary_type = "Grass"
+species = "Barnacle"
+height = 1.5
+weight = 60.4
+[base_stats]
+hp = 86
+atk = 81
+def = 97
+sp_atk = 81
+sp_def = 107
+speed = 43
+[[moves]]
+move_id = "Acid"
+level = 1
+
+[[moves]]
+move_id = "Acid"
+level = 15
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 29
+
+[[moves]]
+move_id = "Constrict"
+level = 1
+
+[[moves]]
+move_id = "Constrict"
+level = 8
+
+[[moves]]
+move_id = "Amnesia"
+level = 36
+
+[[moves]]
+move_id = "Ancient Power"
+level = 48
+
+[[moves]]
+move_id = "Stockpile"
+level = 60
+
+[[moves]]
+move_id = "Spit Up"
+level = 60
+
+[[moves]]
+move_id = "Swallow"
+level = 60
+
+[[moves]]
+move_id = "Ingrain"
+level = 1
+
+[[moves]]
+move_id = "Ingrain"
+level = 22
+
+[[moves]]
+move_id = "Astonish"
+level = 1

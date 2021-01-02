@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 60
+name = "Poliwag"
+primary_type = "Water"
+species = "Tadpole"
+height = 0.6
+weight = 12.4
+[base_stats]
+hp = 40
+atk = 50
+def = 40
+sp_atk = 40
+sp_def = 40
+speed = 90
+[[moves]]
+move_id = "Double Slap"
+level = 19
+
+[[moves]]
+move_id = "Body Slam"
+level = 31
+
+[[moves]]
+move_id = "Water Gun"
+level = 13
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 43
+
+[[moves]]
+move_id = "Hypnosis"
+level = 7
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Belly Drum"
+level = 37
+
+[[moves]]
+move_id = "Rain Dance"
+level = 25

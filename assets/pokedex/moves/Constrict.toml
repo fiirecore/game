@@ -1,0 +1,6 @@
+name = "Constrict"
+pokemon_type = "Normal"
+category = "Physical"
+power = 10
+accuracy = 100
+pp = 35

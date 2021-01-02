@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 160
+name = "Feraligatr"
+primary_type = "Water"
+species = "Big"
+height = 2.3
+weight = 88.8
+[base_stats]
+hp = 85
+atk = 105
+def = 100
+sp_atk = 79
+sp_def = 83
+speed = 78
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 21
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 13
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 58
+
+[[moves]]
+move_id = "Rage"
+level = 1
+
+[[moves]]
+move_id = "Rage"
+level = 7
+
+[[moves]]
+move_id = "Screech"
+level = 47
+
+[[moves]]
+move_id = "Slash"
+level = 38
+
+[[moves]]
+move_id = "Scary Face"
+level = 28

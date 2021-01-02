@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 282
+name = "Gardevoir"
+primary_type = "Psychic"
+secondary_type = "Fairy"
+species = "Embrace"
+height = 1.6
+weight = 48.4
+[base_stats]
+hp = 68
+atk = 65
+def = 65
+sp_atk = 125
+sp_def = 115
+speed = 80
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 6
+
+[[moves]]
+move_id = "Psychic"
+level = 26
+
+[[moves]]
+move_id = "Hypnosis"
+level = 51
+
+[[moves]]
+move_id = "Teleport"
+level = 1
+
+[[moves]]
+move_id = "Teleport"
+level = 16
+
+[[moves]]
+move_id = "Double Team"
+level = 1
+
+[[moves]]
+move_id = "Double Team"
+level = 11
+
+[[moves]]
+move_id = "Dream Eater"
+level = 60
+
+[[moves]]
+move_id = "Future Sight"
+level = 42
+
+[[moves]]
+move_id = "Imprison"
+level = 33
+
+[[moves]]
+move_id = "Calm Mind"
+level = 21

@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 175
+name = "Togepi"
+primary_type = "Fairy"
+species = "Spike"
+height = 0.3
+weight = 1.5
+[base_stats]
+hp = 35
+atk = 20
+def = 65
+sp_atk = 40
+sp_def = 65
+speed = 20
+[[moves]]
+move_id = "Double-Edge"
+level = 37
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Metronome"
+level = 4
+
+[[moves]]
+move_id = "Sweet Kiss"
+level = 9
+
+[[moves]]
+move_id = "Charm"
+level = 1
+
+[[moves]]
+move_id = "Safeguard"
+level = 33
+
+[[moves]]
+move_id = "Baton Pass"
+level = 41
+
+[[moves]]
+move_id = "Encore"
+level = 17
+
+[[moves]]
+move_id = "Ancient Power"
+level = 21
+
+[[moves]]
+move_id = "Follow Me"
+level = 25
+
+[[moves]]
+move_id = "Wish"
+level = 29
+
+[[moves]]
+move_id = "Yawn"
+level = 13

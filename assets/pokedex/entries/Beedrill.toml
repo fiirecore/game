@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 15
+name = "Beedrill"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Poison"
+height = 1.0
+weight = 29.5
+[base_stats]
+hp = 65
+atk = 90
+def = 40
+sp_atk = 45
+sp_def = 80
+speed = 75
+[[moves]]
+move_id = "Fury Attack"
+level = 1
+
+[[moves]]
+move_id = "Fury Attack"
+level = 10
+
+[[moves]]
+move_id = "Twineedle"
+level = 20
+
+[[moves]]
+move_id = "Pin Missile"
+level = 35
+
+[[moves]]
+move_id = "Agility"
+level = 40
+
+[[moves]]
+move_id = "Rage"
+level = 25
+
+[[moves]]
+move_id = "Focus Energy"
+level = 15
+
+[[moves]]
+move_id = "Pursuit"
+level = 30
+
+[[moves]]
+move_id = "Endeavor"
+level = 45

@@ -1,0 +1,5 @@
+name = "Gastro Acid"
+pokemon_type = "Poison"
+category = "Status"
+accuracy = 100
+pp = 10

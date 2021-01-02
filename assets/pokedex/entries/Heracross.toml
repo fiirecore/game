@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 214
+name = "Heracross"
+primary_type = "Bug"
+secondary_type = "Fighting"
+species = "Single"
+height = 1.5
+weight = 54.0
+[base_stats]
+hp = 80
+atk = 125
+def = 75
+sp_atk = 40
+sp_def = 95
+speed = 85
+[[moves]]
+move_id = "Horn Attack"
+level = 6
+
+[[moves]]
+move_id = "Fury Attack"
+level = 17
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 37
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Counter"
+level = 30
+
+[[moves]]
+move_id = "Reversal"
+level = 45
+
+[[moves]]
+move_id = "Endure"
+level = 11
+
+[[moves]]
+move_id = "Megahorn"
+level = 53
+
+[[moves]]
+move_id = "Brick Break"
+level = 23

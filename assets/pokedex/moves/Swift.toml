@@ -1,0 +1,5 @@
+name = "Swift"
+pokemon_type = "Normal"
+category = "Special"
+power = 60
+pp = 20

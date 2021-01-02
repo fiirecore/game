@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 108
+name = "Lickitung"
+primary_type = "Normal"
+species = "Licking"
+height = 1.2
+weight = 65.5
+[base_stats]
+hp = 90
+atk = 55
+def = 75
+sp_atk = 60
+sp_def = 75
+speed = 30
+[[moves]]
+move_id = "Slam"
+level = 40
+
+[[moves]]
+move_id = "Stomp"
+level = 23
+
+[[moves]]
+move_id = "Wrap"
+level = 29
+
+[[moves]]
+move_id = "Supersonic"
+level = 7
+
+[[moves]]
+move_id = "Disable"
+level = 34
+
+[[moves]]
+move_id = "Screech"
+level = 45
+
+[[moves]]
+move_id = "Defense Curl"
+level = 12
+
+[[moves]]
+move_id = "Lick"
+level = 1
+
+[[moves]]
+move_id = "Knock Off"
+level = 18
+
+[[moves]]
+move_id = "Refresh"
+level = 51

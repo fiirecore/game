@@ -1,0 +1,6 @@
+name = "Flame Charge"
+pokemon_type = "Fire"
+category = "Physical"
+power = 50
+accuracy = 100
+pp = 20

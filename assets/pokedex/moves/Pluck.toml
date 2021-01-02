@@ -1,0 +1,6 @@
+name = "Pluck"
+pokemon_type = "Flying"
+category = "Physical"
+power = 60
+accuracy = 100
+pp = 20

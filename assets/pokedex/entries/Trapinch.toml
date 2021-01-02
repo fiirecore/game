@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 328
+name = "Trapinch"
+primary_type = "Ground"
+species = "Ant"
+height = 0.7
+weight = 15.0
+[base_stats]
+hp = 45
+atk = 100
+def = 45
+sp_atk = 45
+sp_def = 45
+speed = 10
+[[moves]]
+move_id = "Sand Attack"
+level = 9
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Hyper Beam"
+level = 57
+
+[[moves]]
+move_id = "Dig"
+level = 41
+
+[[moves]]
+move_id = "Feint Attack"
+level = 17
+
+[[moves]]
+move_id = "Sandstorm"
+level = 49
+
+[[moves]]
+move_id = "Crunch"
+level = 33
+
+[[moves]]
+move_id = "Sand Tomb"
+level = 25

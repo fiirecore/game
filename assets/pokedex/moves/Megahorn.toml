@@ -1,0 +1,6 @@
+name = "Megahorn"
+pokemon_type = "Bug"
+category = "Physical"
+power = 120
+accuracy = 85
+pp = 10

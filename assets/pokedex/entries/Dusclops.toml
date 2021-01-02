@@ -1,0 +1,69 @@
+[pokedex_data]
+number = 356
+name = "Dusclops"
+primary_type = "Ghost"
+species = "Beckon"
+height = 1.6
+weight = 30.6
+[base_stats]
+hp = 40
+atk = 70
+def = 130
+sp_atk = 60
+sp_def = 130
+speed = 25
+[[moves]]
+move_id = "Bind"
+level = 1
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Disable"
+level = 1
+
+[[moves]]
+move_id = "Disable"
+level = 5
+
+[[moves]]
+move_id = "Night Shade"
+level = 1
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 23
+
+[[moves]]
+move_id = "Curse"
+level = 34
+
+[[moves]]
+move_id = "Foresight"
+level = 12
+
+[[moves]]
+move_id = "Mean Look"
+level = 51
+
+[[moves]]
+move_id = "Pursuit"
+level = 27
+
+[[moves]]
+move_id = "Future Sight"
+level = 58
+
+[[moves]]
+move_id = "Will-O-Wisp"
+level = 41
+
+[[moves]]
+move_id = "Astonish"
+level = 16
+
+[[moves]]
+move_id = "Shadow Punch"
+level = 37

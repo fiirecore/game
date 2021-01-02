@@ -1,0 +1,41 @@
+[pokedex_data]
+number = 360
+name = "Wynaut"
+primary_type = "Psychic"
+species = "Bright"
+height = 0.6
+weight = 14.0
+[base_stats]
+hp = 95
+atk = 23
+def = 48
+sp_atk = 23
+sp_def = 48
+speed = 23
+[[moves]]
+move_id = "Counter"
+level = 15
+
+[[moves]]
+move_id = "Splash"
+level = 1
+
+[[moves]]
+move_id = "Destiny Bond"
+level = 15
+
+[[moves]]
+move_id = "Charm"
+level = 1
+
+[[moves]]
+move_id = "Safeguard"
+level = 15
+
+[[moves]]
+move_id = "Encore"
+level = 1
+
+[[moves]]
+move_id = "Mirror Coat"
+level = 15

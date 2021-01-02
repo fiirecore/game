@@ -1,0 +1,6 @@
+name = "Stone Edge"
+pokemon_type = "Rock"
+category = "Physical"
+power = 100
+accuracy = 80
+pp = 5

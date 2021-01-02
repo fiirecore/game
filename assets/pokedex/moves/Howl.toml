@@ -1,0 +1,4 @@
+name = "Howl"
+pokemon_type = "Normal"
+category = "Status"
+pp = 40

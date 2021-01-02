@@ -1,0 +1,6 @@
+name = "Dynamic Punch"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 100
+accuracy = 50
+pp = 5

@@ -1,0 +1,10 @@
+
+x = 0x27
+y = 0x04
+
+[destination]
+world_id = "firered"
+map_id = "mt_moon"
+map_set_num = 2
+dest_x = 0x05
+dest_y = 0x0A

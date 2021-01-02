@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 145
+name = "Zapdos"
+primary_type = "Electric"
+secondary_type = "Flying"
+species = "Electric"
+height = 1.6
+weight = 52.6
+[base_stats]
+hp = 90
+atk = 90
+def = 85
+sp_atk = 125
+sp_def = 90
+speed = 100
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Drill Peck"
+level = 49
+
+[[moves]]
+move_id = "Thunder Shock"
+level = 1
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 13
+
+[[moves]]
+move_id = "Thunder"
+level = 85
+
+[[moves]]
+move_id = "Agility"
+level = 25
+
+[[moves]]
+move_id = "Light Screen"
+level = 73
+
+[[moves]]
+move_id = "Detect"
+level = 37
+
+[[moves]]
+move_id = "Charge"
+level = 61

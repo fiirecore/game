@@ -1,0 +1,5 @@
+name = "Seismic Toss"
+pokemon_type = "Fighting"
+category = "Physical"
+accuracy = 100
+pp = 20

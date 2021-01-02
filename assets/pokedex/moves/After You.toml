@@ -1,0 +1,4 @@
+name = "After You"
+pokemon_type = "Normal"
+category = "Status"
+pp = 15

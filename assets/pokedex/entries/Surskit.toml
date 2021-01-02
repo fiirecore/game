@@ -1,0 +1,46 @@
+[pokedex_data]
+number = 283
+name = "Surskit"
+primary_type = "Bug"
+secondary_type = "Water"
+species = "Pond"
+height = 0.5
+weight = 1.7
+[base_stats]
+hp = 40
+atk = 30
+def = 32
+sp_atk = 50
+sp_def = 52
+speed = 65
+[[moves]]
+move_id = "Mist"
+level = 37
+
+[[moves]]
+move_id = "Bubble Beam"
+level = 25
+
+[[moves]]
+move_id = "Agility"
+level = 31
+
+[[moves]]
+move_id = "Quick Attack"
+level = 7
+
+[[moves]]
+move_id = "Haze"
+level = 37
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 13
+
+[[moves]]
+move_id = "Water Sport"
+level = 19

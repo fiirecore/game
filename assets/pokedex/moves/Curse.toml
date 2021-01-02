@@ -1,0 +1,4 @@
+name = "Curse"
+pokemon_type = "Ghost"
+category = "Status"
+pp = 10

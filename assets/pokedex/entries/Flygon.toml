@@ -1,0 +1,62 @@
+[pokedex_data]
+number = 330
+name = "Flygon"
+primary_type = "Ground"
+secondary_type = "Dragon"
+species = "Mystic"
+height = 2.0
+weight = 82.0
+[base_stats]
+hp = 80
+atk = 100
+def = 80
+sp_atk = 80
+sp_def = 80
+speed = 100
+[[moves]]
+move_id = "Sand Attack"
+level = 1
+
+[[moves]]
+move_id = "Sand Attack"
+level = 9
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Hyper Beam"
+level = 65
+
+[[moves]]
+move_id = "Screech"
+level = 41
+
+[[moves]]
+move_id = "Feint Attack"
+level = 1
+
+[[moves]]
+move_id = "Feint Attack"
+level = 17
+
+[[moves]]
+move_id = "Sandstorm"
+level = 53
+
+[[moves]]
+move_id = "Dragon Breath"
+level = 35
+
+[[moves]]
+move_id = "Crunch"
+level = 33
+
+[[moves]]
+move_id = "Sand Tomb"
+level = 1
+
+[[moves]]
+move_id = "Sand Tomb"
+level = 25

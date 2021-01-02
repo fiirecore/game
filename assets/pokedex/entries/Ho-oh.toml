@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 250
+name = "Ho-oh"
+primary_type = "Fire"
+secondary_type = "Flying"
+species = "Rainbow"
+height = 3.8
+weight = 199.0
+[base_stats]
+hp = 106
+atk = 130
+def = 90
+sp_atk = 110
+sp_def = 154
+speed = 90
+[[moves]]
+move_id = "Gust"
+level = 22
+
+[[moves]]
+move_id = "Whirlwind"
+level = 1
+
+[[moves]]
+move_id = "Recover"
+level = 33
+
+[[moves]]
+move_id = "Fire Blast"
+level = 44
+
+[[moves]]
+move_id = "Swift"
+level = 66
+
+[[moves]]
+move_id = "Safeguard"
+level = 11
+
+[[moves]]
+move_id = "Sacred Fire"
+level = 77
+
+[[moves]]
+move_id = "Sunny Day"
+level = 55
+
+[[moves]]
+move_id = "Ancient Power"
+level = 88
+
+[[moves]]
+move_id = "Future Sight"
+level = 99

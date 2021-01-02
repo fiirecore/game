@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 383
+name = "Groudon"
+primary_type = "Ground"
+species = "Continent"
+height = 3.5
+weight = 950.0
+[base_stats]
+hp = 100
+atk = 150
+def = 140
+sp_atk = 100
+sp_def = 90
+speed = 90
+[[moves]]
+move_id = "Solar Beam"
+level = 65
+
+[[moves]]
+move_id = "Earthquake"
+level = 35
+
+[[moves]]
+move_id = "Fissure"
+level = 60
+
+[[moves]]
+move_id = "Fire Blast"
+level = 45
+
+[[moves]]
+move_id = "Rest"
+level = 50
+
+[[moves]]
+move_id = "Slash"
+level = 20
+
+[[moves]]
+move_id = "Scary Face"
+level = 5
+
+[[moves]]
+move_id = "Ancient Power"
+level = 15
+
+[[moves]]
+move_id = "Eruption"
+level = 75
+
+[[moves]]
+move_id = "Bulk Up"
+level = 30
+
+[[moves]]
+move_id = "Mud Shot"
+level = 1

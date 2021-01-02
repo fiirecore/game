@@ -1,0 +1,6 @@
+name = "Leaf Storm"
+pokemon_type = "Grass"
+category = "Special"
+power = 130
+accuracy = 90
+pp = 5

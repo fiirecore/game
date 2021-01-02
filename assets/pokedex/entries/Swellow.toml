@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 277
+name = "Swellow"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Swallow"
+height = 0.7
+weight = 19.8
+[base_stats]
+hp = 60
+atk = 85
+def = 60
+sp_atk = 75
+sp_def = 50
+speed = 125
+[[moves]]
+move_id = "Wing Attack"
+level = 13
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Agility"
+level = 49
+
+[[moves]]
+move_id = "Quick Attack"
+level = 1
+
+[[moves]]
+move_id = "Quick Attack"
+level = 8
+
+[[moves]]
+move_id = "Double Team"
+level = 19
+
+[[moves]]
+move_id = "Focus Energy"
+level = 1
+
+[[moves]]
+move_id = "Focus Energy"
+level = 4
+
+[[moves]]
+move_id = "Endeavor"
+level = 28
+
+[[moves]]
+move_id = "Aerial Ace"
+level = 38

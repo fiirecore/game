@@ -1,0 +1,4 @@
+name = "Grudge"
+pokemon_type = "Ghost"
+category = "Status"
+pp = 5

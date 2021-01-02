@@ -1,0 +1,6 @@
+name = "Leaf Tornado"
+pokemon_type = "Grass"
+category = "Special"
+power = 65
+accuracy = 90
+pp = 10

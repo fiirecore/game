@@ -1,0 +1,17 @@
+[pokedex_data]
+number = 63
+name = "Abra"
+primary_type = "Psychic"
+species = "Psi"
+height = 0.9
+weight = 19.5
+[base_stats]
+hp = 25
+atk = 20
+def = 15
+sp_atk = 105
+sp_def = 55
+speed = 90
+[[moves]]
+move_id = "Teleport"
+level = 1

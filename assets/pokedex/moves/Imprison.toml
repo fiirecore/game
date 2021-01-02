@@ -1,0 +1,4 @@
+name = "Imprison"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 10

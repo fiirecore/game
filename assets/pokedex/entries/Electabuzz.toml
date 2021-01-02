@@ -1,0 +1,49 @@
+[pokedex_data]
+number = 125
+name = "Electabuzz"
+primary_type = "Electric"
+species = "Electric"
+height = 1.1
+weight = 30.0
+[base_stats]
+hp = 65
+atk = 83
+def = 57
+sp_atk = 95
+sp_def = 85
+speed = 105
+[[moves]]
+move_id = "Thunder Punch"
+level = 1
+
+[[moves]]
+move_id = "Thunder Punch"
+level = 9
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Thunderbolt"
+level = 47
+
+[[moves]]
+move_id = "Thunder"
+level = 58
+
+[[moves]]
+move_id = "Quick Attack"
+level = 1
+
+[[moves]]
+move_id = "Screech"
+level = 36
+
+[[moves]]
+move_id = "Light Screen"
+level = 17
+
+[[moves]]
+move_id = "Swift"
+level = 25

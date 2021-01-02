@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 69
+name = "Bellsprout"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Flower"
+height = 0.7
+weight = 4.0
+[base_stats]
+hp = 50
+atk = 75
+def = 35
+sp_atk = 70
+sp_def = 30
+speed = 40
+[[moves]]
+move_id = "Slam"
+level = 45
+
+[[moves]]
+move_id = "Vine Whip"
+level = 1
+
+[[moves]]
+move_id = "Wrap"
+level = 11
+
+[[moves]]
+move_id = "Acid"
+level = 23
+
+[[moves]]
+move_id = "Growth"
+level = 6
+
+[[moves]]
+move_id = "Razor Leaf"
+level = 37
+
+[[moves]]
+move_id = "Poison Powder"
+level = 17
+
+[[moves]]
+move_id = "Stun Spore"
+level = 19
+
+[[moves]]
+move_id = "Sleep Powder"
+level = 15
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 30

@@ -1,0 +1,25 @@
+[pokedex_data]
+number = 129
+name = "Magikarp"
+primary_type = "Water"
+species = "Fish"
+height = 0.9
+weight = 10.0
+[base_stats]
+hp = 20
+atk = 10
+def = 55
+sp_atk = 15
+sp_def = 20
+speed = 80
+[[moves]]
+move_id = "Tackle"
+level = 15
+
+[[moves]]
+move_id = "Splash"
+level = 1
+
+[[moves]]
+move_id = "Flail"
+level = 30

@@ -1,0 +1,6 @@
+name = "Glaciate"
+pokemon_type = "Ice"
+category = "Special"
+power = 65
+accuracy = 95
+pp = 10

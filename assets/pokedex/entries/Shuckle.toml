@@ -1,0 +1,42 @@
+[pokedex_data]
+number = 213
+name = "Shuckle"
+primary_type = "Bug"
+secondary_type = "Rock"
+species = "Mold"
+height = 0.6
+weight = 20.5
+[base_stats]
+hp = 20
+atk = 10
+def = 230
+sp_atk = 10
+sp_def = 230
+speed = 5
+[[moves]]
+move_id = "Wrap"
+level = 9
+
+[[moves]]
+move_id = "Withdraw"
+level = 1
+
+[[moves]]
+move_id = "Bide"
+level = 28
+
+[[moves]]
+move_id = "Constrict"
+level = 1
+
+[[moves]]
+move_id = "Rest"
+level = 37
+
+[[moves]]
+move_id = "Safeguard"
+level = 23
+
+[[moves]]
+move_id = "Encore"
+level = 14

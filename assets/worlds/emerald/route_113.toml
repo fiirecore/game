@@ -1,0 +1,9 @@
+
+bank = "emerald"
+index = 30
+
+x = 0
+y = 0
+map_file = "maps/gba/0.30_ROUTE 115.map"
+
+connections = [3]

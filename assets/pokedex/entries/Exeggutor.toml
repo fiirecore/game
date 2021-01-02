@@ -1,0 +1,34 @@
+[pokedex_data]
+number = 103
+name = "Exeggutor"
+primary_type = "Grass"
+secondary_type = "Psychic"
+species = "Coconut"
+height = 2.0
+weight = 120.0
+[base_stats]
+hp = 95
+atk = 95
+def = 85
+sp_atk = 125
+sp_def = 75
+speed = 55
+[[moves]]
+move_id = "Stomp"
+level = 19
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Hypnosis"
+level = 1
+
+[[moves]]
+move_id = "Egg Bomb"
+level = 31
+
+[[moves]]
+move_id = "Barrage"
+level = 1

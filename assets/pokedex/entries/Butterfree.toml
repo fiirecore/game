@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 12
+name = "Butterfree"
+primary_type = "Bug"
+secondary_type = "Flying"
+species = "Butterfly"
+height = 1.1
+weight = 32.0
+[base_stats]
+hp = 60
+atk = 45
+def = 50
+sp_atk = 90
+sp_def = 80
+speed = 70
+[[moves]]
+move_id = "Gust"
+level = 28
+
+[[moves]]
+move_id = "Whirlwind"
+level = 23
+
+[[moves]]
+move_id = "Supersonic"
+level = 18
+
+[[moves]]
+move_id = "Psybeam"
+level = 34
+
+[[moves]]
+move_id = "Poison Powder"
+level = 13
+
+[[moves]]
+move_id = "Stun Spore"
+level = 14
+
+[[moves]]
+move_id = "Sleep Powder"
+level = 15
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 10
+
+[[moves]]
+move_id = "Safeguard"
+level = 40
+
+[[moves]]
+move_id = "Silver Wind"
+level = 47

@@ -1,0 +1,6 @@
+name = "Mirror Shot"
+pokemon_type = "Steel"
+category = "Special"
+power = 65
+accuracy = 85
+pp = 10

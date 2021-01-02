@@ -1,0 +1,86 @@
+[pokedex_data]
+number = 308
+name = "Medicham"
+primary_type = "Fighting"
+secondary_type = "Psychic"
+species = "Meditate"
+height = 1.3
+weight = 31.5
+[base_stats]
+hp = 60
+atk = 60
+def = 75
+sp_atk = 60
+sp_def = 75
+speed = 80
+[[moves]]
+move_id = "Fire Punch"
+level = 1
+
+[[moves]]
+move_id = "Ice Punch"
+level = 1
+
+[[moves]]
+move_id = "Thunder Punch"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 9
+
+[[moves]]
+move_id = "Meditate"
+level = 1
+
+[[moves]]
+move_id = "Meditate"
+level = 4
+
+[[moves]]
+move_id = "Recover"
+level = 56
+
+[[moves]]
+move_id = "Bide"
+level = 1
+
+[[moves]]
+move_id = "High Jump Kick"
+level = 33
+
+[[moves]]
+move_id = "Mind Reader"
+level = 25
+
+[[moves]]
+move_id = "Reversal"
+level = 47
+
+[[moves]]
+move_id = "Detect"
+level = 1
+
+[[moves]]
+move_id = "Detect"
+level = 12
+
+[[moves]]
+move_id = "Swagger"
+level = 20
+
+[[moves]]
+move_id = "Hidden Power"
+level = 17
+
+[[moves]]
+move_id = "Psych Up"
+level = 36
+
+[[moves]]
+move_id = "Calm Mind"
+level = 28

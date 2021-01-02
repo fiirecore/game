@@ -1,0 +1,5 @@
+name = "Scary Face"
+pokemon_type = "Normal"
+category = "Status"
+accuracy = 100
+pp = 10

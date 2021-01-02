@@ -1,0 +1,6 @@
+name = "Discharge"
+pokemon_type = "Electric"
+category = "Special"
+power = 80
+accuracy = 100
+pp = 15

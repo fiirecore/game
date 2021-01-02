@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 379
+name = "Registeel"
+primary_type = "Steel"
+species = "Iron"
+height = 1.9
+weight = 205.0
+[base_stats]
+hp = 80
+atk = 75
+def = 150
+sp_atk = 75
+sp_def = 150
+speed = 50
+[[moves]]
+move_id = "Hyper Beam"
+level = 65
+
+[[moves]]
+move_id = "Amnesia"
+level = 41
+
+[[moves]]
+move_id = "Explosion"
+level = 1
+
+[[moves]]
+move_id = "Curse"
+level = 17
+
+[[moves]]
+move_id = "Zap Cannon"
+level = 49
+
+[[moves]]
+move_id = "Lock-On"
+level = 57
+
+[[moves]]
+move_id = "Metal Claw"
+level = 9
+
+[[moves]]
+move_id = "Ancient Power"
+level = 33
+
+[[moves]]
+move_id = "Superpower"
+level = 25
+
+[[moves]]
+move_id = "Iron Defense"
+level = 41

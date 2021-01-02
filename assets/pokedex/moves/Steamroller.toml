@@ -1,0 +1,6 @@
+name = "Steamroller"
+pokemon_type = "Bug"
+category = "Physical"
+power = 65
+accuracy = 100
+pp = 20

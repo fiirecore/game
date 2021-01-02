@@ -1,0 +1,9 @@
+x = 0x06
+y = 0x07
+
+[destination]
+world_id = "firered"
+map_id = "pallet_town_player_house"
+map_set_num = 0
+dest_x = 0x04
+dest_y = 0x08

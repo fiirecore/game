@@ -1,0 +1,22 @@
+[pokedex_data]
+number = 14
+name = "Kakuna"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Cocoon"
+height = 0.6
+weight = 10.0
+[base_stats]
+hp = 45
+atk = 25
+def = 50
+sp_atk = 25
+sp_def = 25
+speed = 35
+[[moves]]
+move_id = "Harden"
+level = 1
+
+[[moves]]
+move_id = "Harden"
+level = 7

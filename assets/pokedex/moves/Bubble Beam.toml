@@ -1,0 +1,6 @@
+name = "Bubble Beam"
+pokemon_type = "Water"
+category = "Special"
+power = 65
+accuracy = 100
+pp = 20

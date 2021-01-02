@@ -1,0 +1,9 @@
+[identifier]
+world_id = "firered"
+map_files = ["3.4_LAVENDER TOWN.map"]
+
+[jigsaw_map]
+piece_index = 4
+x = 384
+y = 130
+connections = [26, 28, 30]

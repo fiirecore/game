@@ -1,0 +1,73 @@
+[pokedex_data]
+number = 317
+name = "Swalot"
+primary_type = "Poison"
+species = "Poison"
+height = 1.7
+weight = 80.0
+[base_stats]
+hp = 100
+atk = 73
+def = 83
+sp_atk = 73
+sp_def = 83
+speed = 55
+[[moves]]
+move_id = "Pound"
+level = 1
+
+[[moves]]
+move_id = "Body Slam"
+level = 26
+
+[[moves]]
+move_id = "Toxic"
+level = 31
+
+[[moves]]
+move_id = "Sludge"
+level = 1
+
+[[moves]]
+move_id = "Sludge"
+level = 14
+
+[[moves]]
+move_id = "Amnesia"
+level = 17
+
+[[moves]]
+move_id = "Poison Gas"
+level = 1
+
+[[moves]]
+move_id = "Poison Gas"
+level = 9
+
+[[moves]]
+move_id = "Sludge Bomb"
+level = 48
+
+[[moves]]
+move_id = "Encore"
+level = 23
+
+[[moves]]
+move_id = "Stockpile"
+level = 40
+
+[[moves]]
+move_id = "Spit Up"
+level = 40
+
+[[moves]]
+move_id = "Swallow"
+level = 40
+
+[[moves]]
+move_id = "Yawn"
+level = 1
+
+[[moves]]
+move_id = "Yawn"
+level = 6

@@ -1,0 +1,6 @@
+[identifier]
+world_id = "firered"
+map_files = ["6.2_PEWTER CITY.map"]
+
+[warp_map]
+map_set_id = "pewter_gym"

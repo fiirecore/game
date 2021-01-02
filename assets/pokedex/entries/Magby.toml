@@ -1,0 +1,49 @@
+[pokedex_data]
+number = 240
+name = "Magby"
+primary_type = "Fire"
+species = "Live"
+height = 0.7
+weight = 21.4
+[base_stats]
+hp = 45
+atk = 75
+def = 37
+sp_atk = 70
+sp_def = 55
+speed = 83
+[[moves]]
+move_id = "Fire Punch"
+level = 19
+
+[[moves]]
+move_id = "Leer"
+level = 7
+
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Flamethrower"
+level = 37
+
+[[moves]]
+move_id = "Smokescreen"
+level = 25
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 43
+
+[[moves]]
+move_id = "Smog"
+level = 13
+
+[[moves]]
+move_id = "Fire Blast"
+level = 49
+
+[[moves]]
+move_id = "Sunny Day"
+level = 31

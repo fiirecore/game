@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 66
+name = "Machop"
+primary_type = "Fighting"
+species = "Superpower"
+height = 0.8
+weight = 19.5
+[base_stats]
+hp = 70
+atk = 80
+def = 50
+sp_atk = 35
+sp_def = 35
+speed = 35
+[[moves]]
+move_id = "Karate Chop"
+level = 13
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Submission"
+level = 37
+
+[[moves]]
+move_id = "Low Kick"
+level = 1
+
+[[moves]]
+move_id = "Seismic Toss"
+level = 19
+
+[[moves]]
+move_id = "Focus Energy"
+level = 7
+
+[[moves]]
+move_id = "Scary Face"
+level = 43
+
+[[moves]]
+move_id = "Foresight"
+level = 22
+
+[[moves]]
+move_id = "Dynamic Punch"
+level = 49
+
+[[moves]]
+move_id = "Vital Throw"
+level = 31
+
+[[moves]]
+move_id = "Cross Chop"
+level = 40
+
+[[moves]]
+move_id = "Revenge"
+level = 25

@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 345
+name = "Lileep"
+primary_type = "Rock"
+secondary_type = "Grass"
+species = "Sea"
+height = 1.0
+weight = 23.8
+[base_stats]
+hp = 66
+atk = 41
+def = 77
+sp_atk = 61
+sp_def = 87
+speed = 23
+[[moves]]
+move_id = "Acid"
+level = 15
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 29
+
+[[moves]]
+move_id = "Constrict"
+level = 8
+
+[[moves]]
+move_id = "Amnesia"
+level = 36
+
+[[moves]]
+move_id = "Ancient Power"
+level = 43
+
+[[moves]]
+move_id = "Stockpile"
+level = 50
+
+[[moves]]
+move_id = "Spit Up"
+level = 50
+
+[[moves]]
+move_id = "Swallow"
+level = 50
+
+[[moves]]
+move_id = "Ingrain"
+level = 22
+
+[[moves]]
+move_id = "Astonish"
+level = 1

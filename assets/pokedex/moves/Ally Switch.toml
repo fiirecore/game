@@ -1,0 +1,4 @@
+name = "Ally Switch"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 15

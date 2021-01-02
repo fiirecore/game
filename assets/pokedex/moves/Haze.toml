@@ -1,0 +1,4 @@
+name = "Haze"
+pokemon_type = "Ice"
+category = "Status"
+pp = 30

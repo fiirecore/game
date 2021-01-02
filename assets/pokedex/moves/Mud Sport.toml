@@ -1,0 +1,4 @@
+name = "Mud Sport"
+pokemon_type = "Ground"
+category = "Status"
+pp = 15

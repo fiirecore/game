@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 367
+name = "Huntail"
+primary_type = "Water"
+species = "Deep"
+height = 1.7
+weight = 27.0
+[base_stats]
+hp = 55
+atk = 104
+def = 105
+sp_atk = 94
+sp_def = 75
+speed = 52
+[[moves]]
+move_id = "Bite"
+level = 8
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 50
+
+[[moves]]
+move_id = "Screech"
+level = 15
+
+[[moves]]
+move_id = "Scary Face"
+level = 29
+
+[[moves]]
+move_id = "Baton Pass"
+level = 43
+
+[[moves]]
+move_id = "Crunch"
+level = 36
+
+[[moves]]
+move_id = "Whirlpool"
+level = 1
+
+[[moves]]
+move_id = "Water Pulse"
+level = 22

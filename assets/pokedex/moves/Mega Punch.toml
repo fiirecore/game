@@ -1,0 +1,6 @@
+name = "Mega Punch"
+pokemon_type = "Normal"
+category = "Physical"
+power = 80
+accuracy = 85
+pp = 20

@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 123
+name = "Scyther"
+primary_type = "Bug"
+secondary_type = "Flying"
+species = "Mantis"
+height = 1.5
+weight = 56.0
+[base_stats]
+hp = 70
+atk = 110
+def = 80
+sp_atk = 55
+sp_def = 80
+speed = 105
+[[moves]]
+move_id = "Swords Dance"
+level = 36
+
+[[moves]]
+move_id = "Wing Attack"
+level = 26
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Agility"
+level = 21
+
+[[moves]]
+move_id = "Quick Attack"
+level = 1
+
+[[moves]]
+move_id = "Double Team"
+level = 41
+
+[[moves]]
+move_id = "Focus Energy"
+level = 6
+
+[[moves]]
+move_id = "Slash"
+level = 31
+
+[[moves]]
+move_id = "False Swipe"
+level = 16
+
+[[moves]]
+move_id = "Fury Cutter"
+level = 46
+
+[[moves]]
+move_id = "Pursuit"
+level = 11

@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 375
+name = "Metang"
+primary_type = "Steel"
+secondary_type = "Psychic"
+species = "Iron"
+height = 1.2
+weight = 202.5
+[base_stats]
+hp = 60
+atk = 75
+def = 100
+sp_atk = 55
+sp_def = 80
+speed = 50
+[[moves]]
+move_id = "Take Down"
+level = 1
+
+[[moves]]
+move_id = "Hyper Beam"
+level = 62
+
+[[moves]]
+move_id = "Confusion"
+level = 20
+
+[[moves]]
+move_id = "Psychic"
+level = 38
+
+[[moves]]
+move_id = "Agility"
+level = 56
+
+[[moves]]
+move_id = "Scary Face"
+level = 26
+
+[[moves]]
+move_id = "Pursuit"
+level = 32
+
+[[moves]]
+move_id = "Metal Claw"
+level = 20
+
+[[moves]]
+move_id = "Meteor Mash"
+level = 50
+
+[[moves]]
+move_id = "Iron Defense"
+level = 44

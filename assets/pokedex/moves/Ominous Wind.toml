@@ -1,0 +1,6 @@
+name = "Ominous Wind"
+pokemon_type = "Ghost"
+category = "Special"
+power = 60
+accuracy = 100
+pp = 5

@@ -1,0 +1,6 @@
+name = "Roar of Time"
+pokemon_type = "Dragon"
+category = "Special"
+power = 150
+accuracy = 90
+pp = 5

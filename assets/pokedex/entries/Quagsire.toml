@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 195
+name = "Quagsire"
+primary_type = "Water"
+secondary_type = "Ground"
+species = "Water"
+height = 1.4
+weight = 75.0
+[base_stats]
+hp = 95
+atk = 85
+def = 85
+sp_atk = 65
+sp_def = 65
+speed = 35
+[[moves]]
+move_id = "Slam"
+level = 11
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Mist"
+level = 61
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Earthquake"
+level = 42
+
+[[moves]]
+move_id = "Haze"
+level = 61
+
+[[moves]]
+move_id = "Amnesia"
+level = 23
+
+[[moves]]
+move_id = "Rain Dance"
+level = 49
+
+[[moves]]
+move_id = "Yawn"
+level = 35
+
+[[moves]]
+move_id = "Mud Shot"
+level = 16

@@ -1,0 +1,6 @@
+name = "Sky Attack"
+pokemon_type = "Flying"
+category = "Physical"
+power = 140
+accuracy = 90
+pp = 5

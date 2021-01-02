@@ -1,0 +1,65 @@
+[pokedex_data]
+number = 68
+name = "Machamp"
+primary_type = "Fighting"
+species = "Superpower"
+height = 1.6
+weight = 130.0
+[base_stats]
+hp = 90
+atk = 130
+def = 80
+sp_atk = 65
+sp_def = 85
+speed = 55
+[[moves]]
+move_id = "Karate Chop"
+level = 13
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Submission"
+level = 41
+
+[[moves]]
+move_id = "Low Kick"
+level = 1
+
+[[moves]]
+move_id = "Seismic Toss"
+level = 19
+
+[[moves]]
+move_id = "Focus Energy"
+level = 1
+
+[[moves]]
+move_id = "Focus Energy"
+level = 7
+
+[[moves]]
+move_id = "Scary Face"
+level = 51
+
+[[moves]]
+move_id = "Foresight"
+level = 22
+
+[[moves]]
+move_id = "Dynamic Punch"
+level = 59
+
+[[moves]]
+move_id = "Vital Throw"
+level = 33
+
+[[moves]]
+move_id = "Cross Chop"
+level = 46
+
+[[moves]]
+move_id = "Revenge"
+level = 25

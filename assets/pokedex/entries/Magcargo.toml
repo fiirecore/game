@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 219
+name = "Magcargo"
+primary_type = "Fire"
+secondary_type = "Rock"
+species = "Lava"
+height = 0.8
+weight = 55.0
+[base_stats]
+hp = 60
+atk = 50
+def = 120
+sp_atk = 90
+sp_def = 80
+speed = 30
+[[moves]]
+move_id = "Body Slam"
+level = 60
+
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 8
+
+[[moves]]
+move_id = "Flamethrower"
+level = 36
+
+[[moves]]
+move_id = "Rock Throw"
+level = 1
+
+[[moves]]
+move_id = "Rock Throw"
+level = 15
+
+[[moves]]
+move_id = "Harden"
+level = 22
+
+[[moves]]
+move_id = "Smog"
+level = 1
+
+[[moves]]
+move_id = "Amnesia"
+level = 29
+
+[[moves]]
+move_id = "Rock Slide"
+level = 48
+
+[[moves]]
+move_id = "Yawn"
+level = 1

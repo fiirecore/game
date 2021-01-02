@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 263
+name = "Zigzagoon"
+primary_type = "Normal"
+species = "Tiny"
+height = 0.4
+weight = 17.5
+[base_stats]
+hp = 38
+atk = 30
+def = 41
+sp_atk = 30
+sp_def = 41
+speed = 60
+[[moves]]
+move_id = "Sand Attack"
+level = 13
+
+[[moves]]
+move_id = "Headbutt"
+level = 9
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 5
+
+[[moves]]
+move_id = "Pin Missile"
+level = 25
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Rest"
+level = 37
+
+[[moves]]
+move_id = "Flail"
+level = 33
+
+[[moves]]
+move_id = "Belly Drum"
+level = 41
+
+[[moves]]
+move_id = "Mud Sport"
+level = 21
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 17
+
+[[moves]]
+move_id = "Covet"
+level = 29

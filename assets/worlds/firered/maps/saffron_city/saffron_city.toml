@@ -1,0 +1,9 @@
+[identifier]
+world_id = "firered"
+map_files = ["3.11_SAFFRON CITY.map"]
+
+[jigsaw_map]
+piece_index = 11
+x = 264
+y = 120
+connections = [23, 24, 25, 26]

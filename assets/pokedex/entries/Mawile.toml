@@ -1,0 +1,62 @@
+[pokedex_data]
+number = 303
+name = "Mawile"
+primary_type = "Steel"
+secondary_type = "Fairy"
+species = "Deceiver"
+height = 0.6
+weight = 11.5
+[base_stats]
+hp = 50
+atk = 85
+def = 85
+sp_atk = 55
+sp_def = 55
+speed = 50
+[[moves]]
+move_id = "Vice Grip"
+level = 21
+
+[[moves]]
+move_id = "Bite"
+level = 11
+
+[[moves]]
+move_id = "Feint Attack"
+level = 26
+
+[[moves]]
+move_id = "Baton Pass"
+level = 31
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 16
+
+[[moves]]
+move_id = "Crunch"
+level = 36
+
+[[moves]]
+move_id = "Stockpile"
+level = 46
+
+[[moves]]
+move_id = "Spit Up"
+level = 46
+
+[[moves]]
+move_id = "Swallow"
+level = 46
+
+[[moves]]
+move_id = "Astonish"
+level = 1
+
+[[moves]]
+move_id = "Fake Tears"
+level = 6
+
+[[moves]]
+move_id = "Iron Defense"
+level = 41

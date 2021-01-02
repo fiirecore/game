@@ -1,0 +1,5 @@
+name = "Feint Attack"
+pokemon_type = "Dark"
+category = "Physical"
+power = 60
+pp = 20

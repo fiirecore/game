@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 180
+name = "Flaaffy"
+primary_type = "Electric"
+species = "Wool"
+height = 0.8
+weight = 13.3
+[base_stats]
+hp = 70
+atk = 55
+def = 55
+sp_atk = 80
+sp_def = 60
+speed = 45
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Thunder Shock"
+level = 1
+
+[[moves]]
+move_id = "Thunder Shock"
+level = 9
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 18
+
+[[moves]]
+move_id = "Thunder"
+level = 45
+
+[[moves]]
+move_id = "Light Screen"
+level = 36
+
+[[moves]]
+move_id = "Cotton Spore"
+level = 27

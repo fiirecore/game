@@ -1,0 +1,6 @@
+name = "Chatter"
+pokemon_type = "Flying"
+category = "Special"
+power = 65
+accuracy = 100
+pp = 20

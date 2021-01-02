@@ -1,0 +1,6 @@
+name = "Earth Power"
+pokemon_type = "Ground"
+category = "Special"
+power = 90
+accuracy = 100
+pp = 10

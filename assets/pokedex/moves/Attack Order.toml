@@ -1,0 +1,6 @@
+name = "Attack Order"
+pokemon_type = "Bug"
+category = "Physical"
+power = 90
+accuracy = 100
+pp = 15

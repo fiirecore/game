@@ -1,0 +1,5 @@
+name = "Dark Void"
+pokemon_type = "Dark"
+category = "Status"
+accuracy = 50
+pp = 10

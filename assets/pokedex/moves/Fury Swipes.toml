@@ -1,0 +1,6 @@
+name = "Fury Swipes"
+pokemon_type = "Normal"
+category = "Physical"
+power = 18
+accuracy = 80
+pp = 15

@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 322
+name = "Numel"
+primary_type = "Fire"
+secondary_type = "Ground"
+species = "Numb"
+height = 0.7
+weight = 24.0
+[base_stats]
+hp = 60
+atk = 60
+def = 40
+sp_atk = 65
+sp_def = 45
+speed = 35
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 29
+
+[[moves]]
+move_id = "Double-Edge"
+level = 49
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 11
+
+[[moves]]
+move_id = "Flamethrower"
+level = 41
+
+[[moves]]
+move_id = "Earthquake"
+level = 35
+
+[[moves]]
+move_id = "Focus Energy"
+level = 25
+
+[[moves]]
+move_id = "Amnesia"
+level = 31
+
+[[moves]]
+move_id = "Magnitude"
+level = 19

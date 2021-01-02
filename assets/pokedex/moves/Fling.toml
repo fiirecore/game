@@ -1,0 +1,5 @@
+name = "Fling"
+pokemon_type = "Dark"
+category = "Physical"
+accuracy = 100
+pp = 10

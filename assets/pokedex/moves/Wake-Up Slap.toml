@@ -1,0 +1,6 @@
+name = "Wake-Up Slap"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 70
+accuracy = 100
+pp = 10

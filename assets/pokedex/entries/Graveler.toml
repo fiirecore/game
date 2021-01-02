@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 75
+name = "Graveler"
+primary_type = "Rock"
+secondary_type = "Ground"
+species = "Rock"
+height = 1.0
+weight = 105.0
+[base_stats]
+hp = 55
+atk = 95
+def = 115
+sp_atk = 45
+sp_def = 45
+speed = 35
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Double-Edge"
+level = 62
+
+[[moves]]
+move_id = "Rock Throw"
+level = 1
+
+[[moves]]
+move_id = "Rock Throw"
+level = 11
+
+[[moves]]
+move_id = "Earthquake"
+level = 45
+
+[[moves]]
+move_id = "Defense Curl"
+level = 1
+
+[[moves]]
+move_id = "Self-Destruct"
+level = 21
+
+[[moves]]
+move_id = "Explosion"
+level = 53
+
+[[moves]]
+move_id = "Rollout"
+level = 29
+
+[[moves]]
+move_id = "Magnitude"
+level = 16
+
+[[moves]]
+move_id = "Mud Sport"
+level = 1
+
+[[moves]]
+move_id = "Mud Sport"
+level = 6
+
+[[moves]]
+move_id = "Rock Blast"
+level = 37

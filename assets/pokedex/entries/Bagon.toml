@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 371
+name = "Bagon"
+primary_type = "Dragon"
+species = "Rock"
+height = 0.6
+weight = 42.1
+[base_stats]
+hp = 45
+atk = 75
+def = 60
+sp_atk = 40
+sp_def = 30
+speed = 50
+[[moves]]
+move_id = "Headbutt"
+level = 17
+
+[[moves]]
+move_id = "Double-Edge"
+level = 53
+
+[[moves]]
+move_id = "Leer"
+level = 9
+
+[[moves]]
+move_id = "Bite"
+level = 5
+
+[[moves]]
+move_id = "Ember"
+level = 25
+
+[[moves]]
+move_id = "Rage"
+level = 1
+
+[[moves]]
+move_id = "Focus Energy"
+level = 21
+
+[[moves]]
+move_id = "Scary Face"
+level = 37
+
+[[moves]]
+move_id = "Dragon Breath"
+level = 33
+
+[[moves]]
+move_id = "Crunch"
+level = 41
+
+[[moves]]
+move_id = "Dragon Claw"
+level = 49

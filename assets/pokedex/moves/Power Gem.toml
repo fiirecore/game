@@ -1,0 +1,6 @@
+name = "Power Gem"
+pokemon_type = "Rock"
+category = "Special"
+power = 80
+accuracy = 100
+pp = 20

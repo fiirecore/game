@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 139
+name = "Omastar"
+primary_type = "Rock"
+secondary_type = "Water"
+species = "Spiral"
+height = 1.0
+weight = 35.0
+[base_stats]
+hp = 70
+atk = 60
+def = 125
+sp_atk = 115
+sp_def = 70
+speed = 55
+[[moves]]
+move_id = "Leer"
+level = 31
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 13
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 19
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 65
+
+[[moves]]
+move_id = "Withdraw"
+level = 1
+
+[[moves]]
+move_id = "Spike Cannon"
+level = 40
+
+[[moves]]
+move_id = "Constrict"
+level = 1
+
+[[moves]]
+move_id = "Protect"
+level = 37
+
+[[moves]]
+move_id = "Ancient Power"
+level = 55
+
+[[moves]]
+move_id = "Tickle"
+level = 46
+
+[[moves]]
+move_id = "Mud Shot"
+level = 25

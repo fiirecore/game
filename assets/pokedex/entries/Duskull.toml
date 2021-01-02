@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 355
+name = "Duskull"
+primary_type = "Ghost"
+species = "Requiem"
+height = 0.8
+weight = 15.0
+[base_stats]
+hp = 20
+atk = 40
+def = 90
+sp_atk = 30
+sp_def = 90
+speed = 25
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Disable"
+level = 5
+
+[[moves]]
+move_id = "Night Shade"
+level = 1
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 23
+
+[[moves]]
+move_id = "Curse"
+level = 34
+
+[[moves]]
+move_id = "Foresight"
+level = 12
+
+[[moves]]
+move_id = "Mean Look"
+level = 45
+
+[[moves]]
+move_id = "Pursuit"
+level = 27
+
+[[moves]]
+move_id = "Future Sight"
+level = 49
+
+[[moves]]
+move_id = "Will-O-Wisp"
+level = 38
+
+[[moves]]
+move_id = "Astonish"
+level = 16

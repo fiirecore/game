@@ -1,0 +1,6 @@
+name = "Thief"
+pokemon_type = "Dark"
+category = "Physical"
+power = 60
+accuracy = 100
+pp = 25

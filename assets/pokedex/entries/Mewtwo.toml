@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 150
+name = "Mewtwo"
+primary_type = "Psychic"
+species = "Genetic"
+height = 2.0
+weight = 122.0
+[base_stats]
+hp = 106
+atk = 110
+def = 90
+sp_atk = 154
+sp_def = 90
+speed = 130
+[[moves]]
+move_id = "Disable"
+level = 1
+
+[[moves]]
+move_id = "Mist"
+level = 22
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Psychic"
+level = 66
+
+[[moves]]
+move_id = "Recover"
+level = 44
+
+[[moves]]
+move_id = "Barrier"
+level = 11
+
+[[moves]]
+move_id = "Swift"
+level = 33
+
+[[moves]]
+move_id = "Amnesia"
+level = 99
+
+[[moves]]
+move_id = "Safeguard"
+level = 55
+
+[[moves]]
+move_id = "Psych Up"
+level = 77
+
+[[moves]]
+move_id = "Future Sight"
+level = 88

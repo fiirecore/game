@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 314
+name = "Illumise"
+primary_type = "Bug"
+species = "Firefly"
+height = 0.6
+weight = 17.7
+[base_stats]
+hp = 65
+atk = 47
+def = 75
+sp_atk = 73
+sp_def = 85
+speed = 85
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Quick Attack"
+level = 17
+
+[[moves]]
+move_id = "Charm"
+level = 9
+
+[[moves]]
+move_id = "Encore"
+level = 25
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 5
+
+[[moves]]
+move_id = "Moonlight"
+level = 13
+
+[[moves]]
+move_id = "Flatter"
+level = 29
+
+[[moves]]
+move_id = "Helping Hand"
+level = 33
+
+[[moves]]
+move_id = "Wish"
+level = 21
+
+[[moves]]
+move_id = "Covet"
+level = 37

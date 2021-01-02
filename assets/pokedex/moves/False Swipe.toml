@@ -1,0 +1,6 @@
+name = "False Swipe"
+pokemon_type = "Normal"
+category = "Physical"
+power = 40
+accuracy = 100
+pp = 40

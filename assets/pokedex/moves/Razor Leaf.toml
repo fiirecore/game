@@ -1,0 +1,6 @@
+name = "Razor Leaf"
+pokemon_type = "Grass"
+category = "Physical"
+power = 55
+accuracy = 95
+pp = 25

@@ -1,0 +1,6 @@
+name = "Water Pledge"
+pokemon_type = "Water"
+category = "Special"
+power = 80
+accuracy = 100
+pp = 10

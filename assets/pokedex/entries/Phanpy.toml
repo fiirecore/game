@@ -1,0 +1,49 @@
+[pokedex_data]
+number = 231
+name = "Phanpy"
+primary_type = "Ground"
+species = "Long"
+height = 0.5
+weight = 33.5
+[base_stats]
+hp = 90
+atk = 60
+def = 60
+sp_atk = 40
+sp_def = 40
+speed = 40
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 25
+
+[[moves]]
+move_id = "Double-Edge"
+level = 49
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Defense Curl"
+level = 9
+
+[[moves]]
+move_id = "Flail"
+level = 17
+
+[[moves]]
+move_id = "Endure"
+level = 41
+
+[[moves]]
+move_id = "Rollout"
+level = 33
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 1

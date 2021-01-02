@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 312
+name = "Minun"
+primary_type = "Electric"
+species = "Cheering"
+height = 0.4
+weight = 4.2
+[base_stats]
+hp = 60
+atk = 40
+def = 50
+sp_atk = 75
+sp_def = 85
+speed = 95
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 4
+
+[[moves]]
+move_id = "Thunder"
+level = 37
+
+[[moves]]
+move_id = "Agility"
+level = 47
+
+[[moves]]
+move_id = "Quick Attack"
+level = 10
+
+[[moves]]
+move_id = "Charm"
+level = 28
+
+[[moves]]
+move_id = "Spark"
+level = 19
+
+[[moves]]
+move_id = "Baton Pass"
+level = 40
+
+[[moves]]
+move_id = "Encore"
+level = 22
+
+[[moves]]
+move_id = "Charge"
+level = 31
+
+[[moves]]
+move_id = "Helping Hand"
+level = 13

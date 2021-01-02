@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 157
+name = "Typhlosion"
+primary_type = "Fire"
+species = "Volcano"
+height = 1.7
+weight = 79.5
+[base_stats]
+hp = 78
+atk = 84
+def = 78
+sp_atk = 109
+sp_def = 85
+speed = 100
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 12
+
+[[moves]]
+move_id = "Flamethrower"
+level = 60
+
+[[moves]]
+move_id = "Quick Attack"
+level = 21
+
+[[moves]]
+move_id = "Smokescreen"
+level = 1
+
+[[moves]]
+move_id = "Smokescreen"
+level = 6
+
+[[moves]]
+move_id = "Swift"
+level = 45
+
+[[moves]]
+move_id = "Flame Wheel"
+level = 31

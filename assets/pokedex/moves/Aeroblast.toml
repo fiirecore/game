@@ -1,0 +1,6 @@
+name = "Aeroblast"
+pokemon_type = "Flying"
+category = "Special"
+power = 100
+accuracy = 95
+pp = 5

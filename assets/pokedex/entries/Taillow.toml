@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 276
+name = "Taillow"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Tiny"
+height = 0.3
+weight = 2.3
+[base_stats]
+hp = 40
+atk = 55
+def = 30
+sp_atk = 30
+sp_def = 30
+speed = 85
+[[moves]]
+move_id = "Wing Attack"
+level = 13
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Agility"
+level = 43
+
+[[moves]]
+move_id = "Quick Attack"
+level = 8
+
+[[moves]]
+move_id = "Double Team"
+level = 19
+
+[[moves]]
+move_id = "Focus Energy"
+level = 4
+
+[[moves]]
+move_id = "Endeavor"
+level = 26
+
+[[moves]]
+move_id = "Aerial Ace"
+level = 34

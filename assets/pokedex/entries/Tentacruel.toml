@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 73
+name = "Tentacruel"
+primary_type = "Water"
+secondary_type = "Poison"
+species = "Jellyfish"
+height = 1.6
+weight = 55.0
+[base_stats]
+hp = 80
+atk = 70
+def = 65
+sp_atk = 80
+sp_def = 120
+speed = 100
+[[moves]]
+move_id = "Wrap"
+level = 30
+
+[[moves]]
+move_id = "Poison Sting"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 6
+
+[[moves]]
+move_id = "Acid"
+level = 19
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 55
+
+[[moves]]
+move_id = "Bubble Beam"
+level = 25
+
+[[moves]]
+move_id = "Screech"
+level = 47
+
+[[moves]]
+move_id = "Barrier"
+level = 38
+
+[[moves]]
+move_id = "Constrict"
+level = 1
+
+[[moves]]
+move_id = "Constrict"
+level = 12

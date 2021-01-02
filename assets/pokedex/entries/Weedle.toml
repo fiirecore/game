@@ -1,0 +1,22 @@
+[pokedex_data]
+number = 13
+name = "Weedle"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Hairy"
+height = 0.3
+weight = 3.2
+[base_stats]
+hp = 40
+atk = 35
+def = 30
+sp_atk = 20
+sp_def = 20
+speed = 50
+[[moves]]
+move_id = "Poison Sting"
+level = 1
+
+[[moves]]
+move_id = "String Shot"
+level = 1

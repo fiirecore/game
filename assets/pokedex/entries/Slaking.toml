@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 289
+name = "Slaking"
+primary_type = "Normal"
+species = "Lazy"
+height = 2.0
+weight = 130.5
+[base_stats]
+hp = 150
+atk = 160
+def = 100
+sp_atk = 95
+sp_def = 65
+speed = 100
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Counter"
+level = 37
+
+[[moves]]
+move_id = "Amnesia"
+level = 25
+
+[[moves]]
+move_id = "Flail"
+level = 43
+
+[[moves]]
+move_id = "Feint Attack"
+level = 19
+
+[[moves]]
+move_id = "Swagger"
+level = 36
+
+[[moves]]
+move_id = "Encore"
+level = 1
+
+[[moves]]
+move_id = "Encore"
+level = 7
+
+[[moves]]
+move_id = "Yawn"
+level = 1
+
+[[moves]]
+move_id = "Slack Off"
+level = 1
+
+[[moves]]
+move_id = "Slack Off"
+level = 13
+
+[[moves]]
+move_id = "Covet"
+level = 31

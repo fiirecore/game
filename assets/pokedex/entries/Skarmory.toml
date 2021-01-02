@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 227
+name = "Skarmory"
+primary_type = "Steel"
+secondary_type = "Flying"
+species = "Armor"
+height = 1.7
+weight = 50.5
+[base_stats]
+hp = 65
+atk = 80
+def = 140
+sp_atk = 40
+sp_def = 70
+speed = 70
+[[moves]]
+move_id = "Sand Attack"
+level = 10
+
+[[moves]]
+move_id = "Fury Attack"
+level = 26
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Agility"
+level = 16
+
+[[moves]]
+move_id = "Swift"
+level = 13
+
+[[moves]]
+move_id = "Spikes"
+level = 42
+
+[[moves]]
+move_id = "Steel Wing"
+level = 32
+
+[[moves]]
+move_id = "Air Cutter"
+level = 29
+
+[[moves]]
+move_id = "Metal Sound"
+level = 45

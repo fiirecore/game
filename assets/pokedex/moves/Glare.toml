@@ -1,0 +1,5 @@
+name = "Glare"
+pokemon_type = "Normal"
+category = "Status"
+accuracy = 100
+pp = 30

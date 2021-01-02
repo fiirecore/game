@@ -1,0 +1,6 @@
+name = "Mud Shot"
+pokemon_type = "Ground"
+category = "Special"
+power = 55
+accuracy = 95
+pp = 15

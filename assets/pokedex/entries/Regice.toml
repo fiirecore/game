@@ -1,0 +1,49 @@
+[pokedex_data]
+number = 378
+name = "Regice"
+primary_type = "Ice"
+species = "Iceberg"
+height = 1.8
+weight = 175.0
+[base_stats]
+hp = 80
+atk = 50
+def = 100
+sp_atk = 100
+sp_def = 200
+speed = 50
+[[moves]]
+move_id = "Hyper Beam"
+level = 65
+
+[[moves]]
+move_id = "Amnesia"
+level = 41
+
+[[moves]]
+move_id = "Explosion"
+level = 1
+
+[[moves]]
+move_id = "Curse"
+level = 17
+
+[[moves]]
+move_id = "Zap Cannon"
+level = 49
+
+[[moves]]
+move_id = "Icy Wind"
+level = 9
+
+[[moves]]
+move_id = "Lock-On"
+level = 57
+
+[[moves]]
+move_id = "Ancient Power"
+level = 33
+
+[[moves]]
+move_id = "Superpower"
+level = 25

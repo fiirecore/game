@@ -1,0 +1,13 @@
+[identifier]
+world_id = "firered"
+map_files = ["3.28_ROUTE 10.map"]
+
+[jigsaw_map]
+piece_index = 28
+x = 384
+y = 50
+connections = [4, 27]
+
+[settings]
+encounter_type = "original"
+wild_tiles = [0x0D]

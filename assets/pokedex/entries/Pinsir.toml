@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 127
+name = "Pinsir"
+primary_type = "Bug"
+species = "Stag"
+height = 1.5
+weight = 55.0
+[base_stats]
+hp = 65
+atk = 125
+def = 100
+sp_atk = 55
+sp_def = 70
+speed = 85
+[[moves]]
+move_id = "Vice Grip"
+level = 1
+
+[[moves]]
+move_id = "Guillotine"
+level = 37
+
+[[moves]]
+move_id = "Swords Dance"
+level = 49
+
+[[moves]]
+move_id = "Bind"
+level = 7
+
+[[moves]]
+move_id = "Submission"
+level = 43
+
+[[moves]]
+move_id = "Seismic Toss"
+level = 13
+
+[[moves]]
+move_id = "Harden"
+level = 19
+
+[[moves]]
+move_id = "Focus Energy"
+level = 1
+
+[[moves]]
+move_id = "Revenge"
+level = 25
+
+[[moves]]
+move_id = "Brick Break"
+level = 31

@@ -1,0 +1,37 @@
+[pokedex_data]
+number = 173
+name = "Cleffa"
+primary_type = "Fairy"
+species = "Star"
+height = 0.3
+weight = 3.0
+[base_stats]
+hp = 50
+atk = 25
+def = 28
+sp_atk = 45
+sp_def = 55
+speed = 15
+[[moves]]
+move_id = "Pound"
+level = 1
+
+[[moves]]
+move_id = "Sing"
+level = 8
+
+[[moves]]
+move_id = "Sweet Kiss"
+level = 13
+
+[[moves]]
+move_id = "Charm"
+level = 1
+
+[[moves]]
+move_id = "Encore"
+level = 4
+
+[[moves]]
+move_id = "Magical Leaf"
+level = 17

@@ -1,0 +1,17 @@
+moves = []
+
+[pokedex_data]
+number = 386
+name = "Deoxys-normal"
+primary_type = "Psychic"
+species = "DNA"
+height = 1.7
+weight = 60.8
+
+[base_stats]
+hp = 50
+atk = 150
+def = 50
+sp_atk = 150
+sp_def = 50
+speed = 150

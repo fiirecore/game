@@ -1,0 +1,4 @@
+name = "Quick Guard"
+pokemon_type = "Fighting"
+category = "Status"
+pp = 15

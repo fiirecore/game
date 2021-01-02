@@ -1,0 +1,6 @@
+name = "Fire Fang"
+pokemon_type = "Fire"
+category = "Physical"
+power = 65
+accuracy = 95
+pp = 15

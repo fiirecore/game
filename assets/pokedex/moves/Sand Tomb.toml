@@ -1,0 +1,6 @@
+name = "Sand Tomb"
+pokemon_type = "Ground"
+category = "Physical"
+power = 35
+accuracy = 85
+pp = 15

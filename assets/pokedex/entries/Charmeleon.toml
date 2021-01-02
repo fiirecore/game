@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 5
+name = "Charmeleon"
+primary_type = "Fire"
+species = "Flame"
+height = 1.1
+weight = 19.0
+[base_stats]
+hp = 58
+atk = 64
+def = 58
+sp_atk = 80
+sp_def = 65
+speed = 80
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 7
+
+[[moves]]
+move_id = "Flamethrower"
+level = 34
+
+[[moves]]
+move_id = "Dragon Rage"
+level = 48
+
+[[moves]]
+move_id = "Fire Spin"
+level = 55
+
+[[moves]]
+move_id = "Smokescreen"
+level = 20
+
+[[moves]]
+move_id = "Slash"
+level = 41
+
+[[moves]]
+move_id = "Scary Face"
+level = 27
+
+[[moves]]
+move_id = "Metal Claw"
+level = 13

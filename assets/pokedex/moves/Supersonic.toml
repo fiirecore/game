@@ -1,0 +1,5 @@
+name = "Supersonic"
+pokemon_type = "Normal"
+category = "Status"
+accuracy = 55
+pp = 20

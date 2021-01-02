@@ -1,0 +1,6 @@
+name = "Head Smash"
+pokemon_type = "Rock"
+category = "Physical"
+power = 150
+accuracy = 80
+pp = 5

@@ -1,0 +1,6 @@
+name = "Bug Bite"
+pokemon_type = "Bug"
+category = "Physical"
+power = 60
+accuracy = 100
+pp = 20

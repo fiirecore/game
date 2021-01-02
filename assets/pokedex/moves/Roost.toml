@@ -1,0 +1,4 @@
+name = "Roost"
+pokemon_type = "Flying"
+category = "Status"
+pp = 10

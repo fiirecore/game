@@ -1,0 +1,4 @@
+name = "Amnesia"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 20

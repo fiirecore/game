@@ -1,0 +1,65 @@
+[pokedex_data]
+number = 8
+name = "Wartortle"
+primary_type = "Water"
+species = "Turtle"
+height = 1.0
+weight = 22.5
+[base_stats]
+hp = 59
+atk = 63
+def = 80
+sp_atk = 65
+sp_def = 80
+speed = 58
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 4
+
+[[moves]]
+move_id = "Bite"
+level = 19
+
+[[moves]]
+move_id = "Water Gun"
+level = 13
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 53
+
+[[moves]]
+move_id = "Withdraw"
+level = 10
+
+[[moves]]
+move_id = "Skull Bash"
+level = 45
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Bubble"
+level = 7
+
+[[moves]]
+move_id = "Protect"
+level = 31
+
+[[moves]]
+move_id = "Rapid Spin"
+level = 25
+
+[[moves]]
+move_id = "Rain Dance"
+level = 37

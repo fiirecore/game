@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 81
+name = "Magnemite"
+primary_type = "Electric"
+secondary_type = "Steel"
+species = "Magnet"
+height = 0.3
+weight = 6.0
+[base_stats]
+hp = 25
+atk = 35
+def = 70
+sp_atk = 95
+sp_def = 55
+speed = 45
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 11
+
+[[moves]]
+move_id = "Sonic Boom"
+level = 16
+
+[[moves]]
+move_id = "Thunder Shock"
+level = 6
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 21
+
+[[moves]]
+move_id = "Screech"
+level = 44
+
+[[moves]]
+move_id = "Swift"
+level = 38
+
+[[moves]]
+move_id = "Zap Cannon"
+level = 50
+
+[[moves]]
+move_id = "Lock-On"
+level = 32
+
+[[moves]]
+move_id = "Spark"
+level = 26
+
+[[moves]]
+move_id = "Metal Sound"
+level = 1

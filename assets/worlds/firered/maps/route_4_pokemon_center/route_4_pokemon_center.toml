@@ -1,0 +1,6 @@
+[identifier]
+world_id = "firered"
+map_files = ["16.0_ROUTE 4.map"]
+
+[warp_map]
+map_set_id = "route_4_pokemon_center"

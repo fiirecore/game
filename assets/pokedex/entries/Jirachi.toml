@@ -1,0 +1,62 @@
+[pokedex_data]
+number = 385
+name = "Jirachi"
+primary_type = "Steel"
+secondary_type = "Psychic"
+species = "Wish"
+height = 0.3
+weight = 1.1
+[base_stats]
+hp = 100
+atk = 100
+def = 100
+sp_atk = 100
+sp_def = 100
+speed = 100
+[[moves]]
+move_id = "Double-Edge"
+level = 35
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Psychic"
+level = 20
+
+[[moves]]
+move_id = "Swift"
+level = 10
+
+[[moves]]
+move_id = "Rest"
+level = 5
+
+[[moves]]
+move_id = "Rest"
+level = 30
+
+[[moves]]
+move_id = "Future Sight"
+level = 40
+
+[[moves]]
+move_id = "Helping Hand"
+level = 15
+
+[[moves]]
+move_id = "Wish"
+level = 1
+
+[[moves]]
+move_id = "Refresh"
+level = 25
+
+[[moves]]
+move_id = "Cosmic Power"
+level = 45
+
+[[moves]]
+move_id = "Doom Desire"
+level = 50

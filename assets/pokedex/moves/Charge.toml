@@ -1,0 +1,4 @@
+name = "Charge"
+pokemon_type = "Electric"
+category = "Status"
+pp = 20

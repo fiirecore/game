@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 221
+name = "Piloswine"
+primary_type = "Ice"
+secondary_type = "Ground"
+species = "Swine"
+height = 1.1
+weight = 55.8
+[base_stats]
+hp = 100
+atk = 100
+def = 80
+sp_atk = 60
+sp_def = 60
+speed = 50
+[[moves]]
+move_id = "Horn Attack"
+level = 1
+
+[[moves]]
+move_id = "Fury Attack"
+level = 33
+
+[[moves]]
+move_id = "Take Down"
+level = 28
+
+[[moves]]
+move_id = "Mist"
+level = 42
+
+[[moves]]
+move_id = "Blizzard"
+level = 56
+
+[[moves]]
+move_id = "Amnesia"
+level = 70
+
+[[moves]]
+move_id = "Powder Snow"
+level = 1
+
+[[moves]]
+move_id = "Powder Snow"
+level = 10
+
+[[moves]]
+move_id = "Endure"
+level = 1
+
+[[moves]]
+move_id = "Endure"
+level = 19
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 1

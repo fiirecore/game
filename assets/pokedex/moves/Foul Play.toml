@@ -1,0 +1,6 @@
+name = "Foul Play"
+pokemon_type = "Dark"
+category = "Physical"
+power = 95
+accuracy = 100
+pp = 15

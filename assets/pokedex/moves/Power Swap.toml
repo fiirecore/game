@@ -1,0 +1,4 @@
+name = "Power Swap"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 10

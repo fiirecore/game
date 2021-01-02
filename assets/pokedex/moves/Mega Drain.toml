@@ -1,0 +1,6 @@
+name = "Mega Drain"
+pokemon_type = "Grass"
+category = "Special"
+power = 40
+accuracy = 100
+pp = 15

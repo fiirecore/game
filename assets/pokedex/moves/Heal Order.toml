@@ -1,0 +1,4 @@
+name = "Heal Order"
+pokemon_type = "Bug"
+category = "Status"
+pp = 10

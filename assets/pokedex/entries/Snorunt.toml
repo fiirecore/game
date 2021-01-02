@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 361
+name = "Snorunt"
+primary_type = "Ice"
+species = "Snow"
+height = 0.7
+weight = 16.8
+[base_stats]
+hp = 50
+atk = 50
+def = 50
+sp_atk = 50
+sp_def = 50
+speed = 50
+[[moves]]
+move_id = "Headbutt"
+level = 19
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 10
+
+[[moves]]
+move_id = "Ice Beam"
+level = 34
+
+[[moves]]
+move_id = "Blizzard"
+level = 43
+
+[[moves]]
+move_id = "Double Team"
+level = 7
+
+[[moves]]
+move_id = "Powder Snow"
+level = 1
+
+[[moves]]
+move_id = "Protect"
+level = 25
+
+[[moves]]
+move_id = "Icy Wind"
+level = 16
+
+[[moves]]
+move_id = "Crunch"
+level = 28
+
+[[moves]]
+move_id = "Hail"
+level = 37

@@ -1,0 +1,49 @@
+[pokedex_data]
+number = 133
+name = "Eevee"
+primary_type = "Normal"
+species = "Evolution"
+height = 0.3
+weight = 6.5
+[base_stats]
+hp = 55
+atk = 55
+def = 50
+sp_atk = 45
+sp_def = 65
+speed = 55
+[[moves]]
+move_id = "Sand Attack"
+level = 8
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 42
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 30
+
+[[moves]]
+move_id = "Growl"
+level = 16
+
+[[moves]]
+move_id = "Quick Attack"
+level = 23
+
+[[moves]]
+move_id = "Baton Pass"
+level = 36
+
+[[moves]]
+move_id = "Helping Hand"
+level = 1

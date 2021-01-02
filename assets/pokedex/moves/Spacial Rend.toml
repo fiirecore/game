@@ -1,0 +1,6 @@
+name = "Spacial Rend"
+pokemon_type = "Dragon"
+category = "Special"
+power = 100
+accuracy = 95
+pp = 5

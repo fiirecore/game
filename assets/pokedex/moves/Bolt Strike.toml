@@ -1,0 +1,6 @@
+name = "Bolt Strike"
+pokemon_type = "Electric"
+category = "Physical"
+power = 130
+accuracy = 85
+pp = 5

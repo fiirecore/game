@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 188
+name = "Skiploom"
+primary_type = "Grass"
+secondary_type = "Flying"
+species = "Cottonweed"
+height = 0.6
+weight = 1.0
+[base_stats]
+hp = 55
+atk = 45
+def = 50
+sp_atk = 45
+sp_def = 65
+speed = 80
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Tackle"
+level = 10
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 5
+
+[[moves]]
+move_id = "Mega Drain"
+level = 36
+
+[[moves]]
+move_id = "Leech Seed"
+level = 22
+
+[[moves]]
+move_id = "Poison Powder"
+level = 13
+
+[[moves]]
+move_id = "Stun Spore"
+level = 15
+
+[[moves]]
+move_id = "Sleep Powder"
+level = 17
+
+[[moves]]
+move_id = "Splash"
+level = 1
+
+[[moves]]
+move_id = "Cotton Spore"
+level = 29
+
+[[moves]]
+move_id = "Synthesis"
+level = 1
+
+[[moves]]
+move_id = "Synthesis"
+level = 5

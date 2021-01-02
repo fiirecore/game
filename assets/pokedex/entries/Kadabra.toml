@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 64
+name = "Kadabra"
+primary_type = "Psychic"
+species = "Psi"
+height = 1.3
+weight = 56.5
+[base_stats]
+hp = 40
+atk = 35
+def = 30
+sp_atk = 120
+sp_def = 70
+speed = 105
+[[moves]]
+move_id = "Disable"
+level = 18
+
+[[moves]]
+move_id = "Psybeam"
+level = 21
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 16
+
+[[moves]]
+move_id = "Psychic"
+level = 36
+
+[[moves]]
+move_id = "Teleport"
+level = 1
+
+[[moves]]
+move_id = "Recover"
+level = 25
+
+[[moves]]
+move_id = "Reflect"
+level = 23
+
+[[moves]]
+move_id = "Kinesis"
+level = 1
+
+[[moves]]
+move_id = "Future Sight"
+level = 30
+
+[[moves]]
+move_id = "Trick"
+level = 43
+
+[[moves]]
+move_id = "Role Play"
+level = 33

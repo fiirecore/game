@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 146
+name = "Moltres"
+primary_type = "Fire"
+secondary_type = "Flying"
+species = "Flame"
+height = 2.0
+weight = 60.0
+[base_stats]
+hp = 90
+atk = 100
+def = 90
+sp_atk = 125
+sp_def = 85
+speed = 90
+[[moves]]
+move_id = "Wing Attack"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Flamethrower"
+level = 49
+
+[[moves]]
+move_id = "Fire Spin"
+level = 13
+
+[[moves]]
+move_id = "Agility"
+level = 25
+
+[[moves]]
+move_id = "Sky Attack"
+level = 85
+
+[[moves]]
+move_id = "Endure"
+level = 37
+
+[[moves]]
+move_id = "Safeguard"
+level = 61
+
+[[moves]]
+move_id = "Heat Wave"
+level = 73

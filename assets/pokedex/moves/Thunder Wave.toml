@@ -1,0 +1,5 @@
+name = "Thunder Wave"
+pokemon_type = "Electric"
+category = "Status"
+accuracy = 90
+pp = 20

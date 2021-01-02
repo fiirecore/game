@@ -1,0 +1,65 @@
+[pokedex_data]
+number = 352
+name = "Kecleon"
+primary_type = "Normal"
+species = "Color"
+height = 1.0
+weight = 22.0
+[base_stats]
+hp = 60
+atk = 90
+def = 70
+sp_atk = 60
+sp_def = 120
+speed = 40
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Bind"
+level = 4
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Psybeam"
+level = 17
+
+[[moves]]
+move_id = "Screech"
+level = 24
+
+[[moves]]
+move_id = "Lick"
+level = 1
+
+[[moves]]
+move_id = "Fury Swipes"
+level = 12
+
+[[moves]]
+move_id = "Slash"
+level = 31
+
+[[moves]]
+move_id = "Substitute"
+level = 40
+
+[[moves]]
+move_id = "Thief"
+level = 1
+
+[[moves]]
+move_id = "Feint Attack"
+level = 7
+
+[[moves]]
+move_id = "Ancient Power"
+level = 49
+
+[[moves]]
+move_id = "Astonish"
+level = 1

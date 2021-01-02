@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 72
+name = "Tentacool"
+primary_type = "Water"
+secondary_type = "Poison"
+species = "Jellyfish"
+height = 0.9
+weight = 45.5
+[base_stats]
+hp = 40
+atk = 40
+def = 35
+sp_atk = 50
+sp_def = 100
+speed = 70
+[[moves]]
+move_id = "Wrap"
+level = 30
+
+[[moves]]
+move_id = "Poison Sting"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 6
+
+[[moves]]
+move_id = "Acid"
+level = 19
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 49
+
+[[moves]]
+move_id = "Bubble Beam"
+level = 25
+
+[[moves]]
+move_id = "Screech"
+level = 43
+
+[[moves]]
+move_id = "Barrier"
+level = 36
+
+[[moves]]
+move_id = "Constrict"
+level = 12

@@ -1,0 +1,78 @@
+[pokedex_data]
+number = 373
+name = "Salamence"
+primary_type = "Dragon"
+secondary_type = "Flying"
+species = "Dragon"
+height = 1.5
+weight = 102.6
+[base_stats]
+hp = 95
+atk = 135
+def = 80
+sp_atk = 110
+sp_def = 80
+speed = 100
+[[moves]]
+move_id = "Fly"
+level = 50
+
+[[moves]]
+move_id = "Headbutt"
+level = 1
+
+[[moves]]
+move_id = "Headbutt"
+level = 17
+
+[[moves]]
+move_id = "Double-Edge"
+level = 93
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Leer"
+level = 9
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 5
+
+[[moves]]
+move_id = "Ember"
+level = 25
+
+[[moves]]
+move_id = "Rage"
+level = 1
+
+[[moves]]
+move_id = "Focus Energy"
+level = 21
+
+[[moves]]
+move_id = "Protect"
+level = 30
+
+[[moves]]
+move_id = "Scary Face"
+level = 47
+
+[[moves]]
+move_id = "Dragon Breath"
+level = 38
+
+[[moves]]
+move_id = "Crunch"
+level = 61
+
+[[moves]]
+move_id = "Dragon Claw"
+level = 79

@@ -1,0 +1,6 @@
+name = "Doom Desire"
+pokemon_type = "Steel"
+category = "Special"
+power = 140
+accuracy = 100
+pp = 5

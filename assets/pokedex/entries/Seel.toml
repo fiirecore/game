@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 86
+name = "Seel"
+primary_type = "Water"
+species = "Sea"
+height = 1.1
+weight = 90.0
+[base_stats]
+hp = 65
+atk = 45
+def = 55
+sp_atk = 45
+sp_def = 70
+speed = 45
+[[moves]]
+move_id = "Headbutt"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 37
+
+[[moves]]
+move_id = "Growl"
+level = 9
+
+[[moves]]
+move_id = "Ice Beam"
+level = 41
+
+[[moves]]
+move_id = "Aurora Beam"
+level = 21
+
+[[moves]]
+move_id = "Rest"
+level = 29
+
+[[moves]]
+move_id = "Icy Wind"
+level = 17
+
+[[moves]]
+move_id = "Safeguard"
+level = 49

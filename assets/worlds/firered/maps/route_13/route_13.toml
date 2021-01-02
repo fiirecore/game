@@ -1,0 +1,9 @@
+[identifier]
+world_id = "firered"
+map_files = ["3.31_ROUTE 13.map"]
+
+[jigsaw_map]
+piece_index = 31
+x = 336
+y = 270
+connections = [30, 32]

@@ -1,0 +1,30 @@
+[pokedex_data]
+number = 40
+name = "Wigglytuff"
+primary_type = "Normal"
+secondary_type = "Fairy"
+species = "Balloon"
+height = 1.0
+weight = 12.0
+[base_stats]
+hp = 140
+atk = 70
+def = 45
+sp_atk = 85
+sp_def = 50
+speed = 45
+[[moves]]
+move_id = "Double Slap"
+level = 1
+
+[[moves]]
+move_id = "Sing"
+level = 1
+
+[[moves]]
+move_id = "Disable"
+level = 1
+
+[[moves]]
+move_id = "Defense Curl"
+level = 1

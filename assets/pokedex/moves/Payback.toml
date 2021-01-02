@@ -1,0 +1,6 @@
+name = "Payback"
+pokemon_type = "Dark"
+category = "Physical"
+power = 50
+accuracy = 100
+pp = 10

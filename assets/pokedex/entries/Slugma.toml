@@ -1,0 +1,49 @@
+[pokedex_data]
+number = 218
+name = "Slugma"
+primary_type = "Fire"
+species = "Lava"
+height = 0.7
+weight = 35.0
+[base_stats]
+hp = 40
+atk = 40
+def = 40
+sp_atk = 70
+sp_def = 40
+speed = 20
+[[moves]]
+move_id = "Body Slam"
+level = 50
+
+[[moves]]
+move_id = "Ember"
+level = 8
+
+[[moves]]
+move_id = "Flamethrower"
+level = 36
+
+[[moves]]
+move_id = "Rock Throw"
+level = 15
+
+[[moves]]
+move_id = "Harden"
+level = 22
+
+[[moves]]
+move_id = "Smog"
+level = 1
+
+[[moves]]
+move_id = "Amnesia"
+level = 29
+
+[[moves]]
+move_id = "Rock Slide"
+level = 43
+
+[[moves]]
+move_id = "Yawn"
+level = 1

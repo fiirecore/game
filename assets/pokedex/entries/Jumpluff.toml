@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 189
+name = "Jumpluff"
+primary_type = "Grass"
+secondary_type = "Flying"
+species = "Cottonweed"
+height = 0.8
+weight = 3.0
+[base_stats]
+hp = 75
+atk = 55
+def = 70
+sp_atk = 55
+sp_def = 95
+speed = 110
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Tackle"
+level = 10
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 5
+
+[[moves]]
+move_id = "Mega Drain"
+level = 44
+
+[[moves]]
+move_id = "Leech Seed"
+level = 22
+
+[[moves]]
+move_id = "Poison Powder"
+level = 13
+
+[[moves]]
+move_id = "Stun Spore"
+level = 15
+
+[[moves]]
+move_id = "Sleep Powder"
+level = 17
+
+[[moves]]
+move_id = "Splash"
+level = 1
+
+[[moves]]
+move_id = "Cotton Spore"
+level = 33
+
+[[moves]]
+move_id = "Synthesis"
+level = 1
+
+[[moves]]
+move_id = "Synthesis"
+level = 5

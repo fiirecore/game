@@ -1,0 +1,6 @@
+name = "Feint"
+pokemon_type = "Normal"
+category = "Physical"
+power = 30
+accuracy = 100
+pp = 10

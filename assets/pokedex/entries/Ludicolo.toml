@@ -1,0 +1,30 @@
+[pokedex_data]
+number = 272
+name = "Ludicolo"
+primary_type = "Water"
+secondary_type = "Grass"
+species = "Carefree"
+height = 1.5
+weight = 55.0
+[base_stats]
+hp = 80
+atk = 70
+def = 70
+sp_atk = 90
+sp_def = 100
+speed = 70
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Absorb"
+level = 1
+
+[[moves]]
+move_id = "Nature Power"
+level = 1
+
+[[moves]]
+move_id = "Astonish"
+level = 1

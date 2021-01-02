@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 109
+name = "Koffing"
+primary_type = "Poison"
+species = "Poison"
+height = 0.6
+weight = 1.0
+[base_stats]
+hp = 40
+atk = 65
+def = 95
+sp_atk = 60
+sp_def = 45
+speed = 35
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Smokescreen"
+level = 25
+
+[[moves]]
+move_id = "Haze"
+level = 33
+
+[[moves]]
+move_id = "Self-Destruct"
+level = 17
+
+[[moves]]
+move_id = "Smog"
+level = 9
+
+[[moves]]
+move_id = "Sludge"
+level = 21
+
+[[moves]]
+move_id = "Poison Gas"
+level = 1
+
+[[moves]]
+move_id = "Explosion"
+level = 41
+
+[[moves]]
+move_id = "Destiny Bond"
+level = 45
+
+[[moves]]
+move_id = "Memento"
+level = 49

@@ -1,0 +1,6 @@
+name = "Seed Bomb"
+pokemon_type = "Grass"
+category = "Physical"
+power = 80
+accuracy = 100
+pp = 15

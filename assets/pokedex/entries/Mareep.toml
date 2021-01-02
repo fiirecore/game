@@ -1,0 +1,41 @@
+[pokedex_data]
+number = 179
+name = "Mareep"
+primary_type = "Electric"
+species = "Wool"
+height = 0.6
+weight = 7.8
+[base_stats]
+hp = 55
+atk = 40
+def = 40
+sp_atk = 65
+sp_def = 45
+speed = 35
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Thunder Shock"
+level = 9
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 16
+
+[[moves]]
+move_id = "Thunder"
+level = 37
+
+[[moves]]
+move_id = "Light Screen"
+level = 30
+
+[[moves]]
+move_id = "Cotton Spore"
+level = 23

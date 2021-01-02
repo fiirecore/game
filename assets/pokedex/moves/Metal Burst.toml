@@ -1,0 +1,5 @@
+name = "Metal Burst"
+pokemon_type = "Steel"
+category = "Physical"
+accuracy = 100
+pp = 10

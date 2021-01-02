@@ -1,0 +1,5 @@
+name = "Lovely Kiss"
+pokemon_type = "Normal"
+category = "Status"
+accuracy = 75
+pp = 10

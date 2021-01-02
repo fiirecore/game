@@ -1,0 +1,6 @@
+name = "Wing Attack"
+pokemon_type = "Flying"
+category = "Physical"
+power = 60
+accuracy = 100
+pp = 35

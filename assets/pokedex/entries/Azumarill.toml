@@ -1,0 +1,62 @@
+[pokedex_data]
+number = 184
+name = "Azumarill"
+primary_type = "Water"
+secondary_type = "Fairy"
+species = "Aqua"
+height = 0.8
+weight = 28.5
+[base_stats]
+hp = 100
+atk = 50
+def = 80
+sp_atk = 60
+sp_def = 80
+speed = 50
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Double-Edge"
+level = 34
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 6
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 10
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 57
+
+[[moves]]
+move_id = "Bubble Beam"
+level = 24
+
+[[moves]]
+move_id = "Defense Curl"
+level = 1
+
+[[moves]]
+move_id = "Defense Curl"
+level = 3
+
+[[moves]]
+move_id = "Rollout"
+level = 15
+
+[[moves]]
+move_id = "Rain Dance"
+level = 45

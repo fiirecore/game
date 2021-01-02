@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 230
+name = "Kingdra"
+primary_type = "Water"
+secondary_type = "Dragon"
+species = "Dragon"
+height = 1.8
+weight = 152.0
+[base_stats]
+hp = 75
+atk = 95
+def = 95
+sp_atk = 95
+sp_def = 95
+speed = 85
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Leer"
+level = 15
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 22
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 51
+
+[[moves]]
+move_id = "Agility"
+level = 40
+
+[[moves]]
+move_id = "Smokescreen"
+level = 1
+
+[[moves]]
+move_id = "Smokescreen"
+level = 8
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Twister"
+level = 29
+
+[[moves]]
+move_id = "Dragon Dance"
+level = 62

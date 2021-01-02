@@ -1,0 +1,45 @@
+[pokedex_data]
+number = 239
+name = "Elekid"
+primary_type = "Electric"
+species = "Electric"
+height = 0.6
+weight = 23.5
+[base_stats]
+hp = 45
+atk = 63
+def = 37
+sp_atk = 65
+sp_def = 55
+speed = 95
+[[moves]]
+move_id = "Thunder Punch"
+level = 9
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Thunderbolt"
+level = 41
+
+[[moves]]
+move_id = "Thunder"
+level = 49
+
+[[moves]]
+move_id = "Quick Attack"
+level = 1
+
+[[moves]]
+move_id = "Screech"
+level = 33
+
+[[moves]]
+move_id = "Light Screen"
+level = 17
+
+[[moves]]
+move_id = "Swift"
+level = 25

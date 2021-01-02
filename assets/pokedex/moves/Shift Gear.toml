@@ -1,0 +1,4 @@
+name = "Shift Gear"
+pokemon_type = "Steel"
+category = "Status"
+pp = 10

@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 152
+name = "Chikorita"
+primary_type = "Grass"
+species = "Leaf"
+height = 0.9
+weight = 6.4
+[base_stats]
+hp = 45
+atk = 49
+def = 65
+sp_atk = 49
+sp_def = 65
+speed = 45
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Body Slam"
+level = 29
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Razor Leaf"
+level = 8
+
+[[moves]]
+move_id = "Solar Beam"
+level = 50
+
+[[moves]]
+move_id = "Poison Powder"
+level = 15
+
+[[moves]]
+move_id = "Light Screen"
+level = 36
+
+[[moves]]
+move_id = "Reflect"
+level = 12
+
+[[moves]]
+move_id = "Safeguard"
+level = 43
+
+[[moves]]
+move_id = "Synthesis"
+level = 22

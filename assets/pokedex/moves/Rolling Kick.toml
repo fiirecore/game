@@ -1,0 +1,6 @@
+name = "Rolling Kick"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 60
+accuracy = 85
+pp = 15

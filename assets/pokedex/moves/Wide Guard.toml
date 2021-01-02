@@ -1,0 +1,4 @@
+name = "Wide Guard"
+pokemon_type = "Rock"
+category = "Status"
+pp = 10

@@ -1,0 +1,6 @@
+name = "Mist Ball"
+pokemon_type = "Psychic"
+category = "Special"
+power = 70
+accuracy = 100
+pp = 5

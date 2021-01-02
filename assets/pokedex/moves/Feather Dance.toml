@@ -1,0 +1,5 @@
+name = "Feather Dance"
+pokemon_type = "Flying"
+category = "Status"
+accuracy = 100
+pp = 15

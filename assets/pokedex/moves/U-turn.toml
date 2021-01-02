@@ -1,0 +1,6 @@
+name = "U-turn"
+pokemon_type = "Bug"
+category = "Physical"
+power = 70
+accuracy = 100
+pp = 20

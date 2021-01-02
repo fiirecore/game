@@ -1,0 +1,5 @@
+name = "Gyro Ball"
+pokemon_type = "Steel"
+category = "Physical"
+accuracy = 100
+pp = 5

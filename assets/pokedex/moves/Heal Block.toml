@@ -1,0 +1,5 @@
+name = "Heal Block"
+pokemon_type = "Psychic"
+category = "Status"
+accuracy = 100
+pp = 15

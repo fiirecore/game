@@ -1,0 +1,6 @@
+name = "Snore"
+pokemon_type = "Normal"
+category = "Special"
+power = 50
+accuracy = 100
+pp = 15

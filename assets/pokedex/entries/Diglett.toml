@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 50
+name = "Diglett"
+primary_type = "Ground"
+species = "Mole"
+height = 0.2
+weight = 0.8
+[base_stats]
+hp = 10
+atk = 55
+def = 25
+sp_atk = 35
+sp_def = 45
+speed = 95
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Sand Attack"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 5
+
+[[moves]]
+move_id = "Earthquake"
+level = 41
+
+[[moves]]
+move_id = "Fissure"
+level = 49
+
+[[moves]]
+move_id = "Dig"
+level = 17
+
+[[moves]]
+move_id = "Fury Swipes"
+level = 21
+
+[[moves]]
+move_id = "Slash"
+level = 33
+
+[[moves]]
+move_id = "Mud-Slap"
+level = 25
+
+[[moves]]
+move_id = "Magnitude"
+level = 9

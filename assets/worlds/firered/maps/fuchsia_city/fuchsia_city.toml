@@ -1,0 +1,9 @@
+[identifier]
+world_id = "firered"
+map_files = ["3.7_FUCHSIA CITY.map"]
+
+[jigsaw_map]
+piece_index = 7
+x = 192
+y = 300
+connections = [33, 36, 37]

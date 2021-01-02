@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 48
+name = "Venonat"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Insect"
+height = 1.0
+weight = 30.0
+[base_stats]
+hp = 60
+atk = 55
+def = 50
+sp_atk = 40
+sp_def = 55
+speed = 45
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 9
+
+[[moves]]
+move_id = "Disable"
+level = 1
+
+[[moves]]
+move_id = "Psybeam"
+level = 33
+
+[[moves]]
+move_id = "Poison Powder"
+level = 20
+
+[[moves]]
+move_id = "Stun Spore"
+level = 28
+
+[[moves]]
+move_id = "Sleep Powder"
+level = 36
+
+[[moves]]
+move_id = "Confusion"
+level = 17
+
+[[moves]]
+move_id = "Psychic"
+level = 41
+
+[[moves]]
+move_id = "Leech Life"
+level = 25
+
+[[moves]]
+move_id = "Foresight"
+level = 1

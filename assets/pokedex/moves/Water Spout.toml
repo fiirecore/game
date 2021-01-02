@@ -1,0 +1,6 @@
+name = "Water Spout"
+pokemon_type = "Water"
+category = "Special"
+power = 150
+accuracy = 100
+pp = 5

@@ -1,0 +1,5 @@
+name = "String Shot"
+pokemon_type = "Bug"
+category = "Status"
+accuracy = 95
+pp = 40

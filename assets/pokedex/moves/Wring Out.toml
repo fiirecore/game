@@ -1,0 +1,5 @@
+name = "Wring Out"
+pokemon_type = "Normal"
+category = "Special"
+accuracy = 100
+pp = 5

@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 293
+name = "Whismur"
+primary_type = "Normal"
+species = "Whisper"
+height = 0.6
+weight = 16.3
+[base_stats]
+hp = 64
+atk = 51
+def = 23
+sp_atk = 51
+sp_def = 23
+speed = 28
+[[moves]]
+move_id = "Pound"
+level = 1
+
+[[moves]]
+move_id = "Stomp"
+level = 25
+
+[[moves]]
+move_id = "Roar"
+level = 35
+
+[[moves]]
+move_id = "Supersonic"
+level = 21
+
+[[moves]]
+move_id = "Screech"
+level = 31
+
+[[moves]]
+move_id = "Rest"
+level = 41
+
+[[moves]]
+move_id = "Sleep Talk"
+level = 41
+
+[[moves]]
+move_id = "Uproar"
+level = 5
+
+[[moves]]
+move_id = "Hyper Voice"
+level = 45
+
+[[moves]]
+move_id = "Astonish"
+level = 11
+
+[[moves]]
+move_id = "Howl"
+level = 15

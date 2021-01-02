@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 32
+name = "Nidoran-m"
+primary_type = "Poison"
+species = "Poison"
+height = 0.5
+weight = 9.0
+[base_stats]
+hp = 46
+atk = 57
+def = 40
+sp_atk = 40
+sp_def = 40
+speed = 50
+[[moves]]
+move_id = "Double Kick"
+level = 12
+
+[[moves]]
+move_id = "Horn Attack"
+level = 20
+
+[[moves]]
+move_id = "Fury Attack"
+level = 30
+
+[[moves]]
+move_id = "Horn Drill"
+level = 47
+
+[[moves]]
+move_id = "Poison Sting"
+level = 17
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Focus Energy"
+level = 8
+
+[[moves]]
+move_id = "Flatter"
+level = 38
+
+[[moves]]
+move_id = "Helping Hand"
+level = 23

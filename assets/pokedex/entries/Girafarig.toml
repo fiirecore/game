@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 203
+name = "Girafarig"
+primary_type = "Normal"
+secondary_type = "Psychic"
+species = "Long"
+height = 1.5
+weight = 41.5
+[base_stats]
+hp = 70
+atk = 80
+def = 65
+sp_atk = 90
+sp_def = 65
+speed = 85
+[[moves]]
+move_id = "Stomp"
+level = 19
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Psybeam"
+level = 43
+
+[[moves]]
+move_id = "Confusion"
+level = 13
+
+[[moves]]
+move_id = "Agility"
+level = 31
+
+[[moves]]
+move_id = "Baton Pass"
+level = 37
+
+[[moves]]
+move_id = "Crunch"
+level = 49
+
+[[moves]]
+move_id = "Astonish"
+level = 7
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 25

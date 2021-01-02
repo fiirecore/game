@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 148
+name = "Dragonair"
+primary_type = "Dragon"
+species = "Dragon"
+height = 4.0
+weight = 16.5
+[base_stats]
+hp = 61
+atk = 84
+def = 65
+sp_atk = 70
+sp_def = 70
+speed = 70
+[[moves]]
+move_id = "Slam"
+level = 29
+
+[[moves]]
+move_id = "Wrap"
+level = 1
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Hyper Beam"
+level = 65
+
+[[moves]]
+move_id = "Dragon Rage"
+level = 22
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 1
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 8
+
+[[moves]]
+move_id = "Agility"
+level = 38
+
+[[moves]]
+move_id = "Outrage"
+level = 56
+
+[[moves]]
+move_id = "Safeguard"
+level = 47
+
+[[moves]]
+move_id = "Twister"
+level = 1
+
+[[moves]]
+move_id = "Twister"
+level = 15

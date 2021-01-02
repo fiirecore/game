@@ -1,0 +1,42 @@
+[pokedex_data]
+number = 71
+name = "Victreebel"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Flycatcher"
+height = 1.7
+weight = 15.5
+[base_stats]
+hp = 80
+atk = 105
+def = 65
+sp_atk = 100
+sp_def = 70
+speed = 70
+[[moves]]
+move_id = "Vine Whip"
+level = 1
+
+[[moves]]
+move_id = "Razor Leaf"
+level = 1
+
+[[moves]]
+move_id = "Sleep Powder"
+level = 1
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 1
+
+[[moves]]
+move_id = "Stockpile"
+level = 1
+
+[[moves]]
+move_id = "Spit Up"
+level = 1
+
+[[moves]]
+move_id = "Swallow"
+level = 1

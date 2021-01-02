@@ -1,0 +1,5 @@
+name = "Poison Powder"
+pokemon_type = "Poison"
+category = "Status"
+accuracy = 75
+pp = 35

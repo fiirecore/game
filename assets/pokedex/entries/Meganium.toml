@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 154
+name = "Meganium"
+primary_type = "Grass"
+species = "Herb"
+height = 1.8
+weight = 100.5
+[base_stats]
+hp = 80
+atk = 82
+def = 100
+sp_atk = 83
+sp_def = 100
+speed = 80
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Body Slam"
+level = 31
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Razor Leaf"
+level = 1
+
+[[moves]]
+move_id = "Razor Leaf"
+level = 8
+
+[[moves]]
+move_id = "Solar Beam"
+level = 61
+
+[[moves]]
+move_id = "Poison Powder"
+level = 15
+
+[[moves]]
+move_id = "Light Screen"
+level = 41
+
+[[moves]]
+move_id = "Reflect"
+level = 1
+
+[[moves]]
+move_id = "Reflect"
+level = 12
+
+[[moves]]
+move_id = "Safeguard"
+level = 51
+
+[[moves]]
+move_id = "Synthesis"
+level = 23

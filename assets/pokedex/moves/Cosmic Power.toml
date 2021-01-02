@@ -1,0 +1,4 @@
+name = "Cosmic Power"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 20

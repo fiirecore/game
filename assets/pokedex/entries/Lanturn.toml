@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 171
+name = "Lanturn"
+primary_type = "Water"
+secondary_type = "Electric"
+species = "Light"
+height = 1.2
+weight = 22.5
+[base_stats]
+hp = 125
+atk = 58
+def = 58
+sp_atk = 76
+sp_def = 76
+speed = 67
+[[moves]]
+move_id = "Take Down"
+level = 43
+
+[[moves]]
+move_id = "Supersonic"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 5
+
+[[moves]]
+move_id = "Water Gun"
+level = 17
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 50
+
+[[moves]]
+move_id = "Thunder Wave"
+level = 1
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 32
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Flail"
+level = 13
+
+[[moves]]
+move_id = "Spark"
+level = 25
+
+[[moves]]
+move_id = "Charge"
+level = 61

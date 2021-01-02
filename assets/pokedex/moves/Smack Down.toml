@@ -1,0 +1,6 @@
+name = "Smack Down"
+pokemon_type = "Rock"
+category = "Physical"
+power = 50
+accuracy = 100
+pp = 15

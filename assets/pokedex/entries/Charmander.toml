@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 4
+name = "Charmander"
+primary_type = "Fire"
+species = "Lizard"
+height = 0.6
+weight = 8.5
+[base_stats]
+hp = 39
+atk = 52
+def = 43
+sp_atk = 60
+sp_def = 50
+speed = 65
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 7
+
+[[moves]]
+move_id = "Flamethrower"
+level = 31
+
+[[moves]]
+move_id = "Dragon Rage"
+level = 43
+
+[[moves]]
+move_id = "Fire Spin"
+level = 49
+
+[[moves]]
+move_id = "Smokescreen"
+level = 19
+
+[[moves]]
+move_id = "Slash"
+level = 37
+
+[[moves]]
+move_id = "Scary Face"
+level = 25
+
+[[moves]]
+move_id = "Metal Claw"
+level = 13

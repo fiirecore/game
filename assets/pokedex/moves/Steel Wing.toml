@@ -1,0 +1,6 @@
+name = "Steel Wing"
+pokemon_type = "Steel"
+category = "Physical"
+power = 70
+accuracy = 90
+pp = 25

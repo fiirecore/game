@@ -1,0 +1,73 @@
+[pokedex_data]
+number = 321
+name = "Wailord"
+primary_type = "Water"
+species = "Float"
+height = 14.5
+weight = 398.0
+[base_stats]
+hp = 170
+atk = 90
+def = 45
+sp_atk = 90
+sp_def = 45
+speed = 60
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 5
+
+[[moves]]
+move_id = "Mist"
+level = 32
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 10
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 59
+
+[[moves]]
+move_id = "Amnesia"
+level = 52
+
+[[moves]]
+move_id = "Splash"
+level = 1
+
+[[moves]]
+move_id = "Rest"
+level = 37
+
+[[moves]]
+move_id = "Rollout"
+level = 1
+
+[[moves]]
+move_id = "Rollout"
+level = 14
+
+[[moves]]
+move_id = "Whirlpool"
+level = 19
+
+[[moves]]
+move_id = "Astonish"
+level = 23
+
+[[moves]]
+move_id = "Water Spout"
+level = 44
+
+[[moves]]
+move_id = "Water Pulse"
+level = 28

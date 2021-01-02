@@ -1,0 +1,66 @@
+[pokedex_data]
+number = 94
+name = "Gengar"
+primary_type = "Ghost"
+secondary_type = "Poison"
+species = "Shadow"
+height = 1.5
+weight = 40.5
+[base_stats]
+hp = 60
+atk = 65
+def = 60
+sp_atk = 130
+sp_def = 75
+speed = 110
+[[moves]]
+move_id = "Hypnosis"
+level = 1
+
+[[moves]]
+move_id = "Night Shade"
+level = 16
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 21
+
+[[moves]]
+move_id = "Lick"
+level = 1
+
+[[moves]]
+move_id = "Dream Eater"
+level = 31
+
+[[moves]]
+move_id = "Nightmare"
+level = 53
+
+[[moves]]
+move_id = "Curse"
+level = 13
+
+[[moves]]
+move_id = "Spite"
+level = 1
+
+[[moves]]
+move_id = "Spite"
+level = 8
+
+[[moves]]
+move_id = "Destiny Bond"
+level = 39
+
+[[moves]]
+move_id = "Mean Look"
+level = 64
+
+[[moves]]
+move_id = "Shadow Ball"
+level = 45
+
+[[moves]]
+move_id = "Shadow Punch"
+level = 25

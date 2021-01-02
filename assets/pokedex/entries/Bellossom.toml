@@ -1,0 +1,37 @@
+[pokedex_data]
+number = 182
+name = "Bellossom"
+primary_type = "Grass"
+species = "Flower"
+height = 0.4
+weight = 5.8
+[base_stats]
+hp = 75
+atk = 80
+def = 95
+sp_atk = 90
+sp_def = 100
+speed = 50
+[[moves]]
+move_id = "Absorb"
+level = 1
+
+[[moves]]
+move_id = "Solar Beam"
+level = 55
+
+[[moves]]
+move_id = "Stun Spore"
+level = 1
+
+[[moves]]
+move_id = "Petal Dance"
+level = 44
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 1
+
+[[moves]]
+move_id = "Magical Leaf"
+level = 1

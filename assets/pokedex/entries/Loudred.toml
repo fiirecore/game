@@ -1,0 +1,69 @@
+[pokedex_data]
+number = 294
+name = "Loudred"
+primary_type = "Normal"
+species = "Big"
+height = 1.0
+weight = 40.5
+[base_stats]
+hp = 84
+atk = 71
+def = 43
+sp_atk = 71
+sp_def = 43
+speed = 48
+[[moves]]
+move_id = "Pound"
+level = 1
+
+[[moves]]
+move_id = "Stomp"
+level = 29
+
+[[moves]]
+move_id = "Roar"
+level = 43
+
+[[moves]]
+move_id = "Supersonic"
+level = 23
+
+[[moves]]
+move_id = "Screech"
+level = 37
+
+[[moves]]
+move_id = "Rest"
+level = 51
+
+[[moves]]
+move_id = "Sleep Talk"
+level = 51
+
+[[moves]]
+move_id = "Uproar"
+level = 1
+
+[[moves]]
+move_id = "Uproar"
+level = 5
+
+[[moves]]
+move_id = "Hyper Voice"
+level = 57
+
+[[moves]]
+move_id = "Astonish"
+level = 1
+
+[[moves]]
+move_id = "Astonish"
+level = 11
+
+[[moves]]
+move_id = "Howl"
+level = 1
+
+[[moves]]
+move_id = "Howl"
+level = 15

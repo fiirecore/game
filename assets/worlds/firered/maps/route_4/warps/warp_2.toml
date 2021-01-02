@@ -1,0 +1,10 @@
+
+x = 0x0C
+y = 0x05
+
+[destination]
+world_id = "firered"
+map_id = "route_4_pokemon_center"
+map_set_num = 0
+dest_x = 0x07
+dest_y = 0x08

@@ -1,0 +1,54 @@
+[pokedex_data]
+number = 165
+name = "Ledyba"
+primary_type = "Bug"
+secondary_type = "Flying"
+species = "Five"
+height = 1.0
+weight = 10.8
+[base_stats]
+hp = 40
+atk = 20
+def = 30
+sp_atk = 40
+sp_def = 80
+speed = 55
+[[moves]]
+move_id = "Comet Punch"
+level = 15
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Double-Edge"
+level = 50
+
+[[moves]]
+move_id = "Supersonic"
+level = 8
+
+[[moves]]
+move_id = "Agility"
+level = 43
+
+[[moves]]
+move_id = "Light Screen"
+level = 22
+
+[[moves]]
+move_id = "Reflect"
+level = 22
+
+[[moves]]
+move_id = "Swift"
+level = 36
+
+[[moves]]
+move_id = "Safeguard"
+level = 22
+
+[[moves]]
+move_id = "Baton Pass"
+level = 29

@@ -1,0 +1,6 @@
+name = "Fusion Bolt"
+pokemon_type = "Electric"
+category = "Physical"
+power = 100
+accuracy = 100
+pp = 5

@@ -1,0 +1,6 @@
+name = "Psychic"
+pokemon_type = "Psychic"
+category = "Special"
+power = 90
+accuracy = 100
+pp = 10

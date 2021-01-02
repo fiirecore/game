@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 229
+name = "Houndoom"
+primary_type = "Dark"
+secondary_type = "Fire"
+species = "Dark"
+height = 1.4
+weight = 35.0
+[base_stats]
+hp = 75
+atk = 90
+def = 50
+sp_atk = 110
+sp_def = 80
+speed = 95
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 27
+
+[[moves]]
+move_id = "Roar"
+level = 19
+
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Flamethrower"
+level = 51
+
+[[moves]]
+move_id = "Smog"
+level = 13
+
+[[moves]]
+move_id = "Feint Attack"
+level = 43
+
+[[moves]]
+move_id = "Crunch"
+level = 59
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 35
+
+[[moves]]
+move_id = "Howl"
+level = 1
+
+[[moves]]
+move_id = "Howl"
+level = 7

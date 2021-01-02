@@ -1,0 +1,70 @@
+[pokedex_data]
+number = 49
+name = "Venomoth"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Poison"
+height = 1.5
+weight = 12.5
+[base_stats]
+hp = 70
+atk = 65
+def = 60
+sp_atk = 90
+sp_def = 75
+speed = 90
+[[moves]]
+move_id = "Gust"
+level = 31
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 1
+
+[[moves]]
+move_id = "Supersonic"
+level = 9
+
+[[moves]]
+move_id = "Disable"
+level = 1
+
+[[moves]]
+move_id = "Psybeam"
+level = 36
+
+[[moves]]
+move_id = "Poison Powder"
+level = 20
+
+[[moves]]
+move_id = "Stun Spore"
+level = 28
+
+[[moves]]
+move_id = "Sleep Powder"
+level = 42
+
+[[moves]]
+move_id = "Confusion"
+level = 17
+
+[[moves]]
+move_id = "Psychic"
+level = 52
+
+[[moves]]
+move_id = "Leech Life"
+level = 25
+
+[[moves]]
+move_id = "Foresight"
+level = 1
+
+[[moves]]
+move_id = "Silver Wind"
+level = 1

@@ -1,0 +1,6 @@
+name = "Thrash"
+pokemon_type = "Normal"
+category = "Physical"
+power = 120
+accuracy = 100
+pp = 10

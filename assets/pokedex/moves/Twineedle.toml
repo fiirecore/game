@@ -1,0 +1,6 @@
+name = "Twineedle"
+pokemon_type = "Bug"
+category = "Physical"
+power = 25
+accuracy = 100
+pp = 20

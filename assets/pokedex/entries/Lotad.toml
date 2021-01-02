@@ -1,0 +1,42 @@
+[pokedex_data]
+number = 270
+name = "Lotad"
+primary_type = "Water"
+secondary_type = "Grass"
+species = "Water"
+height = 0.5
+weight = 2.6
+[base_stats]
+hp = 40
+atk = 30
+def = 30
+sp_atk = 40
+sp_def = 50
+speed = 30
+[[moves]]
+move_id = "Growl"
+level = 3
+
+[[moves]]
+move_id = "Mist"
+level = 21
+
+[[moves]]
+move_id = "Absorb"
+level = 7
+
+[[moves]]
+move_id = "Mega Drain"
+level = 43
+
+[[moves]]
+move_id = "Rain Dance"
+level = 31
+
+[[moves]]
+move_id = "Nature Power"
+level = 13
+
+[[moves]]
+move_id = "Astonish"
+level = 1

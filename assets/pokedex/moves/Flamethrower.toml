@@ -1,0 +1,6 @@
+name = "Flamethrower"
+pokemon_type = "Fire"
+category = "Special"
+power = 90
+accuracy = 100
+pp = 15

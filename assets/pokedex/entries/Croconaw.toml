@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 159
+name = "Croconaw"
+primary_type = "Water"
+species = "Big"
+height = 1.1
+weight = 25.0
+[base_stats]
+hp = 65
+atk = 80
+def = 80
+sp_atk = 59
+sp_def = 63
+speed = 58
+[[moves]]
+move_id = "Scratch"
+level = 1
+
+[[moves]]
+move_id = "Leer"
+level = 1
+
+[[moves]]
+move_id = "Bite"
+level = 21
+
+[[moves]]
+move_id = "Water Gun"
+level = 13
+
+[[moves]]
+move_id = "Hydro Pump"
+level = 55
+
+[[moves]]
+move_id = "Rage"
+level = 1
+
+[[moves]]
+move_id = "Rage"
+level = 7
+
+[[moves]]
+move_id = "Screech"
+level = 45
+
+[[moves]]
+move_id = "Slash"
+level = 37
+
+[[moves]]
+move_id = "Scary Face"
+level = 28

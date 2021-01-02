@@ -1,0 +1,6 @@
+name = "Rollout"
+pokemon_type = "Rock"
+category = "Physical"
+power = 30
+accuracy = 90
+pp = 20

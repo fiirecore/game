@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 333
+name = "Swablu"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Cotton"
+height = 0.4
+weight = 1.2
+[base_stats]
+hp = 45
+atk = 40
+def = 60
+sp_atk = 40
+sp_def = 75
+speed = 50
+[[moves]]
+move_id = "Fury Attack"
+level = 18
+
+[[moves]]
+move_id = "Take Down"
+level = 31
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Sing"
+level = 11
+
+[[moves]]
+move_id = "Mist"
+level = 28
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Mirror Move"
+level = 38
+
+[[moves]]
+move_id = "Perish Song"
+level = 48
+
+[[moves]]
+move_id = "Safeguard"
+level = 21
+
+[[moves]]
+move_id = "Refresh"
+level = 41
+
+[[moves]]
+move_id = "Astonish"
+level = 8

@@ -1,0 +1,37 @@
+[pokedex_data]
+number = 186
+name = "Politoed"
+primary_type = "Water"
+species = "Frog"
+height = 1.1
+weight = 33.9
+[base_stats]
+hp = 90
+atk = 75
+def = 75
+sp_atk = 90
+sp_def = 100
+speed = 70
+[[moves]]
+move_id = "Double Slap"
+level = 1
+
+[[moves]]
+move_id = "Water Gun"
+level = 1
+
+[[moves]]
+move_id = "Hypnosis"
+level = 1
+
+[[moves]]
+move_id = "Perish Song"
+level = 1
+
+[[moves]]
+move_id = "Perish Song"
+level = 35
+
+[[moves]]
+move_id = "Swagger"
+level = 51

@@ -1,0 +1,4 @@
+name = "Hail"
+pokemon_type = "Ice"
+category = "Status"
+pp = 10

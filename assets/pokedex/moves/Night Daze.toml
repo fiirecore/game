@@ -1,0 +1,6 @@
+name = "Night Daze"
+pokemon_type = "Dark"
+category = "Special"
+power = 85
+accuracy = 95
+pp = 10

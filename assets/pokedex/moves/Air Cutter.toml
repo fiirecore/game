@@ -1,0 +1,6 @@
+name = "Air Cutter"
+pokemon_type = "Flying"
+category = "Special"
+power = 60
+accuracy = 95
+pp = 25

@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 233
+name = "Porygon2"
+primary_type = "Normal"
+species = "Virtual"
+height = 0.6
+weight = 32.5
+[base_stats]
+hp = 85
+atk = 80
+def = 90
+sp_atk = 105
+sp_def = 95
+speed = 60
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Psybeam"
+level = 12
+
+[[moves]]
+move_id = "Agility"
+level = 9
+
+[[moves]]
+move_id = "Recover"
+level = 20
+
+[[moves]]
+move_id = "Defense Curl"
+level = 24
+
+[[moves]]
+move_id = "Conversion"
+level = 1
+
+[[moves]]
+move_id = "Tri Attack"
+level = 36
+
+[[moves]]
+move_id = "Conversion 2"
+level = 1
+
+[[moves]]
+move_id = "Zap Cannon"
+level = 48
+
+[[moves]]
+move_id = "Lock-On"
+level = 32
+
+[[moves]]
+move_id = "Recycle"
+level = 44

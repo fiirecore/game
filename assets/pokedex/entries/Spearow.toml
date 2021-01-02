@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 21
+name = "Spearow"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Tiny"
+height = 0.3
+weight = 2.0
+[base_stats]
+hp = 40
+atk = 60
+def = 30
+sp_atk = 31
+sp_def = 31
+speed = 70
+[[moves]]
+move_id = "Fury Attack"
+level = 13
+
+[[moves]]
+move_id = "Leer"
+level = 7
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Drill Peck"
+level = 37
+
+[[moves]]
+move_id = "Agility"
+level = 43
+
+[[moves]]
+move_id = "Mirror Move"
+level = 31
+
+[[moves]]
+move_id = "Pursuit"
+level = 19
+
+[[moves]]
+move_id = "Aerial Ace"
+level = 25

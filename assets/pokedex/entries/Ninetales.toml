@@ -1,0 +1,33 @@
+[pokedex_data]
+number = 38
+name = "Ninetales"
+primary_type = "Fire"
+species = "Fox"
+height = 1.1
+weight = 19.9
+[base_stats]
+hp = 73
+atk = 76
+def = 75
+sp_atk = 81
+sp_def = 100
+speed = 100
+[[moves]]
+move_id = "Ember"
+level = 1
+
+[[moves]]
+move_id = "Fire Spin"
+level = 45
+
+[[moves]]
+move_id = "Quick Attack"
+level = 1
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 1
+
+[[moves]]
+move_id = "Safeguard"
+level = 1

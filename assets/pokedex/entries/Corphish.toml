@@ -1,0 +1,61 @@
+[pokedex_data]
+number = 341
+name = "Corphish"
+primary_type = "Water"
+species = "Ruffian"
+height = 0.6
+weight = 11.5
+[base_stats]
+hp = 43
+atk = 80
+def = 65
+sp_atk = 50
+sp_def = 35
+speed = 35
+[[moves]]
+move_id = "Vice Grip"
+level = 10
+
+[[moves]]
+move_id = "Guillotine"
+level = 46
+
+[[moves]]
+move_id = "Swords Dance"
+level = 37
+
+[[moves]]
+move_id = "Leer"
+level = 13
+
+[[moves]]
+move_id = "Bubble Beam"
+level = 19
+
+[[moves]]
+move_id = "Harden"
+level = 7
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Crabhammer"
+level = 34
+
+[[moves]]
+move_id = "Protect"
+level = 22
+
+[[moves]]
+move_id = "Crunch"
+level = 43
+
+[[moves]]
+move_id = "Taunt"
+level = 31
+
+[[moves]]
+move_id = "Knock Off"
+level = 25

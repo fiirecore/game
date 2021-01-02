@@ -1,0 +1,5 @@
+name = "Spore"
+pokemon_type = "Grass"
+category = "Status"
+accuracy = 100
+pp = 15

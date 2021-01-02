@@ -1,0 +1,73 @@
+[pokedex_data]
+number = 105
+name = "Marowak"
+primary_type = "Ground"
+species = "Bone"
+height = 1.0
+weight = 45.0
+[base_stats]
+hp = 60
+atk = 80
+def = 110
+sp_atk = 50
+sp_def = 80
+speed = 45
+[[moves]]
+move_id = "Headbutt"
+level = 1
+
+[[moves]]
+move_id = "Headbutt"
+level = 13
+
+[[moves]]
+move_id = "Thrash"
+level = 46
+
+[[moves]]
+move_id = "Double-Edge"
+level = 61
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 5
+
+[[moves]]
+move_id = "Leer"
+level = 17
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Rage"
+level = 32
+
+[[moves]]
+move_id = "Focus Energy"
+level = 21
+
+[[moves]]
+move_id = "Bone Club"
+level = 1
+
+[[moves]]
+move_id = "Bone Club"
+level = 9
+
+[[moves]]
+move_id = "Bonemerang"
+level = 25
+
+[[moves]]
+move_id = "Bone Rush"
+level = 53
+
+[[moves]]
+move_id = "False Swipe"
+level = 39

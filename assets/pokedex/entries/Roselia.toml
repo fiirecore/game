@@ -1,0 +1,74 @@
+[pokedex_data]
+number = 315
+name = "Roselia"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Thorn"
+height = 0.3
+weight = 2.0
+[base_stats]
+hp = 50
+atk = 60
+def = 45
+sp_atk = 100
+sp_def = 80
+speed = 65
+[[moves]]
+move_id = "Poison Sting"
+level = 9
+
+[[moves]]
+move_id = "Absorb"
+level = 1
+
+[[moves]]
+move_id = "Mega Drain"
+level = 17
+
+[[moves]]
+move_id = "Leech Seed"
+level = 21
+
+[[moves]]
+move_id = "Growth"
+level = 5
+
+[[moves]]
+move_id = "Stun Spore"
+level = 13
+
+[[moves]]
+move_id = "Petal Dance"
+level = 49
+
+[[moves]]
+move_id = "Toxic"
+level = 45
+
+[[moves]]
+move_id = "Giga Drain"
+level = 33
+
+[[moves]]
+move_id = "Sweet Scent"
+level = 37
+
+[[moves]]
+move_id = "Synthesis"
+level = 57
+
+[[moves]]
+move_id = "Ingrain"
+level = 41
+
+[[moves]]
+move_id = "Aromatherapy"
+level = 53
+
+[[moves]]
+move_id = "Grass Whistle"
+level = 29
+
+[[moves]]
+move_id = "Magical Leaf"
+level = 25

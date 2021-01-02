@@ -1,0 +1,6 @@
+name = "Brave Bird"
+pokemon_type = "Flying"
+category = "Physical"
+power = 120
+accuracy = 100
+pp = 15

@@ -1,0 +1,11 @@
+{
+	"identifier": {
+		"npc_type": "NPC",
+		"sprite": 88
+	},
+	"location": {
+		"x": 8,
+		"y": 4,
+		"direction": 2
+	}
+}

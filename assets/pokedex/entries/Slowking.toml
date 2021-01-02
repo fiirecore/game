@@ -1,0 +1,58 @@
+[pokedex_data]
+number = 199
+name = "Slowking"
+primary_type = "Water"
+secondary_type = "Psychic"
+species = "Royal"
+height = 2.0
+weight = 79.5
+[base_stats]
+hp = 95
+atk = 75
+def = 80
+sp_atk = 100
+sp_def = 110
+speed = 30
+[[moves]]
+move_id = "Headbutt"
+level = 29
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Growl"
+level = 6
+
+[[moves]]
+move_id = "Disable"
+level = 24
+
+[[moves]]
+move_id = "Water Gun"
+level = 13
+
+[[moves]]
+move_id = "Confusion"
+level = 17
+
+[[moves]]
+move_id = "Psychic"
+level = 40
+
+[[moves]]
+move_id = "Curse"
+level = 1
+
+[[moves]]
+move_id = "Swagger"
+level = 36
+
+[[moves]]
+move_id = "Psych Up"
+level = 47
+
+[[moves]]
+move_id = "Yawn"
+level = 1

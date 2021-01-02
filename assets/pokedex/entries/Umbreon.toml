@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 197
+name = "Umbreon"
+primary_type = "Dark"
+species = "Moonlight"
+height = 1.0
+weight = 27.0
+[base_stats]
+hp = 95
+atk = 65
+def = 110
+sp_atk = 60
+sp_def = 130
+speed = 65
+[[moves]]
+move_id = "Sand Attack"
+level = 8
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Tail Whip"
+level = 1
+
+[[moves]]
+move_id = "Quick Attack"
+level = 23
+
+[[moves]]
+move_id = "Screech"
+level = 47
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 30
+
+[[moves]]
+move_id = "Feint Attack"
+level = 36
+
+[[moves]]
+move_id = "Mean Look"
+level = 42
+
+[[moves]]
+move_id = "Pursuit"
+level = 16
+
+[[moves]]
+move_id = "Moonlight"
+level = 52
+
+[[moves]]
+move_id = "Helping Hand"
+level = 1

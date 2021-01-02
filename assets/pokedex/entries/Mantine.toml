@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 226
+name = "Mantine"
+primary_type = "Water"
+secondary_type = "Flying"
+species = "Kite"
+height = 2.1
+weight = 220.0
+[base_stats]
+hp = 85
+atk = 40
+def = 70
+sp_atk = 80
+sp_def = 140
+speed = 70
+[[moves]]
+move_id = "Wing Attack"
+level = 36
+
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Take Down"
+level = 22
+
+[[moves]]
+move_id = "Supersonic"
+level = 8
+
+[[moves]]
+move_id = "Bubble Beam"
+level = 15
+
+[[moves]]
+move_id = "Agility"
+level = 29
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 50
+
+[[moves]]
+move_id = "Bubble"
+level = 1
+
+[[moves]]
+move_id = "Water Pulse"
+level = 43

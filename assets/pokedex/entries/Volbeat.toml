@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 313
+name = "Volbeat"
+primary_type = "Bug"
+species = "Firefly"
+height = 0.7
+weight = 17.7
+[base_stats]
+hp = 65
+atk = 73
+def = 75
+sp_atk = 47
+sp_def = 85
+speed = 85
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Double-Edge"
+level = 37
+
+[[moves]]
+move_id = "Quick Attack"
+level = 17
+
+[[moves]]
+move_id = "Double Team"
+level = 9
+
+[[moves]]
+move_id = "Confuse Ray"
+level = 5
+
+[[moves]]
+move_id = "Protect"
+level = 29
+
+[[moves]]
+move_id = "Moonlight"
+level = 13
+
+[[moves]]
+move_id = "Helping Hand"
+level = 33
+
+[[moves]]
+move_id = "Tail Glow"
+level = 21
+
+[[moves]]
+move_id = "Signal Beam"
+level = 25

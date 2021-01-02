@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 84
+name = "Doduo"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Twin"
+height = 1.4
+weight = 39.2
+[base_stats]
+hp = 35
+atk = 85
+def = 45
+sp_atk = 35
+sp_def = 35
+speed = 75
+[[moves]]
+move_id = "Fury Attack"
+level = 13
+
+[[moves]]
+move_id = "Growl"
+level = 1
+
+[[moves]]
+move_id = "Peck"
+level = 1
+
+[[moves]]
+move_id = "Drill Peck"
+level = 37
+
+[[moves]]
+move_id = "Agility"
+level = 45
+
+[[moves]]
+move_id = "Rage"
+level = 25
+
+[[moves]]
+move_id = "Tri Attack"
+level = 21
+
+[[moves]]
+move_id = "Pursuit"
+level = 9
+
+[[moves]]
+move_id = "Uproar"
+level = 33

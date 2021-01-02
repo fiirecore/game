@@ -1,0 +1,61 @@
+encounter_ratio = 21
+
+[[encounter]]
+min_level = 19
+max_level = 19
+pokemon_id = 16
+
+[[encounter]]
+min_level = 17
+max_level = 17
+pokemon_id = 52
+
+[[encounter]]
+min_level = 19
+max_level = 19
+pokemon_id = 43
+
+[[encounter]]
+min_level = 18
+max_level = 18
+pokemon_id = 52
+
+[[encounter]]
+min_level = 22
+max_level = 22
+pokemon_id = 16
+
+[[encounter]]
+min_level = 22
+max_level = 22
+pokemon_id = 43
+
+[[encounter]]
+min_level = 18
+max_level = 18
+pokemon_id = 58
+
+[[encounter]]
+min_level = 20
+max_level = 20
+pokemon_id = 58
+
+[[encounter]]
+min_level = 17
+max_level = 17
+pokemon_id = 52
+
+[[encounter]]
+min_level = 19
+max_level = 19
+pokemon_id = 52
+
+[[encounter]]
+min_level = 17
+max_level = 17
+pokemon_id = 52
+
+[[encounter]]
+min_level = 20
+max_level = 20
+pokemon_id = 52

@@ -1,0 +1,10 @@
+[identifier]
+world_id = "firered"
+map_files = ["gba/1.1_MT. MOON.map", "gba/1.2_MT. MOON.map", "gba/1.3_MT. MOON.map"]
+
+[warp_map]
+map_set_id = "mt_moon"
+
+[settings]
+encounter_type = "original"
+wild_tiles = [0x281, 0x2D9, 0x2FC, 0x2DD, 0x2D5, 0x2D6, 0x2DE, 0x2F3, 0x2F8, 0x2FB, 0x300, 0x301, 0x303, 0x304, 0x305, 0x2F6, 0x2F7]

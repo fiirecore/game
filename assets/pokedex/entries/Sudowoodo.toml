@@ -1,0 +1,49 @@
+[pokedex_data]
+number = 185
+name = "Sudowoodo"
+primary_type = "Rock"
+species = "Imitation"
+height = 1.2
+weight = 38.0
+[base_stats]
+hp = 70
+atk = 100
+def = 115
+sp_atk = 30
+sp_def = 65
+speed = 30
+[[moves]]
+move_id = "Slam"
+level = 49
+
+[[moves]]
+move_id = "Double-Edge"
+level = 57
+
+[[moves]]
+move_id = "Low Kick"
+level = 17
+
+[[moves]]
+move_id = "Rock Throw"
+level = 1
+
+[[moves]]
+move_id = "Mimic"
+level = 1
+
+[[moves]]
+move_id = "Rock Slide"
+level = 25
+
+[[moves]]
+move_id = "Flail"
+level = 9
+
+[[moves]]
+move_id = "Feint Attack"
+level = 41
+
+[[moves]]
+move_id = "Block"
+level = 33

@@ -1,0 +1,53 @@
+[pokedex_data]
+number = 58
+name = "Growlithe"
+primary_type = "Fire"
+species = "Puppy"
+height = 0.7
+weight = 19.0
+[base_stats]
+hp = 55
+atk = 70
+def = 45
+sp_atk = 70
+sp_def = 50
+speed = 60
+[[moves]]
+move_id = "Take Down"
+level = 25
+
+[[moves]]
+move_id = "Leer"
+level = 13
+
+[[moves]]
+move_id = "Bite"
+level = 1
+
+[[moves]]
+move_id = "Roar"
+level = 1
+
+[[moves]]
+move_id = "Ember"
+level = 7
+
+[[moves]]
+move_id = "Flamethrower"
+level = 49
+
+[[moves]]
+move_id = "Agility"
+level = 43
+
+[[moves]]
+move_id = "Flame Wheel"
+level = 31
+
+[[moves]]
+move_id = "Helping Hand"
+level = 37
+
+[[moves]]
+move_id = "Odor Sleuth"
+level = 19

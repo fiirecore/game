@@ -1,0 +1,25 @@
+[pokedex_data]
+number = 265
+name = "Wurmple"
+primary_type = "Bug"
+species = "Worm"
+height = 0.3
+weight = 3.6
+[base_stats]
+hp = 45
+atk = 45
+def = 35
+sp_atk = 20
+sp_def = 30
+speed = 20
+[[moves]]
+move_id = "Tackle"
+level = 1
+
+[[moves]]
+move_id = "Poison Sting"
+level = 5
+
+[[moves]]
+move_id = "String Shot"
+level = 1

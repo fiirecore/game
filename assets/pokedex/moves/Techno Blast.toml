@@ -1,0 +1,6 @@
+name = "Techno Blast"
+pokemon_type = "Normal"
+category = "Special"
+power = 120
+accuracy = 100
+pp = 5

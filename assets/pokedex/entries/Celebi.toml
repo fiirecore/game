@@ -1,0 +1,50 @@
+[pokedex_data]
+number = 251
+name = "Celebi"
+primary_type = "Psychic"
+secondary_type = "Grass"
+species = "Time"
+height = 0.6
+weight = 5.0
+[base_stats]
+hp = 100
+atk = 100
+def = 100
+sp_atk = 100
+sp_def = 100
+speed = 100
+[[moves]]
+move_id = "Leech Seed"
+level = 1
+
+[[moves]]
+move_id = "Confusion"
+level = 1
+
+[[moves]]
+move_id = "Recover"
+level = 1
+
+[[moves]]
+move_id = "Perish Song"
+level = 50
+
+[[moves]]
+move_id = "Heal Bell"
+level = 1
+
+[[moves]]
+move_id = "Safeguard"
+level = 10
+
+[[moves]]
+move_id = "Baton Pass"
+level = 40
+
+[[moves]]
+move_id = "Ancient Power"
+level = 20
+
+[[moves]]
+move_id = "Future Sight"
+level = 30

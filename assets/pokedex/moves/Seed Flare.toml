@@ -1,0 +1,6 @@
+name = "Seed Flare"
+pokemon_type = "Grass"
+category = "Special"
+power = 120
+accuracy = 85
+pp = 5

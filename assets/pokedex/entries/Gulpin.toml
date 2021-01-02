@@ -1,0 +1,57 @@
+[pokedex_data]
+number = 316
+name = "Gulpin"
+primary_type = "Poison"
+species = "Stomach"
+height = 0.4
+weight = 10.3
+[base_stats]
+hp = 70
+atk = 43
+def = 53
+sp_atk = 43
+sp_def = 53
+speed = 40
+[[moves]]
+move_id = "Pound"
+level = 1
+
+[[moves]]
+move_id = "Toxic"
+level = 28
+
+[[moves]]
+move_id = "Sludge"
+level = 14
+
+[[moves]]
+move_id = "Amnesia"
+level = 17
+
+[[moves]]
+move_id = "Poison Gas"
+level = 9
+
+[[moves]]
+move_id = "Sludge Bomb"
+level = 39
+
+[[moves]]
+move_id = "Encore"
+level = 23
+
+[[moves]]
+move_id = "Stockpile"
+level = 34
+
+[[moves]]
+move_id = "Spit Up"
+level = 34
+
+[[moves]]
+move_id = "Swallow"
+level = 34
+
+[[moves]]
+move_id = "Yawn"
+level = 6

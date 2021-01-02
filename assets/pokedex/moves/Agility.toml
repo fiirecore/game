@@ -1,0 +1,4 @@
+name = "Agility"
+pokemon_type = "Psychic"
+category = "Status"
+pp = 30
