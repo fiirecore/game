@@ -1,3 +1,4 @@
+use log::info;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 use std::time::SystemTime;
@@ -28,7 +29,7 @@ impl AppConsole {
     }
 
     pub fn add_line(&mut self, string: String) {
-        println!("{}", &string);
+        info!("{}", &string);
         self.text.push(string);
         self.last_message_time = SystemTime::now();
     }

@@ -1,3 +1,4 @@
+use log::info;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 use crate::entity::entity::Ticking;
@@ -119,12 +120,12 @@ impl BattleManager {
 	}
 	
 	pub fn load_battle(&mut self, battle: Battle) {
-		println!("Loading Battle: {}", battle);
+		info!("Loading Battle: {}", battle);
 		self.current_battle = battle;
 		self.update_gui();
 		self.load_current_battle();
 		let mut opponent_string = String::from("Wild ");
-		opponent_string.push_str(self.current_battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.as_str());
+		opponent_string.push_str(self.current_battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.to_uppercase().as_str());
 		opponent_string.push_str(" appeared!");
 		
 		self.player_panel.intro_text.update_text(opponent_string);
@@ -182,8 +183,8 @@ impl BattleManager {
 	
 	pub fn update_gui(&mut self) {
 		
-		self.player_pokemon_gui.name.text = self.current_battle.player_pokemon.instance.as_ref().unwrap().pokemon.name.clone();
-		self.opponent_pokemon_gui.name.text = self.current_battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.clone();
+		self.player_pokemon_gui.name.text = self.current_battle.player_pokemon.instance.as_ref().unwrap().pokemon.name.to_uppercase();
+		self.opponent_pokemon_gui.name.text = self.current_battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.to_uppercase();
 		
 		let pl = self.current_battle.player_pokemon.instance.as_ref().unwrap().level;
 		let mut plstr = String::from("Lv");

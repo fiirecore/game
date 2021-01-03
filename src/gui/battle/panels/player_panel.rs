@@ -1,3 +1,4 @@
+use log::warn;
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::Context;
 use crate::engine::game_context::GameContext;
@@ -81,10 +82,10 @@ impl PlayerPanel {
                         self.battle_panel.next = 1;
                     },
                     1 => {
-                        println!("unimplemented");
+                        warn!("bag button unimplemented");
                     },
                     2 => {
-                        println!("unimplemented");
+                        warn!("pokemon button unimplemented");
                     },
                     3 => {
                         battle.run();
@@ -98,12 +99,12 @@ impl PlayerPanel {
                 let strings = self.do_move(context, battle, self.fight_panel.cursor_position as usize);
                 self.fight_panel.disable();
                 if battle.player_pokemon.speed > battle.opponent_pokemon.speed {
-                    self.battle_text.update_text(&battle.player_pokemon.instance.as_ref().unwrap().pokemon.name.clone(), &strings.0);
-                    self.other_pokemon = battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.clone();
+                    self.battle_text.update_text(&battle.player_pokemon.instance.as_ref().unwrap().pokemon.name.to_uppercase(), &strings.0);
+                    self.other_pokemon = battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.to_uppercase();
                     self.other_move = strings.1;
                 } else {
-                    self.battle_text.update_text(&battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.clone(), &strings.1);
-                    self.other_pokemon = battle.player_pokemon.instance.as_ref().unwrap().pokemon.name.clone();
+                    self.battle_text.update_text(&battle.opponent_pokemon.instance.as_ref().unwrap().pokemon.name.to_uppercase(), &strings.1);
+                    self.other_pokemon = battle.player_pokemon.instance.as_ref().unwrap().pokemon.name.to_uppercase();
                     self.other_move = strings.0;
                 }
                 
@@ -140,7 +141,7 @@ impl PlayerPanel {
 
     pub fn update_text(&mut self, instance: &PokemonInstance) {
         let mut player_string = String::from("Go! ");
-        player_string.push_str(instance.pokemon.name.as_str());
+        player_string.push_str(instance.pokemon.name.to_uppercase().as_str());
         player_string.push_str("!");
         //println!("{}", player_string);
         self.intro_text.player_text = player_string;

@@ -3,6 +3,7 @@ use std::ffi::OsString;
 use std::path::PathBuf;
 
 use image::RgbaImage;
+use log::warn;
 
 use crate::audio::music::Music;
 use crate::entity::entities::player::Player;
@@ -82,7 +83,7 @@ impl WorldManager {
                             }
                             Err(e) => {
                                 //println!("Error parsing directory: {:?}", subdir_entry);
-                                println!("{}", e);
+                                warn!("{}", e);
                             }
                         }
                     }
@@ -90,7 +91,7 @@ impl WorldManager {
                 }
                 Err(e) => {
                     //println!("error getting map set files under {:?}", dir_entry);
-                    println!("{}", e);
+                    warn!("{}", e);
                 }
             }
         }
@@ -116,7 +117,7 @@ impl WorldManager {
                             if path.is_dir() {
                                 let mut twt = ThreeWayTexture::new();
                                 if size > 3 {
-                                    println!("Moving NPC textures found, not supported yet.");
+                                    warn!("Moving NPC textures found, not supported yet.");
                                 } else {
                                     twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_up.png")), false)));
                                     twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_down.png")), false)));
@@ -126,13 +127,13 @@ impl WorldManager {
                             }
                         },
                         Err(err) => {
-                            println!("{}", err);
+                            warn!("{}", err);
                         }
                     }
                 }
             },
             Err(err) => {
-                println!("Error reading NPC textures directory for map {} with error: {}", world_id, err);
+                warn!("Error reading NPC textures directory for map {} with error: {}", world_id, err);
             },
         }
     }

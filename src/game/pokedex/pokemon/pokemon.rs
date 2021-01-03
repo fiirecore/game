@@ -1,6 +1,8 @@
 use std::{ffi::OsString, path::Path};
 use std::collections::HashMap;
 
+use log::warn;
+
 use crate::{game::pokedex::pokemon::pokemon_toml::TomlPokemonConfig, util::file_util::UNKNOWN_FILENAME_ERR};
 
 use std::fs::read_to_string;
@@ -92,7 +94,7 @@ impl Pokemon {
 					
 						let number = pokedex_data.number;
 
-						let name = pokedex_data.name.to_uppercase();
+						let name = pokedex_data.name;
 						
 						let mut path1 = String::from("pokedex/textures/normal/front/");
 						path1.push_str(&name.to_lowercase());
@@ -149,7 +151,7 @@ impl Pokemon {
 						})
 					}
 					Err(e) => {
-						println!("Could not parse pokemon toml at {:?} with error {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), e);
+						warn!("Could not parse pokemon toml at {:?} with error {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), e);
 						return None;
 					}
 				}
@@ -158,7 +160,7 @@ impl Pokemon {
 
 			Err(err) => {
 
-				println!("Error reading pokemon entry at {:?} to string with error: {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), err);
+				warn!("Error reading pokemon entry at {:?} to string with error: {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), err);
 				return None;
 	
 			}
@@ -220,7 +222,7 @@ pub enum Stat {
 	
 }
 
-#[derive(Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Hash, Clone, Copy, Eq, PartialEq)]
 pub enum PokemonType {
 	
 	Normal,

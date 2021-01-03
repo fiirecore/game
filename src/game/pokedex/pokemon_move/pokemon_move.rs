@@ -1,16 +1,18 @@
+use std::fmt::Display;
+
 use crate::game::pokedex::{pokedex::Pokedex, pokemon::pokemon::PokemonType};
 use serde_derive::{Deserialize, Serialize};
 
 use super::{move_category::MoveCategory, move_instance::MoveInstance};
 
-#[derive(Clone)]
+#[derive(Debug, Hash, Clone, PartialEq, Eq)]
 pub struct PokemonMove {
 
 	pub name: String,
 	pub category: MoveCategory,
 	pub pokemon_type: Option<PokemonType>,
 	pub power: Option<usize>,
-	pub accuracy: u8,
+	pub accuracy: Option<u8>,
 	pub pp: u8,
 	
 }
@@ -38,4 +40,11 @@ impl SavedPokemonMove {
 		return move_instances;
 	}
 
+}
+
+impl Display for PokemonMove {
+
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.name)
+    }
 }

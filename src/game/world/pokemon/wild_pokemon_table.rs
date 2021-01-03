@@ -1,5 +1,7 @@
 use std::path::Path;
 
+use log::warn;
+
 use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon_instance::PokemonInstance}};
 
 use super::{random_wild_pokemon_table::RandomWildPokemonTable, original_wild_pokemon_table::OriginalWildPokemonTable};
@@ -36,7 +38,7 @@ fn get_or_random<P: AsRef<Path>>(path: P) -> Box<dyn WildPokemonTable> {
             return Box::new(wpt);
         },
         None => {
-            println!("Tried to get original wild pokemon table but failed, using random wild pokemon table");
+            warn!("Tried to get original wild pokemon table but failed, using random wild pokemon table");
             return get_random();
         }
     }   

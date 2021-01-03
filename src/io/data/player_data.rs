@@ -3,9 +3,10 @@ use crate::util::traits::PersistantDataLocation;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
+use log::info;
+use log::warn;
 use serde_derive::{Deserialize, Serialize};
 use crate::entity::util::direction::Direction;
-use std::env::current_exe;
 use std::fs::read_to_string;
 
 static SAVE_FILENAME: &str = "player.json";
@@ -48,7 +49,7 @@ impl PlayerData {
 	}
 
     pub fn load_from_file() -> PlayerData {
-        match read_to_string(get_path().with_file_name(SAVE_FILENAME)) {
+        match read_to_string(get_path().join(SAVE_FILENAME)) {
             Ok(content) => {
 //				println!("{}", content);
 				match serde_json::from_str(content.as_str()) {
@@ -56,13 +57,13 @@ impl PlayerData {
 						return data;
 					}
 					Err(e) => {
-						println!("Error parsing save: {}", e);
+						warn!("Error parsing save: {}", e);
 						return new_save();
 					}
 				}
 			}
             Err(err) => {
-				println!("Error opening save file at {:?} with error {}", get_path(), err);
+				warn!("Error opening save file at {:?} with error {}", get_path(), err);
                 return new_save();
             }
         }
@@ -90,31 +91,34 @@ impl PersistantData for PlayerData {
 						return data;
 					}
 					Err(e) => {
-						println!("Error parsing save: {}", e);
+						warn!("Error parsing save: {}", e);
 						return new_save();
 					}
 				}
 			}
             Err(err) => {
-				println!("Error opening save file at {:?} with error {}", get_path(), err);
+				warn!("Error opening save file at {:?} with error {}", get_path(), err);
                 return new_save();
             }
         }
 	}
 
 	fn save(&self) {
-		let file = File::create(get_path().with_file_name(SAVE_FILENAME)).unwrap();
+		let path = get_path();
+		if !&path.exists() {
+			std::fs::create_dir(&path).expect("Could not create saves directory!");
+		}
+		let file = File::create(path.join(SAVE_FILENAME)).unwrap();
         let mut writer = BufWriter::new(file);
-		println!("Saving game...");
+		info!("Saving player data...");
         match serde_json::to_string_pretty(&self) {
             Ok(encoded) => {
                 if let Err(e) = writer.write(encoded.as_bytes()) {
-					println!("{}", encoded);
-                    println!("WARNING: Failed to encode with error: {}", e);
+                    warn!("Failed to encode with error: {}", e);
                 }
             }
             Err(e) => {
-                println!("WARNING: Failed to save settings: {}", e);
+                warn!("Failed to save settings: {}", e);
             }
         }
 	}
@@ -122,24 +126,24 @@ impl PersistantData for PlayerData {
 }
 
 fn get_path() -> PathBuf {
-	match current_exe() {
-		Ok(mut exe_path) => {
-			exe_path.pop();
-			exe_path.push("saves");
-			return exe_path;
-		}
-		Err(e) => {
-			println!("WARNING: Failed to find exe path with error {}", e);
-			let mut pb = PathBuf::from("./");
-			pb.push("saves");
-			return pb;
-		}
-	}
-    
+	//match current_exe() {
+	//	Ok(mut exe_path) => {
+	//		exe_path.pop();
+	//		exe_path.push("saves");
+	//		return exe_path;
+	//	}
+	//	Err(e) => {
+	//		warn!("Failed to find exe path with error {}", e);
+	//		let mut pb = PathBuf::from("./");
+	//		pb.push("saves");
+	//		return pb;
+	//	}
+	//}
+    return PathBuf::from("saves");
 }
 
 fn new_save() -> PlayerData {
-	println!("Creating a new save file.");
+	info!("Creating a new player save file.");
 	let default = PlayerData::default();
 	default.save();
 	return default;

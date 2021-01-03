@@ -1,4 +1,5 @@
 use std::{ffi::OsString, path::Path};
+use log::warn;
 use serde_derive::Deserialize;
 
 use std::fs::read_to_string;
@@ -58,7 +59,7 @@ impl WarpEntry {
                     }
                     Err(e) => {
         
-                        println!("Could not parse warp entry at {:?} with error {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), e);
+                        warn!("Could not parse warp entry at {:?} with error {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), e);
                         return None;
                     }
                 }
@@ -66,7 +67,7 @@ impl WarpEntry {
             },
             Err(err) => {
 
-                println!("Could not read warp entry toml at {:?} to string with error {}", path, err);
+                warn!("Could not read warp entry toml at {:?} to string with error {}", path, err);
                 return None;
 
             }

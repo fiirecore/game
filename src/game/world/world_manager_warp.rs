@@ -1,3 +1,5 @@
+use log::warn;
+
 use crate::engine::game_context::GameContext;
 use crate::game::warp::warp_entry::WarpEntry;
 use crate::util::file_util::asset_as_pathbuf;
@@ -36,7 +38,7 @@ impl WorldManager {
                     content = string;
                 },
                 Err(err) => {
-                    println!("Error opening toml file {}", err);
+                    warn!("Error opening toml file {}", err);
                 },
             }
 

@@ -77,7 +77,7 @@ impl BattlePanel {
     }
     
     pub fn update_text(&mut self, instance: &PokemonInstance) {
-        self.bottom_text.text = instance.pokemon.name.clone();
+        self.bottom_text.text = instance.pokemon.name.to_uppercase();
         self.bottom_text.text.push_str(" do?");
     }
 

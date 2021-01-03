@@ -1,4 +1,5 @@
 use std::path::Path;
+use log::warn;
 use opengl_graphics::{Filter, Texture, TextureSettings};
 
 use crate::util::file_util::asset_as_pathbuf;
@@ -15,7 +16,7 @@ pub fn texture_from_path<P>(path: P) -> Texture where P: AsRef<Path> {
 			return result;
 		}
 		Err(result) => {
-			println!("Error fetching texture with path: {:?}, Result: {}", path, result);
+			warn!("Error fetching texture with path: {:?}, Result: {}", path, result);
 //			return Image::new(ctx, asset_as_pathbuf("debug/a_texture.png")).expect("Cannot find debug texture");
 			Texture::from_path(asset_as_pathbuf("debug/missing_texture.png"), &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest)).unwrap()
 		}
@@ -35,7 +36,7 @@ pub fn texture64_from_path<P>(path: P) -> Texture where P: AsRef<Path> {
 			return result;
 		}
 		Err(result) => {
-			println!("Error fetching texture with path: {:?}, Result: {}", path, result);
+			warn!("Error fetching texture with path: {:?}, Result: {}", path, result);
 //			return Image::new(ctx, asset_as_pathbuf("debug/a_texture.png")).expect("Cannot find debug texture");
 			Texture::from_path(asset_as_pathbuf("debug/missing_texture_64.png"), &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest)).unwrap()
 		}

@@ -11,17 +11,14 @@ extern crate toml;
 extern crate image;
 extern crate oorandom;
 extern crate music;
+extern crate log;
+extern crate simplelog;
 
 //#[macro_use]
 //extern crate include_dir;
 //pub static ASSET_DIR: include_dir::Dir = include_dir!("./assets");
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-
-    if cfg!(debug_assertions) {
-        println!("Running in debug mode");
-        println!();
-    }
 
     let mut game = crate::app::Game::new();
 

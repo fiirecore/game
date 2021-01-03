@@ -1,6 +1,9 @@
 /target
 /Cargo.lock
 
+/logs
+/config
+
 /.cargo
 /*.lib
 /*.dll

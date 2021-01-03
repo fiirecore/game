@@ -1,4 +1,5 @@
 use crate::util::traits::Loadable;
+use log::info;
 use opengl_graphics::GlGraphics;
 use piston::UpdateArgs;
 use piston_window::Context;
@@ -44,7 +45,7 @@ impl SceneManager {
 	pub fn load_scene(&mut self, context: &mut GameContext, index: usize) {
 		self.scenes[self.current_scene_index].dispose();
 		self.current_scene_index = index;
-		println!("Loading Scene: {}", self.scenes[self.current_scene_index].name());
+		info!("Loading Scene: {}", self.scenes[self.current_scene_index].name());
 		if !self.loaded[self.current_scene_index] {
 			self.scenes[self.current_scene_index].load();
 			self.loaded[self.current_scene_index] = true;

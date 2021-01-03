@@ -1,61 +1,61 @@
 encounter_ratio = 21
 
-[encounter1]
+[[encounter]]
 min_level = 3
 max_level = 3
 pokemon_id = 19
 
-[encounter2]
+[[encounter]]
 min_level = 3
 max_level = 3
 pokemon_id = 16
 
-[encounter3]
+[[encounter]]
 min_level = 4
 max_level = 4
 pokemon_id = 19
 
-[encounter4]
+[[encounter]]
 min_level = 4
 max_level = 4
 pokemon_id = 16
 
-[encounter5]
+[[encounter]]
 min_level = 2
 max_level = 2
 pokemon_id = 19
 
-[encounter6]
+[[encounter]]
 min_level = 2
 max_level = 2
 pokemon_id = 16
 
-[encounter7]
+[[encounter]]
 min_level = 5
 max_level = 5
 pokemon_id = 19
 
-[encounter8]
+[[encounter]]
 min_level = 5
 max_level = 5
 pokemon_id = 16
 
-[encounter9]
+[[encounter]]
 min_level = 4
 max_level = 4
 pokemon_id = 10
 
-[encounter10]
+[[encounter]]
 min_level = 4
 max_level = 4
 pokemon_id = 13
 
-[encounter11]
+[[encounter]]
 min_level = 5
 max_level = 5
 pokemon_id = 10
 
-[encounter12]
-min_level = 4
-max_level = 4
+[[encounter]]
+min_level = 5
+max_level = 5
 pokemon_id = 13

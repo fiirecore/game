@@ -2,6 +2,8 @@ use std::fs::ReadDir;
 use std::fs::read_dir;
 use std::path::Path;
 
+use log::warn;
+
 use crate::game::warp::warp_entry::WarpEntry;
 
 pub fn get_warps<P: AsRef<Path>>(root_path: P, map_set_num: Option<usize>) -> Vec<WarpEntry> {
@@ -20,20 +22,20 @@ pub fn get_warps<P: AsRef<Path>>(root_path: P, map_set_num: Option<usize>) -> Ve
                     match read_dir(&warp_path.join(map_set)) {
                         Ok(dir) => {
                             if let Some(err) = add_warp_under_directory(&mut warps, dir) {
-                                println!(
+                                warn!(
                                     "Error reading warp entry at map set {} under {:?} with error: {}",
                                     map_set_num, root_path, err
                                 );
                             }
                         }
                         Err(err) => {
-                            println!("Error reading map set directory #{} under path {:?} with error {}", map_set_num, root_path, err);
+                            warn!("Error reading map set directory #{} under path {:?} with error {}", map_set_num, root_path, err);
                         }
                     }
                 },
                 None => {
                     if let Some(err) = add_warp_under_directory(&mut warps, dir) {
-                        println!(
+                        warn!(
                             "Error reading warp entry under {:?} with error: {}",
                             root_path, err
                         );
@@ -42,7 +44,7 @@ pub fn get_warps<P: AsRef<Path>>(root_path: P, map_set_num: Option<usize>) -> Ve
             }            
         }
         Err(err) => {
-            println!(
+            warn!(
                 "Could not read warps directory under {:?} with error {}",
                 root_path, err
             );

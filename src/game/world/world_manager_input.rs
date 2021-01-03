@@ -36,6 +36,15 @@ impl WorldManager {
                 pos.push_str(", Y: ");
                 pos.push_str(self.player.coords.y.to_string().as_str());
                 context.app_console.add_line(pos);
+                if self.world_map_manager.is_alive() {
+                    let mut pos_map = String::from("Local X: ");
+                    let map = self.world_map_manager.get_current_world().get_current_piece();
+                    pos_map.push_str((self.player.coords.x - map.x).to_string().as_str());
+                    pos_map.push_str(", Local Y: ");
+                    pos_map.push_str((self.player.coords.y - map.y).to_string().as_str());
+                    context.app_console.add_line(pos_map);
+                }
+                
             }
     
             if context.fkeys[4] == 1 {

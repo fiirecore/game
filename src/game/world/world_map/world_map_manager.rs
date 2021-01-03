@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use log::warn;
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::Context;
 use crate::entity::entity::Ticking;
@@ -75,7 +76,7 @@ impl WorldMapManager {
                     }
                 },
                 None => {
-                    println!("Could not find wild tiles for map {}", current_world.get_current_piece().name);
+                    warn!("Could not find wild tiles for map {}", current_world.get_current_piece().name);
                 }
             }            
             

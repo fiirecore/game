@@ -4,6 +4,8 @@ use std::fs::read_dir;
 use std::fs::read_to_string;
 use std::path::Path;
 
+use log::warn;
+
 use crate::entity::util::direction::Direction;
 use crate::game::npc::npc::NPC;
 
@@ -26,20 +28,20 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPC> where P
                     match read_dir(&npc_path.join(map_set)) {
                         Ok(dir) => {
                             if let Some(err) = get_npc_from_directory(&mut npcs, dir) {
-                                println!(
+                                warn!(
                                     "Error fetching npc under {:?} with error: {}",
                                     root_path, err
                                 );
                             }
                         }
                         Err(err) => {
-                            println!("Error reading map set directory #{} under path {:?} with error {}", map_set_num, root_path, err);
+                            warn!("Error reading map set directory #{} under path {:?} with error {}", map_set_num, root_path, err);
                         }
                     }                    
                 },
                 None => {
                     if let Some(err) = get_npc_from_directory(&mut npcs, dir) {
-                        println!(
+                        warn!(
                             "Error fetching npc under {:?} with error: {}",
                             root_path, err
                         );
@@ -49,7 +51,7 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPC> where P
         }
 
         Err(err) => {
-            println!(
+            warn!(
                 "Could not read NPC directory for map {:?} with error {}",
                 root_path
                     .file_name()
@@ -104,14 +106,14 @@ pub fn load_npc<P>(path: P) -> Option<NPC> where P: AsRef<Path> {
                     });
                 },
                 Err(err) => {
-                    println!("Could not parse NPC json at {:?} with error {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), err);
+                    warn!("Could not parse NPC json at {:?} with error {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), err);
                     return None;
                 }
             }
 
         },
         Err(err) => {
-            println!("Could not get NPC json at {:?} with error {}", path, err);
+            warn!("Could not get NPC json at {:?} with error {}", path, err);
             return None;
         }
     }

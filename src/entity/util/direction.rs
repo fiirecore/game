@@ -1,3 +1,5 @@
+use log::warn;
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Direction {
 	
@@ -52,7 +54,7 @@ impl Direction {
 			"Left" => Some(Direction::Left),
 			"Right" => Some(Direction::Right),
 			&_ => {
-				println!("could not match direction");
+				warn!("could not match direction");
 				None
 			},
 		}
@@ -65,7 +67,7 @@ impl Direction {
 			2 => Some(Direction::Left),
 			3 => Some(Direction::Right),
 			_ => {
-				println!("could not match direction");
+				warn!("could not match direction");
 				None
 			},
 		}

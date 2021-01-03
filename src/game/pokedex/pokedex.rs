@@ -1,6 +1,8 @@
 use std::{collections::HashMap, ffi::OsString};
 use std::path::PathBuf;
 
+use log::warn;
+
 use crate::{game::pokedex::pokemon::pokemon::Pokemon, util::file_util::UNKNOWN_FILENAME_ERR};
 
 use crate::util::file_util::asset_as_pathbuf;
@@ -62,7 +64,7 @@ impl Pokedex {
 					}					
 				}
 				Err(e) => {
-					println!("Error fetching pokemon entry at {:?} with error: {}", entrydir.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), e);
+					warn!("Error fetching pokemon entry at {:?} with error: {}", entrydir.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), e);
 				}
 			}
 		}
@@ -83,7 +85,7 @@ impl Pokedex {
 						}
 					}
 					Err(e) => {
-						println!("Error fetching move toml at {:?} with error: {}", movedir, e);
+						warn!("Error fetching move toml at {:?} with error: {}", movedir, e);
 					}
 				}
 			}

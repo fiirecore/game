@@ -10,6 +10,7 @@ use std::io::Read;
 use std::path::Path;
 use std::io::Write;
 
+use log::info;
 use serde_derive::{Serialize, Deserialize};
 
 static CONFIGURATION_FILENAME: &str = "config.toml";
@@ -73,7 +74,7 @@ impl Configuration {
 
 	pub fn reload(&mut self) {
 		*self = Configuration::load();
-		println!("Reloaded configuration!");
+		info!("Reloaded configuration!");
 		//self.name = conf.name;
 	}
 	
@@ -219,21 +220,26 @@ impl PersistantData for ConfigurationInToml {
 	}
 
 	fn save(&self) {
-
-		let path: OsString;
 		
 //		if cfg!(debug_assertions) {
-			let _exe_path = current_exe();
-			if _exe_path.is_err() {
-			println!("WARNING: Failed to save settings: can't find exe path.");
-			return;
+			//let exe_path = current_exe();
+			//if exe_path.is_err() {
+			//	println!("WARNING: Failed to save settings: can't find exe path.");
+			//	return;
+			//}
+			//path = exe_path.unwrap().join("config");
+
+			let path = PathBuf::from("config");
+
+			if !path.exists() {
+				std::fs::create_dir("config").expect("Could not create configuration directory!");
 			}
-			path = _exe_path.unwrap().into_os_string();
+			
 //		} else {
 //			path = ProjectDirs::from("net", "Rhys Holloway", "Pokemon").unwrap().config_dir().to_path_buf().into_os_string();
 //		}
 		
-		let file = File::create(Path::new(&path).with_file_name(CONFIGURATION_FILENAME)).unwrap();
+		let file = File::create(Path::new(&path).join(CONFIGURATION_FILENAME)).unwrap();
 		let mut writer = BufWriter::new(file);
 
 		match toml::to_string_pretty(&self) {

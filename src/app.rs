@@ -1,9 +1,20 @@
+use log::LevelFilter;
 use sdl2_window::Sdl2Window as Windower;
+use simplelog::CombinedLogger;
+use simplelog::Config;
+use simplelog::TermLogger;
+use simplelog::TerminalMode;
+use simplelog::WriteLogger;
 use crate::audio::{music::Music, sound::Sound};
 use opengl_graphics::GlGraphics;
 use piston::{Button, Key, PressEvent, ReleaseEvent, RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, WindowSettings, EventLoop};
 use piston_window::{OpenGL, Context, PistonWindow, clear};
 use std::error::Error;
+use std::fs::File;
+use std::path::PathBuf;
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
+use log::info;
 
 use crate::scene::scene_manager::SceneManager;
 use crate::engine::text::TextRenderer;
@@ -24,16 +35,19 @@ pub static HEIGHT: usize = 160; //*SCALE;
                                 //pub static TILE_SIZE: usize = 16;
 impl Game {
 
-    pub fn new() -> Game {      
+    pub fn new() -> Game {
+
+        if cfg!(debug_assertions) {
+            println!("Running in debug mode");
+        }
 
         let configuration = crate::io::data::configuration::Configuration::load();
-        println!();
         println!(
         "Starting {}, Version: {}",
         configuration.name, configuration.version
         );
         println!("By {}", configuration.authors);
-        println!();
+        
 
         Game {
             scene_manager: SceneManager::new(),
@@ -54,7 +68,6 @@ impl Game {
         .resizable(false)
         .build()
         .unwrap_or_else(|e| {
-            println!("Failed");
             panic!("Failed to build PistonWindow: {}", e)
         });
 
@@ -92,7 +105,23 @@ impl Game {
 
     pub fn load(&mut self) {
 
-        print!("Loading...");
+        println!("Loading...");
+
+        let mut log_name = String::from("logs/log_");
+        log_name.push_str(SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs().to_string().as_str());
+        log_name.push_str(".txt");
+
+        if !PathBuf::from("logs").exists() {
+            std::fs::create_dir("logs").expect("Could not create logs directory!");
+        }
+        
+
+        CombinedLogger::init(
+            vec![
+                TermLogger::new(LevelFilter::Info, Config::default(), TerminalMode::Mixed),
+                WriteLogger::new(LevelFilter::Info, Config::default(), File::create(log_name).unwrap()),
+            ]
+        ).unwrap();
 
         self.text_renderer.load_textures();
 
@@ -100,15 +129,11 @@ impl Game {
 
         self.scene_manager.load();
 
-//        println!(" Done");
-
-//        print!("Loading keymap... ");
-
         let keys = vec![Key::X, Key::Z, Key::Up, Key::Down, Key::Left, Key::Right, Key::Escape, Key::LShift];
 
         self.game_context.fill_keymaps(keys);
 
-        println!("Done");
+        info!("Done loading!");
     }
 
     pub fn on_start(&mut self) {
@@ -209,7 +234,7 @@ impl Game {
     }
 
     pub fn dispose(&mut self) {
-        println!("Closing app...");
+        info!("Closing app...");
         self.scene_manager.dispose();
     }
 }

@@ -1,3 +1,5 @@
+use log::info;
+use log::warn;
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::Context;
 use crate::entity::entity::Ticking;
@@ -86,13 +88,13 @@ impl WarpMapManager {
                             let rand = context.random.rand_range(0..256) as u8;
                             if rand < table.encounter_rate() {
                                 gen = true;
-                                println!("Generating battle");
+                                info!("Generating battle");
                             }
                         }
                     }
                 },
                 None => {
-                    println!("Could not find wild tiles for warp map {}", self.current_map_set_id);
+                    warn!("Could not find wild tiles for warp map {}", self.current_map_set_id);
                 }
             }            
             

@@ -2,6 +2,8 @@ use std::ffi::OsString;
 use std::fs::read_to_string;
 use std::path::Path;
 
+use log::warn;
+
 use crate::game::world::world_map::world_map_piece::WorldMapPiece;
 use crate::game::world::warp_map::warp_map_set::WarpMapSet;
 use crate::util::file_util::UNKNOWN_FILENAME_ERR;
@@ -35,7 +37,7 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
                                 return (map_config.identifier.world_id, Some(map), None);
                             }
                             None => {
-                                println!("Error reading jigsaw map at path: {:?}", path);
+                                warn!("Error reading jigsaw map at path: {:?}", path);
                                 return (map_config.identifier.world_id, None, None);
                             }
                         }
@@ -47,21 +49,21 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
                                 return (map_config.identifier.world_id, None, Some(map));
                             }
                             None => {
-                                println!("Error reading warp map at path: {:?}", path);
+                                warn!("Error reading warp map at path: {:?}", path);
                                 return (map_config.identifier.world_id, None, None);
                             }
                         }
 
                     } else {
 
-                        println!("Map config at {:?} does not contain either a jigsaw map or a warp map.", &path);
+                        warn!("Map config at {:?} does not contain either a jigsaw map or a warp map.", &path);
                         return (map_config.identifier.world_id, None, None);
 
                     }
                     
                 }
                 Err(e) => {
-                    println!(
+                    warn!(
                         "Toml file at {:?} is {}",
                         path.file_name()
                             .unwrap_or(&OsString::from(&UNKNOWN_FILENAME_ERR)),
@@ -73,7 +75,7 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
             }
         }
         Err(err) => {
-            println!(
+            warn!(
                 "Error reading file at {:?} to string with error: {}",
                 path.file_name()
                     .unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)),

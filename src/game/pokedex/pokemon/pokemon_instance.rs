@@ -1,3 +1,5 @@
+use log::warn;
+
 use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon::Pokemon, pokemon_move::move_instance::MoveInstance}};
 use crate::game::pokedex::pokemon_move::pokemon_move::PokemonMove;
 
@@ -86,7 +88,7 @@ impl PokemonInstance {
 							moves.push(pokemon_move.clone());
 						}
 						None => {
-							println!("Could not add pokemon move {} to {}", string, pokemon.name)
+							warn!("Could not add pokemon move {} to {}", string, pokemon.name)
 						}
 					}
 				}								

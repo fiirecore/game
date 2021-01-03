@@ -1,5 +1,7 @@
 use std::path::Path;
 
+use log::warn;
+
 use crate::game::world::world_map::world_map_piece::WorldMapPiece;
 
 use super::gba_map::fix_tiles;
@@ -72,18 +74,18 @@ pub fn new_jigsaw_map<P: AsRef<Path>>(
                     return None;
                 }
             } else if ext.eq("json") {
-                println!("Json map found under {:?}, not implemented yet!", path);
+                warn!("JSON map found under {:?}, not implemented yet!", path);
                 return None;
             } else {
-                println!(
-                    "Error: Map file with unknown extension provided under {:?}",
+                warn!(
+                    "Map file with unknown extension provided under {:?}",
                     path
                 );
                 return None;
             }
         }
         None => {
-            println!("Map file without an extension found under {:?}", path);
+            warn!("Map file without an extension found under {:?}", path);
             return None;
         }
     }

@@ -1,3 +1,4 @@
+use log::warn;
 use opengl_graphics::{Texture, Filter, TextureSettings};
 use std::{fs::File, path::Path};
 use std::io::Read;
@@ -179,7 +180,7 @@ pub fn get_texture(sheets: &HashMap<u8, RgbaImage>, palette_sizes: &Vec<u16>, ti
 		None => {
 			let mut string = String::from("Could not get spritesheet at index ");
 			string.push_str(index.to_string().as_str());
-			println!("{}", string);
+			warn!("{}", string);
 			println!("{:?}", sheets.keys());
 			return Texture::from_path(asset_as_pathbuf("debug/missing_texture.png"), &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest)).expect("Could not find debug texture");
 		}

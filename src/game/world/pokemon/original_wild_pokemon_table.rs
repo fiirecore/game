@@ -1,4 +1,5 @@
 use std::{ffi::OsStr, path::Path};
+use log::warn;
 use serde_derive::Deserialize;
 
 use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon_instance::PokemonInstance}, util::file_util::UNKNOWN_FILENAME_ERR};
@@ -34,13 +35,13 @@ impl OriginalWildPokemonTable {
                         })
                     },
                     Err(e) => {
-                        println!("Could not parse wild pokemon table in {:?} with error {}", filename, e);
+                        warn!("Could not parse wild pokemon table in {:?} with error {}", filename, e);
                         return None;
                     }
                 }
             },
             Err(err) => {
-                println!("Could not read wild pokemon table at {:?} to string with error: {}", filename, err);
+                warn!("Could not read wild pokemon table at {:?} to string with error: {}", filename, err);
                 return None;
             }
         }

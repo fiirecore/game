@@ -61,7 +61,7 @@ impl FightPanel {
 
     pub fn update_names(&mut self, instance: &PokemonInstance) {
         self.move_names = Vec::new();
-        for moves in &instance.moves {            
+        for moves in &instance.moves {        
             self.move_names.push(moves.move_instance.name.clone());
         }
     }
