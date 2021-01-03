@@ -168,7 +168,7 @@ pub struct Party {
 
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Hash, Clone, Serialize, Deserialize)]
 pub struct SavedPokemon {
 
 	pub pokemon_id: usize,
@@ -187,7 +187,7 @@ impl SavedPokemon {
 
 		let mut vec_moves: Vec<Option<SavedPokemonMove>> = pokemon.instance.moves.iter().map(|moves| Some(SavedPokemonMove {
 			name: moves.move_instance.name.clone(),
-			pp: moves.remaining_pp,
+			remaining_pp: moves.remaining_pp,
 		})).collect();
 
 		while vec_moves.len() < 4 {

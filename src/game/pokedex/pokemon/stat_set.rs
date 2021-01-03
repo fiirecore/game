@@ -1,6 +1,6 @@
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Debug, Hash, Clone, Copy, Serialize, Deserialize)]
 pub struct StatSet {
 
 	pub hp: u8,

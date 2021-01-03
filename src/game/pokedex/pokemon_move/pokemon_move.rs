@@ -17,11 +17,18 @@ pub struct PokemonMove {
 	
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+impl Display for PokemonMove {
+
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.name)
+    }
+}
+
+#[derive(Debug, Hash, Clone, Serialize, Deserialize)]
 pub struct SavedPokemonMove {
 
 	pub name: String,
-	pub pp: u8,
+	pub remaining_pp: u8,
 	
 }
 
@@ -33,18 +40,11 @@ impl SavedPokemonMove {
 			if let Some(pkmn_move) = pkmn_move {
 				move_instances.push(MoveInstance {
 					move_instance: pokedex.move_list.get(&pkmn_move.name).unwrap().clone(),
-					remaining_pp: pkmn_move.pp,
+					remaining_pp: pkmn_move.remaining_pp,
 				});
 			}
 		}
 		return move_instances;
 	}
 
-}
-
-impl Display for PokemonMove {
-
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.name)
-    }
 }
