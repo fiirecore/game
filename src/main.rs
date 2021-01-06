@@ -94,11 +94,20 @@ pub mod entity {
 }
 
 pub mod io {
+
     pub mod app_console;
+
     pub mod data {
         pub mod configuration;
         pub mod player_data;
+        pub mod game_data;
+        pub mod pokemon_party;
+        pub mod saved_pokemon;
+        pub mod saved_pokemon_move;
+        pub mod trainer;
+        //pub mod saved_pokemon_move_set;
     }
+
     pub mod map {
 
         pub mod map_serializable;
@@ -164,35 +173,39 @@ pub mod game {
     pub mod battle {
         pub mod battle;
         pub mod battle_manager;
-        pub mod battle_move;
         pub mod battle_pokemon;
+        pub mod battle_info;
+        pub mod battle_context;
 
         pub mod transitions {
 
-            pub mod traits {
-                pub mod battle_transition_manager;
-                pub mod battle_transition;
-                pub mod battle_intro;
-                pub mod battle_opener;
-                pub mod battle_closer;
-            }
+            pub mod battle_transition_traits;
 
             pub mod managers {
-                pub mod battle_intro_manager;
+                pub mod battle_screen_transition_manager;
                 pub mod battle_opener_manager;
+                pub mod battle_introduction_manager;
                 pub mod battle_closer_manager;
             }
             
-            pub mod transitions {
-                pub mod flash_battle_transition;
-                pub mod trainer_battle_transition;
-                pub mod vertical_close_battle_transition;
+            pub mod screen_transitions {
+                pub mod flash_battle_screen_transition;
+                pub mod trainer_battle_screen_transition;
+                pub mod vertical_close_battle_screen_transition;
             }
             
-            pub mod openers {
-                pub mod player_intro;
+            pub mod openers {             
                 pub mod trainer_battle_opener;
                 pub mod wild_battle_opener;
+            }
+
+            pub mod introductions {
+                pub mod trainer_battle_introduction;
+                pub mod basic_battle_introduction;
+                pub mod util {
+                    pub mod player_intro;
+                    pub mod intro_text;
+                }
             }
             
             pub mod closers {
@@ -236,11 +249,11 @@ mod gui {
 
         pub mod battle_gui;
 
+        pub mod battle_background;
         pub mod health_bar;
         pub mod pokemon_gui;
-        pub mod intro_text;
-        
         pub mod battle_text;
+        pub mod player_bounce;
 
         pub mod panels {
             pub mod player_panel;

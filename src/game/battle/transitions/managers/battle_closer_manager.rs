@@ -5,15 +5,17 @@ use crate::engine::game_context::GameContext;
 use crate::engine::text::TextRenderer;
 use crate::entity::entity::Entity;
 use crate::entity::entity::Ticking;
+use crate::game::battle::transitions::battle_transition_traits::BattleCloser;
+use crate::game::battle::transitions::battle_transition_traits::BattleTransitionManager;
 use crate::game::battle::transitions::closers::basic_battle_closer::BasicBattleCloser;
-use crate::game::battle::transitions::traits::battle_transition::BattleTransition;
-use crate::game::battle::transitions::traits::battle_transition_manager::BattleTransitionManager;
+use crate::util::traits::Completable;
+use crate::util::traits::Loadable;
 
 pub struct BattleCloserManager {
     
     alive: bool,
 
-    pub closers: Vec<Box<dyn BattleTransition>>,
+    pub closers: Vec<Box<dyn BattleCloser>>,
     pub current_closer_id: usize,
 
 }
@@ -43,7 +45,9 @@ impl BattleCloserManager {
 impl Ticking for BattleCloserManager {
 
     fn update(&mut self, context: &mut GameContext) {
-        self.closers[self.current_closer_id].update(context);
+        if self.is_alive() {
+            self.closers[self.current_closer_id].update(context);
+        }
     }
 
     fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
@@ -53,6 +57,22 @@ impl Ticking for BattleCloserManager {
 }
 
 impl BattleTransitionManager for BattleCloserManager {
+
+}
+
+impl Loadable for BattleCloserManager {
+
+    fn load(&mut self) {
+        self.closers[self.current_closer_id].load();
+    }
+
+    fn on_start(&mut self, context: &mut GameContext) {
+        self.closers[self.current_closer_id].on_start(context);
+    }
+
+}
+
+impl Completable for BattleCloserManager {
 
     fn is_finished(&self) -> bool {
         return self.closers[self.current_closer_id].is_finished();

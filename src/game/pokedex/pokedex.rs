@@ -16,6 +16,7 @@ pub struct Pokedex {
 	
 }
 
+pub static LENGTH: usize = 386;
 pub static DEX_DIR: &str = "pokedex/";
 
 impl Pokedex {
@@ -100,6 +101,29 @@ impl Pokedex {
 
 	pub fn pokemon_from_id(&self, id: usize) -> &Pokemon {
 			return self.pokemon_list.get(&id).unwrap_or(self.pokemon_list.get(&1).unwrap());
+	}
+
+	pub fn moves_from_level(&self, pokemon_id: usize, level: u8) -> Vec<PokemonMove> {
+		let mut moves = Vec::new();
+		let pokemon = self.pokemon_from_id(pokemon_id);
+		for index in 0..level+1 {
+			if let Some(pkmn_move_str) = pokemon.learnable_moves.get(&index) {
+				for string in pkmn_move_str {
+					match self.move_list.get(string) {
+						Some(pokemon_move) => {
+							moves.push(pokemon_move.clone());
+						}
+						None => {
+							warn!("Could not add pokemon move {} to {}", string, pokemon.name)
+						}
+					}
+				}								
+			}
+		}
+		while moves.len() > 4 {
+			moves.remove(0);
+		}
+		return moves;
 	}
 	
 }

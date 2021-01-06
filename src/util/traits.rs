@@ -14,6 +14,12 @@ pub trait Loadable {
 
 }
 
+pub trait Completable {
+
+    fn is_finished(&self) -> bool;
+
+}
+
 pub trait PersistantData {
 
     fn load<P>(path: P) -> Self where P: AsRef<Path>;

@@ -5,12 +5,15 @@ use crate::engine::engine::Texture;
 use crate::engine::game_context::GameContext;
 use crate::engine::text::TextRenderer;
 use crate::entity::entity::Entity;
-use crate::game::battle::transitions::traits::battle_opener::BattleOpener;
-use crate::game::battle::transitions::traits::battle_transition::BattleTransition;
+use crate::entity::entity::Ticking;
+use crate::game::battle::transitions::battle_transition_traits::BattleOpener;
+use crate::game::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::util::file_util::asset_as_pathbuf;
 use crate::util::render_util::draw;
 
 use crate::util::texture_util::texture_from_path;
+use crate::util::traits::Completable;
+use crate::util::traits::Loadable;
 
 use super::trainer_battle_opener::TrainerBattleOpener;
 pub struct WildBattleOpener {
@@ -60,10 +63,30 @@ impl BattleTransition for WildBattleOpener {
         self.grass_y_offset = GRASS_Y_OFFSET;
         self.trainer_battle_opener.reset();
     }
+    
+}
+
+impl Loadable for WildBattleOpener {
+
+    fn load(&mut self) {
+        
+    }
 
     fn on_start(&mut self, context: &mut GameContext) {
         self.trainer_battle_opener.on_start(context);
+    } 
+
+}
+
+impl Completable for WildBattleOpener {
+
+    fn is_finished(&self) -> bool {
+        return self.trainer_battle_opener.is_finished();
     }
+
+}
+
+impl Ticking for WildBattleOpener {
 
     fn update(&mut self, context: &mut GameContext) {
         self.trainer_battle_opener.update(context);
@@ -86,9 +109,6 @@ impl BattleTransition for WildBattleOpener {
         self.trainer_battle_opener.render(ctx, g, tr);
     }
 
-    fn is_finished(&self) -> bool {
-        return self.trainer_battle_opener.is_finished();
-    }
 }
 
 impl BattleOpener for WildBattleOpener {

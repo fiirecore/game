@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use oorandom::Rand32;
 use piston::{Button, Key};
 
-use crate::io::data::player_data::SavedPokemon;
+use crate::game::battle::battle_context::BattleContext;
 use crate::io::{app_console::AppConsole, data::configuration::Configuration};
 
 pub struct GameContext {
@@ -20,7 +20,7 @@ pub struct GameContext {
     pub keymap: HashMap<Button, usize>,
     pub fkeymap: HashMap<Button, usize>,
 
-    pub battle: Option<SavedPokemon>,
+    pub battle_context: BattleContext,
 
 }
 
@@ -42,7 +42,7 @@ impl GameContext {
 
             random: Rand32::new(0),
 
-            battle: None,
+            battle_context: BattleContext::empty(),
 
         }
     }

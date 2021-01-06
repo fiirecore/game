@@ -1,8 +1,9 @@
-use log::warn;
+use std::fmt::Display;
 
 use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon::Pokemon, pokemon_move::move_instance::MoveInstance}};
 use crate::game::pokedex::pokemon_move::pokemon_move::PokemonMove;
 
+use super::stat_set::LargeStatSet;
 use super::stat_set::StatSet;
 
 pub struct PokemonInstance {
@@ -17,12 +18,24 @@ pub struct PokemonInstance {
 	pub ivs: StatSet,
 
 	pub evs: StatSet,
+
+	pub base: LargeStatSet,
+
+	pub current_hp: u16,
 	
 }
 
 impl PokemonInstance {
 
+	pub fn faint(&self) -> bool {
+		return self.current_hp == 0;
+	}
+
 	pub fn new(pokedex: &Pokedex, pokemon: &Pokemon, ivs: StatSet, level: u8) -> PokemonInstance {
+
+		let evs = StatSet::default();
+
+		let stats = get_stats(pokemon, ivs, evs, level);
 
 		PokemonInstance {
 			
@@ -30,14 +43,15 @@ impl PokemonInstance {
 			
 			level: level,
 			
-			moves: PokemonInstance::get_moves_from_level(pokedex, pokemon, level).iter().map(|mv| MoveInstance {
-			    move_instance: mv.clone(),
-			    remaining_pp: mv.pp,				
-			}).collect(),
+			moves: PokemonInstance::moves_to_instance(pokedex.moves_from_level(pokemon.number, level)),
 			
 			ivs: ivs,
 			
-			evs: StatSet::default(),
+			evs: evs,
+
+			base: stats,
+
+			current_hp: stats.hp,
 			
 		}
 
@@ -51,54 +65,65 @@ impl PokemonInstance {
 			level = context.random.rand_range(min_level as u32..(max_level as u32 + 1)) as u8;
 		}
 
+		let ivs = StatSet::iv_random(&mut context.random);
+
+		let evs = StatSet::default();
+
+		let base = get_stats(pokemon, ivs, evs, level);
+
 		PokemonInstance {
 			
 			pokemon: pokemon.clone(),
 			
 			level: level,
 			
-			moves: PokemonInstance::get_moves_from_level(pokedex, pokemon, level).iter().map(|mv| MoveInstance {
-			    move_instance: mv.clone(),
-			    remaining_pp: mv.pp,				
-			}).collect(),
+			moves: PokemonInstance::moves_to_instance(pokedex.moves_from_level(pokemon.number, level)),
 			
-			ivs: StatSet::iv_random(&mut context.random),
+			ivs: ivs,
 			
-			evs: StatSet::default(),
+			evs: evs,
+
+			base: base,
+
+			current_hp: base.hp,
 			
 		}
 		
 	}
 
-	pub fn get_move(&self, index: usize) -> Option<&MoveInstance> {
-		if self.moves.len() > index {
-			return Some(&self.moves[index]);
-		} else {
-			return None;
-		}
-	}
+	pub fn moves_to_instance(moves: Vec<PokemonMove>) -> Vec<MoveInstance> {
+		moves.iter().map(|mv| MoveInstance {
+			move_instance: mv.clone(),
+			remaining_pp: mv.pp,				
+		}).collect()
+	}	
+	
+}
 
-	pub fn get_moves_from_level(pokedex: &Pokedex, pokemon: &Pokemon, level: u8) -> Vec<PokemonMove> {
-		let mut moves = Vec::new();
-		for index in 0..level+1 {
-			if let Some(pkmn_move_str) = pokemon.learnable_moves.get(&index) {
-				for string in pkmn_move_str {
-					match pokedex.move_list.get(string) {
-						Some(pokemon_move) => {
-							moves.push(pokemon_move.clone());
-						}
-						None => {
-							warn!("Could not add pokemon move {} to {}", string, pokemon.name)
-						}
-					}
-				}								
-			}
-		}
-		while moves.len() > 4 {
-			moves.remove(0);
-		}
-		return moves;
+impl Display for PokemonInstance {
+
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		write!(f, "Lv. {} {}", self.level, &self.pokemon.name)
 	}
 	
-	
+}
+
+pub fn get_stats(pokemon: &Pokemon, ivs: StatSet, evs: StatSet, level: u8) -> LargeStatSet {
+    LargeStatSet {
+		hp: calculate_hp(pokemon.base_hp, ivs.hp, evs.hp, level),
+		atk: calculate_stat(pokemon.base_atk, ivs.atk, evs.atk, level),
+		def: calculate_stat(pokemon.base_def, ivs.def, evs.def, level),
+		sp_atk: calculate_stat(pokemon.base_sp_atk, ivs.sp_atk, evs.sp_atk, level),
+		sp_def: calculate_stat(pokemon.base_sp_def, ivs.sp_def, evs.sp_def, level),
+		speed: calculate_stat(pokemon.base_speed, ivs.speed, evs.speed, level),
+	}
+}
+
+pub fn calculate_stat(base_stat: u8, iv_stat: u8, ev_stat: u8, level: u8) -> u16 { //add item check
+	let nature = 1.0;
+   (((2.0 * base_stat as f64 + iv_stat as f64 + ev_stat as f64) * level as f64 / 100.0 + 5.0).floor() * nature).floor() as u16
+}
+
+pub fn calculate_hp(base_hp: u8, iv_hp: u8, ev_hp: u8, level: u8) -> u16 {
+   ((2.0 * base_hp as f64 + iv_hp as f64 + ev_hp as f64) * level as f64 / 100.0 + level as f64 + 10.0).floor() as u16
 }

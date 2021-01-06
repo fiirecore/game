@@ -11,6 +11,11 @@ use super::world_manager::WorldManager;
 impl WorldManager {
 
     pub fn input(&mut self, context: &mut GameContext) {
+
+        if context.fkeys[0] == 1 {
+			context.battle_context.random_wild_battle(&mut context.random);
+        }
+
         if context.keys[6] == 1 {
             self.player_gui.toggle();
         }

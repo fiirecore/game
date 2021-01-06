@@ -6,3 +6,12 @@ pub struct MoveInstance {
 	pub remaining_pp: u8,
 	
 }
+
+impl MoveInstance {
+
+	pub fn use_move(&mut self) -> PokemonMove {
+		self.remaining_pp -= 1;
+		self.move_instance.clone()
+	}
+
+}

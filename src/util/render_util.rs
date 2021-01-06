@@ -47,6 +47,16 @@ pub fn draw_flip(ctx: &mut Context, g: &mut GlGraphics, tex: &Texture, x: isize,
 	
 }
 
+pub fn draw_o_bottom(ctx: &mut Context, g: &mut GlGraphics, texture: &Option<Texture>, x: isize, y: isize) {
+	if let Some(texture) = texture {
+		draw_bottom(ctx, g, texture, x, y);
+	}
+}
+
+pub fn draw_bottom(ctx: &mut Context, g: &mut GlGraphics, texture: &Texture, x: isize, y: isize) {
+	draw(ctx, g, texture, x, y - texture.get_height() as isize);
+}
+
 pub fn draw_rect(ctx: &mut Context, g: &mut GlGraphics, color: Color, x: isize, y: isize, width: usize, height: usize) {
 	//let rectangle = graphics::Mesh::new_rectangle(ctx, graphics::DrawMode::fill(), Rect::new_i32(x as i32, y as i32, width as i32, height as i32), color).expect("Could not create rectangle");
 	//graphics::draw(ctx, &rectangle, (ggez::mint::Point2 { x: 0.0, y: 0.0 },));

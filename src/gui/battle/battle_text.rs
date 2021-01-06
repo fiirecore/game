@@ -5,19 +5,15 @@ use crate::engine::text::TextRenderer;
 
 //use crate::game::battle::battle_manager::BattleManager;
 
-use crate::game::battle::battle::Battle;
-use crate::gui::battle::pokemon_gui::PokemonGui;
+use crate::entity::entity::Entity;
 use crate::gui::gui::{GuiComponent, GuiText};
+use crate::util::timer::Timer;
 
-use super::battle_gui::BattleActivatable;
-use super::pokemon_gui::OpponentPokemonGui;
-use super::pokemon_gui::PlayerPokemonGui;
 //use crate::gui::battle::battle_gui::BattleGuiComponent;
 
 pub struct BattleText {
 	
 	alive: bool,
-	focus: bool,
 
 	x: isize,
 	y: isize,
@@ -26,15 +22,12 @@ pub struct BattleText {
 	
 	pub text: String,
 	pub font_id: usize,
+
 	counter: u16,
 
 	pub can_continue: bool,
 
-	pub next: u8,
-	phrase: u8,
-
-	button_pos: i8,
-	button_dir: i8,
+	pub timer: Timer,
 	
 }
 
@@ -45,7 +38,6 @@ impl BattleText {
 		BattleText {
 
 			alive: false,
-			focus: false,
 
 			x: 11,
 			y: 11,
@@ -58,11 +50,13 @@ impl BattleText {
 
 			can_continue: false,
 
-			next: 0,
-			phrase: 0,
+			//next: 0,
+			//phrase: 0,
 
-			button_pos: 0,
-			button_dir: 1,
+			timer: Timer::new(60),
+
+			//button_pos: 0,
+			//button_dir: 1,
 
 		}
 		
@@ -75,11 +69,30 @@ impl BattleText {
 		self.text.push('!');
 	}
 
+	pub fn update_faint(&mut self, pokemon: &String) {
+		self.text = pokemon.clone();
+		self.text.push_str(" fainted!");
+	}
+
 	fn reset(&mut self) {
 		self.counter = 0;
-		self.next = 0;
-		self.phrase = 0;
+		//self.next = 0;
+		//self.phrase = 0;
 		self.can_continue = false;
+		self.timer.despawn();
+	}
+
+	pub fn update(&mut self) {
+		if self.is_active() {
+			if !self.can_continue {
+				if self.counter as usize <= self.text.len() * 4 {
+					self.counter+=1;
+				} else {
+					self.counter = self.text.len() as u16 * 4;
+					self.can_continue = true;
+				}
+			}
+		}
 	}
 	
 }
@@ -93,8 +106,7 @@ impl GuiComponent for BattleText {
 	
 	fn disable(&mut self) {
 		self.alive = false;
-		self.focus = false;
-		self.reset();
+		self.timer.despawn();
 	}
 	
 	fn is_active(& self) -> bool {
@@ -102,20 +114,7 @@ impl GuiComponent for BattleText {
 	}
 
 	fn update(&mut self, _context: &mut GameContext) {
-		if self.is_active() {
-			if self.can_continue {
-				if self.button_pos % (4*8) == 0 || self.button_pos == 0 {
-					self.button_dir *= -1;
-				}
-				self.button_pos += self.button_dir;
-			}
-			if self.counter as usize <= self.text.len() * 4 && !self.can_continue {
-				self.counter+=1;
-			} else {
-				self.counter = self.text.len() as u16 * 4;
-				self.can_continue = true;
-			}
-		}
+		println!("Wrong update method for battle text");
 	}
 
 	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
@@ -130,9 +129,6 @@ impl GuiComponent for BattleText {
 				count+=1;
 			}
 			tr.render_text_from_left(ctx, g, self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y);
-			if self.can_continue {
-				tr.render_button(ctx, g, self.text.as_str(), self.font_id, self.button_pos / 8, self.panel_x + self.x, self.panel_y + self.y /*- 2*/);
-			}
 		}
 	}
 
@@ -155,6 +151,8 @@ impl GuiText for BattleText {
 
 }
 
+/*
+
 impl BattleActivatable for BattleText {
 
 	fn focus(&mut self) {
@@ -173,7 +171,7 @@ impl BattleActivatable for BattleText {
 		if context.keys[0] == 1 {
 			if self.can_continue {
 				if self.phrase == 0 {
-					if battle.player_pokemon.speed > battle.opponent_pokemon.speed {
+					if battle.player().base.speed > battle.opponent().base.speed {
 						op_gui.update_gui(battle);
 					} else {
 						pp_gui.update_gui(battle);
@@ -183,7 +181,7 @@ impl BattleActivatable for BattleText {
 					self.counter = 0;
 					self.can_continue = false;
 				} else if self.phrase == 1 {
-					if battle.player_pokemon.speed > battle.opponent_pokemon.speed {
+					if battle.player().base.speed > battle.opponent().base.speed {
 						pp_gui.update_gui(battle);
 					} else {
 						op_gui.update_gui(battle);
@@ -201,3 +199,5 @@ impl BattleActivatable for BattleText {
 	}
 
 }
+
+*/

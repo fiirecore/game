@@ -68,18 +68,12 @@ impl GameMap for WarpMap {
                     match player.direction {
                         Direction::Up => {
                             if player.coords.y - 1 == npc.y {
-                                npc.interact(player.direction);
-                                if let Some(pokemon) = &npc.pokemon {
-                                    context.battle = Some(pokemon[0].clone());
-                                }
+                                npc.interact(player.direction, context);
                             }
                         },
                         Direction::Down => {
                             if player.coords.y + 1 == npc.y {
-                                npc.interact(player.direction);
-                                if let Some(pokemon) = &npc.pokemon {
-                                    context.battle = Some(pokemon[0].clone());
-                                }
+                                npc.interact(player.direction, context);
                             }
                         },
                         _ => {}
@@ -88,18 +82,12 @@ impl GameMap for WarpMap {
                     match player.direction {
                         Direction::Right => {
                             if player.coords.x + 1 == npc.x {
-                                npc.interact(player.direction);
-                                if let Some(pokemon) = &npc.pokemon {
-                                    context.battle = Some(pokemon[0].clone());
-                                }
+                                npc.interact(player.direction, context);
                             }
                         },
                         Direction::Left => {
                             if player.coords.x - 1 == npc.x {
-                                npc.interact(player.direction);
-                                if let Some(pokemon) = &npc.pokemon {
-                                    context.battle = Some(pokemon[0].clone());
-                                }
+                                npc.interact(player.direction, context);
                             }
                         },
                         _ => {}

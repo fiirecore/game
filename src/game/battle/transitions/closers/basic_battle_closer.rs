@@ -1,6 +1,10 @@
 use crate::entity::entity::Entity;
-use crate::game::battle::transitions::traits::battle_transition::BattleTransition;
 use crate::engine::game_context::GameContext;
+use crate::entity::entity::Ticking;
+use crate::game::battle::transitions::battle_transition_traits::BattleCloser;
+use crate::game::battle::transitions::battle_transition_traits::BattleTransition;
+use crate::util::traits::Completable;
+use crate::util::traits::Loadable;
 
 pub struct BasicBattleCloser {
 
@@ -24,14 +28,39 @@ impl BasicBattleCloser {
 
 }
 
+impl BattleCloser for BasicBattleCloser {
+    
+}
+
 impl BattleTransition for BasicBattleCloser {
 
     fn reset(&mut self) {
         self.finished = true;
+    }    
+
+}
+
+impl Loadable for BasicBattleCloser {
+
+    fn load(&mut self) {
+        
     }
 
     fn on_start(&mut self, context: &mut GameContext) {
+
     }
+
+}
+
+impl Completable for BasicBattleCloser {
+
+    fn is_finished(&self) -> bool {
+        return self.finished;
+    }
+
+}
+
+impl Ticking for BasicBattleCloser {
 
     fn update(&mut self, context: &mut GameContext) {
     }
@@ -39,9 +68,6 @@ impl BattleTransition for BasicBattleCloser {
     fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut crate::engine::text::TextRenderer) {
     }
 
-    fn is_finished(&self) -> bool {
-        return self.finished;
-    }
 }
 
 impl Entity for BasicBattleCloser {

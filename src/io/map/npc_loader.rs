@@ -91,18 +91,12 @@ pub fn load_npc<P>(path: P) -> Option<NPC> where P: AsRef<Path> {
 
             match npc_entry {
                 Ok(npc) => {
-                    let party;
-                    if let Some(pkmn_party) = npc.trainer {
-                        party = Some(pkmn_party.pokemon);
-                    } else {
-                        party = None;
-                    }
                     return Some(NPC {
                         x: npc.location.x,
                         y: npc.location.y,
                         direction: Direction::from_int(npc.location.direction).unwrap_or(Direction::Down),
                         sprite: npc.identifier.sprite,
-                        pokemon: party,
+                        trainer: npc.trainer,
                     });
                 },
                 Err(err) => {

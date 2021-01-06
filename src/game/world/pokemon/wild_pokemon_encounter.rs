@@ -1,21 +1,26 @@
-use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon_instance::PokemonInstance}};
+use oorandom::Rand32;
+
+use crate::game::pokedex::pokemon::stat_set::StatSet;
+use crate::io::data::saved_pokemon::SavedPokemon;
 
 #[derive(Copy, Clone)]
 pub struct WildPokemonEncounter {
 
+    pub pokemon_id: usize,
     pub min_level: u8,
     pub max_level: u8,
-    pub pokemon_id: usize,
 
 }
 
 impl WildPokemonEncounter {
 
-    pub fn generate_instance(&mut self, pokedex: &Pokedex, context: &mut GameContext) -> PokemonInstance {
-        if self.min_level == self.max_level {
-            self.max_level+=1;
-        }
-        return PokemonInstance::generate(pokedex, context, pokedex.pokemon_from_id(self.pokemon_id), self.min_level, self.max_level);
+    //pub fn generate_instance(&self, pokedex: &Pokedex, context: &mut GameContext) -> PokemonInstance {
+    //    return PokemonInstance::generate(pokedex, context, pokedex.pokemon_from_id(self.pokemon_id), self.min_level, self.max_level);
+    //}
+
+    pub fn generate_saved(&self, random: &mut Rand32) -> SavedPokemon {
+        let ivs = StatSet::iv_random(random);
+        return SavedPokemon::generate(random, self.pokemon_id, self.min_level, self.max_level, Some(ivs), None);
     }
 
 }

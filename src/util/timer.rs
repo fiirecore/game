@@ -28,6 +28,10 @@ impl Timer {
         }        
     }
 
+    pub fn halfway(&self) -> bool {
+        return self.counter << 1 >= self.final_count;
+    }
+
     pub fn is_finished(&self) -> bool {
         return self.counter >= self.final_count;
     }
@@ -42,11 +46,12 @@ impl Entity for Timer {
 
     fn spawn(&mut self) {
         self.alive = true;
-        self.counter = 0;
+        self.reset();
     }
 
     fn despawn(&mut self) {
         self.alive = false;
+        self.reset();
     }
     
     fn is_alive(&self) -> bool {

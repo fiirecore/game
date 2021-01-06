@@ -2,9 +2,7 @@
 use crate::util::traits::PersistantDataLocation;
 use crate::util::traits::PersistantData;
 use std::path::PathBuf;
-use std::ffi::OsString;
 use std::fs::File;
-use std::env::current_exe;
 use std::io::BufWriter;
 use std::io::Read;
 use std::path::Path;
@@ -158,16 +156,15 @@ impl ConfigurationInToml {
 impl PersistantDataLocation for ConfigurationInToml {
 
 	fn load_from_file() -> Self {
-		let path: OsString;
 
 //		if cfg!(debug_assertions) {
-			let exe_path = current_exe();
-			if exe_path.is_err() {
-				return ConfigurationInToml::defaults();
-			}
-			let mut exe_path = exe_path.unwrap();
-			exe_path.pop();
-			path = exe_path.join(Path::new(CONFIGURATION_FILENAME)).into_os_string();
+			//let exe_path = current_exe();
+			//if exe_path.is_err() {
+			//	return ConfigurationInToml::defaults();
+			//}
+		//let mut exe_path = exe_path.unwrap();
+		//exe_path.pop();
+		let path = PathBuf::from("config").join(CONFIGURATION_FILENAME);
 //		} else {
 //			let dir = ProjectDirs::from("net", "Rhys Holloway", "Pokemon").unwrap();
 //			path = dir.config_dir().join(CONFIGURATION_FILENAME).into_os_string();

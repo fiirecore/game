@@ -18,15 +18,15 @@ pub struct IntroText { // and outro
 	panel_x: isize,
 	panel_y: isize,
 	
+	pub text: Vec<String>,
 
-	pub player_text: String,
-	pub text: String,
 	font_id: usize,
 	counter: u16,
 	
 	pub no_pause: bool,
 	pub can_continue: bool,
-	next: u8,
+
+	pub next: u8,
 
 	button_pos: i8,
 	button_dir: i8,
@@ -35,7 +35,7 @@ pub struct IntroText { // and outro
 
 impl IntroText {
 	
-	pub fn new(_panel_x: isize, _panel_y: isize) -> IntroText {
+	pub fn new(_panel_x: isize, _panel_y: isize, text: Vec<String>) -> IntroText {
 		
 		IntroText {
 
@@ -47,14 +47,14 @@ impl IntroText {
 			panel_x: _panel_x,
 			panel_y: _panel_y,
 
-			player_text: String::new(),
-			text: String::from("Intro Text"),
+			text: text,
+
 			font_id: 1,
 			counter: 0,
 
 			can_continue: false,
-			next: 0,
 			no_pause: false,
+			next: 0,
 			
 			button_pos: 0,
 			button_dir: 1,
@@ -63,23 +63,23 @@ impl IntroText {
 		
 	}
 
-	pub fn update_text(&mut self, text: String) {
-		self.text = text;
+	fn reset(&mut self) {
+		self.no_pause = false;
+		self.counter = 0;
+		self.can_continue = false;
+		self.button_pos = 0;
+		self.button_dir = 1;
 	}
-	
+
 }
 
 impl GuiComponent for IntroText {
 	
 	fn enable(&mut self) {
-		self.counter = 0;
-		self.can_continue = false;
-		self.button_pos = 0;
-		self.button_dir = 1;
 		self.next = 0;
-		self.no_pause = false;
 		self.focus = true;
 		self.alive = true;	
+		self.reset();
 	}
 	
 	fn disable(&mut self) {
@@ -95,19 +95,15 @@ impl GuiComponent for IntroText {
 	fn update(&mut self, _context: &mut GameContext) {
 		if self.is_active() {
 			if self.can_continue {
-				if self.button_pos % (4*8) == 0 || self.button_pos == 0 {
+				if self.button_pos % (4*8) == 0 {
 					self.button_dir *= -1;
 				}
 				self.button_pos += self.button_dir;
-			}
-			if self.counter as usize <= self.text.len() * 4 && !self.can_continue {
+			} else if self.counter as usize <= self.text[self.next as usize].len() * 4 {
 				self.counter+=1;
 			} else {
-				self.counter = self.text.len() as u16 * 4;
+				self.counter = self.text[self.next as usize].len() as u16 * 4;
 				self.can_continue = true;
-			}
-			if self.can_continue && self.no_pause {
-				self.next = 2;
 			}
 		}
 	}
@@ -116,7 +112,7 @@ impl GuiComponent for IntroText {
 		if self.is_active() {
 			let mut string = String::new();
 			let mut count = 0;
-			for character in self.text.chars() {
+			for character in self.text[self.next as usize].chars() {
 				if count >= self.counter / 4 {
 					break;
 				}
@@ -124,8 +120,8 @@ impl GuiComponent for IntroText {
 				count+=1;
 			}
 			tr.render_text_from_left(ctx, g, self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y);
-			if self.can_continue && !self.no_pause {
-				tr.render_button(ctx, g, self.text.as_str(), self.font_id, self.button_pos / 8, self.panel_x + self.x, self.panel_y + self.y /*- 2*/);
+			if self.can_continue && self.text.len() as u8 - 1 != self.next {
+				tr.render_button(ctx, g, self.get_text(), self.font_id, self.button_pos / 8, self.panel_x + self.x, self.panel_y + self.y /*- 2*/);
 			}
 		}
 		
@@ -153,7 +149,7 @@ impl BattleGuiComponent for IntroText {
 impl GuiText for IntroText {
 	
 	fn get_text(&self) -> &str {
-		self.text.as_str()
+		self.text[self.next as usize].as_str()
 	}
 
 	fn get_font_id(&self) -> usize {
@@ -178,10 +174,11 @@ impl Activatable for IntroText {
     }
 
 	fn input(&mut self, context: &mut GameContext) {
-		if context.keys[0] == 1 {
-			if self.can_continue {
-				self.next = 1;
-			}			
+		if self.can_continue {
+			if context.keys[0] == 1 && !self.no_pause {
+				self.reset();
+				self.next += 1;
+			}
 		}
 	}
 

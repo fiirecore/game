@@ -1,8 +1,9 @@
 use std::path::Path;
 
 use log::warn;
+use oorandom::Rand32;
 
-use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon_instance::PokemonInstance}};
+use crate::io::data::saved_pokemon::SavedPokemon;
 
 use super::{random_wild_pokemon_table::RandomWildPokemonTable, original_wild_pokemon_table::OriginalWildPokemonTable};
 
@@ -11,7 +12,9 @@ pub trait WildPokemonTable {
 
     fn encounter_rate(&self) -> u8;
 
-    fn generate(&mut self, pokedex: &Pokedex, context: &mut GameContext) -> PokemonInstance;
+    //fn generate(&mut self, pokedex: &Pokedex, context: &mut GameContext) -> PokemonInstance;
+
+    fn generate(&self, random: &mut Rand32) -> SavedPokemon;
 
 }
 

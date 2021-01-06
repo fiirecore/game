@@ -1,126 +1,175 @@
 use std::fmt::Display;
 
 use opengl_graphics::GlGraphics;
+use opengl_graphics::Texture;
 use piston_window::Context;
 use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
 
-use crate::game::pokedex::pokemon_move::move_instance::MoveInstance;
+use crate::game::pokedex::pokedex::Pokedex;
 use crate::game::pokedex::pokemon_move::move_category::MoveCategory;
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 use crate::game::pokedex::pokemon::pokemon_owned::OwnedPokemon;
-use crate::game::battle::battle_pokemon::*;
+use crate::game::pokedex::pokemon_move::pokemon_move::PokemonMove;
+use crate::io::data::pokemon_party::PokemonParty;
+use crate::util::file_util::asset_as_pathbuf;
+use crate::util::render_util::draw_bottom;
+use crate::util::texture_util::texture64_from_path;
 
 pub struct Battle {
 	
-	pub player_pokemon: BattlePokemon,
-	pub opponent_pokemon: BattlePokemon,
+	pub player_pokemon: Vec<OwnedPokemon>,
+	pub opponent_pokemon: Vec<PokemonInstance>,
 
-	pub finished: bool,
+	pub player_active: usize,
+	pub opponent_active: usize,
+
+	pub player_move: PokemonMove,
+	pub opponent_move: PokemonMove,
+
+	pub player_textures: Vec<Texture>,
+	pub opponent_textures: Vec<Texture>,
+
+	pub pmove_queued: bool,
+	pub omove_queued: bool,
+	pub faint_queued: bool,
 	
+}
+
+impl Default for Battle {
+	fn default() -> Self {
+		
+		Self {
+		
+			player_pokemon: Vec::new(),
+			opponent_pokemon: Vec::new(),
+
+			player_active: 0,
+			opponent_active: 0,
+
+			player_move: PokemonMove::empty(),
+			opponent_move: PokemonMove::empty(),
+
+			player_textures: Vec::new(),
+			opponent_textures: Vec::new(),
+
+			pmove_queued: false,
+			omove_queued: false,
+			faint_queued: false,
+		
+		}
+		
+	}
 }
 
 impl Battle {
 	
-	pub fn empty() -> Self {
-		
-		Self {
-		
-			player_pokemon: BattlePokemon::empty(),
-			opponent_pokemon:BattlePokemon::empty(),
-
-			finished: false,
-		
-		}
-		
-	}
 	
-	pub fn new(player_pokemon: OwnedPokemon, opponent_pokemon: PokemonInstance) -> Self {
+	
+	pub fn new(pokedex: &Pokedex, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Self {
 		
 		Self {
 			
-			player_pokemon: BattlePokemon::new(player_pokemon.instance),
-			opponent_pokemon: BattlePokemon::new(opponent_pokemon),
-
-			finished: false,
+			player_pokemon: player_pokemon.pokemon.iter().map(|pkmn|
+				pkmn.to_owned_pokemon(pokedex)
+			).collect(),
+			opponent_pokemon: opponent_pokemon.pokemon.iter().map(|pkmn| pkmn.to_pokemon(pokedex) ).collect(),
+			
+			..Battle::default()
 			
 		}
 		
 	}
 
-	fn get_move_damage(&self, pmove: &MoveInstance, pokemon: &BattlePokemon, recieving_pokemon: &BattlePokemon) -> usize {
-		let level = pokemon.instance.as_ref().unwrap().level;
-		if let Some(power) = pmove.move_instance.power {
-			match pmove.move_instance.category {
-				MoveCategory::Status => return 0,
-				MoveCategory::Physical => {
-					return (((2.0 * level as f64 / 5.0 + 2.0).floor() * pokemon.atk as f64 * power as f64 / recieving_pokemon.def as f64).floor() / 50.0).floor() as usize + 2;
-				},
-				MoveCategory::Special => {
-					return (((2.0 * level as f64 / 5.0 + 2.0).floor() * pokemon.sp_atk as f64 * power as f64 / recieving_pokemon.sp_def as f64).floor() / 50.0).floor() as usize + 2;
-				}
-			}
-		} else {
-			return 0;
-		}		
+	fn load_textures(&mut self) {
+		for i in &self.opponent_pokemon {
+			self.opponent_textures.push(texture64_from_path(asset_as_pathbuf(i.pokemon.path_normal_front.as_str())));
+		}
+		for i in &self.player_pokemon {
+			self.player_textures.push(texture64_from_path(asset_as_pathbuf(i.instance.pokemon.path_normal_back.as_str())));
+		}
 	}
-
 
 	pub fn load(&mut self) {
-
-		self.player_pokemon.load_texture(false);
-		self.opponent_pokemon.load_texture(true);
-		
+		self.load_textures();
 	}
 	
-	pub fn update(&mut self, _context: &mut GameContext) {
-		
-	}
-	
-	pub fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer, offset: u16, ppp_y_o: u8) {
-		self.opponent_pokemon.render(ctx, g, 144 - offset as isize, 74);
-		self.player_pokemon.render(ctx, g, 40 + offset as isize, 113 + ppp_y_o as isize);
-		//draw_o(ctx, g, &self.opponent_pokemon_texture, 144 - offset as isize, 74 - self.opponent_y_offset as isize); // fix with offset
-		//draw_o(ctx, g, &self.player_pokemon_texture, 40 + offset as isize, 113 - self.player_y_offset as isize + ppp_y_o as isize);
+	pub fn render(&self, ctx: &mut Context, g: &mut GlGraphics, offset: u16, ppp_y_o: u8) {
+		draw_bottom(ctx, g, &self.opponent_textures[self.opponent_active], 144 - offset as isize, 74);
+		draw_bottom(ctx, g, &self.player_textures[self.player_active], 40 + offset as isize, 113 + ppp_y_o as isize);
 	}
 
-	pub fn player_move(&mut self, index: usize) -> String {
-		if let Some(pmove) = self.player_pokemon.instance.as_ref().unwrap().get_move(index) {
-			let damage = self.get_move_damage(pmove, &self.player_pokemon, &self.opponent_pokemon);
-			if damage >= self.opponent_pokemon.current_hp {
-				self.opponent_pokemon.faint = true;
-			} else {
-				self.opponent_pokemon.current_hp -= damage;
-			}
-			return pmove.move_instance.name.clone();
+	pub fn queue_player_move(&mut self, index: usize) {
+		self.player_move = self.player_mut().moves[index].use_move();
+	}
+
+	pub fn queue_opponent_move(&mut self, context: &mut GameContext) {
+		let index = context.random.rand_range(0..self.opponent().moves.len() as u32) as usize;
+		self.opponent_move = self.opponent_mut().moves[index].use_move();
+	}
+
+	pub fn player_move(&mut self) {
+		let damage = get_move_damage(&self.player_move, &self.player_pokemon[self.player_active].instance, self.opponent());
+		let opponent = &mut self.opponent_pokemon[self.opponent_active];
+		if damage >= opponent.current_hp {
+			opponent.current_hp = 0;
+		} else {
+			opponent.current_hp -= damage;
 		}
-		return String::from("None");
 	}
 
-	pub fn opponent_move(&mut self, index: usize) -> String {
-		if let Some(pmove) = self.opponent_pokemon.instance.as_ref().unwrap().get_move(index) {
-			let damage = self.get_move_damage(pmove, &self.opponent_pokemon, &self.player_pokemon);
-			if damage >= self.player_pokemon.current_hp {
-				self.player_pokemon.faint = true;
-			} else {
-				self.player_pokemon.current_hp -= damage;
-			}
-			return pmove.move_instance.name.clone();
-		}	
-		return String::from("None");
+	pub fn opponent_move(&mut self) {
+		let damage = get_move_damage(&self.opponent_move, &self.opponent_pokemon[self.opponent_active], &self.player_pokemon[self.player_active].instance);
+		let player = &mut self.player_pokemon[self.player_active].instance;
+		if damage >= player.current_hp {
+			player.current_hp = 0;
+		} else {
+			player.current_hp -= damage;
+		}
+	}
+
+	pub fn player(&self) -> &PokemonInstance {
+		&self.player_pokemon[self.player_active].instance
+	}
+
+	pub fn player_mut(&mut self) -> &mut PokemonInstance {
+		&mut self.player_pokemon[self.player_active].instance
+	}
+
+	pub fn opponent(&self) -> &PokemonInstance {
+		&self.opponent_pokemon[self.opponent_active]
+	}
+
+	pub fn opponent_mut(&mut self) -> &mut PokemonInstance {
+		&mut self.opponent_pokemon[self.opponent_active]
 	}
 
 	pub fn run(&mut self) {
-		self.finished = true;
+		//self.finished = true;
 	}
 	
 //	fn render_above(&mut self, c: &mut Context, g: &mut GlGraphics) {}
 	
 }
 
+fn get_move_damage(pmove: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
+	if let Some(power) = pmove.power {
+		match pmove.category {
+			MoveCategory::Status => return 0,
+			MoveCategory::Physical => {
+				return (((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk as f64 * power as f64 / recieving_pokemon.base.def as f64).floor() / 50.0).floor() as u16 + 2;
+			},
+			MoveCategory::Special => {
+				return (((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() as u16+ 2;
+			}
+		}
+	} else {
+		return 0;
+	}		
+}
+
 impl Display for Battle {
 
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} vs. {}", self.player_pokemon, self.opponent_pokemon)
+        write!(f, "{} vs. {}", self.player(), self.opponent())
     }
 }

@@ -1,4 +1,6 @@
-use crate::{game::pokedex::{pokedex::Pokedex, pokemon::{pokemon_instance::PokemonInstance, pokemon_owned::OwnedPokemon, stat_set::StatSet}, pokemon_move::pokemon_move::SavedPokemonMove}, util::traits::PersistantData};
+use crate::game::pokedex::pokedex::Pokedex;
+use crate::game::pokedex::pokemon::pokemon_owned::OwnedPokemon;
+use crate::util::traits::PersistantData;
 use crate::util::traits::PersistantDataLocation;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -9,12 +11,15 @@ use serde_derive::{Deserialize, Serialize};
 use crate::entity::util::direction::Direction;
 use std::fs::read_to_string;
 
+use super::pokemon_party::PokemonParty;
+use super::saved_pokemon::SavedPokemon;
+
 static SAVE_FILENAME: &str = "player.json";
 #[derive(Serialize, Deserialize)]
 pub struct PlayerData {
 
 	pub location: Location,
-	pub party: Party,
+	pub party: PokemonParty,
 
 }
 
@@ -22,7 +27,7 @@ impl Default for PlayerData {
     fn default() -> Self {
 		Self {
 			
-			party: Party {
+			party: PokemonParty {
 
 				pokemon: Vec::new(),
 
@@ -44,8 +49,14 @@ impl Default for PlayerData {
 
 impl PlayerData {
 
+	pub fn default_add(&mut self, pokedex: &Pokedex) {
+		self.add_pokemon_to_party(OwnedPokemon::get_default0(&pokedex));
+		self.add_pokemon_to_party(OwnedPokemon::get_default1(&pokedex));
+		self.add_pokemon_to_party(OwnedPokemon::get_default2(&pokedex));
+	}
+
 	pub fn add_pokemon_to_party(&mut self, pokemon: OwnedPokemon) {
-		self.party.pokemon.push(SavedPokemon::from_owned(pokemon));
+		self.party.pokemon.push(SavedPokemon::from_owned_pokemon(pokemon));
 	}
 
     pub fn load_from_file() -> PlayerData {
@@ -158,80 +169,5 @@ pub struct Location {
 	pub x: isize,
 	pub y: isize,
 	pub direction: String,
-
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Party {
-
-	pub pokemon: Vec<SavedPokemon>,
-
-}
-
-#[derive(Debug, Hash, Clone, Serialize, Deserialize)]
-pub struct SavedPokemon {
-
-	pub pokemon_id: usize,
-	pub level: u8,
-	pub ivs: StatSet,
-	pub evs: StatSet,
-	pub moves: [Option<SavedPokemonMove>; 4],
-	pub exp: usize,
-	pub friendship: u8,
-
-}
-
-impl SavedPokemon {
-
-	pub fn from_owned(pokemon: OwnedPokemon) -> Self {
-
-		let mut vec_moves: Vec<Option<SavedPokemonMove>> = pokemon.instance.moves.iter().map(|moves| Some(SavedPokemonMove {
-			name: moves.move_instance.name.clone(),
-			remaining_pp: moves.remaining_pp,
-		})).collect();
-
-		while vec_moves.len() < 4 {
-			vec_moves.push(None);
-		}
-
-		let arr = [vec_moves[0].clone(), vec_moves[1].clone(), vec_moves[2].clone(), vec_moves[3].clone()];
-
-		Self {
-
-			pokemon_id: pokemon.instance.pokemon.number,
-			level: pokemon.instance.level,
-			ivs: pokemon.instance.ivs,
-			evs: pokemon.instance.evs,
-			moves: arr,
-			exp: pokemon.exp,
-			friendship: pokemon.friendship,
-
-		}
-
-	}
-
-	pub fn to_instance(&self, pokedex: &Pokedex) -> OwnedPokemon {
-
-		OwnedPokemon {
-
-			instance: PokemonInstance {
-
-				pokemon: pokedex.pokemon_from_id(self.pokemon_id).clone(),
-
-				moves: SavedPokemonMove::to_instance(&self.moves, pokedex),
-
-				level: self.level,
-
-				ivs: self.ivs,
-				evs: self.evs,
-
-			},
-
-			exp: self.exp,
-			friendship: self.friendship,
-
-		}
-
-	}
 
 }

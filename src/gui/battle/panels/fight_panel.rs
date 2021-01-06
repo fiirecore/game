@@ -85,7 +85,6 @@ impl GuiComponent for FightPanel {
         self.active = false;
         self.move_panel.disable();
         self.unfocus();
-        self.reset_vars();
     }
 
     fn is_active(& self) -> bool {

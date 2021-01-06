@@ -1,5 +1,6 @@
+use crate::engine::game_context::GameContext;
 use crate::entity::util::direction::Direction;
-use crate::io::data::player_data::SavedPokemon;
+use crate::io::data::trainer::Trainer;
 
 pub struct NPC {
 
@@ -11,14 +12,21 @@ pub struct NPC {
     pub direction: Direction,
     pub sprite: u8,
 
-    pub pokemon: Option<Vec<SavedPokemon>>,
+    pub trainer: Option<Trainer>,
 
 }
 
 impl NPC {
 
-    pub fn interact(&mut self, direction: Direction) {
+    pub fn interact(&mut self, direction: Direction, context: &mut GameContext) {
         self.direction = direction.inverse();
+        self.test_trainer(context);
+    }
+
+    fn test_trainer(&self, context: &mut GameContext) {
+        if let Some(trainer) = &self.trainer {
+            context.battle_context.trainer_battle(trainer);
+        }
     }
 
 }

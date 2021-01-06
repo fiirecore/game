@@ -1,9 +1,12 @@
 use crate::engine::game_context::GameContext;
 use crate::entity::entity::Entity;
-use crate::game::battle::transitions::traits::battle_opener::BattleOpener;
-use crate::game::battle::transitions::traits::battle_transition::BattleTransition;
+use crate::entity::entity::Ticking;
+use crate::game::battle::transitions::battle_transition_traits::BattleOpener;
+use crate::game::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::util::render_util::draw_rect;
 use crate::util::timer::Timer;
+use crate::util::traits::Completable;
+use crate::util::traits::Loadable;
 
 pub struct TrainerBattleOpener {
 
@@ -50,9 +53,29 @@ impl BattleTransition for TrainerBattleOpener {
         self.shrink_by = 1;
     }
 
+}
+
+impl Loadable for TrainerBattleOpener {
+
+    fn load(&mut self) {
+        
+    }
+
     fn on_start(&mut self, _context: &mut GameContext) {
         self.start_timer.spawn();
     }
+
+}
+
+impl Completable for TrainerBattleOpener {
+
+    fn is_finished(&self) -> bool {
+        return self.finished;
+    }
+
+}
+
+impl Ticking for TrainerBattleOpener {
 
     fn update(&mut self, _context: &mut GameContext) {
         if self.start_timer.is_finished() {
@@ -96,9 +119,6 @@ impl BattleTransition for TrainerBattleOpener {
         );
     }
 
-    fn is_finished(&self) -> bool {
-        return self.finished;
-    }
 }
 
 impl BattleOpener for TrainerBattleOpener {

@@ -25,7 +25,15 @@ impl OwnedPokemon {
 		
 	}
 
-	pub fn get_default(pokedex: &Pokedex) -> OwnedPokemon {
+	pub fn get_default0(pokedex: &Pokedex) -> OwnedPokemon {
+		return OwnedPokemon::new(PokemonInstance::new(pokedex, pokedex.pokemon_from_id(1), StatSet::uniform(15), 5));
+	}
+
+	pub fn get_default1(pokedex: &Pokedex) -> OwnedPokemon {
+		return OwnedPokemon::new(PokemonInstance::new(pokedex, pokedex.pokemon_from_id(4), StatSet::uniform(15), 5));
+	}
+
+	pub fn get_default2(pokedex: &Pokedex) -> OwnedPokemon {
 		return OwnedPokemon::new(PokemonInstance::new(pokedex, pokedex.pokemon_from_id(7), StatSet::uniform(15), 5));
 	}
 	

@@ -1,8 +1,10 @@
 use std::{ffi::OsStr, path::Path};
 use log::warn;
+use oorandom::Rand32;
 use serde_derive::Deserialize;
 
-use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon_instance::PokemonInstance}, util::file_util::UNKNOWN_FILENAME_ERR};
+use crate::io::data::saved_pokemon::SavedPokemon;
+use crate::util::file_util::UNKNOWN_FILENAME_ERR;
 
 use super::{wild_pokemon_encounter::WildPokemonEncounter, wild_pokemon_table::WildPokemonTable};
 
@@ -48,6 +50,17 @@ impl OriginalWildPokemonTable {
 
     }
 
+    fn get_counter(&self, random: &mut Rand32) -> usize {
+        let chance = random.rand_range(1..100) as usize;
+        let mut chance_counter = 0;
+        let mut counter = 0;
+        while chance > chance_counter {
+            chance_counter += CHANCES[counter];
+            counter+=1;            
+        }
+        return counter - 1;
+    }
+
 }
 
 impl WildPokemonTable for OriginalWildPokemonTable {
@@ -56,15 +69,12 @@ impl WildPokemonTable for OriginalWildPokemonTable {
         return self.encounter_ratio;
     }
 
-    fn generate(&mut self, pokedex: &Pokedex, context: &mut GameContext) -> PokemonInstance {
-        let chance = context.random.rand_range(1..100) as usize;
-        let mut chance_counter = 0;
-        let mut counter = 0;
-        while chance > chance_counter {
-            chance_counter += CHANCES[counter];
-            counter+=1;            
-        }
-        return self.table[counter - 1].generate_instance(pokedex, context);
+    //fn generate(&mut self, pokedex: &Pokedex, context: &mut GameContext) -> PokemonInstance {
+    //    return self.table[self.get_counter(context)].generate_instance(pokedex, context);
+    //}
+
+    fn generate(&self, random: &mut Rand32) -> SavedPokemon {
+        return self.table[self.get_counter(random)].generate_saved(random);
     }
 
 }
