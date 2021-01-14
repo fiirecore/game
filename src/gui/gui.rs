@@ -26,18 +26,18 @@ pub struct Panel {
 
 impl Panel {
 	
-	pub fn new(_texture_path: &str, _x: isize, _y: isize) -> Panel {
+	pub fn new(texture_path: &str, x: isize, y: isize) -> Panel {
 		
 		Panel {
 			
 			alive: false,
 			components: Vec::new(),
 			
-			x: _x,
-			y: _y,
+			x: x,
+			y: y,
 			
 			background_texture: None,
-			texture_path: asset_as_pathbuf(_texture_path),
+			texture_path: asset_as_pathbuf(texture_path),
 			
 		}
 		
@@ -85,7 +85,7 @@ impl GuiComponent for Panel {
 	}
 	
 	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-		draw_o(ctx, g, &self.background_texture, self.x as isize, self.y as isize);
+		draw_o(ctx, g, self.background_texture.as_ref(), self.x as isize, self.y as isize);
 		for component in &self.components {
 			component.render(ctx, g, tr);
 		}

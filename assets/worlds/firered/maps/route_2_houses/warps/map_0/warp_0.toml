@@ -1,0 +1,9 @@
+x = 7
+y = 0xA
+
+[destination]
+world_id = "firered"
+map_id = "world"
+map_index = 20
+x = 5
+y = 0x33

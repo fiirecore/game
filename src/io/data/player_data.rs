@@ -7,12 +7,12 @@ use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use log::info;
 use log::warn;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use crate::entity::util::direction::Direction;
 use std::fs::read_to_string;
 
-use super::pokemon_party::PokemonParty;
-use super::saved_pokemon::SavedPokemon;
+use super::pokemon::pokemon_party::PokemonParty;
+use super::pokemon::saved_pokemon::SavedPokemon;
 
 static SAVE_FILENAME: &str = "player.json";
 #[derive(Serialize, Deserialize)]
@@ -165,7 +165,7 @@ pub struct Location {
 
 	pub world_id: String,
 	pub map_set_id: String,
-	pub map_set_num: usize,
+	pub map_set_num: u16,
 	pub x: isize,
 	pub y: isize,
 	pub direction: String,

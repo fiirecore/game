@@ -5,6 +5,6 @@ y = 0x02
 [destination]
 world_id = "firered"
 map_id = "pallet_town_player_house"
-map_set_num = 0
-dest_x = 0x0A
-dest_y = 0x02
+map_index = 0
+x = 0x0A
+y = 0x02

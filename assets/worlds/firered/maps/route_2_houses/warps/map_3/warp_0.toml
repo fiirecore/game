@@ -1,0 +1,9 @@
+x = 7
+y = 0xB
+
+[destination]
+world_id = "firered"
+map_id = "viridian_forest"
+map_index = 0
+x = 5
+y = 9

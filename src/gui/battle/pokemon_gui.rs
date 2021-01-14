@@ -1,6 +1,6 @@
 use crate::entity::entity::Entity;
 use crate::entity::util::direction::Direction;
-use crate::game::battle::battle::Battle;
+use crate::battle::battle::Battle;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 use crate::engine::text::TextRenderer;
@@ -49,14 +49,6 @@ impl PlayerPokemonGui {
 		self.health_text.update_position(self.x + x, self.y + y);
 		self.health_bar.update_position(self.x + x, self.y + y);
 	}	
-
-	pub fn update_hp(&mut self, current_health: u16, max_health: u16)  {
-		self.health_bar.update_bar(current_health, max_health);
-		let mut ch = current_health.to_string();
-		ch.push('/');
-		ch.push_str(max_health.to_string().as_str());
-		self.health_text.text = ch;
-	}
 
 }
 
@@ -111,8 +103,16 @@ impl PokemonGui for PlayerPokemonGui {
 		self.update_hp(battle.player().current_hp, battle.player().base.hp);
 	}
 
-	fn freeze(&self) -> bool {
-		self.health_bar.is_moving()
+	fn update_hp(&mut self, current_health: u16, max_health: u16)  {
+		self.health_bar.update_bar(current_health, max_health);
+		let mut ch = current_health.to_string();
+		ch.push('/');
+		ch.push_str(max_health.to_string().as_str());
+		self.health_text.text = ch;
+	}
+
+	fn health_bar(&mut self) -> &mut HealthBar {
+		&mut self.health_bar
 	}
 
 }
@@ -192,11 +192,15 @@ impl PokemonGui for OpponentPokemonGui {
 		let mut olstr = String::from("Lv");
 		olstr.push_str(battle.opponent().level.to_string().as_str());
 		self.level.text = olstr;
-		self.health_bar.update_bar(battle.opponent().current_hp, battle.opponent().base.hp);
+		self.update_hp(battle.opponent().current_hp, battle.opponent().base.hp)
 	}
 
-	fn freeze(&self) -> bool {
-		self.health_bar.is_moving()
+	fn update_hp(&mut self, current_hp: u16, max_hp: u16) {
+		self.health_bar.update_bar(current_hp, max_hp);
+	}
+
+	fn health_bar(&mut self) -> &mut HealthBar {
+		&mut self.health_bar
 	}
 
 }
@@ -209,6 +213,8 @@ pub trait PokemonGui { // To-do: sort out trait or have it extend something
 
 	fn update_gui(&mut self, battle: &Battle);
 
-	fn freeze(&self) -> bool;
+	fn update_hp(&mut self, current_hp: u16, max_hp: u16);
+
+	fn health_bar(&mut self) -> &mut HealthBar;
 
 }

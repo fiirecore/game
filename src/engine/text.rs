@@ -73,11 +73,11 @@ impl TextRenderer {
 
     pub fn render_button(&self, ctx: &mut Context, g: &mut GlGraphics, text: &str, font_id: usize, offset: i8, x: isize, y: isize) {
         let len = self.text_pixel_length(font_id, text) as isize;
-        draw_o(ctx, g, &self.button, x + len, y + offset as isize + 5);
+        draw_o(ctx, g, self.button.as_ref(), x + len, y + offset as isize + 5);
     }
 
     pub fn render_cursor(&self, ctx: &mut Context, g: &mut GlGraphics, x: isize, y: isize) {
-        draw_o(ctx, g, &self.cursor, x, y);
+        draw_o(ctx, g, self.cursor.as_ref(), x, y);
     }
 
 }

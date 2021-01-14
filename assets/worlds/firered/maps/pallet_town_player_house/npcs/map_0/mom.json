@@ -1,6 +1,6 @@
 {
 	"identifier": {
-		"npc_type": "NPC",
+		"name": "Mom",
 		"sprite": 88
 	},
 	"location": {

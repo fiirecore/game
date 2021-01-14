@@ -141,9 +141,9 @@ impl Game {
     }
 
     fn update(&mut self, args: &UpdateArgs) {
-        if self.game_context.fkeys[2] == 1 {
-            self.game_context.app_console.toggle();
-        }
+        // if self.game_context.fkeys[2] == 1 {
+        //     self.game_context.app_console.toggle();
+        // }
         self.scene_manager.input(&mut self.game_context);
         self.key_update();
         self.scene_manager.update(args, &mut self.game_context);
@@ -156,7 +156,7 @@ impl Game {
         g.draw(args.viewport(), |_, g| {
 			clear([0.0, 0.0, 0.0, 1.0], g);
             self.scene_manager.render(&mut ctx, g, &mut self.text_renderer);
-            self.game_context.app_console.render(&mut ctx, g, &mut self.text_renderer);
+            //self.game_context.app_console.render(&mut ctx, g, &mut self.text_renderer);
         });
 
     }

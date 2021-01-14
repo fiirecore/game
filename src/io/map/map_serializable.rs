@@ -1,4 +1,4 @@
-use serde_derive::Deserialize;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct MapConfig {
@@ -9,6 +9,7 @@ pub struct MapConfig {
     pub warp_map: Option<TomlWarpMap>,
 
     pub settings: Option<TomlMapSettings>,
+    pub wild: Option<TomlWildEntry>,
 
 }
 
@@ -18,15 +19,29 @@ pub struct MapIdentifier {
     pub world_id: String,
     pub map_files: Vec<String>,
 
+    pub name: Option<String>,
+
+}
+
+impl MapIdentifier {
+
+    pub fn name(&self) -> String {
+        if let Some(name) = &self.name {
+            return name.clone();
+        } else {
+            return String::from("Map");
+        }
+    }
+
 }
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct TomlJigsawMap {
 
-    pub piece_index: usize,
+    pub piece_index: u16,
     pub x: isize,
     pub y: isize,
-    pub connections: Vec<usize>,
+    pub connections: Vec<u16>,
 
 }
 
@@ -40,7 +55,12 @@ pub struct TomlWarpMap {
 #[derive(Debug, Deserialize)]
 pub struct TomlMapSettings {
 
-    pub encounter_type: Option<String>,
-    pub wild_tiles: Option<Vec<u16>>,
+}
 
+#[derive(Debug, Deserialize)]
+pub struct TomlWildEntry {
+
+    pub encounter_type: String,
+    pub wild_tiles: Vec<u16>,
+    
 }

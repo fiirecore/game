@@ -4,7 +4,7 @@ use piston_window::Context;
 use crate::engine::game_context::GameContext;
 use crate::engine::text::TextRenderer;
 use crate::entity::entity::Entity;
-use crate::game::battle::battle::Battle;
+use crate::battle::battle::Battle;
 use crate::gui::gui::GuiComponent;
 use crate::util::traits::Loadable;
 

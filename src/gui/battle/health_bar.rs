@@ -73,6 +73,11 @@ impl HealthBar {
 	pub fn get_width(&self) -> u8 {
 		return self.previous_width;
 	}
+
+	fn reset(&mut self) {
+		self.width = 48;
+		self.previous_width = self.width;
+	}
 	
 }
 
@@ -80,10 +85,12 @@ impl GuiComponent for HealthBar {
 	
 	fn enable(&mut self) {
 		self.alive = true;
+		self.reset();
 	}
 	
 	fn disable(&mut self) {
 		self.alive = true;
+		self.reset();
 	}
 	
 	fn is_active(& self) -> bool {

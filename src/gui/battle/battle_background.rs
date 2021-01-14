@@ -28,9 +28,9 @@ impl BattleBackground {
     }
 
     pub fn render(&self, ctx: &mut Context, g: &mut GlGraphics, offset: u16) {
-        draw_o(ctx, g, &self.background_texture, 0, 1);
-        draw_o(ctx, g, &self.ground_texture, 113 - offset as isize, 50);
-		draw_o(ctx, g, &self.ground_texture, 0 + offset as isize, 103);
+        draw_o(ctx, g, self.background_texture.as_ref(), 0, 1);
+        draw_o(ctx, g, self.ground_texture.as_ref(), 113 - offset as isize, 50);
+		draw_o(ctx, g, self.ground_texture.as_ref(), 0 + offset as isize, 103);
     }
 
 }

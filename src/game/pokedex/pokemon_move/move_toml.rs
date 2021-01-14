@@ -1,6 +1,6 @@
 use std::{ffi::OsString, path::Path};
 use log::warn;
-use serde_derive::Deserialize;
+use serde::Deserialize;
 
 use crate::{game::pokedex::pokemon::pokemon::PokemonType, util::file_util::UNKNOWN_FILENAME_ERR};
 

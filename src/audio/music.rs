@@ -5,6 +5,7 @@ pub enum Music {
     IntroPokemon,
     Title,
 
+    ViridianForest,
     MountMoon,
     Route1,
     Route2,
@@ -30,6 +31,7 @@ impl Music {
 
     pub fn from_int(id: u8) -> Option<Music> {
         match id {
+            0x1F => Some(Music::ViridianForest),
             0x13 => Some(Music::Gym),
             0x20 => Some(Music::MountMoon),
             0x23 => Some(Music::Route1),
@@ -50,6 +52,7 @@ impl Music {
     pub fn values(&self) -> u8 {
         match *self {
             Music::Gym => 0x13,
+            Music::ViridianForest => 0x1F,
             Music::MountMoon => 0x20,
             Music::Route1 => 0x23,
             Music::Route2 => 0x24,
@@ -64,6 +67,10 @@ impl Music {
             Music::Vermilion => 0x39,
             _ => 0x24,
         }
+    }
+
+    pub fn play_music(music: u8) {
+        music::play_music(&Music::from_int(music).unwrap_or(Music::Pallet), music::Repeat::Forever);
     }
 
 }

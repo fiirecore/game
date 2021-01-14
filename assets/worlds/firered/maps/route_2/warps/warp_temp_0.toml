@@ -3,7 +3,7 @@ y = 51
 
 [destination]
 world_id = "firered"
-map_id = "world"
-map_set_num = 20
-dest_x = 66
-dest_y = 113
+map_id = "route_2_houses"
+map_index = 0
+x = 7
+y = 0xA

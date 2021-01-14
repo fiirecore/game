@@ -1,15 +1,13 @@
 /target
 /Cargo.lock
 
-/logs
-/config
-/saves
-
-/.cargo
 /*.lib
 /*.dll
 
 /.vscode
 
+/logs
+/config
+/saves
+
 /Extra Assets and Old Files
-/.git_old

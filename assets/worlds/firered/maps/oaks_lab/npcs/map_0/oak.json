@@ -1,6 +1,6 @@
 {
 	"identifier": {
-		"npc_type": "NPC",
+		"name": "Oak",
 		"sprite": 71
 	},
 	"location": {

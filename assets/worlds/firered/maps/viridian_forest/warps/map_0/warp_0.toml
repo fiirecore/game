@@ -1,0 +1,9 @@
+x = 31
+y = 63
+
+[destination]
+world_id = "firered"
+map_id = "route_2_houses"
+map_index = 0
+x = 7
+y = 1

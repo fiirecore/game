@@ -2,19 +2,21 @@ use std::path::Path;
 
 use log::warn;
 
-use crate::game::world::world_map::world_map_piece::WorldMapPiece;
+use crate::world::world_chunk::WorldChunk;
+use crate::world::world_map::WorldMap;
 
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
 use super::map_serializable::MapConfig;
 use super::npc_loader::get_npcs;
 use super::warp_loader::get_warps;
+use super::wild_entry_loader;
 
 pub fn new_jigsaw_map<P: AsRef<Path>>(
     path: P,
     palette_sizes: &Vec<u16>,
     config: &MapConfig,
-) -> Option<(usize, WorldMapPiece)> {
+) -> Option<(u16, WorldChunk)> {
     let path = path.as_ref();
 
     let map_path = path.join(&config.identifier.map_files[0]);
@@ -26,49 +28,30 @@ pub fn new_jigsaw_map<P: AsRef<Path>>(
                 let mut gba_map = get_gba_map(map_path);
                 fix_tiles(&mut gba_map, palette_sizes);
 
-                // fix below
-
-                let wildtomlpath = path.clone().join("wild").join("grass.toml");
-                let wild_tiles;
-                let table;
-
-                if let Some(settings) = &config.settings {
-                    wild_tiles = settings.wild_tiles.clone();
-                    table = crate::game::world::pokemon::wild_pokemon_table::get(
-                        settings.encounter_type.as_ref().unwrap_or(&String::new()).clone(),
-                        &wildtomlpath,
-                    );
-                } else {
-                    wild_tiles = None;
-                    table = None;
-                }
-
-                //
-                
-
                 if let Some(jigsaw_map) = &config.jigsaw_map {
                     return Some((
                         jigsaw_map.piece_index,
-                        WorldMapPiece {
-                            name: gba_map.name,
-                            music: gba_map.music,
-
+                        WorldChunk {
                             x: jigsaw_map.x,
                             y: jigsaw_map.y,
-
-                            width: gba_map.width as u16,
-                            height: gba_map.height as u16,
-
-                            tile_map: gba_map.tile_map,
-                            border_blocks: gba_map.border_blocks,
-                            movement_map: gba_map.movement_map,
+                            map: WorldMap {
+                                name: config.identifier.name(),
+                                music: gba_map.music,
+    
+                                width: gba_map.width as u16,
+                                height: gba_map.height as u16,
+    
+                                tile_map: gba_map.tile_map,
+                                border_blocks: gba_map.border_blocks,
+                                movement_map: gba_map.movement_map,
+                                
+                                warps: get_warps(path, None),
+                                npcs: get_npcs(path, None),
+                                wild: wild_entry_loader::load_wild_entry(path, &config, None),
+                            },
                             connections: jigsaw_map.connections.clone(),
-                            warps: get_warps(path, None),
-                            npcs: get_npcs(path, None),
-
-                            wild_tiles: wild_tiles,
-                            wild_pokemon_table: table,
-                        },
+                        }
+                        
                     ));
                 } else {
                     return None;

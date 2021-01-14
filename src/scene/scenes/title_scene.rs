@@ -113,18 +113,18 @@ impl Scene for TitleScene {
 		//		
 		//	}
 		//} else {
-			draw_o(ctx, g, &self.background_tex, 0, 0);
-			draw_o(ctx, g, &self.title_tex, 3, 3);
-			draw_o(ctx, g, &self.trademark_tex, 158, 53);
-			draw_o(ctx, g, &self.subtitle_tex, 52, 57);
+			draw_o(ctx, g, self.background_tex.as_ref(), 0, 0);
+			draw_o(ctx, g, self.title_tex.as_ref(), 3, 3);
+			draw_o(ctx, g, self.trademark_tex.as_ref(), 158, 53);
+			draw_o(ctx, g, self.subtitle_tex.as_ref(), 52, 57);
 			if self.start_time.elapsed().unwrap().as_secs() % 2 == 1 {
-				draw_o(ctx, g, &self.start_tex, 44, 130);
+				draw_o(ctx, g, self.start_tex.as_ref(), 44, 130);
 			}
 			if self.next {
-				draw_o(ctx, g, &self.loading_tex, 0, 0);
+				draw_o(ctx, g, self.loading_tex.as_ref(), 0, 0);
 				self.rendered = true;
 			}
-			draw_o(ctx, g, &self.charizard_tex, 129, 49);
+			draw_o(ctx, g, self.charizard_tex.as_ref(), 129, 49);
 		//}
 	}
 	

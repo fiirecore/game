@@ -3,14 +3,14 @@ use std::collections::HashMap;
 use oorandom::Rand32;
 use piston::{Button, Key};
 
-use crate::game::battle::battle_context::BattleContext;
-use crate::io::{app_console::AppConsole, data::configuration::Configuration};
+use crate::battle::battle_context::BattleContext;
+use crate::io::data::configuration::Configuration;
 
 pub struct GameContext {
 
     pub configuration: Configuration,
     
-    pub app_console: AppConsole,
+    //pub app_console: AppConsole,
     
     pub random: Rand32,
 
@@ -21,6 +21,8 @@ pub struct GameContext {
     pub fkeymap: HashMap<Button, usize>,
 
     pub battle_context: BattleContext,
+
+    pub save_data: bool,
 
 }
 
@@ -38,11 +40,13 @@ impl GameContext {
 
             configuration: configuration,
 
-            app_console: AppConsole::new(),
+            //app_console: AppConsole::new(),
 
             random: Rand32::new(0),
 
             battle_context: BattleContext::empty(),
+
+            save_data: false,
 
         }
     }
@@ -76,72 +80,3 @@ impl GameContext {
     }
 
 }
-
-
-    /*
-
-    pub fn bind_sound<P>(&mut self, index: u8, path: P) where P: AsRef<Path> {
-        let path = path.as_ref();
-
-        if !self.sound_bank.contains_key(&index) {
-            let sound = Source::new(&self.audio_context, path);
-            match sound {
-                Some(sound) => {
-                    self.sound_bank.insert(index, sound);
-                }
-                None => {
-
-                }
-            }
-            
-        }
-    }
-
-    pub fn play_sound(&mut self, index: u8) {
-        let sound = self.sound_bank.get_mut(&index);
-        match sound {
-            Some(sound) => {
-                sound.play_detached();//.play();
-            }
-            None => {
-
-            }
-        }
-    }
-
-    pub fn play_music(&mut self, index: u8, loop_start: Duration) {
-        
-    }
-
-}
-
-struct Sound {
-
-    decoder: Decoder<BufReader<File>>,
-
-}
-
-impl Sound {
-
-    pub fn new<P>(path: P) -> Sound where P: AsRef<Path> {
-        let path = path.as_ref();
-
-        let file = File::open(path).unwrap();
-
-        let d = rodio::Decoder::new(BufReader::new(file)).unwrap();
-
-        Sound {
-
-            decoder: d,
-
-        }
-
-    }
-
-    pub fn play(&self, player: &mut RodioAudioContext) {
-        player.device.1.play_raw(self.decoder.convert_samples());
-    }
-
-}
-
-*/

@@ -22,7 +22,7 @@ pub fn draw(ctx: &mut Context, g: &mut GlGraphics, texture: &Texture, x: isize, 
 	);	
 }
 
-pub fn draw_o(ctx: &mut Context, g: &mut GlGraphics, texture: &Option<Texture>, x: isize, y: isize) {
+pub fn draw_o(ctx: &mut Context, g: &mut GlGraphics, texture: Option<&Texture>, x: isize, y: isize) {
 	if let Some(texture) = texture {
 		draw(ctx, g, texture, x, y);
 	}

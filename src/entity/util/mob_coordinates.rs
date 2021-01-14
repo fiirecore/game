@@ -38,4 +38,13 @@ impl MobCoordinates {
 		(self.y << 4) + self.y_offset as isize
 	}
 
+	pub fn subtract(&self, x: isize, y: isize) -> MobCoordinates {
+		MobCoordinates {
+			x: self.x - x,
+			y: self.y - y,
+			x_offset: self.x_offset,
+			y_offset: self.y_offset,
+		}
+	}
+
 }

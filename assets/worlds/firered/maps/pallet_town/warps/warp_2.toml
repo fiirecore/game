@@ -4,6 +4,6 @@ y = 0x0D
 [destination]
 world_id = "firered"
 map_id = "oaks_lab"
-map_set_num = 0
-dest_x = 0x06
-dest_y = 0x0C
+map_index = 0
+x = 0x06
+y = 0x0C

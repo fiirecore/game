@@ -5,5 +5,6 @@ y = 0x26
 [destination]
 world_id = "firered"
 map_id = "world"
-dest_x = 175
-dest_y = 56
+map_index = 22
+x = 19
+y = 5

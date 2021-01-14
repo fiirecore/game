@@ -1,19 +1,64 @@
+use std::collections::HashMap;
 use std::ffi::OsString;
 use std::fs::ReadDir;
 use std::fs::read_dir;
 use std::fs::read_to_string;
 use std::path::Path;
+use std::path::PathBuf;
 
 use log::warn;
 
+use crate::entity::texture::still_texture_manager::StillTextureManager;
+use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::entity::util::direction::Direction;
-use crate::game::npc::npc::NPC;
+use crate::game::npc::npc::NPCInstance;
 
+use crate::io::data::npc::npc::JsonNPC;
 use crate::util::file_util::UNKNOWN_FILENAME_ERR;
+use crate::util::file_util::asset_as_pathbuf;
+use crate::util::texture_util::texture_from_path;
 
-use super::npc_serializable::JsonNPC;
+pub fn load_npc_textures(world_id: &String, npc_textures: &mut HashMap<u8, ThreeWayTexture>) {
+    let mut dir_pb = PathBuf::from("worlds/");
+    dir_pb.push(world_id);
+    dir_pb.push("textures");
+    dir_pb.push("npcs");
 
-pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPC> where P: AsRef<Path> {
+    //println!("{:?}", dir_pb.clone());
+
+    let entries_result = std::fs::read_dir(asset_as_pathbuf(dir_pb));
+    match entries_result {
+        Ok(readdir) => {
+            let paths: Vec<Result<PathBuf, std::io::Error>> = readdir.map( |res| res.map(|e| e.path())).collect();
+            let size = paths.len();
+            for path in paths {
+                match path {
+                    Ok(path) => {
+                        if path.is_dir() {
+                            let mut twt = ThreeWayTexture::new();
+                            if size > 3 {
+                                warn!("Moving NPC textures found, not supported yet.");
+                            } else {
+                                twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_up.png")), false)));
+                                twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_down.png")), false)));
+                                twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_side.png")), false)));
+                            }                                    
+                            npc_textures.insert(path.file_name().unwrap().to_str().unwrap().parse::<u8>().expect("Found a folder with a non-number name"), twt); // fix
+                        }
+                    },
+                    Err(err) => {
+                        warn!("{}", err);
+                    }
+                }
+            }
+        },
+        Err(err) => {
+            warn!("Error reading NPC textures directory for map {} with error: {}", world_id, err);
+        },
+    }
+}
+
+pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPCInstance> where P: AsRef<Path> {
     let root_path = root_path.as_ref();
     let npc_path = root_path.join("npcs");
 
@@ -63,7 +108,7 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPC> where P
     npcs
 }
 
-pub fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: ReadDir) -> Option<std::io::Error> {
+pub fn get_npc_from_directory(npcs: &mut Vec<NPCInstance>, dir: ReadDir) -> Option<std::io::Error> {
     for path_result in dir.map(|res| res.map(|e| e.path())) {
         match path_result {
             Ok(path) => {
@@ -79,7 +124,7 @@ pub fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: ReadDir) -> Option<std::
     return None;
 }
 
-pub fn load_npc<P>(path: P) -> Option<NPC> where P: AsRef<Path> {
+pub fn load_npc<P>(path: P) -> Option<NPCInstance> where P: AsRef<Path> {
     let path = path.as_ref();
 
     let string_result = read_to_string(path);
@@ -91,11 +136,16 @@ pub fn load_npc<P>(path: P) -> Option<NPC> where P: AsRef<Path> {
 
             match npc_entry {
                 Ok(npc) => {
-                    return Some(NPC {
+                    return Some(NPCInstance {
+
                         x: npc.location.x,
                         y: npc.location.y,
+
                         direction: Direction::from_int(npc.location.direction).unwrap_or(Direction::Down),
+
+                        name: npc.identifier.name,
                         sprite: npc.identifier.sprite,
+
                         trainer: npc.trainer,
                     });
                 },

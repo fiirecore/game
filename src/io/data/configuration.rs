@@ -9,7 +9,7 @@ use std::path::Path;
 use std::io::Write;
 
 use log::info;
-use serde_derive::{Serialize, Deserialize};
+use serde::{Serialize, Deserialize};
 
 static CONFIGURATION_FILENAME: &str = "config.toml";
 

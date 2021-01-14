@@ -10,8 +10,8 @@ use crate::gui::battle::panels::battle_panel::BattlePanel;
 use crate::gui::battle::panels::fight_panel::FightPanel;
 
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
-//use crate::game::battle::battle_manager::BattleManager;
-use crate::game::battle::battle::Battle;
+//use crate::battle::battle_manager::BattleManager;
+use crate::battle::battle::Battle;
 
 use crate::util::{texture_util::texture_from_path, file_util::asset_as_pathbuf, render_util::draw};
 pub struct PlayerPanel {

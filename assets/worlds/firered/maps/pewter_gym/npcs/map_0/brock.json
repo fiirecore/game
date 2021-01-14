@@ -1,6 +1,6 @@
 {
 	"identifier": {
-		"npc_type": "Trainer",
+		"name": "Brock",
 		"sprite": 80
 	},
 	"location": {
@@ -9,69 +9,64 @@
 		"direction": 1
 	},
 	"trainer": {
-		"pokemon": [
-		  {
-			"pokemon_id": 74,
-			"level": 10,
-			"ivs": {
-				"hp": 15,
-				"atk": 15,
-				"def": 15,
-				"sp_atk": 15,
-				"sp_def": 15,
-				"speed": 15
-			},
-			"evs": {
-				"hp": 0,
-				"atk": 0,
-				"def": 0,
-				"sp_atk": 0,
-				"sp_def": 0,
-				"speed": 0
-			},
-			"moves": [
+		"party": {
+			"pokemon": [
 				{
-					"name": "Tackle",
-					"remaining_pp": 35
+					"pokemon_id": 74,
+					"level": 10,
+					"ivs": {
+						"hp": 15,
+						"atk": 15,
+						"def": 15,
+						"sp_atk": 15,
+						"sp_def": 15,
+						"speed": 15
+					},
+					"evs": {
+						"hp": 0,
+						"atk": 0,
+						"def": 0,
+						"sp_atk": 0,
+						"sp_def": 0,
+						"speed": 0
+					},
+					"exp": 0,
+					"friendship": 70
 				},
-				null,
-				null,
-				null
-			],
-			"exp": 0,
-			"friendship": 70
-			},
-			{
-			"pokemon_id": 95,
-			"level": 10,
-			"ivs": {
-				"hp": 15,
-				"atk": 15,
-				"def": 15,
-				"sp_atk": 15,
-				"sp_def": 15,
-				"speed": 15
-			},
-			"evs": {
-				"hp": 0,
-				"atk": 0,
-				"def": 0,
-				"sp_atk": 0,
-				"sp_def": 0,
-				"speed": 0
-			},
-			"moves": [
 				{
-					"name": "Bind",
-					"remaining_pp": 35
-				},
-				null,
-				null,
-				null
-			],
-			"exp": 0,
-			"friendship": 70
-			}
-		]
-	}	
+					"pokemon_id": 95,
+					"level": 10,
+					"ivs": {
+						"hp": 15,
+						"atk": 15,
+						"def": 15,
+						"sp_atk": 15,
+						"sp_def": 15,
+						"speed": 15
+					},
+					"evs": {
+						"hp": 0,
+						"atk": 0,
+						"def": 0,
+						"sp_atk": 0,
+						"sp_def": 0,
+						"speed": 0
+					},
+					"moves": [
+						{
+							"name": "Bind",
+							"remaining_pp": 35
+						},
+						null,
+						null,
+						null
+					],
+					"exp": 0,
+					"friendship": 70
+				}
+			]
+		},
+		"sprite": 0,
+		"trainer_type": "GymLeader"
+	}
 }

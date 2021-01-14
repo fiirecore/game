@@ -1,8 +1,8 @@
 use crate::engine::game_context::GameContext;
 use crate::entity::util::direction::Direction;
-use crate::io::data::trainer::Trainer;
+use crate::io::data::npc::trainer::Trainer;
 
-pub struct NPC {
+pub struct NPCInstance {
 
     // x and y local to map
 
@@ -10,13 +10,15 @@ pub struct NPC {
     pub y: isize,
 
     pub direction: Direction,
+
+    pub name: String,
     pub sprite: u8,
 
     pub trainer: Option<Trainer>,
 
 }
 
-impl NPC {
+impl NPCInstance {
 
     pub fn interact(&mut self, direction: Direction, context: &mut GameContext) {
         self.direction = direction.inverse();
@@ -24,8 +26,8 @@ impl NPC {
     }
 
     fn test_trainer(&self, context: &mut GameContext) {
-        if let Some(trainer) = &self.trainer {
-            context.battle_context.trainer_battle(trainer);
+        if self.trainer.is_some() {
+            context.battle_context.trainer_battle(&self);
         }
     }
 

@@ -5,6 +5,6 @@ y = 0x05
 [destination]
 world_id = "firered"
 map_id = "mt_moon"
-map_set_num = 1
-dest_x = 0x2D
-dest_y = 0x04
+map_index = 1
+x = 0x2D
+y = 0x04

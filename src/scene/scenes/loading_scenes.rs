@@ -126,11 +126,7 @@ impl Scene for LoadingGamefreakScene {
 
 	fn on_start(&mut self, _context: &mut GameContext) {
 		self.scene_token = 0;
-//		use crate::engine::audio::{Source, SoundSource};
-//		let mut sound = Source::new(_context,asset_as_pathbuf("audio/music/intro_gamefreak.mp3")).unwrap();
-//		sound.play();
 		if !cfg!(debug_assertions) {
-			//context.audio_context.play(1);
 			music::play_music(&Music::IntroGamefreak, music::Repeat::Times(0));
 		} else {
 			self.next();

@@ -13,7 +13,7 @@ pub struct GbaMap {
 	
 	pub bank: usize,
 	pub map: usize,
-	pub name: String,
+	//pub name: String,
 	pub music: u8,
 	pub width: u16,
 	pub height: u16,
@@ -43,7 +43,7 @@ pub fn get_gba_map<P>(path: P) -> GbaMap where P: AsRef<Path> {
 		
 	}
 	
-	let name = get_name_from_id(bytes[44]);
+	//let name = get_name_from_id(bytes[44]);
 	
 	let music = bytes[40];
 
@@ -88,7 +88,7 @@ pub fn get_gba_map<P>(path: P) -> GbaMap where P: AsRef<Path> {
 		
 		bank: 0,//bank,
 		map: 0, //map,
-		name: String::from(name),
+		//name: String::from(name),
 		music: music,
 		width: width,
 		height: height,
@@ -104,9 +104,13 @@ pub fn get_gba_map<P>(path: P) -> GbaMap where P: AsRef<Path> {
 
 pub fn fix_tiles(gba_map: &mut GbaMap, palette_sizes: &Vec<u16>) {
 
-	let offset = get_offset(gba_map, palette_sizes);	
-
-	fix_tiles2(&mut gba_map.tile_map, offset, palette_sizes[0]);	
+	let offset = get_offset(gba_map, palette_sizes);
+	
+	for index in 0..gba_map.tile_map.len() {
+		if gba_map.tile_map[index] > palette_sizes[0] {
+			gba_map.tile_map[index] += offset;
+		}
+	}
 
 	for index in 0..gba_map.border_blocks.len() {
 		if gba_map.border_blocks[index] > palette_sizes[0] {
@@ -114,24 +118,40 @@ pub fn fix_tiles(gba_map: &mut GbaMap, palette_sizes: &Vec<u16>) {
 		}
 	}
 
-}
+	if gba_map.palettes[0] > 0 {
+		let mut offset12: u16 = 0;
 
-pub fn fix_tiles2(tiles: &mut Vec<u16>, offset: u16, first_palette_size: u16) {
-	for index in 0..tiles.len() {
-		if tiles[index] > first_palette_size {
-			tiles[index] += offset;
+		for x in 0..gba_map.palettes[0] {
+			offset12 += palette_sizes[x];
+		}
+
+		for index in 0..gba_map.tile_map.len() {
+			if gba_map.tile_map[index] < palette_sizes[0] {
+				gba_map.tile_map[index] += offset12;
+			}
+		}
+
+		for index in 0..gba_map.border_blocks.len() {
+			if gba_map.border_blocks[index] < palette_sizes[0] {
+				gba_map.border_blocks[index] += offset12;
+			}
 		}
 	}
-}
 
-pub fn get_offset(gba_map: &GbaMap, palette_sizes: &Vec<u16>) -> u16 {
+}
+pub fn get_offset(gba_map: &GbaMap, palette_sizes: &Vec<u16>) -> u16 { // To - do: change to recursive function
 	let mut offset = 0;
+	if gba_map.palettes[1] >= palette_sizes.len() {
+		warn!("Not enough palettes to support gba map textures. Need palette #{}", gba_map.palettes[1]);
+		return 0;
+	}
 	for x in 1..gba_map.palettes[1] {
 		offset += palette_sizes[x];
 	}
 	return offset;
 }
 
+/*
 fn get_name_from_id(id: u8) -> &'static str {
 	match id {
 		0x7D => return "Route 25",
@@ -139,26 +159,40 @@ fn get_name_from_id(id: u8) -> &'static str {
 		_ => return "Unknown Map ID",
 	}
 }
+*/
 
 // Map conversion utility
 
-pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, RgbaImage>, top_sheets: &mut HashMap<u8, RgbaImage>, world_id: &String, to_index: u8) {
-    for index in 0..to_index+1 {
-        let mut bottom: String = String::from("worlds/");
-        bottom.push_str(world_id);
-        bottom.push_str("/textures/Palette");
-        bottom.push_str(&index.to_string());
-		let mut top = bottom.clone();
-		bottom.push_str("B.png");
-		top.push_str("T.png");
-		if let Ok(img) = open_image(asset_as_pathbuf(bottom)) {
-			bottom_sheets.insert(index, img);
-		}
-		if let Ok(img) = open_image(asset_as_pathbuf(top)) {
-			top_sheets.insert(index, img);
-		}
+pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, RgbaImage>, top_sheets: &mut HashMap<u8, RgbaImage>, world_id: &String) -> Vec<u16> {
+	let mut sizes = Vec::new();
+	let mut count = 0;
+	loop {
+
+		let file = asset_as_pathbuf("worlds").join(world_id).join("textures");
+
+		let mut bottom_filename = String::from("Palette");
+		bottom_filename.push_str(&count.to_string());
+
+		let mut top_filename = bottom_filename.clone();
+
+		bottom_filename.push_str("B.png");
+		top_filename.push_str("T.png");	
 		
-    }
+		let bottom_file = file.join(bottom_filename);
+
+		if !bottom_file.exists() {
+			break;
+		}
+		if let Ok(img) = open_image(bottom_file) {
+			sizes.push(((img.width() >> 4) * (img.height() >> 4)) as u16);
+			bottom_sheets.insert(count, img);
+		}
+		if let Ok(img) = open_image(file.join(top_filename)) {
+			top_sheets.insert(count, img);
+		}
+		count+=1;
+	}
+	sizes
 }
 
 pub fn get_texture(sheets: &HashMap<u8, RgbaImage>, palette_sizes: &Vec<u16>, tile_id: u16) -> Texture {
@@ -169,6 +203,10 @@ pub fn get_texture(sheets: &HashMap<u8, RgbaImage>, palette_sizes: &Vec<u16>, ti
 
 	while tile_id >= count {
 		index += 1;
+		if index >= (palette_sizes.len() as u8) {
+			warn!("Tile ID {} exceeds palette texture count!", tile_id);
+			break;
+		}
 		count += palette_sizes[index as usize];
 	}
 
@@ -178,10 +216,7 @@ pub fn get_texture(sheets: &HashMap<u8, RgbaImage>, palette_sizes: &Vec<u16>, ti
 			return Texture::from_image(&img, &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest));
 		}
 		None => {
-			let mut string = String::from("Could not get spritesheet at index ");
-			string.push_str(index.to_string().as_str());
-			warn!("{}", string);
-			println!("{:?}", sheets.keys());
+			warn!("Could not get texture for tile ID {}", &tile_id);
 			return Texture::from_path(asset_as_pathbuf("debug/missing_texture.png"), &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest)).expect("Could not find debug texture");
 		}
 	}

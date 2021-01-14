@@ -4,7 +4,7 @@ use std::path::Path;
 
 use log::warn;
 
-use crate::game::warp::warp_entry::WarpEntry;
+use crate::world::warp::WarpEntry;
 
 pub fn get_warps<P: AsRef<Path>>(root_path: P, map_set_num: Option<usize>) -> Vec<WarpEntry> {
 
@@ -58,7 +58,7 @@ fn add_warp_under_directory(warps: &mut Vec<WarpEntry>, dir: ReadDir) -> Option<
     for path_result in dir.map(|res| res.map(|e| e.path())) {
         match path_result {
             Ok(path) => {
-                if let Some(warp_entry) = WarpEntry::from_path(path) {
+                if let Some(warp_entry) = WarpEntry::new(path) {
                     warps.push(warp_entry);
                 }
             }

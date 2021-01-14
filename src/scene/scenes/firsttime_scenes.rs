@@ -58,7 +58,7 @@ impl Scene for FirstTimeControlsScene {
 //	fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
 	
 	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		draw_o(ctx, g, &self.background_tex, 0, 0);
+		draw_o(ctx, g, self.background_tex.as_ref(), 0, 0);
 	}
 	
 	fn input(&mut self, context: &mut GameContext) { //[ButtonActions; 6]) {
@@ -114,7 +114,7 @@ impl Scene for FirstTimeNarrativeScene {
 //	fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
 	
 	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		draw_o(ctx, g, &self.background_tex, 0, 0);
+		draw_o(ctx, g, self.background_tex.as_ref(), 0, 0);
 	}
 	
 	fn input(&mut self, context: &mut GameContext) { //[ButtonActions; 6]) {

@@ -4,6 +4,6 @@ y = 0x10
 [destination]
 world_id = "firered"
 map_id = "pewter_gym"
-map_set_num = 0
-dest_x = 0x06
-dest_y = 0x0E
+map_index = 0
+x = 0x06
+y = 0x0E

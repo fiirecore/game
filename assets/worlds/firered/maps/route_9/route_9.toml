@@ -8,6 +8,6 @@ x = 312
 y = 50
 connections = [3, 28]
 
-[settings]
+[wild]
 encounter_type = "original"
 wild_tiles = [0x0D]

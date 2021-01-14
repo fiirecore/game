@@ -1,0 +1,7 @@
+[identifier]
+world_id = "firered"
+map_files = ["gba/15.0_ROUTE 2.map", "gba/15.1_ROUTE 2.map", "gba/15.2_ROUTE 2.map", "gba/15.3_ROUTE 2.map"]
+name = "Route 2 - Inside"
+
+[warp_map]
+map_set_id = "route_2_houses"
