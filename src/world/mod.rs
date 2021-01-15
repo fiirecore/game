@@ -10,6 +10,8 @@ pub mod world_map_manager;
 
 pub mod warp;
 
+pub mod npc;
+
 pub mod gui {
     pub mod player_world_gui;
     pub mod map_window_manager;
@@ -38,11 +40,11 @@ pub trait World {
 
     fn tile(&self, x: isize, y: isize) -> u16;
 
-    fn walkable(&mut self, x: isize, y: isize) -> u8;
+    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8;
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry>;
 
-    fn on_tile(&mut self, context: &mut GameContext, tile_id: u16);
+    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize);
 
     fn render(&self, ctx: &mut Context, g: &mut GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: ScreenCoords, border: bool);
 

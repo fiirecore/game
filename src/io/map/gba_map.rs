@@ -1,3 +1,4 @@
+use log::debug;
 use log::warn;
 use opengl_graphics::{Texture, Filter, TextureSettings};
 use std::{fs::File, path::Path};
@@ -151,16 +152,6 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &Vec<u16>) -> u16 { // To - d
 	return offset;
 }
 
-/*
-fn get_name_from_id(id: u8) -> &'static str {
-	match id {
-		0x7D => return "Route 25",
-
-		_ => return "Unknown Map ID",
-	}
-}
-*/
-
 // Map conversion utility
 
 pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, RgbaImage>, top_sheets: &mut HashMap<u8, RgbaImage>, world_id: &String) -> Vec<u16> {
@@ -216,7 +207,7 @@ pub fn get_texture(sheets: &HashMap<u8, RgbaImage>, palette_sizes: &Vec<u16>, ti
 			return Texture::from_image(&img, &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest));
 		}
 		None => {
-			warn!("Could not get texture for tile ID {}", &tile_id);
+			debug!("Could not get texture for tile ID {}", &tile_id);
 			return Texture::from_path(asset_as_pathbuf("debug/missing_texture.png"), &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest)).expect("Could not find debug texture");
 		}
 	}

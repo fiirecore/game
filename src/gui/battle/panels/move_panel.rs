@@ -4,7 +4,7 @@ use piston_window::Context;
 
 use crate::engine::game_context::GameContext;
 use crate::engine::text::TextRenderer;
-use crate::entity::util::direction::Direction;
+use crate::io::data::Direction;
 use crate::gui::gui::BasicText;
 use crate::gui::gui::GuiComponent;
 use crate::util::file_util::asset_as_pathbuf;
@@ -44,9 +44,9 @@ impl MovePanel {
             panel_y: panel_y,
 
             background: texture_from_path(asset_as_pathbuf("gui/battle/move_info_panel.png")),
-            pp: BasicText::new("PP", 0, Direction::Left, 8, 13 - 2, x + panel_x, y + panel_y),
-            move_type: BasicText::new("TYPE/", 0, Direction::Left, 8, 27, x + panel_x, y + panel_y),
-            remaining_pp: BasicText::new("x/y", 0, Direction::Right, 72, 13 - 2, x + panel_x, y + panel_y),
+            pp: BasicText::new(vec![String::from("PP")], 0, Direction::Left, 8, 13 - 2, x + panel_x, y + panel_y),
+            move_type: BasicText::new(vec![String::from("TYPE/")], 0, Direction::Left, 8, 27, x + panel_x, y + panel_y),
+            remaining_pp: BasicText::new(vec![String::from("x/y")], 0, Direction::Right, 72, 13 - 2, x + panel_x, y + panel_y),
 
         }
 

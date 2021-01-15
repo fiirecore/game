@@ -1,5 +1,5 @@
 use crate::engine::game_context::GameContext;
-use crate::entity::util::direction::Direction;
+use crate::io::data::Direction;
 use std::path::PathBuf;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
@@ -126,7 +126,9 @@ pub trait GuiComponent {
 
 pub trait GuiText: GuiComponent {
 	
-	fn get_text(&self) -> &str;
+	fn get_line(&self, index: usize) -> &String;
+
+	fn get_text(&self) -> &Vec<String>;
 	
 	fn get_font_id(&self) -> usize;
 
@@ -161,7 +163,7 @@ pub struct BasicText {
 	panel_x: isize,
 	panel_y: isize,
 
-	pub text: String,
+	pub text: Vec<String>,
 	pub font_id: usize,
 
 	direction: Direction,
@@ -170,7 +172,7 @@ pub struct BasicText {
 
 impl BasicText {
 	
-	pub fn new(text: &str, font_id: usize, direction: Direction, x: isize, y: isize, panel_x: isize, panel_y: isize) -> BasicText {
+	pub fn new(text: Vec<String>, font_id: usize, direction: Direction, x: isize, y: isize, panel_x: isize, panel_y: isize) -> BasicText {
 		
 		BasicText {
 			
@@ -180,7 +182,7 @@ impl BasicText {
 			panel_x: panel_x,
 			panel_y: panel_y,
 
-			text: String::from(text),
+			text: text,
 			font_id: font_id,
 
 			direction: direction,
@@ -211,11 +213,14 @@ impl GuiComponent for BasicText {
 	}
 	
 	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-		if self.direction == Direction::Right {
-			tr.render_text_from_right(ctx, g, self.get_font_id(), self.get_text(), self.panel_x + self.x, self.panel_y + self.y);
-		} else {
-			tr.render_text_from_left(ctx, g, self.get_font_id(), self.get_text(), self.panel_x + self.x, self.panel_y + self.y);
+		for line_index in 0..self.get_text().len() {
+			if self.direction == Direction::Right {
+				tr.render_text_from_right(ctx, g, self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + line_index as isize * 16);
+			} else {
+				tr.render_text_from_left(ctx, g, self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + line_index as isize * 16);
+			}
 		}
+		
 		
 	}
 	
@@ -223,8 +228,12 @@ impl GuiComponent for BasicText {
 
 impl GuiText for BasicText {
 	
-	fn get_text(&self) -> &str {
-		self.text.as_str()
+	fn get_line(&self, index: usize) -> &String {
+		&self.get_text()[index]
+	}
+
+	fn get_text(&self) -> &Vec<String> {
+		&self.text
 	}
 
 	fn get_font_id(&self) -> usize {

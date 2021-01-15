@@ -1,10 +1,12 @@
 use std::fmt::Display;
 
-use crate::{engine::game_context::GameContext, game::pokedex::{pokedex::Pokedex, pokemon::pokemon::Pokemon, pokemon_move::move_instance::MoveInstance}};
-use crate::game::pokedex::pokemon_move::pokemon_move::PokemonMove;
-
-use super::stat_set::LargeStatSet;
-use super::stat_set::StatSet;
+use crate::engine::game_context::GameContext;
+use crate::game::pokedex::move_instance::MoveInstance;
+use crate::game::pokedex::pokedex::Pokedex;
+use crate::io::data::pokemon::LargeStatSet;
+use crate::io::data::pokemon::StatSet;
+use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
+use crate::io::data::pokemon::pokemon::Pokemon;
 
 pub struct PokemonInstance {
 	
@@ -15,11 +17,9 @@ pub struct PokemonInstance {
 
 	pub moves: Vec<MoveInstance>,
 
-	pub ivs: StatSet,
-
-	pub evs: StatSet,
-
 	pub base: LargeStatSet,
+	pub ivs: StatSet,
+	pub evs: StatSet,
 
 	pub current_hp: u16,
 	
@@ -43,7 +43,7 @@ impl PokemonInstance {
 			
 			level: level,
 			
-			moves: PokemonInstance::moves_to_instance(pokedex.moves_from_level(pokemon.number, level)),
+			moves: PokemonInstance::moves_to_instance(pokedex.moves_from_level(pokemon.data.number, level)),
 			
 			ivs: ivs,
 			
@@ -77,7 +77,7 @@ impl PokemonInstance {
 			
 			level: level,
 			
-			moves: PokemonInstance::moves_to_instance(pokedex.moves_from_level(pokemon.number, level)),
+			moves: PokemonInstance::moves_to_instance(pokedex.moves_from_level(pokemon.data.number, level)),
 			
 			ivs: ivs,
 			
@@ -103,19 +103,19 @@ impl PokemonInstance {
 impl Display for PokemonInstance {
 
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "Lv. {} {}", self.level, &self.pokemon.name)
+		write!(f, "Lv. {} {}", self.level, &self.pokemon.data.name)
 	}
 	
 }
 
 pub fn get_stats(pokemon: &Pokemon, ivs: StatSet, evs: StatSet, level: u8) -> LargeStatSet {
     LargeStatSet {
-		hp: calculate_hp(pokemon.base_hp, ivs.hp, evs.hp, level),
-		atk: calculate_stat(pokemon.base_atk, ivs.atk, evs.atk, level),
-		def: calculate_stat(pokemon.base_def, ivs.def, evs.def, level),
-		sp_atk: calculate_stat(pokemon.base_sp_atk, ivs.sp_atk, evs.sp_atk, level),
-		sp_def: calculate_stat(pokemon.base_sp_def, ivs.sp_def, evs.sp_def, level),
-		speed: calculate_stat(pokemon.base_speed, ivs.speed, evs.speed, level),
+		hp: calculate_hp(pokemon.base.hp, ivs.hp, evs.hp, level),
+		atk: calculate_stat(pokemon.base.atk, ivs.atk, evs.atk, level),
+		def: calculate_stat(pokemon.base.def, ivs.def, evs.def, level),
+		sp_atk: calculate_stat(pokemon.base.sp_atk, ivs.sp_atk, evs.sp_atk, level),
+		sp_def: calculate_stat(pokemon.base.sp_def, ivs.sp_def, evs.sp_def, level),
+		speed: calculate_stat(pokemon.base.speed, ivs.speed, evs.speed, level),
 	}
 }
 

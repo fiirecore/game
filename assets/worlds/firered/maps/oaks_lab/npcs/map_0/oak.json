@@ -3,9 +3,9 @@
 		"name": "Oak",
 		"sprite": 71
 	},
-	"location": {
+	"position": {
 		"x": 6,
 		"y": 3,
-		"direction": 1
+		"direction": "Down"
 	}
 }

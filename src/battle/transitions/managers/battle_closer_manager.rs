@@ -40,6 +40,14 @@ impl BattleCloserManager { // return player data
         self.closers.push(Box::new(BasicBattleCloser::new()));
     }
 
+    pub fn world_active(&self) -> bool {
+        self.closers[self.current_closer_id].world_active()
+    }
+
+    fn reset(&mut self) {
+        self.closers[self.current_closer_id].reset();
+    }
+
 }
 
 impl Ticking for BattleCloserManager {
@@ -85,11 +93,13 @@ impl Entity for BattleCloserManager {
     fn spawn(&mut self) {
         self.alive = true;
         self.closers[self.current_closer_id].spawn();
+        self.reset();
     }    
 
     fn despawn(&mut self) {
         self.alive = false;
         self.closers[self.current_closer_id].despawn();
+        self.reset();
     }
 
     fn is_alive(&self) -> bool {

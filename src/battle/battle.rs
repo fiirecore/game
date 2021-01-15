@@ -7,13 +7,14 @@ use crate::engine::game_context::GameContext;
 
 use crate::entity::entity::Entity;
 use crate::game::pokedex::pokedex::Pokedex;
-use crate::game::pokedex::pokemon_move::move_category::MoveCategory;
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 use crate::game::pokedex::pokemon::pokemon_owned::OwnedPokemon;
-use crate::game::pokedex::pokemon_move::pokemon_move::PokemonMove;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::gui::gui::GuiComponent;
+use crate::io::data::pokemon::moves::MoveCategory;
+use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
+use crate::io::data::pokemon::pokemon::Pokemon;
 use crate::io::data::pokemon::pokemon_party::PokemonParty;
 use crate::util::file_util::asset_as_pathbuf;
 use crate::util::render_util::draw_bottom;
@@ -84,7 +85,7 @@ impl Battle {
 			player_pokemon: player_pokemon.pokemon.iter().map(|pkmn|
 				pkmn.to_owned_pokemon(pokedex)
 			).collect(),
-			opponent_pokemon: opponent_pokemon.pokemon.iter().map(|pkmn| pkmn.to_pokemon(pokedex) ).collect(),
+			opponent_pokemon: opponent_pokemon.to_instance(pokedex),
 			
 			..Battle::default()
 			
@@ -94,10 +95,10 @@ impl Battle {
 
 	fn load_textures(&mut self) {
 		for i in &self.opponent_pokemon {
-			self.opponent_textures.push(texture64_from_path(asset_as_pathbuf(i.pokemon.path_normal_front.as_str())));
+			self.opponent_textures.push(texture64_from_path(asset_as_pathbuf(Pokemon::texture_path("front", &i.pokemon))));
 		}
 		for i in &self.player_pokemon {
-			self.player_textures.push(texture64_from_path(asset_as_pathbuf(i.instance.pokemon.path_normal_back.as_str())));
+			self.player_textures.push(texture64_from_path(asset_as_pathbuf(Pokemon::texture_path("back", &i.instance.pokemon))));
 		}
 	}
 

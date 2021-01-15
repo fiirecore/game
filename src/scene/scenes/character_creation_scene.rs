@@ -1,4 +1,6 @@
+use crate::engine::game_context::GameContext;
 use crate::scene::scene::Scene;
+use crate::scene::scene::SceneLoad;
 
 pub struct CharacterCreationScene {
 	scene_token: usize,
@@ -10,6 +12,18 @@ impl CharacterCreationScene {
 			scene_token: 1,
 		}
 	}
+}
+
+// #[async_trait::async_trait]
+impl SceneLoad for CharacterCreationScene {
+	
+    fn load(&mut self, _context: &mut GameContext) {
+        
+    }
+
+    fn on_start(&mut self, _context: &mut GameContext) {
+        
+    }
 }
 
 impl Scene for CharacterCreationScene {

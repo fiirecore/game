@@ -41,13 +41,15 @@ pub trait BattleIntroduction: BattleTransition {
 
     fn input(&mut self, context: &mut GameContext);
 
-    fn setup_text(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>);
+    fn setup(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>);
 
     fn render_offset(&self, ctx: &mut Context, g: &mut GlGraphics, battle: &Battle, offset: u16);
 
 }
 
 pub trait BattleCloser: BattleTransition {
+
+    fn world_active(&self) -> bool;
 
 }
 

@@ -74,6 +74,11 @@ impl BattleOpenerManager {
         self.spawn();
     }
 
+    fn reset(&mut self) {
+        self.openers[self.current_opener_id].reset();
+        self.battle_introduction_manager.reset();
+    }
+
 }
 
 impl Ticking for BattleOpenerManager {
@@ -113,7 +118,7 @@ impl BattleTransitionManager for BattleOpenerManager {
 impl Completable for BattleOpenerManager {
 
     fn is_finished(&self) -> bool {
-        return /*self.openers[self.current_opener_id].is_finished() &&*/ self.battle_introduction_manager.is_finished();
+        return self.battle_introduction_manager.is_finished();
     }
     
 }
@@ -122,12 +127,14 @@ impl Entity for BattleOpenerManager {
     fn spawn(&mut self) {
         self.alive = true;
         self.openers[self.current_opener_id].spawn();
+        self.reset();
     }
 
     fn despawn(&mut self) {
         self.alive = false;
         self.openers[self.current_opener_id].despawn();
         self.battle_introduction_manager.despawn();
+        self.reset();
     }
 
     fn is_alive(&self) -> bool {

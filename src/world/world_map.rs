@@ -1,19 +1,21 @@
 use std::collections::HashMap;
 
+use log::info;
 use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
 
+use crate::audio::music::Music;
 use crate::engine::game_context::GameContext;
 use crate::entity::entities::player::Player;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::entity::util::direction::Direction;
-use crate::game::npc::npc::NPCInstance;
+use crate::io::data::Direction;
 use crate::util::render_util::draw_flip;
 use crate::util::render_util::draw_o;
 
 use super::ScreenCoords;
 use super::World;
+use super::npc::NPC;
 use super::pokemon::WildEntry;
 use super::warp::WarpEntry;
 
@@ -21,7 +23,7 @@ use super::warp::WarpEntry;
 pub struct WorldMap {
 
     pub name: String,
-    pub music: u8,
+    pub music: Music,
 
     pub width: u16,
     pub height: u16,
@@ -32,7 +34,7 @@ pub struct WorldMap {
 
     pub wild: Option<WildEntry>,
     pub warps: Vec<WarpEntry>,
-    pub npcs: Vec<NPCInstance>,
+    pub npcs: Vec<NPC>,
 
 }
 
@@ -54,7 +56,12 @@ impl World for WorldMap {
         self.tile_map[x as usize + y as usize * self.width as usize]
     }
 
-    fn walkable(&mut self, x: isize, y: isize) -> u8 {
+    fn walkable(&mut self, _context: &mut GameContext, x: isize, y: isize) -> u8 {
+        for npc in &self.npcs {
+            if npc.position.y == y && npc.position.x == x {
+                return 1;
+            }
+        }
         self.movement_map[x as usize + y as usize * self.width as usize]
     }
 
@@ -69,7 +76,8 @@ impl World for WorldMap {
         return None;
     }
 
-    fn on_tile(&mut self, context: &mut GameContext, tile_id: u16) {
+    fn on_tile(&mut self, context: &mut GameContext, /*player: &mut Player,*/ x: isize, y: isize) {
+        let tile_id = self.tile(x, y);
         if let Some(wild) = &self.wild {
             for tile in &wild.tiles {
                 if tile_id.eq(tile) {
@@ -78,6 +86,47 @@ impl World for WorldMap {
                     }
                 }
             }
+        }
+        for npc in &self.npcs {
+            if let Some(trainer) = &npc.trainer {
+                if let Some(tracker) = &trainer.tracker {
+                    match npc.position.direction {
+                        Direction::Up => {
+                            if x == npc.position.x {
+                                if y > npc.position.y && y <= npc.position.y + tracker.length as isize {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    //player.frozen = true;
+                                    //npc.movement.walk_to_player();
+                                }
+                            }
+                        }
+                        Direction::Down => {
+                            if x == npc.position.x {
+                                if y < npc.position.y && y >= npc.position.y - tracker.length as isize {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    //player.frozen = true;
+                                }
+                            }
+                        }
+                        Direction::Left => {
+                            if y == npc.position.y {
+                                if x < npc.position.x && x >= npc.position.x - tracker.length as isize {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    //player.frozen = true;
+                                }
+                            }
+                        }
+                        Direction::Right => {
+                            if y == npc.position.y {
+                                if x > npc.position.x && x <= npc.position.x + tracker.length as isize {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    //player.frozen = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
         }
     }
 
@@ -110,38 +159,38 @@ impl World for WorldMap {
             }
         }
         for npc in &self.npcs {
-            let tuple = npc_textures.get(&npc.sprite).expect("Could not find NPC texture!").of_direction(npc.direction.int_value());
-            draw_flip(ctx, g, tuple.0, (npc.x << 4) - screen.focus_x + 1, (npc.y << 4) - screen.focus_y - 4, tuple.1);
+            let tuple = npc_textures.get(&npc.identifier.sprite).expect("Could not find NPC texture!").of_direction(npc.position.direction.value());
+            draw_flip(ctx, g, tuple.0, (npc.position.x << 4) - screen.focus_x + 1, (npc.position.y << 4) - screen.focus_y - 4, tuple.1);
         }
     }
 
     fn input(&mut self, context: &mut GameContext, player: &Player) {
         if context.keys[0] == 1 {
             for npc in &mut self.npcs {
-                if player.coords.x == npc.x {
-                    match player.direction {
+                if player.position.x == npc.position.x {
+                    match player.position.direction {
                         Direction::Up => {
-                            if player.coords.y - 1 == npc.y {
-                                npc.interact(player.direction, context);
+                            if player.position.y - 1 == npc.position.y {
+                                npc.interact(player.position.direction, context);
                             }
                         },
                         Direction::Down => {
-                            if player.coords.y + 1 == npc.y {
-                                npc.interact(player.direction, context);
+                            if player.position.y + 1 == npc.position.y {
+                                npc.interact(player.position.direction, context);
                             }
                         },
                         _ => {}
                     }
-                } else if player.coords.y == npc.y {
-                    match player.direction {
+                } else if player.position.y == npc.position.y {
+                    match player.position.direction {
                         Direction::Right => {
-                            if player.coords.x + 1 == npc.x {
-                                npc.interact(player.direction, context);
+                            if player.position.x + 1 == npc.position.x {
+                                npc.interact(player.position.direction, context);
                             }
                         },
                         Direction::Left => {
-                            if player.coords.x - 1 == npc.x {
-                                npc.interact(player.direction, context);
+                            if player.position.x - 1 == npc.position.x {
+                                npc.interact(player.position.direction, context);
                             }
                         },
                         _ => {}

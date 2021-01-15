@@ -41,12 +41,12 @@ fn get_or_random<P: AsRef<Path>>(path: P) -> Box<dyn WildPokemonTable> {
             return Box::new(wpt);
         },
         None => {
-            warn!("Tried to get original wild pokemon table but failed, using random wild pokemon table");
+            warn!("Tried to get original wild pokemon table at path {:?} but failed, using random wild pokemon table", &path);
             return get_random();
         }
     }   
 }
 
 fn get_random() -> Box<dyn WildPokemonTable> {
-    return Box::new(RandomWildPokemonTable::new(DEFAULT_ENCOUNTER_CHANCE));
+    return Box::new(RandomWildPokemonTable {encounter_rate: DEFAULT_ENCOUNTER_CHANCE});
 }

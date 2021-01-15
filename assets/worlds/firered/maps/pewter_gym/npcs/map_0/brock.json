@@ -3,10 +3,10 @@
 		"name": "Brock",
 		"sprite": 80
 	},
-	"location": {
+	"position": {
 		"x": 6,
 		"y": 5,
-		"direction": 1
+		"direction": "Down"
 	},
 	"trainer": {
 		"party": {
@@ -52,21 +52,15 @@
 						"sp_def": 0,
 						"speed": 0
 					},
-					"moves": [
-						{
-							"name": "Bind",
-							"remaining_pp": 35
-						},
-						null,
-						null,
-						null
-					],
 					"exp": 0,
 					"friendship": 70
 				}
 			]
 		},
-		"sprite": 0,
-		"trainer_type": "GymLeader"
+		"trainer_type": "GymLeader",
+		"victory_message": [
+			"Test"
+		],
+		"worth": 0
 	}
 }

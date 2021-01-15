@@ -41,7 +41,7 @@ pub fn pmove(battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.enable();
             battle_gui
                 .battle_text
-                .update_text(&battle.player().pokemon.name, &battle.player_move.name);
+                .update_text(&battle.player().pokemon.data.name, &battle.player_move.name);
         }
     } else if battle.faint_queued {
         faint_queued(battle, battle_gui);
@@ -77,7 +77,7 @@ pub fn omove(battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.enable();
             battle_gui
                 .battle_text
-                .update_text(&battle.opponent().pokemon.name, &battle.opponent_move.name);
+                .update_text(&battle.opponent().pokemon.data.name, &battle.opponent_move.name);
         }
     } else if battle.faint_queued {
         faint_queued(battle, battle_gui);
@@ -103,7 +103,7 @@ fn faint_queued(battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.enable();
             battle_gui
                 .battle_text
-                .update_faint(&battle.player().pokemon.name);
+                .update_faint(&battle.player().pokemon.data.name);
         }
     } else {
         if battle_gui.battle_text.is_active() {
@@ -121,7 +121,7 @@ fn faint_queued(battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.enable();
             battle_gui
                 .battle_text
-                .update_faint(&battle.opponent().pokemon.name);
+                .update_faint(&battle.opponent().pokemon.data.name);
         }
     }
 }
@@ -159,7 +159,8 @@ pub struct BattleText {
     panel_x: isize,
     panel_y: isize,
 
-    pub text: String,
+    pub text: Vec<String>,
+    current_line: usize,
     pub font_id: usize,
 
     counter: u16,
@@ -179,8 +180,10 @@ impl BattleText {
             panel_x: _panel_x,
             panel_y: _panel_y,
 
-            text: String::from("null"),
+            text: vec![String::from("null")],
             font_id: 1,
+            current_line: 0,
+
             counter: 0,
 
             can_continue: false,
@@ -191,19 +194,22 @@ impl BattleText {
 
     pub fn update_text(&mut self, pokemon: &String, pmove: &String) {
         // To - do: seperate into two lines not just one
-        self.text = pokemon.clone();
-        self.text.push_str(" used ");
-        self.text.push_str(pmove.as_str());
-        self.text.push('!');
+        let mut text = pokemon.clone();
+        text.push_str(" used ");
+        text.push_str(pmove.as_str());
+        text.push('!');
+        self.text = vec![text];
     }
 
     pub fn update_faint(&mut self, pokemon: &String) {
-        self.text = pokemon.clone();
-        self.text.push_str(" fainted!");
+        let mut text = pokemon.clone();
+        text.push_str(" fainted!");
+        self.text = vec![text];
     }
 
     fn reset(&mut self) {
         self.counter = 0;
+		self.current_line = 0;
         self.can_continue = false;
         self.timer.despawn();
     }
@@ -211,10 +217,14 @@ impl BattleText {
     pub fn update(&mut self) {
         if self.is_active() {
             if !self.can_continue {
-                if self.counter as usize <= self.text.len() * 4 {
+                let line_len = self.get_line(self.current_line).len() as u16 * 4;
+                if self.counter <= line_len {
                     self.counter += 1;
+                } else if self.current_line < self.get_text().len() - 1 {
+                    self.current_line += 1;
+                    self.counter = 0;
                 } else {
-                    self.counter = self.text.len() as u16 * 4;
+                    self.counter = line_len;
                     self.can_continue = true;
                 }
             }
@@ -245,21 +255,20 @@ impl GuiComponent for BattleText {
         if self.is_active() {
             let mut string = String::new();
             let mut count = 0;
-            for character in self.text.chars() {
-                if count >= self.counter / 4 {
-                    break;
-                }
-                string.push(character);
-                count += 1;
-            }
-            tr.render_text_from_left(
-                ctx,
-                g,
-                self.font_id,
-                string.as_str(),
-                self.panel_x + self.x,
-                self.panel_y + self.y,
-            );
+            
+            for character in self.get_line(self.current_line).chars() {
+				if count >= self.counter / 4 {
+					break;
+				}
+				string.push(character);
+				count+=1;
+			}
+
+			tr.render_text_from_left(ctx, g, self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + self.current_line as isize * 16);
+
+			for line_index in 0..self.current_line {
+				tr.render_text_from_left(ctx, g, self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + line_index as isize * 16);
+			}         
         }
     }
 
@@ -270,8 +279,13 @@ impl GuiComponent for BattleText {
 }
 
 impl GuiText for BattleText {
-    fn get_text(&self) -> &str {
-        self.text.as_str()
+    
+    fn get_line(&self, index: usize) -> &String {
+        &self.get_text()[index]
+    }
+
+    fn get_text(&self) -> &Vec<String> {
+        &self.text
     }
 
     fn get_font_id(&self) -> usize {

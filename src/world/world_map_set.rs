@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use opengl_graphics::Texture;
 
+use crate::engine::game_context::GameContext;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 
 use super::ScreenCoords;
@@ -73,23 +74,23 @@ impl World for WorldMapSet {
         self.maps[self.current_map_index].tile(x, y)
     }
 
-    fn walkable(&mut self, x: isize, y: isize) -> u8 {
-        self.maps[self.current_map_index].walkable(x, y)
+    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
+        self.maps[self.current_map_index].walkable(context, x, y)
     }
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry> {
         self.maps[self.current_map_index].check_warp(x, y)
     }
 
-    fn on_tile(&mut self, context: &mut crate::engine::game_context::GameContext, tile_id: u16) {
-        self.maps[self.current_map_index].on_tile(context, tile_id)
+    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize) {
+        self.maps[self.current_map_index].on_tile(context, x, y)
     }
 
     fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: ScreenCoords, border: bool) {
         self.maps[self.current_map_index].render(ctx, g, textures, npc_textures, screen, border)
     }
 
-    fn input(&mut self, context: &mut crate::engine::game_context::GameContext, player: &crate::entity::entities::player::Player) {
+    fn input(&mut self, context: &mut GameContext, player: &crate::entity::entities::player::Player) {
         self.maps[self.current_map_index].input(context, player)
     }
 

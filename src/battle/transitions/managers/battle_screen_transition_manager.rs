@@ -11,10 +11,8 @@ use crate::battle::transitions::battle_transition_traits::BattleTransitionManage
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::vertical_close_battle_screen_transition::VerticalCloseBattleScreenTransition;
-use crate::util::file_util::asset_as_pathbuf;
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
-use music::Repeat::Forever;
 use crate::battle::battle_info::BattleType;
 
 pub struct BattleScreenTransitionManager {
@@ -43,26 +41,30 @@ impl BattleScreenTransitionManager {
         self.transitions.push(Box::new(VerticalCloseBattleScreenTransition::new()));
     }
 
-    pub fn on_start(&mut self, context: &mut GameContext) {
+    pub fn on_start(&mut self, context: &mut GameContext, battle_type: BattleType) {
 
         self.transitions[self.current_transition_id].spawn();
         self.transitions[self.current_transition_id].on_start(context);
 
-        match context.battle_context.battle_data.as_ref().unwrap().battle_type {
+        match battle_type {
             BattleType::Wild => {
-                music::play_music(&Music::BattleWild, Forever);
+                context.play_music(Music::BattleWild);
             }
             BattleType::Trainer => {
-                music::play_music(&Music::BattleTrainer, Forever);
+                context.play_music(Music::BattleTrainer);
             }
             BattleType::GymLeader => {
-                music::play_music(&Music::BattleGym, Forever);
+                context.play_music(Music::BattleGym);
             }
         }
     }
 
     pub fn render_below_player(&mut self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
         self.transitions[self.current_transition_id].render_below_player(ctx, g, tr);
+    }
+
+    fn reset(&mut self) {
+        self.transitions[self.current_transition_id].reset();
     }
 
 }
@@ -99,11 +101,6 @@ impl Loadable for BattleScreenTransitionManager {
 
     fn load(&mut self) {
 
-        music::bind_music_file(Music::BattleWild, asset_as_pathbuf("audio/music/mus_vs_wild.mid"));
-        music::bind_music_file(Music::BattleTrainer, asset_as_pathbuf("audio/music/mus_vs_trainer.mid"));
-        music::bind_music_file(Music::BattleGym, asset_as_pathbuf("audio/music/mus_vs_gym_leader.mid"));
-        music::bind_music_file(Music::BattleChampion, asset_as_pathbuf("audio/music/mus_vs_champion.mid"));
-
     }
 
 }
@@ -112,10 +109,12 @@ impl Entity for BattleScreenTransitionManager {
 
     fn spawn(&mut self) {
         self.transitions[self.current_transition_id].spawn();
+        self.reset();
     }    
 
     fn despawn(&mut self) {
         self.transitions[self.current_transition_id].despawn();
+        self.reset();
     }
 
     fn is_alive(&self) -> bool {

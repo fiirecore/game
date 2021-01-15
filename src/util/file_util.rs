@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-pub static UNKNOWN_FILENAME_ERR: &str = "unknown file (could not unwrap filename)";
+//pub static UNKNOWN_FILENAME_ERR: &str = "unknown file (could not unwrap filename)";
 
 static DIR: &str = "assets";
 

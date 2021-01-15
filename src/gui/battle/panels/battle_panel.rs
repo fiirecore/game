@@ -2,7 +2,7 @@ use piston_window::Context;
 use opengl_graphics::GlGraphics;
 use crate::gui::basic_button::BasicButton;
 use crate::engine::game_context::GameContext;
-use crate::entity::util::direction::Direction;
+use crate::io::data::Direction;
 use crate::engine::engine::Texture;
 use crate::engine::text::TextRenderer;
 
@@ -34,8 +34,7 @@ pub struct BattlePanel {
     pub pokemon_button: BasicButton,
     pub run_button: BasicButton,
 
-    top_text: BasicText,
-    bottom_text: BasicText,
+    text: BasicText,
 
 }
 
@@ -70,15 +69,14 @@ impl BattlePanel {
             pokemon_button: BasicButton::new("Pokemon".to_uppercase().as_str(), font_id, 17, text_y + 16, x + panel_x, y + panel_y),
             run_button: BasicButton::new("Run".to_uppercase().as_str(), font_id, 73, text_y + 16, x + panel_x, y + panel_y),
 
-            top_text: BasicText::new("What will", 1, Direction::Left, -111, 10, x + panel_x, y + panel_y),
-            bottom_text: BasicText::new("POKEMON do?", 1, Direction::Left, -111, 26, x + panel_x, y + panel_y),
+            text: BasicText::new(vec![String::from("What will"), String::from("POKEMON do?")], 1, Direction::Left, -111, 10, x + panel_x, y + panel_y),
 
 		}
     }
     
     pub fn update_text(&mut self, instance: &PokemonInstance) {
-        self.bottom_text.text = instance.pokemon.name.to_uppercase();
-        self.bottom_text.text.push_str(" do?");
+        self.text.text[1] = instance.pokemon.data.name.to_uppercase();
+        self.text.text[1].push_str(" do?");
     }
 
 }
@@ -133,8 +131,7 @@ impl GuiComponent for BattlePanel {
                 },
                 _ => {}
             }
-            self.top_text.render(ctx, g, tr);
-            self.bottom_text.render(ctx, g, tr);
+            self.text.render(ctx, g, tr);
             tr.render_cursor(ctx, g, self.panel_x + self.x + 10 + cursor_x, self.panel_y + self.y + 13 + cursor_y);
             self.fight_button.render(ctx, g, tr);
             self.bag_button.render(ctx, g, tr);

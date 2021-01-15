@@ -5,7 +5,6 @@ use std::path::PathBuf;
 
 use log::warn;
 
-use crate::util::file_util::UNKNOWN_FILENAME_ERR;
 use crate::util::file_util::asset_as_pathbuf;
 use crate::world::world_chunk::WorldChunk;
 use crate::world::world_chunk_map::WorldChunkMap;
@@ -114,12 +113,11 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
                     }
                     
                 }
-                Err(e) => {
+                Err(err) => {
                     warn!(
                         "Toml file at {:?} is {}",
-                        path.file_name()
-                            .unwrap_or(&OsString::from(&UNKNOWN_FILENAME_ERR)),
-                        e
+                        path,
+                        err
                     );
 
                     return (String::from("null"), None, None);
@@ -129,8 +127,7 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
         Err(err) => {
             warn!(
                 "Error reading file at {:?} to string with error: {}",
-                path.file_name()
-                    .unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)),
+                path,
                 err
             );
             return (String::from("null"),None, None);

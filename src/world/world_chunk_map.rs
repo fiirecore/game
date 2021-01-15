@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use opengl_graphics::Texture;
 
+use crate::audio::music::Music;
+use crate::engine::game_context::GameContext;
 use crate::entity::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 
@@ -19,7 +21,7 @@ pub struct WorldChunkMap {
     //connected_chunks: Vec<&'a WorldChunk>,
     pub(crate) current_chunk: u16,
 
-    current_music: u8,
+    current_music: Music,
 
 }
 
@@ -31,21 +33,21 @@ impl WorldChunkMap {
             alive: false,
             chunks: HashMap::new(),
             current_chunk: 0,
-            current_music: 0,
+            current_music: Music::Pallet,
         }
 
     }
 
 
 
-    pub fn change_chunk(&mut self, chunk: u16) {
+    pub fn change_chunk(&mut self, context: &mut GameContext, chunk: u16) {
         self.current_chunk = chunk;
         let music = self.current_chunk().map.music;
         if music != self.current_music {
             self.current_music = music;
-            crate::audio::music::Music::play_music(self.current_music);
+            context.play_music(self.current_music);
         }
-    }    
+    }
 
     pub fn chunk_at(&self, x: isize, y: isize) -> Option<(&u16, &WorldChunk)> {
         for chunk in &self.chunks {
@@ -115,16 +117,22 @@ impl World for WorldChunkMap {
         }
     }
 
-    fn walkable(&mut self, x: isize, y: isize) -> u8 {
+    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
         let current = self.current_chunk();
         if current.in_bounds(x, y) {
-            self.chunks.get_mut(&self.current_chunk).unwrap().walkable(x, y)
+            self.chunks.get_mut(&self.current_chunk).unwrap().walkable(context, x, y)
         } else {
             for connection in &current.connections {
-                if self.chunks.get(connection).expect("Could not get connected chunk").in_bounds(x, y) {
+                let connected = self.chunks.get(connection).expect("Could not get connected chunk");
+                if connected.in_bounds(x, y) {
                     // To - do: check if walkable here
-                    self.change_chunk(*connection);
-                    return self.walkable(x, y);
+                    self.current_chunk = *connection;
+                    let music = connected.map.music;
+                    if music != self.current_music {
+                        self.current_music = music;
+                        context.play_music(self.current_music);
+                    }
+                    return self.walkable(context, x, y);
                 }
             }
             return 1;
@@ -143,12 +151,14 @@ impl World for WorldChunkMap {
         }
     }
 
-    fn input(&mut self, context: &mut crate::engine::game_context::GameContext, player: &crate::entity::entities::player::Player) {
+    fn input(&mut self, context: &mut GameContext, player: &crate::entity::entities::player::Player) {
         self.current_chunk_mut().input(context, player)
     }
 
-    fn on_tile(&mut self, context: &mut crate::engine::game_context::GameContext, tile_id: u16) {
-        self.current_chunk_mut().on_tile(context, tile_id)
+    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize) {
+        if self.current_chunk().in_bounds(x, y) {
+            self.current_chunk_mut().on_tile(context, x, y);
+        }
     }
     
 }

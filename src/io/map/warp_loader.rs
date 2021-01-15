@@ -6,7 +6,7 @@ use log::warn;
 
 use crate::world::warp::WarpEntry;
 
-pub fn get_warps<P: AsRef<Path>>(root_path: P, map_set_num: Option<usize>) -> Vec<WarpEntry> {
+pub fn load_warp_entries<P: AsRef<Path>>(root_path: P, map_index: Option<usize>) -> Vec<WarpEntry> {
 
     let root_path = root_path.as_ref();
     let warp_path = root_path.join("warps");
@@ -15,30 +15,24 @@ pub fn get_warps<P: AsRef<Path>>(root_path: P, map_set_num: Option<usize>) -> Ve
 
     match read_dir(&warp_path) {
         Ok(dir) => {
-            match map_set_num {
-                Some(map_set_num) => {
+            match map_index {
+                Some(map_index) => {
                     let mut map_set = String::from("map_");
-                    map_set.push_str(map_set_num.to_string().as_str());
+                    map_set.push_str(map_index.to_string().as_str());
                     match read_dir(&warp_path.join(map_set)) {
                         Ok(dir) => {
                             if let Some(err) = add_warp_under_directory(&mut warps, dir) {
-                                warn!(
-                                    "Error reading warp entry at map set {} under {:?} with error: {}",
-                                    map_set_num, root_path, err
-                                );
+                                warn!("Problem reading warp entry at map set {} under {:?} with error: {}", map_index, &warp_path, err);
                             }
                         }
                         Err(err) => {
-                            warn!("Error reading map set directory #{} under path {:?} with error {}", map_set_num, root_path, err);
+                            warn!("Problem reading warp map set directory #{} under path {:?} with error {}", map_index, &warp_path, err);
                         }
                     }
                 },
                 None => {
                     if let Some(err) = add_warp_under_directory(&mut warps, dir) {
-                        warn!(
-                            "Error reading warp entry under {:?} with error: {}",
-                            root_path, err
-                        );
+                        warn!("Problem reading warp entry under {:?} with error: {}", &root_path, err);
                     }
                 }
             }            

@@ -1,4 +1,5 @@
 use super::pokemon_gui::PlayerPokemonGui;
+use super::pokemon_gui::PokemonGui;
 
 pub struct PlayerBounce {
 

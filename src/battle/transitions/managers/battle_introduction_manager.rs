@@ -53,7 +53,7 @@ impl BattleIntroductionManager {
     }
     
     pub fn setup_text(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>) {
-        self.introductions[self.current_introduction_index].setup_text(battle, trainer_data);
+        self.introductions[self.current_introduction_index].setup(battle, trainer_data);
     }
 
     pub fn render_with_offset(&self, ctx: &mut Context, g: &mut GlGraphics, battle: &Battle, offset: u16) {
@@ -66,6 +66,10 @@ impl BattleIntroductionManager {
 
     pub fn spawn_type(&mut self, index: usize) {
         self.current_introduction_index = index;
+    }
+
+    pub fn reset(&mut self) {
+        self.introductions[self.current_introduction_index].reset();
     }
 
 }
@@ -98,11 +102,13 @@ impl Entity for BattleIntroductionManager {
     fn spawn(&mut self) {
         self.alive = true;
         self.introductions[self.current_introduction_index].spawn();
+        self.reset();
     }
 
     fn despawn(&mut self) {
         self.alive = false;
         self.introductions[self.current_introduction_index as usize].despawn();
+        self.reset();
     }
 
     fn is_alive(&self) -> bool {

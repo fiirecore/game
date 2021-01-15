@@ -1,5 +1,6 @@
 
 use crate::engine::engine::Texture;
+use crate::scene::scene::SceneLoad;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 use crate::engine::text::TextRenderer;
@@ -10,6 +11,7 @@ use crate::scene::scene::Scene;
 use crate::util::file_util::asset_as_pathbuf;
 use crate::util::texture_util::texture_from_path;
 use crate::util::render_util::draw_o;
+
 pub struct FirstTimeControlsScene {
 	scene_token: usize,
 	page: u8,
@@ -40,9 +42,10 @@ impl FirstTimeControlsScene {
 	
 }
 
-impl Scene for FirstTimeControlsScene {
-	
-	fn load(&mut self) {
+
+impl SceneLoad for FirstTimeControlsScene {
+
+	fn load(&mut self, _context: &mut GameContext) {
 		
 		self.page = 0;
 		self.background_tex = Some(texture_from_path(asset_as_pathbuf("firsttime/controls/background.png")));
@@ -54,6 +57,14 @@ impl Scene for FirstTimeControlsScene {
 		self.lr_b_tex = None;
 		
 	}
+
+	fn on_start(&mut self, _context: &mut GameContext) {
+		
+	}
+
+}
+
+impl Scene for FirstTimeControlsScene {
 	
 //	fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
 	
@@ -101,15 +112,24 @@ impl FirstTimeNarrativeScene {
 	
 }
 
-impl Scene for FirstTimeNarrativeScene {
-	
-	fn load(&mut self) {
+//
+impl SceneLoad for FirstTimeNarrativeScene {
+
+	fn load(&mut self, _context: &mut GameContext) {
 		
 		self.page = 0;
 		self.background_tex = Some(texture_from_path(asset_as_pathbuf("firsttime/narrative/background.png")));
 		self.pikachu_tex = None;
 		
 	}
+
+	fn on_start(&mut self, _context: &mut GameContext) {
+		
+	}
+
+}
+
+impl Scene for FirstTimeNarrativeScene {
 	
 //	fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
 	

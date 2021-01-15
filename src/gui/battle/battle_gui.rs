@@ -43,7 +43,7 @@ impl BattleGui {
 			battle_background: BattleBackground::new(),
 
 			player_panel: PlayerPanel::new(0, 113),
-			player_pokemon_gui: PlayerPokemonGui::new(127, 76),
+			player_pokemon_gui: PlayerPokemonGui::new(127, 75),
 			opponent_pokemon_gui: OpponentPokemonGui::new(14, 18),
 
 			battle_text: BattleText::new(0, 113),

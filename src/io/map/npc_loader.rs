@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::ffi::OsString;
 use std::fs::ReadDir;
 use std::fs::read_dir;
 use std::fs::read_to_string;
@@ -10,13 +9,10 @@ use log::warn;
 
 use crate::entity::texture::still_texture_manager::StillTextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::entity::util::direction::Direction;
-use crate::game::npc::npc::NPCInstance;
 
-use crate::io::data::npc::npc::JsonNPC;
-use crate::util::file_util::UNKNOWN_FILENAME_ERR;
 use crate::util::file_util::asset_as_pathbuf;
 use crate::util::texture_util::texture_from_path;
+use crate::world::npc::NPC;
 
 pub fn load_npc_textures(world_id: &String, npc_textures: &mut HashMap<u8, ThreeWayTexture>) {
     let mut dir_pb = PathBuf::from("worlds/");
@@ -30,20 +26,26 @@ pub fn load_npc_textures(world_id: &String, npc_textures: &mut HashMap<u8, Three
     match entries_result {
         Ok(readdir) => {
             let paths: Vec<Result<PathBuf, std::io::Error>> = readdir.map( |res| res.map(|e| e.path())).collect();
-            let size = paths.len();
             for path in paths {
                 match path {
                     Ok(path) => {
                         if path.is_dir() {
-                            let mut twt = ThreeWayTexture::new();
-                            if size > 3 {
-                                warn!("Moving NPC textures found, not supported yet.");
-                            } else {
-                                twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_up.png")), false)));
-                                twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_down.png")), false)));
-                                twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(&path.join("idle_side.png")), false)));
-                            }                                    
-                            npc_textures.insert(path.file_name().unwrap().to_str().unwrap().parse::<u8>().expect("Found a folder with a non-number name"), twt); // fix
+                            match path.file_name().unwrap().to_str().unwrap().parse::<u8>() {
+                                Ok(id) => {
+                                    let mut twt = ThreeWayTexture::new();
+                                    let vec: Vec<_> = path.read_dir().unwrap().collect();
+                                    if vec.len() > 4 {
+                                        warn!("Moving NPC textures found under id {}, not supported yet.", id);
+                                    }
+                                    twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(path.join("idle_up.png")), false)));
+                                    twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(path.join("idle_down.png")), false)));
+                                    twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(path.join("idle_side.png")), false)));                                   
+                                    npc_textures.insert(id, twt); // fix
+                                }
+                                Err(err) => {
+                                    warn!("Found an npc texture folder with an unparsable name at {:?} with error {}", path, err);
+                                }
+                            }
                         }
                     },
                     Err(err) => {
@@ -58,7 +60,7 @@ pub fn load_npc_textures(world_id: &String, npc_textures: &mut HashMap<u8, Three
     }
 }
 
-pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPCInstance> where P: AsRef<Path> {
+pub fn load_npc_entries<P>(root_path: P, map_index: Option<usize>) -> Vec<NPC> where P: AsRef<Path> {
     let root_path = root_path.as_ref();
     let npc_path = root_path.join("npcs");
 
@@ -66,10 +68,10 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPCInstance>
 
     match read_dir(&npc_path) {
         Ok(dir) => {
-            match map_set_num {
-                Some(map_set_num) => {
+            match map_index {
+                Some(map_index) => {
                     let mut map_set = String::from("map_");
-                    map_set.push_str(map_set_num.to_string().as_str());
+                    map_set.push_str(map_index.to_string().as_str());
                     match read_dir(&npc_path.join(map_set)) {
                         Ok(dir) => {
                             if let Some(err) = get_npc_from_directory(&mut npcs, dir) {
@@ -80,7 +82,7 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPCInstance>
                             }
                         }
                         Err(err) => {
-                            warn!("Error reading map set directory #{} under path {:?} with error {}", map_set_num, root_path, err);
+                            warn!("Problem reading npc map set directory #{} under path {:?} with error {}", map_index, &npc_path, err);
                         }
                     }                    
                 },
@@ -88,7 +90,7 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPCInstance>
                     if let Some(err) = get_npc_from_directory(&mut npcs, dir) {
                         warn!(
                             "Error fetching npc under {:?} with error: {}",
-                            root_path, err
+                            &npc_path, err
                         );
                     }
                 }
@@ -98,9 +100,7 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPCInstance>
         Err(err) => {
             warn!(
                 "Could not read NPC directory for map {:?} with error {}",
-                root_path
-                    .file_name()
-                    .unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)),
+                &root_path,
                 err
             );
         }
@@ -108,7 +108,7 @@ pub fn get_npcs<P>(root_path: P, map_set_num: Option<usize>) -> Vec<NPCInstance>
     npcs
 }
 
-pub fn get_npc_from_directory(npcs: &mut Vec<NPCInstance>, dir: ReadDir) -> Option<std::io::Error> {
+pub fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: ReadDir) -> Option<std::io::Error> {
     for path_result in dir.map(|res| res.map(|e| e.path())) {
         match path_result {
             Ok(path) => {
@@ -124,7 +124,7 @@ pub fn get_npc_from_directory(npcs: &mut Vec<NPCInstance>, dir: ReadDir) -> Opti
     return None;
 }
 
-pub fn load_npc<P>(path: P) -> Option<NPCInstance> where P: AsRef<Path> {
+pub fn load_npc<P>(path: P) -> Option<NPC> where P: AsRef<Path> {
     let path = path.as_ref();
 
     let string_result = read_to_string(path);
@@ -132,25 +132,14 @@ pub fn load_npc<P>(path: P) -> Option<NPCInstance> where P: AsRef<Path> {
     match string_result {
         Ok(string) => {
 
-            let npc_entry: Result<JsonNPC, serde_json::Error> = serde_json::from_str(string.as_str());
+            let npc_entry: Result<NPC, serde_json::Error> = serde_json::from_str(string.as_str());
 
             match npc_entry {
                 Ok(npc) => {
-                    return Some(NPCInstance {
-
-                        x: npc.location.x,
-                        y: npc.location.y,
-
-                        direction: Direction::from_int(npc.location.direction).unwrap_or(Direction::Down),
-
-                        name: npc.identifier.name,
-                        sprite: npc.identifier.sprite,
-
-                        trainer: npc.trainer,
-                    });
+                    return Some(npc);
                 },
                 Err(err) => {
-                    warn!("Could not parse NPC json at {:?} with error {}", path.file_name().unwrap_or(&OsString::from(UNKNOWN_FILENAME_ERR)), err);
+                    warn!("Could not parse NPC json at {:?} with error {}", path, err);
                     return None;
                 }
             }

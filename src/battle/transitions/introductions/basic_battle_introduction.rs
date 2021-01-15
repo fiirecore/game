@@ -9,15 +9,17 @@ use crate::battle::battle::Battle;
 use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::gui::battle::battle_gui::BattleGui;
+use crate::gui::battle::pokemon_gui::PokemonGui;
 use crate::gui::gui::Activatable;
 use crate::gui::gui::GuiComponent;
 use crate::util::render_util::draw_bottom;
-use crate::util::timer::Timer;
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
 
 use super::util::intro_text::IntroText;
 use super::util::player_intro::PlayerBattleIntro;
+
+static GUI_OFFSET: u8 = 24;
 
 pub struct BasicBattleIntroduction {
 
@@ -26,7 +28,9 @@ pub struct BasicBattleIntroduction {
 
     pub intro_text: IntroText,
     pub player_intro: PlayerBattleIntro,
-    pub timer: Timer,
+
+    ogui_counter: u8,
+    pgui_counter: u8,
 
 }
 
@@ -39,9 +43,12 @@ impl BasicBattleIntroduction {
             alive: false,
             finished: false,
 
-            intro_text: IntroText::new(panel_x, panel_y, vec![String::from("Intro Text")]),
+            intro_text: IntroText::new(panel_x, panel_y, vec![vec![String::from("Intro Text")]]),
             player_intro: PlayerBattleIntro::new(),
-            timer: Timer::new(60),
+            
+
+            ogui_counter: 0,
+            pgui_counter: 0,
 
         }
 
@@ -54,6 +61,8 @@ impl BattleTransition for BasicBattleIntroduction {
     fn reset(&mut self) {
         self.intro_text.load();
         self.player_intro.reset();
+        self.ogui_counter = 0;
+        self.pgui_counter = 0;
     }
 
 }
@@ -73,7 +82,7 @@ impl Loadable for BasicBattleIntroduction {
 impl Completable for BasicBattleIntroduction {
 
     fn is_finished(&self) -> bool {
-        self.finished && !self.player_intro.should_update()
+        self.finished && !self.player_intro.should_update() && !self.pgui_counter >= GUI_OFFSET
     }
 
 }
@@ -91,8 +100,6 @@ impl Entity for BasicBattleIntroduction {
         self.alive = false;
         self.finished = false;
         self.intro_text.disable();
-        self.timer.despawn();
-        self.reset();
     }
 
     fn is_alive(&self) -> bool {
@@ -103,23 +110,17 @@ impl Entity for BasicBattleIntroduction {
 impl Ticking for BasicBattleIntroduction {
 
     fn update(&mut self, context: &mut GameContext) {
-
-        if self.intro_text.next() >= self.intro_text.text.len() as u8 - 1 && self.intro_text.can_continue {
-            if !self.intro_text.no_pause {
-                self.intro_text.no_pause = true;
-                self.timer.spawn();
-            } else {
-                self.timer.update();
+        self.intro_text.update(context);
+        if self.intro_text.can_continue {
+            if self.intro_text.next() + 1 == self.intro_text.text.len() as u8 {
                 if self.player_intro.should_update() {
-                    self.player_intro.update();
-                } else if self.timer.is_finished() {
+                    self.player_intro.update();                
+                } else if self.intro_text.timer.is_finished()   {
+                    self.intro_text.disable();
                     self.finished = true;
                 }
-            }       
-        } else {
-            self.intro_text.update(context);
-        }
-        
+            }
+        }  
 	}
 
     fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut crate::engine::text::TextRenderer) {
@@ -133,14 +134,14 @@ impl BattleIntroduction for BasicBattleIntroduction {
         self.intro_text.input(context);
     }
 
-    fn setup_text(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
+    fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
         let mut opponent_string = String::from("Wild ");
-		opponent_string.push_str(battle.opponent().pokemon.name.to_uppercase().as_str());
+		opponent_string.push_str(battle.opponent().pokemon.data.name.to_uppercase().as_str());
 		opponent_string.push_str(" appeared!");
         let mut player_string = String::from("Go! ");
-        player_string.push_str(battle.player().pokemon.name.to_uppercase().as_str());
+        player_string.push_str(battle.player().pokemon.data.name.to_uppercase().as_str());
         player_string.push_str("!");
-        self.intro_text.text = vec![opponent_string, player_string];
+        self.intro_text.text = vec![vec![opponent_string], vec![player_string]];
     }
 
     fn render_offset(&self, ctx: &mut Context, g: &mut GlGraphics, battle: &Battle, offset: u16) {
@@ -154,13 +155,28 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
     fn update_gui(&mut self, battle_gui: &mut BattleGui) {
         if self.intro_text.can_continue {
-            if self.intro_text.next() == self.intro_text.text.len() as u8 - 2 {
+            if self.intro_text.next() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
+                battle_gui.opponent_pokemon_gui.reset();
                 battle_gui.opponent_pokemon_gui.spawn();
-            } else if self.intro_text.next() == self.intro_text.text.len() as u8 - 1 {
-                battle_gui.player_pokemon_gui.spawn();
             }
         }
-        
+        if !self.player_intro.should_update() && !battle_gui.player_pokemon_gui.is_alive() {
+            battle_gui.player_pokemon_gui.reset();
+            battle_gui.player_pokemon_gui.spawn();
+            battle_gui.player_pokemon_gui.offset_position(-10, 0); 
+        }
+        if battle_gui.opponent_pokemon_gui.is_alive() {
+            if self.ogui_counter < GUI_OFFSET {
+                self.ogui_counter += 1;
+                battle_gui.opponent_pokemon_gui.offset_position(5, 0);
+            }
+        }
+        if battle_gui.player_pokemon_gui.is_alive() {
+            if self.pgui_counter < GUI_OFFSET {
+                self.pgui_counter += 1;
+                battle_gui.player_pokemon_gui.offset_position(-5, 0);
+            }
+        }
     }
 
 }

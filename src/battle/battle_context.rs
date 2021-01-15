@@ -1,9 +1,9 @@
 use oorandom::Rand32;
 
-use crate::game::npc::npc::NPCInstance;
-use crate::game::pokedex::pokemon::stat_set::StatSet;
+use crate::io::data::pokemon::StatSet;
 use crate::io::data::pokemon::pokemon_party::PokemonParty;
 use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
+use crate::world::npc::NPC;
 use crate::world::pokemon::wild_pokemon_table::WildPokemonTable;
 
 use super::battle_info::BattleType;
@@ -60,18 +60,18 @@ impl BattleContext {
         });
     }
 
-    pub fn trainer_battle(&mut self, npc: &NPCInstance) {
+    pub fn trainer_battle(&mut self, npc: &NPC) {
         if let Some(trainer) = &npc.trainer {
             self.battle = true;
             let mut name = trainer.trainer_type.to_string().to_string();
             name.push(' ');
-            name.push_str(npc.name.as_str());
+            name.push_str(npc.identifier.name.as_str());
             self.battle_data = Some(BattleData {
-                battle_type: BattleType::Trainer,
+                battle_type: trainer.trainer_type.battle_type(),
                 party: trainer.party.clone(),
                 trainer_data: Some(TrainerData {
                     name: name,
-                    sprite_id: npc.sprite,
+                    sprite_id: npc.identifier.sprite,
                 }),
             });
         }        
@@ -86,6 +86,18 @@ pub struct BattleData {
     pub party: PokemonParty,
     pub trainer_data: Option<TrainerData>,
 
+}
+
+impl Default for BattleData {
+    fn default() -> Self {
+        Self {
+            battle_type: BattleType::Wild,
+            party: PokemonParty {
+                pokemon: Vec::with_capacity(0),
+            },
+            trainer_data: None,
+        }
+    }
 }
 
 #[derive(Clone)]

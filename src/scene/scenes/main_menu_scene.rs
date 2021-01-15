@@ -1,6 +1,7 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
+use crate::scene::scene::SceneLoad;
 use crate::{engine::{game_context::GameContext, text::TextRenderer}, scene::scene::Scene};
 
 pub struct MainMenuScene {
@@ -21,13 +22,22 @@ impl MainMenuScene {
 
 }
 
+//#[async_trait::async_trait]
+impl SceneLoad for MainMenuScene {
+
+	fn load(&mut self, _context: &mut GameContext) {
+
+	}
+
+	fn on_start(&mut self, _context: &mut GameContext) {
+		self.scene_token = 5;
+	}
+
+}
+
 impl Scene for MainMenuScene {
 
 	// have normal main menu + video settings + controls + exit
-
-	fn load(&mut self) {
-
-	}
 	
 	fn update(&mut self, _context: &mut GameContext) {}
 	

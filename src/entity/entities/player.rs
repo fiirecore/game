@@ -7,8 +7,8 @@ use crate::entity::texture::movement_texture::MovementTexture;
 use crate::entity::texture::movement_texture_manager::MovementTextureManager;
 use crate::entity::texture::texture_manager::TextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::entity::util::direction::Direction;
-use crate::entity::util::mob_coordinates::MobCoordinates;
+use crate::io::data::Direction;
+use crate::io::data::Position;
 use crate::{engine::text::TextRenderer, util::{file_util::asset_as_pathbuf, traits::Loadable}};
 
 use crate::io::data::player_data::PlayerData;
@@ -25,10 +25,9 @@ pub struct Player {
 	
 	alive: bool,
 	
-	pub coords: MobCoordinates,
+	pub position: Position,
 	
 	pub moving: bool,
-	pub direction: Direction,
 	//pub dir_changed: bool,
 	
 	//world_id: String,
@@ -45,6 +44,8 @@ pub struct Player {
 	pub focus_y: isize,
 
 	pub noclip: bool,
+
+	pub frozen: bool,
 	
 }
 
@@ -56,10 +57,9 @@ impl Default for Player {
 
 			alive: false,
 
-			coords: MobCoordinates::default(),
+			position: Position::default(),
 
 			moving: false,
-			direction: Direction::Down,
 			//dir_changed: false,
 
 			textures: Vec::new(),
@@ -73,6 +73,9 @@ impl Default for Player {
 			focus_y: 0,
 
 			noclip: false,
+
+			frozen: false,
+
 		}
 
     }
@@ -88,9 +91,7 @@ impl Player {
 			
 			alive: true,
 
-			coords: MobCoordinates::new(data.location.x, data.location.y),
-
-			direction: Direction::from_string(data.location.direction.as_str()).unwrap_or(Direction::Right),
+			position: data.location.position,
 			
 			speed: 1,
 			
@@ -103,21 +104,19 @@ impl Player {
 	}
 
 	pub fn save_data(&self, data: &mut PlayerData) {
-		data.location.x = self.coords.x;
-		data.location.y = self.coords.y;
-		data.location.direction = String::from(self.direction.value());
+		data.location.position = self.position;
 	}
 	
 	pub fn focus_update(&mut self) {
 		if self.screen_attached {
-			self.focus_x = self.coords.pixel_x() + TEXTURE_SIZE as isize / 2 - crate::util::render_util::VIEW_WIDTH  as isize / 2;
-			self.focus_y = self.coords.pixel_y() + TEXTURE_SIZE as isize / 2 - crate::util::render_util::VIEW_HEIGHT as isize / 2;
+			self.focus_x = self.position.pixel_x() + TEXTURE_SIZE as isize / 2 - crate::util::render_util::VIEW_WIDTH  as isize / 2;
+			self.focus_y = self.position.pixel_y() + TEXTURE_SIZE as isize / 2 - crate::util::render_util::VIEW_HEIGHT as isize / 2;
 		}
 	}
 
 	pub fn move_update(&mut self) {
-		self.textures[0].update_with_direction(self.direction.int_value());
-		self.textures[1].update_with_direction(self.direction.int_value());
+		self.textures[0].update_with_direction(self.position.direction.value());
+		self.textures[1].update_with_direction(self.position.direction.value());
 	}
 
 	pub fn reset_speed(&mut self) {
@@ -130,7 +129,7 @@ impl Player {
 	}
 
 	pub fn on_try_move(&mut self, direction: Direction) {
-		self.textures[0].direction = direction.int_value();
+		self.textures[0].direction = direction.value();
 		self.textures[0].unidle();
 	}
 
@@ -181,7 +180,7 @@ impl Ticking for Player {
 			} else {
 				tex = self.textures[0].texture();
 			}
-			draw_flip(ctx, g, tex.0, self.coords.pixel_x() - self.focus_x, self.coords.pixel_y() - self.focus_y - 4 /* 20 - 4 = 16, on tile border */, tex.1);
+			draw_flip(ctx, g, tex.0, self.position.pixel_x() - self.focus_x, self.position.pixel_y() - self.focus_y - 4 /* 20 - 4 = 16, on tile border */, tex.1);
 		}
 		
 	}
@@ -193,11 +192,11 @@ impl Ticking for Player {
 impl PositionedEntity for Player {
 	
 	fn get_px(&mut self) -> isize {
-		self.coords.pixel_x()
+		self.position.pixel_x()
 	}
 	
 	fn get_py(&mut self) -> isize {
-		self.coords.pixel_y()
+		self.position.pixel_y()
 	}
 	
 	fn move_entity(&mut self, _direction: Direction) {

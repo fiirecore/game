@@ -2,16 +2,9 @@ use opengl_graphics::GlGraphics;
 use piston_window::Context;
 pub use crate::engine::text::TextRenderer;
 use crate::engine::game_context::GameContext;
+//use async_trait::async_trait;
 
-pub trait Scene {
-	
-	fn load(&mut self) {
-		
-	}
-
-	fn on_start(&mut self, _context: &mut GameContext) {
-
-	}
+pub trait Scene: SceneLoad {
 	
 	fn update(&mut self, _context: &mut GameContext) {
 		
@@ -35,22 +28,11 @@ pub trait Scene {
 	
 }
 
-pub struct DefaultScene;
+//#[async_trait]
+pub trait SceneLoad {
 
-impl DefaultScene {
-	pub fn new() -> DefaultScene {
-		DefaultScene {}
-	}
-}
+	fn load(&mut self, context: &mut GameContext);
 
-impl Scene for DefaultScene {
-	
-	fn name(&self) -> &str {
-		&"Default"
-	}
-	
-	fn next_scene(&self) -> usize {
-		1
-	}
-	
+	fn on_start(&mut self, context: &mut GameContext);
+
 }

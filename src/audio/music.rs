@@ -1,76 +1,115 @@
-#[derive(Copy, Clone, Hash, PartialEq, Eq)]
+use std::fmt::Display;
+use std::time::SystemTime;
+
+use enum_iterator::IntoEnumIterator;
+use log::info;
+use log::warn;
+
+use crate::engine::game_context::GameContext;
+
+#[derive(Copy, Clone, Hash, PartialEq, Eq, IntoEnumIterator)]
 pub enum Music {
 
     IntroGamefreak,
-    IntroPokemon,
+    // IntroPokemon,
     Title,
 
-    ViridianForest,
-    MountMoon,
-    Route1,
-    Route2,
-    Route3,
-    Route4,
-    Gym,
-    Fuchsia,
-    Pewter,
     Pallet,
+    Pewter,
+    Fuchsia,
     Lavender,
     Celadon,
     Cinnabar,
     Vermilion,
 
+    Route1,
+    Route2,
+    Route3,
+    Route4,
+
+    ViridianForest,
+    MountMoon,
+    Gym,
+
     BattleWild,
     BattleTrainer,
     BattleGym,
-    BattleChampion,
+    // BattleChampion,
 
+}
+
+impl Default for Music {
+    fn default() -> Self {
+        Music::Pallet
+    }
+}
+
+impl From<u8> for Music {
+    fn from(id: u8) -> Self {
+        match id {
+            0x1F => Music::ViridianForest,
+            0x13 => Music::Gym,
+            0x20 => Music::MountMoon,
+            0x23 => Music::Route1,
+            0x24 => Music::Route2,
+            0x25 => Music::Route3,
+            0x26 => Music::Route4,
+            0x34 => Music::Fuchsia,
+            0x3A => Music::Pewter,
+            0x18 => Music::Lavender,
+            0x35 => Music::Celadon,
+            0x17 => Music::Cinnabar,
+            0x39 => Music::Vermilion,
+            0x2C => Music::Pallet,
+            _ => {
+                warn!("Could not get music with id #{}!", id);
+                return Music::default();
+            },
+        }
+    }
+}
+
+impl Display for Music {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match *self {
+
+            Music::IntroGamefreak => "gamefreak",
+            Music::Title => "title",
+
+            Music::Pallet => "pallet",
+            Music::Pewter => "pewter",
+            Music::Fuchsia => "fuchsia",
+            Music::Lavender => "lavender",
+            Music::Celadon => "celadon",
+            Music::Cinnabar => "cinnabar",
+            Music::Vermilion => "vermilion",
+
+            Music::Route1 => "route1",
+            Music::Route2 => "route2",
+            Music::Route3 => "route3",
+            Music::Route4 => "route4",
+
+            Music::Gym => "gym",
+            Music::ViridianForest => "viridian_forest",
+            Music::MountMoon => "mt_moon",
+
+            Music::BattleWild => "vs_wild",
+            Music::BattleTrainer => "vs_trainer",
+            Music::BattleGym => "vs_gym",
+
+        })
+    }
 }
 
 impl Music {
 
-    pub fn from_int(id: u8) -> Option<Music> {
-        match id {
-            0x1F => Some(Music::ViridianForest),
-            0x13 => Some(Music::Gym),
-            0x20 => Some(Music::MountMoon),
-            0x23 => Some(Music::Route1),
-            0x24 => Some(Music::Route2),
-            0x25 => Some(Music::Route3),
-            0x26 => Some(Music::Route4),
-            0x34 => Some(Music::Fuchsia),
-            0x3A => Some(Music::Pewter),
-            0x18 => Some(Music::Lavender),
-            0x35 => Some(Music::Celadon),
-            0x17 => Some(Music::Cinnabar),
-            0x39 => Some(Music::Vermilion),
-            0x2C => Some(Music::Pallet),
-            _ => None,
+    pub fn bind_music(context: &mut GameContext) {
+        info!("Loading music...");
+        let time = SystemTime::now();
+        for music in Music::into_enum_iter() {
+            context.load_music(music);
         }
-    }
-
-    pub fn values(&self) -> u8 {
-        match *self {
-            Music::Gym => 0x13,
-            Music::ViridianForest => 0x1F,
-            Music::MountMoon => 0x20,
-            Music::Route1 => 0x23,
-            Music::Route2 => 0x24,
-            Music::Route3 => 0x25,
-            Music::Route4 => 0x26,
-            Music::Pallet => 0x2C,
-            Music::Fuchsia => 0x34,
-            Music::Pewter => 0x3A,
-            Music::Lavender => 0x18,
-            Music::Celadon => 0x35,
-            Music::Cinnabar => 0x17,
-            Music::Vermilion => 0x39,
-            _ => 0x24,
-        }
-    }
-
-    pub fn play_music(music: u8) {
-        music::play_music(&Music::from_int(music).unwrap_or(Music::Pallet), music::Repeat::Forever);
+        info!("Finished loading world music in {} ms.", time.elapsed().unwrap().as_millis());
     }
 
 }

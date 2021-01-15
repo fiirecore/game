@@ -11,7 +11,7 @@ pub struct BasicButton {
 	panel_x: isize,
     panel_y: isize,
 
-    name: String,
+    name: Vec<String>,
     font_id: usize,
 	
 }
@@ -29,7 +29,7 @@ impl BasicButton {
 			panel_x: panel_x,
             panel_y: panel_y,
 
-            name: String::from(name),
+            name: vec![String::from(name)],
             font_id: font_id,      
             
 		}
@@ -58,15 +58,19 @@ impl GuiComponent for BasicButton {
 	}
     
     fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-        tr.render_text_from_left(ctx, g, self.get_font_id(), self.get_text(), self.panel_x + self.x, self.panel_y + self.y);
+        tr.render_text_from_left(ctx, g, self.get_font_id(), self.get_line(0), self.panel_x + self.x, self.panel_y + self.y);
     }
 
 }
 
 impl GuiText for BasicButton {
 
-    fn get_text(&self) -> &str {
-        self.name.as_str()
+	fn get_line(&self, index: usize) -> &String {
+		&self.get_text()[index]
+	}
+
+    fn get_text(&self) -> &Vec<String> {
+        &self.name
     }
 
     fn get_font_id(&self) -> usize {

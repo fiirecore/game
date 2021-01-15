@@ -12,14 +12,13 @@ use crate::entity::entities::player::RUN_SPEED;
 use crate::entity::entity::Entity;
 use crate::entity::entity::Ticking;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::entity::util::direction::Direction;
 use crate::gui::gui::Activatable;
+use crate::io::data::Direction;
 use crate::io::data::player_data::PlayerData;
 use crate::io::map::gba_map::fill_palette_map;
 use crate::io::map::gba_map::get_texture;
 use crate::io::map::map_loader::load_maps;
 use crate::io::map::npc_loader::load_npc_textures;
-use crate::util::file_util::asset_as_pathbuf;
 use crate::util::traits::Loadable;
 use crate::gui::gui::GuiComponent;
 
@@ -37,9 +36,8 @@ pub struct WorldMapManager {
     pub(crate) map_sets: WorldMapSetManager,
 
     pub(crate) player: Player,
-    player_screen: ScreenCoords,
 
-    pub(crate) current_music: u8,
+    pub(crate) current_music: Music,
 
     // old world manager values below
     
@@ -80,13 +78,12 @@ impl WorldMapManager {
                     map_sets: WorldMapSetManager::default(),
 
                     player: Player::default(),
-                    player_screen: ScreenCoords::default(),
 
-                    current_music: 0,
+                    current_music: Music::Pallet,
 
                     //
 
-                    world_id: player_data.location.world_id.clone(),
+                    world_id: player_data.world_id.clone(),
                 
                     window_manager: MapWindowManager::new(),
                     player_gui: PlayerWorldGui::new(),
@@ -112,11 +109,10 @@ impl WorldMapManager {
 
     pub fn load(&mut self, player_data: &PlayerData) {
         self.load_maps_and_textures();
-        self.bind_music();
         self.load_player(player_data);
     }
 
-    pub fn reload(&mut self) {
+    pub fn play_music(&mut self, context: &mut GameContext) {
         let music = if self.chunk_map.is_alive() {
             self.chunk_map.current_chunk().map.music
         } else {
@@ -124,13 +120,23 @@ impl WorldMapManager {
         };
         if music != self.current_music {
             self.current_music = music;
-            Music::play_music(self.current_music);
+            context.play_music(self.current_music);
+        } else if !context.is_music_playing() {
+            context.play_music(self.current_music);
         }
     }
 
     pub fn on_start(&mut self, context: &mut GameContext) {
-        music::set_volume(0.2);
-        self.reload();
+        if self.chunk_map.is_alive() {
+            self.load_chunk_map_at(
+                context,
+                self.player.position.x,
+                self.player.position.y,
+            );
+        } else if self.map_sets.is_alive() {
+            self.current_music = Music::from(self.map_sets.map_set().map().music);
+        }
+        context.play_music(self.current_music);
     }
 
     pub fn update(&mut self, context: &mut GameContext) {
@@ -153,23 +159,19 @@ impl WorldMapManager {
     }
 
 
-    pub fn load_chunk_map_at(&mut self, x: isize, y: isize) {
+    pub fn load_chunk_map_at(&mut self, context: &mut GameContext, x: isize, y: isize) {
         if let Some(chunk) = self.chunk_map.chunk_id_at(x, y) {
-            self.chunk_map.change_chunk(chunk);
+            self.chunk_map.change_chunk(context, chunk);
         } else {
             warn!("Could not load chunk at {}, {}", x, y);
-            self.chunk_map.change_chunk(2);
+            self.chunk_map.change_chunk(context, 2);
         }
     }
 
-    pub fn load_map_set(&mut self, id: String, index: u16) {
-        self.map_sets.set(id);
+    pub fn load_map_set(&mut self, id: &String, index: u16) {
+        self.map_sets.set(id.clone());
         self.map_sets.map_set_mut().set(index as usize);
     }
-
-
-    
-
 
     pub fn input(&mut self, context: &mut GameContext) {
 
@@ -184,6 +186,10 @@ impl WorldMapManager {
         if self.player_gui.in_focus() {
             self.player_gui.input(context);
         } else {
+
+            if context.fkeys[2] == 1 {
+                context.stop_music();
+            }
     
             if context.fkeys[1] == 1 {
                 self.player.noclip = !self.player.noclip;
@@ -197,18 +203,23 @@ impl WorldMapManager {
             }
     
             if context.fkeys[3] == 1 {
-                let mut pos = String::from("X: ");
-                pos.push_str(self.player.coords.x.to_string().as_str());
-                pos.push_str(", Y: ");
-                pos.push_str(self.player.coords.y.to_string().as_str());
-                info!("{}", pos);
                 if self.chunk_map.is_alive() {
                     let mut pos_map = String::from("Local X: ");
-                    pos_map.push_str((self.player.coords.x - self.chunk_map.current_chunk().x).to_string().as_str());
+                    pos_map.push_str((self.player.position.x - self.chunk_map.current_chunk().x).to_string().as_str());
                     pos_map.push_str(", Local Y: ");
-                    pos_map.push_str((self.player.coords.y - self.chunk_map.current_chunk().y).to_string().as_str());
+                    pos_map.push_str((self.player.position.y - self.chunk_map.current_chunk().y).to_string().as_str());
                     info!("{}", pos_map);
                 }
+                let mut pos = String::from("X: ");
+                pos.push_str(self.player.position.x.to_string().as_str());
+                pos.push_str(", Y: ");
+                pos.push_str(self.player.position.y.to_string().as_str());
+                let tile = if self.chunk_map.is_alive() {
+                    self.chunk_map.tile(self.player.position.x, self.player.position.y)
+                } else {
+                    self.map_sets.map_set().tile(self.player.position.x, self.player.position.y)
+                };
+                info!("{}, Tile: {}", pos, tile);
                 
             }
 
@@ -231,47 +242,47 @@ impl WorldMapManager {
                 if context.keys[2] == 1 || context.keys[2] == 2 {
                     // Up
                     //self.player.dir_changed = true;
-                    self.player.direction = Direction::Up;
+                    self.player.position.direction = Direction::Up;
                     y_offset -= 1;
-                    self.player.on_try_move(self.player.direction);
+                    self.player.on_try_move(self.player.position.direction);
                 }
                 if context.keys[3] == 1 || context.keys[3] == 2 {
                     //self.player.dir_changed = true;
-                    self.player.direction = Direction::Down;
+                    self.player.position.direction = Direction::Down;
                     y_offset += 1;
                     // if self.chunk_map.is_alive() {
-                    //     let tile_id = self.chunk_map.tile(self.player.coords.x, self.player.coords.y + y_offset as isize);
+                    //     let tile_id = self.chunk_map.tile(self.player.position.x, self.player.position.y + y_offset as isize);
                     //     if tile_id == 135 || tile_id == 176 || tile_id == 177 || tile_id == 143 || tile_id == 184 || tile_id == 185 || tile_id == 217 || tile_id == 1234 {
                     //         jump = true;
                     //     }
                     // }                    
-                    self.player.on_try_move(self.player.direction);
+                    self.player.on_try_move(self.player.position.direction);
                 }
                 if context.keys[4] == 1 || context.keys[4] == 2 {
                     // Left
                     //self.player.dir_changed = true;
-                    self.player.direction = Direction::Left;
+                    self.player.position.direction = Direction::Left;
                     x_offset -= 1;
                     if self.chunk_map.is_alive() {
-                    let tile_id = self.chunk_map.tile(self.player.coords.x + x_offset as isize, self.player.coords.y);
+                    let tile_id = self.chunk_map.tile(self.player.position.x + x_offset as isize, self.player.position.y);
                         if tile_id == 133 {
                             jump = true;
                         }
                     }
-                    self.player.on_try_move(self.player.direction);
+                    self.player.on_try_move(self.player.position.direction);
                 }
                 if context.keys[5] == 1 || context.keys[5] == 2 {
                     // Right
                     //self.player.dir_changed = true;
-                    self.player.direction = Direction::Right;
+                    self.player.position.direction = Direction::Right;
                     x_offset += 1;
                     if self.chunk_map.is_alive() {
-                    let tile_id = self.chunk_map.tile(self.player.coords.x + x_offset as isize, self.player.coords.y);
+                    let tile_id = self.chunk_map.tile(self.player.position.x + x_offset as isize, self.player.position.y);
                         if tile_id == 134 {
                             jump = true;
                         }
                     }
-                    self.player.on_try_move(self.player.direction);
+                    self.player.on_try_move(self.player.position.direction);
                 }
     
                 if x_offset != 0 && y_offset != 0 {
@@ -290,18 +301,18 @@ impl WorldMapManager {
     
                     if self.chunk_map.is_alive() {
     
-                        code = self.chunk_map.walkable(self.player.coords.x + x_offset as isize, self.player.coords.y + y_offset as isize);
-                        if let Some(entry) = self.chunk_map.check_warp(self.player.coords.x + x_offset as isize, self.player.coords.y + y_offset as isize) {
-                            self.warp(entry);
+                        code = self.chunk_map.walkable(context, self.player.position.x + x_offset as isize, self.player.position.y + y_offset as isize);
+                        if let Some(entry) = self.chunk_map.check_warp(self.player.position.x + x_offset as isize, self.player.position.y + y_offset as isize) {
+                            self.warp(context, entry);
                             return;
                         }
                     } else {
     
                         let cms = self.map_sets.map_set_mut();
                         
-                        code = cms.walkable(self.player.coords.x + x_offset as isize, self.player.coords.y + y_offset as isize);
-                        if let Some(entry) = cms.check_warp(self.player.coords.x + x_offset as isize, self.player.coords.y + y_offset as isize) {
-                            self.warp(entry);
+                        code = cms.walkable(context, self.player.position.x + x_offset as isize, self.player.position.y + y_offset as isize);
+                        if let Some(entry) = cms.check_warp(self.player.position.x + x_offset as isize, self.player.position.y + y_offset as isize) {
+                            self.warp(context, entry);
                             return;
                         }
                     }
@@ -319,37 +330,37 @@ impl WorldMapManager {
     #[deprecated]
     pub(crate) fn player_movement(&mut self, context: &mut GameContext) {
         if self.player.moving {
-            if (self.player.direction) == Direction::Up {
-                self.player.coords.y_offset -= self.player.speed as i8;
-                if self.player.coords.y_offset <= -16 {
-                    self.player.coords.y -= 1;
-                    self.player.coords.y_offset = 0;
+            if (self.player.position.direction) == Direction::Up {
+                self.player.position.y_offset -= self.player.speed as i8;
+                if self.player.position.y_offset <= -16 {
+                    self.player.position.y -= 1;
+                    self.player.position.y_offset = 0;
                     self.stop_player(context);
                 }
             }
 
-            if (self.player.direction) == Direction::Down {
-                self.player.coords.y_offset += self.player.speed as i8;
-                if self.player.coords.y_offset >= 16 {
-                    self.player.coords.y += 1;
-                    self.player.coords.y_offset = 0;
+            if (self.player.position.direction) == Direction::Down {
+                self.player.position.y_offset += self.player.speed as i8;
+                if self.player.position.y_offset >= 16 {
+                    self.player.position.y += 1;
+                    self.player.position.y_offset = 0;
                     self.stop_player(context);
                 }
             }
-            if (self.player.direction) == Direction::Left {
-                self.player.coords.x_offset -= self.player.speed as i8;
-                if self.player.coords.x_offset <= -16 {
-                    self.player.coords.x -= 1;
-                    self.player.coords.x_offset = 0;
+            if (self.player.position.direction) == Direction::Left {
+                self.player.position.x_offset -= self.player.speed as i8;
+                if self.player.position.x_offset <= -16 {
+                    self.player.position.x -= 1;
+                    self.player.position.x_offset = 0;
                     self.stop_player(context);
                 }
             }
 
-            if (self.player.direction) == Direction::Right {
-                self.player.coords.x_offset += self.player.speed as i8;
-                if self.player.coords.x_offset >= 16 {
-                    self.player.coords.x += 1;
-                    self.player.coords.x_offset = 0;
+            if (self.player.position.direction) == Direction::Right {
+                self.player.position.x_offset += self.player.speed as i8;
+                if self.player.position.x_offset >= 16 {
+                    self.player.position.x += 1;
+                    self.player.position.x_offset = 0;
                     self.stop_player(context);
                 }
             }
@@ -361,16 +372,16 @@ impl WorldMapManager {
     fn stop_player(&mut self, context: &mut GameContext) {
         self.player.moving = false;
         self.player.on_stopped_moving();
-        let x = self.player.coords.x;
-        let y = self.player.coords.y;
+        let x = self.player.position.x;
+        let y = self.player.position.y;
         if self.chunk_map.is_alive() {
             if self.chunk_map.in_bounds(x, y) {
-                self.chunk_map.on_tile(context, self.chunk_map.tile(x, y));
+                self.chunk_map.on_tile(context, x, y);
             }
         } else {
             let map_set = self.map_sets.map_set_mut();
             if map_set.in_bounds(x, y) {
-                map_set.on_tile(context, map_set.tile(x, y));
+                map_set.on_tile(context, x, y);
             }
         }
         
@@ -378,35 +389,35 @@ impl WorldMapManager {
         
     }
 
-    pub fn warp(&mut self, entry: WarpEntry) {
+    pub fn warp(&mut self, context: &mut GameContext, entry: WarpEntry) {
         // spawn warp transition here
         if entry.destination.map_id.as_str().eq("world") {
-            self.warp_to_chunk_map(entry);
+            self.warp_to_chunk_map(context, entry);
         } else {
-            self.warp_to_map_set(entry);
+            self.warp_to_map_set(context, entry);
         }
     }
 
-    pub fn warp_to_chunk_map(&mut self, entry: WarpEntry) {
+    pub fn warp_to_chunk_map(&mut self, context: &mut GameContext, entry: WarpEntry) {
         if !self.chunk_map.is_alive() {
             self.chunk_map.spawn();
             self.map_sets.despawn();
         }
         self.chunk_map.current_chunk = entry.destination.map_index;
-        self.player.coords.x = self.chunk_map.current_chunk().x + entry.destination.x;
-        self.player.coords.y = self.chunk_map.current_chunk().y + entry.destination.y;
-        self.reload();
+        self.player.position.x = self.chunk_map.current_chunk().x + entry.destination.x;
+        self.player.position.y = self.chunk_map.current_chunk().y + entry.destination.y;
+        self.play_music(context);
     }
 
-    pub fn warp_to_map_set(&mut self, entry: WarpEntry) {
+    pub fn warp_to_map_set(&mut self, context: &mut GameContext, entry: WarpEntry) {
         if !self.map_sets.is_alive() {
             self.map_sets.spawn();
             self.chunk_map.despawn();
         }
-        self.load_map_set(entry.destination.map_id.clone(), entry.destination.map_index);
-        self.player.coords.x = entry.destination.x;
-        self.player.coords.y = entry.destination.y;
-        self.reload();
+        self.load_map_set(&entry.destination.map_id, entry.destination.map_index);
+        self.player.position.x = entry.destination.x;
+        self.player.position.y = entry.destination.y;
+        self.play_music(context);
     }
 
     pub fn load_maps_and_textures(&mut self) {
@@ -447,35 +458,32 @@ impl WorldMapManager {
 
     pub fn load_player(&mut self, player_data: &PlayerData) {
         self.player = Player::new(player_data);
-        self.player.load_textures(player_data.location.world_id.as_str());
+        self.player.load_textures(player_data.world_id.as_str());
         self.player.load();
-        if player_data.location.map_set_id.as_str().eq("world") {
+        if player_data.location.map_id.as_str().eq("world") {
             self.chunk_map.spawn();
-            self.load_chunk_map_at(
-                player_data.location.x,
-                player_data.location.y,
-            );
         } else {
             self.map_sets.spawn();
-            self.load_map_set(player_data.location.map_set_id.clone(), player_data.location.map_set_num);
+            self.load_map_set(&player_data.location.map_id, player_data.location.map_index);
         }
     }
 
-    pub(crate) fn bind_music(&self) {
-        music::bind_music_file(Music::ViridianForest, asset_as_pathbuf("audio/music/mus_viridian_forest.mid"));
-        music::bind_music_file(Music::MountMoon, asset_as_pathbuf("audio/music/mus_mt_moon.mid"));
-        music::bind_music_file(Music::Route1, asset_as_pathbuf("audio/music/route1.mid"));
-        music::bind_music_file(Music::Route2, asset_as_pathbuf("audio/music/route2.mid"));
-        music::bind_music_file(Music::Route3, asset_as_pathbuf("audio/music/route3.mid"));
-        music::bind_music_file(Music::Route4, asset_as_pathbuf("audio/music/route4.mid"));
-        music::bind_music_file(Music::Fuchsia, asset_as_pathbuf("audio/music/mus_fuchsia.mid"));
-        music::bind_music_file(Music::Celadon, asset_as_pathbuf("audio/music/mus_celadon.mid"));
-        music::bind_music_file(Music::Pewter, asset_as_pathbuf("audio/music/mus_pewter.mid"));
-        music::bind_music_file(Music::Lavender, asset_as_pathbuf("audio/music/mus_lavender.mid"));
-        music::bind_music_file(Music::Cinnabar, asset_as_pathbuf("audio/music/mus_cinnabar.mid"));
-        music::bind_music_file(Music::Pallet, asset_as_pathbuf("audio/music/mus_pallet.mid"));
-        music::bind_music_file(Music::Vermilion, asset_as_pathbuf("audio/music/mus_vermilion.mid"));
-        music::bind_music_file(Music::Gym, asset_as_pathbuf("audio/music/mus_gym.mid"));
-    }
+    // pub(crate) fn bind_music(&self, context: &mut GameContext) {
+        
+    //     // music::bind_music_file(Music::ViridianForest, asset_as_pathbuf("audio/music/mus_viridian_forest.mid"));
+    //     // music::bind_music_file(Music::MountMoon, asset_as_pathbuf("audio/music/mus_mt_moon.mid"));
+    //     // music::bind_music_file(Music::Route1, asset_as_pathbuf("audio/music/route1.mid"));
+    //     // music::bind_music_file(Music::Route2, asset_as_pathbuf("audio/music/route2.mid"));
+    //     // music::bind_music_file(Music::Route3, asset_as_pathbuf("audio/music/route3.mid"));
+    //     // music::bind_music_file(Music::Route4, asset_as_pathbuf("audio/music/route4.mid"));
+    //     // music::bind_music_file(Music::Fuchsia, asset_as_pathbuf("audio/music/mus_fuchsia.mid"));
+    //     // music::bind_music_file(Music::Celadon, asset_as_pathbuf("audio/music/mus_celadon.mid"));
+    //     // music::bind_music_file(Music::Pewter, asset_as_pathbuf("audio/music/mus_pewter.mid"));
+    //     // music::bind_music_file(Music::Lavender, asset_as_pathbuf("audio/music/mus_lavender.mid"));
+    //     // music::bind_music_file(Music::Cinnabar, asset_as_pathbuf("audio/music/mus_cinnabar.mid"));
+    //     // music::bind_music_file(Music::Pallet, asset_as_pathbuf("audio/music/mus_pallet.mid"));
+    //     // music::bind_music_file(Music::Vermilion, asset_as_pathbuf("audio/music/mus_vermilion.mid"));
+    //     // music::bind_music_file(Music::Gym, asset_as_pathbuf("audio/music/mus_gym.mid"));
+    // }
     
 }

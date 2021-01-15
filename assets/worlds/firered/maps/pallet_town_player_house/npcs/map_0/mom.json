@@ -3,9 +3,9 @@
 		"name": "Mom",
 		"sprite": 88
 	},
-	"location": {
+	"position": {
 		"x": 8,
 		"y": 4,
-		"direction": 2
+		"direction": "Left"
 	}
 }

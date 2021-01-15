@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use opengl_graphics::Texture;
 
+use crate::engine::game_context::GameContext;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 
 use super::ScreenCoords;
@@ -37,9 +38,9 @@ impl WorldChunk {
 
 impl World for WorldChunk {
 
-    fn walkable(&mut self, x: isize, y: isize) -> u8 {
+    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
         if self.in_bounds(x, y) {
-            return self.map.walkable(x - self.x, y - self.y);
+            return self.map.walkable(context, x - self.x, y - self.y);
         } else {
             1
         }        
@@ -53,11 +54,11 @@ impl World for WorldChunk {
         self.map.render(ctx, g, textures, npc_textures, screen.offset(self.x, self.y), border)
     }
 
-    fn on_tile(&mut self, context: &mut crate::engine::game_context::GameContext, tile_id: u16) {
-        self.map.on_tile(context, tile_id)
+    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize) {
+        self.map.on_tile(context, x - self.x, y - self.y)
     }
 
-    fn input(&mut self, context: &mut crate::engine::game_context::GameContext, player: &crate::entity::entities::player::Player) {
+    fn input(&mut self, context: &mut GameContext, player: &crate::entity::entities::player::Player) {
         self.map.input(context, player)
     }
 

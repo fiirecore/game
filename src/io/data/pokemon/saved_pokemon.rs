@@ -6,11 +6,11 @@ use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 use crate::game::pokedex::pokemon::pokemon_instance::calculate_hp;
 use crate::game::pokedex::pokemon::pokemon_instance::get_stats;
 use crate::game::pokedex::pokemon::pokemon_owned::OwnedPokemon;
-use crate::game::pokedex::pokemon::stat_set::StatSet;
 
-use super::saved_pokemon_move_set::SavedPokemonMoveSet;
+use super::StatSet;
+use super::moves::SavedPokemonMoveSet;
 
-#[derive(Debug, Hash, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SavedPokemon {
 
 	pub pokemon_id: usize,
@@ -64,7 +64,7 @@ impl SavedPokemon {
 
         Self {
 
-            pokemon_id: instance.pokemon.number,
+            pokemon_id: instance.pokemon.data.number,
             level: instance.level,
             current_hp: Some(instance.current_hp),
 			ivs: ivs,
@@ -103,7 +103,7 @@ impl SavedPokemon {
 
         let base = get_stats(&pokemon, ivs, evs, self.level);
 
-        let current_hp = self.current_hp.unwrap_or(calculate_hp(pokemon.base_hp, ivs.hp, evs.hp, self.level));
+        let current_hp = self.current_hp.unwrap_or(calculate_hp(pokemon.base.hp, ivs.hp, evs.hp, self.level));
 
 		PokemonInstance {
 

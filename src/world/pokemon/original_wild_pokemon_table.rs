@@ -1,10 +1,9 @@
-use std::{ffi::OsStr, path::Path};
+use std::path::Path;
 use log::warn;
 use oorandom::Rand32;
 use serde::Deserialize;
 
 use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
-use crate::util::file_util::UNKNOWN_FILENAME_ERR;
 
 use super::{wild_pokemon_encounter::WildPokemonEncounter, wild_pokemon_table::WildPokemonTable};
 
@@ -21,8 +20,6 @@ impl OriginalWildPokemonTable {
     pub fn from_toml<P>(path: P) -> Option<OriginalWildPokemonTable> where P: AsRef<Path> {
         let path = path.as_ref();
 
-        let filename = path.parent().unwrap().parent().unwrap().file_name().unwrap_or(&OsStr::new(UNKNOWN_FILENAME_ERR));
-
         let content_result = std::fs::read_to_string(path);
 
         match content_result {
@@ -36,14 +33,14 @@ impl OriginalWildPokemonTable {
                             table: WildPokemonEncounter::fill_table(&toml_table),
                         })
                     },
-                    Err(e) => {
-                        warn!("Could not parse wild pokemon table in {:?} with error {}", filename, e);
+                    Err(err) => {
+                        warn!("Could not parse wild pokemon table at {:?} with error {}", &path, err);
                         return None;
                     }
                 }
             },
             Err(err) => {
-                warn!("Could not read wild pokemon table at {:?} to string with error: {}", filename, err);
+                warn!("Could not read wild pokemon table at {:?} to string with error: {}", &path, err);
                 return None;
             }
         }

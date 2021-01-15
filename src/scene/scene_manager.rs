@@ -7,7 +7,7 @@ use crate::engine::text::TextRenderer;
 
 use crate::engine::game_context::GameContext;
 
-use crate::scene::scene::{Scene, DefaultScene};
+use crate::scene::scene::Scene;
 
 use crate::scene::scenes::loading_scenes::*;
 use crate::scene::scenes::title_scene::TitleScene;
@@ -22,9 +22,6 @@ pub struct SceneManager {
 	pub scenes: Vec<Box<dyn Scene>>,
 	loaded: Vec<bool>,
 
-//	text_renderer: TextRenderer,
-//	configuration: &'a Configuration,
-
 }
 
 impl SceneManager {
@@ -35,10 +32,6 @@ impl SceneManager {
 			current_scene_index: 0,
 			scenes: Vec::new(),
 			loaded: Vec::new(),
-
-//			configuration: _configuration,
-
-//			text_renderer: TextRenderer::new(),
 		}
 	}
 	
@@ -47,7 +40,7 @@ impl SceneManager {
 		self.current_scene_index = index;
 		info!("Loading Scene: {}", self.scenes[self.current_scene_index].name());
 		if !self.loaded[self.current_scene_index] {
-			self.scenes[self.current_scene_index].load();
+			self.scenes[self.current_scene_index].load(context);
 			self.loaded[self.current_scene_index] = true;
 		}
 		self.scenes[self.current_scene_index].on_start(context);
@@ -89,16 +82,15 @@ impl Loadable for SceneManager {
 
 	fn load(&mut self) {
 		
-		self.scenes.push(Box::new(DefaultScene::new()));
 		self.scenes.push(Box::new(LoadingCopyrightScene::new()));
 		self.scenes.push(Box::new(LoadingGamefreakScene::new()));
 		self.scenes.push(Box::new(LoadingPokemonScene::new()));
 		self.scenes.push(Box::new(TitleScene::new()));
 		self.scenes.push(Box::new(MainMenuScene::new()));
-		self.scenes.push(Box::new(CharacterCreationScene::new()));
+		self.scenes.push(Box::new(GameScene::new()));
 		self.scenes.push(Box::new(FirstTimeControlsScene::new()));
 		self.scenes.push(Box::new(FirstTimeNarrativeScene::new()));
-		self.scenes.push(Box::new(GameScene::new()));
+		self.scenes.push(Box::new(CharacterCreationScene::new()));
 
 		for _index in 0..self.scenes.len() {
 			self.loaded.push(false);

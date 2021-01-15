@@ -8,9 +8,10 @@ use std::path::{Path, PathBuf};
 use log::info;
 use log::warn;
 use serde::{Deserialize, Serialize};
-use crate::entity::util::direction::Direction;
 use std::fs::read_to_string;
 
+use super::Location;
+use super::Position;
 use super::pokemon::pokemon_party::PokemonParty;
 use super::pokemon::saved_pokemon::SavedPokemon;
 
@@ -18,36 +19,17 @@ static SAVE_FILENAME: &str = "player.json";
 #[derive(Serialize, Deserialize)]
 pub struct PlayerData {
 
+	pub world_id: String,
 	pub location: Location,
 	pub party: PokemonParty,
 
 }
 
-impl Default for PlayerData {
-    fn default() -> Self {
-		Self {
-			
-			party: PokemonParty {
-
-				pokemon: Vec::new(),
-
-			},
-
-			location: Location {
-
-				world_id: String::from("firered"),
-				map_set_id: String::from("pallet_town_player_house"),
-				map_set_num: 1,
-
-				x: 6,
-				y: 6,
-				direction: String::from(Direction::Down.value()),
-			},
-		}
-    }
-}
-
 impl PlayerData {
+
+	pub fn exists() -> bool {
+		get_path().exists()
+	}
 
 	pub fn default_add(&mut self, pokedex: &Pokedex) {
 		self.add_pokemon_to_party(OwnedPokemon::get_default0(&pokedex));
@@ -80,6 +62,34 @@ impl PlayerData {
         }
     }
 	
+}
+
+impl Default for PlayerData {
+    fn default() -> Self {
+		Self {
+			
+			world_id: String::from("firered"),
+
+			party: PokemonParty {
+
+				pokemon: Vec::new(),
+
+			},
+
+			location: Location {
+
+				map_id: String::from("pallet_town_player_house"),
+				map_index: 1,
+
+				position: Position {
+					x: 6,
+					y: 6,
+					..Default::default()
+				}
+				
+			},
+		}
+    }
 }
 
 impl PersistantDataLocation for PlayerData {
@@ -158,16 +168,4 @@ fn new_save() -> PlayerData {
 	let default = PlayerData::default();
 	default.save();
 	return default;
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Location {
-
-	pub world_id: String,
-	pub map_set_id: String,
-	pub map_set_num: u16,
-	pub x: isize,
-	pub y: isize,
-	pub direction: String,
-
 }

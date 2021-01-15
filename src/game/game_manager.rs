@@ -1,6 +1,5 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
-use crate::audio::music::Music;
 use crate::engine::game_context::GameContext;
 use crate::engine::text::TextRenderer;
 
@@ -9,7 +8,6 @@ use crate::io::data::player_data::PlayerData;
 use crate::battle::battle_manager::BattleManager;
 use crate::game::pokedex::pokedex::Pokedex;
 
-use crate::util::file_util::asset_as_pathbuf;
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
 use crate::util::traits::PersistantData;
@@ -65,6 +63,11 @@ impl GameManager {
 		self.world_manager.load(self.player_data.get());
 	}
 
+	// pub fn load_sounds(&mut self, context: &mut GameContext) {
+	// 	Music::bind_world_music(context);
+	// 	Music::bind_battle_music(context);
+	// }
+
     pub fn on_start(&mut self, context: &mut GameContext) {
         self.world_manager.on_start(context);
     }
@@ -89,8 +92,9 @@ impl GameManager {
 			self.battle_manager.update(context, self.player_data.get_mut());
 			if self.battle_manager.is_finished() {
 				self.battling = false;
-				self.world_manager.on_start(context);
 				self.swapped = true;
+				context.stop_music();
+				self.world_manager.play_music(context);
 			}
 		}
 
@@ -132,13 +136,13 @@ impl GameManager {
 
     pub fn save_data(&mut self) {
 		let player_data = self.player_data.get_mut();
-        player_data.location.world_id = self.world_manager.world_id.clone();
+        player_data.world_id = self.world_manager.world_id.clone();
         if self.world_manager.chunk_map.is_alive() {
-            player_data.location.map_set_id = String::from("world");
-            player_data.location.map_set_num = 0;
+            player_data.location.map_id = String::from("world");
+            player_data.location.map_index = 0;
         } else {
-            player_data.location.map_set_id = self.world_manager.map_sets.get().clone();
-            player_data.location.map_set_num = *self.world_manager.map_sets.map_set_mut().get() as u16;
+            player_data.location.map_id = self.world_manager.map_sets.get().clone();
+            player_data.location.map_index = *self.world_manager.map_sets.map_set_mut().get() as u16;
         }
         self.world_manager.player.save_data(player_data);
         player_data.save();

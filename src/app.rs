@@ -5,7 +5,6 @@ use simplelog::Config;
 use simplelog::TermLogger;
 use simplelog::TerminalMode;
 use simplelog::WriteLogger;
-use crate::audio::{music::Music, sound::Sound};
 use opengl_graphics::GlGraphics;
 use piston::{Button, Key, PressEvent, ReleaseEvent, RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, WindowSettings, EventLoop};
 use piston_window::{OpenGL, Context, PistonWindow, clear};
@@ -57,7 +56,7 @@ impl Game {
     }
 
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
-        
+
         let mut window: PistonWindow<Windower> = WindowSettings::new(
             &self.game_context.configuration.name,
             [
@@ -74,36 +73,37 @@ impl Game {
         window.set_ups(60);
 
         let mut gl = GlGraphics::new(OpenGL::V3_2);
-        let sdl = window.window.sdl_context.to_owned();
 
-        music::start_context::<Music, Sound, _>(&sdl, 16, || {
-            self.load();
-            self.on_start();
+        //let sdl = window.window.sdl_context.to_owned();
 
-            for e in window {
-                if let Some(args) = e.update_args() {
-                    self.update(&args);
-                }
+        self.load()?;
+        self.on_start();
 
-                if let Some(ref args) = e.render_args() {
-                    self.render(args, &mut gl);
-                }
-
-                if let Some(ref args) = e.press_args() {
-                    self.key_press(args);
-                }
-
-                if let Some(ref args) = e.release_args() {
-                    self.key_release(args);
-                }
+        for e in window {
+            if let Some(args) = e.update_args() {
+                self.update(&args);
             }
-        });
+
+            if let Some(ref args) = e.render_args() {
+                self.render(args, &mut gl);
+            }
+
+            if let Some(ref args) = e.press_args() {
+                self.key_press(args);
+            }
+
+            if let Some(ref args) = e.release_args() {
+                self.key_release(args);
+            }
+        }
+
         self.dispose();
+
         Ok(())
     }
     
 
-    pub fn load(&mut self) {
+    pub fn load(&mut self) -> Result<(), Box<dyn std::error::Error>> {
 
         println!("Loading...");
 
@@ -115,13 +115,12 @@ impl Game {
             std::fs::create_dir("logs").expect("Could not create logs directory!");
         }
         
-
         CombinedLogger::init(
             vec![
                 TermLogger::new(LevelFilter::Info, Config::default(), TerminalMode::Mixed),
                 WriteLogger::new(LevelFilter::Info, Config::default(), File::create(log_name).unwrap()),
             ]
-        ).unwrap();
+        )?;
 
         self.text_renderer.load_textures();
 
@@ -134,6 +133,8 @@ impl Game {
         self.game_context.fill_keymaps(keys);
 
         info!("Done loading!");
+
+        Ok(())
     }
 
     pub fn on_start(&mut self) {
@@ -186,26 +187,6 @@ impl Game {
             }
         }
     }
-
-    /*
-
-    pub fn poll_key_down(&mut self, keycode: Option<Keycode>) {
-        if let Some(i) = self.keymap.get(&keycode.unwrap()) {
-            if i < &self.keys.len() {
-                self.keys[*i] = 1;
-            }
-        }
-    }
-
-    pub fn poll_key_up(&mut self, keycode: Option<Keycode>) {
-        if let Some(i) = self.keymap.get(&keycode.unwrap()) {
-            if i < &self.keys.len() {
-                self.keys[*i] = 3;
-            }
-        }
-    }
-
-    */
 
     pub fn key_update(&mut self) {
         for i in 0..self.game_context.keys.len() {

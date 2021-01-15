@@ -1,6 +1,5 @@
 use crate::game::pokedex::{pokedex::Pokedex, pokemon::pokemon_instance::PokemonInstance};
-
-use super::stat_set::StatSet;
+use crate::io::data::pokemon::StatSet;
 
 #[allow(dead_code)]
 pub struct OwnedPokemon {

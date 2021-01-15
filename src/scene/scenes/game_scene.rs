@@ -6,6 +6,7 @@ use crate::engine::game_context::GameContext;
 use crate::scene::scene::Scene;
 
 use crate::game::game_manager::GameManager;
+use crate::scene::scene::SceneLoad;
 
 pub struct GameScene {
 
@@ -31,15 +32,19 @@ impl GameScene {
 	
 }
 
-impl Scene for GameScene {
 
-	fn load(&mut self) {
+impl SceneLoad for GameScene {
+
+	fn load(&mut self, _context: &mut GameContext) {
 		self.game_manager.load();
 	}
 
 	fn on_start(&mut self, context: &mut GameContext) {
 		self.game_manager.on_start(context);
 	}
+}
+
+impl Scene for GameScene {
 	
 	fn update(&mut self, context: &mut GameContext) {
 		self.game_manager.update(context);		

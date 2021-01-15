@@ -1,0 +1,69 @@
+{
+	"identifier": {
+		"name": "Trainer",
+		"sprite": 39
+	},
+	"position": {
+		"x": 3,
+		"y": 8,
+		"direction": "Right"
+	},
+	"trainer": {
+		"party": {
+			"pokemon": [
+				{
+					"pokemon_id": 74,
+					"level": 10,
+					"ivs": {
+						"hp": 15,
+						"atk": 15,
+						"def": 15,
+						"sp_atk": 15,
+						"sp_def": 15,
+						"speed": 15
+					},
+					"evs": {
+						"hp": 0,
+						"atk": 0,
+						"def": 0,
+						"sp_atk": 0,
+						"sp_def": 0,
+						"speed": 0
+					},
+					"exp": 0,
+					"friendship": 70
+				},
+				{
+					"pokemon_id": 95,
+					"level": 10,
+					"ivs": {
+						"hp": 15,
+						"atk": 15,
+						"def": 15,
+						"sp_atk": 15,
+						"sp_def": 15,
+						"speed": 15
+					},
+					"evs": {
+						"hp": 0,
+						"atk": 0,
+						"def": 0,
+						"sp_atk": 0,
+						"sp_def": 0,
+						"speed": 0
+					},
+					"exp": 0,
+					"friendship": 70
+				}
+			]
+		},
+		"tracker": {
+			"length": 3
+		},
+		"trainer_type": "None",
+		"victory_message": [
+			"Test"
+		],
+		"worth": 0
+	}
+}

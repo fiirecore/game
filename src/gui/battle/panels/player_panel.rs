@@ -80,12 +80,12 @@ impl PlayerPanel {
                 //let strings = self.do_move(context, battle, self.fight_panel.cursor_position as usize);
                 
                 //if battle.player().base.speed > battle.opponent().base.speed {
-                //    self.battle_text.update_text(&battle.player().pokemon.name.to_uppercase(), &strings.0);
-                //    self.other_pokemon = battle.opponent().pokemon.name.to_uppercase();
+                //    self.battle_text.update_text(&battle.player().pokemon.data.name.to_uppercase(), &strings.0);
+                //    self.other_pokemon = battle.opponent().pokemon.data.name.to_uppercase();
                 //    self.other_move = strings.1;
                 //} else {
-                //    self.battle_text.update_text(&battle.opponent().pokemon.name.to_uppercase(), &strings.1);
-                //    self.other_pokemon = battle.player().pokemon.name.to_uppercase();
+                //    self.battle_text.update_text(&battle.opponent().pokemon.data.name.to_uppercase(), &strings.1);
+                //    self.other_pokemon = battle.player().pokemon.data.name.to_uppercase();
                 //    self.other_move = strings.0;
                 //}
                 

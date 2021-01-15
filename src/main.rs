@@ -1,4 +1,3 @@
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut game = crate::app::Game::new();
@@ -46,10 +45,7 @@ pub mod entity {
 
     pub mod entity;
 
-    pub mod util {
-        pub mod mob_coordinates;
-        pub mod direction;
-    }
+    pub mod util;
 
     pub mod entities {
         pub mod player;
@@ -78,22 +74,10 @@ pub mod game {
     pub mod pokedex {
         pub mod pokedex;
         pub mod pokemon {
-            pub mod pokemon;
             pub mod pokemon_instance;
             pub mod pokemon_owned;
-            pub mod pokemon_toml;
-            pub mod stat_set;
         }
-        pub mod pokemon_move {
-            pub mod move_category;
-            pub mod pokemon_move;
-            pub mod move_instance;
-            pub mod move_toml;
-        }
-    }
-
-    pub mod npc {
-        pub mod npc;
+        pub mod move_instance;
     }
 
 }
