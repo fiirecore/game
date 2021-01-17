@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 248
 name = "Tyranitar"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Dark"
 species = "Armor"
 height = 2.0
 weight = 202.0
-[base_stats]
+[base]
 hp = 100
 atk = 134
 def = 110

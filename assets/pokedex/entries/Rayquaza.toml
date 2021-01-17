@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 384
 name = "Rayquaza"
 primary_type = "Dragon"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Sky"
 height = 7.0
 weight = 206.5
-[base_stats]
+[base]
 hp = 105
 atk = 150
 def = 90

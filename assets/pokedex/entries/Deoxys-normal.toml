@@ -1,6 +1,6 @@
 moves = []
 
-[pokedex_data]
+[data]
 number = 386
 name = "Deoxys-normal"
 primary_type = "Psychic"
@@ -8,7 +8,7 @@ species = "DNA"
 height = 1.7
 weight = 60.8
 
-[base_stats]
+[base]
 hp = 50
 atk = 150
 def = 50

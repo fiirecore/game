@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 237
 name = "Hitmontop"
 primary_type = "Fighting"
 species = "Handstand"
 height = 1.4
 weight = 48.0
-[base_stats]
+[base]
 hp = 50
 atk = 95
 def = 95

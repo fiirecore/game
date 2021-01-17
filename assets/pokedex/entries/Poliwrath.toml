@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 62
 name = "Poliwrath"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Fighting"
 species = "Tadpole"
 height = 1.3
 weight = 54.0
-[base_stats]
+[base]
 hp = 90
 atk = 95
 def = 95

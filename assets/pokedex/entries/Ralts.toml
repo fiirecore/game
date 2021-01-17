@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 280
 name = "Ralts"
 primary_type = "Psychic"
@@ -6,7 +6,7 @@ secondary_type = "Fairy"
 species = "Feeling"
 height = 0.4
 weight = 6.6
-[base_stats]
+[base]
 hp = 28
 atk = 25
 def = 25

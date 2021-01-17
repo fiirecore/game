@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 258
 name = "Mudkip"
 primary_type = "Water"
 species = "Mud"
 height = 0.4
 weight = 7.6
-[base_stats]
+[base]
 hp = 50
 atk = 70
 def = 50

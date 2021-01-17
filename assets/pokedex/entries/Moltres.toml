@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 146
 name = "Moltres"
 primary_type = "Fire"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Flame"
 height = 2.0
 weight = 60.0
-[base_stats]
+[base]
 hp = 90
 atk = 100
 def = 90

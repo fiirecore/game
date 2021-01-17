@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 217
 name = "Ursaring"
 primary_type = "Normal"
 species = "Hibernator"
 height = 1.8
 weight = 125.8
-[base_stats]
+[base]
 hp = 90
 atk = 130
 def = 75

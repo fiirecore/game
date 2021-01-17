@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 266
 name = "Silcoon"
 primary_type = "Bug"
 species = "Cocoon"
 height = 0.6
 weight = 10.0
-[base_stats]
+[base]
 hp = 50
 atk = 35
 def = 55

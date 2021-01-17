@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 201
 name = "Unown"
 primary_type = "Psychic"
 species = "Symbol"
 height = 0.5
 weight = 5.0
-[base_stats]
+[base]
 hp = 48
 atk = 72
 def = 48

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 231
 name = "Phanpy"
 primary_type = "Ground"
 species = "Long"
 height = 0.5
 weight = 33.5
-[base_stats]
+[base]
 hp = 90
 atk = 60
 def = 60

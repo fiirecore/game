@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 126
 name = "Magmar"
 primary_type = "Fire"
 species = "Spitfire"
 height = 1.3
 weight = 44.5
-[base_stats]
+[base]
 hp = 65
 atk = 95
 def = 57

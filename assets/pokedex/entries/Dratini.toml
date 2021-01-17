@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 147
 name = "Dratini"
 primary_type = "Dragon"
 species = "Dragon"
 height = 1.8
 weight = 3.3
-[base_stats]
+[base]
 hp = 41
 atk = 64
 def = 45

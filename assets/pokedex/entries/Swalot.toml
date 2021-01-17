@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 317
 name = "Swalot"
 primary_type = "Poison"
 species = "Poison"
 height = 1.7
 weight = 80.0
-[base_stats]
+[base]
 hp = 100
 atk = 73
 def = 83

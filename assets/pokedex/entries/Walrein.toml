@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 365
 name = "Walrein"
 primary_type = "Ice"
@@ -6,7 +6,7 @@ secondary_type = "Water"
 species = "Ice"
 height = 1.4
 weight = 150.6
-[base_stats]
+[base]
 hp = 110
 atk = 80
 def = 90

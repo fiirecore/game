@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 307
 name = "Meditite"
 primary_type = "Fighting"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Meditate"
 height = 0.6
 weight = 11.2
-[base_stats]
+[base]
 hp = 30
 atk = 40
 def = 55

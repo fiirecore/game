@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 250
 name = "Ho-oh"
 primary_type = "Fire"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Rainbow"
 height = 3.8
 weight = 199.0
-[base_stats]
+[base]
 hp = 106
 atk = 130
 def = 90

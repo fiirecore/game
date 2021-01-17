@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 310
 name = "Manectric"
 primary_type = "Electric"
 species = "Discharge"
 height = 1.5
 weight = 40.2
-[base_stats]
+[base]
 hp = 70
 atk = 75
 def = 60

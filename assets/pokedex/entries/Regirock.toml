@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 377
 name = "Regirock"
 primary_type = "Rock"
 species = "Rock"
 height = 1.7
 weight = 230.0
-[base_stats]
+[base]
 hp = 80
 atk = 100
 def = 200

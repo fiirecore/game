@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 208
 name = "Steelix"
 primary_type = "Steel"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Iron"
 height = 9.2
 weight = 400.0
-[base_stats]
+[base]
 hp = 75
 atk = 85
 def = 200

@@ -5,6 +5,7 @@ use serde::Deserialize;
 
 use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
 
+use super::wild_pokemon_table::random_wild_table;
 use super::{wild_pokemon_encounter::WildPokemonEncounter, wild_pokemon_table::WildPokemonTable};
 
 #[derive(Copy, Clone)]
@@ -17,7 +18,7 @@ pub struct OriginalWildPokemonTable {
 
 impl OriginalWildPokemonTable {
 
-    pub fn from_toml<P>(path: P) -> Option<OriginalWildPokemonTable> where P: AsRef<Path> {
+    pub fn from_toml<P>(path: P) -> Box<dyn WildPokemonTable> where P: AsRef<Path> {
         let path = path.as_ref();
 
         let content_result = std::fs::read_to_string(path);
@@ -28,20 +29,20 @@ impl OriginalWildPokemonTable {
                 match toml_result {
                     Ok(toml_table) => {
                         
-                        Some(OriginalWildPokemonTable {
+                        Box::new(OriginalWildPokemonTable {
                             encounter_ratio: toml_table.encounter_ratio,
                             table: WildPokemonEncounter::fill_table(&toml_table),
                         })
                     },
                     Err(err) => {
-                        warn!("Could not parse wild pokemon table at {:?} with error {}", &path, err);
-                        return None;
+                        warn!("Could not parse wild pokemon table at {:?} with error {}, using random table instead!", &path, err);
+                        return random_wild_table();
                     }
                 }
             },
             Err(err) => {
-                warn!("Could not read wild pokemon table at {:?} to string with error: {}", &path, err);
-                return None;
+                warn!("Could not read wild pokemon table at {:?} to string with error: {}, using random table instead!", &path, err);
+                return random_wild_table();
             }
         }
 

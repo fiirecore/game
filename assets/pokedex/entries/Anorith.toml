@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 347
 name = "Anorith"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Bug"
 species = "Old"
 height = 0.7
 weight = 12.5
-[base_stats]
+[base]
 hp = 45
 atk = 95
 def = 50

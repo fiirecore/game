@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 247
 name = "Pupitar"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Hard"
 height = 1.2
 weight = 152.0
-[base_stats]
+[base]
 hp = 70
 atk = 84
 def = 70

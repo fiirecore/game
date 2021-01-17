@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 379
 name = "Registeel"
 primary_type = "Steel"
 species = "Iron"
 height = 1.9
 weight = 205.0
-[base_stats]
+[base]
 hp = 80
 atk = 75
 def = 150

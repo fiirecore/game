@@ -2,7 +2,7 @@ use std::path::Path;
 use log::warn;
 use opengl_graphics::{Filter, Texture, TextureSettings};
 
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 
 pub fn texture_from_path<P>(path: P) -> Texture where P: AsRef<Path> {
 

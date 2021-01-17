@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 206
 name = "Dunsparce"
 primary_type = "Normal"
 species = "Land"
 height = 1.5
 weight = 14.0
-[base_stats]
+[base]
 hp = 100
 atk = 70
 def = 70

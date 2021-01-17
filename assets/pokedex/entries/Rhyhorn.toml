@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 111
 name = "Rhyhorn"
 primary_type = "Ground"
@@ -6,7 +6,7 @@ secondary_type = "Rock"
 species = "Spikes"
 height = 1.0
 weight = 115.0
-[base_stats]
+[base]
 hp = 80
 atk = 85
 def = 95

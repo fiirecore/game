@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 199
 name = "Slowking"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Royal"
 height = 2.0
 weight = 79.5
-[base_stats]
+[base]
 hp = 95
 atk = 75
 def = 80

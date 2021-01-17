@@ -1,16 +1,16 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::battle::battle_context::TrainerData;
 use crate::battle::transitions::introductions::trainer_battle_introduction::TrainerBattleIntroduction;
-use crate::engine::game_context::GameContext;
-use crate::entity::entity::Entity;
-use crate::entity::entity::Ticking;
+use crate::util::context::GameContext;
+use crate::entity::Entity;
+use crate::entity::Ticking;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransitionManager;
 use crate::battle::transitions::introductions::basic_battle_introduction::BasicBattleIntroduction;
 use crate::gui::battle::battle_gui::BattleGui;
+use crate::util::context::battle_context::TrainerData;
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
 
@@ -81,7 +81,7 @@ impl Ticking for BattleIntroductionManager {
         self.introductions[self.current_introduction_index].update(context);     
 	}
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut crate::engine::text::TextRenderer) {
+    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut crate::util::text_renderer::TextRenderer) {
         self.introductions[self.current_introduction_index].render(ctx, g, tr);
 	}
 }

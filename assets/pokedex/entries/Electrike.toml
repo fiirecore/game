@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 309
 name = "Electrike"
 primary_type = "Electric"
 species = "Lightning"
 height = 0.6
 weight = 15.2
-[base_stats]
+[base]
 hp = 40
 atk = 45
 def = 40

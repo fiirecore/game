@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 150
 name = "Mewtwo"
 primary_type = "Psychic"
 species = "Genetic"
 height = 2.0
 weight = 122.0
-[base_stats]
+[base]
 hp = 106
 atk = 110
 def = 90

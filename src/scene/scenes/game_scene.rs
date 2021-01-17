@@ -1,12 +1,11 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
-use crate::engine::text::TextRenderer;
-use crate::engine::game_context::GameContext;
-
-use crate::scene::scene::Scene;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 
 use crate::game::game_manager::GameManager;
-use crate::scene::scene::SceneLoad;
+use crate::scene::Scene;
+use crate::scene::SceneLoad;
 
 pub struct GameScene {
 

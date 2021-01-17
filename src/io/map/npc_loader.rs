@@ -10,20 +10,13 @@ use log::warn;
 use crate::entity::texture::still_texture_manager::StillTextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::texture_util::texture_from_path;
 use crate::world::npc::NPC;
 
-pub fn load_npc_textures(world_id: &String, npc_textures: &mut HashMap<u8, ThreeWayTexture>) {
-    let mut dir_pb = PathBuf::from("worlds/");
-    dir_pb.push(world_id);
-    dir_pb.push("textures");
-    dir_pb.push("npcs");
+pub fn load_npc_textures(npc_textures: &mut HashMap<u8, ThreeWayTexture>) {
 
-    //println!("{:?}", dir_pb.clone());
-
-    let entries_result = std::fs::read_dir(asset_as_pathbuf(dir_pb));
-    match entries_result {
+    match asset_as_pathbuf("world").join("textures").join("npcs").read_dir() {
         Ok(readdir) => {
             let paths: Vec<Result<PathBuf, std::io::Error>> = readdir.map( |res| res.map(|e| e.path())).collect();
             for path in paths {
@@ -55,7 +48,7 @@ pub fn load_npc_textures(world_id: &String, npc_textures: &mut HashMap<u8, Three
             }
         },
         Err(err) => {
-            warn!("Error reading NPC textures directory for map {} with error: {}", world_id, err);
+            warn!("Error reading NPC textures directory with error: {}", err);
         },
     }
 }

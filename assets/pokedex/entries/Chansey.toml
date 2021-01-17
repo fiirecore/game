@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 113
 name = "Chansey"
 primary_type = "Normal"
 species = "Egg"
 height = 1.1
 weight = 34.6
-[base_stats]
+[base]
 hp = 250
 atk = 5
 def = 5

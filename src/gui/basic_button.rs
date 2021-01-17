@@ -1,6 +1,6 @@
 use piston_window::Context;
 use opengl_graphics::GlGraphics;
-use crate::engine::text::TextRenderer;
+use crate::util::text_renderer::TextRenderer;
 use crate::gui::gui::{GuiComponent, GuiText};
 pub struct BasicButton {
 	

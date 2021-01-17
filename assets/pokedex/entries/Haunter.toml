@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 93
 name = "Haunter"
 primary_type = "Ghost"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Gas"
 height = 1.6
 weight = 0.1
-[base_stats]
+[base]
 hp = 45
 atk = 50
 def = 45

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 295
 name = "Exploud"
 primary_type = "Normal"
 species = "Loud"
 height = 1.5
 weight = 84.0
-[base_stats]
+[base]
 hp = 104
 atk = 91
 def = 63

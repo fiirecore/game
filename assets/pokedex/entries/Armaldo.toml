@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 348
 name = "Armaldo"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Bug"
 species = "Plate"
 height = 1.5
 weight = 68.2
-[base_stats]
+[base]
 hp = 75
 atk = 125
 def = 100

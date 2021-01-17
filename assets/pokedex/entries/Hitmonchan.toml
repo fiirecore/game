@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 107
 name = "Hitmonchan"
 primary_type = "Fighting"
 species = "Punching"
 height = 1.4
 weight = 50.2
-[base_stats]
+[base]
 hp = 50
 atk = 105
 def = 79

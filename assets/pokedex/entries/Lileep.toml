@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 345
 name = "Lileep"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Grass"
 species = "Sea"
 height = 1.0
 weight = 23.8
-[base_stats]
+[base]
 hp = 66
 atk = 41
 def = 77

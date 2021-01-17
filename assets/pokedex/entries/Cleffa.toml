@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 173
 name = "Cleffa"
 primary_type = "Fairy"
 species = "Star"
 height = 0.3
 weight = 3.0
-[base_stats]
+[base]
 hp = 50
 atk = 25
 def = 28

@@ -1,12 +1,12 @@
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
 //use crate::battle::battle_manager::BattleManager;
 
 use crate::battle::battle::Battle;
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 use crate::gui::gui::{GuiComponent, GuiText};
 use crate::util::timer::Timer;
 

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 103
 name = "Exeggutor"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Coconut"
 height = 2.0
 weight = 120.0
-[base_stats]
+[base]
 hp = 95
 atk = 95
 def = 85

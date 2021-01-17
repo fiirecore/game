@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 301
 name = "Delcatty"
 primary_type = "Normal"
 species = "Prim"
 height = 1.1
 weight = 32.6
-[base_stats]
+[base]
 hp = 70
 atk = 65
 def = 65

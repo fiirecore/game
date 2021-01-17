@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 106
 name = "Hitmonlee"
 primary_type = "Fighting"
 species = "Kicking"
 height = 1.5
 weight = 49.8
-[base_stats]
+[base]
 hp = 50
 atk = 120
 def = 53

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 124
 name = "Jynx"
 primary_type = "Ice"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Human"
 height = 1.4
 weight = 40.6
-[base_stats]
+[base]
 hp = 65
 atk = 50
 def = 35

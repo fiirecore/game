@@ -4,7 +4,7 @@ use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::entity::entities::player::Player;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::world::warp::WarpEntry;

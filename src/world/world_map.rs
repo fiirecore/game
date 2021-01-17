@@ -6,7 +6,7 @@ use opengl_graphics::Texture;
 use piston_window::Context;
 
 use crate::audio::music::Music;
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::entity::entities::player::Player;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
@@ -46,6 +46,12 @@ impl WorldMap {
 
 }
 
+fn try_wild_battle(context: &mut GameContext, wild: &WildEntry) {
+    if (context.random.rand_range(0..256) as u8) < wild.table.encounter_rate() {
+        context.wild_battle(&wild.table);
+    }
+}
+
 impl World for WorldMap {
 
     fn in_bounds(&self, x: isize, y: isize) -> bool {
@@ -79,13 +85,15 @@ impl World for WorldMap {
     fn on_tile(&mut self, context: &mut GameContext, /*player: &mut Player,*/ x: isize, y: isize) {
         let tile_id = self.tile(x, y);
         if let Some(wild) = &self.wild {
-            for tile in &wild.tiles {
-                if tile_id.eq(tile) {
-                    if (context.random.rand_range(0..256) as u8) < wild.table.encounter_rate() {
-                        context.battle_context.wild_battle(&mut context.random, &wild.table);
+            if let Some(tiles) = &wild.tiles {
+                for tile in tiles {
+                    if tile_id.eq(tile) {
+                        try_wild_battle(context, wild);
                     }
                 }
-            }
+            } else {
+                try_wild_battle(context, wild);
+            }            
         }
         for npc in &self.npcs {
             if let Some(trainer) = &npc.trainer {

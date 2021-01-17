@@ -1,8 +1,8 @@
 use log::warn;
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::Context;
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 
 use crate::gui::gui::{GuiComponent, Activatable};
 
@@ -13,7 +13,7 @@ use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 //use crate::battle::battle_manager::BattleManager;
 use crate::battle::battle::Battle;
 
-use crate::util::{texture_util::texture_from_path, file_util::asset_as_pathbuf, render_util::draw};
+use crate::util::{texture_util::texture_from_path, file::asset_as_pathbuf, render_util::draw};
 pub struct PlayerPanel {
 
     alive: bool,

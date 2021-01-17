@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 251
 name = "Celebi"
 primary_type = "Psychic"
@@ -6,7 +6,7 @@ secondary_type = "Grass"
 species = "Time"
 height = 0.6
 weight = 5.0
-[base_stats]
+[base]
 hp = 100
 atk = 100
 def = 100

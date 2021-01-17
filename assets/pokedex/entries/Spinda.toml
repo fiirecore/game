@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 327
 name = "Spinda"
 primary_type = "Normal"
 species = "Spot"
 height = 1.1
 weight = 5.0
-[base_stats]
+[base]
 hp = 60
 atk = 60
 def = 60

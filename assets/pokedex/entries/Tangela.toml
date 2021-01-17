@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 114
 name = "Tangela"
 primary_type = "Grass"
 species = "Vine"
 height = 1.0
 weight = 35.0
-[base_stats]
+[base]
 hp = 65
 atk = 55
 def = 115

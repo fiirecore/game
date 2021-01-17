@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::collections::hash_map::Values;
 
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 
 use super::world_map_set::WorldMapSet;
 

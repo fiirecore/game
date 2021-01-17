@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 177
 name = "Natu"
 primary_type = "Psychic"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Tiny"
 height = 0.2
 weight = 2.0
-[base_stats]
+[base]
 hp = 40
 atk = 50
 def = 45

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 374
 name = "Beldum"
 primary_type = "Steel"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Iron"
 height = 0.6
 weight = 95.2
-[base_stats]
+[base]
 hp = 40
 atk = 55
 def = 80

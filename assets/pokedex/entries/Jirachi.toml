@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 385
 name = "Jirachi"
 primary_type = "Steel"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Wish"
 height = 0.3
 weight = 1.1
-[base_stats]
+[base]
 hp = 100
 atk = 100
 def = 100

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 314
 name = "Illumise"
 primary_type = "Bug"
 species = "Firefly"
 height = 0.6
 weight = 17.7
-[base_stats]
+[base]
 hp = 65
 atk = 47
 def = 75

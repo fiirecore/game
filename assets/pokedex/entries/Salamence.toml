@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 373
 name = "Salamence"
 primary_type = "Dragon"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Dragon"
 height = 1.5
 weight = 102.6
-[base_stats]
+[base]
 hp = 95
 atk = 135
 def = 80

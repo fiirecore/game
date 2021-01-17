@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 24
 name = "Arbok"
 primary_type = "Poison"
 species = "Cobra"
 height = 3.5
 weight = 65.0
-[base_stats]
+[base]
 hp = 60
 atk = 95
 def = 69

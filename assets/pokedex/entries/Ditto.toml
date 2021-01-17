@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 132
 name = "Ditto"
 primary_type = "Normal"
 species = "Transform"
 height = 0.3
 weight = 4.0
-[base_stats]
+[base]
 hp = 48
 atk = 48
 def = 48

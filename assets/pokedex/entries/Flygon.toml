@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 330
 name = "Flygon"
 primary_type = "Ground"
@@ -6,7 +6,7 @@ secondary_type = "Dragon"
 species = "Mystic"
 height = 2.0
 weight = 82.0
-[base_stats]
+[base]
 hp = 80
 atk = 100
 def = 80

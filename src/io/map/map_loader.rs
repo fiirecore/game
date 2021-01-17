@@ -1,55 +1,40 @@
 use std::ffi::OsString;
 use std::fs::read_to_string;
 use std::path::Path;
-use std::path::PathBuf;
 
 use log::warn;
 
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::world::world_chunk::WorldChunk;
 use crate::world::world_chunk_map::WorldChunkMap;
 use crate::world::world_map_set::WorldMapSet;
 use crate::world::world_map_set_manager::WorldMapSetManager;
 
-use super::jigsaw_map_loader::new_jigsaw_map;
+use super::chunk_map_loader::new_chunk_map;
 use super::map_serializable::MapConfig;
-use super::warp_map_loader::new_warp_map;
+use super::map_set_loader::new_map_set;
 
-pub fn load_maps(world_id: &String, palette_sizes: &Vec<u16>, chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager) {
+pub fn load_maps(palette_sizes: &Vec<u16>, chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager) {
 
-    let mut dir_pb = PathBuf::from("worlds/");
-    dir_pb.push(world_id);
-    dir_pb.push("maps");
-
-    //println!("{:?}", dir_pb.clone());
-
-    let entries = std::fs::read_dir(asset_as_pathbuf(dir_pb)).unwrap().map( |res| res.map(|e| e.path()));
-
-    for dir_entry in entries {
+    for dir_entry in std::fs::read_dir(asset_as_pathbuf("world").join("maps")).unwrap().map( |res| res.map(|e| e.path())) {
         match dir_entry {
             Ok(dir_entry) => {
-                let dir = dir_entry.read_dir().unwrap().map( |res| res.map(|e| e.path()));
-                for subdir_entry in dir {
+                for subdir_entry in dir_entry.read_dir().unwrap().map( |res| res.map(|e| e.path())) {
                     match subdir_entry {
                         Ok(p) => {
                             if let Some(ext) = p.extension() {
                                 if ext == OsString::from("toml") {
                                     let maps = crate::io::map::map_loader::map_from_toml(palette_sizes, p);
-                                    if let Some(map_data) = maps.1 {
-                                        //if map_data.0.eq(&self.player_data.current_world_id) {
-                                            chunk_map.insert(map_data.0, map_data.1);
-                                        //}
-                                    } else if let Some(warp_map_set) = maps.2 {
-                                        //if warp_map_set.0.eq(&self.player_data.current_world_id) {
-                                            map_sets.insert(warp_map_set.0, warp_map_set.1);
-                                        //}
+                                    if let Some(world_chunk) = maps.0 {
+                                        chunk_map.insert(world_chunk.0, world_chunk.1);
+                                    } else if let Some(map_set) = maps.1 {
+                                        map_sets.insert(map_set.0, map_set.1);
                                     }
                                     
                                 }
                             }
                         }
                         Err(e) => {
-                            //println!("Error parsing directory: {:?}", subdir_entry);
                             warn!("{}", e);
                         }
                     }
@@ -57,7 +42,6 @@ pub fn load_maps(world_id: &String, palette_sizes: &Vec<u16>, chunk_map: &mut Wo
                                     
             }
             Err(e) => {
-                //println!("error getting map set files under {:?}", dir_entry);
                 warn!("{}", e);
             }
         }
@@ -66,7 +50,6 @@ pub fn load_maps(world_id: &String, palette_sizes: &Vec<u16>, chunk_map: &mut Wo
 }
 
 pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
-    String,
     Option<(u16, WorldChunk)>,
     Option<(String, WorldMapSet)>,
 )
@@ -83,32 +66,32 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
                 Ok(map_config) => {
 
                     if map_config.jigsaw_map.is_some() {
-                        match new_jigsaw_map(path.parent().unwrap(), palette_sizes, &map_config) {
+                        match new_chunk_map(path.parent().unwrap(), palette_sizes, map_config) {
                             Some(map) => {
-                                return (map_config.identifier.world_id, Some(map), None);
+                                return (Some(map), None);
                             }
                             None => {
                                 warn!("Error reading jigsaw map at path: {:?}", path);
-                                return (map_config.identifier.world_id, None, None);
+                                return (None, None);
                             }
                         }
                         
 
                     } else if map_config.warp_map.is_some() {
-                        match new_warp_map(path.parent().unwrap(), palette_sizes, &map_config) {
+                        match new_map_set(path.parent().unwrap(), palette_sizes, map_config) {
                             Some(map) => {
-                                return (map_config.identifier.world_id, None, Some(map));
+                                return (None, Some(map));
                             }
                             None => {
                                 warn!("Error reading warp map at path: {:?}", path);
-                                return (map_config.identifier.world_id, None, None);
+                                return (None, None);
                             }
                         }
 
                     } else {
 
                         warn!("Map config at {:?} does not contain either a jigsaw map or a warp map.", &path);
-                        return (map_config.identifier.world_id, None, None);
+                        return (None, None);
 
                     }
                     
@@ -120,7 +103,7 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
                         err
                     );
 
-                    return (String::from("null"), None, None);
+                    return (None, None);
                 }
             }
         }
@@ -130,7 +113,7 @@ pub fn map_from_toml<P: AsRef<Path>>(palette_sizes: &Vec<u16>, path: P) -> (
                 path,
                 err
             );
-            return (String::from("null"),None, None);
+            return (None, None);
         }
     }
 }

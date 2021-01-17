@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 185
 name = "Sudowoodo"
 primary_type = "Rock"
 species = "Imitation"
 height = 1.2
 weight = 38.0
-[base_stats]
+[base]
 hp = 70
 atk = 100
 def = 115

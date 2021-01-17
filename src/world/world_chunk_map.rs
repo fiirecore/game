@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use opengl_graphics::Texture;
 
 use crate::audio::music::Music;
-use crate::engine::game_context::GameContext;
-use crate::entity::entity::Entity;
+use crate::util::context::GameContext;
+use crate::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 
 use super::ScreenCoords;

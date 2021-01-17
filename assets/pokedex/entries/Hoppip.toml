@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 187
 name = "Hoppip"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Cottonweed"
 height = 0.4
 weight = 0.5
-[base_stats]
+[base]
 hp = 35
 atk = 35
 def = 40

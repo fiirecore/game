@@ -1,9 +1,9 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
-use crate::entity::entity::Entity;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
+use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::gui::GuiComponent;
 use crate::util::traits::Loadable;

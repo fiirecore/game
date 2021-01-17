@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 346
 name = "Cradily"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Grass"
 species = "Barnacle"
 height = 1.5
 weight = 60.4
-[base_stats]
+[base]
 hp = 86
 atk = 81
 def = 97

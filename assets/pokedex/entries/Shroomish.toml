@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 285
 name = "Shroomish"
 primary_type = "Grass"
 species = "Mushroom"
 height = 0.4
 weight = 4.5
-[base_stats]
+[base]
 hp = 60
 atk = 40
 def = 60

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 130
 name = "Gyarados"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Atrocious"
 height = 6.5
 weight = 235.0
-[base_stats]
+[base]
 hp = 95
 atk = 125
 def = 79

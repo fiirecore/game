@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 160
 name = "Feraligatr"
 primary_type = "Water"
 species = "Big"
 height = 2.3
 weight = 88.8
-[base_stats]
+[base]
 hp = 85
 atk = 105
 def = 100

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 279
 name = "Pelipper"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Water"
 height = 1.2
 weight = 28.0
-[base_stats]
+[base]
 hp = 60
 atk = 50
 def = 100

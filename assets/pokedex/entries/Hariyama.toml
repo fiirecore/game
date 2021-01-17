@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 297
 name = "Hariyama"
 primary_type = "Fighting"
 species = "Arm"
 height = 2.3
 weight = 253.8
-[base_stats]
+[base]
 hp = 144
 atk = 120
 def = 60

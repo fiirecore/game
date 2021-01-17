@@ -2,21 +2,22 @@ use std::path::PathBuf;
 
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::Context;
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::entity::texture::movement_texture::MovementTexture;
 use crate::entity::texture::movement_texture_manager::MovementTextureManager;
 use crate::entity::texture::texture_manager::TextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
 use crate::io::data::Position;
-use crate::{engine::text::TextRenderer, util::{file_util::asset_as_pathbuf, traits::Loadable}};
 
 use crate::io::data::player_data::PlayerData;
 
+use crate::util::file::asset_as_pathbuf;
 use crate::util::texture_util::texture_from_path;
 use crate::util::render_util::draw_flip;
-use crate::entity::entity::*;
+use crate::entity::*;
 use crate::util::render_util::TEXTURE_SIZE;
+use crate::util::traits::Loadable;
 
 static TEX_TICK_LENGTH: u8 = 8;
 pub static RUN_SPEED: u8 = 2;
@@ -109,8 +110,8 @@ impl Player {
 	
 	pub fn focus_update(&mut self) {
 		if self.screen_attached {
-			self.focus_x = self.position.pixel_x() + TEXTURE_SIZE as isize / 2 - crate::util::render_util::VIEW_WIDTH  as isize / 2;
-			self.focus_y = self.position.pixel_y() + TEXTURE_SIZE as isize / 2 - crate::util::render_util::VIEW_HEIGHT as isize / 2;
+			self.focus_x = self.position.pixel_x() + TEXTURE_SIZE as isize / 2 - crate::BASE_WIDTH as isize / 2;
+			self.focus_y = self.position.pixel_y() + TEXTURE_SIZE as isize / 2 - crate::BASE_HEIGHT as isize / 2;
 		}
 	}
 
@@ -217,17 +218,16 @@ impl Mob for Player {
 
 impl Player {
 
-	pub fn load_textures(&mut self, world_id: &str) {
+	pub fn load_textures(&mut self) {
 
-		let mut path = asset_as_pathbuf("worlds");
-		path.push(world_id); // fix
+		let mut path = asset_as_pathbuf("world");
+		//path.push(world_id); // fix
 		path.push("textures/player");
-		if !path.exists() {
-			path.pop();
-			path.pop();
-			path.pop();
-			path.push("firered/textures/player");
-		};
+		// if !path.exists() {
+		// 	path.pop();
+		// 	path.pop();
+		// 	path.push("textures/player");
+		// };
 
 		let mut up_textures = MovementTexture::empty((0, false));
 

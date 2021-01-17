@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 241
 name = "Miltank"
 primary_type = "Normal"
 species = "Milk"
 height = 1.2
 weight = 75.5
-[base_stats]
+[base]
 hp = 95
 atk = 80
 def = 105

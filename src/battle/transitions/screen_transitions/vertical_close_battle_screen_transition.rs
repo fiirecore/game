@@ -1,15 +1,16 @@
-use crate::engine::game_context::GameContext;
-use crate::entity::entity::Ticking;
+use crate::BASE_HEIGHT;
+use crate::BASE_WIDTH;
+use crate::util::context::GameContext;
+use crate::entity::Ticking;
 use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::render_util::{VIEW_WIDTH, VIEW_HEIGHT};
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::engine::text::TextRenderer;
-use crate::entity::entity::Entity;
+use crate::util::text_renderer::TextRenderer;
+use crate::entity::Entity;
 
 use crate::util::render_util::draw_rect;
 
@@ -83,14 +84,14 @@ impl Ticking for VerticalCloseBattleScreenTransition {
             self.speed*=2;
         }
         self.offset += self.speed;
-        if self.offset >= VIEW_HEIGHT as u8 / 2 {
+        if self.offset >= BASE_HEIGHT as u8 / 2 {
             self.finished = true;
         }     
     }
 
     fn render(&self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-        draw_rect(ctx, g, [0.0, 0.0, 0.0, 1.0], 0, 0, VIEW_WIDTH, self.offset as usize);
-        draw_rect(ctx, g, [0.0, 0.0, 0.0, 1.0], 0, VIEW_HEIGHT as isize - self.offset as isize, VIEW_WIDTH, self.offset as usize);    
+        draw_rect(ctx, g, [0.0, 0.0, 0.0, 1.0], 0, 0, BASE_WIDTH, self.offset as u32);
+        draw_rect(ctx, g, [0.0, 0.0, 0.0, 1.0], 0, BASE_HEIGHT as isize - self.offset as isize, BASE_WIDTH, self.offset as u32);    
     }
 
 }

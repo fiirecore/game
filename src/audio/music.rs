@@ -5,7 +5,7 @@ use enum_iterator::IntoEnumIterator;
 use log::info;
 use log::warn;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq, IntoEnumIterator)]
 pub enum Music {
@@ -42,6 +42,24 @@ impl Default for Music {
     fn default() -> Self {
         Music::Pallet
     }
+}
+
+impl Music {
+
+    pub fn loop_start(&self) -> Option<f64> {
+        match *self {
+            Music::BattleWild => Some(13.75),
+            _ => None,
+        }
+    }
+
+    pub fn len(&self) -> Option<f64> {
+        match *self {
+            Music::Route1 => Some(25.0),
+            _ => None,
+        }
+    }
+
 }
 
 impl From<u8> for Music {

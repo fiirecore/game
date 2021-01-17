@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 349
 name = "Feebas"
 primary_type = "Water"
 species = "Fish"
 height = 0.6
 weight = 7.4
-[base_stats]
+[base]
 hp = 20
 atk = 15
 def = 20

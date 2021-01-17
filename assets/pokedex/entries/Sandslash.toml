@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 28
 name = "Sandslash"
 primary_type = "Ground"
 species = "Mouse"
 height = 1.0
 weight = 29.5
-[base_stats]
+[base]
 hp = 75
 atk = 100
 def = 110

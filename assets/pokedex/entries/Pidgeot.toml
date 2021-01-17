@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 18
 name = "Pidgeot"
 primary_type = "Normal"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Bird"
 height = 1.5
 weight = 39.5
-[base_stats]
+[base]
 hp = 83
 atk = 80
 def = 75

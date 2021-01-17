@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 350
 name = "Milotic"
 primary_type = "Water"
 species = "Tender"
 height = 6.2
 weight = 162.0
-[base_stats]
+[base]
 hp = 95
 atk = 60
 def = 79

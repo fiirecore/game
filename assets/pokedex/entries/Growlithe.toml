@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 58
 name = "Growlithe"
 primary_type = "Fire"
 species = "Puppy"
 height = 0.7
 weight = 19.0
-[base_stats]
+[base]
 hp = 55
 atk = 70
 def = 45

@@ -1,7 +1,7 @@
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::io::data::Direction;
 use crate::io::data::Position;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::texture_util::texture64_from_path;
 
 use opengl_graphics::Texture;
@@ -41,12 +41,12 @@ impl NPC {
     pub fn interact(&mut self, direction: Direction, context: &mut GameContext) {
         self.position.direction = direction.inverse();
         if self.trainer.is_some() {
-            context.battle_context.trainer_battle(&self);
+            context.trainer_battle(&self);
         }
     }
 
     pub fn battle_sprite(id: u8) -> Texture {
-        texture64_from_path(asset_as_pathbuf("worlds/firered/textures/npcs").join(id.to_string()).join("battle.png"))
+        texture64_from_path(asset_as_pathbuf("worlds/textures/npcs").join(id.to_string()).join("battle.png"))
     }
 
 }

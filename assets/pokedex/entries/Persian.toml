@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 53
 name = "Persian"
 primary_type = "Normal"
 species = "Classy"
 height = 1.0
 weight = 32.0
-[base_stats]
+[base]
 hp = 65
 atk = 70
 def = 60

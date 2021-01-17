@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 308
 name = "Medicham"
 primary_type = "Fighting"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Meditate"
 height = 1.3
 weight = 31.5
-[base_stats]
+[base]
 hp = 60
 atk = 60
 def = 75

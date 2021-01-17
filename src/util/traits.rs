@@ -1,5 +1,5 @@
 use std::path::Path;
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 pub trait Loadable {
 
     fn load(&mut self);
@@ -25,6 +25,8 @@ pub trait PersistantData {
     fn load<P>(path: P) -> Self where P: AsRef<Path>;
 
     fn save(&self);
+
+    fn reload(&mut self);
 
 }
 

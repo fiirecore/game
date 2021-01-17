@@ -7,7 +7,7 @@ use self::wild_pokemon_table::WildPokemonTable;
 
 pub struct WildEntry {
 
-    pub tiles: Vec<u16>,
+    pub tiles: Option<Vec<u16>>,
     pub table: Box<dyn WildPokemonTable>,
 
 }

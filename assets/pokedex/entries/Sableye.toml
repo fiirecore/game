@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 302
 name = "Sableye"
 primary_type = "Dark"
@@ -6,7 +6,7 @@ secondary_type = "Ghost"
 species = "Darkness"
 height = 0.5
 weight = 11.0
-[base_stats]
+[base]
 hp = 50
 atk = 75
 def = 75

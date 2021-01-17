@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 269
 name = "Dustox"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Poison"
 height = 1.2
 weight = 31.6
-[base_stats]
+[base]
 hp = 60
 atk = 50
 def = 70

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 363
 name = "Spheal"
 primary_type = "Ice"
@@ -6,7 +6,7 @@ secondary_type = "Water"
 species = "Clap"
 height = 0.8
 weight = 39.5
-[base_stats]
+[base]
 hp = 70
 atk = 40
 def = 50

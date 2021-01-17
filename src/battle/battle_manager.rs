@@ -1,20 +1,21 @@
 use log::info;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
-use crate::entity::entity::Ticking;
+use crate::entity::Ticking;
 use crate::game::pokedex::pokedex::Pokedex;
 use crate::gui::battle::battle_gui::BattleGui;
+use crate::util::context::battle_context::BattleData;
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
 use crate::io::data::player_data::PlayerData;
-use crate::engine::text::TextRenderer;
+use crate::util::text_renderer::TextRenderer;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 
 use super::battle::Battle;
-use super::battle_context::BattleData;
+// use super::battle_context::BattleData;
 
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 use super::transitions::managers::battle_screen_transition_manager::BattleScreenTransitionManager;
@@ -89,7 +90,7 @@ impl BattleManager {
 
 	pub fn on_start(&mut self, context: &mut GameContext, pokedex: &Pokedex, player_data: &PlayerData) { // add battle type parameter
 		self.finished = false;
-		self.battle_data = context.battle_context.battle_data.take().unwrap();
+		self.battle_data = context.battle_data.take().unwrap();
 		self.create_battle(player_data, pokedex);
 		self.battle_gui.despawn();
 		self.battle_gui.spawn();		

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 60
 name = "Poliwag"
 primary_type = "Water"
 species = "Tadpole"
 height = 0.6
 weight = 12.4
-[base_stats]
+[base]
 hp = 40
 atk = 50
 def = 40

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 382
 name = "Kyogre"
 primary_type = "Water"
 species = "Sea"
 height = 4.5
 weight = 352.0
-[base_stats]
+[base]
 hp = 100
 atk = 100
 def = 90

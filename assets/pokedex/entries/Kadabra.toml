@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 64
 name = "Kadabra"
 primary_type = "Psychic"
 species = "Psi"
 height = 1.3
 weight = 56.5
-[base_stats]
+[base]
 hp = 40
 atk = 35
 def = 30

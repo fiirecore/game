@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 246
 name = "Larvitar"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Rock"
 height = 0.6
 weight = 72.0
-[base_stats]
+[base]
 hp = 50
 atk = 64
 def = 50

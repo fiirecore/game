@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 87
 name = "Dewgong"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Ice"
 species = "Sea"
 height = 1.7
 weight = 120.0
-[base_stats]
+[base]
 hp = 90
 atk = 70
 def = 80

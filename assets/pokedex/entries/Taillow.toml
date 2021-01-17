@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 276
 name = "Taillow"
 primary_type = "Normal"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Tiny"
 height = 0.3
 weight = 2.3
-[base_stats]
+[base]
 hp = 40
 atk = 55
 def = 30

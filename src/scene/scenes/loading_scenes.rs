@@ -3,17 +3,17 @@ use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
 use crate::audio::music::Music;
-use crate::engine::engine::Texture;
-use crate::engine::text::TextRenderer;
+use opengl_graphics::Texture;
+use crate::util::text_renderer::TextRenderer;
 
-use crate::engine::game_context::GameContext;
-use crate::scene::scene::Scene;
+use crate::util::context::GameContext;
 //use crate::audio::sound_engine::{Source, SoundSource};
 
-use crate::scene::scene::SceneLoad;
+use crate::scene::Scene;
+use crate::scene::SceneLoad;
 use crate::util::render_util::fade_in_out_o;
 use crate::util::render_util::draw_rect;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::texture_util::texture_from_path;
 
 pub struct LoadingCopyrightScene {
@@ -60,8 +60,7 @@ impl SceneLoad for LoadingCopyrightScene {
 			self.next(context);
 		}
 		self.start_time = SystemTime::now();
-
-		//Music::bind_world_music(context);
+		// context.audio.bind(Music::IntroGamefreak);
 
 	}
 

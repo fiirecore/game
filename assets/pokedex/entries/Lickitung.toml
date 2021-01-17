@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 108
 name = "Lickitung"
 primary_type = "Normal"
 species = "Licking"
 height = 1.2
 weight = 65.5
-[base_stats]
+[base]
 hp = 90
 atk = 55
 def = 75

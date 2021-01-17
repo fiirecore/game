@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 1
 name = "Bulbasaur"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Seed"
 height = 0.7
 weight = 6.9
-[base_stats]
+[base]
 hp = 45
 atk = 49
 def = 49

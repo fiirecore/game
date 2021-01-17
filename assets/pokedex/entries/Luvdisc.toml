@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 370
 name = "Luvdisc"
 primary_type = "Water"
 species = "Rendezvous"
 height = 0.6
 weight = 8.7
-[base_stats]
+[base]
 hp = 43
 atk = 30
 def = 55

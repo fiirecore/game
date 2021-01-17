@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 56
 name = "Mankey"
 primary_type = "Fighting"
 species = "Pig"
 height = 0.5
 weight = 28.0
-[base_stats]
+[base]
 hp = 40
 atk = 80
 def = 35

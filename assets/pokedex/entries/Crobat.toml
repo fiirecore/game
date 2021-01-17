@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 169
 name = "Crobat"
 primary_type = "Poison"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Bat"
 height = 1.8
 weight = 75.0
-[base_stats]
+[base]
 hp = 85
 atk = 90
 def = 80

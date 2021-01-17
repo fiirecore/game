@@ -18,7 +18,7 @@ pub struct WarpEntry {
 #[derive(Clone, Deserialize)]
 pub struct WarpDestination {
 
-    pub world_id: String,
+    // pub world_id: String,
     
     pub map_id: String,
     pub map_index: u16,

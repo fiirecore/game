@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 272
 name = "Ludicolo"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Grass"
 species = "Carefree"
 height = 1.5
 weight = 55.0
-[base_stats]
+[base]
 hp = 80
 atk = 70
 def = 70

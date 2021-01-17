@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 170
 name = "Chinchou"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Electric"
 species = "Angler"
 height = 0.5
 weight = 12.0
-[base_stats]
+[base]
 hp = 75
 atk = 38
 def = 38

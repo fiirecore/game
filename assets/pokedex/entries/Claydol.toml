@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 344
 name = "Claydol"
 primary_type = "Ground"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Clay"
 height = 1.5
 weight = 108.0
-[base_stats]
+[base]
 hp = 60
 atk = 70
 def = 105

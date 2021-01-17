@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 359
 name = "Absol"
 primary_type = "Dark"
 species = "Disaster"
 height = 1.2
 weight = 47.0
-[base_stats]
+[base]
 hp = 65
 atk = 130
 def = 60

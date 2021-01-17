@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 152
 name = "Chikorita"
 primary_type = "Grass"
 species = "Leaf"
 height = 0.9
 weight = 6.4
-[base_stats]
+[base]
 hp = 45
 atk = 49
 def = 65

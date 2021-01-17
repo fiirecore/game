@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 139
 name = "Omastar"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Water"
 species = "Spiral"
 height = 1.0
 weight = 35.0
-[base_stats]
+[base]
 hp = 70
 atk = 60
 def = 125

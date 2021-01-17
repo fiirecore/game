@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 286
 name = "Breloom"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Fighting"
 species = "Mushroom"
 height = 1.2
 weight = 39.2
-[base_stats]
+[base]
 hp = 60
 atk = 130
 def = 80

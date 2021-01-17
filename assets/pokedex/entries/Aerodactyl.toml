@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 142
 name = "Aerodactyl"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Fossil"
 height = 1.8
 weight = 59.0
-[base_stats]
+[base]
 hp = 80
 atk = 105
 def = 65

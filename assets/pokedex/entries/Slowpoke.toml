@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 79
 name = "Slowpoke"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Dopey"
 height = 1.2
 weight = 36.0
-[base_stats]
+[base]
 hp = 90
 atk = 65
 def = 65

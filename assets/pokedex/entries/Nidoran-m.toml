@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 32
 name = "Nidoran-m"
 primary_type = "Poison"
 species = "Poison"
 height = 0.5
 weight = 9.0
-[base_stats]
+[base]
 hp = 46
 atk = 57
 def = 40

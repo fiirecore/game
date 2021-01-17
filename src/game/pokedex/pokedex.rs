@@ -4,9 +4,9 @@ use std::path::PathBuf;
 use log::error;
 use log::warn;
 
+use crate::io::data::pokemon::Pokemon;
 use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
-use crate::io::data::pokemon::pokemon::Pokemon;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 
 pub struct Pokedex {
 	
@@ -38,18 +38,16 @@ impl Pokedex {
 	pub fn moves_from_level(&self, pokemon_id: usize, level: u8) -> Vec<PokemonMove> {
 		let mut moves = Vec::new();
 		let pokemon = self.pokemon_from_id(pokemon_id);
-		for index in 0..level+1 {
-			if let Some(pkmn_move_str) = pokemon.learnable_moves.get(&index) {
-				for move_name in pkmn_move_str {
-					match self.move_list.get(move_name) {
-						Some(pokemon_move) => {
-							moves.push(pokemon_move.clone());
-						}
-						None => {
-							warn!("Could not add pokemon move {} to {}", move_name, &pokemon.data.name)
-						}
+		for learnable_move in &pokemon.moves {
+			if learnable_move.level <= level {
+				match self.move_list.get(&learnable_move.move_id) {
+					Some(pokemon_move) => {
+						moves.push(pokemon_move.clone());
 					}
-				}								
+					None => {
+						warn!("Could not add pokemon move {} to {}", &learnable_move.move_id, &pokemon.data.name)
+					}
+				}
 			}
 		}
 		while moves.len() > 4 {

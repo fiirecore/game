@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 262
 name = "Mightyena"
 primary_type = "Dark"
 species = "Bite"
 height = 1.0
 weight = 37.0
-[base_stats]
+[base]
 hp = 70
 atk = 90
 def = 70

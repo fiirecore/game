@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 50
 name = "Diglett"
 primary_type = "Ground"
 species = "Mole"
 height = 0.2
 weight = 0.8
-[base_stats]
+[base]
 hp = 10
 atk = 55
 def = 25

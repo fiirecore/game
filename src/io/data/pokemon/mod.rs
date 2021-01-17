@@ -2,9 +2,57 @@ use serde::{Deserialize, Serialize};
 
 pub mod moves;
 pub mod pokemon;
-pub mod pokemon_toml;
 pub mod pokemon_party;
 pub mod saved_pokemon;
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct Pokemon {
+	
+	pub data: PokedexData,
+	pub base: StatSet,
+	pub moves: Vec<LearnableMove>,
+	// pub training: Option<Training>,
+	// pub breeding: Option<Breeding>,
+	
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PokedexData {
+	
+	pub number: usize,
+	pub name: String,
+	pub primary_type: PokemonType,
+	pub secondary_type: Option<PokemonType>,
+	pub species: String,
+	pub height: f32,
+	pub weight: f32,
+	
+}
+
+#[derive(Debug, Clone, Hash, PartialEq, Serialize, Deserialize)]
+pub struct LearnableMove {
+	pub level: u8,
+	pub move_id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Training {
+	
+	pub ev_yield: Option<(String, usize)>,
+	pub catch_rate: Option<u8>,
+	pub base_friendship: Option<u8>,
+	pub base_exp: Option<usize>,
+	
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Breeding {
+	
+//	pub groups: Vec<EggGroup>,
+//	pub gender: Option< // something for percentages
+	pub cycles: Option<u8>,
+	
+}
 
 #[derive(PartialEq, Eq, Deserialize, Serialize)]
 pub enum Gender {

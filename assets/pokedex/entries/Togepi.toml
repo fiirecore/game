@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 175
 name = "Togepi"
 primary_type = "Fairy"
 species = "Spike"
 height = 0.3
 weight = 1.5
-[base_stats]
+[base]
 hp = 35
 atk = 20
 def = 65

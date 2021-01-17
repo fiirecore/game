@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 273
 name = "Seedot"
 primary_type = "Grass"
 species = "Acorn"
 height = 0.5
 weight = 4.0
-[base_stats]
+[base]
 hp = 40
 atk = 40
 def = 50

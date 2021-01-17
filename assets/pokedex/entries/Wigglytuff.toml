@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 40
 name = "Wigglytuff"
 primary_type = "Normal"
@@ -6,7 +6,7 @@ secondary_type = "Fairy"
 species = "Balloon"
 height = 1.0
 weight = 12.0
-[base_stats]
+[base]
 hp = 140
 atk = 70
 def = 45

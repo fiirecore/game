@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 334
 name = "Altaria"
 primary_type = "Dragon"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Humming"
 height = 1.1
 weight = 20.6
-[base_stats]
+[base]
 hp = 75
 atk = 70
 def = 90

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 8
 name = "Wartortle"
 primary_type = "Water"
 species = "Turtle"
 height = 1.0
 weight = 22.5
-[base_stats]
+[base]
 hp = 59
 atk = 63
 def = 80

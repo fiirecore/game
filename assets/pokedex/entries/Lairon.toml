@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 305
 name = "Lairon"
 primary_type = "Steel"
@@ -6,7 +6,7 @@ secondary_type = "Rock"
 species = "Iron"
 height = 0.9
 weight = 120.0
-[base_stats]
+[base]
 hp = 60
 atk = 90
 def = 140

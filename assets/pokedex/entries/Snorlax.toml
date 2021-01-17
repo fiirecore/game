@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 143
 name = "Snorlax"
 primary_type = "Normal"
 species = "Sleeping"
 height = 2.1
 weight = 460.0
-[base_stats]
+[base]
 hp = 160
 atk = 110
 def = 65

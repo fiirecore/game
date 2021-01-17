@@ -6,7 +6,7 @@ use simplelog::TermLogger;
 use simplelog::TerminalMode;
 use simplelog::WriteLogger;
 use opengl_graphics::GlGraphics;
-use piston::{Button, Key, PressEvent, ReleaseEvent, RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, WindowSettings, EventLoop};
+use piston::{Button, Key, PressEvent, ReleaseEvent, RenderArgs, RenderEvent, UpdateEvent, WindowSettings, EventLoop};
 use piston_window::{OpenGL, Context, PistonWindow, clear};
 use std::error::Error;
 use std::fs::File;
@@ -15,9 +15,14 @@ use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use log::info;
 
+use crate::BASE_HEIGHT;
+use crate::BASE_WIDTH;
+use crate::TITLE;
+use crate::WINDOW_SCALE;
 use crate::scene::scene_manager::SceneManager;
-use crate::engine::text::TextRenderer;
-use crate::engine::game_context::GameContext;
+use crate::util::text_renderer::TextRenderer;
+
+use crate::util::context::GameContext;
 use crate::util::traits::Loadable;
 
 pub struct Game {
@@ -28,10 +33,6 @@ pub struct Game {
 
 }
 
-pub static WIDTH: usize = 240; //*SCALE;
-pub static HEIGHT: usize = 160; //*SCALE;
-                                //pub static SCALE: usize = 1;
-                                //pub static TILE_SIZE: usize = 16;
 impl Game {
 
     pub fn new() -> Game {
@@ -40,28 +41,25 @@ impl Game {
             println!("Running in debug mode");
         }
 
-        let configuration = crate::io::data::configuration::Configuration::load();
-        println!(
-        "Starting {}, Version: {}",
-        configuration.name, configuration.version
-        );
-        println!("By {}", configuration.authors);
-        
+        println!("Starting {}, Version: {}", TITLE, crate::VERSION);
+        println!("By {}", crate::AUTHORS);
 
         Game {
             scene_manager: SceneManager::new(),
-            game_context: GameContext::new(configuration),
+            game_context: GameContext::new(),
             text_renderer: TextRenderer::new(),
         }
     }
 
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
 
+        let scale = crate::CONFIGURATION.lock().unwrap().scale as u32;
+
         let mut window: PistonWindow<Windower> = WindowSettings::new(
-            &self.game_context.configuration.name,
+            TITLE,
             [
-                (self.game_context.configuration.width * self.game_context.configuration.scale) as u32,
-                (self.game_context.configuration.height * self.game_context.configuration.scale) as u32,
+                BASE_WIDTH * scale,
+                BASE_HEIGHT * scale,
             ],
         )
         .resizable(false)
@@ -74,18 +72,32 @@ impl Game {
 
         let mut gl = GlGraphics::new(OpenGL::V3_2);
 
-        //let sdl = window.window.sdl_context.to_owned();
-
         self.load()?;
         self.on_start();
 
         for e in window {
             if let Some(args) = e.update_args() {
-                self.update(&args);
+                self.scene_manager.input(&mut self.game_context);
+                self.key_update();
+                self.scene_manager.update(&args, &mut self.game_context);
             }
 
-            if let Some(ref args) = e.render_args() {
-                self.render(args, &mut gl);
+            if let Some(args) = e.render_args() {
+                
+                let scale = *WINDOW_SCALE.lock().unwrap();
+                // let mut update = crate::UPDATE_WINDOW.lock().unwrap();
+
+                // if *update {
+                //     args.window_size = [BASE_WIDTH as f64 * scale as f64, BASE_HEIGHT as f64 * scale as f64];
+                //     *update = false;
+                // }
+                
+                let mut ctx = Context::new_abs(
+                    args.window_size[0] / scale as f64, 
+                    args.window_size[1] / scale as f64
+                );
+
+                self.render(&args, &mut ctx, &mut gl);
             }
 
             if let Some(ref args) = e.press_args() {
@@ -141,22 +153,11 @@ impl Game {
         self.scene_manager.on_start(&mut self.game_context);
     }
 
-    fn update(&mut self, args: &UpdateArgs) {
-        // if self.game_context.fkeys[2] == 1 {
-        //     self.game_context.app_console.toggle();
-        // }
-        self.scene_manager.input(&mut self.game_context);
-        self.key_update();
-        self.scene_manager.update(args, &mut self.game_context);
-    }
-
-    pub fn render(&mut self, args: &RenderArgs, g: &mut GlGraphics) {
-        
-        let mut ctx = Context::new_abs(args.window_size[0]/self.game_context.configuration.scale as f64, args.window_size[1]/self.game_context.configuration.scale as f64);
+    pub fn render(&mut self, args: &RenderArgs, ctx: &mut Context, g: &mut GlGraphics) {
 
         g.draw(args.viewport(), |_, g| {
 			clear([0.0, 0.0, 0.0, 1.0], g);
-            self.scene_manager.render(&mut ctx, g, &mut self.text_renderer);
+            self.scene_manager.render(ctx, g, &mut self.text_renderer);
             //self.game_context.app_console.render(&mut ctx, g, &mut self.text_renderer);
         });
 

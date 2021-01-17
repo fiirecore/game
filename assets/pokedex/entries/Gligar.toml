@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 207
 name = "Gligar"
 primary_type = "Ground"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Fly"
 height = 1.1
 weight = 64.8
-[base_stats]
+[base]
 hp = 65
 atk = 75
 def = 105

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 329
 name = "Vibrava"
 primary_type = "Ground"
@@ -6,7 +6,7 @@ secondary_type = "Dragon"
 species = "Vibration"
 height = 1.1
 weight = 15.3
-[base_stats]
+[base]
 hp = 50
 atk = 70
 def = 50

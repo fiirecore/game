@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 240
 name = "Magby"
 primary_type = "Fire"
 species = "Live"
 height = 0.7
 weight = 21.4
-[base_stats]
+[base]
 hp = 45
 atk = 75
 def = 37

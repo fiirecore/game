@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 167
 name = "Spinarak"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "String"
 height = 0.5
 weight = 8.5
-[base_stats]
+[base]
 hp = 40
 atk = 60
 def = 40

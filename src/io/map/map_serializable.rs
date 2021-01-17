@@ -5,18 +5,18 @@ pub struct MapConfig {
 
     pub identifier: MapIdentifier,
 
-    pub jigsaw_map: Option<TomlJigsawMap>,
-    pub warp_map: Option<TomlWarpMap>,
+    pub jigsaw_map: Option<SerializedChunkMap>,
+    pub warp_map: Option<SerializedMapSet>,
 
-    pub settings: Option<TomlMapSettings>,
-    pub wild: Option<TomlWildEntry>,
+    //pub settings: Option<TomlMapSettings>,
+    pub wild: Option<SerializedWildEntry>,
 
 }
 
 #[derive(Debug, Deserialize)]
 pub struct MapIdentifier {
 
-    pub world_id: String,
+    // pub world_id: String,
     pub map_files: Vec<String>,
 
     pub name: Option<String>,
@@ -29,14 +29,14 @@ impl MapIdentifier {
         if let Some(name) = &self.name {
             return name.clone();
         } else {
-            return String::from("Map");
+            return String::from("Map (Missing Name)");
         }
     }
 
 }
 
-#[derive(Clone, Debug, Deserialize)]
-pub struct TomlJigsawMap {
+#[derive(Debug, Deserialize)]
+pub struct SerializedChunkMap {
 
     pub piece_index: u16,
     pub x: isize,
@@ -46,21 +46,16 @@ pub struct TomlJigsawMap {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct TomlWarpMap {
+pub struct SerializedMapSet {
 
     pub map_set_id: String,
 
 }
 
-#[derive(Debug, Deserialize)]
-pub struct TomlMapSettings {
-
-}
-
-#[derive(Debug, Deserialize)]
-pub struct TomlWildEntry {
+#[derive(Debug, Deserialize, Clone)]
+pub struct SerializedWildEntry {
 
     pub encounter_type: String,
-    pub wild_tiles: Vec<u16>,
+    pub wild_tiles: Option<Vec<u16>>,
     
 }

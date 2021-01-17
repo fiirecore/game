@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 92
 name = "Gastly"
 primary_type = "Ghost"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Gas"
 height = 1.3
 weight = 0.1
-[base_stats]
+[base]
 hp = 30
 atk = 35
 def = 30

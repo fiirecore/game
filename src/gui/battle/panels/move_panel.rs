@@ -2,12 +2,12 @@ use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
 
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 use crate::io::data::Direction;
 use crate::gui::gui::BasicText;
 use crate::gui::gui::GuiComponent;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::render_util::draw;
 use crate::util::texture_util::texture_from_path;
 

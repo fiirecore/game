@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 73
 name = "Tentacruel"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Jellyfish"
 height = 1.6
 weight = 55.0
-[base_stats]
+[base]
 hp = 80
 atk = 70
 def = 65

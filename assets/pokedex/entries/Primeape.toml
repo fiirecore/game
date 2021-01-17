@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 57
 name = "Primeape"
 primary_type = "Fighting"
 species = "Pig"
 height = 1.0
 weight = 32.0
-[base_stats]
+[base]
 hp = 65
 atk = 105
 def = 60

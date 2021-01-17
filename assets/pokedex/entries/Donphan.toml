@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 232
 name = "Donphan"
 primary_type = "Ground"
 species = "Armor"
 height = 1.1
 weight = 120.0
-[base_stats]
+[base]
 hp = 90
 atk = 120
 def = 120

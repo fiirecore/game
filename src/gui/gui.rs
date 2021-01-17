@@ -1,13 +1,13 @@
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::io::data::Direction;
 use std::path::PathBuf;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::engine::engine::Texture;
-use crate::engine::text::TextRenderer;
+use opengl_graphics::Texture;
+use crate::util::text_renderer::TextRenderer;
 
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::texture_util::texture_from_path;
 use crate::util::render_util::draw_o;
 

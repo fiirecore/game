@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 223
 name = "Remoraid"
 primary_type = "Water"
 species = "Jet"
 height = 0.6
 weight = 12.0
-[base_stats]
+[base]
 hp = 35
 atk = 65
 def = 35

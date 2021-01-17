@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 233
 name = "Porygon2"
 primary_type = "Normal"
 species = "Virtual"
 height = 0.6
 weight = 32.5
-[base_stats]
+[base]
 hp = 85
 atk = 80
 def = 90

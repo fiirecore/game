@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 306
 name = "Aggron"
 primary_type = "Steel"
@@ -6,7 +6,7 @@ secondary_type = "Rock"
 species = "Iron"
 height = 2.1
 weight = 360.0
-[base_stats]
+[base]
 hp = 70
 atk = 110
 def = 180

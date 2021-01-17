@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 145
 name = "Zapdos"
 primary_type = "Electric"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Electric"
 height = 1.6
 weight = 52.6
-[base_stats]
+[base]
 hp = 90
 atk = 90
 def = 85

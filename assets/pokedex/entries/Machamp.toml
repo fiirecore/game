@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 68
 name = "Machamp"
 primary_type = "Fighting"
 species = "Superpower"
 height = 1.6
 weight = 130.0
-[base_stats]
+[base]
 hp = 90
 atk = 130
 def = 80

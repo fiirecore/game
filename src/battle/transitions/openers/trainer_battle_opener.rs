@@ -1,6 +1,6 @@
-use crate::engine::game_context::GameContext;
-use crate::entity::entity::Entity;
-use crate::entity::entity::Ticking;
+use crate::util::context::GameContext;
+use crate::entity::Entity;
+use crate::entity::Ticking;
 use crate::battle::transitions::battle_transition_traits::BattleOpener;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::util::render_util::draw_rect;
@@ -98,7 +98,7 @@ impl Ticking for TrainerBattleOpener {
         }
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, _tr: &mut crate::engine::text::TextRenderer) {
+    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, _tr: &mut crate::util::text_renderer::TextRenderer) {
         draw_rect(
             ctx,
             g,
@@ -106,7 +106,7 @@ impl Ticking for TrainerBattleOpener {
             0,
             0,
             240,
-            self.rect_size as usize,
+            self.rect_size as u32,
         );
         draw_rect(
             ctx,
@@ -115,7 +115,7 @@ impl Ticking for TrainerBattleOpener {
             0,
             160 - self.rect_size as isize,
             240,
-            self.rect_size as usize,
+            self.rect_size as u32,
         );
     }
 

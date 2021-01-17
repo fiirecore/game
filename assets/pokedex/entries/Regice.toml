@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 378
 name = "Regice"
 primary_type = "Ice"
 species = "Iceberg"
 height = 1.8
 weight = 175.0
-[base_stats]
+[base]
 hp = 80
 atk = 50
 def = 100

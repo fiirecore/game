@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 80
 name = "Slowbro"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Hermit"
 height = 1.6
 weight = 78.5
-[base_stats]
+[base]
 hp = 95
 atk = 75
 def = 110

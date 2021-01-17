@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 171
 name = "Lanturn"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Electric"
 species = "Light"
 height = 1.2
 weight = 22.5
-[base_stats]
+[base]
 hp = 125
 atk = 58
 def = 58

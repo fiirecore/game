@@ -1,6 +1,6 @@
-use crate::engine::game_context::GameContext;
-use crate::scene::scene::Scene;
-use crate::scene::scene::SceneLoad;
+use crate::util::context::GameContext;
+use crate::scene::Scene;
+use crate::scene::SceneLoad;
 
 pub struct CharacterCreationScene {
 	scene_token: usize,

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 244
 name = "Entei"
 primary_type = "Fire"
 species = "Volcano"
 height = 2.1
 weight = 198.0
-[base_stats]
+[base]
 hp = 115
 atk = 115
 def = 85

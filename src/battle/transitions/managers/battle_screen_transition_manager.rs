@@ -2,10 +2,10 @@ use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
 use crate::audio::music::Music;
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
-use crate::entity::entity::Entity;
-use crate::entity::entity::Ticking;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
+use crate::entity::Entity;
+use crate::entity::Ticking;
 use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
 use crate::battle::transitions::battle_transition_traits::BattleTransitionManager;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;

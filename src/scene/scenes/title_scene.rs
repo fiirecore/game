@@ -2,15 +2,14 @@ use std::time::SystemTime;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 use crate::audio::music::Music;
-use crate::engine::engine::Texture;
-use crate::engine::text::TextRenderer;
+use opengl_graphics::Texture;
+use crate::util::text_renderer::TextRenderer;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::io::data::player_data::PlayerData;
-use crate::scene::scene::Scene;
-
-use crate::scene::scene::SceneLoad;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::scene::Scene;
+use crate::scene::SceneLoad;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::texture_util::texture_from_path;
 use crate::util::render_util::draw_o;
 

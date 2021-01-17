@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 320
 name = "Wailmer"
 primary_type = "Water"
 species = "Ball"
 height = 2.0
 weight = 130.0
-[base_stats]
+[base]
 hp = 130
 atk = 70
 def = 35

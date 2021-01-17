@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 71
 name = "Victreebel"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Flycatcher"
 height = 1.7
 weight = 15.5
-[base_stats]
+[base]
 hp = 80
 atk = 105
 def = 65

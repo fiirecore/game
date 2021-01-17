@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 289
 name = "Slaking"
 primary_type = "Normal"
 species = "Lazy"
 height = 2.0
 weight = 130.5
-[base_stats]
+[base]
 hp = 150
 atk = 160
 def = 100

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 91
 name = "Cloyster"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Ice"
 species = "Bivalve"
 height = 1.5
 weight = 132.5
-[base_stats]
+[base]
 hp = 50
 atk = 95
 def = 180

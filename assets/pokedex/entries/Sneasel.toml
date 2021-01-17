@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 215
 name = "Sneasel"
 primary_type = "Dark"
@@ -6,7 +6,7 @@ secondary_type = "Ice"
 species = "Sharp"
 height = 0.9
 weight = 28.0
-[base_stats]
+[base]
 hp = 55
 atk = 95
 def = 55

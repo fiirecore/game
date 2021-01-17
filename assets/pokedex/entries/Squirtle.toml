@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 7
 name = "Squirtle"
 primary_type = "Water"
 species = "Tiny"
 height = 0.5
 weight = 9.0
-[base_stats]
+[base]
 hp = 44
 atk = 48
 def = 65

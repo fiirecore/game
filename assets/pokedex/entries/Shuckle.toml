@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 213
 name = "Shuckle"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Rock"
 species = "Mold"
 height = 0.6
 weight = 20.5
-[base_stats]
+[base]
 hp = 20
 atk = 10
 def = 230

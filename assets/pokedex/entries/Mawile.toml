@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 303
 name = "Mawile"
 primary_type = "Steel"
@@ -6,7 +6,7 @@ secondary_type = "Fairy"
 species = "Deceiver"
 height = 0.6
 weight = 11.5
-[base_stats]
+[base]
 hp = 50
 atk = 85
 def = 85

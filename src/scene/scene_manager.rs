@@ -1,13 +1,12 @@
 use crate::util::traits::Loadable;
+use crate::util::traits::PersistantData;
 use log::info;
 use opengl_graphics::GlGraphics;
 use piston::UpdateArgs;
 use piston_window::Context;
-use crate::engine::text::TextRenderer;
+use crate::util::text_renderer::TextRenderer;
 
-use crate::engine::game_context::GameContext;
-
-use crate::scene::scene::Scene;
+use crate::util::context::GameContext;
 
 use crate::scene::scenes::loading_scenes::*;
 use crate::scene::scenes::title_scene::TitleScene;
@@ -15,6 +14,8 @@ use crate::scene::scenes::firsttime_scenes::*;
 use crate::scene::scenes::main_menu_scene::MainMenuScene;
 use crate::scene::scenes::character_creation_scene::CharacterCreationScene;
 use crate::scene::scenes::game_scene::GameScene;
+
+use super::Scene;
 
 pub struct SceneManager {
 
@@ -62,12 +63,11 @@ impl SceneManager {
 	
 	pub fn input(&mut self, context: &mut GameContext){
 		if context.fkeys[7] == 1 {
-			context.configuration.reload();
+			info!("Attempting to reload configuration...");
+			crate::CONFIGURATION.lock().unwrap().reload();
 		}
 		self.scenes[self.current_scene_index].input(context);		
 	}
-
-	
 
 	fn check_scene(&mut self, context: &mut GameContext) {
 		let id = self.scenes[self.current_scene_index].next_scene();

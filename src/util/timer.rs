@@ -1,4 +1,4 @@
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 
 pub struct Timer {
 

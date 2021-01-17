@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 55
 name = "Golduck"
 primary_type = "Water"
 species = "Duck"
 height = 1.7
 weight = 76.6
-[base_stats]
+[base]
 hp = 80
 atk = 82
 def = 78

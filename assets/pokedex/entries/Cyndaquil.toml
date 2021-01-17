@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 155
 name = "Cyndaquil"
 primary_type = "Fire"
 species = "Fire"
 height = 0.5
 weight = 7.9
-[base_stats]
+[base]
 hp = 39
 atk = 52
 def = 43

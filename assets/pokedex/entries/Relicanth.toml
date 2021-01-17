@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 369
 name = "Relicanth"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Rock"
 species = "Longevity"
 height = 1.0
 weight = 23.4
-[base_stats]
+[base]
 hp = 100
 atk = 90
 def = 130

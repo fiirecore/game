@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 176
 name = "Togetic"
 primary_type = "Fairy"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Happiness"
 height = 0.6
 weight = 3.2
-[base_stats]
+[base]
 hp = 55
 atk = 40
 def = 85

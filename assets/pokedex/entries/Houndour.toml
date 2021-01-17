@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 228
 name = "Houndour"
 primary_type = "Dark"
@@ -6,7 +6,7 @@ secondary_type = "Fire"
 species = "Dark"
 height = 0.6
 weight = 10.8
-[base_stats]
+[base]
 hp = 45
 atk = 60
 def = 30

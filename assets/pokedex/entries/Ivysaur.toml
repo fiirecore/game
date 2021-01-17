@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 2
 name = "Ivysaur"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Seed"
 height = 1.0
 weight = 13.0
-[base_stats]
+[base]
 hp = 60
 atk = 62
 def = 63

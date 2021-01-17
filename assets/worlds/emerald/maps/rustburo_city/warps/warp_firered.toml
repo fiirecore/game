@@ -1,8 +1,0 @@
-x = 16
-y = 38
-
-[destination]
-world_id = "firered"
-map_id = "world"
-dest_x = 86
-dest_y = 69

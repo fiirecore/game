@@ -1,7 +1,7 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
-use crate::scene::scene::TextRenderer;
 
+use crate::util::text_renderer::TextRenderer;
 use crate::gui::gui::GuiComponent;
 
 use crate::util::render_util::draw_rect;
@@ -103,8 +103,8 @@ impl GuiComponent for HealthBar {
 	}
 
 	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		draw_rect(ctx, g, self.upper_hp_color.into(), self.x + self.panel_x, self.y + self.panel_y, self.get_width() as usize, 1);
-		draw_rect(ctx, g, self.lower_hp_color.into(), self.x + self.panel_x, self.y + self.panel_y + 1, self.get_width() as usize, 2);
+		draw_rect(ctx, g, self.upper_hp_color.into(), self.x + self.panel_x, self.y + self.panel_y, self.get_width() as u32, 1);
+		draw_rect(ctx, g, self.lower_hp_color.into(), self.x + self.panel_x, self.y + self.panel_y + 1, self.get_width() as u32, 2);
 	}
 	
 }

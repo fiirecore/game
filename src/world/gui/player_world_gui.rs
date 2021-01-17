@@ -1,14 +1,14 @@
 use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 
 use crate::game::player_data_container::PlayerDataContainer;
 use crate::gui::basic_button::BasicButton;
 use crate::gui::gui::Activatable;
 use crate::gui::gui::GuiComponent;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::render_util::draw;
 use crate::util::texture_util::texture_from_path;
 
@@ -77,7 +77,7 @@ impl PlayerWorldGui {
             match self.cursor_position {
                 0 => {
                     // Save
-                    context.save_data = true;
+                    // context.save_data = true;
                 },
                 1 => {
                     // Pokemon

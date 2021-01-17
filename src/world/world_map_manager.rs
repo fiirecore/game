@@ -6,11 +6,12 @@ use log::warn;
 use opengl_graphics::Texture;
 
 use crate::audio::music::Music;
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 use crate::entity::entities::player::Player;
 use crate::entity::entities::player::RUN_SPEED;
-use crate::entity::entity::Entity;
-use crate::entity::entity::Ticking;
+use crate::entity::Entity;
+use crate::entity::Ticking;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::gui::gui::Activatable;
 use crate::io::data::Direction;
@@ -40,8 +41,6 @@ pub struct WorldMapManager {
     pub(crate) current_music: Music,
 
     // old world manager values below
-    
-    pub world_id: String,
 
     pub player_gui: PlayerWorldGui,
 
@@ -83,7 +82,7 @@ impl WorldMapManager {
 
                     //
 
-                    world_id: player_data.world_id.clone(),
+                    // world_id: player_data.world_id.clone(),
                 
                     window_manager: MapWindowManager::new(),
                     player_gui: PlayerWorldGui::new(),
@@ -146,7 +145,7 @@ impl WorldMapManager {
         //self.warp_map_manager.update(context, &self.player);
     }
 
-    pub fn render(&mut self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut crate::scene::scene::TextRenderer) {
+    pub fn render(&mut self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut TextRenderer) {
         self.player.focus_update();
         let coords =  ScreenCoords::new(&self.player);
         if self.chunk_map.is_alive() {
@@ -176,7 +175,7 @@ impl WorldMapManager {
     pub fn input(&mut self, context: &mut GameContext) {
 
         if context.fkeys[0] == 1 {
-			context.battle_context.random_wild_battle(&mut context.random);
+			context.random_wild_battle();
         }
 
         if context.keys[6] == 1 {
@@ -425,11 +424,11 @@ impl WorldMapManager {
         let mut bottom_sheets: HashMap<u8, RgbaImage> = HashMap::new();
         let mut top_sheets: HashMap<u8, RgbaImage> = HashMap::new();
 
-        let palette_sizes = fill_palette_map(&mut bottom_sheets, &mut top_sheets, &self.world_id);
+        let palette_sizes = fill_palette_map(&mut bottom_sheets, &mut top_sheets);
 
-        load_maps(&self.world_id, &palette_sizes, &mut self.chunk_map, &mut self.map_sets);
+        load_maps(&palette_sizes, &mut self.chunk_map, &mut self.map_sets);
 
-        load_npc_textures(&self.world_id, &mut self.npc_textures);
+        load_npc_textures(&mut self.npc_textures);
 
         for wmap in self.chunk_map.chunks.values() {
             for tile_id in &wmap.map.tile_map {
@@ -458,7 +457,7 @@ impl WorldMapManager {
 
     pub fn load_player(&mut self, player_data: &PlayerData) {
         self.player = Player::new(player_data);
-        self.player.load_textures(player_data.world_id.as_str());
+        self.player.load_textures();
         self.player.load();
         if player_data.location.map_id.as_str().eq("world") {
             self.chunk_map.spawn();

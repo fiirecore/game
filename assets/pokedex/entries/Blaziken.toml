@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 257
 name = "Blaziken"
 primary_type = "Fire"
@@ -6,7 +6,7 @@ secondary_type = "Fighting"
 species = "Blaze"
 height = 1.9
 weight = 52.0
-[base_stats]
+[base]
 hp = 80
 atk = 120
 def = 70

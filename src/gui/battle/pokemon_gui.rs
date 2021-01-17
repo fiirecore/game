@@ -1,9 +1,9 @@
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::io::data::Direction;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
-use crate::engine::text::TextRenderer;
+use crate::util::text_renderer::TextRenderer;
 
 use crate::gui::gui::{BasicText, Panel};
 use crate::gui::battle::health_bar::HealthBar;

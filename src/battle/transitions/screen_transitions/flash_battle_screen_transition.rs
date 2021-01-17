@@ -1,5 +1,5 @@
-use crate::engine::game_context::GameContext;
-use crate::entity::entity::Ticking;
+use crate::util::context::GameContext;
+use crate::entity::Ticking;
 use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::util::traits::Completable;
@@ -7,8 +7,8 @@ use crate::util::traits::Loadable;
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::engine::text::TextRenderer;
-use crate::entity::entity::Entity;
+use crate::util::text_renderer::TextRenderer;
+use crate::entity::Entity;
 
 use crate::util::render_util::draw_rect;
 
@@ -103,8 +103,8 @@ impl Ticking for FlashBattleScreenTransition {
             self.screen.into(),
             0,
             0,
-            crate::util::render_util::VIEW_WIDTH,
-            crate::util::render_util::VIEW_HEIGHT,
+            crate::BASE_WIDTH,
+            crate::BASE_HEIGHT,
         );
     }
 }

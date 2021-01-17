@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 77
 name = "Ponyta"
 primary_type = "Fire"
 species = "Fire"
 height = 1.0
 weight = 30.0
-[base_stats]
+[base]
 hp = 50
 atk = 85
 def = 55

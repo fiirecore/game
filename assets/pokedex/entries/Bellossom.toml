@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 182
 name = "Bellossom"
 primary_type = "Grass"
 species = "Flower"
 height = 0.4
 weight = 5.8
-[base_stats]
+[base]
 hp = 75
 atk = 80
 def = 95

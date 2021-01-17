@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 368
 name = "Gorebyss"
 primary_type = "Water"
 species = "South"
 height = 1.8
 weight = 22.6
-[base_stats]
+[base]
 hp = 55
 atk = 84
 def = 105

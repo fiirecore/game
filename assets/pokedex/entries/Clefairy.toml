@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 35
 name = "Clefairy"
 primary_type = "Fairy"
 species = "Fairy"
 height = 0.6
 weight = 7.5
-[base_stats]
+[base]
 hp = 70
 atk = 45
 def = 48

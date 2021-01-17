@@ -1,12 +1,12 @@
 use std::fmt::Display;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::game::pokedex::move_instance::MoveInstance;
 use crate::game::pokedex::pokedex::Pokedex;
 use crate::io::data::pokemon::LargeStatSet;
+use crate::io::data::pokemon::Pokemon;
 use crate::io::data::pokemon::StatSet;
 use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
-use crate::io::data::pokemon::pokemon::Pokemon;
 
 pub struct PokemonInstance {
 	

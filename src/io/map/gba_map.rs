@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use image::RgbaImage;
 
 use crate::util::image_util::{open_image, get_subimage};
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 
 pub struct GbaMap {
 	
@@ -154,12 +154,14 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &Vec<u16>) -> u16 { // To - d
 
 // Map conversion utility
 
-pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, RgbaImage>, top_sheets: &mut HashMap<u8, RgbaImage>, world_id: &String) -> Vec<u16> {
+pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, RgbaImage>, top_sheets: &mut HashMap<u8, RgbaImage>) -> Vec<u16> {
 	let mut sizes = Vec::new();
 	let mut count = 0;
 	loop {
 
-		let file = asset_as_pathbuf("worlds").join(world_id).join("textures");
+		let file = asset_as_pathbuf("world")
+		//.join(world_id)
+		.join("textures");
 
 		let mut bottom_filename = String::from("Palette");
 		bottom_filename.push_str(&count.to_string());

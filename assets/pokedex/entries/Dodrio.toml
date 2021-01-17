@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 85
 name = "Dodrio"
 primary_type = "Normal"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Triple"
 height = 1.8
 weight = 85.2
-[base_stats]
+[base]
 hp = 60
 atk = 110
 def = 70

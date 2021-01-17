@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 221
 name = "Piloswine"
 primary_type = "Ice"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Swine"
 height = 1.1
 weight = 55.8
-[base_stats]
+[base]
 hp = 100
 atk = 100
 def = 80

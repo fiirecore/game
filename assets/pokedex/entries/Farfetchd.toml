@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 83
 name = "Farfetchd"
 primary_type = "Normal"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Wild"
 height = 0.8
 weight = 15.0
-[base_stats]
+[base]
 hp = 52
 atk = 90
 def = 55

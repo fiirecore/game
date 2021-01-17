@@ -1,8 +1,8 @@
 pub mod map_serializable;
 
 pub mod map_loader;
-pub mod jigsaw_map_loader;
-pub mod warp_map_loader;
+pub mod chunk_map_loader;
+pub mod map_set_loader;
 
 pub mod warp_loader;
 pub mod npc_loader;

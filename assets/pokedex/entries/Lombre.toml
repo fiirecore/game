@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 271
 name = "Lombre"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Grass"
 species = "Jolly"
 height = 1.2
 weight = 32.5
-[base_stats]
+[base]
 hp = 60
 atk = 50
 def = 50

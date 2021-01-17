@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 230
 name = "Kingdra"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Dragon"
 species = "Dragon"
 height = 1.8
 weight = 152.0
-[base_stats]
+[base]
 hp = 75
 atk = 95
 def = 95

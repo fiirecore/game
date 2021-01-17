@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 97
 name = "Hypno"
 primary_type = "Psychic"
 species = "Hypnosis"
 height = 1.6
 weight = 75.6
-[base_stats]
+[base]
 hp = 85
 atk = 73
 def = 70

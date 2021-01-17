@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 165
 name = "Ledyba"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Five"
 height = 1.0
 weight = 10.8
-[base_stats]
+[base]
 hp = 40
 atk = 20
 def = 30

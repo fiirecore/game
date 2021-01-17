@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 105
 name = "Marowak"
 primary_type = "Ground"
 species = "Bone"
 height = 1.0
 weight = 45.0
-[base_stats]
+[base]
 hp = 60
 atk = 80
 def = 110

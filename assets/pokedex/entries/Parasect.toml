@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 47
 name = "Parasect"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Grass"
 species = "Mushroom"
 height = 1.0
 weight = 29.5
-[base_stats]
+[base]
 hp = 60
 atk = 95
 def = 80

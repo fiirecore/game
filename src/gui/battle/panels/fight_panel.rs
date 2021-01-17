@@ -1,13 +1,13 @@
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::Context;
-use crate::engine::text::TextRenderer;
+use crate::util::text_renderer::TextRenderer;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::gui::gui::{Activatable, GuiComponent};
 
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 
-use crate::util::{file_util::asset_as_pathbuf, texture_util::texture_from_path, render_util::draw};
+use crate::util::{file::asset_as_pathbuf, texture_util::texture_from_path, render_util::draw};
 
 use super::move_panel::MovePanel;
 pub struct FightPanel {

@@ -1,8 +1,10 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::scene::scene::SceneLoad;
-use crate::{engine::{game_context::GameContext, text::TextRenderer}, scene::scene::Scene};
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
+use crate::scene::Scene;
+use crate::scene::SceneLoad;
 
 pub struct MainMenuScene {
 	scene_token: usize,

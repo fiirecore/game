@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 144
 name = "Articuno"
 primary_type = "Ice"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Freeze"
 height = 1.7
 weight = 55.4
-[base_stats]
+[base]
 hp = 90
 atk = 85
 def = 100

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 65
 name = "Alakazam"
 primary_type = "Psychic"
 species = "Psi"
 height = 1.5
 weight = 48.0
-[base_stats]
+[base]
 hp = 55
 atk = 50
 def = 45

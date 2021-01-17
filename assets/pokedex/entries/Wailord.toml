@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 321
 name = "Wailord"
 primary_type = "Water"
 species = "Float"
 height = 14.5
 weight = 398.0
-[base_stats]
+[base]
 hp = 170
 atk = 90
 def = 45

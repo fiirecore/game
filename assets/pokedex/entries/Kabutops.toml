@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 141
 name = "Kabutops"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Water"
 species = "Shellfish"
 height = 1.3
 weight = 40.5
-[base_stats]
+[base]
 hp = 60
 atk = 115
 def = 105

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 356
 name = "Dusclops"
 primary_type = "Ghost"
 species = "Beckon"
 height = 1.6
 weight = 30.6
-[base_stats]
+[base]
 hp = 40
 atk = 70
 def = 130

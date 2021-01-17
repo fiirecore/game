@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 67
 name = "Machoke"
 primary_type = "Fighting"
 species = "Superpower"
 height = 1.5
 weight = 70.5
-[base_stats]
+[base]
 hp = 80
 atk = 100
 def = 70

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 383
 name = "Groudon"
 primary_type = "Ground"
 species = "Continent"
 height = 3.5
 weight = 950.0
-[base_stats]
+[base]
 hp = 100
 atk = 150
 def = 140

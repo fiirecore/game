@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 110
 name = "Weezing"
 primary_type = "Poison"
 species = "Poison"
 height = 1.2
 weight = 9.5
-[base_stats]
+[base]
 hp = 65
 atk = 90
 def = 120

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 104
 name = "Cubone"
 primary_type = "Ground"
 species = "Lonely"
 height = 0.4
 weight = 6.5
-[base_stats]
+[base]
 hp = 50
 atk = 50
 def = 95

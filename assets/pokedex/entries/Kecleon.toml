@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 352
 name = "Kecleon"
 primary_type = "Normal"
 species = "Color"
 height = 1.0
 weight = 22.0
-[base_stats]
+[base]
 hp = 60
 atk = 90
 def = 70

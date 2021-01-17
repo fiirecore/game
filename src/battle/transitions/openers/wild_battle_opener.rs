@@ -1,14 +1,14 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::engine::engine::Texture;
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
-use crate::entity::entity::Entity;
-use crate::entity::entity::Ticking;
+use opengl_graphics::Texture;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
+use crate::entity::Entity;
+use crate::entity::Ticking;
 use crate::battle::transitions::battle_transition_traits::BattleOpener;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::render_util::draw;
 
 use crate::util::texture_util::texture_from_path;

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 287
 name = "Slakoth"
 primary_type = "Normal"
 species = "Slacker"
 height = 0.8
 weight = 24.0
-[base_stats]
+[base]
 hp = 60
 atk = 60
 def = 60

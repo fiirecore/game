@@ -1,10 +1,8 @@
-use crate::entity::entity::Entity;
-use crate::engine::game_context::GameContext;
-use crate::entity::entity::Ticking;
+use crate::entity::Entity;
+use crate::util::context::GameContext;
+use crate::entity::Ticking;
 use crate::battle::transitions::battle_transition_traits::BattleCloser;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::render_util::VIEW_HEIGHT;
-use crate::util::render_util::VIEW_WIDTH;
 use crate::util::render_util::draw_rect;
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
@@ -87,8 +85,8 @@ impl Ticking for BasicBattleCloser {
         }
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, _tr: &mut crate::engine::text::TextRenderer) {
-        draw_rect(ctx, g, [0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, _tr: &mut crate::util::text_renderer::TextRenderer) {
+        draw_rect(ctx, g, [0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0, 0, crate::BASE_WIDTH, crate::BASE_HEIGHT);
     }
 
 }

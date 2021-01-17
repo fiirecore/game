@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 78
 name = "Rapidash"
 primary_type = "Fire"
 species = "Fire"
 height = 1.7
 weight = 95.0
-[base_stats]
+[base]
 hp = 65
 atk = 100
 def = 70

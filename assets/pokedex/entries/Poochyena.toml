@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 261
 name = "Poochyena"
 primary_type = "Dark"
 species = "Bite"
 height = 0.5
 weight = 13.6
-[base_stats]
+[base]
 hp = 35
 atk = 55
 def = 35

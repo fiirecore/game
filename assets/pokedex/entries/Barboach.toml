@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 339
 name = "Barboach"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Whiskers"
 height = 0.4
 weight = 1.9
-[base_stats]
+[base]
 hp = 50
 atk = 48
 def = 43

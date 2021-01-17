@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 61
 name = "Poliwhirl"
 primary_type = "Water"
 species = "Tadpole"
 height = 1.0
 weight = 20.0
-[base_stats]
+[base]
 hp = 65
 atk = 65
 def = 65

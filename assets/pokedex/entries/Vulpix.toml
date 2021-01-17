@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 37
 name = "Vulpix"
 primary_type = "Fire"
 species = "Fox"
 height = 0.6
 weight = 9.9
-[base_stats]
+[base]
 hp = 38
 atk = 41
 def = 40

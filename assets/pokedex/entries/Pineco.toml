@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 204
 name = "Pineco"
 primary_type = "Bug"
 species = "Bagworm"
 height = 0.6
 weight = 7.2
-[base_stats]
+[base]
 hp = 50
 atk = 65
 def = 90

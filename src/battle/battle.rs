@@ -3,20 +3,20 @@ use std::fmt::Display;
 use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 use crate::game::pokedex::pokedex::Pokedex;
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 use crate::game::pokedex::pokemon::pokemon_owned::OwnedPokemon;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::gui::gui::GuiComponent;
+use crate::io::data::pokemon::Pokemon;
 use crate::io::data::pokemon::moves::MoveCategory;
 use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
-use crate::io::data::pokemon::pokemon::Pokemon;
 use crate::io::data::pokemon::pokemon_party::PokemonParty;
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::render_util::draw_bottom;
 use crate::util::texture_util::texture64_from_path;
 

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 336
 name = "Seviper"
 primary_type = "Poison"
 species = "Fang"
 height = 2.7
 weight = 52.5
-[base_stats]
+[base]
 hp = 73
 atk = 100
 def = 60

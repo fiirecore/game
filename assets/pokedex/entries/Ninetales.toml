@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 38
 name = "Ninetales"
 primary_type = "Fire"
 species = "Fox"
 height = 1.1
 weight = 19.9
-[base_stats]
+[base]
 hp = 73
 atk = 76
 def = 75

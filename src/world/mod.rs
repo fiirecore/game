@@ -25,12 +25,10 @@ use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::entity::entities::player::Player;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::util::render_util::TEXTURE_SIZE;
-use crate::util::render_util::VIEW_HEIGHT;
-use crate::util::render_util::VIEW_WIDTH;
 
 use crate::world::warp::WarpEntry;
 
@@ -80,9 +78,9 @@ impl ScreenCoords {
         Self {
 
             x0: player.focus_x >> 4,
-            x1: (player.focus_x + (VIEW_WIDTH + TEXTURE_SIZE) as isize) >> 4,
+            x1: (player.focus_x + crate::BASE_WIDTH as isize + TEXTURE_SIZE as isize) >> 4,
             y0: player.focus_y >> 4,
-            y1: (player.focus_y + (VIEW_HEIGHT + TEXTURE_SIZE) as isize) >> 4,
+            y1: (player.focus_y + crate::BASE_HEIGHT as isize + TEXTURE_SIZE as isize) >> 4,
 
             focus_x: player.focus_x,
             focus_y: player.focus_y,

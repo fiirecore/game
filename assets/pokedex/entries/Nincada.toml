@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 290
 name = "Nincada"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Trainee"
 height = 0.5
 weight = 5.5
-[base_stats]
+[base]
 hp = 31
 atk = 45
 def = 90

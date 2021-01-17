@@ -1,10 +1,10 @@
 use piston_window::Context;
 use opengl_graphics::GlGraphics;
 use crate::gui::basic_button::BasicButton;
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::io::data::Direction;
-use crate::engine::engine::Texture;
-use crate::engine::text::TextRenderer;
+use opengl_graphics::Texture;
+use crate::util::text_renderer::TextRenderer;
 
 use crate::gui::gui::{GuiComponent, Activatable};
 
@@ -12,7 +12,7 @@ use crate::gui::gui::BasicText;
 
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 
-use crate::util::{file_util::asset_as_pathbuf, texture_util::texture_from_path, render_util::draw};
+use crate::util::{file::asset_as_pathbuf, texture_util::texture_from_path, render_util::draw};
 
 pub struct BattlePanel {
 

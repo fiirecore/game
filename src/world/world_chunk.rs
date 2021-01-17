@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use opengl_graphics::Texture;
 
-use crate::engine::game_context::GameContext;
+use crate::util::context::GameContext;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 
 use super::ScreenCoords;

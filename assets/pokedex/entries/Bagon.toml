@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 371
 name = "Bagon"
 primary_type = "Dragon"
 species = "Rock"
 height = 0.6
 weight = 42.1
-[base_stats]
+[base]
 hp = 45
 atk = 75
 def = 60

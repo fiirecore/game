@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 357
 name = "Tropius"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Fruit"
 height = 2.0
 weight = 100.0
-[base_stats]
+[base]
 hp = 99
 atk = 68
 def = 83

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 253
 name = "Grovyle"
 primary_type = "Grass"
 species = "Wood"
 height = 0.9
 weight = 21.6
-[base_stats]
+[base]
 hp = 50
 atk = 65
 def = 45

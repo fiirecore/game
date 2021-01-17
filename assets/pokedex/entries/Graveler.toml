@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 75
 name = "Graveler"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Rock"
 height = 1.0
 weight = 105.0
-[base_stats]
+[base]
 hp = 55
 atk = 95
 def = 115

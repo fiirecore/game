@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 136
 name = "Flareon"
 primary_type = "Fire"
 species = "Flame"
 height = 0.9
 weight = 25.0
-[base_stats]
+[base]
 hp = 65
 atk = 130
 def = 60

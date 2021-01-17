@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 153
 name = "Bayleef"
 primary_type = "Grass"
 species = "Leaf"
 height = 1.2
 weight = 15.8
-[base_stats]
+[base]
 hp = 60
 atk = 62
 def = 80

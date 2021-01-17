@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 259
 name = "Marshtomp"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Mud"
 height = 0.7
 weight = 28.0
-[base_stats]
+[base]
 hp = 70
 atk = 85
 def = 70

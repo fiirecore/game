@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 48
 name = "Venonat"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Insect"
 height = 1.0
 weight = 30.0
-[base_stats]
+[base]
 hp = 60
 atk = 55
 def = 50

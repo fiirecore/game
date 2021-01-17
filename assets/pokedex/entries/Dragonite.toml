@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 149
 name = "Dragonite"
 primary_type = "Dragon"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Dragon"
 height = 2.2
 weight = 210.0
-[base_stats]
+[base]
 hp = 91
 atk = 134
 def = 95

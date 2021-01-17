@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 34
 name = "Nidoking"
 primary_type = "Poison"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Drill"
 height = 1.4
 weight = 62.0
-[base_stats]
+[base]
 hp = 81
 atk = 102
 def = 77

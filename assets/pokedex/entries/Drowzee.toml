@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 96
 name = "Drowzee"
 primary_type = "Psychic"
 species = "Hypnosis"
 height = 1.0
 weight = 32.4
-[base_stats]
+[base]
 hp = 60
 atk = 48
 def = 45

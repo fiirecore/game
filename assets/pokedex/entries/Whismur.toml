@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 293
 name = "Whismur"
 primary_type = "Normal"
 species = "Whisper"
 height = 0.6
 weight = 16.3
-[base_stats]
+[base]
 hp = 64
 atk = 51
 def = 23

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 157
 name = "Typhlosion"
 primary_type = "Fire"
 species = "Volcano"
 height = 1.7
 weight = 79.5
-[base_stats]
+[base]
 hp = 78
 atk = 84
 def = 78

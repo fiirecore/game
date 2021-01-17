@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 49
 name = "Venomoth"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Poison"
 height = 1.5
 weight = 12.5
-[base_stats]
+[base]
 hp = 70
 atk = 65
 def = 60

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 224
 name = "Octillery"
 primary_type = "Water"
 species = "Jet"
 height = 0.9
 weight = 28.5
-[base_stats]
+[base]
 hp = 75
 atk = 105
 def = 75

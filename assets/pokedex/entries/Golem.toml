@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 76
 name = "Golem"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Megaton"
 height = 1.4
 weight = 300.0
-[base_stats]
+[base]
 hp = 80
 atk = 120
 def = 130

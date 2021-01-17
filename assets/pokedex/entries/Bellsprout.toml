@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 69
 name = "Bellsprout"
 primary_type = "Grass"
@@ -6,7 +6,7 @@ secondary_type = "Poison"
 species = "Flower"
 height = 0.7
 weight = 4.0
-[base_stats]
+[base]
 hp = 50
 atk = 75
 def = 35

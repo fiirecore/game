@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 121
 name = "Starmie"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Mysterious"
 height = 1.1
 weight = 80.0
-[base_stats]
+[base]
 hp = 60
 atk = 75
 def = 85

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 278
 name = "Wingull"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Seagull"
 height = 0.6
 weight = 9.5
-[base_stats]
+[base]
 hp = 40
 atk = 30
 def = 30

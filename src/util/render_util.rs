@@ -2,11 +2,7 @@ use std::time::SystemTime;
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::{Context, DrawState, Graphics, Image, Rectangle, Transformed, rectangle::rectangle_by_corners, types::Color, ImageSize};
 
-use crate::app::{WIDTH, HEIGHT};
-
-pub static VIEW_WIDTH: usize = WIDTH;
-pub static VIEW_HEIGHT: usize = HEIGHT;
-pub static TEXTURE_SIZE: usize = 16;
+pub static TEXTURE_SIZE: u8 = 16;
 //pub static TEXTURE_SIZE_ROOT: usize = 4;
 	
 //fn get_coords(x: isize, y: isize) -> graphics::DrawParam {
@@ -57,7 +53,7 @@ pub fn draw_bottom(ctx: &mut Context, g: &mut GlGraphics, texture: &Texture, x: 
 	draw(ctx, g, texture, x, y - texture.get_height() as isize);
 }
 
-pub fn draw_rect(ctx: &mut Context, g: &mut GlGraphics, color: Color, x: isize, y: isize, width: usize, height: usize) {
+pub fn draw_rect(ctx: &mut Context, g: &mut GlGraphics, color: Color, x: isize, y: isize, width: u32, height: u32) {
 	//let rectangle = graphics::Mesh::new_rectangle(ctx, graphics::DrawMode::fill(), Rect::new_i32(x as i32, y as i32, width as i32, height as i32), color).expect("Could not create rectangle");
 	//graphics::draw(ctx, &rectangle, (ggez::mint::Point2 { x: 0.0, y: 0.0 },));
 	let dims = rectangle_by_corners(0.0, 0.0, width as f64, height as f64);

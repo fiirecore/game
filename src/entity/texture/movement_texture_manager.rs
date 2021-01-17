@@ -1,6 +1,6 @@
 use opengl_graphics::Texture;
 
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 use crate::util::timer::Timer;
 
 use super::movement_texture::MovementTexture;

@@ -19,7 +19,7 @@ static SAVE_FILENAME: &str = "player.json";
 #[derive(Serialize, Deserialize)]
 pub struct PlayerData {
 
-	pub world_id: String,
+	// pub world_id: String,
 	pub location: Location,
 	pub party: PokemonParty,
 
@@ -68,7 +68,7 @@ impl Default for PlayerData {
     fn default() -> Self {
 		Self {
 			
-			world_id: String::from("firered"),
+			// world_id: String::from("firered"),
 
 			party: PokemonParty {
 
@@ -142,6 +142,10 @@ impl PersistantData for PlayerData {
                 warn!("Failed to save settings: {}", e);
             }
         }
+	}
+
+	fn reload(&mut self) {
+		*self = PlayerData::load_from_file();
 	}
 
 }

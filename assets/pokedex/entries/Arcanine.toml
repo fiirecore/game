@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 59
 name = "Arcanine"
 primary_type = "Fire"
 species = "Legendary"
 height = 1.9
 weight = 155.0
-[base_stats]
+[base]
 hp = 90
 atk = 110
 def = 80

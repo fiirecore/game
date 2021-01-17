@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 335
 name = "Zangoose"
 primary_type = "Normal"
 species = "Cat"
 height = 1.3
 weight = 40.3
-[base_stats]
+[base]
 hp = 73
 atk = 115
 def = 60

@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 340
 name = "Whiscash"
 primary_type = "Water"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Whiskers"
 height = 0.9
 weight = 23.6
-[base_stats]
+[base]
 hp = 110
 atk = 78
 def = 73

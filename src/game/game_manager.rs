@@ -1,9 +1,9 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 use crate::io::data::player_data::PlayerData;
 use crate::battle::battle_manager::BattleManager;
 use crate::game::pokedex::pokedex::Pokedex;
@@ -78,7 +78,7 @@ impl GameManager {
 
 			self.world_manager.update(context);
 
-			if context.battle_context.battle {
+			if context.battle_data.is_some() {
 				self.battling = true;
 				self.swapped = true;
 				self.battle_manager.on_start(context, &self.pokedex, self.player_data.get());
@@ -86,7 +86,7 @@ impl GameManager {
 
 		} else {
 			if self.swapped {
-				context.battle_context.reset();
+				// context.battle_context.reset();
 				self.swapped = false;				
 			}
 			self.battle_manager.update(context, self.player_data.get_mut());
@@ -98,10 +98,10 @@ impl GameManager {
 			}
 		}
 
-		if context.save_data {
-			context.save_data = false;
-			self.save_data();
-		}
+		// if context.save_data {
+		// 	context.save_data = false;
+		// 	self.save_data();
+		// }
 		
 	}
 	
@@ -136,7 +136,7 @@ impl GameManager {
 
     pub fn save_data(&mut self) {
 		let player_data = self.player_data.get_mut();
-        player_data.world_id = self.world_manager.world_id.clone();
+        // player_data.world_id = self.world_manager.world_id.clone();
         if self.world_manager.chunk_map.is_alive() {
             player_data.location.map_id = String::from("world");
             player_data.location.map_index = 0;

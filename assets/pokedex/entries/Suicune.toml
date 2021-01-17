@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 245
 name = "Suicune"
 primary_type = "Water"
 species = "Aurora"
 height = 2.0
 weight = 187.0
-[base_stats]
+[base]
 hp = 100
 atk = 75
 def = 115

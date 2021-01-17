@@ -1,10 +1,10 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 
-use crate::battle::battle_context::TrainerData;
-use crate::engine::game_context::GameContext;
-use crate::entity::entity::Entity;
-use crate::entity::entity::Ticking;
+use crate::util::context::battle_context::TrainerData;
+use crate::util::context::GameContext;
+use crate::entity::Entity;
+use crate::entity::Ticking;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
@@ -123,7 +123,7 @@ impl Ticking for BasicBattleIntroduction {
         }  
 	}
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut crate::engine::text::TextRenderer) {
+    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut crate::util::text_renderer::TextRenderer) {
         self.intro_text.render(ctx, g, tr);
 	}
 }

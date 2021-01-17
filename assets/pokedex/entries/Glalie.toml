@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 362
 name = "Glalie"
 primary_type = "Ice"
 species = "Face"
 height = 1.5
 weight = 256.5
-[base_stats]
+[base]
 hp = 80
 atk = 80
 def = 80

@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 218
 name = "Slugma"
 primary_type = "Fire"
 species = "Lava"
 height = 0.7
 weight = 35.0
-[base_stats]
+[base]
 hp = 40
 atk = 40
 def = 40

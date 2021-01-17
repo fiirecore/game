@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 36
 name = "Clefable"
 primary_type = "Fairy"
 species = "Fairy"
 height = 1.3
 weight = 40.0
-[base_stats]
+[base]
 hp = 95
 atk = 70
 def = 73

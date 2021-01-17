@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 338
 name = "Solrock"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Meteorite"
 height = 1.2
 weight = 154.0
-[base_stats]
+[base]
 hp = 90
 atk = 95
 def = 85

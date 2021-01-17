@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 133
 name = "Eevee"
 primary_type = "Normal"
 species = "Evolution"
 height = 0.3
 weight = 6.5
-[base_stats]
+[base]
 hp = 55
 atk = 55
 def = 50

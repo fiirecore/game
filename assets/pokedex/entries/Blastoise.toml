@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 9
 name = "Blastoise"
 primary_type = "Water"
 species = "Shellfish"
 height = 1.6
 weight = 85.5
-[base_stats]
+[base]
 hp = 79
 atk = 83
 def = 100

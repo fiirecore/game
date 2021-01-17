@@ -2,7 +2,7 @@ use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
 
-use crate::util::file_util::asset_as_pathbuf;
+use crate::util::file::asset_as_pathbuf;
 use crate::util::render_util::draw_o;
 use crate::util::texture_util::texture_from_path;
 use crate::util::traits::Loadable;

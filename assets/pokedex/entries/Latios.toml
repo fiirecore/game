@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 381
 name = "Latios"
 primary_type = "Dragon"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Eon"
 height = 2.0
 weight = 60.0
-[base_stats]
+[base]
 hp = 80
 atk = 90
 def = 80

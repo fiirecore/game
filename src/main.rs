@@ -1,3 +1,19 @@
+use std::sync::Mutex;
+
+use io::data::configuration::Configuration;
+
+pub static TITLE: &str =  env!("CARGO_PKG_NAME");
+pub static AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
+pub static VERSION: &str = env!("CARGO_PKG_VERSION");
+pub static BASE_WIDTH: u32 = 240;
+pub static BASE_HEIGHT: u32 = 160;
+
+lazy_static::lazy_static! {
+    pub static ref CONFIGURATION: Mutex<Configuration> = Mutex::new(Configuration::new());
+    pub static ref WINDOW_SCALE: Mutex<u8> = Mutex::new(Configuration::get().scale);
+    // pub static ref ASSET_CACHE: AssetCache = AssetCache::new("assets").expect("Error creating asset cache!");
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut game = crate::app::Game::new();
@@ -10,16 +26,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 pub mod app;
 
-pub mod engine {
-
-    pub mod engine;
-    pub mod game_context;
-
-    pub mod text;
-    pub mod text_renderer_load;
-
-}
-
 pub mod util;
 
 pub mod audio {
@@ -27,39 +33,9 @@ pub mod audio {
     pub mod sound;
 }
 
-pub mod scene {
-    pub mod scene;
-    pub mod scene_manager;
-    pub mod scenes {
-        pub mod first_scene;
-        pub mod character_creation_scene;
-        pub mod firsttime_scenes;
-        pub mod game_scene;
-        pub mod loading_scenes;
-        pub mod main_menu_scene;
-        pub mod title_scene;
-    }
-}
+pub mod scene;
 
-pub mod entity {
-
-    pub mod entity;
-
-    pub mod util;
-
-    pub mod entities {
-        pub mod player;
-    }
-
-    pub mod texture {
-        pub mod still_texture_manager;
-        pub mod movement_texture;
-        pub mod movement_texture_manager;
-        pub mod texture_manager;
-        pub mod four_way_texture;
-        pub mod three_way_texture;
-    }
-}
+pub mod entity;
 
 pub mod io;
 

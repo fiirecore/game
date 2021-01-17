@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 367
 name = "Huntail"
 primary_type = "Water"
 species = "Deep"
 height = 1.7
 weight = 27.0
-[base_stats]
+[base]
 hp = 55
 atk = 104
 def = 105

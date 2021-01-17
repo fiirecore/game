@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 81
 name = "Magnemite"
 primary_type = "Electric"
@@ -6,7 +6,7 @@ secondary_type = "Steel"
 species = "Magnet"
 height = 0.3
 weight = 6.0
-[base_stats]
+[base]
 hp = 25
 atk = 35
 def = 70

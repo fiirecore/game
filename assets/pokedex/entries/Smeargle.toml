@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 235
 name = "Smeargle"
 primary_type = "Normal"
 species = "Painter"
 height = 1.2
 weight = 58.0
-[base_stats]
+[base]
 hp = 55
 atk = 20
 def = 35

@@ -3,11 +3,11 @@ use std::collections::HashMap;
 use opengl_graphics::{GlGraphics, Texture};
 use piston_window::Context;
 
+use crate::util::text_renderer::TextRenderer;
+use crate::entity::entities::player::Player;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::{
-    engine::{game_context::GameContext, text::TextRenderer},
-    entity::entities::player::Player,
-};
+
+use super::context::GameContext;
 
 pub trait MapManager {
 

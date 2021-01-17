@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 200
 name = "Misdreavus"
 primary_type = "Ghost"
 species = "Screech"
 height = 0.7
 weight = 1.0
-[base_stats]
+[base]
 hp = 60
 atk = 60
 def = 60

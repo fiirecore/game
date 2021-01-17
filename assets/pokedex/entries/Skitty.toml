@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 300
 name = "Skitty"
 primary_type = "Normal"
 species = "Kitten"
 height = 0.6
 weight = 11.0
-[base_stats]
+[base]
 hp = 50
 atk = 45
 def = 45

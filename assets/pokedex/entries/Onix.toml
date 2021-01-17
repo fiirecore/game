@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 95
 name = "Onix"
 primary_type = "Rock"
@@ -6,7 +6,7 @@ secondary_type = "Ground"
 species = "Rock"
 height = 8.8
 weight = 210.0
-[base_stats]
+[base]
 hp = 35
 atk = 45
 def = 160

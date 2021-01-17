@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 267
 name = "Beautifly"
 primary_type = "Bug"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Butterfly"
 height = 1.0
 weight = 28.4
-[base_stats]
+[base]
 hp = 60
 atk = 70
 def = 50

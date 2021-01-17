@@ -1,11 +1,11 @@
-[pokedex_data]
+[data]
 number = 236
 name = "Tyrogue"
 primary_type = "Fighting"
 species = "Scuffle"
 height = 0.7
 weight = 21.0
-[base_stats]
+[base]
 hp = 35
 atk = 35
 def = 35

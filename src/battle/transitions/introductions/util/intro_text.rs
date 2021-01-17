@@ -1,11 +1,11 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
-use crate::engine::game_context::GameContext;
-use crate::engine::text::TextRenderer;
+use crate::util::context::GameContext;
+use crate::util::text_renderer::TextRenderer;
 
 //use crate::battle::battles::test_battle::TestBattle;
 
-use crate::entity::entity::Entity;
+use crate::entity::Entity;
 use crate::gui::gui::{GuiComponent, Activatable, GuiText};
 use crate::util::timer::Timer;
 //use crate::gui::battle::battle_gui::BattleGuiComponent;

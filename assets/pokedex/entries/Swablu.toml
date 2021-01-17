@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 333
 name = "Swablu"
 primary_type = "Normal"
@@ -6,7 +6,7 @@ secondary_type = "Flying"
 species = "Cotton"
 height = 0.4
 weight = 1.2
-[base_stats]
+[base]
 hp = 45
 atk = 40
 def = 60

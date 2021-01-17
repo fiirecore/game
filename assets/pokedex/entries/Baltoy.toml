@@ -1,4 +1,4 @@
-[pokedex_data]
+[data]
 number = 343
 name = "Baltoy"
 primary_type = "Ground"
@@ -6,7 +6,7 @@ secondary_type = "Psychic"
 species = "Clay"
 height = 0.5
 weight = 21.5
-[base_stats]
+[base]
 hp = 40
 atk = 40
 def = 55
