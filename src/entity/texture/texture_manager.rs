@@ -10,6 +10,8 @@ pub trait TextureManager {
 
     fn unidle(&mut self);
 
+    fn is_idle(&self) -> bool;
+
     fn texture(&self) -> (&Texture, bool);
 
 }

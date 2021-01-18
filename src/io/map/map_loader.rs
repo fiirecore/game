@@ -5,10 +5,10 @@ use std::path::Path;
 use log::warn;
 
 use crate::util::file::asset_as_pathbuf;
-use crate::world::world_chunk::WorldChunk;
-use crate::world::world_chunk_map::WorldChunkMap;
-use crate::world::world_map_set::WorldMapSet;
-use crate::world::world_map_set_manager::WorldMapSetManager;
+use crate::world::map::chunk::world_chunk::WorldChunk;
+use crate::world::map::chunk::world_chunk_map::WorldChunkMap;
+use crate::world::map::set::world_map_set::WorldMapSet;
+use crate::world::map::set::world_map_set_manager::WorldMapSetManager;
 
 use super::chunk_map_loader::new_chunk_map;
 use super::map_serializable::MapConfig;

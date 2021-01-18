@@ -93,6 +93,12 @@ impl PlayerWorldGui {
 
 }
 
+impl Default for PlayerWorldGui {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GuiComponent for PlayerWorldGui {
 
     fn enable(&mut self) {

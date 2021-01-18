@@ -1,5 +1,5 @@
+use crate::util::file::PersistantData;
 use crate::util::traits::Loadable;
-use crate::util::traits::PersistantData;
 use log::info;
 use opengl_graphics::GlGraphics;
 use piston::UpdateArgs;

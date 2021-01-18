@@ -7,17 +7,31 @@ use piston_window::Context;
 
 use crate::audio::music::Music;
 use crate::util::context::GameContext;
-use crate::entity::entities::player::Player;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
 use crate::util::render_util::draw_flip;
 use crate::util::render_util::draw_o;
 
-use super::ScreenCoords;
-use super::World;
+use super::HALF_HEIGHT;
+use super::HALF_WIDTH;
 use super::npc::NPC;
 use super::pokemon::WildEntry;
 use super::warp::WarpEntry;
+use super::player::Player;
+use super::RenderCoords;
+use super::World;
+
+pub mod manager;
+
+pub mod set {
+    pub mod world_map_set;
+    pub mod world_map_set_manager;
+}
+
+pub mod chunk {
+    pub mod world_chunk;
+    pub mod world_chunk_map;
+}
 
 #[derive(Default)]
 pub struct WorldMap {
@@ -62,7 +76,7 @@ impl World for WorldMap {
         self.tile_map[x as usize + y as usize * self.width as usize]
     }
 
-    fn walkable(&mut self, _context: &mut GameContext, x: isize, y: isize) -> u8 {
+    fn walkable(&self, x: isize, y: isize) -> u8 {
         for npc in &self.npcs {
             if npc.position.y == y && npc.position.x == x {
                 return 1;
@@ -138,29 +152,31 @@ impl World for WorldMap {
         }
     }
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: ScreenCoords, border: bool) {
-        for yy in screen.y0..screen.y1 {
-            let y = yy - screen.offset_y;
-            let shift_y = (yy << 4) - screen.focus_y;
-            let offset = y * self.width as isize;
+    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+        for yy in screen.top..screen.bottom {
+            let y = yy - screen.y_tile_offset;
+            let render_y = (yy << 4) - screen.y_focus; // old = y_tile w/ offset - player x pixel
             
-            for xx in screen.x0..screen.x1 {
-                let x = xx - screen.offset_x;
-                let shift_x = (xx << 4) - screen.focus_x;
+            let row_offset = y * self.width as isize;
+            
+            for xx in screen.left..screen.right {
+                let x = xx - screen.x_tile_offset;
+                let render_x = (xx << 4) - screen.x_focus;
+
                 if !(x < 0 || y < 0 || y >= self.height as isize || x >= self.width as isize) {
-                        draw_o(ctx, g, textures.get(&self.tile_row(x, offset)), shift_x, shift_y);             
+                        draw_o(ctx, g, textures.get(&self.tile_row(x, row_offset)), render_x, render_y);             
                 } else if border {
                     if x % 2 == 0 {
                         if y % 2 == 0 {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[0]), shift_x, shift_y);
+                            draw_o(ctx, g, textures.get(&self.border_blocks[0]), render_x, render_y);
                         } else {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[2]), shift_x, shift_y);
+                            draw_o(ctx, g, textures.get(&self.border_blocks[2]), render_x, render_y);
                         }
                     } else {
                         if y % 2 == 0 {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[1]), shift_x, shift_y);
+                            draw_o(ctx, g, textures.get(&self.border_blocks[1]), render_x, render_y);
                         } else {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[3]), shift_x, shift_y);
+                            draw_o(ctx, g, textures.get(&self.border_blocks[3]), render_x, render_y);
                         }
                     }
                 }
@@ -168,7 +184,7 @@ impl World for WorldMap {
         }
         for npc in &self.npcs {
             let tuple = npc_textures.get(&npc.identifier.sprite).expect("Could not find NPC texture!").of_direction(npc.position.direction.value());
-            draw_flip(ctx, g, tuple.0, (npc.position.x << 4) - screen.focus_x + 1, (npc.position.y << 4) - screen.focus_y - 4, tuple.1);
+            draw_flip(ctx, g, tuple.0, (npc.position.x << 4) + HALF_WIDTH + 1, (npc.position.y << 4) - HALF_HEIGHT - 4, tuple.1);
         }
     }
 

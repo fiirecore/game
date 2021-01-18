@@ -1,12 +1,23 @@
 use std::path::{Path, PathBuf};
 
-//pub static UNKNOWN_FILENAME_ERR: &str = "unknown file (could not unwrap filename)";
+static ASSET_DIR: &str = "assets";
 
-static DIR: &str = "assets";
+pub trait PersistantData {
+
+    fn load<P>(path: P) -> Self where P: AsRef<Path>;
+
+    fn save(&self);
+
+    fn reload(&mut self);
+
+}
+
+pub trait PersistantDataLocation: PersistantData {
+
+    fn load_from_file() -> Self;
+
+}
 
 pub fn asset_as_pathbuf<P>(path: P) -> PathBuf where P: AsRef<Path> {
-	let path = path.as_ref();
-	let mut pathbuf = PathBuf::from(DIR);
-	pathbuf.push(path);
-	pathbuf
+	PathBuf::from(ASSET_DIR).join(path.as_ref())
 }

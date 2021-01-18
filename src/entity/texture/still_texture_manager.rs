@@ -38,6 +38,10 @@ impl TextureManager for StillTextureManager {
 
     }
 
+    fn is_idle(&self) -> bool {
+        true
+    }
+
     fn texture(&self) -> (&Texture, bool) {
         (&self.texture, self.flip)
     }

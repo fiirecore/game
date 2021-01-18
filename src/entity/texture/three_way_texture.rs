@@ -80,6 +80,14 @@ impl TextureManager for ThreeWayTexture {
         } 
     }
 
+    fn is_idle(&self) -> bool {
+        if self.direction != 3 {
+            self.textures[self.direction as usize].is_idle()
+        } else {
+            self.textures[2].is_idle()
+        }
+    }
+
     fn texture(&self) -> (&Texture, bool) {
         if self.direction != 3 {
             return self.textures[self.direction as usize].texture();

@@ -1,6 +1,7 @@
 use opengl_graphics::GlGraphics;
 use piston_window::Context;
 use crate::util::context::GameContext;
+use crate::util::file::PersistantData;
 use crate::util::text_renderer::TextRenderer;
 
 use crate::entity::Entity;
@@ -10,14 +11,13 @@ use crate::game::pokedex::pokedex::Pokedex;
 
 use crate::util::traits::Completable;
 use crate::util::traits::Loadable;
-use crate::util::traits::PersistantData;
-use crate::world::world_map_manager::WorldMapManager;
+use crate::world::map::manager::WorldManager;
 
 use super::player_data_container::PlayerDataContainer;
 
 pub struct GameManager {
 
-	world_manager: WorldMapManager,
+	world_manager: WorldManager,
 
 	battle_manager: BattleManager,
 
@@ -34,17 +34,15 @@ impl GameManager {
 
     pub fn new() -> GameManager {
 
-		let player_data =  PlayerData::load_from_file();
-
 		GameManager {
 			
-			world_manager: WorldMapManager::new(&player_data),
+			world_manager: WorldManager::default(),
 
 			battle_manager: BattleManager::new(),
 
 			pokedex: Pokedex::new(),
 
-			player_data: PlayerDataContainer::new(player_data),
+			player_data: PlayerDataContainer::new(PlayerData::load_from_file()),
 
 			battling: false,
 			swapped: false,
@@ -142,9 +140,9 @@ impl GameManager {
             player_data.location.map_index = 0;
         } else {
             player_data.location.map_id = self.world_manager.map_sets.get().clone();
-            player_data.location.map_index = *self.world_manager.map_sets.map_set_mut().get() as u16;
-        }
-        self.world_manager.player.save_data(player_data);
+            player_data.location.map_index = *self.world_manager.map_sets.get_index() as u16;
+		}
+		player_data.location.position = self.world_manager.player.position;
         player_data.save();
     }
 }

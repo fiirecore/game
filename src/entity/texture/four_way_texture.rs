@@ -56,6 +56,10 @@ impl TextureManager for FourWayMovingTexture {
         self.textures[self.direction as usize].unidle();
     }
 
+    fn is_idle(&self) -> bool {
+        self.textures[self.direction as usize].is_idle()
+    }
+
     fn texture(&self) -> (&Texture, bool) {
         return self.textures[self.direction as usize].texture();
     }

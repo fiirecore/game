@@ -1,4 +1,3 @@
-use std::path::Path;
 use crate::util::context::GameContext;
 pub trait Loadable {
 
@@ -14,24 +13,9 @@ pub trait Loadable {
 
 }
 
+#[deprecated]
 pub trait Completable {
 
     fn is_finished(&self) -> bool;
-
-}
-
-pub trait PersistantData {
-
-    fn load<P>(path: P) -> Self where P: AsRef<Path>;
-
-    fn save(&self);
-
-    fn reload(&mut self);
-
-}
-
-pub trait PersistantDataLocation: PersistantData {
-
-    fn load_from_file() -> Self;
 
 }

@@ -1,22 +1,22 @@
 use std::path::Path;
-use image::{RgbaImage, DynamicImage, SubImage};
+use image::{RgbaImage, SubImage};
 use crate::util::render_util::TEXTURE_SIZE;
 
-pub fn open_image<P>(path: P) -> Result<RgbaImage, String> where P: AsRef<Path> {
+pub fn open_image<P>(path: P) -> Option<RgbaImage> where P: AsRef<Path> {
     let path = path.as_ref();
-    let img = match image::open(path) {
-        Ok(img) => img,
-        Err(e) => {
-            return Err(format!("Could not load '{:?}': {:?}", path.file_name().unwrap(), e))
+    match image::open(path) {
+        Ok(img) => {
+            let img = match img {
+                image::DynamicImage::ImageRgba8(img) => img,
+                other => other.to_rgba8(),
+            };
+            Some(img)
+        },
+        Err(err) => {
+            log::warn!("Could not load image at {:?} with error: {}", path.file_name().unwrap(), err);
+            None
         }
-    };
-
-    let img = match img {
-        DynamicImage::ImageRgba8(img) => img,
-        x => x.to_rgba8(),
-    };
-
-    Ok(img)
+    }
 }
 
 pub fn get_subimage(image: &RgbaImage, id: usize) -> RgbaImage {

@@ -1,6 +1,3 @@
-//use directories_next::ProjectDirs;
-use crate::util::traits::PersistantDataLocation;
-use crate::util::traits::PersistantData;
 use std::path::PathBuf;
 use std::fs::File;
 use std::io::BufWriter;
@@ -10,6 +7,9 @@ use std::sync::MutexGuard;
 
 use log::info;
 use serde::{Serialize, Deserialize};
+
+use crate::util::file::PersistantData;
+use crate::util::file::PersistantDataLocation;
 
 pub mod controls;
 

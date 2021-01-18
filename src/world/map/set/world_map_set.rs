@@ -4,11 +4,11 @@ use opengl_graphics::Texture;
 
 use crate::util::context::GameContext;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-
-use super::ScreenCoords;
-use super::World;
-use super::warp::WarpEntry;
-use super::world_map::WorldMap;
+use crate::world::RenderCoords;
+use crate::world::World;
+use crate::world::map::WorldMap;
+use crate::world::player::Player;
+use crate::world::warp::WarpEntry;
 
 #[derive(Default)]
 pub struct WorldMapSet {
@@ -74,8 +74,12 @@ impl World for WorldMapSet {
         self.maps[self.current_map_index].tile(x, y)
     }
 
-    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
-        self.maps[self.current_map_index].walkable(context, x, y)
+    fn walkable(&self, x: isize, y: isize) -> u8 {
+        if self.in_bounds(x, y) {
+            self.maps[self.current_map_index].walkable(x, y)
+        } else {
+            1
+        }
     }
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry> {
@@ -86,11 +90,11 @@ impl World for WorldMapSet {
         self.maps[self.current_map_index].on_tile(context, x, y)
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: ScreenCoords, border: bool) {
+    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         self.maps[self.current_map_index].render(ctx, g, textures, npc_textures, screen, border)
     }
 
-    fn input(&mut self, context: &mut GameContext, player: &crate::entity::entities::player::Player) {
+    fn input(&mut self, context: &mut GameContext, player: &Player) {
         self.maps[self.current_map_index].input(context, player)
     }
 

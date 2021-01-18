@@ -1,8 +1,8 @@
 use std::path::Path;
 
 use crate::audio::music::Music;
-use crate::world::world_map::WorldMap;
-use crate::world::world_map_set::WorldMapSet;
+use crate::world::map::WorldMap;
+use crate::world::map::set::world_map_set::WorldMapSet;
 
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;

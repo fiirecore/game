@@ -64,6 +64,10 @@ impl TextureManager for MovementTextureManager {
         self.idle = false;
     }
 
+    fn is_idle(&self) -> bool {
+        self.idle
+    }
+
     fn texture(&self) -> (&Texture, bool) {
         if self.idle {
             return self.textures.idle();

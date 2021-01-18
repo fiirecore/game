@@ -5,10 +5,6 @@ use crate::util::text_renderer::TextRenderer;
 
 pub mod util;
 
-pub mod entities {
-	pub mod player;
-}
-
 pub mod texture {
 	pub mod still_texture_manager;
 	pub mod movement_texture;
@@ -28,14 +24,15 @@ pub trait Entity {
 	
 }
 
+#[deprecated]
 pub trait Ticking {
 
-	fn update(&mut self, _context: &mut GameContext) {
+	fn update(&mut self, context: &mut GameContext) {
 		
 	}
 	
-	fn render(&self, _ctx: &mut Context, _g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		
+	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+
 	}
 
 }

@@ -1,23 +1,13 @@
-pub mod world_map;
-
-pub mod world_map_set;
-pub mod world_map_set_manager;
-
-pub mod world_chunk;
-pub mod world_chunk_map;
-
-pub mod world_map_manager;
-
+pub mod map;
 pub mod warp;
-
 pub mod npc;
-
+pub mod pokemon;
 pub mod gui {
     pub mod player_world_gui;
     pub mod map_window_manager;
 }
 
-pub mod pokemon;
+pub mod player;
 
 use std::collections::HashMap;
 
@@ -25,12 +15,13 @@ use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture;
 use piston_window::Context;
 
+use crate::util::TILE_SIZE;
 use crate::util::context::GameContext;
-use crate::entity::entities::player::Player;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::util::render_util::TEXTURE_SIZE;
 
 use crate::world::warp::WarpEntry;
+
+use self::player::Player;
 
 pub trait World {
 
@@ -38,64 +29,63 @@ pub trait World {
 
     fn tile(&self, x: isize, y: isize) -> u16;
 
-    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8;
+    fn walkable(&self, x: isize, y: isize) -> u8;
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry>;
 
     fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize);
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: ScreenCoords, border: bool);
+    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool);
 
     fn input(&mut self, context: &mut GameContext, player: &Player);
 
 }
 
-// #[derive(Debug, serde::Deserialize)]
-// pub struct WorldConfig {
-//     pub palette_sizes: Option<Vec<u16>>,
-// }
-
 #[derive(Default, Clone, Copy)]
-pub struct ScreenCoords {
+pub struct RenderCoords {
 
-    pub x0: isize,
-    pub x1: isize,
-    pub y0: isize,
-    pub y1: isize,
+    pub left: isize,
+    pub right: isize,
+    pub top: isize,
+    pub bottom: isize,
 
-    pub focus_x: isize,
-    pub focus_y: isize,
+    pub x_focus: isize,
+    pub y_focus: isize,
 
-    pub offset_x: isize,
-    pub offset_y: isize,
+    pub x_tile_offset: isize,
+    pub y_tile_offset: isize,
 
 }
 
-impl ScreenCoords {
+static HALF_WIDTH: isize = (crate::BASE_WIDTH as isize + TILE_SIZE as isize) >> 1;
+static HALF_HEIGHT: isize = (crate::BASE_HEIGHT as isize + TILE_SIZE as isize) >> 1;
+
+static HALF_WIDTH_TILE: isize = HALF_WIDTH >> 4;
+static HALF_HEIGHT_TILE: isize = (HALF_HEIGHT >> 4) + 2;
+
+impl RenderCoords {
 
     pub fn new(player: &Player) -> Self {
 
         Self {
 
-            x0: player.focus_x >> 4,
-            x1: (player.focus_x + crate::BASE_WIDTH as isize + TEXTURE_SIZE as isize) >> 4,
-            y0: player.focus_y >> 4,
-            y1: (player.focus_y + crate::BASE_HEIGHT as isize + TEXTURE_SIZE as isize) >> 4,
+            left: player.position.x - HALF_WIDTH_TILE,
+            right: player.position.x + HALF_WIDTH_TILE + 1,
+            top: player.position.y - HALF_HEIGHT_TILE,
+            bottom: player.position.y + HALF_HEIGHT_TILE,
 
-            focus_x: player.focus_x,
-            focus_y: player.focus_y,
+            x_focus: (player.position.x + 1 << 4) + player.position.x_offset as isize - HALF_WIDTH,
+            y_focus: (player.position.y + 1 << 4) + player.position.y_offset as isize - HALF_HEIGHT,
 
-            offset_x: 0,
-            offset_y: 0,
-
+            ..Default::default()
         }
 
     }
 
-    pub fn offset(&self, x: isize, y: isize) -> ScreenCoords {
-        ScreenCoords {
-            offset_x: x,
-            offset_y: y,
+    pub fn offset(&self, x: isize, y: isize) -> RenderCoords { // return offset x & y
+        RenderCoords {
+            x_tile_offset: x,
+            y_tile_offset: y,
             ..*self
         }
     }

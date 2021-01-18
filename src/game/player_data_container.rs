@@ -2,7 +2,7 @@ use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
 use crate::io::data::player_data::PlayerData;
 use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
 use crate::util::traits::Loadable;
-use crate::util::traits::PersistantData;
+use crate::util::file::PersistantData;
 
 use super::pokedex::pokemon::pokemon_owned::OwnedPokemon;
 

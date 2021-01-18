@@ -1,7 +1,7 @@
 use crate::game::pokedex::pokedex::Pokedex;
 use crate::game::pokedex::pokemon::pokemon_owned::OwnedPokemon;
-use crate::util::traits::PersistantData;
-use crate::util::traits::PersistantDataLocation;
+use crate::util::file::PersistantData;
+use crate::util::file::PersistantDataLocation;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};

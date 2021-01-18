@@ -176,11 +176,11 @@ pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, RgbaImage>, top_sheets: 
 		if !bottom_file.exists() {
 			break;
 		}
-		if let Ok(img) = open_image(bottom_file) {
+		if let Some(img) = open_image(bottom_file) {
 			sizes.push(((img.width() >> 4) * (img.height() >> 4)) as u16);
 			bottom_sheets.insert(count, img);
 		}
-		if let Ok(img) = open_image(file.join(top_filename)) {
+		if let Some(img) = open_image(file.join(top_filename)) {
 			top_sheets.insert(count, img);
 		}
 		count+=1;

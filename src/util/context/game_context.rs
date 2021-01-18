@@ -44,6 +44,10 @@ impl GameContext {
         self.random = Random::new(seed);
     }
 
+    pub fn key_active(&self, index: usize) -> bool {
+        self.keys[index] == 1 || self.keys[index] == 2
+    }
+
     pub(crate) fn fill_keymaps(&mut self, keys: Vec<Key>) {
 
         let mut count = 0;

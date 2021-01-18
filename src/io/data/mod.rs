@@ -10,7 +10,7 @@ pub mod text {
     pub mod message;
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, enum_iterator::IntoEnumIterator, Deserialize, Serialize)]
 pub enum Direction {
 	
 	Up,
@@ -48,6 +48,26 @@ impl Direction {
 		}
 	}
 
+	// Input
+
+	pub fn keybind(&self) -> usize {
+		match *self {
+		    Direction::Up => 2,
+		    Direction::Down => 3,
+		    Direction::Left => 4,
+		    Direction::Right => 5,
+		}
+	}
+
+	pub fn offset(&self) -> (i8, i8) {
+		match *self {
+		    Direction::Up => (0, -1),
+		    Direction::Down => (0, 1),
+		    Direction::Left => (-1, 0),
+		    Direction::Right => (1, 0),
+		}
+	}
+
 }
 
 impl Default for Direction {
@@ -80,13 +100,9 @@ pub struct Position {
 
 impl Position {
 
-	pub fn pixel_x(&self) -> isize {
-		(self.x << 4) + self.x_offset as isize
+	pub fn offset(x: isize, y: isize) {
+		
 	}
-
-	pub fn pixel_y(&self) -> isize {
-		(self.y << 4) + self.y_offset as isize
-    }
 
 	pub fn subtract(&self, x: isize, y: isize) -> Position {
 		Position {

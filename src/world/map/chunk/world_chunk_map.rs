@@ -6,12 +6,15 @@ use crate::audio::music::Music;
 use crate::util::context::GameContext;
 use crate::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
+use crate::world::RenderCoords;
+use crate::world::World;
+use crate::world::map::manager::test_move_code;
+use crate::world::player::Player;
+use crate::world::warp::WarpEntry;
 
-use super::ScreenCoords;
-use super::World;
-use super::warp::WarpEntry;
 use super::world_chunk::WorldChunk;
 
+#[derive(Default)]
 pub struct WorldChunkMap {
 
     alive: bool,
@@ -26,19 +29,6 @@ pub struct WorldChunkMap {
 }
 
 impl WorldChunkMap {
-
-    pub fn new() -> Self {
-
-        Self {
-            alive: false,
-            chunks: HashMap::new(),
-            current_chunk: 0,
-            current_music: Music::Pallet,
-        }
-
-    }
-
-
 
     pub fn change_chunk(&mut self, context: &mut GameContext, chunk: u16) {
         self.current_chunk = chunk;
@@ -75,10 +65,28 @@ impl WorldChunkMap {
         self.chunks.get_mut(&self.current_chunk).expect("Could not get current chunk")
     }
 
+    pub fn connections(&self) -> Vec<(&u16, &WorldChunk)> {
+        self.current_chunk().connections.iter().map(|connection| (connection, self.chunks.get(connection).expect("Could not get connected chunks"))).collect()
+    }
+
 
 
     pub fn insert(&mut self, index: u16, chunk: WorldChunk) {
         self.chunks.insert(index, chunk);
+    }
+
+
+    pub fn walk_connections(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
+        for connection in self.connections() {
+            if connection.1.in_bounds(x, y) {
+                let move_code = connection.1.walkable(x, y);
+                if test_move_code(move_code, false) {
+                    self.change_chunk(context, *connection.0);   
+                }
+                return move_code;
+            }
+        }
+        1
     }
 
 }
@@ -117,24 +125,24 @@ impl World for WorldChunkMap {
         }
     }
 
-    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
+    fn walkable(&self, x: isize, y: isize) -> u8 {
         let current = self.current_chunk();
         if current.in_bounds(x, y) {
-            self.chunks.get_mut(&self.current_chunk).unwrap().walkable(context, x, y)
+            current.walkable(x, y)
         } else {
-            for connection in &current.connections {
-                let connected = self.chunks.get(connection).expect("Could not get connected chunk");
-                if connected.in_bounds(x, y) {
-                    // To - do: check if walkable here
-                    self.current_chunk = *connection;
-                    let music = connected.map.music;
-                    if music != self.current_music {
-                        self.current_music = music;
-                        context.play_music(self.current_music);
-                    }
-                    return self.walkable(context, x, y);
-                }
-            }
+            // for connection_id in &current.connections {
+            //     let connection = self.chunks.get(connection_id).expect("Could not get connected chunk");
+            //     if connection.in_bounds(x, y) {
+            //         // To - do: check if walkable here
+            //         //self.current_chunk = *connection_id;
+            //         // let music = connection.map.music;
+            //         // if music != self.current_music {
+            //         //     self.current_music = music;
+            //         //     context.play_music(self.current_music);
+            //         // }
+            //         return self.walkable(x, y);
+            //     }
+            // }
             return 1;
         }        
     }
@@ -143,7 +151,7 @@ impl World for WorldChunkMap {
         self.current_chunk().check_warp(x, y)
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: ScreenCoords, border: bool) {
+    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         let current_chunk = self.current_chunk();
         current_chunk.render(ctx, g, textures, npc_textures, screen, border);
         for connection in &current_chunk.connections {
@@ -151,7 +159,7 @@ impl World for WorldChunkMap {
         }
     }
 
-    fn input(&mut self, context: &mut GameContext, player: &crate::entity::entities::player::Player) {
+    fn input(&mut self, context: &mut GameContext, player: &Player) {
         self.current_chunk_mut().input(context, player)
     }
 

@@ -4,11 +4,11 @@ use opengl_graphics::Texture;
 
 use crate::util::context::GameContext;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-
-use super::ScreenCoords;
-use super::World;
-use super::warp::WarpEntry;
-use super::world_map::WorldMap;
+use crate::world::RenderCoords;
+use crate::world::World;
+use crate::world::map::WorldMap;
+use crate::world::player::Player;
+use crate::world::warp::WarpEntry;
 
 #[derive(Default)]
 pub struct WorldChunk {
@@ -38,9 +38,9 @@ impl WorldChunk {
 
 impl World for WorldChunk {
 
-    fn walkable(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
+    fn walkable(&self, x: isize, y: isize) -> u8 {
         if self.in_bounds(x, y) {
-            return self.map.walkable(context, x - self.x, y - self.y);
+            return self.map.walkable(x - self.x, y - self.y);
         } else {
             1
         }        
@@ -50,7 +50,7 @@ impl World for WorldChunk {
         self.map.check_warp(x - self.x, y - self.y)
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: ScreenCoords, border: bool) {
+    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         self.map.render(ctx, g, textures, npc_textures, screen.offset(self.x, self.y), border)
     }
 
@@ -58,7 +58,7 @@ impl World for WorldChunk {
         self.map.on_tile(context, x - self.x, y - self.y)
     }
 
-    fn input(&mut self, context: &mut GameContext, player: &crate::entity::entities::player::Player) {
+    fn input(&mut self, context: &mut GameContext, player: &Player) {
         self.map.input(context, player)
     }
 

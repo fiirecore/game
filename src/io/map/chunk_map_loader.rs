@@ -3,8 +3,8 @@ use std::path::Path;
 use log::warn;
 
 use crate::audio::music::Music;
-use crate::world::world_chunk::WorldChunk;
-use crate::world::world_map::WorldMap;
+use crate::world::map::WorldMap;
+use crate::world::map::chunk::world_chunk::WorldChunk;
 
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
