@@ -1,12 +1,10 @@
-use crate::util::context::GameContext;
+use std::io::Read;
 use crate::io::data::Direction;
 use crate::io::data::Position;
-use crate::util::file::asset_as_pathbuf;
-use crate::util::texture_util::texture64_from_path;
-
-use opengl_graphics::Texture;
+use crate::util::texture::Texture;
+use crate::util::texture::debug_texture;
+use macroquad::prelude::warn;
 use serde::Deserialize;
-
 use self::trainer::Trainer;
 
 pub mod trainer;
@@ -38,15 +36,36 @@ pub enum MovementType {
 
 impl NPC {
 
-    pub fn interact(&mut self, direction: Direction, context: &mut GameContext) {
+    pub fn interact(&mut self, direction: Direction) {
         self.position.direction = direction.inverse();
         if self.trainer.is_some() {
-            context.trainer_battle(&self);
+            macroquad::prelude::info!("Trainer battle with {}", &self.identifier.name);
+            crate::util::battle_data::trainer_battle(&self);
         }
     }
 
     pub fn battle_sprite(id: u8) -> Texture {
-        texture64_from_path(asset_as_pathbuf("worlds/textures/npcs").join(id.to_string()).join("battle.png"))
+        let mut path = "textures/npcs/".to_string();
+        path.push_str(&id.to_string());
+        path.push_str("/battle.png");
+        let mut archive = crate::io::map::WORLD_ARCHIVE.lock();
+        let mut bytes: Vec<u8> = Vec::new();
+        match archive.by_name(&path) {
+            Ok(mut zipfile) => {
+                match zipfile.read_to_end(&mut bytes) {
+                    Ok(_) => {}
+                    Err(err) => {
+                        warn!("Could not read battle sprite #{} to bytes with error {}", id, err);
+                        return debug_texture();
+                    }
+                }
+            }
+            Err(err) => {
+                warn!("Could not get battle texture for sprite id #{} with error {}", id, err);
+                return debug_texture();
+            }
+        }
+        crate::util::texture::byte_texture(bytes.as_slice())
     }
 
 }

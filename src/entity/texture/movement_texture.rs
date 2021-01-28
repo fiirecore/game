@@ -1,4 +1,4 @@
-use opengl_graphics::Texture;
+use crate::util::texture::Texture;
 
 pub struct MovementTexture {
 
@@ -36,13 +36,13 @@ impl MovementTexture {
         return self.index_map.len();
     }
 
-    pub fn texture(&self, index: usize) -> (&Texture, bool) {
+    pub fn texture(&self, index: usize) -> (Texture, bool) {
         let tuple = self.index_map[index];
-        return (&self.textures[tuple.0 as usize], tuple.1);
+        return (self.textures[tuple.0 as usize], tuple.1);
     }
 
-    pub fn idle(&self) -> (&Texture, bool) {
-        return (&self.textures[self.idle.0 as usize], self.idle.1);
+    pub fn idle(&self) -> (Texture, bool) {
+        return (self.textures[self.idle.0 as usize], self.idle.1);
     }
 
 }

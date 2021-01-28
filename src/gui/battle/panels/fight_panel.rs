@@ -1,13 +1,11 @@
-use opengl_graphics::{GlGraphics, Texture};
-use piston_window::Context;
+use crate::util::input::Control;
+use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
-
-use crate::util::context::GameContext;
 use crate::gui::gui::{Activatable, GuiComponent};
-
+use crate::util::input;
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 
-use crate::util::{file::asset_as_pathbuf, texture_util::texture_from_path, render_util::draw};
+use crate::util::{texture::byte_texture, render::draw};
 
 use super::move_panel::MovePanel;
 pub struct FightPanel {
@@ -15,10 +13,10 @@ pub struct FightPanel {
     active: bool,
     focus: bool,
 
-    x: isize,
-    y: isize,
-    panel_x: isize,
-    panel_y: isize,
+    x: f32,
+    y: f32,
+    panel_x: f32,
+    panel_y: f32,
 
     background: Texture,
     move_panel: MovePanel,
@@ -32,10 +30,10 @@ pub struct FightPanel {
 
 impl FightPanel {
 
-    pub fn new(panel_x: isize, panel_y: isize) -> FightPanel {
+    pub fn new(panel_x: f32, panel_y: f32) -> FightPanel {
 
-        let x = 0;
-        let y = 0;
+        let x = 0.0;
+        let y = 0.0;
 
         FightPanel {
 
@@ -47,7 +45,7 @@ impl FightPanel {
             panel_x: panel_x,
             panel_y: panel_y,
 
-            background: texture_from_path(asset_as_pathbuf("gui/battle/move_panel.png")),
+            background: byte_texture(include_bytes!("../../../../include/gui/battle/move_panel.png")),
             move_panel: MovePanel::new(x + panel_x, y + panel_y),
 
             cursor_position: 0,
@@ -91,35 +89,35 @@ impl GuiComponent for FightPanel {
         self.active
     }
 
-    fn update(&mut self, _context: &mut GameContext) {
-        if self.is_active() {
+    fn update(&mut self, _delta: f32) {
+        // if self.is_active() {
 
-        }
+        // }
     }
 
-    fn update_position(&mut self, panel_x: isize, panel_y: isize) {
+    fn update_position(&mut self, panel_x: f32, panel_y: f32) {
         self.panel_x = panel_x;
         self.panel_y = panel_y;
     }
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+    fn render(&self, tr: &TextRenderer) {
         if self.is_active() {
 
-            draw(ctx, g, &self.background, self.x + self.panel_x, self.y + self.panel_y);
-            self.move_panel.render(ctx, g, tr);
+            draw(self.background, self.x + self.panel_x, self.y + self.panel_y);
+            self.move_panel.render(tr);
         
             for string_id in 0..self.move_names.len() {
-                let mut x_offset = 0;
-                let mut y_offset = 0;
+                let mut x_offset = 0.0;
+                let mut y_offset = 0.0;
                 if string_id % 2 == 1 {
-                    x_offset = 72;
+                    x_offset = 72.0;
                 }
                 if string_id / 2 == 1 {
-                    y_offset = 17;
+                    y_offset = 17.0;
                 }
-                tr.render_text_from_left(ctx, g, 0, self.move_names[string_id].to_uppercase().as_str(), self.panel_x + self.x + 16 + x_offset, self.panel_y + self.y + 8 + y_offset);
+                tr.render_text_from_left(0, self.move_names[string_id].to_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
                 if string_id == self.cursor_position as usize {
-                    tr.render_cursor(ctx, g, self.panel_x + self.x + 10 + x_offset, self.panel_y + self.y + 10 + y_offset);
+                    tr.render_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
                 }
             }
         }        
@@ -141,23 +139,23 @@ impl Activatable for FightPanel {
         self.focus
     }
 
-    fn input(&mut self, context: &mut GameContext) {
-        if context.keys[1] == 1 {
+    fn input(&mut self, _delta: f32) {
+        if input::pressed(Control::B) {
             self.next = 1;
         }
-        if context.keys[2] == 1 {
+        if input::pressed(Control::Up) {
             if self.cursor_position >= 2 {
                 self.cursor_position -= 2;
             }            
-        } else if context.keys[3] == 1 {
+        } else if input::pressed(Control::Down) {
             if self.cursor_position < 2 {
                 self.cursor_position += 2;
             } 
-        } else if context.keys[4] == 1 {
+        } else if input::pressed(Control::Left) {
             if self.cursor_position > 0 {
                 self.cursor_position -= 1;
             }
-        } else if context.keys[5] == 1 {
+        } else if input::pressed(Control::Right) {
             if self.cursor_position < 3 {
                 self.cursor_position += 1;
             }

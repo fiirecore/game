@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::audio::music::Music;
+use crate::audio::Music;
 use crate::util::file::asset_as_pathbuf;
 
 use super::GameContext;
@@ -8,7 +8,7 @@ use super::GameContext;
 use kira::instance::InstanceSettings;
 use kira::instance::StopInstanceSettings;
 use kira::playable::PlayableSettings;
-use log::warn;
+use macroquad::prelude::warn;
 
 // pub struct AudioContext {
 

@@ -1,17 +1,11 @@
-use std::time::SystemTime;
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-use crate::audio::music::Music;
-use opengl_graphics::Texture;
+use crate::util::Load;
+use crate::util::input;
+use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
-
-use crate::util::context::GameContext;
 use crate::io::data::player_data::PlayerData;
 use crate::scene::Scene;
-use crate::scene::SceneLoad;
-use crate::util::file::asset_as_pathbuf;
-use crate::util::texture_util::texture_from_path;
-use crate::util::render_util::draw_o;
+use crate::util::texture::byte_texture;
+use crate::util::render::draw;
 
 pub struct TitleScene {	
 	
@@ -19,18 +13,15 @@ pub struct TitleScene {
 	skip_on_debug: bool,
 	
 	next: bool,
-	start_time: SystemTime,
-	//end_time: SystemTime,
+	accumulator: f32,
 	counter: u64,
-	rendered: bool,
 
-	background_tex: Option<Texture>, //TO-DO: change to 3 (5 including black) seperate solid color textures
-	title_tex: Option<Texture>,
-	trademark_tex: Option<Texture>,
-	subtitle_tex: Option<Texture>,
-	charizard_tex: Option<Texture>,
-	start_tex: Option<Texture>,
-	loading_tex: Option<Texture>,
+	background_tex: Texture, //TO-DO: change to 3 (5 including black) seperate solid color textures
+	title_tex: Texture,
+	trademark_tex: Texture,
+	subtitle_tex: Texture,
+	charizard_tex: Texture,
+	start_tex: Texture,
 	
 }
 
@@ -39,51 +30,35 @@ impl TitleScene {
 	
 	pub fn new() -> TitleScene {
 		TitleScene {
-			
-			scene_token: 0,
 			skip_on_debug: true,
-
-			start_time: SystemTime::now(),
-			next: false,
-			counter: 0,
-			rendered: false,
-			
-			background_tex: None,
-			title_tex: None,
-			trademark_tex: None,
-			subtitle_tex: None,
-			charizard_tex: None,
-			start_tex: None,
-			loading_tex: None,
-			
+			background_tex: byte_texture(include_bytes!("../../../include/scenes/title/background.png")),		
+			title_tex: byte_texture(include_bytes!("../../../include/scenes/title/title.png")),
+			trademark_tex: byte_texture(include_bytes!("../../../include/scenes/title/trademark.png")),
+			subtitle_tex: byte_texture(include_bytes!("../../../include/scenes/title/subtitle.png")),
+			charizard_tex: byte_texture(include_bytes!("../../../include/scenes/title/charizard.png")),
+			start_tex: byte_texture(include_bytes!("../../../include/scenes/title/start.png")),
+		    scene_token: 0,
+		    next: false,
+		    accumulator: 0.0,
+		    counter: 0, 
 		}		
 	}
 	
 }
 
-impl SceneLoad for TitleScene {
+//#[async_trait::async_trait]
+impl Load for TitleScene {
 
-	fn load(&mut self, _context: &mut GameContext) {			
-		
-		self.background_tex = Some(texture_from_path(asset_as_pathbuf("scenes/title/background.png")));
-		self.title_tex = Some(texture_from_path(asset_as_pathbuf("scenes/title/static/title.png")));
-		self.trademark_tex = Some(texture_from_path(asset_as_pathbuf("scenes/title/trademark.png")));
-		self.subtitle_tex = Some(texture_from_path(asset_as_pathbuf("scenes/title/subtitle.png")));
-		self.charizard_tex = Some(texture_from_path(asset_as_pathbuf("scenes/title/charizard.png")));
-		self.start_tex = Some(texture_from_path(asset_as_pathbuf("scenes/title/start.png")));
-		self.loading_tex = Some(texture_from_path(asset_as_pathbuf("scenes/title/loading.png")));
-		// music::bind_sound_file(Sound::CryCharizard, asset_as_pathbuf("audio/sound/cry/cry_charizard.aif"));
-		// context.load_music(Music::Title, asset_as_pathbuf("audio/music/title.ogg"), PlayableSettings::default());
-	}
+	fn load(&mut self) {}
 
-	fn on_start(&mut self, context: &mut GameContext) {
+	fn on_start(&mut self) {
 		self.next = false;
 		self.scene_token = 0;
-		if cfg!(debug_assertions) && self.skip_on_debug {
+		if !crate::not_debug() && self.skip_on_debug {
 			self.next = true;
 		} else {
-			context.play_music(Music::Title);
-			self.start_time = SystemTime::now();
+			//context.play_music(Music::Title);
+			self.accumulator = 0.0;
 		}
 	}
 
@@ -91,49 +66,46 @@ impl SceneLoad for TitleScene {
 
 impl Scene for TitleScene {
 	 
-	fn update(&mut self, context: &mut GameContext) {	
+	fn update(&mut self, _delta: f32) {	
+		self.accumulator += macroquad::prelude::get_frame_time();
 		self.counter+=1;
-		if self.next && self.rendered /*&& self.end_time.elapsed().unwrap().as_millis() > 1500*/ {
-			context.seed_random(self.counter % 256);
+		if self.next {
+			macroquad::prelude::rand::srand(self.counter % 256);
 			if PlayerData::exists() {
-				self.scene_token = 4;
+				self.scene_token = 2;
 			} else {
-				self.scene_token = 6;
+				self.scene_token = 2;//4;
 			}
 		}
-		if self.start_time.elapsed().unwrap().as_secs() > 48 {
+		if self.accumulator > 48.0 {
 			self.scene_token = 1;
 		}
 	}
 	
-	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		draw_o(ctx, g, self.background_tex.as_ref(), 0, 0);
-		draw_o(ctx, g, self.title_tex.as_ref(), 3, 3);
-		draw_o(ctx, g, self.trademark_tex.as_ref(), 158, 53);
-		draw_o(ctx, g, self.subtitle_tex.as_ref(), 52, 57);
-		if self.start_time.elapsed().unwrap().as_secs() % 2 == 1 {
-			draw_o(ctx, g, self.start_tex.as_ref(), 44, 130);
+	fn render(&self, _tr: &TextRenderer) {
+		draw(self.background_tex, 0.0, 0.0);
+		draw(self.title_tex, 3.0, 3.0);
+		draw(self.trademark_tex, 158.0, 53.0);
+		draw(self.subtitle_tex, 52.0, 57.0);
+		if self.accumulator as u8 % 2 == 1 {
+			draw(self.start_tex, 44.0, 130.0);
 		}
-		if self.next {
-			draw_o(ctx, g, self.loading_tex.as_ref(), 0, 0);
-			self.rendered = true;
-		}
-		draw_o(ctx, g, self.charizard_tex.as_ref(), 129, 49);
+		draw(self.charizard_tex, 129.0, 49.0);
 	}
 	
-	fn input(&mut self, context: &mut GameContext) {
+	fn input(&mut self, _delta: f32) {
 		
-		if context.keys[0] == 1 {
+		if input::pressed(crate::util::input::Control::A) {
 			if !self.next {
 				// music::play_sound(&Sound::CryCharizard, music::Repeat::Times(0), 0.05);
-				//self.end_time = SystemTime::now();
+				//self.end_time = Instant::now();
 			}
 			self.next = true;
 		}
 		
 	}
 	
-	fn dispose(&mut self) {}
+	fn quit(&mut self) {}
 	
 	fn name(&self) -> &str {
 		"Title"

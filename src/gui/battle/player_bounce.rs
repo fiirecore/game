@@ -3,7 +3,7 @@ use super::pokemon_gui::PokemonGui;
 
 pub struct PlayerBounce {
 
-    counter: u8,
+    counter: f32,
 	pokemon_up: bool,
     gui_up: bool,
     
@@ -11,13 +11,15 @@ pub struct PlayerBounce {
 
 }
 
+static ONE_THIRD: f32 = 1.0/3.0;
+
 impl PlayerBounce {
 
     pub fn new() -> Self {
 
         Self {
 
-            counter: 0,
+            counter: 0.0,
 			
 			pokemon_up: false,
             gui_up: true,
@@ -28,9 +30,9 @@ impl PlayerBounce {
 
     }
 
-    pub fn update(&mut self, player_pokemon_gui: &mut PlayerPokemonGui) {
-        self.counter = (self.counter + 1) % 20;
-        if self.counter == 0 {
+    pub fn update(&mut self, delta: f32, player_pokemon_gui: &mut PlayerPokemonGui) {
+        self.counter = (self.counter + delta) % ONE_THIRD;
+        if self.counter < delta {
             self.pokemon_up = !self.pokemon_up;
             self.pokemon_offset = if self.pokemon_up {
                 1
@@ -38,12 +40,13 @@ impl PlayerBounce {
                 0
             };
         }
-        if self.counter == 10 {
+        let panel = self.counter - ONE_THIRD / 2.0;
+        if panel >= 0.0 && panel < delta {
             self.gui_up = !self.gui_up;
             if self.gui_up {
-                player_pokemon_gui.offset_position(0, -1);
+                player_pokemon_gui.offset_position(0.0, -1.0);
             } else {
-                player_pokemon_gui.offset_position(0, 1);
+                player_pokemon_gui.offset_position(0.0, 1.0);
             };
         }
     }

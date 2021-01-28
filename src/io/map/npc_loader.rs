@@ -1,59 +1,59 @@
-use std::collections::HashMap;
 use std::fs::ReadDir;
 use std::fs::read_dir;
-use std::fs::read_to_string;
+use crate::util::file::read_to_string;
 use std::path::Path;
-use std::path::PathBuf;
-
-use log::warn;
-
+use macroquad::prelude::info;
+use macroquad::prelude::warn;
 use crate::entity::texture::still_texture_manager::StillTextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-
-use crate::util::file::asset_as_pathbuf;
-use crate::util::texture_util::texture_from_path;
 use crate::world::npc::NPC;
 
-pub fn load_npc_textures(npc_textures: &mut HashMap<u8, ThreeWayTexture>) {
+pub async fn load_npc_textures(npc_textures: &mut ahash::AHashMap<u8, ThreeWayTexture>) {
+    info!("Loading NPC textures...");
 
-    match asset_as_pathbuf("world").join("textures").join("npcs").read_dir() {
-        Ok(readdir) => {
-            let paths: Vec<Result<PathBuf, std::io::Error>> = readdir.map( |res| res.map(|e| e.path())).collect();
-            for path in paths {
-                match path {
-                    Ok(path) => {
-                        if path.is_dir() {
-                            match path.file_name().unwrap().to_str().unwrap().parse::<u8>() {
-                                Ok(id) => {
-                                    let mut twt = ThreeWayTexture::new();
-                                    let vec: Vec<_> = path.read_dir().unwrap().collect();
-                                    if vec.len() > 4 {
-                                        warn!("Moving NPC textures found under id {}, not supported yet.", id);
-                                    }
-                                    twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(path.join("idle_up.png")), false)));
-                                    twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(path.join("idle_down.png")), false)));
-                                    twt.add_texture_manager(Box::new(StillTextureManager::new(texture_from_path(path.join("idle_side.png")), false)));                                   
-                                    npc_textures.insert(id, twt); // fix
-                                }
-                                Err(err) => {
-                                    warn!("Found an npc texture folder with an unparsable name at {:?} with error {}", path, err);
-                                }
-                            }
+    let mut archive = crate::io::map::WORLD_ARCHIVE.lock();
+
+    let mut npctex_paths: ahash::AHashSet<String> = ahash::AHashSet::new();
+
+    for entry in archive.file_names() {
+        if entry.starts_with("textures/npcs") && !entry.ends_with(".png") && entry.len() > 14 {
+            npctex_paths.insert(entry.to_string());
+        }
+    }
+
+    for root_path in npctex_paths {
+
+        let mut up = root_path.clone();
+        up.push_str("idle_up.png");
+        let mut down = root_path.clone();
+        down.push_str("idle_down.png");
+        let mut side = root_path.clone();
+        side.push_str("idle_side.png");
+
+        let files = [up, down, side];
+
+        match root_path[14..root_path.len() - 1].parse::<u8>() {
+            Ok(id) => {
+                let mut twt = ThreeWayTexture::new();
+                for file in &files {
+                    let mut buf: Vec<u8> = Vec::new();
+                    match std::io::Read::read_to_end(&mut archive.by_name(file).expect(&format!("Could not find idle_up file for NPC {}", id)), &mut buf) {
+                        Ok(_) => {
+                            twt.add_texture_manager(Box::new(StillTextureManager::new(crate::util::texture::byte_texture(buf.as_slice()), false)));
                         }
-                    },
-                    Err(err) => {
-                        warn!("{}", err);
+                        Err(err) => {
+                            warn!("Could not read image in world archive {} with error {}", &root_path, err);
+                        }
                     }
                 }
+                npc_textures.insert(id, twt);
             }
-        },
-        Err(err) => {
-            warn!("Error reading NPC textures directory with error: {}", err);
-        },
+            Err(err) => warn!("Found an npc texture folder with an unparsable name at {:?} with error {}", &root_path, err),
+        }
     }
 }
 
-pub fn load_npc_entries<P>(root_path: P, map_index: Option<usize>) -> Vec<NPC> where P: AsRef<Path> {
+pub async fn load_npc_entries<P>(root_path: P, map_index: Option<usize>) -> Vec<NPC> where P: AsRef<Path> {
     let root_path = root_path.as_ref();
     let npc_path = root_path.join("npcs");
 
@@ -67,7 +67,7 @@ pub fn load_npc_entries<P>(root_path: P, map_index: Option<usize>) -> Vec<NPC> w
                     map_set.push_str(map_index.to_string().as_str());
                     match read_dir(&npc_path.join(map_set)) {
                         Ok(dir) => {
-                            if let Some(err) = get_npc_from_directory(&mut npcs, dir) {
+                            if let Some(err) = get_npc_from_directory(&mut npcs, dir).await {
                                 warn!(
                                     "Error fetching npc under {:?} with error: {}",
                                     root_path, err
@@ -80,7 +80,7 @@ pub fn load_npc_entries<P>(root_path: P, map_index: Option<usize>) -> Vec<NPC> w
                     }                    
                 },
                 None => {
-                    if let Some(err) = get_npc_from_directory(&mut npcs, dir) {
+                    if let Some(err) = get_npc_from_directory(&mut npcs, dir).await {
                         warn!(
                             "Error fetching npc under {:?} with error: {}",
                             &npc_path, err
@@ -101,11 +101,11 @@ pub fn load_npc_entries<P>(root_path: P, map_index: Option<usize>) -> Vec<NPC> w
     npcs
 }
 
-pub fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: ReadDir) -> Option<std::io::Error> {
+pub async fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: ReadDir) -> Option<std::io::Error> {
     for path_result in dir.map(|res| res.map(|e| e.path())) {
         match path_result {
             Ok(path) => {
-                if let Some(npc_entry) = load_npc(path) {
+                if let Some(npc_entry) = load_npc(path).await {
                     npcs.push(npc_entry);
                 }
             }
@@ -117,12 +117,10 @@ pub fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: ReadDir) -> Option<std::
     return None;
 }
 
-pub fn load_npc<P>(path: P) -> Option<NPC> where P: AsRef<Path> {
+pub async fn load_npc<P>(path: P) -> Option<NPC> where P: AsRef<Path> {
     let path = path.as_ref();
 
-    let string_result = read_to_string(path);
-
-    match string_result {
+    match read_to_string(path).await {
         Ok(string) => {
 
             let npc_entry: Result<NPC, serde_json::Error> = serde_json::from_str(string.as_str());

@@ -1,3 +1,4 @@
+use macroquad::rand::gen_range;
 use serde::{Deserialize, Serialize};
 
 pub mod moves;
@@ -119,15 +120,15 @@ pub struct LargeStatSet {
 
 impl StatSet {
 
-	pub fn iv_random(random: &mut oorandom::Rand32) -> Self {
+	pub fn iv_random() -> Self {
 
 		Self {
-			hp: random.rand_range(0..32) as u8,
-			atk: random.rand_range(0..32) as u8,
-			def: random.rand_range(0..32) as u8,
-			sp_atk: random.rand_range(0..32) as u8,
-			sp_def: random.rand_range(0..32) as u8,
-			speed: random.rand_range(0..32) as u8,
+			hp: gen_range(0, 32),
+			atk: gen_range(0, 32),
+			def: gen_range(0, 32),
+			sp_atk: gen_range(0, 32),
+			sp_def: gen_range(0, 32),
+			speed: gen_range(0, 32),
 		}
 
 	}

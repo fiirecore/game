@@ -1,7 +1,7 @@
-use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
+// use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
 use crate::io::data::player_data::PlayerData;
 use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
-use crate::util::traits::Loadable;
+use crate::util::Load;
 use crate::util::file::PersistantData;
 
 use super::pokedex::pokemon::pokemon_owned::OwnedPokemon;
@@ -10,7 +10,7 @@ pub struct PlayerDataContainer {
 
     player_data: PlayerData,
 
-    party_gui: PokemonPartyGui,
+    //party_gui: PokemonPartyGui,
 
 }
 
@@ -22,7 +22,7 @@ impl PlayerDataContainer {
 
             player_data: player_data,
 
-            party_gui: PokemonPartyGui::new(),
+            //party_gui: PokemonPartyGui::new(),
 
         }
 
@@ -56,10 +56,10 @@ impl PlayerDataContainer {
 
 }
 
-impl Loadable for PlayerDataContainer {
+impl Load for PlayerDataContainer {
 
     fn load(&mut self) {
-        self.party_gui.load();
+        //self.party_gui.load();
     }
 
 }

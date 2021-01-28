@@ -1,11 +1,8 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-use crate::util::context::GameContext;
+use crate::util::Load;
 use crate::util::text_renderer::TextRenderer;
 
 use crate::game::game_manager::GameManager;
 use crate::scene::Scene;
-use crate::scene::SceneLoad;
 
 pub struct GameScene {
 
@@ -17,13 +14,13 @@ pub struct GameScene {
 
 impl GameScene {
 	
-	pub fn new() -> GameScene {
+	pub async fn new() -> GameScene {
 
 		GameScene {
 			
 			scene_token: 0,
 
-			game_manager: GameManager::new(),
+			game_manager: GameManager::new().await,
 
 		}
 
@@ -31,34 +28,34 @@ impl GameScene {
 	
 }
 
+//#[async_trait::async_trait]
+impl Load for GameScene {
 
-impl SceneLoad for GameScene {
-
-	fn load(&mut self, _context: &mut GameContext) {
+	fn load(&mut self) {
 		self.game_manager.load();
 	}
 
-	fn on_start(&mut self, context: &mut GameContext) {
-		self.game_manager.on_start(context);
+	fn on_start(&mut self) {
+		self.game_manager.on_start();
 	}
 }
 
 impl Scene for GameScene {
 	
-	fn update(&mut self, context: &mut GameContext) {
-		self.game_manager.update(context);		
+	fn update(&mut self, delta: f32) {
+		self.game_manager.update(delta);	
 	}
 	
-	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-		self.game_manager.render(ctx, g, tr)
+	fn render(&self, tr: &TextRenderer) {
+		self.game_manager.render(tr);
 	}
 	
-	fn input(&mut self, context: &mut GameContext) {
-		self.game_manager.input(context);
+	fn input(&mut self, delta: f32) {
+		self.game_manager.input(delta);
 	}
 
-	fn dispose(&mut self) {
-		self.game_manager.dispose();
+	fn quit(&mut self) {
+		self.game_manager.quit();
 	}
 	
 	fn name(&self) -> &str {

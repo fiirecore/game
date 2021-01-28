@@ -1,23 +1,19 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-use crate::util::context::GameContext;
 use crate::util::file::PersistantData;
+use crate::util::file::PersistantDataLocation;
+use crate::util::input::Control;
 use crate::util::text_renderer::TextRenderer;
-
 use crate::entity::Entity;
 use crate::io::data::player_data::PlayerData;
 use crate::battle::battle_manager::BattleManager;
 use crate::game::pokedex::pokedex::Pokedex;
-
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::Completable;
+use crate::util::Load;
 use crate::world::map::manager::WorldManager;
-
 use super::player_data_container::PlayerDataContainer;
 
 pub struct GameManager {
 
-	world_manager: WorldManager,
+	pub(crate) world_manager: WorldManager,
 
 	battle_manager: BattleManager,
 
@@ -32,17 +28,19 @@ pub struct GameManager {
 
 impl GameManager {
 
-    pub fn new() -> GameManager {
+    pub async fn new() -> GameManager {
+
+		let data = PlayerDataContainer::new(PlayerData::load_from_file());
 
 		GameManager {
 			
-			world_manager: WorldManager::default(),
+			world_manager: WorldManager::new(data.get()).await,
 
 			battle_manager: BattleManager::new(),
 
 			pokedex: Pokedex::new(),
 
-			player_data: PlayerDataContainer::new(PlayerData::load_from_file()),
+			player_data: data,
 
 			battling: false,
 			swapped: false,
@@ -52,13 +50,11 @@ impl GameManager {
     }
     
     pub fn load(&mut self) {
-		self.player_data.load();
-		self.pokedex.load();
+		self.player_data.load(); // loads gui
 		if self.player_data.get().party.pokemon.len() == 0 {
 			self.player_data.get_mut().default_add(&self.pokedex);
 		}		
 		self.battle_manager.load();
-		self.world_manager.load(self.player_data.get());
 	}
 
 	// pub fn load_sounds(&mut self, context: &mut GameContext) {
@@ -66,20 +62,20 @@ impl GameManager {
 	// 	Music::bind_battle_music(context);
 	// }
 
-    pub fn on_start(&mut self, context: &mut GameContext) {
-        self.world_manager.on_start(context);
+    pub fn on_start(&mut self) {
+        self.world_manager.on_start();
     }
 
-    pub fn update(&mut self, context: &mut GameContext) {
+    pub fn update(&mut self, delta: f32) {
 
 		if !self.battling {
 
-			self.world_manager.update(context);
+			self.world_manager.update(delta);
 
-			if context.battle_data.is_some() {
+			if crate::util::battle_data::BATTLE_DATA.lock().is_some() {
 				self.battling = true;
 				self.swapped = true;
-				self.battle_manager.on_start(context, &self.pokedex, self.player_data.get());
+				self.battle_manager.on_start(&self.pokedex, self.player_data.get());
 			}
 
 		} else {
@@ -87,12 +83,12 @@ impl GameManager {
 				// context.battle_context.reset();
 				self.swapped = false;				
 			}
-			self.battle_manager.update(context, self.player_data.get_mut());
+			self.battle_manager.update(delta, self.player_data.get_mut());
 			if self.battle_manager.is_finished() {
 				self.battling = false;
 				self.swapped = true;
-				context.stop_music();
-				self.world_manager.play_music(context);
+				//context.stop_music();
+				self.world_manager.play_music();
 			}
 		}
 
@@ -103,23 +99,28 @@ impl GameManager {
 		
 	}
 	
-	pub fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+	pub fn render(&self, tr: &TextRenderer) {
 		if !self.battling {
-			self.world_manager.render(ctx, g, tr);
+			self.world_manager.render(tr);
 		} else {
 			if self.battle_manager.world_active() {
-				self.world_manager.render(ctx, g, tr);
+				self.world_manager.render(tr);
 			}
-			self.battle_manager.render(ctx, g, tr);
+			self.battle_manager.render(tr);
 		}
 	}
 	
-	pub fn input(&mut self, context: &mut GameContext) {
+	pub fn input(&mut self, delta: f32) {
+
+		if crate::util::input::pressed(Control::Start) {
+			self.save_data();
+		}
+
 		if !self.battling {
-			self.world_manager.input(context);
+			self.world_manager.input(delta);
 		} else {
-			self.battle_manager.input(context);
-			// if context.fkeys[0] == 1 {
+			self.battle_manager.input(delta);
+			// if context.finput.pressed(crate::util::input::Control::A) {
 			// 	self.battle_intro_manager.despawn();
 			// 	self.battling = false;
 			// 	self.swapped = !self.swapped;
@@ -127,12 +128,13 @@ impl GameManager {
 		}
 	}
 
-	pub fn dispose(&mut self) {
+	pub fn quit(&mut self) {
 		//self.world_manager.dispose();
         self.save_data();       
     }
 
     pub fn save_data(&mut self) {
+		macroquad::prelude::info!("Saving player data...");
 		let player_data = self.player_data.get_mut();
         // player_data.world_id = self.world_manager.world_id.clone();
         if self.world_manager.chunk_map.is_alive() {

@@ -1,18 +1,18 @@
 use crate::entity::Entity;
-use crate::util::context::GameContext;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleCloser;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::render_util::draw_rect;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::render::draw_rect;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
+
 
 pub struct BasicBattleCloser {
 
     alive: bool,
     finished: bool,
 
-    alpha: u8,
+    alpha: f32,
     world_active: bool,
 
 }
@@ -26,7 +26,7 @@ impl BasicBattleCloser {
             alive: false,
             finished: false,
 
-            alpha: 0,
+            alpha: 0.0,
             world_active: false,
 
         }
@@ -35,6 +35,7 @@ impl BasicBattleCloser {
 
 }
 
+impl BattleTransition for BasicBattleCloser {}
 impl BattleCloser for BasicBattleCloser {
     
     fn world_active(&self) -> bool {
@@ -43,22 +44,22 @@ impl BattleCloser for BasicBattleCloser {
 
 }
 
-impl BattleTransition for BasicBattleCloser {
+impl Reset for BasicBattleCloser {
 
     fn reset(&mut self) {
-        self.alpha = 0;
+        self.alpha = 0.0;
         self.world_active = false;
     }    
 
 }
 
-impl Loadable for BasicBattleCloser {
+impl Load for BasicBattleCloser {
 
     fn load(&mut self) {
         
     }
 
-    fn on_start(&mut self, _context: &mut GameContext) {
+    fn on_start(&mut self) {
 
     }
 
@@ -67,26 +68,30 @@ impl Loadable for BasicBattleCloser {
 impl Completable for BasicBattleCloser {
 
     fn is_finished(&self) -> bool {
-        return self.alpha == 0 && self.world_active;
+        return self.alpha <= 0.0 && self.world_active;
     }
 
 }
 
-impl Ticking for BasicBattleCloser {
+impl Update for BasicBattleCloser {
 
-    fn update(&mut self, _context: &mut GameContext) {
+    fn update(&mut self, delta: f32) {
         if self.world_active {
-            self.alpha -= 1;
+            self.alpha -= 60.0 * delta;
         } else {
-            self.alpha += 1;
+            self.alpha += 60.0 * delta;
         }
-        if self.alpha == 32 {
+        if self.alpha >= 32.0 {
             self.world_active = true;
         }
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, _tr: &mut crate::util::text_renderer::TextRenderer) {
-        draw_rect(ctx, g, [0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0, 0, crate::BASE_WIDTH, crate::BASE_HEIGHT);
+}
+
+impl Render for BasicBattleCloser {
+
+    fn render(&self, _tr: &crate::util::text_renderer::TextRenderer) {
+        draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::BASE_WIDTH, crate::BASE_HEIGHT);
     }
 
 }

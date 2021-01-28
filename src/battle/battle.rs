@@ -1,10 +1,5 @@
 use std::fmt::Display;
-
-use opengl_graphics::GlGraphics;
-use opengl_graphics::Texture;
-use piston_window::Context;
-use crate::util::context::GameContext;
-
+use crate::util::texture::Texture;
 use crate::entity::Entity;
 use crate::game::pokedex::pokedex::Pokedex;
 use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
@@ -16,9 +11,7 @@ use crate::io::data::pokemon::Pokemon;
 use crate::io::data::pokemon::moves::MoveCategory;
 use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
 use crate::io::data::pokemon::pokemon_party::PokemonParty;
-use crate::util::file::asset_as_pathbuf;
-use crate::util::render_util::draw_bottom;
-use crate::util::texture_util::texture64_from_path;
+use crate::util::render::draw_bottom;
 
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 
@@ -95,10 +88,10 @@ impl Battle {
 
 	fn load_textures(&mut self) {
 		for i in &self.opponent_pokemon {
-			self.opponent_textures.push(texture64_from_path(asset_as_pathbuf(Pokemon::texture_path("front", &i.pokemon))));
+			self.opponent_textures.push(Pokedex::pokemon_texture(Pokemon::texture_path("front", &i.pokemon)));
 		}
 		for i in &self.player_pokemon {
-			self.player_textures.push(texture64_from_path(asset_as_pathbuf(Pokemon::texture_path("back", &i.instance.pokemon))));
+			self.player_textures.push(Pokedex::pokemon_texture(Pokemon::texture_path("back", &i.instance.pokemon)));
 		}
 	}
 
@@ -106,15 +99,15 @@ impl Battle {
 		self.load_textures();
 	}
 
-	pub fn update(&mut self, context: &mut GameContext, battle_gui: &mut BattleGui, battle_closer_manager: &mut BattleCloserManager) {
+	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, battle_closer_manager: &mut BattleCloserManager) {
 		if self.pmove_queued || self.omove_queued || self.faint_queued {
 			if battle_gui.opponent_pokemon_gui.health_bar.get_width() == 0 {
 				battle_gui.update_gui(&self);
 			}
 			if self.player().base.speed > self.opponent().base.speed {
-				battle_text::pmove(self, battle_gui);
+				battle_text::pmove(delta, self, battle_gui);
 			} else {
-				battle_text::omove(self, battle_gui);
+				battle_text::omove(delta, self, battle_gui);
 			}
 		} else if self.faint {
 			if self.player().current_hp == 0 {
@@ -148,17 +141,17 @@ impl Battle {
 		}
 	}
 	
-	pub fn render(&self, ctx: &mut Context, g: &mut GlGraphics, offset: u16, ppp_y_o: u8) {
-		draw_bottom(ctx, g, &self.opponent_textures[self.opponent_active], 144 - offset as isize, 74);
-		draw_bottom(ctx, g, &self.player_textures[self.player_active], 40 + offset as isize, 113 + ppp_y_o as isize);
+	pub fn render(&self, offset: f32, ppp_y_o: u8) {
+		draw_bottom(self.opponent_textures[self.opponent_active], 144.0 - offset, 74.0);
+		draw_bottom(self.player_textures[self.player_active], 40.0 + offset, 113.0 + ppp_y_o as f32);
 	}
 
 	pub fn queue_player_move(&mut self, index: usize) {
 		self.player_move = self.player_mut().moves[index].use_move();
 	}
 
-	pub fn queue_opponent_move(&mut self, context: &mut GameContext) {
-		let index = context.random.rand_range(0..self.opponent().moves.len() as u32) as usize;
+	pub fn queue_opponent_move(&mut self) {
+		let index = macroquad::rand::gen_range(0, self.opponent().moves.len());
 		self.opponent_move = self.opponent_mut().moves[index].use_move();
 	}
 
@@ -208,7 +201,7 @@ impl Battle {
 		//self.finished = true;
 	}
 	
-//	fn render_above(&mut self, c: &mut Context, g: &mut GlGraphics) {}
+//	fn render_above(&mut self, c: &mut Context, g: &mut G2d) {}
 	
 }
 

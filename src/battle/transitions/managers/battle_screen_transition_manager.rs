@@ -1,18 +1,13 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use crate::audio::music::Music;
-use crate::util::context::GameContext;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
 use crate::battle::transitions::battle_transition_traits::BattleTransitionManager;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::vertical_close_battle_screen_transition::VerticalCloseBattleScreenTransition;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 use crate::battle::battle_info::BattleType;
 
 pub struct BattleScreenTransitionManager {
@@ -41,51 +36,57 @@ impl BattleScreenTransitionManager {
         self.transitions.push(Box::new(VerticalCloseBattleScreenTransition::new()));
     }
 
-    pub fn on_start(&mut self, context: &mut GameContext, battle_type: BattleType) {
+    pub fn on_start(&mut self, battle_type: BattleType) {
 
         self.transitions[self.current_transition_id].spawn();
-        self.transitions[self.current_transition_id].on_start(context);
+        self.transitions[self.current_transition_id].on_start();
 
-        match battle_type {
-            BattleType::Wild => {
-                context.play_music(Music::BattleWild);
-            }
-            BattleType::Trainer => {
-                context.play_music(Music::BattleTrainer);
-            }
-            BattleType::GymLeader => {
-                context.play_music(Music::BattleGym);
-            }
+        // match battle_type {
+        //     BattleType::Wild => {
+        //         context.play_music(Music::BattleWild);
+        //     }
+        //     BattleType::Trainer => {
+        //         context.play_music(Music::BattleTrainer);
+        //     }
+        //     BattleType::GymLeader => {
+        //         context.play_music(Music::BattleGym);
+        //     }
+        // }
+    }
+
+    pub fn render_below_player(&mut self, tr: &TextRenderer) {
+        self.transitions[self.current_transition_id].render_below_player(tr);
+    }
+
+}
+
+impl Update for BattleScreenTransitionManager {
+
+    fn update(&mut self, delta: f32) {
+        if self.is_alive() {
+            self.transitions[self.current_transition_id].update(delta);
+        }        
+    }
+
+}
+
+impl Render for BattleScreenTransitionManager {
+
+    fn render(&self, tr: &TextRenderer) {
+        if self.is_alive() {
+            self.transitions[self.current_transition_id].render(tr);
         }
     }
 
-    pub fn render_below_player(&mut self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-        self.transitions[self.current_transition_id].render_below_player(ctx, g, tr);
-    }
+}
+
+impl BattleTransitionManager for BattleScreenTransitionManager {}
+
+impl Reset for BattleScreenTransitionManager {
 
     fn reset(&mut self) {
         self.transitions[self.current_transition_id].reset();
     }
-
-}
-
-impl Ticking for BattleScreenTransitionManager {
-
-    fn update(&mut self, context: &mut GameContext) {
-        if self.is_alive() {
-            self.transitions[self.current_transition_id].update(context);
-        }        
-    }
-
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-        if self.is_alive() {
-            self.transitions[self.current_transition_id].render(ctx, g, tr);
-        }
-    }
-
-}
-
-impl BattleTransitionManager for BattleScreenTransitionManager {
 
 }
 
@@ -97,7 +98,7 @@ impl Completable for BattleScreenTransitionManager {
 
 }
 
-impl Loadable for BattleScreenTransitionManager {
+impl Load for BattleScreenTransitionManager {
 
     fn load(&mut self) {
 

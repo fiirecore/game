@@ -1,0 +1,43 @@
+pub use macroquad::prelude::Texture2D as Texture;
+use macroquad::prelude::FilterMode::Nearest;
+use macroquad::prelude::set_texture_filter;
+
+pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
+	let path = path.as_ref();
+	let texture = macroquad::prelude::load_texture(path.to_str().expect("Could not unwrap path to string")).await;
+	set_texture_filter(texture, Nearest);
+	texture
+}
+
+pub fn load_texture_noasync<P: AsRef<std::path::Path>>(path: P) -> Texture {
+	let path = path.as_ref();
+	return match super::file::read_noasync(path) {
+	    Some(bytes) => byte_texture(bytes.as_slice()),
+	    None => {
+			macroquad::prelude::warn!("Could not read texture at path {:?} with error", path);
+			debug_texture()
+		}
+	}	
+}
+
+pub fn byte_texture(bytes: &[u8]) -> Texture {
+	image_texture(&super::image::open_image_bytes(bytes))
+}
+
+pub fn image_texture(image: &macroquad::prelude::Image) -> Texture {
+	let texture = macroquad::prelude::load_texture_from_image(image);
+	set_texture_filter(texture, Nearest);
+	texture
+}
+
+pub fn rgbaimage_texture(image: image::RgbaImage) -> Texture {
+	image_texture(&macroquad::prelude::Image {
+	    width: image.width() as u16,
+	    height: image.height() as u16,
+	    bytes: image.into_raw(),
+	})	
+}
+
+pub fn debug_texture() -> Texture {
+	byte_texture(include_bytes!("../../include/missing_texture.png"))
+}

@@ -1,8 +1,5 @@
-use std::collections::HashMap;
-
-use opengl_graphics::Texture;
-
-use crate::util::context::GameContext;
+use ahash::AHashMap;
+use crate::util::texture::Texture;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::world::RenderCoords;
 use crate::world::World;
@@ -50,16 +47,16 @@ impl World for WorldChunk {
         self.map.check_warp(x - self.x, y - self.y)
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
-        self.map.render(ctx, g, textures, npc_textures, screen.offset(self.x, self.y), border)
+    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+        self.map.render(textures, npc_textures, screen.offset(self.x, self.y), border)
     }
 
-    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize) {
-        self.map.on_tile(context, x - self.x, y - self.y)
+    fn on_tile(&mut self, x: isize, y: isize) {
+        self.map.on_tile(x - self.x, y - self.y)
     }
 
-    fn input(&mut self, context: &mut GameContext, player: &Player) {
-        self.map.input(context, player)
+    fn input(&mut self, delta: f32, player: &Player) {
+        self.map.input(delta, player)
     }
 
     fn in_bounds(&self, x: isize, y: isize) -> bool {

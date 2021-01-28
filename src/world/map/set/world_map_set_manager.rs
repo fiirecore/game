@@ -1,8 +1,7 @@
-use std::collections::HashMap;
+use ahash::AHashMap;
 use std::collections::hash_map::Values;
-
+use crate::util::texture::Texture;
 use crate::entity::Entity;
-use crate::util::context::GameContext;
 use crate::world::RenderCoords;
 use crate::world::World;
 use crate::world::player::Player;
@@ -15,7 +14,7 @@ pub struct WorldMapSetManager {
 
     alive: bool,
 
-    map_sets: HashMap<String, WorldMapSet>,
+    map_sets: AHashMap<String, WorldMapSet>,
     current_map_set: String,
 
 }
@@ -78,16 +77,16 @@ impl World for WorldMapSetManager {
         self.map_set().check_warp(x, y)
     }
 
-    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize) {
-        self.map_set_mut().on_tile(context, x, y)
+    fn on_tile(&mut self, x: isize, y: isize) {
+        self.map_set_mut().on_tile(x, y)
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, opengl_graphics::Texture>, npc_textures: &HashMap<u8, crate::entity::texture::three_way_texture::ThreeWayTexture>, screen: RenderCoords, border: bool) {
-        self.map_set().render(ctx, g, textures, npc_textures, screen, border)
+    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, crate::entity::texture::three_way_texture::ThreeWayTexture>, screen: RenderCoords, border: bool) {
+        self.map_set().render(textures, npc_textures, screen, border)
     }
 
-    fn input(&mut self, context: &mut GameContext, player: &Player) {
-        self.map_set_mut().input(context, player)
+    fn input(&mut self, delta: f32, player: &Player) {
+        self.map_set_mut().input(delta, player)
     }
 }
 

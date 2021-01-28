@@ -9,14 +9,13 @@ pub mod gui {
 
 pub mod player;
 
-use std::collections::HashMap;
+use ahash::AHashMap;
 
-use opengl_graphics::GlGraphics;
-use opengl_graphics::Texture;
-use piston_window::Context;
+
+use crate::util::texture::Texture;
+
 
 use crate::util::TILE_SIZE;
-use crate::util::context::GameContext;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 
 use crate::world::warp::WarpEntry;
@@ -33,11 +32,11 @@ pub trait World {
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry>;
 
-    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize);
+    fn on_tile(&mut self, x: isize, y: isize);
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool);
+    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool);
 
-    fn input(&mut self, context: &mut GameContext, player: &Player);
+    fn input(&mut self, delta: f32, player: &Player);
 
 }
 
@@ -49,8 +48,8 @@ pub struct RenderCoords {
     pub top: isize,
     pub bottom: isize,
 
-    pub x_focus: isize,
-    pub y_focus: isize,
+    pub x_focus: f32,
+    pub y_focus: f32,
 
     pub x_tile_offset: isize,
     pub y_tile_offset: isize,
@@ -74,8 +73,8 @@ impl RenderCoords {
             top: player.position.y - HALF_HEIGHT_TILE,
             bottom: player.position.y + HALF_HEIGHT_TILE,
 
-            x_focus: (player.position.x + 1 << 4) + player.position.x_offset as isize - HALF_WIDTH,
-            y_focus: (player.position.y + 1 << 4) + player.position.y_offset as isize - HALF_HEIGHT,
+            x_focus: (player.position.x + 1 << 4) as f32 + player.position.x_offset - HALF_WIDTH as f32,
+            y_focus: (player.position.y + 1 << 4) as f32 + player.position.y_offset - HALF_HEIGHT as f32,
 
             ..Default::default()
         }

@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::util::input::Control;
+
 pub mod configuration;
 pub mod player_data;
 pub mod game_data;
@@ -50,21 +52,21 @@ impl Direction {
 
 	// Input
 
-	pub fn keybind(&self) -> usize {
+	pub fn keybind(&self) -> Control {
 		match *self {
-		    Direction::Up => 2,
-		    Direction::Down => 3,
-		    Direction::Left => 4,
-		    Direction::Right => 5,
+		    Direction::Up => Control::Up,
+		    Direction::Down => Control::Down,
+		    Direction::Left => Control::Left,
+		    Direction::Right => Control::Right,
 		}
 	}
 
-	pub fn offset(&self) -> (i8, i8) {
+	pub fn offset(&self) -> (f32, f32) {
 		match *self {
-		    Direction::Up => (0, -1),
-		    Direction::Down => (0, 1),
-		    Direction::Left => (-1, 0),
-		    Direction::Right => (1, 0),
+		    Direction::Up => (0.0, -1.0),
+		    Direction::Down => (0.0, 1.0),
+		    Direction::Left => (-1.0, 0.0),
+		    Direction::Right => (1.0, 0.0),
 		}
 	}
 
@@ -85,16 +87,16 @@ pub struct Location {
 
 }
 
-#[derive(Debug, Default, Clone, Copy, Hash, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
 pub struct Position {
 
 	pub x: isize,
     pub y: isize,
 	pub direction: Direction,
     #[serde(skip)]
-    pub x_offset: i8,
+    pub x_offset: f32,
     #[serde(skip)]
-	pub y_offset: i8,
+	pub y_offset: f32,
 
 }
 

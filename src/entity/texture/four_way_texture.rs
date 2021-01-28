@@ -1,4 +1,4 @@
-use opengl_graphics::Texture;
+use crate::util::texture::Texture;
 
 use super::movement_texture_manager::MovementTextureManager;
 use super::texture_manager::TextureManager;
@@ -27,12 +27,12 @@ impl FourWayMovingTexture {
         self.textures.push(movement_texture);
     }
 
-    pub fn update_with_direction(&mut self, direction: u8) {
+    pub fn update_with_direction(&mut self, delta: f32, direction: u8) {
         if self.direction != direction {
             self.direction = direction;
             self.textures[self.direction as usize].reset();
         } else {
-            self.update();
+            self.update(delta);
         }
     }
 
@@ -44,8 +44,8 @@ impl TextureManager for FourWayMovingTexture {
         self.textures[self.direction as usize].reset();
     }
 
-    fn update(&mut self) {
-        self.textures[self.direction as usize].update();
+    fn update(&mut self, delta: f32) {
+        self.textures[self.direction as usize].update(delta);
     }
 
     fn idle(&mut self) {
@@ -60,7 +60,7 @@ impl TextureManager for FourWayMovingTexture {
         self.textures[self.direction as usize].is_idle()
     }
 
-    fn texture(&self) -> (&Texture, bool) {
+    fn texture(&self) -> (Texture, bool) {
         return self.textures[self.direction as usize].texture();
     }
 

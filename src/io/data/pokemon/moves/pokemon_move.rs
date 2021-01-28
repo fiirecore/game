@@ -3,7 +3,7 @@ use std::path::Path;
 
 use serde::Deserialize;
 
-use log::warn;
+use macroquad::prelude::warn;
 
 use crate::game::pokedex::move_instance::MoveInstance;
 use crate::io::data::pokemon::PokemonType;
@@ -42,27 +42,14 @@ impl PokemonMove {
 		}
     }
     
-    pub fn load_move<P>(path: P) -> Option<PokemonMove> where P: AsRef<Path> {
+    #[deprecated(since = "0.2.0", note = "Include as bytes instead of external file")]
+    pub async fn load_move<P>(path: P) -> Option<PokemonMove> where P: AsRef<Path> {
         let path = path.as_ref();
         
-        match std::fs::read_to_string(path) {
-            Ok(move_string) => {
-                let read_toml: Result<PokemonMove, toml::de::Error> = toml::from_str(move_string.as_str());
-                match read_toml {
-                    Ok(pkmn_move) => {
-                        Some(pkmn_move)
-                    // Some(PokemonMove {
-                    //     name: pkmn_move.name.clone(),
-                    //     category: MoveCategory::from_string(pkmn_move.category.as_str()).unwrap_or_else(|| {
-                    //         warn!("Could not get move category for {}, setting to physical", pkmn_move.name);
-                    //         MoveCategory::Physical
-                    //     }),
-                    //     pokemon_type: PokemonType::from_string(pkmn_move.pokemon_type.as_str()),
-                    //     power: pkmn_move.power,
-                    //     accuracy: pkmn_move.accuracy,
-                    //     pp: pkmn_move.pp,
-                    // })
-                    },
+        match crate::util::file::read_to_string(path).await {
+            Ok(ref data) => {
+                match PokemonMove::from_string(data) {
+                    Ok(pkmn_move) => Some(pkmn_move),
                     Err(err) => {
                         warn!("Could not parse pokemon move toml at {:?} with error: {}", path, err);
                         return None;
@@ -76,6 +63,11 @@ impl PokemonMove {
         }
     
     }
+
+    pub fn from_string(data: &String) -> Result<PokemonMove, toml::de::Error> {
+        return toml::from_str(data);
+    }
+
 
 }
 

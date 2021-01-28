@@ -1,10 +1,6 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use crate::util::context::GameContext;
+use crate::util::Load;
 use crate::util::text_renderer::TextRenderer;
 use crate::scene::Scene;
-use crate::scene::SceneLoad;
 
 pub struct MainMenuScene {
 	scene_token: usize,
@@ -24,14 +20,14 @@ impl MainMenuScene {
 
 }
 
-//#[async_trait::async_trait]
-impl SceneLoad for MainMenuScene {
+////#[async_trait::async_trait]
+impl Load for MainMenuScene {
 
-	fn load(&mut self, _context: &mut GameContext) {
+	fn load(&mut self) {
 
 	}
 
-	fn on_start(&mut self, _context: &mut GameContext) {
+	fn on_start(&mut self) {
 		self.scene_token = 5;
 	}
 
@@ -41,13 +37,13 @@ impl Scene for MainMenuScene {
 
 	// have normal main menu + video settings + controls + exit
 	
-	fn update(&mut self, _context: &mut GameContext) {}
+	fn update(&mut self, _delta: f32) {}
 	
-	fn render(&mut self, _ctx: &mut Context, _g: &mut GlGraphics, _tr: &mut TextRenderer) {}
+	fn render(&self, _tr: &TextRenderer) {}
 	
-	fn input(&mut self, _context: &mut GameContext) {}
+	fn input(&mut self, _delta: f32) {}
 	
-	fn dispose(&mut self) {}
+	fn quit(&mut self) {}
 	
 	fn name(&self) -> &str {
 		&"Main Menu"

@@ -1,19 +1,14 @@
-use log::info;
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-use crate::entity::Ticking;
+use macroquad::prelude::info;
+use crate::util::Reset;
+use crate::util::battle_data::BattleData;
+use crate::util::{Update, Render};
 use crate::game::pokedex::pokedex::Pokedex;
 use crate::gui::battle::battle_gui::BattleGui;
-use crate::util::context::battle_context::BattleData;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::Completable;
+use crate::util::Load;
 use crate::io::data::player_data::PlayerData;
 use crate::util::text_renderer::TextRenderer;
-
-use crate::util::context::GameContext;
-
 use super::battle::Battle;
-// use super::battle_context::BattleData;
 
 use crate::entity::Entity;
 
@@ -44,7 +39,7 @@ impl BattleManager {
 
 			battle_screen_transition_manager: BattleScreenTransitionManager::new(),
 			battle_opener_manager: BattleOpenerManager::new(),
-			battle_closer_manager: BattleCloserManager::new(),
+			battle_closer_manager: BattleCloserManager::default(),
 		
 			current_battle: Battle::default(),
 			battle_data: BattleData::default(),
@@ -63,7 +58,7 @@ impl BattleManager {
 
 }
 
-impl Loadable for BattleManager {
+impl Load for BattleManager {
 
 	fn load(&mut self) {
 
@@ -86,16 +81,24 @@ impl Completable for BattleManager {
 	
 }
 
-impl BattleManager {
+impl Reset for BattleManager {
 
-	pub fn on_start(&mut self, context: &mut GameContext, pokedex: &Pokedex, player_data: &PlayerData) { // add battle type parameter
-		self.finished = false;
-		self.battle_data = context.battle_data.take().unwrap();
-		self.create_battle(player_data, pokedex);
+	fn reset(&mut self) {
 		self.battle_gui.despawn();
 		self.battle_gui.spawn();		
 		self.battle_screen_transition_manager.spawn();
-		self.battle_screen_transition_manager.on_start(context, self.battle_data.battle_type);
+	}
+	
+}
+
+impl BattleManager {
+
+	pub fn on_start(&mut self, pokedex: &Pokedex, player_data: &PlayerData) { // add battle type parameter
+		self.finished = false;
+		self.battle_data = crate::util::battle_data::BATTLE_DATA.lock().take().unwrap();
+		self.create_battle(player_data, pokedex);
+		self.reset();
+		self.battle_screen_transition_manager.on_start(self.battle_data.battle_type);
 	}
 
 	pub fn create_battle(&mut self, player_data: &PlayerData, pokedex: &Pokedex) {
@@ -107,23 +110,23 @@ impl BattleManager {
 		self.battle_gui.on_battle_start(&self.current_battle);
 	}
 
-	pub fn update(&mut self, context: &mut GameContext, player_data: &mut PlayerData) {
+	pub fn update(&mut self, delta: f32, player_data: &mut PlayerData) {
 		
 		if self.battle_screen_transition_manager.is_alive() {
 			if self.battle_screen_transition_manager.is_finished() {
 				self.battle_screen_transition_manager.despawn();
 				self.battle_opener_manager.spawn_type(self.battle_data.battle_type);
-				self.battle_opener_manager.on_start(context);
+				self.battle_opener_manager.on_start();
 				self.battle_opener_manager.battle_introduction_manager.setup_text(&self.current_battle, self.battle_data.trainer_data.as_ref());
 			} else {
-				self.battle_screen_transition_manager.update(context);
+				self.battle_screen_transition_manager.update(delta);
 			}
 		} else if self.battle_opener_manager.is_alive() {
 			if self.battle_opener_manager.is_finished() {
 				self.battle_opener_manager.despawn();
 				self.battle_gui.player_panel.start();
 			} else {
-				self.battle_opener_manager.update(context);
+				self.battle_opener_manager.update(delta);
 				self.battle_opener_manager.battle_introduction_manager.update_gui(&mut self.battle_gui);
 				//self.battle_gui.opener_update(context);
 			}
@@ -133,54 +136,54 @@ impl BattleManager {
 				self.battle_closer_manager.despawn();
 				self.finished = true;
 			} else {
-				self.battle_closer_manager.update(context);
+				self.battle_closer_manager.update(delta);
 			}
 		} else /*if !self.current_battle.is_finished()*/ {
-			self.current_battle.update(context, &mut self.battle_gui, &mut self.battle_closer_manager);
-			self.battle_gui.update(context);
+			self.current_battle.update(delta, &mut self.battle_gui, &mut self.battle_closer_manager);
+			self.battle_gui.update(delta);
 		}
 
 	}	
 
-    pub fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+    pub fn render(&self, tr: &TextRenderer) {
 
 		if self.battle_screen_transition_manager.is_alive() {
-			self.battle_screen_transition_manager.render(ctx, g, tr);
+			self.battle_screen_transition_manager.render(tr);
 		} else if self.battle_opener_manager.is_alive() {
-			self.battle_gui.render_background(ctx, g, self.battle_opener_manager.offset());
-			self.battle_opener_manager.render_below_panel(ctx, g, tr, &self.current_battle);
-			self.battle_gui.render(ctx, g, tr);
-			self.battle_gui.render_panel(ctx, g, tr);
-			self.battle_opener_manager.render(ctx, g, tr);
+			self.battle_gui.render_background(self.battle_opener_manager.offset());
+			self.battle_opener_manager.render_below_panel(tr, &self.current_battle);
+			self.battle_gui.render(tr);
+			self.battle_gui.render_panel(tr);
+			self.battle_opener_manager.render(tr);
 		} else if self.battle_closer_manager.is_alive() {
 			if !self.world_active() {
-				self.battle_gui.render_background(ctx, g, 0);
-				self.current_battle.render(ctx, g, 0, self.battle_gui.player_bounce.pokemon_offset());
-				self.battle_gui.render(ctx, g, tr);
-				self.battle_gui.render_panel(ctx, g, tr);
+				self.battle_gui.render_background(0.0);
+				self.current_battle.render(0.0, self.battle_gui.player_bounce.pokemon_offset());
+				self.battle_gui.render(tr);
+				self.battle_gui.render_panel(tr);
 			}
-			self.battle_closer_manager.render(ctx, g, tr);
+			self.battle_closer_manager.render(tr);
 		} else {
-			self.battle_gui.render_background(ctx, g, 0);
-			self.current_battle.render(ctx, g, 0, self.battle_gui.player_bounce.pokemon_offset());
-			self.battle_gui.render(ctx, g, tr);
-			self.battle_gui.render_panel(ctx, g, tr);
+			self.battle_gui.render_background(0.0);
+			self.current_battle.render(0.0, self.battle_gui.player_bounce.pokemon_offset());
+			self.battle_gui.render(tr);
+			self.battle_gui.render_panel(tr);
 		}
 	}
 	
-	pub fn input(&mut self, context: &mut GameContext) {
+	pub fn input(&mut self, delta: f32) {
 
-		if context.fkeys[0] == 1 {
+		if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F1) {
 			self.battle_closer_manager.spawn() // exit shortcut
 		}
 
 		if !self.battle_screen_transition_manager.is_alive() {	
 			if self.battle_opener_manager.is_alive() {
-				self.battle_opener_manager.battle_introduction_manager.input(context);
+				self.battle_opener_manager.battle_introduction_manager.input(delta);
 			} else if self.battle_closer_manager.is_alive() {
 				//self.battle_closer_manager.input(context);
 			} else {
-				self.battle_gui.input(context, &mut self.current_battle);
+				self.battle_gui.input(delta, &mut self.current_battle);
 			}
 		}
 	}

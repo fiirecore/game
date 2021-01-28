@@ -1,20 +1,12 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use opengl_graphics::Texture;
-use crate::util::context::GameContext;
+use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleOpener;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::file::asset_as_pathbuf;
-use crate::util::render_util::draw;
-
-use crate::util::texture_util::texture_from_path;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
-
+use crate::util::render::draw;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 use super::trainer_battle_opener::TrainerBattleOpener;
 pub struct WildBattleOpener {
 
@@ -26,13 +18,13 @@ pub struct WildBattleOpener {
     grass: Texture,
     
     grass_active: bool,
-    grass_x_offset: i16,
-    grass_y_offset: u8,
+    grass_x_offset: f32,
+    grass_y_offset: f32,
 
 }
 
-static GRASS_X_OFFSET: i16 = 128; // width of image
-static GRASS_Y_OFFSET: u8 = 47; // height of image
+static GRASS_X_OFFSET: f32 = 128.0 * 60.0; // width of image
+static GRASS_Y_OFFSET: f32 = 47.0 * 60.0; // height of image
 
 impl WildBattleOpener {
 
@@ -48,14 +40,14 @@ impl WildBattleOpener {
             grass_active: true,
             grass_x_offset: GRASS_X_OFFSET,
             grass_y_offset: GRASS_Y_OFFSET,
-            grass: texture_from_path(asset_as_pathbuf("gui/battle/grass.png")),
+            grass: crate::util::texture::byte_texture(include_bytes!("../../../../include/gui/battle/grass.png")),
         }
 
     }
 
 }
 
-impl BattleTransition for WildBattleOpener {
+impl Reset for WildBattleOpener {
 
     fn reset(&mut self) {
         self.grass_active = true;
@@ -66,14 +58,14 @@ impl BattleTransition for WildBattleOpener {
     
 }
 
-impl Loadable for WildBattleOpener {
+impl Load for WildBattleOpener {
 
     fn load(&mut self) {
         
     }
 
-    fn on_start(&mut self, context: &mut GameContext) {
-        self.trainer_battle_opener.on_start(context);
+    fn on_start(&mut self) {
+        self.trainer_battle_opener.on_start();
     } 
 
 }
@@ -86,58 +78,56 @@ impl Completable for WildBattleOpener {
 
 }
 
-impl Ticking for WildBattleOpener {
+impl Update for WildBattleOpener {
 
-    fn update(&mut self, context: &mut GameContext) {
-        self.trainer_battle_opener.update(context);
+    fn update(&mut self, delta: f32) {
+        self.trainer_battle_opener.update(delta);
         if self.grass_active {
-            self.grass_x_offset -= 6;
-            if self.grass_x_offset < 0 {
-                self.grass_x_offset += GRASS_X_OFFSET;
+            self.grass_x_offset -= 360.0 * delta;
+            if self.grass_x_offset < 0.0 {
+                self.grass_x_offset += GRASS_X_OFFSET * delta;
             }
-            if self.trainer_battle_opener.offset() <= 130 && self.trainer_battle_opener.offset() % 2 == 0 {
-                self.grass_y_offset -= 1;
+            if self.trainer_battle_opener.offset() <= 130.0 && self.trainer_battle_opener.offset() % 2.0 > 1.0 {
+                self.grass_y_offset -= 60.0 * delta;
             }
-            if self.grass_y_offset <= 0 {
+            if self.grass_y_offset <= 0.0 {
                 self.grass_active = false;
             }
         }
         
     }
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-        self.trainer_battle_opener.render(ctx, g, tr);
+}
+
+impl Render for WildBattleOpener {
+
+    fn render(&self, tr: &TextRenderer) {
+        self.trainer_battle_opener.render(tr);
     }
 
 }
 
 impl BattleOpener for WildBattleOpener {
-    fn offset(&self) -> u16 {
+    fn offset(&self) -> f32 {
         return self.trainer_battle_opener.offset();
     }
 
-    fn render_below_panel(&self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
+    fn render_below_panel(&self, _tr: &TextRenderer) {
         if self.grass_active {
-            let y = 114 - self.grass_y_offset as isize;
+            let y = 114.0 - self.grass_y_offset;
             draw(
-                ctx,
-                g,
-                &self.grass,
-                self.grass_x_offset as isize - GRASS_X_OFFSET as isize,
+                self.grass,
+                self.grass_x_offset - GRASS_X_OFFSET,
                 y,
             );
             draw(
-                ctx,
-                g,
-                &self.grass,
-                self.grass_x_offset as isize as isize,
+                self.grass,
+                self.grass_x_offset,
                 y,
             );
             draw(
-                ctx,
-                g,
-                &self.grass,
-                self.grass_x_offset as isize + GRASS_X_OFFSET as isize,
+                self.grass,
+                self.grass_x_offset + GRASS_X_OFFSET,
                 y,
             );
         }
@@ -162,3 +152,5 @@ impl Entity for WildBattleOpener {
         return self.trainer_battle_opener.is_alive();
     }
 }
+
+impl BattleTransition for WildBattleOpener {}

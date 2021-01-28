@@ -2,4 +2,4 @@
 
 My attempt to code somewhat of a clone of Pokemon FireRed in Rust
 
-Building requires SDL2 and SDL2 dev libraries
+Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux

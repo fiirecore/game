@@ -1,18 +1,22 @@
-use std::collections::HashMap;
-use opengl_graphics::{GlGraphics, ImageSize, Texture, TextureSettings, Filter};
-use piston_window::Context;
+use core::f32;
 
-use image::RgbaImage;
+use ahash::AHashMap;
+use macroquad::prelude::Image;
 
-use crate::util::render_util::{draw, draw_o};
-use crate::util::{file::asset_as_pathbuf, texture_util::texture_from_path};
-use crate::util::image_util::{open_image, get_subimage_wh, get_subimage_at};
+use crate::util::texture::Texture;
+
+use crate::util::render::draw;
+use crate::util::image::{get_subimage_wh, get_subimage_at};
+
+use super::image::open_image_bytes;
+use super::texture::byte_texture;
+use super::texture::image_texture;
 
 pub struct TextRenderer {
 
-    pub(crate) fonts: Vec<HashMap<char, Texture>>,
-    pub(crate) button: Option<Texture>,
-    pub(crate) cursor: Option<Texture>,
+    pub(crate) fonts: Vec<AHashMap<char, Texture>>,
+    pub(crate) button: Texture,
+    pub(crate) cursor: Texture,
 
 }
 
@@ -27,77 +31,71 @@ impl TextRenderer {
     pub fn new() -> TextRenderer {
         TextRenderer {
             fonts: Vec::new(),
-            button: None,
-            cursor: None,
+            button: byte_texture(include_bytes!("../../include/gui/button.png")),
+            cursor: byte_texture(include_bytes!("../../include/gui/cursor.png")),
         }
     }
 
-    pub fn render_text_from_left(&self, ctx: &mut Context, g: &mut GlGraphics, font_id: usize, text: &str, x: isize, y: isize) {
+    pub fn render_text_from_left(&self, font_id: usize, text: &str, x: f32, y: f32) {
         let mut len: u32 = 0;
         for character in text.chars() {
-            match self.fonts[font_id].get(&character) {
+            len += match self.fonts[font_id].get(&character) {
                 Some(texture) => {
-                    draw(ctx, g, texture, x + len as isize, y);
-                    len += texture.get_width();
+                    draw(*texture, x + len as f32, y);
+                    texture.width() as u32
                 },
                 None => {
-                    len += self.fonts[font_id].values().next().unwrap().get_width();
+                    self.fonts[font_id].values().next().unwrap().width() as u32
                 }
-            }            
+            };          
         }
     }
 
-    pub fn render_text_from_right(&self, ctx: &mut Context, g: &mut GlGraphics, font_id: usize, text: &str, x: isize, y: isize) {
-        let mut len: u32 = 0;
-        let x_offset = self.text_pixel_length(font_id, text);
+    pub fn render_text_from_right(&self, font_id: usize, text: &str, x: f32, y: f32) {
+        let mut len = 0.0;
+        let x_offset = self.text_pixel_length(font_id, text) as f32;
         for character in text.chars() {
-            match self.fonts[font_id].get(&character) {
+            len += match self.fonts[font_id].get(&character) {
                 Some(texture) => {
-                    draw(ctx, g, texture, x - x_offset as isize + len as isize, y);
-                    len += texture.get_width();
+                    draw(*texture, x - x_offset + len as f32, y);
+                    texture.width()
                 },
                 None => {
-                    len += self.fonts[font_id].values().next().unwrap().get_width();
+                    self.fonts[font_id].values().next().unwrap().width()
                 }
-            }            
+            };         
         }
     }
 
-    pub fn text_pixel_length(&self, font_id: usize, text: &str) -> u32 {
-        let mut len = 0;
+    pub fn text_pixel_length(&self, font_id: usize, text: &str) -> f32 {
+        let mut len = 0.0;
         for character in text.chars() {
-            if let Some(texture) = self.fonts[font_id].get(&character) {
-                len += texture.get_width();
+            len += if let Some(texture) = self.fonts[font_id].get(&character) {
+                texture.width()
             } else {
-                len += self.fonts[font_id].values().next().unwrap().get_width();
+                self.fonts[font_id].values().next().unwrap().width()
             }
-        }
+        };
         return len;
     }
 
-    pub fn render_button(&self, ctx: &mut Context, g: &mut GlGraphics, text: &str, font_id: usize, offset: i8, x: isize, y: isize) {
-        let len = self.text_pixel_length(font_id, text) as isize;
-        draw_o(ctx, g, self.button.as_ref(), x + len, y + offset as isize + 5);
+    pub fn render_button(&self, text: &str, font_id: usize, offset: f32, x: f32, y: f32) {
+        draw(self.button, x + self.text_pixel_length(font_id, text) as f32, y + offset + 5.0);
     }
 
-    pub fn render_cursor(&self, ctx: &mut Context, g: &mut GlGraphics, x: isize, y: isize) {
-        draw_o(ctx, g, self.cursor.as_ref(), x, y);
-    }
-
-    pub fn load_textures(&mut self) {
-        self.button = Some(texture_from_path(asset_as_pathbuf("gui/button.png")));
-        self.cursor = Some(texture_from_path(asset_as_pathbuf("gui/cursor.png")));
+    pub fn render_cursor(&self, x: f32, y: f32) {
+        draw(self.cursor, x, y);
     }
 
     pub fn default_add(&mut self) {
         self.default_add_type0();
-        self.default_add_type1(1);
-        self.default_add_type1(2);
+        self.default_add_type1(include_bytes!("../../include/font1.png"), 1);
+        self.default_add_type1(include_bytes!("../../include/font2.png"), 2);
     }
 
     fn default_add_type0(&mut self) {
-        self.fonts.push(HashMap::new());
-        let font_sheet0 = open_image(asset_as_pathbuf("font0.png")).expect("Could not find font sheet #0!");
+        self.fonts.push(AHashMap::new());
+        let font_sheet0 = open_image_bytes(include_bytes!("../../include/font0.png"));
         let alphanumerics = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀".chars();
         let mut index: usize = 0;
         for character in alphanumerics {
@@ -108,18 +106,16 @@ impl TextRenderer {
         self.remove_char(0, 'T');
         self.remove_char(0, 'Y');
         self.remove_char(0, 'i');
-        self.fonts[0].insert('I', get_tex(&get_subimage_at(&font_sheet0, 40, 0, 4, TEXT_HEIGHT0 as u32)));
-        self.fonts[0].insert('T', get_tex(&get_subimage_at(&font_sheet0, 95, 0, 4, TEXT_HEIGHT0 as u32)));
-        self.fonts[0].insert('Y', get_tex(&get_subimage_at(&font_sheet0, 120, 0, 4, TEXT_HEIGHT0 as u32)));
-        self.fonts[0].insert('i', get_tex(&get_subimage_at(&font_sheet0, 40, 12, 4, TEXT_HEIGHT0 as u32)));
+        self.fonts[0].insert('I', image_texture(&get_subimage_at(&font_sheet0, 40, 0, 4, TEXT_HEIGHT0 as u32)));
+        self.fonts[0].insert('T', image_texture(&get_subimage_at(&font_sheet0, 95, 0, 4, TEXT_HEIGHT0 as u32)));
+        self.fonts[0].insert('Y', image_texture(&get_subimage_at(&font_sheet0, 120, 0, 4, TEXT_HEIGHT0 as u32)));
+        self.fonts[0].insert('i', image_texture(&get_subimage_at(&font_sheet0, 40, 12, 4, TEXT_HEIGHT0 as u32)));
     }
 
-    fn default_add_type1(&mut self, id: usize) {
-        let mut filename = String::from("font");
-        filename.push_str(id.to_string().as_str());
-        filename.push_str(".png");
-        self.fonts.push(HashMap::new());
-        let font_sheet1 = open_image(asset_as_pathbuf(filename)).expect("Could not find font sheet #1!");
+    fn default_add_type1(&mut self, bytes: &[u8], id: usize) {
+        let font_sheet1 = open_image_bytes(bytes);
+        self.fonts.push(AHashMap::new());
+        
         let alphanumerics = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀!?".chars();
         let mut index: usize = 0;
         for character in alphanumerics {
@@ -133,26 +129,21 @@ impl TextRenderer {
         self.remove_char(id, 'r');
         self.remove_char(id, 's');
         self.remove_char(id, 't');
-        self.fonts[id].insert('i', get_tex(&get_subimage_at(&font_sheet1, 48, 14, 4, 14)));
-        self.fonts[id].insert('k', get_tex(&get_subimage_at(&font_sheet1, 60, 14, 5, 14)));
-        self.fonts[id].insert('l', get_tex(&get_subimage_at(&font_sheet1, 66, 14, 5, 14)));
-        self.fonts[id].insert('n', get_tex(&get_subimage_at(&font_sheet1, 78, 14, 5, 14)));
-        self.fonts[id].insert('r', get_tex(&get_subimage_at(&font_sheet1, 102, 14, 5, 14)));
-        self.fonts[id].insert('s', get_tex(&get_subimage_at(&font_sheet1, 108, 14, 5, 14)));
-        self.fonts[id].insert('t', get_tex(&get_subimage_at(&font_sheet1, 114, 14, 5, 14)));
+        self.fonts[id].insert('i', image_texture(&get_subimage_at(&font_sheet1, 48, 14, 4, 14)));
+        self.fonts[id].insert('k', image_texture(&get_subimage_at(&font_sheet1, 60, 14, 5, 14)));
+        self.fonts[id].insert('l', image_texture(&get_subimage_at(&font_sheet1, 66, 14, 5, 14)));
+        self.fonts[id].insert('n', image_texture(&get_subimage_at(&font_sheet1, 78, 14, 5, 14)));
+        self.fonts[id].insert('r', image_texture(&get_subimage_at(&font_sheet1, 102, 14, 5, 14)));
+        self.fonts[id].insert('s', image_texture(&get_subimage_at(&font_sheet1, 108, 14, 5, 14)));
+        self.fonts[id].insert('t', image_texture(&get_subimage_at(&font_sheet1, 114, 14, 5, 14)));
     }
 
-    pub(crate) fn add_char_from_sheet(&mut self, character: char, font_id: usize, font_sheet: &RgbaImage, index: usize, width: u8, height: u8) {
-        self.fonts[font_id].insert(character, get_tex(&get_subimage_wh(&font_sheet, index, width as u32, height as u32)));
+    pub(crate) fn add_char_from_sheet(&mut self, character: char, font_id: usize, font_sheet: &Image, index: usize, width: u8, height: u8) {
+        self.fonts[font_id].insert(character, image_texture(&get_subimage_wh(&font_sheet, index, width as u32, height as u32)));
     }
 
     pub(crate) fn remove_char(&mut self, font_id: usize, character: char) {
         self.fonts[font_id].remove(&character);
     }
 
-}
-
-fn get_tex(image: &RgbaImage) -> Texture {
-    //return Image::from_rgba8(ctx, image.width() as u16, image.height() as u16, image.to_vec().as_mut_slice()).expect("Could not get texture for text");
-    return Texture::from_image(image, &TextureSettings::new().min(Filter::Nearest).mag(Filter::Nearest));
 }

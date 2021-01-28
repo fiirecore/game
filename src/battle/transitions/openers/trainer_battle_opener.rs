@@ -1,12 +1,11 @@
-use crate::util::context::GameContext;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleOpener;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::render_util::draw_rect;
+use crate::util::render::draw_rect;
 use crate::util::timer::Timer;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 
 pub struct TrainerBattleOpener {
 
@@ -15,15 +14,15 @@ pub struct TrainerBattleOpener {
 
     start_timer: Timer,
 
-    offset: u16,
+    offset: f32,
 
-    rect_size: u8,
+    rect_size: f32,
     shrink_by: u8,
 
 }
 
-static RECT_SIZE: u8 = 80;
-static OFFSET: u16 = 153 * 2;
+static RECT_SIZE: f32 = 80.0;
+static OFFSET: f32 = 153.0 * 2.0;
 
 impl TrainerBattleOpener {
 
@@ -34,7 +33,7 @@ impl TrainerBattleOpener {
             active: false,
             finished: false,
 
-            start_timer: Timer::new(30),
+            start_timer: Timer::new(0.5),
 
             rect_size: RECT_SIZE,
             shrink_by: 1,
@@ -45,7 +44,7 @@ impl TrainerBattleOpener {
 
 }
 
-impl BattleTransition for TrainerBattleOpener {
+impl Reset for TrainerBattleOpener {
 
     fn reset(&mut self) {
         self.offset = OFFSET;
@@ -55,13 +54,13 @@ impl BattleTransition for TrainerBattleOpener {
 
 }
 
-impl Loadable for TrainerBattleOpener {
+impl Load for TrainerBattleOpener {
 
     fn load(&mut self) {
         
     }
 
-    fn on_start(&mut self, _context: &mut GameContext) {
+    fn on_start(&mut self) {
         self.start_timer.spawn();
     }
 
@@ -75,45 +74,45 @@ impl Completable for TrainerBattleOpener {
 
 }
 
-impl Ticking for TrainerBattleOpener {
+impl Update for TrainerBattleOpener {
 
-    fn update(&mut self, _context: &mut GameContext) {
+    fn update(&mut self, delta: f32) {
         if self.start_timer.is_finished() {
-            self.offset -= 2;
-            if self.rect_size > 0 {
+            self.offset -= 120.0 * delta;
+            if self.rect_size > 0.0 {
                 if self.rect_size as isize - self.shrink_by as isize > 0 {
-                    self.rect_size -= self.shrink_by;
+                    self.rect_size -= self.shrink_by as f32 * 60.0 * delta;
                 } else {
-                    self.rect_size = 0;
+                    self.rect_size = 0.0;
                 }
-                if self.rect_size == 58 {
+                if self.rect_size <= 58.0 && self.shrink_by != 4 {
                     self.shrink_by = 4;
                 }
             }
-            if self.offset <= 0 {
+            if self.offset <= 0.0 {
                 self.finished = true;
             }
         } else {
-            self.start_timer.update();
+            self.start_timer.update(delta);
         }
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, _tr: &mut crate::util::text_renderer::TextRenderer) {
+}
+
+impl Render for TrainerBattleOpener {
+
+    fn render(&self, _tr: &crate::util::text_renderer::TextRenderer) {
         draw_rect(
-            ctx,
-            g,
-            [0.0, 0.0, 0.0, 1.0].into(),
-            0,
-            0,
+            [0.0, 0.0, 0.0, 1.0],
+            0.0,
+            0.0,
             240,
             self.rect_size as u32,
         );
         draw_rect(
-            ctx,
-            g,
-            [0.0, 0.0, 0.0, 1.0].into(),
-            0,
-            160 - self.rect_size as isize,
+            [0.0, 0.0, 0.0, 1.0],
+            0.0,
+            160.0 - self.rect_size,
             240,
             self.rect_size as u32,
         );
@@ -123,7 +122,7 @@ impl Ticking for TrainerBattleOpener {
 
 impl BattleOpener for TrainerBattleOpener {
 
-    fn offset(&self) -> u16 {
+    fn offset(&self) -> f32 {
         return self.offset;
     }
 
@@ -145,3 +144,5 @@ impl Entity for TrainerBattleOpener {
         return self.active;
     }
 }
+
+impl BattleTransition for TrainerBattleOpener {}

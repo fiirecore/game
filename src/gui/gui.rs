@@ -1,110 +1,68 @@
-use crate::util::context::GameContext;
 use crate::io::data::Direction;
-use std::path::PathBuf;
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use opengl_graphics::Texture;
+use crate::util::render::draw;
+use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
 
-use crate::util::file::asset_as_pathbuf;
-use crate::util::texture_util::texture_from_path;
-use crate::util::render_util::draw_o;
-
-pub struct Panel {
+pub struct Background {
 	
 	alive: bool,
-	pub components: Vec<Box<dyn GuiComponent>>,
 	
-	pub x: isize,
-	pub y: isize,
+	pub x: f32,
+	pub y: f32,
 	
-	background_texture: Option<Texture>,
-	texture_path: PathBuf,
+	texture: Texture,
 	
 }
 
-impl Panel {
+impl Background {
 	
-	pub fn new(texture_path: &str, x: isize, y: isize) -> Panel {
+	pub fn new(texture: Texture, x: f32, y: f32) -> Self {
 		
-		Panel {
+		Self {
 			
 			alive: false,
-			components: Vec::new(),
 			
 			x: x,
 			y: y,
 			
-			background_texture: None,
-			texture_path: asset_as_pathbuf(texture_path),
+			texture: texture,
 			
 		}
 		
 	}
 	
-	/*
-	
-	pub fn add(&mut self, component: Box<dyn GuiComponent>) {
-		self.components.push(component);
-	}
-	
-	*/
-	
 }
 
-impl GuiComponent for Panel {
+impl GuiComponent for Background {
 	
 	fn load(&mut self) {
-		self.background_texture = Some(texture_from_path(&self.texture_path));
 	}
 	
 	fn enable(&mut self) {
 		self.alive = true;
-		for component in self.components.as_mut_slice() {
-			component.enable();
-		}
-		
 	}
 	
 	fn disable(&mut self) {
 		self.alive = false;
-		for component in self.components.as_mut_slice() {
-			component.disable();
-		}
 	}
 	
 	fn is_active(& self) -> bool {
 		self.alive
 	}
-
-	fn update(&mut self, context: &mut GameContext) {
-		for component in self.components.as_mut_slice() {
-			component.update(context);
-		}
-	}
 	
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-		draw_o(ctx, g, self.background_texture.as_ref(), self.x as isize, self.y as isize);
-		for component in &self.components {
-			component.render(ctx, g, tr);
-		}
+	fn render(&self, _tr: &TextRenderer) {
+		draw(self.texture, self.x, self.y);
 	}
 
-	fn update_position(&mut self, x: isize, y: isize) {
+	fn update_position(&mut self, x: f32, y: f32) {
 		self.x = x;
 		self.y = y;
-		for component in &mut self.components {
-			component.update_position(x, y);
-		}
 	}
 }
 
 pub trait GuiComponent {
 
-	fn load(&mut self) {
-
-	}
+	fn load(&mut self) {}
 
 	fn enable(&mut self);
 
@@ -112,15 +70,11 @@ pub trait GuiComponent {
 
 	fn is_active(&self) -> bool;
 
-	fn update(&mut self, _context: &mut GameContext) {
+	fn update(&mut self, _delta: f32) {}
 
-	}
+	fn render(&self, tr: &TextRenderer);
 
-	fn render(&self, _ctx: &mut Context, _g: &mut GlGraphics, _tr: &mut TextRenderer) {
-
-	}
-
-	fn update_position(&mut self, x: isize, y: isize);
+	fn update_position(&mut self, x: f32, y: f32);
 	
 }
 
@@ -148,7 +102,7 @@ pub trait Activatable {
 
 	fn in_focus(&mut self) -> bool;
 
-	fn input(&mut self, context: &mut GameContext);
+	fn input(&mut self, delta: f32);
 
 	fn next(&self) -> u8;
 
@@ -158,10 +112,10 @@ pub trait Activatable {
 pub struct BasicText {
 	
 	alive: bool,
-	x: isize,
-	y: isize,
-	panel_x: isize,
-	panel_y: isize,
+	x: f32,
+	y: f32,
+	panel_x: f32,
+	panel_y: f32,
 
 	pub text: Vec<String>,
 	pub font_id: usize,
@@ -172,7 +126,7 @@ pub struct BasicText {
 
 impl BasicText {
 	
-	pub fn new(text: Vec<String>, font_id: usize, direction: Direction, x: isize, y: isize, panel_x: isize, panel_y: isize) -> BasicText {
+	pub fn new(text: Vec<String>, font_id: usize, direction: Direction, x: f32, y: f32, panel_x: f32, panel_y: f32) -> BasicText {
 		
 		BasicText {
 			
@@ -207,17 +161,17 @@ impl GuiComponent for BasicText {
 		self.alive
 	}
 	
-	fn update_position(&mut self, x: isize, y: isize) {
+	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel_x = x;
 		self.panel_y = y;
 	}
 	
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+	fn render(&self, tr: &TextRenderer) {
 		for line_index in 0..self.get_text().len() {
 			if self.direction == Direction::Right {
-				tr.render_text_from_right(ctx, g, self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + line_index as isize * 16);
+				tr.render_text_from_right(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			} else {
-				tr.render_text_from_left(ctx, g, self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + line_index as isize * 16);
+				tr.render_text_from_left(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 		}
 		

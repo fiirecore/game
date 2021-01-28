@@ -1,10 +1,6 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use crate::util::context::battle_context::TrainerData;
-use crate::util::context::GameContext;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::battle_data::TrainerData;
+use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
 use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
@@ -12,9 +8,9 @@ use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::pokemon_gui::PokemonGui;
 use crate::gui::gui::Activatable;
 use crate::gui::gui::GuiComponent;
-use crate::util::render_util::draw_bottom;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::render::draw_bottom;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 
 use super::util::intro_text::IntroText;
 use super::util::player_intro::PlayerBattleIntro;
@@ -36,7 +32,7 @@ pub struct BasicBattleIntroduction {
 
 impl BasicBattleIntroduction {
 
-    pub fn new(panel_x: isize, panel_y: isize) -> Self {
+    pub fn new(panel_x: f32, panel_y: f32) -> Self {
 
         Self {
 
@@ -56,7 +52,7 @@ impl BasicBattleIntroduction {
 
 }
 
-impl BattleTransition for BasicBattleIntroduction {
+impl Reset for BasicBattleIntroduction {
 
     fn reset(&mut self) {
         self.intro_text.load();
@@ -67,14 +63,14 @@ impl BattleTransition for BasicBattleIntroduction {
 
 }
 
-impl Loadable for BasicBattleIntroduction {
+impl Load for BasicBattleIntroduction {
 
     fn load(&mut self) {
         self.player_intro.load();
     }
 
-    fn on_start(&mut self, context: &mut GameContext) {
-        self.player_intro.on_start(context);
+    fn on_start(&mut self) {
+        self.player_intro.on_start();
     }
 
 }
@@ -107,14 +103,14 @@ impl Entity for BasicBattleIntroduction {
     }
 }
 
-impl Ticking for BasicBattleIntroduction {
+impl Update for BasicBattleIntroduction {
 
-    fn update(&mut self, context: &mut GameContext) {
-        self.intro_text.update(context);
+    fn update(&mut self, delta: f32) {
+        self.intro_text.update(delta);
         if self.intro_text.can_continue {
             if self.intro_text.next() + 1 == self.intro_text.text.len() as u8 {
                 if self.player_intro.should_update() {
-                    self.player_intro.update();                
+                    self.player_intro.update(delta);                
                 } else if self.intro_text.timer.is_finished()   {
                     self.intro_text.disable();
                     self.finished = true;
@@ -122,16 +118,20 @@ impl Ticking for BasicBattleIntroduction {
             }
         }  
 	}
+}
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut crate::util::text_renderer::TextRenderer) {
-        self.intro_text.render(ctx, g, tr);
+impl Render for BasicBattleIntroduction {
+
+    fn render(&self, tr: &crate::util::text_renderer::TextRenderer) {
+        self.intro_text.render(tr);
 	}
+
 }
 
 impl BattleIntroduction for BasicBattleIntroduction {
 
-    fn input(&mut self, context: &mut GameContext) {
-        self.intro_text.input(context);
+    fn input(&mut self, delta: f32) {
+        self.intro_text.input(delta);
     }
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
@@ -144,12 +144,12 @@ impl BattleIntroduction for BasicBattleIntroduction {
         self.intro_text.text = vec![vec![opponent_string], vec![player_string]];
     }
 
-    fn render_offset(&self, ctx: &mut Context, g: &mut GlGraphics, battle: &Battle, offset: u16) {
-        draw_bottom(ctx, g, &battle.opponent_textures[battle.opponent_active], 144 - offset as isize, 74);
+    fn render_offset(&self, battle: &Battle, offset: f32) {
+        draw_bottom(battle.opponent_textures[battle.opponent_active], 144.0 - offset, 74.0);
         if self.player_intro.should_update() {
-            self.player_intro.draw(ctx, g, offset);
+            self.player_intro.draw(offset);
         } else {
-		    draw_bottom(ctx, g, &battle.player_textures[battle.player_active], 40 + offset as isize, 113);
+		    draw_bottom(battle.player_textures[battle.player_active], 40.0 + offset, 113.0);
         }        
     }
 
@@ -163,20 +163,22 @@ impl BattleIntroduction for BasicBattleIntroduction {
         if !self.player_intro.should_update() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
-            battle_gui.player_pokemon_gui.offset_position(-10, 0); 
+            battle_gui.player_pokemon_gui.offset_position(-10.0, 0.0); 
         }
         if battle_gui.opponent_pokemon_gui.is_alive() {
             if self.ogui_counter < GUI_OFFSET {
                 self.ogui_counter += 1;
-                battle_gui.opponent_pokemon_gui.offset_position(5, 0);
+                battle_gui.opponent_pokemon_gui.offset_position(5.0, 0.0);
             }
         }
         if battle_gui.player_pokemon_gui.is_alive() {
             if self.pgui_counter < GUI_OFFSET {
                 self.pgui_counter += 1;
-                battle_gui.player_pokemon_gui.offset_position(-5, 0);
+                battle_gui.player_pokemon_gui.offset_position(-5.0, 0.0);
             }
         }
     }
 
 }
+
+impl BattleTransition for BasicBattleIntroduction {}

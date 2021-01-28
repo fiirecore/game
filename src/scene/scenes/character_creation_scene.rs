@@ -1,6 +1,5 @@
-use crate::util::context::GameContext;
+use crate::util::Load;
 use crate::scene::Scene;
-use crate::scene::SceneLoad;
 
 pub struct CharacterCreationScene {
 	scene_token: usize,
@@ -14,29 +13,27 @@ impl CharacterCreationScene {
 	}
 }
 
-// #[async_trait::async_trait]
-impl SceneLoad for CharacterCreationScene {
+//#[async_trait::async_trait]
+impl Load for CharacterCreationScene {
 	
-    fn load(&mut self, _context: &mut GameContext) {
+    fn load(&mut self) {
         
     }
 
-    fn on_start(&mut self, _context: &mut GameContext) {
+    fn on_start(&mut self) {
         
     }
 }
 
 impl Scene for CharacterCreationScene {
-
-//	fn load(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
 	
-//	fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
+	fn update(&mut self, _delta: f32) {}
 	
-//	fn render(&mut self, _ctx: &mut Context, _gc: &mut TextRenderer) {}
+	fn render(&self, _tr: &crate::util::text_renderer::TextRenderer) {}
 	
-//	fn input(&mut self, _context: &mut GameContext) {}
+	fn input(&mut self, _delta: f32) {}
 	
-//	fn dispose(&mut self) {}
+	fn quit(&mut self) {}
 	
 	fn name(&self) -> &str {
 		&"Character Creation"

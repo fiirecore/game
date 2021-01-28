@@ -1,16 +1,13 @@
-use std::collections::HashMap;
-
-use log::info;
-use opengl_graphics::GlGraphics;
-use opengl_graphics::Texture;
-use piston_window::Context;
-
-use crate::audio::music::Music;
-use crate::util::context::GameContext;
+use ahash::AHashMap;
+use macroquad::prelude::info;
+use crate::util::input;
+use crate::util::texture::Texture;
+use crate::audio::Music;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
-use crate::util::render_util::draw_flip;
-use crate::util::render_util::draw_o;
+use crate::util::input::Control;
+use crate::util::render::draw_flip;
+use crate::util::render::draw_o;
 
 use super::HALF_HEIGHT;
 use super::HALF_WIDTH;
@@ -60,12 +57,6 @@ impl WorldMap {
 
 }
 
-fn try_wild_battle(context: &mut GameContext, wild: &WildEntry) {
-    if (context.random.rand_range(0..256) as u8) < wild.table.encounter_rate() {
-        context.wild_battle(&wild.table);
-    }
-}
-
 impl World for WorldMap {
 
     fn in_bounds(&self, x: isize, y: isize) -> bool {
@@ -96,17 +87,17 @@ impl World for WorldMap {
         return None;
     }
 
-    fn on_tile(&mut self, context: &mut GameContext, /*player: &mut Player,*/ x: isize, y: isize) {
+    fn on_tile(&mut self, /*player: &mut Player,*/ x: isize, y: isize) {
         let tile_id = self.tile(x, y);
         if let Some(wild) = &self.wild {
             if let Some(tiles) = &wild.tiles {
                 for tile in tiles {
                     if tile_id.eq(tile) {
-                        try_wild_battle(context, wild);
+                        try_wild_battle(wild);
                     }
                 }
             } else {
-                try_wild_battle(context, wild);
+                try_wild_battle(wild);
             }            
         }
         for npc in &self.npcs {
@@ -152,55 +143,57 @@ impl World for WorldMap {
         }
     }
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
             let y = yy - screen.y_tile_offset;
-            let render_y = (yy << 4) - screen.y_focus; // old = y_tile w/ offset - player x pixel
+            let render_y = (yy << 4) as f32 - screen.y_focus; // old = y_tile w/ offset - player x pixel
             
             let row_offset = y * self.width as isize;
             
             for xx in screen.left..screen.right {
                 let x = xx - screen.x_tile_offset;
-                let render_x = (xx << 4) - screen.x_focus;
+                let render_x = (xx << 4) as f32 - screen.x_focus;
 
                 if !(x < 0 || y < 0 || y >= self.height as isize || x >= self.width as isize) {
-                        draw_o(ctx, g, textures.get(&self.tile_row(x, row_offset)), render_x, render_y);             
+                    draw_o(textures.get(&self.tile_row(x, row_offset)), render_x, render_y);             
                 } else if border {
                     if x % 2 == 0 {
                         if y % 2 == 0 {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[0]), render_x, render_y);
+                            draw_o(textures.get(&self.border_blocks[0]), render_x, render_y);
                         } else {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[2]), render_x, render_y);
+                            draw_o(textures.get(&self.border_blocks[2]), render_x, render_y);
                         }
                     } else {
                         if y % 2 == 0 {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[1]), render_x, render_y);
+                            draw_o(textures.get(&self.border_blocks[1]), render_x, render_y);
                         } else {
-                            draw_o(ctx, g, textures.get(&self.border_blocks[3]), render_x, render_y);
+                            draw_o(textures.get(&self.border_blocks[3]), render_x, render_y);
                         }
                     }
                 }
             }
         }
         for npc in &self.npcs {
-            let tuple = npc_textures.get(&npc.identifier.sprite).expect("Could not find NPC texture!").of_direction(npc.position.direction.value());
-            draw_flip(ctx, g, tuple.0, (npc.position.x << 4) + HALF_WIDTH + 1, (npc.position.y << 4) - HALF_HEIGHT - 4, tuple.1);
+            if let Some(twt) = npc_textures.get(&npc.identifier.sprite) {
+                let tuple = twt.of_direction(npc.position.direction.value());
+                draw_flip(tuple.0, (npc.position.x << 4) as f32 - screen.x_focus + 1.0, (npc.position.y << 4) as f32 - screen.y_focus - 4.0, tuple.1);
+            }            
         }
     }
 
-    fn input(&mut self, context: &mut GameContext, player: &Player) {
-        if context.keys[0] == 1 {
+    fn input(&mut self, _delta: f32, player: &Player) {
+        if input::pressed(Control::A) {
             for npc in &mut self.npcs {
                 if player.position.x == npc.position.x {
                     match player.position.direction {
                         Direction::Up => {
                             if player.position.y - 1 == npc.position.y {
-                                npc.interact(player.position.direction, context);
+                                npc.interact(player.position.direction);
                             }
                         },
                         Direction::Down => {
                             if player.position.y + 1 == npc.position.y {
-                                npc.interact(player.position.direction, context);
+                                npc.interact(player.position.direction);
                             }
                         },
                         _ => {}
@@ -209,12 +202,12 @@ impl World for WorldMap {
                     match player.position.direction {
                         Direction::Right => {
                             if player.position.x + 1 == npc.position.x {
-                                npc.interact(player.position.direction, context);
+                                npc.interact(player.position.direction);
                             }
                         },
                         Direction::Left => {
                             if player.position.x - 1 == npc.position.x {
-                                npc.interact(player.position.direction, context);
+                                npc.interact(player.position.direction);
                             }
                         },
                         _ => {}
@@ -225,4 +218,10 @@ impl World for WorldMap {
         }
     }
 
+}
+
+pub fn try_wild_battle(wild: &WildEntry) {
+    if macroquad::rand::gen_range(0, 255) < wild.table.encounter_rate() {
+        crate::util::battle_data::wild_battle(&wild.table);
+    }
 }

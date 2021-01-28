@@ -1,49 +1,41 @@
-use std::path::Path;
-use std::path::PathBuf;
-
-use log::warn;
-
 use super::PokedexData;
 use super::Pokemon;
 use super::PokemonType;
 
 impl Pokemon {
 
-	pub fn texture_path(side: &str, pokemon: &Pokemon) -> PathBuf {
-		let mut name = pokemon.data.name.clone();
+	pub fn texture_path(side: &str, pokemon: &Pokemon) -> String {
+		let mut side = side.to_string();
+		side.push_str("/");
+		let mut name = pokemon.data.name.to_lowercase();
 		name.push_str(".png");
-		PathBuf::from("pokedex/textures/normal/").join(side).join(name)
+		side.push_str(&name);
+		side
 	}
 
-	pub fn new<P>(path: P) -> Option<Pokemon> where P: AsRef<Path> {
-		let path = path.as_ref();
+	// #[deprecated(since = "0.2.0", note = "Include as bytes instead of external file")]
+	// pub async fn new<P>(path: P) -> Option<Pokemon> where P: AsRef<Path> {
+	// 	let path = path.as_ref();
+	// 	match crate::util::file::read_to_string(path).await {
+	// 		Ok(data) => {
+	// 			match Pokemon::from_string(&data) {
+	// 			    Ok(pokemon) => Some(pokemon),
+	// 			    Err(err) => {
+	// 					warn!("Could not parse pokemon toml with data {} with error {}", &data[0..20], err);
+	// 					return None;
+	// 				}
+	// 			}
+	// 		}
+	// 		Err(err) => {
+	// 			warn!("Error reading pokemon entry at {:?} to string with error {}", path, err);
+	// 			return None;
 	
-		match std::fs::read_to_string(path) {
-	
-			Ok(string) => {
-	
-				let toml_result: Result<Pokemon, toml::de::Error> = toml::from_str(&string);
-				match toml_result {
-					Ok(pokemon) => {				
-						Some(pokemon)
-					}
-					Err(err) => {
-						warn!("Could not parse pokemon toml at {:?} with error {}", path, err);
-						return None;
-					}
-				}
-	
-			}
-	
-			Err(err) => {
-	
-				warn!("Error reading pokemon entry at {:?} to string with error: {}", path, err);
-				return None;
-	
-			}
-	
-		}
-		
+	// 		}
+	// 	}
+	// }
+
+	pub fn from_string(data: &String) -> Result<Pokemon, toml::de::Error> {
+		return toml::from_str(data);
 	}
 	
 }

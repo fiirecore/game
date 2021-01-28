@@ -1,16 +1,13 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use crate::util::context::GameContext;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleCloser;
 use crate::battle::transitions::battle_transition_traits::BattleTransitionManager;
 use crate::battle::transitions::closers::basic_battle_closer::BasicBattleCloser;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 
+#[derive(Default)]
 pub struct BattleCloserManager {
     
     alive: bool,
@@ -22,20 +19,6 @@ pub struct BattleCloserManager {
 
 impl BattleCloserManager { // return player data
 
-    pub fn new() -> Self {
-
-        Self {
-
-            alive: false,
-
-            closers: Vec::new(),
-
-            current_closer_id: 0,
-
-        }
-
-    }
-
     pub fn load_closers(&mut self) {
         self.closers.push(Box::new(BasicBattleCloser::new()));
     }
@@ -44,38 +27,44 @@ impl BattleCloserManager { // return player data
         self.closers[self.current_closer_id].world_active()
     }
 
-    fn reset(&mut self) {
-        self.closers[self.current_closer_id].reset();
-    }
-
 }
 
-impl Ticking for BattleCloserManager {
+impl Update for BattleCloserManager {
 
-    fn update(&mut self, context: &mut GameContext) {
+    fn update(&mut self, delta: f32) {
         if self.is_alive() {
-            self.closers[self.current_closer_id].update(context);
+            self.closers[self.current_closer_id].update(delta);
         }
     }
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-        self.closers[self.current_closer_id].render(ctx, g, tr);
+}
+
+impl Render for BattleCloserManager {
+
+    fn render(&self, tr: &TextRenderer) {
+        self.closers[self.current_closer_id].render(tr);
     }
 
 }
 
-impl BattleTransitionManager for BattleCloserManager {
+impl BattleTransitionManager for BattleCloserManager {}
 
+impl Reset for BattleCloserManager {
+    
+    fn reset(&mut self) {
+        self.closers[self.current_closer_id].reset();
+    }
+    
 }
 
-impl Loadable for BattleCloserManager {
+impl Load for BattleCloserManager {
 
     fn load(&mut self) {
         self.closers[self.current_closer_id].load();
     }
 
-    fn on_start(&mut self, context: &mut GameContext) {
-        self.closers[self.current_closer_id].on_start(context);
+    fn on_start(&mut self) {
+        self.closers[self.current_closer_id].on_start();
     }
 
 }

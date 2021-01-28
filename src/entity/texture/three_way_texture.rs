@@ -1,4 +1,4 @@
-use opengl_graphics::Texture;
+use crate::util::texture::Texture;
 
 use super::texture_manager::TextureManager;
 
@@ -26,16 +26,16 @@ impl ThreeWayTexture {
         self.textures.push(texture_manager);
     }
 
-    pub fn update_with_direction(&mut self, direction: u8) {
+    pub fn update_with_direction(&mut self, delta: f32, direction: u8) {
         if self.direction != direction {
             self.direction = direction;
             self.reset();       
         } else {
-            self.update();          
+            self.update(delta);          
         }
     }
 
-    pub fn of_direction(&self, direction: u8) -> (&Texture, bool) {
+    pub fn of_direction(&self, direction: u8) -> (Texture, bool) {
         if direction == 3 {
             let tuple = self.textures[2].texture();
             return (tuple.0, !tuple.1);
@@ -56,11 +56,11 @@ impl TextureManager for ThreeWayTexture {
         }        
     }
 
-    fn update(&mut self) {
+    fn update(&mut self, delta: f32) {
         if self.direction != 3 {
-            self.textures[self.direction as usize].update();
+            self.textures[self.direction as usize].update(delta);
         } else {
-            self.textures[2].update();
+            self.textures[2].update(delta);
         } 
     }
 
@@ -88,7 +88,7 @@ impl TextureManager for ThreeWayTexture {
         }
     }
 
-    fn texture(&self) -> (&Texture, bool) {
+    fn texture(&self) -> (Texture, bool) {
         if self.direction != 3 {
             return self.textures[self.direction as usize].texture();
         } else {

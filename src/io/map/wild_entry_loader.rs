@@ -6,7 +6,7 @@ use crate::world::pokemon::wild_pokemon_table;
 
 use super::map_serializable::SerializedWildEntry;
 
-pub fn load_wild_entry<P: AsRef<Path>>(path: P, wild: Option<SerializedWildEntry>, map_set_num: Option<usize>) -> Option<WildEntry> {
+pub async fn load_wild_entry<P: AsRef<Path>>(path: P, wild: Option<SerializedWildEntry>, map_set_num: Option<usize>) -> Option<WildEntry> {
     let path = path.as_ref();
 
     // fix below
@@ -21,7 +21,7 @@ pub fn load_wild_entry<P: AsRef<Path>>(path: P, wild: Option<SerializedWildEntry
     if let Some(toml_wild_entry) = wild {
         Some(WildEntry {
             tiles: toml_wild_entry.wild_tiles,
-            table: wild_pokemon_table::get(toml_wild_entry.encounter_type.as_str(), wildtomlpath.join("grass.toml")),
+            table: wild_pokemon_table::get(toml_wild_entry.encounter_type.as_str(), wildtomlpath.join("grass.toml")).await,
         })
     } else {
         None

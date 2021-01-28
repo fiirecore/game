@@ -1,30 +1,24 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-use crate::util::context::GameContext;
+use crate::util::input;
 use crate::util::text_renderer::TextRenderer;
-
-//use crate::battle::battles::test_battle::TestBattle;
-
 use crate::entity::Entity;
 use crate::gui::gui::{GuiComponent, Activatable, GuiText};
 use crate::util::timer::Timer;
-//use crate::gui::battle::battle_gui::BattleGuiComponent;
 
 pub struct IntroText { // and outro
 
 	alive: bool,
     focus: bool,
     
-	x: isize,
-	y: isize,
-	panel_x: isize,
-	panel_y: isize,
+	x: f32,
+	y: f32,
+	panel_x: f32,
+	panel_y: f32,
 	
 	pub text: Vec<Vec<String>>,
 	current_phrase: u8,
 	current_line: usize,
 	font_id: usize,
-	counter: u16,
+	counter: f32,
 	
 	pub no_pause: bool,
 	pub can_continue: bool,
@@ -37,28 +31,28 @@ pub struct IntroText { // and outro
 
 impl IntroText {
 	
-	pub fn new(_panel_x: isize, _panel_y: isize, text: Vec<Vec<String>>) -> IntroText {
+	pub fn new(panel_x: f32, panel_y: f32, text: Vec<Vec<String>>) -> IntroText {
 		
 		IntroText {
 
 			alive: false,
 			focus: false,
 
-			x: 11,
-			y: 11,
-			panel_x: _panel_x,
-			panel_y: _panel_y,
+			x: 11.0,
+			y: 11.0,
+			panel_x: panel_x,
+			panel_y: panel_y,
 
 			text: text,
 			current_phrase: 0,
 			current_line: 0,
 
 			font_id: 1,
-			counter: 0,
+			counter: 0.0,
 
 			can_continue: false,
 			no_pause: false,
-			timer: Timer::new(60),
+			timer: Timer::new(1.0),
 			
 			button_pos: 0,
 			button_dir: 1,
@@ -78,7 +72,7 @@ impl IntroText {
 		self.can_continue = false;
 		self.no_pause = self.current_phrase >= 1;
 		self.current_line = 0;
-		self.counter = 0;
+		self.counter = 0.0;
 	}
 
 }
@@ -102,7 +96,7 @@ impl GuiComponent for IntroText {
 		self.alive
 	}
 
-	fn update(&mut self, _context: &mut GameContext) {
+	fn update(&mut self, delta: f32) {
 		if self.is_active() {
 			let line_len = self.get_line(self.current_line).len() as u16 * 4;
 			if self.can_continue {
@@ -110,7 +104,7 @@ impl GuiComponent for IntroText {
 					if !self.timer.is_alive() {
 						self.timer.spawn();
 					}
-					self.timer.update();
+					self.timer.update(delta);
 					if self.timer.is_finished() {
 						if self.next() + 1 != self.text.len() as u8 {
 							self.current_phrase += 1;
@@ -124,48 +118,48 @@ impl GuiComponent for IntroText {
 					self.button_dir *= -1;
 				}
 				self.button_pos += self.button_dir;
-			} else if self.counter <= line_len {
-				self.counter += 1;
+			} else if self.counter <= line_len as f32 {
+				self.counter += delta * 60.0;
 			} else if self.current_line < self.get_text().len() - 1 {
 				self.current_line += 1;
-				self.counter = 0;
+				self.counter = 0.0;
 			} else {
-				self.counter = line_len;
+				self.counter = line_len as f32;
 				self.can_continue = true;
 			}
 		}
 	}
 
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+	fn render(&self, tr: &TextRenderer) {
 		if self.is_active() {
 			let mut string = String::new();
 			let mut count = 0;
 
 			for character in self.get_line(self.current_line).chars() {
-				if count >= self.counter / 4 {
+				if count >= (self.counter / 4.0) as i32 {
 					break;
 				}
 				string.push(character);
 				count+=1;
 			}
 
-			tr.render_text_from_left(ctx, g, self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + self.current_line as isize * 16);
+			tr.render_text_from_left(self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
 
 			for line_index in 0..self.current_line {
-				tr.render_text_from_left(ctx, g, self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + line_index as isize * 16);
+				tr.render_text_from_left(self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 
 			if self.can_continue && !self.no_pause {
-				tr.render_button(ctx, g, self.get_line(self.get_text().len() - 1), self.font_id, self.button_pos / 8, self.panel_x + self.x, self.panel_y + self.y + self.current_line as isize * 16/*- 2*/);
+				tr.render_button(self.get_line(self.get_text().len() - 1), self.font_id, self.button_pos as f32 / 8.0, self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32/*- 2*/);
 			}			
 		
 		}
 		
 	}
 
-	fn update_position(&mut self, x: isize, y: isize) {
-		self.panel_x = x;
-		self.panel_y = y;
+	fn update_position(&mut self, x: f32, y: f32) {
+		self.panel_x = x as f32;
+		self.panel_y = y as f32;
 	}
 	
 }
@@ -212,9 +206,9 @@ impl Activatable for IntroText {
         self.focus
     }
 
-	fn input(&mut self, context: &mut GameContext) {
+	fn input(&mut self, _delta: f32) {
 		if self.can_continue {
-			if context.keys[0] == 1 && !self.no_pause {
+			if input::pressed(crate::util::input::Control::A) && !self.no_pause {
 				self.current_phrase += 1;
 				self.reset_phrase();
 			}

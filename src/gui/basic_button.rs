@@ -1,15 +1,15 @@
-use piston_window::Context;
-use opengl_graphics::GlGraphics;
+
+
 use crate::util::text_renderer::TextRenderer;
 use crate::gui::gui::{GuiComponent, GuiText};
 pub struct BasicButton {
 	
     alive: bool,
 
-	x: isize,
-	y: isize,
-	panel_x: isize,
-    panel_y: isize,
+	x: f32,
+	y: f32,
+	panel_x: f32,
+    panel_y: f32,
 
     name: Vec<String>,
     font_id: usize,
@@ -18,7 +18,7 @@ pub struct BasicButton {
 
 impl BasicButton {
 	
-	pub fn new(name: &str, font_id: usize, x: isize, y: isize, panel_x: isize, panel_y: isize) -> Self {
+	pub fn new(name: &str, font_id: usize, x: f32, y: f32, panel_x: f32, panel_y: f32) -> Self {
         
 		Self {
 
@@ -52,13 +52,13 @@ impl GuiComponent for BasicButton {
 		self.alive
     }
 
-	fn update_position(&mut self, x: isize, y: isize) {
+	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel_x = x;
 		self.panel_y = y;
 	}
     
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-        tr.render_text_from_left(ctx, g, self.get_font_id(), self.get_line(0), self.panel_x + self.x, self.panel_y + self.y);
+    fn render(&self, tr: &TextRenderer) {
+        tr.render_text_from_left(self.get_font_id(), self.get_line(0), self.panel_x + self.x, self.panel_y + self.y);
     }
 
 }

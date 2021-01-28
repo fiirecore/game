@@ -1,44 +1,49 @@
-use std::collections::HashMap;
-
-use oorandom::Rand32 as Random;
-
-use kira::instance::InstanceId;
-use kira::manager::AudioManager;
-use kira::sound::SoundId;
-use piston::Button;
-
-use crate::audio::music::Music;
-
 use self::battle_context::BattleData;
 
-pub mod game_context;
-
 pub mod file_context;
-pub mod audio_context;
+// pub mod audio_context;
 pub mod battle_context;
 
-
-
+#[deprecated(since = "0.2.0", note = "Not needed anymore")]
 pub struct GameContext {
 
-    pub keys: [usize; 8],
-    pub fkeys: [usize; 12],
-
-    pub keymap: HashMap<Button, usize>,
-    pub fkeymap: HashMap<Button, usize>,
+    // pub fkeys: [usize; 12],
+    // pub fkeymap: AHashMap<macroquad::prelude::KeyCode, usize>,
     
-    pub random: Random,
+    // pub audio_context: AudioContext,
 
-    //pub app_console: AppConsole,
-    
-    pub audio_manager: AudioManager,
+    // pub audio_manager: AudioManager,
 
-    pub music_map: HashMap<Music, SoundId>,
-    current_music: Option<InstanceId>,
+    // pub music_map: AHashMap<Music, SoundId>,
+    // current_music: Option<InstanceId>,
 
-    pub sound_map: HashMap<u16, SoundId>,
-    current_sounds: Vec<InstanceId>,
-    
-    pub battle_data: Option<BattleData>,
+    // pub sound_map: AHashMap<u16, SoundId>,
+    // current_sounds: Vec<InstanceId>,
+
+}
+
+impl GameContext {
+
+    pub fn new() -> GameContext {
+
+        GameContext {
+
+            // fkeys: [0; 12],
+            // fkeymap: AHashMap::new(),
+
+            // audio_context: super::audio_context::AudioContext::new(),
+
+            // audio_manager: kira::manager::AudioManager::new(kira::manager::AudioManagerSettings::default()).unwrap(),
+            
+            // music_map: AHashMap::new(),
+            // current_music: None,
+
+            // sound_map: AHashMap::new(),
+            // current_sounds: Vec::new(),
+
+            battle_data: None,
+
+        }
+    }
 
 }

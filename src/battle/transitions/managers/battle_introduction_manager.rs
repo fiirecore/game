@@ -1,18 +1,14 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
 use crate::battle::transitions::introductions::trainer_battle_introduction::TrainerBattleIntroduction;
-use crate::util::context::GameContext;
+use crate::util::battle_data::TrainerData;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
 use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransitionManager;
 use crate::battle::transitions::introductions::basic_battle_introduction::BasicBattleIntroduction;
 use crate::gui::battle::battle_gui::BattleGui;
-use crate::util::context::battle_context::TrainerData;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 
 pub struct BattleIntroductionManager {
 
@@ -26,29 +22,29 @@ pub struct BattleIntroductionManager {
 impl BattleIntroductionManager {
 
     pub fn new() -> Self {
-
-        Self {
+        let mut this = Self {
 
             alive: false,
             
             introductions: Vec::new(),
             current_introduction_index: 0,
 
-        }
-
+        };
+        this.load_introductions();
+        this
     }
 
-    pub fn load_introductions(&mut self) {
-        self.introductions.push(Box::new(BasicBattleIntroduction::new(0, 113)));
-        self.introductions.push(Box::new(TrainerBattleIntroduction::new(0, 113)));
+    fn load_introductions(&mut self) {
+        self.introductions.push(Box::new(BasicBattleIntroduction::new(0.0, 113.0)));
+        self.introductions.push(Box::new(TrainerBattleIntroduction::new(0.0, 113.0)));
         for introduction in &mut self.introductions {
             introduction.load();
         }
     }
 
-    pub fn input(&mut self, context: &mut GameContext) {
+    pub fn input(&mut self, delta: f32) {
 		if self.is_alive() {
-            self.introductions[self.current_introduction_index].input(context);
+            self.introductions[self.current_introduction_index].input(delta);
         }
     }
     
@@ -56,8 +52,8 @@ impl BattleIntroductionManager {
         self.introductions[self.current_introduction_index].setup(battle, trainer_data);
     }
 
-    pub fn render_with_offset(&self, ctx: &mut Context, g: &mut GlGraphics, battle: &Battle, offset: u16) {
-        self.introductions[self.current_introduction_index].render_offset(ctx, g, battle, offset);
+    pub fn render_with_offset(&self, battle: &Battle, offset: f32) {
+        self.introductions[self.current_introduction_index].render_offset(battle, offset);
     }
 
     pub fn update_gui(&mut self, battle_gui: &mut BattleGui) {
@@ -68,25 +64,31 @@ impl BattleIntroductionManager {
         self.current_introduction_index = index;
     }
 
-    pub fn reset(&mut self) {
+}
+
+
+impl Update for BattleIntroductionManager {
+
+    fn update(&mut self, delta: f32) {
+        self.introductions[self.current_introduction_index].update(delta);     
+	}
+}
+
+impl Render for BattleIntroductionManager {
+
+    fn render(&self, tr: &crate::util::text_renderer::TextRenderer) {
+        self.introductions[self.current_introduction_index].render(tr);
+	}
+
+}
+
+impl BattleTransitionManager for BattleIntroductionManager {}
+
+impl Reset for BattleIntroductionManager {
+
+    fn reset(&mut self) {
         self.introductions[self.current_introduction_index].reset();
     }
-
-}
-
-
-impl Ticking for BattleIntroductionManager {
-
-    fn update(&mut self, context: &mut GameContext) {
-        self.introductions[self.current_introduction_index].update(context);     
-	}
-
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut crate::util::text_renderer::TextRenderer) {
-        self.introductions[self.current_introduction_index].render(ctx, g, tr);
-	}
-}
-
-impl BattleTransitionManager for BattleIntroductionManager {
 
 }
 
@@ -116,13 +118,14 @@ impl Entity for BattleIntroductionManager {
     }
 }
 
-impl Loadable for BattleIntroductionManager {
+impl Load for BattleIntroductionManager {
 
     fn load(&mut self) {
         self.introductions[self.current_introduction_index].load();
     }
 
-    fn on_start(&mut self, context: &mut GameContext) {
-        self.introductions[self.current_introduction_index].on_start(context);
+    fn on_start(&mut self) {
+        self.introductions[self.current_introduction_index].on_start();
     }
+
 }

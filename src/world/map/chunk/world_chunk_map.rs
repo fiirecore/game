@@ -1,9 +1,6 @@
-use std::collections::HashMap;
-
-use opengl_graphics::Texture;
-
-use crate::audio::music::Music;
-use crate::util::context::GameContext;
+use ahash::AHashMap;
+use crate::util::texture::Texture;
+use crate::audio::Music;
 use crate::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::world::RenderCoords;
@@ -11,7 +8,6 @@ use crate::world::World;
 use crate::world::map::manager::test_move_code;
 use crate::world::player::Player;
 use crate::world::warp::WarpEntry;
-
 use super::world_chunk::WorldChunk;
 
 #[derive(Default)]
@@ -19,7 +15,7 @@ pub struct WorldChunkMap {
 
     alive: bool,
 
-    pub(crate) chunks: HashMap<u16, WorldChunk>,
+    pub(crate) chunks: AHashMap<u16, WorldChunk>,
     //pub(crate) current_chunk: &'a WorldChunk,
     //connected_chunks: Vec<&'a WorldChunk>,
     pub(crate) current_chunk: u16,
@@ -30,12 +26,12 @@ pub struct WorldChunkMap {
 
 impl WorldChunkMap {
 
-    pub fn change_chunk(&mut self, context: &mut GameContext, chunk: u16) {
+    pub fn change_chunk(&mut self, chunk: u16) {
         self.current_chunk = chunk;
         let music = self.current_chunk().map.music;
         if music != self.current_music {
             self.current_music = music;
-            context.play_music(self.current_music);
+            //context.play_music(self.current_music);
         }
     }
 
@@ -76,12 +72,12 @@ impl WorldChunkMap {
     }
 
 
-    pub fn walk_connections(&mut self, context: &mut GameContext, x: isize, y: isize) -> u8 {
+    pub fn walk_connections(&mut self, x: isize, y: isize) -> u8 {
         for connection in self.connections() {
             if connection.1.in_bounds(x, y) {
                 let move_code = connection.1.walkable(x, y);
                 if test_move_code(move_code, false) {
-                    self.change_chunk(context, *connection.0);   
+                    self.change_chunk(*connection.0);   
                 }
                 return move_code;
             }
@@ -151,21 +147,21 @@ impl World for WorldChunkMap {
         self.current_chunk().check_warp(x, y)
     }
 
-    fn render(&self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         let current_chunk = self.current_chunk();
-        current_chunk.render(ctx, g, textures, npc_textures, screen, border);
+        current_chunk.render(textures, npc_textures, screen, border);
         for connection in &current_chunk.connections {
-            self.chunks.get(connection).expect("Could not get connected chunk").render(ctx, g, textures, npc_textures, screen, false);
+            self.chunks.get(connection).expect("Could not get connected chunk").render(textures, npc_textures, screen, false);
         }
     }
 
-    fn input(&mut self, context: &mut GameContext, player: &Player) {
-        self.current_chunk_mut().input(context, player)
+    fn input(&mut self, delta: f32, player: &Player) {
+        self.current_chunk_mut().input(delta, player)
     }
 
-    fn on_tile(&mut self, context: &mut GameContext, x: isize, y: isize) {
+    fn on_tile(&mut self, x: isize, y: isize) {
         if self.current_chunk().in_bounds(x, y) {
-            self.current_chunk_mut().on_tile(context, x, y);
+            self.current_chunk_mut().on_tile(x, y);
         }
     }
     

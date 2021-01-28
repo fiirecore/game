@@ -1,18 +1,14 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
 use crate::battle::battle_info::BattleType;
-use crate::util::context::GameContext;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
 use crate::battle::transitions::battle_transition_traits::BattleOpener;
 use crate::battle::transitions::battle_transition_traits::BattleTransitionManager;
 use crate::battle::transitions::openers::trainer_battle_opener::TrainerBattleOpener;
 use crate::battle::transitions::openers::wild_battle_opener::WildBattleOpener;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 
 use super::battle_introduction_manager::BattleIntroductionManager;
 
@@ -46,15 +42,15 @@ impl BattleOpenerManager {
         for opener in &mut self.openers {
             opener.load();
         }
-        self.battle_introduction_manager.load_introductions();
+        // self.battle_introduction_manager.load_introductions();
     }
 
-    pub fn render_below_panel(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer, battle: &Battle) {
-        self.battle_introduction_manager.render_with_offset(ctx, g, battle, self.offset());
-        self.openers[self.current_opener_id].render_below_panel(ctx, g, tr);
+    pub fn render_below_panel(&self, tr: &TextRenderer, battle: &Battle) {
+        self.battle_introduction_manager.render_with_offset(battle, self.offset());
+        self.openers[self.current_opener_id].render_below_panel(tr);
     }
 
-    pub fn offset(&self) -> u16 {
+    pub fn offset(&self) -> f32 {
         return self.openers[self.current_opener_id].offset();
     }
 
@@ -74,44 +70,51 @@ impl BattleOpenerManager {
         self.spawn();
     }
 
-    fn reset(&mut self) {
-        self.openers[self.current_opener_id].reset();
-        self.battle_introduction_manager.reset();
-    }
-
 }
 
-impl Ticking for BattleOpenerManager {
-    fn update(&mut self, context: &mut GameContext) {
+impl Update for BattleOpenerManager {
+
+    fn update(&mut self, delta: f32) {
         if self.is_alive() {
             if self.openers[self.current_opener_id].is_alive() {
                 if self.openers[self.current_opener_id].is_finished() {
                     self.openers[self.current_opener_id].despawn();
                     self.battle_introduction_manager.spawn();
-                    self.battle_introduction_manager.on_start(context);
+                    self.battle_introduction_manager.on_start();
                 } else {
-                    self.openers[self.current_opener_id].update(context);
+                    self.openers[self.current_opener_id].update(delta);
                 }
             } else if self.battle_introduction_manager.is_alive() {
-                self.battle_introduction_manager.update(context);
+                self.battle_introduction_manager.update(delta);
             }
         }
     }
+}
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+impl Render for BattleOpenerManager {
+
+    fn render(&self, tr: &TextRenderer) {
         if self.is_alive() {
             if self.battle_introduction_manager.is_alive() {
-                self.battle_introduction_manager.render(ctx, g, tr);
+                self.battle_introduction_manager.render(tr);
             } else {
-                self.openers[self.current_opener_id].render(ctx, g, tr);
+                self.openers[self.current_opener_id].render(tr);
             }
             
         }
         
     }
+
 }
 
-impl BattleTransitionManager for BattleOpenerManager {
+impl BattleTransitionManager for BattleOpenerManager {}
+
+impl Reset for BattleOpenerManager {
+
+    fn reset(&mut self) {
+        self.openers[self.current_opener_id].reset();
+        self.battle_introduction_manager.reset();
+    }
 
 }
 
@@ -142,13 +145,13 @@ impl Entity for BattleOpenerManager {
     }
 }
 
-impl Loadable for BattleOpenerManager {
+impl Load for BattleOpenerManager {
 
     fn load(&mut self) {
         self.openers[self.current_opener_id].load();
     }
 
-    fn on_start(&mut self, context: &mut GameContext) {
-        self.openers[self.current_opener_id].on_start(context);
+    fn on_start(&mut self) {
+        self.openers[self.current_opener_id].on_start();
     }
 }

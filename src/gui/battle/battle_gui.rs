@@ -1,12 +1,8 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use crate::util::context::GameContext;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::gui::GuiComponent;
-use crate::util::traits::Loadable;
+use crate::util::Load;
 
 use super::battle_background::BattleBackground;
 use super::battle_text::BattleText;
@@ -42,11 +38,11 @@ impl BattleGui {
 
 			battle_background: BattleBackground::new(),
 
-			player_panel: PlayerPanel::new(0, 113),
-			player_pokemon_gui: PlayerPokemonGui::new(127, 75),
-			opponent_pokemon_gui: OpponentPokemonGui::new(14, 18),
+			player_panel: PlayerPanel::new(0.0, 113.0),
+			player_pokemon_gui: PlayerPokemonGui::new(127.0, 75.0),
+			opponent_pokemon_gui: OpponentPokemonGui::new(14.0, 18.0),
 
-			battle_text: BattleText::new(0, 113),
+			battle_text: BattleText::new(0.0, 113.0),
 
 			player_bounce: PlayerBounce::new(),
 
@@ -70,38 +66,37 @@ impl BattleGui {
 		self.player_pokemon_gui.update_gui(battle);
 	}
 
-	pub fn update(&mut self, context: &mut GameContext) {
-		self.player_bounce.update(&mut self.player_pokemon_gui);
-		self.player_panel.update(context);
+	pub fn update(&mut self, delta: f32) {
+		self.player_bounce.update(delta, &mut self.player_pokemon_gui);
+		self.player_panel.update(delta);
 		self.player_pokemon_gui.update();
 		self.opponent_pokemon_gui.update();
-		self.battle_text.update();
+		self.battle_text.update(delta);
 	}
 
-	pub fn input(&mut self, context: &mut GameContext, battle: &mut Battle) {
-		self.player_panel.input(context, battle);
+	pub fn input(&mut self, delta: f32, battle: &mut Battle) {
+		self.player_panel.input(delta, battle);
 	}
 
-	pub fn render_background(&self, ctx: &mut Context, g: &mut GlGraphics, offset: u16) {
-		self.battle_background.render(ctx, g, offset);
+	pub fn render_background(&self, offset: f32) {
+		self.battle_background.render(offset);
 	}
 
-	pub fn render_panel(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-		self.player_panel.render(ctx, g, tr);
-		self.battle_text.render(ctx, g, tr);
+	pub fn render_panel(&self, tr: &TextRenderer) {
+		self.player_panel.render(tr);
+		self.battle_text.render(tr);
 	}
 
-	pub fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-		self.opponent_pokemon_gui.render(ctx, g, tr);
-		self.player_pokemon_gui.render(ctx, g, tr);
+	pub fn render(&self, tr: &TextRenderer) {
+		self.opponent_pokemon_gui.render(tr);
+		self.player_pokemon_gui.render(tr);
 	}
 
 }
 
-impl Loadable for BattleGui {
+impl Load for BattleGui {
 
 	fn load(&mut self) {
-		self.battle_background.load();
 		self.player_panel.load();
 		self.player_pokemon_gui.panel.load();
 		self.opponent_pokemon_gui.panel.load();
@@ -145,7 +140,7 @@ pub trait BattleGuiComponent {
 
 pub trait BattleGuiButton {
 
-	fn on_use(&mut self, context: &mut GameContext, battle: &mut Battle);
+	fn on_use(&mut self, delta: f32, battle: &mut Battle);
 
 }
 
@@ -157,7 +152,7 @@ pub trait BattleActivatable {
 
 	fn in_focus(&mut self) -> bool;
 
-	fn input(&mut self, context: &mut GameContext, battle: &mut Battle, pp_gui: &mut PlayerPokemonGui, op_gui: &mut OpponentPokemonGui);
+	fn input(&mut self, delta: f32, battle: &mut Battle, pp_gui: &mut PlayerPokemonGui, op_gui: &mut OpponentPokemonGui);
 
 	fn next(&self) -> u8;
 

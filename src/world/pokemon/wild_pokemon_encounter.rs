@@ -1,9 +1,7 @@
-use oorandom::Rand32;
-
 use crate::io::data::pokemon::StatSet;
 use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub struct WildPokemonEncounter {
 
     pub pokemon_id: usize,
@@ -14,9 +12,8 @@ pub struct WildPokemonEncounter {
 
 impl WildPokemonEncounter {
 
-    pub fn generate_saved(&self, random: &mut Rand32) -> SavedPokemon {
-        let ivs = StatSet::iv_random(random);
-        return SavedPokemon::generate(random, self.pokemon_id, self.min_level, self.max_level, Some(ivs), None);
+    pub fn generate_saved(&self) -> SavedPokemon {
+        return SavedPokemon::generate(self.pokemon_id, self.min_level, self.max_level, Some(StatSet::iv_random()), None);
     }
 
 }

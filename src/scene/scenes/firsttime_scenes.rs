@@ -1,21 +1,17 @@
-
-use opengl_graphics::Texture;
+use crate::util::Load;
+use crate::util::input;
+use crate::util::texture::Texture;
 use crate::scene::Scene;
-use crate::scene::SceneLoad;
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
 use crate::util::text_renderer::TextRenderer;
 
-use crate::util::context::GameContext;
-
 use crate::util::file::asset_as_pathbuf;
-use crate::util::texture_util::texture_from_path;
-use crate::util::render_util::draw_o;
-
+use crate::util::render::draw;
+use crate::util::texture::load_texture;
+//use async_trait::async_trait;
 pub struct FirstTimeControlsScene {
 	scene_token: usize,
 	page: u8,
-	background_tex: Option<Texture>,
+	background_tex: Texture,
 	dpad_b_tex: Option<Texture>,
 	a_b_tex: Option<Texture>,
 	b_b_tex: Option<Texture>,
@@ -26,11 +22,11 @@ pub struct FirstTimeControlsScene {
 
 impl FirstTimeControlsScene {
 	
-	pub fn new() -> FirstTimeControlsScene {
+	pub async fn new() -> FirstTimeControlsScene {
 		FirstTimeControlsScene {
 			scene_token: 0,
 			page: 0,
-			background_tex: None,
+			background_tex: load_texture(asset_as_pathbuf("scenes/firsttime/controls/background.png")).await,
 			dpad_b_tex: None,
 			a_b_tex: None,
 			b_b_tex: None,
@@ -42,13 +38,12 @@ impl FirstTimeControlsScene {
 	
 }
 
+//#[async_trait]
+impl Load for FirstTimeControlsScene {
 
-impl SceneLoad for FirstTimeControlsScene {
-
-	fn load(&mut self, _context: &mut GameContext) {
+	fn load(&mut self) {
 		
 		self.page = 0;
-		self.background_tex = Some(texture_from_path(asset_as_pathbuf("firsttime/controls/background.png")));
 		self.dpad_b_tex = None;
 		self.a_b_tex = None;
 		self.b_b_tex = None;
@@ -58,7 +53,7 @@ impl SceneLoad for FirstTimeControlsScene {
 		
 	}
 
-	fn on_start(&mut self, _context: &mut GameContext) {
+	fn on_start(&mut self) {
 		
 	}
 
@@ -66,20 +61,20 @@ impl SceneLoad for FirstTimeControlsScene {
 
 impl Scene for FirstTimeControlsScene {
 	
-//	fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
+	fn update(&mut self, _delta: f32) {}
 	
-	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		draw_o(ctx, g, self.background_tex.as_ref(), 0, 0);
+	fn render(&self, _tr: &TextRenderer) {
+		draw(self.background_tex, 0.0, 0.0);
 	}
 	
-	fn input(&mut self, context: &mut GameContext) { //[ButtonActions; 6]) {
-		if context.keys[0] == 1 { //ButtonActions::PRESSED {
+	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
+		if input::pressed(crate::util::input::Control::A) { //ButtonActions::PRESSED {
 			
 			self.scene_token = 8;
 		}
 	}
 	
-	fn dispose(&mut self) {}
+	fn quit(&mut self) {}
 	
 	fn name(&self) -> &str {
 		&"First Time - Controls"
@@ -94,36 +89,35 @@ pub struct FirstTimeNarrativeScene {
 	
 	scene_token: usize,
 	page: u8,
-	background_tex: Option<Texture>,
+	background_tex: Texture,
 	pikachu_tex: Option<Texture>, // change to pikachu sprite
 
 }
 
 impl FirstTimeNarrativeScene {
 	
-	pub fn new() -> FirstTimeNarrativeScene {
+	pub async fn new() -> FirstTimeNarrativeScene {
 		FirstTimeNarrativeScene {
 			scene_token: 0,
 			page: 0,
-			background_tex: None,
+			background_tex: load_texture(asset_as_pathbuf("firsttime/narrative/background.png")).await,
 			pikachu_tex: None,
 		}
 	}
 	
 }
 
-//
-impl SceneLoad for FirstTimeNarrativeScene {
+//#[async_trait]
+impl Load for FirstTimeNarrativeScene {
 
-	fn load(&mut self, _context: &mut GameContext) {
+	fn load(&mut self) {
 		
 		self.page = 0;
-		self.background_tex = Some(texture_from_path(asset_as_pathbuf("firsttime/narrative/background.png")));
 		self.pikachu_tex = None;
 		
 	}
 
-	fn on_start(&mut self, _context: &mut GameContext) {
+	fn on_start(&mut self) {
 		
 	}
 
@@ -131,20 +125,20 @@ impl SceneLoad for FirstTimeNarrativeScene {
 
 impl Scene for FirstTimeNarrativeScene {
 	
-//	fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
+	fn update(&mut self, _delta: f32) {}
 	
-	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		draw_o(ctx, g, self.background_tex.as_ref(), 0, 0);
+	fn render(&self, _tr: &TextRenderer) {
+		draw(self.background_tex, 0.0, 0.0);
 	}
 	
-	fn input(&mut self, context: &mut GameContext) { //[ButtonActions; 6]) {
-		if context.keys[0] == 1 { //ButtonActions::PRESSED {
+	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
+		if input::pressed(crate::util::input::Control::A) { //ButtonActions::PRESSED {
 			
 			self.scene_token = 6;
 		}
 	}
 	
-	fn dispose(&mut self) {}
+	fn quit(&mut self) {}
 	
 	fn name(&self) -> &str {
 		&"First Time - Narrative"

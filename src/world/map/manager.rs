@@ -1,27 +1,28 @@
-use std::collections::HashMap;
-
-use image::RgbaImage;
-use log::info;
-use log::warn;
-use opengl_graphics::Texture;
+use ahash::AHashMap;
+use crate::gui::gui::Activatable;
+use crate::gui::gui::GuiComponent;
+use macroquad::prelude::Image;
+use macroquad::prelude::KeyCode;
+use macroquad::prelude::info;
+use macroquad::prelude::is_key_pressed;
+use macroquad::prelude::warn;
+use crate::util::input;
+use crate::util::texture::Texture;
+use crate::world::gui::player_world_gui::PlayerWorldGui;
 use enum_iterator::IntoEnumIterator;
-
-use crate::audio::music::Music;
+use crate::audio::Music;
 use crate::util::Render;
-use crate::util::context::GameContext;
+use crate::util::input::Control;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::gui::gui::Activatable;
 use crate::io::data::Direction;
 use crate::io::data::player_data::PlayerData;
 use crate::io::map::gba_map::fill_palette_map;
 use crate::io::map::gba_map::get_texture;
 use crate::io::map::map_loader::load_maps;
 use crate::io::map::npc_loader::load_npc_textures;
-use crate::gui::gui::GuiComponent;
 use crate::world::gui::map_window_manager::MapWindowManager;
-use crate::world::gui::player_world_gui::PlayerWorldGui;
 use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
 use crate::world::player::RUN_SPEED;
@@ -31,7 +32,7 @@ use super::RenderCoords;
 use super::World;
 use super::chunk::world_chunk_map::WorldChunkMap;
 use super::set::world_map_set_manager::WorldMapSetManager;
-#[derive(Default)]
+
 pub struct WorldManager {
 
     pub(crate) chunk_map: WorldChunkMap,
@@ -49,20 +50,43 @@ pub struct WorldManager {
 
     pub window_manager: MapWindowManager,
 
-    pub(crate) bottom_textures: HashMap<u16, Texture>,
-    pub(crate) top_textures: HashMap<u16, Texture>,
-    pub(crate) npc_textures: HashMap<u8, ThreeWayTexture>,
+    pub(crate) bottom_textures: AHashMap<u16, Texture>,
+    //pub(crate) top_textures: AHashMap<u16, Texture>,
+    pub(crate) npc_textures: AHashMap<u8, ThreeWayTexture>,
 
 }
 
 impl WorldManager {
 
-    pub fn load(&mut self, player_data: &PlayerData) {
-        self.load_maps_and_textures();
-        self.load_player(player_data);
+    pub async fn new(player_data: &PlayerData) -> Self {
+        let mut this = Self {
+            chunk_map: WorldChunkMap::default(),
+            map_sets: WorldMapSetManager::default(),
+            player: Player::default(),
+            current_music: Music::default(),
+            player_gui: PlayerWorldGui::new(),
+            window_manager: MapWindowManager::default(),
+            bottom_textures: AHashMap::new(),
+            npc_textures: AHashMap::new(),
+        };
+        this.load_maps_and_textures().await;
+        this.load_player(player_data);
+        this
     }
 
-    pub fn play_music(&mut self, context: &mut GameContext) {
+    pub fn on_start(&mut self) {
+        if self.chunk_map.is_alive() {
+            self.load_chunk_map_at(
+                self.player.position.x,
+                self.player.position.y,
+            );
+        } else if self.map_sets.is_alive() {
+            self.current_music = Music::from(self.map_sets.map_set().map().music);
+        }
+        //context.play_music(self.current_music);
+    }
+
+    pub fn play_music(&mut self) {
         let music = if self.chunk_map.is_alive() {
             self.chunk_map.current_chunk().map.music
         } else {
@@ -70,50 +94,37 @@ impl WorldManager {
         };
         if music != self.current_music {
             self.current_music = music;
-            context.play_music(self.current_music);
-        } else if !context.is_music_playing() {
-            context.play_music(self.current_music);
-        }
+            //context.play_music(self.current_music);
+        }// else if !context.is_music_playing() {
+            //context.play_music(self.current_music);
+        //}
     }
 
-    pub fn on_start(&mut self, context: &mut GameContext) {
-        if self.chunk_map.is_alive() {
-            self.load_chunk_map_at(
-                context,
-                self.player.position.x,
-                self.player.position.y,
-            );
-        } else if self.map_sets.is_alive() {
-            self.current_music = Music::from(self.map_sets.map_set().map().music);
-        }
-        context.play_music(self.current_music);
-    }
-
-    pub fn update(&mut self, context: &mut GameContext) {
-        self.player_movement(context);
+    pub fn update(&mut self, delta: f32) {
+        self.player_movement(delta);
         //self.player.update(context);
         //self.world_map_manager.update(context, &self.player);
         //self.warp_map_manager.update(context, &self.player);
     }
 
-    pub fn render(&mut self, ctx: &mut piston_window::Context, g: &mut opengl_graphics::GlGraphics, tr: &mut TextRenderer) {
+    pub fn render(&self, tr: &TextRenderer) {
         let coords =  RenderCoords::new(&self.player);
         if self.chunk_map.is_alive() {
-            self.chunk_map.render(ctx, g, &self.bottom_textures, &self.npc_textures, coords, true);
+            self.chunk_map.render(&self.bottom_textures, &self.npc_textures, coords, true);
         } else if self.map_sets.is_alive() {
-            self.map_sets.render(ctx, g, &self.bottom_textures, &self.npc_textures, coords, true);
+            self.map_sets.render(&self.bottom_textures, &self.npc_textures, coords, true);
         }
-        self.player.render(ctx, g, tr);
-        self.player_gui.render(ctx, g, tr);      
+        self.player.render(tr);
+        self.player_gui.render(tr);      
     }
 
 
-    pub fn load_chunk_map_at(&mut self, context: &mut GameContext, x: isize, y: isize) {
+    pub fn load_chunk_map_at(&mut self, x: isize, y: isize) {
         if let Some(chunk) = self.chunk_map.chunk_id_at(x, y) {
-            self.chunk_map.change_chunk(context, chunk);
+            self.chunk_map.change_chunk(chunk);
         } else {
             warn!("Could not load chunk at {}, {}", x, y);
-            self.chunk_map.change_chunk(context, 2);
+            self.chunk_map.change_chunk(2);
         }
     }
 
@@ -122,24 +133,30 @@ impl WorldManager {
         self.map_sets.set_index(index as usize);
     }
 
-    pub fn input(&mut self, context: &mut GameContext) {
+    pub fn input(&mut self, delta: f32) {
 
-        if cfg!(debug_assertions) {
-            self.debug_input(context)
+        if !crate::not_debug() {
+            self.debug_input()
         }
 
-        if context.keys[6] == 1 {
+        if input::pressed(Control::Start) {
             self.player_gui.toggle();
         }
 
         if self.player_gui.in_focus() {
-            self.player_gui.input(context);
+            self.player_gui.input(delta);
         } else {
+
+            if self.chunk_map.is_alive() {
+                self.chunk_map.input(delta, &self.player);
+            } else {
+                self.map_sets.input(delta, &self.player);
+            }
     
-            if self.player.position.x_offset == 0 && self.player.position.y_offset == 0 && !self.player.frozen {
+            if self.player.position.x_offset == 0.0 && self.player.position.y_offset == 0.0 && !self.player.frozen {
                 self.player.moving = true;
 
-                if context.key_active(1) {
+                if input::down(Control::B) {
                     if !self.player.running {
                         self.player.running = true;
                         self.player.speed = if self.player.noclip {
@@ -153,15 +170,15 @@ impl WorldManager {
                     self.player.speed = BASE_SPEED;
                 }
 
-                if !context.key_active(self.player.position.direction.keybind()) {
+                if !input::down(self.player.position.direction.keybind()) {
                     for direction in Direction::into_enum_iter() {
-                        if context.key_active(direction.keybind()) {
-                            self.move_direction(context, direction);
+                        if input::down(direction.keybind()) {
+                            self.move_direction(direction);
                             break;
                         }
                     }
-                } else if context.key_active(self.player.position.direction.keybind()) {
-                    self.move_direction(context, self.player.position.direction);
+                } else if input::down(self.player.position.direction.keybind()) {
+                    self.move_direction(self.player.position.direction);
                 } else {
                     self.player.moving = false;
                 }
@@ -172,7 +189,7 @@ impl WorldManager {
         
     }
 
-    fn move_direction(&mut self, context: &mut GameContext, direction: Direction) {
+    fn move_direction(&mut self, direction: Direction) {
         self.player.on_try_move(direction);
         let offset = direction.offset();
         let x = self.player.position.x + offset.0 as isize;
@@ -180,17 +197,17 @@ impl WorldManager {
         let move_code = if self.chunk_map.is_alive() {
             if self.chunk_map.in_bounds(x, y) {
                 if let Some(entry) = self.chunk_map.check_warp(x, y) {
-                    self.warp(context, entry);
+                    self.warp(entry);
                     return;
                 }            
                 self.chunk_map.walkable(x, y)
             } else {
-                self.chunk_map.walk_connections(context, x, y)
+                self.chunk_map.walk_connections(x, y)
             }            
         } else {
             if self.map_sets.in_bounds(x, y) {
                 if let Some(entry) = self.map_sets.check_warp(x, y) {
-                    self.warp(context, entry);
+                    self.warp(entry);
                     return;
                 }
                 self.map_sets.walkable(x, y)
@@ -232,72 +249,72 @@ impl WorldManager {
         }
     }
 
-    fn player_movement(&mut self, context: &mut GameContext) {
-        if self.player.position.x_offset != 0 || self.player.position.y_offset != 0 {
+    fn player_movement(&mut self, delta: f32) {
+        if self.player.position.x_offset != 0.0 || self.player.position.y_offset != 0.0 {
             match self.player.position.direction {
                 Direction::Up => {
-                    self.player.position.y_offset -= self.player.speed as i8;
-                    if self.player.position.y_offset <= -16 {
+                    self.player.position.y_offset -= (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.y_offset <= -16.0 {
                         self.player.position.y -= 1;
-                        self.player.position.y_offset = 0;
-                        self.stop_player(context);
+                        self.player.position.y_offset = 0.0;
+                        self.stop_player();
                     }
                 }
                 Direction::Down => {
-                    self.player.position.y_offset += self.player.speed as i8;
-                    if self.player.position.y_offset >= 16 {
+                    self.player.position.y_offset += (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.y_offset >= 16.0 {
                         self.player.position.y += 1;
-                        self.player.position.y_offset = 0;
-                        self.stop_player(context);
+                        self.player.position.y_offset = 0.0;
+                        self.stop_player();
                     }
                 }
                 Direction::Left => {
-                    self.player.position.x_offset -= self.player.speed as i8;
-                    if self.player.position.x_offset <= -16 {
+                    self.player.position.x_offset -= (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.x_offset <= -16.0 {
                         self.player.position.x -= 1;
-                        self.player.position.x_offset = 0;
-                        self.stop_player(context);
+                        self.player.position.x_offset = 0.0;
+                        self.stop_player();
                     }
                 }
                 Direction::Right => {
-                    self.player.position.x_offset += self.player.speed as i8;
-                    if self.player.position.x_offset >= 16 {
+                    self.player.position.x_offset += (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.x_offset >= 16.0 {
                         self.player.position.x += 1;
-                        self.player.position.x_offset = 0;
-                        self.stop_player(context);
+                        self.player.position.x_offset = 0.0;
+                        self.stop_player();
                     }
                 }
             }
-            self.player.move_update();
+            self.player.move_update(delta);
         }
     }
 
-    fn stop_player(&mut self, context: &mut GameContext) {
+    fn stop_player(&mut self) {
         //self.player.moving = false;
         self.player.on_stopped_moving();
         let x = self.player.position.x;
         let y = self.player.position.y;
         if self.chunk_map.is_alive() {
             if self.chunk_map.in_bounds(x, y) {
-                self.chunk_map.on_tile(context, x, y);
+                self.chunk_map.on_tile(x, y);
             }
         } else {
             if self.map_sets.in_bounds(x, y) {
-                self.map_sets.on_tile(context, x, y);
+                self.map_sets.on_tile(x, y);
             }
         }        
     }
 
-    pub fn warp(&mut self, context: &mut GameContext, entry: WarpEntry) {
+    pub fn warp(&mut self, entry: WarpEntry) {
         // spawn warp transition here
         if entry.destination.map_id.as_str().eq("world") {
-            self.warp_to_chunk_map(context, entry);
+            self.warp_to_chunk_map(entry);
         } else {
-            self.warp_to_map_set(context, entry);
+            self.warp_to_map_set(entry);
         }
     }
 
-    pub fn warp_to_chunk_map(&mut self, context: &mut GameContext, entry: WarpEntry) {
+    pub fn warp_to_chunk_map(&mut self, entry: WarpEntry) {
         if !self.chunk_map.is_alive() {
             self.chunk_map.spawn();
             self.map_sets.despawn();
@@ -305,10 +322,10 @@ impl WorldManager {
         self.chunk_map.current_chunk = entry.destination.map_index;
         self.player.position.x = self.chunk_map.current_chunk().x + entry.destination.x;
         self.player.position.y = self.chunk_map.current_chunk().y + entry.destination.y;
-        self.play_music(context);
+        self.play_music();
     }
 
-    pub fn warp_to_map_set(&mut self, context: &mut GameContext, entry: WarpEntry) {
+    pub fn warp_to_map_set(&mut self, entry: WarpEntry) {
         if !self.map_sets.is_alive() {
             self.map_sets.spawn();
             self.chunk_map.despawn();
@@ -316,38 +333,38 @@ impl WorldManager {
         self.load_map_set(&entry.destination.map_id, entry.destination.map_index);
         self.player.position.x = entry.destination.x;
         self.player.position.y = entry.destination.y;
-        self.play_music(context);
+        self.play_music();
     }
 
-    pub fn load_maps_and_textures(&mut self) {
+    pub async fn load_maps_and_textures(&mut self) {
 
-        let mut bottom_sheets: HashMap<u8, RgbaImage> = HashMap::new();
-        let mut top_sheets: HashMap<u8, RgbaImage> = HashMap::new();
+        let mut bottom_sheets: AHashMap<u8, Image> = AHashMap::new();
+        //let mut top_sheets: HashMap<u8, RgbaImage> = HashMap::new();
 
-        let palette_sizes = fill_palette_map(&mut bottom_sheets, &mut top_sheets);
+        let palette_sizes = fill_palette_map(&mut bottom_sheets/*, &mut top_sheets*/).await;
 
-        load_maps(&palette_sizes, &mut self.chunk_map, &mut self.map_sets);
+        load_maps(&palette_sizes, &mut self.chunk_map, &mut self.map_sets).await;
 
-        load_npc_textures(&mut self.npc_textures);
+        load_npc_textures(&mut self.npc_textures).await;
 
         for wmap in self.chunk_map.chunks.values() {
             for tile_id in &wmap.map.tile_map {
-                if !(self.bottom_textures.contains_key(tile_id) && self.top_textures.contains_key(tile_id)) {
-                    self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
+                if !(self.bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
+                    //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
                     self.bottom_textures.insert(*tile_id, get_texture(&bottom_sheets, &palette_sizes, *tile_id));
                 }
             }
             for tile_id in &wmap.map.border_blocks {
-                if !(self.bottom_textures.contains_key(tile_id) && self.top_textures.contains_key(tile_id)) {
+                if !(self.bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
                     self.bottom_textures.insert(*tile_id, get_texture(&bottom_sheets, &palette_sizes, *tile_id));
-                    self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
+                    //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
                 }
             }
         }
         for wmapset in self.map_sets.values() {
             for tile_id in &wmapset.tiles() {
-                if !(self.bottom_textures.contains_key(tile_id) && self.top_textures.contains_key(tile_id)) {
-                    self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
+                if !(self.bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
+                    //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
                     self.bottom_textures.insert(*tile_id, get_texture(&bottom_sheets, &palette_sizes, *tile_id));
                 }
             }
@@ -366,16 +383,12 @@ impl WorldManager {
         }
     }
 
-    fn debug_input(&mut self, context: &mut GameContext) {
-        if context.fkeys[0] == 1 {
-            context.random_wild_battle();
+    fn debug_input(&mut self) {
+        if is_key_pressed(KeyCode::F1) {
+            crate::util::battle_data::random_wild_battle();
         }
 
-        if context.fkeys[2] == 1 {
-            context.stop_music();
-        }
-
-        if context.fkeys[1] == 1 {
+        if is_key_pressed(KeyCode::F2) {
             self.player.noclip = !self.player.noclip;
             if self.player.noclip {
                 self.player.speed *= 4;
@@ -385,12 +398,12 @@ impl WorldManager {
             info!("No clip toggled!");
         }
 
-        if context.fkeys[3] == 1 {
+        if is_key_pressed(KeyCode::F3) {
             if self.chunk_map.is_alive() {
                 let mut pos_map = String::from("Local X: ");
                 pos_map.push_str((self.player.position.x - self.chunk_map.current_chunk().x).to_string().as_str());
                 pos_map.push_str(", Local Y: ");
-                pos_map.push_str((self.player.position.y - self.chunk_map.current_chunk().y).to_string().as_str());
+                pos_map.push_str((self.player.position.y - self.chunk_map.current_chunk().y).to_string().as_str()); // To - do : use itoa/ryu/lexical
                 info!("{}", pos_map);
             }
             let mut pos = String::from("X: ");
@@ -403,7 +416,6 @@ impl WorldManager {
                 self.map_sets.tile(self.player.position.x, self.player.position.y)
             };
             info!("{}, Tile: {}", pos, tile);
-            
         }
 
     }

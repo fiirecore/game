@@ -1,4 +1,3 @@
-use oorandom::Rand32;
 use serde::{Deserialize, Serialize};
 
 use crate::game::pokedex::pokedex::Pokedex;
@@ -30,7 +29,7 @@ pub struct SavedPokemon {
 
 impl SavedPokemon {
 
-	pub fn generate(random: &mut Rand32, pokemon_id: usize, min_level: u8, mut max_level: u8, ivs: Option<StatSet>, evs: Option<StatSet>) -> Self {
+	pub fn generate(pokemon_id: usize, min_level: u8, mut max_level: u8, ivs: Option<StatSet>, evs: Option<StatSet>) -> Self {
         if min_level == max_level {
             max_level += 1;
         }
@@ -38,7 +37,7 @@ impl SavedPokemon {
         Self {
 
             pokemon_id: pokemon_id,
-            level: random.rand_range(min_level as u32..max_level as u32) as u8,
+            level: macroquad::rand::gen_range(min_level, max_level),
             ivs: ivs,
             evs: evs,
             current_hp: None,

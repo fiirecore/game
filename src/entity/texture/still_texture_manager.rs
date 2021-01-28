@@ -1,4 +1,4 @@
-use opengl_graphics::Texture;
+use crate::util::texture::Texture;
 
 use super::texture_manager::TextureManager;
 
@@ -22,27 +22,19 @@ impl StillTextureManager {
 
 impl TextureManager for StillTextureManager {
 
-    fn reset(&mut self) {
+    fn reset(&mut self) {}
 
-    }
+    fn update(&mut self, _delta: f32) {}
 
-    fn update(&mut self) {
+    fn idle(&mut self) {}
 
-    }
-
-    fn idle(&mut self) {
-
-    }
-
-    fn unidle(&mut self) {
-
-    }
+    fn unidle(&mut self) {}
 
     fn is_idle(&self) -> bool {
         true
     }
 
-    fn texture(&self) -> (&Texture, bool) {
-        (&self.texture, self.flip)
+    fn texture(&self) -> (Texture, bool) {
+        (self.texture, self.flip)
     }
 }

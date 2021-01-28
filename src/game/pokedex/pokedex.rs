@@ -1,38 +1,102 @@
-use std::collections::HashMap;
-use std::path::PathBuf;
-
-use log::error;
-use log::warn;
+use ahash::AHashMap;
+use ahash::AHashSet;
+use parking_lot::Mutex;
+use zip::ZipArchive as Archive;
+use std::io::Cursor;
+use macroquad::prelude::warn;
 
 use crate::io::data::pokemon::Pokemon;
 use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
-use crate::util::file::asset_as_pathbuf;
+use crate::util::texture::debug_texture;
 
 pub struct Pokedex {
 	
-	pub pokemon_list: HashMap<usize, Pokemon>,
-	pub move_list: HashMap<String, PokemonMove>,
+	pub pokemon_list: AHashMap<usize, Pokemon>,
+	pub move_list: AHashMap<String, PokemonMove>,
 	
 }
 
 pub static LENGTH: usize = 386;
 pub static DEX_DIR: &str = "pokedex/";
 
+lazy_static::lazy_static! {
+	static ref POKEDEX_ARCHIVE: Mutex<Archive<Cursor<&'static [u8; 1103274]>>> = Mutex::new(Archive::new(Cursor::new(include_bytes!("../../../include/pokedex.zip"))).expect("Could not read pokedex archive file in executable!"));
+}
+
 impl Pokedex {
 	
 	pub fn new() -> Pokedex {
+
+		let mut archive = POKEDEX_ARCHIVE.lock();
+
+		let mut pokemon_files: AHashSet<String> = AHashSet::new();
+		let mut move_files: AHashSet<String> = AHashSet::new();
+		
+		for file in archive.file_names() {
+			if file.starts_with('e') {
+				pokemon_files.insert(file.to_string());
+			} else if file.starts_with('m') {
+				move_files.insert(file.to_string());
+			} else if !file.starts_with('t') {
+				warn!("Unknown file in pokedex zip: {}", file);
+			}
+		}
+
+		let mut pokemon_list = AHashMap::new();
+
+		for filename in pokemon_files {
+			match archive.by_name(&filename) {
+			    Ok(mut entry) => {
+					let mut content = String::new();
+					match std::io::Read::read_to_string(&mut entry, &mut content) {
+					    Ok(_) => {
+							match Pokemon::from_string(&content) {
+								Ok(pokemon) => {
+									pokemon_list.insert(pokemon.data.number, pokemon);
+								},
+								Err(err) => warn!("Could not read pokemon at {} with error {}", &filename, err),
+							}
+						}
+					    Err(err) => warn!("Could not read pokemon at {} to string with error {}", &filename, err),
+					}
+				}
+			    Err(err) => warn!("Could not get zipped file at {} with error {}", &filename, err),
+			}
+		}
+
+		let mut move_list = AHashMap::new();
+
+		for filename in move_files {
+			match archive.by_name(&filename) {
+			    Ok(mut entry) => {
+					let mut content = String::new();
+					match std::io::Read::read_to_string(&mut entry, &mut content) {
+					    Ok(_) => {
+							match PokemonMove::from_string(&content) {
+								Ok(pokemon_move) => {
+									move_list.insert(pokemon_move.name.clone(), pokemon_move);
+								}
+								Err(err) => warn!("Could not read pokemon move at {} with error {}", &filename, err)
+							}
+						}
+					    Err(err) => warn!("Could not read pokemon move at {} to string with error {}", &filename, err),
+					}
+				}
+			    Err(err) => warn!("Could not get zipped file at {} with error {}", &filename, err),
+			}
+		}
 		
 		Pokedex {
 			
-			pokemon_list: HashMap::new(),
-			move_list: HashMap::new(),
+			pokemon_list: pokemon_list,
+			move_list: move_list,
 			
 		}
 		
 	}
 
 	pub fn pokemon_from_id(&self, id: usize) -> &Pokemon {
-			return self.pokemon_list.get(&id).unwrap_or(self.pokemon_list.get(&1).unwrap());
+		return self.pokemon_list.get(&id).unwrap_or(self.pokemon_list.get(&1).unwrap());
 	}
 
 	pub fn moves_from_level(&self, pokemon_id: usize, level: u8) -> Vec<PokemonMove> {
@@ -56,56 +120,25 @@ impl Pokedex {
 		return moves;
 	}
 
-
-	
-	
-	pub fn load(&mut self) {
-		
-		let entry_path = PathBuf::from(DEX_DIR).join("entries");
-
-		match std::fs::read_dir(asset_as_pathbuf(&entry_path)) {
-			Ok(dir) => {
-				for entry in dir.map(|res| res.map(|e| e.path())) {
-					match entry {
-						Ok(path) => {
-							if let Some(pokemon_entry) = Pokemon::new(path) {
-								self.pokemon_list.insert(pokemon_entry.data.number, pokemon_entry);
-							}					
-						}
-						Err(e) => {
-							warn!("Error fetching pokemon entry at {:?} with error: {}", entry_path, e);
-						}
-					}
-				}
-			},
-			Err(err) => {
-				error!("Problem fetching pokemon entry directory with error: {}", err);
-			},
-		}
-
-		let move_path = PathBuf::from(DEX_DIR).join("moves");
-
-		match std::fs::read_dir(asset_as_pathbuf(&move_path)) {
-			Ok(dir) => {
-				for entry in dir.map(|res| res.map(|e| e.path())) {
-					match entry {
-						Ok(path) => {
-							let move_entry = PokemonMove::load_move(path);
-							if let Some(pkmn_move) = move_entry {
-								self.move_list.insert(pkmn_move.name.clone(), pkmn_move);
-							}
-						}
-						Err(e) => {
-							warn!("Error fetching move toml at {:?} with error: {}", move_path, e);
-						}
+	pub fn pokemon_texture(pathend: String) -> crate::util::texture::Texture {
+		let mut path = String::from("textures/normal/");
+		path.push_str(&pathend);
+		let mut bytes = Vec::new();
+		match POKEDEX_ARCHIVE.lock().by_name(&path) {
+		    Ok(mut zipfile) => {
+				match std::io::Read::read_to_end(&mut zipfile, &mut bytes) {
+				    Ok(_) => crate::util::texture::byte_texture(bytes.as_slice()),
+				    Err(err) => {
+						warn!("Could not read pokemon texture at {} with error {}", &path, err);
+						debug_texture()
 					}
 				}
 			}
-			Err(err) => {
-				error!("Problem fetching moves directory with error: {}", err);
+		    Err(err) => {
+				warn!("Could not find pokemon texture at {} with error {}", &path, err);
+				debug_texture()
 			}
 		}
-		
 	}
 	
 }

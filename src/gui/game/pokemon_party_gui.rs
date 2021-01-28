@@ -1,28 +1,25 @@
-use crate::gui::gui::Panel;
+use crate::gui::gui::Background;
 use crate::gui::gui::GuiComponent;
-use crate::util::traits::Loadable;
+use crate::util::Load;
 
 pub struct PokemonPartyGui {
 
-    background: Panel,
+    background: Background,
 
 }
 
 impl PokemonPartyGui {
 
-    pub fn new() -> Self {
-
+    pub async fn new() -> Self {
         Self {
-
-            background: Panel::new("gui/game/party_panel.png", 0, 0),
-
+            background: Background::new(crate::util::texture::load_texture(crate::util::file::asset_as_pathbuf("gui/game/party_panel.png")).await, 0.0, 0.0),
         }
 
     }
 
 }
 
-impl Loadable for PokemonPartyGui {
+impl Load for PokemonPartyGui {
 
     fn load(&mut self) {
         self.background.load();

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::audio::music::Music;
+use crate::audio::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::set::world_map_set::WorldMapSet;
 
@@ -9,9 +9,9 @@ use super::gba_map::get_gba_map;
 use super::map_serializable::MapConfig;
 use super::npc_loader::load_npc_entries;
 use super::warp_loader::load_warp_entries;
-use super::wild_entry_loader;
+use super::wild_entry_loader::load_wild_entry;
 
-pub fn new_map_set<P: AsRef<Path>>(
+pub async fn new_map_set<P: AsRef<Path>>(
     root_path: P,
     palette_sizes: &Vec<u16>,
     config: MapConfig,
@@ -23,7 +23,7 @@ pub fn new_map_set<P: AsRef<Path>>(
 
     for index in 0..config.identifier.map_files.len() {
 
-        let mut gba_map = get_gba_map(root_path.join(&config.identifier.map_files[index]));
+        let mut gba_map = get_gba_map(root_path.join(&config.identifier.map_files[index])).await;
 
         fix_tiles(&mut gba_map, palette_sizes);
 
@@ -37,9 +37,9 @@ pub fn new_map_set<P: AsRef<Path>>(
                 tile_map: gba_map.tile_map,
                 border_blocks: gba_map.border_blocks,
                 movement_map: gba_map.movement_map,
-                warps: load_warp_entries(&root_path, Some(index)),
-                npcs: load_npc_entries(&root_path, Some(index)),
-                wild: wild_entry_loader::load_wild_entry(&root_path, config.wild.clone(), Some(index)),
+                warps: load_warp_entries(&root_path, Some(index)).await,
+                npcs: load_npc_entries(&root_path, Some(index)).await,
+                wild: load_wild_entry(&root_path, config.wild.clone(), Some(index)).await,
             },
         );
     }

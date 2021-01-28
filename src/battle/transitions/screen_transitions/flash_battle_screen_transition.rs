@@ -1,16 +1,12 @@
-use crate::util::context::GameContext;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 
-use crate::util::render_util::draw_rect;
+use crate::util::render::draw_rect;
 
 static FINAL_INDEX: u8 = 4;
 
@@ -39,11 +35,10 @@ impl FlashBattleScreenTransition {
     }
 }
 
-impl BattleScreenTransition for FlashBattleScreenTransition {
-    
-}
+impl BattleScreenTransition for FlashBattleScreenTransition {}
+impl BattleTransition for FlashBattleScreenTransition {}
 
-impl BattleTransition for FlashBattleScreenTransition {
+impl Reset for FlashBattleScreenTransition {
     fn reset(&mut self) {
         self.screen = [1.0, 1.0, 1.0, 0.0];
         self.waning = false;
@@ -53,13 +48,13 @@ impl BattleTransition for FlashBattleScreenTransition {
     }
 }
 
-impl Loadable for FlashBattleScreenTransition {
+impl Load for FlashBattleScreenTransition {
 
     fn load(&mut self) {
         
     }
 
-    fn on_start(&mut self, _context: &mut GameContext) {
+    fn on_start(&mut self) {
         
     } 
 
@@ -71,20 +66,21 @@ impl Completable for FlashBattleScreenTransition {
     }
 }
 
-impl Ticking for FlashBattleScreenTransition {
-    fn update(&mut self, _context: &mut GameContext) {
+impl Update for FlashBattleScreenTransition {
+    
+    fn update(&mut self, delta: f32) {
         if self.waning {
-            self.screen[3] -= self.fade;
+            self.screen[3] -= self.fade * 60.0 * delta;
         } else {
-            self.screen[3] += self.fade;
+            self.screen[3] += self.fade * 60.0 * delta;
         }
-        if self.screen[3] == 0.0 {
+        if self.screen[3] <= 0.0 {
             self.waning = false;
             self.index += 1;
-        } else if self.screen[3] == 1.0 {
+        } else if self.screen[3] >= 1.0 {
             self.waning = true;
         }
-        if self.index == FINAL_INDEX && self.screen[3] == 0.0 {
+        if self.index == FINAL_INDEX && self.screen[3] <= 0.0 {
             self.screen[0] = 0.0;
             self.screen[1] = 0.0;
             self.screen[2] = 0.0;
@@ -96,13 +92,15 @@ impl Ticking for FlashBattleScreenTransition {
         }
     }
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
+}
+
+impl Render for FlashBattleScreenTransition {
+
+    fn render(&self, _tr: &TextRenderer) {
         draw_rect(
-            ctx,
-            g,
-            self.screen.into(),
-            0,
-            0,
+            self.screen,
+            0.0,
+            0.0,
             crate::BASE_WIDTH,
             crate::BASE_HEIGHT,
         );

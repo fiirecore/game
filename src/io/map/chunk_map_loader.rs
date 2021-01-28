@@ -1,8 +1,8 @@
 use std::path::Path;
 
-use log::warn;
+use macroquad::prelude::warn;
 
-use crate::audio::music::Music;
+use crate::audio::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::chunk::world_chunk::WorldChunk;
 
@@ -13,7 +13,7 @@ use super::npc_loader::load_npc_entries;
 use super::warp_loader::load_warp_entries;
 use super::wild_entry_loader::load_wild_entry;
 
-pub fn new_chunk_map<P: AsRef<Path>>(
+pub async fn new_chunk_map<P: AsRef<Path>>(
     path: P,
     palette_sizes: &Vec<u16>,
     config: MapConfig,
@@ -26,7 +26,7 @@ pub fn new_chunk_map<P: AsRef<Path>>(
         Some(ext_os_str) => {
             let ext = ext_os_str.to_str().unwrap();
             if ext.eq("map") {
-                let mut gba_map = get_gba_map(map_path);
+                let mut gba_map = get_gba_map(map_path).await;
                 fix_tiles(&mut gba_map, palette_sizes);
 
                 if let Some(jigsaw_map) = &config.jigsaw_map {
@@ -47,9 +47,9 @@ pub fn new_chunk_map<P: AsRef<Path>>(
                                 border_blocks: gba_map.border_blocks,
                                 movement_map: gba_map.movement_map,
                                 
-                                warps: load_warp_entries(path, None),
-                                npcs: load_npc_entries(path, None),
-                                wild: load_wild_entry(path, config.wild, None),
+                                warps: load_warp_entries(path, None).await,
+                                npcs: load_npc_entries(path, None).await,
+                                wild: load_wild_entry(path, config.wild, None).await,
 
                             },
                             connections: jigsaw_map.connections.clone(),

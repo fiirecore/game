@@ -1,22 +1,21 @@
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::io::data::Direction;
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
 use crate::util::text_renderer::TextRenderer;
 
-use crate::gui::gui::{BasicText, Panel};
+use crate::gui::gui::{BasicText, Background};
 use crate::gui::battle::health_bar::HealthBar;
 use crate::gui::gui::GuiComponent;
+use crate::util::texture::byte_texture;
 
 static OFFSET: isize = 24 * 5;
 pub struct PlayerPokemonGui {
 
 	alive: bool,
 
-	orig_x: isize,
+	orig_x: f32,
 
-	pub panel: Panel,
+	pub panel: Background,
 	pub name: BasicText,
 	pub level: BasicText,
 	pub health_text: BasicText,
@@ -26,9 +25,9 @@ pub struct PlayerPokemonGui {
 
 impl PlayerPokemonGui {
 
-	pub fn new(x: isize, y: isize) -> PlayerPokemonGui {
+	pub fn new(x: f32, y: f32) -> PlayerPokemonGui {
 
-		let ppp_x = x + OFFSET;
+		let ppp_x = x + OFFSET as f32;
 
 		PlayerPokemonGui {
 
@@ -36,11 +35,11 @@ impl PlayerPokemonGui {
 
 			orig_x: ppp_x,
 
-			panel: Panel::new("gui/battle/player_pokemon.png", ppp_x, y),
-			name: BasicText::new(vec![String::from("Player")], 0, Direction::Left, 17, 2, ppp_x, y),
-			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 95, 2, ppp_x, y),
-			health_text: BasicText::new(vec![String::from("/")], 0, Direction::Right, 95, 20, ppp_x, y),
-			health_bar: HealthBar::new(48, 17, ppp_x, y),
+			panel: Background::new(byte_texture(include_bytes!("../../../include/gui/battle/player_pokemon.png")), ppp_x, y),
+			name: BasicText::new(vec![String::from("Player")], 0, Direction::Left, 17.0, 2.0, ppp_x, y),
+			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 95.0, 2.0, ppp_x, y),
+			health_text: BasicText::new(vec![String::from("/")], 0, Direction::Right, 95.0, 20.0, ppp_x, y),
+			health_bar: HealthBar::new(48.0, 17.0, ppp_x, y),
 
 		}
 	}
@@ -86,13 +85,13 @@ impl PokemonGui for PlayerPokemonGui {
 		}		
 	}
 
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+	fn render(&self, tr: &TextRenderer) {
 		if self.is_alive() {
-			self.panel.render(ctx, g, tr);
-			self.name.render(ctx, g, tr);
-			self.level.render(ctx, g, tr);
-			self.health_text.render(ctx, g, tr);
-			self.health_bar.render(ctx, g, tr);
+			self.panel.render(tr);
+			self.name.render(tr);
+			self.level.render(tr);
+			self.health_text.render(tr);
+			self.health_bar.render(tr);
 		}		
 	}
 
@@ -116,7 +115,7 @@ impl PokemonGui for PlayerPokemonGui {
 		&mut self.health_bar
 	}
 
-	fn update_position(&mut self, x: isize, y: isize) {
+	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel.update_position(x, y);
 		self.name.update_position(x, y);
 		self.level.update_position(x, y);
@@ -124,7 +123,7 @@ impl PokemonGui for PlayerPokemonGui {
 		self.health_bar.update_position(x, y);
 	}
 
-	fn offset_position(&mut self, x: isize, y: isize) {
+	fn offset_position(&mut self, x: f32, y: f32) {
 		self.update_position(self.panel.x + x, self.panel.y + y);
 	}
 
@@ -134,9 +133,9 @@ pub struct OpponentPokemonGui {
 
 	alive: bool,
 
-	orig_x: isize,
+	orig_x: f32,
 
-	pub panel: Panel,
+	pub panel: Background,
 	pub name: BasicText,
 	pub level: BasicText,
 	pub health_bar: HealthBar,
@@ -145,9 +144,9 @@ pub struct OpponentPokemonGui {
 
 impl OpponentPokemonGui {
 
-	pub fn new(x: isize, y: isize) -> OpponentPokemonGui {
+	pub fn new(x: f32, y: f32) -> OpponentPokemonGui {
 
-		let x = x - OFFSET;
+		let x = x - OFFSET as f32;
 
 		OpponentPokemonGui {
 
@@ -155,10 +154,10 @@ impl OpponentPokemonGui {
 
 			orig_x: x,
 
-			panel: Panel::new("gui/battle/opponent_pokemon.png", x, y),			
-			name: BasicText::new(vec![String::from("Opponent")], 0, Direction::Left, 8, 2, x, y),
-			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 86, 2, x, y),
-			health_bar: HealthBar::new(39, 17, x, y),
+			panel: Background::new(byte_texture(include_bytes!("../../../include/gui/battle/opponent_pokemon.png")), x, y),			
+			name: BasicText::new(vec![String::from("Opponent")], 0, Direction::Left, 8.0, 2.0, x, y),
+			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 86.0, 2.0, x, y),
+			health_bar: HealthBar::new(39.0, 17.0, x, y),
 
 		}
 
@@ -201,12 +200,12 @@ impl PokemonGui for OpponentPokemonGui {
 		}		
 	}
 
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
+	fn render(&self, tr: &TextRenderer) {
 		if self.is_alive() {
-			self.panel.render(ctx, g, tr);
-			self.name.render(ctx, g, tr);
-			self.level.render(ctx, g, tr);
-			self.health_bar.render(ctx, g, tr);
+			self.panel.render(tr);
+			self.name.render(tr);
+			self.level.render(tr);
+			self.health_bar.render(tr);
 		}		
 	}
 
@@ -226,14 +225,14 @@ impl PokemonGui for OpponentPokemonGui {
 		&mut self.health_bar
 	}
 
-	fn update_position(&mut self, x: isize, y: isize) {
+	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel.update_position(x, y);
 		self.name.update_position(x, y);
 		self.level.update_position(x, y);
 		self.health_bar.update_position(x, y);
 	}
 
-	fn offset_position(&mut self, x: isize, y: isize) {
+	fn offset_position(&mut self, x: f32, y: f32) {
 		self.update_position(self.panel.x + x, self.panel.y + y);
 	}
 
@@ -245,7 +244,7 @@ pub trait PokemonGui: Entity { // To-do: sort out trait or have it extend someth
 
 	fn update(&mut self);
 
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer);
+	fn render(&self, tr: &TextRenderer);
 
 	fn update_gui(&mut self, battle: &Battle);
 
@@ -253,8 +252,8 @@ pub trait PokemonGui: Entity { // To-do: sort out trait or have it extend someth
 
 	fn health_bar(&mut self) -> &mut HealthBar;
 
-	fn update_position(&mut self, x: isize, y: isize);
+	fn update_position(&mut self, x: f32, y: f32);
 
-	fn offset_position(&mut self, x: isize, y: isize);
+	fn offset_position(&mut self, x: f32, y: f32);
 
 }

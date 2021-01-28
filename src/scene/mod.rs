@@ -1,9 +1,5 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
+use crate::util::Load;
 use crate::util::text_renderer::TextRenderer;
-use crate::util::context::GameContext;
-//use async_trait::async_trait;
-
 
 pub mod scene_manager;
 pub mod scenes {
@@ -16,23 +12,17 @@ pub mod scenes {
 	pub mod title_scene;
 }
 
-pub trait Scene: SceneLoad {
+pub mod loading_scene_manager;
+
+pub trait Scene: Load {
 	
-	fn update(&mut self, _context: &mut GameContext) {
-		
-	}
+	fn update(&mut self, delta: f32);
 	
-	fn render(&mut self, _ctx: &mut Context, _g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		
-	}
+	fn render(&self, _tr: &TextRenderer);
 	
-	fn input(&mut self, _context: &mut GameContext) {
-		
-	}
+	fn input(&mut self, delta: f32);
 	
-	fn dispose(&mut self) {
-		
-	}
+	fn quit(&mut self);
 	
 	fn name(&self) -> &str;
 	
@@ -40,11 +30,19 @@ pub trait Scene: SceneLoad {
 	
 }
 
-//#[async_trait]
-pub trait SceneLoad {
+pub trait LoadingScene {
 
-	fn load(&mut self, context: &mut GameContext);
+	fn update(&mut self, delta: f32);
 
-	fn on_start(&mut self, context: &mut GameContext);
+	fn render(&self);
 
 }
+
+// #[async_trait::async_trait]
+// pub trait SceneLoad {
+
+// 	fn load(&mut self);
+
+// 	fn on_start(&mut self);
+
+// }

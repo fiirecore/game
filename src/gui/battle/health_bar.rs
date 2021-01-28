@@ -1,10 +1,10 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
+
+
 
 use crate::util::text_renderer::TextRenderer;
 use crate::gui::gui::GuiComponent;
 
-use crate::util::render_util::draw_rect;
+use crate::util::render::draw_rect;
 
 static GREEN1: [f32; 4] = [88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0, 1.0];
 static GREEN2: [f32; 4] = [112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0, 1.0];
@@ -13,11 +13,11 @@ pub struct HealthBar {
 	
 	alive: bool,
 
-	x: isize, 
-	y: isize,
+	x: f32, 
+	y: f32,
 
-	panel_x: isize,
-	panel_y: isize,
+	panel_x: f32,
+	panel_y: f32,
 
 	width: u8,
 
@@ -30,7 +30,7 @@ pub struct HealthBar {
 
 impl HealthBar {
 	
-	pub fn new(_x: isize, _y: isize, _panel_x: isize, _panel_y: isize) -> HealthBar {
+	pub fn new(x: f32, y: f32, panel_x: f32, panel_y: f32) -> HealthBar {
 		
 		let width = 48;
 
@@ -38,11 +38,11 @@ impl HealthBar {
 			
 			alive: true,
 
-			x: _x,
-			y: _y,
+			x: x,
+			y: y,
 
-			panel_x: _panel_x,
-			panel_y: _panel_y,
+			panel_x: panel_x,
+			panel_y: panel_y,
 
 			width: width,
 
@@ -97,14 +97,14 @@ impl GuiComponent for HealthBar {
 		self.alive
 	}
 
-	fn update_position(&mut self, x: isize, y: isize) {
+	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel_x = x;
 		self.panel_y = y;
 	}
 
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		draw_rect(ctx, g, self.upper_hp_color.into(), self.x + self.panel_x, self.y + self.panel_y, self.get_width() as u32, 1);
-		draw_rect(ctx, g, self.lower_hp_color.into(), self.x + self.panel_x, self.y + self.panel_y + 1, self.get_width() as u32, 2);
+	fn render(&self, _tr: &TextRenderer) {
+		draw_rect(self.upper_hp_color, self.x + self.panel_x, self.y + self.panel_y, self.get_width() as u32, 1);
+		draw_rect(self.lower_hp_color, self.x + self.panel_x, self.y + self.panel_y + 1.0, self.get_width() as u32, 2);
 	}
 	
 }

@@ -1,8 +1,3 @@
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-use crate::util::context::GameContext;
-use crate::util::text_renderer::TextRenderer;
-
 pub mod util;
 
 pub mod texture {
@@ -22,17 +17,4 @@ pub trait Entity {
 	
 	fn is_alive(&self) -> bool;
 	
-}
-
-#[deprecated]
-pub trait Ticking {
-
-	fn update(&mut self, context: &mut GameContext) {
-		
-	}
-	
-	fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-
-	}
-
 }

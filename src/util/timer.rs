@@ -3,41 +3,41 @@ use crate::entity::Entity;
 pub struct Timer {
 
     alive: bool,
-    counter: usize,
-    final_count: usize,
+    counter: f32,
+    final_time: f32,
 
 }
 
 impl Timer {
 
-    pub fn new(final_count: usize) -> Self {
+    pub fn new(seconds: f32) -> Self {
 
         Self {
 
             alive: false,
-            counter: 0,
-            final_count: final_count,
+            counter: 0.0,
+            final_time: seconds,
 
         }
 
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, delta: f32) {
         if self.is_alive() {
-            self.counter+=1;
+            self.counter += delta;
         }        
     }
 
-    pub fn halfway(&self) -> bool {
-        return self.counter << 1 >= self.final_count;
-    }
+    // pub fn halfway(&self) -> bool {
+    //     return self.counter << 1 >= self.final_count;
+    // }
 
     pub fn is_finished(&self) -> bool {
-        return self.counter >= self.final_count;
+        return self.counter >= self.final_time;
     }
 
     pub fn reset(&mut self) {
-        self.counter = 0;
+        self.counter = 0.0;
     }
 
 }

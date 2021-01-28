@@ -1,85 +1,65 @@
-use std::time::SystemTime;
-use opengl_graphics::GlGraphics;
-use piston_window::Context;
-
-use crate::audio::music::Music;
-use opengl_graphics::Texture;
+use crate::util::Load;
+use crate::util::input;
+use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
-
-use crate::util::context::GameContext;
-//use crate::audio::sound_engine::{Source, SoundSource};
-
+//use async_trait::async_trait;
 use crate::scene::Scene;
-use crate::scene::SceneLoad;
-use crate::util::render_util::fade_in_out_o;
-use crate::util::render_util::draw_rect;
-use crate::util::file::asset_as_pathbuf;
-use crate::util::texture_util::texture_from_path;
+use crate::util::render::fade_in_out;
+use crate::util::render::draw_rect;
+use crate::util::texture::byte_texture;
 
 pub struct LoadingCopyrightScene {
 	scene_token: usize,
-	started: bool,
-	start_time: SystemTime,
-	scene_texture: Option<Texture>,
+	accumulator: f32,
+	scene_texture: Texture,
 }
 
 impl LoadingCopyrightScene {
-	
-	pub fn new() -> LoadingCopyrightScene {
-		
-		LoadingCopyrightScene {
-			
+
+	pub fn new() -> Self {
+		Self {
+			scene_texture: byte_texture(include_bytes!("../../../include/scenes/loading/copyright.png")),
+			accumulator: 0.0,
 			scene_token: 0,
-			started: false,
-			start_time: SystemTime::now(),	
-			scene_texture: None,
-			
 		}
 	}
-	
-	fn next(&mut self, context: &mut GameContext) {
-		self.scene_token = 1;
-		if !cfg!(debug_assertions) {
-            Music::bind_music(context);
-        }
+
+	pub fn render_notr(&self) {
+		fade_in_out(self.scene_texture, 0.0, 0.0, self.accumulator, 3.0, 1.0);
 	}
 	
 }
 
-impl SceneLoad for LoadingCopyrightScene {
+impl Load for LoadingCopyrightScene {
 
-	fn load(&mut self, _context: &mut GameContext) {
-		if !cfg!(debug_assertions) {
-			self.scene_texture = Some(texture_from_path(asset_as_pathbuf("scenes/loading/copyright.png")));
-		}
-	}
+	fn load(&mut self) {}
 
-	fn on_start(&mut self, context: &mut GameContext) {
+	fn on_start(&mut self) {
 		self.scene_token = 0;
-		if cfg!(debug_assertions) {
-			self.next(context);
-		}
-		self.start_time = SystemTime::now();
-		// context.audio.bind(Music::IntroGamefreak);
-
+		self.accumulator = 0.0;
 	}
 
 }
 
 impl Scene for LoadingCopyrightScene {
 	
-	fn update(&mut self, context: &mut GameContext) {
-		if !self.started {
-			self.start_time = SystemTime::now();
-			self.started = true;
-		}
-		if self.start_time.elapsed().unwrap().as_secs() > 3 {
-			self.next(context);
+	fn update(&mut self, delta: f32) {
+		self.accumulator += delta;
+		if self.accumulator > 3.0 {
+			self.scene_token = 1;
 		}
 	}
 	
-	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, _tr: &mut TextRenderer) {
-		fade_in_out_o(ctx, g, &self.scene_texture, 0, 0, self.start_time, 2500, 500, 255, 255, 255);
+	fn render(&self, _tr: &TextRenderer) {
+		self.render_notr();
+	}
+
+	fn input(&mut self, _delta: f32) {
+		
+	}
+
+	fn quit(&mut self) {
+		
 	}
 	
 	fn name(&self) -> &str {
@@ -93,7 +73,7 @@ impl Scene for LoadingCopyrightScene {
 pub struct LoadingGamefreakScene {
 	
 	scene_token: usize,
-	start_time: SystemTime,
+	accumulator: f32,
 	background_color: [f32; 4],
 
 }
@@ -105,63 +85,59 @@ impl LoadingGamefreakScene {
 		LoadingGamefreakScene {
 
 			scene_token: 0,
-			start_time: SystemTime::now(),
+			accumulator: 0.0,
 			background_color: [24.0/255.0, 40.0/255.0, 72.0/255.0, 1.0],
 
 		}
 	}	
 
-	fn next(&mut self) {
-		self.scene_token = 2;
-		
+	pub fn render_notr(&self) {
+		draw_rect(self.background_color, 0.0, 34.0, 240, 96);
 	}
 	
 }
 
+//#[async_trait]
+impl Load for LoadingGamefreakScene {
 
-impl SceneLoad for LoadingGamefreakScene {
-
-	fn load(&mut self, _context: &mut GameContext) {
+	fn load(&mut self) {
 
 	}
 
-	fn on_start(&mut self, context: &mut GameContext) {
+	fn on_start(&mut self) {
 		self.scene_token = 0;
-		if cfg!(debug_assertions) {
-			self.next();
-		} else {
-			context.play_music(Music::IntroGamefreak);
-		}
-		self.start_time = SystemTime::now();
+		//context.play_music(Music::IntroGamefreak);
+		self.accumulator = 0.0;
 	}
 
 }
 
 impl Scene for LoadingGamefreakScene {
 	
-	fn update(&mut self, _context: &mut GameContext) {
-		if self.start_time.elapsed().unwrap().as_millis() > 8500 {
-			self.next();
+	fn update(&mut self, delta: f32) {
+		self.accumulator += delta;
+		if self.accumulator > 8.5 {
+			self.scene_token = 2;
 		}
 	}
 	
-	fn render(&mut self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-		draw_rect(ctx, g, self.background_color.into(), 0, 34, 240, 96);
-		tr.render_text_from_left(ctx, g, 1, "X is A Button", 5, 34);
-		tr.render_text_from_left(ctx, g, 1, "Z is B button", 5, 49);
-		tr.render_text_from_left(ctx, g, 1, "D-Pad is Arrow Keys", 5, 64);
-		tr.render_text_from_left(ctx, g, 1, "F1 to battle", 5, 79);
-		tr.render_text_from_left(ctx, g, 1, "F2 to toggle noclip", 5, 94);
-		tr.render_text_from_left(ctx, g, 1, "F3 to toggle console", 5, 109);
+	fn render(&self, _tr: &TextRenderer) {
+		self.render_notr();
+		// tr.render_text_from_left(1, "X is A Button", 5.0, 34.0);
+		// tr.render_text_from_left(1, "Z is B button", 5.0, 49.0);
+		// tr.render_text_from_left(1, "D-Pad is Arrow Keys", 5.0, 64.0);
+		// tr.render_text_from_left(1, "F1 to battle", 5.0, 79.0);
+		// tr.render_text_from_left(1, "F2 to toggle noclip", 5.0, 94.0);
+		// tr.render_text_from_left(1, "F3 to toggle console", 5.0, 109.0);
 	}
 	
-	fn input(&mut self, context: &mut GameContext) { //[ButtonActions; 6]) {
-		 if context.keys[1] == 1 {
-			 self.next();
+	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
+		 if input::pressed(crate::util::input::Control::A) {
+			self.scene_token = 2;
 		 }
 	}
 	
-	fn dispose(&mut self) {}
+	fn quit(&mut self) {}
 	
 	fn name(&self) -> &str {
 		&"Loading - Gamefreak Intro"
@@ -181,14 +157,18 @@ impl LoadingPokemonScene {
 			scene_token: 0,
 		}
 	}
+
+	pub fn render_notr(&self) {
+
+	}
 }
 
+//#[async_trait]
+impl Load for LoadingPokemonScene {
 
-impl SceneLoad for LoadingPokemonScene {
+	fn load(&mut self) {}
 
-	fn load(&mut self, _context: &mut GameContext) {}
-
-	fn on_start(&mut self, _context: &mut GameContext) {
+	fn on_start(&mut self) {
 		self.scene_token = 3;
 	}
 	
@@ -196,17 +176,19 @@ impl SceneLoad for LoadingPokemonScene {
 
 impl Scene for LoadingPokemonScene {
 	
-	//fn update(&mut self, _ctx: &mut Context, _context: &mut GameContext) {}
+	fn update(&mut self, _delta: f32) {}
 	   
-	//fn render(&mut self, _ctx: &mut Context, _tr: &mut TextRenderer) {}
+	fn render(&self, _tr: &TextRenderer) {
+		self.render_notr();
+	}
 	
-	//fn input(&mut self, context: &mut GameContext) { //[ButtonActions; 6]) {
-	//	if context.keys[1] == 1 {
-	//		self.scene_token = 4;
-	//	}
-	//}
+	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
+		if input::pressed(crate::util::input::Control::B) {
+			self.scene_token = 4;
+		}
+	}
 	
-	//fn dispose(&mut self) {}
+	fn quit(&mut self) {}
 	
 	fn name(&self) -> &str {
 		&"Loading - Pokemon Intro"

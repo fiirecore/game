@@ -1,4 +1,4 @@
-use opengl_graphics::Texture;
+use crate::util::texture::Texture;
 
 use crate::entity::Entity;
 use crate::util::timer::Timer;
@@ -19,9 +19,9 @@ pub struct MovementTextureManager {
 
 impl MovementTextureManager {
 
-    pub fn new(movement_texture: MovementTexture, counter: usize) -> Self {
+    pub fn new(movement_texture: MovementTexture, seconds: f32) -> Self {
 
-        let mut timer =  Timer::new(counter);
+        let mut timer =  Timer::new(seconds);
         timer.spawn();
 
         Self {
@@ -45,8 +45,8 @@ impl TextureManager for MovementTextureManager {
         self.timer.reset();
     }
 
-    fn update(&mut self) {
-        self.timer.update();
+    fn update(&mut self, delta: f32) {
+        self.timer.update(delta);
         if self.timer.is_finished() {
             self.timer.reset();
             self.index += 1;
@@ -68,7 +68,7 @@ impl TextureManager for MovementTextureManager {
         self.idle
     }
 
-    fn texture(&self) -> (&Texture, bool) {
+    fn texture(&self) -> (Texture, bool) {
         if self.idle {
             return self.textures.idle();
         } else {

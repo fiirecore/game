@@ -1,43 +1,38 @@
-use opengl_graphics::GlGraphics;
-use opengl_graphics::Texture;
-use piston_window::Context;
-
+use crate::util::battle_data::TrainerData;
+use crate::util::texture::Texture;
 use crate::battle::battle::Battle;
-use crate::util::context::battle_context::TrainerData;
 use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::context::GameContext;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
-use crate::entity::Ticking;
+use crate::util::{Update, Render};
 use crate::gui::gui::Activatable;
-use crate::util::render_util::draw_bottom;
-use crate::util::traits::Completable;
-use crate::util::traits::Loadable;
+use crate::util::render::draw_bottom;
+use crate::util::{Reset, Completable};
+use crate::util::Load;
 use crate::world::npc::NPC;
-
 use super::basic_battle_introduction::BasicBattleIntroduction;
 
-static FINAL_TRAINER_OFFSET: u8 = 126;
+static FINAL_TRAINER_OFFSET: f32 = 126.0;
 
 pub struct TrainerBattleIntroduction {
 
     basic_battle_introduction: BasicBattleIntroduction,
     trainer_texture: Option<Texture>,
-    trainer_offset: u8,
+    trainer_offset: f32,
     trainer_leaving: bool,
 
 }
 
 impl TrainerBattleIntroduction {
 
-    pub fn new(panel_x: isize, panel_y: isize) -> Self {
+    pub fn new(panel_x: f32, panel_y: f32) -> Self {
 
         Self {
 
             basic_battle_introduction: BasicBattleIntroduction::new(panel_x, panel_y),
             trainer_texture: None,
-            trainer_offset: 0,
+            trainer_offset: 0.0,
             trainer_leaving: false,
 
         }
@@ -56,8 +51,8 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         }
     }
 
-    fn input(&mut self, context: &mut GameContext) {
-        self.basic_battle_introduction.input(context);
+    fn input(&mut self, delta: f32) {
+        self.basic_battle_introduction.input(delta);
     }
 
     fn setup(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>) {
@@ -86,16 +81,18 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         
     }
 
-    fn render_offset(&self, ctx: &mut Context, g: &mut GlGraphics, battle: &Battle, offset: u16) {
+    fn render_offset(&self, battle: &Battle, offset: f32) {
         if self.trainer_offset < FINAL_TRAINER_OFFSET {
-            draw_bottom(ctx, g, self.trainer_texture.as_ref().unwrap(), 144 - offset as isize + self.trainer_offset as isize, 74);
+            if let Some(trainer_texture) = self.trainer_texture {
+                draw_bottom(trainer_texture, 144.0 - offset + self.trainer_offset, 74.0);
+            }
         } else {
-            draw_bottom(ctx, g, &battle.opponent_textures[battle.opponent_active], 144 - offset as isize, 74);
+            draw_bottom(battle.opponent_textures[battle.opponent_active], 144.0 - offset, 74.0);
         }
         if self.basic_battle_introduction.player_intro.should_update() {
-            self.basic_battle_introduction.player_intro.draw(ctx, g, offset);
+            self.basic_battle_introduction.player_intro.draw(offset);
         } else {
-		    draw_bottom(ctx, g, &battle.player_textures[battle.player_active], 40 + offset as isize, 113);
+		    draw_bottom(battle.player_textures[battle.player_active], 40.0 + offset, 113.0);
         }  
     }
 }
@@ -116,24 +113,24 @@ impl Entity for TrainerBattleIntroduction {
 
 }
 
-impl BattleTransition for TrainerBattleIntroduction {
+impl Reset for TrainerBattleIntroduction {
 
     fn reset(&mut self) {
         self.basic_battle_introduction.reset();
-        self.trainer_offset = 0;
+        self.trainer_offset = 0.0;
         self.trainer_leaving = false;
     }
 
 }
 
-impl Loadable for TrainerBattleIntroduction {
+impl Load for TrainerBattleIntroduction {
 
     fn load(&mut self) {
         self.basic_battle_introduction.load();
     }
 
-    fn on_start(&mut self, context: &mut GameContext) {
-        self.basic_battle_introduction.on_start(context);
+    fn on_start(&mut self) {
+        self.basic_battle_introduction.on_start();
     }
 
 }
@@ -146,17 +143,23 @@ impl Completable for TrainerBattleIntroduction {
 
 }
 
-impl Ticking for TrainerBattleIntroduction {
+impl Update for TrainerBattleIntroduction {
 
-    fn update(&mut self, context: &mut GameContext) {
-        self.basic_battle_introduction.update(context);
+    fn update(&mut self, delta: f32) {
+        self.basic_battle_introduction.update(delta);
         if self.trainer_leaving && self.trainer_offset < FINAL_TRAINER_OFFSET {
-            self.trainer_offset += 5;
+            self.trainer_offset += 300.0 * delta;
         }
     }
 
-    fn render(&self, ctx: &mut Context, g: &mut GlGraphics, tr: &mut TextRenderer) {
-        self.basic_battle_introduction.render(ctx, g, tr);
+}
+
+impl Render for TrainerBattleIntroduction {
+
+    fn render(&self, tr: &TextRenderer) {
+        self.basic_battle_introduction.render(tr);
     }
 
 }
+
+impl BattleTransition for TrainerBattleIntroduction {}

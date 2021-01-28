@@ -1,6 +1,4 @@
 use std::fmt::Display;
-
-use crate::util::context::GameContext;
 use crate::game::pokedex::move_instance::MoveInstance;
 use crate::game::pokedex::pokedex::Pokedex;
 use crate::io::data::pokemon::LargeStatSet;
@@ -57,15 +55,15 @@ impl PokemonInstance {
 
 	}
 	
-	pub fn generate(pokedex: &Pokedex, context: &mut GameContext, pokemon: &Pokemon, min_level: u8, max_level: u8) -> PokemonInstance {
+	pub fn generate(pokedex: &Pokedex, pokemon: &Pokemon, min_level: u8, max_level: u8) -> PokemonInstance {
 		let level;
 		if min_level == max_level {
 			level = max_level;
 		} else {
-			level = context.random.rand_range(min_level as u32..(max_level as u32 + 1)) as u8;
+			level = macroquad::rand::gen_range(min_level, max_level + 1);
 		}
 
-		let ivs = StatSet::iv_random(&mut context.random);
+		let ivs = StatSet::iv_random();
 
 		let evs = StatSet::default();
 
