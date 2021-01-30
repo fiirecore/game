@@ -1,8 +1,67 @@
 use std::fmt::Display;
+
+use ahash::AHashMap;
+use kira::instance::handle::InstanceHandle;
+use kira::manager::AudioManager;
+use macroquad::prelude::warn;
+use parking_lot::Mutex;
 use enum_iterator::IntoEnumIterator;
 
-// mod music;
+use self::sound::Sound;
+
+mod music;
 mod sound;
+
+lazy_static::lazy_static! {
+    pub static ref AUDIO_MANAGER: Mutex<AudioManager> = Mutex::new(AudioManager::new(kira::manager::AudioManagerSettings::default()).expect("Could not create audio manager"));
+    static ref MUSIC_MAP: Mutex<AHashMap<Music, kira::sound::handle::SoundHandle>> = Mutex::new(AHashMap::new());
+    static ref MUSIC_INSTANCE: Mutex<Option<InstanceHandle>> = Mutex::new(None);
+    static ref SOUND_INSTANCE_MAP: Mutex<AHashMap<Sound, InstanceHandle>> = Mutex::new(AHashMap::new());
+}
+
+pub fn play_music(music: Music) {
+    if let Some(instance) = MUSIC_INSTANCE.lock().take() {
+        stop_instance(music, instance);
+    }
+    match MUSIC_MAP.lock().get_mut(&music) {
+        Some(sound) => {
+            match sound.play(kira::instance::InstanceSettings::default()) {
+                Ok(instance) => {
+                    *MUSIC_INSTANCE.lock() = Some(instance);
+                }
+                Err(err) => warn!("Problem playing music {} with error {}", music, err),
+            }
+        }
+        None => warn!("Could not get sound for {}", music),
+    }
+}
+
+pub fn is_music_playing() -> bool {
+    MUSIC_INSTANCE.lock().is_some()
+}
+
+pub fn stop_sound(sound: Sound) {
+    let mut instances = SOUND_INSTANCE_MAP.lock();
+    match instances.remove(&sound) {
+        Some(instance) => {
+            stop_instance(sound, instance);
+        },
+        None => warn!("Could not get sound instance handle for {}, probably not playing", sound),
+    }
+}
+
+pub fn stop_all_sounds() {
+    let sound_keys: Vec<Sound> = SOUND_INSTANCE_MAP.lock().keys().into_iter().map(|music|*music).collect();
+    for sound in sound_keys {
+        stop_sound(sound);
+    }
+}
+
+fn stop_instance(audio: impl Display, mut instance: InstanceHandle) {
+    if let Err(err) = instance.stop(kira::instance::StopInstanceSettings::default()) {
+        warn!("Problem stopping audio instance {} with error {}", audio, err);
+    }
+}
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq, IntoEnumIterator)]
 pub enum Music {

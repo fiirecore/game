@@ -1,24 +1,23 @@
 use std::fmt::Display;
+use crate::pokemon::moves::MoveCategory;
+use crate::pokemon::moves::PokemonMove;
+use crate::pokemon::party::PokemonParty;
+use crate::pokemon::pokedex::Pokedex;
+use crate::pokemon::pokedex::texture::Side;
+use crate::pokemon::pokedex::texture::pokemon_texture;
 use crate::util::texture::Texture;
 use crate::entity::Entity;
-use crate::game::pokedex::pokedex::Pokedex;
-use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
-use crate::game::pokedex::pokemon::pokemon_owned::OwnedPokemon;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::gui::gui::GuiComponent;
-use crate::io::data::pokemon::Pokemon;
-use crate::io::data::pokemon::moves::MoveCategory;
-use crate::io::data::pokemon::moves::pokemon_move::PokemonMove;
-use crate::io::data::pokemon::pokemon_party::PokemonParty;
 use crate::util::render::draw_bottom;
-
+use super::battle_pokemon::BattlePokemon;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 
 pub struct Battle {
 	
-	pub player_pokemon: Vec<OwnedPokemon>,
-	pub opponent_pokemon: Vec<PokemonInstance>,
+	pub player_pokemon: Vec<BattlePokemon>,
+	pub opponent_pokemon: Vec<BattlePokemon>,
 
 	pub player_active: usize,
 	pub opponent_active: usize,
@@ -75,10 +74,12 @@ impl Battle {
 		
 		Self {
 			
-			player_pokemon: player_pokemon.pokemon.iter().map(|pkmn|
-				pkmn.to_owned_pokemon(pokedex)
+			player_pokemon: player_pokemon.pokemon.iter().map(|pokemon|
+				BattlePokemon::new(pokedex, pokemon)
 			).collect(),
-			opponent_pokemon: opponent_pokemon.to_instance(pokedex),
+			opponent_pokemon: opponent_pokemon.pokemon.iter().map(|pokemon| {
+				BattlePokemon::new(pokedex, pokemon)
+			}).collect(),
 			
 			..Battle::default()
 			
@@ -88,10 +89,10 @@ impl Battle {
 
 	fn load_textures(&mut self) {
 		for i in &self.opponent_pokemon {
-			self.opponent_textures.push(Pokedex::pokemon_texture(Pokemon::texture_path("front", &i.pokemon)));
+			self.opponent_textures.push(pokemon_texture(&i.data.name.clone(), Side::Front));
 		}
 		for i in &self.player_pokemon {
-			self.player_textures.push(Pokedex::pokemon_texture(Pokemon::texture_path("back", &i.instance.pokemon)));
+			self.player_textures.push(pokemon_texture(&i.data.name.clone(), Side::Back));
 		}
 	}
 
@@ -112,7 +113,7 @@ impl Battle {
 		} else if self.faint {
 			if self.player().current_hp == 0 {
 				for pkmn_index in 0..self.player_pokemon.len() {
-					if self.player_pokemon[pkmn_index].instance.current_hp != 0 {
+					if self.player_pokemon[pkmn_index].current_hp != 0 {
 						self.faint = false;
 						self.player_active = pkmn_index;
 						battle_gui.update_gui(&self);
@@ -162,7 +163,7 @@ impl Battle {
 	}
 
 	pub fn player_move(&mut self) {
-		let damage = get_move_damage(&self.player_move, &self.player_pokemon[self.player_active].instance, self.opponent());
+		let damage = get_move_damage(&self.player_move, &self.player_pokemon[self.player_active], self.opponent());
 		let opponent = &mut self.opponent_pokemon[self.opponent_active];
 		if damage >= opponent.current_hp {
 			opponent.current_hp = 0;
@@ -172,8 +173,8 @@ impl Battle {
 	}
 
 	pub fn opponent_move(&mut self) {
-		let damage = get_move_damage(&self.opponent_move, &self.opponent_pokemon[self.opponent_active], &self.player_pokemon[self.player_active].instance);
-		let player = &mut self.player_pokemon[self.player_active].instance;
+		let damage = get_move_damage(&self.opponent_move, &self.opponent_pokemon[self.opponent_active], &self.player_pokemon[self.player_active]);
+		let player = &mut self.player_pokemon[self.player_active];
 		if damage >= player.current_hp {
 			player.current_hp = 0;
 		} else {
@@ -181,19 +182,19 @@ impl Battle {
 		}
 	}
 
-	pub fn player(&self) -> &PokemonInstance {
-		&self.player_pokemon[self.player_active].instance
+	pub fn player(&self) -> &BattlePokemon {
+		&self.player_pokemon[self.player_active]
 	}
 
-	pub fn player_mut(&mut self) -> &mut PokemonInstance {
-		&mut self.player_pokemon[self.player_active].instance
+	pub fn player_mut(&mut self) -> &mut BattlePokemon {
+		&mut self.player_pokemon[self.player_active]
 	}
 
-	pub fn opponent(&self) -> &PokemonInstance {
+	pub fn opponent(&self) -> &BattlePokemon {
 		&self.opponent_pokemon[self.opponent_active]
 	}
 
-	pub fn opponent_mut(&mut self) -> &mut PokemonInstance {
+	pub fn opponent_mut(&mut self) -> &mut BattlePokemon {
 		&mut self.opponent_pokemon[self.opponent_active]
 	}
 
@@ -212,7 +213,7 @@ pub struct BattleEndData {
 
 
 
-fn get_move_damage(pmove: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
+fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokemon: &BattlePokemon) -> u16 {
 	if let Some(power) = pmove.power {
 		match pmove.category {
 			MoveCategory::Status => return 0,

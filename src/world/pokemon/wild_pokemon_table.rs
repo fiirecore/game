@@ -1,18 +1,12 @@
-use std::path::Path;
-
 use macroquad::prelude::warn;
-
 use crate::io::data::pokemon::StatSet;
-use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
-
 use super::wild_pokemon_encounter::WildPokemonEncounter;
+use crate::pokemon::instance::PokemonInstance;
 
 pub static DEFAULT_ENCOUNTER_CHANCE: u8 = 21;
 pub struct WildPokemonTable {
-
     pub encounter_ratio: u8,
     pub table: Option<[WildPokemonEncounter; 12]>,
-
 }
 
 impl WildPokemonTable {
@@ -21,15 +15,14 @@ impl WildPokemonTable {
         self.encounter_ratio
     }
 
-    pub fn generate(&self) -> SavedPokemon {
+    pub fn generate(&self) -> PokemonInstance {
         match self.table {
             Some(table) => table[get_counter()].generate_saved(),
-            None => return SavedPokemon::generate(
-                macroquad::rand::gen_range(0, crate::game::pokedex::pokedex::LENGTH) + 1, 
+            None => return PokemonInstance::generate(
+                macroquad::rand::gen_range(0, crate::pokemon::pokedex::LENGTH) + 1, 
                 1, 
                 100, 
                 Some(StatSet::iv_random()), 
-                None
             ),
         }
     }
@@ -45,11 +38,11 @@ impl Default for WildPokemonTable {
     }
 }
 
-pub async fn get<P: AsRef<Path>>(encounter_type: &str, path: P) -> WildPokemonTable {
-    let path = path.as_ref();
+pub fn get(encounter_type: &str, file: Option<include_dir::File>) -> WildPokemonTable {
+
     match encounter_type {
         "original" => {
-            return from_toml(path).await;
+            return from_toml(file);
         }
         _ => {
             return WildPokemonTable::default();
@@ -57,31 +50,37 @@ pub async fn get<P: AsRef<Path>>(encounter_type: &str, path: P) -> WildPokemonTa
     }
 }
 
-async fn from_toml<P: AsRef<std::path::Path>>(path: P) -> WildPokemonTable {
-    let path = path.as_ref();
+fn from_toml(file: Option<include_dir::File>) -> WildPokemonTable {
 
-    match crate::util::file::read_to_string(path).await {
-        Ok(content) => {
-            let toml_result: Result<WildPokemonTableInToml, toml::de::Error> = toml::from_str(content.as_str());
-            match toml_result {
-                Ok(toml_table) => {
-                    WildPokemonTable {
-                        encounter_ratio: toml_table.encounter_ratio,
-                        table: Some(fill_table(&toml_table)),
+    match file {
+        Some(file) => {
+            match file.contents_utf8() {
+                Some(content) => {
+                    let toml_result: Result<WildPokemonTableInToml, toml::de::Error> = toml::from_str(content);
+                    match toml_result {
+                        Ok(toml_table) => {
+                            return WildPokemonTable {
+                                encounter_ratio: toml_table.encounter_ratio,
+                                table: Some(fill_table(&toml_table)),
+                            };
+                        },
+                        Err(err) => {
+                            warn!("Could not parse wild pokemon table at {:?} with error {}, using random table instead!", &file.path, err);
+                            return WildPokemonTable::default();
+                        }
                     }
-                },
-                Err(err) => {
-                    warn!("Could not parse wild pokemon table at {:?} with error {}, using random table instead!", &path, err);
+                }
+                None => {
+                    warn!("Could not read wild toml file at {} to string!", file.path);
                     return WildPokemonTable::default();
                 }
             }
-        },
-        Err(err) => {
-            warn!("Could not read wild pokemon table at {:?} to string with error {}, using random table instead!", &path, err);
+        }
+        None => {
+            warn!("Could not find wild toml file!");
             return WildPokemonTable::default();
         }
     }
-
 }
 
 pub static CHANCES: [usize; 12] = [20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1];

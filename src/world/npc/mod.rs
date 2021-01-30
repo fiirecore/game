@@ -1,4 +1,3 @@
-use std::io::Read;
 use crate::io::data::Direction;
 use crate::io::data::Position;
 use crate::util::texture::Texture;
@@ -45,27 +44,15 @@ impl NPC {
     }
 
     pub fn battle_sprite(id: u8) -> Texture {
-        let mut path = "textures/npcs/".to_string();
-        path.push_str(&id.to_string());
-        path.push_str("/battle.png");
-        let mut archive = crate::io::map::WORLD_ARCHIVE.lock();
-        let mut bytes: Vec<u8> = Vec::new();
-        match archive.by_name(&path) {
-            Ok(mut zipfile) => {
-                match zipfile.read_to_end(&mut bytes) {
-                    Ok(_) => {}
-                    Err(err) => {
-                        warn!("Could not read battle sprite #{} to bytes with error {}", id, err);
-                        return debug_texture();
-                    }
-                }
+        match crate::io::ASSET_DIR.get_file(std::path::PathBuf::from("world/textures/npcs/").join(id.to_string()).join("battle.png")) {
+            Some(file) => {
+                return crate::util::texture::byte_texture(file.contents());
             }
-            Err(err) => {
-                warn!("Could not get battle texture for sprite id #{} with error {}", id, err);
+            None => {
+                warn!("Could not find file of battle sprite #{}", id);
                 return debug_texture();
             }
         }
-        crate::util::texture::byte_texture(bytes.as_slice())
     }
 
 }

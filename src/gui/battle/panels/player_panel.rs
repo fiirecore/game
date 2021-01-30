@@ -1,4 +1,5 @@
 use macroquad::prelude::warn;
+use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input;
 use crate::util::text_renderer::TextRenderer;
 
@@ -9,7 +10,6 @@ use crate::gui::gui::{GuiComponent, Activatable};
 use crate::gui::battle::panels::battle_panel::BattlePanel;
 use crate::gui::battle::panels::fight_panel::FightPanel;
 
-use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 //use crate::battle::battle_manager::BattleManager;
 use crate::battle::battle::Battle;
 
@@ -39,7 +39,7 @@ impl PlayerPanel {
             x: panel_x,
             y: panel_y,
 
-            background: byte_texture(include_bytes!("../../../../include/gui/battle/panel.png")),
+            background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/panel.png")),
             
             battle_panel: BattlePanel::new(panel_x, panel_y),
             fight_panel: FightPanel::new(panel_x, panel_y),
@@ -120,7 +120,7 @@ impl PlayerPanel {
     }
     */
 
-    pub fn update_text(&mut self, instance: &PokemonInstance) {
+    pub fn update_text(&mut self, instance: &BattlePokemon) {
         self.battle_panel.update_text(instance);
         self.fight_panel.update_names(instance);
     }

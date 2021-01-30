@@ -13,3 +13,9 @@ pub enum BattleType {
     GymLeader,
 
 }
+
+impl Default for BattleType {
+    fn default() -> Self {
+        Self::Wild
+    }
+}

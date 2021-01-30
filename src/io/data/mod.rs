@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 use crate::util::input::Control;
 
 pub mod configuration;
-pub mod player_data;
-pub mod game_data;
+pub mod player;
+
 
 pub mod pokemon;
 
@@ -12,7 +12,7 @@ pub mod text {
     pub mod message;
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, enum_iterator::IntoEnumIterator, Deserialize, Serialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Deserialize, Serialize, enum_iterator::IntoEnumIterator)]
 pub enum Direction {
 	
 	Up,
@@ -26,18 +26,10 @@ impl Direction {
 
 	pub fn inverse(&self) -> Direction {
 		match *self {
-		    Direction::Up => {
-				Direction::Down
-			}
-		    Direction::Down => {
-				Direction::Up
-			}
-		    Direction::Left => {
-				Direction::Right
-			}
-		    Direction::Right => {
-				Direction::Left
-			}
+		    Direction::Up => Direction::Down,
+		    Direction::Down => Direction::Up,
+		    Direction::Left => Direction::Right,
+		    Direction::Right => Direction::Left,
 		}
 	}
 
@@ -101,10 +93,6 @@ pub struct Position {
 }
 
 impl Position {
-
-	pub fn offset(x: isize, y: isize) {
-		
-	}
 
 	pub fn subtract(&self, x: isize, y: isize) -> Position {
 		Position {

@@ -5,7 +5,7 @@ use crate::entity::texture::texture_manager::TextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
 use crate::io::data::Position;
-use crate::io::data::player_data::PlayerData;
+use crate::io::data::player::PlayerData;
 use crate::util::TILE_SIZE;
 use crate::util::text_renderer::TextRenderer;
 use crate::util::render::draw_flip;
@@ -97,8 +97,8 @@ impl Player {
 
 		let mut up_textures = MovementTexture::empty((0, false));
 
-		up_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/idle_up.png"))); 
-		up_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/walk_up_l.png")));
+		up_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/idle_up.png"))); 
+		up_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/walk_up_l.png")));
 		//up_textures.push_texture(byte_texture(path.join("walk_up_r.png"));
 
 		up_textures.map_to_index(0, false);
@@ -109,8 +109,8 @@ impl Player {
 		
 		let mut down_textures = MovementTexture::empty((0, false));
 
-		down_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/idle_down.png"))); 
-		down_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/walk_down_l.png")));
+		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/idle_down.png"))); 
+		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/walk_down_l.png")));
 		//down_textures.push_texture(byte_texture(path.join("walk_down_r.png"));
 
 		down_textures.map_to_index(0, false);
@@ -120,9 +120,9 @@ impl Player {
 
 		let mut side_textures = MovementTexture::empty((0, false));
 
-		side_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/idle_side.png")));
-		side_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/walk_side_l.png")));
-		side_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/walk_side_r.png")));
+		side_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/idle_side.png")));
+		side_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/walk_side_l.png")));
+		side_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/walk_side_r.png")));
 
 		side_textures.map_to_index(0, false);
 		side_textures.map_to_index(1, false);
@@ -141,8 +141,8 @@ impl Player {
 
 		let mut up_textures = MovementTexture::empty((0, false));
 
-		up_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/run_up.png"))); 
-		up_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/run_up_l.png")));
+		up_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/run_up.png"))); 
+		up_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/run_up_l.png")));
 		//up_textures.push_texture(byte_texture(path.join("run_up_r.png"));
 
 		up_textures.map_to_index(0, false);
@@ -153,8 +153,8 @@ impl Player {
 		
 		let mut down_textures = MovementTexture::empty((0, false));
 
-		down_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/run_down.png"))); 
-		down_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/run_down_l.png")));
+		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/run_down.png"))); 
+		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/run_down_l.png")));
 		//down_textures.push_texture(byte_texture(path.join("run_down_r.png"));
 
 		down_textures.map_to_index(0, false);
@@ -164,9 +164,9 @@ impl Player {
 
 		let mut side_textures = MovementTexture::empty((0, false));
 
-		side_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/run_side.png")));
-		side_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/run_side_l.png")));
-		side_textures.push_texture(byte_texture(include_bytes!("../../include/textures/player/run_side_r.png")));
+		side_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/run_side.png")));
+		side_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/run_side_l.png")));
+		side_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/run_side_r.png")));
 
 		side_textures.map_to_index(0, false);
 		side_textures.map_to_index(1, false);

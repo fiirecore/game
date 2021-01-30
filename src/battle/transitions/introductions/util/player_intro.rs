@@ -17,11 +17,11 @@ impl PlayerBattleIntro {
 
         Self {
 			player_textures: vec! {
-                byte_texture(include_bytes!("../../../../../include/gui/battle/player0.png")),
-                byte_texture(include_bytes!("../../../../../include/gui/battle/player1.png")),
-                byte_texture(include_bytes!("../../../../../include/gui/battle/player2.png")),
-                byte_texture(include_bytes!("../../../../../include/gui/battle/player3.png")),
-                byte_texture(include_bytes!("../../../../../include/gui/battle/player4.png")),
+                byte_texture(include_bytes!("../../../../../build/assets/gui/battle/player0.png")),
+                byte_texture(include_bytes!("../../../../../build/assets/gui/battle/player1.png")),
+                byte_texture(include_bytes!("../../../../../build/assets/gui/battle/player2.png")),
+                byte_texture(include_bytes!("../../../../../build/assets/gui/battle/player3.png")),
+                byte_texture(include_bytes!("../../../../../build/assets/gui/battle/player4.png")),
             },
 			player_x_counter: 0.0,
 			player_texture_index: 0,

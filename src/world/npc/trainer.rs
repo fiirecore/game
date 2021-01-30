@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::battle::battle_info::BattleType;
-use crate::io::data::pokemon::pokemon_party::PokemonParty;
+use crate::pokemon::party::PokemonParty;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Trainer {

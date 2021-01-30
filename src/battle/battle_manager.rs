@@ -1,12 +1,12 @@
 use macroquad::prelude::info;
+use crate::pokemon::pokedex::Pokedex;
 use crate::util::Reset;
 use crate::util::battle_data::BattleData;
 use crate::util::{Update, Render};
-use crate::game::pokedex::pokedex::Pokedex;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;
 use crate::util::Load;
-use crate::io::data::player_data::PlayerData;
+use crate::io::data::player::PlayerData;
 use crate::util::text_renderer::TextRenderer;
 use super::battle::Battle;
 

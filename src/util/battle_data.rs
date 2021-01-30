@@ -3,8 +3,7 @@ use parking_lot::Mutex;
 
 use crate::battle::battle_info::BattleType;
 use crate::io::data::pokemon::StatSet;
-use crate::io::data::pokemon::pokemon_party::PokemonParty;
-use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
+use crate::pokemon::party::PokemonParty;
 use crate::world::npc::NPC;
 use crate::world::pokemon::wild_pokemon_table::WildPokemonTable;
 
@@ -16,7 +15,7 @@ pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
         battle_type: BattleType::Wild,
         party: PokemonParty {
-            pokemon: vec![SavedPokemon::generate(gen_range(0, crate::game::pokedex::pokedex::LENGTH) + 1, 1, 100, Some(StatSet::iv_random()), None)],
+            pokemon: vec![crate::pokemon::instance::PokemonInstance::generate(gen_range(0, crate::pokemon::pokedex::LENGTH) + 1, 1, 100, Some(StatSet::iv_random()))],
         },
         trainer_data: None,
     });
@@ -48,7 +47,7 @@ pub fn trainer_battle(npc: &NPC) {
     }        
 }
 
-#[derive(Clone)]
+#[derive(Default)]
 pub struct BattleData {
 
     pub battle_type: BattleType,
@@ -57,19 +56,7 @@ pub struct BattleData {
 
 }
 
-impl Default for BattleData {
-    fn default() -> Self {
-        Self {
-            battle_type: BattleType::Wild,
-            party: PokemonParty {
-                pokemon: Vec::with_capacity(0),
-            },
-            trainer_data: None,
-        }
-    }
-}
-
-#[derive(Clone)]
+//#[derive(Clone)]
 pub struct TrainerData {
 
     pub name: String,

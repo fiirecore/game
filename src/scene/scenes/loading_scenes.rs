@@ -1,3 +1,5 @@
+use kira::sound::handle::SoundHandle;
+
 use crate::util::Load;
 use crate::util::input;
 use crate::util::texture::Texture;
@@ -18,14 +20,14 @@ impl LoadingCopyrightScene {
 
 	pub fn new() -> Self {
 		Self {
-			scene_texture: byte_texture(include_bytes!("../../../include/scenes/loading/copyright.png")),
+			scene_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/copyright.png")),
 			accumulator: 0.0,
 			scene_token: 0,
 		}
 	}
 
 	pub fn render_notr(&self) {
-		fade_in_out(self.scene_texture, 0.0, 0.0, self.accumulator, 3.0, 1.0);
+		fade_in_out(self.scene_texture, 0.0, 0.0, self.accumulator, 3.0, 0.5);
 	}
 	
 }
@@ -45,7 +47,7 @@ impl Scene for LoadingCopyrightScene {
 	
 	fn update(&mut self, delta: f32) {
 		self.accumulator += delta;
-		if self.accumulator > 3.0 {
+		if self.accumulator > 4.0 {
 			self.scene_token = 1;
 		}
 	}
@@ -75,18 +77,39 @@ pub struct LoadingGamefreakScene {
 	scene_token: usize,
 	accumulator: f32,
 	background_color: [f32; 4],
+	sound: Option<SoundHandle>,
+	length: f32,
 
 }
 
 impl LoadingGamefreakScene {
 
-	pub fn new() -> LoadingGamefreakScene {
+	pub fn new(sound: Option<SoundHandle>) -> LoadingGamefreakScene {
+
+		let def = 8.5;
+		let length: f32 = match sound {
+		    Some(ref sound) => {
+				match sound.semantic_duration() {
+				    Some(len) => {
+						len as _
+					}
+				    None => {
+						def
+					}
+				}
+			}
+		    None => {
+				def
+			}
+		};
 
 		LoadingGamefreakScene {
 
 			scene_token: 0,
 			accumulator: 0.0,
 			background_color: [24.0/255.0, 40.0/255.0, 72.0/255.0, 1.0],
+			sound: sound,
+			length: length,
 
 		}
 	}	
@@ -106,7 +129,11 @@ impl Load for LoadingGamefreakScene {
 
 	fn on_start(&mut self) {
 		self.scene_token = 0;
-		//context.play_music(Music::IntroGamefreak);
+		if let Some(ref mut sound) = self.sound {
+			if let Err(err) = sound.play(kira::instance::InstanceSettings::default()) {
+				macroquad::prelude::warn!("Error playing sound: {}", err);
+			}
+		}
 		self.accumulator = 0.0;
 	}
 
@@ -116,7 +143,7 @@ impl Scene for LoadingGamefreakScene {
 	
 	fn update(&mut self, delta: f32) {
 		self.accumulator += delta;
-		if self.accumulator > 8.5 {
+		if self.accumulator > self.length {
 			self.scene_token = 2;
 		}
 	}

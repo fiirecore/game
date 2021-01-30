@@ -10,9 +10,9 @@ pub struct PokemonPartyGui {
 
 impl PokemonPartyGui {
 
-    pub async fn new() -> Self {
+    pub fn new() -> Self {
         Self {
-            background: Background::new(crate::util::texture::load_texture(crate::util::file::asset_as_pathbuf("gui/game/party_panel.png")).await, 0.0, 0.0),
+            background: Background::new(crate::util::texture::byte_texture(include_bytes!("../../../build/assets/gui/game/party_panel.png")), 0.0, 0.0),
         }
 
     }

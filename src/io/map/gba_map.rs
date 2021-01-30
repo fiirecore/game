@@ -2,7 +2,6 @@ use macroquad::prelude::Image;
 use macroquad::prelude::debug;
 use macroquad::prelude::warn;
 use ahash::AHashMap;
-use crate::util::file::load_file;
 use crate::util::texture::Texture;
 
 pub struct GbaMap {
@@ -20,75 +19,64 @@ pub struct GbaMap {
 	
 }
 
-pub async fn get_gba_map<P: AsRef<std::path::Path>>(path: P) -> GbaMap  {
-	let path = path.as_ref();
-	
-	match load_file(&path).await {
-		
-		Ok(bytes) => {
-			
-			//let name = get_name_from_id(bytes[44]);
-	
-		let music = bytes[40];
+pub fn get_gba_map(file: include_dir::File) -> GbaMap  {
 
-		let width = bytes[0] as u16; // 0 - 3 reserved
-		let height = bytes[4] as u16; // 4 - 7 reserved
-		
-		let palettes = [bytes[8] as usize, bytes[12] as usize]; // 8 - 11 reserved & 12 - 15 reserved
-		
-		//let show_name_on_entering = bytes[49];
-		
-		let mut border_blocks: [u16; 4] = [0; 4];
-		
-		for x in 0..4 {
+	let bytes = file.contents();
 			
-			let location = 52+x*2;
-			
-			let tile_num = (bytes[location+1]%4) as u16 * 256 + bytes[location] as u16;
-			
-			border_blocks[x] = tile_num;
-			
-		}
-		
-		let mut tile_map: Vec<u16> = Vec::new();
-		let mut movement_map: Vec<u8> = Vec::new();
-		
-		let size = width as usize * height as usize;
-		
-		for x in 0..size {
-			
-			let location = 60 + x * 2;
-			
-			let tile_num = (bytes[location+1]%4) as u16 * 256 + bytes[location] as u16;
-			
-			let move_num = (bytes[location+1]/4) as u8;
-			
-			tile_map.push(tile_num);
-			movement_map.push(move_num);
-			
-		}
+		//let name = get_name_from_id(bytes[44]);
 
-		GbaMap {
-			
-			bank: 0,//bank,
-			map: 0, //map,
-			//name: String::from(name),
-			music: music,
-			width: width,
-			height: height,
-			palettes: palettes,
-			border_blocks: border_blocks,
-			tile_map: tile_map,
-			movement_map: movement_map,
-	//		spawnpoint: _spawnpoint,
-			
-		}
-			
-	}
+	let music = bytes[40];
+
+	let width = bytes[0] as u16; // 0 - 3 reserved
+	let height = bytes[4] as u16; // 4 - 7 reserved
+	
+	let palettes = [bytes[8] as usize, bytes[12] as usize]; // 8 - 11 reserved & 12 - 15 reserved
+	
+	//let show_name_on_entering = bytes[49];
+	
+	let mut border_blocks: [u16; 4] = [0; 4];
+	
+	for x in 0..4 {
 		
-	Err(error) => {
-		panic!("Error opening map file {:?}: {}", path, error);
+		let location = 52+x*2;
+		
+		let tile_num = (bytes[location+1]%4) as u16 * 256 + bytes[location] as u16;
+		
+		border_blocks[x] = tile_num;
+		
 	}
+	
+	let mut tile_map: Vec<u16> = Vec::new();
+	let mut movement_map: Vec<u8> = Vec::new();
+	
+	let size = width as usize * height as usize;
+	
+	for x in 0..size {
+		
+		let location = 60 + x * 2;
+		
+		let tile_num = (bytes[location+1]%4) as u16 * 256 + bytes[location] as u16;
+		
+		let move_num = (bytes[location+1]/4) as u8;
+		
+		tile_map.push(tile_num);
+		movement_map.push(move_num);
+		
+	}
+
+	GbaMap {
+		
+		bank: 0,//bank,
+		map: 0, //map,
+		//name: String::from(name),
+		music: music,
+		width: width,
+		height: height,
+		palettes: palettes,
+		border_blocks: border_blocks,
+		tile_map: tile_map,
+		movement_map: movement_map,
+//		spawnpoint: _spawnpoint,
 		
 	}
 	
@@ -145,48 +133,25 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &Vec<u16>) -> u16 { // To - d
 
 // Map conversion utility
 
-pub async fn fill_palette_map(bottom_sheets: &mut AHashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> Vec<u16> {
-
-	let mut archive = crate::io::map::WORLD_ARCHIVE.lock();
-
+pub fn fill_palette_map(bottom_sheets: &mut AHashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> Vec<u16> {
+	let texture_dir = crate::io::ASSET_DIR.get_dir("world/textures").expect("Could not get texture directory");
 	let mut sizes = Vec::new();
-	let mut count = 0;
-	let file = "textures/".to_string();
-	loop {
-
-		let mut file = file.clone();
-
-		let mut bottom_filename = String::from("Palette");
-		bottom_filename.push_str(&count.to_string());
-
-		// let mut top_filename = bottom_filename.clone();
-
-		bottom_filename.push_str("B.png");
-		// top_filename.push_str("T.png");	
-		
-		file.push_str(&bottom_filename);
-
-		match archive.by_name(&file) {
-		    Ok(mut zipfile) => {
-				let mut buf = Vec::new();
-				match std::io::Read::read_to_end(&mut zipfile, &mut buf) {
-				    Ok(_) => {
-						let img = crate::util::image::open_image_bytes(buf.as_slice());
+	for file in texture_dir.files() {
+		let filename = &*file.path().file_name().unwrap().to_string_lossy();
+		if filename.starts_with("P") {
+			if filename.ends_with("B.png") {
+				match &filename[7..filename.len()-5].parse::<u8>() {
+				    Ok(index) => {
+						let img = crate::util::image::open_image_bytes(file.contents());
 						sizes.push(((img.width() >> 4) * (img.height() >> 4)) as u16);
-						bottom_sheets.insert(count, img);
+						bottom_sheets.insert(*index, img);
 					}
 				    Err(err) => {
-						warn!("Error reading palette at {} with error {}", &file, err);
+						warn!("Could not parse tile palette named {} with error {}", filename, err);
 					}
 				}
 			}
-		    Err(err) => {
-				macroquad::prelude::info!("Broke palette creation loop with error {}", err);
-				break;
-			}
 		}
-
-		count+=1;
 	}
 	sizes
 }

@@ -21,10 +21,10 @@ pub struct LoadingSceneManager {
 
 impl LoadingSceneManager {
 
-    pub async fn new() -> Self {
+    pub fn new(sound: Option<kira::sound::handle::SoundHandle>) -> Self {
         Self {
             copyright: LoadingCopyrightScene::new(),
-            gamefreak: LoadingGamefreakScene::new(),
+            gamefreak: LoadingGamefreakScene::new(sound),
             pokemon: LoadingPokemonScene::new(),
             current_scene: 0,
             finished: false,

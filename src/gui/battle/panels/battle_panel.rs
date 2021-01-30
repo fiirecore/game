@@ -1,4 +1,5 @@
 
+use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input::Control;
 use crate::gui::basic_button::BasicButton;
 use crate::io::data::Direction;
@@ -8,8 +9,6 @@ use crate::util::text_renderer::TextRenderer;
 use crate::gui::gui::{GuiComponent, Activatable};
 use crate::util::input;
 use crate::gui::gui::BasicText;
-
-use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 
 use crate::util::{texture::byte_texture, render::draw};
 
@@ -58,7 +57,7 @@ impl BattlePanel {
             panel_x: panel_x,
             panel_y: panel_y,
             
-            background: byte_texture(include_bytes!("../../../../include/gui/battle/button_panel.png")),
+            background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/button_panel.png")),
 
             cursor_position: 0,
             next: 0,
@@ -73,8 +72,8 @@ impl BattlePanel {
 		}
     }
     
-    pub fn update_text(&mut self, instance: &PokemonInstance) {
-        self.text.text[1] = instance.pokemon.data.name.to_uppercase();
+    pub fn update_text(&mut self, instance: &BattlePokemon) {
+        self.text.text[1] = instance.data.name.to_uppercase();
         self.text.text[1].push_str(" do?");
     }
 

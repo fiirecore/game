@@ -31,8 +31,8 @@ impl TextRenderer {
     pub fn new() -> TextRenderer {
         TextRenderer {
             fonts: Vec::new(),
-            button: byte_texture(include_bytes!("../../include/gui/button.png")),
-            cursor: byte_texture(include_bytes!("../../include/gui/cursor.png")),
+            button: byte_texture(include_bytes!("../../build/assets/gui/button.png")),
+            cursor: byte_texture(include_bytes!("../../build/assets/gui/cursor.png")),
         }
     }
 
@@ -89,13 +89,13 @@ impl TextRenderer {
 
     pub fn default_add(&mut self) {
         self.default_add_type0();
-        self.default_add_type1(include_bytes!("../../include/font1.png"), 1);
-        self.default_add_type1(include_bytes!("../../include/font2.png"), 2);
+        self.default_add_type1(include_bytes!("../../build/assets/font1.png"), 1);
+        self.default_add_type1(include_bytes!("../../build/assets/font2.png"), 2);
     }
 
     fn default_add_type0(&mut self) {
         self.fonts.push(AHashMap::new());
-        let font_sheet0 = open_image_bytes(include_bytes!("../../include/font0.png"));
+        let font_sheet0 = open_image_bytes(include_bytes!("../../build/assets/font0.png"));
         let alphanumerics = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀".chars();
         let mut index: usize = 0;
         for character in alphanumerics {

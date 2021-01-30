@@ -52,7 +52,7 @@ use macroquad::prelude::warn;
 
 //             }
 //         }   
-//         println!("Map length: {}", self.loaded_music.lock().unwrap().len());
+//         info!("Map length: {}", self.loaded_music.lock().unwrap().len());
 //     }
 
 // }

@@ -16,17 +16,6 @@ pub async fn open_image<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {
     
 }
 
-pub fn open_image_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {
-    let path = path.as_ref();
-    match super::file::read_noasync(path) {
-        Some(bytes) => Some(open_image_bytes(bytes.as_slice())),
-        None => {
-            macroquad::prelude::warn!("Could not read image bytes at {:?} with error", path);
-            return None;
-        }
-    }
-}
-
 pub fn get_subimage(image: &Image, id: usize) -> Image {
     return get_subimage_wh(image, id, TEXTURE_SIZE as u32, TEXTURE_SIZE as u32);
 }

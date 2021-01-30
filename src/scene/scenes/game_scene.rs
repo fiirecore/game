@@ -1,7 +1,7 @@
 use crate::util::Load;
 use crate::util::text_renderer::TextRenderer;
 
-use crate::game::game_manager::GameManager;
+use crate::game::GameManager;
 use crate::scene::Scene;
 
 pub struct GameScene {
@@ -14,13 +14,13 @@ pub struct GameScene {
 
 impl GameScene {
 	
-	pub async fn new() -> GameScene {
+	pub fn new() -> GameScene {
 
 		GameScene {
 			
 			scene_token: 0,
 
-			game_manager: GameManager::new().await,
+			game_manager: GameManager::new(),
 
 		}
 

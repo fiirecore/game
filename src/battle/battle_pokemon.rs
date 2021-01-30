@@ -1,0 +1,127 @@
+use crate::io::data::pokemon::LargeStatSet;
+use crate::io::data::pokemon::StatSet;
+use crate::pokemon::PokedexData;
+use crate::pokemon::Pokemon;
+use crate::pokemon::instance::PokemonInstance;
+use crate::pokemon::moves::MoveInstance;
+use crate::pokemon::pokedex::Pokedex;
+
+pub struct BattlePokemon {
+	
+	pub data: PokedexData,
+	
+	pub level: u8,
+//	ability: Ability,
+
+	pub moves: Vec<MoveInstance>,
+
+	pub base: LargeStatSet,
+	// pub ivs: StatSet,
+	// pub evs: StatSet,
+
+	pub current_hp: u16,
+	
+}
+
+impl BattlePokemon {
+
+	pub fn faint(&self) -> bool {
+		return self.current_hp == 0;
+	}
+
+	pub fn new(pokedex: &Pokedex, pokemon: &PokemonInstance) -> Self {
+
+		let pokemon_data = pokedex.pokemon_from_id(pokemon.id);
+
+		let stats = get_stats(pokemon_data, pokemon.ivs.unwrap_or(StatSet::iv_random()), pokemon.evs.unwrap_or_default(), pokemon.level);
+
+		Self {
+			
+			data: pokemon_data.data.clone(),
+			
+			level: pokemon.level,
+			
+			moves: pokedex.moves_from_level(pokemon.id, pokemon.level),
+			
+			// ivs: ivs,
+			
+			// evs: evs,
+			
+			current_hp: pokemon.current_hp.unwrap_or(stats.hp),
+
+			base: stats,
+			
+		}
+
+	}
+	
+	pub fn generate(pokedex: &Pokedex, pokemon: &Pokemon, min_level: u8, max_level: u8) -> Self {
+		let level;
+		if min_level == max_level {
+			level = max_level;
+		} else {
+			level = macroquad::rand::gen_range(min_level, max_level + 1);
+		}
+
+		let ivs = StatSet::iv_random();
+
+		let evs = StatSet::default();
+
+		let base = get_stats(pokemon, ivs, evs, level);
+
+		Self {
+			
+			data: pokemon.data.clone(),
+			
+			level: level,
+			
+			moves: pokedex.moves_from_level(pokemon.data.number, level),
+			
+			// ivs: ivs,
+			
+			// evs: evs,
+
+			base: base,
+
+			current_hp: base.hp,
+			
+		}
+		
+	}
+
+	// pub fn moves_to_instance(moves: Vec<PokemonMove>) -> Vec<MoveInstance> {
+	// 	moves.iter().map(|mv| MoveInstance {
+	// 		move_instance: mv.clone(),
+	// 		remaining_pp: mv.pp,				
+	// 	}).collect()
+	// }	
+	
+}
+
+impl std::fmt::Display for BattlePokemon {
+
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		write!(f, "Lv. {} {}", self.level, &self.data.name)
+	}
+	
+}
+
+pub fn get_stats(pokemon: &Pokemon, ivs: StatSet, evs: StatSet, level: u8) -> LargeStatSet {
+    LargeStatSet {
+		hp: calculate_hp(pokemon.base.hp, ivs.hp, evs.hp, level),
+		atk: calculate_stat(pokemon.base.atk, ivs.atk, evs.atk, level),
+		def: calculate_stat(pokemon.base.def, ivs.def, evs.def, level),
+		sp_atk: calculate_stat(pokemon.base.sp_atk, ivs.sp_atk, evs.sp_atk, level),
+		sp_def: calculate_stat(pokemon.base.sp_def, ivs.sp_def, evs.sp_def, level),
+		speed: calculate_stat(pokemon.base.speed, ivs.speed, evs.speed, level),
+	}
+}
+
+pub fn calculate_stat(base_stat: u8, iv_stat: u8, ev_stat: u8, level: u8) -> u16 { //add item check
+	let nature = 1.0;
+   (((2.0 * base_stat as f64 + iv_stat as f64 + ev_stat as f64) * level as f64 / 100.0 + 5.0).floor() * nature).floor() as u16
+}
+
+pub fn calculate_hp(base_hp: u8, iv_hp: u8, ev_hp: u8, level: u8) -> u16 {
+   ((2.0 * base_hp as f64 + iv_hp as f64 + ev_hp as f64) * level as f64 / 100.0 + level as f64 + 10.0).floor() as u16
+}

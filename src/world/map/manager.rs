@@ -1,4 +1,5 @@
 use ahash::AHashMap;
+use crate::audio::play_music;
 use crate::gui::gui::Activatable;
 use crate::gui::gui::GuiComponent;
 use macroquad::prelude::Image;
@@ -9,7 +10,6 @@ use macroquad::prelude::warn;
 use crate::util::input;
 use crate::util::texture::Texture;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
-use enum_iterator::IntoEnumIterator;
 use crate::audio::Music;
 use crate::util::Render;
 use crate::util::input::Control;
@@ -17,7 +17,7 @@ use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
-use crate::io::data::player_data::PlayerData;
+use crate::io::data::player::PlayerData;
 use crate::io::map::gba_map::fill_palette_map;
 use crate::io::map::gba_map::get_texture;
 use crate::io::map::map_loader::load_maps;
@@ -27,7 +27,7 @@ use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
 use crate::world::player::RUN_SPEED;
 use crate::world::warp::WarpEntry;
-
+use enum_iterator::IntoEnumIterator;
 use super::RenderCoords;
 use super::World;
 use super::chunk::world_chunk_map::WorldChunkMap;
@@ -35,30 +35,30 @@ use super::set::world_map_set_manager::WorldMapSetManager;
 
 pub struct WorldManager {
 
-    pub(crate) chunk_map: WorldChunkMap,
-    pub(crate) map_sets: WorldMapSetManager,
+    chunk_map: WorldChunkMap,
+    map_sets: WorldMapSetManager,
 
-    pub(crate) player: Player,
+    player: Player,
 
-    pub(crate) current_music: Music,
+    current_music: Music,
 
     // other
 
     // old world manager values below
 
-    pub player_gui: PlayerWorldGui,
+    player_gui: PlayerWorldGui,
 
-    pub window_manager: MapWindowManager,
+    window_manager: MapWindowManager,
 
-    pub(crate) bottom_textures: AHashMap<u16, Texture>,
+    bottom_textures: AHashMap<u16, Texture>,
     //pub(crate) top_textures: AHashMap<u16, Texture>,
-    pub(crate) npc_textures: AHashMap<u8, ThreeWayTexture>,
+    npc_textures: AHashMap<u8, ThreeWayTexture>,
 
 }
 
 impl WorldManager {
 
-    pub async fn new(player_data: &PlayerData) -> Self {
+    pub fn new(player_data: &PlayerData) -> Self {
         let mut this = Self {
             chunk_map: WorldChunkMap::default(),
             map_sets: WorldMapSetManager::default(),
@@ -69,7 +69,7 @@ impl WorldManager {
             bottom_textures: AHashMap::new(),
             npc_textures: AHashMap::new(),
         };
-        this.load_maps_and_textures().await;
+        this.load_maps_and_textures();
         this.load_player(player_data);
         this
     }
@@ -83,7 +83,7 @@ impl WorldManager {
         } else if self.map_sets.is_alive() {
             self.current_music = Music::from(self.map_sets.map_set().map().music);
         }
-        //context.play_music(self.current_music);
+        play_music(self.current_music);
     }
 
     pub fn play_music(&mut self) {
@@ -94,10 +94,10 @@ impl WorldManager {
         };
         if music != self.current_music {
             self.current_music = music;
-            //context.play_music(self.current_music);
-        }// else if !context.is_music_playing() {
-            //context.play_music(self.current_music);
-        //}
+            play_music(self.current_music);
+        } if !crate::audio::is_music_playing() {
+            play_music(self.current_music);
+        }
     }
 
     pub fn update(&mut self, delta: f32) {
@@ -118,6 +118,16 @@ impl WorldManager {
         self.player_gui.render(tr);      
     }
 
+    pub fn save_data(&self, player_data: &mut PlayerData) {
+        if self.chunk_map.is_alive() {
+            player_data.location.map_id = String::from("world");
+            player_data.location.map_index = 0;
+        } else {
+            player_data.location.map_id = self.map_sets.get().clone();
+            player_data.location.map_index = *self.map_sets.get_index() as u16;
+		}
+		player_data.location.position = self.player.position;
+    }
 
     pub fn load_chunk_map_at(&mut self, x: isize, y: isize) {
         if let Some(chunk) = self.chunk_map.chunk_id_at(x, y) {
@@ -336,16 +346,16 @@ impl WorldManager {
         self.play_music();
     }
 
-    pub async fn load_maps_and_textures(&mut self) {
+    pub fn load_maps_and_textures(&mut self) {
 
         let mut bottom_sheets: AHashMap<u8, Image> = AHashMap::new();
         //let mut top_sheets: HashMap<u8, RgbaImage> = HashMap::new();
 
-        let palette_sizes = fill_palette_map(&mut bottom_sheets/*, &mut top_sheets*/).await;
+        let palette_sizes = fill_palette_map(&mut bottom_sheets/*, &mut top_sheets*/);
 
-        load_maps(&palette_sizes, &mut self.chunk_map, &mut self.map_sets).await;
+        load_maps(&palette_sizes, &mut self.chunk_map, &mut self.map_sets);
 
-        load_npc_textures(&mut self.npc_textures).await;
+        load_npc_textures(&mut self.npc_textures);
 
         for wmap in self.chunk_map.chunks.values() {
             for tile_id in &wmap.map.tile_map {

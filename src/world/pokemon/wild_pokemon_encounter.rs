@@ -1,5 +1,5 @@
 use crate::io::data::pokemon::StatSet;
-use crate::io::data::pokemon::saved_pokemon::SavedPokemon;
+use crate::pokemon::instance::PokemonInstance;
 
 #[derive(Copy, Clone, Default)]
 pub struct WildPokemonEncounter {
@@ -12,8 +12,8 @@ pub struct WildPokemonEncounter {
 
 impl WildPokemonEncounter {
 
-    pub fn generate_saved(&self) -> SavedPokemon {
-        return SavedPokemon::generate(self.pokemon_id, self.min_level, self.max_level, Some(StatSet::iv_random()), None);
+    pub fn generate_saved(&self) -> PokemonInstance {
+        return PokemonInstance::generate(self.pokemon_id, self.min_level, self.max_level, Some(StatSet::iv_random()));
     }
 
 }

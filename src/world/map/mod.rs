@@ -8,9 +8,6 @@ use crate::io::data::Direction;
 use crate::util::input::Control;
 use crate::util::render::draw_flip;
 use crate::util::render::draw_o;
-
-use super::HALF_HEIGHT;
-use super::HALF_WIDTH;
 use super::npc::NPC;
 use super::pokemon::WildEntry;
 use super::warp::WarpEntry;

@@ -1,46 +1,37 @@
-use std::fs::ReadDir;
-use std::fs::read_dir;
-use std::path::Path;
-
 use macroquad::prelude::warn;
-
 use crate::world::warp::WarpEntry;
 
-pub async fn load_warp_entries<P: AsRef<Path>>(root_path: P, map_index: Option<usize>) -> Vec<WarpEntry> {
-
-    let root_path = root_path.as_ref();
-    let warp_path = root_path.join("warps");
-
+pub fn load_warp_entries(root_path: &include_dir::Dir, map_index: Option<usize>) -> Vec<WarpEntry> {
     let mut warps = Vec::new();
 
-    match read_dir(&warp_path) {
-        Ok(dir) => {
+    match root_path.get_dir(root_path.path().join("warps")) {
+        Some(warp_path) => {
             match map_index {
                 Some(map_index) => {
                     let mut map_set = String::from("map_");
                     map_set.push_str(map_index.to_string().as_str());
-                    match read_dir(&warp_path.join(map_set)) {
-                        Ok(dir) => {
-                            if let Some(err) = add_warp_under_directory(&mut warps, dir).await {
-                                warn!("Problem reading warp entry at map set {} under {:?} with error: {}", map_index, &warp_path, err);
-                            }
+                    match warp_path.get_dir(warp_path.path().join(map_set)) {
+                        Some(warp_dir_mapset) => {
+                            /*if let Some(err) = */add_warp_under_directory(&mut warps, warp_dir_mapset);// {
+                            //     warn!("Problem reading warp entry at map set {} under {:?} with error: {}", map_index, &warp_path, err);
+                            // }
                         }
-                        Err(err) => {
-                            warn!("Problem reading warp map set directory #{} under path {:?} with error {}", map_index, &warp_path, err);
+                        None => {
+                            warn!("Problem reading warp map set directory #{} under path {:?}", map_index, &warp_path);
                         }
                     }
                 },
                 None => {
-                    if let Some(err) = add_warp_under_directory(&mut warps, dir).await {
-                        warn!("Problem reading warp entry under {:?} with error: {}", &root_path, err);
-                    }
+                    /*if let Some(err) = */add_warp_under_directory(&mut warps, warp_path);// {
+                    //     warn!("Problem reading warp entry under {:?} with error: {}", &root_path, err);
+                    // }
                 }
             }            
         }
-        Err(err) => {
+        None => {
             warn!(
-                "Could not read warps directory under {:?} with error {}",
-                root_path, err
+                "Could not read warps directory under {:?}",
+                root_path
             );
         }
     }
@@ -48,18 +39,10 @@ pub async fn load_warp_entries<P: AsRef<Path>>(root_path: P, map_index: Option<u
     return warps;
 }
 
-async fn add_warp_under_directory(warps: &mut Vec<WarpEntry>, dir: ReadDir) -> Option<std::io::Error> {
-    for path_result in dir.map(|res| res.map(|e| e.path())) {
-        match path_result {
-            Ok(path) => {
-                if let Some(warp_entry) = WarpEntry::new(path).await {
-                    warps.push(warp_entry);
-                }
-            }
-            Err(err) => {
-                return Some(err);
-            }
+fn add_warp_under_directory(warps: &mut Vec<WarpEntry>, dir: include_dir::Dir) {
+    for file in dir.files() {
+        if let Some(warp_entry) = WarpEntry::new(file) {
+            warps.push(warp_entry);
         }
     }
-    return None;
 }

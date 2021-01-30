@@ -58,7 +58,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
     fn setup(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>) {
 
         let mut player_string = String::from("Go! ");
-                player_string.push_str(battle.player().pokemon.data.name.to_uppercase().as_str());
+                player_string.push_str(battle.player().data.name.to_uppercase().as_str());
                 player_string.push_str("!");
 
         match trainer_data {
@@ -69,7 +69,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
                 let mut opponent_string0 = trainer_data.name.clone();
                 opponent_string0.push_str(" sent");
                 let mut opponent_string1 = String::from("out "); 
-                opponent_string1.push_str(battle.opponent().pokemon.data.name.to_uppercase().as_str());
+                opponent_string1.push_str(battle.opponent().data.name.to_uppercase().as_str());
 
                 self.basic_battle_introduction.intro_text.text = vec![vec![trainer_data.name.clone(), String::from("would like to battle!")], vec![opponent_string0, opponent_string1]];
             }

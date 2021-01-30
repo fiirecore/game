@@ -35,7 +35,7 @@ impl PlayerPokemonGui {
 
 			orig_x: ppp_x,
 
-			panel: Background::new(byte_texture(include_bytes!("../../../include/gui/battle/player_pokemon.png")), ppp_x, y),
+			panel: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/battle/player_pokemon.png")), ppp_x, y),
 			name: BasicText::new(vec![String::from("Player")], 0, Direction::Left, 17.0, 2.0, ppp_x, y),
 			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 95.0, 2.0, ppp_x, y),
 			health_text: BasicText::new(vec![String::from("/")], 0, Direction::Right, 95.0, 20.0, ppp_x, y),
@@ -96,7 +96,7 @@ impl PokemonGui for PlayerPokemonGui {
 	}
 
 	fn update_gui(&mut self, battle: &Battle) {
-		self.name.text = vec![battle.player().pokemon.data.name.to_uppercase()];
+		self.name.text = vec![battle.player().data.name.to_uppercase()];
 		let mut plstr = String::from("Lv");
 		plstr.push_str(battle.player().level.to_string().as_str());
 		self.level.text = vec![plstr];
@@ -154,7 +154,7 @@ impl OpponentPokemonGui {
 
 			orig_x: x,
 
-			panel: Background::new(byte_texture(include_bytes!("../../../include/gui/battle/opponent_pokemon.png")), x, y),			
+			panel: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/battle/opponent_pokemon.png")), x, y),			
 			name: BasicText::new(vec![String::from("Opponent")], 0, Direction::Left, 8.0, 2.0, x, y),
 			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 86.0, 2.0, x, y),
 			health_bar: HealthBar::new(39.0, 17.0, x, y),
@@ -210,7 +210,7 @@ impl PokemonGui for OpponentPokemonGui {
 	}
 
 	fn update_gui(&mut self, battle: &Battle) {
-		self.name.text = vec![battle.opponent().pokemon.data.name.to_uppercase()];
+		self.name.text = vec![battle.opponent().data.name.to_uppercase()];
 		let mut olstr = String::from("Lv");
 		olstr.push_str(battle.opponent().level.to_string().as_str());
 		self.level.text = vec![olstr];

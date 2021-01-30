@@ -57,7 +57,7 @@ impl SceneManager {
 	pub async fn load_other_scenes(&mut self) {
 		self.scenes.push(Box::new(title_scene::TitleScene::new()));
 		self.scenes.push(Box::new(main_menu_scene::MainMenuScene::new()));
-		self.scenes.push(Box::new(game_scene::GameScene::new().await));
+		self.scenes.push(Box::new(game_scene::GameScene::new()));
 		// self.scenes.push(Box::new(firsttime_scenes::FirstTimeControlsScene::new().await));
 		// self.scenes.push(Box::new(firsttime_scenes::FirstTimeNarrativeScene::new().await));
 		// self.scenes.push(Box::new(character_creation_scene::CharacterCreationScene::new()));
@@ -70,7 +70,7 @@ impl SceneManager {
 
 	pub async fn load_loading_scenes(&mut self) {
 		self.scenes.push(Box::new(loading_scenes::LoadingCopyrightScene::new()));
-		self.scenes.push(Box::new(loading_scenes::LoadingGamefreakScene::new()));
+		self.scenes.push(Box::new(loading_scenes::LoadingGamefreakScene::new(None)));
 		self.scenes.push(Box::new(loading_scenes::LoadingPokemonScene::new()));
 	}
 

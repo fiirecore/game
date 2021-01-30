@@ -10,31 +10,36 @@ keywords = ["games", "pokemon"]
 categories = ["games"]
 build = "build/build.rs"
 readme = "README.md"
-include = ["assets"]
+include = ["build", "assets"]
 
 [profile.release]
+codegen-units = 1
 lto = true
+opt-level = 3
 
 [dependencies]
 
 macroquad = { git = "https://github.com/not-fl3/macroquad" }
 
-# kira = {version = "0.3", default-features = false, features = ["ogg"]} # To - do: Figure out how to play audio without taking up lots of memory and storage space
+kira = { version = "0.4", default-features = false, features = ["ogg"] } # To - do: Figure out how to play audio without taking up lots of memory and storage space
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 toml = "0.5"
 
+include_dir = { version = "0.6.0", default-features = false }
 image = {version = "0.22", default-features = false, features = ["png_codec", "tga"] }
 lazy_static = "1.4"
 parking_lot = "0.11"
 ahash = "0.7"
-enum-iterator = "0.6"
 
-zip = "0.5"
-#tar = { version = "0.4", default-features = false }
+enum-iterator = "0.6"
 
 # Build dependencies
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"
+
+#[features]
+#default = []
+#audio = ["kira"]

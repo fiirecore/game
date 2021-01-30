@@ -1,16 +1,17 @@
+use crate::audio::play_music;
 use crate::util::Load;
 use crate::util::input;
 use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
-use crate::io::data::player_data::PlayerData;
+use crate::io::data::player::PlayerData;
 use crate::scene::Scene;
 use crate::util::texture::byte_texture;
 use crate::util::render::draw;
+use crate::audio::Music::Title;
 
 pub struct TitleScene {	
 	
 	scene_token: usize,
-	skip_on_debug: bool,
 	
 	next: bool,
 	accumulator: f32,
@@ -30,13 +31,12 @@ impl TitleScene {
 	
 	pub fn new() -> TitleScene {
 		TitleScene {
-			skip_on_debug: true,
-			background_tex: byte_texture(include_bytes!("../../../include/scenes/title/background.png")),		
-			title_tex: byte_texture(include_bytes!("../../../include/scenes/title/title.png")),
-			trademark_tex: byte_texture(include_bytes!("../../../include/scenes/title/trademark.png")),
-			subtitle_tex: byte_texture(include_bytes!("../../../include/scenes/title/subtitle.png")),
-			charizard_tex: byte_texture(include_bytes!("../../../include/scenes/title/charizard.png")),
-			start_tex: byte_texture(include_bytes!("../../../include/scenes/title/start.png")),
+			background_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/background.png")),		
+			title_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/title.png")),
+			trademark_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/trademark.png")),
+			subtitle_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/subtitle.png")),
+			charizard_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/charizard.png")),
+			start_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/start.png")),
 		    scene_token: 0,
 		    next: false,
 		    accumulator: 0.0,
@@ -54,12 +54,8 @@ impl Load for TitleScene {
 	fn on_start(&mut self) {
 		self.next = false;
 		self.scene_token = 0;
-		if !crate::not_debug() && self.skip_on_debug {
-			self.next = true;
-		} else {
-			//context.play_music(Music::Title);
-			self.accumulator = 0.0;
-		}
+		play_music(Title);
+		self.accumulator = 0.0;
 	}
 
 }
@@ -72,13 +68,13 @@ impl Scene for TitleScene {
 		if self.next {
 			macroquad::prelude::rand::srand(self.counter % 256);
 			if PlayerData::exists() {
-				self.scene_token = 2;
+				self.scene_token = crate::scene::GAME_SCENE;
 			} else {
-				self.scene_token = 2;//4;
+				self.scene_token = crate::scene::GAME_SCENE;//CHARACTER_CREATION_SCENE;
 			}
 		}
 		if self.accumulator > 48.0 {
-			self.scene_token = 1;
+			self.scene_token = crate::scene::TITLE_SCENE;//LOADING_COPYRIGHT_SCENE
 		}
 	}
 	

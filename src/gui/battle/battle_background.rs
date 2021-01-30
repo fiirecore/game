@@ -14,8 +14,8 @@ impl BattleBackground {
 
     pub fn new() -> Self {
         Self {
-            background_texture: byte_texture(include_bytes!("../../../include/gui/battle/background.png")),
-            ground_texture: byte_texture(include_bytes!("../../../include/gui/battle/grass_pad.png")),
+            background_texture: byte_texture(include_bytes!("../../../build/assets/gui/battle/background.png")),
+            ground_texture: byte_texture(include_bytes!("../../../build/assets/gui/battle/grass_pad.png")),
         }
 
     }

@@ -40,7 +40,7 @@ impl WildBattleOpener {
             grass_active: true,
             grass_x_offset: GRASS_X_OFFSET,
             grass_y_offset: GRASS_Y_OFFSET,
-            grass: crate::util::texture::byte_texture(include_bytes!("../../../../include/gui/battle/grass.png")),
+            grass: crate::util::texture::byte_texture(include_bytes!("../../../../build/assets/gui/battle/grass.png")),
         }
 
     }

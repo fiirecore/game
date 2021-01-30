@@ -1,3 +1,5 @@
+use crate::audio::Music;
+use crate::audio::play_music;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 use crate::util::{Update, Render};
@@ -41,17 +43,17 @@ impl BattleScreenTransitionManager {
         self.transitions[self.current_transition_id].spawn();
         self.transitions[self.current_transition_id].on_start();
 
-        // match battle_type {
-        //     BattleType::Wild => {
-        //         context.play_music(Music::BattleWild);
-        //     }
-        //     BattleType::Trainer => {
-        //         context.play_music(Music::BattleTrainer);
-        //     }
-        //     BattleType::GymLeader => {
-        //         context.play_music(Music::BattleGym);
-        //     }
-        // }
+        match battle_type {
+            BattleType::Wild => {
+                play_music(Music::BattleWild);
+            }
+            BattleType::Trainer => {
+                play_music(Music::BattleTrainer);
+            }
+            BattleType::GymLeader => {
+                play_music(Music::BattleGym);
+            }
+        }
     }
 
     pub fn render_below_player(&mut self, tr: &TextRenderer) {

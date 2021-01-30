@@ -39,7 +39,7 @@ impl MovePanel {
             panel_x: panel_x,
             panel_y: panel_y,
 
-            background: byte_texture(include_bytes!("../../../../include/gui/battle/move_info_panel.png")),
+            background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/move_info_panel.png")),
             pp: BasicText::new(vec![String::from("PP")], 0, Direction::Left, 8.0, 11.0, x + panel_x, y + panel_y),
             move_type: BasicText::new(vec![String::from("TYPE/")], 0, Direction::Left, 8.0, 27.0, x + panel_x, y + panel_y),
             remaining_pp: BasicText::new(vec![String::from("x/y")], 0, Direction::Right, 72.0, 11.0, x + panel_x, y + panel_y),

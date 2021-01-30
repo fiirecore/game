@@ -1,9 +1,8 @@
+use crate::io::data::player::PlayerData;
 use crate::util::input;
 use crate::util::texture::Texture;
 use crate::util::input::Control;
 use crate::util::text_renderer::TextRenderer;
-
-use crate::game::player_data_container::PlayerDataContainer;
 use crate::gui::basic_button::BasicButton;
 use crate::gui::gui::Activatable;
 use crate::gui::gui::GuiComponent;
@@ -51,7 +50,7 @@ impl PlayerWorldGui {
             x: x,
             y: y,
 
-            background: byte_texture(include_bytes!("../../../include/gui/world/start_menu.png")),
+            background: byte_texture(include_bytes!("../../../build/assets/gui/world/start_menu.png")),
 
             cursor_position: 0,
 
@@ -70,7 +69,7 @@ impl PlayerWorldGui {
         self.focused = !self.focused;
     }
 
-    pub fn click(&mut self, player_data: &mut PlayerDataContainer) {
+    pub fn click(&mut self, player_data: &mut PlayerData) {
         if input::pressed(crate::util::input::Control::A) {
             match self.cursor_position {
                 0 => {

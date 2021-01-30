@@ -4,8 +4,8 @@ use crate::util::text_renderer::TextRenderer;
 pub mod scene_manager;
 pub mod scenes {
 	pub mod first_scene;
-	pub mod character_creation_scene;
-	pub mod firsttime_scenes;
+	// pub mod character_creation_scene;
+	// pub mod firsttime_scenes;
 	pub mod game_scene;
 	pub mod loading_scenes;
 	pub mod main_menu_scene;
@@ -13,6 +13,9 @@ pub mod scenes {
 }
 
 pub mod loading_scene_manager;
+
+pub static TITLE_SCENE: usize = 0;
+pub static GAME_SCENE: usize = 2;
 
 pub trait Scene: Load {
 	

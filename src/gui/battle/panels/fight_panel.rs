@@ -1,9 +1,9 @@
+use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input::Control;
 use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
 use crate::gui::gui::{Activatable, GuiComponent};
 use crate::util::input;
-use crate::game::pokedex::pokemon::pokemon_instance::PokemonInstance;
 
 use crate::util::{texture::byte_texture, render::draw};
 
@@ -45,7 +45,7 @@ impl FightPanel {
             panel_x: panel_x,
             panel_y: panel_y,
 
-            background: byte_texture(include_bytes!("../../../../include/gui/battle/move_panel.png")),
+            background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/move_panel.png")),
             move_panel: MovePanel::new(x + panel_x, y + panel_y),
 
             cursor_position: 0,
@@ -57,7 +57,7 @@ impl FightPanel {
 
     }
 
-    pub fn update_names(&mut self, instance: &PokemonInstance) {
+    pub fn update_names(&mut self, instance: &BattlePokemon) {
         self.move_names = Vec::new();
         for moves in &instance.moves {        
             self.move_names.push(moves.move_instance.name.clone());

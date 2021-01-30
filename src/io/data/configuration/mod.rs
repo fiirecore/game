@@ -1,12 +1,11 @@
 use std::path::PathBuf;
 use std::fs::File;
 use std::io::BufWriter;
-use std::path::Path;
 use std::io::Write;
+use macroquad::prelude::warn;
 use serde::{Serialize, Deserialize};
 
 use crate::util::file::PersistantData;
-use crate::util::file::PersistantDataLocation;
 
 //use self::controls::ControlConfiguration;
 
@@ -19,6 +18,7 @@ static CONFIGURATION_FILENAME: &str = "config.toml";
 pub struct Configuration {
 	
 	pub window_scale: u8,
+	pub save_timer: f32,
 
 	//pub controls: ControlConfiguration,
 		
@@ -26,14 +26,36 @@ pub struct Configuration {
 
 impl Configuration {
 
-	pub fn get() -> parking_lot::MutexGuard<'static, Self> {
-		crate::CONFIGURATION.lock()
-	}
-
-	pub fn saved_default() -> Self {
+	fn saved_default() -> Self {
+		macroquad::prelude::info!("Creating new configuration file.");
 		let default = Configuration::default();
 		default.save();
 		return default;
+	}
+
+	pub async fn load_async_default() -> Self {
+		Configuration::load_async(PathBuf::from(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME)).await
+	}
+
+	pub async fn load_async(path: PathBuf) -> Self {
+		match macroquad::prelude::load_string(path.to_str().expect("Could not get configuration file path as string")).await {
+			Ok(data) => Configuration::from_toml(&data),
+		    Err(err) => {
+				warn!("Could not load configuration file with error {}", err);
+				Configuration::saved_default()
+			}
+		}
+		
+	}
+
+	fn from_toml(data: &str) -> Self {
+		match toml::from_str(data) {
+			Ok(config) => config,
+			Err(err) => {
+				warn!("Failed parsing configuration file with error {}", err);
+				Configuration::saved_default()
+			}
+		}
 	}
 	
 }
@@ -42,47 +64,43 @@ impl Default for Configuration {
     fn default() -> Self {
         Self {
 			window_scale: 3,
+			save_timer: 60.0,
 			//controls: ControlConfiguration::default(),
 		}
     }
 }
 
-impl PersistantDataLocation for Configuration {
+// impl PersistantDataLocation for Configuration {
 
-	fn load_from_file() -> Self {
-		return Configuration::load(Path::new(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME));
-	}
+// 	fn load_from_file() -> Self {
+// 		return Configuration::load(Path::new(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME));
+// 	}
 
-}
+// }
 
 impl PersistantData for Configuration {
 
-	fn load(path: PathBuf) -> Self {
-		return match crate::util::file::read_to_string_noasync(path) {
-			Some(content) => {
-				match toml::from_str(content.as_str()) {
-					Ok(config) => config,
-					Err(err) => {
-						println!("Failed parsing configuration file with error {}", err);
-						Configuration::saved_default()
-					}
-				}
-			}
-			None => {
-				println!("Failed reading configuration file to string with error");
-				Configuration::saved_default()
-			}
-		};
-	}
+	// fn load(path: PathBuf) -> Self {
+	// 	return match crate::util::file::read_to_string_noasync(path) {
+	// 		Some(content) => {
+	// 			Configuration::from_toml(&content)
+	// 		}
+	// 		None => {
+	// 			warn!("Failed reading configuration file to string with error");
+	// 			Configuration::saved_default()
+	// 		}
+	// 	};
+	// }
 
 	fn save(&self) {
-		#[cfg(not(target_arch = "wasm32"))] {
+		if cfg!(not(target_arch = "wasm32")) {
 			let path = PathBuf::from(CONFIGURATION_PATH);
 
 			if !path.exists() {
-				for folder in path.ancestors() {
-					if !folder.exists() {
-						std::fs::create_dir(folder).expect("Could not create configuration directory!"); // use format! here
+				match std::fs::create_dir_all(&path) {
+					Ok(()) => {}
+					Err(err) => {
+						warn!("Could not create folder for configuration directory with error {}", err);
 					}
 				}
 			}
@@ -93,11 +111,11 @@ impl PersistantData for Configuration {
 				match toml::to_string_pretty(&self) {
 					Ok(encoded) => {
 						if let Err(err) = writer.write(encoded.as_bytes()) {
-							println!("Failed to write configuration: {}", err);
+							warn!("Failed to write configuration: {}", err);
 						}
 					},
 					Err(err) => {
-						println!("Failed to create/open configuration file: {}", err);
+						warn!("Failed to create/open configuration file: {}", err);
 					}
 				}
 			}
