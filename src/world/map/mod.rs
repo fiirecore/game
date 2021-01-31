@@ -1,4 +1,4 @@
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
 use macroquad::prelude::info;
 use crate::util::input;
 use crate::util::texture::Texture;
@@ -86,6 +86,7 @@ impl World for WorldMap {
 
     fn on_tile(&mut self, /*player: &mut Player,*/ x: isize, y: isize) {
         let tile_id = self.tile(x, y);
+
         if let Some(wild) = &self.wild {
             if let Some(tiles) = &wild.tiles {
                 for tile in tiles {
@@ -97,6 +98,7 @@ impl World for WorldMap {
                 try_wild_battle(wild);
             }            
         }
+
         for npc in &self.npcs {
             if let Some(trainer) = &npc.trainer {
                 if let Some(tracker) = &trainer.tracker {
@@ -140,7 +142,7 @@ impl World for WorldMap {
         }
     }
 
-    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
             let y = yy - screen.y_tile_offset;
             let render_y = (yy << 4) as f32 - screen.y_focus; // old = y_tile w/ offset - player x pixel
@@ -217,7 +219,7 @@ impl World for WorldMap {
 
 }
 
-pub fn try_wild_battle(wild: &WildEntry) {
+fn try_wild_battle(wild: &WildEntry) {
     if macroquad::rand::gen_range(0, 255) < wild.table.encounter_rate() {
         crate::util::battle_data::wild_battle(&wild.table);
     }

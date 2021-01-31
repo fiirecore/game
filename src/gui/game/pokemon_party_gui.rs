@@ -1,5 +1,5 @@
-use crate::gui::gui::Background;
-use crate::gui::gui::GuiComponent;
+use crate::gui::background::Background;
+use crate::gui::GuiComponent;
 use crate::util::Load;
 
 pub struct PokemonPartyGui {

@@ -1,19 +1,20 @@
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
+use crate::gui::background::Background;
+use crate::gui::text::BasicText;
 use crate::io::data::Direction;
 use crate::util::text_renderer::TextRenderer;
 
-use crate::gui::gui::{BasicText, Background};
 use crate::gui::battle::health_bar::HealthBar;
-use crate::gui::gui::GuiComponent;
+use crate::gui::GuiComponent;
 use crate::util::texture::byte_texture;
 
-static OFFSET: isize = 24 * 5;
+static OFFSET: f32 = 24.0 * 5.0;
 pub struct PlayerPokemonGui {
 
 	alive: bool,
 
-	orig_x: f32,
+	pub orig_x: f32,
 
 	pub panel: Background,
 	pub name: BasicText,
@@ -27,13 +28,13 @@ impl PlayerPokemonGui {
 
 	pub fn new(x: f32, y: f32) -> PlayerPokemonGui {
 
-		let ppp_x = x + OFFSET as f32;
+		let ppp_x = x + OFFSET;
 
 		PlayerPokemonGui {
 
 			alive: false,
 
-			orig_x: ppp_x,
+			orig_x: x,
 
 			panel: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/battle/player_pokemon.png")), ppp_x, y),
 			name: BasicText::new(vec![String::from("Player")], 0, Direction::Left, 17.0, 2.0, ppp_x, y),
@@ -55,6 +56,7 @@ impl Entity for PlayerPokemonGui {
 		self.level.enable();
 		self.health_text.enable();
 		self.health_bar.enable();
+		self.health_bar.reset();
 		self.reset();
     }
 
@@ -76,12 +78,12 @@ impl Entity for PlayerPokemonGui {
 impl PokemonGui for PlayerPokemonGui {
 
 	fn reset(&mut self) {
-		self.update_position(self.orig_x, self.panel.y);
+		self.update_position(self.orig_x + OFFSET, self.panel.y);
 	}
 
-	fn update(&mut self) {
+	fn update(&mut self, delta: f32) {
 		if self.is_alive() {
-			self.health_bar.update();
+			self.health_bar.update(delta);
 		}		
 	}
 
@@ -97,18 +99,13 @@ impl PokemonGui for PlayerPokemonGui {
 
 	fn update_gui(&mut self, battle: &Battle) {
 		self.name.text = vec![battle.player().data.name.to_uppercase()];
-		let mut plstr = String::from("Lv");
-		plstr.push_str(battle.player().level.to_string().as_str());
-		self.level.text = vec![plstr];
+		self.level.text = vec![String::from("Lv") + battle.player().level.to_string().as_str()];
 		self.update_hp(battle.player().current_hp, battle.player().base.hp);
 	}
 
 	fn update_hp(&mut self, current_health: u16, max_health: u16)  {
 		self.health_bar.update_bar(current_health, max_health);
-		let mut ch = current_health.to_string();
-		ch.push('/');
-		ch.push_str(max_health.to_string().as_str());
-		self.health_text.text = vec![ch];
+		self.health_text.text = vec![current_health.to_string() + "/" + max_health.to_string().as_str()];
 	}
 
 	fn health_bar(&mut self) -> &mut HealthBar {
@@ -133,7 +130,7 @@ pub struct OpponentPokemonGui {
 
 	alive: bool,
 
-	orig_x: f32,
+	pub orig_x: f32,
 
 	pub panel: Background,
 	pub name: BasicText,
@@ -146,7 +143,7 @@ impl OpponentPokemonGui {
 
 	pub fn new(x: f32, y: f32) -> OpponentPokemonGui {
 
-		let x = x - OFFSET as f32;
+		let x_offset = x - OFFSET as f32;
 
 		OpponentPokemonGui {
 
@@ -154,10 +151,10 @@ impl OpponentPokemonGui {
 
 			orig_x: x,
 
-			panel: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/battle/opponent_pokemon.png")), x, y),			
-			name: BasicText::new(vec![String::from("Opponent")], 0, Direction::Left, 8.0, 2.0, x, y),
-			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 86.0, 2.0, x, y),
-			health_bar: HealthBar::new(39.0, 17.0, x, y),
+			panel: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/battle/opponent_pokemon.png")), x_offset, y),			
+			name: BasicText::new(vec![String::from("Opponent")], 0, Direction::Left, 8.0, 2.0, x_offset, y),
+			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 86.0, 2.0, x_offset, y),
+			health_bar: HealthBar::new(39.0, 17.0, x_offset, y),
 
 		}
 
@@ -191,12 +188,12 @@ impl Entity for OpponentPokemonGui {
 impl PokemonGui for OpponentPokemonGui {
 
 	fn reset(&mut self) {
-		self.update_position(self.orig_x, self.panel.y);
+		self.update_position(self.orig_x - OFFSET, self.panel.y);
 	}
 
-	fn update(&mut self) {
+	fn update(&mut self, delta: f32) {
 		if self.is_alive() {
-			self.health_bar.update();
+			self.health_bar.update(delta);
 		}		
 	}
 
@@ -242,7 +239,7 @@ pub trait PokemonGui: Entity { // To-do: sort out trait or have it extend someth
 
 	fn reset(&mut self);
 
-	fn update(&mut self);
+	fn update(&mut self, delta: f32);
 
 	fn render(&self, tr: &TextRenderer);
 

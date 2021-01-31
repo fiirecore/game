@@ -6,7 +6,7 @@ use crate::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 use crate::util::{Update, Render};
-use crate::gui::gui::Activatable;
+use crate::gui::Activatable;
 use crate::util::render::draw_bottom;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
@@ -42,8 +42,8 @@ impl TrainerBattleIntroduction {
 
 impl BattleIntroduction for TrainerBattleIntroduction {
 
-    fn update_gui(&mut self, battle_gui: &mut crate::gui::battle::battle_gui::BattleGui) {
-        self.basic_battle_introduction.update_gui(battle_gui);
+    fn update_gui(&mut self, battle_gui: &mut crate::gui::battle::battle_gui::BattleGui, delta: f32) {
+        self.basic_battle_introduction.update_gui(battle_gui, delta);
         if self.basic_battle_introduction.intro_text.can_continue {
             if self.basic_battle_introduction.intro_text.next() == self.basic_battle_introduction.intro_text.text.len() as u8 - 2 {
                 self.trainer_leaving = true;

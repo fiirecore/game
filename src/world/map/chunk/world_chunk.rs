@@ -1,4 +1,4 @@
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
 use crate::util::texture::Texture;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::world::RenderCoords;
@@ -47,7 +47,7 @@ impl World for WorldChunk {
         self.map.check_warp(x - self.x, y - self.y)
     }
 
-    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         self.map.render(textures, npc_textures, screen.offset(self.x, self.y), border)
     }
 

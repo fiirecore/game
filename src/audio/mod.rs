@@ -1,76 +1,69 @@
 use std::fmt::Display;
-
-use ahash::AHashMap;
-use kira::instance::handle::InstanceHandle;
-use kira::manager::AudioManager;
-use macroquad::prelude::warn;
-use parking_lot::Mutex;
+use std::ops::DerefMut;
+use kira::sound::SoundSettings;
+use macroquad::prelude::collections::storage::get_mut;
 use enum_iterator::IntoEnumIterator;
 
-use self::sound::Sound;
+use crate::util::audio::AudioContext;
 
-mod music;
+pub mod music;
 mod sound;
 
-lazy_static::lazy_static! {
-    pub static ref AUDIO_MANAGER: Mutex<AudioManager> = Mutex::new(AudioManager::new(kira::manager::AudioManagerSettings::default()).expect("Could not create audio manager"));
-    static ref MUSIC_MAP: Mutex<AHashMap<Music, kira::sound::handle::SoundHandle>> = Mutex::new(AHashMap::new());
-    static ref MUSIC_INSTANCE: Mutex<Option<InstanceHandle>> = Mutex::new(None);
-    static ref SOUND_INSTANCE_MAP: Mutex<AHashMap<Sound, InstanceHandle>> = Mutex::new(AHashMap::new());
-}
-
 pub fn play_music(music: Music) {
-    if let Some(instance) = MUSIC_INSTANCE.lock().take() {
-        stop_instance(music, instance);
-    }
-    match MUSIC_MAP.lock().get_mut(&music) {
-        Some(sound) => {
-            match sound.play(kira::instance::InstanceSettings::default()) {
-                Ok(instance) => {
-                    *MUSIC_INSTANCE.lock() = Some(instance);
-                }
-                Err(err) => warn!("Problem playing music {} with error {}", music, err),
-            }
-        }
-        None => warn!("Could not get sound for {}", music),
+    if let Some(mut ac) = get_mut::<AudioContext>() {
+        ac.deref_mut().play_music(music);
     }
 }
 
 pub fn is_music_playing() -> bool {
-    MUSIC_INSTANCE.lock().is_some()
-}
-
-pub fn stop_sound(sound: Sound) {
-    let mut instances = SOUND_INSTANCE_MAP.lock();
-    match instances.remove(&sound) {
-        Some(instance) => {
-            stop_instance(sound, instance);
-        },
-        None => warn!("Could not get sound instance handle for {}, probably not playing", sound),
+    if let Some(mut ac) = get_mut::<AudioContext>() {
+        return ac.deref_mut().is_music_playing();
+    } else {
+        return false;
     }
 }
 
-pub fn stop_all_sounds() {
-    let sound_keys: Vec<Sound> = SOUND_INSTANCE_MAP.lock().keys().into_iter().map(|music|*music).collect();
-    for sound in sound_keys {
-        stop_sound(sound);
+pub fn bind_world_music() {
+    if cfg!(not(target_arch = "wasm32")) {
+        std::thread::spawn( || {
+            if let Some(mut ac) = get_mut::<AudioContext>() {
+                ac.deref_mut().bind_music();     
+            }
+        });
+    } else {
+        if let Some(mut ac) = get_mut::<AudioContext>() {
+            ac.deref_mut().bind_music();     
+        }
     }
+    
 }
 
-fn stop_instance(audio: impl Display, mut instance: InstanceHandle) {
-    if let Err(err) = instance.stop(kira::instance::StopInstanceSettings::default()) {
-        warn!("Problem stopping audio instance {} with error {}", audio, err);
-    }
-}
+// pub fn stop_sound(sound: Sound) {
+//     let mut instances = SOUND_INSTANCE_MAP.lock();
+//     match instances.remove(&sound) {
+//         Some(instance) => {
+//             stop_instance(sound, instance);
+//         },
+//         None => warn!("Could not get sound instance handle for {}, probably not playing", sound),
+//     }
+// }
+
+
+// pub fn stop_all_sounds() {
+//     let sound_keys: Vec<Sound> = SOUND_INSTANCE_MAP.lock().keys().into_iter().map(|music|*music).collect();
+//     for sound in sound_keys {
+//         stop_sound(sound);
+//     }
+// }
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq, IntoEnumIterator)]
 pub enum Music {
 
     IntroGamefreak,
     // IntroPokemon,
-    Title,
+    Title, // 45.010
 
-    Pallet,
+    Pallet, // 43.640
     Pewter,
     Fuchsia,
     Lavender,
@@ -78,7 +71,7 @@ pub enum Music {
     Cinnabar,
     Vermilion,
 
-    Route1,
+    Route1, // 25.090
     Route2,
     Route3,
     Route4,
@@ -87,9 +80,9 @@ pub enum Music {
     MountMoon,
     Gym,
 
-    BattleWild,
-    BattleTrainer,
-    BattleGym,
+    BattleWild, // 44.480
+    BattleTrainer, // 1:41.870
+    BattleGym, // 56.780
     // BattleChampion,
 
 }
@@ -102,17 +95,27 @@ impl Default for Music {
 
 impl Music {
 
-    pub fn loop_start(&self) -> Option<f64> {
+    pub fn included_bytes(&self) -> Option<&[u8]> {
         match *self {
-            Music::BattleWild => Some(13.75),
+            Music::IntroGamefreak => Some(include_bytes!("../../assets/music/gamefreak.ogg")),
+            Music::Title => Some(include_bytes!("../../assets/music/title.ogg")),
+            Music::Pallet => Some(include_bytes!("../../assets/music/pallet.ogg")),
+            Music::BattleWild => Some(include_bytes!("../../assets/music/vs_wild.ogg")),
             _ => None,
         }
     }
 
-    pub fn len(&self) -> Option<f64> {
+    pub fn loop_start(&self) -> Option<f64> {
         match *self {
-            Music::Route1 => Some(25.0),
+            Music::BattleWild => Some(13.15),
             _ => None,
+        }
+    }
+
+    pub fn settings(&self) -> SoundSettings {
+        SoundSettings {
+            default_loop_start: self.loop_start(),
+            ..Default::default()
         }
     }
 
@@ -173,4 +176,32 @@ impl Display for Music {
 
         })
     }
+}
+
+pub fn from_ogg_bytes(bytes: &[u8], settings: kira::sound::SoundSettings) -> Result<kira::sound::Sound, kira::sound::error::SoundFromFileError> {
+    use lewton::samples::Samples;
+    let mut reader = lewton::inside_ogg::OggStreamReader::new(std::io::Cursor::new(bytes))?;
+    let mut stereo_samples = vec![];
+    while let Some(packet) = reader.read_dec_packet_generic::<Vec<Vec<f32>>>()? {
+        let num_channels = packet.len();
+        let num_samples = packet.num_samples();
+        match num_channels {
+            1 => {
+                for i in 0..num_samples {
+                    stereo_samples.push(kira::Frame::from_mono(packet[0][i]));
+                }
+            }
+            2 => {
+                for i in 0..num_samples {
+                    stereo_samples.push(kira::Frame::new(packet[0][i], packet[1][i]));
+                }
+            }
+            _ => return Err(kira::sound::error::SoundFromFileError::UnsupportedChannelConfiguration),
+        }
+    }
+    Ok(kira::sound::Sound::from_frames(
+        reader.ident_hdr.audio_sample_rate,
+        stereo_samples,
+        settings,
+    ))
 }

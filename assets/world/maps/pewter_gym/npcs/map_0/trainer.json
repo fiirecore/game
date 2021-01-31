@@ -12,7 +12,7 @@
 		"party": {
 			"pokemon": [
 				{
-					"pokemon_id": 74,
+					"id": 74,
 					"level": 10,
 					"ivs": {
 						"hp": 15,
@@ -34,7 +34,7 @@
 					"friendship": 70
 				},
 				{
-					"pokemon_id": 95,
+					"id": 95,
 					"level": 10,
 					"ivs": {
 						"hp": 15,

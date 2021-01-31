@@ -2,8 +2,8 @@
 use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
 use crate::io::data::Direction;
-use crate::gui::gui::BasicText;
-use crate::gui::gui::GuiComponent;
+use crate::gui::text::BasicText;
+use crate::gui::GuiComponent;
 use crate::util::render::draw;
 use crate::util::texture::byte_texture;
 

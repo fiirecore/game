@@ -2,7 +2,7 @@ use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input::Control;
 use crate::util::texture::Texture;
 use crate::util::text_renderer::TextRenderer;
-use crate::gui::gui::{Activatable, GuiComponent};
+use crate::gui::{Activatable, GuiComponent};
 use crate::util::input;
 
 use crate::util::{texture::byte_texture, render::draw};

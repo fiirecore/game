@@ -26,7 +26,7 @@ pub trait BattleOpener: BattleTransition  {
 
 pub trait BattleIntroduction: BattleTransition {
 
-    fn update_gui(&mut self, battle_gui: &mut BattleGui);
+    fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32);
 
     fn input(&mut self, delta: f32);
 

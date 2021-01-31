@@ -1,12 +1,11 @@
-use ahash::AHashMap;
-use ahash::AHashSet;
-use macroquad::prelude::KeyCode;
+use ahash::AHashMap as HashMap;
+use ahash::AHashSet as HashSet;
 use parking_lot::RwLock;
+use macroquad::prelude::KeyCode;
 use serde::{Deserialize, Serialize};
-//use enum_iterator::IntoEnumIterator;
 
 lazy_static::lazy_static! {
-    static ref KEY_CONTROLS: RwLock<AHashMap<Control, AHashSet<KeyCode>>> = RwLock::new(AHashMap::new());
+    static ref KEY_CONTROLS: RwLock<HashMap<Control, HashSet<KeyCode>>> = RwLock::new(HashMap::new()); // benchmark if parking_lot rwlock and Hash's hashmap are faster than dashmap
 }
 
 pub fn pressed(control: Control) -> bool {
@@ -60,8 +59,8 @@ pub(crate) fn default_keybinds() {
     //controls.insert(KeyCode::Escape), Control::Escape);
 }
 
-fn set_of(codes: &[KeyCode]) -> AHashSet<KeyCode> {
-    let mut set = AHashSet::new();
+fn set_of(codes: &[KeyCode]) -> HashSet<KeyCode> {
+    let mut set = HashSet::new();
     for code in codes {
         set.insert(*code);
     }    

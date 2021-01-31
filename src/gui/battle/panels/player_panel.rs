@@ -5,7 +5,7 @@ use crate::util::text_renderer::TextRenderer;
 
 use crate::util::texture::Texture;
 
-use crate::gui::gui::{GuiComponent, Activatable};
+use crate::gui::{GuiComponent, Activatable};
 
 use crate::gui::battle::panels::battle_panel::BattlePanel;
 use crate::gui::battle::panels::fight_panel::FightPanel;

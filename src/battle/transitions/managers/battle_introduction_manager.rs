@@ -56,8 +56,8 @@ impl BattleIntroductionManager {
         self.introductions[self.current_introduction_index].render_offset(battle, offset);
     }
 
-    pub fn update_gui(&mut self, battle_gui: &mut BattleGui) {
-        self.introductions[self.current_introduction_index].update_gui(battle_gui);
+    pub fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32) {
+        self.introductions[self.current_introduction_index].update_gui(battle_gui, delta);
     }
 
     pub fn spawn_type(&mut self, index: usize) {

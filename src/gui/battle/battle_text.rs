@@ -1,7 +1,7 @@
 use crate::util::text_renderer::TextRenderer;
 use crate::battle::battle::Battle;
 use crate::entity::Entity;
-use crate::gui::gui::{GuiComponent, GuiText};
+use crate::gui::{GuiComponent, GuiText};
 use crate::util::timer::Timer;
 
 use super::battle_gui::BattleGui;

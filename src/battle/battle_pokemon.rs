@@ -16,8 +16,9 @@ pub struct BattlePokemon {
 	pub moves: Vec<MoveInstance>,
 
 	pub base: LargeStatSet,
-	// pub ivs: StatSet,
-	// pub evs: StatSet,
+
+	ivs: StatSet,
+	evs: StatSet,
 
 	pub current_hp: u16,
 	
@@ -33,7 +34,10 @@ impl BattlePokemon {
 
 		let pokemon_data = pokedex.pokemon_from_id(pokemon.id);
 
-		let stats = get_stats(pokemon_data, pokemon.ivs.unwrap_or(StatSet::iv_random()), pokemon.evs.unwrap_or_default(), pokemon.level);
+		let ivs = pokemon.ivs.unwrap_or(StatSet::iv_random());
+		let evs = pokemon.evs.unwrap_or_default();
+
+		let stats = get_stats(pokemon_data, ivs, evs, pokemon.level);
 
 		Self {
 			
@@ -43,9 +47,9 @@ impl BattlePokemon {
 			
 			moves: pokedex.moves_from_level(pokemon.id, pokemon.level),
 			
-			// ivs: ivs,
+			ivs: ivs,
 			
-			// evs: evs,
+			evs: evs,
 			
 			current_hp: pokemon.current_hp.unwrap_or(stats.hp),
 
@@ -64,7 +68,6 @@ impl BattlePokemon {
 		}
 
 		let ivs = StatSet::iv_random();
-
 		let evs = StatSet::default();
 
 		let base = get_stats(pokemon, ivs, evs, level);
@@ -77,9 +80,8 @@ impl BattlePokemon {
 			
 			moves: pokedex.moves_from_level(pokemon.data.number, level),
 			
-			// ivs: ivs,
-			
-			// evs: evs,
+			ivs: ivs,
+			evs: evs,
 
 			base: base,
 
@@ -87,6 +89,19 @@ impl BattlePokemon {
 			
 		}
 		
+	}
+
+	pub fn to_instance(&self) -> PokemonInstance {
+		PokemonInstance {
+		    id: self.data.number,
+		    level: self.level,
+		    ivs: Some(self.ivs),
+		    evs: Some(self.evs),
+		    move_set: Some(crate::pokemon::moves::instance::SavedPokemonMoveSet::from_instance(&self.moves)),
+		    exp: Some(0),
+		    friendship: Some(70),
+		    current_hp: Some(self.current_hp),
+		}
 	}
 
 	// pub fn moves_to_instance(moves: Vec<PokemonMove>) -> Vec<MoveInstance> {

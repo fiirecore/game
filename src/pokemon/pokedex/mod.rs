@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
 use macroquad::prelude::warn;
 
 use super::Pokemon;
@@ -11,8 +11,8 @@ pub mod texture;
 
 pub struct Pokedex {
 	
-	pub pokemon_list: AHashMap<usize, Pokemon>,
-	pub move_list: AHashMap<String, PokemonMove>,
+	pub pokemon_list: HashMap<usize, Pokemon>,
+	pub move_list: HashMap<String, PokemonMove>,
 	
 }
 
@@ -27,7 +27,7 @@ impl Pokedex {
 	
 	pub fn new() -> Pokedex {
 
-		let mut pokemon_list = AHashMap::new();
+		let mut pokemon_list = HashMap::new();
 
 		let entries_dir = crate::io::ASSET_DIR.get_dir(DEX_DIR.join("entries")).expect("Could not get pokemon entries directory!");
 
@@ -47,7 +47,7 @@ impl Pokedex {
 			}
 		}
 
-		let mut move_list = AHashMap::new();
+		let mut move_list = HashMap::new();
 
 		let moves_dir = crate::io::ASSET_DIR.get_dir(DEX_DIR.join("moves")).expect("Could not get moves directory!");
 

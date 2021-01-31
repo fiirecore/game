@@ -1,7 +1,7 @@
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
 use crate::audio::play_music;
-use crate::gui::gui::Activatable;
-use crate::gui::gui::GuiComponent;
+use crate::gui::Activatable;
+use crate::gui::GuiComponent;
 use macroquad::prelude::Image;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::info;
@@ -22,7 +22,6 @@ use crate::io::map::gba_map::fill_palette_map;
 use crate::io::map::gba_map::get_texture;
 use crate::io::map::map_loader::load_maps;
 use crate::io::map::npc_loader::load_npc_textures;
-use crate::world::gui::map_window_manager::MapWindowManager;
 use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
 use crate::world::player::RUN_SPEED;
@@ -48,11 +47,11 @@ pub struct WorldManager {
 
     player_gui: PlayerWorldGui,
 
-    window_manager: MapWindowManager,
+    //window_manager: MapWindowManager,
 
-    bottom_textures: AHashMap<u16, Texture>,
-    //pub(crate) top_textures: AHashMap<u16, Texture>,
-    npc_textures: AHashMap<u8, ThreeWayTexture>,
+    bottom_textures: HashMap<u16, Texture>,
+    //pub(crate) top_textures: HashMap<u16, Texture>,
+    npc_textures: HashMap<u8, ThreeWayTexture>,
 
 }
 
@@ -65,9 +64,9 @@ impl WorldManager {
             player: Player::default(),
             current_music: Music::default(),
             player_gui: PlayerWorldGui::new(),
-            window_manager: MapWindowManager::default(),
-            bottom_textures: AHashMap::new(),
-            npc_textures: AHashMap::new(),
+            //window_manager: MapWindowManager::default(),
+            bottom_textures: HashMap::new(),
+            npc_textures: HashMap::new(),
         };
         this.load_maps_and_textures();
         this.load_player(player_data);
@@ -348,7 +347,7 @@ impl WorldManager {
 
     pub fn load_maps_and_textures(&mut self) {
 
-        let mut bottom_sheets: AHashMap<u8, Image> = AHashMap::new();
+        let mut bottom_sheets: HashMap<u8, Image> = HashMap::new();
         //let mut top_sheets: HashMap<u8, RgbaImage> = HashMap::new();
 
         let palette_sizes = fill_palette_map(&mut bottom_sheets/*, &mut top_sheets*/);

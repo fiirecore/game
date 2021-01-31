@@ -1,4 +1,5 @@
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
+use crate::audio::play_music;
 use crate::util::texture::Texture;
 use crate::audio::Music;
 use crate::entity::Entity;
@@ -15,7 +16,7 @@ pub struct WorldChunkMap {
 
     alive: bool,
 
-    pub(crate) chunks: AHashMap<u16, WorldChunk>,
+    pub(crate) chunks: HashMap<u16, WorldChunk>,
     //pub(crate) current_chunk: &'a WorldChunk,
     //connected_chunks: Vec<&'a WorldChunk>,
     pub(crate) current_chunk: u16,
@@ -31,7 +32,7 @@ impl WorldChunkMap {
         let music = self.current_chunk().map.music;
         if music != self.current_music {
             self.current_music = music;
-            //context.play_music(self.current_music);
+            play_music(self.current_music);
         }
     }
 
@@ -73,16 +74,20 @@ impl WorldChunkMap {
 
 
     pub fn walk_connections(&mut self, x: isize, y: isize) -> u8 {
+        let mut move_code = 1;
+        let mut chunk = None;
         for connection in self.connections() {
             if connection.1.in_bounds(x, y) {
-                let move_code = connection.1.walkable(x, y);
-                if test_move_code(move_code, false) {
-                    self.change_chunk(*connection.0);   
-                }
-                return move_code;
+                move_code = connection.1.walkable(x, y);
+                chunk = Some(*connection.0);
             }
         }
-        1
+        if let Some(chunk) = chunk {
+            if test_move_code(move_code, false) {
+                self.change_chunk(chunk);   
+            }
+        }
+        return move_code;
     }
 
 }
@@ -147,7 +152,7 @@ impl World for WorldChunkMap {
         self.current_chunk().check_warp(x, y)
     }
 
-    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
         let current_chunk = self.current_chunk();
         current_chunk.render(textures, npc_textures, screen, border);
         for connection in &current_chunk.connections {

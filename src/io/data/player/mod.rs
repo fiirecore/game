@@ -11,35 +11,6 @@ use super::Position;
 use super::pokemon::StatSet;
 use crate::pokemon::instance::PokemonInstance;
 
-// lazy_static::lazy_static! {
-// 	pub static ref PLAYER_DATA: RwLock<PlayerData> = RwLock::new(PlayerData::default());
-// }
-
-// pub fn load_player_data() {
-//     *PLAYER_DATA.write() = PlayerData::load_from_file();
-// }
-
-// #[cfg(not(target = "wasm32"))]
-// pub async fn save_timer() {
-// 	let timer = macroquad::prelude::collections::storage::get::<Configuration>().expect("Could not get configuration!").save_timer;
-// 	loop {
-// 		macroquad::prelude::coroutines::wait_seconds(timer);
-// 		mark_dirty();
-// 	}
-// }
-
-// pub fn player_data_mut() -> parking_lot::lock_api::RwLockWriteGuard<'static, parking_lot::RawRwLock, PlayerData> {
-//     PLAYER_DATA.write()
-// }
-
-// pub fn player_data() -> parking_lot::lock_api::RwLockReadGuard<'static, parking_lot::RawRwLock, PlayerData> {
-//     PLAYER_DATA.read()
-// }
-
-// pub fn mark_dirty() {
-//     PLAYER_DATA.write().mark_dirty();
-// }
-
 static SAVE_FILENAME: &str = "player.json";
 #[derive(Serialize, Deserialize)]
 pub struct PlayerData {

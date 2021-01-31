@@ -1,5 +1,4 @@
-use ahash::AHashMap;
-use std::collections::hash_map::Values;
+use ahash::AHashMap as HashMap;
 use crate::util::texture::Texture;
 use crate::entity::Entity;
 use crate::world::RenderCoords;
@@ -14,7 +13,7 @@ pub struct WorldMapSetManager {
 
     alive: bool,
 
-    map_sets: AHashMap<String, WorldMapSet>,
+    map_sets: HashMap<String, WorldMapSet>,
     current_map_set: String,
 
 }
@@ -54,7 +53,7 @@ impl WorldMapSetManager {
     }
 
 
-    pub fn values(&self) -> Values<'_, String, WorldMapSet> {
+    pub fn values(&self) -> std::collections::hash_map::Values<'_, String, WorldMapSet> {
         self.map_sets.values()
     }
 
@@ -81,7 +80,7 @@ impl World for WorldMapSetManager {
         self.map_set_mut().on_tile(x, y)
     }
 
-    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, crate::entity::texture::three_way_texture::ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, crate::entity::texture::three_way_texture::ThreeWayTexture>, screen: RenderCoords, border: bool) {
         self.map_set().render(textures, npc_textures, screen, border)
     }
 

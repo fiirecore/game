@@ -1,7 +1,7 @@
 
 
 use crate::util::text_renderer::TextRenderer;
-use crate::gui::gui::{GuiComponent, GuiText};
+use super::{GuiComponent, GuiText};
 pub struct BasicButton {
 	
     alive: bool,

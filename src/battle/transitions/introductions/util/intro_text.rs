@@ -1,7 +1,7 @@
 use crate::util::input;
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
-use crate::gui::gui::{GuiComponent, Activatable, GuiText};
+use crate::gui::{GuiComponent, Activatable, GuiText};
 use crate::util::timer::Timer;
 
 pub struct IntroText { // and outro
@@ -24,8 +24,8 @@ pub struct IntroText { // and outro
 	pub can_continue: bool,
 	pub timer: Timer,
 
-	button_pos: i8,
-	button_dir: i8,
+	button_pos: f32,
+	button_up: bool,
 
 }
 
@@ -54,8 +54,8 @@ impl IntroText {
 			no_pause: false,
 			timer: Timer::new(1.0),
 			
-			button_pos: 0,
-			button_dir: 1,
+			button_pos: 0.0,
+			button_up: true,
 
 		}
 		
@@ -63,8 +63,8 @@ impl IntroText {
 
 	fn reset(&mut self) {
 		self.current_phrase = 0;
-		self.button_pos = 0;
-		self.button_dir = 1;
+		self.button_pos = 0.0;
+		self.button_up = true;
 		self.reset_phrase();
 	}
 
@@ -114,10 +114,14 @@ impl GuiComponent for IntroText {
 						}
 					}
 				}
-				if self.button_pos % (4*8) == 0 {
-					self.button_dir *= -1;
+				if self.button_pos.abs() >= 32.0 {
+					self.button_up = !self.button_up;
 				}
-				self.button_pos += self.button_dir;
+				if self.button_up {
+					self.button_pos += delta * 240.0;
+				} else {
+					self.button_pos -= delta * 240.0;
+				}
 			} else if self.counter <= line_len as f32 {
 				self.counter += delta * 60.0;
 			} else if self.current_line < self.get_text().len() - 1 {

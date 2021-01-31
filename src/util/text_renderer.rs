@@ -1,6 +1,6 @@
 use core::f32;
 
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
 use macroquad::prelude::Image;
 
 use crate::util::texture::Texture;
@@ -14,7 +14,7 @@ use super::texture::image_texture;
 
 pub struct TextRenderer {
 
-    pub(crate) fonts: Vec<AHashMap<char, Texture>>,
+    pub(crate) fonts: Vec<HashMap<char, Texture>>,
     pub(crate) button: Texture,
     pub(crate) cursor: Texture,
 
@@ -94,7 +94,7 @@ impl TextRenderer {
     }
 
     fn default_add_type0(&mut self) {
-        self.fonts.push(AHashMap::new());
+        self.fonts.push(HashMap::new());
         let font_sheet0 = open_image_bytes(include_bytes!("../../build/assets/font0.png"));
         let alphanumerics = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀".chars();
         let mut index: usize = 0;
@@ -114,7 +114,7 @@ impl TextRenderer {
 
     fn default_add_type1(&mut self, bytes: &[u8], id: usize) {
         let font_sheet1 = open_image_bytes(bytes);
-        self.fonts.push(AHashMap::new());
+        self.fonts.push(HashMap::new());
         
         let alphanumerics = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀!?".chars();
         let mut index: usize = 0;

@@ -44,8 +44,7 @@ impl Configuration {
 				warn!("Could not load configuration file with error {}", err);
 				Configuration::saved_default()
 			}
-		}
-		
+		}		
 	}
 
 	fn from_toml(data: &str) -> Self {
@@ -70,13 +69,19 @@ impl Default for Configuration {
     }
 }
 
-// impl PersistantDataLocation for Configuration {
+impl crate::util::file::PersistantDataLocation for Configuration {
 
-// 	fn load_from_file() -> Self {
-// 		return Configuration::load(Path::new(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME));
-// 	}
+	fn load_from_file() -> Self {
+		match crate::util::file::read_to_string_noasync(PathBuf::from(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME)) {
+			Some(data) => Configuration::from_toml(&data),
+		    None => {
+				warn!("Could not load configuration file!");
+				Configuration::saved_default()
+			}
+		}
+	}
 
-// }
+}
 
 impl PersistantData for Configuration {
 

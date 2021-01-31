@@ -127,13 +127,14 @@ impl BattleManager {
 				self.battle_gui.player_panel.start();
 			} else {
 				self.battle_opener_manager.update(delta);
-				self.battle_opener_manager.battle_introduction_manager.update_gui(&mut self.battle_gui);
+				self.battle_opener_manager.battle_introduction_manager.update_gui(&mut self.battle_gui, delta);
 				//self.battle_gui.opener_update(context);
 			}
 		} else if self.battle_closer_manager.is_alive() {
 			if self.battle_closer_manager.is_finished() {
 				// self.battle_closer_manager.update_player(player_data);
 				self.battle_closer_manager.despawn();
+				self.current_battle.update_data(player_data);
 				self.finished = true;
 			} else {
 				self.battle_closer_manager.update(delta);

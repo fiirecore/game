@@ -1,8 +1,6 @@
 use macroquad::prelude::collections::storage::{get, get_mut};
-
 use crate::pokemon::pokedex::Pokedex;
 use crate::util::file::PersistantData;
-use crate::util::input::Control;
 use crate::util::text_renderer::TextRenderer;
 use crate::io::data::player::PlayerData;
 use crate::battle::battle_manager::BattleManager;
@@ -119,10 +117,6 @@ impl GameManager {
 	
 	pub fn input(&mut self, delta: f32) {
 
-		if crate::util::input::pressed(Control::Start) {
-			self.save_data(&mut get_mut::<PlayerData>().expect("Could not get Player Data"));
-		}
-
 		if !self.battling {
 			self.world_manager.input(delta);
 		} else {
@@ -136,8 +130,8 @@ impl GameManager {
 	}
 
 	pub fn quit(&mut self) {
-		//self.world_manager.dispose();
-        //self.save_data();       
+		//self.world_manager.quit();
+        self.save_data(&mut get_mut::<PlayerData>().expect("Could not get player data"));       
 	}
 	
 	pub fn data_dirty(&mut self, player_data: &mut PlayerData) {

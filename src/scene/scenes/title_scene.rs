@@ -15,7 +15,6 @@ pub struct TitleScene {
 	
 	next: bool,
 	accumulator: f32,
-	counter: u64,
 
 	background_tex: Texture, //TO-DO: change to 3 (5 including black) seperate solid color textures
 	title_tex: Texture,
@@ -40,7 +39,6 @@ impl TitleScene {
 		    scene_token: 0,
 		    next: false,
 		    accumulator: 0.0,
-		    counter: 0, 
 		}		
 	}
 	
@@ -64,18 +62,17 @@ impl Scene for TitleScene {
 	 
 	fn update(&mut self, _delta: f32) {	
 		self.accumulator += macroquad::prelude::get_frame_time();
-		self.counter+=1;
 		if self.next {
-			macroquad::prelude::rand::srand(self.counter % 256);
+			macroquad::prelude::rand::srand(self.accumulator as u64 % 256);
 			if PlayerData::exists() {
 				self.scene_token = crate::scene::GAME_SCENE;
 			} else {
 				self.scene_token = crate::scene::GAME_SCENE;//CHARACTER_CREATION_SCENE;
 			}
 		}
-		if self.accumulator > 48.0 {
-			self.scene_token = crate::scene::TITLE_SCENE;//LOADING_COPYRIGHT_SCENE
-		}
+		// if self.accumulator > 48.0 {
+		// 	self.scene_token = crate::scene::TITLE_SCENE;//LOADING_COPYRIGHT_SCENE
+		// }
 	}
 	
 	fn render(&self, _tr: &TextRenderer) {

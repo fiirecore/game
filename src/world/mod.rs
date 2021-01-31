@@ -9,7 +9,7 @@ pub mod gui {
 
 pub mod player;
 
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
 
 
 use crate::util::texture::Texture;
@@ -34,7 +34,7 @@ pub trait World {
 
     fn on_tile(&mut self, x: isize, y: isize);
 
-    fn render(&self, textures: &AHashMap<u16, Texture>, npc_textures: &AHashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool);
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool);
 
     fn input(&mut self, delta: f32, player: &Player);
 

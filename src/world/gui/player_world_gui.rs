@@ -3,13 +3,13 @@ use crate::util::input;
 use crate::util::texture::Texture;
 use crate::util::input::Control;
 use crate::util::text_renderer::TextRenderer;
-use crate::gui::basic_button::BasicButton;
-use crate::gui::gui::Activatable;
-use crate::gui::gui::GuiComponent;
+use crate::gui::button::BasicButton;
+use crate::gui::Activatable;
+use crate::gui::GuiComponent;
 use crate::util::render::draw;
 use crate::util::texture::byte_texture;
 
-static BUTTON_COUNT: u8 = 3;
+static BUTTON_COUNT: u8 = 4;
 
 pub struct PlayerWorldGui {
 
@@ -25,7 +25,8 @@ pub struct PlayerWorldGui {
 
     save_button: BasicButton,
     pokemon_button: BasicButton,
-    exit_button: BasicButton,
+    exit_menu_button: BasicButton,
+    exit_game_button: BasicButton,
 
     next: u8,
 
@@ -35,12 +36,10 @@ impl PlayerWorldGui {
 
     pub fn new() -> Self {
 
+        use Button::*;
+
         let x = 169.0;
         let y = 1.0;
-        let font_id = 2;
-
-        let text_x = 15.0;
-        let text_y = 7.0;
 
         Self {
 
@@ -54,9 +53,10 @@ impl PlayerWorldGui {
 
             cursor_position: 0,
 
-            save_button: BasicButton::new("Save".to_uppercase().as_str(), font_id, text_x, text_y, x, y),
-            pokemon_button: BasicButton::new("Pokemon".to_uppercase().as_str(), font_id, text_x, text_y + 15.0, x, y),
-            exit_button: BasicButton::new("Exit".to_uppercase().as_str(), font_id, text_x, text_y + 30.0, x, y),
+            save_button: Save.to_button(x, y),
+            pokemon_button: Pokemon.to_button(x, y),
+            exit_game_button: ExitGame.to_button(x, y),
+            exit_menu_button: Close.to_button(x, y),
 
             next: 0,
 
@@ -67,25 +67,6 @@ impl PlayerWorldGui {
     pub fn toggle(&mut self) {
         self.active = !self.active;
         self.focused = !self.focused;
-    }
-
-    pub fn click(&mut self, player_data: &mut PlayerData) {
-        if input::pressed(crate::util::input::Control::A) {
-            match self.cursor_position {
-                0 => {
-                    // Save
-                    // context.save_data = true;
-                },
-                1 => {
-                    // Pokemon
-                    
-                },
-                2 => {
-                    // Exit
-                },
-                _ => {},
-            }
-        }
     }
 
 }
@@ -116,7 +97,8 @@ impl GuiComponent for PlayerWorldGui {
             draw(self.background, self.x, self.y);
             self.save_button.render(tr);
             self.pokemon_button.render(tr);
-            self.exit_button.render(tr);
+            self.exit_menu_button.render(tr);
+            self.exit_game_button.render(tr);
             tr.render_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
         }
     }
@@ -137,20 +119,83 @@ impl Activatable for PlayerWorldGui {
         return self.focused;
     }
 
-    fn input(&mut self, delta: f32) {
-        if input::pressed(Control::Down) {
+    fn input(&mut self, _delta: f32) {
+
+        if input::pressed(Control::A) {
+            match self.cursor_position {
+                0 => {
+                    // Save
+                    macroquad::prelude::collections::storage::get_mut::<PlayerData>().expect("Could not get Player Data").mark_dirty();
+                },
+                1 => {
+                    // Pokemon
+                    
+                },
+                2 => {
+                    // Exit Game
+                    *crate::QUIT_SIGNAL.write() = true;
+                },
+                3 => {
+                    // Exit Menu
+                    self.disable();
+                }
+                _ => {},
+            }
+        }
+
+        if input::pressed(Control::Up) {
             if self.cursor_position > 0 {
                 self.cursor_position -= 1;
-            }            
-        } else if input::pressed(Control::Up) {
+            } else {
+                self.cursor_position = BUTTON_COUNT - 1;
+            }    
+        } else if input::pressed(Control::Down) {
             if self.cursor_position < BUTTON_COUNT - 1 {
                 self.cursor_position += 1;
-            } 
+            } else {
+                self.cursor_position = 0;
+            }
         }
     }
 
     fn next(&self) -> u8 {
         return self.next;
+    }
+
+}
+
+#[derive(Debug, enum_iterator::IntoEnumIterator)]
+enum Button {
+
+    Save,
+    Pokemon,
+    ExitGame,
+    Close,
+
+}
+
+impl Button {
+
+    pub fn name(&self) -> &str {
+        match *self {
+            Button::Save => "Save",
+            Button::Pokemon => "POKEMON",
+            Button::ExitGame => "EXIT GAME",
+            Button::Close => "CLOSE",
+        }
+    }
+
+    pub fn position(&self) -> u8 {
+        match *self {
+            Button::Save => 0,
+            Button::Pokemon => 1,
+            Button::ExitGame => 2,
+            Button::Close => 3,
+        }
+    }
+
+    pub fn to_button(self, panel_x: f32, panel_y: f32) -> BasicButton {
+        BasicButton::new(self.name(), 2, 15.0, 7.0 + 15.0 * self.position() as f32, panel_x, panel_y)
     }
 
 }

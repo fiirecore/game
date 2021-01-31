@@ -1,4 +1,5 @@
 use std::fmt::Display;
+use crate::io::data::player::PlayerData;
 use crate::pokemon::moves::MoveCategory;
 use crate::pokemon::moves::PokemonMove;
 use crate::pokemon::party::PokemonParty;
@@ -9,7 +10,7 @@ use crate::util::texture::Texture;
 use crate::entity::Entity;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
-use crate::gui::gui::GuiComponent;
+use crate::gui::GuiComponent;
 use crate::util::render::draw_bottom;
 use super::battle_pokemon::BattlePokemon;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
@@ -72,15 +73,25 @@ impl Battle {
 	
 	pub fn new(pokedex: &Pokedex, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Self {
 		
+		let mut player_active = 0;
+
 		Self {
 			
-			player_pokemon: player_pokemon.pokemon.iter().map(|pokemon|
+			player_pokemon: player_pokemon.pokemon.iter().map(|pokemon| {
+				if let Some(hp) = pokemon.current_hp {
+					if hp == 0 {
+						player_active += 1;
+					}
+				}
 				BattlePokemon::new(pokedex, pokemon)
+			}
 			).collect(),
 			opponent_pokemon: opponent_pokemon.pokemon.iter().map(|pokemon| {
 				BattlePokemon::new(pokedex, pokemon)
 			}).collect(),
 			
+			player_active: player_active,
+
 			..Battle::default()
 			
 		}
@@ -180,6 +191,22 @@ impl Battle {
 		} else {
 			player.current_hp -= damage;
 		}
+	}
+
+	pub fn update_data(&mut self, player_data: &mut PlayerData) {
+		let mut alive = false;
+		for pokemon in &self.player_pokemon {
+			if pokemon.current_hp != 0 {
+				alive = true;
+			}
+		}
+
+		player_data.party.pokemon = self.player_pokemon.iter_mut().map(|pokemon| {
+			if !alive {
+				pokemon.current_hp = pokemon.base.hp;
+			}
+			pokemon.to_instance()
+		}).collect();
 	}
 
 	pub fn player(&self) -> &BattlePokemon {

@@ -25,7 +25,7 @@ impl SavedPokemonMoveSet {
 		}).collect();
 	}
 
-	pub fn from_instance(moves: Vec<MoveInstance>) -> Self {
+	pub fn from_instance(moves: &Vec<MoveInstance>) -> Self {
 		Self {
 			moves: moves.iter().map(|pkmn_move| SavedPokemonMove {
 			    name: pkmn_move.move_instance.name.clone(),

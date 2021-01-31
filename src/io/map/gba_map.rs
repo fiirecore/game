@@ -1,7 +1,7 @@
 use macroquad::prelude::Image;
 use macroquad::prelude::debug;
 use macroquad::prelude::warn;
-use ahash::AHashMap;
+use ahash::AHashMap as HashMap;
 use crate::util::texture::Texture;
 
 pub struct GbaMap {
@@ -133,30 +133,38 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &Vec<u16>) -> u16 { // To - d
 
 // Map conversion utility
 
-pub fn fill_palette_map(bottom_sheets: &mut AHashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> Vec<u16> {
-	let texture_dir = crate::io::ASSET_DIR.get_dir("world/textures").expect("Could not get texture directory");
+pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> Vec<u16> {
 	let mut sizes = Vec::new();
-	for file in texture_dir.files() {
-		let filename = &*file.path().file_name().unwrap().to_string_lossy();
-		if filename.starts_with("P") {
-			if filename.ends_with("B.png") {
-				match &filename[7..filename.len()-5].parse::<u8>() {
-				    Ok(index) => {
-						let img = crate::util::image::open_image_bytes(file.contents());
-						sizes.push(((img.width() >> 4) * (img.height() >> 4)) as u16);
-						bottom_sheets.insert(*index, img);
-					}
-				    Err(err) => {
-						warn!("Could not parse tile palette named {} with error {}", filename, err);
+	match crate::io::ASSET_DIR.get_dir("world\\textures") {
+	    Some(texture_dir) => {
+			for file in texture_dir.files() {
+				let filename = &*file.path().file_name().unwrap().to_string_lossy();
+				if filename.starts_with("P") {
+					if filename.ends_with("B.png") {
+						match &filename[7..filename.len()-5].parse::<u8>() {
+							Ok(index) => {
+								let img = crate::util::image::open_image_bytes(file.contents());
+								sizes.push(((img.width() >> 4) * (img.height() >> 4)) as u16);
+								bottom_sheets.insert(*index, img);
+							}
+							Err(err) => {
+								warn!("Could not parse tile palette named {} with error {}", filename, err);
+							}
+						}
 					}
 				}
 			}
+
 		}
-	}
+	    None => {
+			warn!("Could not get texture directory for palette maps");
+			warn!("Avaliable directories: {:?}", crate::io::ASSET_DIR.dirs());
+		}
+	}	
 	sizes
 }
 
-pub fn get_texture(sheets: &AHashMap<u8, Image>, palette_sizes: &Vec<u16>, tile_id: u16) -> Texture {
+pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &Vec<u16>, tile_id: u16) -> Texture {
 	
 	let mut count: u16 = palette_sizes[0];
 	let mut index: u8 = 0;

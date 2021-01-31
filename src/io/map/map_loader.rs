@@ -9,23 +9,27 @@ use super::map_set_loader::new_map_set;
 
 pub fn load_maps(palette_sizes: &Vec<u16>, chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager) {
 
-    let map_dir = crate::io::ASSET_DIR.get_dir("world/maps").unwrap().dirs();
-
-    for dir_entry in map_dir {
-        for file in dir_entry.files {
-            if let Some(ext) = file.path().extension() {
-                if ext == std::ffi::OsString::from("toml") {
-                    let maps = map_from_toml(palette_sizes, dir_entry, file);
-                    if let Some(world_chunk) = maps.0 {
-                        chunk_map.insert(world_chunk.0, world_chunk.1);
-                    } else if let Some(map_set) = maps.1 {
-                        map_sets.insert(map_set.0, map_set.1);
+    match crate::io::ASSET_DIR.get_dir("world/maps") {
+        Some(map_dir) => {
+            for dir_entry in map_dir.dirs() {
+                for file in dir_entry.files {
+                    if let Some(ext) = file.path().extension() {
+                        if ext == std::ffi::OsString::from("toml") {
+                            let maps = map_from_toml(palette_sizes, dir_entry, file);
+                            if let Some(world_chunk) = maps.0 {
+                                chunk_map.insert(world_chunk.0, world_chunk.1);
+                            } else if let Some(map_set) = maps.1 {
+                                map_sets.insert(map_set.0, map_set.1);
+                            }
+                        }
                     }
                 }
             }
         }
+        None => {
+            warn!("Could not get map directory!");
+        }
     }
-
 }
 
 pub fn map_from_toml(palette_sizes: &Vec<u16>, root_path: &include_dir::Dir, file: &include_dir::File) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {

@@ -1,7 +1,7 @@
 use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
-use crate::gui::gui::GuiComponent;
+use crate::gui::GuiComponent;
 use crate::util::Load;
 
 use super::battle_background::BattleBackground;
@@ -69,8 +69,8 @@ impl BattleGui {
 	pub fn update(&mut self, delta: f32) {
 		self.player_bounce.update(delta, &mut self.player_pokemon_gui);
 		self.player_panel.update(delta);
-		self.player_pokemon_gui.update();
-		self.opponent_pokemon_gui.update();
+		self.player_pokemon_gui.update(delta);
+		self.opponent_pokemon_gui.update(delta);
 		self.battle_text.update(delta);
 	}
 

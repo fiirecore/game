@@ -70,7 +70,7 @@ impl SceneManager {
 
 	pub async fn load_loading_scenes(&mut self) {
 		self.scenes.push(Box::new(loading_scenes::LoadingCopyrightScene::new()));
-		self.scenes.push(Box::new(loading_scenes::LoadingGamefreakScene::new(None)));
+		self.scenes.push(Box::new(loading_scenes::LoadingGamefreakScene::new()));
 		self.scenes.push(Box::new(loading_scenes::LoadingPokemonScene::new()));
 	}
 

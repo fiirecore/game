@@ -6,16 +6,14 @@ use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::pokemon_gui::PokemonGui;
-use crate::gui::gui::Activatable;
-use crate::gui::gui::GuiComponent;
+use crate::gui::Activatable;
+use crate::gui::GuiComponent;
 use crate::util::render::draw_bottom;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
 
 use super::util::intro_text::IntroText;
 use super::util::player_intro::PlayerBattleIntro;
-
-static GUI_OFFSET: u8 = 24;
 
 pub struct BasicBattleIntroduction {
 
@@ -25,8 +23,7 @@ pub struct BasicBattleIntroduction {
     pub intro_text: IntroText,
     pub player_intro: PlayerBattleIntro,
 
-    ogui_counter: u8,
-    pgui_counter: u8,
+    finished_panel: bool,
 
 }
 
@@ -42,9 +39,7 @@ impl BasicBattleIntroduction {
             intro_text: IntroText::new(panel_x, panel_y, vec![vec![String::from("Intro Text")]]),
             player_intro: PlayerBattleIntro::new(),
             
-
-            ogui_counter: 0,
-            pgui_counter: 0,
+            finished_panel: false,
 
         }
 
@@ -57,8 +52,7 @@ impl Reset for BasicBattleIntroduction {
     fn reset(&mut self) {
         self.intro_text.load();
         self.player_intro.reset();
-        self.ogui_counter = 0;
-        self.pgui_counter = 0;
+        self.finished_panel = false;
     }
 
 }
@@ -78,7 +72,7 @@ impl Load for BasicBattleIntroduction {
 impl Completable for BasicBattleIntroduction {
 
     fn is_finished(&self) -> bool {
-        self.finished && !self.player_intro.should_update() && !self.pgui_counter >= GUI_OFFSET
+        self.finished && !self.player_intro.should_update() && self.finished_panel
     }
 
 }
@@ -153,7 +147,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
         }        
     }
 
-    fn update_gui(&mut self, battle_gui: &mut BattleGui) {
+    fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32) {
         if self.intro_text.can_continue {
             if self.intro_text.next() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
                 battle_gui.opponent_pokemon_gui.reset();
@@ -163,18 +157,21 @@ impl BattleIntroduction for BasicBattleIntroduction {
         if !self.player_intro.should_update() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
-            battle_gui.player_pokemon_gui.offset_position(-10.0, 0.0); 
         }
         if battle_gui.opponent_pokemon_gui.is_alive() {
-            if self.ogui_counter < GUI_OFFSET {
-                self.ogui_counter += 1;
-                battle_gui.opponent_pokemon_gui.offset_position(5.0, 0.0);
+            if battle_gui.opponent_pokemon_gui.panel.x + 5.0 < battle_gui.opponent_pokemon_gui.orig_x {
+                battle_gui.opponent_pokemon_gui.offset_position(240.0 * delta, 0.0);
+            } else if battle_gui.opponent_pokemon_gui.panel.x < battle_gui.opponent_pokemon_gui.orig_x {
+                battle_gui.opponent_pokemon_gui.update_position(battle_gui.opponent_pokemon_gui.orig_x, battle_gui.opponent_pokemon_gui.panel.y);
             }
         }
         if battle_gui.player_pokemon_gui.is_alive() {
-            if self.pgui_counter < GUI_OFFSET {
-                self.pgui_counter += 1;
-                battle_gui.player_pokemon_gui.offset_position(-5.0, 0.0);
+            //macroquad::prelude::info!("{}, {}", battle_gui.player_pokemon_gui.panel.x, battle_gui.player_pokemon_gui.orig_x);
+            if battle_gui.player_pokemon_gui.panel.x - 5.0 > battle_gui.player_pokemon_gui.orig_x {
+                battle_gui.player_pokemon_gui.offset_position(-240.0 * delta, 0.0);
+            } else {
+                battle_gui.player_pokemon_gui.update_position(battle_gui.player_pokemon_gui.orig_x, battle_gui.player_pokemon_gui.panel.y);
+                self.finished_panel = true;
             }
         }
     }
