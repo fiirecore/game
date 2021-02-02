@@ -5,7 +5,18 @@ use macroquad::prelude::KeyCode;
 use serde::{Deserialize, Serialize};
 
 lazy_static::lazy_static! {
-    static ref KEY_CONTROLS: RwLock<HashMap<Control, HashSet<KeyCode>>> = RwLock::new(HashMap::new()); // benchmark if parking_lot rwlock and Hash's hashmap are faster than dashmap
+    static ref KEY_CONTROLS: RwLock<HashMap<Control, HashSet<KeyCode>>> = RwLock::new({
+        let mut controls = HashMap::new();
+        controls.insert(Control::A, set_of(&[KeyCode::X]));
+        controls.insert(Control::B, set_of(&[KeyCode::Z]));
+        controls.insert(Control::Up, set_of(&[KeyCode::Up]));
+        controls.insert(Control::Down, set_of(&[KeyCode::Down]));
+        controls.insert(Control::Left, set_of(&[KeyCode::Left]));
+        controls.insert(Control::Right, set_of(&[KeyCode::Right]));
+        controls.insert(Control::Start, set_of(&[KeyCode::A]));
+        controls.insert(Control::Select, set_of(&[KeyCode::S]));
+        controls
+    }); // benchmark if parking_lot rwlock and Hash's hashmap are faster than dashmap
 }
 
 pub fn pressed(control: Control) -> bool {
@@ -43,20 +54,6 @@ pub enum Control {
     Select,
     //Escape,
 
-}
-
-pub(crate) fn default_keybinds() {
-        
-    let mut controls = KEY_CONTROLS.write();
-    controls.insert(Control::A, set_of(&[KeyCode::X]));
-    controls.insert(Control::B, set_of(&[KeyCode::Z]));
-    controls.insert(Control::Up, set_of(&[KeyCode::Up]));
-    controls.insert(Control::Down, set_of(&[KeyCode::Down]));
-    controls.insert(Control::Left, set_of(&[KeyCode::Left]));
-    controls.insert(Control::Right, set_of(&[KeyCode::Right]));
-    controls.insert(Control::Start, set_of(&[KeyCode::A]));
-    controls.insert(Control::Select, set_of(&[KeyCode::S]));
-    //controls.insert(KeyCode::Escape), Control::Escape);
 }
 
 fn set_of(codes: &[KeyCode]) -> HashSet<KeyCode> {

@@ -6,7 +6,6 @@ use macroquad::prelude::info;
 
 use io::data::configuration::Configuration;
 use macroquad::prelude::warn;
-use parking_lot::RwLock;
 use scene::loading_scene_manager::LoadingSceneManager;
 use scene::scene_manager::SceneManager;
 use util::file::PersistantDataLocation;
@@ -17,9 +16,7 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;
 pub static BASE_HEIGHT: u32 = 160;
 
-lazy_static::lazy_static! {
-    pub static ref QUIT_SIGNAL: RwLock<bool> = RwLock::new(false);
-}
+pub static mut RUNNING: bool = true;
 
 #[macroquad::main(settings)]
 async fn main() {
@@ -58,11 +55,9 @@ async fn main() {
     let loading_coroutine = macroquad::prelude::coroutines::start_coroutine(load_coroutine());
 
     let mut scene_manager = SceneManager::default();
-    // bind_world_music(); // moved to after gamefreak music plays, fix this
+    audio::loader::bind_world_music();
     
     storage::store(io::data::player::PlayerData::load_async_default().await);
-
-    crate::util::input::default_keybinds();
 
     while !loading_coroutine.is_done() {
         macroquad::prelude::coroutines::wait_seconds(0.2).await;
@@ -82,8 +77,10 @@ async fn main() {
         scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
         scene_manager.render();
-        if *QUIT_SIGNAL.read() == true {
-            break;
+        unsafe {
+            if !RUNNING {
+                break;
+            }
         }
         macroquad::prelude::next_frame().await;
     }
@@ -119,6 +116,13 @@ async fn load_coroutine() {
         loading_scene_manager.render();
         macroquad::prelude::next_frame().await;
     }
+}
+
+pub enum RunState {
+
+    Continue,
+    Quit,
+
 }
 
 pub mod util;

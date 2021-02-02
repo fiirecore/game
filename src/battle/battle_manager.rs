@@ -173,8 +173,13 @@ impl BattleManager {
 	
 	pub fn input(&mut self, delta: f32) {
 
-		if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F1) {
-			self.battle_closer_manager.spawn() // exit shortcut
+		if cfg!(debug_assertions) {
+
+			if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F1) {
+				//self.battle_closer_manager.spawn() // exit shortcut
+				self.finished = true;
+			}
+
 		}
 
 		if !self.battle_screen_transition_manager.is_alive() {	

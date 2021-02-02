@@ -133,7 +133,9 @@ impl Activatable for PlayerWorldGui {
                 },
                 2 => {
                     // Exit Game
-                    *crate::QUIT_SIGNAL.write() = true;
+                    unsafe {
+                        crate::RUNNING = false;
+                    }
                 },
                 3 => {
                     // Exit Menu

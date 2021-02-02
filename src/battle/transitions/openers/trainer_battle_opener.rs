@@ -78,7 +78,12 @@ impl Update for TrainerBattleOpener {
 
     fn update(&mut self, delta: f32) {
         if self.start_timer.is_finished() {
-            self.offset -= 120.0 * delta;
+            if self.offset - delta <= 0.0 {
+                self.offset = 0.0;
+                self.finished = true;
+            } else {
+                self.offset -= 120.0 * delta;
+            }
             if self.rect_size > 0.0 {
                 if self.rect_size as isize - self.shrink_by as isize > 0 {
                     self.rect_size -= self.shrink_by as f32 * 60.0 * delta;
@@ -88,9 +93,6 @@ impl Update for TrainerBattleOpener {
                 if self.rect_size <= 58.0 && self.shrink_by != 4 {
                     self.shrink_by = 4;
                 }
-            }
-            if self.offset <= 0.0 {
-                self.finished = true;
             }
         } else {
             self.start_timer.update(delta);
