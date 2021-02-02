@@ -4,8 +4,11 @@ name = "Tropius"
 primary_type = "Grass"
 secondary_type = "Flying"
 species = "Fruit"
-height = 2.0
-weight = 100.0
+height = 20
+weight = 1000
+[training]
+base_exp = 161
+growth_rate = "Slow"
 [base]
 hp = 99
 atk = 68

@@ -4,8 +4,11 @@ name = "Gyarados"
 primary_type = "Water"
 secondary_type = "Flying"
 species = "Atrocious"
-height = 6.5
-weight = 235.0
+height = 65
+weight = 2350
+[training]
+base_exp = 189
+growth_rate = "Slow"
 [base]
 hp = 95
 atk = 125

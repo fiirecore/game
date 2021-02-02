@@ -3,8 +3,11 @@ number = 25
 name = "Pikachu"
 primary_type = "Electric"
 species = "Mouse"
-height = 0.4
-weight = 6.0
+height = 4
+weight = 60
+[training]
+base_exp = 112
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 55

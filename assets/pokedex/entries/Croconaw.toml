@@ -3,8 +3,11 @@ number = 159
 name = "Croconaw"
 primary_type = "Water"
 species = "Big"
-height = 1.1
-weight = 25.0
+height = 11
+weight = 250
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 65
 atk = 80

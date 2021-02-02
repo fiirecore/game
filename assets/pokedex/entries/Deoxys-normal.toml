@@ -5,8 +5,12 @@ number = 386
 name = "Deoxys-normal"
 primary_type = "Psychic"
 species = "DNA"
-height = 1.7
-weight = 60.8
+height = 17
+weight = 608
+
+[training]
+base_exp = 270
+growth_rate = "Slow"
 
 [base]
 hp = 50

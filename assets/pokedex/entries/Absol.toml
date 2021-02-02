@@ -3,8 +3,11 @@ number = 359
 name = "Absol"
 primary_type = "Dark"
 species = "Disaster"
-height = 1.2
-weight = 47.0
+height = 12
+weight = 470
+[training]
+base_exp = 163
+growth_rate = "MediumSlow"
 [base]
 hp = 65
 atk = 130

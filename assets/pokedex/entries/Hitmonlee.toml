@@ -3,8 +3,11 @@ number = 106
 name = "Hitmonlee"
 primary_type = "Fighting"
 species = "Kicking"
-height = 1.5
-weight = 49.8
+height = 15
+weight = 498
+[training]
+base_exp = 159
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 120

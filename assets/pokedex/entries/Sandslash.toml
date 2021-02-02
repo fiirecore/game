@@ -3,8 +3,11 @@ number = 28
 name = "Sandslash"
 primary_type = "Ground"
 species = "Mouse"
-height = 1.0
-weight = 29.5
+height = 10
+weight = 295
+[training]
+base_exp = 158
+growth_rate = "MediumFast"
 [base]
 hp = 75
 atk = 100

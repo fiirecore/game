@@ -3,8 +3,11 @@ number = 372
 name = "Shelgon"
 primary_type = "Dragon"
 species = "Endurance"
-height = 1.1
-weight = 110.5
+height = 11
+weight = 1105
+[training]
+base_exp = 147
+growth_rate = "Slow"
 [base]
 hp = 65
 atk = 95

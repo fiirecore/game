@@ -73,8 +73,7 @@ impl BattlePanel {
     }
     
     pub fn update_text(&mut self, instance: &BattlePokemon) {
-        self.text.text[1] = instance.data.name.to_uppercase();
-        self.text.text[1].push_str(" do?");
+        self.text.text[1] = instance.data.name.to_uppercase() + " do?";
     }
 
 }

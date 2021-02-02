@@ -4,8 +4,11 @@ name = "Taillow"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Tiny"
-height = 0.3
-weight = 2.3
+height = 3
+weight = 23
+[training]
+base_exp = 54
+growth_rate = "MediumSlow"
 [base]
 hp = 40
 atk = 55

@@ -4,8 +4,11 @@ name = "Aron"
 primary_type = "Steel"
 secondary_type = "Rock"
 species = "Iron"
-height = 0.4
-weight = 60.0
+height = 4
+weight = 600
+[training]
+base_exp = 66
+growth_rate = "Slow"
 [base]
 hp = 50
 atk = 70

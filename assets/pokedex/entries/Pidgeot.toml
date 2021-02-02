@@ -4,8 +4,11 @@ name = "Pidgeot"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Bird"
-height = 1.5
-weight = 39.5
+height = 15
+weight = 395
+[training]
+base_exp = 216
+growth_rate = "MediumSlow"
 [base]
 hp = 83
 atk = 80

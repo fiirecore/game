@@ -4,8 +4,11 @@ name = "Paras"
 primary_type = "Bug"
 secondary_type = "Grass"
 species = "Mushroom"
-height = 0.3
-weight = 5.4
+height = 3
+weight = 54
+[training]
+base_exp = 57
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 70

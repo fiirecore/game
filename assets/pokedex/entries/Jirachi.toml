@@ -4,8 +4,11 @@ name = "Jirachi"
 primary_type = "Steel"
 secondary_type = "Psychic"
 species = "Wish"
-height = 0.3
-weight = 1.1
+height = 3
+weight = 11
+[training]
+base_exp = 270
+growth_rate = "Slow"
 [base]
 hp = 100
 atk = 100

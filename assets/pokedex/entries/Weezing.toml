@@ -3,8 +3,11 @@ number = 110
 name = "Weezing"
 primary_type = "Poison"
 species = "Poison"
-height = 1.2
-weight = 9.5
+height = 12
+weight = 95
+[training]
+base_exp = 172
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 90

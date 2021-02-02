@@ -136,7 +136,7 @@ impl Battle {
 				battle_text::omove(delta, self, battle_gui);
 			}
 		} else if self.faint {
-			if self.player().current_hp == 0 {
+			if self.player().faint() {
 				for pkmn_index in 0..self.player_pokemon.len() {
 					if self.player_pokemon[pkmn_index].current_hp != 0 {
 						self.faint = false;
@@ -150,6 +150,26 @@ impl Battle {
 				}
 			} else {
 				for pkmn_index in 0..self.opponent_pokemon.len() {
+
+					// Calculate and give exp to player
+
+					let gain = ((self.opponent().training.base_exp * self.opponent().level as usize) as f32 * match self.battle_type {
+						BattleType::Wild => 1.0,
+						_ => 1.5,
+					} / 7.0) as usize;
+					self.player_mut().exp += gain;
+					let max_exp = self.player().training.growth_rate.level_exp(self.player().level);
+					if self.player().exp > max_exp {
+						let player = self.player_mut();
+						player.level += 1;
+						player.exp -= max_exp;
+						macroquad::prelude::info!("{} levelled up to Lv. {}", &player.data.name, player.level);
+					} else {
+						macroquad::prelude::info!("{} gained {} exp. {} is needed to level up!", &self.player().data.name, gain, max_exp - self.player().exp);
+					}
+
+
+
 					if self.opponent_pokemon[pkmn_index].current_hp != 0 {
 						self.faint = false;
 						self.opponent_active = pkmn_index;
@@ -208,19 +228,14 @@ impl Battle {
 	}
 
 	pub fn update_data(&mut self, player_data: &mut PlayerData) {
-		let mut alive = false;
-		for pokemon in &self.player_pokemon {
-			if pokemon.current_hp != 0 {
-				alive = true;
-			}
-		}
+
+		// Heal all pokemon in party (temporary)
 
 		player_data.party.pokemon = self.player_pokemon.iter_mut().map(|pokemon| {
-			if !alive {
 				pokemon.current_hp = pokemon.base.hp;
-			}
 			pokemon.to_instance()
 		}).collect();
+		
 	}
 
 	pub fn player(&self) -> &BattlePokemon {
@@ -256,13 +271,17 @@ pub struct BattleEndData {
 
 fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokemon: &BattlePokemon) -> u16 {
 	if let Some(power) = pmove.power {
+		let effective = pmove.pokemon_type.unwrap_or_default().effective(recieving_pokemon.data.primary_type) as f64 * match recieving_pokemon.data.secondary_type {
+		    Some(ptype) => pmove.pokemon_type.unwrap_or_default().effective(ptype) as f64,
+		    None => 1.0,
+		};
 		match pmove.category {
 			MoveCategory::Status => return 0,
 			MoveCategory::Physical => {
-				return (((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk as f64 * power as f64 / recieving_pokemon.base.def as f64).floor() / 50.0).floor() as u16 + 2;
+				return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk as f64 * power as f64 / recieving_pokemon.base.def as f64).floor() / 50.0).floor() * effective) as u16 + 2;
 			},
 			MoveCategory::Special => {
-				return (((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() as u16+ 2;
+				return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() * effective) as u16+ 2;
 			}
 		}
 	} else {

@@ -3,8 +3,11 @@ number = 311
 name = "Plusle"
 primary_type = "Electric"
 species = "Cheering"
-height = 0.4
-weight = 4.2
+height = 4
+weight = 42
+[training]
+base_exp = 142
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 50

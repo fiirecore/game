@@ -1,5 +1,5 @@
 use macroquad::prelude::warn;
-
+use ahash::AHashMap as HashMap;
 use crate::audio::music::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::set::world_map_set::WorldMapSet;
@@ -11,7 +11,7 @@ use super::npc_loader::load_npc_entries;
 use super::warp_loader::load_warp_entries;
 use super::wild_entry_loader::load_wild_entry;
 
-pub fn new_map_set(root_path: &include_dir::Dir, palette_sizes: &Vec<u16>, config: MapConfig) -> Option<(String, WorldMapSet)> {
+pub fn new_map_set(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(String, WorldMapSet)> {
 
     let mut maps: Vec<WorldMap> = Vec::new();
 

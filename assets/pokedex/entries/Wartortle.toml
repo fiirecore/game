@@ -3,8 +3,11 @@ number = 8
 name = "Wartortle"
 primary_type = "Water"
 species = "Turtle"
-height = 1.0
-weight = 22.5
+height = 10
+weight = 225
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 59
 atk = 63

@@ -4,8 +4,11 @@ name = "Slowpoke"
 primary_type = "Water"
 secondary_type = "Psychic"
 species = "Dopey"
-height = 1.2
-weight = 36.0
+height = 12
+weight = 360
+[training]
+base_exp = 63
+growth_rate = "MediumFast"
 [base]
 hp = 90
 atk = 65

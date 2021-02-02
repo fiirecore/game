@@ -3,8 +3,11 @@ number = 129
 name = "Magikarp"
 primary_type = "Water"
 species = "Fish"
-height = 0.9
-weight = 10.0
+height = 9
+weight = 100
+[training]
+base_exp = 40
+growth_rate = "Slow"
 [base]
 hp = 20
 atk = 10

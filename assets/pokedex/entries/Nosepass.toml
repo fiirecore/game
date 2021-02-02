@@ -3,8 +3,11 @@ number = 299
 name = "Nosepass"
 primary_type = "Rock"
 species = "Compass"
-height = 1.0
-weight = 97.0
+height = 10
+weight = 970
+[training]
+base_exp = 75
+growth_rate = "MediumFast"
 [base]
 hp = 30
 atk = 45

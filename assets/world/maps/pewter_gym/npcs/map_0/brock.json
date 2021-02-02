@@ -9,6 +9,7 @@
 		"direction": "Down"
 	},
 	"trainer": {
+		"trainer_type": "GymLeader",
 		"party": {
 			"pokemon": [
 				{
@@ -21,17 +22,7 @@
 						"sp_atk": 15,
 						"sp_def": 15,
 						"speed": 15
-					},
-					"evs": {
-						"hp": 0,
-						"atk": 0,
-						"def": 0,
-						"sp_atk": 0,
-						"sp_def": 0,
-						"speed": 0
-					},
-					"exp": 0,
-					"friendship": 70
+					}
 				},
 				{
 					"id": 95,
@@ -43,21 +34,11 @@
 						"sp_atk": 15,
 						"sp_def": 15,
 						"speed": 15
-					},
-					"evs": {
-						"hp": 0,
-						"atk": 0,
-						"def": 0,
-						"sp_atk": 0,
-						"sp_def": 0,
-						"speed": 0
-					},
-					"exp": 0,
-					"friendship": 70
+					}
 				}
 			]
 		},
-		"trainer_type": "GymLeader",
+		"battled": false,
 		"victory_message": [
 			"Test"
 		],

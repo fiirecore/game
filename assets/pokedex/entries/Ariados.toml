@@ -4,8 +4,11 @@ name = "Ariados"
 primary_type = "Bug"
 secondary_type = "Poison"
 species = "Long"
-height = 1.1
-weight = 33.5
+height = 11
+weight = 335
+[training]
+base_exp = 140
+growth_rate = "Fast"
 [base]
 hp = 70
 atk = 90

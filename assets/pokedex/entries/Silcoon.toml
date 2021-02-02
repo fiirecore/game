@@ -3,8 +3,11 @@ number = 266
 name = "Silcoon"
 primary_type = "Bug"
 species = "Cocoon"
-height = 0.6
-weight = 10.0
+height = 6
+weight = 100
+[training]
+base_exp = 72
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 35

@@ -4,8 +4,11 @@ name = "Lairon"
 primary_type = "Steel"
 secondary_type = "Rock"
 species = "Iron"
-height = 0.9
-weight = 120.0
+height = 9
+weight = 1200
+[training]
+base_exp = 151
+growth_rate = "Slow"
 [base]
 hp = 60
 atk = 90

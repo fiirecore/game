@@ -4,8 +4,11 @@ name = "Mr-mime"
 primary_type = "Psychic"
 secondary_type = "Fairy"
 species = "Barrier"
-height = 1.3
-weight = 54.5
+height = 13
+weight = 545
+[training]
+base_exp = 161
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 45

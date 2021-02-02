@@ -3,8 +3,11 @@ number = 10
 name = "Caterpie"
 primary_type = "Bug"
 species = "Worm"
-height = 0.3
-weight = 2.9
+height = 3
+weight = 29
+[training]
+base_exp = 39
+growth_rate = "MediumFast"
 [base]
 hp = 45
 atk = 30

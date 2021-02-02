@@ -3,8 +3,11 @@ number = 182
 name = "Bellossom"
 primary_type = "Grass"
 species = "Flower"
-height = 0.4
-weight = 5.8
+height = 4
+weight = 58
+[training]
+base_exp = 221
+growth_rate = "MediumSlow"
 [base]
 hp = 75
 atk = 80

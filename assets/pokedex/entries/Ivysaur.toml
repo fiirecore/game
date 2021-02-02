@@ -4,8 +4,11 @@ name = "Ivysaur"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Seed"
-height = 1.0
-weight = 13.0
+height = 10
+weight = 130
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 62

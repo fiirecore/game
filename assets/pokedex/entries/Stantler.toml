@@ -3,8 +3,11 @@ number = 234
 name = "Stantler"
 primary_type = "Normal"
 species = "Big"
-height = 1.4
-weight = 71.2
+height = 14
+weight = 712
+[training]
+base_exp = 163
+growth_rate = "Slow"
 [base]
 hp = 73
 atk = 95

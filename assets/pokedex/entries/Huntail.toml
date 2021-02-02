@@ -3,8 +3,11 @@ number = 367
 name = "Huntail"
 primary_type = "Water"
 species = "Deep"
-height = 1.7
-weight = 27.0
+height = 17
+weight = 270
+[training]
+base_exp = 170
+growth_rate = "Slow"
 [base]
 hp = 55
 atk = 104

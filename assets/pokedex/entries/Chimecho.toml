@@ -3,8 +3,11 @@ number = 358
 name = "Chimecho"
 primary_type = "Psychic"
 species = "Wind"
-height = 0.6
-weight = 1.0
+height = 6
+weight = 10
+[training]
+base_exp = 159
+growth_rate = "Fast"
 [base]
 hp = 75
 atk = 50

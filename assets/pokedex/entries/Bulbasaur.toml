@@ -4,8 +4,11 @@ name = "Bulbasaur"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Seed"
-height = 0.7
-weight = 6.9
+height = 7
+weight = 69
+[training]
+base_exp = 64
+growth_rate = "MediumSlow"
 [base]
 hp = 45
 atk = 49

@@ -4,8 +4,11 @@ name = "Beldum"
 primary_type = "Steel"
 secondary_type = "Psychic"
 species = "Iron"
-height = 0.6
-weight = 95.2
+height = 6
+weight = 952
+[training]
+base_exp = 60
+growth_rate = "Slow"
 [base]
 hp = 40
 atk = 55

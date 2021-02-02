@@ -4,8 +4,11 @@ name = "Skarmory"
 primary_type = "Steel"
 secondary_type = "Flying"
 species = "Armor"
-height = 1.7
-weight = 50.5
+height = 17
+weight = 505
+[training]
+base_exp = 163
+growth_rate = "Slow"
 [base]
 hp = 65
 atk = 80

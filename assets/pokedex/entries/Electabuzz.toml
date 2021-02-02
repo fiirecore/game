@@ -3,8 +3,11 @@ number = 125
 name = "Electabuzz"
 primary_type = "Electric"
 species = "Electric"
-height = 1.1
-weight = 30.0
+height = 11
+weight = 300
+[training]
+base_exp = 172
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 83

@@ -3,8 +3,11 @@ number = 101
 name = "Electrode"
 primary_type = "Electric"
 species = "Ball"
-height = 1.2
-weight = 66.6
+height = 12
+weight = 666
+[training]
+base_exp = 172
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 50

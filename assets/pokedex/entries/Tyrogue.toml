@@ -3,8 +3,11 @@ number = 236
 name = "Tyrogue"
 primary_type = "Fighting"
 species = "Scuffle"
-height = 0.7
-weight = 21.0
+height = 7
+weight = 210
+[training]
+base_exp = 42
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 35

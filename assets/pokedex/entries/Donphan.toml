@@ -3,8 +3,11 @@ number = 232
 name = "Donphan"
 primary_type = "Ground"
 species = "Armor"
-height = 1.1
-weight = 120.0
+height = 11
+weight = 1200
+[training]
+base_exp = 175
+growth_rate = "MediumFast"
 [base]
 hp = 90
 atk = 120

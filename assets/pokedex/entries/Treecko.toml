@@ -3,8 +3,11 @@ number = 252
 name = "Treecko"
 primary_type = "Grass"
 species = "Wood"
-height = 0.5
-weight = 5.0
+height = 5
+weight = 50
+[training]
+base_exp = 62
+growth_rate = "MediumSlow"
 [base]
 hp = 40
 atk = 45

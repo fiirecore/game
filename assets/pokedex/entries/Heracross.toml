@@ -4,8 +4,11 @@ name = "Heracross"
 primary_type = "Bug"
 secondary_type = "Fighting"
 species = "Single"
-height = 1.5
-weight = 54.0
+height = 15
+weight = 540
+[training]
+base_exp = 175
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 125

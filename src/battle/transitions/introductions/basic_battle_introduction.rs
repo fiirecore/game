@@ -129,13 +129,10 @@ impl BattleIntroduction for BasicBattleIntroduction {
     }
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
-        let mut opponent_string = String::from("Wild ");
-		opponent_string.push_str(battle.opponent().data.name.to_uppercase().as_str());
-		opponent_string.push_str(" appeared!");
-        let mut player_string = String::from("Go! ");
-        player_string.push_str(battle.player().data.name.to_uppercase().as_str());
-        player_string.push_str("!");
-        self.intro_text.text = vec![vec![opponent_string], vec![player_string]];
+        self.intro_text.text = vec![
+            vec![String::from("Wild ") + battle.opponent().data.name.to_uppercase().as_str() + " appeared!"],
+            vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"]
+        ];
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {

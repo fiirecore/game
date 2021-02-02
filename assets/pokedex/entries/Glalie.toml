@@ -3,8 +3,11 @@ number = 362
 name = "Glalie"
 primary_type = "Ice"
 species = "Face"
-height = 1.5
-weight = 256.5
+height = 15
+weight = 2565
+[training]
+base_exp = 168
+growth_rate = "MediumFast"
 [base]
 hp = 80
 atk = 80

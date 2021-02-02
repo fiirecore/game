@@ -3,8 +3,11 @@ number = 128
 name = "Tauros"
 primary_type = "Normal"
 species = "Wild"
-height = 1.4
-weight = 88.4
+height = 14
+weight = 884
+[training]
+base_exp = 172
+growth_rate = "Slow"
 [base]
 hp = 75
 atk = 100

@@ -4,8 +4,11 @@ name = "Exeggcute"
 primary_type = "Grass"
 secondary_type = "Psychic"
 species = "Egg"
-height = 0.4
-weight = 2.5
+height = 4
+weight = 25
+[training]
+base_exp = 65
+growth_rate = "Slow"
 [base]
 hp = 60
 atk = 40

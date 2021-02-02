@@ -3,8 +3,11 @@ number = 88
 name = "Grimer"
 primary_type = "Poison"
 species = "Sludge"
-height = 0.9
-weight = 30.0
+height = 9
+weight = 300
+[training]
+base_exp = 65
+growth_rate = "MediumFast"
 [base]
 hp = 80
 atk = 80

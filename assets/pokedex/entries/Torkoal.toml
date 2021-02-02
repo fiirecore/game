@@ -3,8 +3,11 @@ number = 324
 name = "Torkoal"
 primary_type = "Fire"
 species = "Coal"
-height = 0.5
-weight = 80.4
+height = 5
+weight = 804
+[training]
+base_exp = 165
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 85

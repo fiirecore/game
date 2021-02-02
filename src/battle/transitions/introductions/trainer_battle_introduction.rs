@@ -57,27 +57,21 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>) {
 
-        let mut player_string = String::from("Go! ");
-                player_string.push_str(battle.player().data.name.to_uppercase().as_str());
-                player_string.push_str("!");
+        if let Some(trainer_data) = trainer_data {
 
-        match trainer_data {
-            Some(trainer_data) => {
+            self.trainer_texture = Some(NPC::battle_sprite(trainer_data.sprite_id));
 
-                self.trainer_texture = Some(NPC::battle_sprite(trainer_data.sprite_id));
+            self.basic_battle_introduction.intro_text.text = vec![
+                vec![trainer_data.name.clone(), String::from("would like to battle!")], 
+                vec![trainer_data.name.clone() + " sent", String::from("out ") + battle.opponent().data.name.to_uppercase().as_str()]
+            ];
+        } else {
+            self.basic_battle_introduction.intro_text.text = vec![vec![String::from("No trainer data found!")]];
+        }        
 
-                let mut opponent_string0 = trainer_data.name.clone();
-                opponent_string0.push_str(" sent");
-                let mut opponent_string1 = String::from("out "); 
-                opponent_string1.push_str(battle.opponent().data.name.to_uppercase().as_str());
-
-                self.basic_battle_introduction.intro_text.text = vec![vec![trainer_data.name.clone(), String::from("would like to battle!")], vec![opponent_string0, opponent_string1]];
-            }
-            None => {
-                self.basic_battle_introduction.intro_text.text = vec![vec![String::from("Missing trainer data")]];
-            }
-        }
-        self.basic_battle_introduction.intro_text.text.push(vec![player_string]);
+        self.basic_battle_introduction.intro_text.text.push(
+            vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"]
+        );
         
     }
 

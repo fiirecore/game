@@ -39,12 +39,14 @@ impl Default for Music {
 
 impl Music {
 
-    pub fn included_bytes(&self) -> Option<&[u8]> {
+    pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
         match *self {
-            Music::IntroGamefreak => Some(include_bytes!("../../assets/music/gamefreak.ogg")),
-            Music::Title => Some(include_bytes!("../../assets/music/title.ogg")),
-            Music::Pallet => Some(include_bytes!("../../assets/music/pallet.ogg")),
-            Music::BattleWild => Some(include_bytes!("../../assets/music/vs_wild.ogg")),
+            Music::IntroGamefreak => Some(include_bytes!("../../build/assets/music/gamefreak.ogg")),
+            Music::Title => Some(include_bytes!("../../build/assets/music/title.ogg")),
+            Music::Pallet => Some(include_bytes!("../../build/assets/music/pallet.ogg")),
+            Music::BattleWild => Some(include_bytes!("../../build/assets/music/vs_wild.ogg")),
+            Music::BattleTrainer => Some(include_bytes!("../../build/assets/music/vs_trainer.ogg")),
+            Music::BattleGym => Some(include_bytes!("../../build/assets/music/vs_gym.ogg")),
             _ => None,
         }
     }

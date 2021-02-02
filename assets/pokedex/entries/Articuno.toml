@@ -4,8 +4,11 @@ name = "Articuno"
 primary_type = "Ice"
 secondary_type = "Flying"
 species = "Freeze"
-height = 1.7
-weight = 55.4
+height = 17
+weight = 554
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 90
 atk = 85

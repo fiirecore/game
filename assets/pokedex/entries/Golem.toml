@@ -4,8 +4,11 @@ name = "Golem"
 primary_type = "Rock"
 secondary_type = "Ground"
 species = "Megaton"
-height = 1.4
-weight = 300.0
+height = 14
+weight = 3000
+[training]
+base_exp = 223
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 120

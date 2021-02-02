@@ -3,8 +3,11 @@ number = 352
 name = "Kecleon"
 primary_type = "Normal"
 species = "Color"
-height = 1.0
-weight = 22.0
+height = 10
+weight = 220
+[training]
+base_exp = 154
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 90

@@ -4,8 +4,11 @@ name = "Meditite"
 primary_type = "Fighting"
 secondary_type = "Psychic"
 species = "Meditate"
-height = 0.6
-weight = 11.2
+height = 6
+weight = 112
+[training]
+base_exp = 56
+growth_rate = "MediumFast"
 [base]
 hp = 30
 atk = 40

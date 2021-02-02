@@ -3,8 +3,11 @@ number = 317
 name = "Swalot"
 primary_type = "Poison"
 species = "Poison"
-height = 1.7
-weight = 80.0
+height = 17
+weight = 800
+[training]
+base_exp = 163
+growth_rate = "Fast"
 [base]
 hp = 100
 atk = 73

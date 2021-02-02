@@ -3,8 +3,11 @@ number = 150
 name = "Mewtwo"
 primary_type = "Psychic"
 species = "Genetic"
-height = 2.0
-weight = 122.0
+height = 20
+weight = 1220
+[training]
+base_exp = 306
+growth_rate = "Slow"
 [base]
 hp = 106
 atk = 110

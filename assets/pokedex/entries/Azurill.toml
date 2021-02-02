@@ -4,8 +4,11 @@ name = "Azurill"
 primary_type = "Normal"
 secondary_type = "Fairy"
 species = "Polka"
-height = 0.2
-weight = 2.0
+height = 2
+weight = 20
+[training]
+base_exp = 38
+growth_rate = "Fast"
 [base]
 hp = 50
 atk = 20

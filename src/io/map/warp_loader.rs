@@ -8,9 +8,7 @@ pub fn load_warp_entries(root_path: &include_dir::Dir, map_index: Option<usize>)
         Some(warp_path) => {
             match map_index {
                 Some(map_index) => {
-                    let mut map_set = String::from("map_");
-                    map_set.push_str(map_index.to_string().as_str());
-                    match warp_path.get_dir(warp_path.path().join(map_set)) {
+                    match warp_path.get_dir(warp_path.path().join(String::from("map_") + map_index.to_string().as_str())) {
                         Some(warp_dir_mapset) => {
                             /*if let Some(err) = */add_warp_under_directory(&mut warps, warp_dir_mapset);// {
                             //     warn!("Problem reading warp entry at map set {} under {:?} with error: {}", map_index, &warp_path, err);

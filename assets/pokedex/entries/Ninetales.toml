@@ -3,8 +3,11 @@ number = 38
 name = "Ninetales"
 primary_type = "Fire"
 species = "Fox"
-height = 1.1
-weight = 19.9
+height = 11
+weight = 199
+[training]
+base_exp = 177
+growth_rate = "MediumFast"
 [base]
 hp = 73
 atk = 76

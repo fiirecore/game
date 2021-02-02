@@ -3,8 +3,11 @@ number = 117
 name = "Seadra"
 primary_type = "Water"
 species = "Dragon"
-height = 1.2
-weight = 25.0
+height = 12
+weight = 250
+[training]
+base_exp = 154
+growth_rate = "MediumFast"
 [base]
 hp = 55
 atk = 65

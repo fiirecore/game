@@ -4,8 +4,11 @@ name = "Ludicolo"
 primary_type = "Water"
 secondary_type = "Grass"
 species = "Carefree"
-height = 1.5
-weight = 55.0
+height = 15
+weight = 550
+[training]
+base_exp = 216
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 70

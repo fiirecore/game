@@ -3,8 +3,11 @@ number = 296
 name = "Makuhita"
 primary_type = "Fighting"
 species = "Guts"
-height = 1.0
-weight = 86.4
+height = 10
+weight = 864
+[training]
+base_exp = 47
+growth_rate = "Fast"
 [base]
 hp = 72
 atk = 60

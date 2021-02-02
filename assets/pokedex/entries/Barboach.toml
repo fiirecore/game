@@ -4,8 +4,11 @@ name = "Barboach"
 primary_type = "Water"
 secondary_type = "Ground"
 species = "Whiskers"
-height = 0.4
-weight = 1.9
+height = 4
+weight = 19
+[training]
+base_exp = 58
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 48

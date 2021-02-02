@@ -3,8 +3,11 @@ number = 383
 name = "Groudon"
 primary_type = "Ground"
 species = "Continent"
-height = 3.5
-weight = 950.0
+height = 35
+weight = 9500
+[training]
+base_exp = 302
+growth_rate = "Slow"
 [base]
 hp = 100
 atk = 150

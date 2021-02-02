@@ -3,8 +3,11 @@ number = 173
 name = "Cleffa"
 primary_type = "Fairy"
 species = "Star"
-height = 0.3
-weight = 3.0
+height = 3
+weight = 30
+[training]
+base_exp = 44
+growth_rate = "Fast"
 [base]
 hp = 50
 atk = 25

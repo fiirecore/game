@@ -3,8 +3,11 @@ number = 273
 name = "Seedot"
 primary_type = "Grass"
 species = "Acorn"
-height = 0.5
-weight = 4.0
+height = 5
+weight = 40
+[training]
+base_exp = 44
+growth_rate = "MediumSlow"
 [base]
 hp = 40
 atk = 40

@@ -3,8 +3,11 @@ number = 321
 name = "Wailord"
 primary_type = "Water"
 species = "Float"
-height = 14.5
-weight = 398.0
+height = 145
+weight = 3980
+[training]
+base_exp = 175
+growth_rate = "Fast"
 [base]
 hp = 170
 atk = 90

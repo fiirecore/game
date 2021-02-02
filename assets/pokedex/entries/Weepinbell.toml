@@ -4,8 +4,11 @@ name = "Weepinbell"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Flycatcher"
-height = 1.0
-weight = 6.4
+height = 10
+weight = 64
+[training]
+base_exp = 137
+growth_rate = "MediumSlow"
 [base]
 hp = 65
 atk = 90

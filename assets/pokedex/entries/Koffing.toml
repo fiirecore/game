@@ -3,8 +3,11 @@ number = 109
 name = "Koffing"
 primary_type = "Poison"
 species = "Poison"
-height = 0.6
-weight = 1.0
+height = 6
+weight = 10
+[training]
+base_exp = 68
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 65

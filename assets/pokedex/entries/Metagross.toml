@@ -4,8 +4,11 @@ name = "Metagross"
 primary_type = "Steel"
 secondary_type = "Psychic"
 species = "Iron"
-height = 1.6
-weight = 550.0
+height = 16
+weight = 5500
+[training]
+base_exp = 270
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 135

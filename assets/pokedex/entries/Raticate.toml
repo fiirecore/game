@@ -3,8 +3,11 @@ number = 20
 name = "Raticate"
 primary_type = "Normal"
 species = "Mouse"
-height = 0.7
-weight = 18.5
+height = 7
+weight = 185
+[training]
+base_exp = 145
+growth_rate = "MediumFast"
 [base]
 hp = 55
 atk = 81

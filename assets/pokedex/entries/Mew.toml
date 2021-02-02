@@ -3,8 +3,11 @@ number = 151
 name = "Mew"
 primary_type = "Psychic"
 species = "New"
-height = 0.4
-weight = 4.0
+height = 4
+weight = 40
+[training]
+base_exp = 270
+growth_rate = "MediumSlow"
 [base]
 hp = 100
 atk = 100

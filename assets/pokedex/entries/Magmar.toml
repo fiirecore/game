@@ -3,8 +3,11 @@ number = 126
 name = "Magmar"
 primary_type = "Fire"
 species = "Spitfire"
-height = 1.3
-weight = 44.5
+height = 13
+weight = 445
+[training]
+base_exp = 173
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 95

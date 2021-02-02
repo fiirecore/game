@@ -3,8 +3,11 @@ number = 243
 name = "Raikou"
 primary_type = "Electric"
 species = "Thunder"
-height = 1.9
-weight = 178.0
+height = 19
+weight = 1780
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 90
 atk = 85

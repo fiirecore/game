@@ -3,8 +3,11 @@ number = 27
 name = "Sandshrew"
 primary_type = "Ground"
 species = "Mouse"
-height = 0.6
-weight = 12.0
+height = 6
+weight = 120
+[training]
+base_exp = 60
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 75

@@ -3,8 +3,11 @@ number = 108
 name = "Lickitung"
 primary_type = "Normal"
 species = "Licking"
-height = 1.2
-weight = 65.5
+height = 12
+weight = 655
+[training]
+base_exp = 77
+growth_rate = "MediumFast"
 [base]
 hp = 90
 atk = 55

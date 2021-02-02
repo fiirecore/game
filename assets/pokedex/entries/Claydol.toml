@@ -4,8 +4,11 @@ name = "Claydol"
 primary_type = "Ground"
 secondary_type = "Psychic"
 species = "Clay"
-height = 1.5
-weight = 108.0
+height = 15
+weight = 1080
+[training]
+base_exp = 175
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 70

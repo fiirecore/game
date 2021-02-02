@@ -99,7 +99,7 @@ impl World for WorldMap {
             }            
         }
 
-        for npc in &self.npcs {
+        for npc in &mut self.npcs {
             if let Some(trainer) = &npc.trainer {
                 if let Some(tracker) = &trainer.tracker {
                     match npc.position.direction {
@@ -107,6 +107,7 @@ impl World for WorldMap {
                             if x == npc.position.x {
                                 if y > npc.position.y && y <= npc.position.y + tracker.length as isize {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    npc.interact(None, x, y);
                                     //player.frozen = true;
                                     //npc.movement.walk_to_player();
                                 }
@@ -116,6 +117,7 @@ impl World for WorldMap {
                             if x == npc.position.x {
                                 if y < npc.position.y && y >= npc.position.y - tracker.length as isize {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    npc.interact(None, x, y);
                                     //player.frozen = true;
                                 }
                             }
@@ -124,6 +126,7 @@ impl World for WorldMap {
                             if y == npc.position.y {
                                 if x < npc.position.x && x >= npc.position.x - tracker.length as isize {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    npc.interact(None, x, y);
                                     //player.frozen = true;
                                 }
                             }
@@ -132,6 +135,7 @@ impl World for WorldMap {
                             if y == npc.position.y {
                                 if x > npc.position.x && x <= npc.position.x + tracker.length as isize {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                                    npc.interact(None, x, y);
                                     //player.frozen = true;
                                 }
                             }
@@ -187,12 +191,12 @@ impl World for WorldMap {
                     match player.position.direction {
                         Direction::Up => {
                             if player.position.y - 1 == npc.position.y {
-                                npc.interact(player.position.direction);
+                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
                             }
                         },
                         Direction::Down => {
                             if player.position.y + 1 == npc.position.y {
-                                npc.interact(player.position.direction);
+                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
                             }
                         },
                         _ => {}
@@ -201,12 +205,12 @@ impl World for WorldMap {
                     match player.position.direction {
                         Direction::Right => {
                             if player.position.x + 1 == npc.position.x {
-                                npc.interact(player.position.direction);
+                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
                             }
                         },
                         Direction::Left => {
                             if player.position.x - 1 == npc.position.x {
-                                npc.interact(player.position.direction);
+                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
                             }
                         },
                         _ => {}

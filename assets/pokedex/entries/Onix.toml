@@ -4,8 +4,11 @@ name = "Onix"
 primary_type = "Rock"
 secondary_type = "Ground"
 species = "Rock"
-height = 8.8
-weight = 210.0
+height = 88
+weight = 2100
+[training]
+base_exp = 77
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 45

@@ -133,9 +133,7 @@ impl Activatable for PlayerWorldGui {
                 },
                 2 => {
                     // Exit Game
-                    unsafe {
-                        crate::RUNNING = false;
-                    }
+                    crate::queue_quit();
                 },
                 3 => {
                     // Exit Menu

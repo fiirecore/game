@@ -3,8 +3,11 @@ number = 196
 name = "Espeon"
 primary_type = "Psychic"
 species = "Sun"
-height = 0.9
-weight = 26.5
+height = 9
+weight = 265
+[training]
+base_exp = 184
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 65

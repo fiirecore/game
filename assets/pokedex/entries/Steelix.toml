@@ -4,8 +4,11 @@ name = "Steelix"
 primary_type = "Steel"
 secondary_type = "Ground"
 species = "Iron"
-height = 9.2
-weight = 400.0
+height = 92
+weight = 4000
+[training]
+base_exp = 179
+growth_rate = "MediumFast"
 [base]
 hp = 75
 atk = 85

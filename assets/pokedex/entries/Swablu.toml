@@ -4,8 +4,11 @@ name = "Swablu"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Cotton"
-height = 0.4
-weight = 1.2
+height = 4
+weight = 12
+[training]
+base_exp = 62
+growth_rate = "Slow"
 [base]
 hp = 45
 atk = 40

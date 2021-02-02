@@ -3,8 +3,11 @@ number = 185
 name = "Sudowoodo"
 primary_type = "Rock"
 species = "Imitation"
-height = 1.2
-weight = 38.0
+height = 12
+weight = 380
+[training]
+base_exp = 144
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 100

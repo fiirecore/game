@@ -4,8 +4,11 @@ name = "Latias"
 primary_type = "Dragon"
 secondary_type = "Psychic"
 species = "Eon"
-height = 1.4
-weight = 40.0
+height = 14
+weight = 400
+[training]
+base_exp = 270
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 80

@@ -4,8 +4,11 @@ name = "Swampert"
 primary_type = "Water"
 secondary_type = "Ground"
 species = "Mud"
-height = 1.5
-weight = 81.9
+height = 15
+weight = 819
+[training]
+base_exp = 241
+growth_rate = "MediumSlow"
 [base]
 hp = 100
 atk = 110

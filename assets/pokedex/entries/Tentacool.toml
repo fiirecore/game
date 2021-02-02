@@ -4,8 +4,11 @@ name = "Tentacool"
 primary_type = "Water"
 secondary_type = "Poison"
 species = "Jellyfish"
-height = 0.9
-weight = 45.5
+height = 9
+weight = 455
+[training]
+base_exp = 67
+growth_rate = "Slow"
 [base]
 hp = 40
 atk = 40

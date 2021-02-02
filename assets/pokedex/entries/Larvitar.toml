@@ -4,8 +4,11 @@ name = "Larvitar"
 primary_type = "Rock"
 secondary_type = "Ground"
 species = "Rock"
-height = 0.6
-weight = 72.0
+height = 6
+weight = 720
+[training]
+base_exp = 60
+growth_rate = "Slow"
 [base]
 hp = 50
 atk = 64

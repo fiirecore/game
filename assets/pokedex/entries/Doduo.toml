@@ -4,8 +4,11 @@ name = "Doduo"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Twin"
-height = 1.4
-weight = 39.2
+height = 14
+weight = 392
+[training]
+base_exp = 62
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 85

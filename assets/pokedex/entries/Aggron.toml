@@ -4,8 +4,11 @@ name = "Aggron"
 primary_type = "Steel"
 secondary_type = "Rock"
 species = "Iron"
-height = 2.1
-weight = 360.0
+height = 21
+weight = 3600
+[training]
+base_exp = 239
+growth_rate = "Slow"
 [base]
 hp = 70
 atk = 110

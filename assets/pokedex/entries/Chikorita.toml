@@ -3,8 +3,11 @@ number = 152
 name = "Chikorita"
 primary_type = "Grass"
 species = "Leaf"
-height = 0.9
-weight = 6.4
+height = 9
+weight = 64
+[training]
+base_exp = 64
+growth_rate = "MediumSlow"
 [base]
 hp = 45
 atk = 49

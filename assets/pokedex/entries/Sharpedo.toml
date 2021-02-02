@@ -4,8 +4,11 @@ name = "Sharpedo"
 primary_type = "Water"
 secondary_type = "Dark"
 species = "Brutal"
-height = 1.8
-weight = 88.8
+height = 18
+weight = 888
+[training]
+base_exp = 161
+growth_rate = "Slow"
 [base]
 hp = 70
 atk = 120

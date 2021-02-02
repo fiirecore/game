@@ -4,8 +4,11 @@ name = "Nidoking"
 primary_type = "Poison"
 secondary_type = "Ground"
 species = "Drill"
-height = 1.4
-weight = 62.0
+height = 14
+weight = 620
+[training]
+base_exp = 227
+growth_rate = "MediumSlow"
 [base]
 hp = 81
 atk = 102

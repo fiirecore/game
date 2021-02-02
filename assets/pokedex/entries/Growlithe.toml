@@ -3,8 +3,11 @@ number = 58
 name = "Growlithe"
 primary_type = "Fire"
 species = "Puppy"
-height = 0.7
-weight = 19.0
+height = 7
+weight = 190
+[training]
+base_exp = 70
+growth_rate = "Slow"
 [base]
 hp = 55
 atk = 70

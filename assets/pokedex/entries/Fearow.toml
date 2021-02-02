@@ -4,8 +4,11 @@ name = "Fearow"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Beak"
-height = 1.2
-weight = 38.0
+height = 12
+weight = 380
+[training]
+base_exp = 155
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 90

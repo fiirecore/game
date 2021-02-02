@@ -4,8 +4,11 @@ name = "Togetic"
 primary_type = "Fairy"
 secondary_type = "Flying"
 species = "Happiness"
-height = 0.6
-weight = 3.2
+height = 6
+weight = 32
+[training]
+base_exp = 142
+growth_rate = "Fast"
 [base]
 hp = 55
 atk = 40

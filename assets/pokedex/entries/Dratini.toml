@@ -3,8 +3,11 @@ number = 147
 name = "Dratini"
 primary_type = "Dragon"
 species = "Dragon"
-height = 1.8
-weight = 3.3
+height = 18
+weight = 33
+[training]
+base_exp = 60
+growth_rate = "Slow"
 [base]
 hp = 41
 atk = 64

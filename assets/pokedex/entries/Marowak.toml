@@ -3,8 +3,11 @@ number = 105
 name = "Marowak"
 primary_type = "Ground"
 species = "Bone"
-height = 1.0
-weight = 45.0
+height = 10
+weight = 450
+[training]
+base_exp = 149
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 80

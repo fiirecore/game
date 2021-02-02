@@ -40,43 +40,6 @@ pub fn load_npc_textures(npc_textures: &mut ahash::AHashMap<u8, ThreeWayTexture>
             macroquad::prelude::error!("Could not find NPC textures folder!");
         }
     }
-
-    // for entry in archive.file_names() {
-    //     if entry.starts_with("textures/npcs") && !entry.ends_with(".png") && entry.len() > 14 {
-    //         npctex_paths.insert(entry.to_string());
-    //     }
-    // }
-
-    // for root_path in npctex_paths {
-
-    //     let mut up = root_path.clone();
-    //     up.push_str("idle_up.png");
-    //     let mut down = root_path.clone();
-    //     down.push_str("idle_down.png");
-    //     let mut side = root_path.clone();
-    //     side.push_str("idle_side.png");
-
-    //     let files = [up, down, side];
-
-    //     match root_path[14..root_path.len() - 1].parse::<u8>() {
-    //         Ok(id) => {
-    //             let mut twt = ThreeWayTexture::new();
-    //             for file in &files {
-    //                 let mut buf: Vec<u8> = Vec::new();
-    //                 match std::io::Read::read_to_end(&mut archive.by_name(file).expect(&format!("Could not find idle_up file for NPC {}", id)), &mut buf) {
-    //                     Ok(_) => {
-    //                         twt.add_texture_manager(Box::new(StillTextureManager::new(crate::util::texture::byte_texture(buf.as_slice()), false)));
-    //                     }
-    //                     Err(err) => {
-    //                         warn!("Could not read image in world archive {} with error {}", &root_path, err);
-    //                     }
-    //                 }
-    //             }
-    //             npc_textures.insert(id, twt);
-    //         }
-    //         Err(err) => warn!("Found an npc texture folder with an unparsable name at {:?} with error {}", &root_path, err),
-    //     }
-    // }
 }
 
 pub fn load_npc_entries(root_path: &include_dir::Dir, map_index: Option<usize>) -> Vec<NPC> {
@@ -87,9 +50,7 @@ pub fn load_npc_entries(root_path: &include_dir::Dir, map_index: Option<usize>) 
         Some(npc_dir) => {
             match map_index {
                 Some(map_index) => {
-                    let mut map_set = String::from("map_");
-                    map_set.push_str(map_index.to_string().as_str());
-                    match npc_dir.get_dir(npc_dir.path().join(map_set)) {
+                    match npc_dir.get_dir(npc_dir.path().join(String::from("map_") + map_index.to_string().as_str())) {
                         Some(npc_dir_mapset) => {
                             get_npc_from_directory(&mut npcs, npc_dir_mapset);
                             //     warn!(

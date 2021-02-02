@@ -4,8 +4,11 @@ name = "Aerodactyl"
 primary_type = "Rock"
 secondary_type = "Flying"
 species = "Fossil"
-height = 1.8
-weight = 59.0
+height = 18
+weight = 590
+[training]
+base_exp = 180
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 105

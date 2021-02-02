@@ -4,8 +4,11 @@ name = "Mantine"
 primary_type = "Water"
 secondary_type = "Flying"
 species = "Kite"
-height = 2.1
-weight = 220.0
+height = 21
+weight = 2200
+[training]
+base_exp = 170
+growth_rate = "Slow"
 [base]
 hp = 85
 atk = 40

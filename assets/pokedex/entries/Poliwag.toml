@@ -3,8 +3,11 @@ number = 60
 name = "Poliwag"
 primary_type = "Water"
 species = "Tadpole"
-height = 0.6
-weight = 12.4
+height = 6
+weight = 124
+[training]
+base_exp = 60
+growth_rate = "MediumSlow"
 [base]
 hp = 40
 atk = 50

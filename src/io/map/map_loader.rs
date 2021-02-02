@@ -1,4 +1,5 @@
 use macroquad::prelude::warn;
+use ahash::AHashMap as HashMap;
 use crate::world::map::chunk::world_chunk::WorldChunk;
 use crate::world::map::chunk::world_chunk_map::WorldChunkMap;
 use crate::world::map::set::world_map_set::WorldMapSet;
@@ -7,7 +8,7 @@ use super::chunk_map_loader::new_chunk_map;
 use super::map_serializable::MapConfig;
 use super::map_set_loader::new_map_set;
 
-pub fn load_maps(palette_sizes: &Vec<u16>, chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager) {
+pub fn load_maps(palette_sizes: &HashMap<u8, u16>, chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager) {
 
     match crate::io::ASSET_DIR.get_dir("world/maps") {
         Some(map_dir) => {
@@ -32,7 +33,7 @@ pub fn load_maps(palette_sizes: &Vec<u16>, chunk_map: &mut WorldChunkMap, map_se
     }
 }
 
-pub fn map_from_toml(palette_sizes: &Vec<u16>, root_path: &include_dir::Dir, file: &include_dir::File) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {
+pub fn map_from_toml(palette_sizes: &HashMap<u8, u16>, root_path: &include_dir::Dir, file: &include_dir::File) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {
 
     match file.contents_utf8() {
         Some(data) => {

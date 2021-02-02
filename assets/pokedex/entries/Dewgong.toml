@@ -4,8 +4,11 @@ name = "Dewgong"
 primary_type = "Water"
 secondary_type = "Ice"
 species = "Sea"
-height = 1.7
-weight = 120.0
+height = 17
+weight = 1200
+[training]
+base_exp = 166
+growth_rate = "MediumFast"
 [base]
 hp = 90
 atk = 70

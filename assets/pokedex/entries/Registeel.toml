@@ -3,8 +3,11 @@ number = 379
 name = "Registeel"
 primary_type = "Steel"
 species = "Iron"
-height = 1.9
-weight = 205.0
+height = 19
+weight = 2050
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 75

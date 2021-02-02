@@ -4,8 +4,11 @@ name = "Natu"
 primary_type = "Psychic"
 secondary_type = "Flying"
 species = "Tiny"
-height = 0.2
-weight = 2.0
+height = 2
+weight = 20
+[training]
+base_exp = 64
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 50

@@ -18,7 +18,7 @@ pub fn pmove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
                     battle.pmove_queued = false;
                     battle_gui.battle_text.disable();
 
-                    if battle.opponent().current_hp == 0 {
+                    if battle.opponent().faint() {
                         battle.faint_queued = true;
                         battle.omove_queued = false;
                     }
@@ -55,7 +55,7 @@ pub fn omove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
                     battle.omove_queued = false;
                     battle_gui.battle_text.disable();
 
-                    if battle.player().current_hp == 0 {
+                    if battle.player().faint() {
                         battle.faint_queued = true;
                         battle.pmove_queued = false;
                     }
@@ -82,7 +82,7 @@ pub fn omove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
 }
 
 fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
-    if battle.player().current_hp == 0 {
+    if battle.player().faint() {
         if battle_gui.battle_text.is_active() {
             if battle_gui.battle_text.can_continue {
                 if battle_gui.battle_text.timer.is_finished() {
@@ -120,31 +120,6 @@ fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
         }
     }
 }
-
-// fn move_with_text(battle: &mut Battle, battle_text: &mut BattleText, user: &mut PokemonInstance, user_move_bool: &mut bool, user_health_bar: &mut HealthBar, user_health_text: Option<&mut BasicText>) {
-// 	if battle_text.can_continue {
-// 		if !user_health_bar.is_moving() && battle_text.timer.is_finished() {
-
-// 			//user_move_bool = &mut false;
-// 			battle_text.disable();
-
-// 			if user.current_hp == 0 {
-// 				battle.queue_faint();
-// 			}
-
-// 		} else if !battle_text.timer.is_alive() {
-// 			battle_text.timer.spawn();
-// 			user_health_bar.update_bar(user.current_hp, user.base.hp);
-// 			if let Some(text) = user_health_text {
-// 				let mut ch = user.current_hp.to_string();
-// 				ch.push('/');
-// 				ch.push_str(user.base.hp.to_string().as_str());
-// 				text.text = ch;
-// 			}
-// 		}
-// 		battle_text.update();
-// 	}
-// }
 
 pub struct BattleText {
     alive: bool,
@@ -188,18 +163,11 @@ impl BattleText {
     }
 
     pub fn update_text(&mut self, pokemon: &String, pmove: &String) {
-        // To - do: seperate into two lines not just one
-        let mut text = pokemon.clone();
-        text.push_str(" used ");
-        text.push_str(pmove.as_str());
-        text.push('!');
-        self.text = vec![text];
+        self.text = vec![pokemon.clone() + " used " + pmove.as_str() + "!"];
     }
 
     pub fn update_faint(&mut self, pokemon: &String) {
-        let mut text = pokemon.clone();
-        text.push_str(" fainted!");
-        self.text = vec![text];
+        self.text = vec![pokemon.clone() + " fainted!"];
     }
 
     fn reset(&mut self) {

@@ -3,8 +3,11 @@ number = 254
 name = "Sceptile"
 primary_type = "Grass"
 species = "Forest"
-height = 1.7
-weight = 52.2
+height = 17
+weight = 522
+[training]
+base_exp = 239
+growth_rate = "MediumSlow"
 [base]
 hp = 70
 atk = 85

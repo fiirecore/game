@@ -3,8 +3,11 @@ number = 309
 name = "Electrike"
 primary_type = "Electric"
 species = "Lightning"
-height = 0.6
-weight = 15.2
+height = 6
+weight = 152
+[training]
+base_exp = 59
+growth_rate = "Slow"
 [base]
 hp = 40
 atk = 45

@@ -4,8 +4,11 @@ name = "Jynx"
 primary_type = "Ice"
 secondary_type = "Psychic"
 species = "Human"
-height = 1.4
-weight = 40.6
+height = 14
+weight = 406
+[training]
+base_exp = 159
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 50

@@ -4,8 +4,11 @@ name = "Rhydon"
 primary_type = "Ground"
 secondary_type = "Rock"
 species = "Drill"
-height = 1.9
-weight = 120.0
+height = 19
+weight = 1200
+[training]
+base_exp = 170
+growth_rate = "Slow"
 [base]
 hp = 105
 atk = 130

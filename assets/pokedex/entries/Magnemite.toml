@@ -4,8 +4,11 @@ name = "Magnemite"
 primary_type = "Electric"
 secondary_type = "Steel"
 species = "Magnet"
-height = 0.3
-weight = 6.0
+height = 3
+weight = 60
+[training]
+base_exp = 65
+growth_rate = "MediumFast"
 [base]
 hp = 25
 atk = 35

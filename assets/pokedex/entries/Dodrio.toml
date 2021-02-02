@@ -4,8 +4,11 @@ name = "Dodrio"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Triple"
-height = 1.8
-weight = 85.2
+height = 18
+weight = 852
+[training]
+base_exp = 165
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 110

@@ -3,8 +3,11 @@ number = 65
 name = "Alakazam"
 primary_type = "Psychic"
 species = "Psi"
-height = 1.5
-weight = 48.0
+height = 15
+weight = 480
+[training]
+base_exp = 225
+growth_rate = "MediumSlow"
 [base]
 hp = 55
 atk = 50

@@ -3,8 +3,11 @@ number = 36
 name = "Clefable"
 primary_type = "Fairy"
 species = "Fairy"
-height = 1.3
-weight = 40.0
+height = 13
+weight = 400
+[training]
+base_exp = 217
+growth_rate = "Fast"
 [base]
 hp = 95
 atk = 70

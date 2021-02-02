@@ -3,8 +3,11 @@ number = 61
 name = "Poliwhirl"
 primary_type = "Water"
 species = "Tadpole"
-height = 1.0
-weight = 20.0
+height = 10
+weight = 200
+[training]
+base_exp = 135
+growth_rate = "MediumSlow"
 [base]
 hp = 65
 atk = 65

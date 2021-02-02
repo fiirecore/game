@@ -3,8 +3,11 @@ number = 371
 name = "Bagon"
 primary_type = "Dragon"
 species = "Rock"
-height = 0.6
-weight = 42.1
+height = 6
+weight = 421
+[training]
+base_exp = 60
+growth_rate = "Slow"
 [base]
 hp = 45
 atk = 75

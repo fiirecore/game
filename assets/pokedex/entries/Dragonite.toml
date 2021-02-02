@@ -4,8 +4,11 @@ name = "Dragonite"
 primary_type = "Dragon"
 secondary_type = "Flying"
 species = "Dragon"
-height = 2.2
-weight = 210.0
+height = 22
+weight = 2100
+[training]
+base_exp = 270
+growth_rate = "Slow"
 [base]
 hp = 91
 atk = 134

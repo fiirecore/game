@@ -3,8 +3,11 @@ number = 50
 name = "Diglett"
 primary_type = "Ground"
 species = "Mole"
-height = 0.2
-weight = 0.8
+height = 2
+weight = 8
+[training]
+base_exp = 53
+growth_rate = "MediumFast"
 [base]
 hp = 10
 atk = 55

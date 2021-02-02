@@ -3,8 +3,11 @@ number = 127
 name = "Pinsir"
 primary_type = "Bug"
 species = "Stag"
-height = 1.5
-weight = 55.0
+height = 15
+weight = 550
+[training]
+base_exp = 175
+growth_rate = "Slow"
 [base]
 hp = 65
 atk = 125

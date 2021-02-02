@@ -3,8 +3,11 @@ number = 206
 name = "Dunsparce"
 primary_type = "Normal"
 species = "Land"
-height = 1.5
-weight = 14.0
+height = 15
+weight = 140
+[training]
+base_exp = 145
+growth_rate = "MediumFast"
 [base]
 hp = 100
 atk = 70

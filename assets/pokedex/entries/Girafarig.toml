@@ -4,8 +4,11 @@ name = "Girafarig"
 primary_type = "Normal"
 secondary_type = "Psychic"
 species = "Long"
-height = 1.5
-weight = 41.5
+height = 15
+weight = 415
+[training]
+base_exp = 159
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 80

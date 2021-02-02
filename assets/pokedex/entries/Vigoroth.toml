@@ -3,8 +3,11 @@ number = 288
 name = "Vigoroth"
 primary_type = "Normal"
 species = "Wild"
-height = 1.4
-weight = 46.5
+height = 14
+weight = 465
+[training]
+base_exp = 154
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 80

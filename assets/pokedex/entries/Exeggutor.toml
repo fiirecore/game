@@ -4,8 +4,11 @@ name = "Exeggutor"
 primary_type = "Grass"
 secondary_type = "Psychic"
 species = "Coconut"
-height = 2.0
-weight = 120.0
+height = 20
+weight = 1200
+[training]
+base_exp = 186
+growth_rate = "Slow"
 [base]
 hp = 95
 atk = 95

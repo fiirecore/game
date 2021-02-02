@@ -4,8 +4,11 @@ name = "Kakuna"
 primary_type = "Bug"
 secondary_type = "Poison"
 species = "Cocoon"
-height = 0.6
-weight = 10.0
+height = 6
+weight = 100
+[training]
+base_exp = 72
+growth_rate = "MediumFast"
 [base]
 hp = 45
 atk = 25

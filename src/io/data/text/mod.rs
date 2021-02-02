@@ -16,6 +16,7 @@ pub struct Message {
 pub enum TextColor {
 
     White,
+    Gray,
     Black,
     Red,
     Blue,
@@ -26,7 +27,8 @@ impl Into<Color> for TextColor {
     fn into(self) -> Color {
         match self {
             TextColor::White => macroquad::prelude::WHITE,
-            TextColor::Black => macroquad::prelude::GRAY,
+            TextColor::Gray => macroquad::prelude::GRAY,
+            TextColor::Black => macroquad::prelude::BLACK,
             TextColor::Red => macroquad::prelude::RED,
             TextColor::Blue => macroquad::prelude::BLUE,
         }

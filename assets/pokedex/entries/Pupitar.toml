@@ -4,8 +4,11 @@ name = "Pupitar"
 primary_type = "Rock"
 secondary_type = "Ground"
 species = "Hard"
-height = 1.2
-weight = 152.0
+height = 12
+weight = 1520
+[training]
+base_exp = 144
+growth_rate = "Slow"
 [base]
 hp = 70
 atk = 84

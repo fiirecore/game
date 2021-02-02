@@ -3,8 +3,11 @@ number = 202
 name = "Wobbuffet"
 primary_type = "Psychic"
 species = "Patient"
-height = 1.3
-weight = 28.5
+height = 13
+weight = 285
+[training]
+base_exp = 142
+growth_rate = "MediumFast"
 [base]
 hp = 190
 atk = 33

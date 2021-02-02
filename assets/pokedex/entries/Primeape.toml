@@ -3,8 +3,11 @@ number = 57
 name = "Primeape"
 primary_type = "Fighting"
 species = "Pig"
-height = 1.0
-weight = 32.0
+height = 10
+weight = 320
+[training]
+base_exp = 159
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 105

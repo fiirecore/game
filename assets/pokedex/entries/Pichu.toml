@@ -3,8 +3,11 @@ number = 172
 name = "Pichu"
 primary_type = "Electric"
 species = "Tiny"
-height = 0.3
-weight = 2.0
+height = 3
+weight = 20
+[training]
+base_exp = 41
+growth_rate = "MediumFast"
 [base]
 hp = 20
 atk = 40

@@ -10,9 +10,7 @@ pub fn load_wild_entry(root_path: &include_dir::Dir, wild: Option<SerializedWild
         match root_path.get_dir(root_path.path().join("wild")) {
             Some(mut wild_dir) => {
                 if let Some(map_set_num) = map_set_num {
-                    let mut map_id = String::from("map_");
-                    map_id.push_str(map_set_num.to_string().as_str());
-                    wild_dir = wild_dir.get_dir(wild_dir.path().join(map_id)).unwrap(); // Fix this
+                    wild_dir = wild_dir.get_dir(wild_dir.path().join(String::from("map_") + map_set_num.to_string().as_str())).unwrap(); // Fix this
                 }
                 Some(WildEntry {
                     tiles: toml_wild_entry.wild_tiles,

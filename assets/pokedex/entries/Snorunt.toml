@@ -3,8 +3,11 @@ number = 361
 name = "Snorunt"
 primary_type = "Ice"
 species = "Snow"
-height = 0.7
-weight = 16.8
+height = 7
+weight = 168
+[training]
+base_exp = 60
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 50

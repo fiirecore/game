@@ -4,8 +4,11 @@ name = "Beedrill"
 primary_type = "Bug"
 secondary_type = "Poison"
 species = "Poison"
-height = 1.0
-weight = 29.5
+height = 10
+weight = 295
+[training]
+base_exp = 178
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 90

@@ -3,8 +3,11 @@ number = 285
 name = "Shroomish"
 primary_type = "Grass"
 species = "Mushroom"
-height = 0.4
-weight = 4.5
+height = 4
+weight = 45
+[training]
+base_exp = 59
+growth_rate = "Fast"
 [base]
 hp = 60
 atk = 40

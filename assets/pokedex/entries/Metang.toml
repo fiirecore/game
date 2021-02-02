@@ -4,8 +4,11 @@ name = "Metang"
 primary_type = "Steel"
 secondary_type = "Psychic"
 species = "Iron"
-height = 1.2
-weight = 202.5
+height = 12
+weight = 2025
+[training]
+base_exp = 147
+growth_rate = "Slow"
 [base]
 hp = 60
 atk = 75

@@ -3,8 +3,11 @@ number = 5
 name = "Charmeleon"
 primary_type = "Fire"
 species = "Flame"
-height = 1.1
-weight = 19.0
+height = 11
+weight = 190
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 58
 atk = 64

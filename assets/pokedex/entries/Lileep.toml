@@ -4,8 +4,11 @@ name = "Lileep"
 primary_type = "Rock"
 secondary_type = "Grass"
 species = "Sea"
-height = 1.0
-weight = 23.8
+height = 10
+weight = 238
+[training]
+base_exp = 71
+growth_rate = "Slow"
 [base]
 hp = 66
 atk = 41

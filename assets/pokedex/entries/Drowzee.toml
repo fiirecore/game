@@ -3,8 +3,11 @@ number = 96
 name = "Drowzee"
 primary_type = "Psychic"
 species = "Hypnosis"
-height = 1.0
-weight = 32.4
+height = 10
+weight = 324
+[training]
+base_exp = 66
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 48

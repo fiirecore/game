@@ -3,8 +3,11 @@ number = 253
 name = "Grovyle"
 primary_type = "Grass"
 species = "Wood"
-height = 0.9
-weight = 21.6
+height = 9
+weight = 216
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 50
 atk = 65

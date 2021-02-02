@@ -3,8 +3,11 @@ number = 23
 name = "Ekans"
 primary_type = "Poison"
 species = "Snake"
-height = 2.0
-weight = 6.9
+height = 20
+weight = 69
+[training]
+base_exp = 58
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 60

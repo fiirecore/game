@@ -4,8 +4,11 @@ name = "Tyranitar"
 primary_type = "Rock"
 secondary_type = "Dark"
 species = "Armor"
-height = 2.0
-weight = 202.0
+height = 20
+weight = 2020
+[training]
+base_exp = 270
+growth_rate = "Slow"
 [base]
 hp = 100
 atk = 134

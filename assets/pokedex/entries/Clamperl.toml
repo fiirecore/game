@@ -3,8 +3,11 @@ number = 366
 name = "Clamperl"
 primary_type = "Water"
 species = "Bivalve"
-height = 0.4
-weight = 52.5
+height = 4
+weight = 525
+[training]
+base_exp = 69
+growth_rate = "Slow"
 [base]
 hp = 35
 atk = 64

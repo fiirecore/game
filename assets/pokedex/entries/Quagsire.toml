@@ -4,8 +4,11 @@ name = "Quagsire"
 primary_type = "Water"
 secondary_type = "Ground"
 species = "Water"
-height = 1.4
-weight = 75.0
+height = 14
+weight = 750
+[training]
+base_exp = 151
+growth_rate = "MediumFast"
 [base]
 hp = 95
 atk = 85

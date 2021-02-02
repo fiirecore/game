@@ -3,8 +3,11 @@ number = 63
 name = "Abra"
 primary_type = "Psychic"
 species = "Psi"
-height = 0.9
-weight = 19.5
+height = 9
+weight = 195
+[training]
+base_exp = 62
+growth_rate = "MediumSlow"
 [base]
 hp = 25
 atk = 20

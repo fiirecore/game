@@ -3,8 +3,11 @@ number = 136
 name = "Flareon"
 primary_type = "Fire"
 species = "Flame"
-height = 0.9
-weight = 25.0
+height = 9
+weight = 250
+[training]
+base_exp = 184
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 130

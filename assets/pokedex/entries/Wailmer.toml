@@ -3,8 +3,11 @@ number = 320
 name = "Wailmer"
 primary_type = "Water"
 species = "Ball"
-height = 2.0
-weight = 130.0
+height = 20
+weight = 1300
+[training]
+base_exp = 80
+growth_rate = "Fast"
 [base]
 hp = 130
 atk = 70

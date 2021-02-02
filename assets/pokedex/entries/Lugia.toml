@@ -4,8 +4,11 @@ name = "Lugia"
 primary_type = "Psychic"
 secondary_type = "Flying"
 species = "Diving"
-height = 5.2
-weight = 216.0
+height = 52
+weight = 2160
+[training]
+base_exp = 306
+growth_rate = "Slow"
 [base]
 hp = 106
 atk = 90

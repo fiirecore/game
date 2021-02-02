@@ -3,8 +3,11 @@ number = 97
 name = "Hypno"
 primary_type = "Psychic"
 species = "Hypnosis"
-height = 1.6
-weight = 75.6
+height = 16
+weight = 756
+[training]
+base_exp = 169
+growth_rate = "MediumFast"
 [base]
 hp = 85
 atk = 73

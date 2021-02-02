@@ -3,8 +3,11 @@ number = 331
 name = "Cacnea"
 primary_type = "Grass"
 species = "Cactus"
-height = 0.4
-weight = 51.3
+height = 4
+weight = 513
+[training]
+base_exp = 67
+growth_rate = "MediumSlow"
 [base]
 hp = 50
 atk = 85

@@ -4,8 +4,11 @@ name = "Pidgey"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Tiny"
-height = 0.3
-weight = 1.8
+height = 3
+weight = 18
+[training]
+base_exp = 50
+growth_rate = "MediumSlow"
 [base]
 hp = 40
 atk = 45

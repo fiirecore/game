@@ -4,8 +4,11 @@ name = "Zapdos"
 primary_type = "Electric"
 secondary_type = "Flying"
 species = "Electric"
-height = 1.6
-weight = 52.6
+height = 16
+weight = 526
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 90
 atk = 90

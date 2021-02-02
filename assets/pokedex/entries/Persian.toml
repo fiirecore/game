@@ -3,8 +3,11 @@ number = 53
 name = "Persian"
 primary_type = "Normal"
 species = "Classy"
-height = 1.0
-weight = 32.0
+height = 10
+weight = 320
+[training]
+base_exp = 154
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 70

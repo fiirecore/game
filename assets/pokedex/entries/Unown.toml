@@ -3,8 +3,11 @@ number = 201
 name = "Unown"
 primary_type = "Psychic"
 species = "Symbol"
-height = 0.5
-weight = 5.0
+height = 5
+weight = 50
+[training]
+base_exp = 118
+growth_rate = "MediumFast"
 [base]
 hp = 48
 atk = 72

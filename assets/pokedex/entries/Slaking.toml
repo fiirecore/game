@@ -3,8 +3,11 @@ number = 289
 name = "Slaking"
 primary_type = "Normal"
 species = "Lazy"
-height = 2.0
-weight = 130.5
+height = 20
+weight = 1305
+[training]
+base_exp = 252
+growth_rate = "Slow"
 [base]
 hp = 150
 atk = 160

@@ -3,8 +3,11 @@ number = 160
 name = "Feraligatr"
 primary_type = "Water"
 species = "Big"
-height = 2.3
-weight = 88.8
+height = 23
+weight = 888
+[training]
+base_exp = 239
+growth_rate = "MediumSlow"
 [base]
 hp = 85
 atk = 105

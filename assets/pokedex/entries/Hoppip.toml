@@ -4,8 +4,11 @@ name = "Hoppip"
 primary_type = "Grass"
 secondary_type = "Flying"
 species = "Cottonweed"
-height = 0.4
-weight = 0.5
+height = 4
+weight = 5
+[training]
+base_exp = 50
+growth_rate = "MediumSlow"
 [base]
 hp = 35
 atk = 35

@@ -4,8 +4,11 @@ name = "Scyther"
 primary_type = "Bug"
 secondary_type = "Flying"
 species = "Mantis"
-height = 1.5
-weight = 56.0
+height = 15
+weight = 560
+[training]
+base_exp = 100
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 110

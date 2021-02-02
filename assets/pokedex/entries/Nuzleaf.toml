@@ -4,8 +4,11 @@ name = "Nuzleaf"
 primary_type = "Grass"
 secondary_type = "Dark"
 species = "Wily"
-height = 1.0
-weight = 28.0
+height = 10
+weight = 280
+[training]
+base_exp = 119
+growth_rate = "MediumSlow"
 [base]
 hp = 70
 atk = 70

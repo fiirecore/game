@@ -3,8 +3,11 @@ number = 154
 name = "Meganium"
 primary_type = "Grass"
 species = "Herb"
-height = 1.8
-weight = 100.5
+height = 18
+weight = 1005
+[training]
+base_exp = 236
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 82

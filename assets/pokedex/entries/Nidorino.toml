@@ -3,8 +3,11 @@ number = 33
 name = "Nidorino"
 primary_type = "Poison"
 species = "Poison"
-height = 0.9
-weight = 19.5
+height = 9
+weight = 195
+[training]
+base_exp = 128
+growth_rate = "MediumSlow"
 [base]
 hp = 61
 atk = 72

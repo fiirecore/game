@@ -3,8 +3,11 @@ number = 157
 name = "Typhlosion"
 primary_type = "Fire"
 species = "Volcano"
-height = 1.7
-weight = 79.5
+height = 17
+weight = 795
+[training]
+base_exp = 240
+growth_rate = "MediumSlow"
 [base]
 hp = 78
 atk = 84

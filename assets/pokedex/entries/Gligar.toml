@@ -4,8 +4,11 @@ name = "Gligar"
 primary_type = "Ground"
 secondary_type = "Flying"
 species = "Fly"
-height = 1.1
-weight = 64.8
+height = 11
+weight = 648
+[training]
+base_exp = 86
+growth_rate = "MediumSlow"
 [base]
 hp = 65
 atk = 75

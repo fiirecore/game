@@ -3,8 +3,11 @@ number = 197
 name = "Umbreon"
 primary_type = "Dark"
 species = "Moonlight"
-height = 1.0
-weight = 27.0
+height = 10
+weight = 270
+[training]
+base_exp = 184
+growth_rate = "MediumFast"
 [base]
 hp = 95
 atk = 65

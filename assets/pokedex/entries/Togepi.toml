@@ -3,8 +3,11 @@ number = 175
 name = "Togepi"
 primary_type = "Fairy"
 species = "Spike"
-height = 0.3
-weight = 1.5
+height = 3
+weight = 15
+[training]
+base_exp = 49
+growth_rate = "Fast"
 [base]
 hp = 35
 atk = 20

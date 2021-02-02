@@ -4,8 +4,11 @@ name = "Lotad"
 primary_type = "Water"
 secondary_type = "Grass"
 species = "Water"
-height = 0.5
-weight = 2.6
+height = 5
+weight = 26
+[training]
+base_exp = 44
+growth_rate = "MediumSlow"
 [base]
 hp = 40
 atk = 30

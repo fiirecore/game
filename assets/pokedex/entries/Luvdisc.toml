@@ -3,8 +3,11 @@ number = 370
 name = "Luvdisc"
 primary_type = "Water"
 species = "Rendezvous"
-height = 0.6
-weight = 8.7
+height = 6
+weight = 87
+[training]
+base_exp = 116
+growth_rate = "Fast"
 [base]
 hp = 43
 atk = 30

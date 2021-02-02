@@ -4,8 +4,11 @@ name = "Latios"
 primary_type = "Dragon"
 secondary_type = "Psychic"
 species = "Eon"
-height = 2.0
-weight = 60.0
+height = 20
+weight = 600
+[training]
+base_exp = 270
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 90

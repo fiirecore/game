@@ -3,8 +3,11 @@ number = 68
 name = "Machamp"
 primary_type = "Fighting"
 species = "Superpower"
-height = 1.6
-weight = 130.0
+height = 16
+weight = 1300
+[training]
+base_exp = 227
+growth_rate = "MediumSlow"
 [base]
 hp = 90
 atk = 130

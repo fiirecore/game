@@ -3,8 +3,11 @@ number = 244
 name = "Entei"
 primary_type = "Fire"
 species = "Volcano"
-height = 2.1
-weight = 198.0
+height = 21
+weight = 1980
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 115
 atk = 115

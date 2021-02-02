@@ -3,8 +3,11 @@ number = 67
 name = "Machoke"
 primary_type = "Fighting"
 species = "Superpower"
-height = 1.5
-weight = 70.5
+height = 15
+weight = 705
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 100

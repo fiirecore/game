@@ -3,8 +3,11 @@ number = 204
 name = "Pineco"
 primary_type = "Bug"
 species = "Bagworm"
-height = 0.6
-weight = 7.2
+height = 6
+weight = 72
+[training]
+base_exp = 58
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 65

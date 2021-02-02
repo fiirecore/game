@@ -3,8 +3,11 @@ number = 210
 name = "Granbull"
 primary_type = "Fairy"
 species = "Fairy"
-height = 1.4
-weight = 48.7
+height = 14
+weight = 487
+[training]
+base_exp = 158
+growth_rate = "Fast"
 [base]
 hp = 90
 atk = 120

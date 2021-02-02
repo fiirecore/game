@@ -3,8 +3,11 @@ number = 378
 name = "Regice"
 primary_type = "Ice"
 species = "Iceberg"
-height = 1.8
-weight = 175.0
+height = 18
+weight = 1750
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 50

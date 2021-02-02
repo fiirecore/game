@@ -4,8 +4,11 @@ name = "Graveler"
 primary_type = "Rock"
 secondary_type = "Ground"
 species = "Rock"
-height = 1.0
-weight = 105.0
+height = 10
+weight = 1050
+[training]
+base_exp = 137
+growth_rate = "MediumSlow"
 [base]
 hp = 55
 atk = 95

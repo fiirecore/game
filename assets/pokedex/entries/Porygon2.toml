@@ -3,8 +3,11 @@ number = 233
 name = "Porygon2"
 primary_type = "Normal"
 species = "Virtual"
-height = 0.6
-weight = 32.5
+height = 6
+weight = 325
+[training]
+base_exp = 180
+growth_rate = "MediumFast"
 [base]
 hp = 85
 atk = 80

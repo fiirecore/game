@@ -3,8 +3,11 @@ number = 293
 name = "Whismur"
 primary_type = "Normal"
 species = "Whisper"
-height = 0.6
-weight = 16.3
+height = 6
+weight = 163
+[training]
+base_exp = 48
+growth_rate = "MediumSlow"
 [base]
 hp = 64
 atk = 51

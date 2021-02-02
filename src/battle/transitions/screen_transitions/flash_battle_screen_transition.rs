@@ -1,3 +1,7 @@
+use macroquad::camera::Camera2D;
+use macroquad::camera::set_camera;
+use macroquad::prelude::Rect;
+
 use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
@@ -18,6 +22,7 @@ pub struct FlashBattleScreenTransition {
     index: u8,
     fade: f32,
     zoom: bool,
+    zoom_offset: f32,
 }
 
 impl FlashBattleScreenTransition {
@@ -31,6 +36,7 @@ impl FlashBattleScreenTransition {
             index: 0,
             fade: 1.0 / 8.0,
             zoom: false,
+            zoom_offset: 0.0,
         }
     }
 }
@@ -45,6 +51,7 @@ impl Reset for FlashBattleScreenTransition {
         self.index = 0;
         self.fade = 1.0 / 8.0;
         self.zoom = false;
+        self.zoom_offset = 0.0;
     }
 }
 
@@ -87,7 +94,12 @@ impl Update for FlashBattleScreenTransition {
             self.fade = 1.0 / 16.0;
             self.zoom = true;
         }
+        if self.zoom {
+            self.zoom_offset += 600.0 * delta;
+            set_camera(Camera2D::from_display_rect(Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, crate::BASE_WIDTH as f32 - self.zoom_offset, crate::BASE_HEIGHT as f32 - self.zoom_offset)))
+        }
         if self.index >= FINAL_INDEX && self.waning {
+            set_camera(Camera2D::from_display_rect(Rect::new(0.0, 0.0, crate::BASE_WIDTH as f32, crate::BASE_HEIGHT as f32)));
             self.finished = true;
         }
     }

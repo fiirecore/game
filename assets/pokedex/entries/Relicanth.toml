@@ -4,8 +4,11 @@ name = "Relicanth"
 primary_type = "Water"
 secondary_type = "Rock"
 species = "Longevity"
-height = 1.0
-weight = 23.4
+height = 10
+weight = 234
+[training]
+base_exp = 170
+growth_rate = "Slow"
 [base]
 hp = 100
 atk = 90

@@ -4,8 +4,11 @@ name = "Corsola"
 primary_type = "Water"
 secondary_type = "Rock"
 species = "Coral"
-height = 0.6
-weight = 5.0
+height = 6
+weight = 50
+[training]
+base_exp = 144
+growth_rate = "Fast"
 [base]
 hp = 65
 atk = 55

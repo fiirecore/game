@@ -3,8 +3,11 @@ number = 35
 name = "Clefairy"
 primary_type = "Fairy"
 species = "Fairy"
-height = 0.6
-weight = 7.5
+height = 6
+weight = 75
+[training]
+base_exp = 113
+growth_rate = "Fast"
 [base]
 hp = 70
 atk = 45

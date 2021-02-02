@@ -3,8 +3,11 @@ number = 349
 name = "Feebas"
 primary_type = "Water"
 species = "Fish"
-height = 0.6
-weight = 7.4
+height = 6
+weight = 74
+[training]
+base_exp = 40
+growth_rate = "Slow"
 [base]
 hp = 20
 atk = 15

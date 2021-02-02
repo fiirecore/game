@@ -4,8 +4,11 @@ name = "Ralts"
 primary_type = "Psychic"
 secondary_type = "Fairy"
 species = "Feeling"
-height = 0.4
-weight = 6.6
+height = 4
+weight = 66
+[training]
+base_exp = 40
+growth_rate = "Slow"
 [base]
 hp = 28
 atk = 25

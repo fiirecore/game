@@ -4,8 +4,11 @@ name = "Camerupt"
 primary_type = "Fire"
 secondary_type = "Ground"
 species = "Eruption"
-height = 1.9
-weight = 220.0
+height = 19
+weight = 2200
+[training]
+base_exp = 161
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 100

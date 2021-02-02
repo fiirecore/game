@@ -4,8 +4,11 @@ name = "Shuckle"
 primary_type = "Bug"
 secondary_type = "Rock"
 species = "Mold"
-height = 0.6
-weight = 20.5
+height = 6
+weight = 205
+[training]
+base_exp = 177
+growth_rate = "MediumSlow"
 [base]
 hp = 20
 atk = 10

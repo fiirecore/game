@@ -3,8 +3,11 @@ number = 255
 name = "Torchic"
 primary_type = "Fire"
 species = "Chick"
-height = 0.4
-weight = 2.5
+height = 4
+weight = 25
+[training]
+base_exp = 62
+growth_rate = "MediumSlow"
 [base]
 hp = 45
 atk = 60

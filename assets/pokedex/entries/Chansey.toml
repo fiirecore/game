@@ -3,8 +3,11 @@ number = 113
 name = "Chansey"
 primary_type = "Normal"
 species = "Egg"
-height = 1.1
-weight = 34.6
+height = 11
+weight = 346
+[training]
+base_exp = 395
+growth_rate = "Fast"
 [base]
 hp = 250
 atk = 5

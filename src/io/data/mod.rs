@@ -38,18 +38,6 @@ pub struct Position {
 
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct StatSet {
-
-	pub hp: u8,
-	pub atk: u8,
-	pub def: u8,
-	pub sp_atk: u8,
-	pub sp_def: u8,
-	pub speed: u8,
-
-}
-
 impl Direction {
 
 	pub fn inverse(&self) -> Direction {
@@ -107,37 +95,5 @@ impl Position {
 			..*self
 		}
     }
-
-}
-
-impl StatSet {
-
-	pub fn iv_random() -> Self {
-
-		use macroquad::prelude::rand::gen_range;
-
-		Self {
-			hp: gen_range(0, 32),
-			atk: gen_range(0, 32),
-			def: gen_range(0, 32),
-			sp_atk: gen_range(0, 32),
-			sp_def: gen_range(0, 32),
-			speed: gen_range(0, 32),
-		}
-
-	}
-
-	pub fn uniform(stat: u8) -> Self {
-
-		Self {
-			hp: stat,
-			atk: stat,
-			def: stat,
-			sp_atk: stat,
-			sp_def: stat,
-			speed: stat,
-		}
-		
-	}
 
 }

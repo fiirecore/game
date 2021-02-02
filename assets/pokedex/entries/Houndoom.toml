@@ -4,8 +4,11 @@ name = "Houndoom"
 primary_type = "Dark"
 secondary_type = "Fire"
 species = "Dark"
-height = 1.4
-weight = 35.0
+height = 14
+weight = 350
+[training]
+base_exp = 175
+growth_rate = "Slow"
 [base]
 hp = 75
 atk = 90

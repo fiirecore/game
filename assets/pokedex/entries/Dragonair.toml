@@ -3,8 +3,11 @@ number = 148
 name = "Dragonair"
 primary_type = "Dragon"
 species = "Dragon"
-height = 4.0
-weight = 16.5
+height = 40
+weight = 165
+[training]
+base_exp = 147
+growth_rate = "Slow"
 [base]
 hp = 61
 atk = 84

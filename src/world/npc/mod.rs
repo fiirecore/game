@@ -13,7 +13,7 @@ pub struct NPC {
 
     pub identifier: NPCIdentifier,
     pub position: Position,
-    pub movement: Option<MovementType>,
+    //pub movement: Option<MovementType>,
     pub trainer: Option<Trainer>,
 
 }
@@ -26,20 +26,43 @@ pub struct NPCIdentifier {
 
 }
 
-#[derive(Clone, Debug, Deserialize)]
-pub enum MovementType {
+// #[derive(Clone, Debug, Deserialize)]
+// pub enum MovementType {
 
-    Still,
+//     Still,
 
-}
+// }
 
 impl NPC {
 
-    pub fn interact(&mut self, direction: Direction) {
-        self.position.direction = direction.inverse();
-        if self.trainer.is_some() {
+    pub fn walk_to(&mut self, x: isize, y: isize) {
+        match self.position.direction {
+            Direction::Up => {
+                self.position.y = y + 1;
+            }
+            Direction::Down => {
+                self.position.y = y - 1;
+            }
+            Direction::Left => {
+                self.position.x = x + 1;
+            }
+            Direction::Right => {
+                self.position.x = x - 1;
+            }
+        }
+    }
+
+    pub fn interact(&mut self, direction: Option<Direction>, x: isize, y: isize) {
+        if let Some(direction) = direction {
+            self.position.direction = direction.inverse();
+        }
+        if let Some(trainer) = &mut self.trainer {
             macroquad::prelude::info!("Trainer battle with {}", &self.identifier.name);
-            crate::util::battle_data::trainer_battle(&self);
+            if !trainer.battled {
+                trainer.battled = true;
+                self.walk_to(x, y);
+                crate::util::battle_data::trainer_battle(&self);
+            }
         }
     }
 

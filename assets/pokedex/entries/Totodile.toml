@@ -3,8 +3,11 @@ number = 158
 name = "Totodile"
 primary_type = "Water"
 species = "Big"
-height = 0.6
-weight = 9.5
+height = 6
+weight = 95
+[training]
+base_exp = 63
+growth_rate = "MediumSlow"
 [base]
 hp = 50
 atk = 65

@@ -4,8 +4,11 @@ name = "Mawile"
 primary_type = "Steel"
 secondary_type = "Fairy"
 species = "Deceiver"
-height = 0.6
-weight = 11.5
+height = 6
+weight = 115
+[training]
+base_exp = 133
+growth_rate = "Fast"
 [base]
 hp = 50
 atk = 85

@@ -4,8 +4,11 @@ name = "Smoochum"
 primary_type = "Ice"
 secondary_type = "Psychic"
 species = "Kiss"
-height = 0.4
-weight = 6.0
+height = 4
+weight = 60
+[training]
+base_exp = 61
+growth_rate = "MediumFast"
 [base]
 hp = 45
 atk = 30

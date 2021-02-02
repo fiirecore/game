@@ -4,8 +4,11 @@ name = "Walrein"
 primary_type = "Ice"
 secondary_type = "Water"
 species = "Ice"
-height = 1.4
-weight = 150.6
+height = 14
+weight = 1506
+[training]
+base_exp = 239
+growth_rate = "MediumSlow"
 [base]
 hp = 110
 atk = 80

@@ -4,8 +4,11 @@ name = "Blaziken"
 primary_type = "Fire"
 secondary_type = "Fighting"
 species = "Blaze"
-height = 1.9
-weight = 52.0
+height = 19
+weight = 520
+[training]
+base_exp = 239
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 120

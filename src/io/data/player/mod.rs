@@ -1,3 +1,4 @@
+use crate::pokemon::data::StatSet;
 use crate::pokemon::party::PokemonParty;
 use crate::util::file::PersistantData;
 use std::fs::File;
@@ -8,7 +9,6 @@ use macroquad::prelude::warn;
 use serde::{Deserialize, Serialize};
 use super::Location;
 use super::Position;
-use super::StatSet;
 use crate::pokemon::instance::PokemonInstance;
 
 static SAVE_FILENAME: &str = "player.json";
@@ -28,12 +28,6 @@ impl PlayerData {
 
 	pub fn exists() -> bool {
 		get_path().exists()
-	}
-
-	pub fn default_add(&mut self) {
-		self.add_pokemon_to_party(PokemonInstance::generate_with_level(1, 5, Some(StatSet::uniform(15))));
-		self.add_pokemon_to_party(PokemonInstance::generate_with_level(4, 5, Some(StatSet::uniform(15))));
-		self.add_pokemon_to_party(PokemonInstance::generate_with_level(7, 5, Some(StatSet::uniform(15))));
 	}
 
 	pub fn add_pokemon_to_party(&mut self, pokemon: PokemonInstance) {
@@ -78,7 +72,11 @@ impl Default for PlayerData {
 
 			party: PokemonParty {
 
-				pokemon: Vec::new(),
+				pokemon: vec![
+					PokemonInstance::generate_with_level(1, 11, Some(StatSet::uniform(15))),
+					PokemonInstance::generate_with_level(4, 11, Some(StatSet::uniform(15))),
+					PokemonInstance::generate_with_level(7, 11, Some(StatSet::uniform(15))),
+				],
 
 			},
 

@@ -3,8 +3,11 @@ number = 263
 name = "Zigzagoon"
 primary_type = "Normal"
 species = "Tiny"
-height = 0.4
-weight = 17.5
+height = 4
+weight = 175
+[training]
+base_exp = 56
+growth_rate = "MediumFast"
 [base]
 hp = 38
 atk = 30

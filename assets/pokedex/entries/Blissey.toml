@@ -3,8 +3,11 @@ number = 242
 name = "Blissey"
 primary_type = "Normal"
 species = "Happiness"
-height = 1.5
-weight = 46.8
+height = 15
+weight = 468
+[training]
+base_exp = 608
+growth_rate = "Fast"
 [base]
 hp = 255
 atk = 10

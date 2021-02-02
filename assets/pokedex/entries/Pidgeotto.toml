@@ -4,8 +4,11 @@ name = "Pidgeotto"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Bird"
-height = 1.1
-weight = 30.0
+height = 11
+weight = 300
+[training]
+base_exp = 122
+growth_rate = "MediumSlow"
 [base]
 hp = 63
 atk = 60

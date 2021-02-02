@@ -4,8 +4,11 @@ name = "Beautifly"
 primary_type = "Bug"
 secondary_type = "Flying"
 species = "Butterfly"
-height = 1.0
-weight = 28.4
+height = 10
+weight = 284
+[training]
+base_exp = 178
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 70

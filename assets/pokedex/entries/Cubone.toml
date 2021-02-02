@@ -3,8 +3,11 @@ number = 104
 name = "Cubone"
 primary_type = "Ground"
 species = "Lonely"
-height = 0.4
-weight = 6.5
+height = 4
+weight = 65
+[training]
+base_exp = 64
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 50

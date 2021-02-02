@@ -4,8 +4,11 @@ name = "Zubat"
 primary_type = "Poison"
 secondary_type = "Flying"
 species = "Bat"
-height = 0.8
-weight = 7.5
+height = 8
+weight = 75
+[training]
+base_exp = 49
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 45

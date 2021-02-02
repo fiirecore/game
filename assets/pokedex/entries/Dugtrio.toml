@@ -3,8 +3,11 @@ number = 51
 name = "Dugtrio"
 primary_type = "Ground"
 species = "Mole"
-height = 0.7
-weight = 33.3
+height = 7
+weight = 333
+[training]
+base_exp = 149
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 100

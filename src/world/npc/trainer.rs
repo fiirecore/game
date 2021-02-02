@@ -8,6 +8,7 @@ pub struct Trainer {
 
     pub trainer_type: TrainerType,
     pub party: PokemonParty,
+    pub battled: bool,
 
     pub tracker: Option<Tracker>,
 
@@ -20,6 +21,7 @@ pub struct Trainer {
 pub enum TrainerType {
 
     None,
+    Camper,
     GymLeader,
     
 }
@@ -28,22 +30,21 @@ impl TrainerType {
 
     pub fn battle_type(&self) -> BattleType {
         match *self {
-            TrainerType::None => BattleType::Trainer,
             TrainerType::GymLeader => BattleType::GymLeader,
+            _ => BattleType::Trainer,
         }
     }
 
 }
 
-impl ToString for TrainerType {
-
-    fn to_string(&self) -> String {
-        match *self {
+impl std::fmt::Display for TrainerType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match *self {
             TrainerType::None => "Trainer",
+            TrainerType::Camper => "Camper",
             TrainerType::GymLeader => "Gym Leader",
-        }.to_string()
+        })
     }
-
 }
 
 #[derive(Clone, Debug, Deserialize)]

@@ -4,8 +4,11 @@ name = "Whiscash"
 primary_type = "Water"
 secondary_type = "Ground"
 species = "Whiskers"
-height = 0.9
-weight = 23.6
+height = 9
+weight = 236
+[training]
+base_exp = 164
+growth_rate = "MediumFast"
 [base]
 hp = 110
 atk = 78

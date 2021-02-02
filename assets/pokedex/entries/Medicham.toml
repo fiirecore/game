@@ -4,8 +4,11 @@ name = "Medicham"
 primary_type = "Fighting"
 secondary_type = "Psychic"
 species = "Meditate"
-height = 1.3
-weight = 31.5
+height = 13
+weight = 315
+[training]
+base_exp = 144
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 60

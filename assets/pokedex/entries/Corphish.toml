@@ -3,8 +3,11 @@ number = 341
 name = "Corphish"
 primary_type = "Water"
 species = "Ruffian"
-height = 0.6
-weight = 11.5
+height = 6
+weight = 115
+[training]
+base_exp = 62
+growth_rate = "Fast"
 [base]
 hp = 43
 atk = 80

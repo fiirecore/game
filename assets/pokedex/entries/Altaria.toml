@@ -4,8 +4,11 @@ name = "Altaria"
 primary_type = "Dragon"
 secondary_type = "Flying"
 species = "Humming"
-height = 1.1
-weight = 20.6
+height = 11
+weight = 206
+[training]
+base_exp = 172
+growth_rate = "Slow"
 [base]
 hp = 75
 atk = 70

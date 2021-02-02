@@ -4,8 +4,11 @@ name = "Qwilfish"
 primary_type = "Water"
 secondary_type = "Poison"
 species = "Balloon"
-height = 0.5
-weight = 3.9
+height = 5
+weight = 39
+[training]
+base_exp = 88
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 95

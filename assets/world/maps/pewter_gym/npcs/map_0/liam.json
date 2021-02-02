@@ -1,6 +1,6 @@
 {
 	"identifier": {
-		"name": "Trainer",
+		"name": "Liam",
 		"sprite": 39
 	},
 	"position": {
@@ -9,6 +9,7 @@
 		"direction": "Right"
 	},
 	"trainer": {
+		"trainer_type": "Camper",
 		"party": {
 			"pokemon": [
 				{
@@ -21,21 +22,11 @@
 						"sp_atk": 15,
 						"sp_def": 15,
 						"speed": 15
-					},
-					"evs": {
-						"hp": 0,
-						"atk": 0,
-						"def": 0,
-						"sp_atk": 0,
-						"sp_def": 0,
-						"speed": 0
-					},
-					"exp": 0,
-					"friendship": 70
+					}
 				},
 				{
-					"id": 95,
-					"level": 10,
+					"id": 27,
+					"level": 11,
 					"ivs": {
 						"hp": 15,
 						"atk": 15,
@@ -43,24 +34,14 @@
 						"sp_atk": 15,
 						"sp_def": 15,
 						"speed": 15
-					},
-					"evs": {
-						"hp": 0,
-						"atk": 0,
-						"def": 0,
-						"sp_atk": 0,
-						"sp_def": 0,
-						"speed": 0
-					},
-					"exp": 0,
-					"friendship": 70
+					}
 				}
 			]
 		},
+		"battled": false,
 		"tracker": {
 			"length": 3
 		},
-		"trainer_type": "None",
 		"victory_message": [
 			"Test"
 		],

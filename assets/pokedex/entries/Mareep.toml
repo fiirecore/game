@@ -3,8 +3,11 @@ number = 179
 name = "Mareep"
 primary_type = "Electric"
 species = "Wool"
-height = 0.6
-weight = 7.8
+height = 6
+weight = 78
+[training]
+base_exp = 56
+growth_rate = "MediumSlow"
 [base]
 hp = 55
 atk = 40

@@ -4,8 +4,11 @@ name = "Cradily"
 primary_type = "Rock"
 secondary_type = "Grass"
 species = "Barnacle"
-height = 1.5
-weight = 60.4
+height = 15
+weight = 604
+[training]
+base_exp = 173
+growth_rate = "Slow"
 [base]
 hp = 86
 atk = 81

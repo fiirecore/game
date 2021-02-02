@@ -4,8 +4,11 @@ name = "Dustox"
 primary_type = "Bug"
 secondary_type = "Poison"
 species = "Poison"
-height = 1.2
-weight = 31.6
+height = 12
+weight = 316
+[training]
+base_exp = 173
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 50

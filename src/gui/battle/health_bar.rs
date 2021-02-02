@@ -21,7 +21,7 @@ pub struct HealthBar {
 	panel_y: f32,
 
 	width: u8,
-	previous_width: u8,
+	previous_width: f32,
 
 	has_width: bool,
 	
@@ -42,7 +42,7 @@ impl HealthBar {
 			panel_y: panel_y,
 
 			width: WIDTH,
-			previous_width: WIDTH,
+			previous_width: WIDTH as f32,
 
 			has_width: false,
 			
@@ -51,25 +51,25 @@ impl HealthBar {
 	}
 	
 	pub fn update_bar(&mut self, current_health: u16, max_health: u16) {
-		self.previous_width = self.width;
+		self.previous_width = self.width as f32;
 		self.width = (current_health as f32 * 48f32 / max_health as f32).ceil() as u8;
 		if !self.has_width {
-			self.previous_width = self.width;
+			self.previous_width = self.width as f32;
 			self.has_width = true;
 		}
 	}
 
 	pub fn is_moving(&self) -> bool {
-		return self.previous_width > self.width;
+		return self.previous_width > self.width as f32;
 	}
 
 	pub fn get_width(&self) -> u8 {
-		return self.previous_width;
+		return self.previous_width as u8;
 	}
 
 	pub fn reset(&mut self) {
 		self.width = WIDTH;
-		self.previous_width = self.width;
+		self.previous_width = self.width as f32;
 	}
 	
 }
@@ -95,9 +95,9 @@ impl GuiComponent for HealthBar {
 		self.panel_y = y;
 	}
 
-	fn update(&mut self, _delta: f32) {
+	fn update(&mut self, delta: f32) {
 		if self.is_moving() {
-			self.previous_width -= 1;
+			self.previous_width -= 60.0 * delta;
 		}
 	}
 

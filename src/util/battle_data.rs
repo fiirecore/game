@@ -2,7 +2,7 @@ use macroquad::rand::gen_range;
 use parking_lot::Mutex;
 
 use crate::battle::battle_info::BattleType;
-use crate::io::data::StatSet;
+use crate::pokemon::data::StatSet;
 use crate::pokemon::party::PokemonParty;
 use crate::world::npc::NPC;
 use crate::world::pokemon::wild_pokemon_table::WildPokemonTable;
@@ -33,14 +33,11 @@ pub fn wild_battle(table: &WildPokemonTable) {
 
 pub fn trainer_battle(npc: &NPC) {
     if let Some(trainer) = &npc.trainer {
-        let mut name = trainer.trainer_type.to_string().to_string();
-        name.push(' ');
-        name.push_str(npc.identifier.name.as_str());
         *BATTLE_DATA.lock() = Some(BattleData {
             battle_type: trainer.trainer_type.battle_type(),
             party: trainer.party.clone(),
             trainer_data: Some(TrainerData {
-                name: name,
+                name: trainer.trainer_type.to_string().to_string() + " " + npc.identifier.name.as_str(),
                 sprite_id: npc.identifier.sprite,
             }),
         });

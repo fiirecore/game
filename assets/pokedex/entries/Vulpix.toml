@@ -3,8 +3,11 @@ number = 37
 name = "Vulpix"
 primary_type = "Fire"
 species = "Fox"
-height = 0.6
-weight = 9.9
+height = 6
+weight = 99
+[training]
+base_exp = 60
+growth_rate = "MediumFast"
 [base]
 hp = 38
 atk = 41

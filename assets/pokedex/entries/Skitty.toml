@@ -3,8 +3,11 @@ number = 300
 name = "Skitty"
 primary_type = "Normal"
 species = "Kitten"
-height = 0.6
-weight = 11.0
+height = 6
+weight = 110
+[training]
+base_exp = 52
+growth_rate = "Fast"
 [base]
 hp = 50
 atk = 45

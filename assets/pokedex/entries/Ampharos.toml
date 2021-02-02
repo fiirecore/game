@@ -3,8 +3,11 @@ number = 181
 name = "Ampharos"
 primary_type = "Electric"
 species = "Light"
-height = 1.4
-weight = 61.5
+height = 14
+weight = 615
+[training]
+base_exp = 230
+growth_rate = "MediumSlow"
 [base]
 hp = 90
 atk = 75

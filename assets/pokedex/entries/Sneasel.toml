@@ -4,8 +4,11 @@ name = "Sneasel"
 primary_type = "Dark"
 secondary_type = "Ice"
 species = "Sharp"
-height = 0.9
-weight = 28.0
+height = 9
+weight = 280
+[training]
+base_exp = 86
+growth_rate = "MediumSlow"
 [base]
 hp = 55
 atk = 95

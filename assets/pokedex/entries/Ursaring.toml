@@ -3,8 +3,11 @@ number = 217
 name = "Ursaring"
 primary_type = "Normal"
 species = "Hibernator"
-height = 1.8
-weight = 125.8
+height = 18
+weight = 1258
+[training]
+base_exp = 175
+growth_rate = "MediumFast"
 [base]
 hp = 90
 atk = 130

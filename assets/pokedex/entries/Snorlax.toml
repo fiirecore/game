@@ -3,8 +3,11 @@ number = 143
 name = "Snorlax"
 primary_type = "Normal"
 species = "Sleeping"
-height = 2.1
-weight = 460.0
+height = 21
+weight = 4600
+[training]
+base_exp = 189
+growth_rate = "Slow"
 [base]
 hp = 160
 atk = 110

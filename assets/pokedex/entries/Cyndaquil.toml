@@ -3,8 +3,11 @@ number = 155
 name = "Cyndaquil"
 primary_type = "Fire"
 species = "Fire"
-height = 0.5
-weight = 7.9
+height = 5
+weight = 79
+[training]
+base_exp = 62
+growth_rate = "MediumSlow"
 [base]
 hp = 39
 atk = 52

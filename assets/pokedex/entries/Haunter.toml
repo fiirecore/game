@@ -4,8 +4,11 @@ name = "Haunter"
 primary_type = "Ghost"
 secondary_type = "Poison"
 species = "Gas"
-height = 1.6
-weight = 0.1
+height = 16
+weight = 1
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 45
 atk = 50

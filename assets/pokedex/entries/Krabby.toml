@@ -3,8 +3,11 @@ number = 98
 name = "Krabby"
 primary_type = "Water"
 species = "River"
-height = 0.4
-weight = 6.5
+height = 4
+weight = 65
+[training]
+base_exp = 65
+growth_rate = "MediumFast"
 [base]
 hp = 30
 atk = 105

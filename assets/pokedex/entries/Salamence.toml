@@ -4,8 +4,11 @@ name = "Salamence"
 primary_type = "Dragon"
 secondary_type = "Flying"
 species = "Dragon"
-height = 1.5
-weight = 102.6
+height = 15
+weight = 1026
+[training]
+base_exp = 270
+growth_rate = "Slow"
 [base]
 hp = 95
 atk = 135

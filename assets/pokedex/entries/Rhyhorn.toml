@@ -4,8 +4,11 @@ name = "Rhyhorn"
 primary_type = "Ground"
 secondary_type = "Rock"
 species = "Spikes"
-height = 1.0
-weight = 115.0
+height = 10
+weight = 1150
+[training]
+base_exp = 69
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 85

@@ -4,8 +4,11 @@ name = "Surskit"
 primary_type = "Bug"
 secondary_type = "Water"
 species = "Pond"
-height = 0.5
-weight = 1.7
+height = 5
+weight = 17
+[training]
+base_exp = 54
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 30

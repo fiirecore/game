@@ -4,8 +4,11 @@ name = "Jigglypuff"
 primary_type = "Normal"
 secondary_type = "Fairy"
 species = "Balloon"
-height = 0.5
-weight = 5.5
+height = 5
+weight = 55
+[training]
+base_exp = 95
+growth_rate = "Fast"
 [base]
 hp = 115
 atk = 45

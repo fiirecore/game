@@ -4,8 +4,11 @@ name = "Tentacruel"
 primary_type = "Water"
 secondary_type = "Poison"
 species = "Jellyfish"
-height = 1.6
-weight = 55.0
+height = 16
+weight = 550
+[training]
+base_exp = 180
+growth_rate = "Slow"
 [base]
 hp = 80
 atk = 70

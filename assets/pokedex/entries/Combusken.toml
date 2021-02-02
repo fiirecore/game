@@ -4,8 +4,11 @@ name = "Combusken"
 primary_type = "Fire"
 secondary_type = "Fighting"
 species = "Young"
-height = 0.9
-weight = 19.5
+height = 9
+weight = 195
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 85

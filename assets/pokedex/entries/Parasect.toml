@@ -4,8 +4,11 @@ name = "Parasect"
 primary_type = "Bug"
 secondary_type = "Grass"
 species = "Mushroom"
-height = 1.0
-weight = 29.5
+height = 10
+weight = 295
+[training]
+base_exp = 142
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 95

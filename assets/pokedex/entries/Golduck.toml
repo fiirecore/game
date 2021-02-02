@@ -3,8 +3,11 @@ number = 55
 name = "Golduck"
 primary_type = "Water"
 species = "Duck"
-height = 1.7
-weight = 76.6
+height = 17
+weight = 766
+[training]
+base_exp = 175
+growth_rate = "MediumFast"
 [base]
 hp = 80
 atk = 82

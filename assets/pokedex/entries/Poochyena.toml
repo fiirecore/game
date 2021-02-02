@@ -3,8 +3,11 @@ number = 261
 name = "Poochyena"
 primary_type = "Dark"
 species = "Bite"
-height = 0.5
-weight = 13.6
+height = 5
+weight = 136
+[training]
+base_exp = 56
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 55

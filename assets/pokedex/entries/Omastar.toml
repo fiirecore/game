@@ -4,8 +4,11 @@ name = "Omastar"
 primary_type = "Rock"
 secondary_type = "Water"
 species = "Spiral"
-height = 1.0
-weight = 35.0
+height = 10
+weight = 350
+[training]
+base_exp = 173
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 60

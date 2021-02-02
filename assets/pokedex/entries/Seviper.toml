@@ -3,8 +3,11 @@ number = 336
 name = "Seviper"
 primary_type = "Poison"
 species = "Fang"
-height = 2.7
-weight = 52.5
+height = 27
+weight = 525
+[training]
+base_exp = 160
+growth_rate = "Fast"
 [base]
 hp = 73
 atk = 100

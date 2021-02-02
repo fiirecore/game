@@ -4,8 +4,11 @@ name = "Vileplume"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Flower"
-height = 1.2
-weight = 18.6
+height = 12
+weight = 186
+[training]
+base_exp = 221
+growth_rate = "MediumSlow"
 [base]
 hp = 75
 atk = 80

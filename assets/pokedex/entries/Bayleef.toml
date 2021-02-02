@@ -3,8 +3,11 @@ number = 153
 name = "Bayleef"
 primary_type = "Grass"
 species = "Leaf"
-height = 1.2
-weight = 15.8
+height = 12
+weight = 158
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 62

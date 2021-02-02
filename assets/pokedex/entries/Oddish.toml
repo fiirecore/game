@@ -4,8 +4,11 @@ name = "Oddish"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Weed"
-height = 0.5
-weight = 5.4
+height = 5
+weight = 54
+[training]
+base_exp = 64
+growth_rate = "MediumSlow"
 [base]
 hp = 45
 atk = 50

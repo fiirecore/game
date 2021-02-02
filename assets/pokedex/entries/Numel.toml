@@ -4,8 +4,11 @@ name = "Numel"
 primary_type = "Fire"
 secondary_type = "Ground"
 species = "Numb"
-height = 0.7
-weight = 24.0
+height = 7
+weight = 240
+[training]
+base_exp = 61
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 60

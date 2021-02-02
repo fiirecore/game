@@ -3,8 +3,11 @@ number = 90
 name = "Shellder"
 primary_type = "Water"
 species = "Bivalve"
-height = 0.3
-weight = 4.0
+height = 3
+weight = 40
+[training]
+base_exp = 61
+growth_rate = "Slow"
 [base]
 hp = 30
 atk = 65

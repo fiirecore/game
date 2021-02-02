@@ -4,8 +4,11 @@ name = "Sableye"
 primary_type = "Dark"
 secondary_type = "Ghost"
 species = "Darkness"
-height = 0.5
-weight = 11.0
+height = 5
+weight = 110
+[training]
+base_exp = 133
+growth_rate = "MediumSlow"
 [base]
 hp = 50
 atk = 75

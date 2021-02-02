@@ -4,8 +4,11 @@ name = "Kingdra"
 primary_type = "Water"
 secondary_type = "Dragon"
 species = "Dragon"
-height = 1.8
-weight = 152.0
+height = 18
+weight = 1520
+[training]
+base_exp = 243
+growth_rate = "MediumFast"
 [base]
 hp = 75
 atk = 95

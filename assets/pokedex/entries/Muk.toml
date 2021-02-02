@@ -3,8 +3,11 @@ number = 89
 name = "Muk"
 primary_type = "Poison"
 species = "Sludge"
-height = 1.2
-weight = 30.0
+height = 12
+weight = 300
+[training]
+base_exp = 175
+growth_rate = "MediumFast"
 [base]
 hp = 105
 atk = 105

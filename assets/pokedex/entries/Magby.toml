@@ -3,8 +3,11 @@ number = 240
 name = "Magby"
 primary_type = "Fire"
 species = "Live"
-height = 0.7
-weight = 21.4
+height = 7
+weight = 214
+[training]
+base_exp = 73
+growth_rate = "MediumFast"
 [base]
 hp = 45
 atk = 75

@@ -4,8 +4,11 @@ name = "Magneton"
 primary_type = "Electric"
 secondary_type = "Steel"
 species = "Magnet"
-height = 1.0
-weight = 60.0
+height = 10
+weight = 600
+[training]
+base_exp = 163
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 60

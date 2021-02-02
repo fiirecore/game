@@ -3,8 +3,11 @@ number = 328
 name = "Trapinch"
 primary_type = "Ground"
 species = "Ant"
-height = 0.7
-weight = 15.0
+height = 7
+weight = 150
+[training]
+base_exp = 58
+growth_rate = "MediumSlow"
 [base]
 hp = 45
 atk = 100

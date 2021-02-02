@@ -4,8 +4,11 @@ name = "Solrock"
 primary_type = "Rock"
 secondary_type = "Psychic"
 species = "Meteorite"
-height = 1.2
-weight = 154.0
+height = 12
+weight = 1540
+[training]
+base_exp = 161
+growth_rate = "Fast"
 [base]
 hp = 90
 atk = 95

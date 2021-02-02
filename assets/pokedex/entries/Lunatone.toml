@@ -4,8 +4,11 @@ name = "Lunatone"
 primary_type = "Rock"
 secondary_type = "Psychic"
 species = "Meteorite"
-height = 1.0
-weight = 168.0
+height = 10
+weight = 1680
+[training]
+base_exp = 161
+growth_rate = "Fast"
 [base]
 hp = 90
 atk = 55

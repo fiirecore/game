@@ -4,8 +4,11 @@ name = "Charizard"
 primary_type = "Fire"
 secondary_type = "Flying"
 species = "Flame"
-height = 1.7
-weight = 90.5
+height = 17
+weight = 905
+[training]
+base_exp = 240
+growth_rate = "MediumSlow"
 [base]
 hp = 78
 atk = 84

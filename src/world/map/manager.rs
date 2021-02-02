@@ -93,8 +93,6 @@ impl WorldManager {
         if music != self.current_music {
             self.current_music = music;
             play_music(self.current_music);
-        } if !crate::audio::is_music_playing() {
-            play_music(self.current_music);
         }
     }
 
@@ -408,22 +406,14 @@ impl WorldManager {
 
         if is_key_pressed(KeyCode::F3) {
             if self.chunk_map.is_alive() {
-                let mut pos_map = String::from("Local X: ");
-                pos_map.push_str((self.player.position.x - self.chunk_map.current_chunk().x).to_string().as_str());
-                pos_map.push_str(", Local Y: ");
-                pos_map.push_str((self.player.position.y - self.chunk_map.current_chunk().y).to_string().as_str()); // To - do : use itoa/ryu/lexical
-                info!("{}", pos_map);
+                info!("Local X: {}, Local Y: {}", self.player.position.x - self.chunk_map.current_chunk().x, self.player.position.y - self.chunk_map.current_chunk().y);
             }
-            let mut pos = String::from("X: ");
-            pos.push_str(self.player.position.x.to_string().as_str());
-            pos.push_str(", Y: ");
-            pos.push_str(self.player.position.y.to_string().as_str());
             let tile = if self.chunk_map.is_alive() {
                 self.chunk_map.tile(self.player.position.x, self.player.position.y)
             } else {
                 self.map_sets.tile(self.player.position.x, self.player.position.y)
             };
-            info!("{}, Tile: {}", pos, tile);
+            info!("X: {}, Y: {}, Tile ID: {}", self.player.position.x, self.player.position.y, tile);
         }
 
     }

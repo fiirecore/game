@@ -3,8 +3,11 @@ number = 77
 name = "Ponyta"
 primary_type = "Fire"
 species = "Fire"
-height = 1.0
-weight = 30.0
+height = 10
+weight = 300
+[training]
+base_exp = 82
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 85

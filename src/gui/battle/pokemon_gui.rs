@@ -1,3 +1,5 @@
+use macroquad::prelude::Color;
+
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::background::Background;
@@ -7,6 +9,7 @@ use crate::io::data::Direction;
 
 use crate::gui::battle::health_bar::HealthBar;
 use crate::gui::GuiComponent;
+use crate::util::render::draw_rect;
 use crate::util::texture::byte_texture;
 
 static OFFSET: f32 = 24.0 * 5.0;
@@ -21,10 +24,13 @@ pub struct PlayerPokemonGui {
 	pub level: BasicText,
 	pub health_text: BasicText,
 	pub health_bar: HealthBar,
+	pub exp_width: f32,
 
 }
 
 impl PlayerPokemonGui {
+
+	const EXP_COLOR: Color = macroquad::color_u8!(64, 200, 248, 255);
 
 	pub fn new(x: f32, y: f32) -> PlayerPokemonGui {
 
@@ -41,6 +47,7 @@ impl PlayerPokemonGui {
 			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 95.0, 2.0, ppp_x, y),
 			health_text: BasicText::new(vec![String::from("/")], 0, Direction::Right, 95.0, 20.0, ppp_x, y),
 			health_bar: HealthBar::new(48.0, 17.0, ppp_x, y),
+			exp_width: 0.0,
 
 		}
 	}
@@ -94,12 +101,14 @@ impl PokemonGui for PlayerPokemonGui {
 			self.level.render();
 			self.health_text.render();
 			self.health_bar.render();
+			draw_rect(Self::EXP_COLOR, self.panel.x + 32.0, self.panel.y + 33.0, (self.exp_width * 64.0) as u32, 2);
 		}		
 	}
 
 	fn update_gui(&mut self, battle: &Battle) {
 		self.name.text = vec![battle.player().data.name.to_uppercase()];
 		self.level.text = vec![String::from("Lv") + battle.player().level.to_string().as_str()];
+		self.exp_width = battle.player().exp as f32 / battle.player().training.growth_rate.level_exp(battle.player().level) as f32;
 		self.update_hp(battle.player().current_hp, battle.player().base.hp);
 	}
 
@@ -208,9 +217,7 @@ impl PokemonGui for OpponentPokemonGui {
 
 	fn update_gui(&mut self, battle: &Battle) {
 		self.name.text = vec![battle.opponent().data.name.to_uppercase()];
-		let mut olstr = String::from("Lv");
-		olstr.push_str(battle.opponent().level.to_string().as_str());
-		self.level.text = vec![olstr];
+		self.level.text = vec![String::from("Lv") + battle.opponent().level.to_string().as_str()];
 		self.update_hp(battle.opponent().current_hp, battle.opponent().base.hp)
 	}
 

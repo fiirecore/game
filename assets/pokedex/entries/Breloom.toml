@@ -4,8 +4,11 @@ name = "Breloom"
 primary_type = "Grass"
 secondary_type = "Fighting"
 species = "Mushroom"
-height = 1.2
-weight = 39.2
+height = 12
+weight = 392
+[training]
+base_exp = 161
+growth_rate = "Fast"
 [base]
 hp = 60
 atk = 130

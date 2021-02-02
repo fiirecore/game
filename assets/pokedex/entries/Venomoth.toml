@@ -4,8 +4,11 @@ name = "Venomoth"
 primary_type = "Bug"
 secondary_type = "Poison"
 species = "Poison"
-height = 1.5
-weight = 12.5
+height = 15
+weight = 125
+[training]
+base_exp = 158
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 65

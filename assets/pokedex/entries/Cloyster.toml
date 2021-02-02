@@ -4,8 +4,11 @@ name = "Cloyster"
 primary_type = "Water"
 secondary_type = "Ice"
 species = "Bivalve"
-height = 1.5
-weight = 132.5
+height = 15
+weight = 1325
+[training]
+base_exp = 184
+growth_rate = "Slow"
 [base]
 hp = 50
 atk = 95

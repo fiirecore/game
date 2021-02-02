@@ -3,8 +3,11 @@ number = 107
 name = "Hitmonchan"
 primary_type = "Fighting"
 species = "Punching"
-height = 1.4
-weight = 50.2
+height = 14
+weight = 502
+[training]
+base_exp = 159
+growth_rate = "MediumFast"
 [base]
 hp = 50
 atk = 105

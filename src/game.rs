@@ -54,7 +54,7 @@ impl GameManager {
 		let mut player_data = get_mut::<PlayerData>().expect("Could not get Player Data");
 		// player_data.load(); // loads gui
 		if player_data.party.pokemon.len() == 0 {
-			player_data.default_add();
+			player_data.party = PlayerData::default().party;
 		}		
 		self.battle_manager.load();
 	}

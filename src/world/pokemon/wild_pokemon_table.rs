@@ -1,5 +1,5 @@
 use macroquad::prelude::warn;
-use crate::io::data::StatSet;
+use crate::pokemon::data::StatSet;
 use super::wild_pokemon_encounter::WildPokemonEncounter;
 use crate::pokemon::instance::PokemonInstance;
 

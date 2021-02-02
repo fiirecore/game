@@ -4,8 +4,11 @@ name = "Moltres"
 primary_type = "Fire"
 secondary_type = "Flying"
 species = "Flame"
-height = 2.0
-weight = 60.0
+height = 20
+weight = 600
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 90
 atk = 100

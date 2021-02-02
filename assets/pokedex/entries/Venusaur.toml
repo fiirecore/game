@@ -4,8 +4,11 @@ name = "Venusaur"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Seed"
-height = 2.0
-weight = 100.0
+height = 20
+weight = 1000
+[training]
+base_exp = 236
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 82

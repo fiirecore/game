@@ -4,8 +4,11 @@ name = "Chinchou"
 primary_type = "Water"
 secondary_type = "Electric"
 species = "Angler"
-height = 0.5
-weight = 12.0
+height = 5
+weight = 120
+[training]
+base_exp = 66
+growth_rate = "Slow"
 [base]
 hp = 75
 atk = 38

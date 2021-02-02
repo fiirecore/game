@@ -3,8 +3,11 @@ number = 116
 name = "Horsea"
 primary_type = "Water"
 species = "Dragon"
-height = 0.4
-weight = 8.0
+height = 4
+weight = 80
+[training]
+base_exp = 59
+growth_rate = "MediumFast"
 [base]
 hp = 30
 atk = 40

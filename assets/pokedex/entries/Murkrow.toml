@@ -4,8 +4,11 @@ name = "Murkrow"
 primary_type = "Dark"
 secondary_type = "Flying"
 species = "Darkness"
-height = 0.5
-weight = 2.1
+height = 5
+weight = 21
+[training]
+base_exp = 81
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 85

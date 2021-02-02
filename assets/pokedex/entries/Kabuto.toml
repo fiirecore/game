@@ -4,8 +4,11 @@ name = "Kabuto"
 primary_type = "Rock"
 secondary_type = "Water"
 species = "Shellfish"
-height = 0.5
-weight = 11.5
+height = 5
+weight = 115
+[training]
+base_exp = 71
+growth_rate = "MediumFast"
 [base]
 hp = 30
 atk = 80

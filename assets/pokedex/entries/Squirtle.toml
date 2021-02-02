@@ -3,8 +3,11 @@ number = 7
 name = "Squirtle"
 primary_type = "Water"
 species = "Tiny"
-height = 0.5
-weight = 9.0
+height = 5
+weight = 90
+[training]
+base_exp = 63
+growth_rate = "MediumSlow"
 [base]
 hp = 44
 atk = 48

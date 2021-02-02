@@ -4,8 +4,11 @@ name = "Wooper"
 primary_type = "Water"
 secondary_type = "Ground"
 species = "Water"
-height = 0.4
-weight = 8.5
+height = 4
+weight = 85
+[training]
+base_exp = 42
+growth_rate = "MediumFast"
 [base]
 hp = 55
 atk = 45

@@ -4,8 +4,11 @@ name = "Houndour"
 primary_type = "Dark"
 secondary_type = "Fire"
 species = "Dark"
-height = 0.6
-weight = 10.8
+height = 6
+weight = 108
+[training]
+base_exp = 66
+growth_rate = "Slow"
 [base]
 hp = 45
 atk = 60

@@ -4,8 +4,11 @@ name = "Slowking"
 primary_type = "Water"
 secondary_type = "Psychic"
 species = "Royal"
-height = 2.0
-weight = 79.5
+height = 20
+weight = 795
+[training]
+base_exp = 172
+growth_rate = "MediumFast"
 [base]
 hp = 95
 atk = 75

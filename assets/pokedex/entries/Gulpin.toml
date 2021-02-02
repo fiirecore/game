@@ -3,8 +3,11 @@ number = 316
 name = "Gulpin"
 primary_type = "Poison"
 species = "Stomach"
-height = 0.4
-weight = 10.3
+height = 4
+weight = 103
+[training]
+base_exp = 60
+growth_rate = "Fast"
 [base]
 hp = 70
 atk = 43

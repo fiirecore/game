@@ -4,8 +4,11 @@ name = "Vibrava"
 primary_type = "Ground"
 secondary_type = "Dragon"
 species = "Vibration"
-height = 1.1
-weight = 15.3
+height = 11
+weight = 153
+[training]
+base_exp = 119
+growth_rate = "MediumSlow"
 [base]
 hp = 50
 atk = 70

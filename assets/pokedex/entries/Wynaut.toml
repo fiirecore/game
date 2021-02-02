@@ -3,8 +3,11 @@ number = 360
 name = "Wynaut"
 primary_type = "Psychic"
 species = "Bright"
-height = 0.6
-weight = 14.0
+height = 6
+weight = 140
+[training]
+base_exp = 52
+growth_rate = "MediumFast"
 [base]
 hp = 95
 atk = 23

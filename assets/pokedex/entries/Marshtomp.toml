@@ -4,8 +4,11 @@ name = "Marshtomp"
 primary_type = "Water"
 secondary_type = "Ground"
 species = "Mud"
-height = 0.7
-weight = 28.0
+height = 7
+weight = 280
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 70
 atk = 85

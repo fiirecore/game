@@ -4,8 +4,11 @@ name = "Swellow"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Swallow"
-height = 0.7
-weight = 19.8
+height = 7
+weight = 198
+[training]
+base_exp = 159
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 85

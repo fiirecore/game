@@ -3,8 +3,11 @@ number = 241
 name = "Miltank"
 primary_type = "Normal"
 species = "Milk"
-height = 1.2
-weight = 75.5
+height = 12
+weight = 755
+[training]
+base_exp = 172
+growth_rate = "Slow"
 [base]
 hp = 95
 atk = 80

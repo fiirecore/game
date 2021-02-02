@@ -4,8 +4,11 @@ name = "Noctowl"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Owl"
-height = 1.6
-weight = 40.8
+height = 16
+weight = 408
+[training]
+base_exp = 158
+growth_rate = "MediumFast"
 [base]
 hp = 100
 atk = 50

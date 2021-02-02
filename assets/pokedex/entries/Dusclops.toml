@@ -3,8 +3,11 @@ number = 356
 name = "Dusclops"
 primary_type = "Ghost"
 species = "Beckon"
-height = 1.6
-weight = 30.6
+height = 16
+weight = 306
+[training]
+base_exp = 159
+growth_rate = "Fast"
 [base]
 hp = 40
 atk = 70

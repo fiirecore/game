@@ -1,6 +1,7 @@
-use crate::io::data::StatSet;
-use crate::pokemon::PokedexData;
+use crate::pokemon::data::StatSet;
+use crate::pokemon::data::PokedexData;
 use crate::pokemon::Pokemon;
+use crate::pokemon::data::training::Training;
 use crate::pokemon::instance::PokemonInstance;
 use crate::pokemon::moves::MoveInstance;
 use crate::pokemon::pokedex::Pokedex;
@@ -8,6 +9,7 @@ use crate::pokemon::pokedex::Pokedex;
 pub struct BattlePokemon {
 	
 	pub data: PokedexData,
+	pub training: Training,
 	
 	pub level: u8,
 //	ability: Ability,
@@ -20,6 +22,8 @@ pub struct BattlePokemon {
 	evs: StatSet,
 
 	pub current_hp: u16,
+
+	pub exp: usize,
 	
 }
 
@@ -41,6 +45,7 @@ impl BattlePokemon {
 		Self {
 			
 			data: pokemon_data.data.clone(),
+			training: pokemon_data.training,
 			
 			level: pokemon.level,
 			
@@ -53,6 +58,8 @@ impl BattlePokemon {
 			current_hp: pokemon.current_hp.unwrap_or(stats.hp),
 
 			base: stats,
+
+			exp: pokemon.exp.unwrap_or_default(),
 			
 		}
 
@@ -74,6 +81,7 @@ impl BattlePokemon {
 		Self {
 			
 			data: pokemon.data.clone(),
+			training: pokemon.training,
 			
 			level: level,
 			
@@ -85,6 +93,7 @@ impl BattlePokemon {
 			base: base,
 
 			current_hp: base.hp,
+			exp: 0,
 			
 		}
 		
@@ -97,7 +106,7 @@ impl BattlePokemon {
 		    ivs: Some(self.ivs),
 		    evs: Some(self.evs),
 		    move_set: Some(crate::pokemon::moves::instance::SavedPokemonMoveSet::from_instance(&self.moves)),
-		    exp: Some(0),
+		    exp: Some(self.exp),
 		    friendship: Some(70),
 		    current_hp: Some(self.current_hp),
 		}

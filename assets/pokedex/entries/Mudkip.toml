@@ -3,8 +3,11 @@ number = 258
 name = "Mudkip"
 primary_type = "Water"
 species = "Mud"
-height = 0.4
-weight = 7.6
+height = 4
+weight = 76
+[training]
+base_exp = 62
+growth_rate = "MediumSlow"
 [base]
 hp = 50
 atk = 70

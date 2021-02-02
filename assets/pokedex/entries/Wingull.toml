@@ -4,8 +4,11 @@ name = "Wingull"
 primary_type = "Water"
 secondary_type = "Flying"
 species = "Seagull"
-height = 0.6
-weight = 9.5
+height = 6
+weight = 95
+[training]
+base_exp = 54
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 30

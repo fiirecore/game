@@ -3,8 +3,11 @@ number = 224
 name = "Octillery"
 primary_type = "Water"
 species = "Jet"
-height = 0.9
-weight = 28.5
+height = 9
+weight = 285
+[training]
+base_exp = 168
+growth_rate = "MediumFast"
 [base]
 hp = 75
 atk = 105

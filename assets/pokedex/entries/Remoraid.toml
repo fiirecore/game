@@ -3,8 +3,11 @@ number = 223
 name = "Remoraid"
 primary_type = "Water"
 species = "Jet"
-height = 0.6
-weight = 12.0
+height = 6
+weight = 120
+[training]
+base_exp = 60
+growth_rate = "MediumFast"
 [base]
 hp = 35
 atk = 65

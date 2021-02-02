@@ -4,8 +4,11 @@ name = "Masquerain"
 primary_type = "Bug"
 secondary_type = "Flying"
 species = "Eyeball"
-height = 0.8
-weight = 3.6
+height = 8
+weight = 36
+[training]
+base_exp = 159
+growth_rate = "MediumFast"
 [base]
 hp = 70
 atk = 60

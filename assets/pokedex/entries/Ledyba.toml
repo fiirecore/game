@@ -4,8 +4,11 @@ name = "Ledyba"
 primary_type = "Bug"
 secondary_type = "Flying"
 species = "Five"
-height = 1.0
-weight = 10.8
+height = 10
+weight = 108
+[training]
+base_exp = 53
+growth_rate = "Fast"
 [base]
 hp = 40
 atk = 20

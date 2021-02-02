@@ -3,8 +3,11 @@ number = 59
 name = "Arcanine"
 primary_type = "Fire"
 species = "Legendary"
-height = 1.9
-weight = 155.0
+height = 19
+weight = 1550
+[training]
+base_exp = 194
+growth_rate = "Slow"
 [base]
 hp = 90
 atk = 110

@@ -3,8 +3,11 @@ number = 29
 name = "Nidoran-f"
 primary_type = "Poison"
 species = "Poison"
-height = 0.4
-weight = 7.0
+height = 4
+weight = 70
+[training]
+base_exp = 55
+growth_rate = "MediumSlow"
 [base]
 hp = 55
 atk = 47

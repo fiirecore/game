@@ -4,8 +4,11 @@ name = "Skiploom"
 primary_type = "Grass"
 secondary_type = "Flying"
 species = "Cottonweed"
-height = 0.6
-weight = 1.0
+height = 6
+weight = 10
+[training]
+base_exp = 119
+growth_rate = "MediumSlow"
 [base]
 hp = 55
 atk = 45

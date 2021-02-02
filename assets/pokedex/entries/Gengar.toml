@@ -4,8 +4,11 @@ name = "Gengar"
 primary_type = "Ghost"
 secondary_type = "Poison"
 species = "Shadow"
-height = 1.5
-weight = 40.5
+height = 15
+weight = 405
+[training]
+base_exp = 225
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 65

@@ -4,8 +4,11 @@ name = "Hoothoot"
 primary_type = "Normal"
 secondary_type = "Flying"
 species = "Owl"
-height = 0.7
-weight = 21.2
+height = 7
+weight = 212
+[training]
+base_exp = 52
+growth_rate = "MediumFast"
 [base]
 hp = 60
 atk = 30

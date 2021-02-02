@@ -6,6 +6,7 @@ use macroquad::prelude::info;
 
 use io::data::configuration::Configuration;
 use macroquad::prelude::warn;
+use parking_lot::RwLock;
 use scene::loading_scene_manager::LoadingSceneManager;
 use scene::scene_manager::SceneManager;
 use util::file::PersistantDataLocation;
@@ -16,7 +17,9 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;
 pub static BASE_HEIGHT: u32 = 160;
 
-pub static mut RUNNING: bool = true;
+lazy_static::lazy_static! {
+    static ref RUNNING: RwLock<bool> = RwLock::new(true);
+}
 
 #[macroquad::main(settings)]
 async fn main() {
@@ -27,66 +30,55 @@ async fn main() {
         info!("Running in debug mode");
     }
 
-    let args: Vec<String> = std::env::args().collect();
-
-    let mut load_music = true;
-
-    let mut opts = getopts::Options::new();
-    opts.optflag("m", "no-music", "Disable music");
-    match opts.parse(&args[1..]) {
-        Ok(m) => {
-            if m.opt_present("m") {
-                load_music = false;
-            }
-        }
-        Err(f) => {
-            warn!("Could not parse command line arguments with error {}", f.to_string());
-        }
-    };
+    let args = parse_args();
 
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
-    info!("Loading in background...");
-
-    if load_music {
+    if args.0 {
         storage::store(util::audio::AudioContext::new());
     }
 
     let loading_coroutine = macroquad::prelude::coroutines::start_coroutine(load_coroutine());
+
+
+    info!("Loading in background...");
 
     let mut scene_manager = SceneManager::default();
     audio::loader::bind_world_music();
     
     storage::store(io::data::player::PlayerData::load_async_default().await);
 
-    while !loading_coroutine.is_done() {
-        macroquad::prelude::coroutines::wait_seconds(0.2).await;
-    }
-    macroquad::prelude::coroutines::stop_coroutine(loading_coroutine);
-
     scene_manager.load_other_scenes().await;
 
     info!("Finished loading in background!");
+
+
+
+    while !loading_coroutine.is_done() {
+        macroquad::prelude::coroutines::wait_seconds(0.2).await;
+    }
+    macroquad::prelude::coroutines::stop_coroutine(loading_coroutine);   
 
     info!("Starting game!");
 
     scene_manager.on_start();
 
-    loop {
+    let running = RUNNING.read();
+
+    while *running {
         scene_manager.input(get_frame_time());
         scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
         scene_manager.render();
-        unsafe {
-            if !RUNNING {
-                break;
-            }
-        }
         macroquad::prelude::next_frame().await;
     }
 
     util::Quit::quit(&mut scene_manager);
 
+}
+
+pub fn queue_quit() {
+    *RUNNING.write() = false;
 }
 
 fn settings() -> Conf {
@@ -103,10 +95,6 @@ fn settings() -> Conf {
     }
 }
 
-fn not_debug() -> bool {
-    !cfg!(debug_assertions) || cfg!(target_arch = "wasm32")
-}
-
 async fn load_coroutine() {
     info!("Starting loading scene coroutine");
     let mut loading_scene_manager = LoadingSceneManager::new();
@@ -116,6 +104,31 @@ async fn load_coroutine() {
         loading_scene_manager.render();
         macroquad::prelude::next_frame().await;
     }
+}
+
+fn not_debug() -> bool {
+    !cfg!(debug_assertions) || cfg!(target_arch = "wasm32")
+}
+
+fn parse_args() -> (bool, ) {
+    let args: Vec<String> = std::env::args().collect();
+    let mut opts = getopts::Options::new();
+
+    let mut load_music = true;
+    opts.optflag("m", "no-music", "Disable music");
+
+    match opts.parse(&args[1..]) {
+        Ok(m) => {
+            if m.opt_present("m") {
+                load_music = false; // return here instead of having mut bool
+            }
+        }
+        Err(f) => {
+            warn!("Could not parse command line arguments with error {}", f.to_string());
+        }
+    };
+
+    return (load_music, );
 }
 
 pub enum RunState {

@@ -4,8 +4,11 @@ name = "Crawdaunt"
 primary_type = "Water"
 secondary_type = "Dark"
 species = "Rogue"
-height = 1.1
-weight = 32.8
+height = 11
+weight = 328
+[training]
+base_exp = 164
+growth_rate = "Fast"
 [base]
 hp = 63
 atk = 120

@@ -3,8 +3,11 @@ number = 156
 name = "Quilava"
 primary_type = "Fire"
 species = "Volcano"
-height = 0.9
-weight = 19.0
+height = 9
+weight = 190
+[training]
+base_exp = 142
+growth_rate = "MediumSlow"
 [base]
 hp = 58
 atk = 64

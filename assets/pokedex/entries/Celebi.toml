@@ -4,8 +4,11 @@ name = "Celebi"
 primary_type = "Psychic"
 secondary_type = "Grass"
 species = "Time"
-height = 0.6
-weight = 5.0
+height = 6
+weight = 50
+[training]
+base_exp = 270
+growth_rate = "MediumSlow"
 [base]
 hp = 100
 atk = 100

@@ -3,8 +3,11 @@ number = 353
 name = "Shuppet"
 primary_type = "Ghost"
 species = "Puppet"
-height = 0.6
-weight = 2.3
+height = 6
+weight = 23
+[training]
+base_exp = 59
+growth_rate = "Fast"
 [base]
 hp = 44
 atk = 75

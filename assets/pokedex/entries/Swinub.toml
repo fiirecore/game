@@ -4,8 +4,11 @@ name = "Swinub"
 primary_type = "Ice"
 secondary_type = "Ground"
 species = "Pig"
-height = 0.4
-weight = 6.5
+height = 4
+weight = 65
+[training]
+base_exp = 50
+growth_rate = "Slow"
 [base]
 hp = 50
 atk = 50

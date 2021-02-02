@@ -3,8 +3,11 @@ number = 118
 name = "Goldeen"
 primary_type = "Water"
 species = "Goldfish"
-height = 0.6
-weight = 15.0
+height = 6
+weight = 150
+[training]
+base_exp = 64
+growth_rate = "MediumFast"
 [base]
 hp = 45
 atk = 67

@@ -3,8 +3,11 @@ number = 368
 name = "Gorebyss"
 primary_type = "Water"
 species = "South"
-height = 1.8
-weight = 22.6
+height = 18
+weight = 226
+[training]
+base_exp = 170
+growth_rate = "Slow"
 [base]
 hp = 55
 atk = 84

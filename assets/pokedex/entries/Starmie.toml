@@ -4,8 +4,11 @@ name = "Starmie"
 primary_type = "Water"
 secondary_type = "Psychic"
 species = "Mysterious"
-height = 1.1
-weight = 80.0
+height = 11
+weight = 800
+[training]
+base_exp = 182
+growth_rate = "Slow"
 [base]
 hp = 60
 atk = 75

@@ -4,8 +4,11 @@ name = "Victreebel"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Flycatcher"
-height = 1.7
-weight = 15.5
+height = 17
+weight = 155
+[training]
+base_exp = 221
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 105

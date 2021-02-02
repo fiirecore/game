@@ -3,8 +3,11 @@ number = 239
 name = "Elekid"
 primary_type = "Electric"
 species = "Electric"
-height = 0.6
-weight = 23.5
+height = 6
+weight = 235
+[training]
+base_exp = 72
+growth_rate = "MediumFast"
 [base]
 hp = 45
 atk = 63

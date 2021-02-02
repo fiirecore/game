@@ -3,8 +3,11 @@ number = 56
 name = "Mankey"
 primary_type = "Fighting"
 species = "Pig"
-height = 0.5
-weight = 28.0
+height = 5
+weight = 280
+[training]
+base_exp = 61
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 80

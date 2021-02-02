@@ -4,8 +4,11 @@ name = "Bellsprout"
 primary_type = "Grass"
 secondary_type = "Poison"
 species = "Flower"
-height = 0.7
-weight = 4.0
+height = 7
+weight = 40
+[training]
+base_exp = 60
+growth_rate = "MediumSlow"
 [base]
 hp = 50
 atk = 75

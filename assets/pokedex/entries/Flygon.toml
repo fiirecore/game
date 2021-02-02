@@ -4,8 +4,11 @@ name = "Flygon"
 primary_type = "Ground"
 secondary_type = "Dragon"
 species = "Mystic"
-height = 2.0
-weight = 82.0
+height = 20
+weight = 820
+[training]
+base_exp = 234
+growth_rate = "MediumSlow"
 [base]
 hp = 80
 atk = 100

@@ -1,4 +1,5 @@
 use macroquad::prelude::warn;
+use ahash::AHashMap as HashMap;
 use crate::audio::music::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::chunk::world_chunk::WorldChunk;
@@ -9,7 +10,7 @@ use super::npc_loader::load_npc_entries;
 use super::warp_loader::load_warp_entries;
 use super::wild_entry_loader::load_wild_entry;
 
-pub fn new_chunk_map(root_path: &include_dir::Dir, palette_sizes: &Vec<u16>, config: MapConfig) -> Option<(u16, WorldChunk)> {
+pub fn new_chunk_map(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(u16, WorldChunk)> {
     match root_path.get_file(root_path.path().join(&config.identifier.map_files[0])) {
         Some(map_file) => {
             match map_file.path().extension() {

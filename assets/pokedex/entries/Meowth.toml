@@ -3,8 +3,11 @@ number = 52
 name = "Meowth"
 primary_type = "Normal"
 species = "Scratch"
-height = 0.4
-weight = 4.2
+height = 4
+weight = 42
+[training]
+base_exp = 58
+growth_rate = "MediumFast"
 [base]
 hp = 40
 atk = 45

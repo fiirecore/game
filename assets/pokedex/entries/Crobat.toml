@@ -4,8 +4,11 @@ name = "Crobat"
 primary_type = "Poison"
 secondary_type = "Flying"
 species = "Bat"
-height = 1.8
-weight = 75.0
+height = 18
+weight = 750
+[training]
+base_exp = 241
+growth_rate = "MediumFast"
 [base]
 hp = 85
 atk = 90

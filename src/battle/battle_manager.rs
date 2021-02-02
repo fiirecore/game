@@ -178,6 +178,7 @@ impl BattleManager {
 			if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F1) {
 				//self.battle_closer_manager.spawn() // exit shortcut
 				self.finished = true;
+				self.current_battle.update_data(&mut std::ops::DerefMut::deref_mut(&mut macroquad::prelude::collections::storage::get_mut::<PlayerData>().unwrap()))
 			}
 
 		}

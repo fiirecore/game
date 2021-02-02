@@ -4,8 +4,11 @@ name = "Marill"
 primary_type = "Water"
 secondary_type = "Fairy"
 species = "Aqua"
-height = 0.4
-weight = 8.5
+height = 4
+weight = 85
+[training]
+base_exp = 88
+growth_rate = "Fast"
 [base]
 hp = 70
 atk = 20

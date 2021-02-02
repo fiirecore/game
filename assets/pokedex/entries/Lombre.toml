@@ -4,8 +4,11 @@ name = "Lombre"
 primary_type = "Water"
 secondary_type = "Grass"
 species = "Jolly"
-height = 1.2
-weight = 32.5
+height = 12
+weight = 325
+[training]
+base_exp = 119
+growth_rate = "MediumSlow"
 [base]
 hp = 60
 atk = 50

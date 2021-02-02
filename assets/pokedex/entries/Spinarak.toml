@@ -4,8 +4,11 @@ name = "Spinarak"
 primary_type = "Bug"
 secondary_type = "Poison"
 species = "String"
-height = 0.5
-weight = 8.5
+height = 5
+weight = 85
+[training]
+base_exp = 50
+growth_rate = "Fast"
 [base]
 hp = 40
 atk = 60

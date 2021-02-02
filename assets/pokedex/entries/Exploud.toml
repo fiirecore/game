@@ -3,8 +3,11 @@ number = 295
 name = "Exploud"
 primary_type = "Normal"
 species = "Loud"
-height = 1.5
-weight = 84.0
+height = 15
+weight = 840
+[training]
+base_exp = 221
+growth_rate = "MediumSlow"
 [base]
 hp = 104
 atk = 91

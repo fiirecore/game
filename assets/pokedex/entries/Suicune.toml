@@ -3,8 +3,11 @@ number = 245
 name = "Suicune"
 primary_type = "Water"
 species = "Aurora"
-height = 2.0
-weight = 187.0
+height = 20
+weight = 1870
+[training]
+base_exp = 261
+growth_rate = "Slow"
 [base]
 hp = 100
 atk = 75

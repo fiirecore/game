@@ -4,8 +4,11 @@ name = "Lapras"
 primary_type = "Water"
 secondary_type = "Ice"
 species = "Transport"
-height = 2.5
-weight = 220.0
+height = 25
+weight = 2200
+[training]
+base_exp = 187
+growth_rate = "Slow"
 [base]
 hp = 130
 atk = 85

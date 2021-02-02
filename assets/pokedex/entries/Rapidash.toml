@@ -3,8 +3,11 @@ number = 78
 name = "Rapidash"
 primary_type = "Fire"
 species = "Fire"
-height = 1.7
-weight = 95.0
+height = 17
+weight = 950
+[training]
+base_exp = 175
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 100

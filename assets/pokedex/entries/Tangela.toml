@@ -3,8 +3,11 @@ number = 114
 name = "Tangela"
 primary_type = "Grass"
 species = "Vine"
-height = 1.0
-weight = 35.0
+height = 10
+weight = 350
+[training]
+base_exp = 87
+growth_rate = "MediumFast"
 [base]
 hp = 65
 atk = 55

@@ -3,8 +3,11 @@ number = 326
 name = "Grumpig"
 primary_type = "Psychic"
 species = "Manipulate"
-height = 0.9
-weight = 71.5
+height = 9
+weight = 715
+[training]
+base_exp = 165
+growth_rate = "Fast"
 [base]
 hp = 80
 atk = 45

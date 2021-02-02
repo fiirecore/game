@@ -4,8 +4,11 @@ name = "Ho-oh"
 primary_type = "Fire"
 secondary_type = "Flying"
 species = "Rainbow"
-height = 3.8
-weight = 199.0
+height = 38
+weight = 1990
+[training]
+base_exp = 306
+growth_rate = "Slow"
 [base]
 hp = 106
 atk = 130

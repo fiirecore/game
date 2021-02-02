@@ -3,8 +3,11 @@ number = 350
 name = "Milotic"
 primary_type = "Water"
 species = "Tender"
-height = 6.2
-weight = 162.0
+height = 62
+weight = 1620
+[training]
+base_exp = 189
+growth_rate = "Slow"
 [base]
 hp = 95
 atk = 60

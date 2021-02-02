@@ -1,9 +1,9 @@
 use serde::Deserialize;
-use super::PokemonType;
+use super::types::PokemonType;
 
 pub mod instance;
 
-#[derive(Hash, Clone, Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct PokemonMove {
 
 	pub name: String,

@@ -4,8 +4,11 @@ name = "Slowbro"
 primary_type = "Water"
 secondary_type = "Psychic"
 species = "Hermit"
-height = 1.6
-weight = 78.5
+height = 16
+weight = 785
+[training]
+base_exp = 172
+growth_rate = "MediumFast"
 [base]
 hp = 95
 atk = 75

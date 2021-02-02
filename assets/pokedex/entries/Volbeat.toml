@@ -3,8 +3,11 @@ number = 313
 name = "Volbeat"
 primary_type = "Bug"
 species = "Firefly"
-height = 0.7
-weight = 17.7
+height = 7
+weight = 177
+[training]
+base_exp = 151
+growth_rate = "Slow"
 [base]
 hp = 65
 atk = 73
