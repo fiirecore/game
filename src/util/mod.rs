@@ -1,11 +1,9 @@
-use self::text_renderer::TextRenderer;
-
-pub mod image;
 pub mod render;
 pub mod texture;
+pub mod text;
 pub mod timer;
 pub mod input;
-pub mod text_renderer;
+pub mod image;
 pub mod file;
 pub mod audio;
 pub mod battle_data;
@@ -36,7 +34,7 @@ pub trait Update {
 
 pub trait Render {
 
-	fn render(&self, tr: &TextRenderer);
+	fn render(&self);
 
 }
 

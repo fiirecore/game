@@ -1,6 +1,6 @@
 
 
-use crate::util::text_renderer::TextRenderer;
+
 use super::{GuiComponent, GuiText};
 pub struct BasicButton {
 	
@@ -57,8 +57,8 @@ impl GuiComponent for BasicButton {
 		self.panel_y = y;
 	}
     
-    fn render(&self, tr: &TextRenderer) {
-        tr.render_text_from_left(self.get_font_id(), self.get_line(0), self.panel_x + self.x, self.panel_y + self.y);
+    fn render(&self) {
+        crate::util::render::draw_text_left(self.get_font_id(), self.get_line(0), self.panel_x + self.x, self.panel_y + self.y);
     }
 
 }

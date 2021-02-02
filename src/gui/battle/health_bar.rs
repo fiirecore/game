@@ -1,7 +1,7 @@
 
 
 
-use crate::util::text_renderer::TextRenderer;
+
 use crate::gui::GuiComponent;
 
 use crate::util::render::draw_rect;
@@ -101,7 +101,7 @@ impl GuiComponent for HealthBar {
 		}
 	}
 
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		draw_rect(UPPER_COLOR, self.x + self.panel_x, self.y + self.panel_y, self.get_width() as u32, 1);
 		draw_rect(LOWER_COLOR, self.x + self.panel_x, self.y + self.panel_y + 1.0, self.get_width() as u32, 2);
 	}

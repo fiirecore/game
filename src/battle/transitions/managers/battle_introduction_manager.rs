@@ -76,8 +76,8 @@ impl Update for BattleIntroductionManager {
 
 impl Render for BattleIntroductionManager {
 
-    fn render(&self, tr: &crate::util::text_renderer::TextRenderer) {
-        self.introductions[self.current_introduction_index].render(tr);
+    fn render(&self) {
+        self.introductions[self.current_introduction_index].render();
 	}
 
 }

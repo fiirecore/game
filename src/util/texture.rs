@@ -10,7 +10,7 @@ pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 }
 
 pub fn byte_texture(bytes: &[u8]) -> Texture {
-	image_texture(&super::image::open_image_bytes(bytes))
+	image_texture(&super::image::byte_image(bytes))
 }
 
 pub fn image_texture(image: &macroquad::prelude::Image) -> Texture {

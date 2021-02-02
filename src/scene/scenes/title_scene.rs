@@ -2,12 +2,12 @@ use crate::audio::play_music;
 use crate::util::Load;
 use crate::util::input;
 use crate::util::texture::Texture;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::io::data::player::PlayerData;
 use crate::scene::Scene;
 use crate::util::texture::byte_texture;
 use crate::util::render::draw;
-use crate::audio::Music::Title;
+use crate::audio::music::Music::Title;
 
 pub struct TitleScene {	
 	
@@ -75,7 +75,7 @@ impl Scene for TitleScene {
 		// }
 	}
 	
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		draw(self.background_tex, 0.0, 0.0);
 		draw(self.title_tex, 3.0, 3.0);
 		draw(self.trademark_tex, 158.0, 53.0);

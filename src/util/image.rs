@@ -1,8 +1,8 @@
 use image::RgbaImage;
 use macroquad::prelude::Image;
-use crate::util::render::TEXTURE_SIZE;
+use crate::util::TILE_SIZE;
 
-pub fn open_image_bytes(bytes: &[u8]) -> Image {
+pub fn byte_image(bytes: &[u8]) -> Image {
     Image::from_file_with_format(bytes, Some(image::ImageFormat::PNG))
 }
 
@@ -17,7 +17,7 @@ pub async fn open_image<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {
 }
 
 pub fn get_subimage(image: &Image, id: usize) -> Image {
-    return get_subimage_wh(image, id, TEXTURE_SIZE as u32, TEXTURE_SIZE as u32);
+    return get_subimage_wh(image, id, TILE_SIZE as u32, TILE_SIZE as u32);
 }
 
 pub fn get_subimage_wh(image: &Image, id: usize, w: u32, h: u32) -> Image {
@@ -27,7 +27,7 @@ pub fn get_subimage_wh(image: &Image, id: usize, w: u32, h: u32) -> Image {
 }
 
 pub fn get_subimage_at(image: &Image, x: u32, y: u32, w: u32, h: u32) -> Image {
-    let image = RgbaImage::from_raw(image.width as u32, image.height as u32, image.bytes.clone()).expect("Could not create image from bytes");
+    let image = get_rgbaimage(image);
     let image = get_rgbasubimage_at(&image, x, y, w, h);
     return Image {
         width: image.width() as u16,
@@ -38,4 +38,8 @@ pub fn get_subimage_at(image: &Image, x: u32, y: u32, w: u32, h: u32) -> Image {
 
 fn get_rgbasubimage_at(image: &RgbaImage, x: u32, y: u32, w: u32, h: u32) -> RgbaImage {
     return image::SubImage::new(image, x, y, w as u32, h as u32).to_image();
+}
+
+pub fn get_rgbaimage(image: &Image) -> RgbaImage {
+    RgbaImage::from_raw(image.width as u32, image.height as u32, image.bytes.clone()).expect("Could not create image from bytes")
 }

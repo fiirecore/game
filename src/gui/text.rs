@@ -1,5 +1,5 @@
 use crate::io::data::Direction;
-use crate::util::text_renderer::TextRenderer;
+
 
 use super::GuiText;
 
@@ -61,12 +61,12 @@ impl super::GuiComponent for BasicText {
 		self.panel_y = y;
 	}
 	
-	fn render(&self, tr: &TextRenderer) {
+	fn render(&self) {
 		for line_index in 0..self.get_text().len() {
 			if self.direction == Direction::Right {
-				tr.render_text_from_right(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+				crate::util::render::draw_text_right(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			} else {
-				tr.render_text_from_left(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+				crate::util::render::draw_text_left(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 		}
 		

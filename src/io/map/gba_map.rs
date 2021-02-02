@@ -143,7 +143,7 @@ pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &m
 					if filename.ends_with("B.png") {
 						match &filename[7..filename.len()-5].parse::<u8>() {
 							Ok(index) => {
-								let img = crate::util::image::open_image_bytes(file.contents());
+								let img = crate::util::image::byte_image(file.contents());
 								sizes.push(((img.width() >> 4) * (img.height() >> 4)) as u16);
 								bottom_sheets.insert(*index, img);
 							}

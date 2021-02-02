@@ -2,7 +2,7 @@ use ahash::AHashMap as HashMap;
 use macroquad::prelude::info;
 use crate::util::input;
 use crate::util::texture::Texture;
-use crate::audio::Music;
+use crate::audio::music::Music;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
 use crate::util::input::Control;

@@ -1,4 +1,4 @@
-use audio::bind_world_music;
+use audio::loader::bind_world_music;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::Conf;
 use macroquad::prelude::collections::storage;
@@ -9,9 +9,7 @@ use io::data::configuration::Configuration;
 use parking_lot::RwLock;
 use scene::loading_scene_manager::LoadingSceneManager;
 use scene::scene_manager::SceneManager;
-use util::audio::AudioContext;
 use util::file::PersistantDataLocation;
-use util::text_renderer::TextRenderer;
 
 pub static TITLE: &str =  env!("CARGO_PKG_NAME");
 pub static AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
@@ -25,37 +23,32 @@ lazy_static::lazy_static! {
 
 #[macroquad::main(settings)]
 async fn main() {
+    info!("Starting {} v{}", TITLE, VERSION);
+    info!("By {}", AUTHORS);
+    
     if cfg!(debug_assertions) {
         info!("Running in debug mode");
     }
-    info!("Starting {}, Version: {}", TITLE, crate::VERSION);
-    info!("By {}", crate::AUTHORS);
 
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
     info!("Loading in background...");
 
-    let mut text_renderer = TextRenderer::new();
-    let mut scene_manager = SceneManager::default();
-
-    if cfg!(not(target_arch = "wasm32")) {
-        storage::store( AudioContext::new());
-        bind_world_music();
-    }
+    //storage::store(util::audio::AudioContext::new());
 
     let loading_coroutine = macroquad::prelude::coroutines::start_coroutine(load_coroutine());
+
+    let mut scene_manager = SceneManager::default();
+    bind_world_music();
     
     storage::store(io::data::player::PlayerData::load_async_default().await);
 
-
     crate::util::input::default_keybinds();
 
-    while !(*crate::scene::loading_scene_manager::LOADING_SCENE_FINISHED.read()) {
+    while !loading_coroutine.is_done() {
         macroquad::prelude::coroutines::wait_seconds(0.2).await;
     }
     macroquad::prelude::coroutines::stop_coroutine(loading_coroutine);
-
-    text_renderer.default_add();
 
     scene_manager.load_other_scenes().await;
 
@@ -69,7 +62,7 @@ async fn main() {
         scene_manager.input(get_frame_time());
         scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
-        scene_manager.render(&text_renderer);
+        scene_manager.render();
         if *QUIT_SIGNAL.read() == true {
             break;
         }
@@ -101,8 +94,7 @@ fn not_debug() -> bool {
 async fn load_coroutine() {
     info!("Starting loading scene coroutine");
     let mut loading_scene_manager = LoadingSceneManager::new();
-    // let tr = TEXT_RENDERER.read();
-    loop {
+    while !loading_scene_manager.finished {
         loading_scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
         loading_scene_manager.render();

@@ -1,7 +1,8 @@
-use crate::util::text_renderer::TextRenderer;
+
 use crate::battle::battle::Battle;
 use crate::entity::Entity;
 use crate::gui::{GuiComponent, GuiText};
+use crate::util::render::draw_text_left;
 use crate::util::timer::Timer;
 
 use super::battle_gui::BattleGui;
@@ -243,7 +244,7 @@ impl GuiComponent for BattleText {
         }
     }
 
-    fn render(&self, tr: &TextRenderer) {
+    fn render(&self) {
         if self.is_active() {
             let mut string = String::new();
             let mut count = 0;
@@ -256,10 +257,10 @@ impl GuiComponent for BattleText {
 				count+=1;
 			}
 
-			tr.render_text_from_left(self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
+			draw_text_left(self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
 
 			for line_index in 0..self.current_line {
-				tr.render_text_from_left(self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+				draw_text_left(self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}         
         }
     }

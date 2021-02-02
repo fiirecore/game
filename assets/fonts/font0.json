@@ -1,0 +1,24 @@
+{
+    "file": "images/font0.png",
+    "width": 5,
+    "height": 12,
+    "chars": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀",
+    "custom" : [
+        {
+            "id": "I",
+            "width": 4
+        },
+        {
+            "id": "T",
+            "width": 4
+        },
+        {
+            "id": "Y",
+            "width": 4
+        },
+        {
+            "id": "i",
+            "width": 4
+        }
+    ]
+}

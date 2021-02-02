@@ -1,6 +1,6 @@
 
 use crate::util::texture::Texture;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::io::data::Direction;
 use crate::gui::text::BasicText;
 use crate::gui::GuiComponent;
@@ -66,12 +66,12 @@ impl GuiComponent for MovePanel {
     
     fn update(&mut self, _delta: f32) {}
 
-    fn render(&self, tr: &TextRenderer) {
+    fn render(&self) {
         if self.is_active() {
             draw(self.background, (self.x + self.panel_x) as f32, (self.y + self.panel_y) as f32);
-            self.pp.render(tr);
-            self.remaining_pp.render(tr);
-            self.move_type.render(tr);
+            self.pp.render();
+            self.remaining_pp.render();
+            self.move_type.render();
         }
     }
 

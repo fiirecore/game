@@ -1,4 +1,4 @@
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::GuiComponent;
@@ -82,14 +82,14 @@ impl BattleGui {
 		self.battle_background.render(offset);
 	}
 
-	pub fn render_panel(&self, tr: &TextRenderer) {
-		self.player_panel.render(tr);
-		self.battle_text.render(tr);
+	pub fn render_panel(&self) {
+		self.player_panel.render();
+		self.battle_text.render();
 	}
 
-	pub fn render(&self, tr: &TextRenderer) {
-		self.opponent_pokemon_gui.render(tr);
-		self.player_pokemon_gui.render(tr);
+	pub fn render(&self) {
+		self.opponent_pokemon_gui.render();
+		self.player_pokemon_gui.render();
 	}
 
 }

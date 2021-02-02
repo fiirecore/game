@@ -1,6 +1,6 @@
 use crate::util::Quit;
 use macroquad::prelude::info;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::scene::scenes::*;
 use super::Scene;
 
@@ -36,8 +36,8 @@ impl SceneManager {
 		self.check_scene();
 	}
 	
-	pub fn render(&mut self, tr: &TextRenderer) {
-		self.scenes[self.current_scene_index].render(tr);
+	pub fn render(&mut self) {
+		self.scenes[self.current_scene_index].render();
 	}
 	
 	pub fn input(&mut self, delta: f32){

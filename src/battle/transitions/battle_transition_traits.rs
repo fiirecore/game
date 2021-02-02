@@ -1,7 +1,7 @@
 use crate::util::Render;
 use crate::util::Update;
 use crate::util::battle_data::TrainerData;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::battle::battle_gui::BattleGui;
@@ -12,7 +12,7 @@ pub trait BattleTransition: Load + Entity + Update + Render + Completable {}
 
 pub trait BattleScreenTransition: BattleTransition {
 
-    fn render_below_player(&mut self, _tr: &TextRenderer) {}
+    fn render_below_player(&mut self) {}
 
 }
 
@@ -20,7 +20,7 @@ pub trait BattleOpener: BattleTransition  {
 
     fn offset(&self) -> f32;
 
-    fn render_below_panel(&self, _tr: &TextRenderer) {}
+    fn render_below_panel(&self) {}
 
 }
 

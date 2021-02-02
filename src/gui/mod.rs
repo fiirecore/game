@@ -1,4 +1,4 @@
-use crate::util::text_renderer::TextRenderer;
+
 
 pub mod background;
 pub mod text;
@@ -22,7 +22,7 @@ pub trait GuiComponent {
 
 	fn update(&mut self, _delta: f32) {}
 
-	fn render(&self, tr: &TextRenderer);
+	fn render(&self);
 
 	fn update_position(&mut self, x: f32, y: f32);
 	

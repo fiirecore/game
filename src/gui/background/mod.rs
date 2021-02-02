@@ -1,6 +1,6 @@
 pub mod builder;
 
-use crate::util::text_renderer::TextRenderer;
+
 use crate::util::texture::Texture;
 
 pub struct Background {
@@ -50,7 +50,7 @@ impl super::GuiComponent for Background {
 		self.alive
 	}
 	
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		crate::util::render::draw(self.texture, self.x, self.y);
 	}
 

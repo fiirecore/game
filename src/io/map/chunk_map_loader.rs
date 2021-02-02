@@ -1,5 +1,5 @@
 use macroquad::prelude::warn;
-use crate::audio::Music;
+use crate::audio::music::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::chunk::world_chunk::WorldChunk;
 use super::gba_map::fix_tiles;

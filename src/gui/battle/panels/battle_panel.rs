@@ -4,7 +4,7 @@ use crate::util::input::Control;
 use crate::gui::button::BasicButton;
 use crate::io::data::Direction;
 use crate::util::texture::Texture;
-use crate::util::text_renderer::TextRenderer;
+
 
 use crate::gui::{GuiComponent, Activatable};
 use crate::util::input;
@@ -107,7 +107,7 @@ impl GuiComponent for BattlePanel {
 
 	fn update(&mut self, _delta: f32) {}
 
-	fn render(&self, tr: &TextRenderer) {
+	fn render(&self) {
 		if self.is_active() {
             draw(self.background, self.panel_x + self.x, self.panel_y + self.y);
             let mut cursor_x = 0.0;
@@ -125,12 +125,12 @@ impl GuiComponent for BattlePanel {
                 },
                 _ => {}
             }
-            self.text.render(tr);
-            tr.render_cursor(self.panel_x + self.x + 10.0 + cursor_x, self.panel_y + self.y + 13.0 + cursor_y);
-            self.fight_button.render(tr);
-            self.bag_button.render(tr);
-            self.pokemon_button.render(tr);
-            self.run_button.render(tr);
+            self.text.render();
+            crate::util::render::draw_cursor(self.panel_x + self.x + 10.0 + cursor_x, self.panel_y + self.y + 13.0 + cursor_y);
+            self.fight_button.render();
+            self.bag_button.render();
+            self.pokemon_button.render();
+            self.run_button.render();
             
 		}		
 	}

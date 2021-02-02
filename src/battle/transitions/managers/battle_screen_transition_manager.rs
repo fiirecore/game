@@ -1,6 +1,6 @@
-use crate::audio::Music;
+use crate::audio::music::Music;
 use crate::audio::play_music;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
@@ -56,8 +56,8 @@ impl BattleScreenTransitionManager {
         }
     }
 
-    pub fn render_below_player(&mut self, tr: &TextRenderer) {
-        self.transitions[self.current_transition_id].render_below_player(tr);
+    pub fn render_below_player(&mut self) {
+        self.transitions[self.current_transition_id].render_below_player();
     }
 
 }
@@ -74,9 +74,9 @@ impl Update for BattleScreenTransitionManager {
 
 impl Render for BattleScreenTransitionManager {
 
-    fn render(&self, tr: &TextRenderer) {
+    fn render(&self) {
         if self.is_alive() {
-            self.transitions[self.current_transition_id].render(tr);
+            self.transitions[self.current_transition_id].render();
         }
     }
 

@@ -8,7 +8,7 @@ use macroquad::prelude::warn;
 use serde::{Deserialize, Serialize};
 use super::Location;
 use super::Position;
-use super::pokemon::StatSet;
+use super::StatSet;
 use crate::pokemon::instance::PokemonInstance;
 
 static SAVE_FILENAME: &str = "player.json";

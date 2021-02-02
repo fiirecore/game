@@ -4,22 +4,50 @@ use crate::util::input::Control;
 
 pub mod configuration;
 pub mod player;
-
-
-pub mod pokemon;
-
-pub mod text {
-    pub mod message;
-}
+pub mod text;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Deserialize, Serialize, enum_iterator::IntoEnumIterator)]
-pub enum Direction {
+pub enum Direction { // move to util
 	
 	Up,
 	Down,
 	Left,
 	Right,
 	
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Location {
+
+	pub map_id: String,
+	pub map_index: u16,
+	pub position: Position,
+
+}
+
+#[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
+pub struct Position {
+
+	pub x: isize,
+    pub y: isize,
+	pub direction: Direction,
+    #[serde(skip)]
+    pub x_offset: f32,
+    #[serde(skip)]
+	pub y_offset: f32,
+
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct StatSet {
+
+	pub hp: u8,
+	pub atk: u8,
+	pub def: u8,
+	pub sp_atk: u8,
+	pub sp_def: u8,
+	pub speed: u8,
+
 }
 
 impl Direction {
@@ -70,28 +98,6 @@ impl Default for Direction {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Location {
-
-	pub map_id: String,
-	pub map_index: u16,
-	pub position: Position,
-
-}
-
-#[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
-pub struct Position {
-
-	pub x: isize,
-    pub y: isize,
-	pub direction: Direction,
-    #[serde(skip)]
-    pub x_offset: f32,
-    #[serde(skip)]
-	pub y_offset: f32,
-
-}
-
 impl Position {
 
 	pub fn subtract(&self, x: isize, y: isize) -> Position {
@@ -101,5 +107,37 @@ impl Position {
 			..*self
 		}
     }
+
+}
+
+impl StatSet {
+
+	pub fn iv_random() -> Self {
+
+		use macroquad::prelude::rand::gen_range;
+
+		Self {
+			hp: gen_range(0, 32),
+			atk: gen_range(0, 32),
+			def: gen_range(0, 32),
+			sp_atk: gen_range(0, 32),
+			sp_def: gen_range(0, 32),
+			speed: gen_range(0, 32),
+		}
+
+	}
+
+	pub fn uniform(stat: u8) -> Self {
+
+		Self {
+			hp: stat,
+			atk: stat,
+			def: stat,
+			sp_atk: stat,
+			sp_def: stat,
+			speed: stat,
+		}
+		
+	}
 
 }

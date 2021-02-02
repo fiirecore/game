@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::io::data::pokemon::StatSet;
+use crate::io::data::StatSet;
 
 use super::moves::instance::SavedPokemonMoveSet;
 

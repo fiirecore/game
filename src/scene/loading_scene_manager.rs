@@ -1,13 +1,7 @@
-use parking_lot::RwLock;
-
 use crate::util::Load;
 
 use super::Scene;
 use super::scenes::loading_scenes::*;
-
-lazy_static::lazy_static! {
-    pub static ref LOADING_SCENE_FINISHED: RwLock<bool> = RwLock::new(false);
-}
 
 pub struct LoadingSceneManager {
 
@@ -15,7 +9,7 @@ pub struct LoadingSceneManager {
     gamefreak: LoadingGamefreakScene,
     pokemon: LoadingPokemonScene,
     current_scene: usize,
-    finished: bool,
+    pub finished: bool,
 
 }
 
@@ -73,7 +67,6 @@ impl LoadingSceneManager {
 
     fn finish(&mut self) {
         self.finished = true;
-        *LOADING_SCENE_FINISHED.write() = true;
         macroquad::prelude::info!("Finished loading scene sequence.");
     }
 

@@ -2,7 +2,7 @@ use macroquad::rand::gen_range;
 use parking_lot::Mutex;
 
 use crate::battle::battle_info::BattleType;
-use crate::io::data::pokemon::StatSet;
+use crate::io::data::StatSet;
 use crate::pokemon::party::PokemonParty;
 use crate::world::npc::NPC;
 use crate::world::pokemon::wild_pokemon_table::WildPokemonTable;

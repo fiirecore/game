@@ -1,5 +1,5 @@
 use crate::util::Load;
-use crate::util::text_renderer::TextRenderer;
+
 
 pub mod scene_manager;
 pub mod scenes {
@@ -21,7 +21,7 @@ pub trait Scene: Load {
 	
 	fn update(&mut self, delta: f32);
 	
-	fn render(&self, _tr: &TextRenderer);
+	fn render(&self);
 	
 	fn input(&mut self, delta: f32);
 	

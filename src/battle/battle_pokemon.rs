@@ -1,5 +1,4 @@
-use crate::io::data::pokemon::LargeStatSet;
-use crate::io::data::pokemon::StatSet;
+use crate::io::data::StatSet;
 use crate::pokemon::PokedexData;
 use crate::pokemon::Pokemon;
 use crate::pokemon::instance::PokemonInstance;
@@ -15,7 +14,7 @@ pub struct BattlePokemon {
 
 	pub moves: Vec<MoveInstance>,
 
-	pub base: LargeStatSet,
+	pub base: BaseStatSet,
 
 	ivs: StatSet,
 	evs: StatSet,
@@ -121,8 +120,20 @@ impl std::fmt::Display for BattlePokemon {
 	
 }
 
-pub fn get_stats(pokemon: &Pokemon, ivs: StatSet, evs: StatSet, level: u8) -> LargeStatSet {
-    LargeStatSet {
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, Default)]
+pub struct BaseStatSet {
+
+	pub hp: u16,
+	pub atk: u16,
+	pub def: u16,
+	pub sp_atk: u16,
+	pub sp_def: u16,
+	pub speed: u16,
+
+}
+
+pub fn get_stats(pokemon: &Pokemon, ivs: StatSet, evs: StatSet, level: u8) -> BaseStatSet {
+    BaseStatSet {
 		hp: calculate_hp(pokemon.base.hp, ivs.hp, evs.hp, level),
 		atk: calculate_stat(pokemon.base.atk, ivs.atk, evs.atk, level),
 		def: calculate_stat(pokemon.base.def, ivs.def, evs.def, level),

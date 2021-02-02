@@ -1,5 +1,5 @@
 use crate::util::Load;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::scene::Scene;
 
 pub struct MainMenuScene {
@@ -39,7 +39,7 @@ impl Scene for MainMenuScene {
 	
 	fn update(&mut self, _delta: f32) {}
 	
-	fn render(&self, _tr: &TextRenderer) {}
+	fn render(&self) {}
 	
 	fn input(&mut self, _delta: f32) {}
 	

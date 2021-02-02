@@ -4,7 +4,7 @@ use crate::battle::transitions::battle_transition_traits::BattleScreenTransition
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::util::render::draw_rect;
 
@@ -78,7 +78,7 @@ impl Update for TrainerBattleScreenTransition {
 
 impl Render for TrainerBattleScreenTransition {
 
-    fn render(&self, _tr: &TextRenderer) {
+    fn render(&self) {
         draw_rect([0.0, 0.0, 0.0, 1.0], -(BASE_WIDTH as f32) - self.rect_width, 0.0, BASE_WIDTH, 32);
         draw_rect([0.0, 0.0, 0.0, 1.0], BASE_WIDTH as f32 - self.rect_width, 32.0, BASE_WIDTH, 32);
         draw_rect([0.0, 0.0, 0.0, 1.0], -(BASE_WIDTH as f32) - self.rect_width, 64.0, BASE_WIDTH, 32);

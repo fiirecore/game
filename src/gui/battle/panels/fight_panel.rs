@@ -1,7 +1,7 @@
 use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input::Control;
 use crate::util::texture::Texture;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::gui::{Activatable, GuiComponent};
 use crate::util::input;
 
@@ -100,11 +100,11 @@ impl GuiComponent for FightPanel {
         self.panel_y = panel_y;
     }
 
-    fn render(&self, tr: &TextRenderer) {
+    fn render(&self) {
         if self.is_active() {
 
             draw(self.background, self.x + self.panel_x, self.y + self.panel_y);
-            self.move_panel.render(tr);
+            self.move_panel.render();
         
             for string_id in 0..self.move_names.len() {
                 let mut x_offset = 0.0;
@@ -115,9 +115,9 @@ impl GuiComponent for FightPanel {
                 if string_id / 2 == 1 {
                     y_offset = 17.0;
                 }
-                tr.render_text_from_left(0, self.move_names[string_id].to_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
+                crate::util::render::draw_text_left(0, self.move_names[string_id].to_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
                 if string_id == self.cursor_position as usize {
-                    tr.render_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
+                    crate::util::render::draw_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
                 }
             }
         }        

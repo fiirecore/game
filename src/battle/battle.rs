@@ -12,6 +12,7 @@ use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::gui::GuiComponent;
 use crate::util::render::draw_bottom;
+use super::battle_info::BattleType;
 use super::battle_pokemon::BattlePokemon;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 
@@ -37,6 +38,9 @@ pub struct Battle {
 
 	//pub move_finished: bool,
 	pub faint: bool,
+
+	try_run: bool,
+	battle_type: BattleType,
 	
 }
 
@@ -63,6 +67,9 @@ impl Default for Battle {
 
 			//move_finished: false,
 			faint: false,
+			try_run: false,
+
+			battle_type: BattleType::Wild,
 		
 		}
 		
@@ -71,7 +78,7 @@ impl Default for Battle {
 
 impl Battle {
 	
-	pub fn new(pokedex: &Pokedex, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Self {
+	pub fn new(battle_type: BattleType, pokedex: &Pokedex, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Self {
 		
 		let mut player_active = 0;
 
@@ -91,6 +98,8 @@ impl Battle {
 			}).collect(),
 			
 			player_active: player_active,
+
+			battle_type: battle_type,
 
 			..Battle::default()
 			
@@ -112,6 +121,11 @@ impl Battle {
 	}
 
 	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, battle_closer_manager: &mut BattleCloserManager) {
+		if self.try_run {
+			if self.battle_type == BattleType::Wild {
+				battle_closer_manager.spawn();
+			}
+		}
 		if self.pmove_queued || self.omove_queued || self.faint_queued {
 			if battle_gui.opponent_pokemon_gui.health_bar.get_width() == 0 {
 				battle_gui.update_gui(&self);
@@ -226,7 +240,7 @@ impl Battle {
 	}
 
 	pub fn run(&mut self) {
-		//self.finished = true;
+		self.try_run = true;
 	}
 	
 //	fn render_above(&mut self, c: &mut Context, g: &mut G2d) {}

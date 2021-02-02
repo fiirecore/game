@@ -1,5 +1,5 @@
 use crate::battle::battle_info::BattleType;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
@@ -45,9 +45,9 @@ impl BattleOpenerManager {
         // self.battle_introduction_manager.load_introductions();
     }
 
-    pub fn render_below_panel(&self, tr: &TextRenderer, battle: &Battle) {
+    pub fn render_below_panel(&self, battle: &Battle) {
         self.battle_introduction_manager.render_with_offset(battle, self.offset());
-        self.openers[self.current_opener_id].render_below_panel(tr);
+        self.openers[self.current_opener_id].render_below_panel();
     }
 
     pub fn offset(&self) -> f32 {
@@ -93,12 +93,12 @@ impl Update for BattleOpenerManager {
 
 impl Render for BattleOpenerManager {
 
-    fn render(&self, tr: &TextRenderer) {
+    fn render(&self) {
         if self.is_alive() {
             if self.battle_introduction_manager.is_alive() {
-                self.battle_introduction_manager.render(tr);
+                self.battle_introduction_manager.render();
             } else {
-                self.openers[self.current_opener_id].render(tr);
+                self.openers[self.current_opener_id].render();
             }
             
         }

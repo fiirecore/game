@@ -2,7 +2,7 @@ use crate::io::data::player::PlayerData;
 use crate::util::input;
 use crate::util::texture::Texture;
 use crate::util::input::Control;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::gui::button::BasicButton;
 use crate::gui::Activatable;
 use crate::gui::GuiComponent;
@@ -92,14 +92,14 @@ impl GuiComponent for PlayerWorldGui {
         self.y = y;
     }
 
-    fn render(&self, tr: &TextRenderer) {
+    fn render(&self) {
         if self.is_active() {
             draw(self.background, self.x, self.y);
-            self.save_button.render(tr);
-            self.pokemon_button.render(tr);
-            self.exit_menu_button.render(tr);
-            self.exit_game_button.render(tr);
-            tr.render_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
+            self.save_button.render();
+            self.pokemon_button.render();
+            self.exit_menu_button.render();
+            self.exit_game_button.render();
+            crate::util::render::draw_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
         }
     }
 

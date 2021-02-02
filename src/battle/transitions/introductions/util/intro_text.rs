@@ -1,7 +1,8 @@
 use crate::util::input;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::gui::{GuiComponent, Activatable, GuiText};
+use crate::util::render::draw_text_left;
 use crate::util::timer::Timer;
 
 pub struct IntroText { // and outro
@@ -114,13 +115,16 @@ impl GuiComponent for IntroText {
 						}
 					}
 				}
-				if self.button_pos.abs() >= 32.0 {
-					self.button_up = !self.button_up;
-				}
 				if self.button_up {
-					self.button_pos += delta * 240.0;
+					self.button_pos += delta * 15.0;
+					if self.button_pos > 80.0 {
+						self.button_up = !self.button_up;
+					}
 				} else {
-					self.button_pos -= delta * 240.0;
+					self.button_pos -= delta * 15.0;
+					if self.button_pos < 0.0 {
+						self.button_up = !self.button_up;
+					}
 				}
 			} else if self.counter <= line_len as f32 {
 				self.counter += delta * 60.0;
@@ -134,7 +138,7 @@ impl GuiComponent for IntroText {
 		}
 	}
 
-	fn render(&self, tr: &TextRenderer) {
+	fn render(&self) {
 		if self.is_active() {
 			let mut string = String::new();
 			let mut count = 0;
@@ -147,14 +151,14 @@ impl GuiComponent for IntroText {
 				count+=1;
 			}
 
-			tr.render_text_from_left(self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
+			draw_text_left(self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
 
 			for line_index in 0..self.current_line {
-				tr.render_text_from_left(self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+				draw_text_left(self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 
 			if self.can_continue && !self.no_pause {
-				tr.render_button(self.get_line(self.get_text().len() - 1), self.font_id, self.button_pos as f32 / 8.0, self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32/*- 2*/);
+				crate::util::render::draw_button(self.get_line(self.get_text().len() - 1), self.font_id, self.panel_x + self.x, self.panel_y + self.y + self.button_pos + (self.current_line << 4) as f32);
 			}			
 		
 		}

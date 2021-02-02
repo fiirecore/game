@@ -63,7 +63,7 @@ impl Scene for FirstTimeControlsScene {
 	
 	fn update(&mut self, _delta: f32) {}
 	
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		draw(self.background_tex, 0.0, 0.0);
 	}
 	
@@ -127,7 +127,7 @@ impl Scene for FirstTimeNarrativeScene {
 	
 	fn update(&mut self, _delta: f32) {}
 	
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		draw(self.background_tex, 0.0, 0.0);
 	}
 	

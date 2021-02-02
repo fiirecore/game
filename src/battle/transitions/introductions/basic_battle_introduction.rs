@@ -116,8 +116,8 @@ impl Update for BasicBattleIntroduction {
 
 impl Render for BasicBattleIntroduction {
 
-    fn render(&self, tr: &crate::util::text_renderer::TextRenderer) {
-        self.intro_text.render(tr);
+    fn render(&self) {
+        self.intro_text.render();
 	}
 
 }

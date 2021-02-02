@@ -3,7 +3,7 @@ use kira::instance::handle::InstanceHandle;
 use kira::manager::AudioManager;
 use kira::sound::handle::SoundHandle;
 use macroquad::prelude::info;
-use crate::audio::Music;
+use crate::audio::music::Music;
 use macroquad::prelude::warn;
 use enum_iterator::IntoEnumIterator;
 pub struct AudioContext {
@@ -21,21 +21,21 @@ pub struct AudioContext {
 impl AudioContext {
 
     pub fn new() -> Self {
-        let mut am = match AudioManager::new(kira::manager::AudioManagerSettings::default()) {
-            Ok(am) => Some(am),
-            Err(err) => {
-                warn!("Failed to create audio manager with error {}", err);
-                None
+        let mut this = Self {
+            audio_manager: match AudioManager::new(kira::manager::AudioManagerSettings::default()) {
+                Ok(am) => Some(am),
+                Err(err) => {
+                    warn!("Failed to create audio manager with error {}", err);
+                    None
+                },
             },
-        };
-
-        Self::bind_gamefreak(&mut am);
-
-        Self {
-            audio_manager: am,
             music_map: HashMap::new(),
             current_music: None,
-        }
+        };
+
+        this.bind_gamefreak();
+
+        return this;
     }
 
     pub fn play_music(&mut self, music: Music) {
@@ -62,29 +62,21 @@ impl AudioContext {
         return self.current_music.is_some();
     }
 
-    pub fn bind_music(&mut self) {
-        // if cfg!(not(target_arch = "wasm32")) {
-        //         std::thread::spawn( || {
-        //             Self::bind_music_main(&mut self.audio_manager, &mut self.music_map);        
-        //         });
-        // } else {
-            Self::bind_music_main(&mut self.audio_manager, &mut self.music_map);
-        //}
-    }
+    
 
-    fn bind_music_main(manager: &mut Option<AudioManager>, music_map: &mut HashMap<Music, SoundHandle>) {
-        match manager {
+    pub fn bind_music(&mut self) {
+        match self.audio_manager.as_mut() {
             Some(manager) => {
                 info!("Loading music...");
                 for music in Music::into_enum_iter() {
-                    if music != Music::IntroGamefreak {
+                    if !self.music_map.contains_key(&music) {
                         match music.included_bytes() {
                             Some(bytes) => {
-                                match crate::audio::from_ogg_bytes(bytes, kira::sound::SoundSettings::default()) {
+                                match crate::audio::loader::from_ogg_bytes(bytes, kira::sound::SoundSettings::default()) {
                                     Ok(sound) => {
                                         match manager.add_sound(sound) {
                                             Ok(sound) => {
-                                                music_map.insert(music, sound);
+                                                self.music_map.insert(music, sound);
                                                 info!("Loaded {} successfully", music);
                                             }
                                             Err(err) => warn!("Problem loading music {} with error {}", music, err),
@@ -95,10 +87,10 @@ impl AudioContext {
                                 
                             }
                             None => {
-                                if !cfg!(debug_assertions) {
+                                if !(cfg!(debug_assertions) || cfg!(target_arch = "wasm32")) {
                                     match manager.load_sound(String::from("music/") + &music.to_string() + ".ogg", kira::sound::SoundSettings::default()) {
                                         Ok(sound) => {
-                                            music_map.insert(music, sound);
+                                            self.music_map.insert(music, sound);
                                             info!("Loaded {} successfully", music);
                                         }
                                         Err(err) => warn!("Problem loading music {} with error {}", music, err),
@@ -112,14 +104,15 @@ impl AudioContext {
             }
             None => {}
         }
-        
     }
 
-    pub fn bind_gamefreak(audio_manager: &mut Option<AudioManager>) {
-        match audio_manager {
+    pub fn bind_gamefreak(&mut self) {
+        match self.audio_manager.as_mut() {
             Some(manager) => {
                 match manager.load_sound("music/gamefreak.ogg", kira::sound::SoundSettings::default()) {
-                    Ok(sound) => return *crate::audio::music::GAMEFREAK_MUSIC.lock() = Some(sound),
+                    Ok(sound) => {
+                        self.music_map.insert(Music::IntroGamefreak, sound);
+                    },
                     Err(err) => {
                         warn!("Could not load gamefreak intro music with error {}", err);
                     }

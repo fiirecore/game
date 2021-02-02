@@ -1,7 +1,7 @@
 use macroquad::prelude::collections::storage::{get, get_mut};
 use crate::pokemon::pokedex::Pokedex;
 use crate::util::file::PersistantData;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::io::data::player::PlayerData;
 use crate::battle::battle_manager::BattleManager;
 use crate::util::Completable;
@@ -104,14 +104,14 @@ impl GameManager {
 		
 	}
 	
-	pub fn render(&self, tr: &TextRenderer) {
+	pub fn render(&self) {
 		if !self.battling {
-			self.world_manager.render(tr);
+			self.world_manager.render();
 		} else {
 			if self.battle_manager.world_active() {
-				self.world_manager.render(tr);
+				self.world_manager.render();
 			}
-			self.battle_manager.render(tr);
+			self.battle_manager.render();
 		}
 	}
 	

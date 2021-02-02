@@ -1,18 +1,18 @@
 use macroquad::prelude::warn;
-use parking_lot::Mutex;
 use crate::util::texture::Texture;
 
 lazy_static::lazy_static! {
-	static ref FILE: Mutex<Option<Vec<u8>>> = Mutex::new(None); // lol
+	static ref FILE: parking_lot::Mutex<Option<Vec<u8>>> = parking_lot::Mutex::new(None); // lol
 }
 
 pub fn read_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<Vec<u8>> {
     let path = path.as_ref().to_str().unwrap().to_owned();
+    
     macroquad::miniquad::fs::load_file(&path.clone(), move |bytes| {
         match bytes {
             Ok(bytes) => *FILE.lock() = Some(bytes),
             Err(err) => {
-                warn!("Could not read file at {:?} with error {}", &path, err);
+                warn!("Could not read file at {:?} with error {}", path, err);
             }
         }
     });
@@ -27,7 +27,6 @@ pub fn read_to_string_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<Stri
                 Ok(str) => return Some(str.to_string()),
                 Err(err) => {
                     warn!("Could not read file at {:?} to string with error {}", path, err);
-                    //return Err(Box::new(err));
                     return None;
                 }
             }
@@ -41,7 +40,7 @@ pub fn read_to_string_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<Stri
 pub fn open_image_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<macroquad::prelude::Image> {
     let path = path.as_ref();
     match read_noasync(path) {
-        Some(bytes) => Some(crate::util::image::open_image_bytes(bytes.as_slice())),
+        Some(bytes) => Some(crate::util::image::byte_image(bytes.as_slice())),
         None => {
             macroquad::prelude::warn!("Could not read image bytes at {:?} with error", path);
             return None;

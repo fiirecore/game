@@ -8,7 +8,7 @@ use crate::util::Load;
 
 
 
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 
 use crate::util::render::draw_rect;
@@ -91,7 +91,7 @@ impl Update for VerticalCloseBattleScreenTransition {
 
 impl Render for VerticalCloseBattleScreenTransition {
 
-    fn render(&self, _tr: &TextRenderer) {
+    fn render(&self) {
         draw_rect([0.0, 0.0, 0.0, 1.0], 0f32, 0f32, BASE_WIDTH, self.offset as u32);
         draw_rect([0.0, 0.0, 0.0, 1.0], 0f32, BASE_HEIGHT as f32 - self.offset, BASE_WIDTH, self.offset.ceil() as u32);    
     }

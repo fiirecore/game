@@ -3,7 +3,7 @@ use crate::util::texture::Texture;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
 use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::util::{Update, Render};
 use crate::gui::Activatable;
@@ -156,8 +156,8 @@ impl Update for TrainerBattleIntroduction {
 
 impl Render for TrainerBattleIntroduction {
 
-    fn render(&self, tr: &TextRenderer) {
-        self.basic_battle_introduction.render(tr);
+    fn render(&self) {
+        self.basic_battle_introduction.render();
     }
 
 }

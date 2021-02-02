@@ -1,7 +1,7 @@
 use macroquad::prelude::warn;
 use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input;
-use crate::util::text_renderer::TextRenderer;
+
 
 use crate::util::texture::Texture;
 
@@ -176,11 +176,11 @@ impl GuiComponent for PlayerPanel {
               
 	}
 
-	fn render(&self, tr: &TextRenderer) {
+	fn render(&self) {
 		if self.is_active() {
 			draw(self.background, self.x as f32, self.y as f32);
-            self.battle_panel.render(tr);
-            self.fight_panel.render(tr);
+            self.battle_panel.render();
+            self.fight_panel.render();
 		}
 	}
 

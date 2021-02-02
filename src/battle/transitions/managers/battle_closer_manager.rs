@@ -1,4 +1,4 @@
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleCloser;
@@ -41,8 +41,8 @@ impl Update for BattleCloserManager {
 
 impl Render for BattleCloserManager {
 
-    fn render(&self, tr: &TextRenderer) {
-        self.closers[self.current_closer_id].render(tr);
+    fn render(&self) {
+        self.closers[self.current_closer_id].render();
     }
 
 }

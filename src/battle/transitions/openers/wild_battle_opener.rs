@@ -1,5 +1,5 @@
 use crate::util::texture::Texture;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::entity::Entity;
 use crate::util::{Update, Render};
 use crate::battle::transitions::battle_transition_traits::BattleOpener;
@@ -101,8 +101,8 @@ impl Update for WildBattleOpener {
 
 impl Render for WildBattleOpener {
 
-    fn render(&self, tr: &TextRenderer) {
-        self.trainer_battle_opener.render(tr);
+    fn render(&self) {
+        self.trainer_battle_opener.render();
     }
 
 }
@@ -112,7 +112,7 @@ impl BattleOpener for WildBattleOpener {
         return self.trainer_battle_opener.offset();
     }
 
-    fn render_below_panel(&self, _tr: &TextRenderer) {
+    fn render_below_panel(&self) {
         if self.grass_active {
             let y = 114.0 - self.grass_y_offset;
             draw(

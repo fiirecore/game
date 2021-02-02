@@ -10,10 +10,9 @@ use macroquad::prelude::warn;
 use crate::util::input;
 use crate::util::texture::Texture;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
-use crate::audio::Music;
+use crate::audio::music::Music;
 use crate::util::Render;
 use crate::util::input::Control;
-use crate::util::text_renderer::TextRenderer;
 use crate::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
@@ -106,15 +105,15 @@ impl WorldManager {
         //self.warp_map_manager.update(context, &self.player);
     }
 
-    pub fn render(&self, tr: &TextRenderer) {
+    pub fn render(&self) {
         let coords =  RenderCoords::new(&self.player);
         if self.chunk_map.is_alive() {
             self.chunk_map.render(&self.bottom_textures, &self.npc_textures, coords, true);
         } else if self.map_sets.is_alive() {
             self.map_sets.render(&self.bottom_textures, &self.npc_textures, coords, true);
         }
-        self.player.render(tr);
-        self.player_gui.render(tr);      
+        self.player.render();
+        self.player_gui.render();      
     }
 
     pub fn save_data(&self, player_data: &mut PlayerData) {

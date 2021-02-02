@@ -90,7 +90,7 @@ impl Update for BasicBattleCloser {
 
 impl Render for BasicBattleCloser {
 
-    fn render(&self, _tr: &crate::util::text_renderer::TextRenderer) {
+    fn render(&self) {
         draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::BASE_WIDTH, crate::BASE_HEIGHT);
     }
 

@@ -1,5 +1,5 @@
 use crate::util::Load;
-use crate::util::text_renderer::TextRenderer;
+
 
 use crate::game::GameManager;
 use crate::scene::Scene;
@@ -46,8 +46,8 @@ impl Scene for GameScene {
 		self.game_manager.update(delta);	
 	}
 	
-	fn render(&self, tr: &TextRenderer) {
-		self.game_manager.render(tr);
+	fn render(&self) {
+		self.game_manager.render();
 	}
 	
 	fn input(&mut self, delta: f32) {

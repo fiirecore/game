@@ -101,7 +101,7 @@ impl Update for TrainerBattleOpener {
 
 impl Render for TrainerBattleOpener {
 
-    fn render(&self, _tr: &crate::util::text_renderer::TextRenderer) {
+    fn render(&self) {
         draw_rect(
             [0.0, 0.0, 0.0, 1.0],
             0.0,

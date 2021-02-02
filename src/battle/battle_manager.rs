@@ -7,7 +7,7 @@ use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;
 use crate::util::Load;
 use crate::io::data::player::PlayerData;
-use crate::util::text_renderer::TextRenderer;
+
 use super::battle::Battle;
 
 use crate::entity::Entity;
@@ -102,8 +102,7 @@ impl BattleManager {
 	}
 
 	pub fn create_battle(&mut self, player_data: &PlayerData, pokedex: &Pokedex) {
-		
-		let battle = Battle::new(pokedex, &player_data.party, &self.battle_data.party);
+		let battle = Battle::new(self.battle_data.battle_type, pokedex, &player_data.party, &self.battle_data.party);
 		info!("Loading Battle: {}", battle);
 		self.current_battle = battle;
 		self.current_battle.load();
@@ -146,29 +145,29 @@ impl BattleManager {
 
 	}	
 
-    pub fn render(&self, tr: &TextRenderer) {
+    pub fn render(&self) {
 
 		if self.battle_screen_transition_manager.is_alive() {
-			self.battle_screen_transition_manager.render(tr);
+			self.battle_screen_transition_manager.render();
 		} else if self.battle_opener_manager.is_alive() {
 			self.battle_gui.render_background(self.battle_opener_manager.offset());
-			self.battle_opener_manager.render_below_panel(tr, &self.current_battle);
-			self.battle_gui.render(tr);
-			self.battle_gui.render_panel(tr);
-			self.battle_opener_manager.render(tr);
+			self.battle_opener_manager.render_below_panel(&self.current_battle);
+			self.battle_gui.render();
+			self.battle_gui.render_panel();
+			self.battle_opener_manager.render();
 		} else if self.battle_closer_manager.is_alive() {
 			if !self.world_active() {
 				self.battle_gui.render_background(0.0);
 				self.current_battle.render(0.0, self.battle_gui.player_bounce.pokemon_offset());
-				self.battle_gui.render(tr);
-				self.battle_gui.render_panel(tr);
+				self.battle_gui.render();
+				self.battle_gui.render_panel();
 			}
-			self.battle_closer_manager.render(tr);
+			self.battle_closer_manager.render();
 		} else {
 			self.battle_gui.render_background(0.0);
 			self.current_battle.render(0.0, self.battle_gui.player_bounce.pokemon_offset());
-			self.battle_gui.render(tr);
-			self.battle_gui.render_panel(tr);
+			self.battle_gui.render();
+			self.battle_gui.render_panel();
 		}
 	}
 	

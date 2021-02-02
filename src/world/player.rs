@@ -7,7 +7,7 @@ use crate::io::data::Direction;
 use crate::io::data::Position;
 use crate::io::data::player::PlayerData;
 use crate::util::TILE_SIZE;
-use crate::util::text_renderer::TextRenderer;
+
 use crate::util::render::draw_flip;
 use crate::util::texture::byte_texture;
 
@@ -69,7 +69,7 @@ static SCREEN_Y: f32 = ((crate::BASE_HEIGHT as isize - TILE_SIZE as isize) >> 1)
 
 impl Render for Player {
 	
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		//let tex = self.move_textures[self.move_status as usize].get_texture();
 		let tex;
 		if self.running && self.moving {

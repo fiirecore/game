@@ -1,6 +1,6 @@
 use macroquad::prelude::warn;
 
-use crate::audio::Music;
+use crate::audio::music::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::set::world_map_set::WorldMapSet;
 

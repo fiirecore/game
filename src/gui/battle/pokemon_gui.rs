@@ -3,7 +3,7 @@ use crate::battle::battle::Battle;
 use crate::gui::background::Background;
 use crate::gui::text::BasicText;
 use crate::io::data::Direction;
-use crate::util::text_renderer::TextRenderer;
+
 
 use crate::gui::battle::health_bar::HealthBar;
 use crate::gui::GuiComponent;
@@ -87,13 +87,13 @@ impl PokemonGui for PlayerPokemonGui {
 		}		
 	}
 
-	fn render(&self, tr: &TextRenderer) {
+	fn render(&self) {
 		if self.is_alive() {
-			self.panel.render(tr);
-			self.name.render(tr);
-			self.level.render(tr);
-			self.health_text.render(tr);
-			self.health_bar.render(tr);
+			self.panel.render();
+			self.name.render();
+			self.level.render();
+			self.health_text.render();
+			self.health_bar.render();
 		}		
 	}
 
@@ -197,12 +197,12 @@ impl PokemonGui for OpponentPokemonGui {
 		}		
 	}
 
-	fn render(&self, tr: &TextRenderer) {
+	fn render(&self) {
 		if self.is_alive() {
-			self.panel.render(tr);
-			self.name.render(tr);
-			self.level.render(tr);
-			self.health_bar.render(tr);
+			self.panel.render();
+			self.name.render();
+			self.level.render();
+			self.health_bar.render();
 		}		
 	}
 
@@ -241,7 +241,7 @@ pub trait PokemonGui: Entity { // To-do: sort out trait or have it extend someth
 
 	fn update(&mut self, delta: f32);
 
-	fn render(&self, tr: &TextRenderer);
+	fn render(&self);
 
 	fn update_gui(&mut self, battle: &Battle);
 

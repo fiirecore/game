@@ -1,7 +1,7 @@
 use crate::util::Load;
 use crate::util::input;
 use crate::util::texture::Texture;
-use crate::util::text_renderer::TextRenderer;
+
 //use async_trait::async_trait;
 use crate::scene::Scene;
 use crate::util::render::fade_in_out;
@@ -50,7 +50,7 @@ impl Scene for LoadingCopyrightScene {
 		}
 	}
 	
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		self.render_notr();
 	}
 
@@ -106,11 +106,7 @@ impl Load for LoadingGamefreakScene {
 
 	fn on_start(&mut self) {
 		self.scene_token = 0;
-		if let Some(ref mut sound) = *crate::audio::music::GAMEFREAK_MUSIC.lock() {
-			if let Err(err) = sound.play(kira::instance::InstanceSettings::default()) {
-				macroquad::prelude::warn!("Error playing sound: {}", err);
-			}
-		}
+		crate::audio::play_music(crate::audio::music::Music::IntroGamefreak);
 		self.accumulator = 0.0;
 	}
 
@@ -125,14 +121,14 @@ impl Scene for LoadingGamefreakScene {
 		}
 	}
 	
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		self.render_notr();
-		// tr.render_text_from_left(1, "X is A Button", 5.0, 34.0);
-		// tr.render_text_from_left(1, "Z is B button", 5.0, 49.0);
-		// tr.render_text_from_left(1, "D-Pad is Arrow Keys", 5.0, 64.0);
-		// tr.render_text_from_left(1, "F1 to battle", 5.0, 79.0);
-		// tr.render_text_from_left(1, "F2 to toggle noclip", 5.0, 94.0);
-		// tr.render_text_from_left(1, "F3 to toggle console", 5.0, 109.0);
+		// draw_text_left(1, "X is A Button", 5.0, 34.0);
+		// draw_text_left(1, "Z is B button", 5.0, 49.0);
+		// draw_text_left(1, "D-Pad is Arrow Keys", 5.0, 64.0);
+		// draw_text_left(1, "F1 to battle", 5.0, 79.0);
+		// draw_text_left(1, "F2 to toggle noclip", 5.0, 94.0);
+		// draw_text_left(1, "F3 to toggle console", 5.0, 109.0);
 	}
 	
 	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
@@ -182,7 +178,7 @@ impl Scene for LoadingPokemonScene {
 	
 	fn update(&mut self, _delta: f32) {}
 	   
-	fn render(&self, _tr: &TextRenderer) {
+	fn render(&self) {
 		self.render_notr();
 	}
 	
