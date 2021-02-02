@@ -1,4 +1,3 @@
-use audio::loader::bind_world_music;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::Conf;
 use macroquad::prelude::collections::storage;
@@ -6,6 +5,7 @@ use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
 
 use io::data::configuration::Configuration;
+use macroquad::prelude::warn;
 use parking_lot::RwLock;
 use scene::loading_scene_manager::LoadingSceneManager;
 use scene::scene_manager::SceneManager;
@@ -30,16 +30,35 @@ async fn main() {
         info!("Running in debug mode");
     }
 
+    let args: Vec<String> = std::env::args().collect();
+
+    let mut load_music = true;
+
+    let mut opts = getopts::Options::new();
+    opts.optflag("m", "no-music", "Disable music");
+    match opts.parse(&args[1..]) {
+        Ok(m) => {
+            if m.opt_present("m") {
+                load_music = false;
+            }
+        }
+        Err(f) => {
+            warn!("Could not parse command line arguments with error {}", f.to_string());
+        }
+    };
+
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
     info!("Loading in background...");
 
-    //storage::store(util::audio::AudioContext::new());
+    if load_music {
+        storage::store(util::audio::AudioContext::new());
+    }
 
     let loading_coroutine = macroquad::prelude::coroutines::start_coroutine(load_coroutine());
 
     let mut scene_manager = SceneManager::default();
-    bind_world_music();
+    // bind_world_music(); // moved to after gamefreak music plays, fix this
     
     storage::store(io::data::player::PlayerData::load_async_default().await);
 

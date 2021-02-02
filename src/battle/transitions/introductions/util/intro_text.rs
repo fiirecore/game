@@ -117,7 +117,7 @@ impl GuiComponent for IntroText {
 				}
 				if self.button_up {
 					self.button_pos += delta * 15.0;
-					if self.button_pos > 80.0 {
+					if self.button_pos > 8.0 {
 						self.button_up = !self.button_up;
 					}
 				} else {

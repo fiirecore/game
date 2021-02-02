@@ -107,6 +107,7 @@ impl Load for LoadingGamefreakScene {
 	fn on_start(&mut self) {
 		self.scene_token = 0;
 		crate::audio::play_music(crate::audio::music::Music::IntroGamefreak);
+		crate::audio::loader::bind_world_music();
 		self.accumulator = 0.0;
 	}
 
