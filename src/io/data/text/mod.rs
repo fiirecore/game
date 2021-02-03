@@ -1,15 +1,19 @@
-use macroquad::color_u8;
-use macroquad::prelude::Color;
 use serde::Deserialize;
 
+use self::color::TextColor;
+
 pub mod font;
+pub mod color;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Message {
 
+    #[serde(default)]
     pub font_id: usize,
     pub message: Vec<String>,
+    #[serde(default)]
     pub color: TextColor,
+    #[serde(default)]
     pub no_pause: bool,
 
 }
@@ -19,7 +23,7 @@ impl Default for Message {
         Self {
             font_id: 1,
             color: TextColor::default(),
-            message: Vec::new(),
+            message: vec![String::from("Default message")],
             no_pause: true,
         }
     }
@@ -42,34 +46,42 @@ impl Message {
 
 }
 
-#[derive(Debug, Copy, Clone, Deserialize)]
-pub enum TextColor {
-
-    White,
-    Gray,
-    Black,
-    Red,
-    Blue,
-
+#[derive(Debug, Clone, Deserialize)]
+pub struct MessageSet {
+    pub messages: Vec<Message>,
 }
 
-impl Default for TextColor {
-    fn default() -> Self {
-        Self::White
+impl MessageSet {
+
+    pub fn new(font_id: usize, color: TextColor, messages: Vec<Vec<String>>) -> Self {
+        let mut messages_vec = Vec::new();
+        for message in messages {
+            messages_vec.push(Message {
+                font_id: font_id,
+                message: message,
+                color: color,
+                no_pause: false,
+            })
+        }
+        Self {
+            messages: messages_vec,
+        }
     }
+
+    pub fn get_phrase(&self, index: usize) -> &Message {
+        &self.messages[index]
+    }
+
+    pub fn len(&self) -> usize {
+        self.messages.len()
+    }
+    
 }
 
-impl Into<Color> for TextColor {
-    fn into(self) -> Color {
-        match self {
-            TextColor::White => macroquad::prelude::WHITE,
-            TextColor::Gray => macroquad::prelude::GRAY,
-            TextColor::Black => macroquad::prelude::BLACK,
-            TextColor::Red => macroquad::prelude::RED,
-            TextColor::Blue => BLUE_COLOR,
+impl Default for MessageSet {
+    fn default() -> Self {
+        Self {
+            messages: vec![Message::default()],
         }
     }
 }
-
-//const WHITE_COLOR: Color = Color::new(1.2, 1.2, 1.2, 1.0);
-const BLUE_COLOR: Color = color_u8!(48, 80, 200, 255); // 48, 80, 200

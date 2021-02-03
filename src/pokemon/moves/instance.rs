@@ -19,10 +19,18 @@ impl SavedPokemonMoveSet {
 	}
 
 	pub fn to_instance(&self, pokedex: &Pokedex) -> Vec<MoveInstance> {
-		return self.moves.iter().map(|pkmn_move| MoveInstance {
-			move_instance: pokedex.move_list.get(&pkmn_move.name).unwrap().clone(),
-			remaining_pp: pkmn_move.remaining_pp,
-		}).collect();
+		let mut instance = Vec::new();
+		for pkmn_move in &self.moves {
+			if let Some(pokemon_move) = pokedex.move_list.get(&pkmn_move.name) {
+				instance.push(MoveInstance {
+					move_instance: pokemon_move.clone(),
+					remaining_pp: pkmn_move.remaining_pp,
+				});
+			} else {
+				macroquad::prelude::warn!("Could not find move {} from saved moveset!", &pkmn_move.name);
+			}
+		}
+		return instance;
 	}
 
 	pub fn from_instance(moves: &Vec<MoveInstance>) -> Self {

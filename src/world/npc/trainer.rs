@@ -10,8 +10,8 @@ pub struct Trainer {
 
     pub trainer_type: TrainerType,
 
-    //#[serde(default)]
     pub encounter_music: Option<Music>,
+    //#[serde(default)]
     pub encounter_message: Vec<Vec<String>>,
     pub victory_message: Vec<String>,
     pub worth: u16,

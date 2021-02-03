@@ -7,7 +7,7 @@ pub fn byte_image(bytes: &[u8]) -> Image {
 
 pub async fn open_image<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {
     let path = path.as_ref();
-    match macroquad::prelude::load_image(path.to_str().unwrap()).await {
+    match macroquad::prelude::load_image(&path.to_string_lossy()).await {
         Ok(image) => Some(image),
         Err(err) => {
             macroquad::prelude::warn!("Could not open image at {:?} with error {}", path, err);

@@ -1,25 +1,38 @@
+use std::path::Path;
+use macroquad::miniquad::fs::Error;
 use macroquad::prelude::warn;
 use crate::util::graphics::Texture;
 
 lazy_static::lazy_static! {
-	static ref FILE: parking_lot::Mutex<Option<Vec<u8>>> = parking_lot::Mutex::new(None); // lol
+	static ref FILE: parking_lot::Mutex<Option<Result<Vec<u8>, Error>>> = parking_lot::Mutex::new(None); // lol
 }
 
-pub fn read_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<Vec<u8>> {
-    let path = path.as_ref().to_str().unwrap().to_owned();
-    
-    macroquad::miniquad::fs::load_file(&path.clone(), move |bytes| {
-        match bytes {
-            Ok(bytes) => *FILE.lock() = Some(bytes),
-            Err(err) => {
-                warn!("Could not read file at {:?} with error {}", path, err);
-            }
+pub fn read_noasync<P: AsRef<Path>>(path: P) -> Option<Vec<u8>> {
+    let path2 = path.as_ref().clone();
+    match read(&path) {
+        Ok(bytes) => Some(bytes),
+        Err(err) => {
+            warn!("Could not read file at {:?} with error {}", path2, err);
+            None
         }
-    });
-    return FILE.lock().take();
+    }
 }
 
-pub fn read_to_string_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<String> {
+fn read<P: AsRef<Path>>(path: P) -> Result<Vec<u8>, Error> {
+    macroquad::miniquad::fs::load_file(&path.as_ref().to_string_lossy(), move |bytes| {
+        *FILE.lock() = Some(bytes);
+    });
+    match FILE.lock().take() {
+        Some(result) => return result,
+        None => {
+            warn!("Could not take file result from mutex!");
+            return Err(Error::DownloadFailed);
+        }
+    }
+    
+}
+
+pub fn read_to_string_noasync<P: AsRef<Path>>(path: P) -> Option<String> {
     let path = path.as_ref();
     match read_noasync(path) {
         Some(bytes) => {

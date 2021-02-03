@@ -1,4 +1,5 @@
 use crate::io::data::text::Message;
+use crate::io::data::text::MessageSet;
 use crate::util::battle_data::TrainerData;
 use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
@@ -62,15 +63,18 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
             self.trainer_texture = Some(NPC::battle_sprite(trainer_data.sprite_id));
 
-            self.basic_battle_introduction.intro_text.text = vec![
-                Message::new(vec![trainer_data.name.clone(), String::from("would like to battle!")], false), 
-                Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + battle.opponent().data.name.to_uppercase().as_str()], true),
-            ];
+            self.basic_battle_introduction.intro_text.text = MessageSet {
+                messages: vec![
+                    Message::new(vec![trainer_data.name.clone(), String::from("would like to battle!")], false), 
+                    Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + battle.opponent().data.name.to_uppercase().as_str()], true),
+                ]
+            };
+            
         } else {
-            self.basic_battle_introduction.intro_text.text = vec![Message::new(vec![String::from("No trainer data found!")], false)];
+            self.basic_battle_introduction.intro_text.text = MessageSet { messages: vec![Message::new(vec![String::from("No trainer data found!")], false)] };
         }        
 
-        self.basic_battle_introduction.intro_text.text.push(
+        self.basic_battle_introduction.intro_text.text.messages.push(
             Message::new(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], true),
         );
         

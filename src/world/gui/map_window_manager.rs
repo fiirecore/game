@@ -3,7 +3,7 @@ use crate::gui::Activatable;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
 use crate::gui::dynamic_text::DynamicText;
-use crate::io::data::text::Message;
+use crate::io::data::text::MessageSet;
 use crate::util::Completable;
 use crate::util::Reset;
 
@@ -27,8 +27,8 @@ impl MapWindowManager {
         }
     }
 
-    pub fn set_text(&mut self, message: Vec<Message>) {
-        self.text.text = message;
+    pub fn set_text(&mut self, message_set: MessageSet) {
+        self.text.text = message_set;
     }
 
     pub fn update(&mut self, delta: f32) {

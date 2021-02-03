@@ -116,24 +116,24 @@ impl WorldManager {
                 if self.current_map_mut().npcs[index].should_move() {
                     self.npc_movement(index, delta);
                 } else {
-                    self.current_map_mut().npcs[index].offset = None;
                     self.window_manager.spawn();
+                    self.current_map_mut().npcs[index].offset = None;
                     if let Some(trainer) = &self.current_map_mut().npcs[index].trainer {
                         if let Some(music) = trainer.encounter_music {
                             play_music(music);
                         }
-                        let mut messages = Vec::new();
-                        for index in 0..trainer.encounter_message.len() {
-                            messages.push(crate::io::data::text::Message {
-                                font_id: 1,
-                                message: trainer.encounter_message[index].clone(),
-                                color: crate::io::data::text::TextColor::Blue,
-                                no_pause: false,
-                            });
-                        }
-                        self.window_manager.set_text(messages);
+                        let message_set = crate::io::data::text::MessageSet::new(
+                            1, 
+                            crate::io::data::text::color::TextColor::Blue, 
+                            trainer.encounter_message.clone()
+                        );
+                        self.window_manager.set_text(message_set);
                     }
-                    self.player.frozen = false;
+                    self.player.position.direction = self.current_map_mut().npcs[index].position.direction.inverse();
+                    if self.player.frozen {
+                        self.player.move_update(0.0);
+                        self.player.frozen = false;
+                    }
                 }
             }
             if !self.player.frozen {

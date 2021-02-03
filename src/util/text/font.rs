@@ -18,31 +18,25 @@ impl Font {
     pub fn render_text_from_left(&self, text: &str, x: f32, y: f32, color: Color) {
         let mut len: u32 = 0;
         for character in text.chars() {
-            len += match self.chars.get(&character) {
-                Some(texture) => {
-                    draw_texture(*texture, x + len as f32, y, color);
-                    texture.width() as u32
-                },
-                None => {
-                    self.chars.values().next().unwrap().width() as u32
-                }
-            };          
+            len += if let Some(texture) = self.chars.get(&character) {
+                draw_texture(*texture, x + len as f32, y, color);
+                texture.width() as u32
+            } else {
+                self.font_width as u32
+            };       
         }
     }
 
     pub fn render_text_from_right(&self, text: &str, x: f32, y: f32, color: Color) {
         let mut len = 0.0;
-        let x_offset = self.text_pixel_length(text) as f32;
+        let x_offset = self.text_pixel_length(text);
         for character in text.chars() {
-            len += match self.chars.get(&character) {
-                Some(texture) => {
-                    draw_texture(*texture, x - x_offset + len as f32, y, color);
-                    texture.width()
-                },
-                None => {
-                    self.chars.values().next().unwrap().width()
-                }
-            };         
+            len += if let Some(texture) = self.chars.get(&character) {
+                draw_texture(*texture, x - x_offset + len, y, color);
+                texture.width()
+            } else {
+                self.font_width as f32
+            };
         }
     }
 
@@ -50,7 +44,7 @@ impl Font {
         text.chars().map(|character| {
             match self.chars.get(&character) {
                 Some(texture) => texture.width(),
-                None => self.chars.values().next().unwrap().width(),
+                None => self.font_width as f32,
             }
         }).sum()
     }

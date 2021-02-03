@@ -1,6 +1,6 @@
 use crate::entity::Entity;
 use crate::io::data::text::Message;
-use crate::io::data::text::TextColor;
+use crate::io::data::text::color::TextColor;
 use crate::util::battle_data::TrainerData;
 use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
@@ -129,10 +129,10 @@ impl BattleIntroduction for BasicBattleIntroduction {
     }
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
-        self.intro_text.text = vec![
+        self.intro_text.text = crate::io::data::text::MessageSet { messages: vec![
             Message::with_color(vec![String::from("Wild ") + battle.opponent().data.name.to_uppercase().as_str() + " appeared!"], false, TextColor::White),
             Message::with_color(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], true, TextColor::White),
-        ];
+        ]};
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {

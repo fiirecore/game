@@ -2,7 +2,7 @@ use crate::pokemon::data::StatSet;
 use crate::pokemon::party::PokemonParty;
 use crate::util::file::PersistantData;
 use std::fs::File;
-use std::io::{BufWriter, Write};
+use std::io::Write;
 use std::path::PathBuf;
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
@@ -125,28 +125,38 @@ impl PersistantData for PlayerData {
 
 	fn save(&self) {
 		if cfg!(not(target_arch = "wasm32")) {
+			info!("Saving player data...");
 			let path = get_path();
 			if !&path.exists() {
 				match std::fs::create_dir_all(&path) {
 				    Ok(()) => (),
 				    Err(err) => {
-						warn!("Could not create saves directory with error {}", err);
+						warn!("Could not create saves directory at {:?} with error {}", &path, err);
 					}
 				}
 			}
-			let file = File::create(path.join(SAVE_FILENAME)).unwrap();
-			let mut writer = BufWriter::new(file);
-			info!("Saving player data...");
-			match serde_json::to_string_pretty(&self) {
-				Ok(encoded) => {
-					if let Err(e) = writer.write(encoded.as_bytes()) {
-						warn!("Failed to encode with error: {}", e);
+			
+			let path = path.join(SAVE_FILENAME);
+			match File::create(&path) {
+			    Ok(mut file) => {
+					match serde_json::to_string_pretty(&self) {
+						Ok(encoded) => {
+							if let Err(err) = file.write(encoded.as_bytes()) {
+								warn!("Failed to encode player data with error: {}", err);
+							}
+						}
+						Err(e) => {
+							warn!("Failed to save settings: {}", e);
+						}
 					}
 				}
-				Err(e) => {
-					warn!("Failed to save settings: {}", e);
-				}
+			    Err(err) => {
+					warn!("Could not create player save file at {:?} with error {}", &path, err);
+				},
 			}
+			
+			
+			
 		}		
 	}
 

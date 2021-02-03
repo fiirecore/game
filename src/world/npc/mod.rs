@@ -76,8 +76,10 @@ impl NPC {
     }
 
     pub fn after_interact(&mut self) {
-        self.trainer.as_mut().unwrap().tracking_length = None;
-        crate::util::battle_data::trainer_battle(&self);
+        if let Some(trainer) = self.trainer.as_mut() {
+            trainer.tracking_length = None;
+            crate::util::battle_data::trainer_battle(&self);
+        }
     }
 
     pub fn battle_sprite(id: u8) -> Texture {

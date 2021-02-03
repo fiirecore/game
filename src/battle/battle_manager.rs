@@ -93,9 +93,9 @@ impl Reset for BattleManager {
 
 impl BattleManager {
 
-	pub fn on_start(&mut self, pokedex: &Pokedex, player_data: &PlayerData) { // add battle type parameter
+	pub fn on_start(&mut self, pokedex: &Pokedex, player_data: &PlayerData, battle_data: BattleData) { // add battle type parameter
 		self.finished = false;
-		self.battle_data = crate::util::battle_data::BATTLE_DATA.lock().take().unwrap();
+		self.battle_data = battle_data;
 		self.create_battle(player_data, pokedex);
 		self.reset();
 		self.battle_screen_transition_manager.on_start(&self.battle_data);

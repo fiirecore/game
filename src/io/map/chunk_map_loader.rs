@@ -15,7 +15,7 @@ pub fn new_chunk_map(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u
         Some(map_file) => {
             match map_file.path().extension() {
                 Some(ext) => {
-                    if ext.to_str().unwrap().eq("map") {
+                    if ext.to_string_lossy().eq("map") {
                         let mut gba_map = get_gba_map(map_file);
                         fix_tiles(&mut gba_map, palette_sizes);
 

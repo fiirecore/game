@@ -58,7 +58,7 @@ impl TrainerBattleScreenTransition {
             y, 
             macroquad::prelude::WHITE, 
             DrawTextureParams {
-                rotation: self.rect_width.to_radians(),
+                rotation: (self.rect_width * 2.0).to_radians(),
                 ..Default::default()
             },
         );

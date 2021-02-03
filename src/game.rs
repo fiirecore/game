@@ -81,7 +81,7 @@ impl GameManager {
 			if crate::util::battle_data::BATTLE_DATA.lock().is_some() {
 				self.battling = true;
 				self.swapped = true;
-				self.battle_manager.on_start(&self.pokedex, &get::<PlayerData>().expect("Could not get Player Data"));
+				self.battle_manager.on_start(&self.pokedex, &get::<PlayerData>().expect("Could not get Player Data"), crate::util::battle_data::BATTLE_DATA.lock().take().unwrap());
 			}
 
 		} else {

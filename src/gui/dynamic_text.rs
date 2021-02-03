@@ -1,4 +1,5 @@
 use crate::io::data::text::Message;
+use crate::io::data::text::MessageSet;
 use crate::util::Completable;
 use crate::util::Reset;
 use crate::util::graphics::draw_text_left_color;
@@ -18,7 +19,7 @@ pub struct DynamicText {
 	panel_x: f32,
 	panel_y: f32,
 	
-	pub text: Vec<Message>,
+	pub text: MessageSet,
 	current_phrase: u8,
 	current_line: usize,
 	counter: f32,
@@ -42,7 +43,7 @@ impl Default for DynamicText {
 			y: 0.0,
 			panel_x: 0.0,
 			panel_y: 0.0,
-			text: Vec::new(),
+			text: MessageSet::default(),
 			current_phrase: 0,
 			current_line: 0,
 
@@ -84,7 +85,7 @@ impl DynamicText {
 	}
 
 	fn current_message(&self) -> &Message {
-		&self.text[self.current_phrase as usize]
+		&self.text.get_phrase(self.current_phrase as usize)
 	}
 
 }
@@ -143,7 +144,7 @@ impl GuiComponent for DynamicText {
 				} else {
 					1.0
 				}
-			} else if self.current_line < self.text[self.current_phrase as usize].message.len() - 1 {
+			} else if self.current_line < self.current_message().message.len() - 1 {
 				self.current_line += 1;
 				self.counter = 0.0;
 			} else {
