@@ -1,6 +1,4 @@
-try kira audio once it supports midi
-
-###streamline battle panel update method
+custom deserialization for MessageSet
 
 copy structure of pokemon showdown battle code
 
@@ -8,27 +6,12 @@ make text objects able to wait a certain amount of time -> something like fn wai
 
 create new map system
 
-better trait and implementation system for maps and stuff ((load, on_start), map rendering, saveable, etc.)
-
-world map to different world warp fix
-
-log4rs
-
-asset system for embed, Asset struct to get things as strings, images, and files
-
 finish start menu
-
-fix warp map exit so it loads the world map piece
-change warp to world to make map_set_num the piece id and dest_x and dest_y local map coordinates
 
 look at warp to-dos in long term
 
 have bush textures for player when player idle in bush
 
-finish wild pokemon entry types (add better version of original and own version)
-
 finish npcs
 
-battle end_if_finished()
-
-add battle backgrounds and ground types in a vec to battle manager
+add battle backgrounds and ground types

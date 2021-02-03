@@ -40,7 +40,7 @@ pub fn trainer_battle(npc: &NPC) {
             trainer_data: Some(TrainerData {
                 name: trainer.trainer_type.to_string().to_string() + " " + npc.identifier.name.as_str(),
                 sprite_id: npc.identifier.sprite,
-                transition: trainer.transition.unwrap_or(BattleScreenTransitions::Trainer),        
+                transition: trainer.battle_transition.unwrap_or(BattleScreenTransitions::Trainer),        
             }),
         });
     }        

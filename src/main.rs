@@ -1,15 +1,25 @@
+use io::args::Args;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::Conf;
 use macroquad::prelude::collections::storage;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
-
 use io::data::configuration::Configuration;
-use macroquad::prelude::warn;
 use parking_lot::RwLock;
 use scene::loading_scene_manager::LoadingSceneManager;
 use scene::scene_manager::SceneManager;
 use util::file::PersistantDataLocation;
+
+pub mod util;
+pub mod audio;
+pub mod scene;
+pub mod entity;
+pub mod io;
+pub mod world;
+pub mod pokemon;
+pub mod game;
+pub mod battle;
+mod gui;
 
 pub static TITLE: &str =  env!("CARGO_PKG_NAME");
 pub static AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
@@ -33,12 +43,13 @@ async fn main() {
         info!("Running in debug mode");
     }
 
-    let args = parse_args();
+    let args = crate::io::args::parse_args();
 
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
-    if args.0 {
-        storage::store(util::audio::AudioContext::new());
+    if !args.contains(&Args::DisableAudio) {
+        #[cfg(feature = "audio")]
+        storage::store(crate::audio::context::AudioContext::new());
     }
 
     let loading_coroutine = macroquad::prelude::coroutines::start_coroutine(load_coroutine());
@@ -47,6 +58,8 @@ async fn main() {
     info!("Loading in background...");
 
     let mut scene_manager = SceneManager::default();
+    
+    #[cfg(feature = "audio")]
     audio::loader::bind_world_music();
     
     storage::store(io::data::player::PlayerData::load_async_default().await);
@@ -108,57 +121,5 @@ async fn load_coroutine() {
         macroquad::prelude::next_frame().await;
     }
 }
-
-fn not_debug() -> bool {
-    !cfg!(debug_assertions) || cfg!(target_arch = "wasm32")
-}
-
-fn parse_args() -> (bool, ) {
-    let args: Vec<String> = std::env::args().collect();
-    let mut opts = getopts::Options::new();
-
-    let mut load_music = true;
-    opts.optflag("m", "no-music", "Disable music");
-
-    match opts.parse(&args[1..]) {
-        Ok(m) => {
-            if m.opt_present("m") {
-                load_music = false; // return here instead of having mut bool
-            }
-        }
-        Err(f) => {
-            warn!("Could not parse command line arguments with error {}", f.to_string());
-        }
-    };
-
-    return (load_music, );
-}
-
-pub enum RunState {
-
-    Continue,
-    Quit,
-
-}
-
-pub mod util;
-
-pub mod audio;
-
-pub mod scene;
-
-pub mod entity;
-
-pub mod io;
-
-pub mod world;
-
-pub mod pokemon;
-
-pub mod game;
-
-pub mod battle;
-
-mod gui;
 
 

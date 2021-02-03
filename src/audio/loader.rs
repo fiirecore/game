@@ -12,7 +12,7 @@ pub fn bind_world_music() {
 }
 
 fn bind_music_fn() {
-    if let Some(mut audio_context) = macroquad::prelude::collections::storage::get_mut::<crate::util::audio::AudioContext>() {
+    if let Some(mut audio_context) = macroquad::prelude::collections::storage::get_mut::<crate::audio::context::AudioContext>() {
         audio_context.deref_mut().bind_music();     
     }
 }

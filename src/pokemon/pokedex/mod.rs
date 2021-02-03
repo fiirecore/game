@@ -77,10 +77,14 @@ impl Pokedex {
 	}
 
 	pub fn pokemon_from_id(&self, id: usize) -> &Pokemon {
-		return self.pokemon_list.get(&id).unwrap_or({
-			warn!("Pokemon with id {} could not be found! Returning Pokemon with id 1.", id);
-			self.pokemon_list.get(&1).unwrap()
-		});
+		match self.pokemon_list.get(&id) {
+			Some(pokemon) => pokemon,
+			None => {
+				let pokemon = self.pokemon_list.values().next().unwrap();
+				warn!("Pokemon with id {} could not be found! Returning first found Pokemon value ({}).", id, &pokemon.data.name);
+				return pokemon;
+			}
+		}
 	}
 
 	pub fn moves_from_level(&self, pokemon_id: usize, level: u8) -> Vec<MoveInstance> {

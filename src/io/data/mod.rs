@@ -5,6 +5,7 @@ use crate::util::input::Control;
 pub mod configuration;
 pub mod player;
 pub mod text;
+pub mod world_status;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Deserialize, Serialize, enum_iterator::IntoEnumIterator)]
 pub enum Direction { // move to util

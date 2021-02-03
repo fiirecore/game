@@ -17,11 +17,16 @@ codegen-units = 1
 lto = true
 opt-level = 3
 
+[features]
+default = ["audio"]
+audio = ["kira"]
+args = ["getopts"]
+
 [dependencies]
 
-macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
+macroquad = { git = "https://github.com/DoNotDoughnut/macroquad", default-features = false, features = ["log-impl", "experimental"] }
 
-kira = { version = "0.4", default-features = false, features = ["ogg"] } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
+kira = { version = "0.4", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -35,7 +40,7 @@ include_dir = { version = "0.6.0", default-features = false }
 lazy_static = "1.4"
 parking_lot = "0.11"
 
-getopts = "0.2.21"
+getopts = { version = "0.2.21", optional = true }
 
 enum-iterator = "0.6"
 

@@ -1,17 +1,23 @@
-use self::context::music::MUSIC_CONTEXT;
 use self::music::Music;
 
 pub mod music;
 pub mod sound;
+#[cfg(feature = "audio")]
 pub mod loader;
+#[cfg(feature = "audio")]
 pub mod context;
 
 pub fn play_music(music: Music) {
-    MUSIC_CONTEXT.lock().play_music(music);
+    macroquad::prelude::debug!("Playing {:?}", music);
+    #[cfg(feature = "audio")]
+    self::context::music::MUSIC_CONTEXT.lock().play_music(music);
 }
 
 pub fn get_music_playing() -> Option<Music> {
-    MUSIC_CONTEXT.lock().get_music_playing()
+    #[cfg(feature = "audio")]
+    return self::context::music::MUSIC_CONTEXT.lock().get_music_playing();
+    #[cfg(not(feature = "audio"))]
+    return None;
 }
 
 // pub fn stop_sound(sound: Sound) {

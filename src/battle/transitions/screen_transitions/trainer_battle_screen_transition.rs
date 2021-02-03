@@ -23,7 +23,7 @@ pub struct TrainerBattleScreenTransition {
 
 }
 
-impl TrainerBattleScreenTransition {
+impl TrainerBattleScreenTransition { // To - do: Two grey flashes before rectangles scroll through screen
 
     pub fn new() -> Self {
 

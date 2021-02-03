@@ -4,7 +4,6 @@ pub mod timer;
 pub mod input;
 pub mod image;
 pub mod file;
-pub mod audio;
 pub mod battle_data;
 
 pub static TILE_SIZE: u8 = 16;

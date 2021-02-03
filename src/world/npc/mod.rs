@@ -1,3 +1,4 @@
+use crate::audio::music::Music;
 use crate::io::data::Direction;
 use crate::io::data::Position;
 use crate::util::graphics::Texture;
@@ -16,6 +17,7 @@ pub struct NPC {
     #[serde(skip)]
     pub offset: Option<(isize, isize)>, // Offset from home position, see if changing the struct to something that uses variables better would help
     // pub movement: Option<MovementType>,
+    pub encounter_music: Option<Music>,
     pub trainer: Option<Trainer>,
 
 }

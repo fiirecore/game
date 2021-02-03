@@ -113,15 +113,30 @@ impl WorldManager {
             }
         } else {
             if let Some(index) = self.current_map_mut().npc_active {
+
+                // Play NPC music
+
+                if let Some(music) = self.current_map_mut().npcs[index].encounter_music {
+                    if let Some(playing_music) = crate::audio::get_music_playing() {
+                        if playing_music != music {
+                            play_music(music);
+                        }
+                    } else {
+                        play_music(music);
+                    }
+                }
+
+                // Move npc or spawn textbox
+
                 if self.current_map_mut().npcs[index].should_move() {
                     self.npc_movement(index, delta);
                 } else {
                     self.window_manager.spawn();
                     self.current_map_mut().npcs[index].offset = None;
                     if let Some(trainer) = &self.current_map_mut().npcs[index].trainer {
-                        if let Some(music) = trainer.encounter_music {
-                            play_music(music);
-                        }
+                        // if let Some(music) = trainer.encounter_music {
+                        //     play_music(music);
+                        // }
                         let message_set = crate::io::data::text::MessageSet::new(
                             1, 
                             crate::io::data::text::color::TextColor::Blue, 
@@ -181,7 +196,7 @@ impl WorldManager {
 
     pub fn input(&mut self, delta: f32) {
 
-        if !crate::not_debug() {
+        if cfg!(debug_assertions) {
             self.debug_input()
         }
 

@@ -9,6 +9,7 @@ use macroquad::prelude::warn;
 use serde::{Deserialize, Serialize};
 use super::Location;
 use super::Position;
+use super::world_status::WorldStatus;
 use crate::pokemon::instance::PokemonInstance;
 
 static SAVE_FILENAME: &str = "player.json";
@@ -18,6 +19,12 @@ pub struct PlayerData {
 	// pub world_id: String,
 	pub location: Location,
 	pub party: PokemonParty,
+
+	#[serde(default)]
+	pub worth: usize,
+
+	#[serde(default)]
+	pub world_status: WorldStatus,
 
 	#[serde(skip)]
 	pub dirty: bool,
@@ -93,7 +100,7 @@ impl Default for PlayerData {
 				
 			},
 
-			dirty: false,
+			..Default::default()
 
 		}
 	}
