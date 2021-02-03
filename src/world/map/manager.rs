@@ -113,24 +113,32 @@ impl WorldManager {
             }
         } else {
             if let Some(index) = self.current_map_mut().npc_active {
-                self.window_manager.spawn();
-                if let Some(trainer) = &self.current_map_mut().npcs[index].trainer {
-                    if let Some(music) = trainer.encounter_music {
-                        play_music(music);
+                if self.current_map_mut().npcs[index].should_move() {
+                    self.npc_movement(index, delta);
+                } else {
+                    self.current_map_mut().npcs[index].offset = None;
+                    self.window_manager.spawn();
+                    if let Some(trainer) = &self.current_map_mut().npcs[index].trainer {
+                        if let Some(music) = trainer.encounter_music {
+                            play_music(music);
+                        }
+                        let mut messages = Vec::new();
+                        for index in 0..trainer.encounter_message.len() {
+                            messages.push(crate::io::data::text::Message {
+                                font_id: 1,
+                                message: trainer.encounter_message[index].clone(),
+                                color: crate::io::data::text::TextColor::Blue,
+                                no_pause: false,
+                            });
+                        }
+                        self.window_manager.set_text(messages);
                     }
-                    let mut messages = Vec::new();
-                    for index in 0..trainer.encounter_message.len() {
-                        messages.push(crate::io::data::text::Message {
-                            font_id: 1,
-                            message: trainer.encounter_message[index].clone(),
-                            color: crate::io::data::text::TextColor::Blue,
-                            no_pause: false,
-                        });
-                    }
-                    self.window_manager.set_text(messages);
+                    self.player.frozen = false;
                 }
             }
-            self.player_movement(delta);
+            if !self.player.frozen {
+                self.player_movement(delta);
+            }           
         }
     }
 
@@ -329,6 +337,42 @@ impl WorldManager {
         }
     }
 
+    fn npc_movement(&mut self, npc_index: usize, delta: f32) {
+        let npc = &mut self.current_map_mut().npcs[npc_index];
+        if npc.should_move() {
+            match npc.position.direction {
+                Direction::Up => {
+                    npc.position.y_offset -= 60.0 * delta;
+                    if npc.position.y_offset <= -16.0 {
+                        npc.position.y -= 1;
+                        npc.position.y_offset = 0.0;
+                    }
+                }
+                Direction::Down => {
+                    npc.position.y_offset += 60.0 * delta;
+                    if npc.position.y_offset >= 16.0 {
+                        npc.position.y += 1;
+                        npc.position.y_offset = 0.0;
+                    }
+                }
+                Direction::Left => {
+                    npc.position.x_offset -= 60.0 * delta;
+                    if npc.position.x_offset <= -16.0 {
+                        npc.position.x -= 1;
+                        npc.position.x_offset = 0.0;
+                    }
+                }
+                Direction::Right => {
+                    npc.position.x_offset += 60.0 * delta;
+                    if npc.position.x_offset >= 16.0 {
+                        npc.position.x += 1;
+                        npc.position.x_offset = 0.0;
+                    }
+                }
+            }
+        }
+    }
+
     fn stop_player(&mut self) {
         //self.player.moving = false;
         self.player.on_stopped_moving();
@@ -336,11 +380,11 @@ impl WorldManager {
         let y = self.player.position.y;
         if self.chunk_map.is_alive() {
             if self.chunk_map.in_bounds(x, y) {
-                self.chunk_map.on_tile(x, y);
+                self.chunk_map.on_tile(&mut self.player, x, y);
             }
         } else {
             if self.map_sets.in_bounds(x, y) {
-                self.map_sets.on_tile(x, y);
+                self.map_sets.on_tile(&mut self.player, x, y);
             }
         }        
     }

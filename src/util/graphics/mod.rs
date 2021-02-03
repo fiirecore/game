@@ -85,3 +85,11 @@ pub fn fade_in_out(texture: Texture, x: f32, y: f32, accumulator: f32, end_time:
 		draw_texture(texture, x, y, [1.0, 1.0, 1.0, (end_time - accumulator) / fade_time].into());
 	}
 }
+
+pub fn fade_in(texture: Texture, x: f32, y: f32, accumulator: f32, fade_time: f32) {
+	if accumulator < fade_time {
+		draw_texture(texture, x, y, [1.0, 1.0, 1.0, accumulator/fade_time].into());
+	} else {
+		draw(texture, x, y);
+	}
+}

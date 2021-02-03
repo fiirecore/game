@@ -138,7 +138,11 @@ impl GuiComponent for DynamicText {
 					}
 				}
 			} else if self.counter <= line_len as f32 {
-				self.counter += delta * 60.0;
+				self.counter += delta * 60.0 * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+					16.0
+				} else {
+					1.0
+				}
 			} else if self.current_line < self.text[self.current_phrase as usize].message.len() - 1 {
 				self.current_line += 1;
 				self.counter = 0.0;
@@ -152,17 +156,23 @@ impl GuiComponent for DynamicText {
 	fn render(&self) {
 		if self.is_active() {
 
-			//crate::util::graphics::draw_message(self.text[self.current_phrase as usize], self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
+			let current_line = self.current_line();
 
-			draw_text_left_color(self.current_message().font_id, &self.current_line()[..(self.counter / 4.0) as usize], self.current_message().color, self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
+			let string = if current_line.len() > (self.counter / 4.0) as usize {
+				&current_line[..(self.counter / 4.0) as usize]
+			} else {
+				current_line
+			};		
+
+			draw_text_left_color(self.current_message().font_id, string, self.current_message().color, self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
 
 			for line_index in 0..self.current_line {
 				draw_text_left_color(self.current_message().font_id, &self.current_message().message[line_index], self.current_message().color, self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 
-			//if self.can_continue && !self.no_pause {
-				//crate::util::graphics::draw_button(self.get_line(self.get_text().len() - 1), self.font_id, self.panel_x + self.x, self.panel_y + self.y + self.button_pos + (self.current_line << 4) as f32);
-			//}			
+			if self.can_continue && !self.current_message().no_pause {
+				crate::util::graphics::draw_button(current_line, self.current_message().font_id, self.panel_x + self.x, self.panel_y + self.y + self.button_pos + (self.current_line << 4) as f32);
+			}			
 		
 		}
 		

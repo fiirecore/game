@@ -13,8 +13,8 @@ pub struct NPC {
 
     pub identifier: NPCIdentifier,
     pub position: Position, // Home position
-    // #[serde(skip)]
-    // pub home_offset: Position, // Offset from home position, see if changing the struct to something that uses variables better would help
+    #[serde(skip)]
+    pub offset: Option<(isize, isize)>, // Offset from home position, see if changing the struct to something that uses variables better would help
     // pub movement: Option<MovementType>,
     pub trainer: Option<Trainer>,
 
@@ -40,17 +40,25 @@ impl NPC {
     pub fn walk_to(&mut self, x: isize, y: isize) {
         match self.position.direction {
             Direction::Up => {
-                self.position.y = y + 1;
+                self.offset = Some((x, y + 1));
             }
             Direction::Down => {
-                self.position.y = y - 1;
+                self.offset = Some((x, y - 1));
             }
             Direction::Left => {
-                self.position.x = x + 1;
+                self.offset = Some((x + 1, y));
             }
             Direction::Right => {
-                self.position.x = x - 1;
+                self.offset = Some((x - 1, y));
             }
+        }
+    }
+
+    pub fn should_move(&self) -> bool {
+        if let Some(offset) = self.offset {
+            self.position.x != offset.0 || self.position.y != offset.1
+        } else {
+            false
         }
     }
 

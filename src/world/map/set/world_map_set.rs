@@ -83,8 +83,8 @@ impl World for WorldMapSet {
         self.maps[self.current_map_index].check_warp(x, y)
     }
 
-    fn on_tile(&mut self, x: isize, y: isize) {
-        self.maps[self.current_map_index].on_tile(x, y)
+    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
+        self.maps[self.current_map_index].on_tile(player, x, y)
     }
 
     fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {

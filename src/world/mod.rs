@@ -32,7 +32,7 @@ pub trait World {
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry>;
 
-    fn on_tile(&mut self, x: isize, y: isize);
+    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize);
 
     fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool);
 

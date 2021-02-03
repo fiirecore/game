@@ -51,8 +51,8 @@ impl World for WorldChunk {
         self.map.render(textures, npc_textures, screen.offset(self.x, self.y), border)
     }
 
-    fn on_tile(&mut self, x: isize, y: isize) {
-        self.map.on_tile(x - self.x, y - self.y)
+    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
+        self.map.on_tile(player, x - self.x, y - self.y)
     }
 
     fn input(&mut self, delta: f32, player: &Player) {

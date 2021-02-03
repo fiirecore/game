@@ -61,6 +61,16 @@ impl Player {
 	pub fn on_stopped_moving(&mut self) {
 		self.textures[0].idle();
 	}
+
+	pub fn freeze(&mut self) {
+		self.frozen = true;
+		self.position.x_offset = 0.0;
+		self.position.y_offset = 0.0;
+		self.moving = false;
+		self.running = false;
+		self.speed = BASE_SPEED;
+		self.on_stopped_moving();
+	}
 	
 }
 

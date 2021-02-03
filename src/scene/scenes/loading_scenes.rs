@@ -1,4 +1,5 @@
 use crate::util::Load;
+use crate::util::graphics::fade_in;
 use crate::util::input;
 use crate::util::graphics::Texture;
 
@@ -75,6 +76,8 @@ pub struct LoadingGamefreakScene {
 	scene_token: usize,
 	accumulator: f32,
 	background_color: [f32; 4],
+	logo_texture: Texture,
+	text_texture: Texture,
 
 }
 
@@ -87,12 +90,15 @@ impl LoadingGamefreakScene {
 			scene_token: 0,
 			accumulator: 0.0,
 			background_color: [24.0/255.0, 40.0/255.0, 72.0/255.0, 1.0],
-
+			logo_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/logo.png")),
+			text_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/text.png")),
 		}
 	}	
 
 	pub fn render_notr(&self) {
 		draw_rect(self.background_color, 0.0, 34.0, 240, 96);
+		fade_in(self.logo_texture, 108.0, 45.0, self.accumulator - 6.0, 1.0); //108x, 12y
+		fade_in(self.text_texture, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
 	}
 	
 }

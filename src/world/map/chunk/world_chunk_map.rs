@@ -164,9 +164,9 @@ impl World for WorldChunkMap {
         self.current_chunk_mut().input(delta, player)
     }
 
-    fn on_tile(&mut self, x: isize, y: isize) {
+    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
         if self.current_chunk().in_bounds(x, y) {
-            self.current_chunk_mut().on_tile(x, y);
+            self.current_chunk_mut().on_tile(player, x, y);
         }
     }
     

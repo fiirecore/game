@@ -76,8 +76,8 @@ impl World for WorldMapSetManager {
         self.map_set().check_warp(x, y)
     }
 
-    fn on_tile(&mut self, x: isize, y: isize) {
-        self.map_set_mut().on_tile(x, y)
+    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
+        self.map_set_mut().on_tile(player, x, y)
     }
 
     fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, crate::entity::texture::three_way_texture::ThreeWayTexture>, screen: RenderCoords, border: bool) {

@@ -103,7 +103,7 @@ impl Update for BasicBattleIntroduction {
 
     fn update(&mut self, delta: f32) {
         self.intro_text.update(delta);
-        if self.intro_text.is_finished() {
+        if self.intro_text.next() + 1 == self.intro_text.text.len() as u8 {
             if self.player_intro.should_update() {
                 self.player_intro.update(delta);                
             } else if self.intro_text.timer.is_finished() {
@@ -130,8 +130,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
         self.intro_text.text = vec![
-            Message::with_color(vec![String::from("Wild ") + battle.opponent().data.name.to_uppercase().as_str() + " appeared!"], true, TextColor::White),
-            Message::with_color(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], false, TextColor::White),
+            Message::with_color(vec![String::from("Wild ") + battle.opponent().data.name.to_uppercase().as_str() + " appeared!"], false, TextColor::White),
+            Message::with_color(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], true, TextColor::White),
         ];
     }
 

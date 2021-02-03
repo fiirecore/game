@@ -85,7 +85,7 @@ impl World for WorldMap {
         return None;
     }
 
-    fn on_tile(&mut self, /*player: &mut Player,*/ x: isize, y: isize) {
+    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
         let tile_id = self.tile(x, y);
 
         if let Some(wild) = &self.wild {
@@ -112,7 +112,7 @@ impl World for WorldMap {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
                                     self.npc_active = Some(npc_index);
                                     npc.interact(None, x, y);
-                                    //player.frozen = true;
+                                    player.freeze();
                                     //npc.movement.walk_to_player();
                                 }
                             }
@@ -123,7 +123,7 @@ impl World for WorldMap {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
                                     self.npc_active = Some(npc_index);
                                     npc.interact(None, x, y);
-                                    //player.frozen = true;
+                                    player.freeze();
                                 }
                             }
                         }
@@ -133,7 +133,7 @@ impl World for WorldMap {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
                                     self.npc_active = Some(npc_index);
                                     npc.interact(None, x, y);
-                                    //player.frozen = true;
+                                    player.freeze();
                                 }
                             }
                         }
@@ -143,7 +143,7 @@ impl World for WorldMap {
                                     info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
                                     self.npc_active = Some(npc_index);
                                     npc.interact(None, x, y);
-                                    //player.frozen = true;
+                                    player.freeze();
                                 }
                             }
                         }
@@ -186,7 +186,7 @@ impl World for WorldMap {
         for npc in &self.npcs {
             if let Some(twt) = npc_textures.get(&npc.identifier.sprite) {
                 let tuple = twt.of_direction(npc.position.direction.value());
-                draw_flip(tuple.0, (npc.position.x << 4) as f32 - screen.x_focus + 1.0, (npc.position.y << 4) as f32 - screen.y_focus - 4.0, tuple.1);
+                draw_flip(tuple.0, (npc.position.x << 4) as f32 - screen.x_focus + 1.0 + npc.position.x_offset, (npc.position.y << 4) as f32 - screen.y_focus - 4.0 + npc.position.y_offset, tuple.1);
             }            
         }
     }

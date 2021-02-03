@@ -41,7 +41,7 @@ impl TextRenderer {
     }
 
     pub fn render_button(&self, text: &str, font_id: usize, x: f32, y: f32) {
-        draw(self.button, x + self.fonts[font_id].text_pixel_length(text) as f32, y);
+        draw(self.button, x + self.fonts[font_id].text_pixel_length(text) as f32, y + 2.0);
     }
 
     pub fn render_cursor(&self, x: f32, y: f32) {
