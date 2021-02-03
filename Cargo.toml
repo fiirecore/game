@@ -35,7 +35,7 @@ toml = "0.5"
 ahash = "0.7"
 
 include_dir = { version = "0.6.0", default-features = false }
-#rust-embed = { version = "5", features = ["compression"] }
+zip = { version = "0.5.9", default-features = false, features = ["deflate"]}
 
 lazy_static = "1.4"
 parking_lot = "0.11"

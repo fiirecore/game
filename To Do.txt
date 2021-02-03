@@ -1,3 +1,7 @@
+Add zips of moves and entries instead of folders in asset dir
+
+npc uuids? possibly move active_npc Option to Vec
+
 custom deserialization for MessageSet
 
 copy structure of pokemon showdown battle code

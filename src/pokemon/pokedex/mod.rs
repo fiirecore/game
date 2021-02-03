@@ -1,3 +1,4 @@
+use std::io::Read;
 use std::path::PathBuf;
 
 use ahash::AHashMap as HashMap;
@@ -29,40 +30,75 @@ impl Pokedex {
 
 		let mut pokemon_list = HashMap::new();
 
-		let entries_dir = crate::io::ASSET_DIR.get_dir(DEX_DIR.join("entries")).expect("Could not get pokemon entries directory!");
+		let mut zip = zip::ZipArchive::new(
+			std::io::Cursor::new(
+				crate::io::ASSET_DIR.get_file(
+					DEX_DIR.join("entries.zip")
+				).expect("Could not get pokemon entries zip!").contents()
+			)
+		).expect("Could not read entries zip!");
 
-		for file in entries_dir.files() {
-			match file.contents_utf8() {
-			    Some(data) => {
-					match Pokemon::from_string(data) {
-					    Ok(pokemon) => {
-							pokemon_list.insert(pokemon.data.number, pokemon);
-						},
-						Err(err) => warn!("Could not read pokemon at {} with error {}", &file.path, err),
+		for index in 0..zip.len() {
+			match zip.by_index(index) {
+			    Ok(mut file) => {
+					let mut data = String::new();
+					match file.read_to_string(&mut data) {
+					    Ok(_) => match Pokemon::from_string(&data) {
+							Ok(pokemon) => {
+								pokemon_list.insert(pokemon.data.number, pokemon);
+							},
+							Err(err) => warn!("Could not read pokemon entry at {} with error {}", file.name(), err),
+						}
+					    Err(err) => warn!("Could not read pokemon entry at {} to string with error {}", file.name(), err),
 					}
 				}
-			    None => {
-					warn!("Could not read pokemon at {} to string with", &file.path);
-				}
+			    Err(err) => warn!("Could not get pokemon entry at index {} with error {}", index, err),
 			}
 		}
 
 		let mut move_list = HashMap::new();
 
-		let moves_dir = crate::io::ASSET_DIR.get_dir(DEX_DIR.join("moves")).expect("Could not get moves directory!");
-
-		for file in moves_dir.files() {
-			match file.contents_utf8() {
-			    Some(data) => {
-					match PokemonMove::from_string(data) {
-						Ok(pokemon_move) => {
-							move_list.insert(pokemon_move.name.clone(), pokemon_move);
+		match crate::io::ASSET_DIR.get_file(DEX_DIR.join("moves.zip")) {
+		    Some(file) => {
+				zip = zip::ZipArchive::new(std::io::Cursor::new(file.contents())).expect("Could not read moves zip!");
+				for index in 0..zip.len() {
+					match zip.by_index(index) {
+						Ok(mut file) => {
+							let mut data = String::new();
+							match file.read_to_string(&mut data) {
+								Ok(_) => match PokemonMove::from_string(&data) {
+									Ok(pokemon_move) => {
+										move_list.insert(pokemon_move.name.clone(), pokemon_move);
+									}
+									Err(err) => warn!("Could not read move entry at {} with error {}", file.name(), err),
+								}
+								Err(err) => warn!("Could not read move entry at {} to string with error {}", file.name(), err),
+							}
 						}
-						Err(err) => warn!("Could not read pokemon move at {} with error {}", &file.path, err),
+						Err(err) => warn!("Could not get move entry at index {} with error {}", index, err),
 					}
 				}
-			    None => {
-					warn!("Could not read pokemon move at {} to string", &file.path);
+			}
+		    None => {
+				match crate::io::ASSET_DIR.get_dir(DEX_DIR.join("moves")) {
+				    Some(moves_dir) => {
+						for file in moves_dir.files() {
+							match file.contents_utf8() {
+								Some(data) => {
+									match PokemonMove::from_string(data) {
+										Ok(pokemon_move) => {
+											move_list.insert(pokemon_move.name.clone(), pokemon_move);
+										}
+										Err(err) => warn!("Could not read pokemon move at {} with error {}", file.path, err),
+									}
+								}
+								None => {
+									warn!("Could not read pokemon move at {} to string", file.path);
+								}
+							}
+						}
+					}
+				    None => warn!("Could not get moves directory or zip file!"),
 				}
 			}
 		}
