@@ -1,23 +1,30 @@
 use serde::{Deserialize, Serialize};
 
+use crate::audio::music::Music;
 use crate::battle::battle_info::BattleType;
+use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
 use crate::pokemon::party::PokemonParty;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Trainer {
 
     pub trainer_type: TrainerType,
-    pub party: PokemonParty,
-    pub battled: bool,
 
-    pub tracker: Option<Tracker>,
-
+    //#[serde(default)]
+    pub encounter_music: Option<Music>,
+    pub encounter_message: Vec<Vec<String>>,
     pub victory_message: Vec<String>,
     pub worth: u16,
 
+    pub tracking_length: Option<usize>,
+    pub transition: Option<BattleScreenTransitions>,
+
+    pub party: PokemonParty,
+    //pub battled: bool,
+
 }
 
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Deserialize, Serialize)]
 pub enum TrainerType {
 
     None,
@@ -45,11 +52,4 @@ impl std::fmt::Display for TrainerType {
             TrainerType::GymLeader => "Gym Leader",
         })
     }
-}
-
-#[derive(Clone, Debug, Deserialize)]
-pub struct Tracker {
-
-    pub length: u8,
-
 }

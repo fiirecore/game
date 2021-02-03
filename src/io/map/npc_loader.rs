@@ -19,7 +19,7 @@ pub fn load_npc_textures(npc_textures: &mut ahash::AHashMap<u8, ThreeWayTexture>
                         for file in &files {
                             match npcs_textures_dir.get_file(npcs_textures_dir.path().join(index.to_string()).join(file)) {
                                 Some(file) => {
-                                    twt.add_texture_manager(Box::new(StillTextureManager::new(crate::util::texture::byte_texture(file.contents()), false)));
+                                    twt.add_texture_manager(Box::new(StillTextureManager::new(crate::util::graphics::texture::byte_texture(file.contents()), false)));
                                 }
                                 None => {
                                     warn!("Could not get texture {} under NPC texture folder {}", file, npc_texture_dir.path);

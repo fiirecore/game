@@ -1,5 +1,5 @@
 use ahash::AHashMap as HashMap;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::world::RenderCoords;
 use crate::world::World;

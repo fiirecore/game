@@ -23,6 +23,9 @@ lazy_static::lazy_static! {
 
 #[macroquad::main(settings)]
 async fn main() {
+
+    //crate::io::embed::create_root_dir();
+
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
     

@@ -35,6 +35,8 @@ pub fn new_map_set(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u16
                         warps: load_warp_entries(&root_path, Some(index)),
                         npcs: load_npc_entries(&root_path, Some(index)),
                         wild: load_wild_entry(&root_path, config.wild.clone(), Some(index)),
+
+                        ..Default::default()  
                     },
                 );
             }

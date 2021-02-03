@@ -2,7 +2,7 @@ use macroquad::prelude::Image;
 use macroquad::prelude::debug;
 use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 pub struct GbaMap {
 	
@@ -182,11 +182,11 @@ pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>
 
 	match sheets.get(&index) {
 		Some(sheet) => {
-			return crate::util::texture::image_texture(&crate::util::image::get_subimage(sheet, (tile_id - (count - *palette_sizes.get(&index).unwrap())) as usize));
+			return crate::util::graphics::texture::image_texture(&crate::util::image::get_subimage(sheet, (tile_id - (count - *palette_sizes.get(&index).unwrap())) as usize));
 		}
 		None => {
 			debug!("Could not get texture for tile ID {}", &tile_id);
-			return crate::util::texture::debug_texture();
+			return crate::util::graphics::texture::debug_texture();
 		}
 	}
     

@@ -10,6 +10,49 @@
 	},
 	"trainer": {
 		"trainer_type": "GymLeader",
+		"encounter_message": [
+
+				[
+					"So, you're here. I'm BROCK.",
+					"I'm PEWTER's GYM LEADER."
+				],
+
+				[
+					"My rock-hard willpower is evident",
+					"even in my POKEMON."
+				],
+
+				[
+					"My POKEMON are all rock hard, and",
+					"have true-grit determination."
+				],
+
+				[
+					"That's right - my POKEMON are all",
+					"the ROCK type!"
+				],
+
+				[
+					"Fuhaha! You're going to challenge",
+					"me knowing that you'll lose?"
+				],
+
+				[
+					"That's the TRAINER's honor that",
+					"compels you to challenge me."
+				],
+
+				[
+					"Fine, then!",
+					"Show me your best!"
+				]
+		
+		],
+		"victory_message": [
+			"Test"
+		],
+		"worth": 0,
+
 		"party": {
 			"pokemon": [
 				{
@@ -37,11 +80,6 @@
 					}
 				}
 			]
-		},
-		"battled": false,
-		"victory_message": [
-			"Test"
-		],
-		"worth": 0
+		}
 	}
 }

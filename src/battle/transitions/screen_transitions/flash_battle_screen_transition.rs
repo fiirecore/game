@@ -3,14 +3,14 @@ use macroquad::camera::set_camera;
 use macroquad::prelude::Rect;
 
 use crate::util::{Update, Render};
-use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
-use crate::battle::transitions::battle_transition_traits::BattleTransition;
+use crate::battle::transitions::BattleScreenTransition;
+use crate::battle::transitions::BattleTransition;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
 
 use crate::entity::Entity;
 
-use crate::util::render::draw_rect;
+use crate::util::graphics::draw_rect;
 
 static FINAL_INDEX: u8 = 4;
 

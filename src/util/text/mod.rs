@@ -1,12 +1,12 @@
 use macroquad::prelude::Color;
 
 use crate::io::data::text::font::FontSheetData;
-use crate::util::texture::Texture;
-use crate::util::render::draw;
+use crate::util::graphics::Texture;
+use crate::util::graphics::draw;
 
 use self::font::Font;
 
-use super::texture::byte_texture;
+use super::graphics::texture::byte_texture;
 
 pub mod font;
 

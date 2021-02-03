@@ -12,7 +12,7 @@ pub mod player;
 use ahash::AHashMap as HashMap;
 
 
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 
 use crate::util::TILE_SIZE;

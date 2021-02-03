@@ -58,7 +58,7 @@ impl GuiComponent for BasicButton {
 	}
     
     fn render(&self) {
-        crate::util::render::draw_text_left(self.get_font_id(), self.get_line(0), self.panel_x + self.x, self.panel_y + self.y);
+        crate::util::graphics::draw_text_left(self.get_font_id(), self.get_line(0), self.panel_x + self.x, self.panel_y + self.y);
     }
 
 }

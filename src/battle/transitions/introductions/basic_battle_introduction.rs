@@ -1,18 +1,20 @@
 use crate::entity::Entity;
+use crate::io::data::text::Message;
+use crate::io::data::text::TextColor;
 use crate::util::battle_data::TrainerData;
 use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
-use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
-use crate::battle::transitions::battle_transition_traits::BattleTransition;
+use crate::battle::transitions::BattleIntroduction;
+use crate::battle::transitions::BattleTransition;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::pokemon_gui::PokemonGui;
 use crate::gui::Activatable;
 use crate::gui::GuiComponent;
-use crate::util::render::draw_bottom;
+use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
 
-use super::util::intro_text::IntroText;
+use crate::gui::dynamic_text::DynamicText;
 use super::util::player_intro::PlayerBattleIntro;
 
 pub struct BasicBattleIntroduction {
@@ -20,7 +22,7 @@ pub struct BasicBattleIntroduction {
     alive: bool,
     finished: bool,
 
-    pub intro_text: IntroText,
+    pub intro_text: DynamicText,
     pub player_intro: PlayerBattleIntro,
 
     finished_panel: bool,
@@ -36,7 +38,7 @@ impl BasicBattleIntroduction {
             alive: false,
             finished: false,
 
-            intro_text: IntroText::new(panel_x, panel_y, vec![vec![String::from("Intro Text")]]),
+            intro_text: DynamicText::new(11.0, 11.0, panel_x, panel_y),
             player_intro: PlayerBattleIntro::new(),
             
             finished_panel: false,
@@ -101,16 +103,14 @@ impl Update for BasicBattleIntroduction {
 
     fn update(&mut self, delta: f32) {
         self.intro_text.update(delta);
-        if self.intro_text.can_continue {
-            if self.intro_text.next() + 1 == self.intro_text.text.len() as u8 {
-                if self.player_intro.should_update() {
-                    self.player_intro.update(delta);                
-                } else if self.intro_text.timer.is_finished()   {
-                    self.intro_text.disable();
-                    self.finished = true;
-                }
+        if self.intro_text.is_finished() {
+            if self.player_intro.should_update() {
+                self.player_intro.update(delta);                
+            } else if self.intro_text.timer.is_finished() {
+                self.intro_text.disable();
+                self.finished = true;
             }
-        }  
+        }
 	}
 }
 
@@ -130,8 +130,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
         self.intro_text.text = vec![
-            vec![String::from("Wild ") + battle.opponent().data.name.to_uppercase().as_str() + " appeared!"],
-            vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"]
+            Message::with_color(vec![String::from("Wild ") + battle.opponent().data.name.to_uppercase().as_str() + " appeared!"], true, TextColor::White),
+            Message::with_color(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], false, TextColor::White),
         ];
     }
 

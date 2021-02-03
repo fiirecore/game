@@ -1,10 +1,7 @@
 use crate::io::data::Direction;
-
-
 use super::GuiText;
 
-#[derive(Clone)]
-pub struct BasicText {
+pub struct StaticText {
 	
 	alive: bool,
 	x: f32,
@@ -15,15 +12,15 @@ pub struct BasicText {
 	pub text: Vec<String>,
 	pub font_id: usize,
 
-	direction: Direction,
+	direction: bool,
 	
 }
 
-impl BasicText {
+impl StaticText {
 	
-	pub fn new(text: Vec<String>, font_id: usize, direction: Direction, x: f32, y: f32, panel_x: f32, panel_y: f32) -> BasicText {
+	pub fn new(text: Vec<String>, font_id: usize, direction: Direction, x: f32, y: f32, panel_x: f32, panel_y: f32) -> Self {
 		
-		BasicText {
+		Self {
 			
 			alive: false,
 			x: x,
@@ -34,7 +31,7 @@ impl BasicText {
 			text: text,
 			font_id: font_id,
 
-			direction: direction,
+			direction: direction == Direction::Right,
 			
 		}
 		
@@ -42,7 +39,7 @@ impl BasicText {
 	
 }
 
-impl super::GuiComponent for BasicText {
+impl super::GuiComponent for StaticText {
 
 	fn enable(&mut self) {
 		self.alive = true;		
@@ -63,10 +60,10 @@ impl super::GuiComponent for BasicText {
 	
 	fn render(&self) {
 		for line_index in 0..self.get_text().len() {
-			if self.direction == Direction::Right {
-				crate::util::render::draw_text_right(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+			if self.direction {
+				crate::util::graphics::draw_text_right(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			} else {
-				crate::util::render::draw_text_left(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+				crate::util::graphics::draw_text_left(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 		}
 		
@@ -75,7 +72,7 @@ impl super::GuiComponent for BasicText {
 	
 }
 
-impl GuiText for BasicText {
+impl GuiText for StaticText {
 	
 	fn get_line(&self, index: usize) -> &String {
 		&self.get_text()[index]

@@ -1,13 +1,14 @@
+use crate::io::data::text::Message;
 use crate::util::battle_data::TrainerData;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
-use crate::battle::transitions::battle_transition_traits::BattleIntroduction;
-use crate::battle::transitions::battle_transition_traits::BattleTransition;
+use crate::battle::transitions::BattleIntroduction;
+use crate::battle::transitions::BattleTransition;
 
 use crate::entity::Entity;
 use crate::util::{Update, Render};
 use crate::gui::Activatable;
-use crate::util::render::draw_bottom;
+use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
 use crate::world::npc::NPC;
@@ -62,15 +63,15 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             self.trainer_texture = Some(NPC::battle_sprite(trainer_data.sprite_id));
 
             self.basic_battle_introduction.intro_text.text = vec![
-                vec![trainer_data.name.clone(), String::from("would like to battle!")], 
-                vec![trainer_data.name.clone() + " sent", String::from("out ") + battle.opponent().data.name.to_uppercase().as_str()]
+                Message::new(vec![trainer_data.name.clone(), String::from("would like to battle!")], false), 
+                Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + battle.opponent().data.name.to_uppercase().as_str()], true),
             ];
         } else {
-            self.basic_battle_introduction.intro_text.text = vec![vec![String::from("No trainer data found!")]];
+            self.basic_battle_introduction.intro_text.text = vec![Message::new(vec![String::from("No trainer data found!")], false)];
         }        
 
         self.basic_battle_introduction.intro_text.text.push(
-            vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"]
+            Message::new(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], true),
         );
         
     }

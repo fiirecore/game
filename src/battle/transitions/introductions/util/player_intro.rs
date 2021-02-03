@@ -1,6 +1,6 @@
-use crate::util::texture::Texture;
-use crate::util::render::draw;
-use crate::util::texture::byte_texture;
+use crate::util::graphics::Texture;
+use crate::util::graphics::draw;
+use crate::util::graphics::texture::byte_texture;
 use crate::util::Load;
 
 pub struct PlayerBattleIntro {

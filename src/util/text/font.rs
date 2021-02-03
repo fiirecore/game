@@ -1,7 +1,7 @@
 pub use ahash::AHashMap as HashMap;
 use macroquad::prelude::Color;
 use macroquad::prelude::draw_texture;
-pub use crate::util::texture::Texture;
+pub use crate::util::graphics::Texture;
 
 pub struct Font {
 

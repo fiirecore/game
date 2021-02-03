@@ -1,12 +1,12 @@
 use crate::util::Load;
 use crate::util::input;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 //use async_trait::async_trait;
 use crate::scene::Scene;
-use crate::util::render::fade_in_out;
-use crate::util::render::draw_rect;
-use crate::util::texture::byte_texture;
+use crate::util::graphics::fade_in_out;
+use crate::util::graphics::draw_rect;
+use crate::util::graphics::texture::byte_texture;
 
 pub struct LoadingCopyrightScene {
 	scene_token: usize,

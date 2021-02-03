@@ -1,8 +1,8 @@
 
 use crate::entity::Entity;
 use crate::util::{Update, Render};
-use crate::battle::transitions::battle_transition_traits::BattleCloser;
-use crate::battle::transitions::battle_transition_traits::BattleTransitionManager;
+use crate::battle::transitions::BattleCloser;
+use crate::battle::transitions::BattleTransitionManager;
 use crate::battle::transitions::closers::basic_battle_closer::BasicBattleCloser;
 use crate::util::{Reset, Completable};
 use crate::util::Load;

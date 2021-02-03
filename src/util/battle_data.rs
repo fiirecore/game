@@ -2,6 +2,7 @@ use macroquad::rand::gen_range;
 use parking_lot::Mutex;
 
 use crate::battle::battle_info::BattleType;
+use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
 use crate::pokemon::data::StatSet;
 use crate::pokemon::party::PokemonParty;
 use crate::world::npc::NPC;
@@ -39,6 +40,7 @@ pub fn trainer_battle(npc: &NPC) {
             trainer_data: Some(TrainerData {
                 name: trainer.trainer_type.to_string().to_string() + " " + npc.identifier.name.as_str(),
                 sprite_id: npc.identifier.sprite,
+                transition: trainer.transition.unwrap_or(BattleScreenTransitions::Trainer),        
             }),
         });
     }        
@@ -58,5 +60,6 @@ pub struct TrainerData {
 
     pub name: String,
     pub sprite_id: u8,
+    pub transition: BattleScreenTransitions,
 
 }

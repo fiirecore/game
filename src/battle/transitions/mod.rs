@@ -8,6 +8,36 @@ use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;
 use crate::util::Load;
 
+pub mod managers {
+    pub mod battle_screen_transition_manager;
+    pub mod battle_opener_manager;
+    pub mod battle_introduction_manager;
+    pub mod battle_closer_manager;
+}
+
+pub mod screen_transitions {
+    pub mod flash_battle_screen_transition;
+    pub mod trainer_battle_screen_transition;
+    //pub mod vertical_close_battle_screen_transition;
+}
+
+pub mod openers {             
+    pub mod trainer_battle_opener;
+    pub mod wild_battle_opener;
+}
+
+pub mod introductions {
+    pub mod trainer_battle_introduction;
+    pub mod basic_battle_introduction;
+    pub mod util {
+        pub mod player_intro;
+    }
+}
+
+pub mod closers {
+    pub mod basic_battle_closer;
+}
+
 pub trait BattleTransition: Load + Entity + Update + Render + Completable {}
 
 pub trait BattleScreenTransition: BattleTransition {

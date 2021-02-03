@@ -3,14 +3,14 @@ use macroquad::prelude::Color;
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::background::Background;
-use crate::gui::text::BasicText;
+use crate::gui::text::StaticText;
 use crate::io::data::Direction;
 
 
 use crate::gui::battle::health_bar::HealthBar;
 use crate::gui::GuiComponent;
-use crate::util::render::draw_rect;
-use crate::util::texture::byte_texture;
+use crate::util::graphics::draw_rect;
+use crate::util::graphics::texture::byte_texture;
 
 static OFFSET: f32 = 24.0 * 5.0;
 pub struct PlayerPokemonGui {
@@ -20,9 +20,9 @@ pub struct PlayerPokemonGui {
 	pub orig_x: f32,
 
 	pub panel: Background,
-	pub name: BasicText,
-	pub level: BasicText,
-	pub health_text: BasicText,
+	pub name: StaticText,
+	pub level: StaticText,
+	pub health_text: StaticText,
 	pub health_bar: HealthBar,
 	pub exp_width: f32,
 
@@ -43,9 +43,9 @@ impl PlayerPokemonGui {
 			orig_x: x,
 
 			panel: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/battle/player_pokemon.png")), ppp_x, y),
-			name: BasicText::new(vec![String::from("Player")], 0, Direction::Left, 17.0, 2.0, ppp_x, y),
-			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 95.0, 2.0, ppp_x, y),
-			health_text: BasicText::new(vec![String::from("/")], 0, Direction::Right, 95.0, 20.0, ppp_x, y),
+			name: StaticText::new(vec![String::from("Player")], 0, Direction::Left, 17.0, 2.0, ppp_x, y),
+			level: StaticText::new(vec![String::from("Lv")], 0, Direction::Right, 95.0, 2.0, ppp_x, y),
+			health_text: StaticText::new(vec![String::from("/")], 0, Direction::Right, 95.0, 20.0, ppp_x, y),
 			health_bar: HealthBar::new(48.0, 17.0, ppp_x, y),
 			exp_width: 0.0,
 
@@ -142,8 +142,8 @@ pub struct OpponentPokemonGui {
 	pub orig_x: f32,
 
 	pub panel: Background,
-	pub name: BasicText,
-	pub level: BasicText,
+	pub name: StaticText,
+	pub level: StaticText,
 	pub health_bar: HealthBar,
 
 }
@@ -161,8 +161,8 @@ impl OpponentPokemonGui {
 			orig_x: x,
 
 			panel: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/battle/opponent_pokemon.png")), x_offset, y),			
-			name: BasicText::new(vec![String::from("Opponent")], 0, Direction::Left, 8.0, 2.0, x_offset, y),
-			level: BasicText::new(vec![String::from("Lv")], 0, Direction::Right, 86.0, 2.0, x_offset, y),
+			name: StaticText::new(vec![String::from("Opponent")], 0, Direction::Left, 8.0, 2.0, x_offset, y),
+			level: StaticText::new(vec![String::from("Lv")], 0, Direction::Right, 86.0, 2.0, x_offset, y),
 			health_bar: HealthBar::new(39.0, 17.0, x_offset, y),
 
 		}

@@ -27,11 +27,7 @@ impl Timer {
             self.counter += delta;
         }        
     }
-
-    // pub fn halfway(&self) -> bool {
-    //     return self.counter << 1 >= self.final_count;
-    // }
-
+    
     pub fn is_finished(&self) -> bool {
         return self.counter >= self.final_time;
     }

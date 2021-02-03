@@ -40,7 +40,8 @@ pub fn new_chunk_map(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u
                                         warps: load_warp_entries(root_path, None),
                                         npcs: load_npc_entries(root_path, None),
                                         wild: load_wild_entry(root_path, config.wild, None),
-        
+
+                                        ..Default::default()        
                                     },
                                     connections: jigsaw_map.connections.clone(),
                                 }

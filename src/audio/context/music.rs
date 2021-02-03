@@ -14,7 +14,7 @@ lazy_static::lazy_static! {
 pub struct MusicContext {
 
     pub music_map: HashMap<Music, SoundHandle>,
-    current_music: Option<InstanceHandle>,
+    current_music: Option<(Music, InstanceHandle)>,
 
 }
 
@@ -22,7 +22,7 @@ impl MusicContext {
     
     pub fn play_music(&mut self, music: Music) {
         if let Some(instance) = self.current_music.take() {
-            super::stop_instance(music, instance);
+            super::stop_instance(instance.0, instance.1);
         }
         match self.music_map.get_mut(&music) {
             Some(sound) => {
@@ -31,7 +31,7 @@ impl MusicContext {
                     ..Default::default()
                 }) {
                     Ok(instance) => {
-                        self.current_music = Some(instance);
+                        self.current_music = Some((music, instance));
                     }
                     Err(err) => warn!("Problem playing music {} with error {}", music, err),
                 }
@@ -40,8 +40,13 @@ impl MusicContext {
         }        
     }
 
-    pub fn is_music_playing(&self) -> bool {
-        return self.current_music.is_some();
+    pub fn get_music_playing(&self) -> Option<Music> {
+        if let Some(ref instance) = self.current_music {
+            Some(instance.0)
+        } else {
+            None
+        }
     }
+    
 
 }

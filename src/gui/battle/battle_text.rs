@@ -2,7 +2,7 @@
 use crate::battle::battle::Battle;
 use crate::entity::Entity;
 use crate::gui::{GuiComponent, GuiText};
-use crate::util::render::draw_text_left;
+use crate::util::graphics::draw_text_left;
 use crate::util::timer::Timer;
 
 use super::battle_gui::BattleGui;

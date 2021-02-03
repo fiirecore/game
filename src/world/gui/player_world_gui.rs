@@ -1,13 +1,13 @@
 use crate::io::data::player::PlayerData;
 use crate::util::input;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 use crate::util::input::Control;
 
 use crate::gui::button::BasicButton;
 use crate::gui::Activatable;
 use crate::gui::GuiComponent;
-use crate::util::render::draw;
-use crate::util::texture::byte_texture;
+use crate::util::graphics::draw;
+use crate::util::graphics::texture::byte_texture;
 
 static BUTTON_COUNT: u8 = 4;
 
@@ -99,7 +99,7 @@ impl GuiComponent for PlayerWorldGui {
             self.pokemon_button.render();
             self.exit_menu_button.render();
             self.exit_game_button.render();
-            crate::util::render::draw_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
+            crate::util::graphics::draw_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
         }
     }
 

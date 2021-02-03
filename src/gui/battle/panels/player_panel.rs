@@ -3,7 +3,7 @@ use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input;
 
 
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 use crate::gui::{GuiComponent, Activatable};
 
@@ -13,7 +13,8 @@ use crate::gui::battle::panels::fight_panel::FightPanel;
 //use crate::battle::battle_manager::BattleManager;
 use crate::battle::battle::Battle;
 
-use crate::util::{texture::byte_texture, render::draw};
+use crate::util::graphics::draw;
+use crate::util::graphics::texture::byte_texture;
 pub struct PlayerPanel {
 
     alive: bool,

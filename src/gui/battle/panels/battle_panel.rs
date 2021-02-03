@@ -3,14 +3,12 @@ use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input::Control;
 use crate::gui::button::BasicButton;
 use crate::io::data::Direction;
-use crate::util::texture::Texture;
-
-
+use crate::util::graphics::Texture;
 use crate::gui::{GuiComponent, Activatable};
 use crate::util::input;
-use crate::gui::text::BasicText;
-
-use crate::util::{texture::byte_texture, render::draw};
+use crate::gui::text::StaticText;
+use crate::util::graphics::draw;
+use crate::util::graphics::texture::byte_texture;
 
 pub struct BattlePanel {
 
@@ -32,7 +30,7 @@ pub struct BattlePanel {
     pub pokemon_button: BasicButton,
     pub run_button: BasicButton,
 
-    text: BasicText,
+    text: StaticText,
 
 }
 
@@ -67,7 +65,7 @@ impl BattlePanel {
             pokemon_button: BasicButton::new("Pokemon".to_uppercase().as_str(), font_id, 17.0, text_y + 16.0, x + panel_x, y + panel_y),
             run_button: BasicButton::new("Run".to_uppercase().as_str(), font_id, 73.0, text_y + 16.0, x + panel_x, y + panel_y),
 
-            text: BasicText::new(vec![String::from("What will"), String::from("POKEMON do?")], 1, Direction::Left, -111.0, 10.0, x + panel_x, y + panel_y),
+            text: StaticText::new(vec![String::from("What will"), String::from("POKEMON do?")], 1, Direction::Left, -111.0, 10.0, x + panel_x, y + panel_y),
 
 		}
     }
@@ -125,7 +123,7 @@ impl GuiComponent for BattlePanel {
                 _ => {}
             }
             self.text.render();
-            crate::util::render::draw_cursor(self.panel_x + self.x + 10.0 + cursor_x, self.panel_y + self.y + 13.0 + cursor_y);
+            crate::util::graphics::draw_cursor(self.panel_x + self.x + 10.0 + cursor_x, self.panel_y + self.y + 13.0 + cursor_y);
             self.fight_button.render();
             self.bag_button.render();
             self.pokemon_button.render();

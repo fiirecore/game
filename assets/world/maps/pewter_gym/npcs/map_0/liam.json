@@ -10,6 +10,22 @@
 	},
 	"trainer": {
 		"trainer_type": "Camper",
+		"encounter_music": "EncounterBoy",
+		"encounter_message": [
+
+				[
+					"Stop right there, kid!"
+				],
+
+				[
+					"You're ten thousand light-years",
+					"from facing BROCK!"
+				]
+		
+		],
+		"victory_message": [
+			"Test"
+		],
 		"party": {
 			"pokemon": [
 				{
@@ -39,12 +55,7 @@
 			]
 		},
 		"battled": false,
-		"tracker": {
-			"length": 3
-		},
-		"victory_message": [
-			"Test"
-		],
+		"tracking_length": 3,
 		"worth": 0
 	}
 }

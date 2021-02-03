@@ -1,19 +1,25 @@
+use macroquad::prelude::DrawTextureParams;
+use macroquad::prelude::draw_texture_ex;
+
 use crate::BASE_WIDTH;
+use crate::util::graphics::Texture;
 use crate::util::{Update, Render};
-use crate::battle::transitions::battle_transition_traits::BattleScreenTransition;
-use crate::battle::transitions::battle_transition_traits::BattleTransition;
+use crate::battle::transitions::BattleScreenTransition;
+use crate::battle::transitions::BattleTransition;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
 
 use crate::entity::Entity;
-use crate::util::render::draw_rect;
+use crate::util::graphics::draw_rect;
 
 pub struct TrainerBattleScreenTransition {
 
-    pub active: bool,
-    pub finished: bool,
+    active: bool,
+    finished: bool,
 
     rect_width: f32,
+
+    texture: Texture,
 
 }
 
@@ -24,12 +30,40 @@ impl TrainerBattleScreenTransition {
         Self {
             active: false,
             finished: false,
-            rect_width: 0.0,
+            rect_width: -16.0,
+            texture: crate::util::graphics::texture::byte_texture(include_bytes!("../../../../build/assets/battle/trainer_encounter_ball.png")),
         }
 
     }
 
-    
+    fn draw_lines(&self, y: f32, invert: bool) {
+        draw_rect(
+            [0.0, 0.0, 0.0, 1.0], 
+            if invert {
+                BASE_WIDTH as f32 - self.rect_width
+            } else {
+                0.0
+            }, 
+            y, 
+            self.rect_width as u32, 
+            32
+        );
+        draw_texture_ex(
+            self.texture, 
+            if invert {
+                BASE_WIDTH as f32 - self.rect_width - 16.0
+            } else {
+                self.rect_width - 16.0
+            }, 
+            y, 
+            macroquad::prelude::WHITE, 
+            DrawTextureParams {
+                rotation: self.rect_width.to_radians(),
+                ..Default::default()
+            },
+        );
+        
+    }
 
 }
 
@@ -39,7 +73,7 @@ impl BattleTransition for TrainerBattleScreenTransition {}
 impl Reset for TrainerBattleScreenTransition {
 
     fn reset(&mut self) {
-        self.rect_width = 0.0;
+        self.rect_width = -16.0;
         self.finished = false;
     }
 
@@ -69,7 +103,7 @@ impl Update for TrainerBattleScreenTransition {
 
     fn update(&mut self, delta: f32) {
         self.rect_width += 240.0 * delta;
-        if self.rect_width >= BASE_WIDTH as f32 {
+        if self.rect_width >= BASE_WIDTH as f32 + 16.0 {
             self.finished = true;
         }
     }
@@ -79,11 +113,11 @@ impl Update for TrainerBattleScreenTransition {
 impl Render for TrainerBattleScreenTransition {
 
     fn render(&self) {
-        draw_rect([0.0, 0.0, 0.0, 1.0], -(BASE_WIDTH as f32) - self.rect_width, 0.0, BASE_WIDTH, 32);
-        draw_rect([0.0, 0.0, 0.0, 1.0], BASE_WIDTH as f32 - self.rect_width, 32.0, BASE_WIDTH, 32);
-        draw_rect([0.0, 0.0, 0.0, 1.0], -(BASE_WIDTH as f32) - self.rect_width, 64.0, BASE_WIDTH, 32);
-        draw_rect([0.0, 0.0, 0.0, 1.0], BASE_WIDTH as f32 - self.rect_width, 96.0, BASE_WIDTH, 32);
-        draw_rect([0.0, 0.0, 0.0, 1.0], -(BASE_WIDTH as f32) - self.rect_width, 128.0, BASE_WIDTH, 32);      
+        self.draw_lines(0.0, false);
+        self.draw_lines(32.0, true);
+        self.draw_lines(64.0, false);
+        self.draw_lines(96.0, true);
+        self.draw_lines(128.0, false);
     }
 
 }

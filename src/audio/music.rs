@@ -1,6 +1,6 @@
 use kira::sound::SoundSettings;
 
-#[derive(Copy, Clone, Hash, PartialEq, Eq, enum_iterator::IntoEnumIterator)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq, enum_iterator::IntoEnumIterator, serde::Deserialize)]
 pub enum Music {
 
     IntroGamefreak,
@@ -24,6 +24,8 @@ pub enum Music {
     MountMoon,
     Gym,
 
+    EncounterBoy,
+
     BattleWild, // 44.480
     BattleTrainer, // 1:41.870
     BattleGym, // 56.780
@@ -44,6 +46,7 @@ impl Music {
             Music::IntroGamefreak => Some(include_bytes!("../../build/assets/music/gamefreak.ogg")),
             Music::Title => Some(include_bytes!("../../build/assets/music/title.ogg")),
             Music::Pallet => Some(include_bytes!("../../build/assets/music/pallet.ogg")),
+            Music::EncounterBoy => Some(include_bytes!("../../build/assets/music/encounter_boy.ogg")),
             Music::BattleWild => Some(include_bytes!("../../build/assets/music/vs_wild.ogg")),
             Music::BattleTrainer => Some(include_bytes!("../../build/assets/music/vs_trainer.ogg")),
             Music::BattleGym => Some(include_bytes!("../../build/assets/music/vs_gym.ogg")),
@@ -115,6 +118,8 @@ impl std::fmt::Display for Music {
             Music::Gym => "gym",
             Music::ViridianForest => "viridian_forest",
             Music::MountMoon => "mt_moon",
+
+            Music::EncounterBoy => "encounter_boy",
 
             Music::BattleWild => "vs_wild",
             Music::BattleTrainer => "vs_trainer",

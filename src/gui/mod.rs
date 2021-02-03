@@ -3,6 +3,7 @@
 pub mod background;
 pub mod text;
 pub mod button;
+pub mod dynamic_text;
 
 pub mod battle;
 

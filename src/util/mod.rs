@@ -1,5 +1,4 @@
-pub mod render;
-pub mod texture;
+pub mod graphics;
 pub mod text;
 pub mod timer;
 pub mod input;

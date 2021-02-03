@@ -1,11 +1,12 @@
 use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::input::Control;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 use crate::gui::{Activatable, GuiComponent};
 use crate::util::input;
 
-use crate::util::{texture::byte_texture, render::draw};
+use crate::util::graphics::draw;
+use crate::util::graphics::texture::byte_texture;
 
 use super::move_panel::MovePanel;
 pub struct FightPanel {
@@ -115,9 +116,9 @@ impl GuiComponent for FightPanel {
                 if string_id / 2 == 1 {
                     y_offset = 17.0;
                 }
-                crate::util::render::draw_text_left(0, self.move_names[string_id].to_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
+                crate::util::graphics::draw_text_left(0, self.move_names[string_id].to_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
                 if string_id == self.cursor_position as usize {
-                    crate::util::render::draw_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
+                    crate::util::graphics::draw_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
                 }
             }
         }        

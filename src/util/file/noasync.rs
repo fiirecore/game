@@ -1,5 +1,5 @@
 use macroquad::prelude::warn;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 lazy_static::lazy_static! {
 	static ref FILE: parking_lot::Mutex<Option<Vec<u8>>> = parking_lot::Mutex::new(None); // lol
@@ -51,10 +51,10 @@ pub fn open_image_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<macroqua
 pub fn load_texture_noasync<P: AsRef<std::path::Path>>(path: P) -> Texture {
 	let path = path.as_ref();
 	return match read_noasync(path) {
-	    Some(bytes) => crate::util::texture::byte_texture(bytes.as_slice()),
+	    Some(bytes) => crate::util::graphics::texture::byte_texture(bytes.as_slice()),
 	    None => {
 			macroquad::prelude::warn!("Could not read texture at path {:?} with error", path);
-			crate::util::texture::debug_texture()
+			crate::util::graphics::texture::debug_texture()
 		}
 	}	
 }

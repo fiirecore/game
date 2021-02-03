@@ -1,12 +1,12 @@
 use crate::util::Load;
 use crate::util::input;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::text_renderer::TextRenderer;
 
 use crate::util::file::asset_as_pathbuf;
-use crate::util::render::draw;
-use crate::util::texture::load_texture;
+use crate::util::graphics::draw;
+use crate::util::graphics::texture::load_texture;
 //use async_trait::async_trait;
 pub struct FirstTimeControlsScene {
 	scene_token: usize,

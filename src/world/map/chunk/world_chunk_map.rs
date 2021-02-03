@@ -1,6 +1,6 @@
 use ahash::AHashMap as HashMap;
 use crate::audio::play_music;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 use crate::audio::music::Music;
 use crate::entity::Entity;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;

@@ -19,7 +19,7 @@ opt-level = 3
 
 [dependencies]
 
-macroquad = { git = "https://github.com/not-fl3/macroquad" }
+macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
 
 kira = { version = "0.4", default-features = false, features = ["ogg"] } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
 
@@ -40,7 +40,6 @@ getopts = "0.2.21"
 enum-iterator = "0.6"
 
 
-image = {version = "0.22", default-features = false, features = ["png_codec", "tga"] } # Included in macroquad
 lewton = "0.10.1" # Included in kira
 
 # Build dependencies

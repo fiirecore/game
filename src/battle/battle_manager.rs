@@ -98,7 +98,7 @@ impl BattleManager {
 		self.battle_data = crate::util::battle_data::BATTLE_DATA.lock().take().unwrap();
 		self.create_battle(player_data, pokedex);
 		self.reset();
-		self.battle_screen_transition_manager.on_start(self.battle_data.battle_type);
+		self.battle_screen_transition_manager.on_start(&self.battle_data);
 	}
 
 	pub fn create_battle(&mut self, player_data: &PlayerData, pokedex: &Pokedex) {

@@ -1,6 +1,6 @@
-pub use macroquad::prelude::Texture2D as Texture;
 use macroquad::prelude::FilterMode::Nearest;
 use macroquad::prelude::set_texture_filter;
+use super::Texture;
 
 pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 	let path = path.as_ref();
@@ -10,7 +10,7 @@ pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 }
 
 pub fn byte_texture(bytes: &[u8]) -> Texture {
-	image_texture(&super::image::byte_image(bytes))
+	image_texture(&crate::util::image::byte_image(bytes))
 }
 
 pub fn image_texture(image: &macroquad::prelude::Image) -> Texture {
@@ -19,14 +19,14 @@ pub fn image_texture(image: &macroquad::prelude::Image) -> Texture {
 	texture
 }
 
-pub fn rgbaimage_texture(image: image::RgbaImage) -> Texture {
-	image_texture(&macroquad::prelude::Image {
-	    width: image.width() as u16,
-	    height: image.height() as u16,
-	    bytes: image.into_raw(),
-	})	
-}
+// pub fn rgbaimage_texture(image: image::RgbaImage) -> Texture {
+// 	image_texture(&macroquad::prelude::Image {
+// 	    width: image.width() as u16,
+// 	    height: image.height() as u16,
+// 	    bytes: image.into_raw(),
+// 	})	
+// }
 
 pub fn debug_texture() -> Texture {
-	byte_texture(include_bytes!("../../build/assets/missing_texture.png"))
+	byte_texture(include_bytes!("../../../build/assets/missing_texture.png"))
 }

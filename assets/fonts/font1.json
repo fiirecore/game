@@ -2,7 +2,7 @@
     "file": "images/font1.png",
     "width": 6,
     "height": 14,
-    "chars": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀!?",
+    "chars": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀!?-.,'",
     "custom" : [
         {
             "id": "i",
@@ -31,6 +31,19 @@
         {
             "id": "t",
             "width": 5
+        },
+        {
+            "id": ".",
+            "width": 5
+        },
+        {
+            "id": ",",
+            "width": 5,
+            "height": 15
+        },
+        {
+            "id": "'",
+            "width": 3
         }
     ]
 }

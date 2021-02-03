@@ -8,8 +8,8 @@ use crate::io::data::Position;
 use crate::io::data::player::PlayerData;
 use crate::util::TILE_SIZE;
 
-use crate::util::render::draw_flip;
-use crate::util::texture::byte_texture;
+use crate::util::graphics::draw_flip;
+use crate::util::graphics::texture::byte_texture;
 
 static TEX_TICK_LENGTH: f32 = 8.0 / 60.0;
 pub static BASE_SPEED: u8 = 1;

@@ -3,8 +3,7 @@ use serde::Deserialize;
 use ahash::AHashMap as HashMap;
 
 use crate::util::text::font::Font;
-use crate::util::image::get_subimage_at;
-use crate::util::texture::image_texture;
+use crate::util::graphics::texture::image_texture;
 #[derive(Debug, Deserialize)]
 pub struct FontSheetData {
 
@@ -65,7 +64,7 @@ impl FontSheetData {
 
 }
 
-fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChars>, sheet: macroquad::prelude::Image) -> HashMap<char, crate::util::texture::Texture> {
+fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChars>, sheet: macroquad::prelude::Image) -> HashMap<char, crate::util::graphics::Texture> {
 
     let mut customchars = HashMap::new();
     for cchar in custom {
@@ -85,9 +84,9 @@ fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec
     while y < sheet_height {
         while x < sheet_width {
             if let Some(cchar) = customchars.remove(&chars[counter]) {
-                charmap.insert(chars[counter], image_texture(&get_subimage_at(&sheet, x, y, cchar.0 as u32, cchar.1.unwrap_or(font_height) as u32)));
+                charmap.insert(chars[counter], image_texture(&sheet.get_subimage(x, y, cchar.0 as u32, cchar.1.unwrap_or(font_height) as u32)));
             } else {
-                charmap.insert(chars[counter], image_texture(&get_subimage_at(&sheet, x, y, font_width as u32, font_height as u32)));
+                charmap.insert(chars[counter], image_texture(&sheet.get_subimage(x, y, font_width as u32, font_height as u32)));
             }
             x += font_width as u32;
             counter+=1;

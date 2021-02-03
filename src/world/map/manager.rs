@@ -2,13 +2,15 @@ use ahash::AHashMap as HashMap;
 use crate::audio::play_music;
 use crate::gui::Activatable;
 use crate::gui::GuiComponent;
+use crate::util::Completable;
+use crate::world::gui::map_window_manager::MapWindowManager;
 use macroquad::prelude::Image;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
 use crate::util::input;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
 use crate::audio::music::Music;
 use crate::util::Render;
@@ -46,7 +48,7 @@ pub struct WorldManager {
 
     player_gui: PlayerWorldGui,
 
-    //window_manager: MapWindowManager,
+    window_manager: MapWindowManager,
 
     bottom_textures: HashMap<u16, Texture>,
     //pub(crate) top_textures: HashMap<u16, Texture>,
@@ -63,7 +65,7 @@ impl WorldManager {
             player: Player::default(),
             current_music: Music::default(),
             player_gui: PlayerWorldGui::new(),
-            //window_manager: MapWindowManager::default(),
+            window_manager: MapWindowManager::default(),
             bottom_textures: HashMap::new(),
             npc_textures: HashMap::new(),
         };
@@ -85,22 +87,51 @@ impl WorldManager {
     }
 
     pub fn play_music(&mut self) {
-        let music = if self.chunk_map.is_alive() {
-            self.chunk_map.current_chunk().map.music
+        if let Some(music) = crate::audio::get_music_playing() {
+            if music != self.current_music {
+                self.current_music = if self.chunk_map.is_alive() {
+                    self.chunk_map.current_chunk().map.music
+                } else {
+                    self.map_sets.map_set().map().music
+                };
+                play_music(self.current_music);
+            }
         } else {
-            self.map_sets.map_set().map().music
-        };
-        if music != self.current_music {
-            self.current_music = music;
             play_music(self.current_music);
         }
     }
 
     pub fn update(&mut self, delta: f32) {
-        self.player_movement(delta);
-        //self.player.update(context);
-        //self.world_map_manager.update(context, &self.player);
-        //self.warp_map_manager.update(context, &self.player);
+        if self.window_manager.is_alive() {
+            if self.window_manager.is_finished() {
+                if let Some(index) = self.current_map_mut().npc_active.take() {
+                    self.current_map_mut().npcs[index].after_interact();
+                }
+                self.window_manager.despawn();
+            } else {
+                self.window_manager.update(delta);
+            }
+        } else {
+            if let Some(index) = self.current_map_mut().npc_active {
+                self.window_manager.spawn();
+                if let Some(trainer) = &self.current_map_mut().npcs[index].trainer {
+                    if let Some(music) = trainer.encounter_music {
+                        play_music(music);
+                    }
+                    let mut messages = Vec::new();
+                    for index in 0..trainer.encounter_message.len() {
+                        messages.push(crate::io::data::text::Message {
+                            font_id: 1,
+                            message: trainer.encounter_message[index].clone(),
+                            color: crate::io::data::text::TextColor::Blue,
+                            no_pause: false,
+                        });
+                    }
+                    self.window_manager.set_text(messages);
+                }
+            }
+            self.player_movement(delta);
+        }
     }
 
     pub fn render(&self) {
@@ -111,7 +142,8 @@ impl WorldManager {
             self.map_sets.render(&self.bottom_textures, &self.npc_textures, coords, true);
         }
         self.player.render();
-        self.player_gui.render();      
+        self.player_gui.render(); 
+        self.window_manager.render();     
     }
 
     pub fn save_data(&self, player_data: &mut PlayerData) {
@@ -151,6 +183,8 @@ impl WorldManager {
 
         if self.player_gui.in_focus() {
             self.player_gui.input(delta);
+        } else if self.window_manager.is_alive() {
+            self.window_manager.input(delta);
         } else {
 
             if self.chunk_map.is_alive() {
@@ -340,6 +374,14 @@ impl WorldManager {
         self.player.position.x = entry.destination.x;
         self.player.position.y = entry.destination.y;
         self.play_music();
+    }
+
+    pub fn current_map_mut(&mut self) -> &mut super::WorldMap {
+        if self.chunk_map.is_alive() {
+            &mut self.chunk_map.current_chunk_mut().map
+        } else {
+            self.map_sets.map_set_mut().map_mut()
+        }
     }
 
     pub fn load_maps_and_textures(&mut self) {

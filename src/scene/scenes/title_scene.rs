@@ -1,12 +1,12 @@
 use crate::audio::play_music;
 use crate::util::Load;
 use crate::util::input;
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 use crate::io::data::player::PlayerData;
 use crate::scene::Scene;
-use crate::util::texture::byte_texture;
-use crate::util::render::draw;
+use crate::util::graphics::texture::byte_texture;
+use crate::util::graphics::draw;
 use crate::audio::music::Music::Title;
 
 pub struct TitleScene {	

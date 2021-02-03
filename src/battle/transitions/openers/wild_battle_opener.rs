@@ -1,10 +1,10 @@
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 use crate::entity::Entity;
 use crate::util::{Update, Render};
-use crate::battle::transitions::battle_transition_traits::BattleOpener;
-use crate::battle::transitions::battle_transition_traits::BattleTransition;
-use crate::util::render::draw;
+use crate::battle::transitions::BattleOpener;
+use crate::battle::transitions::BattleTransition;
+use crate::util::graphics::draw;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
 use super::trainer_battle_opener::TrainerBattleOpener;
@@ -40,7 +40,7 @@ impl WildBattleOpener {
             grass_active: true,
             grass_x_offset: GRASS_X_OFFSET,
             grass_y_offset: GRASS_Y_OFFSET,
-            grass: crate::util::texture::byte_texture(include_bytes!("../../../../build/assets/gui/battle/grass.png")),
+            grass: crate::util::graphics::texture::byte_texture(include_bytes!("../../../../build/assets/gui/battle/grass.png")),
         }
 
     }

@@ -1,7 +1,7 @@
 pub mod builder;
 
 
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 pub struct Background {
 	
@@ -51,7 +51,7 @@ impl super::GuiComponent for Background {
 	}
 	
 	fn render(&self) {
-		crate::util::render::draw(self.texture, self.x, self.y);
+		crate::util::graphics::draw(self.texture, self.x, self.y);
 	}
 
 	fn update_position(&mut self, x: f32, y: f32) {

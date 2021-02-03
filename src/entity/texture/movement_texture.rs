@@ -1,4 +1,4 @@
-use crate::util::texture::Texture;
+use crate::util::graphics::Texture;
 
 pub struct MovementTexture {
 
