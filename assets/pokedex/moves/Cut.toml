@@ -1,6 +1,0 @@
-name = "Cut"
-pokemon_type = "Normal"
-category = "Physical"
-power = 50
-accuracy = 95
-pp = 30

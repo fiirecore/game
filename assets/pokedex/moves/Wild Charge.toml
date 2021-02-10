@@ -1,6 +1,0 @@
-name = "Wild Charge"
-pokemon_type = "Electric"
-category = "Physical"
-power = 90
-accuracy = 100
-pp = 15

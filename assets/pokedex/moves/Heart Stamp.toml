@@ -1,6 +1,0 @@
-name = "Heart Stamp"
-pokemon_type = "Psychic"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 25

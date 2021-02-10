@@ -1,6 +1,0 @@
-name = "Psycho Boost"
-pokemon_type = "Psychic"
-category = "Special"
-power = 140
-accuracy = 90
-pp = 5

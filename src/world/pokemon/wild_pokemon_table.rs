@@ -1,4 +1,5 @@
 use macroquad::prelude::warn;
+use crate::pokemon::PokemonId;
 use crate::pokemon::data::StatSet;
 use super::wild_pokemon_encounter::WildPokemonEncounter;
 use crate::pokemon::instance::PokemonInstance;
@@ -19,7 +20,7 @@ impl WildPokemonTable {
         match self.table {
             Some(table) => table[get_counter()].generate_saved(),
             None => return PokemonInstance::generate(
-                macroquad::rand::gen_range(0, crate::pokemon::pokedex::LENGTH) + 1, 
+                macroquad::rand::gen_range(0, crate::pokemon::pokedex::LENGTH) as PokemonId + 1, 
                 1, 
                 100, 
                 Some(StatSet::iv_random()), 
@@ -110,7 +111,7 @@ pub struct TomlWildPokemon {
 
     min_level: u8,
     max_level: u8,
-    pokemon_id: usize,
+    pokemon_id: PokemonId,
 
 }
 

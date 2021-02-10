@@ -1,5 +1,0 @@
-name = "Flash"
-pokemon_type = "Normal"
-category = "Status"
-accuracy = 100
-pp = 20

@@ -14,6 +14,8 @@ pub mod moves;
 pub mod instance;
 pub mod party;
 
+pub type PokemonId = u16;
+
 #[derive(Serialize, Deserialize)]
 pub struct Pokemon {
 	

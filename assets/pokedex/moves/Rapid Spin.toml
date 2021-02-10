@@ -1,6 +1,7 @@
+number = 229
 name = "Rapid Spin"
 pokemon_type = "Normal"
 category = "Physical"
-power = 20
+power = 50
 accuracy = 100
 pp = 40

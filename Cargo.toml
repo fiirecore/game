@@ -1,7 +1,6 @@
 [package]
-
 name = "pokemon-game"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Rhys Holloway <rhysholloway@pacbell.net>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -34,13 +33,13 @@ toml = "0.5"
 
 ahash = "0.7"
 
-include_dir = { version = "0.6.0", default-features = false }
-zip = { version = "0.5.9", default-features = false, features = ["deflate"]}
+include_dir = { version = "0.6", default-features = false }
+zip = { version = "0.5", default-features = false, features = ["deflate"]}
 
 lazy_static = "1.4"
-parking_lot = "0.11"
+parking_lot = {version = "0.11", features = ["nightly"] }
 
-getopts = { version = "0.2.21", optional = true }
+getopts = { version = "0.2", optional = true }
 
 enum-iterator = "0.6"
 

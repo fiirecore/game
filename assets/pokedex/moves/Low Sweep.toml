@@ -1,6 +1,0 @@
-name = "Low Sweep"
-pokemon_type = "Fighting"
-category = "Physical"
-power = 65
-accuracy = 100
-pp = 20

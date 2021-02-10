@@ -1,6 +1,0 @@
-name = "Frost Breath"
-pokemon_type = "Ice"
-category = "Special"
-power = 60
-accuracy = 90
-pp = 10

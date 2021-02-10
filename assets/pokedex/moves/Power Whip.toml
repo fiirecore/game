@@ -1,6 +1,0 @@
-name = "Power Whip"
-pokemon_type = "Grass"
-category = "Physical"
-power = 120
-accuracy = 85
-pp = 10

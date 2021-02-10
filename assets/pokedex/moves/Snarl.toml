@@ -1,6 +1,0 @@
-name = "Snarl"
-pokemon_type = "Dark"
-category = "Special"
-power = 55
-accuracy = 95
-pp = 15

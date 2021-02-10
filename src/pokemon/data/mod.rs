@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use super::PokemonId;
 use super::types::PokemonType;
 
 //pub mod pokedex;
@@ -10,7 +11,7 @@ pub mod training;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PokedexData {
 	
-	pub number: usize,
+	pub number: PokemonId,
 	pub name: String,
 	pub primary_type: PokemonType,
 	pub secondary_type: Option<PokemonType>,
@@ -22,8 +23,8 @@ pub struct PokedexData {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct LearnableMove {
+	pub move_id: u16,
 	pub level: u8,
-	pub move_id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -1,6 +1,0 @@
-name = "Venoshock"
-pokemon_type = "Poison"
-category = "Special"
-power = 65
-accuracy = 100
-pp = 10

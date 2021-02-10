@@ -1,6 +1,0 @@
-name = "V-create"
-pokemon_type = "Fire"
-category = "Physical"
-power = 180
-accuracy = 95
-pp = 5

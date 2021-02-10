@@ -2,12 +2,13 @@ use serde::{Deserialize, Serialize};
 
 use crate::pokemon::data::StatSet;
 
+use super::PokemonId;
 use super::moves::instance::SavedPokemonMoveSet;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PokemonInstance {
 
-	pub id: usize,
+	pub id: PokemonId,
     pub level: u8,
     
 	pub ivs: Option<StatSet>,
@@ -24,7 +25,7 @@ pub struct PokemonInstance {
 
 impl PokemonInstance {
 
-    pub fn generate(pokemon_id: usize, min_level: u8, max_level: u8, ivs: Option<StatSet>) -> Self {
+    pub fn generate(pokemon_id: PokemonId, min_level: u8, max_level: u8, ivs: Option<StatSet>) -> Self {
 
         Self {
 
@@ -41,7 +42,7 @@ impl PokemonInstance {
 
     }
     
-    pub fn generate_with_level(pokemon_id: usize, level: u8, ivs: Option<StatSet>) -> Self {
+    pub fn generate_with_level(pokemon_id: PokemonId, level: u8, ivs: Option<StatSet>) -> Self {
         PokemonInstance::generate(pokemon_id, level, level, ivs)
     }
 

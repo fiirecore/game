@@ -1,6 +1,0 @@
-name = "Dragon Tail"
-pokemon_type = "Dragon"
-category = "Physical"
-power = 60
-accuracy = 90
-pp = 10

@@ -1,6 +1,0 @@
-name = "Storm Throw"
-pokemon_type = "Fighting"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 10

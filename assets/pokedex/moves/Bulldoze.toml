@@ -1,6 +1,0 @@
-name = "Bulldoze"
-pokemon_type = "Ground"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 20

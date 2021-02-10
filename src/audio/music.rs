@@ -37,32 +37,7 @@ impl Default for Music {
     }
 }
 
-impl From<u8> for Music {
-    fn from(id: u8) -> Self {
-        match id {
-            0x1F => Music::ViridianForest,
-            0x13 => Music::Gym,
-            0x20 => Music::MountMoon,
-            0x23 => Music::Route1,
-            0x24 => Music::Route2,
-            0x25 => Music::Route3,
-            0x26 => Music::Route4,
-            0x34 => Music::Fuchsia,
-            0x3A => Music::Pewter,
-            0x18 => Music::Lavender,
-            0x35 => Music::Celadon,
-            0x17 => Music::Cinnabar,
-            0x39 => Music::Vermilion,
-            0x2C => Music::Pallet,
-            _ => {
-                macroquad::prelude::warn!("Could not get music with id #{}!", id);
-                return Music::default();
-            },
-        }
-    }
-}
-
-#[deprecated]
+//#[deprecated]
 impl std::fmt::Display for Music {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match *self {

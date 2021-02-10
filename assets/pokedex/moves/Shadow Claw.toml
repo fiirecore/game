@@ -1,6 +1,0 @@
-name = "Shadow Claw"
-pokemon_type = "Ghost"
-category = "Physical"
-power = 70
-accuracy = 100
-pp = 15

@@ -1,6 +1,0 @@
-name = "Focus Blast"
-pokemon_type = "Fighting"
-category = "Special"
-power = 120
-accuracy = 70
-pp = 5

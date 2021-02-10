@@ -1,6 +1,0 @@
-name = "Chip Away"
-pokemon_type = "Normal"
-category = "Physical"
-power = 70
-accuracy = 100
-pp = 20

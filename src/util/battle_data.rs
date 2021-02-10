@@ -3,6 +3,7 @@ use parking_lot::Mutex;
 
 use crate::battle::battle_info::BattleType;
 use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
+use crate::pokemon::PokemonId;
 use crate::pokemon::data::StatSet;
 use crate::pokemon::party::PokemonParty;
 use crate::world::npc::NPC;
@@ -16,7 +17,7 @@ pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
         battle_type: BattleType::Wild,
         party: PokemonParty {
-            pokemon: vec![crate::pokemon::instance::PokemonInstance::generate(gen_range(0, crate::pokemon::pokedex::LENGTH) + 1, 1, 100, Some(StatSet::iv_random()))],
+            pokemon: vec![crate::pokemon::instance::PokemonInstance::generate(gen_range(0, crate::pokemon::pokedex::LENGTH) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
         },
         trainer_data: None,
     });

@@ -1,6 +1,0 @@
-name = "Dark Pulse"
-pokemon_type = "Dark"
-category = "Special"
-power = 80
-accuracy = 100
-pp = 15

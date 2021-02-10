@@ -1,9 +1,10 @@
+use crate::pokemon::PokemonId;
 use crate::pokemon::instance::PokemonInstance;
 
 #[derive(Copy, Clone, Default)]
 pub struct WildPokemonEncounter {
 
-    pub pokemon_id: usize,
+    pub pokemon_id: PokemonId,
     pub min_level: u8,
     pub max_level: u8,
 

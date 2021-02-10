@@ -1,6 +1,0 @@
-name = "Avalanche"
-pokemon_type = "Ice"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 10

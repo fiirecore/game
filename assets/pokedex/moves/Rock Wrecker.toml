@@ -1,6 +1,0 @@
-name = "Rock Wrecker"
-pokemon_type = "Rock"
-category = "Physical"
-power = 150
-accuracy = 90
-pp = 5

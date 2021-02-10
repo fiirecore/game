@@ -5,6 +5,7 @@ use ahash::AHashMap as HashMap;
 use macroquad::prelude::warn;
 
 use super::Pokemon;
+use super::PokemonId;
 use super::moves::MoveInstance;
 use super::moves::PokemonMove;
 
@@ -12,8 +13,8 @@ pub mod texture;
 
 pub struct Pokedex {
 	
-	pub pokemon_list: HashMap<usize, Pokemon>,
-	pub move_list: HashMap<String, PokemonMove>,
+	pub pokemon_list: HashMap<PokemonId, Pokemon>,
+	pub move_list: HashMap<u16, PokemonMove>,
 	
 }
 
@@ -68,7 +69,7 @@ impl Pokedex {
 							match file.read_to_string(&mut data) {
 								Ok(_) => match PokemonMove::from_string(&data) {
 									Ok(pokemon_move) => {
-										move_list.insert(pokemon_move.name.clone(), pokemon_move);
+										move_list.insert(pokemon_move.number, pokemon_move);
 									}
 									Err(err) => warn!("Could not read move entry at {} with error {}", file.name(), err),
 								}
@@ -87,7 +88,7 @@ impl Pokedex {
 								Some(data) => {
 									match PokemonMove::from_string(data) {
 										Ok(pokemon_move) => {
-											move_list.insert(pokemon_move.name.clone(), pokemon_move);
+											move_list.insert(pokemon_move.number, pokemon_move);
 										}
 										Err(err) => warn!("Could not read pokemon move at {} with error {}", file.path, err),
 									}
@@ -112,7 +113,7 @@ impl Pokedex {
 		
 	}
 
-	pub fn pokemon_from_id(&self, id: usize) -> &Pokemon {
+	pub fn pokemon_from_id(&self, id: PokemonId) -> &Pokemon {
 		match self.pokemon_list.get(&id) {
 			Some(pokemon) => pokemon,
 			None => {
@@ -123,7 +124,7 @@ impl Pokedex {
 		}
 	}
 
-	pub fn moves_from_level(&self, pokemon_id: usize, level: u8) -> Vec<MoveInstance> {
+	pub fn moves_from_level(&self, pokemon_id: PokemonId, level: u8) -> Vec<MoveInstance> {
 		self.pokemon_from_id(pokemon_id).moves_from_level(&self, level)
 	}
 	

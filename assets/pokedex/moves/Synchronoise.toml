@@ -1,6 +1,0 @@
-name = "Synchronoise"
-pokemon_type = "Psychic"
-category = "Special"
-power = 120
-accuracy = 100
-pp = 10

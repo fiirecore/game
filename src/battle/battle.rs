@@ -55,8 +55,8 @@ impl Default for Battle {
 			player_active: 0,
 			opponent_active: 0,
 
-			player_move: PokemonMove::empty(),
-			opponent_move: PokemonMove::empty(),
+			player_move: PokemonMove::default(),
+			opponent_move: PokemonMove::default(),
 
 			player_textures: Vec::new(),
 			opponent_textures: Vec::new(),
@@ -269,24 +269,35 @@ pub struct BattleEndData {
 
 
 
-fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokemon: &BattlePokemon) -> u16 {
-	if let Some(power) = pmove.power {
-		let effective = pmove.pokemon_type.unwrap_or_default().effective(recieving_pokemon.data.primary_type) as f64 * match recieving_pokemon.data.secondary_type {
-		    Some(ptype) => pmove.pokemon_type.unwrap_or_default().effective(ptype) as f64,
-		    None => 1.0,
-		};
-		match pmove.category {
-			MoveCategory::Status => return 0,
-			MoveCategory::Physical => {
-				return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk as f64 * power as f64 / recieving_pokemon.base.def as f64).floor() / 50.0).floor() * effective) as u16 + 2;
-			},
-			MoveCategory::Special => {
-				return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() * effective) as u16+ 2;
+fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokemon: &BattlePokemon) -> u16 { // Change to return MoveResult<>
+	if if let Some(accuracy) = pmove.accuracy {
+		let hit: u8 = macroquad::rand::gen_range(0, 100);
+		macroquad::prelude::debug!("{} accuracy: {}/{}",  pmove, hit, accuracy);
+		hit < accuracy
+	} else {
+		true
+	} {
+		if let Some(power) = pmove.power {
+			let effective = pmove.pokemon_type.unwrap_or_default().effective(recieving_pokemon.data.primary_type) as f64 * match recieving_pokemon.data.secondary_type {
+				Some(ptype) => pmove.pokemon_type.unwrap_or_default().effective(ptype) as f64,
+				None => 1.0,
+			};
+			match pmove.category {
+				MoveCategory::Status => return 0,
+				MoveCategory::Physical => {
+					return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk as f64 * power as f64 / recieving_pokemon.base.def as f64).floor() / 50.0).floor() * effective) as u16 + 2;
+				},
+				MoveCategory::Special => {
+					return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() * effective) as u16+ 2;
+				}
 			}
+		} else {
+			return 0;
 		}
 	} else {
+		macroquad::prelude::info!("{} missed!", pokemon);
 		return 0;
-	}		
+	}	
 }
 
 impl Display for Battle {

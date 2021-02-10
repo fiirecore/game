@@ -1,6 +1,0 @@
-name = "Icicle Crash"
-pokemon_type = "Ice"
-category = "Physical"
-power = 85
-accuracy = 90
-pp = 10

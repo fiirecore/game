@@ -17,7 +17,9 @@ static SAVE_FILENAME: &str = "player.json";
 pub struct PlayerData {
 
 	// pub world_id: String,
+	#[serde(default = "player_location")]
 	pub location: Location,
+	#[serde(default = "player_party")]
 	pub party: PokemonParty,
 
 	#[serde(default)]
@@ -77,34 +79,37 @@ impl Default for PlayerData {
 			
 			// world_id: String::from("firered"),
 
-			party: PokemonParty {
+			party: player_party(),
 
-				pokemon: vec![
-					PokemonInstance::generate_with_level(1, 11, Some(StatSet::uniform(15))),
-					PokemonInstance::generate_with_level(4, 11, Some(StatSet::uniform(15))),
-					PokemonInstance::generate_with_level(7, 11, Some(StatSet::uniform(15))),
-				],
-
-			},
-
-			location: Location {
-
-				map_id: String::from("pallet_town_player_house"),
-				map_index: 1,
-
-				position: Position {
-					x: 6,
-					y: 6,
-					..Default::default()
-				}
-				
-			},
+			location: player_location(),
 
 			..Default::default()
 
 		}
 	}
 
+}
+
+fn player_location() -> Location {
+	Location {
+		map_id: String::from("pallet_town_player_house"),
+		map_index: 1,
+		position: Position {
+			x: 6,
+			y: 6,
+			..Default::default()
+		}
+	}
+}
+
+fn player_party() -> PokemonParty {
+	PokemonParty {
+		pokemon: vec![
+			PokemonInstance::generate_with_level(1, 11, Some(StatSet::uniform(15))),
+			PokemonInstance::generate_with_level(4, 11, Some(StatSet::uniform(15))),
+			PokemonInstance::generate_with_level(7, 11, Some(StatSet::uniform(15))),
+		],
+	}
 }
 
 // impl PersistantDataLocation for PlayerData {

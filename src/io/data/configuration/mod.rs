@@ -4,8 +4,10 @@ use std::io::BufWriter;
 use std::io::Write;
 use macroquad::prelude::warn;
 use serde::{Serialize, Deserialize};
-
 use crate::util::file::PersistantData;
+//use ahash::{AHashMap, AHashSet};
+//use crate::util::input::Control;
+//use crate::util::input::KeyCodeDef;
 
 //use self::controls::ControlConfiguration;
 
@@ -17,10 +19,11 @@ static CONFIGURATION_FILENAME: &str = "config.toml";
 #[derive(Serialize, Deserialize)]
 pub struct Configuration {
 	
-	pub window_scale: u8,
-	pub save_timer: f32,
+	// pub window_scale: u8,
+	// pub save_timer: f32,
 
-	//pub controls: ControlConfiguration,
+	//#[serde(with = "KeyCodeDef")]
+	//pub controls: AHashMap<Control, AHashSet<macroquad::prelude::KeyCode>>,
 		
 }
 
@@ -62,9 +65,7 @@ impl Configuration {
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-			window_scale: 3,
-			save_timer: 60.0,
-			//controls: ControlConfiguration::default(),
+			//controls: Control::default_map(),
 		}
     }
 }

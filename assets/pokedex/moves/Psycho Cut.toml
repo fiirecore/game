@@ -1,6 +1,0 @@
-name = "Psycho Cut"
-pokemon_type = "Psychic"
-category = "Physical"
-power = 70
-accuracy = 100
-pp = 20

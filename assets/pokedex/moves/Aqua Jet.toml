@@ -1,6 +1,0 @@
-name = "Aqua Jet"
-pokemon_type = "Water"
-category = "Physical"
-power = 40
-accuracy = 100
-pp = 20

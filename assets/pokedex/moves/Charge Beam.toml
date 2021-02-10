@@ -1,6 +1,0 @@
-name = "Charge Beam"
-pokemon_type = "Electric"
-category = "Special"
-power = 50
-accuracy = 90
-pp = 10

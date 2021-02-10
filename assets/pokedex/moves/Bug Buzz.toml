@@ -1,6 +1,0 @@
-name = "Bug Buzz"
-pokemon_type = "Bug"
-category = "Special"
-power = 90
-accuracy = 100
-pp = 10

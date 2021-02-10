@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct Training {
 	
 	pub base_exp: usize,
+	#[serde(default)]
 	pub growth_rate: GrowthRate,
 	//pub ev_yield: Option<(String, usize)>,
 	//pub catch_rate: Option<u8>,
@@ -15,12 +16,22 @@ pub struct Training {
 pub enum GrowthRate {
 
 	//Erratic,
+	#[serde(rename = "fast")]
 	Fast,
+	#[serde(rename = "medium")]
 	MediumFast,
+	#[serde(rename = "medium-slow")]
 	MediumSlow,
+	#[serde(rename = "slow")]
 	Slow,
 	//Fluctuating
 	
+}
+
+impl Default for GrowthRate {
+    fn default() -> Self {
+        Self::MediumSlow
+    }
 }
 
 impl GrowthRate {

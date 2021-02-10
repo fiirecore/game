@@ -5,7 +5,6 @@ use macroquad::prelude::collections::storage;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
 use io::data::configuration::Configuration;
-use parking_lot::RwLock;
 use scene::loading_scene_manager::LoadingSceneManager;
 use scene::scene_manager::SceneManager;
 use util::file::PersistantDataLocation;
@@ -27,9 +26,12 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;
 pub static BASE_HEIGHT: u32 = 160;
 
-lazy_static::lazy_static! {
-    static ref RUNNING: RwLock<bool> = RwLock::new(true);
-}
+static mut QUIT: bool = false;
+
+// use parking_lot::RwLock;
+// lazy_static::lazy_static! {
+//     static ref RUNNING: RwLock<bool> = RwLock::new(true);
+// }
 
 #[macroquad::main(settings)]
 async fn main() {
@@ -71,7 +73,7 @@ async fn main() {
 
 
     while !loading_coroutine.is_done() {
-        macroquad::prelude::coroutines::wait_seconds(0.2).await;
+        macroquad::prelude::coroutines::wait_seconds(0.05).await;
     }
     macroquad::prelude::coroutines::stop_coroutine(loading_coroutine);   
 
@@ -79,27 +81,33 @@ async fn main() {
 
     scene_manager.on_start();
 
-    let running = RUNNING.read();
+    //let running = RUNNING.read();
 
-    while *running {
+    loop {
         scene_manager.input(get_frame_time());
         scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
         scene_manager.render();
+        if unsafe{QUIT} {
+            break;
+        }
         macroquad::prelude::next_frame().await;
     }
 
+    info!("Quitting game...");
     util::Quit::quit(&mut scene_manager);
 
 }
 
 pub fn queue_quit() {
-    *RUNNING.write() = false;
+    unsafe{QUIT = true;}
+    //*RUNNING.write() = false;
 }
 
 fn settings() -> Conf {
     let config = Configuration::load_from_file();
-    let scale = config.window_scale as u32;
+    // let scale = config.window_scale as u32;
+    let scale = 3;
     storage::store(config);
 
     Conf {

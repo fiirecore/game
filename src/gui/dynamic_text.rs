@@ -140,7 +140,7 @@ impl GuiComponent for DynamicText {
 				}
 			} else if self.counter <= line_len as f32 {
 				self.counter += delta * 60.0 * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
-					16.0
+					8.0
 				} else {
 					1.0
 				}

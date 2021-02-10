@@ -3,9 +3,10 @@ use super::types::PokemonType;
 
 pub mod instance;
 
-#[derive(Clone, Deserialize)]
+#[derive(Default, Clone, Deserialize)]
 pub struct PokemonMove {
 
+	pub number: u16,
 	pub name: String,
 	pub category: MoveCategory,
 	pub pokemon_type: Option<PokemonType>,
@@ -16,24 +17,6 @@ pub struct PokemonMove {
 }
 
 impl PokemonMove {
-
-	pub fn empty() -> Self {
-		Self {
-			name: String::new(),
-			category: MoveCategory::Status,
-			pokemon_type: None,
-			power: None,
-			accuracy: None,
-			pp: 0,
-		}
-	}
-
-	// pub fn to_instance(&self) -> MoveInstance {
-	// 	MoveInstance {
-	// 		move_instance: self.clone(),
-	// 		remaining_pp: self.pp
-	// 	}
-    // }
 
     pub fn from_string(data: &str) -> Result<PokemonMove, toml::de::Error> {
         return toml::from_str(data);
@@ -49,7 +32,7 @@ impl std::fmt::Display for PokemonMove {
 
 pub struct MoveInstance {
 	
-	pub move_instance: PokemonMove,
+	pub move_instance: PokemonMove, // To - do: possibly change to number in case of global pokedex variable
 	pub remaining_pp: u8,
 	
 }
@@ -70,4 +53,10 @@ pub enum MoveCategory {
 	Special,
 	Status,	
 	
+}
+
+impl Default for MoveCategory {
+    fn default() -> Self {
+        Self::Status
+    }
 }

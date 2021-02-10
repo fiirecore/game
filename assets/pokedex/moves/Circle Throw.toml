@@ -1,6 +1,0 @@
-name = "Circle Throw"
-pokemon_type = "Fighting"
-category = "Physical"
-power = 60
-accuracy = 90
-pp = 10

@@ -1,6 +1,0 @@
-name = "Inferno"
-pokemon_type = "Fire"
-category = "Special"
-power = 100
-accuracy = 50
-pp = 5

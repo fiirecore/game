@@ -1,6 +1,0 @@
-name = "Gear Grind"
-pokemon_type = "Steel"
-category = "Physical"
-power = 50
-accuracy = 85
-pp = 15

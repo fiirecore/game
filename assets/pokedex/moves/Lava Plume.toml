@@ -1,6 +1,0 @@
-name = "Lava Plume"
-pokemon_type = "Fire"
-category = "Special"
-power = 80
-accuracy = 100
-pp = 15
