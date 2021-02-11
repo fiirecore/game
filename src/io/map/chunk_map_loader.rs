@@ -27,7 +27,7 @@ pub fn new_chunk_map(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u
                                     y: jigsaw_map.y,
                                     map: WorldMap {
         
-                                        name: config.identifier.name(),
+                                        name: config.identifier.name,
                                         music: Music::from(gba_map.music),
             
                                         width: gba_map.width as u16,

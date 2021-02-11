@@ -112,14 +112,15 @@ impl WorldManager {
             if let Some(index) = self.current_map_mut().npc_active {
 
                 // Play NPC music
-
-                if let Some(music) = self.current_map_mut().npcs[index].encounter_music {
-                    if let Some(playing_music) = crate::audio::get_music_playing() {
-                        if playing_music != music {
+                if let Some(trainer) = self.current_map_mut().npcs[index].trainer.as_ref() {
+                    if let Some(music) = trainer.encounter_music {
+                        if let Some(playing_music) = crate::audio::get_music_playing() {
+                            if playing_music != music {
+                                play_music(music);
+                            }
+                        } else {
                             play_music(music);
                         }
-                    } else {
-                        play_music(music);
                     }
                 }
 
@@ -128,19 +129,30 @@ impl WorldManager {
                 if self.current_map_mut().npcs[index].should_move() {
                     self.npc_movement(index, delta);
                 } else {
+
                     self.window_manager.spawn();
                     self.current_map_mut().npcs[index].offset = None;
+                    
+
+                    let mut battled = false;
+
                     if let Some(trainer) = &self.current_map_mut().npcs[index].trainer {
-                        // if let Some(music) = trainer.encounter_music {
-                        //     play_music(music);
-                        // }
                         let message_set = crate::io::data::text::MessageSet::new(
                             1, 
                             crate::io::data::text::color::TextColor::Blue, 
                             trainer.encounter_message.clone()
                         );
                         self.window_manager.set_text(message_set);
+                        battled = true;
                     }
+
+                    if battled {
+                        if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
+                            let npc_name = self.current_map_mut().npcs[index].identifier.name.clone();
+                            std::ops::DerefMut::deref_mut(&mut data).world_status.get_or_create_map_data(&self.current_map_mut().name).battled.insert(npc_name);
+                        }
+                    }
+
                     self.player.position.local.direction = self.current_map_mut().npcs[index].position.direction.inverse();
                     if self.player.frozen {
                         self.player.move_update(0.0);
@@ -210,9 +222,9 @@ impl WorldManager {
         } else {
 
             if self.chunk_map.is_alive() {
-                self.chunk_map.input(delta, &self.player);
+                self.chunk_map.input(delta, &mut self.player);
             } else {
-                self.map_sets.input(delta, &self.player);
+                self.map_sets.input(delta, &mut self.player);
             }
     
             if self.player.position.local.x_offset == 0.0 && self.player.position.local.y_offset == 0.0 && !self.player.frozen {
@@ -520,6 +532,14 @@ impl WorldManager {
                 self.map_sets.tile(self.player.position.local.x, self.player.position.local.y)
             };
             info!("Current Tile ID: {}", tile);
+        }
+
+        if is_key_pressed(KeyCode::F5) {
+            let name = &self.current_map_mut().name;
+            info!("Resetting battled trainers in this map! ({})", name);
+            if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
+                std::ops::DerefMut::deref_mut(&mut data).world_status.get_or_create_map_data(name).battled.clear();
+            }
         }
 
     }

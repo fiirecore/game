@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Lavender Town"
 map_files = ["3.4_LAVENDER TOWN.map"]
 
 [jigsaw_map]

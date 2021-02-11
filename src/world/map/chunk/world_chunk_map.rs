@@ -169,7 +169,7 @@ impl World for WorldChunkMap {
         }
     }
 
-    fn input(&mut self, delta: f32, player: &Player) {
+    fn input(&mut self, delta: f32, player: &mut Player) {
         self.current_chunk_mut().input(delta, player)
     }
 

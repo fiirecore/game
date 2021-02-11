@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Cinnabar Island"
 map_files = ["3.8_CINNABAR ISLAND.map"]
 
 [jigsaw_map]

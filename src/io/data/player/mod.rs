@@ -11,12 +11,12 @@ use serde::{Deserialize, Serialize};
 use super::GlobalPosition;
 use super::Location;
 use super::Position;
-use super::world_status::WorldStatus;
+use super::world::WorldStatus;
 use crate::pokemon::instance::PokemonInstance;
 
 static SAVE_DIRECTORY: &str = "saves";
 static SAVE_FILENAME: &str = "player.json";
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerData {
 
 	// pub world_id: String,
@@ -64,7 +64,7 @@ impl Default for PlayerData {
 			party: player_party(),
 			location: player_location(),
 		    worth: 0,
-		    world_status: WorldStatus {},
+		    world_status: WorldStatus::default(),
 		    dirty: false,
 		}
 	}

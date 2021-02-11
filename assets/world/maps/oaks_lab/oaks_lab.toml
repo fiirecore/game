@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Oak's Laboratory"
 map_files = ["4.3_PALLET TOWN.map"]
 
 [warp_map]

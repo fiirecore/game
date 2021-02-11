@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Route 4 (Pokemon Center)"
 map_files = ["16.0_ROUTE 4.map"]
 
 [warp_map]

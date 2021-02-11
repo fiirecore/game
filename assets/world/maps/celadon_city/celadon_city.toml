@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Celadon City"
 map_files = ["3.6_CELADON CITY.map"]
 
 [jigsaw_map]

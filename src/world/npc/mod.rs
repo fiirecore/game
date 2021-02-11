@@ -1,4 +1,3 @@
-use crate::audio::music::Music;
 use crate::io::data::Direction;
 use crate::io::data::Position;
 use crate::util::graphics::Texture;
@@ -6,6 +5,8 @@ use crate::util::graphics::texture::debug_texture;
 use macroquad::prelude::warn;
 use serde::Deserialize;
 use self::trainer::Trainer;
+
+use super::player::Player;
 
 pub mod trainer;
 
@@ -17,7 +18,7 @@ pub struct NPC {
     #[serde(skip)]
     pub offset: Option<(isize, isize)>, // Offset from home position, see if changing the struct to something that uses variables better would help
     // pub movement: Option<MovementType>,
-    pub encounter_music: Option<Music>,
+    // pub encounter_message: Vec<Vec<String>>,
     pub trainer: Option<Trainer>,
 
 }
@@ -50,14 +51,13 @@ impl NPC {
 
     pub fn should_move(&self) -> bool {
         if let Some(offset) = self.offset {
-            macroquad::prelude::info!("Y dest: {}, Current Y: {}", offset.1, self.position.y);
             self.position.x != offset.0 || self.position.y != offset.1
         } else {
             false
         }
     }
 
-    pub fn interact(&mut self, direction: Option<Direction>, x: isize, y: isize) {
+    pub fn interact(&mut self, direction: Option<Direction>, player: &mut Player) {
         if let Some(direction) = direction {
             self.position.direction = direction.inverse();
         }
@@ -65,14 +65,14 @@ impl NPC {
             macroquad::prelude::info!("Trainer battle with {}", &self.identifier.name);
             // if !trainer.battled {
             //     trainer.battled = true;
-                self.walk_to(x, y);
+                self.walk_to(player.position.local.x, player.position.local.y);
+                player.freeze();
             //}
         }
     }
 
     pub fn after_interact(&mut self) {
-        if let Some(trainer) = self.trainer.as_mut() {
-            trainer.tracking_length = None;
+        if self.trainer.is_some() {
             crate::util::battle_data::trainer_battle(&self);
         }
     }

@@ -18,9 +18,9 @@ pub mod world;
 pub mod pokemon;
 pub mod game;
 pub mod battle;
-mod gui;
+pub mod gui;
 
-pub static TITLE: &str =  env!("CARGO_PKG_NAME");
+pub static TITLE: &str = "Pokemon FireRed";
 pub static AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;

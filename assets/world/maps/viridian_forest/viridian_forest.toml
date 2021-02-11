@@ -1,7 +1,6 @@
 [identifier]
-world_id = "firered"
-map_files = ["1.0_VIRIDIAN FOREST.map"]
 name = "Viridian Forest"
+map_files = ["1.0_VIRIDIAN FOREST.map"]
 
 [warp_map]
 map_set_id = "viridian_forest"

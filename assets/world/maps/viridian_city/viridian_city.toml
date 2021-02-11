@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Viridian City"
 map_files = ["3.1_VIRIDIAN CITY.map"]
 
 [jigsaw_map]

@@ -91,7 +91,7 @@ impl World for WorldMapSet {
         self.maps[self.current_map_index].render(textures, npc_textures, screen, border)
     }
 
-    fn input(&mut self, delta: f32, player: &Player) {
+    fn input(&mut self, delta: f32, player: &mut Player) {
         self.maps[self.current_map_index].input(delta, player)
     }
 

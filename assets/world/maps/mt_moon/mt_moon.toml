@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Mt. Moon"
 map_files = ["gba/1.1_MT. MOON.map", "gba/1.2_MT. MOON.map", "gba/1.3_MT. MOON.map"]
 
 [warp_map]

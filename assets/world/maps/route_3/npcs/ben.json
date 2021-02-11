@@ -8,9 +8,9 @@
 		"y": 4,
 		"direction": "Down"
 	},
-	"encounter_music": "EncounterBoy",
 	"trainer": {
 		"trainer_type": "Youngster",
+		"encounter_music": "EncounterBoy",
 		"encounter_message": [
 				[
 					"Hi!",

@@ -13,6 +13,8 @@ use super::wild_entry_loader::load_wild_entry;
 
 pub fn new_map_set(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(String, WorldMapSet)> {
 
+    let name = config.identifier.name;
+
     let mut maps: Vec<WorldMap> = Vec::new();
 
     for index in 0..config.identifier.map_files.len() {
@@ -25,7 +27,7 @@ pub fn new_map_set(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u16
                 maps.insert(
                     index,
                     WorldMap {
-                        name: config.identifier.name(),
+                        name: name.clone(),
                         music: Music::from(gba_map.music),
                         width: gba_map.width,
                         height: gba_map.height,

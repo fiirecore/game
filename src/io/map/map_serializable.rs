@@ -16,24 +16,27 @@ pub struct MapConfig {
 #[derive(Debug, Deserialize)]
 pub struct MapIdentifier {
 
-    // pub world_id: String,
+    #[serde(default = "map_default_name")]
+    pub name: String,
     pub map_files: Vec<String>,
 
-    pub name: Option<String>,
-
 }
 
-impl MapIdentifier {
-
-    pub fn name(&self) -> String {
-        if let Some(name) = &self.name {
-            return name.clone();
-        } else {
-            return String::from("Map (Missing Name)");
-        }
-    }
-
+fn map_default_name() -> String {
+    String::from("Map (Missing Name)")
 }
+
+// impl MapIdentifier {
+
+//     pub fn name(&self) -> String {
+//         if let Some(name) = &self.name {
+//             return name.clone();
+//         } else {
+//             return String::from("Map (Missing Name)");
+//         }
+//     }
+
+// }
 
 #[derive(Debug, Deserialize)]
 pub struct SerializedChunkMap {

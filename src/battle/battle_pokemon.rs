@@ -37,10 +37,7 @@ impl BattlePokemon {
 
 		let pokemon_data = pokedex.pokemon_from_id(pokemon.id);
 
-		let ivs = pokemon.ivs;
-		let evs = pokemon.evs.unwrap_or_default();
-
-		let stats = get_stats(pokemon_data, ivs, evs, pokemon.level);
+		let stats = get_stats(pokemon_data, pokemon.ivs, pokemon.evs, pokemon.level);
 
 		Self {
 			
@@ -51,15 +48,15 @@ impl BattlePokemon {
 			
 			moves: pokedex.moves_from_level(pokemon.id, pokemon.level),
 			
-			ivs: ivs,
+			ivs: pokemon.ivs,
 			
-			evs: evs,
+			evs: pokemon.evs,
 			
 			current_hp: pokemon.current_hp.unwrap_or(stats.hp),
 
 			base: stats,
 
-			exp: pokemon.exp.unwrap_or_default(),
+			exp: pokemon.exp,
 			
 		}
 
@@ -104,10 +101,10 @@ impl BattlePokemon {
 		    id: self.data.number,
 		    level: self.level,
 		    ivs: self.ivs,
-		    evs: Some(self.evs),
+		    evs: self.evs,
 		    move_set: Some(crate::pokemon::moves::instance::SavedPokemonMoveSet::from_instance(&self.moves)),
-		    exp: Some(self.exp),
-		    friendship: Some(70),
+		    exp: self.exp,
+		    friendship: 70,
 		    current_hp: Some(self.current_hp),
 		}
 	}

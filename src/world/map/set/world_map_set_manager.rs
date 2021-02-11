@@ -85,7 +85,7 @@ impl World for WorldMapSetManager {
         self.map_set().render(textures, npc_textures, screen, border)
     }
 
-    fn input(&mut self, delta: f32, player: &Player) {
+    fn input(&mut self, delta: f32, player: &mut Player) {
         self.map_set_mut().input(delta, player)
     }
 }

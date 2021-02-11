@@ -8,9 +8,9 @@
 		"y": 6,
 		"direction": "Right"
 	},
-	"encounter_music": "EncounterBoy",
 	"trainer": {
 		"trainer_type": "BugCatcher",
+		"encounter_music": "EncounterBoy",
 		"encounter_message": [
 				[
 					"Hey!",

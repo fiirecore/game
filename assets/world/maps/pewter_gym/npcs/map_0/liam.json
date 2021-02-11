@@ -8,9 +8,9 @@
 		"y": 8,
 		"direction": "Right"
 	},
-	"encounter_music": "EncounterBoy",
 	"trainer": {
 		"trainer_type": "Camper",
+		"encounter_music": "EncounterBoy",
 		"encounter_message": [
 
 				[

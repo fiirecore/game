@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Saffron City"
 map_files = ["3.11_SAFFRON CITY.map"]
 
 [jigsaw_map]

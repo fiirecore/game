@@ -104,47 +104,48 @@ impl World for WorldMap {
         for npc_index in 0..self.npcs.len() {
             let npc = &mut self.npcs[npc_index];
             if let Some(trainer) = &npc.trainer {
-                if let Some(tracker) = trainer.tracking_length {
-                    let tracker = tracker as isize;
-                    match npc.position.direction {
-                        Direction::Up => {
-                            if player.position.local.x == npc.position.x {
-                                if player.position.local.y < npc.position.y && player.position.local.y >= npc.position.y - tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
-                                    self.npc_active = Some(npc_index);
-                                    npc.interact(None, player.position.local.x, player.position.local.y);
-                                    player.freeze();
-                                    //npc.movement.walk_to_player();
+                if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<crate::io::data::player::PlayerData>() {
+                    if !std::ops::DerefMut::deref_mut(&mut data).world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.name) {
+                        if let Some(tracker) = trainer.tracking_length {
+                            let tracker = tracker as isize;
+                            match npc.position.direction {
+                                Direction::Up => {
+                                    if player.position.local.x == npc.position.x {
+                                        if player.position.local.y < npc.position.y && player.position.local.y >= npc.position.y - tracker {
+                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            self.npc_active = Some(npc_index);
+                                            npc.interact(None, player);
+                                            
+                                            //npc.movement.walk_to_player();
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        Direction::Down => {
-                            if player.position.local.x == npc.position.x {
-                                if player.position.local.y > npc.position.y && player.position.local.y <= npc.position.y + tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
-                                    self.npc_active = Some(npc_index);
-                                    npc.interact(None, player.position.local.x, player.position.local.y);
-                                    player.freeze();
+                                Direction::Down => {
+                                    if player.position.local.x == npc.position.x {
+                                        if player.position.local.y > npc.position.y && player.position.local.y <= npc.position.y + tracker {
+                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            self.npc_active = Some(npc_index);
+                                            npc.interact(None, player);
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        Direction::Left => {
-                            if player.position.local.y == npc.position.y {
-                                if player.position.local.x < npc.position.x && player.position.local.x >= npc.position.x - tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
-                                    self.npc_active = Some(npc_index);
-                                    npc.interact(None, player.position.local.x, player.position.local.y);
-                                    player.freeze();
+                                Direction::Left => {
+                                    if player.position.local.y == npc.position.y {
+                                        if player.position.local.x < npc.position.x && player.position.local.x >= npc.position.x - tracker {
+                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            self.npc_active = Some(npc_index);
+                                            npc.interact(None, player);
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        Direction::Right => {
-                            if player.position.local.y == npc.position.y {
-                                if player.position.local.x > npc.position.x && player.position.local.x <= npc.position.x + tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
-                                    self.npc_active = Some(npc_index);
-                                    npc.interact(None, player.position.local.x, player.position.local.y);
-                                    player.freeze();
+                                Direction::Right => {
+                                    if player.position.local.y == npc.position.y {
+                                        if player.position.local.x > npc.position.x && player.position.local.x <= npc.position.x + tracker {
+                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            self.npc_active = Some(npc_index);
+                                            npc.interact(None, player);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -196,7 +197,7 @@ impl World for WorldMap {
         }
     }
 
-    fn input(&mut self, _delta: f32, player: &Player) {
+    fn input(&mut self, _delta: f32, player: &mut Player) {
         if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F4) {
             for npc in &self.npcs {
                 info!("NPC {} is at {}, {}; looking {:?}", &npc.identifier.name, &npc.position.x, &npc.position.y, &npc.position.direction);
@@ -211,13 +212,13 @@ impl World for WorldMap {
                         Direction::Up => {
                             if player.position.local.y - 1 == npc.position.y {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
+                                npc.interact(Some(player.position.local.direction), player);
                             }
                         },
                         Direction::Down => {
                             if player.position.local.y + 1 == npc.position.y {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
+                                npc.interact(Some(player.position.local.direction), player);
                             }
                         },
                         _ => (),
@@ -227,13 +228,13 @@ impl World for WorldMap {
                         Direction::Right => {
                             if player.position.local.x + 1 == npc.position.x {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
+                                npc.interact(Some(player.position.local.direction), player);
                             }
                         },
                         Direction::Left => {
                             if player.position.local.x - 1 == npc.position.x {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
+                                npc.interact(Some(player.position.local.direction), player);
                             }
                         },
                         _ => (),

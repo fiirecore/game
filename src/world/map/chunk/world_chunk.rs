@@ -53,7 +53,7 @@ impl World for WorldChunk {
         self.map.on_tile(player)
     }
 
-    fn input(&mut self, delta: f32, player: &Player) {
+    fn input(&mut self, delta: f32, player: &mut Player) {
         self.map.input(delta, player)
     }
 

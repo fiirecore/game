@@ -12,7 +12,6 @@ pub mod player;
 pub type NpcTextures = HashMap<String, ThreeWayTexture>;
 
 use ahash::AHashMap as HashMap;
-use crate::io::data::Position;
 use crate::util::graphics::Texture;
 use crate::util::TILE_SIZE;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
@@ -33,7 +32,7 @@ pub trait World {
 
     fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool);
 
-    fn input(&mut self, delta: f32, player: &Player);
+    fn input(&mut self, delta: f32, player: &mut Player);
 
 }
 
