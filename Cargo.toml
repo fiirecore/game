@@ -23,7 +23,7 @@ args = ["getopts"]
 
 [dependencies]
 
-macroquad = { git = "https://github.com/DoNotDoughnut/macroquad", default-features = false, features = ["log-impl", "experimental"] }
+macroquad = { git = "https://github.com/DoNotDoughnut/macroquad", default-features = false, features = ["log-impl", "experimental", "serde"] }
 
 kira = { version = "0.4", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
 

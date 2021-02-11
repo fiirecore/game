@@ -1,5 +1,4 @@
-use ahash::AHashMap;
-use ahash::AHashSet;
+use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 use macroquad::prelude::KeyCode;
 use serde::{Deserialize, Serialize};
 
@@ -20,8 +19,8 @@ pub enum Control {
 
 impl Control {
 
-    pub fn default_map() -> AHashMap<Control, AHashSet<KeyCode>> {
-        let mut controls = AHashMap::new();
+    pub fn default_map() -> HashMap<Control, HashSet<KeyCode>> {
+        let mut controls = HashMap::new();
         controls.insert(Control::A, set_of(&[KeyCode::X]));
         controls.insert(Control::B, set_of(&[KeyCode::Z]));
         controls.insert(Control::Up, set_of(&[KeyCode::Up]));
@@ -35,8 +34,8 @@ impl Control {
 
 }
 
-fn set_of(codes: &[KeyCode]) -> AHashSet<KeyCode> {
-    let mut set = AHashSet::new();
+fn set_of(codes: &[KeyCode]) -> HashSet<KeyCode> {
+    let mut set = HashSet::new();
     for code in codes {
         set.insert(*code);
     }    

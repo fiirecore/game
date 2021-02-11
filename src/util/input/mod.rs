@@ -1,5 +1,4 @@
-use ahash::AHashMap as HashMap;
-use ahash::AHashSet as HashSet;
+use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 use parking_lot::RwLock;
 use macroquad::prelude::KeyCode;
 
@@ -33,8 +32,6 @@ pub fn down(control: Control) -> bool {
     return false;
 }
 
-// #[derive(serde::Serialize, serde::Deserialize)]
-// #[serde(remote = "KeyCode")]
-// pub enum KeyCodeDef {
-
-// }
+pub fn reload_with_config(config: &crate::io::data::configuration::Configuration) {
+    *KEY_CONTROLS.write() = config.controls.clone();
+}

@@ -1,33 +1,31 @@
 use std::path::PathBuf;
 use std::fs::File;
-use std::io::BufWriter;
 use std::io::Write;
+use async_trait::async_trait;
+use macroquad::prelude::KeyCode;
+use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use serde::{Serialize, Deserialize};
 use crate::util::file::PersistantData;
-//use ahash::{AHashMap, AHashSet};
-//use crate::util::input::Control;
-//use crate::util::input::KeyCodeDef;
-
-//use self::controls::ControlConfiguration;
-
-//pub mod controls;
+use crate::util::file::PersistantDataLocation;
+use ahash::{AHashMap as HashMap, AHashSet as HashSet};
+use crate::util::input::Control;
 
 static CONFIGURATION_PATH: &str = "config";
-static CONFIGURATION_FILENAME: &str = "config.toml";
+static CONFIGURATION_FILENAME: &str = "config.json";
 
 #[derive(Serialize, Deserialize)]
 pub struct Configuration {
-	
-	// pub window_scale: u8,
-	// pub save_timer: f32,
-
-	//#[serde(with = "KeyCodeDef")]
-	//pub controls: AHashMap<Control, AHashSet<macroquad::prelude::KeyCode>>,
-		
+	pub controls: HashMap<Control, HashSet<KeyCode>>,	
 }
 
 impl Configuration {
+
+	pub fn on_reload(&self) {
+		info!("Running configuration reload tasks...");
+		crate::util::input::reload_with_config(self);
+		info!("Finished configuration reload tasks!");
+	}
 
 	fn saved_default() -> Self {
 		macroquad::prelude::info!("Creating new configuration file.");
@@ -36,22 +34,12 @@ impl Configuration {
 		return default;
 	}
 
-	pub async fn load_async_default() -> Self {
-		Configuration::load_async(PathBuf::from(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME)).await
+	fn default_path() -> PathBuf {
+		PathBuf::from(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME)
 	}
 
-	pub async fn load_async(path: PathBuf) -> Self {
-		match macroquad::prelude::load_string(path.to_str().expect("Could not get configuration file path as string")).await {
-			Ok(data) => Configuration::from_toml(&data),
-		    Err(err) => {
-				warn!("Could not load configuration file with error {}", err);
-				Configuration::saved_default()
-			}
-		}		
-	}
-
-	fn from_toml(data: &str) -> Self {
-		match toml::from_str(data) {
+	fn from_string(data: &str) -> Self {
+		match serde_json::from_str(data) {
 			Ok(config) => config,
 			Err(err) => {
 				warn!("Failed parsing configuration file with error {}", err);
@@ -65,38 +53,32 @@ impl Configuration {
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-			//controls: Control::default_map(),
+			controls: Control::default_map(),
 		}
     }
 }
 
-impl crate::util::file::PersistantDataLocation for Configuration {
+#[async_trait(?Send)]
+impl PersistantDataLocation for Configuration {
 
-	fn load_from_file() -> Self {
-		match crate::util::file::read_to_string_noasync(PathBuf::from(CONFIGURATION_PATH).join(CONFIGURATION_FILENAME)) {
-			Some(data) => Configuration::from_toml(&data),
-		    None => {
-				warn!("Could not load configuration file!");
-				Configuration::saved_default()
-			}
-		}
+	async fn load_from_file() -> Self {
+		Configuration::load(Self::default_path()).await
 	}
 
 }
 
+#[async_trait(?Send)]
 impl PersistantData for Configuration {
 
-	// fn load(path: PathBuf) -> Self {
-	// 	return match crate::util::file::read_to_string_noasync(path) {
-	// 		Some(content) => {
-	// 			Configuration::from_toml(&content)
-	// 		}
-	// 		None => {
-	// 			warn!("Failed reading configuration file to string with error");
-	// 			Configuration::saved_default()
-	// 		}
-	// 	};
-	// }
+	async fn load(path: PathBuf) -> Self {
+		return match crate::util::file::read_to_string(path).await {
+			Ok(content) => Configuration::from_string(&content),
+			Err(err) => {
+				warn!("Failed reading configuration file to string with error {}", err);
+				Configuration::saved_default()
+			}
+		};
+	}
 
 	fn save(&self) {
 		if cfg!(not(target_arch = "wasm32")) {
@@ -111,27 +93,26 @@ impl PersistantData for Configuration {
 				}
 			}
 	
-			if let Ok(file) = File::create(path.join(CONFIGURATION_FILENAME)) {
-				let mut writer = BufWriter::new(file);
-	
-				match toml::to_string_pretty(&self) {
+			if let Ok(mut file) = File::create(path.join(CONFIGURATION_FILENAME)) {
+				match serde_json::to_string_pretty(&self) {
 					Ok(encoded) => {
-						if let Err(err) = writer.write(encoded.as_bytes()) {
-							warn!("Failed to write configuration: {}", err);
+						if let Err(err) = file.write(encoded.as_bytes()) {
+							warn!("Failed to write to configuration file: {}", err);
 						}
 					},
 					Err(err) => {
-						warn!("Failed to create/open configuration file: {}", err);
+						warn!("Failed to parse configuration into a string with error: {}", err);
 					}
 				}
 			}
 		}
 	}
 
-	// fn reload(&mut self) {
-	// 	info!("Attempting to reload configuration...");
-	// 	*self = Configuration::load_from_file();
-	// 	info!("Reloaded configuration!");
-	// }
+	async fn reload(&mut self) {
+		info!("Attempting to reload configuration...");
+		*self = Configuration::load_from_file().await;
+		info!("Reloaded configuration!");
+		self.on_reload();
+	}
 	
 }

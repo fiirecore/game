@@ -1,4 +1,5 @@
 use io::args::Args;
+use io::data::configuration::Configuration;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::Conf;
 use macroquad::prelude::collections::storage;
@@ -43,6 +44,12 @@ async fn main() {
         info!("Running in debug mode");
     }
 
+    let config = Configuration::load_from_file().await;
+
+    config.on_reload();
+
+    storage::store(config);
+
     let args = crate::io::args::parse_args();
 
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
@@ -84,6 +91,11 @@ async fn main() {
         scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
         scene_manager.render();
+        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
+            if let Some(mut config) = storage::get_mut::<Configuration>() {
+                util::file::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
+            }
+        }
         if *QUIT.lock() {
             break;
         }
@@ -114,5 +126,3 @@ fn settings() -> Conf {
         ..Default::default()
     }
 }
-
-
