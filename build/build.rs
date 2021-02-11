@@ -1,9 +1,9 @@
-#[cfg(target_os = "windows")]
+#[cfg(windows)]
 fn main() {
-    let mut res = winres::WindowsResource::new();
-    res.set_icon("build/windows/icon.ico");
-    res.compile().expect("Could not compile winres!");
+    // let mut res = winres::WindowsResource::new();
+    // res.set_icon("build/windows/icon.ico");
+    // res.compile().expect("Could not compile winres!");
 }
 
-#[cfg(not(target_os = "windows"))]
+#[cfg(not(windows))]
 fn main() {}

@@ -1,5 +1,7 @@
 use std::ops::DerefMut;
 
+pub mod context;
+
 pub fn bind_world_music() {
     if cfg!(not(target_arch = "wasm32")) {
         std::thread::spawn( || {
@@ -12,7 +14,7 @@ pub fn bind_world_music() {
 }
 
 fn bind_music_fn() {
-    if let Some(mut audio_context) = macroquad::prelude::collections::storage::get_mut::<crate::audio::context::AudioContext>() {
+    if let Some(mut audio_context) = macroquad::prelude::collections::storage::get_mut::<self::context::AudioContext>() {
         audio_context.deref_mut().bind_music();     
     }
 }

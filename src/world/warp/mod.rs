@@ -1,5 +1,6 @@
+use std::path::PathBuf;
+
 //pub mod warp_transition;
-use include_dir::File;
 use macroquad::prelude::warn;
 use serde::Deserialize;
 
@@ -27,25 +28,25 @@ pub struct WarpDestination {
 
 impl WarpEntry {
 
-    pub fn new(file: &File) -> Option<WarpEntry> {
-        match file.contents_utf8() {
+    pub fn new(file: PathBuf) -> Option<WarpEntry> {
+        match crate::io::get_file_as_string(&file) {
             Some(data) => {
 
-                let warp_entry: Result<WarpEntry, toml::de::Error> = toml::from_str(data);
+                let warp_entry: Result<WarpEntry, toml::de::Error> = toml::from_str(&data);
 
                 match warp_entry {
                     Ok(warp_entry) => {
                         return Some(warp_entry);
                     }
-                    Err(e) => {
-                        warn!("Could not parse warp entry at {:?} with error {}", file.path, e);
+                    Err(err) => {
+                        warn!("Could not parse warp entry at {:?} with error {}", &file, err);
                         return None;
                     }
                 }
 
             },
             None => {
-                warn!("Could not read warp entry toml at {:?} to string", file.path);
+                warn!("Could not read warp entry toml at {:?} to string", &file);
                 return None;
             }
         }

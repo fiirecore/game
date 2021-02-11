@@ -37,6 +37,24 @@ impl Default for Music {
     }
 }
 
+impl Music {
+
+    #[cfg(any(feature = "audio", feature = "webaudio"))]
+    pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
+        match self {
+            Music::IntroGamefreak => Some(include_bytes!("../../build/assets/music/gamefreak.ogg")),
+            Music::Title => Some(include_bytes!("../../build/assets/music/title.ogg")),
+            Music::Pallet => Some(include_bytes!("../../build/assets/music/pallet.ogg")),
+            Music::EncounterBoy => Some(include_bytes!("../../build/assets/music/encounter_boy.ogg")),
+            Music::BattleWild => Some(include_bytes!("../../build/assets/music/vs_wild.ogg")),
+            Music::BattleTrainer => Some(include_bytes!("../../build/assets/music/vs_trainer.ogg")),
+            Music::BattleGym => Some(include_bytes!("../../build/assets/music/vs_gym.ogg")),
+            _ => None,
+        }
+    }
+
+}
+
 //#[deprecated]
 impl std::fmt::Display for Music {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

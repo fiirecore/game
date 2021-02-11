@@ -1,12 +1,6 @@
 use std::borrow::Cow;
 use std::path::Path;
 
-use rust_embed::RustEmbed;
-
-#[derive(RustEmbed)]
-#[folder = "build"]
-pub struct AssetFolder;
-
 // lazy_static::lazy_static! {
 //     static ref ROOT_DIR: Directory = Directory {
 //         path: "",

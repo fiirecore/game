@@ -1,6 +1,7 @@
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
-use parking_lot::RwLock;
+//use parking_lot::RwLock;
 use macroquad::prelude::KeyCode;
+use parking_lot::RwLock;
 
 pub use self::control::Control;
 

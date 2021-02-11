@@ -1,7 +1,6 @@
 use macroquad::prelude::collections::storage::{get, get_mut};
 use crate::pokemon::pokedex::Pokedex;
 use crate::util::file::PersistantData;
-
 use crate::io::data::player::PlayerData;
 use crate::battle::battle_manager::BattleManager;
 use crate::util::Completable;

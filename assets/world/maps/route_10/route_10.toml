@@ -1,5 +1,5 @@
 [identifier]
-world_id = "firered"
+name = "Route 10"
 map_files = ["3.28_ROUTE 10.map"]
 
 [jigsaw_map]

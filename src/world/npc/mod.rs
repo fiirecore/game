@@ -1,8 +1,5 @@
 use crate::io::data::Direction;
 use crate::io::data::Position;
-use crate::util::graphics::Texture;
-use crate::util::graphics::texture::debug_texture;
-use macroquad::prelude::warn;
 use serde::Deserialize;
 use self::trainer::Trainer;
 
@@ -74,18 +71,6 @@ impl NPC {
     pub fn after_interact(&mut self) {
         if self.trainer.is_some() {
             crate::util::battle_data::trainer_battle(&self);
-        }
-    }
-
-    pub fn battle_sprite(id: &str) -> Texture {
-        match crate::io::ASSET_DIR.get_file(std::path::PathBuf::from("world/textures/npcs/").join(id).join("battle.png")) {
-            Some(file) => {
-                return crate::util::graphics::texture::byte_texture(file.contents());
-            }
-            None => {
-                warn!("Could not find file of battle sprite {}", id);
-                return debug_texture();
-            }
         }
     }
 

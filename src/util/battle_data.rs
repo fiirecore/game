@@ -1,6 +1,5 @@
 use macroquad::rand::gen_range;
 use parking_lot::Mutex;
-
 use crate::battle::battle_info::BattleType;
 use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
 use crate::pokemon::PokemonId;
@@ -12,6 +11,11 @@ use crate::world::pokemon::wild_pokemon_table::WildPokemonTable;
 lazy_static::lazy_static! {
 	pub static ref BATTLE_DATA: Mutex<Option<BattleData>> = Mutex::new(None);
 }
+
+// #[derive(Default)]
+// pub struct BattleDataContainer {
+//     pub data: Option<BattleData>
+// }
 
 pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {

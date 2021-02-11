@@ -5,7 +5,6 @@ use macroquad::prelude::Conf;
 use macroquad::prelude::collections::storage;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
-use parking_lot::Mutex;
 use scene::loading_scene_manager::load_coroutine;
 use scene::scene_manager::SceneManager;
 use util::file::PersistantDataLocation;
@@ -29,9 +28,9 @@ pub static BASE_HEIGHT: u32 = 160;
 
 pub static SAVEABLE: bool = cfg!(not(target_arch = "wasm32"));
 
-lazy_static::lazy_static!{
-    static ref QUIT: Mutex<bool> = Mutex::new(false);
-}
+static mut QUIT: bool = false;
+
+
 #[macroquad::main(settings)]
 async fn main() {
 
@@ -56,7 +55,9 @@ async fn main() {
 
     if !args.contains(&Args::DisableAudio) {
         #[cfg(feature = "audio")]
-        storage::store(crate::audio::context::AudioContext::new());
+        storage::store(crate::audio::kira::context::AudioContext::new());
+        // #[cfg(feature = "webaudio")]
+        // crate::audio::quadsnd::bind_gamefreak();
     }
 
     let loading_coroutine = macroquad::prelude::coroutines::start_coroutine(load_coroutine());
@@ -66,8 +67,8 @@ async fn main() {
 
     let mut scene_manager = SceneManager::default();
     
-    #[cfg(feature = "audio")]
-    audio::loader::bind_world_music();
+    
+    audio::bind_world_music().await;
     
     storage::store(io::data::player::PlayerData::load_from_file().await);
 
@@ -87,6 +88,10 @@ async fn main() {
     scene_manager.on_start();
 
     loop {
+
+        #[cfg(feature = "webaudio")]
+        crate::audio::quadsnd::context::music::MIXER.lock().frame();
+
         scene_manager.input(get_frame_time());
         scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
@@ -96,7 +101,7 @@ async fn main() {
                 util::file::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
         }
-        if *QUIT.lock() {
+        if unsafe{QUIT} {
             break;
         }
         macroquad::prelude::next_frame().await;
@@ -108,8 +113,9 @@ async fn main() {
 }
 
 pub fn queue_quit() {
-    *QUIT.lock() = true;
-    //*RUNNING.write() = false;
+    unsafe {
+        QUIT = true;
+    }
 }
 
 fn settings() -> Conf {
@@ -122,7 +128,7 @@ fn settings() -> Conf {
         window_title: TITLE.to_string(),
         window_width: (BASE_WIDTH * scale) as _,
         window_height: (BASE_HEIGHT * scale) as _,
-        sample_count: 0,
+        sample_count: 1,
         ..Default::default()
     }
 }

@@ -22,7 +22,7 @@ use crate::io::data::player::PlayerData;
 use crate::io::map::gba_map::fill_palette_map;
 use crate::io::map::gba_map::get_texture;
 use crate::io::map::map_loader::load_maps;
-use crate::io::map::npc::npc_loader::load_npc_textures;
+use crate::io::map::npc::npc_texture::load_npc_textures;
 use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
 use crate::world::player::RUN_SPEED;

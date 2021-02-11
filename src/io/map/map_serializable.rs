@@ -13,6 +13,14 @@ pub struct MapConfig {
 
 }
 
+impl MapConfig {
+
+    pub fn from_string(data: &str) -> Result<MapConfig, toml::de::Error> {
+        toml::from_str(data)
+    }
+
+}
+
 #[derive(Debug, Deserialize)]
 pub struct MapIdentifier {
 

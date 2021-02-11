@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use macroquad::prelude::warn;
 use crate::pokemon::PokemonId;
 use crate::pokemon::data::StatSet;
@@ -39,7 +41,7 @@ impl Default for WildPokemonTable {
     }
 }
 
-pub fn get(encounter_type: &str, file: Option<include_dir::File>) -> WildPokemonTable {
+pub fn get(encounter_type: &str, file: PathBuf) -> WildPokemonTable {
 
     match encounter_type {
         "original" => {
@@ -51,28 +53,20 @@ pub fn get(encounter_type: &str, file: Option<include_dir::File>) -> WildPokemon
     }
 }
 
-fn from_toml(file: Option<include_dir::File>) -> WildPokemonTable {
+fn from_toml(file: PathBuf) -> WildPokemonTable {
 
-    match file {
-        Some(file) => {
-            match file.contents_utf8() {
-                Some(content) => {
-                    let toml_result: Result<WildPokemonTableInToml, toml::de::Error> = toml::from_str(content);
-                    match toml_result {
-                        Ok(toml_table) => {
-                            return WildPokemonTable {
-                                encounter_ratio: toml_table.encounter_ratio,
-                                table: Some(fill_table(&toml_table)),
-                            };
-                        },
-                        Err(err) => {
-                            warn!("Could not parse wild pokemon table at {:?} with error {}, using random table instead!", &file.path, err);
-                            return WildPokemonTable::default();
-                        }
-                    }
-                }
-                None => {
-                    warn!("Could not read wild toml file at {} to string!", file.path);
+    match crate::io::get_file_as_string(&file) {
+        Some(content) => {
+            let toml_result: Result<WildPokemonTableInToml, toml::de::Error> = toml::from_str(&content);
+            match toml_result {
+                Ok(toml_table) => {
+                    return WildPokemonTable {
+                        encounter_ratio: toml_table.encounter_ratio,
+                        table: Some(fill_table(&toml_table)),
+                    };
+                },
+                Err(err) => {
+                    warn!("Could not parse wild pokemon table at {:?} with error {}, using random table instead!", &file, err);
                     return WildPokemonTable::default();
                 }
             }

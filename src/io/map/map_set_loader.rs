@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
 use crate::audio::music::Music;
@@ -11,15 +13,17 @@ use super::npc::npc_loader::load_npc_entries;
 use super::warp_loader::load_warp_entries;
 use super::wild_entry_loader::load_wild_entry;
 
-pub fn new_map_set(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(String, WorldMapSet)> {
+pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(String, WorldMapSet)> {
 
     let name = config.identifier.name;
+    
+    macroquad::prelude::info!("Loading map set {}", &name);
 
     let mut maps: Vec<WorldMap> = Vec::new();
 
     for index in 0..config.identifier.map_files.len() {
 
-        match root_path.get_file(root_path.path().join(&config.identifier.map_files[index])) {
+        match crate::io::get_file(root_path.join(&config.identifier.map_files[index])) {
             Some(file) => {
                 let mut gba_map = get_gba_map(file);
                 fix_tiles(&mut gba_map, palette_sizes);
@@ -43,7 +47,7 @@ pub fn new_map_set(root_path: &include_dir::Dir, palette_sizes: &HashMap<u8, u16
                 );
             }
             None => {
-                warn!("Could not get map at path {}/{}", root_path.path, &config.identifier.map_files[index]);
+                warn!("Could not get map at path {:?}/{}", &root_path, &config.identifier.map_files[index]);
                 return None;
             }
         }

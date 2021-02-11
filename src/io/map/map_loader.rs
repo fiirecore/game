@@ -1,3 +1,6 @@
+use std::path::PathBuf;
+
+use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
 use crate::world::map::chunk::world_chunk::WorldChunk;
@@ -9,36 +12,29 @@ use super::map_serializable::MapConfig;
 use super::map_set_loader::new_map_set;
 
 pub fn load_maps(palette_sizes: &HashMap<u8, u16>, chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager) {
-
-    match crate::io::ASSET_DIR.get_dir("world/maps") {
-        Some(map_dir) => {
-            for dir_entry in map_dir.dirs() {
-                for file in dir_entry.files {
-                    if let Some(ext) = file.path().extension() {
-                        if ext == std::ffi::OsString::from("toml") {
-                            let maps = map_from_toml(palette_sizes, dir_entry, file);
-                            if let Some(world_chunk) = maps.0 {
-                                chunk_map.insert(world_chunk.0, world_chunk.1);
-                            } else if let Some(map_set) = maps.1 {
-                                map_sets.insert(map_set.0, map_set.1);
-                            }
-                        }
+    info!("Loading maps...");
+    for dir_entry in crate::io::get_dir("world/maps/") {
+        for file in crate::io::get_dir(&dir_entry) {
+            if let Some(ext) = file.extension() {
+                if ext == std::ffi::OsString::from("toml") {
+                    let maps = map_from_toml(palette_sizes, &dir_entry, &file);
+                    if let Some(world_chunk) = maps.0 {
+                        chunk_map.insert(world_chunk.0, world_chunk.1);
+                    } else if let Some(map_set) = maps.1 {
+                        map_sets.insert(map_set.0, map_set.1);
                     }
                 }
             }
         }
-        None => {
-            warn!("Could not get map directory!");
-        }
     }
+    info!("Finished loading maps!");
 }
 
-pub fn map_from_toml(palette_sizes: &HashMap<u8, u16>, root_path: &include_dir::Dir, file: &include_dir::File) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {
+pub fn map_from_toml(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &PathBuf) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {
 
-    match file.contents_utf8() {
+    match crate::io::get_file_as_string(file) {
         Some(data) => {
-            let map_config: Result<MapConfig, toml::de::Error> = toml::from_str(data);
-            match map_config {
+            match MapConfig::from_string(&data) {
                 Ok(map_config) => {
                     if map_config.jigsaw_map.is_some() {
                         match new_chunk_map(root_path, palette_sizes, map_config) {
@@ -46,26 +42,24 @@ pub fn map_from_toml(palette_sizes: &HashMap<u8, u16>, root_path: &include_dir::
                                 return (Some(map), None);
                             }
                             None => {
-                                warn!("Error reading jigsaw map at path: {}", root_path.path);
+                                warn!("Error reading jigsaw map at path: {:?}", &root_path);
                                 return (None, None);
                             }
                         }
-                        
-
                     } else if map_config.warp_map.is_some() {
                         match new_map_set(root_path, palette_sizes, map_config) {
                             Some(map) => {
                                 return (None, Some(map));
                             }
                             None => {
-                                warn!("Error reading warp map at path: {}", root_path.path);
+                                warn!("Error reading warp map at path: {:?}", &root_path);
                                 return (None, None);
                             }
                         }
 
                     } else {
 
-                        warn!("Map config at {} does not contain either a jigsaw map or a warp map.", root_path.path);
+                        warn!("Map config at {:?} does not contain either a jigsaw map or a warp map.", &root_path);
                         return (None, None);
 
                     }
@@ -73,8 +67,8 @@ pub fn map_from_toml(palette_sizes: &HashMap<u8, u16>, root_path: &include_dir::
                 }
                 Err(err) => {
                     warn!(
-                        "Toml file at {} is {}",
-                        root_path.path,
+                        "Toml file at {:?} is {}",
+                        &root_path,
                         err
                     );
 
@@ -83,7 +77,7 @@ pub fn map_from_toml(palette_sizes: &HashMap<u8, u16>, root_path: &include_dir::
             }
         }
         None => {
-            warn!("Error reading file at {} to string with error", root_path.path);
+            warn!("Error reading file at {:?} to string with error", &root_path);
             return (None, None);
         }
     }

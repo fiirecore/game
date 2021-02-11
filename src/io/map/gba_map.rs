@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use macroquad::prelude::Image;
 use macroquad::prelude::debug;
 use macroquad::prelude::warn;
@@ -20,9 +22,9 @@ pub struct GbaMap {
 	
 }
 
-pub fn get_gba_map(file: include_dir::File) -> GbaMap  {
+pub fn get_gba_map(file: Cow<[u8]>) -> GbaMap  {
 
-	let bytes = file.contents();
+	let bytes = file;
 			
 		//let name = get_name_from_id(bytes[44]);
 
@@ -138,15 +140,16 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &HashMap<u8, u16>) -> u16 { /
 
 pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> HashMap<u8, u16> {
 	let mut sizes: HashMap<u8, u16> = HashMap::new();
-	match crate::io::ASSET_DIR.get_dir("world/textures") {
-	    Some(texture_dir) => {
-			for file in texture_dir.files() {
-				let filename = file.path().file_name().unwrap().to_string_lossy();
+
+	for filepath in crate::io::get_dir("world/textures") {
+		match crate::io::get_file(&filepath) {
+		    Some(file) => {
+				let filename = filepath.file_name().unwrap().to_string_lossy();
 				if filename.starts_with("P") {
 					if filename.ends_with("B.png") {
 						match filename[7..filename.len()-5].parse::<u8>() {
 							Ok(index) => {
-								match crate::util::image::byte_image(file.contents()) {
+								match crate::util::image::byte_image(&file) {
 									Ok(img) => {
 										sizes.insert(index, ((img.width() >> 4) * (img.height() >> 4)) as u16);
 										bottom_sheets.insert(index, img);
@@ -164,13 +167,13 @@ pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &m
 					}
 				}
 			}
+		    None => {
+				warn!("Could not get palette sheet at {:?}", &filepath);
+			}
+		}
+		
+	}
 
-		}
-	    None => {
-			warn!("Could not get texture directory for palette maps");
-			warn!("Avaliable directories: {:?}", crate::io::ASSET_DIR.dirs());
-		}
-	}	
 	sizes
 }
 

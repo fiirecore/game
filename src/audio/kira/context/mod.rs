@@ -2,7 +2,7 @@ use kira::manager::AudioManager;
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use enum_iterator::IntoEnumIterator;
-use super::music::Music;
+use crate::audio::music::Music;
 
 pub mod music;
 pub mod sound;
@@ -36,11 +36,11 @@ impl AudioContext {
             Some(manager) => {
                 info!("Loading music...");
                 for music in Music::into_enum_iter() {
-                    let music_map = &mut crate::audio::context::music::MUSIC_CONTEXT.lock().music_map;
+                    let music_map = &mut self::music::MUSIC_CONTEXT.lock().music_map;
                     if !music_map.contains_key(&music) {
                         match music.included_bytes() {
                             Some(bytes) => {
-                                match crate::audio::loader::from_ogg_bytes(bytes, kira::sound::SoundSettings::default()) {
+                                match super::from_ogg_bytes(bytes, kira::sound::SoundSettings::default()) {
                                     Ok(sound) => {
                                         match manager.add_sound(sound) {
                                             Ok(sound) => {
@@ -79,7 +79,7 @@ impl AudioContext {
             Some(manager) => {
                 match manager.load_sound("music/gamefreak.ogg", kira::sound::SoundSettings::default()) {
                     Ok(sound) => {
-                        crate::audio::context::music::MUSIC_CONTEXT.lock().music_map.insert(Music::IntroGamefreak, sound);
+                        self::music::MUSIC_CONTEXT.lock().music_map.insert(Music::IntroGamefreak, sound);
                     },
                     Err(err) => {
                         warn!("Could not load gamefreak intro music with error {}", err);

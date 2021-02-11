@@ -11,14 +11,26 @@ build = "build/build.rs"
 readme = "README.md"
 include = ["build", "assets"]
 
+[profile.dev]
+opt-level = 1
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = false
+panic = 'unwind'
+incremental = true
+codegen-units = 256
+rpath = false
+
 [profile.release]
 codegen-units = 1
 lto = true
 opt-level = 3
 
 [features]
-default = ["audio"]
-audio = ["kira"]
+default = ["webaudio"]
+webaudio = ["quad-snd"]
+audio = ["kira", "lewton"]
 args = ["getopts"]
 
 [dependencies]
@@ -26,6 +38,7 @@ args = ["getopts"]
 macroquad = { git = "https://github.com/DoNotDoughnut/macroquad", default-features = false, features = ["log-impl", "experimental", "serde"] }
 
 kira = { version = "0.4", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
+quad-snd = { path = "crates/quad-snd", optional = true }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -33,20 +46,21 @@ toml = "0.5"
 
 ahash = { version = "0.7", features = ["serde"] }
 
-include_dir = { version = "0.6", default-features = false }
+rust-embed = { version = "5.9" }
 zip = { version = "0.5", default-features = false, features = ["deflate"]}
 
 lazy_static = "1.4"
 parking_lot = { version = "0.11" }
+
 async-trait = "0.1"
 getopts = { version = "0.2", optional = true }
 
 enum-iterator = "0.6"
 
 
-lewton = "0.10.1" # Included in kira
+lewton = { version = "0.10.1", optional = true } # Included in kira
 
 # Build dependencies
 
-[target.'cfg(target_os="windows")'.build-dependencies]
+[target.'cfg(windows)'.build-dependencies]
 winres = "0.1"

@@ -1,8 +1,8 @@
 pub fn pokemon_texture(name: &str, side: Side) -> crate::util::graphics::Texture {
     let path = std::path::PathBuf::from(super::DEX_DIR.join("textures/normal")).join(side.path()).join(name.to_lowercase() + ".png");
-    match crate::io::ASSET_DIR.get_file(&path) {
+    match crate::io::get_file(&path) {
         Some(file) => {
-            return crate::util::graphics::texture::byte_texture(file.contents());
+            return crate::util::graphics::texture::byte_texture(&file);
         }
         None => {
             macroquad::prelude::warn!("Could not find pokemon texture at {:?}", &path);
