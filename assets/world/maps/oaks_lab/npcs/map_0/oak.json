@@ -1,7 +1,7 @@
 {
 	"identifier": {
 		"name": "Oak",
-		"sprite": 71
+		"npc_type": "prof_oak"
 	},
 	"position": {
 		"x": 6,

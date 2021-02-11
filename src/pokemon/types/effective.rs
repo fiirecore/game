@@ -36,7 +36,7 @@ impl PokemonType {
 
     pub fn supereffective(&self, pokemon_type: PokemonType) -> bool {
         use PokemonType::*;
-        match *self {
+        match self {
             Normal => false,
 
             Fire => match pokemon_type {

@@ -1,13 +1,14 @@
 use ahash::AHashMap as HashMap;
 use macroquad::prelude::info;
+use crate::util::graphics::draw_rect;
 use crate::util::input;
 use crate::util::graphics::Texture;
 use crate::audio::music::Music;
-use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
 use crate::util::input::Control;
 use crate::util::graphics::draw_flip;
 use crate::util::graphics::draw_o;
+use super::NpcTextures;
 use super::npc::NPC;
 use super::pokemon::WildEntry;
 use super::warp::WarpEntry;
@@ -85,8 +86,8 @@ impl World for WorldMap {
         return None;
     }
 
-    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
-        let tile_id = self.tile(x, y);
+    fn on_tile(&mut self, player: &mut Player) {
+        let tile_id = self.tile(player.position.local.x, player.position.local.y);
 
         if let Some(wild) = &self.wild {
             if let Some(tiles) = &wild.tiles {
@@ -107,42 +108,42 @@ impl World for WorldMap {
                     let tracker = tracker as isize;
                     match npc.position.direction {
                         Direction::Up => {
-                            if x == npc.position.x {
-                                if y > npc.position.y && y <= npc.position.y + tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                            if player.position.local.x == npc.position.x {
+                                if player.position.local.y < npc.position.y && player.position.local.y >= npc.position.y - tracker {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                     self.npc_active = Some(npc_index);
-                                    npc.interact(None, x, y);
+                                    npc.interact(None, player.position.local.x, player.position.local.y);
                                     player.freeze();
                                     //npc.movement.walk_to_player();
                                 }
                             }
                         }
                         Direction::Down => {
-                            if x == npc.position.x {
-                                if y < npc.position.y && y >= npc.position.y - tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                            if player.position.local.x == npc.position.x {
+                                if player.position.local.y > npc.position.y && player.position.local.y <= npc.position.y + tracker {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                     self.npc_active = Some(npc_index);
-                                    npc.interact(None, x, y);
+                                    npc.interact(None, player.position.local.x, player.position.local.y);
                                     player.freeze();
                                 }
                             }
                         }
                         Direction::Left => {
-                            if y == npc.position.y {
-                                if x < npc.position.x && x >= npc.position.x - tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                            if player.position.local.y == npc.position.y {
+                                if player.position.local.x < npc.position.x && player.position.local.x >= npc.position.x - tracker {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                     self.npc_active = Some(npc_index);
-                                    npc.interact(None, x, y);
+                                    npc.interact(None, player.position.local.x, player.position.local.y);
                                     player.freeze();
                                 }
                             }
                         }
                         Direction::Right => {
-                            if y == npc.position.y {
-                                if x > npc.position.x && x <= npc.position.x + tracker {
-                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, x, y);
+                            if player.position.local.y == npc.position.y {
+                                if player.position.local.x > npc.position.x && player.position.local.x <= npc.position.x + tracker {
+                                    info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                     self.npc_active = Some(npc_index);
-                                    npc.interact(None, x, y);
+                                    npc.interact(None, player.position.local.x, player.position.local.y);
                                     player.freeze();
                                 }
                             }
@@ -153,7 +154,7 @@ impl World for WorldMap {
         }
     }
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
             let y = yy - screen.y_tile_offset;
             let render_y = (yy << 4) as f32 - screen.y_focus; // old = y_tile w/ offset - player x pixel
@@ -184,48 +185,58 @@ impl World for WorldMap {
             }
         }
         for npc in &self.npcs {
-            if let Some(twt) = npc_textures.get(&npc.identifier.sprite) {
-                let tuple = twt.of_direction(npc.position.direction.value());
-                draw_flip(tuple.0, (npc.position.x << 4) as f32 - screen.x_focus + 1.0 + npc.position.x_offset, (npc.position.y << 4) as f32 - screen.y_focus - 4.0 + npc.position.y_offset, tuple.1);
-            }            
+            let x = ((npc.position.x + screen.x_tile_offset) << 4) as f32 - screen.x_focus + npc.position.x_offset;
+            let y = ((npc.position.y - 1 + screen.y_tile_offset) << 4) as f32 - screen.y_focus + npc.position.y_offset;
+            if let Some(twt) = npc_textures.get(&npc.identifier.npc_type) {
+                let tuple = twt.of_direction(npc.position.direction);
+                draw_flip(tuple.0, x, y, tuple.1);
+            } else {
+                draw_rect([1.0, 0.0, 0.0, 1.0], x, y + crate::util::TILE_SIZE as f32, 16, 16);
+            }      
         }
     }
 
     fn input(&mut self, _delta: f32, player: &Player) {
+        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F4) {
+            for npc in &self.npcs {
+                info!("NPC {} is at {}, {}; looking {:?}", &npc.identifier.name, &npc.position.x, &npc.position.y, &npc.position.direction);
+            }
+        }
+        
         if input::pressed(Control::A) {
             for npc_index in 0..self.npcs.len() {
                 let npc = &mut self.npcs[npc_index];
-                if player.position.x == npc.position.x {
-                    match player.position.direction {
+                if player.position.local.x == npc.position.x {
+                    match player.position.local.direction {
                         Direction::Up => {
-                            if player.position.y - 1 == npc.position.y {
+                            if player.position.local.y - 1 == npc.position.y {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
+                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
                             }
                         },
                         Direction::Down => {
-                            if player.position.y + 1 == npc.position.y {
+                            if player.position.local.y + 1 == npc.position.y {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
+                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
                             }
                         },
-                        _ => {}
+                        _ => (),
                     }
-                } else if player.position.y == npc.position.y {
-                    match player.position.direction {
+                } else if player.position.local.y == npc.position.y {
+                    match player.position.local.direction {
                         Direction::Right => {
-                            if player.position.x + 1 == npc.position.x {
+                            if player.position.local.x + 1 == npc.position.x {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
+                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
                             }
                         },
                         Direction::Left => {
-                            if player.position.x - 1 == npc.position.x {
+                            if player.position.local.x - 1 == npc.position.x {
                                 self.npc_active = Some(npc_index);
-                                npc.interact(Some(player.position.direction), player.position.x, player.position.y);
+                                npc.interact(Some(player.position.local.direction), player.position.local.x, player.position.local.y);
                             }
                         },
-                        _ => {}
+                        _ => (),
                     }
                 }
                 

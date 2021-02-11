@@ -1,6 +1,6 @@
 use ahash::AHashMap as HashMap;
 use crate::util::graphics::Texture;
-use crate::entity::texture::three_way_texture::ThreeWayTexture;
+use crate::world::NpcTextures;
 use crate::world::RenderCoords;
 use crate::world::World;
 use crate::world::map::WorldMap;
@@ -22,8 +22,6 @@ pub struct WorldChunk {
 impl WorldChunk {
 
     pub fn safe_tile(&self, x: isize, y: isize) -> Option<u16> {
-        let x = x - self.x;
-        let y = y - self.y;
         if self.map.in_bounds(x, y) {
             Some(self.map.tile(x, y))
         } else {
@@ -37,22 +35,22 @@ impl World for WorldChunk {
 
     fn walkable(&self, x: isize, y: isize) -> u8 {
         if self.in_bounds(x, y) {
-            return self.map.walkable(x - self.x, y - self.y);
+            return self.map.walkable(x, y);
         } else {
             1
         }        
     }
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry> {
-        self.map.check_warp(x - self.x, y - self.y)
+        self.map.check_warp(x, y)
     }
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         self.map.render(textures, npc_textures, screen.offset(self.x, self.y), border)
     }
 
-    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
-        self.map.on_tile(player, x - self.x, y - self.y)
+    fn on_tile(&mut self, player: &mut Player) {
+        self.map.on_tile(player)
     }
 
     fn input(&mut self, delta: f32, player: &Player) {
@@ -60,11 +58,11 @@ impl World for WorldChunk {
     }
 
     fn in_bounds(&self, x: isize, y: isize) -> bool {
-        self.map.in_bounds(x - self.x, y - self.y)
+        self.map.in_bounds(x, y)
     }
 
     fn tile(&self, x: isize, y: isize) -> u16 {
-        self.map.tile(x - self.x, y - self.y)
+        self.map.tile(x, y)
     }
 
 }

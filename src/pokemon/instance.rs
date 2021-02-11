@@ -11,7 +11,8 @@ pub struct PokemonInstance {
 	pub id: PokemonId,
     pub level: u8,
     
-	pub ivs: Option<StatSet>,
+    #[serde(default = "iv_default")]
+	pub ivs: StatSet,
     pub evs: Option<StatSet>,
     
     pub move_set: Option<SavedPokemonMoveSet>,
@@ -31,7 +32,7 @@ impl PokemonInstance {
 
             id: pokemon_id,
             level: macroquad::rand::gen_range(min_level, max_level),
-            ivs: ivs,
+            ivs: ivs.unwrap_or_default(),
             evs: None,
             current_hp: None,
             move_set: None,
@@ -46,4 +47,8 @@ impl PokemonInstance {
         PokemonInstance::generate(pokemon_id, level, level, ivs)
     }
 
+}
+
+fn iv_default() -> StatSet {
+    StatSet::uniform(15)
 }

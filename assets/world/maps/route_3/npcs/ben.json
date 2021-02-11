@@ -1,0 +1,42 @@
+{
+	"identifier": {
+		"name": "Ben",
+		"npc_type": "youngster"
+	},
+	"position": {
+		"x": 18,
+		"y": 4,
+		"direction": "Down"
+	},
+	"encounter_music": "EncounterBoy",
+	"trainer": {
+		"trainer_type": "Youngster",
+		"encounter_message": [
+				[
+					"Hi!",
+                    "I like shorts!"
+				],
+				[
+					"They're delightfully comfy and",
+					"easy to wear!"
+				]
+		],
+		"victory_message": [
+			"Test"
+		],
+		"party": {
+			"pokemon": [
+				{
+					"id": 19,
+					"level": 11
+				},
+				{
+					"id": 23,
+					"level": 11
+				}
+			]
+		},
+		"tracking_length": 2,
+		"worth": 0
+	}
+}

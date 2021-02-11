@@ -1,3 +1,4 @@
+use crate::io::data::Direction;
 use crate::util::graphics::Texture;
 
 use super::texture_manager::TextureManager;
@@ -26,7 +27,8 @@ impl ThreeWayTexture {
         self.textures.push(texture_manager);
     }
 
-    pub fn update_with_direction(&mut self, delta: f32, direction: u8) {
+    pub fn update_with_direction(&mut self, delta: f32, direction: Direction) {
+        let direction = direction.value();
         if self.direction != direction {
             self.direction = direction;
             self.reset();       
@@ -35,7 +37,8 @@ impl ThreeWayTexture {
         }
     }
 
-    pub fn of_direction(&self, direction: u8) -> (Texture, bool) {
+    pub fn of_direction(&self, direction: Direction) -> (Texture, bool) {
+        let direction = direction.value();
         if direction == 3 {
             let tuple = self.textures[2].texture();
             return (tuple.0, !tuple.1);

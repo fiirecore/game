@@ -1,7 +1,7 @@
 {
 	"identifier": {
 		"name": "Mom",
-		"sprite": 88
+		"npc_type": "mom"
 	},
 	"position": {
 		"x": 8,

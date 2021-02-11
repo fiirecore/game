@@ -9,17 +9,14 @@ pub mod gui {
 
 pub mod player;
 
+pub type NpcTextures = HashMap<String, ThreeWayTexture>;
+
 use ahash::AHashMap as HashMap;
-
-
+use crate::io::data::Position;
 use crate::util::graphics::Texture;
-
-
 use crate::util::TILE_SIZE;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-
 use crate::world::warp::WarpEntry;
-
 use self::player::Player;
 
 pub trait World {
@@ -32,9 +29,9 @@ pub trait World {
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry>;
 
-    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize);
+    fn on_tile(&mut self, player: &mut Player);
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool);
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool);
 
     fn input(&mut self, delta: f32, player: &Player);
 
@@ -68,13 +65,13 @@ impl RenderCoords {
 
         Self {
 
-            left: player.position.x - HALF_WIDTH_TILE,
-            right: player.position.x + HALF_WIDTH_TILE + 1,
-            top: player.position.y - HALF_HEIGHT_TILE,
-            bottom: player.position.y + HALF_HEIGHT_TILE,
+            left: player.position.get_x() - HALF_WIDTH_TILE,
+            right: player.position.get_x() + HALF_WIDTH_TILE + 1,
+            top: player.position.get_y() - HALF_HEIGHT_TILE,
+            bottom: player.position.get_y() + HALF_HEIGHT_TILE,
 
-            x_focus: (player.position.x + 1 << 4) as f32 + player.position.x_offset - HALF_WIDTH as f32,
-            y_focus: (player.position.y + 1 << 4) as f32 + player.position.y_offset - HALF_HEIGHT as f32,
+            x_focus: (player.position.get_x() + 1 << 4) as f32 + player.position.local.x_offset - HALF_WIDTH as f32,
+            y_focus: (player.position.get_y() + 1 << 4) as f32 + player.position.local.y_offset - HALF_HEIGHT as f32,
 
             ..Default::default()
         }

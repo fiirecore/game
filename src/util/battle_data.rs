@@ -40,7 +40,7 @@ pub fn trainer_battle(npc: &NPC) {
             party: trainer.party.clone(),
             trainer_data: Some(TrainerData {
                 name: trainer.trainer_type.to_string().to_string() + " " + npc.identifier.name.as_str(),
-                sprite_id: npc.identifier.sprite,
+                npc_type: npc.identifier.npc_type.clone(),
                 transition: trainer.battle_transition.unwrap_or(BattleScreenTransitions::Trainer),        
             }),
         });
@@ -60,7 +60,7 @@ pub struct BattleData {
 pub struct TrainerData {
 
     pub name: String,
-    pub sprite_id: u8,
+    pub npc_type: String,
     pub transition: BattleScreenTransitions,
 
 }

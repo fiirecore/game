@@ -1,10 +1,10 @@
+use crate::io::data::GlobalPosition;
 use crate::util::Render;
 use crate::entity::texture::movement_texture::MovementTexture;
 use crate::entity::texture::movement_texture_manager::MovementTextureManager;
 use crate::entity::texture::texture_manager::TextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
-use crate::io::data::Position;
 use crate::io::data::player::PlayerData;
 use crate::util::TILE_SIZE;
 
@@ -18,7 +18,7 @@ pub static RUN_SPEED: u8 = BASE_SPEED << 1;
 #[derive(Default)]
 pub struct Player {
 	
-	pub position: Position,
+	pub position: GlobalPosition,
 
 	pub speed: u8,
 
@@ -48,12 +48,12 @@ impl Player {
 	}
 
 	pub fn move_update(&mut self, delta: f32) {
-		self.textures[0].update_with_direction(delta, self.position.direction.value());
-		self.textures[1].update_with_direction(delta, self.position.direction.value());
+		self.textures[0].update_with_direction(delta, self.position.local.direction);
+		self.textures[1].update_with_direction(delta, self.position.local.direction);
 	}
 
 	pub fn on_try_move(&mut self, direction: Direction) {
-		self.position.direction = direction;
+		self.position.local.direction = direction;
 		self.textures[0].direction = direction.value();
 		self.textures[0].unidle();
 	}
@@ -64,8 +64,8 @@ impl Player {
 
 	pub fn freeze(&mut self) {
 		self.frozen = true;
-		self.position.x_offset = 0.0;
-		self.position.y_offset = 0.0;
+		self.position.local.x_offset = 0.0;
+		self.position.local.y_offset = 0.0;
 		self.moving = false;
 		self.running = false;
 		self.speed = BASE_SPEED;
@@ -94,16 +94,19 @@ impl Render for Player {
 
 impl Player {
 
-	pub fn load_textures(&mut self) {
+	pub fn load_textures(&mut self) { // To - do: Use NPC styled spritesheet for player that is found in the code
 
-		// let mut path = asset_as_pathbuf("world");
-		// path.push(world_id); // fix
-		// path.push("textures/player");
-		// if !path.exists() {
-		// 	path.pop();
-		// 	path.pop();
-		// 	path.push("textures/player");
-		// };
+		let mut down_textures = MovementTexture::empty((0, false));
+
+		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/idle_down.png"))); 
+		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/walk_down_l.png")));
+		//down_textures.push_texture(byte_texture(path.join("walk_down_r.png"));
+
+		down_textures.map_to_index(0, false);
+		down_textures.map_to_index(1, false);
+		down_textures.map_to_index(0, false);
+		down_textures.map_to_index(1, true);
+
 
 		let mut up_textures = MovementTexture::empty((0, false));
 
@@ -115,18 +118,6 @@ impl Player {
 		up_textures.map_to_index(1, false);
 		up_textures.map_to_index(0, false);
 		up_textures.map_to_index(1, true);
-
-		
-		let mut down_textures = MovementTexture::empty((0, false));
-
-		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/idle_down.png"))); 
-		down_textures.push_texture(byte_texture(include_bytes!("../../build/assets/textures/player/walk_down_l.png")));
-		//down_textures.push_texture(byte_texture(path.join("walk_down_r.png"));
-
-		down_textures.map_to_index(0, false);
-		down_textures.map_to_index(1, false);
-		down_textures.map_to_index(0, false);
-		down_textures.map_to_index(1, true);
 
 		let mut side_textures = MovementTexture::empty((0, false));
 
@@ -141,8 +132,8 @@ impl Player {
 
 		let mut walk_textures = ThreeWayTexture::new();
 
-		walk_textures.add_texture_manager(Box::new(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH)));
 		walk_textures.add_texture_manager(Box::new(MovementTextureManager::new(down_textures, TEX_TICK_LENGTH)));
+		walk_textures.add_texture_manager(Box::new(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH)));
 		walk_textures.add_texture_manager(Box::new(MovementTextureManager::new(side_textures, TEX_TICK_LENGTH)));
 
 		self.textures.push(walk_textures);
@@ -185,8 +176,8 @@ impl Player {
 
 		let mut run_textures = ThreeWayTexture::new();
 
-		run_textures.add_texture_manager(Box::new(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH / 2.0)));
 		run_textures.add_texture_manager(Box::new(MovementTextureManager::new(down_textures, TEX_TICK_LENGTH / 2.0)));
+		run_textures.add_texture_manager(Box::new(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH / 2.0)));
 		run_textures.add_texture_manager(Box::new(MovementTextureManager::new(side_textures, TEX_TICK_LENGTH / 2.0)));
 
 		self.textures.push(run_textures);

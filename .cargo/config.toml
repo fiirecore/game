@@ -12,4 +12,4 @@ linker = "rust-lld.exe"
 rustflags = ["-Zshare-generics=y"]
 
 [build]
-rustflags = ["-Ctarget-feature=+atomics"]
+#rustflags = ["-Ctarget-feature=+atomics", "-Ctarget-feature=+bulk-memory"]

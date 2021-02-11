@@ -3,7 +3,7 @@ use crate::audio::play_music;
 use crate::util::graphics::Texture;
 use crate::audio::music::Music;
 use crate::entity::Entity;
-use crate::entity::texture::three_way_texture::ThreeWayTexture;
+use crate::world::NpcTextures;
 use crate::world::RenderCoords;
 use crate::world::World;
 use crate::world::map::manager::test_move_code;
@@ -27,8 +27,15 @@ pub struct WorldChunkMap {
 
 impl WorldChunkMap {
 
-    pub fn change_chunk(&mut self, chunk: u16) {
+    pub fn change_chunk(&mut self, chunk: u16, player: &mut Player) {
         self.current_chunk = chunk;
+        {
+            let chunk1 = self.chunks.get(&self.current_chunk).unwrap();
+            player.position.local.x = player.position.get_x() - chunk1.x;
+            player.position.local.y = player.position.get_y() - chunk1.y;
+            player.position.x_offset = chunk1.x;
+            player.position.y_offset = chunk1.y;
+        }
         let music = self.current_chunk().map.music;
         if music != self.current_music {
             self.current_music = music;
@@ -47,7 +54,7 @@ impl WorldChunkMap {
 
     pub fn chunk_id_at(&self, x: isize, y: isize) -> Option<u16> {
         for chunk in &self.chunks {
-            if chunk.1.in_bounds(x, y) {
+            if chunk.1.in_bounds(x - chunk.1.x, y - chunk.1.y) {
                 return Some(*chunk.0);
             }
         }
@@ -73,10 +80,12 @@ impl WorldChunkMap {
     }
 
 
-    pub fn walk_connections(&mut self, x: isize, y: isize) -> u8 {
+    pub fn walk_connections(&mut self, player: &mut Player, x: isize, y: isize) -> u8 {
         let mut move_code = 1;
         let mut chunk = None;
         for connection in self.connections() {
+            let x = x - connection.1.x;
+            let y = y - connection.1.y;
             if connection.1.in_bounds(x, y) {
                 move_code = connection.1.walkable(x, y);
                 chunk = Some(*connection.0);
@@ -84,7 +93,7 @@ impl WorldChunkMap {
         }
         if let Some(chunk) = chunk {
             if test_move_code(move_code, false) {
-                self.change_chunk(chunk);   
+                self.change_chunk(chunk, player);   
             }
         }
         return move_code;
@@ -152,7 +161,7 @@ impl World for WorldChunkMap {
         self.current_chunk().check_warp(x, y)
     }
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         let current_chunk = self.current_chunk();
         current_chunk.render(textures, npc_textures, screen, border);
         for connection in &current_chunk.connections {
@@ -164,9 +173,9 @@ impl World for WorldChunkMap {
         self.current_chunk_mut().input(delta, player)
     }
 
-    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
-        if self.current_chunk().in_bounds(x, y) {
-            self.current_chunk_mut().on_tile(player, x, y);
+    fn on_tile(&mut self, player: &mut Player) {
+        if self.current_chunk().in_bounds(player.position.local.x, player.position.local.y) {
+            self.current_chunk_mut().on_tile(player);
         }
     }
     

@@ -55,7 +55,7 @@ impl MusicContext {
 impl Music {
 
     pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
-        match *self {
+        match self {
             Music::IntroGamefreak => Some(include_bytes!("../../../build/assets/music/gamefreak.ogg")),
             Music::Title => Some(include_bytes!("../../../build/assets/music/title.ogg")),
             Music::Pallet => Some(include_bytes!("../../../build/assets/music/pallet.ogg")),
@@ -68,7 +68,7 @@ impl Music {
     }
 
     pub fn loop_start(&self) -> Option<f64> {
-        match *self {
+        match self {
             Music::BattleWild => Some(13.15),
             _ => None,
         }

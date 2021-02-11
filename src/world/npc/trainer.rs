@@ -21,11 +21,31 @@ pub struct Trainer {
 
 }
 
+// pub fn npc_type_string(npc_type: &str) -> String {
+//     let mut name = String::new();
+//     let mut space_before = true;
+//     for mut char in npc_type.chars() {
+//         if space_before {
+//             space_before = false;
+//             char.make_ascii_uppercase();
+//         }
+//         if char == ' ' {
+//             space_before = true;
+//         }
+//         name.push(char);
+//     }
+//     macroquad::prelude::info!("{}", name);
+//     return name;
+// }
+
 #[derive(Clone, Copy, Debug, PartialEq, Deserialize, Serialize)]
-pub enum TrainerType {
+pub enum TrainerType { // To - do: I don't like having this in an enum, I'd preferably parse strings instead
 
     None,
     Camper,
+    Youngster,
+    Lass,
+    BugCatcher,
     GymLeader,
     
 }
@@ -33,7 +53,7 @@ pub enum TrainerType {
 impl TrainerType {
 
     pub fn battle_type(&self) -> BattleType {
-        match *self {
+        match self {
             TrainerType::GymLeader => BattleType::GymLeader,
             _ => BattleType::Trainer,
         }
@@ -43,9 +63,12 @@ impl TrainerType {
 
 impl std::fmt::Display for TrainerType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match *self {
+        write!(f, "{}", match self {
             TrainerType::None => "Trainer",
             TrainerType::Camper => "Camper",
+            TrainerType::Youngster => "Youngster",
+            TrainerType::Lass => "Lass",
+            TrainerType::BugCatcher => "Bug Catcher",
             TrainerType::GymLeader => "Gym Leader",
         })
     }

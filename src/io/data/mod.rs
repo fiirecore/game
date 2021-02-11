@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::util::input::Control;
 
-pub mod configuration;
+//pub mod configuration;
 pub mod player;
 pub mod text;
 pub mod world_status;
@@ -22,8 +22,29 @@ pub struct Location {
 
 	pub map_id: String,
 	pub map_index: u16,
-	pub position: Position,
+	pub position: GlobalPosition,
 
+}
+
+#[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
+pub struct GlobalPosition {
+
+	pub local: Position,
+	pub x_offset: isize,
+	pub y_offset: isize,
+
+}
+
+impl GlobalPosition {
+
+	pub fn get_x(&self) -> isize {
+		self.x_offset + self.local.x
+	}
+
+	pub fn get_y(&self) -> isize {
+		self.y_offset + self.local.y
+	}
+ 
 }
 
 #[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
@@ -42,7 +63,7 @@ pub struct Position {
 impl Direction {
 
 	pub fn inverse(&self) -> Direction {
-		match *self {
+		match self {
 		    Direction::Up => Direction::Down,
 		    Direction::Down => Direction::Up,
 		    Direction::Left => Direction::Right,
@@ -51,9 +72,9 @@ impl Direction {
 	}
 
 	pub fn value(&self) -> u8 {
-		match *self {
-			Direction::Up => 0,
-			Direction::Down => 1,
+		match self {
+			Direction::Down => 0,
+			Direction::Up => 1,
 			Direction::Left => 2,
 			Direction::Right => 3,
 		}
@@ -62,7 +83,7 @@ impl Direction {
 	// Input
 
 	pub fn keybind(&self) -> Control {
-		match *self {
+		match self {
 		    Direction::Up => Control::Up,
 		    Direction::Down => Control::Down,
 		    Direction::Left => Control::Left,
@@ -71,7 +92,7 @@ impl Direction {
 	}
 
 	pub fn offset(&self) -> (f32, f32) {
-		match *self {
+		match self {
 		    Direction::Up => (0.0, -1.0),
 		    Direction::Down => (0.0, 1.0),
 		    Direction::Left => (-1.0, 0.0),

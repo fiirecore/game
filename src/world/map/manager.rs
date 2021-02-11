@@ -22,7 +22,7 @@ use crate::io::data::player::PlayerData;
 use crate::io::map::gba_map::fill_palette_map;
 use crate::io::map::gba_map::get_texture;
 use crate::io::map::map_loader::load_maps;
-use crate::io::map::npc_loader::load_npc_textures;
+use crate::io::map::npc::npc_loader::load_npc_textures;
 use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
 use crate::world::player::RUN_SPEED;
@@ -52,7 +52,7 @@ pub struct WorldManager {
 
     bottom_textures: HashMap<u16, Texture>,
     //pub(crate) top_textures: HashMap<u16, Texture>,
-    npc_textures: HashMap<u8, ThreeWayTexture>,
+    npc_textures: HashMap<String, ThreeWayTexture>,
 
 }
 
@@ -76,10 +76,7 @@ impl WorldManager {
 
     pub fn on_start(&mut self) {
         if self.chunk_map.is_alive() {
-            self.load_chunk_map_at(
-                self.player.position.x,
-                self.player.position.y,
-            );
+            self.load_chunk_map_at_player();
         } else if self.map_sets.is_alive() {
             self.current_music = Music::from(self.map_sets.map_set().map().music);
         }
@@ -144,7 +141,7 @@ impl WorldManager {
                         );
                         self.window_manager.set_text(message_set);
                     }
-                    self.player.position.direction = self.current_map_mut().npcs[index].position.direction.inverse();
+                    self.player.position.local.direction = self.current_map_mut().npcs[index].position.direction.inverse();
                     if self.player.frozen {
                         self.player.move_update(0.0);
                         self.player.frozen = false;
@@ -180,12 +177,14 @@ impl WorldManager {
 		player_data.location.position = self.player.position;
     }
 
-    pub fn load_chunk_map_at(&mut self, x: isize, y: isize) {
+    pub fn load_chunk_map_at_player(&mut self) {
+        let x = self.player.position.get_x();
+        let y = self.player.position.get_y();
         if let Some(chunk) = self.chunk_map.chunk_id_at(x, y) {
-            self.chunk_map.change_chunk(chunk);
+            self.chunk_map.change_chunk(chunk, &mut self.player);
         } else {
-            warn!("Could not load chunk at {}, {}", x, y);
-            self.chunk_map.change_chunk(2);
+            warn!("Could not load chunk at ({}, {})", x, y);
+            self.chunk_map.change_chunk(2, &mut self.player);
         }
     }
 
@@ -216,7 +215,7 @@ impl WorldManager {
                 self.map_sets.input(delta, &self.player);
             }
     
-            if self.player.position.x_offset == 0.0 && self.player.position.y_offset == 0.0 && !self.player.frozen {
+            if self.player.position.local.x_offset == 0.0 && self.player.position.local.y_offset == 0.0 && !self.player.frozen {
                 self.player.moving = true;
 
                 if input::down(Control::B) {
@@ -233,15 +232,15 @@ impl WorldManager {
                     self.player.speed = BASE_SPEED;
                 }
 
-                if !input::down(self.player.position.direction.keybind()) {
+                if !input::down(self.player.position.local.direction.keybind()) {
                     for direction in Direction::into_enum_iter() {
                         if input::down(direction.keybind()) {
                             self.move_direction(direction);
                             break;
                         }
                     }
-                } else if input::down(self.player.position.direction.keybind()) {
-                    self.move_direction(self.player.position.direction);
+                } else if input::down(self.player.position.local.direction.keybind()) {
+                    self.move_direction(self.player.position.local.direction);
                 } else {
                     self.player.moving = false;
                 }
@@ -255,8 +254,8 @@ impl WorldManager {
     fn move_direction(&mut self, direction: Direction) {
         self.player.on_try_move(direction);
         let offset = direction.offset();
-        let x = self.player.position.x + offset.0 as isize;
-        let y = self.player.position.y + offset.1 as isize;
+        let x = self.player.position.local.x + offset.0 as isize;
+        let y = self.player.position.local.y + offset.1 as isize;
         let move_code = if self.chunk_map.is_alive() {
             if self.chunk_map.in_bounds(x, y) {
                 if let Some(entry) = self.chunk_map.check_warp(x, y) {
@@ -265,7 +264,10 @@ impl WorldManager {
                 }            
                 self.chunk_map.walkable(x, y)
             } else {
-                self.chunk_map.walk_connections(x, y)
+                // convert x and y to global coordinates
+                let x = x + self.player.position.x_offset;
+                let y = y + self.player.position.y_offset;
+                self.chunk_map.walk_connections(&mut self.player, x, y)
             }            
         } else {
             if self.map_sets.in_bounds(x, y) {
@@ -307,43 +309,43 @@ impl WorldManager {
             false
         };
         if test_move_code(move_code, jump || self.player.noclip) {
-            self.player.position.x_offset = offset.0;
-            self.player.position.y_offset = offset.1;
+            self.player.position.local.x_offset = offset.0;
+            self.player.position.local.y_offset = offset.1;
         }
     }
 
     fn player_movement(&mut self, delta: f32) {
-        if self.player.position.x_offset != 0.0 || self.player.position.y_offset != 0.0 {
-            match self.player.position.direction {
+        if self.player.position.local.x_offset != 0.0 || self.player.position.local.y_offset != 0.0 {
+            match self.player.position.local.direction {
                 Direction::Up => {
-                    self.player.position.y_offset -= (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.y_offset <= -16.0 {
-                        self.player.position.y -= 1;
-                        self.player.position.y_offset = 0.0;
+                    self.player.position.local.y_offset -= (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.y_offset <= -16.0 {
+                        self.player.position.local.y -= 1;
+                        self.player.position.local.y_offset = 0.0;
                         self.stop_player();
                     }
                 }
                 Direction::Down => {
-                    self.player.position.y_offset += (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.y_offset >= 16.0 {
-                        self.player.position.y += 1;
-                        self.player.position.y_offset = 0.0;
+                    self.player.position.local.y_offset += (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.y_offset >= 16.0 {
+                        self.player.position.local.y += 1;
+                        self.player.position.local.y_offset = 0.0;
                         self.stop_player();
                     }
                 }
                 Direction::Left => {
-                    self.player.position.x_offset -= (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.x_offset <= -16.0 {
-                        self.player.position.x -= 1;
-                        self.player.position.x_offset = 0.0;
+                    self.player.position.local.x_offset -= (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.x_offset <= -16.0 {
+                        self.player.position.local.x -= 1;
+                        self.player.position.local.x_offset = 0.0;
                         self.stop_player();
                     }
                 }
                 Direction::Right => {
-                    self.player.position.x_offset += (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.x_offset >= 16.0 {
-                        self.player.position.x += 1;
-                        self.player.position.x_offset = 0.0;
+                    self.player.position.local.x_offset += (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.x_offset >= 16.0 {
+                        self.player.position.local.x += 1;
+                        self.player.position.local.x_offset = 0.0;
                         self.stop_player();
                     }
                 }
@@ -391,15 +393,15 @@ impl WorldManager {
     fn stop_player(&mut self) {
         //self.player.moving = false;
         self.player.on_stopped_moving();
-        let x = self.player.position.x;
-        let y = self.player.position.y;
+        let x = self.player.position.local.x;
+        let y = self.player.position.local.y;
         if self.chunk_map.is_alive() {
             if self.chunk_map.in_bounds(x, y) {
-                self.chunk_map.on_tile(&mut self.player, x, y);
+                self.chunk_map.on_tile(&mut self.player);
             }
         } else {
             if self.map_sets.in_bounds(x, y) {
-                self.map_sets.on_tile(&mut self.player, x, y);
+                self.map_sets.on_tile(&mut self.player);
             }
         }        
     }
@@ -419,8 +421,10 @@ impl WorldManager {
             self.map_sets.despawn();
         }
         self.chunk_map.current_chunk = entry.destination.map_index;
-        self.player.position.x = self.chunk_map.current_chunk().x + entry.destination.x;
-        self.player.position.y = self.chunk_map.current_chunk().y + entry.destination.y;
+        self.player.position.x_offset = self.chunk_map.current_chunk().x;
+        self.player.position.y_offset = self.chunk_map.current_chunk().y;
+        self.player.position.local.x = entry.destination.x;
+        self.player.position.local.y = entry.destination.y;
         self.play_music();
     }
 
@@ -430,8 +434,10 @@ impl WorldManager {
             self.chunk_map.despawn();
         }
         self.load_map_set(&entry.destination.map_id, entry.destination.map_index);
-        self.player.position.x = entry.destination.x;
-        self.player.position.y = entry.destination.y;
+        self.player.position.x_offset = 0;
+        self.player.position.y_offset = 0;
+        self.player.position.local.x = entry.destination.x;
+        self.player.position.local.y = entry.destination.y;
         self.play_music();
     }
 
@@ -506,15 +512,14 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F3) {
-            if self.chunk_map.is_alive() {
-                info!("Local X: {}, Local Y: {}", self.player.position.x - self.chunk_map.current_chunk().x, self.player.position.y - self.chunk_map.current_chunk().y);
-            }
+            info!("Local Coordinates: ({}, {})", self.player.position.local.x, self.player.position.local.y);
+            info!("Global Coordinates: ({}, {})", self.player.position.get_x(), self.player.position.get_y());
             let tile = if self.chunk_map.is_alive() {
-                self.chunk_map.tile(self.player.position.x, self.player.position.y)
+                self.chunk_map.tile(self.player.position.local.x, self.player.position.local.y)
             } else {
-                self.map_sets.tile(self.player.position.x, self.player.position.y)
+                self.map_sets.tile(self.player.position.local.x, self.player.position.local.y)
             };
-            info!("X: {}, Y: {}, Tile ID: {}", self.player.position.x, self.player.position.y, tile);
+            info!("Current Tile ID: {}", tile);
         }
 
     }

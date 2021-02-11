@@ -1,13 +1,16 @@
+use std::path::PathBuf;
+
 use macroquad::prelude::FileError;
 
-mod noasync;
-pub use self::noasync::*;
+//mod noasync;
+//pub use self::noasync::*;
 
 //static ASSET_DIR: &str = "assets";
 
+#[async_trait::async_trait(?Send)]
 pub trait PersistantData {
 
-    //fn load(path: PathBuf) -> Self; // replace with async
+    async fn load(path: PathBuf) -> Self; // replace with async
 
     fn save(&self);
 
@@ -15,9 +18,10 @@ pub trait PersistantData {
 
 }
 
+#[async_trait::async_trait(?Send)]
 pub trait PersistantDataLocation: PersistantData {
 
-    fn load_from_file() -> Self;
+    async fn load_from_file() -> Self;
 
 }
 

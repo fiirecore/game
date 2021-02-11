@@ -10,7 +10,7 @@ pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 }
 
 pub fn byte_texture(bytes: &[u8]) -> Texture {
-	image_texture(&crate::util::image::byte_image(bytes))
+	image_texture(&crate::util::image::byte_image(bytes).expect("Could not get bytes from image!"))
 }
 
 pub fn image_texture(image: &macroquad::prelude::Image) -> Texture {

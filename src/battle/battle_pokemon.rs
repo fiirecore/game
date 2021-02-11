@@ -37,7 +37,7 @@ impl BattlePokemon {
 
 		let pokemon_data = pokedex.pokemon_from_id(pokemon.id);
 
-		let ivs = pokemon.ivs.unwrap_or(StatSet::iv_random());
+		let ivs = pokemon.ivs;
 		let evs = pokemon.evs.unwrap_or_default();
 
 		let stats = get_stats(pokemon_data, ivs, evs, pokemon.level);
@@ -103,7 +103,7 @@ impl BattlePokemon {
 		PokemonInstance {
 		    id: self.data.number,
 		    level: self.level,
-		    ivs: Some(self.ivs),
+		    ivs: self.ivs,
 		    evs: Some(self.evs),
 		    move_set: Some(crate::pokemon::moves::instance::SavedPokemonMoveSet::from_instance(&self.moves)),
 		    exp: Some(self.exp),

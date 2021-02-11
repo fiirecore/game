@@ -4,8 +4,8 @@ use macroquad::prelude::Conf;
 use macroquad::prelude::collections::storage;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
-use io::data::configuration::Configuration;
-use scene::loading_scene_manager::LoadingSceneManager;
+use parking_lot::Mutex;
+use scene::loading_scene_manager::load_coroutine;
 use scene::scene_manager::SceneManager;
 use util::file::PersistantDataLocation;
 
@@ -26,13 +26,11 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;
 pub static BASE_HEIGHT: u32 = 160;
 
-static mut QUIT: bool = false;
+pub static SAVEABLE: bool = cfg!(not(target_arch = "wasm32"));
 
-// use parking_lot::RwLock;
-// lazy_static::lazy_static! {
-//     static ref RUNNING: RwLock<bool> = RwLock::new(true);
-// }
-
+lazy_static::lazy_static!{
+    static ref QUIT: Mutex<bool> = Mutex::new(false);
+}
 #[macroquad::main(settings)]
 async fn main() {
 
@@ -64,7 +62,7 @@ async fn main() {
     #[cfg(feature = "audio")]
     audio::loader::bind_world_music();
     
-    storage::store(io::data::player::PlayerData::load_async_default().await);
+    storage::store(io::data::player::PlayerData::load_from_file().await);
 
     scene_manager.load_other_scenes().await;
 
@@ -81,14 +79,12 @@ async fn main() {
 
     scene_manager.on_start();
 
-    //let running = RUNNING.read();
-
     loop {
         scene_manager.input(get_frame_time());
         scene_manager.update(get_frame_time());
         macroquad::prelude::clear_background(macroquad::prelude::BLACK);
         scene_manager.render();
-        if unsafe{QUIT} {
+        if *QUIT.lock() {
             break;
         }
         macroquad::prelude::next_frame().await;
@@ -100,15 +96,15 @@ async fn main() {
 }
 
 pub fn queue_quit() {
-    unsafe{QUIT = true;}
+    *QUIT.lock() = true;
     //*RUNNING.write() = false;
 }
 
 fn settings() -> Conf {
-    let config = Configuration::load_from_file();
+    // let config = Configuration::load_from_file();
     // let scale = config.window_scale as u32;
     let scale = 3;
-    storage::store(config);
+    //storage::store(config);
 
     Conf {
         window_title: TITLE.to_string(),
@@ -116,17 +112,6 @@ fn settings() -> Conf {
         window_height: (BASE_HEIGHT * scale) as _,
         sample_count: 0,
         ..Default::default()
-    }
-}
-
-async fn load_coroutine() {
-    info!("Starting loading scene coroutine");
-    let mut loading_scene_manager = LoadingSceneManager::new();
-    while !loading_scene_manager.finished {
-        loading_scene_manager.update(get_frame_time());
-        macroquad::prelude::clear_background(macroquad::prelude::BLACK);
-        loading_scene_manager.render();
-        macroquad::prelude::next_frame().await;
     }
 }
 

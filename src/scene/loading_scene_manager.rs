@@ -3,6 +3,17 @@ use crate::util::Load;
 use super::Scene;
 use super::scenes::loading_scenes::*;
 
+pub async fn load_coroutine() {
+    macroquad::prelude::info!("Starting loading scene coroutine");
+    let mut loading_scene_manager = LoadingSceneManager::new();
+    while !loading_scene_manager.finished {
+        loading_scene_manager.update(macroquad::prelude::get_frame_time());
+        macroquad::prelude::clear_background(macroquad::prelude::BLACK);
+        loading_scene_manager.render();
+        macroquad::prelude::next_frame().await;
+    }
+}
+
 pub struct LoadingSceneManager {
 
     copyright: LoadingCopyrightScene,

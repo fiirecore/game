@@ -61,12 +61,12 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
         if let Some(trainer_data) = trainer_data {
 
-            self.trainer_texture = Some(NPC::battle_sprite(trainer_data.sprite_id));
+            self.trainer_texture = Some(NPC::battle_sprite(&trainer_data.npc_type));
 
             self.basic_battle_introduction.intro_text.text = MessageSet {
                 messages: vec![
                     Message::new(vec![trainer_data.name.clone(), String::from("would like to battle!")], false), 
-                    Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + battle.opponent().data.name.to_uppercase().as_str()], true),
+                    Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + &battle.opponent().data.name.to_uppercase()], true),
                 ]
             };
             

@@ -54,7 +54,13 @@ impl FontSheetData {
 
     fn sheet_image(self) -> Option<Font> {
         match crate::io::ASSET_DIR.get_file(std::path::PathBuf::from("fonts").join(&self.file)) {
-            Some(file) => Some(self.into_sheet(crate::util::image::byte_image(file.contents()))),
+            Some(file) => match crate::util::image::byte_image(file.contents()) {
+                Ok(image) => Some(self.into_sheet(image)),
+                Err(err) => {
+                    warn!("Could not parse font sheet at {} with error {}", &self.file, err);
+                    return None;
+                }
+            },
             None => {
                 warn!("Could not open font image at {}", &self.file);
                 return None;

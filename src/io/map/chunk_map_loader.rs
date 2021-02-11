@@ -6,7 +6,7 @@ use crate::world::map::chunk::world_chunk::WorldChunk;
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
 use super::map_serializable::MapConfig;
-use super::npc_loader::load_npc_entries;
+use super::npc::npc_loader::load_npc_entries;
 use super::warp_loader::load_warp_entries;
 use super::wild_entry_loader::load_wild_entry;
 

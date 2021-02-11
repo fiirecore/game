@@ -1,8 +1,8 @@
 use macroquad::prelude::Image;
 use crate::util::TILE_SIZE;
 
-pub fn byte_image(bytes: &[u8]) -> Image {
-    Image::from_file_with_format(bytes, Some(macroquad::prelude::ImageFormat::Png)).expect("Could not get image from bytes!")
+pub fn byte_image(bytes: &[u8]) -> Result<Image, macroquad::prelude::ImageError> {
+    Image::from_file_with_format(bytes, Some(macroquad::prelude::ImageFormat::Png))
 }
 
 pub async fn open_image<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {

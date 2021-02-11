@@ -177,7 +177,7 @@ enum Button {
 impl Button {
 
     pub fn name(&self) -> &str {
-        match *self {
+        match self {
             Button::Save => "Save",
             Button::Pokemon => "POKEMON",
             Button::ExitGame => "EXIT GAME",
@@ -186,7 +186,7 @@ impl Button {
     }
 
     pub fn position(&self) -> u8 {
-        match *self {
+        match self {
             Button::Save => 0,
             Button::Pokemon => 1,
             Button::ExitGame => 2,

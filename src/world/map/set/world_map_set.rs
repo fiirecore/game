@@ -1,6 +1,6 @@
 use ahash::AHashMap as HashMap;
 use crate::util::graphics::Texture;
-use crate::entity::texture::three_way_texture::ThreeWayTexture;
+use crate::world::NpcTextures;
 use crate::world::RenderCoords;
 use crate::world::World;
 use crate::world::map::WorldMap;
@@ -83,11 +83,11 @@ impl World for WorldMapSet {
         self.maps[self.current_map_index].check_warp(x, y)
     }
 
-    fn on_tile(&mut self, player: &mut Player, x: isize, y: isize) {
-        self.maps[self.current_map_index].on_tile(player, x, y)
+    fn on_tile(&mut self, player: &mut Player) {
+        self.maps[self.current_map_index].on_tile(player)
     }
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &HashMap<u8, ThreeWayTexture>, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         self.maps[self.current_map_index].render(textures, npc_textures, screen, border)
     }
 

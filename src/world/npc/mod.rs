@@ -26,7 +26,7 @@ pub struct NPC {
 pub struct NPCIdentifier {
 
     pub name: String,
-    pub sprite: u8,
+    pub npc_type: String,
 
 }
 
@@ -41,23 +41,16 @@ impl NPC {
 
     pub fn walk_to(&mut self, x: isize, y: isize) {
         match self.position.direction {
-            Direction::Up => {
-                self.offset = Some((x, y + 1));
-            }
-            Direction::Down => {
-                self.offset = Some((x, y - 1));
-            }
-            Direction::Left => {
-                self.offset = Some((x + 1, y));
-            }
-            Direction::Right => {
-                self.offset = Some((x - 1, y));
-            }
+            Direction::Up => self.offset = Some((x, y + 1)),
+            Direction::Down => self.offset = Some((x, y - 1)),
+            Direction::Left => self.offset = Some((x + 1, y)),
+            Direction::Right => self.offset = Some((x - 1, y)),
         }
     }
 
     pub fn should_move(&self) -> bool {
         if let Some(offset) = self.offset {
+            macroquad::prelude::info!("Y dest: {}, Current Y: {}", offset.1, self.position.y);
             self.position.x != offset.0 || self.position.y != offset.1
         } else {
             false
@@ -84,13 +77,13 @@ impl NPC {
         }
     }
 
-    pub fn battle_sprite(id: u8) -> Texture {
-        match crate::io::ASSET_DIR.get_file(std::path::PathBuf::from("world/textures/npcs/").join(id.to_string()).join("battle.png")) {
+    pub fn battle_sprite(id: &str) -> Texture {
+        match crate::io::ASSET_DIR.get_file(std::path::PathBuf::from("world/textures/npcs/").join(id).join("battle.png")) {
             Some(file) => {
                 return crate::util::graphics::texture::byte_texture(file.contents());
             }
             None => {
-                warn!("Could not find file of battle sprite #{}", id);
+                warn!("Could not find file of battle sprite {}", id);
                 return debug_texture();
             }
         }

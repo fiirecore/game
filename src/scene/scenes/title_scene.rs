@@ -2,8 +2,6 @@ use crate::audio::play_music;
 use crate::util::Load;
 use crate::util::input;
 use crate::util::graphics::Texture;
-
-use crate::io::data::player::PlayerData;
 use crate::scene::Scene;
 use crate::util::graphics::texture::byte_texture;
 use crate::util::graphics::draw;
@@ -64,11 +62,11 @@ impl Scene for TitleScene {
 		self.accumulator += macroquad::prelude::get_frame_time();
 		if self.next {
 			macroquad::prelude::rand::srand(self.accumulator as u64 % 256);
-			if PlayerData::exists() {
+			//if PlayerData::exists() {
 				self.scene_token = crate::scene::GAME_SCENE;
-			} else {
-				self.scene_token = crate::scene::GAME_SCENE;//CHARACTER_CREATION_SCENE;
-			}
+			//} else {
+			//	self.scene_token = crate::scene::GAME_SCENE;//CHARACTER_CREATION_SCENE;
+			//}
 		}
 		// if self.accumulator > 48.0 {
 		// 	self.scene_token = crate::scene::TITLE_SCENE;//LOADING_COPYRIGHT_SCENE

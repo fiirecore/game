@@ -9,7 +9,7 @@ lazy_static::lazy_static! {
 
 pub fn read_noasync<P: AsRef<Path>>(path: P) -> Option<Vec<u8>> {
     let path2 = path.as_ref().clone();
-    match read(&path) {
+    match read_noasync_result(&path) {
         Ok(bytes) => Some(bytes),
         Err(err) => {
             warn!("Could not read file at {:?} with error {}", path2, err);
@@ -18,7 +18,7 @@ pub fn read_noasync<P: AsRef<Path>>(path: P) -> Option<Vec<u8>> {
     }
 }
 
-fn read<P: AsRef<Path>>(path: P) -> Result<Vec<u8>, Error> {
+fn read_noasync_result<P: AsRef<Path>>(path: P) -> Result<Vec<u8>, Error> {
     macroquad::miniquad::fs::load_file(&path.as_ref().to_string_lossy(), move |bytes| {
         *FILE.lock() = Some(bytes);
     });
