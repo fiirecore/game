@@ -39,7 +39,7 @@ impl Default for Music {
 
 impl Music {
 
-    #[cfg(any(feature = "audio", feature = "webaudio"))]
+    //#[cfg(any(feature = "audio", target_arch = "wasm32"))]
     pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
         match self {
             Music::IntroGamefreak => Some(include_bytes!("../../build/assets/music/gamefreak.ogg")),

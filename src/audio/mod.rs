@@ -2,33 +2,31 @@ use self::music::Music;
 
 pub mod music;
 pub mod sound;
-#[cfg(feature = "audio")]
+#[cfg(not(target_arch = "wasm32"))]
 pub mod kira;
-#[cfg(feature = "webaudio")]
+#[cfg(target_arch = "wasm32")]
 pub mod quadsnd;
 
 pub async fn bind_world_music() {
-    #[cfg(feature = "audio")]
+    #[cfg(not(target_arch = "wasm32"))]
     self::kira::bind_world_music();
-    #[cfg(feature = "webaudio")]
+    #[cfg(target_arch = "wasm32")]
     self::quadsnd::bind_world_music().await;
 }
 
 pub fn play_music(music: Music) {
     macroquad::prelude::debug!("Playing {:?}", music);
-    #[cfg(feature = "audio")]
+    #[cfg(not(target_arch = "wasm32"))]
     self::kira::context::music::MUSIC_CONTEXT.lock().play_music(music);
-    #[cfg(feature = "webaudio")]
+    #[cfg(target_arch = "wasm32")]
     self::quadsnd::context::music::play_music(music);
 }
 
 pub fn get_music_playing() -> Option<Music> {
-    #[cfg(feature = "audio")]
+    #[cfg(not(target_arch = "wasm32"))]
     return self::kira::context::music::MUSIC_CONTEXT.lock().get_music_playing();
-    #[cfg(feature = "webaudio")]
+    #[cfg(target_arch = "wasm32")]
     return self::quadsnd::context::music::get_current_music();
-    #[cfg(not(any(feature = "audio", feature = "webaudio")))]
-    return None;
 }
 
 // pub fn stop_sound(sound: Sound) {

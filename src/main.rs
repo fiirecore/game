@@ -54,7 +54,7 @@ async fn main() {
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
     if !args.contains(&Args::DisableAudio) {
-        #[cfg(feature = "audio")]
+        #[cfg(not(target_arch = "wasm32"))]
         storage::store(crate::audio::kira::context::AudioContext::new());
         // #[cfg(feature = "webaudio")]
         // crate::audio::quadsnd::bind_gamefreak();
@@ -89,7 +89,7 @@ async fn main() {
 
     loop {
 
-        #[cfg(feature = "webaudio")]
+        #[cfg(target_arch = "wasm32")]
         crate::audio::quadsnd::context::music::MIXER.lock().frame();
 
         scene_manager.input(get_frame_time());
