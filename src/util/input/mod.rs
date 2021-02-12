@@ -8,7 +8,7 @@ pub use self::control::Control;
 mod control;
 
 lazy_static::lazy_static! {
-    static ref KEY_CONTROLS: RwLock<HashMap<Control, HashSet<KeyCode>>> = RwLock::new(Control::default_map()); // benchmark if parking_lot rwlock and Hash's hashmap are faster than dashmap
+    pub static ref KEY_CONTROLS: RwLock<HashMap<Control, HashSet<KeyCode>>> = RwLock::new(Control::default_map()); // benchmark if parking_lot rwlock and Hash's hashmap are faster than dashmap
 }
 
 pub fn pressed(control: Control) -> bool {

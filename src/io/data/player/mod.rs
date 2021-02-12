@@ -120,7 +120,7 @@ impl PersistantData for PlayerData {
 	}
 
 	fn save(&self) {
-		if crate::SAVEABLE {
+		#[cfg(not(target_arch = "wasm32"))] {
 			info!("Saving player data...");
 			let path = PathBuf::from(SAVE_DIRECTORY);
 			if !path.exists() {
@@ -147,10 +147,21 @@ impl PersistantData for PlayerData {
 				}
 			    Err(err) => warn!("Could not create player save file at {:?} with error {}", &path, err),
 			}
-			
-			
-			
-		}		
+			crate::gui::set_message(super::text::MessageSet::new(
+				1, 
+				super::text::color::TextColor::Black, 
+				vec![vec![String::from("Saved player data!")]]
+			));
+			info!("Saved player data!");
+		}
+		#[cfg(target_arch = "wasm32")]
+		{
+			crate::gui::set_message(super::text::MessageSet::new(
+				1, 
+				super::text::color::TextColor::Black, 
+				vec![vec![String::from("Cannot save player data"), String::from("on web browsers!")]]
+			));
+		}
 	}
 
 	// async fn reload(&mut self) {

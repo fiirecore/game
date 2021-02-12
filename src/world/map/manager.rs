@@ -59,6 +59,9 @@ pub struct WorldManager {
 impl WorldManager {
 
     pub fn new(player_data: &PlayerData) -> Self {
+        if let Some(message) = crate::gui::MESSAGE.lock().take() {
+            info!("WorldManager cleared previous global message: {:?}", message);
+        }
         let mut this = Self {
             chunk_map: WorldChunkMap::default(),
             map_sets: WorldMapSetManager::default(),
@@ -99,6 +102,18 @@ impl WorldManager {
     }
 
     pub fn update(&mut self, delta: f32) {
+
+        // Check global message to see if anything is there
+
+        {
+            let mut message = crate::gui::MESSAGE.lock();
+            if message.is_some() {
+                let message = message.take().unwrap();
+                self.window_manager.spawn();
+                self.window_manager.set_text(message);
+            }
+        }
+
         if self.window_manager.is_alive() {
             if self.window_manager.is_finished() {
                 if let Some(index) = self.current_map_mut().npc_active.take() {
@@ -215,10 +230,10 @@ impl WorldManager {
             self.player_gui.toggle();
         }
 
-        if self.player_gui.in_focus() {
-            self.player_gui.input(delta);
-        } else if self.window_manager.is_alive() {
+        if self.window_manager.is_alive() {
             self.window_manager.input(delta);
+        } else if self.player_gui.in_focus() {
+            self.player_gui.input(delta);
         } else {
 
             if self.chunk_map.is_alive() {

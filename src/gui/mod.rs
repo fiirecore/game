@@ -1,4 +1,5 @@
-
+use parking_lot::Mutex;
+use crate::io::data::text::MessageSet;
 
 pub mod background;
 pub mod text;
@@ -9,6 +10,14 @@ pub mod battle;
 
 pub mod game {
 	pub mod pokemon_party_gui;
+}
+
+lazy_static::lazy_static! {
+	pub static ref MESSAGE: Mutex<Option<MessageSet>> = Mutex::new(None);
+}
+
+pub fn set_message(message_set: MessageSet) {
+	*MESSAGE.lock() = Some(message_set);
 }
 
 pub trait GuiComponent {
@@ -39,6 +48,7 @@ pub trait GuiText: GuiComponent {
 
 }
 
+#[deprecated]
 pub trait Activatable {
 
 	fn focus(&mut self);
@@ -53,24 +63,4 @@ pub trait Activatable {
 
 }
 
-/*
-pub struct BasicButton {
-	
-	text: String,
-	
-}
-
-impl BasicButton {
-	
-	pub fn new(text: &str) -> BasicButton {
-		
-		BasicButton {
-			
-			text: String::from(text),
-			
-		}
-		
-	}
-	
-}
-*/
+pub trait WindowManager: GuiComponent + Activatable {}

@@ -1,4 +1,5 @@
 use crate::util::Load;
+use crate::util::graphics::draw_text_left;
 use crate::util::graphics::fade_in;
 use crate::util::input;
 use crate::util::graphics::Texture;
@@ -24,10 +25,6 @@ impl LoadingCopyrightScene {
 			scene_token: 0,
 		}
 	}
-
-	pub fn render_notr(&self) {
-		fade_in_out(self.scene_texture, 0.0, 0.0, self.accumulator, 3.0, 0.5);
-	}
 	
 }
 
@@ -52,7 +49,7 @@ impl Scene for LoadingCopyrightScene {
 	}
 	
 	fn render(&self) {
-		self.render_notr();
+		fade_in_out(self.scene_texture, 0.0, 0.0, self.accumulator, 3.0, 0.5);
 	}
 
 	fn input(&mut self, _delta: f32) {
@@ -93,12 +90,6 @@ impl LoadingGamefreakScene {
 			logo_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/logo.png")),
 			text_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/text.png")),
 		}
-	}	
-
-	pub fn render_notr(&self) {
-		draw_rect(self.background_color, 0.0, 34.0, 240, 96);
-		fade_in(self.logo_texture, 108.0, 45.0, self.accumulator - 6.0, 1.0); //108x, 12y
-		fade_in(self.text_texture, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
 	}
 	
 }
@@ -128,13 +119,16 @@ impl Scene for LoadingGamefreakScene {
 	}
 	
 	fn render(&self) {
-		self.render_notr();
-		// draw_text_left(1, "X is A Button", 5.0, 34.0);
-		// draw_text_left(1, "Z is B button", 5.0, 49.0);
-		// draw_text_left(1, "D-Pad is Arrow Keys", 5.0, 64.0);
-		// draw_text_left(1, "F1 to battle", 5.0, 79.0);
-		// draw_text_left(1, "F2 to toggle noclip", 5.0, 94.0);
-		// draw_text_left(1, "F3 to toggle console", 5.0, 109.0);
+		draw_rect(self.background_color, 0.0, 34.0, 240, 96);
+		fade_in(self.logo_texture, 108.0, 45.0, self.accumulator - 6.0, 1.0); //108x, 12y
+		fade_in(self.text_texture, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
+		draw_text_left(1, &format!("A is{:?}Button", input::KEY_CONTROLS.read().get(&input::Control::A).unwrap()), 5.0, 5.0);
+		draw_text_left(1, &format!("B is{:?}Button", input::KEY_CONTROLS.read().get(&input::Control::B).unwrap()), 125.0, 5.0);
+		draw_text_left(1, "D-Pad is Arrow Keys", 5.0, 15.0);
+		#[cfg(target_arch = "wasm32")] {
+			draw_text_left(1, "The game may stay on a black screen", 5.0, 130.0);
+			draw_text_left(1, "while loading.", 5.0, 145.0);
+		}
 	}
 	
 	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
@@ -164,9 +158,6 @@ impl LoadingPokemonScene {
 		}
 	}
 
-	pub fn render_notr(&self) {
-
-	}
 }
 
 //#[async_trait]
@@ -185,7 +176,7 @@ impl Scene for LoadingPokemonScene {
 	fn update(&mut self, _delta: f32) {}
 	   
 	fn render(&self) {
-		self.render_notr();
+		
 	}
 	
 	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {

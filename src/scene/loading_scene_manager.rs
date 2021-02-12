@@ -68,9 +68,9 @@ impl LoadingSceneManager {
     pub fn render(&self) {
         if !self.finished {
             match self.current_scene {
-                0 => self.copyright.render_notr(),
-                1 => self.gamefreak.render_notr(),
-                2 => self.pokemon.render_notr(),
+                0 => self.copyright.render(),
+                1 => self.gamefreak.render(),
+                2 => self.pokemon.render(),
                 _ => (),
             }
         }

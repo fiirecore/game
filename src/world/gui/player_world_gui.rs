@@ -129,7 +129,11 @@ impl Activatable for PlayerWorldGui {
                 },
                 1 => {
                     // Pokemon
-                    
+                    crate::gui::set_message(crate::io::data::text::MessageSet::new(
+                        1,
+                        crate::io::data::text::color::TextColor::Black,
+                        vec![vec![String::from("Unimplemented!")]]
+                    ));
                 },
                 2 => {
                     // Exit Game
