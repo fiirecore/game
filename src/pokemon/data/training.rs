@@ -15,16 +15,18 @@ pub struct Training {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum GrowthRate {
 
-	//Erratic,
 	#[serde(rename = "fast")]
 	Fast,
 	#[serde(rename = "medium")]
-	MediumFast,
+	Medium,
 	#[serde(rename = "medium-slow")]
 	MediumSlow,
 	#[serde(rename = "slow")]
 	Slow,
-	//Fluctuating
+	#[serde(rename = "fast-then-very-slow")]
+	FastSlow,
+	#[serde(rename = "slow-then-very-fast")]
+	SlowFast,
 	
 }
 
@@ -40,9 +42,9 @@ impl GrowthRate {
 		let level = level as u32;
 		match self {
 		    GrowthRate::Fast => (0.8 * level.pow(3) as f32) as usize,
-		    GrowthRate::MediumFast => level.pow(3) as usize,
-		    GrowthRate::MediumSlow => ((1.2 * level.pow(3) as f32) as isize - 15 * level.pow(2) as isize + 100 * level as isize - 140) as usize,
+		    GrowthRate::Medium => level.pow(3) as usize,
 		    GrowthRate::Slow => (1.25 * level.pow(3) as f32) as usize,
+			_ => ((1.2 * level.pow(3) as f32) as isize - 15 * level.pow(2) as isize + 100 * level as isize - 140) as usize, // MediumSlow
 		}
 	}
 

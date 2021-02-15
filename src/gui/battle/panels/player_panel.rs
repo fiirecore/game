@@ -1,11 +1,13 @@
 use macroquad::prelude::warn;
 use crate::battle::battle_pokemon::BattlePokemon;
+use crate::gui::Focus;
+use crate::util::Input;
 use crate::util::input;
 
 
 use crate::util::graphics::Texture;
 
-use crate::gui::{GuiComponent, Activatable};
+use crate::gui::GuiComponent;
 
 use crate::gui::battle::panels::battle_panel::BattlePanel;
 use crate::gui::battle::panels::fight_panel::FightPanel;
@@ -152,11 +154,11 @@ impl GuiComponent for PlayerPanel {
 
 	fn update(&mut self, delta: f32) {
         if self.is_active() {
-            if self.battle_panel.next() == 1 {
+            if self.battle_panel.next == 1 {
                 self.battle_panel.disable();
                 self.fight_panel.enable();
                 self.fight_panel.focus();
-            } else if self.fight_panel.next() == 1 {
+            } else if self.fight_panel.next == 1 {
                 self.fight_panel.disable();
                 self.battle_panel.enable();
                 self.battle_panel.focus();

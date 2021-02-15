@@ -1,10 +1,11 @@
+use crate::gui::Focus;
 use crate::io::data::player::PlayerData;
+use crate::util::Input;
 use crate::util::input;
 use crate::util::graphics::Texture;
 use crate::util::input::Control;
 
 use crate::gui::button::BasicButton;
-use crate::gui::Activatable;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;
@@ -27,8 +28,6 @@ pub struct PlayerWorldGui {
     pokemon_button: BasicButton,
     exit_menu_button: BasicButton,
     exit_game_button: BasicButton,
-
-    next: u8,
 
 }
 
@@ -57,8 +56,6 @@ impl PlayerWorldGui {
             pokemon_button: Pokemon.to_button(x, y),
             exit_game_button: ExitGame.to_button(x, y),
             exit_menu_button: Close.to_button(x, y),
-
-            next: 0,
 
         }
 
@@ -105,19 +102,7 @@ impl GuiComponent for PlayerWorldGui {
 
 }
 
-impl Activatable for PlayerWorldGui {
-
-    fn focus(&mut self) {
-        self.focused = true;
-    }
-
-    fn unfocus(&mut self) {
-        self.focused = false;
-    }
-
-    fn in_focus(&mut self) -> bool {
-        return self.focused;
-    }
+impl Input for PlayerWorldGui {
 
     fn input(&mut self, _delta: f32) {
 
@@ -162,8 +147,20 @@ impl Activatable for PlayerWorldGui {
         }
     }
 
-    fn next(&self) -> u8 {
-        return self.next;
+}
+
+impl Focus for PlayerWorldGui {
+
+    fn focus(&mut self) {
+        self.focused = true;
+    }
+
+    fn unfocus(&mut self) {
+        self.focused = false;
+    }
+
+    fn in_focus(&mut self) -> bool {
+        return self.focused;
     }
 
 }

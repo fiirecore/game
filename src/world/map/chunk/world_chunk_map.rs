@@ -1,5 +1,4 @@
 use ahash::AHashMap as HashMap;
-use crate::audio::play_music;
 use crate::util::graphics::Texture;
 use crate::audio::music::Music;
 use crate::entity::Entity;
@@ -21,7 +20,7 @@ pub struct WorldChunkMap {
     //connected_chunks: Vec<&'a WorldChunk>,
     pub(crate) current_chunk: u16,
 
-    current_music: Music,
+    pub current_music: Music,
 
 }
 
@@ -39,7 +38,6 @@ impl WorldChunkMap {
         let music = self.current_chunk().map.music;
         if music != self.current_music {
             self.current_music = music;
-            play_music(self.current_music);
         }
     }
 

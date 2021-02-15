@@ -2,9 +2,9 @@ use std::path::PathBuf;
 
 //pub mod warp_transition;
 use macroquad::prelude::warn;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct WarpEntry {
     
     pub x: isize,
@@ -13,7 +13,7 @@ pub struct WarpEntry {
     pub destination: WarpDestination, // world_id, map_set_id OR "world" for overworld map
 
 }
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct WarpDestination {
 
     // pub world_id: String,

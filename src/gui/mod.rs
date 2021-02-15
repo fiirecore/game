@@ -48,19 +48,14 @@ pub trait GuiText: GuiComponent {
 
 }
 
-#[deprecated]
-pub trait Activatable {
-
+pub trait Focus {
+	
 	fn focus(&mut self);
 
 	fn unfocus(&mut self);
 
 	fn in_focus(&mut self) -> bool;
 
-	fn input(&mut self, delta: f32);
-
-	fn next(&self) -> u8;
-
 }
 
-pub trait WindowManager: GuiComponent + Activatable {}
+pub trait WindowManager: GuiComponent + crate::util::Input + Focus {}

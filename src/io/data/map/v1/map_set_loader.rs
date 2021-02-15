@@ -5,19 +5,14 @@ use ahash::AHashMap as HashMap;
 use crate::audio::music::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::set::world_map_set::WorldMapSet;
-
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
-use super::map_serializable::MapConfig;
-use super::npc::npc_loader::load_npc_entries;
-use super::warp_loader::load_warp_entries;
-use super::wild_entry_loader::load_wild_entry;
 
-pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(String, WorldMapSet)> {
+pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: super::map_serializable::MapConfig) -> Option<(String, WorldMapSet)> {
 
     let name = config.identifier.name;
     
-    macroquad::prelude::info!("Loading map set {}", &name);
+    macroquad::prelude::debug!("Loading map set {}", &name);
 
     let mut maps: Vec<WorldMap> = Vec::new();
 
@@ -38,9 +33,9 @@ pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config
                         tile_map: gba_map.tile_map,
                         border_blocks: gba_map.border_blocks,
                         movement_map: gba_map.movement_map,
-                        warps: load_warp_entries(&root_path, Some(index)),
-                        npcs: load_npc_entries(&root_path, Some(index)),
-                        wild: load_wild_entry(&root_path, config.wild.clone(), Some(index)),
+                        warps: super::load_warp_entries(&root_path, Some(index)),
+                        npcs: super::load_npc_entries(&root_path, Some(index)),
+                        wild: super::load_wild_entry(&root_path, config.wild.clone(), Some(index)),
 
                         ..Default::default()  
                     },

@@ -23,7 +23,7 @@ impl Configuration {
 
 	pub fn on_reload(&self) {
 		info!("Running configuration reload tasks...");
-		crate::util::input::reload_with_config(self);
+		crate::util::input::keyboard::reload_with_config(self);
 		info!("Finished configuration reload tasks!");
 	}
 
@@ -53,7 +53,7 @@ impl Configuration {
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-			controls: Control::default_map(),
+			controls: crate::util::input::keyboard::default(),
 		}
     }
 }

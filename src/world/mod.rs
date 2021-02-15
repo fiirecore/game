@@ -9,6 +9,7 @@ pub mod gui {
 
 pub mod player;
 
+pub type TileTextures = HashMap<u16, Texture>;
 pub type NpcTextures = HashMap<String, ThreeWayTexture>;
 
 use ahash::AHashMap as HashMap;
@@ -30,7 +31,7 @@ pub trait World {
 
     fn on_tile(&mut self, player: &mut Player);
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool);
+    fn render(&self, textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool);
 
     fn input(&mut self, delta: f32, player: &mut Player);
 

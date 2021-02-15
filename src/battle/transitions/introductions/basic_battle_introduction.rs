@@ -1,6 +1,8 @@
 use crate::entity::Entity;
+use crate::gui::Focus;
 use crate::io::data::text::Message;
 use crate::io::data::text::color::TextColor;
+use crate::util::Input;
 use crate::util::battle_data::TrainerData;
 use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
@@ -8,7 +10,6 @@ use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::pokemon_gui::PokemonGui;
-use crate::gui::Activatable;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
@@ -103,7 +104,7 @@ impl Update for BasicBattleIntroduction {
 
     fn update(&mut self, delta: f32) {
         self.intro_text.update(delta);
-        if self.intro_text.next() + 1 == self.intro_text.text.len() as u8 {
+        if self.intro_text.current_phrase() + 1 == self.intro_text.text.len() as u8 {
             if self.player_intro.should_update() {
                 self.player_intro.update(delta);                
             } else if self.intro_text.timer.is_finished() {
@@ -146,7 +147,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
     fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32) {
         if self.intro_text.can_continue {
-            if self.intro_text.next() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
+            if self.intro_text.current_phrase() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
                 battle_gui.opponent_pokemon_gui.reset();
                 battle_gui.opponent_pokemon_gui.spawn();
             }

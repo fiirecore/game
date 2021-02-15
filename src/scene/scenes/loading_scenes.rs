@@ -122,8 +122,8 @@ impl Scene for LoadingGamefreakScene {
 		draw_rect(self.background_color, 0.0, 34.0, 240, 96);
 		fade_in(self.logo_texture, 108.0, 45.0, self.accumulator - 6.0, 1.0); //108x, 12y
 		fade_in(self.text_texture, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
-		draw_text_left(1, &format!("A is{:?}Button", input::KEY_CONTROLS.read().get(&input::Control::A).unwrap()), 5.0, 5.0);
-		draw_text_left(1, &format!("B is{:?}Button", input::KEY_CONTROLS.read().get(&input::Control::B).unwrap()), 125.0, 5.0);
+		draw_text_left(1, &format!("A is{:?}Button", input::keyboard::KEY_CONTROLS.read().get(&input::Control::A).unwrap()), 5.0, 5.0);
+		draw_text_left(1, &format!("B is{:?}Button", input::keyboard::KEY_CONTROLS.read().get(&input::Control::B).unwrap()), 125.0, 5.0);
 		draw_text_left(1, "D-Pad is Arrow Keys", 5.0, 15.0);
 		#[cfg(target_arch = "wasm32")] {
 			draw_text_left(1, "The game may stay on a black screen", 5.0, 130.0);

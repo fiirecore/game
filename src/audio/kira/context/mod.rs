@@ -5,7 +5,7 @@ use enum_iterator::IntoEnumIterator;
 use crate::audio::music::Music;
 
 pub mod music;
-pub mod sound;
+// pub mod sound;
 
 pub struct AudioContext {
 
@@ -32,57 +32,72 @@ impl AudioContext {
     }    
 
     pub fn bind_music(&mut self) {
-        match self.audio_manager.as_mut() {
-            Some(manager) => {
-                info!("Loading music...");
+        info!("Loading music...");
                 for music in Music::into_enum_iter() {
-                    let music_map = &mut self::music::MUSIC_CONTEXT.lock().music_map;
-                    if !music_map.contains_key(&music) {
-                        match music.included_bytes() {
-                            Some(bytes) => {
-                                match super::from_ogg_bytes(bytes, kira::sound::SoundSettings::default()) {
-                                    Ok(sound) => {
+                    if !self::music::MUSIC_CONTEXT.read().music_map.contains_key(&music) {
+                        if let Some(bytes) = music.included_bytes() {
+                            match super::from_ogg_bytes(bytes, kira::sound::SoundSettings::default()) {
+                                Ok(sound) => match self.audio_manager.as_mut() {
+                                    Some(manager) => {
                                         match manager.add_sound(sound) {
                                             Ok(sound) => {
-                                                music_map.insert(music, sound);
-                                                info!("Loaded {} successfully", music);
+                                                self::music::MUSIC_CONTEXT.write().music_map.insert(music, sound);
+                                                info!("Loaded music \"{:?}\" successfully", music);
                                             }
-                                            Err(err) => warn!("Problem loading music {} with error {}", music, err),
+                                            Err(err) => {
+                                                warn!("Problem loading music \"{:?}\" with error {}", music, err);
+                                            }
                                         }
                                     }
-                                    Err(err) => warn!("Problem decoding {} bytes in executable with error {}", music, err),
+                                    None => {}
                                 }
-                                
+                                Err(err) => {
+                                    warn!("Problem decoding bytes of \"{:?}\" in executable with error {}", music, err);
+                                }
                             }
-                            None => {
-                                if !(cfg!(debug_assertions) || cfg!(target_arch = "wasm32")) {
-                                    match manager.load_sound(String::from("music/") + &music.to_string() + ".ogg", kira::sound::SoundSettings::default()) {
+                        }
+                    }
+                }
+                for music in Music::into_enum_iter() {
+                    if music.included_bytes().is_none() {
+                        if !self::music::MUSIC_CONTEXT.read().music_map.contains_key(&music) {
+                            if !(cfg!(debug_assertions)) {
+                                match self.audio_manager.as_mut() {
+                                    Some(manager) => match manager.load_sound(String::from("music/") + &music.file_name() + ".ogg", kira::sound::SoundSettings::default()) {
                                         Ok(sound) => {
-                                            music_map.insert(music, sound);
-                                            info!("Loaded {} successfully", music);
+                                            self::music::MUSIC_CONTEXT.write().music_map.insert(music, sound);
+                                            info!("Loaded \"{:?}\" successfully", music);
                                         }
-                                        Err(err) => warn!("Problem loading music {} with error {}", music, err),
+                                        Err(err) => {
+                                            warn!("Problem loading music \"{:?}\" with error {}", music, err);
+                                        }
+                                    }
+                                    None => {
+                                        warn!("Could not get audio manager from audio context while loading music \"{:?}\"!", music);
                                     }
                                 }
                             }
-                        }                        
+                        }
                     }
                 }
                 info!("Finished loading world music!");
-            }
-            None => {}
-        }
+        
     }
 
     pub fn bind_gamefreak(&mut self) {
         match self.audio_manager.as_mut() {
             Some(manager) => {
-                match manager.load_sound("music/gamefreak.ogg", kira::sound::SoundSettings::default()) {
-                    Ok(sound) => {
-                        self::music::MUSIC_CONTEXT.lock().music_map.insert(Music::IntroGamefreak, sound);
-                    },
+                match super::from_ogg_bytes(Music::IntroGamefreak.included_bytes().unwrap(), kira::sound::SoundSettings::default()) {
+                    Ok(sound) => match manager.add_sound(sound) {
+                        Ok(sound) => {
+                            self::music::MUSIC_CONTEXT.write().music_map.insert(Music::IntroGamefreak, sound);
+                        },
+                        Err(err) => {
+                            warn!("Could not load gamefreak intro music with error {}", err);
+                        }
+                    }
                     Err(err) => {
-                        warn!("Could not load gamefreak intro music with error {}", err);
+                        warn!("Could not decode gamefreak into audio with error {}", err);
                     }
                 }
             }
@@ -94,8 +109,8 @@ impl AudioContext {
 
 }
 
-fn stop_instance(audio: impl std::fmt::Display, mut instance: kira::instance::handle::InstanceHandle) {
+fn stop_instance(audio: impl std::fmt::Debug, mut instance: kira::instance::handle::InstanceHandle) {
     if let Err(err) = instance.stop(kira::instance::StopInstanceSettings::default().fade_tween(kira::parameter::tween::Tween::linear(0.75))) {
-        macroquad::prelude::warn!("Problem stopping audio instance {} with error {}", audio, err);
+        macroquad::prelude::warn!("Problem stopping audio instance {:?} with error {}", audio, err);
     }
 }

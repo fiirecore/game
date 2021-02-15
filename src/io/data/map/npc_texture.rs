@@ -22,7 +22,7 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures) {
                 match crate::util::image::byte_image(&file) {
                     Ok(image) => match parse_image(image) {
                         Some(twt) => {
-                            info!("Added NPC texture type: {}", &npc_type);
+                            macroquad::prelude::debug!("Added NPC texture type: {}", &npc_type);
                             npc_textures.insert(npc_type, twt);
                         },
                         None => warn!("Could not parse image of three way NPC texture with id {}!", &npc_type),
@@ -39,7 +39,7 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures) {
         }
     }
 
-    info!("Finished loading NPC textures");
+    info!("Finished loading NPC textures!");
 }
 
 pub fn parse_image(image: Image) -> Option<ThreeWayTexture> {

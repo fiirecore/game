@@ -1,5 +1,4 @@
 use crate::util::Quit;
-use macroquad::prelude::info;
 
 use crate::scene::scenes::*;
 use super::Scene;
@@ -18,7 +17,7 @@ impl SceneManager {
 	pub fn load_scene(&mut self, index: usize) {
 		self.scenes[self.current_scene_index].quit();
 		self.current_scene_index = index;
-		info!("Loading Scene: {}", self.scenes[self.current_scene_index].name());
+		macroquad::prelude::debug!("Loading Scene: {}", self.scenes[self.current_scene_index].name());
 		if !self.loaded[self.current_scene_index] {
 			self.scenes[self.current_scene_index].load();
 			self.loaded[self.current_scene_index] = true;

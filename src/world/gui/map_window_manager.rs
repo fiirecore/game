@@ -1,10 +1,11 @@
 use crate::entity::Entity;
-use crate::gui::Activatable;
+use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
 use crate::gui::dynamic_text::DynamicText;
 use crate::io::data::text::MessageSet;
 use crate::util::Completable;
+use crate::util::Input;
 use crate::util::Reset;
 
 pub struct MapWindowManager {

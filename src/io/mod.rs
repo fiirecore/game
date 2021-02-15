@@ -1,18 +1,12 @@
-//pub mod embed;
-pub mod data;
-pub mod map;
-pub mod args;
-
 use std::borrow::Cow;
 use std::path::Path;
 use std::path::PathBuf;
-
 use ahash::AHashSet as HashSet;
-
 use macroquad::prelude::warn;
 use rust_embed::RustEmbed;
 
-//pub static ASSET_DIR: include_dir::Dir = include_dir::include_dir!("assets");
+pub mod data;
+pub mod args;
 
 #[derive(RustEmbed)]
 #[folder = "assets"]
@@ -21,6 +15,22 @@ pub struct AssetFolder;
 pub fn get_file<P: AsRef<Path>>(path: P) -> Option<Cow<'static, [u8]>> {
     AssetFolder::get(&path.as_ref().to_string_lossy())
 }
+
+// pub async fn get_file_fs<P: AsRef<Path>>(path: P) -> Option<Cow<'static, [u8]>> {
+//     let mut file = get_file(&path);
+//     if file.is_none() {
+//         let path = path.as_ref();
+//         match macroquad::file::load_file(&path).await {
+//             Ok(bytes) => {
+//                 file = Some(Cow::Owned(bytes))
+//             }
+//             Err(err) => {
+//                 warn!("Could not open file at {:?} with error {}", path, err);
+//             }
+//         }
+//     }
+//     return file;
+// }
 
 pub fn get_file_as_string<P: AsRef<Path>>(path: P) -> Option<String> {
     match get_file(&path) {
@@ -42,22 +52,20 @@ pub fn get_dir<P: AsRef<Path>>(path: P) -> HashSet<PathBuf> {
     let path = path.as_ref();
     let mut paths = HashSet::new();
     for filepath in AssetFolder::iter() {
-        let path2 = PathBuf::from(filepath.to_string());
-        //macroquad::prelude::info!("Dir: {:?}, file in dir: {:?}", &path, &path2);
-        if let Some(parent) = path2.parent() {
+        let filepath = PathBuf::from(&*filepath);
+        if let Some(parent) = filepath.parent() {
             if path.eq(parent) {
-                paths.insert(path2);
+                paths.insert(filepath);
             }
         }
     }
     if paths.is_empty() {
         for filepath in AssetFolder::iter() {
-            let path2 = PathBuf::from(filepath.to_string());
-            //macroquad::prelude::info!("Dir: {:?}, file in dir: {:?}", &path, &path2);
-            if let Some(parent1) = path2.parent() {
-                if let Some(parent) = parent1.parent() {
+            let filepath = PathBuf::from(&*filepath);
+            if let Some(first_parent) = filepath.parent() {
+                if let Some(parent) = first_parent.parent() {
                     if path.eq(parent) {
-                        paths.insert(PathBuf::from(parent1));
+                        paths.insert(PathBuf::from(first_parent));
                     }
                 }
             }
@@ -65,13 +73,3 @@ pub fn get_dir<P: AsRef<Path>>(path: P) -> HashSet<PathBuf> {
     }
     return paths;
 }
-
-// pub fn exists<P: AsRef<Path>>(path: P) -> bool {
-//     let path = path.as_ref();
-//     for file in AssetFolder::iter() {
-//         if PathBuf::from(&*file).eq(path) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }

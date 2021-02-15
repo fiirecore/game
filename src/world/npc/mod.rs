@@ -1,13 +1,13 @@
 use crate::io::data::Direction;
 use crate::io::data::Position;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use self::trainer::Trainer;
 
 use super::player::Player;
 
 pub mod trainer;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct NPC {
 
     pub identifier: NPCIdentifier,
@@ -20,7 +20,7 @@ pub struct NPC {
 
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct NPCIdentifier {
 
     pub name: String,

@@ -1,28 +1,23 @@
-use ahash::AHashMap as HashMap;
 use crate::audio::play_music;
-use crate::gui::Activatable;
+use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::util::Completable;
+use crate::util::Input;
+use crate::world::NpcTextures;
+use crate::world::TileTextures;
 use crate::world::gui::map_window_manager::MapWindowManager;
-use macroquad::prelude::Image;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
 use crate::util::input;
-use crate::util::graphics::Texture;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
 use crate::audio::music::Music;
 use crate::util::Render;
 use crate::util::input::Control;
 use crate::entity::Entity;
-use crate::entity::texture::three_way_texture::ThreeWayTexture;
 use crate::io::data::Direction;
 use crate::io::data::player::PlayerData;
-use crate::io::map::gba_map::fill_palette_map;
-use crate::io::map::gba_map::get_texture;
-use crate::io::map::map_loader::load_maps;
-use crate::io::map::npc::npc_texture::load_npc_textures;
 use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
 use crate::world::player::RUN_SPEED;
@@ -37,22 +32,15 @@ pub struct WorldManager {
 
     chunk_map: WorldChunkMap,
     map_sets: WorldMapSetManager,
-
-    player: Player,
+    textures: TileTextures,
+    npc_textures: NpcTextures,
 
     current_music: Music,
 
-    // other
-
-    // old world manager values below
+    player: Player,
 
     player_gui: PlayerWorldGui,
-
     window_manager: MapWindowManager,
-
-    bottom_textures: HashMap<u16, Texture>,
-    //pub(crate) top_textures: HashMap<u16, Texture>,
-    npc_textures: HashMap<String, ThreeWayTexture>,
 
 }
 
@@ -62,42 +50,48 @@ impl WorldManager {
         if let Some(message) = crate::gui::MESSAGE.lock().take() {
             info!("WorldManager cleared previous global message: {:?}", message);
         }
+        let stuff = crate::io::data::map::load_maps();
         let mut this = Self {
-            chunk_map: WorldChunkMap::default(),
-            map_sets: WorldMapSetManager::default(),
+            chunk_map: stuff.0,
+            map_sets: stuff.1,
             player: Player::default(),
             current_music: Music::default(),
             player_gui: PlayerWorldGui::new(),
             window_manager: MapWindowManager::default(),
-            bottom_textures: HashMap::new(),
-            npc_textures: HashMap::new(),
+            textures: stuff.2,
+            npc_textures: stuff.3,
         };
-        this.load_maps_and_textures();
+        
         this.load_player(player_data);
-        this
+        return this;
     }
 
     pub fn on_start(&mut self) {
         if self.chunk_map.is_alive() {
             self.load_chunk_map_at_player();
-        } else if self.map_sets.is_alive() {
-            self.current_music = Music::from(self.map_sets.map_set().map().music);
         }
-        play_music(self.current_music);
+        self.play_music();
     }
 
     pub fn play_music(&mut self) {
-        if let Some(music) = crate::audio::get_music_playing() {
-            if music != self.current_music {
-                self.current_music = if self.chunk_map.is_alive() {
-                    self.chunk_map.current_chunk().map.music
-                } else {
-                    self.map_sets.map_set().map().music
-                };
+        let music = self.get_map_music();
+        if music != self.current_music {
+            self.current_music = music;  
+            play_music(self.current_music);
+        }
+        if let Some(playing_music) = crate::audio::get_music_playing() {
+            if music != playing_music {
+                self.current_music = music;  
                 play_music(self.current_music);
             }
+        }
+    }
+
+    fn get_map_music(&self) -> Music {
+        if self.chunk_map.is_alive() {
+            self.chunk_map.current_music
         } else {
-            play_music(self.current_music);
+            self.map_sets.map_set().map().music
         }
     }
 
@@ -127,6 +121,7 @@ impl WorldManager {
             if let Some(index) = self.current_map_mut().npc_active {
 
                 // Play NPC music
+                
                 if let Some(trainer) = self.current_map_mut().npcs[index].trainer.as_ref() {
                     if let Some(music) = trainer.encounter_music {
                         if let Some(playing_music) = crate::audio::get_music_playing() {
@@ -184,9 +179,9 @@ impl WorldManager {
     pub fn render(&self) {
         let coords =  RenderCoords::new(&self.player);
         if self.chunk_map.is_alive() {
-            self.chunk_map.render(&self.bottom_textures, &self.npc_textures, coords, true);
+            self.chunk_map.render(&self.textures, &self.npc_textures, coords, true);
         } else if self.map_sets.is_alive() {
-            self.map_sets.render(&self.bottom_textures, &self.npc_textures, coords, true);
+            self.map_sets.render(&self.textures, &self.npc_textures, coords, true);
         }
         self.player.render();
         self.player_gui.render(); 
@@ -468,48 +463,20 @@ impl WorldManager {
         self.play_music();
     }
 
+    pub fn current_map(&self) -> &super::WorldMap {
+        if self.chunk_map.is_alive() {
+            &self.chunk_map.current_chunk().map
+        } else {
+            self.map_sets.map_set().map()
+        }
+    }
+
     pub fn current_map_mut(&mut self) -> &mut super::WorldMap {
         if self.chunk_map.is_alive() {
             &mut self.chunk_map.current_chunk_mut().map
         } else {
             self.map_sets.map_set_mut().map_mut()
         }
-    }
-
-    pub fn load_maps_and_textures(&mut self) {
-
-        let mut bottom_sheets: HashMap<u8, Image> = HashMap::new();
-        //let mut top_sheets: HashMap<u8, RgbaImage> = HashMap::new();
-
-        let palette_sizes = fill_palette_map(&mut bottom_sheets/*, &mut top_sheets*/);
-
-        load_maps(&palette_sizes, &mut self.chunk_map, &mut self.map_sets);
-
-        load_npc_textures(&mut self.npc_textures);
-
-        for wmap in self.chunk_map.chunks.values() {
-            for tile_id in &wmap.map.tile_map {
-                if !(self.bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                    //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                    self.bottom_textures.insert(*tile_id, get_texture(&bottom_sheets, &palette_sizes, *tile_id));
-                }
-            }
-            for tile_id in &wmap.map.border_blocks {
-                if !(self.bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                    self.bottom_textures.insert(*tile_id, get_texture(&bottom_sheets, &palette_sizes, *tile_id));
-                    //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                }
-            }
-        }
-        for wmapset in self.map_sets.values() {
-            for tile_id in &wmapset.tiles() {
-                if !(self.bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                    //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                    self.bottom_textures.insert(*tile_id, get_texture(&bottom_sheets, &palette_sizes, *tile_id));
-                }
-            }
-        }
-
     }
 
     pub fn load_player(&mut self, player_data: &PlayerData) {

@@ -77,7 +77,6 @@ async fn main() {
     info!("Finished loading in background!");
 
 
-
     while !loading_coroutine.is_done() {
         macroquad::prelude::coroutines::wait_seconds(0.05).await;
     }
@@ -91,6 +90,10 @@ async fn main() {
 
         #[cfg(target_arch = "wasm32")]
         crate::audio::quadsnd::context::music::MIXER.lock().frame();
+
+        // crate::util::input::controller::update_active_controls();
+    
+        // You can also use cached gamepad state
 
         scene_manager.input(get_frame_time());
         scene_manager.update(get_frame_time());

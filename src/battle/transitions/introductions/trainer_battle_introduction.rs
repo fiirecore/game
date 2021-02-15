@@ -5,10 +5,8 @@ use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
-
 use crate::entity::Entity;
 use crate::util::{Update, Render};
-use crate::gui::Activatable;
 use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
 use crate::util::Load;
@@ -46,7 +44,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
     fn update_gui(&mut self, battle_gui: &mut crate::gui::battle::battle_gui::BattleGui, delta: f32) {
         self.basic_battle_introduction.update_gui(battle_gui, delta);
         if self.basic_battle_introduction.intro_text.can_continue {
-            if self.basic_battle_introduction.intro_text.next() == self.basic_battle_introduction.intro_text.text.len() as u8 - 2 {
+            if self.basic_battle_introduction.intro_text.current_phrase() == self.basic_battle_introduction.intro_text.text.len() as u8 - 2 {
                 self.trainer_leaving = true;
             }
         }
@@ -60,7 +58,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
         if let Some(trainer_data) = trainer_data {
 
-            self.trainer_texture = Some(crate::io::map::npc::npc_texture::battle_sprite(&trainer_data.npc_type));
+            self.trainer_texture = Some(crate::io::data::map::npc_texture::battle_sprite(&trainer_data.npc_type));
 
             self.basic_battle_introduction.intro_text.text = MessageSet {
                 messages: vec![

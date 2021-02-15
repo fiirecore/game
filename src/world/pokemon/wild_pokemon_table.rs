@@ -7,6 +7,8 @@ use super::wild_pokemon_encounter::WildPokemonEncounter;
 use crate::pokemon::instance::PokemonInstance;
 
 pub static DEFAULT_ENCOUNTER_CHANCE: u8 = 21;
+
+#[derive(serde::Deserialize, serde::Serialize)]
 pub struct WildPokemonTable {
     pub encounter_ratio: u8,
     pub table: Option<[WildPokemonEncounter; 12]>,
@@ -57,14 +59,8 @@ fn from_toml(file: PathBuf) -> WildPokemonTable {
 
     match crate::io::get_file_as_string(&file) {
         Some(content) => {
-            let toml_result: Result<WildPokemonTableInToml, toml::de::Error> = toml::from_str(&content);
-            match toml_result {
-                Ok(toml_table) => {
-                    return WildPokemonTable {
-                        encounter_ratio: toml_table.encounter_ratio,
-                        table: Some(fill_table(&toml_table)),
-                    };
-                },
+            match toml::from_str(&content) {
+                Ok(table) => return table,
                 Err(err) => {
                     warn!("Could not parse wild pokemon table at {:?} with error {}, using random table instead!", &file, err);
                     return WildPokemonTable::default();
@@ -92,35 +88,35 @@ fn get_counter() -> usize {
     return counter - 1;
 }
 
-#[derive(Debug, serde::Deserialize)]
-pub struct WildPokemonTableInToml {
+// #[derive(Debug, serde::Deserialize)]
+// pub struct SerializedWildPokemonTable {
 
-    pub encounter_ratio: u8,
-    pub encounter: Vec<TomlWildPokemon>,
+//     pub encounter_ratio: u8,
+//     pub encounter: Vec<TomlWildPokemon>,
 
-}
+// }
 
-#[derive(Debug, serde::Deserialize, Clone, Copy)]
-pub struct TomlWildPokemon {
+// #[derive(Debug, serde::Deserialize, Clone, Copy)]
+// pub struct TomlWildPokemon {
 
-    min_level: u8,
-    max_level: u8,
-    pokemon_id: PokemonId,
+//     min_level: u8,
+//     max_level: u8,
+//     pokemon_id: PokemonId,
 
-}
+// }
 
-fn encounter_from_toml(toml_table: TomlWildPokemon) -> WildPokemonEncounter {
-    WildPokemonEncounter {
-        min_level: toml_table.min_level,
-        max_level: toml_table.max_level,
-        pokemon_id: toml_table.pokemon_id,
-    }
-}
+// fn encounter_from_toml(toml_table: TomlWildPokemon) -> WildPokemonEncounter {
+//     WildPokemonEncounter {
+//         min_level: toml_table.min_level,
+//         max_level: toml_table.max_level,
+//         pokemon_id: toml_table.pokemon_id,
+//     }
+// }
 
-fn fill_table(toml_table: &WildPokemonTableInToml) -> [WildPokemonEncounter; 12] {
-    let mut arr: [WildPokemonEncounter; 12] = [WildPokemonEncounter::default(); 12];
-    for i in 0..12 {
-        arr[i] = encounter_from_toml(toml_table.encounter[i]);
-    }
-    return arr;
-}
+// fn fill_table(toml_table: &WildPokemonTableInToml) -> [WildPokemonEncounter; 12] {
+//     let mut arr: [WildPokemonEncounter; 12] = [WildPokemonEncounter::default(); 12];
+//     for i in 0..12 {
+//         arr[i] = encounter_from_toml(toml_table.encounter[i]);
+//     }
+//     return arr;
+// }

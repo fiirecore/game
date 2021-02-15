@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::util::input::Control;
 
 pub mod configuration;
+pub mod map;
 pub mod player;
 pub mod text;
 pub mod world;

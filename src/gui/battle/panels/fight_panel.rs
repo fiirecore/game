@@ -1,8 +1,9 @@
 use crate::battle::battle_pokemon::BattlePokemon;
+use crate::gui::Focus;
 use crate::util::input::Control;
 use crate::util::graphics::Texture;
 
-use crate::gui::{Activatable, GuiComponent};
+use crate::gui::GuiComponent;
 use crate::util::input;
 
 use crate::util::graphics::draw;
@@ -23,7 +24,7 @@ pub struct FightPanel {
     move_panel: MovePanel,
 
     pub cursor_position: u8,
-    next: u8,
+    pub next: u8,
 
     move_names: Vec<String>,
 
@@ -126,7 +127,7 @@ impl GuiComponent for FightPanel {
 
 }
 
-impl Activatable for FightPanel {
+impl Focus for FightPanel {
 
     fn focus(&mut self) {
         self.focus = true;
@@ -139,6 +140,14 @@ impl Activatable for FightPanel {
     fn in_focus(&mut self) -> bool {
         self.focus
     }
+
+    // fn next(&self) -> u8 {
+    //     self.next
+    // }
+
+}
+
+impl crate::util::Input for FightPanel {
 
     fn input(&mut self, _delta: f32) {
         if input::pressed(Control::B) {
@@ -169,10 +178,6 @@ impl Activatable for FightPanel {
             }
             
         }
-    }
-
-    fn next(&self) -> u8 {
-        self.next
     }
 
 }

@@ -1,6 +1,8 @@
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub enum Sound {
 
+    // Save,
+    // Select,
     CryCharizard,
 
 }

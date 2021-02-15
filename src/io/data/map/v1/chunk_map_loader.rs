@@ -8,12 +8,9 @@ use crate::world::map::chunk::world_chunk::WorldChunk;
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
 use super::map_serializable::MapConfig;
-use super::npc::npc_loader::load_npc_entries;
-use super::warp_loader::load_warp_entries;
-use super::wild_entry_loader::load_wild_entry;
 
 pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(u16, WorldChunk)> {
-    macroquad::prelude::info!("Loading chunk map {}", &config.identifier.name);
+    macroquad::prelude::debug!("Loading chunk map {}", &config.identifier.name);
     let map_path = root_path.join(&config.identifier.map_files[0]);
     match map_path.extension() {
         Some(ext) => {
@@ -41,9 +38,9 @@ pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, conf
                                         border_blocks: gba_map.border_blocks,
                                         movement_map: gba_map.movement_map,
                                         
-                                        warps: load_warp_entries(root_path, None),
-                                        npcs: load_npc_entries(root_path, None),
-                                        wild: load_wild_entry(root_path, config.wild, None),
+                                        warps: super::load_warp_entries(root_path, None),
+                                        npcs: super::load_npc_entries(root_path, None),
+                                        wild: super::load_wild_entry(root_path, config.wild, None),
 
                                         ..Default::default()        
                                     },
@@ -55,9 +52,7 @@ pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, conf
                             return None;
                         }
                     }
-                    None => {
-                        return None;
-                    }
+                    None => return None,
                 }
             } else {
                 warn!("Could not find map {} at path {:?}", &config.identifier.map_files[0], &root_path);

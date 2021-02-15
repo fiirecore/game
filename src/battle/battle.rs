@@ -258,22 +258,14 @@ impl Battle {
 		self.try_run = true;
 	}
 	
-//	fn render_above(&mut self, c: &mut Context, g: &mut G2d) {}
-	
 }
-
-pub struct BattleEndData {
-
-}
-
-
-
 
 fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokemon: &BattlePokemon) -> u16 { // Change to return MoveResult<>
 	if if let Some(accuracy) = pmove.accuracy {
 		let hit: u8 = macroquad::rand::gen_range(0, 100);
-		macroquad::prelude::debug!("{} accuracy: {}/{}",  pmove, hit, accuracy);
-		hit < accuracy
+		let test = hit < accuracy;
+		macroquad::prelude::debug!("{} accuracy: {} < {} = {}",  pmove, hit, accuracy, if test { "Hit! "} else { "Miss!" });
+		test
 	} else {
 		true
 	} {

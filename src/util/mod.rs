@@ -36,6 +36,12 @@ pub trait Render {
 
 }
 
+pub trait Input {
+
+	fn input(&mut self, delta: f32);
+
+}
+
 pub trait Reset {
 
 	fn reset(&mut self);

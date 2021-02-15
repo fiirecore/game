@@ -1,4 +1,4 @@
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq, enum_iterator::IntoEnumIterator, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq, enum_iterator::IntoEnumIterator, serde::Deserialize, serde::Serialize)]
 pub enum Music {
 
     IntroGamefreak,
@@ -39,7 +39,6 @@ impl Default for Music {
 
 impl Music {
 
-    //#[cfg(any(feature = "audio", target_arch = "wasm32"))]
     pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
         match self {
             Music::IntroGamefreak => Some(include_bytes!("../../build/assets/music/gamefreak.ogg")),
@@ -53,17 +52,16 @@ impl Music {
         }
     }
 
-}
+    pub fn loop_start(&self) -> Option<f64> {
+        match self {
+            Music::BattleWild => Some(13.15),
+            _ => None,
+        }
+    }
 
-//#[deprecated]
-impl std::fmt::Display for Music {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
+    pub fn file_name(&self) -> &str {
+        match self {
 
-            Music::IntroGamefreak => "gamefreak",
-            Music::Title => "title",
-
-            Music::Pallet => "pallet",
             Music::Pewter => "pewter",
             Music::Fuchsia => "fuchsia",
             Music::Lavender => "lavender",
@@ -80,12 +78,9 @@ impl std::fmt::Display for Music {
             Music::ViridianForest => "viridian_forest",
             Music::MountMoon => "mt_moon",
 
-            Music::EncounterBoy => "encounter_boy",
+            _ => "no_name",
 
-            Music::BattleWild => "vs_wild",
-            Music::BattleTrainer => "vs_trainer",
-            Music::BattleGym => "vs_gym",
-
-        })
+        }
     }
+
 }

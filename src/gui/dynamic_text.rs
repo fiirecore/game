@@ -6,7 +6,7 @@ use crate::util::graphics::draw_text_left_color;
 use crate::util::input;
 
 use crate::entity::Entity;
-use crate::gui::{GuiComponent, Activatable};
+use crate::gui::GuiComponent;
 use crate::util::timer::Timer;
 
 pub struct DynamicText {
@@ -88,6 +88,10 @@ impl DynamicText {
 		&self.text.get_phrase(self.current_phrase as usize)
 	}
 
+	pub fn current_phrase(&self) -> u8 {
+		self.current_phrase
+	}
+
 }
 
 impl GuiComponent for DynamicText {
@@ -119,7 +123,7 @@ impl GuiComponent for DynamicText {
 					}
 					self.timer.update(delta);
 					if self.timer.is_finished() {
-						if self.next() + 1 != self.text.len() as u8 {
+						if self.current_phrase() + 1 != self.text.len() as u8 {
 							self.current_phrase += 1;
 							self.reset_phrase();
 							self.timer.reset();
@@ -186,7 +190,7 @@ impl GuiComponent for DynamicText {
 	
 }
 
-impl Activatable for DynamicText {
+impl super::Focus for DynamicText {
 
     fn focus(&mut self) {
         self.focus = true;
@@ -200,10 +204,14 @@ impl Activatable for DynamicText {
         self.focus
     }
 
+}
+
+impl crate::util::Input for DynamicText {
+
 	fn input(&mut self, _delta: f32) {
 		if self.can_continue && self.focus {
 			if input::pressed(crate::util::input::Control::A) && !self.current_message().no_pause {
-				if self.next() + 1 == self.text.len() as u8 {
+				if self.current_phrase() + 1 == self.text.len() as u8 {
 					self.finish_click = true;
 				} else {
 					self.current_phrase += 1;
@@ -211,10 +219,6 @@ impl Activatable for DynamicText {
 				}
 			}
 		}
-	}
-
-	fn next(&self) -> u8 {
-		self.current_phrase
 	}
 
 }
@@ -232,7 +236,7 @@ impl Reset for DynamicText {
 impl Completable for DynamicText {
     fn is_finished(&self) -> bool {
 		self.can_continue && 
-		self.next() + 1 == self.text.len() as u8 &&
+		self.current_phrase() + 1 == self.text.len() as u8 &&
 		if self.current_message().no_pause {
 			self.timer.is_finished()
 		} else {

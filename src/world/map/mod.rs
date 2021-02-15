@@ -28,7 +28,7 @@ pub mod chunk {
     pub mod world_chunk_map;
 }
 
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct WorldMap {
 
     pub name: String,
@@ -44,6 +44,8 @@ pub struct WorldMap {
     pub wild: Option<WildEntry>,
     pub warps: Vec<WarpEntry>,
     pub npcs: Vec<NPC>,
+    
+    #[serde(skip)]
     pub npc_active: Option<usize>,
 
 }
@@ -112,7 +114,7 @@ impl World for WorldMap {
                                 Direction::Up => {
                                     if player.position.local.x == npc.position.x {
                                         if player.position.local.y < npc.position.y && player.position.local.y >= npc.position.y - tracker {
-                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                             self.npc_active = Some(npc_index);
                                             npc.interact(None, player);
                                             
@@ -123,7 +125,7 @@ impl World for WorldMap {
                                 Direction::Down => {
                                     if player.position.local.x == npc.position.x {
                                         if player.position.local.y > npc.position.y && player.position.local.y <= npc.position.y + tracker {
-                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                             self.npc_active = Some(npc_index);
                                             npc.interact(None, player);
                                         }
@@ -132,7 +134,7 @@ impl World for WorldMap {
                                 Direction::Left => {
                                     if player.position.local.y == npc.position.y {
                                         if player.position.local.x < npc.position.x && player.position.local.x >= npc.position.x - tracker {
-                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                             self.npc_active = Some(npc_index);
                                             npc.interact(None, player);
                                         }
@@ -141,7 +143,7 @@ impl World for WorldMap {
                                 Direction::Right => {
                                     if player.position.local.y == npc.position.y {
                                         if player.position.local.x > npc.position.x && player.position.local.x <= npc.position.x + tracker {
-                                            info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
+                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.x, player.position.local.y);
                                             self.npc_active = Some(npc_index);
                                             npc.interact(None, player);
                                         }

@@ -2,13 +2,12 @@ use kira::instance::handle::InstanceHandle;
 use kira::sound::SoundSettings;
 use kira::sound::handle::SoundHandle;
 use macroquad::prelude::warn;
-use parking_lot::Mutex;
 use ahash::AHashMap as HashMap;
-
+use parking_lot::RwLock;
 use crate::audio::music::Music;
 
 lazy_static::lazy_static! {
-    pub static ref MUSIC_CONTEXT: Mutex<MusicContext> = Mutex::new(MusicContext::default());
+    pub static ref MUSIC_CONTEXT: RwLock<MusicContext> = RwLock::new(MusicContext::default());
 }
 
 #[derive(Default)]
@@ -32,12 +31,13 @@ impl MusicContext {
                     ..Default::default()
                 }) {
                     Ok(instance) => {
+                        macroquad::prelude::debug!("Playing music: \"{:?}\"", music);
                         self.current_music = Some((music, instance));
                     }
-                    Err(err) => warn!("Problem playing music {} with error {}", music, err),
+                    Err(err) => warn!("Problem playing music \"{:?}\" with error {}", music, err),
                 }
             }
-            None => warn!("Could not get sound for {}", music),
+            None => warn!("Could not get music for \"{:?}\"", music),
         }        
     }
 
@@ -49,17 +49,9 @@ impl MusicContext {
         }
     }
     
-
 }
 
 impl Music {
-
-    pub fn loop_start(&self) -> Option<f64> {
-        match self {
-            Music::BattleWild => Some(13.15),
-            _ => None,
-        }
-    }
 
     pub fn settings(&self) -> SoundSettings {
         SoundSettings {

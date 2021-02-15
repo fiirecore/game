@@ -23,20 +23,38 @@ impl Effective {
 
 }
 
+impl std::fmt::Display for Effective {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Effective::Ineffective => "ineffective",
+            Effective::NotEffective => "not very effective",
+            Effective::Effective => "effective",
+            Effective::SuperEffective => "super effective",
+        })
+    }
+}
+
 impl PokemonType {
 
     pub fn effective(&self, pokemon_type: PokemonType) -> f32 {
-        if self.supereffective(pokemon_type) {
-            macroquad::prelude::info!("{:?} is supereffective on {:?}", self, pokemon_type);
-            Effective::SuperEffective.multiplier()
+        let effective = if self.supereffective(&pokemon_type) {
+            Effective::SuperEffective
+        } else if self.noteffective(&pokemon_type) {
+            Effective::NotEffective
+        } else if self.ineffective(&pokemon_type) {
+            Effective::Ineffective
         } else {
-            Effective::Effective.multiplier()
-        }
+            Effective::Effective
+        };
+        macroquad::prelude::debug!("{:?} is {} on {:?}", self, effective, pokemon_type);
+        effective.multiplier()
     }
 
-    pub fn supereffective(&self, pokemon_type: PokemonType) -> bool {
+    pub fn supereffective(&self, pokemon_type: &PokemonType) -> bool {
         use PokemonType::*;
+
         match self {
+
             Normal => false,
 
             Fire => match pokemon_type {
@@ -54,7 +72,9 @@ impl PokemonType {
                 _ => false,
             }
 
-            PokemonType::Electric => match pokemon_type {
+            Electric => match pokemon_type {
+                Water => true,
+                Flying => true,
                 _ => false,
             }
 
@@ -64,45 +84,234 @@ impl PokemonType {
                 Rock => true,
                 _ => false,
             }
+            
+            Ice => match pokemon_type {
+                Grass => true,
+                Ground => true,
+                Flying => true,
+                Dragon => true,
+                _ => false,
+            }
+
+            Fighting => match pokemon_type {
+                Normal => true,
+                Ice => true,
+                Rock => true,
+                Dark => true,
+                Steel => true,
+                _ => false,
+            }
+            
+            Poison => match pokemon_type {
+                Grass => true,
+                Fairy => true,
+                _ => false,
+            }
+            
+            Ground => match pokemon_type {
+                Fire => true,
+                Electric => true,
+                Poison => true,
+                Rock => true,
+                Steel => true,
+                _ => false,
+            }
+            
+            Flying => match pokemon_type {
+                Grass => true,
+                Fighting => true,
+                Bug => true,
+                _ => false,
+            }
+            
+            Psychic => match pokemon_type {
+                Fighting => true,
+                Poison => true,
+                _ => false,
+            }
+            
+            Bug => match pokemon_type {
+                Grass => true,
+                Psychic => true,
+                Dark => true,
+                _ => false,
+            }
+            
+            Rock => match pokemon_type {
+                Fire => true,
+                Ice => true,
+                Flying => true,
+                Bug => true,
+                _ => false,
+            }
+            
+            Ghost => match pokemon_type {
+                Psychic => true,
+                Ghost => true,
+                _ => false,
+            }
+            
+            Dragon => match pokemon_type {
+                Dragon => true,
+                _ => false,
+            }
+            
+            Dark => match pokemon_type {
+                Psychic => true,
+                Ghost => true,
+                _ => false,
+            }
+
+            Steel => match pokemon_type {
+                Ice => true,
+                Rock => true,
+                Fairy => true,
+                _ => false,
+            }
+
+            Fairy => match pokemon_type {
+                Fighting => true,
+                Dragon => true,
+                Dark => true,
+                _ => false,
+            }
+
+        }
+    }
+
+    pub fn noteffective(&self, pokemon_type: &PokemonType) -> bool {
+
+        match self {
+            PokemonType::Normal => match pokemon_type {
+                PokemonType::Rock => true,
+                PokemonType::Steel => true,
+                _ => false,
+            }
+            PokemonType::Fire => match pokemon_type {
+                PokemonType::Grass => true,
+                PokemonType::Ice => true,
+                PokemonType::Bug => true,
+                PokemonType::Steel => true,
+                _ => false,
+            }
+            PokemonType::Water => match pokemon_type {
+                PokemonType::Water => true,
+                PokemonType::Grass => true,
+                PokemonType::Dragon => true,
+                _ => false,
+            }
+            PokemonType::Electric => match pokemon_type {
+                PokemonType::Electric => true,
+                PokemonType::Grass => true,
+                PokemonType::Dragon => true,
+                _ => false,
+            }
+            PokemonType::Grass => match pokemon_type {
+                PokemonType::Fire => true,
+                PokemonType::Grass => true,
+                PokemonType::Poison => true,
+                PokemonType::Flying => true,
+                PokemonType::Bug => true,
+                PokemonType::Dragon => true,
+                PokemonType::Steel => true,
+                _ => false,
+            }
             PokemonType::Ice => match pokemon_type {
+                PokemonType::Fire => true,
+                PokemonType::Water => true,
+                PokemonType::Ice => true,
+                PokemonType::Steel => true,
                 _ => false,
             }
             PokemonType::Fighting => match pokemon_type {
+                PokemonType::Poison => true,
+                PokemonType::Flying => true,
+                PokemonType::Psychic => true,
+                PokemonType::Bug => true,
+                PokemonType::Fairy => true,
                 _ => false,
             }
             PokemonType::Poison => match pokemon_type {
+                PokemonType::Poison => true,
+                PokemonType::Ground => true,
+                PokemonType::Rock => true,
+                PokemonType::Ghost => true,
                 _ => false,
             }
             PokemonType::Ground => match pokemon_type {
+                PokemonType::Grass => true,
+                PokemonType::Bug => true,
                 _ => false,
             }
             PokemonType::Flying => match pokemon_type {
+                PokemonType::Electric => true,
+                PokemonType::Rock => true,
+                PokemonType::Steel => true,
                 _ => false,
             }
             PokemonType::Psychic => match pokemon_type {
+                PokemonType::Psychic => true,
+                PokemonType::Steel => true,
                 _ => false,
             }
             PokemonType::Bug => match pokemon_type {
+                PokemonType::Fire => true,
+                PokemonType::Fighting => true,
+                PokemonType::Poison => true,
+                PokemonType::Flying => true,
+                PokemonType::Ghost => true,
+                PokemonType::Steel => true,
+                PokemonType::Fairy => true,
                 _ => false,
             }
             PokemonType::Rock => match pokemon_type {
+                PokemonType::Fighting => true,
+                PokemonType::Ground => true,
+                PokemonType::Steel => true,
                 _ => false,
             }
             PokemonType::Ghost => match pokemon_type {
+                PokemonType::Dark => true,
                 _ => false,
             }
             PokemonType::Dragon => match pokemon_type {
+                PokemonType::Steel => true,
                 _ => false,
             }
             PokemonType::Dark => match pokemon_type {
+                PokemonType::Fighting => true,
+                PokemonType::Dark => true,
+                PokemonType::Fairy => true,
                 _ => false,
             }
             PokemonType::Steel => match pokemon_type {
+                PokemonType::Fire => true,
+                PokemonType::Water => true,
+                PokemonType::Electric => true,
+                PokemonType::Steel => true,
                 _ => false,
             }
             PokemonType::Fairy => match pokemon_type {
+                PokemonType::Fire => true,
+                PokemonType::Poison => true,
+                PokemonType::Steel => true,
                 _ => false,
             }
+        }
+
+    }
+
+    pub fn ineffective(&self, pokemon_type: &PokemonType) -> bool {
+        match self {
+            PokemonType::Normal => PokemonType::Ghost.eq(pokemon_type),
+            PokemonType::Electric => PokemonType::Ground.eq(pokemon_type),
+            PokemonType::Fighting => PokemonType::Ghost.eq(pokemon_type),
+            PokemonType::Poison => PokemonType::Steel.eq(pokemon_type),
+            PokemonType::Ground => PokemonType::Flying.eq(pokemon_type),
+            PokemonType::Psychic => PokemonType::Dark.eq(pokemon_type),
+            PokemonType::Ghost => PokemonType::Normal.eq(pokemon_type),
+            PokemonType::Dragon => PokemonType::Fairy.eq(pokemon_type),
+            _ => false,
         }
     }
 

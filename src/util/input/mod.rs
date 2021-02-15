@@ -1,38 +1,33 @@
-use ahash::{AHashMap as HashMap, AHashSet as HashSet};
-//use parking_lot::RwLock;
-use macroquad::prelude::KeyCode;
-use parking_lot::RwLock;
+use serde::{Serialize, Deserialize};
 
-pub use self::control::Control;
+pub mod keyboard;
+//pub mod controller;
 
-mod control;
+#[derive(Clone, Copy, Hash, PartialEq, Eq, Deserialize, Serialize)]
+pub enum Control {
 
-lazy_static::lazy_static! {
-    pub static ref KEY_CONTROLS: RwLock<HashMap<Control, HashSet<KeyCode>>> = RwLock::new(Control::default_map()); // benchmark if parking_lot rwlock and Hash's hashmap are faster than dashmap
+    A,
+    B,
+    Up,
+    Down,
+    Left,
+    Right,
+    Start,
+    Select,
+    //Escape,
+
 }
 
 pub fn pressed(control: Control) -> bool {
-    if let Some(keys) = KEY_CONTROLS.read().get(&control) {
-        for key in keys {
-            if macroquad::prelude::is_key_pressed(*key) {
-                return true;
-            }
-        }
+    if keyboard::pressed(&control) {
+        return true;
     }
     return false;
 }
 
 pub fn down(control: Control) -> bool {
-    if let Some(keys) = KEY_CONTROLS.read().get(&control) {
-        for key in keys {
-            if macroquad::prelude::is_key_down(*key) {
-                return true;
-            }
-        }
+    if keyboard::down(&control) {
+        return true;
     }
     return false;
-}
-
-pub fn reload_with_config(config: &crate::io::data::configuration::Configuration) {
-    *KEY_CONTROLS.write() = config.controls.clone();
 }

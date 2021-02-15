@@ -1,10 +1,12 @@
 
 use crate::battle::battle_pokemon::BattlePokemon;
+use crate::gui::Focus;
+use crate::util::Input;
 use crate::util::input::Control;
 use crate::gui::button::BasicButton;
 use crate::io::data::Direction;
 use crate::util::graphics::Texture;
-use crate::gui::{GuiComponent, Activatable};
+use crate::gui::GuiComponent;
 use crate::util::input;
 use crate::gui::text::StaticText;
 use crate::util::graphics::draw;
@@ -146,7 +148,7 @@ impl GuiComponent for BattlePanel {
 	}
 }
 
-impl Activatable for BattlePanel {
+impl Focus for BattlePanel {
 
     fn focus(&mut self) {
         self.focus = true;
@@ -159,6 +161,14 @@ impl Activatable for BattlePanel {
     fn in_focus(&mut self) -> bool {
         self.focus
     }
+
+    // fn next(&self) -> u8 {
+    //     self.next
+    // }
+
+}
+
+impl Input for BattlePanel {
 
     fn input(&mut self, _delta: f32) {
         if input::pressed(Control::Up) {
@@ -178,10 +188,6 @@ impl Activatable for BattlePanel {
                 self.cursor_position += 1;
             }
         }
-    }
-
-    fn next(&self) -> u8 {
-        self.next
     }
 
 }

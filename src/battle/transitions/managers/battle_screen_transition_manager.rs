@@ -19,7 +19,7 @@ pub struct BattleScreenTransitionManager {
 
 }
 
-#[derive(Debug, Clone, Copy, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, serde::Deserialize, serde::Serialize)]
 pub enum BattleScreenTransitions {
 
     Flash,
