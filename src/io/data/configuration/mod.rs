@@ -9,21 +9,24 @@ use serde::{Serialize, Deserialize};
 use crate::util::file::PersistantData;
 use crate::util::file::PersistantDataLocation;
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
-use crate::util::input::Control;
+use crate::io::input::Control;
 
 static CONFIGURATION_PATH: &str = "config";
 static CONFIGURATION_FILENAME: &str = "config.json";
 
 #[derive(Serialize, Deserialize)]
 pub struct Configuration {
+
 	pub controls: HashMap<Control, HashSet<KeyCode>>,	
+	pub touchscreen: bool,
+
 }
 
 impl Configuration {
 
 	pub fn on_reload(&self) {
 		info!("Running configuration reload tasks...");
-		crate::util::input::keyboard::reload_with_config(self);
+		crate::io::input::keyboard::reload_with_config(self);
 		info!("Finished configuration reload tasks!");
 	}
 
@@ -53,7 +56,11 @@ impl Configuration {
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-			controls: crate::util::input::keyboard::default(),
+			controls: crate::io::input::keyboard::default(),
+			#[cfg(target_arch = "wasm32")]
+			touchscreen: true,
+			#[cfg(not(target_arch = "wasm32"))]
+			touchscreen: false,
 		}
     }
 }

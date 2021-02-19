@@ -1,5 +1,7 @@
 use std::ops::DerefMut;
 
+use super::music::Music;
+
 pub mod context;
 
 pub fn bind_world_music() {
@@ -17,6 +19,23 @@ fn bind_music_fn() {
     if let Some(mut audio_context) = macroquad::prelude::collections::storage::get_mut::<self::context::AudioContext>() {
         audio_context.deref_mut().bind_music();     
     }
+}
+
+impl Music {
+
+    pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
+        match self {
+            Music::IntroGamefreak => Some(include_bytes!("../../../build/assets/music/gamefreak.ogg")),
+            Music::Title => Some(include_bytes!("../../../build/assets/music/title.ogg")),
+            Music::Pallet => Some(include_bytes!("../../../build/assets/music/pallet.ogg")),
+            Music::EncounterBoy => Some(include_bytes!("../../../build/assets/music/encounter_boy.ogg")),
+            Music::BattleWild => Some(include_bytes!("../../../build/assets/music/vs_wild.ogg")),
+            Music::BattleTrainer => Some(include_bytes!("../../../build/assets/music/vs_trainer.ogg")),
+            Music::BattleGym => Some(include_bytes!("../../../build/assets/music/vs_gym.ogg")),
+            _ => None,
+        }
+    }
+
 }
 
 pub fn from_ogg_bytes(bytes: &[u8], settings: kira::sound::SoundSettings) -> Result<kira::sound::Sound, kira::sound::error::SoundFromFileError> {

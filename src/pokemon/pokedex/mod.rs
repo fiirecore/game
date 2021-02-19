@@ -27,7 +27,7 @@ lazy_static::lazy_static! {
 
 impl Pokedex {
 	
-	pub fn new() -> Pokedex {
+	pub async fn new() -> Pokedex {
 
 		let mut pokemon_list = HashMap::new();
 
@@ -35,7 +35,7 @@ impl Pokedex {
 			std::io::Cursor::new(
 				crate::io::get_file(
 					DEX_DIR.join("entries.zip")
-				).expect("Could not get pokemon entries zip!")
+				).await.expect("Could not get pokemon entries zip!")
 			)
 		).expect("Could not read entries zip!");
 
@@ -48,12 +48,18 @@ impl Pokedex {
 							Ok(pokemon) => {
 								pokemon_list.insert(pokemon.data.number, pokemon);
 							},
-							Err(err) => warn!("Could not read pokemon entry at {} with error {}", file.name(), err),
+							Err(err) => {
+								warn!("Could not read pokemon entry at {} with error {}", file.name(), err);
+							},
 						}
-					    Err(err) => warn!("Could not read pokemon entry at {} to string with error {}", file.name(), err),
+					    Err(err) => {
+							warn!("Could not read pokemon entry at {} to string with error {}", file.name(), err);
+						},
 					}
 				}
-			    Err(err) => warn!("Could not get pokemon entry at index {} with error {}", index, err),
+			    Err(err) => {
+					warn!("Could not get pokemon entry at index {} with error {}", index, err);
+				},
 			}
 		}
 
@@ -84,13 +90,15 @@ impl Pokedex {
 		//match cfg_accessible {
 			// Some(moves_paths) => {
 		for path in crate::io::get_dir(DEX_DIR.join("moves")) {
-			match crate::io::get_file_as_string(&path) {
+			match crate::io::get_file_as_string(&path).await {
 				Some(data) => {
 					match PokemonMove::from_string(&data) {
 						Ok(pokemon_move) => {
 							move_list.insert(pokemon_move.number, pokemon_move);
 						}
-						Err(err) => warn!("Could not read pokemon move at {:?} with error {}", &path, err),
+						Err(err) => {
+							warn!("Could not read pokemon move at {:?} with error {}", &path, err);
+						},
 					}
 				}
 				None => {

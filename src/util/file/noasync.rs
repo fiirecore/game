@@ -53,9 +53,15 @@ pub fn read_to_string_noasync<P: AsRef<Path>>(path: P) -> Option<String> {
 pub fn open_image_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<macroquad::prelude::Image> {
     let path = path.as_ref();
     match read_noasync(path) {
-        Some(bytes) => Some(crate::util::image::byte_image(bytes.as_slice())),
+        Some(bytes) => match crate::util::image::byte_image(bytes.as_slice()) {
+            Ok(image) => return Some(image),
+            Err(err) => {
+                warn!("Could not parse image bytes at {:?} with error {}", path, err);
+                return None;
+            },
+        },
         None => {
-            macroquad::prelude::warn!("Could not read image bytes at {:?} with error", path);
+            warn!("Could not read image bytes at {:?} with error", path);
             return None;
         }
     }

@@ -2,8 +2,6 @@ use crate::pokemon::data::StatSet;
 use crate::pokemon::party::PokemonParty;
 use crate::util::file::PersistantData;
 use crate::util::file::PersistantDataLocation;
-use std::fs::File;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
@@ -110,7 +108,7 @@ impl PersistantData for PlayerData {
 	
 	async fn load(path: PathBuf) -> Self {
 		info!("Loading player data...");
-		match macroquad::file::load_string(path.to_str().expect("Could not get player data path as string")).await {
+		match crate::util::file::read_string(&path).await {
 			Ok(data) => PlayerData::from_string(&data),
 		    Err(err) => {
 				warn!("Could not open player data file at {:?} with error {}", path, err);
@@ -120,48 +118,26 @@ impl PersistantData for PlayerData {
 	}
 
 	fn save(&self) {
-		#[cfg(not(target_arch = "wasm32"))] {
+		// #[cfg(not(target_arch = "wasm32"))] {
 			info!("Saving player data...");
-			let path = PathBuf::from(SAVE_DIRECTORY);
-			if !path.exists() {
-				if let Err(err) = std::fs::create_dir_all(&path) {
-				    warn!("Could not create saves directory at {:?} with error {}", &path, err);
-				}
-			}
-
-			if !path.exists() {
-				return;
-			}
 			
-			let path = path.join(SAVE_FILENAME);
-			match File::create(&path) {
-			    Ok(mut file) => {
-					match serde_json::to_string_pretty(&self) {
-						Ok(encoded) => {
-							if let Err(err) = file.write(encoded.as_bytes()) {
-								warn!("Failed to encode player data with error: {}", err);
-							}
-						}
-						Err(e) => warn!("Failed to save player data with error: {}", e),
-					}
-				}
-			    Err(err) => warn!("Could not create player save file at {:?} with error {}", &path, err),
-			}
+			crate::util::file::save_struct(PathBuf::from(SAVE_DIRECTORY).join(SAVE_FILENAME), &self);
+
 			crate::gui::set_message(super::text::MessageSet::new(
 				1, 
 				super::text::color::TextColor::Black, 
 				vec![vec![String::from("Saved player data!")]]
 			));
 			info!("Saved player data!");
-		}
-		#[cfg(target_arch = "wasm32")]
-		{
-			crate::gui::set_message(super::text::MessageSet::new(
-				1, 
-				super::text::color::TextColor::Black, 
-				vec![vec![String::from("Cannot save player data"), String::from("on web browsers!")]]
-			));
-		}
+		// }
+		// #[cfg(target_arch = "wasm32")]
+		// {
+		// 	crate::gui::set_message(super::text::MessageSet::new(
+		// 		1, 
+		// 		super::text::color::TextColor::Black, 
+		// 		vec![vec![String::from("Cannot save player data"), String::from("on web browsers!")]]
+		// 	));
+		// }
 	}
 
 	// async fn reload(&mut self) {

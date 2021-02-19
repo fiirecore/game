@@ -1,19 +1,11 @@
 use parking_lot::{Mutex, RwLock};
 use ahash::AHashMap as HashMap;
-use quad_snd::mixer::{Sound, SoundId, SoundMixer, MixerInternal, Volume};
+use quad_snd::mixer::{Sound, SoundId, SoundMixer, Volume};
 
 use crate::audio::music::Music;
 
 lazy_static::lazy_static! {
-    pub static ref MIXER: Mutex<SoundMixer> = Mutex::new({
-        let mut driver = quad_snd::SoundDriver::new(Box::new(MixerInternal {
-            sample_rate: 22050.0,
-            volume: Volume(0.2),
-            ..Default::default()
-        }));
-        driver.start();
-        SoundMixer { driver, uid: 0 }
-    });
+    pub static ref MIXER: Mutex<SoundMixer> = Mutex::new(SoundMixer::new_ext(Volume(0.2)));
     pub static ref MUSIC_MAP: RwLock<HashMap<Music, Sound>> = RwLock::new(HashMap::new());
     static ref CURRENT_MUSIC: Mutex<Option<(Music, SoundId)>> = Mutex::new(None);
 }

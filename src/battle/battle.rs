@@ -109,10 +109,10 @@ impl Battle {
 
 	fn load_textures(&mut self) {
 		for i in &self.opponent_pokemon {
-			self.opponent_textures.push(pokemon_texture(&i.data.name.clone(), Side::Front));
+			self.opponent_textures.push(pokemon_texture(&i.data.name, Side::Front));
 		}
 		for i in &self.player_pokemon {
-			self.player_textures.push(pokemon_texture(&i.data.name.clone(), Side::Back));
+			self.player_textures.push(pokemon_texture(&i.data.name, Side::Back));
 		}
 	}
 

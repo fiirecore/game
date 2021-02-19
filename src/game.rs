@@ -24,7 +24,7 @@ pub struct GameManager {
 
 impl GameManager {
 
-    pub fn new() -> GameManager {
+    pub async fn new() -> GameManager {
 
 		
 
@@ -34,11 +34,11 @@ impl GameManager {
 
 		GameManager {
 			
-			world_manager: WorldManager::new(&get::<PlayerData>().expect("Could not get Player Data")),
+			world_manager: WorldManager::new(&get::<PlayerData>().expect("Could not get Player Data")).await,
 
 			battle_manager: BattleManager::new(),
 
-			pokedex: Pokedex::new(),
+			pokedex: Pokedex::new().await,
 
 			//player_data: data,
 
@@ -120,7 +120,7 @@ impl GameManager {
 			self.world_manager.input(delta);
 		} else {
 			self.battle_manager.input(delta);
-			// if context.finput.pressed(crate::util::input::Control::A) {
+			// if context.finput.pressed(crate::io::input::Control::A) {
 			// 	self.battle_intro_manager.despawn();
 			// 	self.battling = false;
 			// 	self.swapped = !self.swapped;

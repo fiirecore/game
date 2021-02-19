@@ -23,6 +23,7 @@ pub enum Music {
     Gym,
 
     EncounterBoy,
+    EncounterGirl,
 
     BattleWild, // 44.480
     BattleTrainer, // 1:41.870
@@ -39,19 +40,6 @@ impl Default for Music {
 
 impl Music {
 
-    pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
-        match self {
-            Music::IntroGamefreak => Some(include_bytes!("../../build/assets/music/gamefreak.ogg")),
-            Music::Title => Some(include_bytes!("../../build/assets/music/title.ogg")),
-            Music::Pallet => Some(include_bytes!("../../build/assets/music/pallet.ogg")),
-            Music::EncounterBoy => Some(include_bytes!("../../build/assets/music/encounter_boy.ogg")),
-            Music::BattleWild => Some(include_bytes!("../../build/assets/music/vs_wild.ogg")),
-            Music::BattleTrainer => Some(include_bytes!("../../build/assets/music/vs_trainer.ogg")),
-            Music::BattleGym => Some(include_bytes!("../../build/assets/music/vs_gym.ogg")),
-            _ => None,
-        }
-    }
-
     pub fn loop_start(&self) -> Option<f64> {
         match self {
             Music::BattleWild => Some(13.15),
@@ -62,6 +50,10 @@ impl Music {
     pub fn file_name(&self) -> &str {
         match self {
 
+            Music::IntroGamefreak => "gamefreak",
+            Music::Title => "title",
+
+            Music::Pallet => "pallet",
             Music::Pewter => "pewter",
             Music::Fuchsia => "fuchsia",
             Music::Lavender => "lavender",
@@ -78,8 +70,14 @@ impl Music {
             Music::ViridianForest => "viridian_forest",
             Music::MountMoon => "mt_moon",
 
-            _ => "no_name",
+            
+            Music::EncounterBoy => "encounter_boy",
+            Music::EncounterGirl => "encounter_girl",
 
+            Music::BattleWild => "vs_wild",
+            Music::BattleTrainer => "vs_trainer",
+            Music::BattleGym => "vs_gym",
+            
         }
     }
 

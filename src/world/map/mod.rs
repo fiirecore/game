@@ -1,11 +1,11 @@
 use ahash::AHashMap as HashMap;
 use macroquad::prelude::info;
 use crate::util::graphics::draw_rect;
-use crate::util::input;
+use crate::io::input;
 use crate::util::graphics::Texture;
 use crate::audio::music::Music;
 use crate::io::data::Direction;
-use crate::util::input::Control;
+use crate::io::input::Control;
 use crate::util::graphics::draw_flip;
 use crate::util::graphics::draw_o;
 use super::NpcTextures;

@@ -1,6 +1,6 @@
 pub fn pokemon_texture(name: &str, side: Side) -> crate::util::graphics::Texture {
     let path = std::path::PathBuf::from(super::DEX_DIR.join("textures/normal")).join(side.path()).join(name.to_lowercase() + ".png");
-    match crate::io::get_file(&path) {
+    match crate::io::get_file_noasync(&path) {
         Some(file) => {
             return crate::util::graphics::texture::byte_texture(&file);
         }

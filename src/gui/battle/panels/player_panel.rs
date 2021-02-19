@@ -2,7 +2,7 @@ use macroquad::prelude::warn;
 use crate::battle::battle_pokemon::BattlePokemon;
 use crate::gui::Focus;
 use crate::util::Input;
-use crate::util::input;
+use crate::io::input;
 
 
 use crate::util::graphics::Texture;
@@ -54,7 +54,7 @@ impl PlayerPanel {
     pub fn input(&mut self, delta: f32, battle: &mut Battle) {
         if self.battle_panel.in_focus() {
             self.battle_panel.input(delta);
-            if input::pressed(crate::util::input::Control::A) {
+            if input::pressed(crate::io::input::Control::A) {
                 match self.battle_panel.cursor_position {
                     0 => {
                         self.battle_panel.next = 1;
@@ -73,55 +73,18 @@ impl PlayerPanel {
             }        
         } else if self.fight_panel.in_focus() {
             self.fight_panel.input(delta);
-            if input::pressed(crate::util::input::Control::A) {
+            if input::pressed(crate::io::input::Control::A) {
                 self.fight_panel.disable();
 
                 battle.queue_player_move(self.fight_panel.cursor_position as usize);
                 battle.queue_opponent_move();
                 battle.pmove_queued = true;
                 battle.omove_queued = true;
-                //let strings = self.do_move(context, battle, self.fight_panel.cursor_position as usize);
-                
-                //if battle.player().base.speed > battle.opponent().base.speed {
-                //    self.battle_text.update_text(&battle.player().pokemon.data.name.to_uppercase(), &strings.0);
-                //    self.other_pokemon = battle.opponent().pokemon.data.name.to_uppercase();
-                //    self.other_move = strings.1;
-                //} else {
-                //    self.battle_text.update_text(&battle.opponent().pokemon.data.name.to_uppercase(), &strings.1);
-                //    self.other_pokemon = battle.player().pokemon.data.name.to_uppercase();
-                //    self.other_move = strings.0;
-                //}
                 
             }
-        }// else if self.battle_text.in_focus() {
-        //    self.battle_text.input(context, battle, player_pokemon_gui, opponent_pokemon_gui);
-        //}
+        }
     }
 
-    /*
-    fn do_move(&mut self, context: &mut GameContext, battle: &mut Battle, index: usize) -> (String, String) {
-        let str0;
-        let str1;
-
-        let opponent_move_num;
-        let opponent_move_size = battle.opponent().moves.len();
-
-        if opponent_move_size != 0 {
-            opponent_move_num = context.random.rand_range(0..opponent_move_size as u32) as usize;
-        } else {
-            opponent_move_num = 0;
-        }
-
-        if battle.player().base.speed > battle.opponent().base.speed {
-            str0 = battle.player_move(index);
-            str1 = battle.opponent_move(opponent_move_num);
-        } else {
-            str1 = battle.opponent_move(opponent_move_num);
-            str0 = battle.player_move(index);
-        }
-        (str0, str1)
-    }
-    */
 
     pub fn update_text(&mut self, instance: &BattlePokemon) {
         self.battle_panel.update_text(instance);

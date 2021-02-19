@@ -10,6 +10,8 @@
 	},
 	"trainer": {
 		"trainer_type": "Lass",
+		"encounter_music": "EncounterGirl",
+		"message_color": "Red",
 		"encounter_message": [
 				[
 					"Excuse me?",

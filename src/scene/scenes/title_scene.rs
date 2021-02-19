@@ -1,6 +1,6 @@
 use crate::audio::play_music;
 use crate::util::Load;
-use crate::util::input;
+use crate::io::input;
 use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::graphics::texture::byte_texture;
@@ -86,7 +86,7 @@ impl Scene for TitleScene {
 	
 	fn input(&mut self, _delta: f32) {
 		
-		if input::pressed(crate::util::input::Control::A) {
+		if input::pressed(crate::io::input::Control::A) {
 			if !self.next {
 				// music::play_sound(&Sound::CryCharizard, music::Repeat::Times(0), 0.05);
 				//self.end_time = Instant::now();

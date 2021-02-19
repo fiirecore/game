@@ -28,8 +28,8 @@ pub struct WarpDestination {
 
 impl WarpEntry {
 
-    pub fn new(file: PathBuf) -> Option<WarpEntry> {
-        match crate::io::get_file_as_string(&file) {
+    pub async fn new(file: PathBuf) -> Option<WarpEntry> {
+        match crate::io::get_file_as_string(&file).await {
             Some(data) => {
 
                 let warp_entry: Result<WarpEntry, toml::de::Error> = toml::from_str(&data);

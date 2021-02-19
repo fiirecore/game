@@ -11,7 +11,7 @@ pub static DEFAULT_ENCOUNTER_CHANCE: u8 = 21;
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct WildPokemonTable {
     pub encounter_ratio: u8,
-    pub table: Option<[WildPokemonEncounter; 12]>,
+    pub encounter: Option<[WildPokemonEncounter; 12]>,
 }
 
 impl WildPokemonTable {
@@ -21,8 +21,8 @@ impl WildPokemonTable {
     }
 
     pub fn generate(&self) -> PokemonInstance {
-        match self.table {
-            Some(table) => table[get_counter()].generate_saved(),
+        match self.encounter {
+            Some(encounter) => encounter[get_counter()].generate_saved(),
             None => return PokemonInstance::generate(
                 macroquad::rand::gen_range(0, crate::pokemon::pokedex::LENGTH) as PokemonId + 1, 
                 1, 
@@ -38,26 +38,27 @@ impl Default for WildPokemonTable {
     fn default() -> Self {
         Self {
             encounter_ratio: DEFAULT_ENCOUNTER_CHANCE,
-            table: None,
+            encounter: None,
         }
     }
 }
 
-pub fn get(encounter_type: &str, file: PathBuf) -> WildPokemonTable {
+pub async fn get(encounter_type: &str, file: PathBuf) -> WildPokemonTable {
 
     match encounter_type {
         "original" => {
-            return from_toml(file);
+            return from_toml(file).await;
         }
         _ => {
             return WildPokemonTable::default();
         }
     }
+
 }
 
-fn from_toml(file: PathBuf) -> WildPokemonTable {
+async fn from_toml(file: PathBuf) -> WildPokemonTable {
 
-    match crate::io::get_file_as_string(&file) {
+    match crate::io::get_file_as_string(&file).await {
         Some(content) => {
             match toml::from_str(&content) {
                 Ok(table) => return table,

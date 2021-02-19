@@ -1,10 +1,10 @@
 use crate::battle::battle_pokemon::BattlePokemon;
 use crate::gui::Focus;
-use crate::util::input::Control;
+use crate::io::input::Control;
 use crate::util::graphics::Texture;
 
 use crate::gui::GuiComponent;
-use crate::util::input;
+use crate::io::input;
 
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;

@@ -14,13 +14,13 @@ pub struct GameScene {
 
 impl GameScene {
 	
-	pub fn new() -> GameScene {
+	pub async fn new() -> GameScene {
 
 		GameScene {
 			
 			scene_token: 0,
 
-			game_manager: GameManager::new(),
+			game_manager: GameManager::new().await,
 
 		}
 

@@ -1,9 +1,9 @@
 use crate::gui::Focus;
 use crate::io::data::player::PlayerData;
 use crate::util::Input;
-use crate::util::input;
+use crate::io::input;
 use crate::util::graphics::Texture;
-use crate::util::input::Control;
+use crate::io::input::Control;
 
 use crate::gui::button::BasicButton;
 use crate::gui::GuiComponent;

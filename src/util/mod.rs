@@ -1,7 +1,6 @@
 pub mod graphics;
 pub mod text;
 pub mod timer;
-pub mod input;
 pub mod image;
 pub mod file;
 pub mod battle_data;

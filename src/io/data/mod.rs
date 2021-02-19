@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::util::input::Control;
+use crate::io::input::Control;
 
 pub mod configuration;
 pub mod map;

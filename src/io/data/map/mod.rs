@@ -9,11 +9,11 @@ pub mod v1;
 
 pub mod npc_texture;
 
-pub fn load_maps() -> (WorldChunkMap, WorldMapSetManager, TileTextures, NpcTextures) {
+pub async fn load_maps() -> (WorldChunkMap, WorldMapSetManager, TileTextures, NpcTextures) {
     let mut wcm = WorldChunkMap::default();
     let mut wmsm = WorldMapSetManager::default();
     let mut tt = TileTextures::new();
     let mut nt = NpcTextures::new();
-    v1::load_maps_v1(&mut wcm, &mut wmsm, &mut tt, &mut nt);
+    v1::load_maps_v1(&mut wcm, &mut wmsm, &mut tt, &mut nt).await;
     (wcm, wmsm, tt, nt)
 }

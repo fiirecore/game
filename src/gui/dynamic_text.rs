@@ -3,7 +3,7 @@ use crate::io::data::text::MessageSet;
 use crate::util::Completable;
 use crate::util::Reset;
 use crate::util::graphics::draw_text_left_color;
-use crate::util::input;
+use crate::io::input;
 
 use crate::entity::Entity;
 use crate::gui::GuiComponent;
@@ -210,7 +210,7 @@ impl crate::util::Input for DynamicText {
 
 	fn input(&mut self, _delta: f32) {
 		if self.can_continue && self.focus {
-			if input::pressed(crate::util::input::Control::A) && !self.current_message().no_pause {
+			if input::pressed(crate::io::input::Control::A) && !self.current_message().no_pause {
 				if self.current_phrase() + 1 == self.text.len() as u8 {
 					self.finish_click = true;
 				} else {

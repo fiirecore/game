@@ -1,5 +1,5 @@
 use crate::util::Load;
-use crate::util::input;
+use crate::io::input;
 use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::text_renderer::TextRenderer;
@@ -68,7 +68,7 @@ impl Scene for FirstTimeControlsScene {
 	}
 	
 	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
-		if input::pressed(crate::util::input::Control::A) { //ButtonActions::PRESSED {
+		if input::pressed(crate::io::input::Control::A) { //ButtonActions::PRESSED {
 			
 			self.scene_token = 8;
 		}
@@ -132,7 +132,7 @@ impl Scene for FirstTimeNarrativeScene {
 	}
 	
 	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
-		if input::pressed(crate::util::input::Control::A) { //ButtonActions::PRESSED {
+		if input::pressed(crate::io::input::Control::A) { //ButtonActions::PRESSED {
 			
 			self.scene_token = 6;
 		}

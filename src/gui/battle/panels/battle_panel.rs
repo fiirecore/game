@@ -2,12 +2,12 @@
 use crate::battle::battle_pokemon::BattlePokemon;
 use crate::gui::Focus;
 use crate::util::Input;
-use crate::util::input::Control;
+use crate::io::input::Control;
 use crate::gui::button::BasicButton;
 use crate::io::data::Direction;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
-use crate::util::input;
+use crate::io::input;
 use crate::gui::text::StaticText;
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;

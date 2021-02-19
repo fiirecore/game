@@ -2,6 +2,8 @@ use macroquad::prelude::FilterMode::Nearest;
 use macroquad::prelude::set_texture_filter;
 use super::Texture;
 
+// pub mod spritesheet;
+
 pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 	let path = path.as_ref();
 	let texture = macroquad::prelude::load_texture(path.to_str().expect("Could not unwrap path to string")).await;
@@ -28,5 +30,5 @@ pub fn image_texture(image: &macroquad::prelude::Image) -> Texture {
 // }
 
 pub fn debug_texture() -> Texture {
-	byte_texture(include_bytes!("../../../build/assets/missing_texture.png"))
+	byte_texture(include_bytes!("../../../../build/assets/missing_texture.png"))
 }

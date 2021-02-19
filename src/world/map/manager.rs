@@ -10,11 +10,11 @@ use macroquad::prelude::KeyCode;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
-use crate::util::input;
+use crate::io::input;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
 use crate::audio::music::Music;
 use crate::util::Render;
-use crate::util::input::Control;
+use crate::io::input::Control;
 use crate::entity::Entity;
 use crate::io::data::Direction;
 use crate::io::data::player::PlayerData;
@@ -46,11 +46,11 @@ pub struct WorldManager {
 
 impl WorldManager {
 
-    pub fn new(player_data: &PlayerData) -> Self {
+    pub async fn new(player_data: &PlayerData) -> Self {
         if let Some(message) = crate::gui::MESSAGE.lock().take() {
             info!("WorldManager cleared previous global message: {:?}", message);
         }
-        let stuff = crate::io::data::map::load_maps();
+        let stuff = crate::io::data::map::load_maps().await;
         let mut this = Self {
             chunk_map: stuff.0,
             map_sets: stuff.1,
