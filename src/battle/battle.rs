@@ -3,14 +3,12 @@ use crate::io::data::player::PlayerData;
 use crate::pokemon::moves::MoveCategory;
 use crate::pokemon::moves::PokemonMove;
 use crate::pokemon::party::PokemonParty;
-use crate::pokemon::pokedex::Pokedex;
 use crate::pokemon::pokedex::texture::Side;
 use crate::pokemon::pokedex::texture::pokemon_texture;
 use crate::util::graphics::Texture;
 use crate::entity::Entity;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
-use crate::gui::GuiComponent;
 use crate::util::graphics::draw_bottom;
 use super::battle_info::BattleType;
 use super::battle_pokemon::BattlePokemon;
@@ -78,7 +76,7 @@ impl Default for Battle {
 
 impl Battle {
 	
-	pub fn new(battle_type: BattleType, pokedex: &Pokedex, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Self {
+	pub fn new(battle_type: BattleType, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Self {
 		
 		let mut player_active = 0;
 
@@ -90,11 +88,11 @@ impl Battle {
 						player_active += 1;
 					}
 				}
-				BattlePokemon::new(pokedex, pokemon)
+				BattlePokemon::new(pokemon)
 			}
 			).collect(),
 			opponent_pokemon: opponent_pokemon.pokemon.iter().map(|pokemon| {
-				BattlePokemon::new(pokedex, pokemon)
+				BattlePokemon::new(pokemon)
 			}).collect(),
 			
 			player_active: player_active,
@@ -181,7 +179,7 @@ impl Battle {
 					battle_closer_manager.spawn();
 				}
 			}
-		} else if !(battle_gui.player_panel.battle_panel.is_active() || battle_gui.player_panel.fight_panel.is_active()) {
+		} else if !(battle_gui.player_panel.battle_panel.is_alive() || battle_gui.player_panel.fight_panel.is_alive()) {
 			//self.finished = false;
 			battle_gui.player_panel.start();
 		}

@@ -1,0 +1,64 @@
+[data]
+number = 300
+name = "Skitty"
+primary_type = "Normal"
+species = "Kitten"
+height = 6
+weight = 110
+[training]
+base_exp = 52
+growth_rate = "fast"
+[base]
+hp = 50
+atk = 45
+def = 45
+sp_atk = 35
+sp_def = 35
+speed = 50
+[[moves]]
+move_id = 3
+level = 15
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 38
+level = 39
+
+[[moves]]
+move_id = 39
+level = 3
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 47
+level = 13
+
+[[moves]]
+move_id = 185
+level = 27
+
+[[moves]]
+move_id = 204
+level = 25
+
+[[moves]]
+move_id = 213
+level = 7
+
+[[moves]]
+move_id = 215
+level = 37
+
+[[moves]]
+move_id = 274
+level = 19
+
+[[moves]]
+move_id = 343
+level = 31

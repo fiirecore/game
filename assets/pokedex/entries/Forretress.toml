@@ -1,0 +1,61 @@
+[data]
+number = 205
+name = "Forretress"
+primary_type = "Bug"
+secondary_type = "Steel"
+species = "Bagworm"
+height = 12
+weight = 1258
+[training]
+base_exp = 163
+growth_rate = "medium"
+[base]
+hp = 75
+atk = 90
+def = 140
+sp_atk = 60
+sp_def = 60
+speed = 40
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 15
+
+[[moves]]
+move_id = 38
+level = 59
+
+[[moves]]
+move_id = 117
+level = 29
+
+[[moves]]
+move_id = 120
+level = 1
+
+[[moves]]
+move_id = 120
+level = 8
+
+[[moves]]
+move_id = 153
+level = 39
+
+[[moves]]
+move_id = 182
+level = 1
+
+[[moves]]
+move_id = 191
+level = 49
+
+[[moves]]
+move_id = 192
+level = 31
+
+[[moves]]
+move_id = 229
+level = 22

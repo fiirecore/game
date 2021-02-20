@@ -1,0 +1,61 @@
+[data]
+number = 85
+name = "Dodrio"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Triple"
+height = 18
+weight = 852
+[training]
+base_exp = 165
+growth_rate = "medium"
+[base]
+hp = 60
+atk = 110
+def = 70
+sp_atk = 60
+sp_def = 60
+speed = 110
+[[moves]]
+move_id = 31
+level = 1
+
+[[moves]]
+move_id = 31
+level = 13
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 65
+level = 47
+
+[[moves]]
+move_id = 97
+level = 60
+
+[[moves]]
+move_id = 99
+level = 25
+
+[[moves]]
+move_id = 161
+level = 21
+
+[[moves]]
+move_id = 228
+level = 1
+
+[[moves]]
+move_id = 228
+level = 9
+
+[[moves]]
+move_id = 253
+level = 38

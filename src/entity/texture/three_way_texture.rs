@@ -1,4 +1,4 @@
-use crate::io::data::Direction;
+use crate::util::Direction;
 use crate::util::graphics::Texture;
 
 use super::texture_manager::TextureManager;

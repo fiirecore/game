@@ -1,0 +1,49 @@
+[data]
+number = 177
+name = "Natu"
+primary_type = "Psychic"
+secondary_type = "Flying"
+species = "Tiny"
+height = 2
+weight = 20
+[training]
+base_exp = 64
+growth_rate = "medium"
+[base]
+hp = 40
+atk = 50
+def = 45
+sp_atk = 70
+sp_def = 45
+speed = 70
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 94
+level = 50
+
+[[moves]]
+move_id = 100
+level = 20
+
+[[moves]]
+move_id = 101
+level = 10
+
+[[moves]]
+move_id = 109
+level = 40
+
+[[moves]]
+move_id = 248
+level = 30
+
+[[moves]]
+move_id = 273
+level = 30

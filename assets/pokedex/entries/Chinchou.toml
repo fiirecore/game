@@ -1,0 +1,57 @@
+[data]
+number = 170
+name = "Chinchou"
+primary_type = "Water"
+secondary_type = "Electric"
+species = "Angler"
+height = 5
+weight = 120
+[training]
+base_exp = 66
+growth_rate = "slow"
+[base]
+hp = 75
+atk = 38
+def = 38
+sp_atk = 56
+sp_def = 56
+speed = 67
+[[moves]]
+move_id = 36
+level = 37
+
+[[moves]]
+move_id = 48
+level = 5
+
+[[moves]]
+move_id = 55
+level = 17
+
+[[moves]]
+move_id = 56
+level = 41
+
+[[moves]]
+move_id = 86
+level = 1
+
+[[moves]]
+move_id = 109
+level = 29
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 175
+level = 13
+
+[[moves]]
+move_id = 209
+level = 25
+
+[[moves]]
+move_id = 268
+level = 49

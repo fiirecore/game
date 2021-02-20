@@ -1,0 +1,56 @@
+[data]
+number = 314
+name = "Illumise"
+primary_type = "Bug"
+species = "Firefly"
+height = 6
+weight = 177
+[training]
+base_exp = 151
+growth_rate = "fast-then-very-slow"
+[base]
+hp = 65
+atk = 47
+def = 75
+sp_atk = 73
+sp_def = 85
+speed = 85
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 98
+level = 17
+
+[[moves]]
+move_id = 204
+level = 9
+
+[[moves]]
+move_id = 227
+level = 25
+
+[[moves]]
+move_id = 230
+level = 5
+
+[[moves]]
+move_id = 236
+level = 13
+
+[[moves]]
+move_id = 260
+level = 29
+
+[[moves]]
+move_id = 270
+level = 33
+
+[[moves]]
+move_id = 273
+level = 21
+
+[[moves]]
+move_id = 343
+level = 37

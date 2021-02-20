@@ -1,0 +1,69 @@
+[data]
+number = 94
+name = "Gengar"
+primary_type = "Ghost"
+secondary_type = "Poison"
+species = "Shadow"
+height = 15
+weight = 405
+[training]
+base_exp = 225
+growth_rate = "medium-slow"
+[base]
+hp = 60
+atk = 65
+def = 60
+sp_atk = 130
+sp_def = 75
+speed = 110
+[[moves]]
+move_id = 95
+level = 1
+
+[[moves]]
+move_id = 101
+level = 16
+
+[[moves]]
+move_id = 109
+level = 21
+
+[[moves]]
+move_id = 122
+level = 1
+
+[[moves]]
+move_id = 138
+level = 31
+
+[[moves]]
+move_id = 171
+level = 53
+
+[[moves]]
+move_id = 174
+level = 13
+
+[[moves]]
+move_id = 180
+level = 1
+
+[[moves]]
+move_id = 180
+level = 8
+
+[[moves]]
+move_id = 194
+level = 39
+
+[[moves]]
+move_id = 212
+level = 64
+
+[[moves]]
+move_id = 247
+level = 45
+
+[[moves]]
+move_id = 325
+level = 25

@@ -1,0 +1,77 @@
+[data]
+number = 305
+name = "Lairon"
+primary_type = "Steel"
+secondary_type = "Rock"
+species = "Iron"
+height = 9
+weight = 1200
+[training]
+base_exp = 151
+growth_rate = "slow"
+[base]
+hp = 60
+atk = 90
+def = 140
+sp_atk = 50
+sp_def = 50
+speed = 40
+[[moves]]
+move_id = 29
+level = 1
+
+[[moves]]
+move_id = 29
+level = 10
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 25
+
+[[moves]]
+move_id = 38
+level = 53
+
+[[moves]]
+move_id = 46
+level = 21
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 106
+level = 4
+
+[[moves]]
+move_id = 182
+level = 37
+
+[[moves]]
+move_id = 189
+level = 1
+
+[[moves]]
+move_id = 189
+level = 7
+
+[[moves]]
+move_id = 231
+level = 29
+
+[[moves]]
+move_id = 232
+level = 13
+
+[[moves]]
+move_id = 319
+level = 45
+
+[[moves]]
+move_id = 334
+level = 17

@@ -1,0 +1,40 @@
+[data]
+number = 173
+name = "Cleffa"
+primary_type = "Fairy"
+species = "Star"
+height = 3
+weight = 30
+[training]
+base_exp = 44
+growth_rate = "fast"
+[base]
+hp = 50
+atk = 25
+def = 28
+sp_atk = 45
+sp_def = 55
+speed = 15
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 47
+level = 8
+
+[[moves]]
+move_id = 186
+level = 13
+
+[[moves]]
+move_id = 204
+level = 1
+
+[[moves]]
+move_id = 227
+level = 4
+
+[[moves]]
+move_id = 345
+level = 17

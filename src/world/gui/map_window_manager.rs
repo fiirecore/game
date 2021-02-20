@@ -61,13 +61,13 @@ impl Entity for MapWindowManager {
     fn spawn(&mut self) {
         self.alive = true;
         self.reset();
-        self.text.enable();
+        self.text.spawn();
         self.text.focus();
     }
 
     fn despawn(&mut self) {
         self.alive = false;
-        self.text.disable();
+        self.text.despawn();
     }
 
     fn is_alive(&self) -> bool {

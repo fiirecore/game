@@ -1,0 +1,57 @@
+[data]
+number = 203
+name = "Girafarig"
+primary_type = "Normal"
+secondary_type = "Psychic"
+species = "Long"
+height = 15
+weight = 415
+[training]
+base_exp = 159
+growth_rate = "medium"
+[base]
+hp = 70
+atk = 80
+def = 65
+sp_atk = 90
+sp_def = 65
+speed = 85
+[[moves]]
+move_id = 23
+level = 19
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 60
+level = 43
+
+[[moves]]
+move_id = 93
+level = 13
+
+[[moves]]
+move_id = 97
+level = 31
+
+[[moves]]
+move_id = 226
+level = 37
+
+[[moves]]
+move_id = 242
+level = 49
+
+[[moves]]
+move_id = 310
+level = 7
+
+[[moves]]
+move_id = 316
+level = 25

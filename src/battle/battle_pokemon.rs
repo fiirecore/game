@@ -33,7 +33,9 @@ impl BattlePokemon {
 		return self.current_hp == 0;
 	}
 
-	pub fn new(pokedex: &Pokedex, pokemon: &PokemonInstance) -> Self {
+	pub fn new(pokemon: &PokemonInstance) -> Self {
+
+		let pokedex = crate::pokemon::pokedex();
 
 		let pokemon_data = pokedex.pokemon_from_id(pokemon.id);
 

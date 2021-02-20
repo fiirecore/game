@@ -1,0 +1,25 @@
+[data]
+number = 13
+name = "Weedle"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Hairy"
+height = 3
+weight = 32
+[training]
+base_exp = 39
+growth_rate = "medium"
+[base]
+hp = 40
+atk = 35
+def = 30
+sp_atk = 20
+sp_def = 20
+speed = 50
+[[moves]]
+move_id = 40
+level = 1
+
+[[moves]]
+move_id = 81
+level = 1

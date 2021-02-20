@@ -1,0 +1,48 @@
+[data]
+number = 223
+name = "Remoraid"
+primary_type = "Water"
+species = "Jet"
+height = 6
+weight = 120
+[training]
+base_exp = 60
+growth_rate = "medium"
+[base]
+hp = 35
+atk = 65
+def = 35
+sp_atk = 65
+sp_def = 35
+speed = 65
+[[moves]]
+move_id = 55
+level = 1
+
+[[moves]]
+move_id = 58
+level = 44
+
+[[moves]]
+move_id = 60
+level = 22
+
+[[moves]]
+move_id = 61
+level = 22
+
+[[moves]]
+move_id = 62
+level = 22
+
+[[moves]]
+move_id = 63
+level = 55
+
+[[moves]]
+move_id = 116
+level = 33
+
+[[moves]]
+move_id = 199
+level = 11

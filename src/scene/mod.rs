@@ -1,23 +1,11 @@
-use crate::util::Load;
-
-
 pub mod scene_manager;
-pub mod scenes {
-	pub mod first_scene;
-	// pub mod character_creation_scene;
-	// pub mod firsttime_scenes;
-	pub mod game_scene;
-	pub mod loading_scenes;
-	pub mod main_menu_scene;
-	pub mod title_scene;
-}
-
 pub mod loading_scene_manager;
 
-pub static TITLE_SCENE: usize = 0;
-pub static GAME_SCENE: usize = 2;
+pub mod scenes;
 
-pub trait Scene: Load {
+pub trait Scene {
+
+	fn on_start(&mut self);
 	
 	fn update(&mut self, delta: f32);
 	
@@ -27,25 +15,8 @@ pub trait Scene: Load {
 	
 	fn quit(&mut self);
 	
-	fn name(&self) -> &str;
+	// fn name(&self) -> &str;
 	
-	fn next_scene(&self) -> usize;
+	fn next_scene(&self) -> Option<scenes::Scenes>;
 	
 }
-
-pub trait LoadingScene {
-
-	fn update(&mut self, delta: f32);
-
-	fn render(&self);
-
-}
-
-// #[async_trait::async_trait]
-// pub trait SceneLoad {
-
-// 	fn load(&mut self);
-
-// 	fn on_start(&mut self);
-
-// }

@@ -10,13 +10,13 @@ use super::pokemon_gui::PokemonGui;
 
 pub fn pmove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
     if battle.pmove_queued {
-        if battle_gui.battle_text.is_active() {
+        if battle_gui.battle_text.is_alive() {
             if battle_gui.battle_text.can_continue {
                 if !battle_gui.opponent_pokemon_gui.health_bar.is_moving()
                     && battle_gui.battle_text.timer.is_finished()
                 {
                     battle.pmove_queued = false;
-                    battle_gui.battle_text.disable();
+                    battle_gui.battle_text.despawn();
 
                     if battle.opponent().faint() {
                         battle.faint_queued = true;
@@ -33,7 +33,7 @@ pub fn pmove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             }
         } else {
             battle.player_move();
-            battle_gui.battle_text.enable();
+            battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
                 .update_text(&battle.player().data.name, &battle.player_move.name);
@@ -47,13 +47,13 @@ pub fn pmove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
 
 pub fn omove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
     if battle.omove_queued {
-        if battle_gui.battle_text.is_active() {
+        if battle_gui.battle_text.is_alive() {
             if battle_gui.battle_text.can_continue {
                 if !battle_gui.player_pokemon_gui.health_bar.is_moving()
                     && battle_gui.battle_text.timer.is_finished()
                 {
                     battle.omove_queued = false;
-                    battle_gui.battle_text.disable();
+                    battle_gui.battle_text.despawn();
 
                     if battle.player().faint() {
                         battle.faint_queued = true;
@@ -69,7 +69,7 @@ pub fn omove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             }
         } else {
             battle.opponent_move();
-            battle_gui.battle_text.enable();
+            battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
                 .update_text(&battle.opponent().data.name, &battle.opponent_move.name);
@@ -83,10 +83,10 @@ pub fn omove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
 
 fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
     if battle.player().faint() {
-        if battle_gui.battle_text.is_active() {
+        if battle_gui.battle_text.is_alive() {
             if battle_gui.battle_text.can_continue {
                 if battle_gui.battle_text.timer.is_finished() {
-                    battle_gui.battle_text.disable();
+                    battle_gui.battle_text.despawn();
                     battle.faint_queued = false;
                     battle.faint = true;
                 } else if !battle_gui.battle_text.timer.is_alive() {
@@ -95,17 +95,17 @@ fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
                 battle_gui.battle_text.timer.update(delta);
             }
         } else {
-            battle_gui.battle_text.enable();
+            battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
                 .update_faint(&battle.player().data.name);
         }
     } else {
-        if battle_gui.battle_text.is_active() {
+        if battle_gui.battle_text.is_alive() {
             if battle_gui.battle_text.can_continue {
                 if battle_gui.battle_text.timer.is_finished() {
                     battle.faint_queued = false;
-                    battle_gui.battle_text.disable();
+                    battle_gui.battle_text.despawn();
                     battle.faint = true;
                 } else if !battle_gui.battle_text.timer.is_alive() {
                     battle_gui.battle_text.timer.spawn();
@@ -113,7 +113,7 @@ fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
                 battle_gui.battle_text.timer.update(delta);
             }
         } else {
-            battle_gui.battle_text.enable();
+            battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
                 .update_faint(&battle.opponent().data.name);
@@ -181,22 +181,8 @@ impl BattleText {
 
 impl GuiComponent for BattleText {
 
-    fn enable(&mut self) {
-        self.alive = true;
-        self.reset();
-    }
-
-    fn disable(&mut self) {
-        self.alive = false;
-        self.timer.despawn();
-    }
-
-    fn is_active(&self) -> bool {
-        self.alive
-    }
-
     fn update(&mut self, delta: f32) {
-        if self.is_active() {
+        if self.is_alive() {
             if !self.can_continue {
                 let line_len = self.get_line(self.current_line).len() as u16 * 4;
                 if self.counter <= line_len as f32 {
@@ -213,7 +199,7 @@ impl GuiComponent for BattleText {
     }
 
     fn render(&self) {
-        if self.is_active() {
+        if self.is_alive() {
             let mut string = String::new();
             let mut count = 0;
             
@@ -252,4 +238,22 @@ impl GuiText for BattleText {
     fn get_font_id(&self) -> usize {
         self.font_id
     }
+}
+
+impl Entity for BattleText {
+
+    fn spawn(&mut self) {
+        self.alive = true;
+        self.reset();
+    }
+
+    fn despawn(&mut self) {
+        self.alive = false;
+        self.timer.despawn();
+    }
+
+    fn is_alive(&self) -> bool {
+        self.alive
+    }
+
 }

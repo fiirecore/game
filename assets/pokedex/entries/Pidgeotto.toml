@@ -1,0 +1,61 @@
+[data]
+number = 17
+name = "Pidgeotto"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Bird"
+height = 11
+weight = 300
+[training]
+base_exp = 122
+growth_rate = "medium-slow"
+[base]
+hp = 63
+atk = 60
+def = 55
+sp_atk = 50
+sp_def = 50
+speed = 71
+[[moves]]
+move_id = 16
+level = 1
+
+[[moves]]
+move_id = 16
+level = 9
+
+[[moves]]
+move_id = 17
+level = 27
+
+[[moves]]
+move_id = 18
+level = 20
+
+[[moves]]
+move_id = 28
+level = 1
+
+[[moves]]
+move_id = 28
+level = 5
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 97
+level = 43
+
+[[moves]]
+move_id = 98
+level = 13
+
+[[moves]]
+move_id = 119
+level = 52
+
+[[moves]]
+move_id = 297
+level = 34

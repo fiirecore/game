@@ -1,5 +1,3 @@
-use crate::util::Load;
-
 use super::Scene;
 use super::scenes::loading_scenes::*;
 
@@ -41,23 +39,23 @@ impl LoadingSceneManager {
             match self.current_scene {
                 0 => {
                     self.copyright.update(delta);
-                    if self.copyright.next_scene() != 0 {
-                        self.current_scene = self.copyright.next_scene();
+                    if self.copyright.next_scene().is_some() {
+                        self.current_scene += 1;
                         self.gamefreak.on_start();
                     }
                 },
 
                 1 => {
                     self.gamefreak.update(delta);
-                    if self.gamefreak.next_scene() != 0 {
-                        self.current_scene = self.gamefreak.next_scene();
+                    if self.gamefreak.next_scene().is_some() {
+                        self.current_scene += 1;
                         self.pokemon.on_start();
                     }
                 },
                 2 => {
                     self.pokemon.update(delta);
-                    if self.pokemon.next_scene() != 0 {
-                        self.current_scene = self.pokemon.next_scene();
+                    if self.pokemon.next_scene().is_some() {
+                        self.current_scene += 1;
                     }
                 },
                 _ => self.finish(),

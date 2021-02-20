@@ -138,11 +138,11 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &HashMap<u8, u16>) -> u16 { /
 
 // Map conversion utility
 
-pub async fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> HashMap<u8, u16> {
+pub fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> HashMap<u8, u16> {
 	let mut sizes: HashMap<u8, u16> = HashMap::new();
 
 	for filepath in crate::io::get_dir("world/textures") {
-		match crate::io::get_file(&filepath).await {
+		match crate::io::get_file(&filepath) {
 		    Some(file) => {
 				let filename = filepath.file_name().unwrap().to_string_lossy();
 				if filename.starts_with("P") {

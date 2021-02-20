@@ -1,78 +1,82 @@
 
 use crate::entity::Entity;
-use crate::util::{Update, Render};
 use crate::battle::transitions::BattleCloser;
-use crate::battle::transitions::BattleTransitionManager;
+use crate::battle::transitions::BattleTransition;
 use crate::battle::transitions::closers::basic_battle_closer::BasicBattleCloser;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 
 #[derive(Default)]
 pub struct BattleCloserManager {
     
     alive: bool,
 
-    pub closers: Vec<Box<dyn BattleCloser>>,
-    pub current_closer_id: usize,
+    current_closer: Closers,
+    basic: BasicBattleCloser,
 
+}
+
+pub enum Closers {
+
+    Basic,
+
+}
+
+impl Default for Closers {
+    fn default() -> Self {
+        Self::Basic
+    }
 }
 
 impl BattleCloserManager { // return player data
 
-    pub fn load_closers(&mut self) {
-        self.closers.push(Box::new(BasicBattleCloser::new()));
+    fn get(&self) -> &dyn BattleCloser {
+        match self.current_closer {
+            Closers::Basic => &self.basic,
+        }
     }
 
-    pub fn world_active(&self) -> bool {
-        self.closers[self.current_closer_id].world_active()
-    }
-
-}
-
-impl Update for BattleCloserManager {
-
-    fn update(&mut self, delta: f32) {
-        if self.is_alive() {
-            self.closers[self.current_closer_id].update(delta);
+    fn get_mut(&mut self) -> &mut dyn BattleCloser {
+        match self.current_closer {
+            Closers::Basic => &mut self.basic,
         }
     }
 
 }
 
-impl Render for BattleCloserManager {
+impl BattleTransition for BattleCloserManager {
+
+    fn on_start(&mut self) {
+        self.get_mut().on_start();
+    }
+
+    fn update(&mut self, delta: f32) {
+        self.get_mut().update(delta);
+    }
 
     fn render(&self) {
-        self.closers[self.current_closer_id].render();
+        self.get().render();
     }
 
 }
 
-impl BattleTransitionManager for BattleCloserManager {}
+impl BattleCloser for BattleCloserManager {
+    fn world_active(&self) -> bool {
+        self.get().world_active()
+    }
+}
 
 impl Reset for BattleCloserManager {
     
     fn reset(&mut self) {
-        self.closers[self.current_closer_id].reset();
+        self.get_mut().reset();
     }
     
-}
-
-impl Load for BattleCloserManager {
-
-    fn load(&mut self) {
-        self.closers[self.current_closer_id].load();
-    }
-
-    fn on_start(&mut self) {
-        self.closers[self.current_closer_id].on_start();
-    }
-
 }
 
 impl Completable for BattleCloserManager {
 
     fn is_finished(&self) -> bool {
-        return self.closers[self.current_closer_id].is_finished();
+        return self.get().is_finished();
     }
 
 }
@@ -81,13 +85,13 @@ impl Entity for BattleCloserManager {
 
     fn spawn(&mut self) {
         self.alive = true;
-        self.closers[self.current_closer_id].spawn();
+        self.get_mut().spawn();
         self.reset();
     }    
 
     fn despawn(&mut self) {
         self.alive = false;
-        self.closers[self.current_closer_id].despawn();
+        self.get_mut().despawn();
         self.reset();
     }
 

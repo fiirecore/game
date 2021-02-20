@@ -1,17 +1,14 @@
 use macroquad::prelude::info;
-use crate::pokemon::pokedex::Pokedex;
 use crate::util::Reset;
 use crate::util::battle_data::BattleData;
-use crate::util::{Update, Render};
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;
-use crate::util::Load;
 use crate::io::data::player::PlayerData;
-
 use super::battle::Battle;
-
+use super::transitions::BattleCloser;
+use super::transitions::BattleOpener;
+use super::transitions::BattleTransition;
 use crate::entity::Entity;
-
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 use super::transitions::managers::battle_screen_transition_manager::BattleScreenTransitionManager;
 use super::transitions::managers::battle_opener_manager::BattleOpenerManager;
@@ -58,21 +55,6 @@ impl BattleManager {
 
 }
 
-impl Load for BattleManager {
-
-	fn load(&mut self) {
-
-		self.battle_screen_transition_manager.load();
-		self.battle_screen_transition_manager.load_transitions();
-		self.battle_opener_manager.load_openers();
-		self.battle_closer_manager.load_closers();
-
-		self.battle_gui.load();
-
-	}
-
-}
-
 impl Completable for BattleManager {
 
 	fn is_finished(&self) -> bool {
@@ -93,23 +75,23 @@ impl Reset for BattleManager {
 
 impl BattleManager {
 
-	pub fn on_start(&mut self, pokedex: &Pokedex, player_data: &PlayerData, battle_data: BattleData) { // add battle type parameter
+	pub fn on_start(&mut self, player_data: &PlayerData, battle_data: BattleData) { // add battle type parameter
 		self.finished = false;
 		self.battle_data = battle_data;
-		self.create_battle(player_data, pokedex);
+		self.create_battle(player_data);
 		self.reset();
-		self.battle_screen_transition_manager.on_start(&self.battle_data);
+		self.battle_screen_transition_manager.set_type(self.battle_data.battle_type);
 	}
 
-	pub fn create_battle(&mut self, player_data: &PlayerData, pokedex: &Pokedex) {
-		let battle = Battle::new(self.battle_data.battle_type, pokedex, &player_data.party, &self.battle_data.party);
+	pub fn create_battle(&mut self, player_data: &PlayerData) {
+		let battle = Battle::new(self.battle_data.battle_type, &player_data.party, &self.battle_data.party);
 		info!("Loading Battle: {}", battle);
 		self.current_battle = battle;
 		self.current_battle.load();
 		self.battle_gui.on_battle_start(&self.current_battle);
 	}
 
-	pub fn update(&mut self, delta: f32, player_data: &mut PlayerData) {
+	pub fn update(&mut self, delta: f32) {
 		
 		if self.battle_screen_transition_manager.is_alive() {
 			if self.battle_screen_transition_manager.is_finished() {
@@ -133,7 +115,6 @@ impl BattleManager {
 			if self.battle_closer_manager.is_finished() {
 				// self.battle_closer_manager.update_player(player_data);
 				self.battle_closer_manager.despawn();
-				self.current_battle.update_data(player_data);
 				self.finished = true;
 			} else {
 				self.battle_closer_manager.update(delta);

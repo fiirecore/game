@@ -1,0 +1,53 @@
+[data]
+number = 146
+name = "Moltres"
+primary_type = "Fire"
+secondary_type = "Flying"
+species = "Flame"
+height = 20
+weight = 600
+[training]
+base_exp = 261
+growth_rate = "slow"
+[base]
+hp = 90
+atk = 100
+def = 90
+sp_atk = 125
+sp_def = 85
+speed = 90
+[[moves]]
+move_id = 17
+level = 1
+
+[[moves]]
+move_id = 52
+level = 1
+
+[[moves]]
+move_id = 53
+level = 49
+
+[[moves]]
+move_id = 83
+level = 13
+
+[[moves]]
+move_id = 97
+level = 25
+
+[[moves]]
+move_id = 143
+level = 85
+
+[[moves]]
+move_id = 203
+level = 37
+
+[[moves]]
+move_id = 219
+level = 61
+
+[[moves]]
+move_id = 257
+level = 73

@@ -1,0 +1,56 @@
+[data]
+number = 210
+name = "Granbull"
+primary_type = "Fairy"
+species = "Fairy"
+height = 14
+weight = 487
+[training]
+base_exp = 158
+growth_rate = "fast"
+[base]
+hp = 90
+atk = 120
+def = 75
+sp_atk = 60
+sp_def = 60
+speed = 45
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 49
+
+[[moves]]
+move_id = 39
+level = 4
+
+[[moves]]
+move_id = 44
+level = 13
+
+[[moves]]
+move_id = 46
+level = 28
+
+[[moves]]
+move_id = 99
+level = 38
+
+[[moves]]
+move_id = 122
+level = 19
+
+[[moves]]
+move_id = 184
+level = 1
+
+[[moves]]
+move_id = 204
+level = 8
+
+[[moves]]
+move_id = 242
+level = 61

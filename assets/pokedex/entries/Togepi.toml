@@ -1,0 +1,64 @@
+[data]
+number = 175
+name = "Togepi"
+primary_type = "Fairy"
+species = "Spike"
+height = 3
+weight = 15
+[training]
+base_exp = 49
+growth_rate = "fast"
+[base]
+hp = 35
+atk = 20
+def = 65
+sp_atk = 40
+sp_def = 65
+speed = 20
+[[moves]]
+move_id = 38
+level = 37
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 118
+level = 4
+
+[[moves]]
+move_id = 186
+level = 9
+
+[[moves]]
+move_id = 204
+level = 1
+
+[[moves]]
+move_id = 219
+level = 33
+
+[[moves]]
+move_id = 226
+level = 41
+
+[[moves]]
+move_id = 227
+level = 17
+
+[[moves]]
+move_id = 246
+level = 21
+
+[[moves]]
+move_id = 266
+level = 25
+
+[[moves]]
+move_id = 273
+level = 29
+
+[[moves]]
+move_id = 281
+level = 13

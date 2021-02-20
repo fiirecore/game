@@ -1,0 +1,44 @@
+[data]
+number = 360
+name = "Wynaut"
+primary_type = "Psychic"
+species = "Bright"
+height = 6
+weight = 140
+[training]
+base_exp = 52
+growth_rate = "medium"
+[base]
+hp = 95
+atk = 23
+def = 48
+sp_atk = 23
+sp_def = 48
+speed = 23
+[[moves]]
+move_id = 68
+level = 15
+
+[[moves]]
+move_id = 150
+level = 1
+
+[[moves]]
+move_id = 194
+level = 15
+
+[[moves]]
+move_id = 204
+level = 1
+
+[[moves]]
+move_id = 219
+level = 15
+
+[[moves]]
+move_id = 227
+level = 1
+
+[[moves]]
+move_id = 243
+level = 15

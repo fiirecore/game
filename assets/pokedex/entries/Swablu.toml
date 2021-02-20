@@ -1,0 +1,61 @@
+[data]
+number = 333
+name = "Swablu"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Cotton"
+height = 4
+weight = 12
+[training]
+base_exp = 62
+growth_rate = "slow-then-very-fast"
+[base]
+hp = 45
+atk = 40
+def = 60
+sp_atk = 40
+sp_def = 75
+speed = 50
+[[moves]]
+move_id = 31
+level = 18
+
+[[moves]]
+move_id = 36
+level = 31
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 47
+level = 11
+
+[[moves]]
+move_id = 54
+level = 28
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 119
+level = 38
+
+[[moves]]
+move_id = 195
+level = 48
+
+[[moves]]
+move_id = 219
+level = 21
+
+[[moves]]
+move_id = 287
+level = 41
+
+[[moves]]
+move_id = 310
+level = 8

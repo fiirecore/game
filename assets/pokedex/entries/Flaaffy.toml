@@ -1,0 +1,48 @@
+[data]
+number = 180
+name = "Flaaffy"
+primary_type = "Electric"
+species = "Wool"
+height = 8
+weight = 133
+[training]
+base_exp = 128
+growth_rate = "medium-slow"
+[base]
+hp = 70
+atk = 55
+def = 55
+sp_atk = 80
+sp_def = 60
+speed = 45
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 84
+level = 1
+
+[[moves]]
+move_id = 84
+level = 9
+
+[[moves]]
+move_id = 86
+level = 18
+
+[[moves]]
+move_id = 87
+level = 45
+
+[[moves]]
+move_id = 113
+level = 36
+
+[[moves]]
+move_id = 178
+level = 27

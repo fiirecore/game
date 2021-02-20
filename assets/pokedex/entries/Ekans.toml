@@ -1,0 +1,60 @@
+[data]
+number = 23
+name = "Ekans"
+primary_type = "Poison"
+species = "Snake"
+height = 20
+weight = 69
+[training]
+base_exp = 58
+growth_rate = "medium"
+[base]
+hp = 35
+atk = 60
+def = 44
+sp_atk = 40
+sp_def = 54
+speed = 55
+[[moves]]
+move_id = 35
+level = 1
+
+[[moves]]
+move_id = 40
+level = 8
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 44
+level = 13
+
+[[moves]]
+move_id = 51
+level = 32
+
+[[moves]]
+move_id = 103
+level = 25
+
+[[moves]]
+move_id = 114
+level = 44
+
+[[moves]]
+move_id = 137
+level = 20
+
+[[moves]]
+move_id = 254
+level = 37
+
+[[moves]]
+move_id = 255
+level = 37
+
+[[moves]]
+move_id = 256
+level = 37

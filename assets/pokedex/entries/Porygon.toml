@@ -1,0 +1,60 @@
+[data]
+number = 137
+name = "Porygon"
+primary_type = "Normal"
+species = "Virtual"
+height = 8
+weight = 365
+[training]
+base_exp = 79
+growth_rate = "medium"
+[base]
+hp = 65
+atk = 60
+def = 70
+sp_atk = 85
+sp_def = 75
+speed = 40
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 60
+level = 12
+
+[[moves]]
+move_id = 97
+level = 9
+
+[[moves]]
+move_id = 105
+level = 20
+
+[[moves]]
+move_id = 159
+level = 24
+
+[[moves]]
+move_id = 160
+level = 1
+
+[[moves]]
+move_id = 161
+level = 36
+
+[[moves]]
+move_id = 176
+level = 1
+
+[[moves]]
+move_id = 192
+level = 48
+
+[[moves]]
+move_id = 199
+level = 32
+
+[[moves]]
+move_id = 278
+level = 44

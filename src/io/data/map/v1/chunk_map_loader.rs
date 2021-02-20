@@ -9,13 +9,13 @@ use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
 use super::map_serializable::MapConfig;
 
-pub async fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(u16, WorldChunk)> {
+pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> Option<(u16, WorldChunk)> {
     macroquad::prelude::debug!("Loading chunk map {}", &config.identifier.name);
     let map_path = root_path.join(&config.identifier.map_files[0]);
     match map_path.extension() {
         Some(ext) => {
             if ext.to_string_lossy().eq("map") {
-                match crate::io::get_file(&map_path).await {
+                match crate::io::get_file(&map_path) {
                     Some(map_file) => {
                         let mut gba_map = get_gba_map(map_file);
                         fix_tiles(&mut gba_map, palette_sizes);
@@ -38,9 +38,9 @@ pub async fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>
                                         border_blocks: gba_map.border_blocks,
                                         movement_map: gba_map.movement_map,
                                         
-                                        warps: super::load_warp_entries(root_path, None).await,
-                                        npcs: super::load_npc_entries(root_path, None).await,
-                                        wild: super::load_wild_entry(root_path, config.wild, None).await,
+                                        warps: super::load_warp_entries(root_path, None),
+                                        npcs: super::load_npc_entries(root_path, None),
+                                        wild: super::load_wild_entry(root_path, config.wild, None),
 
                                         ..Default::default()        
                                     },

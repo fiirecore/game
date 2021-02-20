@@ -1,0 +1,73 @@
+[data]
+number = 49
+name = "Venomoth"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Poison"
+height = 15
+weight = 125
+[training]
+base_exp = 158
+growth_rate = "medium"
+[base]
+hp = 70
+atk = 65
+def = 60
+sp_atk = 90
+sp_def = 75
+speed = 90
+[[moves]]
+move_id = 16
+level = 31
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 48
+level = 1
+
+[[moves]]
+move_id = 48
+level = 9
+
+[[moves]]
+move_id = 50
+level = 1
+
+[[moves]]
+move_id = 60
+level = 36
+
+[[moves]]
+move_id = 77
+level = 20
+
+[[moves]]
+move_id = 78
+level = 28
+
+[[moves]]
+move_id = 79
+level = 42
+
+[[moves]]
+move_id = 93
+level = 17
+
+[[moves]]
+move_id = 94
+level = 52
+
+[[moves]]
+move_id = 141
+level = 25
+
+[[moves]]
+move_id = 193
+level = 1
+
+[[moves]]
+move_id = 318
+level = 1

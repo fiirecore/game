@@ -1,0 +1,57 @@
+[data]
+number = 22
+name = "Fearow"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Beak"
+height = 12
+weight = 380
+[training]
+base_exp = 155
+growth_rate = "medium"
+[base]
+hp = 65
+atk = 90
+def = 65
+sp_atk = 61
+sp_def = 61
+speed = 100
+[[moves]]
+move_id = 31
+level = 1
+
+[[moves]]
+move_id = 31
+level = 13
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 43
+level = 7
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 65
+level = 40
+
+[[moves]]
+move_id = 97
+level = 47
+
+[[moves]]
+move_id = 119
+level = 32
+
+[[moves]]
+move_id = 228
+level = 26

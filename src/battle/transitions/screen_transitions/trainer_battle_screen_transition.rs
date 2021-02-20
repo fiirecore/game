@@ -3,11 +3,9 @@ use macroquad::prelude::draw_texture_ex;
 
 use crate::BASE_WIDTH;
 use crate::util::graphics::Texture;
-use crate::util::{Update, Render};
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::BattleTransition;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 
 use crate::entity::Entity;
 use crate::util::graphics::draw_rect;
@@ -26,14 +24,12 @@ pub struct TrainerBattleScreenTransition {
 impl TrainerBattleScreenTransition { // To - do: Two grey flashes before rectangles scroll through screen
 
     pub fn new() -> Self {
-
         Self {
             active: false,
             finished: false,
             rect_width: -16.0,
             texture: crate::util::graphics::texture::byte_texture(include_bytes!("../../../../build/assets/battle/trainer_encounter_ball.png")),
         }
-
     }
 
     fn draw_lines(&self, y: f32, invert: bool) {
@@ -68,7 +64,28 @@ impl TrainerBattleScreenTransition { // To - do: Two grey flashes before rectang
 }
 
 impl BattleScreenTransition for TrainerBattleScreenTransition {}
-impl BattleTransition for TrainerBattleScreenTransition {}
+impl BattleTransition for TrainerBattleScreenTransition {
+
+    fn on_start(&mut self) {
+        
+    }
+
+    fn update(&mut self, delta: f32) {
+        self.rect_width += 240.0 * delta;
+        if self.rect_width >= BASE_WIDTH as f32 + 16.0 {
+            self.finished = true;
+        }
+    }
+
+    fn render(&self) {
+        self.draw_lines(0.0, false);
+        self.draw_lines(32.0, true);
+        self.draw_lines(64.0, false);
+        self.draw_lines(96.0, true);
+        self.draw_lines(128.0, false);
+    }
+
+}
 
 impl Reset for TrainerBattleScreenTransition {
 
@@ -79,46 +96,11 @@ impl Reset for TrainerBattleScreenTransition {
 
 }
 
-impl Load for TrainerBattleScreenTransition {
-
-    fn load(&mut self) {
-        
-    }
-
-    fn on_start(&mut self) {
-        
-    } 
-
-}
-
 impl Completable for TrainerBattleScreenTransition {
 
     fn is_finished(&self) -> bool {
         return self.finished;
     } 
-
-}
-
-impl Update for TrainerBattleScreenTransition {
-
-    fn update(&mut self, delta: f32) {
-        self.rect_width += 240.0 * delta;
-        if self.rect_width >= BASE_WIDTH as f32 + 16.0 {
-            self.finished = true;
-        }
-    }
-
-}
-
-impl Render for TrainerBattleScreenTransition {
-
-    fn render(&self) {
-        self.draw_lines(0.0, false);
-        self.draw_lines(32.0, true);
-        self.draw_lines(64.0, false);
-        self.draw_lines(96.0, true);
-        self.draw_lines(128.0, false);
-    }
 
 }
 

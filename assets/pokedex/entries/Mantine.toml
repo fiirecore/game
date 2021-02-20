@@ -1,0 +1,53 @@
+[data]
+number = 226
+name = "Mantine"
+primary_type = "Water"
+secondary_type = "Flying"
+species = "Kite"
+height = 21
+weight = 2200
+[training]
+base_exp = 170
+growth_rate = "slow"
+[base]
+hp = 85
+atk = 40
+def = 70
+sp_atk = 80
+sp_def = 140
+speed = 70
+[[moves]]
+move_id = 17
+level = 36
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 22
+
+[[moves]]
+move_id = 48
+level = 8
+
+[[moves]]
+move_id = 61
+level = 15
+
+[[moves]]
+move_id = 97
+level = 29
+
+[[moves]]
+move_id = 109
+level = 50
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 352
+level = 43

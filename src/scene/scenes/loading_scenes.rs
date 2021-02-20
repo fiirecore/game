@@ -1,17 +1,15 @@
-use crate::util::Load;
 use crate::util::graphics::draw_text_left;
 use crate::util::graphics::fade_in;
 use crate::io::input;
 use crate::util::graphics::Texture;
-
-//use async_trait::async_trait;
 use crate::scene::Scene;
 use crate::util::graphics::fade_in_out;
 use crate::util::graphics::draw_rect;
 use crate::util::graphics::texture::byte_texture;
+use super::Scenes;
 
 pub struct LoadingCopyrightScene {
-	scene_token: usize,
+	scene_token: Option<Scenes>,
 	accumulator: f32,
 	scene_texture: Texture,
 }
@@ -20,31 +18,25 @@ impl LoadingCopyrightScene {
 
 	pub fn new() -> Self {
 		Self {
+			scene_token: None,
 			scene_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/copyright.png")),
 			accumulator: 0.0,
-			scene_token: 0,
 		}
 	}
 	
 }
 
-impl Load for LoadingCopyrightScene {
-
-	fn load(&mut self) {}
+impl Scene for LoadingCopyrightScene {
 
 	fn on_start(&mut self) {
-		self.scene_token = 0;
+		self.scene_token = None;
 		self.accumulator = 0.0;
 	}
-
-}
-
-impl Scene for LoadingCopyrightScene {
 	
 	fn update(&mut self, delta: f32) {
 		self.accumulator += delta;
 		if self.accumulator > 4.0 {
-			self.scene_token = 1;
+			self.scene_token = Some(Scenes::TitleScene);
 		}
 	}
 	
@@ -60,17 +52,15 @@ impl Scene for LoadingCopyrightScene {
 		
 	}
 	
-	fn name(&self) -> &str {
-		&"Loading - Copyright"
+	fn next_scene(&self) -> Option<Scenes> {
+		self.scene_token
 	}
-	
-	fn next_scene(&self) -> usize {self.scene_token}
 	
 }
 
 pub struct LoadingGamefreakScene {
 	
-	scene_token: usize,
+	scene_token: Option<Scenes>,
 	accumulator: f32,
 	background_color: [f32; 4],
 	logo_texture: Texture,
@@ -84,7 +74,7 @@ impl LoadingGamefreakScene {
 
 		LoadingGamefreakScene {
 
-			scene_token: 0,
+			scene_token: None,
 			accumulator: 0.0,
 			background_color: [24.0/255.0, 40.0/255.0, 72.0/255.0, 1.0],
 			logo_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/logo.png")),
@@ -94,27 +84,18 @@ impl LoadingGamefreakScene {
 	
 }
 
-//#[async_trait]
-impl Load for LoadingGamefreakScene {
-
-	fn load(&mut self) {
-
-	}
+impl Scene for LoadingGamefreakScene {
 
 	fn on_start(&mut self) {
-		self.scene_token = 0;
+		self.scene_token = None;
 		crate::audio::play_music(crate::audio::music::Music::IntroGamefreak);
 		self.accumulator = 0.0;
 	}
-
-}
-
-impl Scene for LoadingGamefreakScene {
 	
 	fn update(&mut self, delta: f32) {
 		self.accumulator += delta;
 		if self.accumulator > 8.5 {
-			self.scene_token = 2;
+			self.scene_token = Some(Scenes::TitleScene);
 		}
 	}
 	
@@ -133,64 +114,51 @@ impl Scene for LoadingGamefreakScene {
 	
 	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
 		 if input::pressed(crate::io::input::Control::A) {
-			self.scene_token = 2;
+			self.scene_token = Some(Scenes::TitleScene);
 		 }
 	}
 	
 	fn quit(&mut self) {}
 	
-	fn name(&self) -> &str {
-		&"Loading - Gamefreak Intro"
+	fn next_scene(&self) -> Option<Scenes> {
+		self.scene_token
 	}
-	
-	fn next_scene(&self) -> usize {self.scene_token}
 	
 }
 
 pub struct LoadingPokemonScene {
-	scene_token: usize,
+	scene_token: Option<Scenes>,
 }
 
 impl LoadingPokemonScene {
 	pub fn new() -> LoadingPokemonScene {
 		LoadingPokemonScene {
-			scene_token: 0,
+			scene_token: None,
 		}
 	}
 
 }
 
-//#[async_trait]
-impl Load for LoadingPokemonScene {
-
-	fn load(&mut self) {}
+impl Scene for LoadingPokemonScene {
 
 	fn on_start(&mut self) {
-		self.scene_token = 3;
+		self.scene_token = Some(Scenes::TitleScene);
 	}
-	
-}
-
-impl Scene for LoadingPokemonScene {
 	
 	fn update(&mut self, _delta: f32) {}
 	   
-	fn render(&self) {
-		
-	}
+	fn render(&self) {}
 	
-	fn input(&mut self, _delta: f32) { //[ButtonActions; 6]) {
-		if input::pressed(crate::io::input::Control::B) {
-			self.scene_token = 4;
+	fn input(&mut self, _delta: f32) {
+		if input::pressed(crate::io::input::Control::A) {
+			self.scene_token = Some(Scenes::TitleScene);
 		}
 	}
 	
 	fn quit(&mut self) {}
 	
-	fn name(&self) -> &str {
-		&"Loading - Pokemon Intro"
+	fn next_scene(&self) -> Option<Scenes> {
+		self.scene_token
 	}
-	
-	fn next_scene(&self) -> usize {self.scene_token}
 	
 }

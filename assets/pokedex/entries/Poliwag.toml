@@ -1,0 +1,48 @@
+[data]
+number = 60
+name = "Poliwag"
+primary_type = "Water"
+species = "Tadpole"
+height = 6
+weight = 124
+[training]
+base_exp = 60
+growth_rate = "medium-slow"
+[base]
+hp = 40
+atk = 50
+def = 40
+sp_atk = 40
+sp_def = 40
+speed = 90
+[[moves]]
+move_id = 3
+level = 19
+
+[[moves]]
+move_id = 34
+level = 31
+
+[[moves]]
+move_id = 55
+level = 13
+
+[[moves]]
+move_id = 56
+level = 43
+
+[[moves]]
+move_id = 95
+level = 7
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 187
+level = 37
+
+[[moves]]
+move_id = 240
+level = 25

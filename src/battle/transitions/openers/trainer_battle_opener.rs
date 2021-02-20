@@ -1,11 +1,9 @@
 use crate::entity::Entity;
-use crate::util::{Update, Render};
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw_rect;
 use crate::util::timer::Timer;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 
 pub struct TrainerBattleOpener {
 
@@ -44,37 +42,11 @@ impl TrainerBattleOpener {
 
 }
 
-impl Reset for TrainerBattleOpener {
-
-    fn reset(&mut self) {
-        self.offset = OFFSET;
-        self.rect_size = RECT_SIZE;
-        self.shrink_by = 1;
-    }
-
-}
-
-impl Load for TrainerBattleOpener {
-
-    fn load(&mut self) {
-        
-    }
+impl BattleTransition for TrainerBattleOpener {
 
     fn on_start(&mut self) {
         self.start_timer.spawn();
     }
-
-}
-
-impl Completable for TrainerBattleOpener {
-
-    fn is_finished(&self) -> bool {
-        return self.finished;
-    }
-
-}
-
-impl Update for TrainerBattleOpener {
 
     fn update(&mut self, delta: f32) {
         if self.start_timer.is_finished() {
@@ -99,10 +71,6 @@ impl Update for TrainerBattleOpener {
         }
     }
 
-}
-
-impl Render for TrainerBattleOpener {
-
     fn render(&self) {
         draw_rect(
             [0.0, 0.0, 0.0, 1.0],
@@ -118,6 +86,24 @@ impl Render for TrainerBattleOpener {
             240,
             self.rect_size as u32,
         );
+    }
+
+}
+
+impl Reset for TrainerBattleOpener {
+
+    fn reset(&mut self) {
+        self.offset = OFFSET;
+        self.rect_size = RECT_SIZE;
+        self.shrink_by = 1;
+    }
+
+}
+
+impl Completable for TrainerBattleOpener {
+
+    fn is_finished(&self) -> bool {
+        return self.finished;
     }
 
 }
@@ -146,5 +132,3 @@ impl Entity for TrainerBattleOpener {
         return self.active;
     }
 }
-
-impl BattleTransition for TrainerBattleOpener {}

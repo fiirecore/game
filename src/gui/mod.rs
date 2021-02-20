@@ -20,15 +20,9 @@ pub fn set_message(message_set: MessageSet) {
 	*MESSAGE.lock() = Some(message_set);
 }
 
-pub trait GuiComponent {
+pub trait GuiComponent: crate::entity::Entity {
 
-	fn load(&mut self) {}
-
-	fn enable(&mut self);
-
-	fn disable(&mut self);
-
-	fn is_active(&self) -> bool;
+	fn on_start(&mut self) {}
 
 	fn update(&mut self, _delta: f32) {}
 

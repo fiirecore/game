@@ -1,0 +1,65 @@
+[data]
+number = 330
+name = "Flygon"
+primary_type = "Ground"
+secondary_type = "Dragon"
+species = "Mystic"
+height = 20
+weight = 820
+[training]
+base_exp = 234
+growth_rate = "medium-slow"
+[base]
+hp = 80
+atk = 100
+def = 80
+sp_atk = 80
+sp_def = 80
+speed = 100
+[[moves]]
+move_id = 28
+level = 1
+
+[[moves]]
+move_id = 28
+level = 9
+
+[[moves]]
+move_id = 44
+level = 1
+
+[[moves]]
+move_id = 63
+level = 65
+
+[[moves]]
+move_id = 103
+level = 41
+
+[[moves]]
+move_id = 185
+level = 1
+
+[[moves]]
+move_id = 185
+level = 17
+
+[[moves]]
+move_id = 201
+level = 53
+
+[[moves]]
+move_id = 225
+level = 35
+
+[[moves]]
+move_id = 242
+level = 33
+
+[[moves]]
+move_id = 328
+level = 1
+
+[[moves]]
+move_id = 328
+level = 25

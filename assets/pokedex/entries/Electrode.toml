@@ -1,0 +1,68 @@
+[data]
+number = 101
+name = "Electrode"
+primary_type = "Electric"
+species = "Ball"
+height = 12
+weight = 666
+[training]
+base_exp = 172
+growth_rate = "medium"
+[base]
+hp = 60
+atk = 50
+def = 70
+sp_atk = 80
+sp_def = 80
+speed = 150
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 49
+level = 1
+
+[[moves]]
+move_id = 49
+level = 15
+
+[[moves]]
+move_id = 103
+level = 1
+
+[[moves]]
+move_id = 103
+level = 8
+
+[[moves]]
+move_id = 113
+level = 41
+
+[[moves]]
+move_id = 120
+level = 27
+
+[[moves]]
+move_id = 129
+level = 48
+
+[[moves]]
+move_id = 153
+level = 54
+
+[[moves]]
+move_id = 205
+level = 34
+
+[[moves]]
+move_id = 209
+level = 21
+
+[[moves]]
+move_id = 243
+level = 59
+
+[[moves]]
+move_id = 268
+level = 1

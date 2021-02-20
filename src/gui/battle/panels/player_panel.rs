@@ -1,20 +1,14 @@
 use macroquad::prelude::warn;
 use crate::battle::battle_pokemon::BattlePokemon;
+use crate::entity::Entity;
 use crate::gui::Focus;
 use crate::util::Input;
 use crate::io::input;
-
-
 use crate::util::graphics::Texture;
-
 use crate::gui::GuiComponent;
-
 use crate::gui::battle::panels::battle_panel::BattlePanel;
 use crate::gui::battle::panels::fight_panel::FightPanel;
-
-//use crate::battle::battle_manager::BattleManager;
 use crate::battle::battle::Battle;
-
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;
 pub struct PlayerPanel {
@@ -74,7 +68,7 @@ impl PlayerPanel {
         } else if self.fight_panel.in_focus() {
             self.fight_panel.input(delta);
             if input::pressed(crate::io::input::Control::A) {
-                self.fight_panel.disable();
+                self.fight_panel.despawn();
 
                 battle.queue_player_move(self.fight_panel.cursor_position as usize);
                 battle.queue_opponent_move();
@@ -85,14 +79,13 @@ impl PlayerPanel {
         }
     }
 
-
     pub fn update_text(&mut self, instance: &BattlePokemon) {
         self.battle_panel.update_text(instance);
         self.fight_panel.update_names(instance);
     }
 
     pub fn start(&mut self) {
-        self.battle_panel.enable();
+        self.battle_panel.spawn();
         self.battle_panel.focus();
     }
 
@@ -100,38 +93,17 @@ impl PlayerPanel {
 
 impl GuiComponent for PlayerPanel {
 
-	fn enable(&mut self) {
-        self.alive = true;
-	}
-
-	fn disable(&mut self) {
-		self.alive = false;
-        
-        self.battle_panel.disable();
-        self.fight_panel.disable();
-	}
-
-	fn is_active(& self) -> bool {
-		self.alive
-	}
-
 	fn update(&mut self, delta: f32) {
-        if self.is_active() {
+        if self.is_alive() {
             if self.battle_panel.next == 1 {
-                self.battle_panel.disable();
-                self.fight_panel.enable();
+                self.battle_panel.despawn();
+                self.fight_panel.spawn();
                 self.fight_panel.focus();
             } else if self.fight_panel.next == 1 {
-                self.fight_panel.disable();
-                self.battle_panel.enable();
+                self.fight_panel.despawn();
+                self.battle_panel.spawn();
                 self.battle_panel.focus();
-            }/* else if self.battle_text.next() == 1 {
-                self.battle_text.update_text(&self.other_pokemon, &self.other_move);
-            } else if self.battle_text.next() == 2 {
-                self.battle_text.disable();
-                self.battle_panel.enable();
-                self.battle_panel.focus();
-            }*/
+            }
             
             if self.battle_panel.in_focus() {
                 self.battle_panel.update(delta);
@@ -143,7 +115,7 @@ impl GuiComponent for PlayerPanel {
 	}
 
 	fn render(&self) {
-		if self.is_active() {
+		if self.is_alive() {
 			draw(self.background, self.x as f32, self.y as f32);
             self.battle_panel.render();
             self.fight_panel.render();
@@ -151,8 +123,26 @@ impl GuiComponent for PlayerPanel {
 	}
 
 	fn update_position(&mut self, x: f32, y: f32) {
-        //self.intro_text.update_position(x, y);
         self.fight_panel.update_position(x, y);
+	}
+
+}
+
+impl Entity for PlayerPanel {
+
+	fn spawn(&mut self) {
+        self.alive = true;
+	}
+
+	fn despawn(&mut self) {
+		self.alive = false;
+        
+        self.battle_panel.despawn();
+        self.fight_panel.despawn();
+	}
+
+	fn is_alive(& self) -> bool {
+		self.alive
 	}
 
 }

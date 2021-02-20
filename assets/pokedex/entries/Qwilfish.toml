@@ -1,0 +1,61 @@
+[data]
+number = 211
+name = "Qwilfish"
+primary_type = "Water"
+secondary_type = "Poison"
+species = "Balloon"
+height = 5
+weight = 39
+[training]
+base_exp = 88
+growth_rate = "medium"
+[base]
+hp = 65
+atk = 95
+def = 85
+sp_atk = 55
+sp_def = 55
+speed = 85
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 33
+
+[[moves]]
+move_id = 40
+level = 1
+
+[[moves]]
+move_id = 42
+level = 21
+
+[[moves]]
+move_id = 55
+level = 13
+
+[[moves]]
+move_id = 56
+level = 37
+
+[[moves]]
+move_id = 106
+level = 9
+
+[[moves]]
+move_id = 107
+level = 9
+
+[[moves]]
+move_id = 191
+level = 1
+
+[[moves]]
+move_id = 194
+level = 45
+
+[[moves]]
+move_id = 279
+level = 25

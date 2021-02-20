@@ -19,11 +19,11 @@ pub mod entity;
 pub mod io;
 pub mod world;
 pub mod pokemon;
-pub mod game;
 pub mod battle;
 pub mod gui;
 
 pub static TITLE: &str = "Pokemon FireRed";
+pub static DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
 pub static AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;
@@ -80,13 +80,13 @@ async fn main() {
 
     info!("Loading assets...");
 
-    let mut scene_manager = SceneManager::default();
-    
     audio::bind_world_music().await;
     
     storage::store(io::data::player::PlayerData::load_from_file().await);
+    
+    let mut scene_manager = SceneManager::new();
 
-    scene_manager.load_other_scenes().await;
+    pokemon::load_pokedex();
 
     info!("Finished loading assets!");
 
@@ -112,9 +112,6 @@ async fn main() {
         #[cfg(target_arch = "wasm32")]
         crate::audio::quadsnd::context::music::MIXER.lock().frame();
 
-        // crate::io::input::controller::update_active_controls();
-    
-        // You can also use cached gamepad state
 
         scene_manager.input(get_frame_time());
         
@@ -152,10 +149,6 @@ pub fn queue_quit() {
 }
 
 fn settings() -> Conf {
-    // let config = Configuration::load_from_file();
-    // let scale = config.window_scale as u32;
-    //storage::store(config);
-
     Conf {
         window_title: TITLE.to_string(),
         window_width: (BASE_WIDTH * SCALE as u32) as _,

@@ -43,11 +43,11 @@ impl Default for WildPokemonTable {
     }
 }
 
-pub async fn get(encounter_type: &str, file: PathBuf) -> WildPokemonTable {
+pub fn get_table(encounter_type: &str, file: PathBuf) -> WildPokemonTable {
 
     match encounter_type {
         "original" => {
-            return from_toml(file).await;
+            return from_toml(file);
         }
         _ => {
             return WildPokemonTable::default();
@@ -56,10 +56,10 @@ pub async fn get(encounter_type: &str, file: PathBuf) -> WildPokemonTable {
 
 }
 
-async fn from_toml(file: PathBuf) -> WildPokemonTable {
+fn from_toml(file: PathBuf) -> WildPokemonTable {
 
-    match crate::io::get_file_as_string(&file).await {
-        Some(content) => {
+    match crate::io::get_file_as_string(&file) {
+        Ok(content) => {
             match toml::from_str(&content) {
                 Ok(table) => return table,
                 Err(err) => {
@@ -68,8 +68,8 @@ async fn from_toml(file: PathBuf) -> WildPokemonTable {
                 }
             }
         }
-        None => {
-            warn!("Could not find wild toml file!");
+        Err(err) => {
+            warn!("Could not find wild toml file at {:?} with error {}!", file, err);
             return WildPokemonTable::default();
         }
     }

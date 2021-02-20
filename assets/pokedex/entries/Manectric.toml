@@ -1,0 +1,72 @@
+[data]
+number = 310
+name = "Manectric"
+primary_type = "Electric"
+species = "Discharge"
+height = 15
+weight = 402
+[training]
+base_exp = 166
+growth_rate = "slow"
+[base]
+hp = 70
+atk = 75
+def = 60
+sp_atk = 105
+sp_def = 60
+speed = 105
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 43
+level = 9
+
+[[moves]]
+move_id = 44
+level = 39
+
+[[moves]]
+move_id = 46
+level = 31
+
+[[moves]]
+move_id = 86
+level = 1
+
+[[moves]]
+move_id = 86
+level = 4
+
+[[moves]]
+move_id = 87
+level = 45
+
+[[moves]]
+move_id = 98
+level = 17
+
+[[moves]]
+move_id = 209
+level = 20
+
+[[moves]]
+move_id = 268
+level = 53
+
+[[moves]]
+move_id = 316
+level = 25
+
+[[moves]]
+move_id = 336
+level = 1
+
+[[moves]]
+move_id = 336
+level = 12

@@ -1,0 +1,61 @@
+[data]
+number = 339
+name = "Barboach"
+primary_type = "Water"
+secondary_type = "Ground"
+species = "Whiskers"
+height = 4
+weight = 19
+[training]
+base_exp = 58
+growth_rate = "medium"
+[base]
+hp = 50
+atk = 48
+def = 43
+sp_atk = 46
+sp_def = 41
+speed = 60
+[[moves]]
+move_id = 55
+level = 11
+
+[[moves]]
+move_id = 89
+level = 31
+
+[[moves]]
+move_id = 90
+level = 41
+
+[[moves]]
+move_id = 133
+level = 21
+
+[[moves]]
+move_id = 156
+level = 26
+
+[[moves]]
+move_id = 173
+level = 26
+
+[[moves]]
+move_id = 189
+level = 1
+
+[[moves]]
+move_id = 222
+level = 16
+
+[[moves]]
+move_id = 248
+level = 36
+
+[[moves]]
+move_id = 300
+level = 6
+
+[[moves]]
+move_id = 346
+level = 6

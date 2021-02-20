@@ -1,0 +1,68 @@
+[data]
+number = 51
+name = "Dugtrio"
+primary_type = "Ground"
+species = "Mole"
+height = 7
+weight = 333
+[training]
+base_exp = 149
+growth_rate = "medium"
+[base]
+hp = 35
+atk = 100
+def = 50
+sp_atk = 50
+sp_def = 70
+speed = 120
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 28
+level = 1
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 45
+level = 5
+
+[[moves]]
+move_id = 89
+level = 51
+
+[[moves]]
+move_id = 90
+level = 64
+
+[[moves]]
+move_id = 91
+level = 17
+
+[[moves]]
+move_id = 154
+level = 21
+
+[[moves]]
+move_id = 161
+level = 1
+
+[[moves]]
+move_id = 163
+level = 38
+
+[[moves]]
+move_id = 189
+level = 25
+
+[[moves]]
+move_id = 222
+level = 9
+
+[[moves]]
+move_id = 328
+level = 26

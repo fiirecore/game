@@ -28,9 +28,9 @@ pub struct WarpDestination {
 
 impl WarpEntry {
 
-    pub async fn new(file: PathBuf) -> Option<WarpEntry> {
-        match crate::io::get_file_as_string(&file).await {
-            Some(data) => {
+    pub fn new(file: PathBuf) -> Option<WarpEntry> {
+        match crate::io::get_file_as_string(&file) {
+            Ok(data) => {
 
                 let warp_entry: Result<WarpEntry, toml::de::Error> = toml::from_str(&data);
 
@@ -45,8 +45,8 @@ impl WarpEntry {
                 }
 
             },
-            None => {
-                warn!("Could not read warp entry toml at {:?} to string", &file);
+            Err(err) => {
+                warn!("Could not read warp entry toml at {:?} to string with error {}", &file, err);
                 return None;
             }
         }

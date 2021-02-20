@@ -7,7 +7,7 @@ use crate::util::graphics::texture::image_texture;
 use crate::util::graphics::Texture;
 use crate::world::NpcTextures;
 
-pub async fn load_npc_textures(npc_textures: &mut NpcTextures) {
+pub fn load_npc_textures(npc_textures: &mut NpcTextures) {
     info!("Loading NPC textures...");
 
     //let files = ["idle_up.png", "idle_down.png", "idle_side.png"];
@@ -17,7 +17,7 @@ pub async fn load_npc_textures(npc_textures: &mut NpcTextures) {
         let filepath = std::path::Path::new(dir).join(&npc_type);
         let filepath = filepath.join(npc_type.clone() + ".png");
 
-        match crate::io::get_file(&filepath).await {
+        match crate::io::get_file(&filepath) {
             Some(file) => {
                 match crate::util::image::byte_image(&file) {
                     Ok(image) => match parse_image(image) {
@@ -69,7 +69,7 @@ fn idle_npc(image: Image) -> Option<ThreeWayTexture> {
 }
 
 pub fn battle_sprite(id: &str) -> Texture {
-    match crate::io::get_file_noasync(std::path::PathBuf::from("world/textures/npcs/").join(id).join("battle.png")) {
+    match crate::io::get_file(std::path::PathBuf::from("world/textures/npcs/").join(id).join("battle.png")) {
         Some(file) => {
             return crate::util::graphics::texture::byte_texture(&file);
         }

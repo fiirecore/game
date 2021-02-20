@@ -1,0 +1,61 @@
+[data]
+number = 47
+name = "Parasect"
+primary_type = "Bug"
+secondary_type = "Grass"
+species = "Mushroom"
+height = 10
+weight = 295
+[training]
+base_exp = 142
+growth_rate = "medium"
+[base]
+hp = 60
+atk = 95
+def = 80
+sp_atk = 60
+sp_def = 80
+speed = 30
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 74
+level = 43
+
+[[moves]]
+move_id = 77
+level = 1
+
+[[moves]]
+move_id = 77
+level = 13
+
+[[moves]]
+move_id = 78
+level = 1
+
+[[moves]]
+move_id = 78
+level = 7
+
+[[moves]]
+move_id = 141
+level = 19
+
+[[moves]]
+move_id = 147
+level = 27
+
+[[moves]]
+move_id = 163
+level = 35
+
+[[moves]]
+move_id = 202
+level = 51
+
+[[moves]]
+move_id = 312
+level = 59

@@ -1,0 +1,56 @@
+[data]
+number = 127
+name = "Pinsir"
+primary_type = "Bug"
+species = "Stag"
+height = 15
+weight = 550
+[training]
+base_exp = 175
+growth_rate = "slow"
+[base]
+hp = 65
+atk = 125
+def = 100
+sp_atk = 55
+sp_def = 70
+speed = 85
+[[moves]]
+move_id = 11
+level = 1
+
+[[moves]]
+move_id = 12
+level = 37
+
+[[moves]]
+move_id = 14
+level = 49
+
+[[moves]]
+move_id = 20
+level = 7
+
+[[moves]]
+move_id = 66
+level = 43
+
+[[moves]]
+move_id = 69
+level = 13
+
+[[moves]]
+move_id = 106
+level = 19
+
+[[moves]]
+move_id = 116
+level = 1
+
+[[moves]]
+move_id = 279
+level = 25
+
+[[moves]]
+move_id = 280
+level = 31

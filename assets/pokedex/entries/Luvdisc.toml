@@ -1,0 +1,52 @@
+[data]
+number = 370
+name = "Luvdisc"
+primary_type = "Water"
+species = "Rendezvous"
+height = 6
+weight = 87
+[training]
+base_exp = 116
+growth_rate = "fast"
+[base]
+hp = 43
+atk = 30
+def = 55
+sp_atk = 40
+sp_def = 65
+speed = 97
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 24
+
+[[moves]]
+move_id = 55
+level = 12
+
+[[moves]]
+move_id = 97
+level = 16
+
+[[moves]]
+move_id = 175
+level = 40
+
+[[moves]]
+move_id = 186
+level = 36
+
+[[moves]]
+move_id = 204
+level = 4
+
+[[moves]]
+move_id = 213
+level = 28
+
+[[moves]]
+move_id = 219
+level = 48

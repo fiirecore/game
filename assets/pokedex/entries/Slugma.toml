@@ -1,0 +1,52 @@
+[data]
+number = 218
+name = "Slugma"
+primary_type = "Fire"
+species = "Lava"
+height = 7
+weight = 350
+[training]
+base_exp = 50
+growth_rate = "medium"
+[base]
+hp = 40
+atk = 40
+def = 40
+sp_atk = 70
+sp_def = 40
+speed = 20
+[[moves]]
+move_id = 34
+level = 50
+
+[[moves]]
+move_id = 52
+level = 8
+
+[[moves]]
+move_id = 53
+level = 36
+
+[[moves]]
+move_id = 88
+level = 15
+
+[[moves]]
+move_id = 106
+level = 22
+
+[[moves]]
+move_id = 123
+level = 1
+
+[[moves]]
+move_id = 133
+level = 29
+
+[[moves]]
+move_id = 157
+level = 43
+
+[[moves]]
+move_id = 281
+level = 1

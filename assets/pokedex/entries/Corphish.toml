@@ -1,0 +1,64 @@
+[data]
+number = 341
+name = "Corphish"
+primary_type = "Water"
+species = "Ruffian"
+height = 6
+weight = 115
+[training]
+base_exp = 62
+growth_rate = "fast-then-very-slow"
+[base]
+hp = 43
+atk = 80
+def = 65
+sp_atk = 50
+sp_def = 35
+speed = 35
+[[moves]]
+move_id = 11
+level = 10
+
+[[moves]]
+move_id = 12
+level = 46
+
+[[moves]]
+move_id = 14
+level = 37
+
+[[moves]]
+move_id = 43
+level = 13
+
+[[moves]]
+move_id = 61
+level = 19
+
+[[moves]]
+move_id = 106
+level = 7
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 152
+level = 34
+
+[[moves]]
+move_id = 182
+level = 22
+
+[[moves]]
+move_id = 242
+level = 43
+
+[[moves]]
+move_id = 269
+level = 31
+
+[[moves]]
+move_id = 282
+level = 25

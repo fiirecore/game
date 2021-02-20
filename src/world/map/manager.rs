@@ -16,7 +16,7 @@ use crate::audio::music::Music;
 use crate::util::Render;
 use crate::io::input::Control;
 use crate::entity::Entity;
-use crate::io::data::Direction;
+use crate::util::Direction;
 use crate::io::data::player::PlayerData;
 use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
@@ -46,11 +46,12 @@ pub struct WorldManager {
 
 impl WorldManager {
 
-    pub async fn new(player_data: &PlayerData) -> Self {
+    pub fn new() -> Self {
+        let player_data = &macroquad::prelude::collections::storage::get::<PlayerData>().expect("Could not get Player Data");
         if let Some(message) = crate::gui::MESSAGE.lock().take() {
             info!("WorldManager cleared previous global message: {:?}", message);
         }
-        let stuff = crate::io::data::map::load_maps().await;
+        let stuff = crate::io::data::map::load_maps();
         let mut this = Self {
             chunk_map: stuff.0,
             map_sets: stuff.1,

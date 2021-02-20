@@ -4,7 +4,6 @@ use crate::io::data::text::Message;
 use crate::io::data::text::color::TextColor;
 use crate::util::Input;
 use crate::util::battle_data::TrainerData;
-use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
@@ -13,7 +12,6 @@ use crate::gui::battle::pokemon_gui::PokemonGui;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 
 use crate::gui::dynamic_text::DynamicText;
 use super::util::player_intro::PlayerBattleIntro;
@@ -50,32 +48,43 @@ impl BasicBattleIntroduction {
 
 }
 
-impl Reset for BasicBattleIntroduction {
-
-    fn reset(&mut self) {
-        self.intro_text.load();
-        self.player_intro.reset();
-        self.finished_panel = false;
-    }
-
-}
-
-impl Load for BasicBattleIntroduction {
-
-    fn load(&mut self) {
-        self.player_intro.load();
-    }
+impl BattleTransition for BasicBattleIntroduction {
 
     fn on_start(&mut self) {
-        self.player_intro.on_start();
+
     }
 
+    fn update(&mut self, delta: f32) {
+        self.intro_text.update(delta);
+        if self.intro_text.current_phrase() + 1 == self.intro_text.text.len() as u8 {
+            if !self.player_intro.is_finished() {
+                self.player_intro.update(delta);                
+            } else if self.intro_text.timer.is_finished() {
+                self.intro_text.despawn();
+                self.finished = true;
+            }
+        }
+	}
+
+    fn render(&self) {
+        self.intro_text.render();
+	}
+    
 }
 
 impl Completable for BasicBattleIntroduction {
 
     fn is_finished(&self) -> bool {
-        self.finished && !self.player_intro.should_update() && self.finished_panel
+        self.finished && self.player_intro.is_finished() && self.finished_panel
+    }
+
+}
+
+impl Reset for BasicBattleIntroduction {
+
+    fn reset(&mut self) {
+        self.player_intro.reset();
+        self.finished_panel = false;
     }
 
 }
@@ -85,41 +94,19 @@ impl Entity for BasicBattleIntroduction {
     fn spawn(&mut self) {
         self.alive = true;
         self.finished = false;
-        self.intro_text.enable();
+        self.intro_text.spawn();
         self.intro_text.focus();
     }
 
     fn despawn(&mut self) {
         self.alive = false;
         self.finished = false;
-        self.intro_text.disable();
+        self.intro_text.despawn();
     }
 
     fn is_alive(&self) -> bool {
         self.alive
     }
-}
-
-impl Update for BasicBattleIntroduction {
-
-    fn update(&mut self, delta: f32) {
-        self.intro_text.update(delta);
-        if self.intro_text.current_phrase() + 1 == self.intro_text.text.len() as u8 {
-            if self.player_intro.should_update() {
-                self.player_intro.update(delta);                
-            } else if self.intro_text.timer.is_finished() {
-                self.intro_text.disable();
-                self.finished = true;
-            }
-        }
-	}
-}
-
-impl Render for BasicBattleIntroduction {
-
-    fn render(&self) {
-        self.intro_text.render();
-	}
 
 }
 
@@ -131,14 +118,14 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
         self.intro_text.text = crate::io::data::text::MessageSet { messages: vec![
-            Message::with_color(vec![String::from("Wild ") + battle.opponent().data.name.to_uppercase().as_str() + " appeared!"], false, TextColor::White),
-            Message::with_color(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], true, TextColor::White),
+            Message::with_color(vec![String::from("Wild ") + battle.opponent().data.name.to_ascii_uppercase().as_str() + " appeared!"], false, TextColor::White),
+            Message::with_color(vec![String::from("Go! ") + battle.player().data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         ]};
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {
         draw_bottom(battle.opponent_textures[battle.opponent_active], 144.0 - offset, 74.0);
-        if self.player_intro.should_update() {
+        if !self.player_intro.is_finished() {
             self.player_intro.draw(offset);
         } else {
 		    draw_bottom(battle.player_textures[battle.player_active], 40.0 + offset, 113.0);
@@ -152,7 +139,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 battle_gui.opponent_pokemon_gui.spawn();
             }
         }
-        if !self.player_intro.should_update() && !battle_gui.player_pokemon_gui.is_alive() {
+        if self.player_intro.is_finished() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
         }
@@ -175,5 +162,3 @@ impl BattleIntroduction for BasicBattleIntroduction {
     }
 
 }
-
-impl BattleTransition for BasicBattleIntroduction {}

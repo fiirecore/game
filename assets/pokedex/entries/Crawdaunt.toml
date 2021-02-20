@@ -1,0 +1,77 @@
+[data]
+number = 342
+name = "Crawdaunt"
+primary_type = "Water"
+secondary_type = "Dark"
+species = "Rogue"
+height = 11
+weight = 328
+[training]
+base_exp = 164
+growth_rate = "fast-then-very-slow"
+[base]
+hp = 63
+atk = 120
+def = 85
+sp_atk = 90
+sp_def = 55
+speed = 55
+[[moves]]
+move_id = 11
+level = 1
+
+[[moves]]
+move_id = 11
+level = 10
+
+[[moves]]
+move_id = 12
+level = 56
+
+[[moves]]
+move_id = 14
+level = 43
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 43
+level = 13
+
+[[moves]]
+move_id = 61
+level = 19
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 106
+level = 7
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 152
+level = 38
+
+[[moves]]
+move_id = 182
+level = 22
+
+[[moves]]
+move_id = 242
+level = 51
+
+[[moves]]
+move_id = 269
+level = 33
+
+[[moves]]
+move_id = 282
+level = 25

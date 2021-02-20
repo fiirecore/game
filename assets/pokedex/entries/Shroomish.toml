@@ -1,0 +1,56 @@
+[data]
+number = 285
+name = "Shroomish"
+primary_type = "Grass"
+species = "Mushroom"
+height = 4
+weight = 45
+[training]
+base_exp = 59
+growth_rate = "fast-then-very-slow"
+[base]
+hp = 60
+atk = 40
+def = 60
+sp_atk = 40
+sp_def = 60
+speed = 35
+[[moves]]
+move_id = 29
+level = 22
+
+[[moves]]
+move_id = 33
+level = 4
+
+[[moves]]
+move_id = 71
+level = 1
+
+[[moves]]
+move_id = 72
+level = 16
+
+[[moves]]
+move_id = 73
+level = 10
+
+[[moves]]
+move_id = 74
+level = 36
+
+[[moves]]
+move_id = 77
+level = 28
+
+[[moves]]
+move_id = 78
+level = 7
+
+[[moves]]
+move_id = 147
+level = 54
+
+[[moves]]
+move_id = 202
+level = 45

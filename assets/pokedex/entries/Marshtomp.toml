@@ -1,0 +1,77 @@
+[data]
+number = 259
+name = "Marshtomp"
+primary_type = "Water"
+secondary_type = "Ground"
+species = "Mud"
+height = 7
+weight = 280
+[training]
+base_exp = 142
+growth_rate = "medium-slow"
+[base]
+hp = 70
+atk = 85
+def = 70
+sp_atk = 60
+sp_def = 70
+speed = 50
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 31
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 55
+level = 1
+
+[[moves]]
+move_id = 55
+level = 10
+
+[[moves]]
+move_id = 89
+level = 46
+
+[[moves]]
+move_id = 117
+level = 15
+
+[[moves]]
+move_id = 182
+level = 42
+
+[[moves]]
+move_id = 189
+level = 1
+
+[[moves]]
+move_id = 189
+level = 6
+
+[[moves]]
+move_id = 193
+level = 20
+
+[[moves]]
+move_id = 283
+level = 53
+
+[[moves]]
+move_id = 300
+level = 25
+
+[[moves]]
+move_id = 330
+level = 37
+
+[[moves]]
+move_id = 341
+level = 16

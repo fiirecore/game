@@ -1,0 +1,60 @@
+[data]
+number = 53
+name = "Persian"
+primary_type = "Normal"
+species = "Classy"
+height = 10
+weight = 320
+[training]
+base_exp = 154
+growth_rate = "medium"
+[base]
+hp = 65
+atk = 70
+def = 60
+sp_atk = 65
+sp_def = 65
+speed = 115
+[[moves]]
+move_id = 6
+level = 18
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 44
+level = 1
+
+[[moves]]
+move_id = 44
+level = 10
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 103
+level = 34
+
+[[moves]]
+move_id = 154
+level = 42
+
+[[moves]]
+move_id = 163
+level = 49
+
+[[moves]]
+move_id = 185
+level = 25
+
+[[moves]]
+move_id = 207
+level = 61
+
+[[moves]]
+move_id = 252
+level = 55

@@ -1,0 +1,69 @@
+[data]
+number = 75
+name = "Graveler"
+primary_type = "Rock"
+secondary_type = "Ground"
+species = "Rock"
+height = 10
+weight = 1050
+[training]
+base_exp = 137
+growth_rate = "medium-slow"
+[base]
+hp = 55
+atk = 95
+def = 115
+sp_atk = 45
+sp_def = 45
+speed = 35
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 38
+level = 62
+
+[[moves]]
+move_id = 88
+level = 1
+
+[[moves]]
+move_id = 88
+level = 11
+
+[[moves]]
+move_id = 89
+level = 45
+
+[[moves]]
+move_id = 111
+level = 1
+
+[[moves]]
+move_id = 120
+level = 21
+
+[[moves]]
+move_id = 153
+level = 53
+
+[[moves]]
+move_id = 205
+level = 29
+
+[[moves]]
+move_id = 222
+level = 16
+
+[[moves]]
+move_id = 300
+level = 1
+
+[[moves]]
+move_id = 300
+level = 6
+
+[[moves]]
+move_id = 350
+level = 37

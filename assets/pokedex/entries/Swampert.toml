@@ -1,0 +1,77 @@
+[data]
+number = 260
+name = "Swampert"
+primary_type = "Water"
+secondary_type = "Ground"
+species = "Mud"
+height = 15
+weight = 819
+[training]
+base_exp = 241
+growth_rate = "medium-slow"
+[base]
+hp = 100
+atk = 110
+def = 90
+sp_atk = 85
+sp_def = 90
+speed = 60
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 31
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 55
+level = 1
+
+[[moves]]
+move_id = 55
+level = 10
+
+[[moves]]
+move_id = 89
+level = 52
+
+[[moves]]
+move_id = 117
+level = 15
+
+[[moves]]
+move_id = 182
+level = 46
+
+[[moves]]
+move_id = 189
+level = 1
+
+[[moves]]
+move_id = 189
+level = 6
+
+[[moves]]
+move_id = 193
+level = 20
+
+[[moves]]
+move_id = 283
+level = 61
+
+[[moves]]
+move_id = 300
+level = 25
+
+[[moves]]
+move_id = 330
+level = 39
+
+[[moves]]
+move_id = 341
+level = 16

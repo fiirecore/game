@@ -1,0 +1,57 @@
+[data]
+number = 345
+name = "Lileep"
+primary_type = "Rock"
+secondary_type = "Grass"
+species = "Sea"
+height = 10
+weight = 238
+[training]
+base_exp = 71
+growth_rate = "slow-then-very-fast"
+[base]
+hp = 66
+atk = 41
+def = 77
+sp_atk = 61
+sp_def = 87
+speed = 23
+[[moves]]
+move_id = 51
+level = 15
+
+[[moves]]
+move_id = 109
+level = 29
+
+[[moves]]
+move_id = 132
+level = 8
+
+[[moves]]
+move_id = 133
+level = 36
+
+[[moves]]
+move_id = 246
+level = 43
+
+[[moves]]
+move_id = 254
+level = 50
+
+[[moves]]
+move_id = 255
+level = 50
+
+[[moves]]
+move_id = 256
+level = 50
+
+[[moves]]
+move_id = 275
+level = 22
+
+[[moves]]
+move_id = 310
+level = 1

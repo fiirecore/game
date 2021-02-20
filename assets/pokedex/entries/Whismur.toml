@@ -1,0 +1,60 @@
+[data]
+number = 293
+name = "Whismur"
+primary_type = "Normal"
+species = "Whisper"
+height = 6
+weight = 163
+[training]
+base_exp = 48
+growth_rate = "medium-slow"
+[base]
+hp = 64
+atk = 51
+def = 23
+sp_atk = 51
+sp_def = 23
+speed = 28
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 23
+level = 25
+
+[[moves]]
+move_id = 46
+level = 35
+
+[[moves]]
+move_id = 48
+level = 21
+
+[[moves]]
+move_id = 103
+level = 31
+
+[[moves]]
+move_id = 156
+level = 41
+
+[[moves]]
+move_id = 214
+level = 41
+
+[[moves]]
+move_id = 253
+level = 5
+
+[[moves]]
+move_id = 304
+level = 45
+
+[[moves]]
+move_id = 310
+level = 11
+
+[[moves]]
+move_id = 336
+level = 15

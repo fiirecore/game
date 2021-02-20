@@ -1,0 +1,24 @@
+[data]
+number = 268
+name = "Cascoon"
+primary_type = "Bug"
+species = "Cocoon"
+height = 7
+weight = 115
+[training]
+base_exp = 72
+growth_rate = "medium"
+[base]
+hp = 50
+atk = 35
+def = 55
+sp_atk = 25
+sp_def = 25
+speed = 15
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 106
+level = 7

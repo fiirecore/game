@@ -1,5 +1,5 @@
-use crate::io::data::Direction;
-use crate::io::data::Position;
+use crate::util::Direction;
+use crate::util::Position;
 use serde::{Deserialize, Serialize};
 use self::trainer::Trainer;
 

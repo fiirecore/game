@@ -1,10 +1,10 @@
-use crate::io::data::GlobalPosition;
+use crate::util::GlobalPosition;
 use crate::util::Render;
 use crate::entity::texture::movement_texture::MovementTexture;
 use crate::entity::texture::movement_texture_manager::MovementTextureManager;
 use crate::entity::texture::texture_manager::TextureManager;
 use crate::entity::texture::three_way_texture::ThreeWayTexture;
-use crate::io::data::Direction;
+use crate::util::Direction;
 use crate::io::data::player::PlayerData;
 use crate::util::TILE_SIZE;
 

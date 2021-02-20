@@ -1,0 +1,60 @@
+[data]
+number = 118
+name = "Goldeen"
+primary_type = "Water"
+species = "Goldfish"
+height = 6
+weight = 150
+[training]
+base_exp = 64
+growth_rate = "medium"
+[base]
+hp = 45
+atk = 67
+def = 60
+sp_atk = 35
+sp_def = 50
+speed = 63
+[[moves]]
+move_id = 30
+level = 15
+
+[[moves]]
+move_id = 31
+level = 29
+
+[[moves]]
+move_id = 32
+level = 43
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 48
+level = 10
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 97
+level = 52
+
+[[moves]]
+move_id = 127
+level = 38
+
+[[moves]]
+move_id = 175
+level = 24
+
+[[moves]]
+move_id = 224
+level = 57
+
+[[moves]]
+move_id = 346
+level = 1

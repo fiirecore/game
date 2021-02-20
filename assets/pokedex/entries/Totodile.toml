@@ -1,0 +1,52 @@
+[data]
+number = 158
+name = "Totodile"
+primary_type = "Water"
+species = "Big"
+height = 6
+weight = 95
+[training]
+base_exp = 63
+growth_rate = "medium-slow"
+[base]
+hp = 50
+atk = 65
+def = 64
+sp_atk = 44
+sp_def = 48
+speed = 43
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 44
+level = 20
+
+[[moves]]
+move_id = 55
+level = 13
+
+[[moves]]
+move_id = 56
+level = 52
+
+[[moves]]
+move_id = 99
+level = 7
+
+[[moves]]
+move_id = 103
+level = 43
+
+[[moves]]
+move_id = 163
+level = 35
+
+[[moves]]
+move_id = 184
+level = 27

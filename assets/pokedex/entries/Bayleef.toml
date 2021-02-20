@@ -1,0 +1,64 @@
+[data]
+number = 153
+name = "Bayleef"
+primary_type = "Grass"
+species = "Leaf"
+height = 12
+weight = 158
+[training]
+base_exp = 142
+growth_rate = "medium-slow"
+[base]
+hp = 60
+atk = 62
+def = 80
+sp_atk = 63
+sp_def = 80
+speed = 60
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 34
+level = 31
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 75
+level = 1
+
+[[moves]]
+move_id = 75
+level = 8
+
+[[moves]]
+move_id = 76
+level = 55
+
+[[moves]]
+move_id = 77
+level = 15
+
+[[moves]]
+move_id = 113
+level = 39
+
+[[moves]]
+move_id = 115
+level = 1
+
+[[moves]]
+move_id = 115
+level = 12
+
+[[moves]]
+move_id = 219
+level = 47
+
+[[moves]]
+move_id = 235
+level = 23

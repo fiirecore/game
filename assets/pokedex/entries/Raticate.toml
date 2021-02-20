@@ -1,0 +1,52 @@
+[data]
+number = 20
+name = "Raticate"
+primary_type = "Normal"
+species = "Mouse"
+height = 7
+weight = 185
+[training]
+base_exp = 145
+growth_rate = "medium"
+[base]
+hp = 55
+atk = 81
+def = 60
+sp_atk = 50
+sp_def = 70
+speed = 97
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 98
+level = 7
+
+[[moves]]
+move_id = 158
+level = 13
+
+[[moves]]
+move_id = 162
+level = 40
+
+[[moves]]
+move_id = 184
+level = 20
+
+[[moves]]
+move_id = 228
+level = 30
+
+[[moves]]
+move_id = 283
+level = 50

@@ -1,0 +1,56 @@
+[data]
+number = 108
+name = "Lickitung"
+primary_type = "Normal"
+species = "Licking"
+height = 12
+weight = 655
+[training]
+base_exp = 77
+growth_rate = "medium"
+[base]
+hp = 90
+atk = 55
+def = 75
+sp_atk = 60
+sp_def = 75
+speed = 30
+[[moves]]
+move_id = 21
+level = 40
+
+[[moves]]
+move_id = 23
+level = 23
+
+[[moves]]
+move_id = 35
+level = 29
+
+[[moves]]
+move_id = 48
+level = 7
+
+[[moves]]
+move_id = 50
+level = 34
+
+[[moves]]
+move_id = 103
+level = 45
+
+[[moves]]
+move_id = 111
+level = 12
+
+[[moves]]
+move_id = 122
+level = 1
+
+[[moves]]
+move_id = 282
+level = 18
+
+[[moves]]
+move_id = 287
+level = 51

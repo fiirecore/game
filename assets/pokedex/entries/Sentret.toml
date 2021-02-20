@@ -1,0 +1,52 @@
+[data]
+number = 161
+name = "Sentret"
+primary_type = "Normal"
+species = "Scout"
+height = 8
+weight = 60
+[training]
+base_exp = 43
+growth_rate = "medium"
+[base]
+hp = 35
+atk = 46
+def = 34
+sp_atk = 35
+sp_def = 45
+speed = 20
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 21
+level = 24
+
+[[moves]]
+move_id = 98
+level = 7
+
+[[moves]]
+move_id = 111
+level = 4
+
+[[moves]]
+move_id = 133
+level = 49
+
+[[moves]]
+move_id = 154
+level = 12
+
+[[moves]]
+move_id = 156
+level = 40
+
+[[moves]]
+move_id = 266
+level = 31
+
+[[moves]]
+move_id = 270
+level = 17

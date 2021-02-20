@@ -1,12 +1,10 @@
 use crate::entity::Entity;
-use crate::util::{Update, Render};
 use crate::battle::transitions::BattleCloser;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw_rect;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 
-
+#[derive(Default)]
 pub struct BasicBattleCloser {
 
     alive: bool,
@@ -17,25 +15,29 @@ pub struct BasicBattleCloser {
 
 }
 
-impl BasicBattleCloser {
+impl BattleTransition for BasicBattleCloser {
+    
+    fn on_start(&mut self) {
+        
+    }
 
-    pub fn new() -> Self {
-
-        Self {
-
-            alive: false,
-            finished: false,
-
-            alpha: 0.0,
-            world_active: false,
-
+    fn update(&mut self, delta: f32) {
+        if self.world_active {
+            self.alpha -= 60.0 * delta;
+        } else {
+            self.alpha += 60.0 * delta;
         }
+        if self.alpha >= 32.0 {
+            self.world_active = true;
+        }
+    }
 
+    fn render(&self) {
+        draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::BASE_WIDTH, crate::BASE_HEIGHT);
     }
 
 }
 
-impl BattleTransition for BasicBattleCloser {}
 impl BattleCloser for BasicBattleCloser {
     
     fn world_active(&self) -> bool {
@@ -53,45 +55,10 @@ impl Reset for BasicBattleCloser {
 
 }
 
-impl Load for BasicBattleCloser {
-
-    fn load(&mut self) {
-        
-    }
-
-    fn on_start(&mut self) {
-
-    }
-
-}
-
 impl Completable for BasicBattleCloser {
 
     fn is_finished(&self) -> bool {
         return self.alpha <= 0.0 && self.world_active;
-    }
-
-}
-
-impl Update for BasicBattleCloser {
-
-    fn update(&mut self, delta: f32) {
-        if self.world_active {
-            self.alpha -= 60.0 * delta;
-        } else {
-            self.alpha += 60.0 * delta;
-        }
-        if self.alpha >= 32.0 {
-            self.world_active = true;
-        }
-    }
-
-}
-
-impl Render for BasicBattleCloser {
-
-    fn render(&self) {
-        draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::BASE_WIDTH, crate::BASE_HEIGHT);
     }
 
 }

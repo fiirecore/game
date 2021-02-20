@@ -1,0 +1,65 @@
+[data]
+number = 168
+name = "Ariados"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Long"
+height = 11
+weight = 335
+[training]
+base_exp = 140
+growth_rate = "fast"
+[base]
+hp = 70
+atk = 90
+def = 70
+sp_atk = 60
+sp_def = 70
+speed = 40
+[[moves]]
+move_id = 40
+level = 1
+
+[[moves]]
+move_id = 81
+level = 1
+
+[[moves]]
+move_id = 94
+level = 63
+
+[[moves]]
+move_id = 97
+level = 53
+
+[[moves]]
+move_id = 101
+level = 17
+
+[[moves]]
+move_id = 132
+level = 1
+
+[[moves]]
+move_id = 132
+level = 11
+
+[[moves]]
+move_id = 141
+level = 25
+
+[[moves]]
+move_id = 154
+level = 34
+
+[[moves]]
+move_id = 169
+level = 43
+
+[[moves]]
+move_id = 184
+level = 1
+
+[[moves]]
+move_id = 184
+level = 6

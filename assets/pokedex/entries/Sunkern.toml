@@ -1,0 +1,48 @@
+[data]
+number = 191
+name = "Sunkern"
+primary_type = "Grass"
+species = "Seed"
+height = 3
+weight = 18
+[training]
+base_exp = 36
+growth_rate = "medium-slow"
+[base]
+hp = 30
+atk = 30
+def = 30
+sp_atk = 30
+sp_def = 30
+speed = 30
+[[moves]]
+move_id = 71
+level = 1
+
+[[moves]]
+move_id = 72
+level = 13
+
+[[moves]]
+move_id = 74
+level = 6
+
+[[moves]]
+move_id = 202
+level = 42
+
+[[moves]]
+move_id = 235
+level = 37
+
+[[moves]]
+move_id = 241
+level = 30
+
+[[moves]]
+move_id = 275
+level = 18
+
+[[moves]]
+move_id = 283
+level = 25

@@ -95,26 +95,9 @@ impl DynamicText {
 }
 
 impl GuiComponent for DynamicText {
-	
-	fn enable(&mut self) {
-		self.focus = true;
-		self.alive = true;	
-		self.reset();
-	}
-	
-	fn disable(&mut self) {
-		self.focus = false;
-		self.alive = false;		
-        self.timer.despawn();
-		self.reset();
-	}
-	
-	fn is_active(& self) -> bool {
-		self.alive
-	}
 
 	fn update(&mut self, delta: f32) {
-		if self.is_active() {
+		if self.is_alive() {
 			let line_len = (self.current_line().len() as u16) << 2;
 			if self.can_continue {
 				if self.current_message().no_pause {
@@ -159,7 +142,7 @@ impl GuiComponent for DynamicText {
 	}
 
 	fn render(&self) {
-		if self.is_active() {
+		if self.is_alive() {
 
 			let current_line = self.current_line();
 
@@ -243,4 +226,25 @@ impl Completable for DynamicText {
 			self.finish_click
 		}
     }
+}
+
+impl Entity for DynamicText {
+
+	fn spawn(&mut self) {
+		self.focus = true;
+		self.alive = true;	
+		self.reset();
+	}
+	
+	fn despawn(&mut self) {
+		self.focus = false;
+		self.alive = false;		
+        self.timer.despawn();
+		self.reset();
+	}
+	
+	fn is_alive(& self) -> bool {
+		self.alive
+	}
+
 }

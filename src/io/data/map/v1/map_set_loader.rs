@@ -8,7 +8,7 @@ use crate::world::map::set::world_map_set::WorldMapSet;
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
 
-pub async fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: super::map_serializable::MapConfig) -> Option<(String, WorldMapSet)> {
+pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config: super::map_serializable::MapConfig) -> Option<(String, WorldMapSet)> {
 
     let name = config.identifier.name;
     
@@ -18,7 +18,7 @@ pub async fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, 
 
     for index in 0..config.identifier.map_files.len() {
 
-        match crate::io::get_file(root_path.join(&config.identifier.map_files[index])).await {
+        match crate::io::get_file(root_path.join(&config.identifier.map_files[index])) {
             Some(file) => {
                 let mut gba_map = get_gba_map(file);
                 fix_tiles(&mut gba_map, palette_sizes);
@@ -33,9 +33,9 @@ pub async fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, 
                         tile_map: gba_map.tile_map,
                         border_blocks: gba_map.border_blocks,
                         movement_map: gba_map.movement_map,
-                        warps: super::load_warp_entries(&root_path, Some(index)).await,
-                        npcs: super::load_npc_entries(&root_path, Some(index)).await,
-                        wild: super::load_wild_entry(&root_path, config.wild.clone(), Some(index)).await,
+                        warps: super::load_warp_entries(&root_path, Some(index)),
+                        npcs: super::load_npc_entries(&root_path, Some(index)),
+                        wild: super::load_wild_entry(&root_path, config.wild.clone(), Some(index)),
 
                         ..Default::default()  
                     },

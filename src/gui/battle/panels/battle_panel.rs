@@ -1,10 +1,11 @@
 
 use crate::battle::battle_pokemon::BattlePokemon;
+use crate::entity::Entity;
 use crate::gui::Focus;
 use crate::util::Input;
 use crate::io::input::Control;
 use crate::gui::button::BasicButton;
-use crate::io::data::Direction;
+use crate::util::Direction;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
 use crate::io::input;
@@ -62,10 +63,10 @@ impl BattlePanel {
             cursor_position: 0,
             next: 0,
 
-            fight_button: BasicButton::new("Fight".to_uppercase().as_str(), font_id, 17.0, text_y, x + panel_x, y + panel_y),
-            bag_button: BasicButton::new("Bag".to_uppercase().as_str(), font_id, 73.0, text_y, x + panel_x, y + panel_y),
-            pokemon_button: BasicButton::new("Pokemon".to_uppercase().as_str(), font_id, 17.0, text_y + 16.0, x + panel_x, y + panel_y),
-            run_button: BasicButton::new("Run".to_uppercase().as_str(), font_id, 73.0, text_y + 16.0, x + panel_x, y + panel_y),
+            fight_button: BasicButton::new("Fight".to_ascii_uppercase().as_str(), font_id, 17.0, text_y, x + panel_x, y + panel_y),
+            bag_button: BasicButton::new("Bag".to_ascii_uppercase().as_str(), font_id, 73.0, text_y, x + panel_x, y + panel_y),
+            pokemon_button: BasicButton::new("Pokemon".to_ascii_uppercase().as_str(), font_id, 17.0, text_y + 16.0, x + panel_x, y + panel_y),
+            run_button: BasicButton::new("Run".to_ascii_uppercase().as_str(), font_id, 73.0, text_y + 16.0, x + panel_x, y + panel_y),
 
             text: StaticText::new(vec![String::from("What will"), String::from("POKEMON do?")], 1, Direction::Left, -111.0, 10.0, x + panel_x, y + panel_y),
 
@@ -80,34 +81,10 @@ impl BattlePanel {
 
 impl GuiComponent for BattlePanel {
 
-	fn enable(&mut self) {
-        self.active = true;
-        self.fight_button.enable();
-        self.bag_button.enable();
-        self.pokemon_button.enable();
-        self.run_button.enable();
-        self.cursor_position = 0;
-        self.next = 0;
-	}
-
-	fn disable(&mut self) {
-        self.active = false;
-        self.unfocus();
-        self.fight_button.disable();
-        self.bag_button.disable();
-        self.pokemon_button.disable();
-        self.run_button.disable();
-        self.next = 0;
-	}
-
-	fn is_active(& self) -> bool {
-		self.active
-	}
-
 	fn update(&mut self, _delta: f32) {}
 
 	fn render(&self) {
-		if self.is_active() {
+		if self.is_alive() {
             draw(self.background, self.panel_x + self.x, self.panel_y + self.y);
             let mut cursor_x = 0.0;
             let mut cursor_y = 0.0;
@@ -142,30 +119,6 @@ impl GuiComponent for BattlePanel {
         self.pokemon_button.update_position(panel_x, panel_y);
         self.run_button.update_position(panel_x, panel_y);
 	}
-
-	fn load(&mut self) {
-
-	}
-}
-
-impl Focus for BattlePanel {
-
-    fn focus(&mut self) {
-        self.focus = true;
-    }
-
-    fn unfocus(&mut self) {
-        self.focus = false;
-    }
-
-    fn in_focus(&mut self) -> bool {
-        self.focus
-    }
-
-    // fn next(&self) -> u8 {
-    //     self.next
-    // }
-
 }
 
 impl Input for BattlePanel {
@@ -188,6 +141,50 @@ impl Input for BattlePanel {
                 self.cursor_position += 1;
             }
         }
+    }
+
+}
+
+impl Entity for BattlePanel {
+
+	fn spawn(&mut self) {
+        self.active = true;
+        self.fight_button.spawn();
+        self.bag_button.spawn();
+        self.pokemon_button.spawn();
+        self.run_button.spawn();
+        self.cursor_position = 0;
+        self.next = 0;
+	}
+
+	fn despawn(&mut self) {
+        self.active = false;
+        self.unfocus();
+        self.fight_button.despawn();
+        self.bag_button.despawn();
+        self.pokemon_button.despawn();
+        self.run_button.despawn();
+        self.next = 0;
+	}
+
+	fn is_alive(& self) -> bool {
+		self.active
+	}
+
+}
+
+impl Focus for BattlePanel {
+
+    fn focus(&mut self) {
+        self.focus = true;
+    }
+
+    fn unfocus(&mut self) {
+        self.focus = false;
+    }
+
+    fn in_focus(&mut self) -> bool {
+        self.focus
     }
 
 }

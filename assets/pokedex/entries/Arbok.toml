@@ -1,0 +1,68 @@
+[data]
+number = 24
+name = "Arbok"
+primary_type = "Poison"
+species = "Cobra"
+height = 35
+weight = 650
+[training]
+base_exp = 157
+growth_rate = "medium"
+[base]
+hp = 60
+atk = 95
+def = 69
+sp_atk = 65
+sp_def = 79
+speed = 80
+[[moves]]
+move_id = 35
+level = 1
+
+[[moves]]
+move_id = 40
+level = 1
+
+[[moves]]
+move_id = 40
+level = 8
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 44
+level = 1
+
+[[moves]]
+move_id = 44
+level = 13
+
+[[moves]]
+move_id = 51
+level = 38
+
+[[moves]]
+move_id = 103
+level = 28
+
+[[moves]]
+move_id = 114
+level = 56
+
+[[moves]]
+move_id = 137
+level = 20
+
+[[moves]]
+move_id = 254
+level = 46
+
+[[moves]]
+move_id = 255
+level = 46
+
+[[moves]]
+move_id = 256
+level = 46

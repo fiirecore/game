@@ -6,9 +6,9 @@ use std::path::{Path, PathBuf};
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use serde::{Deserialize, Serialize};
-use super::GlobalPosition;
-use super::Location;
-use super::Position;
+use crate::util::GlobalPosition;
+use crate::util::Location;
+use crate::util::Position;
 use super::world::WorldStatus;
 use crate::pokemon::instance::PokemonInstance;
 
@@ -129,15 +129,6 @@ impl PersistantData for PlayerData {
 				vec![vec![String::from("Saved player data!")]]
 			));
 			info!("Saved player data!");
-		// }
-		// #[cfg(target_arch = "wasm32")]
-		// {
-		// 	crate::gui::set_message(super::text::MessageSet::new(
-		// 		1, 
-		// 		super::text::color::TextColor::Black, 
-		// 		vec![vec![String::from("Cannot save player data"), String::from("on web browsers!")]]
-		// 	));
-		// }
 	}
 
 	// async fn reload(&mut self) {

@@ -1,3 +1,4 @@
+use crate::entity::Entity;
 use crate::gui::Focus;
 use crate::io::data::player::PlayerData;
 use crate::util::Input;
@@ -70,27 +71,13 @@ impl PlayerWorldGui {
 
 impl GuiComponent for PlayerWorldGui {
 
-    fn enable(&mut self) {
-        self.active = true;
-        self.focus();
-    }
-
-    fn disable(&mut self) {
-        self.active = false;
-        self.unfocus();
-    }
-
-    fn is_active(&self) -> bool {
-        self.active
-    }
-
     fn update_position(&mut self, x: f32, y: f32) {
         self.x = x;
         self.y = y;
     }
 
     fn render(&self) {
-        if self.is_active() {
+        if self.is_alive() {
             draw(self.background, self.x, self.y);
             self.save_button.render();
             self.pokemon_button.render();
@@ -126,7 +113,7 @@ impl Input for PlayerWorldGui {
                 },
                 3 => {
                     // Exit Menu
-                    self.disable();
+                    self.despawn();
                 }
                 _ => {},
             }
@@ -145,6 +132,24 @@ impl Input for PlayerWorldGui {
                 self.cursor_position = 0;
             }
         }
+    }
+
+}
+
+impl Entity for PlayerWorldGui {
+
+    fn spawn(&mut self) {
+        self.active = true;
+        self.focus();
+    }
+
+    fn despawn(&mut self) {
+        self.active = false;
+        self.unfocus();
+    }
+
+    fn is_alive(&self) -> bool {
+        self.active
     }
 
 }

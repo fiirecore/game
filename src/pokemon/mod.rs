@@ -16,6 +16,20 @@ pub mod party;
 
 pub type PokemonId = u16;
 
+static mut DEX: Option<Pokedex> = None;
+
+pub fn load_pokedex() {
+	unsafe { 
+		DEX = Some(Pokedex::new());
+	}
+}
+
+pub fn pokedex() -> &'static Pokedex {
+	unsafe {
+		DEX.as_ref().expect("Could not get Pokedex!")
+	}
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct Pokemon {
 	

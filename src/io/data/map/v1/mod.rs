@@ -16,16 +16,16 @@ pub mod map_set_loader;
 pub mod map_serializable;
 pub mod gba_map;
 
-pub async fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager, bottom_textures: &mut HashMap<u16, crate::util::graphics::Texture>, npc_textures: &mut crate::world::NpcTextures) {
+pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager, bottom_textures: &mut HashMap<u16, crate::util::graphics::Texture>, npc_textures: &mut crate::world::NpcTextures) {
     let mut bottom_sheets: HashMap<u8, macroquad::prelude::Image> = HashMap::new();
-    let palette_sizes = gba_map::fill_palette_map(&mut bottom_sheets).await;
+    let palette_sizes = gba_map::fill_palette_map(&mut bottom_sheets);
 
     info!("Loading maps...");
     for dir_entry in crate::io::get_dir("world/maps/") {
         for file in crate::io::get_dir(&dir_entry) {
             if let Some(ext) = file.extension() {
                 if ext == std::ffi::OsString::from("toml") {
-                    let maps = load_map(&palette_sizes, &dir_entry, &file).await;
+                    let maps = load_map(&palette_sizes, &dir_entry, &file);
                     if let Some(world_chunk) = maps.0 {
                         // super::map_loader::create_file_test(&dir_entry, &world_chunk.1);
                         chunk_map.insert(world_chunk.0, world_chunk.1);
@@ -62,19 +62,19 @@ pub async fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMap
         }
     }
 
-    super::npc_texture::load_npc_textures(npc_textures).await;
+    super::npc_texture::load_npc_textures(npc_textures);
     info!("Finished loading textures!");
 
 }
 
-async fn load_map(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &PathBuf) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {
+fn load_map(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &PathBuf) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {
 
-    match crate::io::get_file_as_string(file).await {
-        Some(data) => {
+    match crate::io::get_file_as_string(file) {
+        Ok(data) => {
             match self::map_serializable::MapConfig::from_string(&data) {
                 Ok(map_config) => {
                     if map_config.jigsaw_map.is_some() {
-                        match self::chunk_map_loader::new_chunk_map(root_path, palette_sizes, map_config).await {
+                        match self::chunk_map_loader::new_chunk_map(root_path, palette_sizes, map_config) {
                             Some(map) => {
                                 return (Some(map), None);
                             }
@@ -84,7 +84,7 @@ async fn load_map(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &
                             }
                         }
                     } else if map_config.warp_map.is_some() {
-                        match self::map_set_loader::new_map_set(root_path, palette_sizes, map_config).await {
+                        match self::map_set_loader::new_map_set(root_path, palette_sizes, map_config) {
                             Some(map) => {
                                 return (None, Some(map));
                             }
@@ -113,27 +113,27 @@ async fn load_map(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &
                 }
             }
         }
-        None => {
-            warn!("Error reading file at {:?} to string with error", &root_path);
+        Err(err) => {
+            warn!("Error reading file at {:?} to string with error {}", &root_path, err);
             return (None, None);
         }
     }
 }
 
-pub async fn load_npc_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<NPC> {
+pub fn load_npc_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<NPC> {
     let mut npcs = Vec::new();
     let npc_dir = root_path.join("npcs");
     match map_index {
-        Some(map_index) => get_npc_from_directory(&mut npcs, npc_dir.join(String::from("map_") + &map_index.to_string())).await,
-        None => get_npc_from_directory(&mut npcs, npc_dir).await,
+        Some(map_index) => get_npc_from_directory(&mut npcs, npc_dir.join(String::from("map_") + &map_index.to_string())),
+        None => get_npc_from_directory(&mut npcs, npc_dir),
     }
     return npcs;
 }
 
-async fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: PathBuf) {
+fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: PathBuf) {
     for filepath in crate::io::get_dir(dir) {
-        match crate::io::get_file_as_string(&filepath).await {
-            Some(data) => {
+        match crate::io::get_file_as_string(&filepath) {
+            Ok(data) => {
                 let npc_result: Result<NPC, serde_json::Error> = serde_json::from_str(&data);
                 match npc_result {
                     Ok(npc) => {
@@ -145,32 +145,32 @@ async fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: PathBuf) {
                     },
                 }
             },
-            None => {
-                warn!("Could not get NPC json at {:?}", &filepath);
+            Err(err) => {
+                warn!("Could not get NPC json at {:?} with error {}", &filepath, err);
             },
         }
     }
 }
 
-pub async fn load_warp_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<WarpEntry> {
+pub fn load_warp_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<WarpEntry> {
     let mut warps = Vec::new();
     let warp_path = root_path.join("warps");
     match map_index {
-        Some(map_index) => add_warp_under_directory(&mut warps, warp_path.join(String::from("map_") + &map_index.to_string())).await,
-        None => add_warp_under_directory(&mut warps, warp_path).await,
+        Some(map_index) => add_warp_under_directory(&mut warps, warp_path.join(String::from("map_") + &map_index.to_string())),
+        None => add_warp_under_directory(&mut warps, warp_path),
     }
     return warps;
 }
 
-async fn add_warp_under_directory(warps: &mut Vec<WarpEntry>, dir: PathBuf) {
+fn add_warp_under_directory(warps: &mut Vec<WarpEntry>, dir: PathBuf) {
     for file in crate::io::get_dir(dir) {
-        if let Some(warp_entry) = WarpEntry::new(file).await {
+        if let Some(warp_entry) = WarpEntry::new(file) {
             warps.push(warp_entry);
         }
     }
 }
 
-pub async fn load_wild_entry(root_path: &PathBuf, wild: Option<map_serializable::SerializedWildEntry>, map_set_index: Option<usize>) -> Option<WildEntry> {
+pub fn load_wild_entry(root_path: &PathBuf, wild: Option<map_serializable::SerializedWildEntry>, map_set_index: Option<usize>) -> Option<WildEntry> {
     if let Some(toml_wild_entry) = wild {
         let mut wild_path = root_path.join("wild");
 
@@ -180,7 +180,7 @@ pub async fn load_wild_entry(root_path: &PathBuf, wild: Option<map_serializable:
 
         Some(WildEntry {
             tiles: toml_wild_entry.wild_tiles,
-            table: crate::world::pokemon::wild_pokemon_table::get(toml_wild_entry.encounter_type.as_str(), wild_path.join("grass.toml")).await,
+            table: crate::world::pokemon::wild_pokemon_table::get_table(toml_wild_entry.encounter_type.as_str(), wild_path.join("grass.toml")),
         })
 
     } else {

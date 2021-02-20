@@ -39,18 +39,6 @@ impl BasicButton {
 }
 
 impl GuiComponent for BasicButton {
-	
-	fn enable(&mut self) {
-		self.alive = true;		
-	}
-	
-	fn disable(&mut self) {
-		self.alive = false;
-	}
-	
-	fn is_active(& self) -> bool {
-		self.alive
-    }
 
 	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel_x = x;
@@ -75,6 +63,22 @@ impl GuiText for BasicButton {
 
     fn get_font_id(&self) -> usize {
         self.font_id
+    }
+
+}
+
+impl crate::entity::Entity for BasicButton {
+
+	fn spawn(&mut self) {
+		self.alive = true;		
+	}
+	
+	fn despawn(&mut self) {
+		self.alive = false;
+	}
+	
+	fn is_alive(& self) -> bool {
+		self.alive
     }
 
 }

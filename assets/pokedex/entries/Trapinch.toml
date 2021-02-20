@@ -1,0 +1,48 @@
+[data]
+number = 328
+name = "Trapinch"
+primary_type = "Ground"
+species = "Ant"
+height = 7
+weight = 150
+[training]
+base_exp = 58
+growth_rate = "medium-slow"
+[base]
+hp = 45
+atk = 100
+def = 45
+sp_atk = 45
+sp_def = 45
+speed = 10
+[[moves]]
+move_id = 28
+level = 9
+
+[[moves]]
+move_id = 44
+level = 1
+
+[[moves]]
+move_id = 63
+level = 57
+
+[[moves]]
+move_id = 91
+level = 41
+
+[[moves]]
+move_id = 185
+level = 17
+
+[[moves]]
+move_id = 201
+level = 49
+
+[[moves]]
+move_id = 242
+level = 33
+
+[[moves]]
+move_id = 328
+level = 25

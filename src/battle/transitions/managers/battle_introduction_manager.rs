@@ -1,93 +1,108 @@
 use crate::battle::transitions::introductions::trainer_battle_introduction::TrainerBattleIntroduction;
 use crate::util::battle_data::TrainerData;
 use crate::entity::Entity;
-use crate::util::{Update, Render};
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
-use crate::battle::transitions::BattleTransitionManager;
+use crate::battle::transitions::BattleTransition;
 use crate::battle::transitions::introductions::basic_battle_introduction::BasicBattleIntroduction;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
+
+use super::battle_opener_manager::Openers;
 
 pub struct BattleIntroductionManager {
 
     alive: bool,
     
-    introductions: Vec<Box<dyn BattleIntroduction>>,
-    pub current_introduction_index: usize,
+    current_introduction: Introductions,
+    basic: BasicBattleIntroduction,
+    trainer: TrainerBattleIntroduction,
 
+}
+
+pub enum Introductions {
+
+    Basic,
+    Trainer,
+
+}
+
+impl Default for Introductions {
+    fn default() -> Self {
+        Self::Basic
+    }
 }
 
 impl BattleIntroductionManager {
 
     pub fn new() -> Self {
-        let mut this = Self {
-
+        Self {
             alive: false,
             
-            introductions: Vec::new(),
-            current_introduction_index: 0,
-
-        };
-        this.load_introductions();
-        this
-    }
-
-    fn load_introductions(&mut self) {
-        self.introductions.push(Box::new(BasicBattleIntroduction::new(0.0, 113.0)));
-        self.introductions.push(Box::new(TrainerBattleIntroduction::new(0.0, 113.0)));
-        for introduction in &mut self.introductions {
-            introduction.load();
+            current_introduction: Introductions::default(),
+            basic: BasicBattleIntroduction::new(0.0, 113.0),
+            trainer: TrainerBattleIntroduction::new(0.0, 113.0),
         }
     }
 
     pub fn input(&mut self, delta: f32) {
 		if self.is_alive() {
-            self.introductions[self.current_introduction_index].input(delta);
+            self.get_mut().input(delta);
         }
     }
     
     pub fn setup_text(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>) {
-        self.introductions[self.current_introduction_index].setup(battle, trainer_data);
+        self.get_mut().setup(battle, trainer_data);
     }
 
     pub fn render_with_offset(&self, battle: &Battle, offset: f32) {
-        self.introductions[self.current_introduction_index].render_offset(battle, offset);
+        self.get().render_offset(battle, offset);
     }
 
     pub fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32) {
-        self.introductions[self.current_introduction_index].update_gui(battle_gui, delta);
+        self.get_mut().update_gui(battle_gui, delta);
     }
 
-    pub fn spawn_type(&mut self, index: usize) {
-        self.current_introduction_index = index;
+    pub fn spawn_type(&mut self, opener: &Openers) {
+        self.current_introduction = opener.intro();
+    }
+
+    fn get(&self) -> &dyn BattleIntroduction {
+        match self.current_introduction {
+            Introductions::Basic => &self.basic,
+            Introductions::Trainer => &self.trainer,
+        }
+    }
+
+    fn get_mut(&mut self) -> &mut dyn BattleIntroduction {
+        match self.current_introduction {
+            Introductions::Basic => &mut self.basic,
+            Introductions::Trainer => &mut self.trainer,
+        }
     }
 
 }
 
+impl BattleTransition for BattleIntroductionManager {
 
-impl Update for BattleIntroductionManager {
+    fn on_start(&mut self) {
+        self.get_mut().on_start();
+    }
 
     fn update(&mut self, delta: f32) {
-        self.introductions[self.current_introduction_index].update(delta);     
+        self.get_mut().update(delta);     
 	}
-}
-
-impl Render for BattleIntroductionManager {
 
     fn render(&self) {
-        self.introductions[self.current_introduction_index].render();
+        self.get().render();
 	}
 
 }
-
-impl BattleTransitionManager for BattleIntroductionManager {}
 
 impl Reset for BattleIntroductionManager {
 
     fn reset(&mut self) {
-        self.introductions[self.current_introduction_index].reset();
+        self.get_mut().reset();
     }
 
 }
@@ -95,7 +110,7 @@ impl Reset for BattleIntroductionManager {
 impl Completable for BattleIntroductionManager {
 
     fn is_finished(&self) -> bool {
-        return self.introductions[self.current_introduction_index].is_finished();
+        return self.get().is_finished();
     }
 }
 
@@ -103,29 +118,18 @@ impl Entity for BattleIntroductionManager {
 
     fn spawn(&mut self) {
         self.alive = true;
-        self.introductions[self.current_introduction_index].spawn();
+        self.get_mut().spawn();
         self.reset();
     }
 
     fn despawn(&mut self) {
         self.alive = false;
-        self.introductions[self.current_introduction_index as usize].despawn();
+        self.get_mut().despawn();
         self.reset();
     }
 
     fn is_alive(&self) -> bool {
-        return self.introductions[self.current_introduction_index as usize].is_alive();
-    }
-}
-
-impl Load for BattleIntroductionManager {
-
-    fn load(&mut self) {
-        self.introductions[self.current_introduction_index].load();
-    }
-
-    fn on_start(&mut self) {
-        self.introductions[self.current_introduction_index].on_start();
+        return self.get().is_alive();
     }
 
 }

@@ -1,0 +1,61 @@
+[data]
+number = 164
+name = "Noctowl"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Owl"
+height = 16
+weight = 408
+[training]
+base_exp = 158
+growth_rate = "medium"
+[base]
+hp = 100
+atk = 50
+def = 50
+sp_atk = 86
+sp_def = 96
+speed = 70
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 33
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 64
+level = 11
+
+[[moves]]
+move_id = 93
+level = 41
+
+[[moves]]
+move_id = 95
+level = 16
+
+[[moves]]
+move_id = 115
+level = 25
+
+[[moves]]
+move_id = 138
+level = 57
+
+[[moves]]
+move_id = 193
+level = 1
+
+[[moves]]
+move_id = 193
+level = 6

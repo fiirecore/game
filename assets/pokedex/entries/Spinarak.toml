@@ -1,0 +1,57 @@
+[data]
+number = 167
+name = "Spinarak"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "String"
+height = 5
+weight = 85
+[training]
+base_exp = 50
+growth_rate = "fast"
+[base]
+hp = 40
+atk = 60
+def = 40
+sp_atk = 40
+sp_def = 40
+speed = 30
+[[moves]]
+move_id = 40
+level = 1
+
+[[moves]]
+move_id = 81
+level = 1
+
+[[moves]]
+move_id = 94
+level = 53
+
+[[moves]]
+move_id = 97
+level = 45
+
+[[moves]]
+move_id = 101
+level = 17
+
+[[moves]]
+move_id = 132
+level = 11
+
+[[moves]]
+move_id = 141
+level = 23
+
+[[moves]]
+move_id = 154
+level = 30
+
+[[moves]]
+move_id = 169
+level = 37
+
+[[moves]]
+move_id = 184
+level = 6

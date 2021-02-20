@@ -1,0 +1,60 @@
+[data]
+number = 196
+name = "Espeon"
+primary_type = "Psychic"
+species = "Sun"
+height = 9
+weight = 265
+[training]
+base_exp = 184
+growth_rate = "medium"
+[base]
+hp = 65
+atk = 65
+def = 60
+sp_atk = 130
+sp_def = 95
+speed = 110
+[[moves]]
+move_id = 28
+level = 8
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 60
+level = 36
+
+[[moves]]
+move_id = 93
+level = 16
+
+[[moves]]
+move_id = 94
+level = 47
+
+[[moves]]
+move_id = 98
+level = 23
+
+[[moves]]
+move_id = 129
+level = 30
+
+[[moves]]
+move_id = 234
+level = 52
+
+[[moves]]
+move_id = 244
+level = 42
+
+[[moves]]
+move_id = 270
+level = 1

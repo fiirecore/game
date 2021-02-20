@@ -1,0 +1,48 @@
+[data]
+number = 239
+name = "Elekid"
+primary_type = "Electric"
+species = "Electric"
+height = 6
+weight = 235
+[training]
+base_exp = 72
+growth_rate = "medium"
+[base]
+hp = 45
+atk = 63
+def = 37
+sp_atk = 65
+sp_def = 55
+speed = 95
+[[moves]]
+move_id = 9
+level = 9
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 85
+level = 41
+
+[[moves]]
+move_id = 87
+level = 49
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 103
+level = 33
+
+[[moves]]
+move_id = 113
+level = 17
+
+[[moves]]
+move_id = 129
+level = 25

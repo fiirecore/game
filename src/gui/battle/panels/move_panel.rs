@@ -1,7 +1,8 @@
 
+use crate::entity::Entity;
 use crate::util::graphics::Texture;
 
-use crate::io::data::Direction;
+use crate::util::Direction;
 use crate::gui::text::StaticText;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw;
@@ -52,22 +53,8 @@ impl MovePanel {
 
 impl GuiComponent for MovePanel {
 
-    fn enable(&mut self) {
-        self.active = true;
-    }
-
-    fn disable(&mut self) {
-        self.active = false;
-    }
-
-    fn is_active(&self) -> bool {
-        return self.active;
-    }
-    
-    fn update(&mut self, _delta: f32) {}
-
     fn render(&self) {
-        if self.is_active() {
+        if self.is_alive() {
             draw(self.background, (self.x + self.panel_x) as f32, (self.y + self.panel_y) as f32);
             self.pp.render();
             self.remaining_pp.render();
@@ -78,6 +65,22 @@ impl GuiComponent for MovePanel {
     fn update_position(&mut self, x: f32, y: f32) {
         self.panel_x = x;
         self.panel_y = y;
+    }
+
+}
+
+impl Entity for MovePanel {
+
+    fn spawn(&mut self) {
+        self.active = true;
+    }
+
+    fn despawn(&mut self) {
+        self.active = false;
+    }
+
+    fn is_alive(&self) -> bool {
+        return self.active;
     }
 
 }

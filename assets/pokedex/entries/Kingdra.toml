@@ -1,0 +1,61 @@
+[data]
+number = 230
+name = "Kingdra"
+primary_type = "Water"
+secondary_type = "Dragon"
+species = "Dragon"
+height = 18
+weight = 1520
+[training]
+base_exp = 243
+growth_rate = "medium"
+[base]
+hp = 75
+atk = 95
+def = 95
+sp_atk = 95
+sp_def = 95
+speed = 85
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 43
+level = 15
+
+[[moves]]
+move_id = 55
+level = 1
+
+[[moves]]
+move_id = 55
+level = 22
+
+[[moves]]
+move_id = 56
+level = 51
+
+[[moves]]
+move_id = 97
+level = 40
+
+[[moves]]
+move_id = 108
+level = 1
+
+[[moves]]
+move_id = 108
+level = 8
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 239
+level = 29
+
+[[moves]]
+move_id = 349
+level = 62

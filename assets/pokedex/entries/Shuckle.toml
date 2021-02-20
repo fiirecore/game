@@ -1,0 +1,45 @@
+[data]
+number = 213
+name = "Shuckle"
+primary_type = "Bug"
+secondary_type = "Rock"
+species = "Mold"
+height = 6
+weight = 205
+[training]
+base_exp = 177
+growth_rate = "medium-slow"
+[base]
+hp = 20
+atk = 10
+def = 230
+sp_atk = 10
+sp_def = 230
+speed = 5
+[[moves]]
+move_id = 35
+level = 9
+
+[[moves]]
+move_id = 110
+level = 1
+
+[[moves]]
+move_id = 117
+level = 28
+
+[[moves]]
+move_id = 132
+level = 1
+
+[[moves]]
+move_id = 156
+level = 37
+
+[[moves]]
+move_id = 219
+level = 23
+
+[[moves]]
+move_id = 227
+level = 14

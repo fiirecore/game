@@ -1,0 +1,53 @@
+[data]
+number = 145
+name = "Zapdos"
+primary_type = "Electric"
+secondary_type = "Flying"
+species = "Electric"
+height = 16
+weight = 526
+[training]
+base_exp = 261
+growth_rate = "slow"
+[base]
+hp = 90
+atk = 90
+def = 85
+sp_atk = 125
+sp_def = 90
+speed = 100
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 65
+level = 49
+
+[[moves]]
+move_id = 84
+level = 1
+
+[[moves]]
+move_id = 86
+level = 13
+
+[[moves]]
+move_id = 87
+level = 85
+
+[[moves]]
+move_id = 97
+level = 25
+
+[[moves]]
+move_id = 113
+level = 73
+
+[[moves]]
+move_id = 197
+level = 37
+
+[[moves]]
+move_id = 268
+level = 61

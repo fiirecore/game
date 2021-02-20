@@ -1,0 +1,76 @@
+[data]
+number = 262
+name = "Mightyena"
+primary_type = "Dark"
+species = "Bite"
+height = 10
+weight = 370
+[training]
+base_exp = 147
+growth_rate = "medium"
+[base]
+hp = 70
+atk = 90
+def = 70
+sp_atk = 60
+sp_def = 60
+speed = 70
+[[moves]]
+move_id = 28
+level = 1
+
+[[moves]]
+move_id = 28
+level = 9
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 37
+
+[[moves]]
+move_id = 44
+level = 1
+
+[[moves]]
+move_id = 44
+level = 13
+
+[[moves]]
+move_id = 46
+level = 22
+
+[[moves]]
+move_id = 168
+level = 52
+
+[[moves]]
+move_id = 184
+level = 32
+
+[[moves]]
+move_id = 207
+level = 27
+
+[[moves]]
+move_id = 242
+level = 47
+
+[[moves]]
+move_id = 269
+level = 42
+
+[[moves]]
+move_id = 316
+level = 17
+
+[[moves]]
+move_id = 336
+level = 1
+
+[[moves]]
+move_id = 336
+level = 5

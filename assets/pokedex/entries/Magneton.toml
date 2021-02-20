@@ -1,0 +1,69 @@
+[data]
+number = 82
+name = "Magneton"
+primary_type = "Electric"
+secondary_type = "Steel"
+species = "Magnet"
+height = 10
+weight = 600
+[training]
+base_exp = 163
+growth_rate = "medium"
+[base]
+hp = 50
+atk = 60
+def = 95
+sp_atk = 120
+sp_def = 70
+speed = 70
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 48
+level = 1
+
+[[moves]]
+move_id = 48
+level = 11
+
+[[moves]]
+move_id = 49
+level = 16
+
+[[moves]]
+move_id = 84
+level = 1
+
+[[moves]]
+move_id = 84
+level = 6
+
+[[moves]]
+move_id = 86
+level = 21
+
+[[moves]]
+move_id = 103
+level = 53
+
+[[moves]]
+move_id = 161
+level = 44
+
+[[moves]]
+move_id = 192
+level = 62
+
+[[moves]]
+move_id = 199
+level = 35
+
+[[moves]]
+move_id = 209
+level = 26
+
+[[moves]]
+move_id = 319
+level = 1

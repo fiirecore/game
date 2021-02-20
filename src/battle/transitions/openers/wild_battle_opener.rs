@@ -1,17 +1,11 @@
 use crate::util::graphics::Texture;
-
 use crate::entity::Entity;
-use crate::util::{Update, Render};
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 use super::trainer_battle_opener::TrainerBattleOpener;
 pub struct WildBattleOpener {
-
-    //active: bool,
-    //finished: bool,
 
     trainer_battle_opener: TrainerBattleOpener,
     
@@ -32,9 +26,6 @@ impl WildBattleOpener {
 
         Self {
 
-            //active: false,
-            //finished: false,
-
             trainer_battle_opener: TrainerBattleOpener::new(),
 
             grass_active: true,
@@ -47,38 +38,11 @@ impl WildBattleOpener {
 
 }
 
-impl Reset for WildBattleOpener {
-
-    fn reset(&mut self) {
-        self.grass_active = true;
-        self.grass_x_offset = GRASS_X_OFFSET;
-        self.grass_y_offset = GRASS_Y_OFFSET;
-        self.trainer_battle_opener.reset();
-    }
+impl BattleTransition for WildBattleOpener {
     
-}
-
-impl Load for WildBattleOpener {
-
-    fn load(&mut self) {
-        
-    }
-
     fn on_start(&mut self) {
         self.trainer_battle_opener.on_start();
-    } 
-
-}
-
-impl Completable for WildBattleOpener {
-
-    fn is_finished(&self) -> bool {
-        return self.trainer_battle_opener.is_finished();
     }
-
-}
-
-impl Update for WildBattleOpener {
 
     fn update(&mut self, delta: f32) {
         self.trainer_battle_opener.update(delta);
@@ -96,10 +60,6 @@ impl Update for WildBattleOpener {
         }
         
     }
-
-}
-
-impl Render for WildBattleOpener {
 
     fn render(&self) {
         self.trainer_battle_opener.render();
@@ -134,23 +94,36 @@ impl BattleOpener for WildBattleOpener {
     }
 }
 
+impl Reset for WildBattleOpener {
+
+    fn reset(&mut self) {
+        self.grass_active = true;
+        self.grass_x_offset = GRASS_X_OFFSET;
+        self.grass_y_offset = GRASS_Y_OFFSET;
+        self.trainer_battle_opener.reset();
+    }
+    
+}
+
+impl Completable for WildBattleOpener {
+
+    fn is_finished(&self) -> bool {
+        return self.trainer_battle_opener.is_finished();
+    }
+
+}
+
 impl Entity for WildBattleOpener {
     fn spawn(&mut self) {
         self.reset();
-        //self.active = true;
         self.trainer_battle_opener.spawn();
     }
 
     fn despawn(&mut self) {
-        //self.active = false;
-        //self.finished = false;
         self.trainer_battle_opener.despawn();
     }
 
     fn is_alive(&self) -> bool {
-        //self.active
         return self.trainer_battle_opener.is_alive();
     }
 }
-
-impl BattleTransition for WildBattleOpener {}

@@ -1,0 +1,60 @@
+[data]
+number = 316
+name = "Gulpin"
+primary_type = "Poison"
+species = "Stomach"
+height = 4
+weight = 103
+[training]
+base_exp = 60
+growth_rate = "fast-then-very-slow"
+[base]
+hp = 70
+atk = 43
+def = 53
+sp_atk = 43
+sp_def = 53
+speed = 40
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 92
+level = 28
+
+[[moves]]
+move_id = 124
+level = 14
+
+[[moves]]
+move_id = 133
+level = 17
+
+[[moves]]
+move_id = 139
+level = 9
+
+[[moves]]
+move_id = 188
+level = 39
+
+[[moves]]
+move_id = 227
+level = 23
+
+[[moves]]
+move_id = 254
+level = 34
+
+[[moves]]
+move_id = 255
+level = 34
+
+[[moves]]
+move_id = 256
+level = 34
+
+[[moves]]
+move_id = 281
+level = 6

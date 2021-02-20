@@ -6,10 +6,8 @@ use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
 use crate::entity::Entity;
-use crate::util::{Update, Render};
 use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 use super::basic_battle_introduction::BasicBattleIntroduction;
 
 static FINAL_TRAINER_OFFSET: f32 = 126.0;
@@ -26,14 +24,11 @@ pub struct TrainerBattleIntroduction {
 impl TrainerBattleIntroduction {
 
     pub fn new(panel_x: f32, panel_y: f32) -> Self {
-
         Self {
-
             basic_battle_introduction: BasicBattleIntroduction::new(panel_x, panel_y),
             trainer_texture: None,
             trainer_offset: 0.0,
             trainer_leaving: false,
-
         }
     }
 
@@ -63,7 +58,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             self.basic_battle_introduction.intro_text.text = MessageSet {
                 messages: vec![
                     Message::new(vec![trainer_data.name.clone(), String::from("would like to battle!")], false), 
-                    Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + &battle.opponent().data.name.to_uppercase()], true),
+                    Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + &battle.opponent().data.name.to_ascii_uppercase()], true),
                 ]
             };
             
@@ -72,7 +67,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         }        
 
         self.basic_battle_introduction.intro_text.text.messages.push(
-            Message::new(vec![String::from("Go! ") + battle.player().data.name.to_uppercase().as_str() + "!"], true),
+            Message::new(vec![String::from("Go! ") + battle.player().data.name.to_ascii_uppercase().as_str() + "!"], true),
         );
         
     }
@@ -85,12 +80,49 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         } else {
             draw_bottom(battle.opponent_textures[battle.opponent_active], 144.0 - offset, 74.0);
         }
-        if self.basic_battle_introduction.player_intro.should_update() {
+        if !self.basic_battle_introduction.player_intro.is_finished() {
             self.basic_battle_introduction.player_intro.draw(offset);
         } else {
 		    draw_bottom(battle.player_textures[battle.player_active], 40.0 + offset, 113.0);
         }  
     }
+}
+
+impl BattleTransition for TrainerBattleIntroduction {
+
+    fn on_start(&mut self) {
+        self.basic_battle_introduction.on_start();
+    }
+
+    fn update(&mut self, delta: f32) {
+        self.basic_battle_introduction.update(delta);
+        if self.trainer_leaving && self.trainer_offset < FINAL_TRAINER_OFFSET {
+            self.trainer_offset += 300.0 * delta;
+        }
+    }
+
+    fn render(&self) {
+        self.basic_battle_introduction.render();
+    }
+
+}
+
+impl Completable for TrainerBattleIntroduction {
+
+    fn is_finished(&self) -> bool {
+        self.basic_battle_introduction.is_finished()
+    }
+
+}
+
+impl Reset for TrainerBattleIntroduction {
+
+    fn reset(&mut self) {
+        self.basic_battle_introduction.reset();
+        self.trainer_offset = 0.0;
+        self.trainer_leaving = false;
+    }
+
 }
 
 impl Entity for TrainerBattleIntroduction {
@@ -108,54 +140,3 @@ impl Entity for TrainerBattleIntroduction {
     }
 
 }
-
-impl Reset for TrainerBattleIntroduction {
-
-    fn reset(&mut self) {
-        self.basic_battle_introduction.reset();
-        self.trainer_offset = 0.0;
-        self.trainer_leaving = false;
-    }
-
-}
-
-impl Load for TrainerBattleIntroduction {
-
-    fn load(&mut self) {
-        self.basic_battle_introduction.load();
-    }
-
-    fn on_start(&mut self) {
-        self.basic_battle_introduction.on_start();
-    }
-
-}
-
-impl Completable for TrainerBattleIntroduction {
-
-    fn is_finished(&self) -> bool {
-        self.basic_battle_introduction.is_finished()
-    }
-
-}
-
-impl Update for TrainerBattleIntroduction {
-
-    fn update(&mut self, delta: f32) {
-        self.basic_battle_introduction.update(delta);
-        if self.trainer_leaving && self.trainer_offset < FINAL_TRAINER_OFFSET {
-            self.trainer_offset += 300.0 * delta;
-        }
-    }
-
-}
-
-impl Render for TrainerBattleIntroduction {
-
-    fn render(&self) {
-        self.basic_battle_introduction.render();
-    }
-
-}
-
-impl BattleTransition for TrainerBattleIntroduction {}

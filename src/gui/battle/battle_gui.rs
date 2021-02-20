@@ -2,8 +2,6 @@
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::GuiComponent;
-use crate::util::Load;
-
 use super::battle_background::BattleBackground;
 use super::battle_text::BattleText;
 use super::panels::player_panel::PlayerPanel;
@@ -51,9 +49,7 @@ impl BattleGui {
 	}
 
 	pub fn on_battle_start(&mut self, battle: &Battle) {
-	
 		self.update_gui(battle);
-
 	}
 
 	pub fn update_gui(&mut self, battle: &Battle) {
@@ -94,29 +90,19 @@ impl BattleGui {
 
 }
 
-impl Load for BattleGui {
-
-	fn load(&mut self) {
-		self.player_panel.load();
-		self.player_pokemon_gui.panel.load();
-		self.opponent_pokemon_gui.panel.load();
-	}
-	
-}
-
 impl Entity for BattleGui {
 
     fn spawn(&mut self) {
 		self.alive = true;
-        self.player_panel.enable();
+        self.player_panel.spawn();
     }
 
     fn despawn(&mut self) {
 		self.alive = false;
-		self.player_panel.disable();
+		self.player_panel.despawn();
 		self.player_pokemon_gui.despawn();
 		self.opponent_pokemon_gui.despawn();
-		self.battle_text.disable();
+		self.battle_text.despawn();
     }
 
     fn is_alive(&self) -> bool {

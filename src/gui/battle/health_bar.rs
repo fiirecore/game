@@ -1,9 +1,5 @@
-
-
-
-
+use crate::entity::Entity;
 use crate::gui::GuiComponent;
-
 use crate::util::graphics::draw_rect;
 
 static UPPER_COLOR: [f32; 4] = [88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0, 1.0];
@@ -75,20 +71,6 @@ impl HealthBar {
 }
 
 impl GuiComponent for HealthBar {
-	
-	fn enable(&mut self) {
-		self.alive = true;
-		self.reset();
-	}
-	
-	fn disable(&mut self) {
-		self.alive = true;
-		self.reset();
-	}
-	
-	fn is_active(& self) -> bool {
-		self.alive
-	}
 
 	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel_x = x;
@@ -104,6 +86,24 @@ impl GuiComponent for HealthBar {
 	fn render(&self) {
 		draw_rect(UPPER_COLOR, self.x + self.panel_x, self.y + self.panel_y, self.get_width() as u32, 1);
 		draw_rect(LOWER_COLOR, self.x + self.panel_x, self.y + self.panel_y + 1.0, self.get_width() as u32, 2);
+	}
+	
+}
+
+impl Entity for HealthBar {
+
+	fn spawn(&mut self) {
+		self.alive = true;
+		self.reset();
+	}
+	
+	fn despawn(&mut self) {
+		self.alive = true;
+		self.reset();
+	}
+	
+	fn is_alive(& self) -> bool {
+		self.alive
 	}
 	
 }

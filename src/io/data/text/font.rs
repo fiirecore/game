@@ -28,7 +28,7 @@ impl FontSheetData {
 
     pub fn open_sheet<P: AsRef<std::path::Path>>(path: P) -> Option<Font> {
         let path = path.as_ref();
-        match crate::io::get_file_noasync(path) {
+        match crate::io::get_file(path) {
             Some(file) => match serde_json::from_slice(&*file) {
                 Ok(sheet) => return Self::sheet_image(sheet),
                 Err(err) => {
@@ -53,7 +53,7 @@ impl FontSheetData {
     }
 
     fn sheet_image(self) -> Option<Font> {
-        match crate::io::get_file_noasync(std::path::PathBuf::from("fonts").join(&self.file)) {
+        match crate::io::get_file(std::path::PathBuf::from("fonts").join(&self.file)) {
             Some(ref file) => match crate::util::image::byte_image(file) {
                 Ok(image) => Some(self.into_sheet(image)),
                 Err(err) => {

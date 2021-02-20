@@ -1,0 +1,24 @@
+[data]
+number = 10
+name = "Caterpie"
+primary_type = "Bug"
+species = "Worm"
+height = 3
+weight = 29
+[training]
+base_exp = 39
+growth_rate = "medium"
+[base]
+hp = 45
+atk = 30
+def = 35
+sp_atk = 20
+sp_def = 20
+speed = 45
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 81
+level = 1

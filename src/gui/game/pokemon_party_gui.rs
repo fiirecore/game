@@ -1,6 +1,4 @@
 use crate::gui::background::Background;
-use crate::gui::GuiComponent;
-use crate::util::Load;
 
 pub struct PokemonPartyGui {
 
@@ -15,14 +13,6 @@ impl PokemonPartyGui {
             background: Background::new(crate::util::graphics::texture::byte_texture(include_bytes!("../../../build/assets/gui/game/party_panel.png")), 0.0, 0.0),
         }
 
-    }
-
-}
-
-impl Load for PokemonPartyGui {
-
-    fn load(&mut self) {
-        self.background.load();
     }
 
 }

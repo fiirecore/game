@@ -1,0 +1,52 @@
+[data]
+number = 241
+name = "Miltank"
+primary_type = "Normal"
+species = "Milk"
+height = 12
+weight = 755
+[training]
+base_exp = 172
+growth_rate = "slow"
+[base]
+hp = 95
+atk = 80
+def = 105
+sp_atk = 40
+sp_def = 70
+speed = 100
+[[moves]]
+move_id = 23
+level = 13
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 34
+level = 43
+
+[[moves]]
+move_id = 45
+level = 4
+
+[[moves]]
+move_id = 111
+level = 8
+
+[[moves]]
+move_id = 117
+level = 26
+
+[[moves]]
+move_id = 205
+level = 34
+
+[[moves]]
+move_id = 208
+level = 19
+
+[[moves]]
+move_id = 215
+level = 53

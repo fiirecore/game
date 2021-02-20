@@ -1,12 +1,9 @@
 use macroquad::camera::Camera2D;
 use macroquad::camera::set_camera;
 use macroquad::prelude::Rect;
-
-use crate::util::{Update, Render};
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::BattleTransition;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 
 use crate::entity::Entity;
 
@@ -42,39 +39,13 @@ impl FlashBattleScreenTransition {
 }
 
 impl BattleScreenTransition for FlashBattleScreenTransition {}
-impl BattleTransition for FlashBattleScreenTransition {}
 
-impl Reset for FlashBattleScreenTransition {
-    fn reset(&mut self) {
-        self.screen = [1.0, 1.0, 1.0, 0.0];
-        self.waning = false;
-        self.index = 0;
-        self.fade = 1.0 / 8.0;
-        self.zoom = false;
-        self.zoom_offset = 0.0;
-    }
-}
-
-impl Load for FlashBattleScreenTransition {
-
-    fn load(&mut self) {
-        
-    }
+impl BattleTransition for FlashBattleScreenTransition {
 
     fn on_start(&mut self) {
         
-    } 
-
-}
-
-impl Completable for FlashBattleScreenTransition {
-    fn is_finished(&self) -> bool {
-        return self.finished;
     }
-}
 
-impl Update for FlashBattleScreenTransition {
-    
     fn update(&mut self, delta: f32) {
         if self.waning {
             self.screen[3] -= self.fade * 60.0 * delta;
@@ -104,10 +75,6 @@ impl Update for FlashBattleScreenTransition {
         }
     }
 
-}
-
-impl Render for FlashBattleScreenTransition {
-
     fn render(&self) {
         draw_rect(
             self.screen,
@@ -117,11 +84,28 @@ impl Render for FlashBattleScreenTransition {
             crate::BASE_HEIGHT,
         );
     }
+
+}
+
+impl Reset for FlashBattleScreenTransition {
+    fn reset(&mut self) {
+        self.screen = [1.0, 1.0, 1.0, 0.0];
+        self.waning = false;
+        self.index = 0;
+        self.fade = 1.0 / 8.0;
+        self.zoom = false;
+        self.zoom_offset = 0.0;
+    }
+}
+
+impl Completable for FlashBattleScreenTransition {
+    fn is_finished(&self) -> bool {
+        return self.finished;
+    }
 }
 
 impl Entity for FlashBattleScreenTransition {
     fn spawn(&mut self) {
-        self.reset();
         self.active = true;
         self.finished = false;
     }

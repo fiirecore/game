@@ -1,12 +1,8 @@
-use crate::util::Render;
-use crate::util::Update;
 use crate::util::battle_data::TrainerData;
-
 use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;
-use crate::util::Load;
 
 pub mod managers {
     pub mod battle_screen_transition_manager;
@@ -38,11 +34,19 @@ pub mod closers {
     pub mod basic_battle_closer;
 }
 
-pub trait BattleTransition: Load + Entity + Update + Render + Completable {}
+pub trait BattleTransition: Entity + Completable {
+
+    fn on_start(&mut self);
+
+    fn update(&mut self, delta: f32);
+
+    fn render(&self);
+
+}
 
 pub trait BattleScreenTransition: BattleTransition {
 
-    fn render_below_player(&mut self) {}
+    fn render_below_player(&self) {}
 
 }
 
@@ -71,6 +75,3 @@ pub trait BattleCloser: BattleTransition {
     fn world_active(&self) -> bool;
 
 }
-
-pub trait BattleTransitionManager: Load + Entity + Update + Render + Completable {}
-

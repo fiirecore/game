@@ -1,0 +1,20 @@
+[data]
+number = 201
+name = "Unown"
+primary_type = "Psychic"
+species = "Symbol"
+height = 5
+weight = 50
+[training]
+base_exp = 118
+growth_rate = "medium"
+[base]
+hp = 48
+atk = 72
+def = 48
+sp_atk = 72
+sp_def = 48
+speed = 48
+[[moves]]
+move_id = 237
+level = 1

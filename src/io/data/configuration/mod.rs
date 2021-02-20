@@ -1,6 +1,4 @@
 use std::path::PathBuf;
-use std::fs::File;
-use std::io::Write;
 use async_trait::async_trait;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::info;
@@ -57,9 +55,6 @@ impl Default for Configuration {
     fn default() -> Self {
         Self {
 			controls: crate::io::input::keyboard::default(),
-			#[cfg(target_arch = "wasm32")]
-			touchscreen: true,
-			#[cfg(not(target_arch = "wasm32"))]
 			touchscreen: false,
 		}
     }
@@ -89,29 +84,30 @@ impl PersistantData for Configuration {
 
 	fn save(&self) {
 		if cfg!(not(target_arch = "wasm32")) {
-			let path = PathBuf::from(CONFIGURATION_PATH);
+			crate::util::file::save_struct(Self::default_path(), &self);
+			// let path = PathBuf::from(CONFIGURATION_PATH);
 
-			if !path.exists() {
-				match std::fs::create_dir_all(&path) {
-					Ok(()) => {}
-					Err(err) => {
-						warn!("Could not create folder for configuration directory with error {}", err);
-					}
-				}
-			}
+			// if !path.exists() {
+			// 	match std::fs::create_dir_all(&path) {
+			// 		Ok(()) => {}
+			// 		Err(err) => {
+			// 			warn!("Could not create folder for configuration directory with error {}", err);
+			// 		}
+			// 	}
+			// }
 	
-			if let Ok(mut file) = File::create(path.join(CONFIGURATION_FILENAME)) {
-				match serde_json::to_string_pretty(&self) {
-					Ok(encoded) => {
-						if let Err(err) = file.write(encoded.as_bytes()) {
-							warn!("Failed to write to configuration file: {}", err);
-						}
-					},
-					Err(err) => {
-						warn!("Failed to parse configuration into a string with error: {}", err);
-					}
-				}
-			}
+			// if let Ok(mut file) = File::create(path.join(CONFIGURATION_FILENAME)) {
+			// 	match serde_json::to_string_pretty(&self) {
+			// 		Ok(encoded) => {
+			// 			if let Err(err) = file.write(encoded.as_bytes()) {
+			// 				warn!("Failed to write to configuration file: {}", err);
+			// 			}
+			// 		},
+			// 		Err(err) => {
+			// 			warn!("Failed to parse configuration into a string with error: {}", err);
+			// 		}
+			// 	}
+			// }
 		}
 	}
 

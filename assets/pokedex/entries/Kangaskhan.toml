@@ -1,0 +1,56 @@
+[data]
+number = 115
+name = "Kangaskhan"
+primary_type = "Normal"
+species = "Parent"
+height = 22
+weight = 800
+[training]
+base_exp = 172
+growth_rate = "medium"
+[base]
+hp = 105
+atk = 95
+def = 80
+sp_atk = 40
+sp_def = 80
+speed = 90
+[[moves]]
+move_id = 4
+level = 1
+
+[[moves]]
+move_id = 5
+level = 25
+
+[[moves]]
+move_id = 39
+level = 13
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 44
+level = 7
+
+[[moves]]
+move_id = 99
+level = 31
+
+[[moves]]
+move_id = 146
+level = 43
+
+[[moves]]
+move_id = 179
+level = 49
+
+[[moves]]
+move_id = 203
+level = 37
+
+[[moves]]
+move_id = 252
+level = 19

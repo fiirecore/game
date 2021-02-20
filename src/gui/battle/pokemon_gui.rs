@@ -4,7 +4,7 @@ use crate::entity::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::background::Background;
 use crate::gui::text::StaticText;
-use crate::io::data::Direction;
+use crate::util::Direction;
 
 
 use crate::gui::battle::health_bar::HealthBar;
@@ -58,22 +58,22 @@ impl Entity for PlayerPokemonGui {
 
     fn spawn(&mut self) {
 		self.alive = true;
-		self.panel.enable();
-		self.name.enable();
-		self.level.enable();
-		self.health_text.enable();
-		self.health_bar.enable();
+		self.panel.spawn();
+		self.name.spawn();
+		self.level.spawn();
+		self.health_text.spawn();
+		self.health_bar.spawn();
 		self.health_bar.reset();
 		self.reset();
     }
 
     fn despawn(&mut self) {
 		self.alive = false;
-		self.panel.disable();
-		self.name.disable();
-		self.level.disable();
-		self.health_text.disable();
-		self.health_bar.disable();
+		self.panel.despawn();
+		self.name.despawn();
+		self.level.despawn();
+		self.health_text.despawn();
+		self.health_bar.despawn();
 		self.reset();
     }
 
@@ -106,7 +106,7 @@ impl PokemonGui for PlayerPokemonGui {
 	}
 
 	fn update_gui(&mut self, battle: &Battle) {
-		self.name.text = vec![battle.player().data.name.to_uppercase()];
+		self.name.text = vec![battle.player().data.name.to_ascii_uppercase()];
 		self.level.text = vec![String::from("Lv") + battle.player().level.to_string().as_str()];
 		self.exp_width = battle.player().exp as f32 / battle.player().training.growth_rate.level_exp(battle.player().level) as f32;
 		self.update_hp(battle.player().current_hp, battle.player().base.hp);
@@ -175,18 +175,18 @@ impl Entity for OpponentPokemonGui {
 
     fn spawn(&mut self) {
 		self.alive = true;
-		self.panel.enable();
-		self.name.enable();
-		self.level.enable();
-		self.health_bar.enable();
+		self.panel.spawn();
+		self.name.spawn();
+		self.level.spawn();
+		self.health_bar.spawn();
     }
 
     fn despawn(&mut self) {
 		self.alive = false;
-		self.panel.disable();
-		self.name.disable();
-		self.level.disable();
-		self.health_bar.disable();
+		self.panel.despawn();
+		self.name.despawn();
+		self.level.despawn();
+		self.health_bar.despawn();
     }
 
     fn is_alive(&self) -> bool {
@@ -216,7 +216,7 @@ impl PokemonGui for OpponentPokemonGui {
 	}
 
 	fn update_gui(&mut self, battle: &Battle) {
-		self.name.text = vec![battle.opponent().data.name.to_uppercase()];
+		self.name.text = vec![battle.opponent().data.name.to_ascii_uppercase()];
 		self.level.text = vec![String::from("Lv") + battle.opponent().level.to_string().as_str()];
 		self.update_hp(battle.opponent().current_hp, battle.opponent().base.hp)
 	}

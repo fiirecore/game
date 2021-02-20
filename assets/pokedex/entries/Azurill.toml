@@ -1,0 +1,41 @@
+[data]
+number = 298
+name = "Azurill"
+primary_type = "Normal"
+secondary_type = "Fairy"
+species = "Polka"
+height = 2
+weight = 20
+[training]
+base_exp = 38
+growth_rate = "fast"
+[base]
+hp = 50
+atk = 20
+def = 40
+sp_atk = 20
+sp_def = 40
+speed = 20
+[[moves]]
+move_id = 21
+level = 15
+
+[[moves]]
+move_id = 39
+level = 6
+
+[[moves]]
+move_id = 55
+level = 21
+
+[[moves]]
+move_id = 145
+level = 10
+
+[[moves]]
+move_id = 150
+level = 1
+
+[[moves]]
+move_id = 204
+level = 3

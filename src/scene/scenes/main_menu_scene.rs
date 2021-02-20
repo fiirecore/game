@@ -1,34 +1,16 @@
-use crate::util::Load;
-
 use crate::scene::Scene;
+use super::Scenes;
 
 pub struct MainMenuScene {
-	scene_token: usize,
+	scene_token: Option<Scenes>,
 }
 
 impl MainMenuScene {
 
 	pub fn new() -> MainMenuScene {
-
 		MainMenuScene {
-
-			scene_token: 0,
-
+			scene_token: None,
 		}
-
-	}
-
-}
-
-////#[async_trait::async_trait]
-impl Load for MainMenuScene {
-
-	fn load(&mut self) {
-
-	}
-
-	fn on_start(&mut self) {
-		self.scene_token = 5;
 	}
 
 }
@@ -36,6 +18,10 @@ impl Load for MainMenuScene {
 impl Scene for MainMenuScene {
 
 	// have normal main menu + video settings + controls + exit
+
+	fn on_start(&mut self) {
+		self.scene_token = Some(Scenes::GameScene);
+	}
 	
 	fn update(&mut self, _delta: f32) {}
 	
@@ -45,11 +31,7 @@ impl Scene for MainMenuScene {
 	
 	fn quit(&mut self) {}
 	
-	fn name(&self) -> &str {
-		&"Main Menu"
-	}
-	
-	fn next_scene(&self) -> usize {
+	fn next_scene(&self) -> Option<Scenes> {
 		self.scene_token
 	}
 	

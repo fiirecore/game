@@ -1,0 +1,48 @@
+[data]
+number = 19
+name = "Rattata"
+primary_type = "Normal"
+species = "Mouse"
+height = 3
+weight = 35
+[training]
+base_exp = 51
+growth_rate = "medium"
+[base]
+hp = 30
+atk = 56
+def = 35
+sp_atk = 25
+sp_def = 35
+speed = 72
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 98
+level = 7
+
+[[moves]]
+move_id = 116
+level = 20
+
+[[moves]]
+move_id = 158
+level = 13
+
+[[moves]]
+move_id = 162
+level = 34
+
+[[moves]]
+move_id = 228
+level = 27
+
+[[moves]]
+move_id = 283
+level = 41

@@ -1,0 +1,61 @@
+[data]
+number = 73
+name = "Tentacruel"
+primary_type = "Water"
+secondary_type = "Poison"
+species = "Jellyfish"
+height = 16
+weight = 550
+[training]
+base_exp = 180
+growth_rate = "slow"
+[base]
+hp = 80
+atk = 70
+def = 65
+sp_atk = 80
+sp_def = 120
+speed = 100
+[[moves]]
+move_id = 35
+level = 30
+
+[[moves]]
+move_id = 40
+level = 1
+
+[[moves]]
+move_id = 48
+level = 1
+
+[[moves]]
+move_id = 48
+level = 6
+
+[[moves]]
+move_id = 51
+level = 19
+
+[[moves]]
+move_id = 56
+level = 55
+
+[[moves]]
+move_id = 61
+level = 25
+
+[[moves]]
+move_id = 103
+level = 47
+
+[[moves]]
+move_id = 112
+level = 38
+
+[[moves]]
+move_id = 132
+level = 1
+
+[[moves]]
+move_id = 132
+level = 12

@@ -1,4 +1,5 @@
 use crate::battle::battle_pokemon::BattlePokemon;
+use crate::entity::Entity;
 use crate::gui::Focus;
 use crate::io::input::Control;
 use crate::util::graphics::Texture;
@@ -75,35 +76,13 @@ impl FightPanel {
 
 impl GuiComponent for FightPanel {
 
-    fn enable(&mut self) {
-        self.active = true;
-        self.move_panel.enable();
-        self.reset_vars();
-    }
-
-    fn disable(&mut self) {
-        self.active = false;
-        self.move_panel.disable();
-        self.unfocus();
-    }
-
-    fn is_active(& self) -> bool {
-        self.active
-    }
-
-    fn update(&mut self, _delta: f32) {
-        // if self.is_active() {
-
-        // }
-    }
-
     fn update_position(&mut self, panel_x: f32, panel_y: f32) {
         self.panel_x = panel_x;
         self.panel_y = panel_y;
     }
 
     fn render(&self) {
-        if self.is_active() {
+        if self.is_alive() {
 
             draw(self.background, self.x + self.panel_x, self.y + self.panel_y);
             self.move_panel.render();
@@ -117,33 +96,13 @@ impl GuiComponent for FightPanel {
                 if string_id / 2 == 1 {
                     y_offset = 17.0;
                 }
-                crate::util::graphics::draw_text_left(0, self.move_names[string_id].to_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
+                crate::util::graphics::draw_text_left(0, self.move_names[string_id].to_ascii_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
                 if string_id == self.cursor_position as usize {
                     crate::util::graphics::draw_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
                 }
             }
         }        
     }
-
-}
-
-impl Focus for FightPanel {
-
-    fn focus(&mut self) {
-        self.focus = true;
-    }
-
-    fn unfocus(&mut self) {
-        self.focus = false;
-    }
-
-    fn in_focus(&mut self) -> bool {
-        self.focus
-    }
-
-    // fn next(&self) -> u8 {
-    //     self.next
-    // }
 
 }
 
@@ -178,6 +137,42 @@ impl crate::util::Input for FightPanel {
             }
             
         }
+    }
+
+}
+
+impl Entity for FightPanel {
+
+    fn spawn(&mut self) {
+        self.active = true;
+        self.move_panel.spawn();
+        self.reset_vars();
+    }
+
+    fn despawn(&mut self) {
+        self.active = false;
+        self.move_panel.despawn();
+        self.unfocus();
+    }
+
+    fn is_alive(& self) -> bool {
+        self.active
+    }
+
+}
+
+impl Focus for FightPanel {
+
+    fn focus(&mut self) {
+        self.focus = true;
+    }
+
+    fn unfocus(&mut self) {
+        self.focus = false;
+    }
+
+    fn in_focus(&mut self) -> bool {
+        self.focus
     }
 
 }

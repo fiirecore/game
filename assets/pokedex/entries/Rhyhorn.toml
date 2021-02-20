@@ -1,0 +1,57 @@
+[data]
+number = 111
+name = "Rhyhorn"
+primary_type = "Ground"
+secondary_type = "Rock"
+species = "Spikes"
+height = 10
+weight = 1150
+[training]
+base_exp = 69
+growth_rate = "slow"
+[base]
+hp = 80
+atk = 85
+def = 95
+sp_atk = 30
+sp_def = 30
+speed = 25
+[[moves]]
+move_id = 23
+level = 10
+
+[[moves]]
+move_id = 30
+level = 1
+
+[[moves]]
+move_id = 31
+level = 15
+
+[[moves]]
+move_id = 32
+level = 38
+
+[[moves]]
+move_id = 36
+level = 43
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 89
+level = 52
+
+[[moves]]
+move_id = 184
+level = 24
+
+[[moves]]
+move_id = 224
+level = 57
+
+[[moves]]
+move_id = 350
+level = 29

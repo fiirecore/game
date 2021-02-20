@@ -1,4 +1,4 @@
-use crate::io::data::Direction;
+use crate::util::Direction;
 use super::GuiText;
 
 pub struct StaticText {
@@ -40,18 +40,6 @@ impl StaticText {
 }
 
 impl super::GuiComponent for StaticText {
-
-	fn enable(&mut self) {
-		self.alive = true;		
-	}
-	
-	fn disable(&mut self) {
-		self.alive = false;
-	}
-	
-	fn is_active(& self) -> bool {
-		self.alive
-	}
 	
 	fn update_position(&mut self, x: f32, y: f32) {
 		self.panel_x = x;
@@ -65,9 +53,7 @@ impl super::GuiComponent for StaticText {
 			} else {
 				crate::util::graphics::draw_text_left(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
-		}
-		
-		
+		}		
 	}
 	
 }
@@ -86,4 +72,20 @@ impl GuiText for StaticText {
 		self.font_id
 	}
 	
+}
+
+impl crate::entity::Entity for StaticText {
+
+	fn spawn(&mut self) {
+		self.alive = true;		
+	}
+	
+	fn despawn(&mut self) {
+		self.alive = false;
+	}
+	
+	fn is_alive(& self) -> bool {
+		self.alive
+	}
+
 }

@@ -1,0 +1,53 @@
+[data]
+number = 183
+name = "Marill"
+primary_type = "Water"
+secondary_type = "Fairy"
+species = "Aqua"
+height = 4
+weight = 85
+[training]
+base_exp = 88
+growth_rate = "fast"
+[base]
+hp = 70
+atk = 20
+def = 50
+sp_atk = 20
+sp_def = 50
+speed = 40
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 38
+level = 28
+
+[[moves]]
+move_id = 39
+level = 6
+
+[[moves]]
+move_id = 55
+level = 10
+
+[[moves]]
+move_id = 56
+level = 45
+
+[[moves]]
+move_id = 61
+level = 21
+
+[[moves]]
+move_id = 111
+level = 3
+
+[[moves]]
+move_id = 205
+level = 15
+
+[[moves]]
+move_id = 240
+level = 36

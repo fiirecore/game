@@ -1,0 +1,69 @@
+[data]
+number = 42
+name = "Golbat"
+primary_type = "Poison"
+secondary_type = "Flying"
+species = "Bat"
+height = 16
+weight = 550
+[training]
+base_exp = 159
+growth_rate = "medium"
+[base]
+hp = 75
+atk = 80
+def = 70
+sp_atk = 65
+sp_def = 75
+speed = 90
+[[moves]]
+move_id = 17
+level = 21
+
+[[moves]]
+move_id = 44
+level = 16
+
+[[moves]]
+move_id = 48
+level = 1
+
+[[moves]]
+move_id = 48
+level = 11
+
+[[moves]]
+move_id = 103
+level = 1
+
+[[moves]]
+move_id = 109
+level = 28
+
+[[moves]]
+move_id = 114
+level = 56
+
+[[moves]]
+move_id = 141
+level = 1
+
+[[moves]]
+move_id = 212
+level = 42
+
+[[moves]]
+move_id = 305
+level = 49
+
+[[moves]]
+move_id = 310
+level = 1
+
+[[moves]]
+move_id = 310
+level = 6
+
+[[moves]]
+move_id = 314
+level = 35

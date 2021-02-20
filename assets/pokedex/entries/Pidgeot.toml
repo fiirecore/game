@@ -1,0 +1,65 @@
+[data]
+number = 18
+name = "Pidgeot"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Bird"
+height = 15
+weight = 395
+[training]
+base_exp = 216
+growth_rate = "medium-slow"
+[base]
+hp = 83
+atk = 80
+def = 75
+sp_atk = 70
+sp_def = 70
+speed = 101
+[[moves]]
+move_id = 16
+level = 1
+
+[[moves]]
+move_id = 16
+level = 9
+
+[[moves]]
+move_id = 17
+level = 27
+
+[[moves]]
+move_id = 18
+level = 20
+
+[[moves]]
+move_id = 28
+level = 1
+
+[[moves]]
+move_id = 28
+level = 5
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 97
+level = 48
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 98
+level = 13
+
+[[moves]]
+move_id = 119
+level = 62
+
+[[moves]]
+move_id = 297
+level = 34

@@ -1,0 +1,56 @@
+[data]
+number = 234
+name = "Stantler"
+primary_type = "Normal"
+species = "Big"
+height = 14
+weight = 712
+[training]
+base_exp = 163
+growth_rate = "slow"
+[base]
+hp = 73
+atk = 95
+def = 62
+sp_atk = 85
+sp_def = 65
+speed = 85
+[[moves]]
+move_id = 23
+level = 21
+
+[[moves]]
+move_id = 28
+level = 27
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 37
+
+[[moves]]
+move_id = 43
+level = 7
+
+[[moves]]
+move_id = 95
+level = 17
+
+[[moves]]
+move_id = 109
+level = 41
+
+[[moves]]
+move_id = 272
+level = 31
+
+[[moves]]
+move_id = 310
+level = 11
+
+[[moves]]
+move_id = 347
+level = 47

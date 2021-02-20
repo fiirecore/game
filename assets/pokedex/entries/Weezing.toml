@@ -1,0 +1,64 @@
+[data]
+number = 110
+name = "Weezing"
+primary_type = "Poison"
+species = "Poison"
+height = 12
+weight = 95
+[training]
+base_exp = 172
+growth_rate = "medium"
+[base]
+hp = 65
+atk = 90
+def = 120
+sp_atk = 85
+sp_def = 70
+speed = 60
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 108
+level = 25
+
+[[moves]]
+move_id = 114
+level = 33
+
+[[moves]]
+move_id = 120
+level = 1
+
+[[moves]]
+move_id = 120
+level = 17
+
+[[moves]]
+move_id = 123
+level = 1
+
+[[moves]]
+move_id = 123
+level = 9
+
+[[moves]]
+move_id = 124
+level = 21
+
+[[moves]]
+move_id = 139
+level = 1
+
+[[moves]]
+move_id = 153
+level = 44
+
+[[moves]]
+move_id = 194
+level = 51
+
+[[moves]]
+move_id = 262
+level = 58

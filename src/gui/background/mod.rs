@@ -35,21 +35,6 @@ impl Background {
 
 impl super::GuiComponent for Background {
 	
-	fn load(&mut self) {
-	}
-	
-	fn enable(&mut self) {
-		self.alive = true;
-	}
-	
-	fn disable(&mut self) {
-		self.alive = false;
-	}
-	
-	fn is_active(& self) -> bool {
-		self.alive
-	}
-	
 	fn render(&self) {
 		crate::util::graphics::draw(self.texture, self.x, self.y);
 	}
@@ -59,4 +44,21 @@ impl super::GuiComponent for Background {
 		self.y = y;
     }
     
+}
+
+impl crate::entity::Entity for Background {
+
+	
+	fn spawn(&mut self) {
+		self.alive = true;
+	}
+	
+	fn despawn(&mut self) {
+		self.alive = false;
+	}
+	
+	fn is_alive(& self) -> bool {
+		self.alive
+	}
+
 }

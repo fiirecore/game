@@ -1,21 +1,21 @@
 use crate::audio::music::Music;
 use crate::audio::play_music;
+use crate::battle::transitions::BattleTransition;
 use crate::entity::Entity;
-use crate::util::battle_data::BattleData;
-use crate::util::{Update, Render};
 use crate::battle::transitions::BattleScreenTransition;
-use crate::battle::transitions::BattleTransitionManager;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
 //use crate::battle::transitions::screen_transitions::vertical_close_battle_screen_transition::VerticalCloseBattleScreenTransition;
 use crate::util::{Reset, Completable};
-use crate::util::Load;
 use crate::battle::battle_info::BattleType;
 
 pub struct BattleScreenTransitionManager {
 
-    pub transitions: Vec<Box<dyn BattleScreenTransition>>,
-    pub current_transition_id: usize,
+    
+    current_transition: BattleScreenTransitions,
+
+    flash: FlashBattleScreenTransition,
+    trainer: TrainerBattleScreenTransition,
 
 }
 
@@ -27,48 +27,18 @@ pub enum BattleScreenTransitions {
 
 }
 
-impl BattleScreenTransitions {
-
-    fn id(&self) -> usize {
-        match self {
-            BattleScreenTransitions::Flash => 0,
-            BattleScreenTransitions::Trainer => 1,
-        }
-    }
-
-}
-
 impl BattleScreenTransitionManager {
 
     pub fn new() -> Self {
-
         Self {
-
-            transitions: Vec::new(),
-            current_transition_id: 0,
-
+            current_transition: BattleScreenTransitions::default(),
+            flash: FlashBattleScreenTransition::new(),
+            trainer: TrainerBattleScreenTransition::new(),
         }
-
     }
 
-    pub fn load_transitions(&mut self) {
-        self.transitions.push(Box::new(FlashBattleScreenTransition::new()));
-        self.transitions.push(Box::new(TrainerBattleScreenTransition::new()));
-        //self.transitions.push(Box::new(VerticalCloseBattleScreenTransition::new()));
-    }
-
-    pub fn on_start(&mut self, battle_data: &BattleData) {
-
-        if let Some(ref trainer) = battle_data.trainer_data {
-            self.current_transition_id = trainer.transition.id();
-        } else {
-            self.current_transition_id = 0;
-        }
-
-        self.transitions[self.current_transition_id].spawn();
-        self.transitions[self.current_transition_id].on_start();
-
-        match battle_data.battle_type {
+    pub fn set_type(&mut self, battle_type: BattleType) {
+        match battle_type {
             BattleType::Wild => {
                 play_music(Music::BattleWild);
             }
@@ -81,38 +51,53 @@ impl BattleScreenTransitionManager {
         }
     }
 
-    pub fn render_below_player(&mut self) {
-        self.transitions[self.current_transition_id].render_below_player();
+    fn get(&self) -> &dyn BattleScreenTransition {
+        match self.current_transition {
+            BattleScreenTransitions::Flash => &self.flash,
+            BattleScreenTransitions::Trainer => &self.trainer,
+        }
     }
 
-}
-
-impl Update for BattleScreenTransitionManager {
-
-    fn update(&mut self, delta: f32) {
-        if self.is_alive() {
-            self.transitions[self.current_transition_id].update(delta);
-        }        
-    }
-
-}
-
-impl Render for BattleScreenTransitionManager {
-
-    fn render(&self) {
-        if self.is_alive() {
-            self.transitions[self.current_transition_id].render();
+    fn get_mut(&mut self) -> &mut dyn BattleScreenTransition {
+        match self.current_transition {
+            BattleScreenTransitions::Flash => &mut self.flash,
+            BattleScreenTransitions::Trainer => &mut self.trainer,
         }
     }
 
 }
 
-impl BattleTransitionManager for BattleScreenTransitionManager {}
+impl BattleTransition for BattleScreenTransitionManager {
+
+    fn on_start(&mut self) {
+        self.spawn();
+        self.get_mut().on_start();
+    }
+
+    fn update(&mut self, delta: f32) {
+        if self.is_alive() {
+            self.get_mut().update(delta);
+        }        
+    }
+
+    fn render(&self) {
+        if self.is_alive() {
+            self.get().render();
+        }
+    }
+
+}
+
+impl BattleScreenTransition for BattleScreenTransitionManager {
+    fn render_below_player(&self) {
+        self.get().render_below_player();
+    }
+}
 
 impl Reset for BattleScreenTransitionManager {
 
     fn reset(&mut self) {
-        self.transitions[self.current_transition_id].reset();
+        self.get_mut().reset();
     }
 
 }
@@ -120,15 +105,7 @@ impl Reset for BattleScreenTransitionManager {
 impl Completable for BattleScreenTransitionManager {
 
     fn is_finished(&self) -> bool {
-        return self.transitions[self.current_transition_id].is_finished();
-    }
-
-}
-
-impl Load for BattleScreenTransitionManager {
-
-    fn load(&mut self) {
-
+        self.get().is_finished()
     }
 
 }
@@ -136,17 +113,23 @@ impl Load for BattleScreenTransitionManager {
 impl Entity for BattleScreenTransitionManager {
 
     fn spawn(&mut self) {
-        self.transitions[self.current_transition_id].spawn();
+        self.get_mut().spawn();
         self.reset();
     }    
 
     fn despawn(&mut self) {
-        self.transitions[self.current_transition_id].despawn();
+        self.get_mut().despawn();
         self.reset();
     }
 
     fn is_alive(&self) -> bool {
-        return self.transitions[self.current_transition_id].is_alive();
+        self.get().is_alive()
     }
 
+}
+
+impl Default for BattleScreenTransitions {
+    fn default() -> Self {
+        Self::Flash
+    }
 }
