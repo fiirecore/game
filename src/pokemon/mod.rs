@@ -1,11 +1,9 @@
 use serde::{Deserialize, Serialize};
-
 use self::data::LearnableMove;
 use self::data::PokedexData;
 use self::data::StatSet;
 use self::data::training::Training;
-use self::moves::MoveInstance;
-use self::pokedex::Pokedex;
+use self::moves::instance::{MoveInstance, MoveInstances};
 
 pub mod pokedex;
 pub mod data;
@@ -15,20 +13,6 @@ pub mod instance;
 pub mod party;
 
 pub type PokemonId = u16;
-
-static mut DEX: Option<Pokedex> = None;
-
-pub fn load_pokedex() {
-	unsafe { 
-		DEX = Some(Pokedex::new());
-	}
-}
-
-pub fn pokedex() -> &'static Pokedex {
-	unsafe {
-		DEX.as_ref().expect("Could not get Pokedex!")
-	}
-}
 
 #[derive(Serialize, Deserialize)]
 pub struct Pokemon {
@@ -43,16 +27,17 @@ pub struct Pokemon {
 
 impl Pokemon {
 
-	pub fn moves_from_level(&self, pokedex: &Pokedex, level: u8) -> Vec<MoveInstance> {
+	pub fn moves_from_level(&self, level: u8) -> MoveInstances {
 		let mut moves = Vec::new();
+		let movedex = &pokedex::MOVEDEX;
 		for learnable_move in &self.moves {
 			if learnable_move.level <= level {
-				match pokedex.move_list.get(&learnable_move.move_id) {
+				match movedex.get(&learnable_move.move_id) {
 					Some(pokemon_move) => {
 						moves.push(MoveInstance {
-                            move_instance: pokemon_move.clone(),
+						    pokemon_move: pokemon_move.value().clone(),
 						    remaining_pp: pokemon_move.pp,
-                        });
+						});
 					}
 					None => {
 						macroquad::prelude::warn!("Could not add pokemon move {} to {}", &learnable_move.move_id, &self.data.name)
@@ -60,10 +45,10 @@ impl Pokemon {
 				}
 			}
 		}
-		while moves.len() > 4 {
-			moves.remove(0);
-		}
-		return moves;
+		moves.reverse();
+		moves.truncate(4);
+
+		return moves;		
 	}
 
 	pub fn from_string(data: &str) -> Result<Pokemon, toml::de::Error> {

@@ -1,4 +1,4 @@
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::Focus;
 use crate::io::data::player::PlayerData;
 use crate::util::Input;
@@ -101,11 +101,7 @@ impl Input for PlayerWorldGui {
                 },
                 1 => {
                     // Pokemon
-                    crate::gui::set_message(crate::io::data::text::MessageSet::new(
-                        1,
-                        crate::io::data::text::color::TextColor::Black,
-                        vec![vec![String::from("Unimplemented!")]]
-                    ));
+                    crate::gui::game::pokemon_party_gui::toggle();
                 },
                 2 => {
                     // Exit Game
@@ -184,7 +180,7 @@ impl Button {
 
     pub fn name(&self) -> &str {
         match self {
-            Button::Save => "Save",
+            Button::Save => "SAVE",
             Button::Pokemon => "POKEMON",
             Button::ExitGame => "EXIT GAME",
             Button::Close => "CLOSE",

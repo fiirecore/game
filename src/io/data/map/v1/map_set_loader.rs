@@ -4,7 +4,7 @@ use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
 use crate::audio::music::Music;
 use crate::world::map::WorldMap;
-use crate::world::map::set::world_map_set::WorldMapSet;
+use crate::world::map::set::WorldMapSet;
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
 
@@ -33,11 +33,12 @@ pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config
                         tile_map: gba_map.tile_map,
                         border_blocks: gba_map.border_blocks,
                         movement_map: gba_map.movement_map,
-                        warps: super::load_warp_entries(&root_path, Some(index)),
-                        npcs: super::load_npc_entries(&root_path, Some(index)),
+                        fly_position: config.fly_position,
                         wild: super::load_wild_entry(&root_path, config.wild.clone(), Some(index)),
+                        warps: super::load_warp_entries(&root_path, Some(index)),
+                        npc_manager: super::load_npc_entries(&root_path, Some(index)),
+                        script_manager: super::load_script_entries(root_path, Some(index)),
 
-                        ..Default::default()  
                     },
                 );
             }

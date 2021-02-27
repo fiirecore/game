@@ -11,6 +11,16 @@ pub mod battle_data;
 
 pub static TILE_SIZE: u8 = 16;
 
+pub trait Entity {
+	
+	fn spawn(&mut self);
+	
+	fn despawn(&mut self);
+	
+	fn is_alive(&self) -> bool;
+	
+}
+
 pub trait Load {
 
 	fn load(&mut self);
@@ -79,19 +89,18 @@ pub struct Location {
 pub struct GlobalPosition {
 
 	pub local: Position,
-	pub x_offset: isize,
-	pub y_offset: isize,
+	pub offset: Coordinate,
 
 }
 
 impl GlobalPosition {
 
 	pub fn get_x(&self) -> isize {
-		self.x_offset + self.local.x
+		self.offset.x + self.local.coords.x
 	}
 
 	pub fn get_y(&self) -> isize {
-		self.y_offset + self.local.y
+		self.offset.y + self.local.coords.y
 	}
  
 }
@@ -99,13 +108,20 @@ impl GlobalPosition {
 #[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
 pub struct Position {
 
-	pub x: isize,
-    pub y: isize,
+	pub coords: Coordinate,
 	pub direction: Direction,
     #[serde(skip)]
     pub x_offset: f32,
     #[serde(skip)]
 	pub y_offset: f32,
+
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+pub struct Coordinate {
+
+	pub x: isize,
+	pub y: isize,
 
 }
 
@@ -157,14 +173,30 @@ impl Default for Direction {
     }
 }
 
-impl Position {
+impl Coordinate {
 
-	pub fn subtract(&self, x: isize, y: isize) -> Position {
-		Position {
+	pub fn subtract(&self, x: isize, y: isize) -> Coordinate {
+		Coordinate {
 			x: self.x - x,
 			y: self.y - y,
 			..*self
 		}
     }
+
+	pub fn towards(&self, destination: &Coordinate) -> Direction {
+		if (self.x - destination.x).abs() <= (self.y - destination.y).abs() {
+			if self.x > destination.x {
+				Direction::Left
+			} else {
+				Direction::Right
+			}
+		} else {
+			if self.y > destination.y {
+				Direction::Up
+			} else {
+				Direction::Down
+			}
+		}
+	}
 
 }

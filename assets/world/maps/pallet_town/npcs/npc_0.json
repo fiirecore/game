@@ -1,0 +1,13 @@
+{
+    "identifier": {
+        "name": "NPC 0",
+        "npc_type": "woman_1"
+    },
+    "position": {
+        "coords": {
+            "x": 3,
+            "y": 10
+        },
+        "direction": "Down"
+    }
+}

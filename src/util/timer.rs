@@ -1,5 +1,6 @@
-use crate::entity::Entity;
+use crate::util::Entity;
 
+#[derive(Default, Clone)]
 pub struct Timer {
 
     alive: bool,

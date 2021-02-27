@@ -1,5 +1,6 @@
 use crate::pokemon::data::StatSet;
 use crate::pokemon::party::PokemonParty;
+use crate::util::Coordinate;
 use crate::util::file::PersistantData;
 use crate::util::file::PersistantDataLocation;
 use std::path::{Path, PathBuf};
@@ -75,8 +76,10 @@ fn player_location() -> Location {
 		map_index: 1,
 		position: GlobalPosition {
 			local: Position {
-				x: 6,
-				y: 6,
+				coords: Coordinate {
+					x: 6,
+					y: 6,
+				},
 				..Default::default()
 			},
 			..Default::default()
@@ -131,9 +134,9 @@ impl PersistantData for PlayerData {
 			info!("Saved player data!");
 	}
 
-	// async fn reload(&mut self) {
-	// 	*self = PlayerData::load_from_file().await;
-	// }
+	async fn reload(&mut self) {
+		*self = PlayerData::load_from_file().await;
+	}
 
 }
 

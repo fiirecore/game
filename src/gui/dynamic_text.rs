@@ -1,3 +1,5 @@
+use serde::Deserialize;
+
 use crate::io::data::text::Message;
 use crate::io::data::text::MessageSet;
 use crate::util::Completable;
@@ -5,64 +7,59 @@ use crate::util::Reset;
 use crate::util::graphics::draw_text_left_color;
 use crate::io::input;
 
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::GuiComponent;
 use crate::util::timer::Timer;
 
+#[derive(Clone, Deserialize)]
 pub struct DynamicText {
 
+	#[serde(skip)]
 	alive: bool,
+	#[serde(skip)]
     focus: bool,
     
+	#[serde(default = "dx")]
 	x: f32,
+	#[serde(default = "dy")]
 	y: f32,
+	#[serde(default = "px")]
 	panel_x: f32,
+	#[serde(default = "py")]
 	panel_y: f32,
 	
 	pub text: MessageSet,
+	#[serde(skip)]
 	current_phrase: u8,
+	#[serde(skip)]
 	current_line: usize,
+	#[serde(skip)]
 	counter: f32,
 	
+	#[serde(skip)]
 	pub can_continue: bool,
+	#[serde(skip)]
 	finish_click: bool,
+	#[serde(skip)]
 	pub timer: Timer,
 
+	#[serde(skip)]
 	button_pos: f32,
+	#[serde(skip)]
 	button_up: bool,
 
 }
 
-impl Default for DynamicText {
-    fn default() -> Self {
-        Self {
-			alive: false,
-			focus: false,
-
-			x: 0.0,
-			y: 0.0,
-			panel_x: 0.0,
-			panel_y: 0.0,
-			text: MessageSet::default(),
-			current_phrase: 0,
-			current_line: 0,
-
-			counter: 0.0,
-
-			can_continue: false,
-			finish_click: false,
-			timer: Timer::new(1.0),
-			
-			button_pos: 0.0,
-			button_up: true,
-		}
-    }
-}
-
 impl DynamicText {
+
+	pub fn from_text(text_x: f32, text_y: f32, panel_x: f32, panel_y: f32, text: MessageSet) -> Self {
+		Self {
+			text,
+			..Self::new(text_x, text_y, panel_x, panel_y)
+		}
+	}
 	
 	pub fn new(text_x: f32, text_y: f32, panel_x: f32, panel_y: f32) -> Self {
-		
 		Self {
 			x: text_x,
 			y: text_y,
@@ -70,7 +67,6 @@ impl DynamicText {
 			panel_y: panel_y,
 			..Default::default()
 		}
-		
 	}
 
 	fn reset_phrase(&mut self) {
@@ -247,4 +243,46 @@ impl Entity for DynamicText {
 		self.alive
 	}
 
+}
+
+impl Default for DynamicText {
+    fn default() -> Self {
+        Self {
+			alive: false,
+			focus: false,
+
+			x: 0.0,
+			y: 0.0,
+			panel_x: 0.0,
+			panel_y: 0.0,
+			text: MessageSet::default(),
+			current_phrase: 0,
+			current_line: 0,
+
+			counter: 0.0,
+
+			can_continue: false,
+			finish_click: false,
+			timer: Timer::new(1.0),
+			
+			button_pos: 0.0,
+			button_up: true,
+		}
+    }
+}
+
+const fn dx() -> f32 {
+	6.0
+}
+
+const fn dy() -> f32 {
+	116.0
+}
+
+const fn px() -> f32 {
+	11.0
+}
+
+const fn py() -> f32 {
+	5.0
 }

@@ -4,7 +4,7 @@ use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
 use crate::audio::music::Music;
 use crate::world::map::WorldMap;
-use crate::world::map::chunk::world_chunk::WorldChunk;
+use crate::world::map::chunk::WorldChunk;
 use super::gba_map::fix_tiles;
 use super::gba_map::get_gba_map;
 use super::map_serializable::MapConfig;
@@ -37,12 +37,15 @@ pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, conf
                                         tile_map: gba_map.tile_map,
                                         border_blocks: gba_map.border_blocks,
                                         movement_map: gba_map.movement_map,
+
+                                        fly_position: config.fly_position,
+                                        
+                                        wild: super::load_wild_entry(root_path, config.wild, None),
                                         
                                         warps: super::load_warp_entries(root_path, None),
-                                        npcs: super::load_npc_entries(root_path, None),
-                                        wild: super::load_wild_entry(root_path, config.wild, None),
+                                        npc_manager: super::load_npc_entries(root_path, None),
+                                        script_manager: super::load_script_entries(root_path, None),
 
-                                        ..Default::default()        
                                     },
                                     connections: jigsaw_map.connections,
                                 }

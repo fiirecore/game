@@ -1,3 +1,4 @@
+use crate::io::data::text::color::TextColor;
 use crate::util::Direction;
 use super::GuiText;
 
@@ -10,6 +11,7 @@ pub struct StaticText {
 	panel_y: f32,
 
 	pub text: Vec<String>,
+	pub color: TextColor,
 	pub font_id: usize,
 
 	direction: bool,
@@ -18,7 +20,7 @@ pub struct StaticText {
 
 impl StaticText {
 	
-	pub fn new(text: Vec<String>, font_id: usize, direction: Direction, x: f32, y: f32, panel_x: f32, panel_y: f32) -> Self {
+	pub fn new(text: Vec<String>, text_color: TextColor, font_id: usize, direction: Direction, x: f32, y: f32, panel_x: f32, panel_y: f32) -> Self {
 		
 		Self {
 			
@@ -29,6 +31,7 @@ impl StaticText {
 			panel_y: panel_y,
 
 			text: text,
+			color: text_color,
 			font_id: font_id,
 
 			direction: direction == Direction::Right,
@@ -49,9 +52,9 @@ impl super::GuiComponent for StaticText {
 	fn render(&self) {
 		for line_index in 0..self.get_text().len() {
 			if self.direction {
-				crate::util::graphics::draw_text_right(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+				crate::util::graphics::draw_text_right_color(self.get_font_id(), self.get_line(line_index), self.color, self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			} else {
-				crate::util::graphics::draw_text_left(self.get_font_id(), self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
+				crate::util::graphics::draw_text_left_color(self.get_font_id(), self.get_line(line_index), self.color, self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 		}		
 	}
@@ -74,7 +77,7 @@ impl GuiText for StaticText {
 	
 }
 
-impl crate::entity::Entity for StaticText {
+impl crate::util::Entity for StaticText {
 
 	fn spawn(&mut self) {
 		self.alive = true;		

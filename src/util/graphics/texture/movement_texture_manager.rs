@@ -1,6 +1,6 @@
 use crate::util::graphics::Texture;
 
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::util::timer::Timer;
 
 use super::movement_texture::MovementTexture;

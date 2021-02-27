@@ -1,24 +1,19 @@
 use ahash::AHashMap as HashMap;
+use macroquad::prelude::debug;
 use crate::util::graphics::Texture;
 use crate::audio::music::Music;
-use crate::entity::Entity;
 use crate::world::NpcTextures;
 use crate::world::RenderCoords;
 use crate::world::World;
 use crate::world::map::manager::test_move_code;
 use crate::world::player::Player;
 use crate::world::warp::WarpEntry;
-use super::world_chunk::WorldChunk;
+use super::WorldChunk;
 
-#[derive(Default)]
 pub struct WorldChunkMap {
 
-    alive: bool,
-
-    pub(crate) chunks: HashMap<u16, WorldChunk>,
-    //pub(crate) current_chunk: &'a WorldChunk,
-    //connected_chunks: Vec<&'a WorldChunk>,
-    pub(crate) current_chunk: u16,
+    chunks: HashMap<u16, WorldChunk>,
+    current_chunk: u16,
 
     pub current_music: Music,
 
@@ -26,19 +21,38 @@ pub struct WorldChunkMap {
 
 impl WorldChunkMap {
 
+    pub fn new() -> Self {
+        Self {
+            chunks: HashMap::new(),
+            current_chunk: 2,
+            current_music: Music::default(),
+        }
+    }
+
+    pub fn update_chunk(&mut self, chunk_id: &u16) -> Option<&WorldChunk> {
+        if let Some(chunk) = self.chunks.get(chunk_id) {
+            self.current_chunk = *chunk_id;
+            return Some(chunk);
+        } else {
+            return None;
+        }
+    }
+
     pub fn change_chunk(&mut self, chunk: u16, player: &mut Player) {
-        self.current_chunk = chunk;
-        {
-            let chunk1 = self.chunks.get(&self.current_chunk).unwrap();
-            player.position.local.x = player.position.get_x() - chunk1.x;
-            player.position.local.y = player.position.get_y() - chunk1.y;
-            player.position.x_offset = chunk1.x;
-            player.position.y_offset = chunk1.y;
+        if let Some(chunk1) = self.update_chunk(&chunk) {
+            {
+                player.position.local.coords.x = player.position.get_x() - chunk1.x;
+                player.position.local.coords.y = player.position.get_y() - chunk1.y;
+                player.position.offset.x = chunk1.x;
+                player.position.offset.y = chunk1.y;
+            }
+            debug!("Entered chunk: {}", chunk1.map.name);
+            let music = self.current_chunk().map.music;
+            if music != self.current_music {
+                self.current_music = music;
+            }
         }
-        let music = self.current_chunk().map.music;
-        if music != self.current_music {
-            self.current_music = music;
-        }
+        
     }
 
     pub fn chunk_at(&self, x: isize, y: isize) -> Option<(&u16, &WorldChunk)> {
@@ -77,6 +91,24 @@ impl WorldChunkMap {
         self.chunks.insert(index, chunk);
     }
 
+    pub(crate) fn tiles(&self) -> Vec<crate::world::TileId> {
+        let mut tiles = Vec::new();
+        for chunk in self.chunks.values() {
+            for tile_id in &chunk.map.tile_map {
+                if !tiles.contains(tile_id) {
+                    tiles.push(*tile_id);
+                }
+            }
+            for tile_id in &chunk.map.border_blocks {
+                if !tiles.contains(tile_id) {
+                    tiles.push(*tile_id);
+                }
+            }
+        }
+        return tiles;
+    }
+
+
 
     pub fn walk_connections(&mut self, player: &mut Player, x: isize, y: isize) -> u8 {
         let mut move_code = 1;
@@ -106,10 +138,10 @@ impl World for WorldChunkMap {
     }
 
     fn tile(&self, x: isize, y: isize) -> u16 {
-        let current_chunk = self.current_chunk();
-        if let Some(tile) = current_chunk.safe_tile(x, y) {
+        if let Some(tile) = self.current_chunk().safe_tile(x, y) {
             return tile;
         } else {
+            let current_chunk = self.current_chunk();
             for connection in &current_chunk.connections {
                 let chunk = self.chunks.get(connection).expect("Could not get current chunk");
                 if let Some(tile) = chunk.safe_tile(x, y) {
@@ -134,36 +166,22 @@ impl World for WorldChunkMap {
     }
 
     fn walkable(&self, x: isize, y: isize) -> u8 {
-        let current = self.current_chunk();
-        if current.in_bounds(x, y) {
-            current.walkable(x, y)
-        } else {
-            // for connection_id in &current.connections {
-            //     let connection = self.chunks.get(connection_id).expect("Could not get connected chunk");
-            //     if connection.in_bounds(x, y) {
-            //         // To - do: check if walkable here
-            //         //self.current_chunk = *connection_id;
-            //         // let music = connection.map.music;
-            //         // if music != self.current_music {
-            //         //     self.current_music = music;
-            //         //     context.play_music(self.current_music);
-            //         // }
-            //         return self.walkable(x, y);
-            //     }
-            // }
-            return 1;
-        }        
+        self.current_chunk().walkable(x, y)  
     }
 
     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry> {
         self.current_chunk().check_warp(x, y)
     }
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+    fn update(&mut self, delta: f32, player: &mut Player) {
+        self.current_chunk_mut().update(delta, player);
+    }
+
+    fn render(&self, tile_textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         let current_chunk = self.current_chunk();
-        current_chunk.render(textures, npc_textures, screen, border);
+        current_chunk.render(tile_textures, npc_textures, screen, border);
         for connection in &current_chunk.connections {
-            self.chunks.get(connection).expect("Could not get connected chunk").render(textures, npc_textures, screen, false);
+            self.chunks.get(connection).expect("Could not get connected chunk").render(tile_textures, npc_textures, screen, false);
         }
     }
 
@@ -172,23 +190,10 @@ impl World for WorldChunkMap {
     }
 
     fn on_tile(&mut self, player: &mut Player) {
-        if self.current_chunk().in_bounds(player.position.local.x, player.position.local.y) {
-            self.current_chunk_mut().on_tile(player);
+        let current_chunk = self.current_chunk_mut();
+        if current_chunk.in_bounds(player.position.local.coords.x, player.position.local.coords.y) {
+            current_chunk.on_tile(player);
         }
     }
     
-}
-
-impl Entity for WorldChunkMap {
-    fn spawn(&mut self) {
-        self.alive = true;
-    }
-
-    fn despawn(&mut self) {
-        self.alive = false;
-    }
-
-    fn is_alive(&self) -> bool {
-        self.alive
-    }
 }

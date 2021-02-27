@@ -1,4 +1,4 @@
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::util::Reset;
 use crate::util::{Update, Render};
 
@@ -10,14 +10,6 @@ pub struct WarpTransition {
     alpha: f32,
     pub waning: bool,
 
-}
-
-impl WarpTransition {
-
-    pub fn new() {
-
-    }
-    
 }
 
 impl Reset for WarpTransition {

@@ -1,5 +1,5 @@
 
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::GuiComponent;
 use super::battle_background::BattleBackground;

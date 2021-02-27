@@ -21,7 +21,7 @@ pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
         battle_type: BattleType::Wild,
         party: PokemonParty {
-            pokemon: vec![crate::pokemon::instance::PokemonInstance::generate(gen_range(0, crate::pokemon::pokedex::LENGTH) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
+            pokemon: vec![crate::pokemon::instance::PokemonInstance::generate(gen_range(0, crate::pokemon::pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
         },
         trainer_data: None,
     });

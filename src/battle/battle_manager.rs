@@ -8,7 +8,7 @@ use super::battle::Battle;
 use super::transitions::BattleCloser;
 use super::transitions::BattleOpener;
 use super::transitions::BattleTransition;
-use crate::entity::Entity;
+use crate::util::Entity;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 use super::transitions::managers::battle_screen_transition_manager::BattleScreenTransitionManager;
 use super::transitions::managers::battle_opener_manager::BattleOpenerManager;

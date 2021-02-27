@@ -1,5 +1,5 @@
 use crate::battle::battle_pokemon::BattlePokemon;
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::Focus;
 use crate::io::input::Control;
 use crate::util::graphics::Texture;
@@ -62,8 +62,8 @@ impl FightPanel {
 
     pub fn update_names(&mut self, instance: &BattlePokemon) {
         self.move_names = Vec::new();
-        for moves in &instance.moves {        
-            self.move_names.push(moves.move_instance.name.clone());
+        for move_instance in &instance.moves {
+            self.move_names.push(move_instance.pokemon_move.name.clone());            
         }
     }
 
@@ -96,7 +96,7 @@ impl GuiComponent for FightPanel {
                 if string_id / 2 == 1 {
                     y_offset = 17.0;
                 }
-                crate::util::graphics::draw_text_left(0, self.move_names[string_id].to_ascii_uppercase().as_str(), self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
+                crate::util::graphics::draw_text_left_color(0, self.move_names[string_id].to_ascii_uppercase().as_str(), crate::io::data::text::color::TextColor::Black, self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
                 if string_id == self.cursor_position as usize {
                     crate::util::graphics::draw_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
                 }

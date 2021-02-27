@@ -1,4 +1,4 @@
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
@@ -23,7 +23,7 @@ impl MapWindowManager {
         let panel_y = 116.0;
         MapWindowManager {
             alive: false,
-            background: Background::new(crate::util::graphics::texture::byte_texture(include_bytes!("../../../build/assets/gui/message.png")), panel_x, panel_y),
+            background: Background::default(),
             text: DynamicText::new(11.0, 5.0, panel_x, panel_y),
         }
     }

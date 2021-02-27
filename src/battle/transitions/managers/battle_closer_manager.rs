@@ -1,5 +1,5 @@
 
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::battle::transitions::BattleCloser;
 use crate::battle::transitions::BattleTransition;
 use crate::battle::transitions::closers::basic_battle_closer::BasicBattleCloser;

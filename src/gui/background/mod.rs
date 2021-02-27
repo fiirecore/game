@@ -3,6 +3,7 @@ pub mod builder;
 
 use crate::util::graphics::Texture;
 
+#[derive(Clone)]
 pub struct Background {
 	
 	alive: bool,
@@ -17,18 +18,12 @@ pub struct Background {
 impl Background {
 	
 	pub fn new(texture: Texture, x: f32, y: f32) -> Self {
-		
 		Self {
-			
 			alive: false,
-			
 			x: x,
 			y: y,
-			
 			texture: texture,
-			
 		}
-		
 	}
 	
 }
@@ -46,7 +41,7 @@ impl super::GuiComponent for Background {
     
 }
 
-impl crate::entity::Entity for Background {
+impl crate::util::Entity for Background {
 
 	
 	fn spawn(&mut self) {
@@ -61,4 +56,15 @@ impl crate::entity::Entity for Background {
 		self.alive
 	}
 
+}
+
+impl Default for Background {
+    fn default() -> Self {
+        Self {
+			alive: false,
+			x: 6.0,
+			y: 116.0,
+			texture: crate::util::graphics::texture::byte_texture(include_bytes!("../../../build/assets/gui/message.png")),
+		}
+    }
 }

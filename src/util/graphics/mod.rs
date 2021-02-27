@@ -63,9 +63,12 @@ pub fn draw_text_left_color(font_id: usize, text: &str, color: impl Into<Color>,
 	TEXT_RENDERER.render_text_from_left(font_id, text, color.into(), x, y);
 }
 
-//#[deprecated(since = "0.2.1", note = "Use draw_message instead")]
 pub fn draw_text_right(font_id: usize, text: &str, x: f32, y: f32) {
 	TEXT_RENDERER.render_text_from_right(font_id, text, WHITE, x, y);
+}
+
+pub fn draw_text_right_color(font_id: usize, text: &str, color: impl Into<Color>, x: f32, y: f32) {
+	TEXT_RENDERER.render_text_from_right(font_id, text, color.into(), x, y);
 }
 
 pub fn draw_cursor(x: f32, y: f32) {

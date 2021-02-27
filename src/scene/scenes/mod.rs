@@ -1,16 +1,14 @@
 pub mod first_scene;
-// pub mod character_creation_scene;
-// pub mod firsttime_scenes;
 pub mod game_scene;
-pub mod loading_scenes;
 pub mod main_menu_scene;
 pub mod title_scene;
 
-pub enum LoadingScenes {
+#[derive(Clone, Copy)]
+pub enum SceneState {
 
-    LoadingCopyrightScene,
-    LoadingGamefreakScene,
-    LoadingPokemonScene,
+    Continue,
+    Scene(Scenes),
+    // End,
 
 }
 
@@ -23,4 +21,10 @@ pub enum Scenes {
 
     GameScene,
 
+}
+
+impl Default for Scenes {
+    fn default() -> Self {
+        Self::TitleScene
+    }
 }

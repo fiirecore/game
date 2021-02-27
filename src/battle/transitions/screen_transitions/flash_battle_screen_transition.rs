@@ -5,7 +5,7 @@ use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::BattleTransition;
 use crate::util::{Reset, Completable};
 
-use crate::entity::Entity;
+use crate::util::Entity;
 
 use crate::util::graphics::draw_rect;
 

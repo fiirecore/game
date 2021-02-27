@@ -73,7 +73,7 @@ impl PersistantDataLocation for Configuration {
 impl PersistantData for Configuration {
 
 	async fn load(path: PathBuf) -> Self {
-		return match crate::util::file::read_to_string(path).await {
+		return match crate::util::file::read_string(path).await {
 			Ok(content) => Configuration::from_string(&content),
 			Err(err) => {
 				warn!("Failed reading configuration file to string with error {}", err);

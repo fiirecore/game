@@ -34,14 +34,14 @@ impl AudioContext {
     pub fn bind_music(&mut self) {
         info!("Loading music...");
                 for music in Music::into_enum_iter() {
-                    if !self::music::MUSIC_CONTEXT.read().music_map.contains_key(&music) {
+                    if !self::music::MUSIC_CONTEXT.music_map.contains_key(&music) {
                         if let Some(bytes) = music.included_bytes() {
                             match super::from_ogg_bytes(bytes, kira::sound::SoundSettings::default()) {
                                 Ok(sound) => match self.audio_manager.as_mut() {
                                     Some(manager) => {
                                         match manager.add_sound(sound) {
                                             Ok(sound) => {
-                                                self::music::MUSIC_CONTEXT.write().music_map.insert(music, sound);
+                                                self::music::MUSIC_CONTEXT.music_map.insert(music, sound);
                                                 info!("Loaded music \"{:?}\" successfully", music);
                                             }
                                             Err(err) => {
@@ -60,12 +60,12 @@ impl AudioContext {
                 }
                 for music in Music::into_enum_iter() {
                     if music.included_bytes().is_none() {
-                        if !self::music::MUSIC_CONTEXT.read().music_map.contains_key(&music) {
+                        if !self::music::MUSIC_CONTEXT.music_map.contains_key(&music) {
                             if !(cfg!(debug_assertions)) {
                                 match self.audio_manager.as_mut() {
                                     Some(manager) => match manager.load_sound(String::from("music/") + &music.file_name() + ".ogg", kira::sound::SoundSettings::default()) {
                                         Ok(sound) => {
-                                            self::music::MUSIC_CONTEXT.write().music_map.insert(music, sound);
+                                            self::music::MUSIC_CONTEXT.music_map.insert(music, sound);
                                             info!("Loaded \"{:?}\" successfully", music);
                                         }
                                         Err(err) => {
@@ -90,7 +90,7 @@ impl AudioContext {
                 match super::from_ogg_bytes(Music::IntroGamefreak.included_bytes().unwrap(), kira::sound::SoundSettings::default()) {
                     Ok(sound) => match manager.add_sound(sound) {
                         Ok(sound) => {
-                            self::music::MUSIC_CONTEXT.write().music_map.insert(Music::IntroGamefreak, sound);
+                            self::music::MUSIC_CONTEXT.music_map.insert(Music::IntroGamefreak, sound);
                         },
                         Err(err) => {
                             warn!("Could not load gamefreak intro music with error {}", err);
@@ -109,8 +109,8 @@ impl AudioContext {
 
 }
 
-fn stop_instance(audio: impl std::fmt::Debug, mut instance: kira::instance::handle::InstanceHandle) {
+fn stop_instance(name: impl std::fmt::Debug, mut instance: kira::instance::handle::InstanceHandle) {
     if let Err(err) = instance.stop(kira::instance::StopInstanceSettings::default().fade_tween(kira::parameter::tween::Tween::linear(0.75))) {
-        macroquad::prelude::warn!("Problem stopping audio instance {:?} with error {}", audio, err);
+        macroquad::prelude::warn!("Problem stopping audio instance {:?} with error {}", name, err);
     }
 }

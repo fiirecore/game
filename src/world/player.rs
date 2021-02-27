@@ -1,9 +1,9 @@
 use crate::util::GlobalPosition;
 use crate::util::Render;
-use crate::entity::texture::movement_texture::MovementTexture;
-use crate::entity::texture::movement_texture_manager::MovementTextureManager;
-use crate::entity::texture::texture_manager::TextureManager;
-use crate::entity::texture::three_way_texture::ThreeWayTexture;
+use crate::util::graphics::texture::movement_texture::MovementTexture;
+use crate::util::graphics::texture::movement_texture_manager::MovementTextureManager;
+use crate::util::graphics::texture::texture_manager::TextureManager;
+use crate::util::graphics::texture::three_way_texture::ThreeWayTexture;
 use crate::util::Direction;
 use crate::io::data::player::PlayerData;
 use crate::util::TILE_SIZE;
@@ -22,7 +22,7 @@ pub struct Player {
 
 	pub speed: u8,
 
-	textures: Vec<ThreeWayTexture>,
+	textures: Vec<ThreeWayTexture<MovementTextureManager>>,
 	
 	pub moving: bool,
 	pub running: bool,
@@ -132,9 +132,9 @@ impl Player {
 
 		let mut walk_textures = ThreeWayTexture::new();
 
-		walk_textures.add_texture_manager(Box::new(MovementTextureManager::new(down_textures, TEX_TICK_LENGTH)));
-		walk_textures.add_texture_manager(Box::new(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH)));
-		walk_textures.add_texture_manager(Box::new(MovementTextureManager::new(side_textures, TEX_TICK_LENGTH)));
+		walk_textures.add_texture_manager(MovementTextureManager::new(down_textures, TEX_TICK_LENGTH));
+		walk_textures.add_texture_manager(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH));
+		walk_textures.add_texture_manager(MovementTextureManager::new(side_textures, TEX_TICK_LENGTH));
 
 		self.textures.push(walk_textures);
 
@@ -176,9 +176,9 @@ impl Player {
 
 		let mut run_textures = ThreeWayTexture::new();
 
-		run_textures.add_texture_manager(Box::new(MovementTextureManager::new(down_textures, TEX_TICK_LENGTH / 2.0)));
-		run_textures.add_texture_manager(Box::new(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH / 2.0)));
-		run_textures.add_texture_manager(Box::new(MovementTextureManager::new(side_textures, TEX_TICK_LENGTH / 2.0)));
+		run_textures.add_texture_manager(MovementTextureManager::new(down_textures, TEX_TICK_LENGTH / 2.0));
+		run_textures.add_texture_manager(MovementTextureManager::new(up_textures, TEX_TICK_LENGTH / 2.0));
+		run_textures.add_texture_manager(MovementTextureManager::new(side_textures, TEX_TICK_LENGTH / 2.0));
 
 		self.textures.push(run_textures);
 

@@ -24,7 +24,7 @@ impl WildPokemonTable {
         match self.encounter {
             Some(encounter) => encounter[get_counter()].generate_saved(),
             None => return PokemonInstance::generate(
-                macroquad::rand::gen_range(0, crate::pokemon::pokedex::LENGTH) as PokemonId + 1, 
+                macroquad::rand::gen_range(0, crate::pokemon::pokedex::POKEDEX.len()) as PokemonId + 1, 
                 1, 
                 100, 
                 Some(StatSet::iv_random()), 

@@ -1,44 +1,45 @@
 {
-	"identifier": {
-		"name": "Liam",
-		"npc_type": "camper"
-	},
-	"position": {
-		"x": 3,
-		"y": 8,
-		"direction": "Right"
-	},
-	"trainer": {
-		"trainer_type": "Camper",
-		"encounter_music": "EncounterBoy",
-		"encounter_message": [
+    "identifier": {
+        "name": "Liam",
+        "npc_type": "camper"
+    },
+    "position": {
+        "coords": {
+            "x": 3,
+            "y": 8
+        },
+        "direction": "Right"
+    },
+    "trainer": {
+        "trainer_type": "Camper",
+        "encounter_music": "EncounterBoy",
+        "encounter_message": [
 
-				[
-					"Stop right there, kid!"
-				],
+            [
+                "Stop right there, kid!"
+            ],
 
-				[
-					"You're ten thousand light-years",
-					"from facing BROCK!"
-				]
-		
-		],
-		"victory_message": [
-			"Test"
-		],
-		"party": {
-			"pokemon": [
-				{
-					"id": 74,
-					"level": 10
-				},
-				{
-					"id": 27,
-					"level": 11
-				}
-			]
-		},
-		"tracking_length": 3,
-		"worth": 0
-	}
+            [
+                "You're ten thousand light-years",
+                "from facing BROCK!"
+            ]
+
+        ],
+        "victory_message": [
+            "Test"
+        ],
+        "party": {
+            "pokemon": [{
+                    "id": 74,
+                    "level": 10
+                },
+                {
+                    "id": 27,
+                    "level": 11
+                }
+            ]
+        },
+        "tracking_length": 3,
+        "worth": 0
+    }
 }

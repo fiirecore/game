@@ -1,4 +1,4 @@
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::Focus;
 use crate::io::data::text::Message;
 use crate::io::data::text::color::TextColor;

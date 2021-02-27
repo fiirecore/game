@@ -1,6 +1,6 @@
 use crate::battle::battle_info::BattleType;
 
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;

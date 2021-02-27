@@ -1,11 +1,13 @@
 {
-	"identifier": {
-		"name": "Oak",
-		"npc_type": "prof_oak"
-	},
-	"position": {
-		"x": 6,
-		"y": 3,
-		"direction": "Down"
-	}
+    "identifier": {
+        "name": "Oak",
+        "npc_type": "prof_oak"
+    },
+    "position": {
+        "coords": {
+            "x": 6,
+            "y": 3
+        },
+        "direction": "Down"
+    }
 }

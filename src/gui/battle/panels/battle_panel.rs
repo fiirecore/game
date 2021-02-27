@@ -1,6 +1,6 @@
-
+use crate::io::data::text::color::TextColor;
 use crate::battle::battle_pokemon::BattlePokemon;
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::Focus;
 use crate::util::Input;
 use crate::io::input::Control;
@@ -68,7 +68,7 @@ impl BattlePanel {
             pokemon_button: BasicButton::new("Pokemon".to_ascii_uppercase().as_str(), font_id, 17.0, text_y + 16.0, x + panel_x, y + panel_y),
             run_button: BasicButton::new("Run".to_ascii_uppercase().as_str(), font_id, 73.0, text_y + 16.0, x + panel_x, y + panel_y),
 
-            text: StaticText::new(vec![String::from("What will"), String::from("POKEMON do?")], 1, Direction::Left, -111.0, 10.0, x + panel_x, y + panel_y),
+            text: StaticText::new(vec![String::from("What will"), String::from("POKEMON do?")], TextColor::White, 1, Direction::Left, -111.0, 10.0, x + panel_x, y + panel_y),
 
 		}
     }

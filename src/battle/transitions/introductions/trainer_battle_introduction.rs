@@ -5,7 +5,7 @@ use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
 use super::basic_battle_introduction::BasicBattleIntroduction;

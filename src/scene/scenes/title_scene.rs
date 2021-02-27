@@ -6,11 +6,11 @@ use crate::util::graphics::texture::byte_texture;
 use crate::util::graphics::draw;
 use crate::audio::music::Music::Title;
 
-use super::Scenes;
+use super::SceneState;
 
 pub struct TitleScene {	
 	
-	scene_token: Option<Scenes>,
+	state: SceneState,
 	
 	accumulator: f32,
 
@@ -28,7 +28,7 @@ impl TitleScene {
 	
 	pub fn new() -> TitleScene {
 		TitleScene {
-		    scene_token: None,
+		    state: SceneState::Continue,
 			background_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/background.png")),		
 			title_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/title.png")),
 			trademark_tex: byte_texture(include_bytes!("../../../build/assets/scenes/title/trademark.png")),
@@ -44,7 +44,7 @@ impl TitleScene {
 impl Scene for TitleScene {
 
 	fn on_start(&mut self) {
-		self.scene_token = None;
+		self.state = SceneState::Continue;
 		play_music(Title);
 		self.accumulator = 0.0;
 	}
@@ -67,14 +67,14 @@ impl Scene for TitleScene {
 	fn input(&mut self, _delta: f32) {
 		if input::pressed(input::Control::A) {
 			macroquad::prelude::rand::srand(self.accumulator as u64 % 256);
-			self.scene_token = Some(super::Scenes::GameScene);
+			self.state = SceneState::Scene(super::Scenes::GameScene);
 		}
 	}
 	
 	fn quit(&mut self) {}
 	
-	fn next_scene(&self) -> Option<Scenes> {
-		self.scene_token
+	fn state(&self) -> SceneState {
+		self.state
 	}
 	
 }

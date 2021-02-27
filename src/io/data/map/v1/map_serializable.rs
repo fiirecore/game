@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::util::Coordinate;
+
 #[derive(Debug, Deserialize)]
 pub struct MapConfig {
 
@@ -8,7 +10,8 @@ pub struct MapConfig {
     pub jigsaw_map: Option<SerializedChunkMap>,
     pub warp_map: Option<SerializedMapSet>,
 
-    //pub settings: Option<TomlMapSettings>,
+    #[serde(default)]
+    pub fly_position: Coordinate,
     pub wild: Option<SerializedWildEntry>,
 
 }

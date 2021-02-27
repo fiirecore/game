@@ -1,18 +1,15 @@
 use ahash::AHashMap as HashMap;
 use crate::util::graphics::Texture;
-use crate::entity::Entity;
 use crate::world::NpcTextures;
 use crate::world::RenderCoords;
 use crate::world::World;
 use crate::world::player::Player;
 use crate::world::warp::WarpEntry;
 
-use super::world_map_set::WorldMapSet;
+use super::WorldMapSet;
 
 #[derive(Default)]
 pub struct WorldMapSetManager {
-
-    alive: bool,
 
     map_sets: HashMap<String, WorldMapSet>,
     current_map_set: String,
@@ -61,6 +58,7 @@ impl WorldMapSetManager {
 }
 
 impl World for WorldMapSetManager {
+
     fn in_bounds(&self, x: isize, y: isize) -> bool {
         self.map_set().in_bounds(x, y)
     }
@@ -81,25 +79,15 @@ impl World for WorldMapSetManager {
         self.map_set_mut().on_tile(player)
     }
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
-        self.map_set().render(textures, npc_textures, screen, border)
+    fn update(&mut self, delta: f32, player: &mut Player) {
+        self.map_set_mut().update(delta, player);
+    }
+
+    fn render(&self, tile_textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+        self.map_set().render(tile_textures, npc_textures, screen, border)
     }
 
     fn input(&mut self, delta: f32, player: &mut Player) {
         self.map_set_mut().input(delta, player)
-    }
-}
-
-impl Entity for WorldMapSetManager {
-    fn spawn(&mut self) {
-        self.alive = true;
-    }
-
-    fn despawn(&mut self) {
-        self.alive = false;
-    }
-
-    fn is_alive(&self) -> bool {
-        self.alive
     }
 }

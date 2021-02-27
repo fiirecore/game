@@ -1,8 +1,8 @@
 use macroquad::prelude::Image;
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
-use crate::entity::texture::still_texture_manager::StillTextureManager;
-use crate::entity::texture::three_way_texture::ThreeWayTexture;
+use crate::util::graphics::texture::still_texture_manager::StillTextureManager;
+use crate::util::graphics::texture::three_way_texture::ThreeWayTexture;
 use crate::util::graphics::texture::image_texture;
 use crate::util::graphics::Texture;
 use crate::world::NpcTextures;
@@ -44,7 +44,7 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures) {
     info!("Finished loading NPC textures!");
 }
 
-pub fn parse_image(image: Image) -> Option<ThreeWayTexture> {
+pub fn parse_image(image: Image) -> Option<ThreeWayTexture<StillTextureManager>> {
     match image.width {
         48 => idle_npc(image),
 
@@ -60,10 +60,10 @@ pub fn parse_image(image: Image) -> Option<ThreeWayTexture> {
 
 }
 
-fn idle_npc(image: Image) -> Option<ThreeWayTexture> {
+fn idle_npc(image: Image) -> Option<ThreeWayTexture<StillTextureManager>> {
     let mut twt = ThreeWayTexture::new();
     for i in 0..3 {
-        twt.add_texture_manager(Box::new(StillTextureManager::new(image_texture(&image.get_subimage(i * 16, 0, 16, 32)), false)));
+        twt.add_texture_manager(StillTextureManager::new(image_texture(&image.get_subimage(i * 16, 0, 16, 32)), false));
     }
     return Some(twt);
 }

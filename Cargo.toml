@@ -45,6 +45,7 @@ miniquad-cookie = { path = "./crates/cookie" }
 # Other
 
 ahash = { version = "0.7", features = ["serde"] }
+dashmap = "4.0"
 
 lazy_static = "1.4"
 parking_lot = { version = "0.11" }

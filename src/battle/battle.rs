@@ -6,7 +6,7 @@ use crate::pokemon::party::PokemonParty;
 use crate::pokemon::pokedex::texture::Side;
 use crate::pokemon::pokedex::texture::pokemon_texture;
 use crate::util::graphics::Texture;
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::util::graphics::draw_bottom;
@@ -191,12 +191,14 @@ impl Battle {
 	}
 
 	pub fn queue_player_move(&mut self, index: usize) {
-		self.player_move = self.player_mut().moves[index].use_move();
+		if index < self.player_mut().moves.len() {
+			self.player_move = self.player_mut().moves[index].use_move().clone();
+		}		
 	}
 
 	pub fn queue_opponent_move(&mut self) {
 		let index = macroquad::rand::gen_range(0, self.opponent().moves.len());
-		self.opponent_move = self.opponent_mut().moves[index].use_move();
+		self.opponent_move = self.opponent_mut().moves[index].use_move().clone();	
 	}
 
 	pub fn queue_faint(&mut self) {
@@ -229,10 +231,16 @@ impl Battle {
 
 		// Heal all pokemon in party (temporary)
 
-		player_data.party.pokemon = self.player_pokemon.iter_mut().map(|pokemon| {
-				pokemon.current_hp = pokemon.base.hp;
+		// ???
+
+		let mut vec: Vec<crate::pokemon::instance::PokemonInstance> = self.player_pokemon.iter_mut().map(|pokemon| {
+			pokemon.current_hp = pokemon.base.hp;
 			pokemon.to_instance()
 		}).collect();
+
+		vec.reverse();
+		
+		player_data.party.pokemon = vec;
 		
 	}
 

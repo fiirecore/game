@@ -3,18 +3,18 @@ use crate::pokemon::data::PokedexData;
 use crate::pokemon::Pokemon;
 use crate::pokemon::data::training::Training;
 use crate::pokemon::instance::PokemonInstance;
-use crate::pokemon::moves::MoveInstance;
-use crate::pokemon::pokedex::Pokedex;
+use crate::pokemon::moves::instance::MoveInstances;
 
 pub struct BattlePokemon {
 	
 	pub data: PokedexData,
 	pub training: Training,
 	
+	pub nickname: Option<String>,
 	pub level: u8,
 //	ability: Ability,
 
-	pub moves: Vec<MoveInstance>,
+	pub moves: MoveInstances,
 
 	pub base: BaseStatSet,
 
@@ -35,9 +35,10 @@ impl BattlePokemon {
 
 	pub fn new(pokemon: &PokemonInstance) -> Self {
 
-		let pokedex = crate::pokemon::pokedex();
+		let pokedex = &crate::pokemon::pokedex::POKEDEX;
 
-		let pokemon_data = pokedex.pokemon_from_id(pokemon.id);
+		let pokemon_data = pokedex.get(&pokemon.id).expect("Could not get Pokemon from id!");
+		let pokemon_data = pokemon_data.value();
 
 		let stats = get_stats(pokemon_data, pokemon.ivs, pokemon.evs, pokemon.level);
 
@@ -46,9 +47,10 @@ impl BattlePokemon {
 			data: pokemon_data.data.clone(),
 			training: pokemon_data.training,
 			
+			nickname: pokemon.nickname.clone(),
 			level: pokemon.level,
 			
-			moves: pokedex.moves_from_level(pokemon.id, pokemon.level),
+			moves: pokemon_data.moves_from_level(pokemon.level),
 			
 			ivs: pokemon.ivs,
 			
@@ -64,7 +66,7 @@ impl BattlePokemon {
 
 	}
 	
-	pub fn generate(pokedex: &Pokedex, pokemon: &Pokemon, min_level: u8, max_level: u8) -> Self {
+	pub fn generate(pokemon: &Pokemon, min_level: u8, max_level: u8) -> Self {
 		let level;
 		if min_level == max_level {
 			level = max_level;
@@ -82,9 +84,10 @@ impl BattlePokemon {
 			data: pokemon.data.clone(),
 			training: pokemon.training,
 			
+			nickname: None,
 			level: level,
 			
-			moves: pokedex.moves_from_level(pokemon.data.number, level),
+			moves: pokemon.moves_from_level(level),
 			
 			ivs: ivs,
 			evs: evs,
@@ -101,22 +104,16 @@ impl BattlePokemon {
 	pub fn to_instance(&self) -> PokemonInstance {
 		PokemonInstance {
 		    id: self.data.number,
+			nickname: self.nickname.clone(),
 		    level: self.level,
 		    ivs: self.ivs,
 		    evs: self.evs,
-		    move_set: Some(crate::pokemon::moves::instance::SavedPokemonMoveSet::from_instance(&self.moves)),
+		    moves: Some(crate::pokemon::moves::serializable::from_instances(&self.moves)),
 		    exp: self.exp,
 		    friendship: 70,
 		    current_hp: Some(self.current_hp),
 		}
-	}
-
-	// pub fn moves_to_instance(moves: Vec<PokemonMove>) -> Vec<MoveInstance> {
-	// 	moves.iter().map(|mv| MoveInstance {
-	// 		move_instance: mv.clone(),
-	// 		remaining_pp: mv.pp,				
-	// 	}).collect()
-	// }	
+	}	
 	
 }
 

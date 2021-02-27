@@ -8,11 +8,11 @@ use crate::util::Completable;
 use crate::util::file::PersistantData;
 use crate::world::map::manager::WorldManager;
 
-use super::Scenes;
+use super::SceneState;
 
 pub struct GameScene {
 
-	scene_token: Option<Scenes>,
+	state: SceneState,
 	
 	world_manager: WorldManager,
 	battle_manager: BattleManager,
@@ -26,7 +26,7 @@ impl GameScene {
 	
 	pub fn new() -> GameScene {
 		GameScene {
-			scene_token: None,
+			state: SceneState::Continue,
 
 			world_manager: WorldManager::new(),
 			battle_manager: BattleManager::new(),
@@ -100,11 +100,6 @@ impl Scene for GameScene {
 			self.world_manager.input(delta);
 		} else {
 			self.battle_manager.input(delta);
-			// if context.finput.pressed(crate::io::input::Control::A) {
-			// 	self.battle_intro_manager.despawn();
-			// 	self.battling = false;
-			// 	self.swapped = !self.swapped;
-			// }
 		}
 	}
 
@@ -112,8 +107,8 @@ impl Scene for GameScene {
         self.save_data(&mut get_mut::<PlayerData>().expect("Could not get player data"));      
 	}
 	
-	fn next_scene(&self) -> Option<Scenes> {
-		self.scene_token
+	fn state(&self) -> SceneState {
+		self.state
 	}
 	
 }

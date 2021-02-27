@@ -1,6 +1,8 @@
-pub mod scene_manager;
-pub mod loading_scene_manager;
+use self::scenes::SceneState;
 
+pub mod loading;
+
+pub mod manager;
 pub mod scenes;
 
 pub trait Scene {
@@ -15,8 +17,6 @@ pub trait Scene {
 	
 	fn quit(&mut self);
 	
-	// fn name(&self) -> &str;
-	
-	fn next_scene(&self) -> Option<scenes::Scenes>;
+	fn state(&self) -> SceneState;
 	
 }

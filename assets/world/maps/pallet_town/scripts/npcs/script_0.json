@@ -1,0 +1,41 @@
+{
+    "identifier": "oak_script",
+    "run_type": "Once",
+    "location": {
+        "x": 12,
+        "y": 1
+    },
+    "end_position": {
+        "coords": {
+            "x": 12,
+            "y": 2
+        },
+        "direction": "Up"
+    },
+    "npc": {
+        "npc": {
+            "identifier": {
+                "name": "Oak",
+                "npc_type": "prof_oak"
+            },
+            "position": {
+                "coords": {
+                    "x": 10,
+                    "y": 7
+                },
+                "direction": "Up"
+            }
+        },
+        "message": {
+            "text": {
+                "messages": [{
+                    "message": [
+                        "bruh"
+                    ],
+                    "color": "Black",
+                    "font_id": 1
+                }]
+            }
+        }
+    }
+}

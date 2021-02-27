@@ -7,6 +7,8 @@ use crate::world::map::WorldMap;
 use crate::world::player::Player;
 use crate::world::warp::WarpEntry;
 
+pub mod world_chunk_map;
+
 #[derive(Default)]
 pub struct WorldChunk {
 
@@ -45,8 +47,12 @@ impl World for WorldChunk {
         self.map.check_warp(x, y)
     }
 
-    fn render(&self, textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
-        self.map.render(textures, npc_textures, screen.offset(self.x, self.y), border)
+    fn update(&mut self, delta: f32, player: &mut Player) {
+        self.map.update(delta, player);
+    }
+
+    fn render(&self, tile_textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+        self.map.render(tile_textures, npc_textures, screen.offset(self.x, self.y), border)
     }
 
     fn on_tile(&mut self, player: &mut Player) {

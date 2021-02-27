@@ -1,7 +1,7 @@
 use crate::audio::music::Music;
 use crate::audio::play_music;
 use crate::battle::transitions::BattleTransition;
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;

@@ -1,6 +1,6 @@
 use macroquad::prelude::warn;
 use crate::battle::battle_pokemon::BattlePokemon;
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::Focus;
 use crate::util::Input;
 use crate::io::input;
@@ -57,7 +57,7 @@ impl PlayerPanel {
                         warn!("bag button unimplemented");
                     },
                     2 => {
-                        warn!("pokemon button unimplemented");
+                        crate::gui::game::pokemon_party_gui::toggle();
                     },
                     3 => {
                         battle.run();

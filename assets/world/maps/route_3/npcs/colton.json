@@ -1,42 +1,43 @@
 {
-	"identifier": {
-		"name": "Colton",
-		"npc_type": "bug_catcher"
-	},
-	"position": {
-		"x": 13,
-		"y": 6,
-		"direction": "Right"
-	},
-	"trainer": {
-		"trainer_type": "BugCatcher",
-		"encounter_music": "EncounterBoy",
-		"encounter_message": [
-				[
-					"Hey!",
-                    "I saw you in VIRIDIAN FOREST!"
-				]
-		],
-		"victory_message": [
-			"You beat me again!"
-		],
-		"party": {
-			"pokemon": [
-				{
-					"id": 10,
-					"level": 10
-				},
-				{
-					"id": 13,
-					"level": 10
-				},
-				{
-					"id": 10,
-					"level": 10
-				}
-			]
-		},
-		"tracking_length": 3,
-		"worth": 0
-	}
+    "identifier": {
+        "name": "Colton",
+        "npc_type": "bug_catcher"
+    },
+    "position": {
+        "coords": {
+            "x": 13,
+            "y": 6
+        },
+        "direction": "Right"
+    },
+    "trainer": {
+        "trainer_type": "BugCatcher",
+        "encounter_music": "EncounterBoy",
+        "encounter_message": [
+            [
+                "Hey!",
+                "I saw you in VIRIDIAN FOREST!"
+            ]
+        ],
+        "victory_message": [
+            "You beat me again!"
+        ],
+        "party": {
+            "pokemon": [{
+                    "id": 10,
+                    "level": 10
+                },
+                {
+                    "id": 13,
+                    "level": 10
+                },
+                {
+                    "id": 10,
+                    "level": 10
+                }
+            ]
+        },
+        "tracking_length": 3,
+        "worth": 0
+    }
 }

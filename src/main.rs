@@ -8,14 +8,15 @@ use macroquad::prelude::collections::storage;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
 use macroquad::prelude::next_frame;
-use scene::loading_scene_manager::load_coroutine;
-use scene::scene_manager::SceneManager;
+use macroquad::prelude::coroutines::start_coroutine;
+use scene::loading::manager::load_coroutine;
+use scene::manager::SceneManager;
 use util::file::PersistantDataLocation;
+use scene::Scene;
 
 pub mod util;
 pub mod audio;
 pub mod scene;
-pub mod entity;
 pub mod io;
 pub mod world;
 pub mod pokemon;
@@ -31,15 +32,11 @@ pub static BASE_HEIGHT: u32 = 160;
 
 pub static SCALE: f32 = 3.0;
 
-pub static SAVEABLE: bool = cfg!(not(target_arch = "wasm32"));
-
 static mut QUIT: bool = false;
 
 
 #[macroquad::main(settings)]
 async fn main() {
-
-    //crate::io::embed::create_root_dir();
 
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
@@ -66,9 +63,9 @@ async fn main() {
     }
 
     let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
-        macroquad::prelude::coroutines::start_coroutine(load_coroutine())
+        start_coroutine(load_coroutine())
     } else {
-        macroquad::prelude::coroutines::start_coroutine(async {
+        start_coroutine(async {
             let texture = crate::util::graphics::texture::byte_texture(include_bytes!("../build/assets/loading.png"));
             loop {
                 clear_background(macroquad::prelude::BLUE);
@@ -86,7 +83,7 @@ async fn main() {
     
     let mut scene_manager = SceneManager::new();
 
-    pokemon::load_pokedex();
+    pokemon::pokedex::load();
 
     info!("Finished loading assets!");
 
@@ -101,7 +98,7 @@ async fn main() {
 
     if cfg!(target_arch = "wasm32") {
         load_coroutine().await;
-    }    
+    }  
 
     info!("Starting game!");
 
@@ -128,6 +125,9 @@ async fn main() {
             if let Some(mut config) = storage::get_mut::<Configuration>() {
                 util::file::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
+            if let Some(mut player_data) = storage::get_mut::<crate::io::data::player::PlayerData>() {
+                util::file::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut player_data)).await;
+            }
         }
 
         if unsafe{QUIT} {
@@ -138,7 +138,7 @@ async fn main() {
     }
 
     info!("Quitting game...");
-    util::Quit::quit(&mut scene_manager);
+    scene_manager.quit();
 
 }
 

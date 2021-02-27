@@ -14,23 +14,14 @@ pub async fn bind_world_music() {
 
 pub fn play_music(music: music::Music) {
     #[cfg(not(target_arch = "wasm32"))]
-    if let Some(mut context) = self::kira::context::music::MUSIC_CONTEXT.try_write() {
-        context.play_music(music);
-    } else {
-        macroquad::prelude::warn!("Could not borrow music context!");
-    }
+    self::kira::context::music::MUSIC_CONTEXT.play_music(music);
     #[cfg(target_arch = "wasm32")]
     self::quadsnd::context::music::play_music(music);
 }
 
 pub fn get_music_playing() -> Option<music::Music> {
     #[cfg(not(target_arch = "wasm32"))]
-    if let Some(context) = self::kira::context::music::MUSIC_CONTEXT.try_read() {
-        return context.get_music_playing();
-    } else {
-        macroquad::prelude::warn!("Could not read music context!");
-        return None;
-    }
+    return self::kira::context::music::MUSIC_CONTEXT.get_music_playing();
     #[cfg(target_arch = "wasm32")]
     return self::quadsnd::context::music::get_current_music();
 }

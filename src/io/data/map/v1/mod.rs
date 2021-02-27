@@ -2,12 +2,15 @@ use std::path::PathBuf;
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
-use crate::world::map::chunk::world_chunk::WorldChunk;
+use crate::world::map::chunk::WorldChunk;
 use crate::world::map::chunk::world_chunk_map::WorldChunkMap;
-use crate::world::map::set::world_map_set::WorldMapSet;
-use crate::world::map::set::world_map_set_manager::WorldMapSetManager;
+use crate::world::map::npc_manager::MapNpcManager;
+use crate::world::map::script_manager::MapScriptManager;
+use crate::world::map::set::WorldMapSet;
+use crate::world::map::set::manager::WorldMapSetManager;
 use crate::world::npc::NPC;
 use crate::world::pokemon::WildEntry;
+use crate::world::script::npc::NPCScript;
 use crate::world::warp::WarpEntry;
 
 pub mod chunk_map_loader;
@@ -39,18 +42,10 @@ pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetMan
     info!("Finished loading maps!");
 
     info!("Loading textures...");
-    for wmap in chunk_map.chunks.values() {
-        for tile_id in &wmap.map.tile_map {
-            if !(bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                bottom_textures.insert(*tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, *tile_id));
-            }
-        }
-        for tile_id in &wmap.map.border_blocks {
-            if !(bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                bottom_textures.insert(*tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, *tile_id));
-                //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-            }
+    for tile_id in chunk_map.tiles() {
+        if !(bottom_textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
+            //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
+            bottom_textures.insert(tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, tile_id));
         }
     }
     for wmapset in map_sets.values() {
@@ -120,14 +115,17 @@ fn load_map(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &PathBu
     }
 }
 
-pub fn load_npc_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<NPC> {
+pub fn load_npc_entries(root_path: &PathBuf, map_index: Option<usize>) -> MapNpcManager {
     let mut npcs = Vec::new();
     let npc_dir = root_path.join("npcs");
     match map_index {
         Some(map_index) => get_npc_from_directory(&mut npcs, npc_dir.join(String::from("map_") + &map_index.to_string())),
         None => get_npc_from_directory(&mut npcs, npc_dir),
     }
-    return npcs;
+    return MapNpcManager {
+        npcs,
+        npc_active: None,
+    };
 }
 
 fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: PathBuf) {
@@ -170,20 +168,38 @@ fn add_warp_under_directory(warps: &mut Vec<WarpEntry>, dir: PathBuf) {
     }
 }
 
-pub fn load_wild_entry(root_path: &PathBuf, wild: Option<map_serializable::SerializedWildEntry>, map_set_index: Option<usize>) -> Option<WildEntry> {
-    if let Some(toml_wild_entry) = wild {
+pub fn load_wild_entry(root_path: &PathBuf, wild: Option<map_serializable::SerializedWildEntry>, map_index: Option<usize>) -> Option<WildEntry> {
+    wild.map(|toml_wild_entry| {
         let mut wild_path = root_path.join("wild");
 
-        if let Some(map_set_index) = map_set_index {
-            wild_path = wild_path.join(String::from("map_") + &map_set_index.to_string());
+        if let Some(map_index) = map_index {
+            wild_path = wild_path.join(String::from("map_") + &map_index.to_string());
         }
 
-        Some(WildEntry {
+        WildEntry {
             tiles: toml_wild_entry.wild_tiles,
             table: crate::world::pokemon::wild_pokemon_table::get_table(toml_wild_entry.encounter_type.as_str(), wild_path.join("grass.toml")),
-        })
+        }
 
-    } else {
-        return None;
-    }   
+    })
+}
+
+pub fn load_script_entries(root_path: &PathBuf, map_index: Option<usize>) -> MapScriptManager {
+    let mut npc_scripts = Vec::new();
+    let script_root = root_path.join("scripts");
+
+
+    let mut npc_script_path = script_root.join("npcs");
+
+    if let Some(map_index) = map_index {
+        npc_script_path = npc_script_path.join(String::from("map_") + &map_index.to_string());
+    }
+
+    for file in crate::io::get_dir(npc_script_path) {
+        if let Some(npc_script) = NPCScript::new(file) {
+            npc_scripts.push(npc_script);
+        }
+    }
+
+    MapScriptManager::new(npc_scripts)
 }

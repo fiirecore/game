@@ -3,12 +3,13 @@ use serde::{Deserialize, Serialize};
 use crate::pokemon::data::StatSet;
 
 use super::PokemonId;
-use super::moves::instance::SavedPokemonMoveSet;
+use super::moves::serializable::SerializableMoveSet;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PokemonInstance {
 
 	pub id: PokemonId,
+    pub nickname: Option<String>,
     pub level: u8,
     
     #[serde(default = "iv_default")]
@@ -16,7 +17,7 @@ pub struct PokemonInstance {
     #[serde(default)]
     pub evs: StatSet,
     
-    pub move_set: Option<SavedPokemonMoveSet>,
+    pub moves: Option<SerializableMoveSet>,
     
     #[serde(default)]
 	pub exp: usize,
@@ -34,11 +35,12 @@ impl PokemonInstance {
         Self {
 
             id: pokemon_id,
+            nickname: None,
             level: macroquad::rand::gen_range(min_level, max_level),
             ivs: ivs.unwrap_or_default(),
             evs: StatSet::default(),
             current_hp: None,
-            move_set: None,
+            moves: None,
             exp: 0,
             friendship: 70,
 

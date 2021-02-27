@@ -4,6 +4,13 @@ use super::Texture;
 
 // pub mod spritesheet;
 
+pub mod still_texture_manager;
+pub mod movement_texture;
+pub mod movement_texture_manager;
+pub mod texture_manager;
+pub mod four_way_texture;
+pub mod three_way_texture;
+
 pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 	let path = path.as_ref();
 	let texture = macroquad::prelude::load_texture(path.to_str().expect("Could not unwrap path to string")).await;

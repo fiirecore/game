@@ -1,11 +1,13 @@
 {
-	"identifier": {
-		"name": "Mom",
-		"npc_type": "mom"
-	},
-	"position": {
-		"x": 8,
-		"y": 4,
-		"direction": "Left"
-	}
+    "identifier": {
+        "name": "Mom",
+        "npc_type": "mom"
+    },
+    "position": {
+        "coords": {
+            "x": 8,
+            "y": 4
+        },
+        "direction": "Left"
+    }
 }

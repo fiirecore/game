@@ -1,9 +1,9 @@
-use crate::entity::Entity;
+use crate::util::Entity;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw_rect;
 
-static UPPER_COLOR: [f32; 4] = [88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0, 1.0];
-static LOWER_COLOR: [f32; 4] = [112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0, 1.0];
+pub static UPPER_COLOR: [f32; 4] = [88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0, 1.0];
+pub static LOWER_COLOR: [f32; 4] = [112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0, 1.0];
 
 static WIDTH: u8 = 48;
 

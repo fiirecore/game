@@ -3,14 +3,15 @@ use crate::util::graphics::Texture;
 
 use super::texture_manager::TextureManager;
 
-pub struct ThreeWayTexture {
+#[derive(Default)]
+pub struct ThreeWayTexture<T: TextureManager> {
 
     pub direction: u8,
-    textures: Vec<Box<dyn TextureManager>>, // 0 = Up, 1 = Down, 2 = Left, 3 = Right
+    textures: Vec<T>, // 0 = Up, 1 = Down, 2 = Left, 3 = Right
 
 }
 
-impl ThreeWayTexture {
+impl<T: TextureManager> ThreeWayTexture<T> {
 
     pub fn new() -> Self {
 
@@ -23,7 +24,7 @@ impl ThreeWayTexture {
 
     }
 
-    pub fn add_texture_manager(&mut self, texture_manager: Box<dyn TextureManager>) {
+    pub fn add_texture_manager(&mut self, texture_manager: T) {
         self.textures.push(texture_manager);
     }
 
@@ -49,7 +50,7 @@ impl ThreeWayTexture {
 
 }
 
-impl TextureManager for ThreeWayTexture {
+impl<T: TextureManager> TextureManager for ThreeWayTexture<T> {
 
     fn reset(&mut self) {
         if self.direction != 3 {

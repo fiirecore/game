@@ -4,7 +4,7 @@ use crate::battle::battle_info::BattleType;
 use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
 use crate::pokemon::party::PokemonParty;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Trainer {
 
     pub trainer_type: TrainerType,

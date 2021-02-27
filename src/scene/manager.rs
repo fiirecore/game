@@ -1,7 +1,5 @@
 use game_scene::GameScene;
 
-use crate::util::Quit;
-
 use crate::scene::scenes::*;
 use super::Scene;
 use super::scenes::title_scene::TitleScene;
@@ -21,43 +19,11 @@ impl SceneManager {
 	
 	pub fn new() -> Self {
 		Self {
-			current_scene: Scenes::TitleScene,
+			current_scene: Scenes::default(),
 			title_scene: TitleScene::new(),
 			main_menu_scene: MainMenuScene::new(),
 			game_scene: GameScene::new(),
 		}
-	}
-
-	pub fn load_scene(&mut self, scene: Scenes) {
-		self.get_mut().quit();
-		self.current_scene = scene;
-		// macroquad::prelude::debug!("Loading Scene: {}", self.scenes[self.current_scene_index].name());
-		self.get_mut().on_start();
-		self.check_scene();
-	}
-	
-	pub fn update(&mut self, delta: f32) {
-		self.get_mut().update(delta);
-		self.check_scene();
-	}
-	
-	pub fn render(&mut self) {
-		self.get().render();
-	}
-	
-	pub fn input(&mut self, delta: f32){
-		self.get_mut().input(delta);		
-	}
-
-	fn check_scene(&mut self) {
-		let id = self.get().next_scene();
-		if let Some(id) = id {
-			self.load_scene(id);
-		}
-	}
-
-	pub fn on_start(&mut self) {
-		self.load_scene(self.current_scene);
 	}
 
 	fn get(&self) -> &dyn Scene {
@@ -78,11 +44,38 @@ impl SceneManager {
 	
 }
 
-impl Quit for SceneManager {
+impl Scene for SceneManager {
+    fn on_start(&mut self) {
+        self.get_mut().on_start();
+    }
 
-	fn quit(&mut self) {
-		self.get_mut().quit();
-	}
+    fn update(&mut self, delta: f32) {
+        match self.get().state() {
+		    SceneState::Continue => {
+				self.get_mut().update(delta);
+			}
+		    SceneState::Scene(scene) => {
+				self.get_mut().quit();
+				self.current_scene = scene;
+				self.get_mut().on_start();
+			}
+		}
+    }
 
+    fn render(&self) {
+        self.get().render();
+    }
+
+    fn input(&mut self, delta: f32) {
+        self.get_mut().input(delta);
+    }
+
+    fn quit(&mut self) {
+        self.get_mut().quit();
+    }
+
+    fn state(&self) -> SceneState {
+        SceneState::Continue
+    }
+	
 }
-

@@ -1,39 +1,40 @@
 {
-	"identifier": {
-		"name": "Janice",
-		"npc_type": "lass"
-	},
-	"position": {
-		"x": 19,
-		"y": 9,
-		"direction": "Left"
-	},
-	"trainer": {
-		"trainer_type": "Lass",
-		"encounter_music": "EncounterGirl",
-		"message_color": "Red",
-		"encounter_message": [
-				[
-					"Excuse me?",
-                    "You looked at me, didn't you?"
-				]
-		],
-		"victory_message": [
-			"Test"
-		],
-		"party": {
-			"pokemon": [
-				{
-					"id": 16,
-					"level": 9
-				},
-				{
-					"id": 16,
-					"level": 9
-				}
-			]
-		},
-		"tracking_length": 5,
-		"worth": 0
-	}
+    "identifier": {
+        "name": "Janice",
+        "npc_type": "lass"
+    },
+    "position": {
+        "coords": {
+            "x": 19,
+            "y": 9
+        },
+        "direction": "Left"
+    },
+    "trainer": {
+        "trainer_type": "Lass",
+        "encounter_music": "EncounterGirl",
+        "message_color": "Red",
+        "encounter_message": [
+            [
+                "Excuse me?",
+                "You looked at me, didn't you?"
+            ]
+        ],
+        "victory_message": [
+            "Test"
+        ],
+        "party": {
+            "pokemon": [{
+                    "id": 16,
+                    "level": 9
+                },
+                {
+                    "id": 16,
+                    "level": 9
+                }
+            ]
+        },
+        "tracking_length": 5,
+        "worth": 0
+    }
 }
