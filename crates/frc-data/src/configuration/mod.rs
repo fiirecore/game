@@ -9,7 +9,7 @@ use ahash::AHashMap as HashMap;
 use frc_input::Control;
 
 static CONFIGURATION_PATH: &str = "config";
-static CONFIGURATION_FILENAME: &str = "config.json";
+static CONFIGURATION_FILENAME: &str = "config.ron";
 
 #[derive(Serialize, Deserialize)]
 pub struct Configuration {
@@ -39,7 +39,7 @@ impl Configuration {
 	}
 
 	fn from_string(data: &str) -> Self {
-		match serde_json::from_str(data) {
+		match ron::from_str(data) {
 			Ok(config) => config,
 			Err(err) => {
 				warn!("Failed parsing configuration file with error {}", err);

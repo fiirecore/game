@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use frc_pokedex::texture::PokemonTexture;
+use firecore_pokedex::texture::PokemonTexture;
 use macroquad::prelude::warn;
 
 lazy_static::lazy_static! {
@@ -12,10 +12,10 @@ pub fn load() {
 	for path in crate::io::get_dir(DEX_DIR.join("entries")) {
 		match crate::io::get_file_as_string(&path) {
 			Ok(data) => {
-				let result: Result<frc_pokedex::pokemon::Pokemon, toml::de::Error> = toml::from_str(&data);
+				let result: Result<firecore_pokedex::pokemon::Pokemon, toml::de::Error> = toml::from_str(&data);
 				match result {
 					Ok(pokemon) => {
-						frc_pokedex::POKEDEX.insert(pokemon.data.number, pokemon);
+						firecore_pokedex::POKEDEX.insert(pokemon.data.number, pokemon);
 					},
 					Err(err) => {
 						warn!("Could not read pokemon entry at {:?} with error {}", path, err);
@@ -31,10 +31,10 @@ pub fn load() {
 	for path in crate::io::get_dir(DEX_DIR.join("moves")) {
 		match crate::io::get_file_as_string(&path) {
 			Ok(data) => {
-				let result: Result<frc_pokedex::moves::PokemonMove, toml::de::Error> = toml::from_str(&data);
+				let result: Result<firecore_pokedex::moves::PokemonMove, toml::de::Error> = toml::from_str(&data);
 				match result {
 					Ok(pokemon_move) => {
-						frc_pokedex::MOVEDEX.insert(pokemon_move.number, pokemon_move);
+						firecore_pokedex::MOVEDEX.insert(pokemon_move.number, pokemon_move);
 					}
 					Err(err) => {
 						warn!("Could not read pokemon move at {:?} with error {}", &path, err);

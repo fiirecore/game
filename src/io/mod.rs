@@ -16,10 +16,10 @@ pub fn get_file<P: AsRef<Path>>(path: P) -> Option<Cow<'static, [u8]>> {
     return AssetFolder::get(&path.as_ref().to_string_lossy());
 }
 
-pub fn get_file_as_string<P: AsRef<Path>>(path: P) -> anyhow::Result<String> {
+pub fn get_file_as_string<P: AsRef<Path>>(path: P) -> Result<String, StringIOError> {
     match get_file(&path) {
-        Some(file) => return String::from_utf8(file.to_vec()).map_err(|err| anyhow::Error::from(err) ),
-        None => return Err(anyhow::format_err!("Could not get file at {:?}", path.as_ref())),
+        Some(file) => return String::from_utf8(file.to_vec()).map_err(|err| StringIOError::FromUtf8(err) ),
+        None => return Err(StringIOError::Missing(format!("Could not get file at {:?}", path.as_ref()))),
     }
 }
 
@@ -48,5 +48,24 @@ pub fn get_dir<P: AsRef<Path>>(path: P) -> HashSet<PathBuf> {
     }
     return paths;
 }
+
+#[derive(Debug)]
+pub enum StringIOError {
+    FromUtf8(std::string::FromUtf8Error),
+    Missing(String),
+}
     
-    
+impl std::error::Error for StringIOError {}
+
+impl core::fmt::Display for StringIOError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            StringIOError::FromUtf8(err) => {
+                write!(f, "{}", err)
+            }
+            StringIOError::Missing(string) => {
+                write!(f, "{}", string)
+            }
+        }
+    }
+}

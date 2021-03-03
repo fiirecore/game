@@ -1,8 +1,8 @@
 use crate::io::data::player::PlayerData;
-use frc_pokedex::moves::MoveCategory;
-use frc_pokedex::moves::PokemonMove;
-use frc_pokedex::party::PokemonParty;
-use frc_pokedex::texture::PokemonTexture;
+use firecore_pokedex::moves::MoveCategory;
+use firecore_pokedex::moves::PokemonMove;
+use firecore_pokedex::party::PokemonParty;
+use firecore_pokedex::texture::PokemonTexture;
 use crate::pokemon::pokemon_texture;
 use crate::util::graphics::Texture;
 use crate::util::Entity;
@@ -231,7 +231,7 @@ impl Battle {
 
 		// ???
 
-		let mut vec: Vec<frc_pokedex::instance::PokemonInstance> = self.player_pokemon.iter_mut().map(|pokemon| {
+		let mut vec: Vec<firecore_pokedex::instance::PokemonInstance> = self.player_pokemon.iter_mut().map(|pokemon| {
 			pokemon.current_hp = pokemon.base.hp;
 			pokemon.to_instance()
 		}).collect();

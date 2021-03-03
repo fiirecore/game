@@ -1,13 +1,12 @@
-use dashmap::mapref::one::Ref;
-use frc_pokedex::PokemonId;
-use frc_pokedex::data::StatSet;
-use frc_pokedex::pokemon::Pokemon;
-use frc_pokedex::instance::PokemonInstance;
-use frc_pokedex::moves::instance::MoveInstances;
+use firecore_pokedex::PokemonRef;
+use firecore_pokedex::data::StatSet;
+use firecore_pokedex::pokemon::Pokemon;
+use firecore_pokedex::instance::PokemonInstance;
+use firecore_pokedex::moves::instance::MoveInstances;
 
 pub struct BattlePokemon {
 	
-	pub pokemon: Ref<'static, PokemonId, Pokemon>, 
+	pub pokemon: PokemonRef, 
 	
 	pub nickname: Option<String>,
 	pub level: u8,
@@ -34,7 +33,7 @@ impl BattlePokemon {
 
 	pub fn new(pokemon: &PokemonInstance) -> Self {
 
-		let pokemon_data = frc_pokedex::POKEDEX.get(&pokemon.id).expect("Could not get Pokemon from id!");
+		let pokemon_data = firecore_pokedex::POKEDEX.get(&pokemon.id).expect("Could not get Pokemon from id!");
 
 		let stats = get_stats(pokemon_data.value(), pokemon.ivs, pokemon.evs, pokemon.level);
 
@@ -61,7 +60,7 @@ impl BattlePokemon {
 
 	}
 	
-	pub fn generate(pokemon: Ref<'static, u16, Pokemon>, min_level: u8, max_level: u8) -> Self {
+	pub fn generate(pokemon: PokemonRef, min_level: u8, max_level: u8) -> Self {
 		let level;
 		if min_level == max_level {
 			level = max_level;
@@ -102,7 +101,7 @@ impl BattlePokemon {
 		    level: self.level,
 		    ivs: self.ivs,
 		    evs: self.evs,
-		    moves: Some(frc_pokedex::moves::serializable::from_instances(&self.moves)),
+		    moves: Some(firecore_pokedex::moves::serializable::from_instances(&self.moves)),
 		    exp: self.exp,
 		    friendship: 70,
 		    current_hp: Some(self.current_hp),

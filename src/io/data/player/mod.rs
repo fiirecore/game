@@ -1,5 +1,5 @@
-use frc_pokedex::data::StatSet;
-use frc_pokedex::party::PokemonParty;
+use firecore_pokedex::data::StatSet;
+use firecore_pokedex::party::PokemonParty;
 use crate::util::Coordinate;
 use frc_data::data::PersistantData;
 use std::path::{Path, PathBuf};
@@ -11,7 +11,7 @@ use crate::util::GlobalPosition;
 use crate::util::Location;
 use crate::util::Position;
 use super::world::WorldStatus;
-use frc_pokedex::instance::PokemonInstance;
+use firecore_pokedex::instance::PokemonInstance;
 
 static SAVE_DIRECTORY: &str = "saves";
 static SAVE_FILE_TYPE: &str = ".json";

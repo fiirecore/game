@@ -2,9 +2,9 @@ use macroquad::rand::gen_range;
 use parking_lot::Mutex;
 use crate::battle::battle_info::BattleType;
 use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
-use frc_pokedex::PokemonId;
-use frc_pokedex::data::StatSet;
-use frc_pokedex::party::PokemonParty;
+use firecore_pokedex::PokemonId;
+use firecore_pokedex::data::StatSet;
+use firecore_pokedex::party::PokemonParty;
 use crate::world::npc::NPC;
 use crate::world::pokemon::wild_pokemon_table::WildPokemonTable;
 
@@ -21,7 +21,7 @@ pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
         battle_type: BattleType::Wild,
         party: PokemonParty {
-            pokemon: vec![frc_pokedex::instance::PokemonInstance::generate(gen_range(0, frc_pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
+            pokemon: vec![firecore_pokedex::instance::PokemonInstance::generate(gen_range(0, firecore_pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
         },
         trainer_data: None,
     });

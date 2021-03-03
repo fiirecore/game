@@ -65,7 +65,7 @@ impl PokemonPartyGui {
                 break;
             }
             
-            let pokemon_data = frc_pokedex::POKEDEX.get(&pokemon.1.id).expect("Could not get Pokemon from id!");
+            let pokemon_data = firecore_pokedex::POKEDEX.get(&pokemon.1.id).expect("Could not get Pokemon from id!");
             let pokemon_data = pokemon_data.value();
 
             let max = crate::battle::battle_pokemon::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);

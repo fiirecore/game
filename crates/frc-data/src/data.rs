@@ -39,7 +39,7 @@ pub fn save_struct<P: AsRef<std::path::Path>>(path: P, data: &impl serde::Serial
 
             match std::fs::File::create(&path) {
                 Ok(mut file) => {
-                    match serde_json::to_string_pretty(data) {
+                    match ron::ser::to_string_pretty(data, ron::ser::PrettyConfig::default()) {
                         Ok(string) => {
                             if let Err(err) = std::io::Write::write(&mut file, string.as_bytes()) {
                                 warn!("Failed to save data with error: {}", err);
@@ -62,7 +62,7 @@ pub fn save_struct<P: AsRef<std::path::Path>>(path: P, data: &impl serde::Serial
     #[cfg(target_arch = "wasm32")]
     {
         if let Some(fname) = path.as_ref().file_name() {
-            match serde_json::to_string(&data) {
+            match ron::to_string(&data) {
                 Ok(string) => miniquad_cookie::set_cookie(&fname.to_string_lossy(), &string),
                 Err(err) => warn!("Could not encode cookie with error: {}", err),
             }
