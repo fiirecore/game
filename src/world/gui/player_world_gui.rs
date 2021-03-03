@@ -2,9 +2,8 @@ use crate::util::Entity;
 use crate::gui::Focus;
 use crate::io::data::player::PlayerData;
 use crate::util::Input;
-use crate::io::input;
+use frc_input::{self as input, Control};
 use crate::util::graphics::Texture;
-use crate::io::input::Control;
 
 use crate::gui::button::BasicButton;
 use crate::gui::GuiComponent;

@@ -1,20 +1,25 @@
-use crate::pokemon::data::StatSet;
-use crate::pokemon::party::PokemonParty;
+use frc_pokedex::data::StatSet;
+use frc_pokedex::party::PokemonParty;
 use crate::util::Coordinate;
-use crate::util::file::PersistantData;
-use crate::util::file::PersistantDataLocation;
+use frc_data::data::PersistantData;
 use std::path::{Path, PathBuf};
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
+use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use crate::util::GlobalPosition;
 use crate::util::Location;
 use crate::util::Position;
 use super::world::WorldStatus;
-use crate::pokemon::instance::PokemonInstance;
+use frc_pokedex::instance::PokemonInstance;
 
 static SAVE_DIRECTORY: &str = "saves";
-static SAVE_FILENAME: &str = "player.json";
+static SAVE_FILE_TYPE: &str = ".json";
+
+lazy_static::lazy_static! {
+	pub static ref PLAYER_SAVE: Mutex<Option<String>> = Mutex::new(None);
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerData {
 
@@ -36,6 +41,21 @@ pub struct PlayerData {
 }
 
 impl PlayerData {
+
+	pub fn select_data(data: String) {
+		*PLAYER_SAVE.lock() = Some(data);
+	}
+
+	pub async fn load_selected_data() -> Self {
+		match PLAYER_SAVE.lock().clone() {
+		    Some(save_name) => Self::load(Path::new(SAVE_DIRECTORY).join(save_name + SAVE_FILE_TYPE)).await,
+		    None => {
+				warn!("Could not get player save data because no data has been selected");
+				return new_save();
+			}
+		}
+		
+	}
 
 	pub fn add_pokemon_to_party(&mut self, pokemon: PokemonInstance) {
 		self.party.pokemon.push(pokemon);
@@ -98,20 +118,11 @@ fn player_party() -> PokemonParty {
 }
 
 #[async_trait::async_trait(?Send)]
-impl PersistantDataLocation for PlayerData {
-
-	async fn load_from_file() -> Self {
-		return PlayerData::load(Path::new(SAVE_DIRECTORY).join(SAVE_FILENAME)).await;
-	}
-
-}
-
-#[async_trait::async_trait(?Send)]
 impl PersistantData for PlayerData {
 	
 	async fn load(path: PathBuf) -> Self {
 		info!("Loading player data...");
-		match crate::util::file::read_string(&path).await {
+		match frc_data::data::read_string(&path).await {
 			Ok(data) => PlayerData::from_string(&data),
 		    Err(err) => {
 				warn!("Could not open player data file at {:?} with error {}", path, err);
@@ -124,7 +135,7 @@ impl PersistantData for PlayerData {
 		// #[cfg(not(target_arch = "wasm32"))] {
 			info!("Saving player data...");
 			
-			crate::util::file::save_struct(PathBuf::from(SAVE_DIRECTORY).join(SAVE_FILENAME), &self);
+			frc_data::data::save_struct(PathBuf::from(SAVE_DIRECTORY).join(PLAYER_SAVE.lock().clone().unwrap_or(String::from("player") + SAVE_FILE_TYPE)), &self);
 
 			crate::gui::set_message(super::text::MessageSet::new(
 				1, 
@@ -135,7 +146,7 @@ impl PersistantData for PlayerData {
 	}
 
 	async fn reload(&mut self) {
-		*self = PlayerData::load_from_file().await;
+		*self = PlayerData::load_selected_data().await;
 	}
 
 }

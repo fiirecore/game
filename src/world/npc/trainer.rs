@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
-use crate::audio::music::Music;
+use frc_audio::music::Music;
 use crate::battle::battle_info::BattleType;
 use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
-use crate::pokemon::party::PokemonParty;
+use frc_pokedex::party::PokemonParty;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Trainer {
 
     pub trainer_type: TrainerType,

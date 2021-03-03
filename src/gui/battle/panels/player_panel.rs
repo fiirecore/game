@@ -3,7 +3,7 @@ use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::Entity;
 use crate::gui::Focus;
 use crate::util::Input;
-use crate::io::input;
+use frc_input as input;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
 use crate::gui::battle::panels::battle_panel::BattlePanel;
@@ -48,8 +48,8 @@ impl PlayerPanel {
     pub fn input(&mut self, delta: f32, battle: &mut Battle) {
         if self.battle_panel.in_focus() {
             self.battle_panel.input(delta);
-            if input::pressed(crate::io::input::Control::A) {
-                match self.battle_panel.cursor_position {
+            if input::pressed(input::Control::A) {
+                match self.battle_panel.cursor_x + self.battle_panel.cursor_y * 2 {
                     0 => {
                         self.battle_panel.next = 1;
                     },
@@ -67,10 +67,10 @@ impl PlayerPanel {
             }        
         } else if self.fight_panel.in_focus() {
             self.fight_panel.input(delta);
-            if input::pressed(crate::io::input::Control::A) {
+            if input::pressed(input::Control::A) {
                 self.fight_panel.despawn();
 
-                battle.queue_player_move(self.fight_panel.cursor_position as usize);
+                battle.queue_player_move((self.fight_panel.cursor_x + self.fight_panel.cursor_y * 2) as usize);
                 battle.queue_opponent_move();
                 battle.pmove_queued = true;
                 battle.omove_queued = true;

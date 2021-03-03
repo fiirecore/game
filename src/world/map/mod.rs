@@ -1,12 +1,8 @@
-use ahash::AHashMap as HashMap;
 use macroquad::prelude::info;
-use crate::io::input;
 use crate::util::Coordinate;
-use crate::util::graphics::Texture;
-use crate::audio::music::Music;
+use frc_audio::music::Music;
 use crate::util::Direction;
-use crate::io::input::Control;
-use crate::util::graphics::draw_o;
+use frc_input::{self as input, Control};
 use self::npc_manager::MapNpcManager;
 use self::script_manager::MapScriptManager;
 
@@ -14,6 +10,7 @@ use super::MapSize;
 use super::MovementId;
 use super::NpcTextures;
 use super::TileId;
+use super::TileTextures;
 use super::pokemon::WildEntry;
 use super::warp::WarpEntry;
 use super::player::Player;
@@ -92,11 +89,11 @@ impl World for WorldMap {
 
         if let Some(wild) = &self.wild {
             if let Some(tiles) = &wild.tiles {
-                for tile in tiles {
+                tiles.iter().for_each(|tile| {
                     if tile_id.eq(tile) {
                         try_wild_battle(wild);
                     }
-                }
+                });
             } else {
                 try_wild_battle(wild);
             }            
@@ -163,7 +160,7 @@ impl World for WorldMap {
         self.script_manager.update(delta, player);
     }
 
-    fn render(&self, tile_textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
             let y = yy - screen.y_tile_offset;
             let render_y = (yy << 4) as f32 - screen.y_focus; // old = y_tile w/ offset - player x pixel
@@ -175,26 +172,26 @@ impl World for WorldMap {
                 let render_x = (xx << 4) as f32 - screen.x_focus;
 
                 if !(x < 0 || y < 0 || y >= self.height as isize || x >= self.width as isize) {
-                    draw_o(tile_textures.get(&self.tile_row(x, row_offset)), render_x, render_y);             
+                    tile_textures.render_tile(&self.tile_row(x, row_offset), render_x, render_y);
                 } else if border {
                     if x % 2 == 0 {
                         if y % 2 == 0 {
-                            draw_o(tile_textures.get(&self.border_blocks[0]), render_x, render_y);
+                            tile_textures.render_tile(&self.border_blocks[0], render_x, render_y);
                         } else {
-                            draw_o(tile_textures.get(&self.border_blocks[2]), render_x, render_y);
+                            tile_textures.render_tile(&self.border_blocks[2], render_x, render_y);
                         }
                     } else {
                         if y % 2 == 0 {
-                            draw_o(tile_textures.get(&self.border_blocks[1]), render_x, render_y);
+                            tile_textures.render_tile(&self.border_blocks[1], render_x, render_y);
                         } else {
-                            draw_o(tile_textures.get(&self.border_blocks[3]), render_x, render_y);
+                            tile_textures.render_tile(&self.border_blocks[3], render_x, render_y);
                         }
                     }
                 }
             }
         }
         for npc in &self.npc_manager.npcs {
-            npc.render(npc_textures, &screen);    
+            npc.render(npc_textures, &screen);
         }
         self.script_manager.render(tile_textures, npc_textures, &screen);
     }

@@ -19,40 +19,45 @@ pub mod map_set_loader;
 pub mod map_serializable;
 pub mod gba_map;
 
-pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager, bottom_textures: &mut HashMap<u16, crate::util::graphics::Texture>, npc_textures: &mut crate::world::NpcTextures) {
+pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager, bottom_textures: &mut crate::world::TileTextures, npc_textures: &mut crate::world::NpcTextures) {
     let mut bottom_sheets: HashMap<u8, macroquad::prelude::Image> = HashMap::new();
     let palette_sizes = gba_map::fill_palette_map(&mut bottom_sheets);
 
     info!("Loading maps...");
-    for dir_entry in crate::io::get_dir("world/maps/") {
-        for file in crate::io::get_dir(&dir_entry) {
+    let maps: Vec<(Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>)> = crate::io::get_dir("world/maps/").iter().map(|dir_entry | {
+        for file in crate::io::get_dir(dir_entry) {
             if let Some(ext) = file.extension() {
                 if ext == std::ffi::OsString::from("toml") {
-                    let maps = load_map(&palette_sizes, &dir_entry, &file);
-                    if let Some(world_chunk) = maps.0 {
-                        // super::map_loader::create_file_test(&dir_entry, &world_chunk.1);
-                        chunk_map.insert(world_chunk.0, world_chunk.1);
-                    } else if let Some(map_set) = maps.1 {
-                        map_sets.insert(map_set.0, map_set.1);
-                    }
+                    return load_map(&palette_sizes, dir_entry, &file);
                 }
             }
         }
-    }
+        return (None, None);
+    }).collect();
+
+    for maps in maps {
+        if let Some(world_chunk) = maps.0 {
+            // super::map_loader::create_file_test(&dir_entry, &world_chunk.1);
+            chunk_map.insert(world_chunk.0, world_chunk.1);
+        } else if let Some(map_set) = maps.1 {
+            map_sets.insert(map_set.0, map_set.1);
+        }
+    }    
+
     info!("Finished loading maps!");
 
     info!("Loading textures...");
     for tile_id in chunk_map.tiles() {
-        if !(bottom_textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
+        if !(bottom_textures.tile_textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
             //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-            bottom_textures.insert(tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, tile_id));
+            bottom_textures.tile_textures.insert(tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, tile_id));
         }
     }
     for wmapset in map_sets.values() {
         for tile_id in &wmapset.tiles() {
-            if !(bottom_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
+            if !(bottom_textures.tile_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
                 //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                bottom_textures.insert(*tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, *tile_id));
+                bottom_textures.tile_textures.insert(*tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, *tile_id));
             }
         }
     }

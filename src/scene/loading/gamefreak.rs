@@ -5,7 +5,7 @@ use crate::util::graphics::draw_text_left;
 use crate::util::graphics::fade_in;
 use crate::util::graphics::draw_rect;
 use crate::util::graphics::texture::byte_texture;
-use crate::io::input;
+use frc_input as input;
 
 use super::LoadingState;
 
@@ -36,7 +36,7 @@ impl super::LoadingScene for GamefreakLoadingScene {
 	fn on_start(&mut self) {
 		self.state = LoadingState::Continue;
 		self.accumulator = 0.0;
-		crate::audio::play_music(crate::audio::music::Music::IntroGamefreak);
+		frc_audio::play_music(frc_audio::music::Music::IntroGamefreak);
 	}
 	
 	fn update(&mut self, delta: f32) {

@@ -1,10 +1,9 @@
-use std::fmt::Display;
 use crate::io::data::player::PlayerData;
-use crate::pokemon::moves::MoveCategory;
-use crate::pokemon::moves::PokemonMove;
-use crate::pokemon::party::PokemonParty;
-use crate::pokemon::pokedex::texture::Side;
-use crate::pokemon::pokedex::texture::pokemon_texture;
+use frc_pokedex::moves::MoveCategory;
+use frc_pokedex::moves::PokemonMove;
+use frc_pokedex::party::PokemonParty;
+use frc_pokedex::texture::PokemonTexture;
+use crate::pokemon::pokemon_texture;
 use crate::util::graphics::Texture;
 use crate::util::Entity;
 use crate::gui::battle::battle_gui::BattleGui;
@@ -106,12 +105,12 @@ impl Battle {
 	}
 
 	fn load_textures(&mut self) {
-		for i in &self.opponent_pokemon {
-			self.opponent_textures.push(pokemon_texture(&i.data.name, Side::Front));
-		}
-		for i in &self.player_pokemon {
-			self.player_textures.push(pokemon_texture(&i.data.name, Side::Back));
-		}
+		self.opponent_textures = self.opponent_pokemon.iter().map(|i| {
+			pokemon_texture(&i.pokemon.data.name, PokemonTexture::Front)
+		}).collect();
+		self.player_textures = self.player_pokemon.iter().map(|i| {
+			pokemon_texture(&i.pokemon.data.name, PokemonTexture::Back)
+		}).collect();
 	}
 
 	pub fn load(&mut self) {
@@ -151,27 +150,26 @@ impl Battle {
 
 					// Calculate and give exp to player
 
-					let gain = ((self.opponent().training.base_exp * self.opponent().level as usize) as f32 * match self.battle_type {
+					let gain = ((self.opponent().pokemon.training.base_exp * self.opponent().level as usize) as f32 * match self.battle_type {
 						BattleType::Wild => 1.0,
 						_ => 1.5,
 					} / 7.0) as usize;
 					self.player_mut().exp += gain;
-					let max_exp = self.player().training.growth_rate.level_exp(self.player().level);
+					let max_exp = self.player().pokemon.training.growth_rate.level_exp(self.player().level);
 					if self.player().exp > max_exp {
 						let player = self.player_mut();
 						player.level += 1;
 						player.exp -= max_exp;
-						macroquad::prelude::info!("{} levelled up to Lv. {}", &player.data.name, player.level);
+						macroquad::prelude::info!("{} levelled up to Lv. {}", &player.pokemon.data.name, player.level);
 					} else {
-						macroquad::prelude::info!("{} gained {} exp. {} is needed to level up!", &self.player().data.name, gain, max_exp - self.player().exp);
+						macroquad::prelude::info!("{} gained {} exp. {} is needed to level up!", &self.player().pokemon.data.name, gain, max_exp - self.player().exp);
 					}
-
-
 
 					if self.opponent_pokemon[pkmn_index].current_hp != 0 {
 						self.faint = false;
 						self.opponent_active = pkmn_index;
 						battle_gui.update_gui(&self);
+						battle_gui.opponent_pokemon_gui.health_bar.update_bar(self.opponent_pokemon[pkmn_index].current_hp, self.opponent_pokemon[pkmn_index].base.hp);
 						break;
 					}
 				}
@@ -233,7 +231,7 @@ impl Battle {
 
 		// ???
 
-		let mut vec: Vec<crate::pokemon::instance::PokemonInstance> = self.player_pokemon.iter_mut().map(|pokemon| {
+		let mut vec: Vec<frc_pokedex::instance::PokemonInstance> = self.player_pokemon.iter_mut().map(|pokemon| {
 			pokemon.current_hp = pokemon.base.hp;
 			pokemon.to_instance()
 		}).collect();
@@ -276,7 +274,7 @@ fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokem
 		true
 	} {
 		if let Some(power) = pmove.power {
-			let effective = pmove.pokemon_type.unwrap_or_default().effective(recieving_pokemon.data.primary_type) as f64 * match recieving_pokemon.data.secondary_type {
+			let effective = pmove.pokemon_type.unwrap_or_default().effective(recieving_pokemon.pokemon.data.primary_type) as f64 * match recieving_pokemon.pokemon.data.secondary_type {
 				Some(ptype) => pmove.pokemon_type.unwrap_or_default().effective(ptype) as f64,
 				None => 1.0,
 			};
@@ -298,7 +296,7 @@ fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokem
 	}	
 }
 
-impl Display for Battle {
+impl std::fmt::Display for Battle {
 
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} vs. {}", self.player(), self.opponent())

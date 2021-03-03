@@ -1,9 +1,9 @@
 use ahash::AHashMap as HashMap;
 use macroquad::prelude::debug;
-use crate::util::graphics::Texture;
-use crate::audio::music::Music;
+use frc_audio::music::Music;
 use crate::world::NpcTextures;
 use crate::world::RenderCoords;
+use crate::world::TileTextures;
 use crate::world::World;
 use crate::world::map::manager::test_move_code;
 use crate::world::player::Player;
@@ -50,6 +50,7 @@ impl WorldChunkMap {
             let music = self.current_chunk().map.music;
             if music != self.current_music {
                 self.current_music = music;
+                frc_audio::play_music(music);
             }
         }
         
@@ -177,7 +178,7 @@ impl World for WorldChunkMap {
         self.current_chunk_mut().update(delta, player);
     }
 
-    fn render(&self, tile_textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         let current_chunk = self.current_chunk();
         current_chunk.render(tile_textures, npc_textures, screen, border);
         for connection in &current_chunk.connections {

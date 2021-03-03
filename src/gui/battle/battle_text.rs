@@ -36,7 +36,7 @@ pub fn pmove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
-                .update_text(&battle.player().data.name, &battle.player_move.name);
+                .update_text(&battle.player().pokemon.data.name, &battle.player_move.name);
         }
     } else if battle.faint_queued {
         faint_queued(delta, battle, battle_gui);
@@ -72,7 +72,7 @@ pub fn omove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
-                .update_text(&battle.opponent().data.name, &battle.opponent_move.name);
+                .update_text(&battle.opponent().pokemon.data.name, &battle.opponent_move.name);
         }
     } else if battle.faint_queued {
         faint_queued(delta, battle, battle_gui);
@@ -98,7 +98,7 @@ fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
-                .update_faint(&battle.player().data.name);
+                .update_faint(&battle.player().pokemon.data.name);
         }
     } else {
         if battle_gui.battle_text.is_alive() {
@@ -116,7 +116,7 @@ fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             battle_gui.battle_text.spawn();
             battle_gui
                 .battle_text
-                .update_faint(&battle.opponent().data.name);
+                .update_faint(&battle.opponent().pokemon.data.name);
         }
     }
 }

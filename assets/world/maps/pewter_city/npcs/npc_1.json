@@ -1,0 +1,14 @@
+{
+    "identifier": {
+        "name": "NPC 1",
+        "npc_type": "woman_1"
+    },
+    "position": {
+        "coords": {
+            "x": 33,
+            "y": 17
+        },
+        "direction": "Down"
+    },
+    "movement_type": "LookAround"
+}

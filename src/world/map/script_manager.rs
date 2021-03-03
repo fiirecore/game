@@ -27,14 +27,22 @@ impl MapScriptManager {
 
     pub fn on_tile(&mut self, player: &mut Player) {
         for script in &mut self.npc_scripts {
-            if !script.is_alive() && script.location.x == player.position.local.coords.x && script.location.y == player.position.local.coords.y {
+            if !script.is_alive() && script.location.in_bounds(&player.position.local.coords) {
                 match script.run_type {
                     crate::world::script::ScriptRunType::Once => {
                         if !script.has_run() {
                             script.start(player);
                         }
                     }
-                    crate::world::script::ScriptRunType::Conditional => {}
+                    crate::world::script::ScriptRunType::Conditional(ref event) => {
+                        if let Some(player_data) = macroquad::prelude::collections::storage::get::<crate::io::data::player::PlayerData>() {
+                            if !player_data.world_status.completed_events.contains(event) {
+                                if !script.has_run() {
+                                    script.start(player);
+                                }
+                            }
+                        }
+                    }
                     crate::world::script::ScriptRunType::Always => {
                         if let Some(original) = self.npc_script_clones.get(&script.identifier) {
                             *script = original.clone();

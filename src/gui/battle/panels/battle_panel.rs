@@ -3,12 +3,11 @@ use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::Entity;
 use crate::gui::Focus;
 use crate::util::Input;
-use crate::io::input::Control;
+use frc_input::{self as input, Control};
 use crate::gui::button::BasicButton;
 use crate::util::Direction;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
-use crate::io::input;
 use crate::gui::text::StaticText;
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;
@@ -25,7 +24,8 @@ pub struct BattlePanel {
     
     background: Texture,
     
-    pub cursor_position: u8,
+    pub cursor_x: u8,
+    pub cursor_y: u8,
     pub next: u8,
 
     pub fight_button: BasicButton,
@@ -60,7 +60,8 @@ impl BattlePanel {
             
             background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/button_panel.png")),
 
-            cursor_position: 0,
+            cursor_x: 0,
+            cursor_y: 0,
             next: 0,
 
             fight_button: BasicButton::new("Fight".to_ascii_uppercase().as_str(), font_id, 17.0, text_y, x + panel_x, y + panel_y),
@@ -74,7 +75,7 @@ impl BattlePanel {
     }
     
     pub fn update_text(&mut self, instance: &BattlePokemon) {
-        self.text.text[1] = instance.data.name.to_uppercase() + " do?";
+        self.text.text[1] = instance.pokemon.data.name.to_uppercase() + " do?";
     }
 
 }
@@ -86,21 +87,16 @@ impl GuiComponent for BattlePanel {
 	fn render(&self) {
 		if self.is_alive() {
             draw(self.background, self.panel_x + self.x, self.panel_y + self.y);
-            let mut cursor_x = 0.0;
-            let mut cursor_y = 0.0;
-            match self.cursor_position {
-                1 => {
-                    cursor_x = 56.0;
-                },
-                2 => {
-                    cursor_y = 16.0;
-                },
-                3 => {
-                    cursor_x = 56.0;
-                    cursor_y = 16.0;
-                },
-                _ => {}
-            }
+            let cursor_x = if self.cursor_x > 0 {
+                56.0
+            } else {
+                0.0
+            };
+            let cursor_y = if self.cursor_y > 0 {
+                16.0
+            } else {
+                0.0
+            };
             self.text.render();
             crate::util::graphics::draw_cursor(self.panel_x + self.x + 10.0 + cursor_x, self.panel_y + self.y + 13.0 + cursor_y);
             self.fight_button.render();
@@ -124,23 +120,25 @@ impl GuiComponent for BattlePanel {
 impl Input for BattlePanel {
 
     fn input(&mut self, _delta: f32) {
-        if input::pressed(Control::Up) {
-            if self.cursor_position >= 2 {
-                self.cursor_position -= 2;
-            }            
-        } else if input::pressed(Control::Down) {
-            if self.cursor_position < 2 {
-                self.cursor_position += 2;
-            } 
-        } else if input::pressed(Control::Left) {
-            if self.cursor_position > 0 {
-                self.cursor_position -= 1;
+        if self.in_focus() {
+            if input::pressed(Control::Up) {
+                if self.cursor_y > 0 {
+                    self.cursor_y -= 1;
+                }            
+            } else if input::pressed(Control::Down) {
+                if self.cursor_y < 1 {
+                    self.cursor_y += 1;
+                } 
+            } else if input::pressed(Control::Left) {
+                if self.cursor_y > 0 {
+                    self.cursor_y -= 1;
+                }
+            } else if input::pressed(Control::Right) {
+                if self.cursor_x < 1 {
+                    self.cursor_x += 1;
+                }
             }
-        } else if input::pressed(Control::Right) {
-            if self.cursor_position < 3 {
-                self.cursor_position += 1;
-            }
-        }
+        }        
     }
 
 }
@@ -153,7 +151,8 @@ impl Entity for BattlePanel {
         self.bag_button.spawn();
         self.pokemon_button.spawn();
         self.run_button.spawn();
-        self.cursor_position = 0;
+        self.cursor_x = 0;
+        self.cursor_y = 0;
         self.next = 0;
 	}
 

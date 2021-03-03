@@ -5,7 +5,12 @@ pub mod loading;
 pub mod manager;
 pub mod scenes;
 
+#[async_trait::async_trait(?Send)]
 pub trait Scene {
+
+	async fn load(&mut self);
+
+	fn loaded(&self) -> bool;
 
 	fn on_start(&mut self);
 	

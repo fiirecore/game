@@ -1,4 +1,4 @@
-use crate::audio::play_music;
+use frc_audio::play_music;
 use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::gui::game::pokemon_party_gui::PARTY_GUI;
@@ -11,12 +11,11 @@ use macroquad::prelude::KeyCode;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
-use crate::io::input;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
-use crate::audio::music::Music;
+use frc_audio::music::Music;
 use crate::util::Update;
 use crate::util::Render;
-use crate::io::input::Control;
+use frc_input::{self as input, Control};
 use crate::util::Entity;
 use crate::util::Direction;
 use crate::io::data::player::PlayerData;
@@ -36,7 +35,7 @@ pub struct WorldManager {
     map_sets: WorldMapSetManager,
     chunk_active: bool,
 
-    textures: TileTextures,
+    tile_textures: TileTextures,
     npc_textures: NpcTextures,
 
     current_music: Music,
@@ -53,29 +52,30 @@ pub struct WorldManager {
 impl WorldManager {
 
     pub fn new() -> Self {
-        let player_data = &macroquad::prelude::collections::storage::get::<PlayerData>().expect("Could not get Player Data");
-        if let Some(message) = crate::gui::MESSAGE.lock().take() {
-            info!("WorldManager cleared previous global message: {:?}", message);
-        }
-        let mut wcm = WorldChunkMap::new();
-        let mut wmsm = WorldMapSetManager::default();
-        let mut tt = TileTextures::new();
-        let mut nt = NpcTextures::new();
-        crate::io::data::map::v1::load_maps_v1(&mut wcm, &mut wmsm, &mut tt, &mut nt);
-        let mut this = Self {
-            chunk_map: wcm,
-            map_sets: wmsm,
+        let mut tile_textures = TileTextures::new();
+        tile_textures.setup();
+        let mut chunk_map = WorldChunkMap::new();
+        let mut map_sets = WorldMapSetManager::default();
+        let mut npc_textures = NpcTextures::new();
+        crate::io::data::map::v1::load_maps_v1(&mut chunk_map, &mut map_sets, &mut tile_textures, &mut npc_textures);
+        Self {
+            chunk_map,
+            map_sets,
             chunk_active: true,
             player: Player::default(),
             current_music: Music::default(),
             player_gui: PlayerWorldGui::new(),
             window_manager: MapWindowManager::default(),
-            textures: tt,
-            npc_textures: nt,
-        };
-        
-        this.load_player(player_data);
-        return this;
+            tile_textures,
+            npc_textures,
+        }
+    }
+
+    pub fn load(&mut self, player_data: &mut PlayerData) {
+        if let Some(message) = crate::gui::MESSAGE.lock().take() {
+            info!("WorldManager cleared previous global message: {:?}", message);
+        }
+        self.load_player(player_data);
     }
 
     pub fn on_start(&mut self) {
@@ -91,7 +91,7 @@ impl WorldManager {
             self.current_music = music;  
             play_music(self.current_music);
         }
-        if let Some(playing_music) = crate::audio::get_music_playing() {
+        if let Ok(playing_music) = frc_audio::get_music_playing() {
             if music != playing_music {
                 self.current_music = music;  
                 play_music(self.current_music);
@@ -108,6 +108,7 @@ impl WorldManager {
     }
 
     pub fn update(&mut self, delta: f32) {
+        self.tile_textures.update(delta);
 
         // Check global message to see if anything is there
 
@@ -142,12 +143,16 @@ impl WorldManager {
                 
                 if let Some(trainer) = self.current_map_mut().npc_manager.npcs[index].trainer.as_ref() {
                     if let Some(music) = trainer.encounter_music {
-                        if let Some(playing_music) = crate::audio::get_music_playing() {
-                            if playing_music != music {
+                        match frc_audio::get_music_playing() {
+                            Ok(playing_music) => {
+                                if playing_music != music {
+                                    play_music(music);
+                                }
+                            }
+                            Err(err) => {
+                                warn!("{}", err);
                                 play_music(music);
                             }
-                        } else {
-                            play_music(music);
                         }
                     }
                 }
@@ -163,15 +168,21 @@ impl WorldManager {
                     
 
                     let mut battled = false;
-
-                    if let Some(trainer) = &self.current_map_mut().npc_manager.npcs[index].trainer {
-                        let message_set = crate::io::data::text::MessageSet::new(
-                            1, 
-                            crate::io::data::text::color::TextColor::Blue, 
-                            trainer.encounter_message.clone()
-                        );
-                        self.window_manager.set_text(message_set);
-                        battled = true;
+                    if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
+                        if !data.world_status.get_or_create_map_data(&self.current_map().name).battled.contains(&self.current_map().npc_manager.npcs[index].identifier.name) {
+                            if let Some(trainer) = &self.current_map_mut().npc_manager.npcs[index].trainer {
+                                let message_set = crate::io::data::text::MessageSet::new(
+                                    1, 
+                                    crate::io::data::text::color::TextColor::Blue, 
+                                    trainer.encounter_message.clone()
+                                );
+                                self.window_manager.set_text(message_set);
+                                battled = true;
+                            }
+                        } else {
+                            info!("{:?}", &self.current_map().npc_manager.npcs[index].message);
+                            self.window_manager.set_text(self.current_map().npc_manager.npcs[index].message.clone());
+                        }
                     }
 
                     if battled {
@@ -198,9 +209,9 @@ impl WorldManager {
     pub fn render(&self) {
         let coords =  RenderCoords::new(&self.player);
         if self.chunk_active {
-            self.chunk_map.render(&self.textures, &self.npc_textures, coords, true);
+            self.chunk_map.render(&self.tile_textures, &self.npc_textures, coords, true);
         } else {
-            self.map_sets.render(&self.textures, &self.npc_textures, coords, true);
+            self.map_sets.render(&self.tile_textures, &self.npc_textures, coords, true);
         }
         self.player.render();
         self.player_gui.render(); 

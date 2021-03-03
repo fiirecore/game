@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::io::input::Control;
+use frc_input::Control;
 
 pub mod graphics;
 pub mod text;
@@ -184,7 +184,7 @@ impl Coordinate {
     }
 
 	pub fn towards(&self, destination: &Coordinate) -> Direction {
-		if (self.x - destination.x).abs() <= (self.y - destination.y).abs() {
+		if (self.x - destination.x).abs() > (self.y - destination.y).abs() {
 			if self.x > destination.x {
 				Direction::Left
 			} else {

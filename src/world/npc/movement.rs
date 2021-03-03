@@ -6,7 +6,7 @@ use crate::util::Position;
 
 use super::NPC;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct NPCDestination {
 
     pub coords: Coordinate,
@@ -25,11 +25,12 @@ impl NPCDestination {
     }
 
     pub fn next_to(from: &Position, to: &Coordinate) -> Self {
-        let direction = from.coords.towards(&to);
+        let direction = from.coords.towards(to);
+        // macroquad::prelude::debug!("Trainer direction: {:?}. \n Trying to go to {:?}", direction, to);
         let offset = direction.inverse().offset();
         let coords = Coordinate {
-            x: from.coords.x + offset.0 as isize,
-            y: from.coords.y + offset.1 as isize,
+            x: to.x + offset.0 as isize,
+            y: to.y + offset.1 as isize,
         };
         NPCDestination {
             coords,

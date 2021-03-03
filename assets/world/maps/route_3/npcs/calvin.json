@@ -1,0 +1,35 @@
+{
+    "identifier": {
+        "name": "Calvin",
+        "npc_type": "youngster"
+    },
+    "position": {
+        "coords": {
+            "x": 29,
+            "y": 10
+        },
+        "direction": "Left"
+    },
+    "trainer": {
+        "trainer_type": "Youngster",
+        "encounter_music": "EncounterBoy",
+        "encounter_message": [
+            [
+                "Hey! You're not wearing shorts!",
+                "What's wrong with you?"
+            ]
+        ],
+        "victory_message": [
+            "Lost!",
+            "Lost! Lost!"
+        ],
+        "party": {
+            "pokemon": [{
+                "id": 21,
+                "level": 14
+            }]
+        },
+        "tracking_length": 5,
+        "worth": 224
+    }
+}

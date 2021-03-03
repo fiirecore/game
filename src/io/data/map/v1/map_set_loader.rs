@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
-use crate::audio::music::Music;
+use frc_audio::music::Music;
 use crate::world::map::WorldMap;
 use crate::world::map::set::WorldMapSet;
 use super::gba_map::fix_tiles;
@@ -33,7 +33,7 @@ pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config
                         tile_map: gba_map.tile_map,
                         border_blocks: gba_map.border_blocks,
                         movement_map: gba_map.movement_map,
-                        fly_position: config.fly_position,
+                        fly_position: config.settings.fly_position,
                         wild: super::load_wild_entry(&root_path, config.wild.clone(), Some(index)),
                         warps: super::load_warp_entries(&root_path, Some(index)),
                         npc_manager: super::load_npc_entries(&root_path, Some(index)),

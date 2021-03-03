@@ -1,7 +1,7 @@
 use ahash::AHashMap as HashMap;
-use crate::util::graphics::Texture;
 use crate::world::NpcTextures;
 use crate::world::RenderCoords;
+use crate::world::TileTextures;
 use crate::world::World;
 use crate::world::player::Player;
 use crate::world::warp::WarpEntry;
@@ -83,7 +83,7 @@ impl World for WorldMapSetManager {
         self.map_set_mut().update(delta, player);
     }
 
-    fn render(&self, tile_textures: &HashMap<u16, Texture>, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         self.map_set().render(tile_textures, npc_textures, screen, border)
     }
 

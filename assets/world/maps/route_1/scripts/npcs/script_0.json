@@ -2,8 +2,14 @@
     "identifier": "test_battle_script",
     "run_type": "Always",
     "location": {
-        "x": 3,
-        "y": 27
+        "min": {
+            "x": 3,
+            "y": 27
+        },
+        "max": {
+            "x": 3,
+            "y": 27
+        }
     },
     "end_position": {
         "coords": {

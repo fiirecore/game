@@ -118,8 +118,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
         self.intro_text.text = crate::io::data::text::MessageSet { messages: vec![
-            Message::with_color(vec![String::from("Wild ") + battle.opponent().data.name.to_ascii_uppercase().as_str() + " appeared!"], false, TextColor::White),
-            Message::with_color(vec![String::from("Go! ") + battle.player().data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
+            Message::with_color(vec![String::from("Wild ") + battle.opponent().pokemon.data.name.to_ascii_uppercase().as_str() + " appeared!"], false, TextColor::White),
+            Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         ]};
     }
 

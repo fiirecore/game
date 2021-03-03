@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
 use macroquad::prelude::warn;
-use crate::pokemon::PokemonId;
-use crate::pokemon::data::StatSet;
+use frc_pokedex::PokemonId;
+use frc_pokedex::data::StatSet;
 use super::wild_pokemon_encounter::WildPokemonEncounter;
-use crate::pokemon::instance::PokemonInstance;
+use frc_pokedex::instance::PokemonInstance;
 
 pub static DEFAULT_ENCOUNTER_CHANCE: u8 = 21;
 
@@ -24,7 +24,7 @@ impl WildPokemonTable {
         match self.encounter {
             Some(encounter) => encounter[get_counter()].generate_saved(),
             None => return PokemonInstance::generate(
-                macroquad::rand::gen_range(0, crate::pokemon::pokedex::POKEDEX.len()) as PokemonId + 1, 
+                macroquad::rand::gen_range(0, frc_pokedex::POKEDEX.len()) as PokemonId + 1, 
                 1, 
                 100, 
                 Some(StatSet::iv_random()), 

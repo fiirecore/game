@@ -105,9 +105,9 @@ impl PokemonGui for PlayerPokemonGui {
 	}
 
 	fn update_gui(&mut self, battle: &Battle) {
-		self.name.text = vec![battle.player().data.name.to_ascii_uppercase()];
+		self.name.text = vec![battle.player().pokemon.data.name.to_ascii_uppercase()];
 		self.level.text = vec![String::from("Lv") + battle.player().level.to_string().as_str()];
-		self.exp_width = battle.player().exp as f32 / battle.player().training.growth_rate.level_exp(battle.player().level) as f32;
+		self.exp_width = battle.player().exp as f32 / battle.player().pokemon.training.growth_rate.level_exp(battle.player().level) as f32;
 		self.update_hp(battle.player().current_hp, battle.player().base.hp);
 	}
 
@@ -215,7 +215,7 @@ impl PokemonGui for OpponentPokemonGui {
 	}
 
 	fn update_gui(&mut self, battle: &Battle) {
-		self.name.text = vec![battle.opponent().data.name.to_ascii_uppercase()];
+		self.name.text = vec![battle.opponent().pokemon.data.name.to_ascii_uppercase()];
 		self.level.text = vec![String::from("Lv") + battle.opponent().level.to_string().as_str()];
 		self.update_hp(battle.opponent().current_hp, battle.opponent().base.hp)
 	}

@@ -1,3 +1,4 @@
+use crate::io::data::text::MessageSet;
 use crate::util::Direction;
 use crate::util::Position;
 use serde::{Deserialize, Serialize};
@@ -10,13 +11,19 @@ use super::player::Player;
 pub mod movement;
 pub mod trainer;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct NPC {
 
     pub identifier: NPCIdentifier,
 
 
     pub position: Position, // Home position
+
+    #[serde(default)]
+    pub movement_type: MovementType,
+
+    #[serde(default)]
+    pub message: MessageSet,
 
     #[serde(default = "default_speed")]
     pub speed: f32,
@@ -30,11 +37,20 @@ pub struct NPC {
 
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct NPCIdentifier {
 
     pub name: String,
     pub npc_type: String,
+
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+pub enum MovementType {
+
+    Still,
+    LookAround,
+    WalkUpAndDown(isize),
 
 }
 
@@ -70,11 +86,19 @@ impl NPC {
 
 }
 
+impl Default for MovementType {
+    fn default() -> Self {
+        Self::Still
+    }
+}
+
 impl Default for NPC {
     fn default() -> Self {
         Self {
             identifier: NPCIdentifier::default(),
             position: Position::default(),
+            movement_type: MovementType::default(),
+            message: MessageSet::default(),
             speed: default_speed(),
             trainer: None,
             offset: None,
@@ -82,7 +106,7 @@ impl Default for NPC {
     }
 }
 
-fn default_speed() -> f32 {
+const fn default_speed() -> f32 {
     1.0
 }
 

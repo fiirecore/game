@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::util::Coordinate;
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct MapConfig {
 
     pub identifier: MapIdentifier,
@@ -11,7 +11,7 @@ pub struct MapConfig {
     pub warp_map: Option<SerializedMapSet>,
 
     #[serde(default)]
-    pub fly_position: Coordinate,
+    pub settings: SerializedMapSettings,
     pub wild: Option<SerializedWildEntry>,
 
 }
@@ -24,7 +24,7 @@ impl MapConfig {
 
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct MapIdentifier {
 
     #[serde(default = "map_default_name")]
@@ -34,22 +34,17 @@ pub struct MapIdentifier {
 }
 
 fn map_default_name() -> String {
-    String::from("Map (Missing Name)")
+    "Map (Missing Name)".to_owned()
 }
 
-// impl MapIdentifier {
+#[derive(Default, Deserialize)]
+pub struct SerializedMapSettings {
 
-//     pub fn name(&self) -> String {
-//         if let Some(name) = &self.name {
-//             return name.clone();
-//         } else {
-//             return String::from("Map (Missing Name)");
-//         }
-//     }
+    pub fly_position: Coordinate,
 
-// }
+}
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct SerializedChunkMap {
 
     pub piece_index: u16,
@@ -59,14 +54,14 @@ pub struct SerializedChunkMap {
 
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct SerializedMapSet {
 
     pub map_set_id: String,
 
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Deserialize, Clone)]
 pub struct SerializedWildEntry {
 
     pub encounter_type: String,

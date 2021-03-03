@@ -1,10 +1,10 @@
-use crate::audio::play_music;
-use crate::io::input;
+use frc_audio::play_music;
+use frc_input as input;
 use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::graphics::texture::byte_texture;
 use crate::util::graphics::draw;
-use crate::audio::music::Music::Title;
+use frc_audio::music::Music::Title;
 
 use super::SceneState;
 
@@ -41,7 +41,16 @@ impl TitleScene {
 	
 }
 
+#[async_trait::async_trait(?Send)]
 impl Scene for TitleScene {
+
+	async fn load(&mut self) {
+		
+	}
+
+	fn loaded(&self) -> bool {
+		true
+	}
 
 	fn on_start(&mut self) {
 		self.state = SceneState::Continue;
@@ -67,7 +76,7 @@ impl Scene for TitleScene {
 	fn input(&mut self, _delta: f32) {
 		if input::pressed(input::Control::A) {
 			macroquad::prelude::rand::srand(self.accumulator as u64 % 256);
-			self.state = SceneState::Scene(super::Scenes::GameScene);
+			self.state = SceneState::Scene(super::Scenes::MainMenuScene);
 		}
 	}
 	

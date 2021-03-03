@@ -1,8 +1,8 @@
 var ctx = null;
 var buffer_size = 0;
 
-register_plugin = function (importObject) {
-    importObject.env.audio_init = function (audio_buffer_size) {
+register_plugin = function(importObject) {
+    importObject.env.audio_init = function(audio_buffer_size) {
         if (ctx != null) {
             return;
         }
@@ -20,7 +20,7 @@ register_plugin = function (importObject) {
         {
             audioContext = window.AudioContext || window.webkitAudioContext;
             ctx = new audioContext();
-            var fixAudioContext = function (e) {
+            var fixAudioContext = function(e) {
                 console.log("fix");
 
                 // Create empty buffer
@@ -59,11 +59,11 @@ register_plugin = function (importObject) {
             return false;
         }
     }
-    importObject.env.audio_current_time = function () {
+    importObject.env.audio_current_time = function() {
         return ctx.currentTime;
     }
 
-    importObject.env.audio_samples = function (buffer_ptr, start_audio) {
+    importObject.env.audio_samples = function(buffer_ptr, start_audio) {
         var buffer = ctx.createBuffer(2, buffer_size, ctx.sampleRate);
         var channel0 = buffer.getChannelData(0);
         var channel1 = buffer.getChannelData(1);
@@ -81,11 +81,11 @@ register_plugin = function (importObject) {
         return bufferSec;
     }
 
-    importObject.env.audio_sample_rate = function () {
+    importObject.env.audio_sample_rate = function() {
         return ctx.sampleRate;
     }
 
-    importObject.env.audio_pause_state = function () {
+    importObject.env.audio_pause_state = function() {
         var duration = window.endPause - window.startPause;
         if (duration > 0) {
             window.endPause = 0;
@@ -99,4 +99,4 @@ register_plugin = function (importObject) {
     }
 }
 
-miniquad_add_plugin({ register_plugin });
+miniquad_add_plugin({ register_plugin, version: "v0.0.1-alpha.1", name: "quad-snd" });

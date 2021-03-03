@@ -1,11 +1,11 @@
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy)]
 pub struct BattleInfo {
 
     pub battle_type: BattleType,
 
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum BattleType {
 
     Wild,

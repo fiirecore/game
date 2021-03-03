@@ -2,8 +2,14 @@
     "identifier": "oak_script",
     "run_type": "Once",
     "location": {
-        "x": 12,
-        "y": 1
+        "min": {
+            "x": 12,
+            "y": 1
+        },
+        "max": {
+            "x": 13,
+            "y": 1
+        }
     },
     "end_position": {
         "coords": {

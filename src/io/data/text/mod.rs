@@ -1,11 +1,11 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use self::color::TextColor;
 
 pub mod font;
 pub mod color;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Message {
 
     #[serde(default)]
@@ -46,7 +46,7 @@ impl Message {
 
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MessageSet {
     pub messages: Vec<Message>,
 }

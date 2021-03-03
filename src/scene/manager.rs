@@ -41,26 +41,44 @@ impl SceneManager {
 		    Scenes::GameScene => &mut self.game_scene,
 		}
 	}
-	
-}
 
-impl Scene for SceneManager {
-    fn on_start(&mut self) {
-        self.get_mut().on_start();
-    }
-
-    fn update(&mut self, delta: f32) {
-        match self.get().state() {
+	pub async fn poll(&mut self, delta: f32) {
+		match self.get().state() {
 		    SceneState::Continue => {
 				self.get_mut().update(delta);
 			}
 		    SceneState::Scene(scene) => {
 				self.get_mut().quit();
 				self.current_scene = scene;
-				self.get_mut().on_start();
+				let scene = self.get_mut();
+				if !scene.loaded() {
+					scene.load().await;
+				}
+				scene.on_start();
 			}
 		}
+	}
+	
+}
+
+#[async_trait::async_trait(?Send)]
+impl Scene for SceneManager {
+
+	async fn load(&mut self) {
+		self.get_mut().load().await;
+	}
+
+	fn loaded(&self) -> bool {
+		self.get().loaded()
+	}
+
+    fn on_start(&mut self) {
+        self.get_mut().on_start();
     }
+
+    fn update(&mut self, _delta: f32) {
+		macroquad::prelude::warn!("Use poll() for scene manager instead!");
+	}
 
     fn render(&self) {
         self.get().render();

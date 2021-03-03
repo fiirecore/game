@@ -24,7 +24,7 @@
             ]
         ],
         "victory_message": [
-            "Test"
+            "I don't believe it!"
         ],
         "party": {
             "pokemon": [{
@@ -38,6 +38,6 @@
             ]
         },
         "tracking_length": 2,
-        "worth": 0
+        "worth": 176
     }
 }

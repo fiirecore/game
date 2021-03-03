@@ -12,6 +12,8 @@ use crate::util::graphics::draw_rect;
 use crate::util::graphics::draw_text_left_color;
 use crate::util::graphics::texture::byte_texture;
 
+const TEXTURE_TICK: f32 = 0.15;
+
 lazy_static::lazy_static! {
     pub static ref PARTY_GUI: RwLock<PokemonPartyGui> = RwLock::new(PokemonPartyGui::new());
 }
@@ -31,6 +33,7 @@ pub struct PokemonPartyGui {
     alive: bool,
 
     background: Background,
+    primary_texture: Texture,
     pokemon_texture: Texture,
 
     accumulator: f32,
@@ -45,6 +48,7 @@ impl PokemonPartyGui {
         Self {
             alive: false,
             background: Background::new(byte_texture(include_bytes!("../../../build/assets/gui/party/background.png")), 0.0, 0.0),
+            primary_texture: byte_texture(include_bytes!("../../../build/assets/gui/party/primary.png")),
             pokemon_texture: byte_texture(include_bytes!("../../../build/assets/gui/party/pokemon.png")),
             accumulator: 0.0,
             pokemon: [None, None, None, None, None, None],
@@ -61,7 +65,7 @@ impl PokemonPartyGui {
                 break;
             }
             
-            let pokemon_data = crate::pokemon::pokedex::POKEDEX.get(&pokemon.1.id).expect("Could not get Pokemon from id!");
+            let pokemon_data = frc_pokedex::POKEDEX.get(&pokemon.1.id).expect("Could not get Pokemon from id!");
             let pokemon_data = pokemon_data.value();
 
             let max = crate::battle::battle_pokemon::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
@@ -86,9 +90,8 @@ impl PokemonPartyGui {
     fn render_cell(&self, index: usize, data: &PartyGuiData) {
         let offset = -14.0 + (24.0 * index as f32);
         draw(self.pokemon_texture, 89.0, offset);
-        let flip = self.accumulator > (4.0 / 60.0);
         macroquad::prelude::draw_texture_ex(data.texture, 84.0, offset - 8.0, macroquad::prelude::WHITE, macroquad::prelude::DrawTextureParams {
-            source: Some(macroquad::prelude::Rect::new(0.0, if flip { 32.0 } else { 0.0 }, 32.0, 32.0)),
+            source: Some(macroquad::prelude::Rect::new(0.0, if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 32.0, 32.0)),
             ..Default::default()
         });
         draw_text_left_color(0, &data.name, TextColor::White, 119.0, offset/* + 1.0*/);
@@ -104,7 +107,7 @@ impl crate::util::Update for PokemonPartyGui {
     fn update(&mut self, delta: f32) {
         if self.is_alive() {
             self.accumulator += delta;
-            if self.accumulator > (8.0 / 60.0) {
+            if self.accumulator > TEXTURE_TICK * 2.0 {
                 self.accumulator = 0.0;
             }
         }
@@ -119,7 +122,12 @@ impl crate::util::Render for PokemonPartyGui {
             for pokemon in self.pokemon.iter().enumerate() {
                 if let Some(data) = pokemon.1 {
                     if pokemon.0 == 0 {
-
+                        const OFFSET: f32 = 26.0;
+                        draw(self.primary_texture, 3.0, OFFSET - 6.0);
+                        macroquad::prelude::draw_texture_ex(data.texture, 0.0, OFFSET, macroquad::prelude::WHITE, macroquad::prelude::DrawTextureParams {
+                            source: Some(macroquad::prelude::Rect::new(0.0, if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 32.0, 32.0)),
+                            ..Default::default()
+                        });
                     } else {
                         self.render_cell(pokemon.0, data);
                     }
@@ -131,8 +139,8 @@ impl crate::util::Render for PokemonPartyGui {
 }
 
 impl crate::util::Input for PokemonPartyGui {
-    fn input(&mut self, delta: f32) {
-        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) || crate::io::input::pressed(crate::io::input::Control::Start) {
+    fn input(&mut self, _delta: f32) {
+        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) || frc_input::pressed(frc_input::Control::Start) {
             self.despawn();
         }
     }

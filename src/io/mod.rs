@@ -5,7 +5,7 @@ use ahash::AHashSet as HashSet;
 use rust_embed::RustEmbed;
 
 pub mod data;
-pub mod input;
+// pub mod input;
 pub mod args;
 
 #[derive(RustEmbed)]

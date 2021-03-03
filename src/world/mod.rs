@@ -1,9 +1,10 @@
 use ahash::AHashMap as HashMap;
+use crate::util::Coordinate;
 use crate::util::graphics::texture::still_texture_manager::StillTextureManager;
-use crate::util::graphics::Texture;
 use crate::util::graphics::texture::three_way_texture::ThreeWayTexture;
 use crate::world::warp::WarpEntry;
 use self::player::Player;
+use self::tile::TileTextureManager;
 
 pub mod map;
 pub mod warp;
@@ -12,6 +13,7 @@ pub mod pokemon;
 pub mod gui;
 pub mod player;
 pub mod script;
+pub mod tile;
 
 mod render_coords;
 
@@ -21,7 +23,7 @@ pub type TileId = u16;
 pub type MovementId = u8;
 pub type MapSize = u16;
 
-pub type TileTextures = HashMap<u16, Texture>;
+pub type TileTextures = TileTextureManager;
 pub type NpcTextures = HashMap<String, ThreeWayTexture<StillTextureManager>>;
 
 pub trait World {
@@ -44,4 +46,24 @@ pub trait World {
 
 }
 
-pub struct BoundingBox(isize, isize, isize, isize);
+#[derive(Debug, Clone, Copy, serde::Deserialize, serde::Serialize)]
+pub struct BoundingBox {
+    pub min: Coordinate,
+    pub max: Coordinate,
+}
+
+impl BoundingBox {
+
+    pub fn in_bounds(&self, coordinate: &Coordinate) -> bool{
+        if coordinate.x >= self.min.x && coordinate.x <= self.max.x {
+            return coordinate.y >= self.min.y && coordinate.y <= self.max.y;
+        } else {
+            return false;
+        }
+    }
+
+    // pub fn intersects(&self, ) {
+
+    // }
+
+}

@@ -1,7 +1,4 @@
-register_plugin = function (importObject) {
-
-    const name = "Cookie saver";
-    const version = "1.0";
+register_plugin = function(importObject) {
 
     importObject.env.getCookie = function getCookie(cname) {
         var properName = consume_js_object(cname);
@@ -22,19 +19,19 @@ register_plugin = function (importObject) {
         console.warn("Could not find cookie with name: \"" + properName + "\"");
         return js_object("Missing cookie");
     }
-    
+
     importObject.env.setCookie = function setCookie(cname, cvalue) {
         var value = consume_js_object(cvalue);
         var properName = consume_js_object(cname);
         console.info('Saving cookie named \"' + properName + '\" with data: ' + value);
         var exdays = 365 * 100;
         var d = new Date();
-        d.setTime(d.getTime() + (exdays*24*60*60*1000));
-        var expires = 'expires='+ d.toUTCString();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = 'expires=' + d.toUTCString();
         document.cookie = properName + '=' + value + ';' + expires + ';path=/';
         console.info("Saved cookie: \"" + properName + "\"");
     }
 
 }
 
-miniquad_add_plugin({ register_plugin });
+miniquad_add_plugin({ register_plugin, version: "1.0", name: "donut-cookie" });

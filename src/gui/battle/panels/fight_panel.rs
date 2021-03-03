@@ -1,11 +1,10 @@
 use crate::battle::battle_pokemon::BattlePokemon;
 use crate::util::Entity;
 use crate::gui::Focus;
-use crate::io::input::Control;
 use crate::util::graphics::Texture;
 
 use crate::gui::GuiComponent;
-use crate::io::input;
+use frc_input::{self as input, Control};
 
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;
@@ -24,7 +23,8 @@ pub struct FightPanel {
     background: Texture,
     move_panel: MovePanel,
 
-    pub cursor_position: u8,
+    pub cursor_x: u8,
+    pub cursor_y: u8,
     pub next: u8,
 
     move_names: Vec<String>,
@@ -51,7 +51,8 @@ impl FightPanel {
             background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/move_panel.png")),
             move_panel: MovePanel::new(x + panel_x, y + panel_y),
 
-            cursor_position: 0,
+            cursor_x: 0,
+            cursor_y: 0,
             next: 0,
 
             move_names: Vec::new(),
@@ -61,15 +62,15 @@ impl FightPanel {
     }
 
     pub fn update_names(&mut self, instance: &BattlePokemon) {
-        self.move_names = Vec::new();
-        for move_instance in &instance.moves {
-            self.move_names.push(move_instance.pokemon_move.name.clone());            
-        }
+        self.move_names = instance.moves.iter().map(|move_instance| {
+            move_instance.pokemon_move.name.clone()          
+        }).collect();
     }
 
     fn reset_vars(&mut self) {
         self.next = 0;
-        self.cursor_position = 0;
+        self.cursor_x = 0;
+        self.cursor_y = 0;
     }
 
 }
@@ -97,7 +98,7 @@ impl GuiComponent for FightPanel {
                     y_offset = 17.0;
                 }
                 crate::util::graphics::draw_text_left_color(0, self.move_names[string_id].to_ascii_uppercase().as_str(), crate::io::data::text::color::TextColor::Black, self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
-                if string_id == self.cursor_position as usize {
+                if string_id == (self.cursor_x + self.cursor_y * 2) as usize {
                     crate::util::graphics::draw_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
                 }
             }
@@ -113,30 +114,29 @@ impl crate::util::Input for FightPanel {
             self.next = 1;
         }
         if input::pressed(Control::Up) {
-            if self.cursor_position >= 2 {
-                self.cursor_position -= 2;
+            if self.cursor_y > 0 {
+                self.cursor_y -= 1;
             }            
         } else if input::pressed(Control::Down) {
-            if self.cursor_position < 2 {
-                self.cursor_position += 2;
+            if self.cursor_y < 1 {
+                self.cursor_y += 1;
             } 
         } else if input::pressed(Control::Left) {
-            if self.cursor_position > 0 {
-                self.cursor_position -= 1;
+            if self.cursor_x > 0 {
+                self.cursor_x -= 1;
             }
         } else if input::pressed(Control::Right) {
-            if self.cursor_position < 3 {
-                self.cursor_position += 1;
+            if self.cursor_x < 1 {
+                self.cursor_x += 1;
             }
         }
-        if self.cursor_position >= self.move_names.len() as u8 {
-            if self.cursor_position == 0 {
-                self.cursor_position = 0;
-            } else {
-                self.cursor_position = self.move_names.len() as u8 - 1;
-            }
-            
+
+        if (self.cursor_x + self.cursor_y * 2) >= self.move_names.len() as u8 {
+            let pos = self.move_names.len() as u8 - 1;
+            self.cursor_x = pos % 2;
+            self.cursor_y = pos / 2;            
         }
+        
     }
 
 }

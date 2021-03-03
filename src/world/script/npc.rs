@@ -1,15 +1,15 @@
 use macroquad::prelude::warn;
 use serde::Deserialize;
-use crate::audio::music::Music;
+use frc_audio::music::Music;
 use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
 use crate::gui::dynamic_text::DynamicText;
 use crate::util::Completable;
-use crate::util::Coordinate;
 use crate::util::Entity;
 use crate::util::Input;
 use crate::util::Position;
+use crate::world::BoundingBox;
 use crate::world::NpcTextures;
 use crate::world::RenderCoords;
 use crate::world::TileTextures;
@@ -31,24 +31,24 @@ pub struct NPCScript {
     
     pub run_type: ScriptRunType,
 
-    pub location: Coordinate,
+    pub location: BoundingBox,
 
     pub npc: ScriptNPC,
-    pub end_position: Position,
+    pub end_position: Option<Position>,
 
 }
 
 impl NPCScript {
 
     pub fn new(file: std::path::PathBuf) -> Option<Self> {
-        match crate::io::get_file_as_string(file) {
+        match crate::io::get_file_as_string(&file) {
             Ok(content) => {
                 match serde_json::from_str(&content) {
                     Ok(script) => {
                         return Some(script);
                     }
                     Err(err) => {
-                        warn!("Could not parse NPC script with error {}", err);
+                        warn!("Could not parse NPC script at {:?} with error {}", file, err);
                         return None;
                     }
                 }
@@ -66,7 +66,15 @@ impl WorldScript for NPCScript {
 
     fn start(&mut self, player: &mut Player) {
         player.freeze();
-        self.npc.npc.walk_to(&self.end_position.coords);
+        if let Some(end_position) = &self.end_position {
+            self.npc.npc.walk_to(&end_position.coords);
+            self.npc.npc.position.direction = end_position.direction;
+            player.position.local.direction = end_position.direction.inverse();
+        } else {
+            self.end_position = Some(player.position.local);
+            self.npc.npc.walk_next_to(&player.position.local.coords);
+            self.npc.npc.position.direction = player.position.local.direction.inverse();
+        }
         self.spawn();
     }
 
@@ -77,8 +85,6 @@ impl WorldScript for NPCScript {
             if !self.npc.message.is_alive() {
                 self.npc.message.spawn();
                 self.npc.message.focus();
-                self.npc.npc.position.direction = self.end_position.direction;
-                player.position.local.direction = self.end_position.direction.inverse();
             }
             self.npc.message.input(delta);
             self.npc.message.update(delta);

@@ -1,5 +1,5 @@
 use io::args::Args;
-use io::data::configuration::Configuration;
+use frc_data::configuration::Configuration;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::BLACK;
 use macroquad::prelude::Conf;
@@ -11,17 +11,17 @@ use macroquad::prelude::next_frame;
 use macroquad::prelude::coroutines::start_coroutine;
 use scene::loading::manager::load_coroutine;
 use scene::manager::SceneManager;
-use util::file::PersistantDataLocation;
+use frc_data::data::PersistantDataLocation;
 use scene::Scene;
 
 pub mod util;
-pub mod audio;
 pub mod scene;
 pub mod io;
 pub mod world;
-pub mod pokemon;
 pub mod battle;
 pub mod gui;
+
+pub mod pokemon;
 
 pub static TITLE: &str = "Pokemon FireRed";
 pub static DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
@@ -56,10 +56,7 @@ async fn main() {
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
     if !args.contains(&Args::DisableAudio) {
-        #[cfg(not(target_arch = "wasm32"))]
-        storage::store(crate::audio::kira::context::AudioContext::new());
-        #[cfg(target_arch = "wasm32")]
-        crate::audio::quadsnd::bind_gamefreak().await;
+        frc_audio::create();
     }
 
     let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
@@ -77,13 +74,13 @@ async fn main() {
 
     info!("Loading assets...");
 
-    audio::bind_world_music().await;
+    frc_audio::bind_world_music().await;
     
-    storage::store(io::data::player::PlayerData::load_from_file().await);
+    // storage::store(io::data::player::PlayerData::load_from_file().await);
     
     let mut scene_manager = SceneManager::new();
 
-    pokemon::pokedex::load();
+    pokemon::load();
 
     info!("Finished loading assets!");
 
@@ -107,26 +104,26 @@ async fn main() {
     loop {
 
         #[cfg(target_arch = "wasm32")]
-        crate::audio::quadsnd::context::music::MIXER.lock().frame();
+        frc_audio::quadsnd::context::music::MIXER.lock().frame();
 
 
         scene_manager.input(get_frame_time());
         
-        scene_manager.update(get_frame_time());
+        scene_manager.poll(get_frame_time()).await;
 
 
         clear_background(BLACK);
 
         scene_manager.render();
-        io::input::touchscreen::TOUCH_CONTROLS.render();
+        // io::input::touchscreen::TOUCH_CONTROLS.render();
 
 
         if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
             if let Some(mut config) = storage::get_mut::<Configuration>() {
-                util::file::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
+                frc_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
             if let Some(mut player_data) = storage::get_mut::<crate::io::data::player::PlayerData>() {
-                util::file::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut player_data)).await;
+                frc_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut player_data)).await;
             }
         }
 

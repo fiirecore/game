@@ -1,7 +1,7 @@
 use macroquad::color_u8;
 use macroquad::prelude::Color;
 
-#[derive(Debug, Copy, Clone, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, serde::Deserialize, serde::Serialize)]
 pub enum TextColor {
 
     White,

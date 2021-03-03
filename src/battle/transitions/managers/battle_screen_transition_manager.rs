@@ -1,5 +1,5 @@
-use crate::audio::music::Music;
-use crate::audio::play_music;
+use frc_audio::music::Music;
+use frc_audio::play_music;
 use crate::battle::transitions::BattleTransition;
 use crate::util::Entity;
 use crate::battle::transitions::BattleScreenTransition;
@@ -19,7 +19,7 @@ pub struct BattleScreenTransitionManager {
 
 }
 
-#[derive(Debug, Clone, Copy, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Copy, serde::Deserialize, serde::Serialize)]
 pub enum BattleScreenTransitions {
 
     Flash,

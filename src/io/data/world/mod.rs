@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use ahash::AHashMap as HashMap;
+use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 
 use self::map_data::MapData;
 
@@ -10,6 +10,7 @@ pub struct WorldStatus {
 
     // battled trainers, map stops, etc.
     map_data: HashMap<String, MapData>,
+    pub completed_events: HashSet<String>,
 
 }
 

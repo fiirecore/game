@@ -1,5 +1,5 @@
-use crate::pokemon::PokemonId;
-use crate::pokemon::instance::PokemonInstance;
+use frc_pokedex::PokemonId;
+use frc_pokedex::instance::PokemonInstance;
 
 #[derive(Copy, Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct WildPokemonEncounter {
@@ -13,7 +13,7 @@ pub struct WildPokemonEncounter {
 impl WildPokemonEncounter {
 
     pub fn generate_saved(&self) -> PokemonInstance {
-        return PokemonInstance::generate(self.pokemon_id, self.min_level, self.max_level, Some(crate::pokemon::data::StatSet::iv_random()));
+        return PokemonInstance::generate(self.pokemon_id, self.min_level, self.max_level, Some(frc_pokedex::data::StatSet::iv_random()));
     }
 
 }

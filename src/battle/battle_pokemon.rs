@@ -1,14 +1,13 @@
-use crate::pokemon::data::StatSet;
-use crate::pokemon::data::PokedexData;
-use crate::pokemon::Pokemon;
-use crate::pokemon::data::training::Training;
-use crate::pokemon::instance::PokemonInstance;
-use crate::pokemon::moves::instance::MoveInstances;
+use dashmap::mapref::one::Ref;
+use frc_pokedex::PokemonId;
+use frc_pokedex::data::StatSet;
+use frc_pokedex::pokemon::Pokemon;
+use frc_pokedex::instance::PokemonInstance;
+use frc_pokedex::moves::instance::MoveInstances;
 
 pub struct BattlePokemon {
 	
-	pub data: PokedexData,
-	pub training: Training,
+	pub pokemon: Ref<'static, PokemonId, Pokemon>, 
 	
 	pub nickname: Option<String>,
 	pub level: u8,
@@ -35,22 +34,16 @@ impl BattlePokemon {
 
 	pub fn new(pokemon: &PokemonInstance) -> Self {
 
-		let pokedex = &crate::pokemon::pokedex::POKEDEX;
+		let pokemon_data = frc_pokedex::POKEDEX.get(&pokemon.id).expect("Could not get Pokemon from id!");
 
-		let pokemon_data = pokedex.get(&pokemon.id).expect("Could not get Pokemon from id!");
-		let pokemon_data = pokemon_data.value();
-
-		let stats = get_stats(pokemon_data, pokemon.ivs, pokemon.evs, pokemon.level);
+		let stats = get_stats(pokemon_data.value(), pokemon.ivs, pokemon.evs, pokemon.level);
 
 		Self {
 			
-			data: pokemon_data.data.clone(),
-			training: pokemon_data.training,
+			moves: pokemon_data.moves_from_level(pokemon.level),
 			
 			nickname: pokemon.nickname.clone(),
 			level: pokemon.level,
-			
-			moves: pokemon_data.moves_from_level(pokemon.level),
 			
 			ivs: pokemon.ivs,
 			
@@ -61,12 +54,14 @@ impl BattlePokemon {
 			base: stats,
 
 			exp: pokemon.exp,
+
+			pokemon: pokemon_data,
 			
 		}
 
 	}
 	
-	pub fn generate(pokemon: &Pokemon, min_level: u8, max_level: u8) -> Self {
+	pub fn generate(pokemon: Ref<'static, u16, Pokemon>, min_level: u8, max_level: u8) -> Self {
 		let level;
 		if min_level == max_level {
 			level = max_level;
@@ -77,12 +72,9 @@ impl BattlePokemon {
 		let ivs = StatSet::iv_random();
 		let evs = StatSet::default();
 
-		let base = get_stats(pokemon, ivs, evs, level);
+		let base = get_stats(pokemon.value(), ivs, evs, level);
 
 		Self {
-			
-			data: pokemon.data.clone(),
-			training: pokemon.training,
 			
 			nickname: None,
 			level: level,
@@ -97,18 +89,20 @@ impl BattlePokemon {
 			current_hp: base.hp,
 			exp: 0,
 			
+			pokemon,
+			
 		}
 		
 	}
 
 	pub fn to_instance(&self) -> PokemonInstance {
 		PokemonInstance {
-		    id: self.data.number,
+		    id: self.pokemon.data.number,
 			nickname: self.nickname.clone(),
 		    level: self.level,
 		    ivs: self.ivs,
 		    evs: self.evs,
-		    moves: Some(crate::pokemon::moves::serializable::from_instances(&self.moves)),
+		    moves: Some(frc_pokedex::moves::serializable::from_instances(&self.moves)),
 		    exp: self.exp,
 		    friendship: 70,
 		    current_hp: Some(self.current_hp),
@@ -120,7 +114,7 @@ impl BattlePokemon {
 impl std::fmt::Display for BattlePokemon {
 
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "Lv. {} {}", self.level, &self.data.name)
+		write!(f, "Lv. {} {}", self.level, &self.pokemon.data.name)
 	}
 	
 }

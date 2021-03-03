@@ -9,7 +9,7 @@ pub mod npc;
 pub enum ScriptRunType {
 
     Once,
-    Conditional, // check player data for conditions
+    Conditional(String), // check player data for conditions
     Always,
     AlwaysNoReset,
 
