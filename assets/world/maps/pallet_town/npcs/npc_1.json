@@ -9,5 +9,15 @@
             "y": 17
         },
         "direction": "Down"
+    },
+    "message_set": {
+        "messages": [{
+            "message": "Technology is incredible!"
+        }, {
+            "message": [
+                "You can now store and recall items",
+                "and POKEMON as data via PC."
+            ]
+        }]
     }
 }

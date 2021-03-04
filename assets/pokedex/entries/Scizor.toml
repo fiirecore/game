@@ -1,14 +1,16 @@
 [data]
 number = 212
-name = "Scizor"
-primary_type = "Bug"
-secondary_type = "Steel"
-species = "Pincer"
+name = 'Scizor'
+primary_type = 'Bug'
+secondary_type = 'Steel'
+species = 'Pincer'
 height = 18
 weight = 1180
+
 [training]
 base_exp = 175
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 70
 atk = 130
@@ -16,6 +18,10 @@ def = 100
 sp_atk = 55
 sp_def = 80
 speed = 65
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 14
 level = 36

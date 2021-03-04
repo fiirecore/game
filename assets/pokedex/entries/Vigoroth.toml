@@ -1,13 +1,15 @@
 [data]
 number = 288
-name = "Vigoroth"
-primary_type = "Normal"
-species = "Wild"
+name = 'Vigoroth'
+primary_type = 'Normal'
+species = 'Wild'
 height = 14
 weight = 465
+
 [training]
 base_exp = 154
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 80
@@ -15,6 +17,10 @@ def = 80
 sp_atk = 55
 sp_def = 55
 speed = 90
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

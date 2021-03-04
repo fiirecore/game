@@ -1,14 +1,16 @@
 [data]
 number = 176
-name = "Togetic"
-primary_type = "Fairy"
-secondary_type = "Flying"
-species = "Happiness"
+name = 'Togetic'
+primary_type = 'Fairy'
+secondary_type = 'Flying'
+species = 'Happiness'
 height = 6
 weight = 32
+
 [training]
 base_exp = 142
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 55
 atk = 40
@@ -16,6 +18,10 @@ def = 85
 sp_atk = 80
 sp_def = 105
 speed = 40
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 38
 level = 37

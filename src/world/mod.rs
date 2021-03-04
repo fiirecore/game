@@ -12,7 +12,7 @@ pub mod npc;
 pub mod pokemon;
 pub mod gui;
 pub mod player;
-pub mod script;
+// pub mod script;
 pub mod tile;
 
 mod render_coords;

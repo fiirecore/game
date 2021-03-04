@@ -45,7 +45,6 @@ pub fn update_active_controls() {
     let mut active_gamepad = None;
 
     while let Some(gilrs::Event { id, event, time }) = gilrs.next_event() {
-        println!("{:?} New event from {}: {:?}", time, id, event);
         active_gamepad = Some(id);
     }
 

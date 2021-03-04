@@ -1,13 +1,15 @@
 [data]
 number = 370
-name = "Luvdisc"
-primary_type = "Water"
-species = "Rendezvous"
+name = 'Luvdisc'
+primary_type = 'Water'
+species = 'Rendezvous'
 height = 6
 weight = 87
+
 [training]
 base_exp = 116
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 43
 atk = 30
@@ -15,6 +17,10 @@ def = 55
 sp_atk = 40
 sp_def = 65
 speed = 97
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 33
 level = 1

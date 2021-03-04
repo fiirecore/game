@@ -1,14 +1,16 @@
 [data]
 number = 214
-name = "Heracross"
-primary_type = "Bug"
-secondary_type = "Fighting"
-species = "Single"
+name = 'Heracross'
+primary_type = 'Bug'
+secondary_type = 'Fighting'
+species = 'Single'
 height = 15
 weight = 540
+
 [training]
 base_exp = 175
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 125
@@ -16,6 +18,10 @@ def = 75
 sp_atk = 40
 sp_def = 95
 speed = 85
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 30
 level = 6

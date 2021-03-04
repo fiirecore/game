@@ -1,14 +1,16 @@
 [data]
 number = 348
-name = "Armaldo"
-primary_type = "Rock"
-secondary_type = "Bug"
-species = "Plate"
+name = 'Armaldo'
+primary_type = 'Rock'
+secondary_type = 'Bug'
+species = 'Plate'
 height = 15
 weight = 682
+
 [training]
 base_exp = 173
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 75
 atk = 125
@@ -16,6 +18,10 @@ def = 100
 sp_atk = 70
 sp_def = 80
 speed = 45
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 10
 level = 1

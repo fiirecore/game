@@ -1,14 +1,16 @@
 [data]
 number = 73
-name = "Tentacruel"
-primary_type = "Water"
-secondary_type = "Poison"
-species = "Jellyfish"
+name = 'Tentacruel'
+primary_type = 'Water'
+secondary_type = 'Poison'
+species = 'Jellyfish'
 height = 16
 weight = 550
+
 [training]
 base_exp = 180
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 70
@@ -16,6 +18,10 @@ def = 65
 sp_atk = 80
 sp_def = 120
 speed = 100
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 35
 level = 30

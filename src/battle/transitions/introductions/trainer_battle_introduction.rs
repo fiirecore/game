@@ -1,5 +1,6 @@
 use crate::io::data::text::Message;
 use crate::io::data::text::MessageSet;
+use crate::io::data::text::color::TextColor;
 use crate::util::battle_data::TrainerData;
 use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
@@ -57,17 +58,17 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
             self.basic_battle_introduction.intro_text.text = MessageSet {
                 messages: vec![
-                    Message::new(vec![trainer_data.name.clone(), String::from("would like to battle!")], false), 
-                    Message::new(vec![trainer_data.name.clone() + " sent", String::from("out ") + &battle.opponent().pokemon.data.name.to_ascii_uppercase()], true),
+                    Message::with_color(vec![trainer_data.name.clone(), String::from("would like to battle!")], false, TextColor::White), 
+                    Message::with_color(vec![trainer_data.name.clone() + " sent", String::from("out ") + &battle.opponent().pokemon.data.name.to_ascii_uppercase()], true, TextColor::White),
                 ]
             };
             
         } else {
-            self.basic_battle_introduction.intro_text.text = MessageSet { messages: vec![Message::new(vec![String::from("No trainer data found!")], false)] };
+            self.basic_battle_introduction.intro_text.text = MessageSet { messages: vec![Message::with_color(vec![String::from("No trainer data found!")], false, TextColor::White)] };
         }        
 
         self.basic_battle_introduction.intro_text.text.messages.push(
-            Message::new(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true),
+            Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         );
         
     }

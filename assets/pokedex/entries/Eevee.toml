@@ -1,13 +1,15 @@
 [data]
 number = 133
-name = "Eevee"
-primary_type = "Normal"
-species = "Evolution"
+name = 'Eevee'
+primary_type = 'Normal'
+species = 'Evolution'
 height = 3
 weight = 65
+
 [training]
 base_exp = 65
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 55
 atk = 55
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 45
 sp_def = 65
 speed = 55
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 28
 level = 8

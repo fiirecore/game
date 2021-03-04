@@ -1,14 +1,16 @@
 [data]
 number = 187
-name = "Hoppip"
-primary_type = "Grass"
-secondary_type = "Flying"
-species = "Cottonweed"
+name = 'Hoppip'
+primary_type = 'Grass'
+secondary_type = 'Flying'
+species = 'Cottonweed'
 height = 4
 weight = 5
+
 [training]
 base_exp = 50
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 35
 atk = 35
@@ -16,6 +18,10 @@ def = 40
 sp_atk = 35
 sp_def = 55
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 10

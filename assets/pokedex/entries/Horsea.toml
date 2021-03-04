@@ -1,13 +1,15 @@
 [data]
 number = 116
-name = "Horsea"
-primary_type = "Water"
-species = "Dragon"
+name = 'Horsea'
+primary_type = 'Water'
+species = 'Dragon'
 height = 4
 weight = 80
+
 [training]
 base_exp = 59
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 30
 atk = 40
@@ -15,6 +17,10 @@ def = 70
 sp_atk = 70
 sp_def = 25
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 43
 level = 15

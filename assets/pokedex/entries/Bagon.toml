@@ -1,13 +1,15 @@
 [data]
 number = 371
-name = "Bagon"
-primary_type = "Dragon"
-species = "Rock"
+name = 'Bagon'
+primary_type = 'Dragon'
+species = 'Rock'
 height = 6
 weight = 421
+
 [training]
 base_exp = 60
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 45
 atk = 75
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 40
 sp_def = 30
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 17

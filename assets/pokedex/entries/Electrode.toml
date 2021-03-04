@@ -1,13 +1,15 @@
 [data]
 number = 101
-name = "Electrode"
-primary_type = "Electric"
-species = "Ball"
+name = 'Electrode'
+primary_type = 'Electric'
+species = 'Ball'
 height = 12
 weight = 666
+
 [training]
 base_exp = 172
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 50
@@ -15,6 +17,9 @@ def = 70
 sp_atk = 80
 sp_def = 80
 speed = 150
+
+[breeding]
+
 [[moves]]
 move_id = 33
 level = 1

@@ -1,13 +1,15 @@
 [data]
 number = 336
-name = "Seviper"
-primary_type = "Poison"
-species = "Fang"
+name = 'Seviper'
+primary_type = 'Poison'
+species = 'Fang'
 height = 27
 weight = 525
+
 [training]
 base_exp = 160
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 73
 atk = 100
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 100
 sp_def = 60
 speed = 65
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 35
 level = 1

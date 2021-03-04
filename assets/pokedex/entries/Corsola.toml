@@ -1,14 +1,16 @@
 [data]
 number = 222
-name = "Corsola"
-primary_type = "Water"
-secondary_type = "Rock"
-species = "Coral"
+name = 'Corsola'
+primary_type = 'Water'
+secondary_type = 'Rock'
+species = 'Coral'
 height = 6
 weight = 50
+
 [training]
 base_exp = 144
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 65
 atk = 55
@@ -16,6 +18,10 @@ def = 95
 sp_atk = 65
 sp_def = 95
 speed = 35
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 33
 level = 1

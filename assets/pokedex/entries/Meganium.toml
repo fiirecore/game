@@ -1,13 +1,15 @@
 [data]
 number = 154
-name = "Meganium"
-primary_type = "Grass"
-species = "Herb"
+name = 'Meganium'
+primary_type = 'Grass'
+species = 'Herb'
 height = 18
 weight = 1005
+
 [training]
 base_exp = 236
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 80
 atk = 82
@@ -15,6 +17,10 @@ def = 100
 sp_atk = 83
 sp_def = 100
 speed = 80
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

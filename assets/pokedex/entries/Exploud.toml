@@ -1,13 +1,15 @@
 [data]
 number = 295
-name = "Exploud"
-primary_type = "Normal"
-species = "Loud"
+name = 'Exploud'
+primary_type = 'Normal'
+species = 'Loud'
 height = 15
 weight = 840
+
 [training]
 base_exp = 221
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 104
 atk = 91
@@ -15,6 +17,10 @@ def = 63
 sp_atk = 91
 sp_def = 73
 speed = 68
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 1
 level = 1

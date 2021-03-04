@@ -1,14 +1,16 @@
 [data]
 number = 193
-name = "Yanma"
-primary_type = "Bug"
-secondary_type = "Flying"
-species = "Clear"
+name = 'Yanma'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Clear'
 height = 12
 weight = 380
+
 [training]
 base_exp = 78
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 65
@@ -16,6 +18,10 @@ def = 45
 sp_atk = 75
 sp_def = 45
 speed = 95
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 17
 level = 39

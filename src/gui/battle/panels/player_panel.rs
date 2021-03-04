@@ -1,5 +1,5 @@
 use macroquad::prelude::warn;
-use crate::battle::battle_pokemon::BattlePokemon;
+use firecore_pokedex::pokemon::battle::BattlePokemon;
 use crate::util::Entity;
 use crate::gui::Focus;
 use crate::util::Input;

@@ -1,14 +1,16 @@
 [data]
 number = 149
-name = "Dragonite"
-primary_type = "Dragon"
-secondary_type = "Flying"
-species = "Dragon"
+name = 'Dragonite'
+primary_type = 'Dragon'
+secondary_type = 'Flying'
+species = 'Dragon'
 height = 22
 weight = 2100
+
 [training]
 base_exp = 270
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 91
 atk = 134
@@ -16,6 +18,10 @@ def = 95
 sp_atk = 100
 sp_def = 100
 speed = 80
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 17
 level = 55

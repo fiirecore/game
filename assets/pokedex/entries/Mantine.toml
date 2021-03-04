@@ -1,14 +1,16 @@
 [data]
 number = 226
-name = "Mantine"
-primary_type = "Water"
-secondary_type = "Flying"
-species = "Kite"
+name = 'Mantine'
+primary_type = 'Water'
+secondary_type = 'Flying'
+species = 'Kite'
 height = 21
 weight = 2200
+
 [training]
 base_exp = 170
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 85
 atk = 40
@@ -16,6 +18,10 @@ def = 70
 sp_atk = 80
 sp_def = 140
 speed = 70
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 17
 level = 36

@@ -1,13 +1,15 @@
 [data]
 number = 326
-name = "Grumpig"
-primary_type = "Psychic"
-species = "Manipulate"
+name = 'Grumpig'
+primary_type = 'Psychic'
+species = 'Manipulate'
 height = 9
 weight = 715
+
 [training]
 base_exp = 165
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 80
 atk = 45
@@ -15,6 +17,10 @@ def = 65
 sp_atk = 90
 sp_def = 110
 speed = 80
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 60
 level = 1

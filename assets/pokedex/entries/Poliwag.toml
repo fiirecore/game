@@ -1,13 +1,15 @@
 [data]
 number = 60
-name = "Poliwag"
-primary_type = "Water"
-species = "Tadpole"
+name = 'Poliwag'
+primary_type = 'Water'
+species = 'Tadpole'
 height = 6
 weight = 124
+
 [training]
 base_exp = 60
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 40
 atk = 50
@@ -15,6 +17,10 @@ def = 40
 sp_atk = 40
 sp_def = 40
 speed = 90
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 3
 level = 19

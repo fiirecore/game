@@ -1,13 +1,15 @@
 [data]
 number = 299
-name = "Nosepass"
-primary_type = "Rock"
-species = "Compass"
+name = 'Nosepass'
+primary_type = 'Rock'
+species = 'Compass'
 height = 10
 weight = 970
+
 [training]
 base_exp = 75
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 30
 atk = 45
@@ -15,6 +17,10 @@ def = 135
 sp_atk = 45
 sp_def = 90
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

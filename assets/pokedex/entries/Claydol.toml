@@ -1,14 +1,16 @@
 [data]
 number = 344
-name = "Claydol"
-primary_type = "Ground"
-secondary_type = "Psychic"
-species = "Clay"
+name = 'Claydol'
+primary_type = 'Ground'
+secondary_type = 'Psychic'
+species = 'Clay'
 height = 15
 weight = 1080
+
 [training]
 base_exp = 175
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 70
@@ -16,6 +18,9 @@ def = 105
 sp_atk = 70
 sp_def = 120
 speed = 75
+
+[breeding]
+
 [[moves]]
 move_id = 60
 level = 11

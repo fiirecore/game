@@ -1,13 +1,15 @@
 [data]
 number = 327
-name = "Spinda"
-primary_type = "Normal"
-species = "Spot"
+name = 'Spinda'
+primary_type = 'Normal'
+species = 'Spot'
 height = 11
 weight = 50
+
 [training]
 base_exp = 126
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 60
 atk = 60
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 60
 sp_def = 60
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

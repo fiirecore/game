@@ -1,0 +1,6 @@
+[identifier]
+name = "Cerulean Gym"
+map_files = ["7.5_CERULEAN CITY.map"]
+
+[warp_map]
+map_set_id = "cerulean_gym"

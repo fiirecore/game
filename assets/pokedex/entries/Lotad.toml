@@ -1,14 +1,16 @@
 [data]
 number = 270
-name = "Lotad"
-primary_type = "Water"
-secondary_type = "Grass"
-species = "Water"
+name = 'Lotad'
+primary_type = 'Water'
+secondary_type = 'Grass'
+species = 'Water'
 height = 5
 weight = 26
+
 [training]
 base_exp = 44
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 40
 atk = 30
@@ -16,6 +18,10 @@ def = 30
 sp_atk = 40
 sp_def = 50
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 45
 level = 3

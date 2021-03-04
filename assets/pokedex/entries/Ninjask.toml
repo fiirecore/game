@@ -1,14 +1,16 @@
 [data]
 number = 291
-name = "Ninjask"
-primary_type = "Bug"
-secondary_type = "Flying"
-species = "Ninja"
+name = 'Ninjask'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Ninja'
 height = 8
 weight = 120
+
 [training]
 base_exp = 160
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 61
 atk = 90
@@ -16,6 +18,10 @@ def = 45
 sp_atk = 50
 sp_def = 50
 speed = 160
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

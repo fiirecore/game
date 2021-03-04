@@ -1,14 +1,16 @@
 [data]
 number = 87
-name = "Dewgong"
-primary_type = "Water"
-secondary_type = "Ice"
-species = "Sea"
+name = 'Dewgong'
+primary_type = 'Water'
+secondary_type = 'Ice'
+species = 'Sea'
 height = 17
 weight = 1200
+
 [training]
 base_exp = 166
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 90
 atk = 70
@@ -16,6 +18,10 @@ def = 80
 sp_atk = 70
 sp_def = 95
 speed = 70
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 1

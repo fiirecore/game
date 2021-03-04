@@ -1,13 +1,15 @@
 [data]
 number = 173
-name = "Cleffa"
-primary_type = "Fairy"
-species = "Star"
+name = 'Cleffa'
+primary_type = 'Fairy'
+species = 'Star'
 height = 3
 weight = 30
+
 [training]
 base_exp = 44
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 50
 atk = 25
@@ -15,6 +17,10 @@ def = 28
 sp_atk = 45
 sp_def = 55
 speed = 15
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 1
 level = 1

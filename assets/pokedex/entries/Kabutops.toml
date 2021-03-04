@@ -1,14 +1,16 @@
 [data]
 number = 141
-name = "Kabutops"
-primary_type = "Rock"
-secondary_type = "Water"
-species = "Shellfish"
+name = 'Kabutops'
+primary_type = 'Rock'
+secondary_type = 'Water'
+species = 'Shellfish'
 height = 13
 weight = 405
+
 [training]
 base_exp = 173
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 115
@@ -16,6 +18,10 @@ def = 105
 sp_atk = 65
 sp_def = 70
 speed = 80
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 10
 level = 1

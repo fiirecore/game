@@ -1,13 +1,15 @@
 [data]
 number = 197
-name = "Umbreon"
-primary_type = "Dark"
-species = "Moonlight"
+name = 'Umbreon'
+primary_type = 'Dark'
+species = 'Moonlight'
 height = 10
 weight = 270
+
 [training]
 base_exp = 184
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 95
 atk = 65
@@ -15,6 +17,10 @@ def = 110
 sp_atk = 60
 sp_def = 130
 speed = 65
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 28
 level = 8

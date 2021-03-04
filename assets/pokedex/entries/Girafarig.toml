@@ -1,14 +1,16 @@
 [data]
 number = 203
-name = "Girafarig"
-primary_type = "Normal"
-secondary_type = "Psychic"
-species = "Long"
+name = 'Girafarig'
+primary_type = 'Normal'
+secondary_type = 'Psychic'
+species = 'Long'
 height = 15
 weight = 415
+
 [training]
 base_exp = 159
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 70
 atk = 80
@@ -16,6 +18,10 @@ def = 65
 sp_atk = 90
 sp_def = 65
 speed = 85
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 23
 level = 19

@@ -1,13 +1,15 @@
 [data]
 number = 297
-name = "Hariyama"
-primary_type = "Fighting"
-species = "Arm"
+name = 'Hariyama'
+primary_type = 'Fighting'
+species = 'Arm'
 height = 23
 weight = 2538
+
 [training]
 base_exp = 166
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 144
 atk = 120
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 40
 sp_def = 60
 speed = 50
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 18
 level = 22

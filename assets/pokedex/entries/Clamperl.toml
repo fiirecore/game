@@ -1,13 +1,15 @@
 [data]
 number = 366
-name = "Clamperl"
-primary_type = "Water"
-species = "Bivalve"
+name = 'Clamperl'
+primary_type = 'Water'
+species = 'Bivalve'
 height = 4
 weight = 525
+
 [training]
 base_exp = 69
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 35
 atk = 64
@@ -15,6 +17,10 @@ def = 85
 sp_atk = 74
 sp_def = 55
 speed = 32
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 55
 level = 1

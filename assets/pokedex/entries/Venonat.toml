@@ -1,14 +1,16 @@
 [data]
 number = 48
-name = "Venonat"
-primary_type = "Bug"
-secondary_type = "Poison"
-species = "Insect"
+name = 'Venonat'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'Insect'
 height = 10
 weight = 300
+
 [training]
 base_exp = 61
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 55
@@ -16,6 +18,10 @@ def = 50
 sp_atk = 40
 sp_def = 55
 speed = 45
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

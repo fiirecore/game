@@ -1,13 +1,15 @@
 [data]
 number = 57
-name = "Primeape"
-primary_type = "Fighting"
-species = "Pig"
+name = 'Primeape'
+primary_type = 'Fighting'
+species = 'Pig'
 height = 10
 weight = 320
+
 [training]
 base_exp = 159
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 105
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 60
 sp_def = 70
 speed = 95
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 2
 level = 11

@@ -1,13 +1,15 @@
 [data]
 number = 264
-name = "Linoone"
-primary_type = "Normal"
-species = "Rushing"
+name = 'Linoone'
+primary_type = 'Normal'
+species = 'Rushing'
 height = 5
 weight = 325
+
 [training]
 base_exp = 147
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 78
 atk = 70
@@ -15,6 +17,10 @@ def = 61
 sp_atk = 50
 sp_def = 61
 speed = 100
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 28
 level = 13

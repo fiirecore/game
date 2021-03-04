@@ -1,13 +1,15 @@
 [data]
 number = 354
-name = "Banette"
-primary_type = "Ghost"
-species = "Marionette"
+name = 'Banette'
+primary_type = 'Ghost'
+species = 'Marionette'
 height = 11
 weight = 125
+
 [training]
 base_exp = 159
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 64
 atk = 115
@@ -15,6 +17,10 @@ def = 65
 sp_atk = 83
 sp_def = 63
 speed = 65
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 101
 level = 1

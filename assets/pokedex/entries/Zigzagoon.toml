@@ -1,13 +1,15 @@
 [data]
 number = 263
-name = "Zigzagoon"
-primary_type = "Normal"
-species = "Tiny"
+name = 'Zigzagoon'
+primary_type = 'Normal'
+species = 'Tiny'
 height = 4
 weight = 175
+
 [training]
 base_exp = 56
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 38
 atk = 30
@@ -15,6 +17,10 @@ def = 41
 sp_atk = 30
 sp_def = 41
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 28
 level = 13

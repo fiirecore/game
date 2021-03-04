@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use firecore_pokedex::texture::PokemonTexture;
+use firecore_pokedex::pokemon::texture::PokemonTexture;
 use macroquad::prelude::warn;
 
 lazy_static::lazy_static! {

@@ -1,14 +1,16 @@
 [data]
 number = 248
-name = "Tyranitar"
-primary_type = "Rock"
-secondary_type = "Dark"
-species = "Armor"
+name = 'Tyranitar'
+primary_type = 'Rock'
+secondary_type = 'Dark'
+species = 'Armor'
 height = 20
 weight = 2020
+
 [training]
 base_exp = 270
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 100
 atk = 134
@@ -16,6 +18,10 @@ def = 110
 sp_atk = 95
 sp_def = 100
 speed = 61
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 37
 level = 29

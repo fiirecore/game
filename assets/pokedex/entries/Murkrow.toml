@@ -1,14 +1,16 @@
 [data]
 number = 198
-name = "Murkrow"
-primary_type = "Dark"
-secondary_type = "Flying"
-species = "Darkness"
+name = 'Murkrow'
+primary_type = 'Dark'
+secondary_type = 'Flying'
+species = 'Darkness'
 height = 5
 weight = 21
+
 [training]
 base_exp = 81
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 60
 atk = 85
@@ -16,6 +18,10 @@ def = 42
 sp_atk = 85
 sp_def = 42
 speed = 91
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 64
 level = 1

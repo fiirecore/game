@@ -1,13 +1,15 @@
 [data]
 number = 20
-name = "Raticate"
-primary_type = "Normal"
-species = "Mouse"
+name = 'Raticate'
+primary_type = 'Normal'
+species = 'Mouse'
 height = 7
 weight = 185
+
 [training]
 base_exp = 145
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 55
 atk = 81
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 50
 sp_def = 70
 speed = 97
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

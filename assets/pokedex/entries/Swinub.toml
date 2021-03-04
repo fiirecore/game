@@ -1,14 +1,16 @@
 [data]
 number = 220
-name = "Swinub"
-primary_type = "Ice"
-secondary_type = "Ground"
-species = "Pig"
+name = 'Swinub'
+primary_type = 'Ice'
+secondary_type = 'Ground'
+species = 'Pig'
 height = 4
 weight = 65
+
 [training]
 base_exp = 50
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 50
 atk = 50
@@ -16,6 +18,10 @@ def = 40
 sp_atk = 30
 sp_def = 30
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

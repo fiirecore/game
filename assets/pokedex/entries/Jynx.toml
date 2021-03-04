@@ -1,14 +1,16 @@
 [data]
 number = 124
-name = "Jynx"
-primary_type = "Ice"
-secondary_type = "Psychic"
-species = "Human"
+name = 'Jynx'
+primary_type = 'Ice'
+secondary_type = 'Psychic'
+species = 'Human'
 height = 14
 weight = 406
+
 [training]
 base_exp = 159
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 50
@@ -16,6 +18,10 @@ def = 35
 sp_atk = 115
 sp_def = 95
 speed = 95
+
+[breeding]
+gender = 8
+
 [[moves]]
 move_id = 1
 level = 1

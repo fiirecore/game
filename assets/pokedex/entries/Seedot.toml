@@ -1,13 +1,15 @@
 [data]
 number = 273
-name = "Seedot"
-primary_type = "Grass"
-species = "Acorn"
+name = 'Seedot'
+primary_type = 'Grass'
+species = 'Acorn'
 height = 5
 weight = 40
+
 [training]
 base_exp = 44
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 40
 atk = 40
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 30
 sp_def = 30
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 74
 level = 7

@@ -1,14 +1,16 @@
 [data]
 number = 95
-name = "Onix"
-primary_type = "Rock"
-secondary_type = "Ground"
-species = "Rock"
+name = 'Onix'
+primary_type = 'Rock'
+secondary_type = 'Ground'
+species = 'Rock'
 height = 88
 weight = 2100
+
 [training]
 base_exp = 77
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 35
 atk = 45
@@ -16,6 +18,10 @@ def = 160
 sp_atk = 30
 sp_def = 45
 speed = 70
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 20
 level = 8

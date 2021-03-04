@@ -1,14 +1,16 @@
 [data]
 number = 345
-name = "Lileep"
-primary_type = "Rock"
-secondary_type = "Grass"
-species = "Sea"
+name = 'Lileep'
+primary_type = 'Rock'
+secondary_type = 'Grass'
+species = 'Sea'
 height = 10
 weight = 238
+
 [training]
 base_exp = 71
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 66
 atk = 41
@@ -16,6 +18,10 @@ def = 77
 sp_atk = 61
 sp_def = 87
 speed = 23
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 51
 level = 15

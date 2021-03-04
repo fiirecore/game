@@ -34,10 +34,11 @@ pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config
                         border_blocks: gba_map.border_blocks,
                         movement_map: gba_map.movement_map,
                         fly_position: config.settings.fly_position,
+                        // draw_color: config.settings.draw_color.map(|arr| macroquad::prelude::color_u8!(arr[0], arr[1], arr[2], 255)),
                         wild: super::load_wild_entry(&root_path, config.wild.clone(), Some(index)),
                         warps: super::load_warp_entries(&root_path, Some(index)),
                         npc_manager: super::load_npc_entries(&root_path, Some(index)),
-                        script_manager: super::load_script_entries(root_path, Some(index)),
+                        // script_manager: super::load_script_entries(root_path, Some(index)),
 
                     },
                 );

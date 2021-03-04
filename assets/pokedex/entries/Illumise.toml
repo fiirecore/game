@@ -1,13 +1,15 @@
 [data]
 number = 314
-name = "Illumise"
-primary_type = "Bug"
-species = "Firefly"
+name = 'Illumise'
+primary_type = 'Bug'
+species = 'Firefly'
 height = 6
 weight = 177
+
 [training]
 base_exp = 151
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 65
 atk = 47
@@ -15,6 +17,10 @@ def = 75
 sp_atk = 73
 sp_def = 85
 speed = 85
+
+[breeding]
+gender = 8
+
 [[moves]]
 move_id = 33
 level = 1

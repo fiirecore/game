@@ -1,13 +1,15 @@
 [data]
 number = 341
-name = "Corphish"
-primary_type = "Water"
-species = "Ruffian"
+name = 'Corphish'
+primary_type = 'Water'
+species = 'Ruffian'
 height = 6
 weight = 115
+
 [training]
 base_exp = 62
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 43
 atk = 80
@@ -15,6 +17,10 @@ def = 65
 sp_atk = 50
 sp_def = 35
 speed = 35
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 11
 level = 10

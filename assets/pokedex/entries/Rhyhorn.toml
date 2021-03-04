@@ -1,14 +1,16 @@
 [data]
 number = 111
-name = "Rhyhorn"
-primary_type = "Ground"
-secondary_type = "Rock"
-species = "Spikes"
+name = 'Rhyhorn'
+primary_type = 'Ground'
+secondary_type = 'Rock'
+species = 'Spikes'
 height = 10
 weight = 1150
+
 [training]
 base_exp = 69
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 85
@@ -16,6 +18,10 @@ def = 95
 sp_atk = 30
 sp_def = 30
 speed = 25
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 23
 level = 10

@@ -1,0 +1,9 @@
+x = 0x08
+y = 0x12
+
+[destination]
+world_id = "firered"
+map_id = "world"
+map_index = 3
+x = 0x1F
+y = 0x16

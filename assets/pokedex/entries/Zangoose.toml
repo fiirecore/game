@@ -1,13 +1,15 @@
 [data]
 number = 335
-name = "Zangoose"
-primary_type = "Normal"
-species = "Cat"
+name = 'Zangoose'
+primary_type = 'Normal'
+species = 'Cat'
 height = 13
 weight = 403
+
 [training]
 base_exp = 160
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 73
 atk = 115
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 60
 sp_def = 60
 speed = 90
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

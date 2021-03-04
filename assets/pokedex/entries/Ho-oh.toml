@@ -1,14 +1,16 @@
 [data]
 number = 250
-name = "Ho-oh"
-primary_type = "Fire"
-secondary_type = "Flying"
-species = "Rainbow"
+name = 'Ho-oh'
+primary_type = 'Fire'
+secondary_type = 'Flying'
+species = 'Rainbow'
 height = 38
 weight = 1990
+
 [training]
 base_exp = 306
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 106
 atk = 130
@@ -16,6 +18,9 @@ def = 90
 sp_atk = 110
 sp_def = 154
 speed = 90
+
+[breeding]
+
 [[moves]]
 move_id = 16
 level = 22

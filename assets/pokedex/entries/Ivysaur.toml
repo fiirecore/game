@@ -1,14 +1,16 @@
 [data]
 number = 2
-name = "Ivysaur"
-primary_type = "Grass"
-secondary_type = "Poison"
-species = "Seed"
+name = 'Ivysaur'
+primary_type = 'Grass'
+secondary_type = 'Poison'
+species = 'Seed'
 height = 10
 weight = 130
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 60
 atk = 62
@@ -16,6 +18,10 @@ def = 63
 sp_atk = 80
 sp_def = 80
 speed = 60
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 22
 level = 10

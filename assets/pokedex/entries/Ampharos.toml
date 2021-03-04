@@ -1,13 +1,15 @@
 [data]
 number = 181
-name = "Ampharos"
-primary_type = "Electric"
-species = "Light"
+name = 'Ampharos'
+primary_type = 'Electric'
+species = 'Light'
 height = 14
 weight = 615
+
 [training]
 base_exp = 230
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 90
 atk = 75
@@ -15,6 +17,10 @@ def = 85
 sp_atk = 115
 sp_def = 90
 speed = 55
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 9
 level = 30

@@ -1,14 +1,16 @@
 [data]
 number = 208
-name = "Steelix"
-primary_type = "Steel"
-secondary_type = "Ground"
-species = "Iron"
+name = 'Steelix'
+primary_type = 'Steel'
+secondary_type = 'Ground'
+species = 'Iron'
 height = 92
 weight = 4000
+
 [training]
 base_exp = 179
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 75
 atk = 85
@@ -16,6 +18,10 @@ def = 200
 sp_atk = 55
 sp_def = 65
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 20
 level = 8

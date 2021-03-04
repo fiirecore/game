@@ -1,13 +1,15 @@
 [data]
 number = 4
-name = "Charmander"
-primary_type = "Fire"
-species = "Lizard"
+name = 'Charmander'
+primary_type = 'Fire'
+species = 'Lizard'
 height = 6
 weight = 85
+
 [training]
 base_exp = 62
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 39
 atk = 52
@@ -15,6 +17,10 @@ def = 43
 sp_atk = 60
 sp_def = 50
 speed = 65
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 10
 level = 1

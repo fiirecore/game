@@ -51,7 +51,6 @@ impl BasicBattleIntroduction {
 impl BattleTransition for BasicBattleIntroduction {
 
     fn on_start(&mut self) {
-
     }
 
     fn update(&mut self, delta: f32) {

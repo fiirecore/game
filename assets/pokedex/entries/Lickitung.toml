@@ -1,13 +1,15 @@
 [data]
 number = 108
-name = "Lickitung"
-primary_type = "Normal"
-species = "Licking"
+name = 'Lickitung'
+primary_type = 'Normal'
+species = 'Licking'
 height = 12
 weight = 655
+
 [training]
 base_exp = 77
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 90
 atk = 55
@@ -15,6 +17,10 @@ def = 75
 sp_atk = 60
 sp_def = 75
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 21
 level = 40

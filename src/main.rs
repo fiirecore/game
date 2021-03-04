@@ -1,3 +1,5 @@
+#[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use io::args::Args;
 use frc_data::configuration::Configuration;
 use macroquad::camera::Camera2D;
@@ -9,6 +11,7 @@ use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
 use macroquad::prelude::next_frame;
 use macroquad::prelude::coroutines::start_coroutine;
+use parking_lot::Mutex;
 use scene::loading::manager::load_coroutine;
 use scene::manager::SceneManager;
 use frc_data::data::PersistantDataLocation;
@@ -34,16 +37,30 @@ pub static SCALE: f32 = 3.0;
 
 static mut QUIT: bool = false;
 
+lazy_static::lazy_static! {
+    static ref SCENE_MANAGER: Mutex<SceneManager> = Mutex::new(SceneManager::new());
+}
 
-#[macroquad::main(settings)]
-async fn main() {
+
+fn main() {
 
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
-    
-    if cfg!(debug_assertions) {
+
+    #[cfg(debug_assertions)] {
         info!("Running in debug mode");
     }
+
+    macroquad::Window::from_config(settings(), macroquad_main());
+
+    info!("Quitting game...");
+
+    unsafe{SCENE_MANAGER.force_unlock();}
+    SCENE_MANAGER.lock().quit();
+
+}
+
+async fn macroquad_main() {
 
     let config = Configuration::load_from_file().await;
 
@@ -78,12 +95,11 @@ async fn main() {
     
     // storage::store(io::data::player::PlayerData::load_from_file().await);
     
-    let mut scene_manager = SceneManager::new();
+    
 
     pokemon::load();
 
     info!("Finished loading assets!");
-
 
     if cfg!(not(target_arch = "wasm32")) {
         while !loading_coroutine.is_done() {
@@ -98,6 +114,8 @@ async fn main() {
     }  
 
     info!("Starting game!");
+
+    let mut scene_manager = SCENE_MANAGER.lock();
 
     scene_manager.on_start();
 
@@ -133,9 +151,6 @@ async fn main() {
 
         next_frame().await;
     }
-
-    info!("Quitting game...");
-    scene_manager.quit();
 
 }
 

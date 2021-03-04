@@ -1,14 +1,16 @@
 [data]
 number = 144
-name = "Articuno"
-primary_type = "Ice"
-secondary_type = "Flying"
-species = "Freeze"
+name = 'Articuno'
+primary_type = 'Ice'
+secondary_type = 'Flying'
+species = 'Freeze'
 height = 17
 weight = 554
+
 [training]
 base_exp = 261
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 90
 atk = 85
@@ -16,6 +18,9 @@ def = 100
 sp_atk = 95
 sp_def = 125
 speed = 85
+
+[breeding]
+
 [[moves]]
 move_id = 16
 level = 1

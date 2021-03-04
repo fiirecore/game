@@ -1,14 +1,16 @@
 [data]
 number = 221
-name = "Piloswine"
-primary_type = "Ice"
-secondary_type = "Ground"
-species = "Swine"
+name = 'Piloswine'
+primary_type = 'Ice'
+secondary_type = 'Ground'
+species = 'Swine'
 height = 11
 weight = 558
+
 [training]
 base_exp = 158
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 100
 atk = 100
@@ -16,6 +18,10 @@ def = 80
 sp_atk = 60
 sp_def = 60
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 30
 level = 1

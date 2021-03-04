@@ -1,27 +1,26 @@
-use firecore_pokedex::data::StatSet;
-use firecore_pokedex::party::PokemonParty;
+use firecore_pokedex::pokemon::data::StatSet;
+use firecore_pokedex::pokemon::party::PokemonParty;
 use crate::util::Coordinate;
 use frc_data::data::PersistantData;
 use std::path::{Path, PathBuf};
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
-use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use crate::util::GlobalPosition;
 use crate::util::Location;
 use crate::util::Position;
 use super::world::WorldStatus;
-use firecore_pokedex::instance::PokemonInstance;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 
 static SAVE_DIRECTORY: &str = "saves";
-static SAVE_FILE_TYPE: &str = ".json";
+static SAVE_FILE_TYPE: &str = ".ron";
 
-lazy_static::lazy_static! {
-	pub static ref PLAYER_SAVE: Mutex<Option<String>> = Mutex::new(None);
-}
+pub static mut PLAYER_SAVE: Option<String> = None;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerData {
+
+	pub name: String,
 
 	// pub world_id: String,
 	#[serde(default = "player_location")]
@@ -43,12 +42,12 @@ pub struct PlayerData {
 impl PlayerData {
 
 	pub fn select_data(data: String) {
-		*PLAYER_SAVE.lock() = Some(data);
+		unsafe { PLAYER_SAVE = Some(data) };
 	}
 
 	pub async fn load_selected_data() -> Self {
-		match PLAYER_SAVE.lock().clone() {
-		    Some(save_name) => Self::load(Path::new(SAVE_DIRECTORY).join(save_name + SAVE_FILE_TYPE)).await,
+		match unsafe {PLAYER_SAVE.as_ref()} {
+		    Some(save_name) => Self::load(Path::new(SAVE_DIRECTORY).join(save_name.clone() + SAVE_FILE_TYPE)).await,
 		    None => {
 				warn!("Could not get player save data because no data has been selected");
 				return new_save();
@@ -66,7 +65,7 @@ impl PlayerData {
 	}
 	
 	fn from_string(data: &str) -> Self {
-		match serde_json::from_str(data) {
+		match ron::from_str(data) {
 			Ok(data) => return data,
 			Err(err) => {
 				warn!("Error parsing player save: {}", err);
@@ -80,6 +79,7 @@ impl PlayerData {
 impl Default for PlayerData {
     fn default() -> Self {
 		Self {
+			name: "Red".to_string(),
 			party: player_party(),
 			location: player_location(),
 		    worth: 0,
@@ -109,7 +109,7 @@ fn player_location() -> Location {
 
 fn player_party() -> PokemonParty {
 	PokemonParty {
-		pokemon: vec![
+		pokemon: firecore_pokedex::smallvec![
 			PokemonInstance::generate_with_level(1, 11, Some(StatSet::uniform(15))),
 			PokemonInstance::generate_with_level(4, 11, Some(StatSet::uniform(15))),
 			PokemonInstance::generate_with_level(7, 11, Some(StatSet::uniform(15))),
@@ -135,7 +135,7 @@ impl PersistantData for PlayerData {
 		// #[cfg(not(target_arch = "wasm32"))] {
 			info!("Saving player data...");
 			
-			frc_data::data::save_struct(PathBuf::from(SAVE_DIRECTORY).join(PLAYER_SAVE.lock().clone().unwrap_or(String::from("player") + SAVE_FILE_TYPE)), &self);
+			frc_data::data::save_struct(PathBuf::from(SAVE_DIRECTORY).join(unsafe{PLAYER_SAVE.clone()}.unwrap_or(String::from("player")) + SAVE_FILE_TYPE), &self);
 
 			crate::gui::set_message(super::text::MessageSet::new(
 				1, 

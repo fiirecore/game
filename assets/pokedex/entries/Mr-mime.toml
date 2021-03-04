@@ -1,14 +1,16 @@
 [data]
 number = 122
-name = "Mr-mime"
-primary_type = "Psychic"
-secondary_type = "Fairy"
-species = "Barrier"
+name = 'Mr-mime'
+primary_type = 'Psychic'
+secondary_type = 'Fairy'
+species = 'Barrier'
 height = 13
 weight = 545
+
 [training]
 base_exp = 161
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 40
 atk = 45
@@ -16,6 +18,10 @@ def = 65
 sp_atk = 100
 sp_def = 120
 speed = 90
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 3
 level = 15

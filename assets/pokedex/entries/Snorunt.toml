@@ -1,13 +1,15 @@
 [data]
 number = 361
-name = "Snorunt"
-primary_type = "Ice"
-species = "Snow"
+name = 'Snorunt'
+primary_type = 'Ice'
+species = 'Snow'
 height = 7
 weight = 168
+
 [training]
 base_exp = 60
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 50
 atk = 50
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 50
 sp_def = 50
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 19

@@ -1,13 +1,15 @@
 [data]
 number = 316
-name = "Gulpin"
-primary_type = "Poison"
-species = "Stomach"
+name = 'Gulpin'
+primary_type = 'Poison'
+species = 'Stomach'
 height = 4
 weight = 103
+
 [training]
 base_exp = 60
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 70
 atk = 43
@@ -15,6 +17,10 @@ def = 53
 sp_atk = 43
 sp_def = 53
 speed = 40
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 1
 level = 1

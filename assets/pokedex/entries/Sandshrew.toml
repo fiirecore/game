@@ -1,13 +1,15 @@
 [data]
 number = 27
-name = "Sandshrew"
-primary_type = "Ground"
-species = "Mouse"
+name = 'Sandshrew'
+primary_type = 'Ground'
+species = 'Mouse'
 height = 6
 weight = 120
+
 [training]
 base_exp = 60
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 50
 atk = 75
@@ -15,6 +17,10 @@ def = 85
 sp_atk = 20
 sp_def = 30
 speed = 40
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

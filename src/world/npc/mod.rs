@@ -1,3 +1,4 @@
+use crate::io::data::player::PlayerData;
 use crate::io::data::text::MessageSet;
 use crate::util::Direction;
 use crate::util::Position;
@@ -10,6 +11,7 @@ use super::player::Player;
 
 pub mod movement;
 pub mod trainer;
+pub mod manager;
 
 #[derive(Clone, Deserialize, Serialize)]
 pub struct NPC {
@@ -22,8 +24,8 @@ pub struct NPC {
     #[serde(default)]
     pub movement_type: MovementType,
 
-    #[serde(default)]
-    pub message: MessageSet,
+    // #[serde(default)]
+    pub message_set: MessageSet,
 
     #[serde(default = "default_speed")]
     pub speed: f32,
@@ -67,15 +69,18 @@ impl NPC {
         }
     }
 
-    pub fn after_interact(&mut self) {
-        if self.trainer.is_some() {
-            crate::util::battle_data::trainer_battle(&self);
+    pub fn after_interact(&mut self, map_name: &String) {
+        if let Some(mut player_data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
+            macroquad::prelude::info!("Finished interacting with {}", self.identifier.name);
+            player_data.world_status.get_or_create_map_data(map_name).battle(&self);
+        } else {
+            macroquad::prelude::warn!("Could not get playerdata!");
         }
     }
 
     pub fn render(&self, npc_textures: &NpcTextures, screen: &super::RenderCoords) {
-        let x = ((self.position.coords.x + screen.x_tile_offset) << 4) as f32 - screen.x_focus + self.position.x_offset;
-        let y = ((self.position.coords.y - 1 + screen.y_tile_offset) << 4) as f32 - screen.y_focus + self.position.y_offset;
+        let x = ((self.position.coords.x + screen.x_tile_offset) << 4) as f32 - screen.focus.x + self.position.offset.x;
+        let y = ((self.position.coords.y - 1 + screen.y_tile_offset) << 4) as f32 - screen.focus.y + self.position.offset.y;
         if let Some(twt) = npc_textures.get(&self.identifier.npc_type) {
             let tuple = twt.of_direction(self.position.direction);
             crate::util::graphics::draw_flip(tuple.0, x, y, tuple.1);
@@ -92,19 +97,19 @@ impl Default for MovementType {
     }
 }
 
-impl Default for NPC {
-    fn default() -> Self {
-        Self {
-            identifier: NPCIdentifier::default(),
-            position: Position::default(),
-            movement_type: MovementType::default(),
-            message: MessageSet::default(),
-            speed: default_speed(),
-            trainer: None,
-            offset: None,
-        }
-    }
-}
+// impl Default for NPC {
+//     fn default() -> Self {
+//         Self {
+//             identifier: NPCIdentifier::default(),
+//             position: Position::default(),
+//             movement_type: MovementType::default(),
+//             message: MessageSet::default(),
+//             speed: default_speed(),
+//             trainer: None,
+//             offset: None,
+//         }
+//     }
+// }
 
 const fn default_speed() -> f32 {
     1.0

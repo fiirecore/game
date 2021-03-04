@@ -1,14 +1,16 @@
 [data]
 number = 145
-name = "Zapdos"
-primary_type = "Electric"
-secondary_type = "Flying"
-species = "Electric"
+name = 'Zapdos'
+primary_type = 'Electric'
+secondary_type = 'Flying'
+species = 'Electric'
 height = 16
 weight = 526
+
 [training]
 base_exp = 261
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 90
 atk = 90
@@ -16,6 +18,9 @@ def = 85
 sp_atk = 125
 sp_def = 90
 speed = 100
+
+[breeding]
+
 [[moves]]
 move_id = 64
 level = 1

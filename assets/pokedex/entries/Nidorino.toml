@@ -1,13 +1,15 @@
 [data]
 number = 33
-name = "Nidorino"
-primary_type = "Poison"
-species = "Poison"
+name = 'Nidorino'
+primary_type = 'Poison'
+species = 'Poison'
 height = 9
 weight = 195
+
 [training]
 base_exp = 128
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 61
 atk = 72
@@ -15,6 +17,10 @@ def = 57
 sp_atk = 55
 sp_def = 55
 speed = 65
+
+[breeding]
+gender = 0
+
 [[moves]]
 move_id = 24
 level = 12

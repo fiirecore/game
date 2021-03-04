@@ -1,14 +1,16 @@
 [data]
 number = 94
-name = "Gengar"
-primary_type = "Ghost"
-secondary_type = "Poison"
-species = "Shadow"
+name = 'Gengar'
+primary_type = 'Ghost'
+secondary_type = 'Poison'
+species = 'Shadow'
 height = 15
 weight = 405
+
 [training]
 base_exp = 225
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 60
 atk = 65
@@ -16,6 +18,10 @@ def = 60
 sp_atk = 130
 sp_def = 75
 speed = 110
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 95
 level = 1

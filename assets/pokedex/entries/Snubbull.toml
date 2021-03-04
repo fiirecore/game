@@ -1,13 +1,15 @@
 [data]
 number = 209
-name = "Snubbull"
-primary_type = "Fairy"
-species = "Fairy"
+name = 'Snubbull'
+primary_type = 'Fairy'
+species = 'Fairy'
 height = 6
 weight = 78
+
 [training]
 base_exp = 60
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 60
 atk = 80
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 40
 sp_def = 40
 speed = 30
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 33
 level = 1

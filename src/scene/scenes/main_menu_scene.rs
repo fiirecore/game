@@ -46,7 +46,7 @@ impl Scene for MainMenuScene {
 		self.continue_button.spawn();
 	}
 	
-	fn update(&mut self, delta: f32) {
+	fn update(&mut self, _delta: f32) {
 
 	}
 	
@@ -55,7 +55,7 @@ impl Scene for MainMenuScene {
 		self.continue_button.render();
 	}
 	
-	fn input(&mut self, delta: f32) {
+	fn input(&mut self, _delta: f32) {
 		if input::pressed(input::Control::A) {
 			self.state = SceneState::Scene(Scenes::GameScene);
 		}

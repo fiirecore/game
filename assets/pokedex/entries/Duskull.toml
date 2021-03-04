@@ -1,13 +1,15 @@
 [data]
 number = 355
-name = "Duskull"
-primary_type = "Ghost"
-species = "Requiem"
+name = 'Duskull'
+primary_type = 'Ghost'
+species = 'Requiem'
 height = 8
 weight = 150
+
 [training]
 base_exp = 59
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 20
 atk = 40
@@ -15,6 +17,10 @@ def = 90
 sp_atk = 30
 sp_def = 90
 speed = 25
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 43
 level = 1

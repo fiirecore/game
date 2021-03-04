@@ -1,14 +1,16 @@
 [data]
 number = 138
-name = "Omanyte"
-primary_type = "Rock"
-secondary_type = "Water"
-species = "Spiral"
+name = 'Omanyte'
+primary_type = 'Rock'
+secondary_type = 'Water'
+species = 'Spiral'
 height = 4
 weight = 75
+
 [training]
 base_exp = 71
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 35
 atk = 40
@@ -16,6 +18,10 @@ def = 100
 sp_atk = 90
 sp_def = 55
 speed = 35
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 43
 level = 31

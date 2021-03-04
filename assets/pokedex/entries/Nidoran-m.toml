@@ -1,13 +1,15 @@
 [data]
 number = 32
-name = "Nidoran-m"
-primary_type = "Poison"
-species = "Poison"
+name = 'Nidoran-m'
+primary_type = 'Poison'
+species = 'Poison'
 height = 5
 weight = 90
+
 [training]
 base_exp = 55
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 46
 atk = 57
@@ -15,6 +17,10 @@ def = 40
 sp_atk = 40
 sp_def = 40
 speed = 50
+
+[breeding]
+gender = 0
+
 [[moves]]
 move_id = 24
 level = 12

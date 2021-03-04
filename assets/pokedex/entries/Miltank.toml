@@ -1,13 +1,15 @@
 [data]
 number = 241
-name = "Miltank"
-primary_type = "Normal"
-species = "Milk"
+name = 'Miltank'
+primary_type = 'Normal'
+species = 'Milk'
 height = 12
 weight = 755
+
 [training]
 base_exp = 172
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 95
 atk = 80
@@ -15,6 +17,10 @@ def = 105
 sp_atk = 40
 sp_def = 70
 speed = 100
+
+[breeding]
+gender = 8
+
 [[moves]]
 move_id = 23
 level = 13

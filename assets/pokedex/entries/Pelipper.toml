@@ -1,14 +1,16 @@
 [data]
 number = 279
-name = "Pelipper"
-primary_type = "Water"
-secondary_type = "Flying"
-species = "Water"
+name = 'Pelipper'
+primary_type = 'Water'
+secondary_type = 'Flying'
+species = 'Water'
 height = 12
 weight = 280
+
 [training]
 base_exp = 154
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 50
@@ -16,6 +18,10 @@ def = 100
 sp_atk = 95
 sp_def = 70
 speed = 65
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 17
 level = 1

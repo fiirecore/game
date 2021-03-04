@@ -1,14 +1,16 @@
 [data]
 number = 376
-name = "Metagross"
-primary_type = "Steel"
-secondary_type = "Psychic"
-species = "Iron"
+name = 'Metagross'
+primary_type = 'Steel'
+secondary_type = 'Psychic'
+species = 'Iron'
 height = 16
 weight = 5500
+
 [training]
 base_exp = 270
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 135
@@ -16,6 +18,9 @@ def = 130
 sp_atk = 95
 sp_def = 90
 speed = 70
+
+[breeding]
+
 [[moves]]
 move_id = 36
 level = 1

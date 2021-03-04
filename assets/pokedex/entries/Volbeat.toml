@@ -1,13 +1,15 @@
 [data]
 number = 313
-name = "Volbeat"
-primary_type = "Bug"
-species = "Firefly"
+name = 'Volbeat'
+primary_type = 'Bug'
+species = 'Firefly'
 height = 7
 weight = 177
+
 [training]
 base_exp = 151
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 65
 atk = 73
@@ -15,6 +17,10 @@ def = 75
 sp_atk = 47
 sp_def = 85
 speed = 85
+
+[breeding]
+gender = 0
+
 [[moves]]
 move_id = 33
 level = 1

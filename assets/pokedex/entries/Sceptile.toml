@@ -1,13 +1,15 @@
 [data]
 number = 254
-name = "Sceptile"
-primary_type = "Grass"
-species = "Forest"
+name = 'Sceptile'
+primary_type = 'Grass'
+species = 'Forest'
 height = 17
 weight = 522
+
 [training]
 base_exp = 239
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 70
 atk = 85
@@ -15,6 +17,10 @@ def = 65
 sp_atk = 105
 sp_def = 85
 speed = 120
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 1
 level = 1

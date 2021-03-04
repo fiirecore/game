@@ -1,14 +1,16 @@
 [data]
 number = 346
-name = "Cradily"
-primary_type = "Rock"
-secondary_type = "Grass"
-species = "Barnacle"
+name = 'Cradily'
+primary_type = 'Rock'
+secondary_type = 'Grass'
+species = 'Barnacle'
 height = 15
 weight = 604
+
 [training]
 base_exp = 173
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 86
 atk = 81
@@ -16,6 +18,10 @@ def = 97
 sp_atk = 81
 sp_def = 107
 speed = 43
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 51
 level = 1

@@ -1,13 +1,15 @@
 [data]
 number = 210
-name = "Granbull"
-primary_type = "Fairy"
-species = "Fairy"
+name = 'Granbull'
+primary_type = 'Fairy'
+species = 'Fairy'
 height = 14
 weight = 487
+
 [training]
 base_exp = 158
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 90
 atk = 120
@@ -15,6 +17,10 @@ def = 75
 sp_atk = 60
 sp_def = 60
 speed = 45
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 33
 level = 1

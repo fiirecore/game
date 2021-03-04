@@ -1,13 +1,15 @@
 [data]
 number = 311
-name = "Plusle"
-primary_type = "Electric"
-species = "Cheering"
+name = 'Plusle'
+primary_type = 'Electric'
+species = 'Cheering'
 height = 4
 weight = 42
+
 [training]
 base_exp = 142
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 50
@@ -15,6 +17,10 @@ def = 40
 sp_atk = 85
 sp_def = 75
 speed = 95
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 45
 level = 1

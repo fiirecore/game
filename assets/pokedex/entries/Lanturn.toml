@@ -1,14 +1,16 @@
 [data]
 number = 171
-name = "Lanturn"
-primary_type = "Water"
-secondary_type = "Electric"
-species = "Light"
+name = 'Lanturn'
+primary_type = 'Water'
+secondary_type = 'Electric'
+species = 'Light'
 height = 12
 weight = 225
+
 [training]
 base_exp = 161
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 125
 atk = 58
@@ -16,6 +18,10 @@ def = 58
 sp_atk = 76
 sp_def = 76
 speed = 67
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 36
 level = 43

@@ -1,13 +1,15 @@
 [data]
 number = 243
-name = "Raikou"
-primary_type = "Electric"
-species = "Thunder"
+name = 'Raikou'
+primary_type = 'Electric'
+species = 'Thunder'
 height = 19
 weight = 1780
+
 [training]
 base_exp = 261
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 90
 atk = 85
@@ -15,6 +17,9 @@ def = 75
 sp_atk = 115
 sp_def = 100
 speed = 115
+
+[breeding]
+
 [[moves]]
 move_id = 43
 level = 1

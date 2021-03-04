@@ -1,13 +1,15 @@
 [data]
 number = 152
-name = "Chikorita"
-primary_type = "Grass"
-species = "Leaf"
+name = 'Chikorita'
+primary_type = 'Grass'
+species = 'Leaf'
 height = 9
 weight = 64
+
 [training]
 base_exp = 64
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 45
 atk = 49
@@ -15,6 +17,10 @@ def = 65
 sp_atk = 49
 sp_def = 65
 speed = 45
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

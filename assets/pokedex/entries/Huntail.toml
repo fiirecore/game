@@ -1,13 +1,15 @@
 [data]
 number = 367
-name = "Huntail"
-primary_type = "Water"
-species = "Deep"
+name = 'Huntail'
+primary_type = 'Water'
+species = 'Deep'
 height = 17
 weight = 270
+
 [training]
 base_exp = 170
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 55
 atk = 104
@@ -15,6 +17,10 @@ def = 105
 sp_atk = 94
 sp_def = 75
 speed = 52
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 44
 level = 8

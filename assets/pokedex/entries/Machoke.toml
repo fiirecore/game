@@ -1,13 +1,15 @@
 [data]
 number = 67
-name = "Machoke"
-primary_type = "Fighting"
-species = "Superpower"
+name = 'Machoke'
+primary_type = 'Fighting'
+species = 'Superpower'
 height = 15
 weight = 705
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 80
 atk = 100
@@ -15,6 +17,10 @@ def = 70
 sp_atk = 50
 sp_def = 60
 speed = 45
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 2
 level = 13

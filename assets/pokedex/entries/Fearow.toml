@@ -1,14 +1,16 @@
 [data]
 number = 22
-name = "Fearow"
-primary_type = "Normal"
-secondary_type = "Flying"
-species = "Beak"
+name = 'Fearow'
+primary_type = 'Normal'
+secondary_type = 'Flying'
+species = 'Beak'
 height = 12
 weight = 380
+
 [training]
 base_exp = 155
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 90
@@ -16,6 +18,10 @@ def = 65
 sp_atk = 61
 sp_def = 61
 speed = 100
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 31
 level = 1

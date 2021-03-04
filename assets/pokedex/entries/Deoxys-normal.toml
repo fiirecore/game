@@ -19,3 +19,5 @@ def = 50
 sp_atk = 150
 sp_def = 50
 speed = 150
+
+[breeding]

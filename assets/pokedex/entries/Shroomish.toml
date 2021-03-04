@@ -1,13 +1,15 @@
 [data]
 number = 285
-name = "Shroomish"
-primary_type = "Grass"
-species = "Mushroom"
+name = 'Shroomish'
+primary_type = 'Grass'
+species = 'Mushroom'
 height = 4
 weight = 45
+
 [training]
 base_exp = 59
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 60
 atk = 40
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 40
 sp_def = 60
 speed = 35
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 22

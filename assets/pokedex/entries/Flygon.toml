@@ -1,14 +1,16 @@
 [data]
 number = 330
-name = "Flygon"
-primary_type = "Ground"
-secondary_type = "Dragon"
-species = "Mystic"
+name = 'Flygon'
+primary_type = 'Ground'
+secondary_type = 'Dragon'
+species = 'Mystic'
 height = 20
 weight = 820
+
 [training]
 base_exp = 234
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 80
 atk = 100
@@ -16,6 +18,10 @@ def = 80
 sp_atk = 80
 sp_def = 80
 speed = 100
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 28
 level = 1

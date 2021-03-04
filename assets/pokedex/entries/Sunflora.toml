@@ -1,13 +1,15 @@
 [data]
 number = 192
-name = "Sunflora"
-primary_type = "Grass"
-species = "Sun"
+name = 'Sunflora'
+primary_type = 'Grass'
+species = 'Sun'
 height = 8
 weight = 85
+
 [training]
 base_exp = 149
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 75
 atk = 75
@@ -15,6 +17,10 @@ def = 55
 sp_atk = 105
 sp_def = 85
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 1
 level = 1

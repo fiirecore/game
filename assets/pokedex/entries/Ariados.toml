@@ -1,14 +1,16 @@
 [data]
 number = 168
-name = "Ariados"
-primary_type = "Bug"
-secondary_type = "Poison"
-species = "Long"
+name = 'Ariados'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'Long'
 height = 11
 weight = 335
+
 [training]
 base_exp = 140
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 70
 atk = 90
@@ -16,6 +18,10 @@ def = 70
 sp_atk = 60
 sp_def = 70
 speed = 40
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 40
 level = 1

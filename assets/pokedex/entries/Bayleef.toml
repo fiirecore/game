@@ -1,13 +1,15 @@
 [data]
 number = 153
-name = "Bayleef"
-primary_type = "Grass"
-species = "Leaf"
+name = 'Bayleef'
+primary_type = 'Grass'
+species = 'Leaf'
 height = 12
 weight = 158
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 60
 atk = 62
@@ -15,6 +17,10 @@ def = 80
 sp_atk = 63
 sp_def = 80
 speed = 60
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

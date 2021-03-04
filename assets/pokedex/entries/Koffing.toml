@@ -1,13 +1,15 @@
 [data]
 number = 109
-name = "Koffing"
-primary_type = "Poison"
-species = "Poison"
+name = 'Koffing'
+primary_type = 'Poison'
+species = 'Poison'
 height = 6
 weight = 10
+
 [training]
 base_exp = 68
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 40
 atk = 65
@@ -15,6 +17,10 @@ def = 95
 sp_atk = 60
 sp_def = 45
 speed = 35
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

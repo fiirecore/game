@@ -1,14 +1,16 @@
 [data]
 number = 213
-name = "Shuckle"
-primary_type = "Bug"
-secondary_type = "Rock"
-species = "Mold"
+name = 'Shuckle'
+primary_type = 'Bug'
+secondary_type = 'Rock'
+species = 'Mold'
 height = 6
 weight = 205
+
 [training]
 base_exp = 177
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 20
 atk = 10
@@ -16,6 +18,10 @@ def = 230
 sp_atk = 10
 sp_def = 230
 speed = 5
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 35
 level = 9

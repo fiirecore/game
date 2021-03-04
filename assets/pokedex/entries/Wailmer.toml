@@ -1,13 +1,15 @@
 [data]
 number = 320
-name = "Wailmer"
-primary_type = "Water"
-species = "Ball"
+name = 'Wailmer'
+primary_type = 'Water'
+species = 'Ball'
 height = 20
 weight = 1300
+
 [training]
 base_exp = 80
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 130
 atk = 70
@@ -15,6 +17,10 @@ def = 35
 sp_atk = 70
 sp_def = 35
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 45
 level = 5

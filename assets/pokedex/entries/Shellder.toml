@@ -1,13 +1,15 @@
 [data]
 number = 90
-name = "Shellder"
-primary_type = "Water"
-species = "Bivalve"
+name = 'Shellder'
+primary_type = 'Water'
+species = 'Bivalve'
 height = 3
 weight = 40
+
 [training]
 base_exp = 61
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 30
 atk = 65
@@ -15,6 +17,10 @@ def = 100
 sp_atk = 45
 sp_def = 25
 speed = 40
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

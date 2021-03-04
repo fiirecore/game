@@ -1,13 +1,15 @@
 [data]
 number = 65
-name = "Alakazam"
-primary_type = "Psychic"
-species = "Psi"
+name = 'Alakazam'
+primary_type = 'Psychic'
+species = 'Psi'
 height = 15
 weight = 480
+
 [training]
 base_exp = 225
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 55
 atk = 50
@@ -15,6 +17,10 @@ def = 45
 sp_atk = 135
 sp_def = 95
 speed = 120
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 50
 level = 18

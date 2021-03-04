@@ -1,0 +1,57 @@
+(
+    identifier: (
+        name: "Greg",
+        npc_type: "bug_catcher"
+    ),
+    position: (
+        coords: (
+            x: 25,
+            y: 4
+        ),
+        direction: Down
+    ),
+    message_set: (
+        messages: [(
+            message: [
+                "If a POKEMON BOX on the PC gets",
+                "full, just switch to another BOX."
+            ]
+        )]
+    ),
+    trainer: Some(Trainer(
+        trainer_type: BugCatcher,
+        encounter_music: Some(EncounterBoy),
+        battle_transition: Some(Trainer),
+        encounter_message: [
+            [
+                "Are you a TRAINER?",
+                "Let's get with it right away!"
+            ]
+        ],
+        victory_message: [
+            "If a POKEMON BOX on the PC gets",
+            "full, just switch to another BOX."
+        ],
+        party: (
+            pokemon: [(
+                    id: 13,
+                    level: 9
+                ),
+                (
+                    id: 13,
+                    level: 9
+                ),
+                (
+                    id: 14,
+                    level: 9
+                ),
+                (
+                    id: 11,
+                    level: 9
+                )
+            ]
+        ),
+        tracking_length: Some(2),
+        worth: 0
+    ))
+)

@@ -1,14 +1,16 @@
 [data]
 number = 39
-name = "Jigglypuff"
-primary_type = "Normal"
-secondary_type = "Fairy"
-species = "Balloon"
+name = 'Jigglypuff'
+primary_type = 'Normal'
+secondary_type = 'Fairy'
+species = 'Balloon'
 height = 5
 weight = 55
+
 [training]
 base_exp = 95
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 115
 atk = 45
@@ -16,6 +18,10 @@ def = 20
 sp_atk = 45
 sp_def = 25
 speed = 20
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 1
 level = 9

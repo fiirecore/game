@@ -1,13 +1,15 @@
 [data]
 number = 350
-name = "Milotic"
-primary_type = "Water"
-species = "Tender"
+name = 'Milotic'
+primary_type = 'Water'
+species = 'Tender'
 height = 62
 weight = 1620
+
 [training]
 base_exp = 189
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 95
 atk = 60
@@ -15,6 +17,10 @@ def = 79
 sp_atk = 100
 sp_def = 125
 speed = 81
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 35
 level = 5

@@ -40,14 +40,14 @@ impl Default for Music {
 
 impl Music {
 
-    pub fn loop_start(&self) -> Option<f64> {
+    pub const fn loop_start(&self) -> Option<f64> {
         match self {
             Music::BattleWild => Some(13.15),
             _ => None,
         }
     }
 
-    pub fn file_name(&self) -> &str {
+    pub const fn file_name(&self) -> &str {
         match self {
 
             Music::IntroGamefreak => "gamefreak",
@@ -81,8 +81,8 @@ impl Music {
         }
     }
 
-    pub fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
-        match self {
+    pub const fn included_bytes(&self) -> Option<&[u8]> { // To - do: Load dynamically from assets folder instead of specifying this
+        let mut bytes: Option<&[u8]> = match self {
             Music::IntroGamefreak => Some(include_bytes!("../music/gamefreak.ogg")),
             Music::Title => Some(include_bytes!("../music/title.ogg")),
             Music::Pallet => Some(include_bytes!("../music/pallet.ogg")),
@@ -91,7 +91,30 @@ impl Music {
             Music::BattleTrainer => Some(include_bytes!("../music/vs_trainer.ogg")),
             Music::BattleGym => Some(include_bytes!("../music/vs_gym.ogg")),
             _ => None,
+        };
+        #[cfg(debug_assertions)] {
+            if bytes.is_none() {
+                bytes = match self {
+                    Music::Pewter => Some(include_bytes!("../../../music/pewter.ogg")),
+                    Music::Fuchsia => Some(include_bytes!("../../../music/fuchsia.ogg")),
+                    Music::Lavender => Some(include_bytes!("../../../music/lavender.ogg")),
+                    Music::Celadon => Some(include_bytes!("../../../music/celadon.ogg")),
+                    Music::Cinnabar => Some(include_bytes!("../../../music/cinnabar.ogg")),
+                    Music::Vermilion => Some(include_bytes!("../../../music/vermilion.ogg")),
+                    Music::Route1 => Some(include_bytes!("../../../music/route1.ogg")),
+                    Music::Route2 => Some(include_bytes!("../../../music/route2.ogg")),
+                    Music::Route3 => Some(include_bytes!("../../../music/route3.ogg")),
+                    Music::Route4 => Some(include_bytes!("../../../music/route3.ogg")),
+                    Music::ViridianForest => Some(include_bytes!("../../../music/viridian_forest.ogg")),
+                    Music::MountMoon => Some(include_bytes!("../../../music/mt_moon.ogg")),
+                    Music::Gym => Some(include_bytes!("../../../music/gym.ogg")),
+                    Music::EncounterGirl => Some(include_bytes!("../../../music/encounter_girl.ogg")),
+                    _ => None,
+                }
+            }
         }
+        
+        bytes
     }
 
 }

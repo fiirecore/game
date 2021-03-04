@@ -40,12 +40,13 @@ pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, conf
                                             movement_map: gba_map.movement_map,
     
                                             fly_position: config.settings.fly_position,
+                                            // draw_color: config.settings.draw_color.map(|arr| macroquad::prelude::color_u8!(arr[0], arr[1], arr[2], 255)),
                                             
                                             wild: super::load_wild_entry(root_path, config.wild, None),
                                             
                                             warps: super::load_warp_entries(root_path, None),
                                             npc_manager: super::load_npc_entries(root_path, None),
-                                            script_manager: super::load_script_entries(root_path, None),
+                                            // script_manager: super::load_script_entries(root_path, None),
     
                                         },
                                         connections: jigsaw_map.connections,

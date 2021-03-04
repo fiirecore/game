@@ -1,13 +1,15 @@
 [data]
 number = 37
-name = "Vulpix"
-primary_type = "Fire"
-species = "Fox"
+name = 'Vulpix'
+primary_type = 'Fire'
+species = 'Fox'
 height = 6
 weight = 99
+
 [training]
 base_exp = 60
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 38
 atk = 41
@@ -15,6 +17,10 @@ def = 40
 sp_atk = 50
 sp_def = 65
 speed = 65
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 39
 level = 5

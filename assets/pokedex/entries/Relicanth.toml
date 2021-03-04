@@ -1,14 +1,16 @@
 [data]
 number = 369
-name = "Relicanth"
-primary_type = "Water"
-secondary_type = "Rock"
-species = "Longevity"
+name = 'Relicanth'
+primary_type = 'Water'
+secondary_type = 'Rock'
+species = 'Longevity'
 height = 10
 weight = 234
+
 [training]
 base_exp = 170
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 100
 atk = 90
@@ -16,6 +18,10 @@ def = 130
 sp_atk = 45
 sp_def = 65
 speed = 55
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

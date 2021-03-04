@@ -1,13 +1,15 @@
 [data]
 number = 379
-name = "Registeel"
-primary_type = "Steel"
-species = "Iron"
+name = 'Registeel'
+primary_type = 'Steel'
+species = 'Iron'
 height = 19
 weight = 2050
+
 [training]
 base_exp = 261
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 75
@@ -15,6 +17,9 @@ def = 150
 sp_atk = 75
 sp_def = 150
 speed = 50
+
+[breeding]
+
 [[moves]]
 move_id = 63
 level = 65

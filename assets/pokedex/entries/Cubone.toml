@@ -1,13 +1,15 @@
 [data]
 number = 104
-name = "Cubone"
-primary_type = "Ground"
-species = "Lonely"
+name = 'Cubone'
+primary_type = 'Ground'
+species = 'Lonely'
 height = 4
 weight = 65
+
 [training]
 base_exp = 64
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 50
 atk = 50
@@ -15,6 +17,10 @@ def = 95
 sp_atk = 40
 sp_def = 50
 speed = 35
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 13

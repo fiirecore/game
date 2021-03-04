@@ -1,13 +1,15 @@
 [data]
 number = 377
-name = "Regirock"
-primary_type = "Rock"
-species = "Rock"
+name = 'Regirock'
+primary_type = 'Rock'
+species = 'Rock'
 height = 17
 weight = 2300
+
 [training]
 base_exp = 261
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 100
@@ -15,6 +17,9 @@ def = 200
 sp_atk = 50
 sp_def = 100
 speed = 50
+
+[breeding]
+
 [[moves]]
 move_id = 63
 level = 65

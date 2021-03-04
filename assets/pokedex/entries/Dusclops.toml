@@ -1,13 +1,15 @@
 [data]
 number = 356
-name = "Dusclops"
-primary_type = "Ghost"
-species = "Beckon"
+name = 'Dusclops'
+primary_type = 'Ghost'
+species = 'Beckon'
 height = 16
 weight = 306
+
 [training]
 base_exp = 159
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 40
 atk = 70
@@ -15,6 +17,10 @@ def = 130
 sp_atk = 60
 sp_def = 130
 speed = 25
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 20
 level = 1

@@ -1,14 +1,16 @@
 [data]
 number = 364
-name = "Sealeo"
-primary_type = "Ice"
-secondary_type = "Water"
-species = "Ball"
+name = 'Sealeo'
+primary_type = 'Ice'
+secondary_type = 'Water'
+species = 'Ball'
 height = 11
 weight = 876
+
 [training]
 base_exp = 144
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 90
 atk = 60
@@ -16,6 +18,10 @@ def = 70
 sp_atk = 75
 sp_def = 70
 speed = 45
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 34
 level = 19

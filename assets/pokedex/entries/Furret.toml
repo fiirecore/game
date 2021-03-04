@@ -1,13 +1,15 @@
 [data]
 number = 162
-name = "Furret"
-primary_type = "Normal"
-species = "Long"
+name = 'Furret'
+primary_type = 'Normal'
+species = 'Long'
 height = 18
 weight = 325
+
 [training]
 base_exp = 145
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 85
 atk = 76
@@ -15,6 +17,10 @@ def = 64
 sp_atk = 45
 sp_def = 55
 speed = 90
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

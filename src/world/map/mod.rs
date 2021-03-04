@@ -3,8 +3,7 @@ use crate::util::Coordinate;
 use frc_audio::music::Music;
 use crate::util::Direction;
 use frc_input::{self as input, Control};
-use self::npc_manager::MapNpcManager;
-use self::script_manager::MapScriptManager;
+use super::npc::manager::MapNpcManager;
 
 use super::MapSize;
 use super::MovementId;
@@ -21,8 +20,7 @@ pub mod manager;
 pub mod set;
 pub mod chunk;
 
-pub mod npc_manager;
-pub mod script_manager;
+// pub mod script_manager;
 
 #[derive(Default)]
 pub struct WorldMap {
@@ -38,11 +36,12 @@ pub struct WorldMap {
     pub movement_map: Vec<MovementId>,
 
     pub fly_position: Coordinate,
+    // pub draw_color: Option<macroquad::prelude::Color>,
     pub wild: Option<WildEntry>,
 
     pub warps: Vec<WarpEntry>,
     pub npc_manager: MapNpcManager,
-    pub script_manager: MapScriptManager,
+    // pub script_manager: MapScriptManager,
 
 }
 
@@ -50,6 +49,10 @@ impl WorldMap {
 
     fn tile_row(&self, x: isize, offset: isize) -> u16 {
         self.tile_map[x as usize + offset as usize]
+    }
+
+    pub fn after_interact(&mut self, index: usize) {
+        self.npc_manager.npcs[index].after_interact(&self.name);
     }
 
 }
@@ -152,24 +155,24 @@ impl World for WorldMap {
             }            
         }
 
-        self.script_manager.on_tile(player);
+        // self.script_manager.on_tile(player);
 
     }
 
     fn update(&mut self, delta: f32, player: &mut Player) {
-        self.script_manager.update(delta, player);
+        // self.script_manager.update(delta, player);
     }
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
             let y = yy - screen.y_tile_offset;
-            let render_y = (yy << 4) as f32 - screen.y_focus; // old = y_tile w/ offset - player x pixel
+            let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
             
             let row_offset = y * self.width as isize;
             
             for xx in screen.left..screen.right {
                 let x = xx - screen.x_tile_offset;
-                let render_x = (xx << 4) as f32 - screen.x_focus;
+                let render_x = (xx << 4) as f32 - screen.focus.x;
 
                 if !(x < 0 || y < 0 || y >= self.height as isize || x >= self.width as isize) {
                     tile_textures.render_tile(&self.tile_row(x, row_offset), render_x, render_y);
@@ -193,7 +196,7 @@ impl World for WorldMap {
         for npc in &self.npc_manager.npcs {
             npc.render(npc_textures, &screen);
         }
-        self.script_manager.render(tile_textures, npc_textures, &screen);
+        // self.script_manager.render(tile_textures, npc_textures, &screen);
     }
 
     fn input(&mut self, _delta: f32, player: &mut Player) {

@@ -1,13 +1,15 @@
 [data]
 number = 242
-name = "Blissey"
-primary_type = "Normal"
-species = "Happiness"
+name = 'Blissey'
+primary_type = 'Normal'
+species = 'Happiness'
 height = 15
 weight = 468
+
 [training]
 base_exp = 608
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 255
 atk = 10
@@ -15,6 +17,10 @@ def = 10
 sp_atk = 75
 sp_def = 135
 speed = 55
+
+[breeding]
+gender = 8
+
 [[moves]]
 move_id = 1
 level = 1

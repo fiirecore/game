@@ -1,14 +1,16 @@
 [data]
 number = 282
-name = "Gardevoir"
-primary_type = "Psychic"
-secondary_type = "Fairy"
-species = "Embrace"
+name = 'Gardevoir'
+primary_type = 'Psychic'
+secondary_type = 'Fairy'
+species = 'Embrace'
 height = 16
 weight = 484
+
 [training]
 base_exp = 233
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 68
 atk = 65
@@ -16,6 +18,10 @@ def = 65
 sp_atk = 125
 sp_def = 115
 speed = 80
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 45
 level = 1

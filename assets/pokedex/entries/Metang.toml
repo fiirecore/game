@@ -1,14 +1,16 @@
 [data]
 number = 375
-name = "Metang"
-primary_type = "Steel"
-secondary_type = "Psychic"
-species = "Iron"
+name = 'Metang'
+primary_type = 'Steel'
+secondary_type = 'Psychic'
+species = 'Iron'
 height = 12
 weight = 2025
+
 [training]
 base_exp = 147
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 60
 atk = 75
@@ -16,6 +18,9 @@ def = 100
 sp_atk = 55
 sp_def = 80
 speed = 50
+
+[breeding]
+
 [[moves]]
 move_id = 36
 level = 1

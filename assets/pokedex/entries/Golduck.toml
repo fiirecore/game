@@ -1,13 +1,15 @@
 [data]
 number = 55
-name = "Golduck"
-primary_type = "Water"
-species = "Duck"
+name = 'Golduck'
+primary_type = 'Water'
+species = 'Duck'
 height = 17
 weight = 766
+
 [training]
 base_exp = 175
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 80
 atk = 82
@@ -15,6 +17,10 @@ def = 78
 sp_atk = 95
 sp_def = 80
 speed = 85
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

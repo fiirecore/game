@@ -1,14 +1,16 @@
 [data]
 number = 303
-name = "Mawile"
-primary_type = "Steel"
-secondary_type = "Fairy"
-species = "Deceiver"
+name = 'Mawile'
+primary_type = 'Steel'
+secondary_type = 'Fairy'
+species = 'Deceiver'
 height = 6
 weight = 115
+
 [training]
 base_exp = 133
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 50
 atk = 85
@@ -16,6 +18,10 @@ def = 85
 sp_atk = 55
 sp_def = 55
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 11
 level = 21

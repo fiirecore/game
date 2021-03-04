@@ -1,13 +1,15 @@
 [data]
 number = 136
-name = "Flareon"
-primary_type = "Fire"
-species = "Flame"
+name = 'Flareon'
+primary_type = 'Fire'
+species = 'Flame'
 height = 9
 weight = 250
+
 [training]
 base_exp = 184
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 130
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 95
 sp_def = 110
 speed = 65
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 28
 level = 8

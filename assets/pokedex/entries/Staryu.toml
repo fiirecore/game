@@ -1,13 +1,15 @@
 [data]
 number = 120
-name = "Staryu"
-primary_type = "Water"
-species = "Star"
+name = 'Staryu'
+primary_type = 'Water'
+species = 'Star'
 height = 8
 weight = 345
+
 [training]
 base_exp = 68
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 30
 atk = 45
@@ -15,6 +17,9 @@ def = 55
 sp_atk = 70
 sp_def = 55
 speed = 85
+
+[breeding]
+
 [[moves]]
 move_id = 33
 level = 1

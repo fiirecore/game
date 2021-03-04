@@ -1,14 +1,16 @@
 [data]
 number = 49
-name = "Venomoth"
-primary_type = "Bug"
-secondary_type = "Poison"
-species = "Poison"
+name = 'Venomoth'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'Poison'
 height = 15
 weight = 125
+
 [training]
 base_exp = 158
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 70
 atk = 65
@@ -16,6 +18,10 @@ def = 60
 sp_atk = 90
 sp_def = 75
 speed = 90
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 16
 level = 31

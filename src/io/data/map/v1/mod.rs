@@ -4,13 +4,13 @@ use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
 use crate::world::map::chunk::WorldChunk;
 use crate::world::map::chunk::world_chunk_map::WorldChunkMap;
-use crate::world::map::npc_manager::MapNpcManager;
-use crate::world::map::script_manager::MapScriptManager;
+use crate::world::npc::manager::MapNpcManager;
 use crate::world::map::set::WorldMapSet;
 use crate::world::map::set::manager::WorldMapSetManager;
 use crate::world::npc::NPC;
 use crate::world::pokemon::WildEntry;
-use crate::world::script::npc::NPCScript;
+// use crate::world::map::script_manager::MapScriptManager;
+// use crate::world::script::npc::NPCScript;
 use crate::world::warp::WarpEntry;
 
 pub mod chunk_map_loader;
@@ -137,14 +137,14 @@ fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: PathBuf) {
     for filepath in crate::io::get_dir(dir) {
         match crate::io::get_file_as_string(&filepath) {
             Ok(data) => {
-                let npc_result: Result<NPC, serde_json::Error> = serde_json::from_str(&data);
+                let npc_result: Result<NPC, ron::Error> = ron::from_str(&data);
                 match npc_result {
                     Ok(npc) => {
                         macroquad::prelude::debug!("Loaded NPC {}", &npc.identifier.name);
                         npcs.push(npc);
                     },
                     Err(err) => {
-                        warn!("Could not parse NPC json at {:?} with error {}", &filepath, err);
+                        warn!("Could not parse NPC .ron at {:?} with error {}", &filepath, err);
                     },
                 }
             },
@@ -189,6 +189,8 @@ pub fn load_wild_entry(root_path: &PathBuf, wild: Option<map_serializable::Seria
     })
 }
 
+/*
+
 pub fn load_script_entries(root_path: &PathBuf, map_index: Option<usize>) -> MapScriptManager {
     let mut npc_scripts = Vec::new();
     let script_root = root_path.join("scripts");
@@ -208,3 +210,5 @@ pub fn load_script_entries(root_path: &PathBuf, map_index: Option<usize>) -> Map
 
     MapScriptManager::new(npc_scripts)
 }
+
+*/

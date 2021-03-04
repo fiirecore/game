@@ -1,14 +1,16 @@
 [data]
 number = 315
-name = "Roselia"
-primary_type = "Grass"
-secondary_type = "Poison"
-species = "Thorn"
+name = 'Roselia'
+primary_type = 'Grass'
+secondary_type = 'Poison'
+species = 'Thorn'
 height = 3
 weight = 20
+
 [training]
 base_exp = 140
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 50
 atk = 60
@@ -16,6 +18,10 @@ def = 45
 sp_atk = 100
 sp_def = 80
 speed = 65
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 40
 level = 9

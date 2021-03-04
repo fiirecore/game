@@ -1,14 +1,16 @@
 [data]
 number = 292
-name = "Shedinja"
-primary_type = "Bug"
-secondary_type = "Ghost"
-species = "Shed"
+name = 'Shedinja'
+primary_type = 'Bug'
+secondary_type = 'Ghost'
+species = 'Shed'
 height = 8
 weight = 12
+
 [training]
 base_exp = 83
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 1
 atk = 90
@@ -16,6 +18,9 @@ def = 45
 sp_atk = 30
 sp_def = 30
 speed = 40
+
+[breeding]
+
 [[moves]]
 move_id = 10
 level = 1

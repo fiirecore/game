@@ -1,13 +1,15 @@
 [data]
 number = 236
-name = "Tyrogue"
-primary_type = "Fighting"
-species = "Scuffle"
+name = 'Tyrogue'
+primary_type = 'Fighting'
+species = 'Scuffle'
 height = 7
 weight = 210
+
 [training]
 base_exp = 42
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 35
 atk = 35
@@ -15,6 +17,10 @@ def = 35
 sp_atk = 35
 sp_def = 35
 speed = 35
+
+[breeding]
+gender = 0
+
 [[moves]]
 move_id = 33
 level = 1

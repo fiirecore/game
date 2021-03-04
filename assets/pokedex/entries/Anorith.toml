@@ -1,14 +1,16 @@
 [data]
 number = 347
-name = "Anorith"
-primary_type = "Rock"
-secondary_type = "Bug"
-species = "Old"
+name = 'Anorith'
+primary_type = 'Rock'
+secondary_type = 'Bug'
+species = 'Old'
 height = 7
 weight = 125
+
 [training]
 base_exp = 71
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 45
 atk = 95
@@ -16,6 +18,10 @@ def = 50
 sp_atk = 40
 sp_def = 50
 speed = 75
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 10
 level = 1

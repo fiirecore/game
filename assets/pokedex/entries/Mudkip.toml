@@ -1,13 +1,15 @@
 [data]
 number = 258
-name = "Mudkip"
-primary_type = "Water"
-species = "Mud"
+name = 'Mudkip'
+primary_type = 'Water'
+species = 'Mud'
 height = 4
 weight = 76
+
 [training]
 base_exp = 62
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 50
 atk = 70
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 50
 sp_def = 50
 speed = 40
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

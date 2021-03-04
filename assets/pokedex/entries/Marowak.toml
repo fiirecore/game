@@ -1,13 +1,15 @@
 [data]
 number = 105
-name = "Marowak"
-primary_type = "Ground"
-species = "Bone"
+name = 'Marowak'
+primary_type = 'Ground'
+species = 'Bone'
 height = 10
 weight = 450
+
 [training]
 base_exp = 149
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 80
@@ -15,6 +17,10 @@ def = 110
 sp_atk = 50
 sp_def = 80
 speed = 45
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 1

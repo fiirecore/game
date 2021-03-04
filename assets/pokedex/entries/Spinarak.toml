@@ -1,14 +1,16 @@
 [data]
 number = 167
-name = "Spinarak"
-primary_type = "Bug"
-secondary_type = "Poison"
-species = "String"
+name = 'Spinarak'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'String'
 height = 5
 weight = 85
+
 [training]
 base_exp = 50
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 40
 atk = 60
@@ -16,6 +18,10 @@ def = 40
 sp_atk = 40
 sp_def = 40
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 40
 level = 1

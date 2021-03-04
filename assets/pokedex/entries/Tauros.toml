@@ -1,13 +1,15 @@
 [data]
 number = 128
-name = "Tauros"
-primary_type = "Normal"
-species = "Wild"
+name = 'Tauros'
+primary_type = 'Normal'
+species = 'Wild'
 height = 14
 weight = 884
+
 [training]
 base_exp = 172
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 75
 atk = 100
@@ -15,6 +17,10 @@ def = 95
 sp_atk = 40
 sp_def = 70
 speed = 110
+
+[breeding]
+gender = 0
+
 [[moves]]
 move_id = 30
 level = 8

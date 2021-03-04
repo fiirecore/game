@@ -1,13 +1,15 @@
 [data]
 number = 35
-name = "Clefairy"
-primary_type = "Fairy"
-species = "Fairy"
+name = 'Clefairy'
+primary_type = 'Fairy'
+species = 'Fairy'
 height = 6
 weight = 75
+
 [training]
 base_exp = 113
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 70
 atk = 45
@@ -15,6 +17,10 @@ def = 48
 sp_atk = 60
 sp_def = 65
 speed = 35
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 1
 level = 1

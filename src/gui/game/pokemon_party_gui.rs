@@ -65,25 +65,26 @@ impl PokemonPartyGui {
                 break;
             }
             
-            let pokemon_data = firecore_pokedex::POKEDEX.get(&pokemon.1.id).expect("Could not get Pokemon from id!");
-            let pokemon_data = pokemon_data.value();
+            if let Some(pokemon_data) = firecore_pokedex::POKEDEX.get(&pokemon.1.id) {
+                let pokemon_data = pokemon_data.value();
 
-            let max = crate::battle::battle_pokemon::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
-            let curr = pokemon.1.current_hp.unwrap_or(max);
-
-            let texture = if let Some(file) = crate::io::get_file(format!("pokedex/textures/icon/{}.png", pokemon_data.data.name.to_ascii_lowercase())) {
-                byte_texture(&file)
-            } else {
-                crate::util::graphics::texture::debug_texture()
-            };
-
-            self.pokemon[pokemon.0] = Some(PartyGuiData {
-                name: pokemon.1.nickname.as_ref().unwrap_or(&pokemon_data.data.name).to_ascii_uppercase(),
-                level: format!("Lv{}", pokemon.1.level),
-                hp: format!("{}/{}", curr, max),
-                health_width: ((curr as f32 / max as f32).ceil() * 48.0) as u32,
-                texture: texture,
-            });
+                let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
+                let curr = pokemon.1.current_hp.unwrap_or(max);
+    
+                let texture = if let Some(file) = crate::io::get_file(format!("pokedex/textures/icon/{}.png", pokemon_data.data.name.to_ascii_lowercase())) {
+                    byte_texture(&file)
+                } else {
+                    crate::util::graphics::texture::debug_texture()
+                };
+    
+                self.pokemon[pokemon.0] = Some(PartyGuiData {
+                    name: pokemon.1.nickname.as_ref().unwrap_or(&pokemon_data.data.name).to_ascii_uppercase(),
+                    level: format!("Lv{}", pokemon.1.level),
+                    hp: format!("{}/{}", curr, max),
+                    health_width: ((curr as f32 / max as f32).ceil() * 48.0) as u32,
+                    texture: texture,
+                });
+            }            
         }
     }
 

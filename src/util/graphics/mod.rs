@@ -13,8 +13,10 @@ lazy_static::lazy_static! {
 	static ref TEXT_RENDERER: TextRenderer = TextRenderer::new();
 }
 
+pub static DRAW_COLOR: Color = macroquad::prelude::WHITE;
+
 pub fn draw(texture: Texture, x: f32, y: f32) {
-	draw_texture(texture, x, y, WHITE);
+	draw_texture(texture, x, y, DRAW_COLOR);
 }
 
 pub fn draw_o(texture: Option<&Texture>, x: f32, y: f32) {

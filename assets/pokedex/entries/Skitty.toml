@@ -1,13 +1,15 @@
 [data]
 number = 300
-name = "Skitty"
-primary_type = "Normal"
-species = "Kitten"
+name = 'Skitty'
+primary_type = 'Normal'
+species = 'Kitten'
 height = 6
 weight = 110
+
 [training]
 base_exp = 52
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 50
 atk = 45
@@ -15,6 +17,10 @@ def = 45
 sp_atk = 35
 sp_def = 35
 speed = 50
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 3
 level = 15

@@ -1,14 +1,19 @@
 [data]
 number = 269
-name = "Dustox"
-primary_type = "Bug"
-secondary_type = "Poison"
-species = "Poison"
+name = 'Dustox'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'Poison'
 height = 12
 weight = 316
+
 [training]
 base_exp = 173
-growth_rate = "medium"
+growth_rate = 'medium'
+
+[breeding]
+gender = 4
+
 [base]
 hp = 60
 atk = 50
@@ -16,6 +21,7 @@ def = 70
 sp_atk = 50
 sp_def = 90
 speed = 65
+
 [[moves]]
 move_id = 16
 level = 13

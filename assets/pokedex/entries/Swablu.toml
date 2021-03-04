@@ -1,14 +1,16 @@
 [data]
 number = 333
-name = "Swablu"
-primary_type = "Normal"
-secondary_type = "Flying"
-species = "Cotton"
+name = 'Swablu'
+primary_type = 'Normal'
+secondary_type = 'Flying'
+species = 'Cotton'
 height = 4
 weight = 12
+
 [training]
 base_exp = 62
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 45
 atk = 40
@@ -16,6 +18,10 @@ def = 60
 sp_atk = 40
 sp_def = 75
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 31
 level = 18

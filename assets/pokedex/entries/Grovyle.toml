@@ -1,13 +1,15 @@
 [data]
 number = 253
-name = "Grovyle"
-primary_type = "Grass"
-species = "Wood"
+name = 'Grovyle'
+primary_type = 'Grass'
+species = 'Wood'
 height = 9
 weight = 216
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 50
 atk = 65
@@ -15,6 +17,10 @@ def = 45
 sp_atk = 85
 sp_def = 65
 speed = 95
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 1
 level = 1

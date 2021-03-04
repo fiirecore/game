@@ -1,14 +1,16 @@
 [data]
 number = 80
-name = "Slowbro"
-primary_type = "Water"
-secondary_type = "Psychic"
-species = "Hermit"
+name = 'Slowbro'
+primary_type = 'Water'
+secondary_type = 'Psychic'
+species = 'Hermit'
 height = 16
 weight = 785
+
 [training]
 base_exp = 172
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 95
 atk = 75
@@ -16,6 +18,10 @@ def = 110
 sp_atk = 100
 sp_def = 80
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 29

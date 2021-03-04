@@ -1,14 +1,16 @@
 [data]
 number = 131
-name = "Lapras"
-primary_type = "Water"
-secondary_type = "Ice"
-species = "Transport"
+name = 'Lapras'
+primary_type = 'Water'
+secondary_type = 'Ice'
+species = 'Transport'
 height = 25
 weight = 2200
+
 [training]
 base_exp = 187
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 130
 atk = 85
@@ -16,6 +18,10 @@ def = 80
 sp_atk = 85
 sp_def = 95
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 34
 level = 13

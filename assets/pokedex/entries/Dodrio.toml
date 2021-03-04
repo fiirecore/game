@@ -1,14 +1,16 @@
 [data]
 number = 85
-name = "Dodrio"
-primary_type = "Normal"
-secondary_type = "Flying"
-species = "Triple"
+name = 'Dodrio'
+primary_type = 'Normal'
+secondary_type = 'Flying'
+species = 'Triple'
 height = 18
 weight = 852
+
 [training]
 base_exp = 165
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 110
@@ -16,6 +18,10 @@ def = 70
 sp_atk = 60
 sp_def = 60
 speed = 110
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 31
 level = 1

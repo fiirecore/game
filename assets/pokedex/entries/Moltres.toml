@@ -1,14 +1,16 @@
 [data]
 number = 146
-name = "Moltres"
-primary_type = "Fire"
-secondary_type = "Flying"
-species = "Flame"
+name = 'Moltres'
+primary_type = 'Fire'
+secondary_type = 'Flying'
+species = 'Flame'
 height = 20
 weight = 600
+
 [training]
 base_exp = 261
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 90
 atk = 100
@@ -16,6 +18,9 @@ def = 90
 sp_atk = 125
 sp_def = 85
 speed = 90
+
+[breeding]
+
 [[moves]]
 move_id = 17
 level = 1

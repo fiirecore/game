@@ -1,14 +1,16 @@
 [data]
 number = 304
-name = "Aron"
-primary_type = "Steel"
-secondary_type = "Rock"
-species = "Iron"
+name = 'Aron'
+primary_type = 'Steel'
+secondary_type = 'Rock'
+species = 'Iron'
 height = 4
 weight = 600
+
 [training]
 base_exp = 66
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 50
 atk = 70
@@ -16,6 +18,10 @@ def = 100
 sp_atk = 40
 sp_def = 40
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 10

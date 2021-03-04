@@ -1,13 +1,15 @@
 [data]
 number = 383
-name = "Groudon"
-primary_type = "Ground"
-species = "Continent"
+name = 'Groudon'
+primary_type = 'Ground'
+species = 'Continent'
 height = 35
 weight = 9500
+
 [training]
 base_exp = 302
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 100
 atk = 150
@@ -15,6 +17,9 @@ def = 140
 sp_atk = 100
 sp_def = 90
 speed = 90
+
+[breeding]
+
 [[moves]]
 move_id = 76
 level = 65

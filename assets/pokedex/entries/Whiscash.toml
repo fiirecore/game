@@ -1,14 +1,16 @@
 [data]
 number = 340
-name = "Whiscash"
-primary_type = "Water"
-secondary_type = "Ground"
-species = "Whiskers"
+name = 'Whiscash'
+primary_type = 'Water'
+secondary_type = 'Ground'
+species = 'Whiskers'
 height = 9
 weight = 236
+
 [training]
 base_exp = 164
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 110
 atk = 78
@@ -16,6 +18,10 @@ def = 73
 sp_atk = 76
 sp_def = 71
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 55
 level = 11

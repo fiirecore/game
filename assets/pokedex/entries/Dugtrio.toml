@@ -1,13 +1,15 @@
 [data]
 number = 51
-name = "Dugtrio"
-primary_type = "Ground"
-species = "Mole"
+name = 'Dugtrio'
+primary_type = 'Ground'
+species = 'Mole'
 height = 7
 weight = 333
+
 [training]
 base_exp = 149
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 35
 atk = 100
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 50
 sp_def = 70
 speed = 120
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

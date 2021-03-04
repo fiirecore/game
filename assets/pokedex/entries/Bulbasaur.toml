@@ -1,14 +1,16 @@
 [data]
 number = 1
-name = "Bulbasaur"
-primary_type = "Grass"
-secondary_type = "Poison"
-species = "Seed"
+name = 'Bulbasaur'
+primary_type = 'Grass'
+secondary_type = 'Poison'
+species = 'Seed'
 height = 7
 weight = 69
+
 [training]
 base_exp = 64
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 45
 atk = 49
@@ -16,6 +18,10 @@ def = 49
 sp_atk = 65
 sp_def = 65
 speed = 45
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 22
 level = 10

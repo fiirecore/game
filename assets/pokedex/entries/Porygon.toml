@@ -1,13 +1,15 @@
 [data]
 number = 137
-name = "Porygon"
-primary_type = "Normal"
-species = "Virtual"
+name = 'Porygon'
+primary_type = 'Normal'
+species = 'Virtual'
 height = 8
 weight = 365
+
 [training]
 base_exp = 79
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 60
@@ -15,6 +17,9 @@ def = 70
 sp_atk = 85
 sp_def = 75
 speed = 40
+
+[breeding]
+
 [[moves]]
 move_id = 33
 level = 1

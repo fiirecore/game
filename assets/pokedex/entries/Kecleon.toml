@@ -1,13 +1,15 @@
 [data]
 number = 352
-name = "Kecleon"
-primary_type = "Normal"
-species = "Color"
+name = 'Kecleon'
+primary_type = 'Normal'
+species = 'Color'
 height = 10
 weight = 220
+
 [training]
 base_exp = 154
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 60
 atk = 90
@@ -15,6 +17,10 @@ def = 70
 sp_atk = 60
 sp_def = 120
 speed = 40
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

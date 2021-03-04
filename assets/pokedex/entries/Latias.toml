@@ -1,14 +1,16 @@
 [data]
 number = 380
-name = "Latias"
-primary_type = "Dragon"
-secondary_type = "Psychic"
-species = "Eon"
+name = 'Latias'
+primary_type = 'Dragon'
+secondary_type = 'Psychic'
+species = 'Eon'
 height = 14
 weight = 400
+
 [training]
 base_exp = 270
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 80
 atk = 80
@@ -16,6 +18,10 @@ def = 90
 sp_atk = 110
 sp_def = 130
 speed = 110
+
+[breeding]
+gender = 8
+
 [[moves]]
 move_id = 94
 level = 40

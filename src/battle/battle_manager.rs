@@ -76,6 +76,7 @@ impl Reset for BattleManager {
 impl BattleManager {
 
 	pub fn on_start(&mut self, player_data: &PlayerData, battle_data: BattleData) { // add battle type parameter
+		info!("Attemping to create battle!");
 		self.finished = false;
 		self.battle_data = battle_data;
 		self.create_battle(player_data);
@@ -85,10 +86,14 @@ impl BattleManager {
 
 	pub fn create_battle(&mut self, player_data: &PlayerData) {
 		let battle = Battle::new(self.battle_data.battle_type, &player_data.party, &self.battle_data.party);
-		info!("Loading Battle: {}", battle);
-		self.current_battle = battle;
-		self.current_battle.load();
-		self.battle_gui.on_battle_start(&self.current_battle);
+		if let Some(battle) = battle {
+			info!("Loading Battle: {}", battle);
+			self.current_battle = battle;
+			self.current_battle.load();
+			self.battle_gui.on_battle_start(&self.current_battle);
+		} else {
+			self.finished = true;
+		}		
 	}
 
 	pub fn update(&mut self, delta: f32) {

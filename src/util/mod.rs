@@ -1,3 +1,4 @@
+use macroquad::prelude::Vec2;
 use serde::{Deserialize, Serialize};
 
 use frc_input::Control;
@@ -111,9 +112,7 @@ pub struct Position {
 	pub coords: Coordinate,
 	pub direction: Direction,
     #[serde(skip)]
-    pub x_offset: f32,
-    #[serde(skip)]
-	pub y_offset: f32,
+    pub offset: Vec2,
 
 }
 

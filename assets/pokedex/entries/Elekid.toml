@@ -1,13 +1,15 @@
 [data]
 number = 239
-name = "Elekid"
-primary_type = "Electric"
-species = "Electric"
+name = 'Elekid'
+primary_type = 'Electric'
+species = 'Electric'
 height = 6
 weight = 235
+
 [training]
 base_exp = 72
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 45
 atk = 63
@@ -15,6 +17,10 @@ def = 37
 sp_atk = 65
 sp_def = 55
 speed = 95
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 9
 level = 9

@@ -1,14 +1,16 @@
 [data]
 number = 93
-name = "Haunter"
-primary_type = "Ghost"
-secondary_type = "Poison"
-species = "Gas"
+name = 'Haunter'
+primary_type = 'Ghost'
+secondary_type = 'Poison'
+species = 'Gas'
 height = 16
 weight = 1
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 45
 atk = 50
@@ -16,6 +18,10 @@ def = 45
 sp_atk = 115
 sp_def = 55
 speed = 95
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 95
 level = 1

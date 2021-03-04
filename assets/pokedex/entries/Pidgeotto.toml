@@ -1,14 +1,16 @@
 [data]
 number = 17
-name = "Pidgeotto"
-primary_type = "Normal"
-secondary_type = "Flying"
-species = "Bird"
+name = 'Pidgeotto'
+primary_type = 'Normal'
+secondary_type = 'Flying'
+species = 'Bird'
 height = 11
 weight = 300
+
 [training]
 base_exp = 122
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 63
 atk = 60
@@ -16,6 +18,10 @@ def = 55
 sp_atk = 50
 sp_def = 50
 speed = 71
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 16
 level = 1

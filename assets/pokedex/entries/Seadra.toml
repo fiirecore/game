@@ -1,13 +1,15 @@
 [data]
 number = 117
-name = "Seadra"
-primary_type = "Water"
-species = "Dragon"
+name = 'Seadra'
+primary_type = 'Water'
+species = 'Dragon'
 height = 12
 weight = 250
+
 [training]
 base_exp = 154
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 55
 atk = 65
@@ -15,6 +17,10 @@ def = 95
 sp_atk = 95
 sp_def = 45
 speed = 85
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 43
 level = 1

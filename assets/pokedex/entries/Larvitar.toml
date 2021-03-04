@@ -1,14 +1,16 @@
 [data]
 number = 246
-name = "Larvitar"
-primary_type = "Rock"
-secondary_type = "Ground"
-species = "Rock"
+name = 'Larvitar'
+primary_type = 'Rock'
+secondary_type = 'Ground'
+species = 'Rock'
 height = 6
 weight = 720
+
 [training]
 base_exp = 60
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 50
 atk = 64
@@ -16,6 +18,10 @@ def = 50
 sp_atk = 45
 sp_def = 50
 speed = 41
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 37
 level = 29

@@ -1,14 +1,16 @@
 [data]
 number = 3
-name = "Venusaur"
-primary_type = "Grass"
-secondary_type = "Poison"
-species = "Seed"
+name = 'Venusaur'
+primary_type = 'Grass'
+secondary_type = 'Poison'
+species = 'Seed'
 height = 20
 weight = 1000
+
 [training]
 base_exp = 236
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 80
 atk = 82
@@ -16,6 +18,10 @@ def = 83
 sp_atk = 100
 sp_def = 100
 speed = 80
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 22
 level = 1

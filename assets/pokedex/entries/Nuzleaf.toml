@@ -1,14 +1,16 @@
 [data]
 number = 274
-name = "Nuzleaf"
-primary_type = "Grass"
-secondary_type = "Dark"
-species = "Wily"
+name = 'Nuzleaf'
+primary_type = 'Grass'
+secondary_type = 'Dark'
+species = 'Wily'
 height = 10
 weight = 280
+
 [training]
 base_exp = 119
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 70
 atk = 70
@@ -16,6 +18,10 @@ def = 40
 sp_atk = 60
 sp_def = 40
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 1
 level = 1

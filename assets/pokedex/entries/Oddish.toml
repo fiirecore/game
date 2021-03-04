@@ -1,14 +1,16 @@
 [data]
 number = 43
-name = "Oddish"
-primary_type = "Grass"
-secondary_type = "Poison"
-species = "Weed"
+name = 'Oddish'
+primary_type = 'Grass'
+secondary_type = 'Poison'
+species = 'Weed'
 height = 5
 weight = 54
+
 [training]
 base_exp = 64
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 45
 atk = 50
@@ -16,6 +18,10 @@ def = 55
 sp_atk = 75
 sp_def = 65
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 51
 level = 23

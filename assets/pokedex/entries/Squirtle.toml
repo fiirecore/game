@@ -1,13 +1,15 @@
 [data]
 number = 7
-name = "Squirtle"
-primary_type = "Water"
-species = "Tiny"
+name = 'Squirtle'
+primary_type = 'Water'
+species = 'Tiny'
 height = 5
 weight = 90
+
 [training]
 base_exp = 63
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 44
 atk = 48
@@ -15,6 +17,10 @@ def = 65
 sp_atk = 50
 sp_def = 64
 speed = 43
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

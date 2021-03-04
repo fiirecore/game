@@ -1,13 +1,15 @@
 [data]
 number = 26
-name = "Raichu"
-primary_type = "Electric"
-species = "Mouse"
+name = 'Raichu'
+primary_type = 'Electric'
+species = 'Mouse'
 height = 8
 weight = 300
+
 [training]
 base_exp = 218
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 90
@@ -15,6 +17,10 @@ def = 55
 sp_atk = 90
 sp_def = 80
 speed = 110
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 39
 level = 1

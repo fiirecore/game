@@ -1,13 +1,15 @@
 [data]
 number = 160
-name = "Feraligatr"
-primary_type = "Water"
-species = "Big"
+name = 'Feraligatr'
+primary_type = 'Water'
+species = 'Big'
 height = 23
 weight = 888
+
 [training]
 base_exp = 239
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 85
 atk = 105
@@ -15,6 +17,10 @@ def = 100
 sp_atk = 79
 sp_def = 83
 speed = 78
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 10
 level = 1

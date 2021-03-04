@@ -1,14 +1,16 @@
 [data]
 number = 247
-name = "Pupitar"
-primary_type = "Rock"
-secondary_type = "Ground"
-species = "Hard"
+name = 'Pupitar'
+primary_type = 'Rock'
+secondary_type = 'Ground'
+species = 'Hard'
 height = 12
 weight = 1520
+
 [training]
 base_exp = 144
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 70
 atk = 84
@@ -16,6 +18,10 @@ def = 70
 sp_atk = 65
 sp_def = 70
 speed = 51
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 37
 level = 29

@@ -1,13 +1,15 @@
 [data]
 number = 262
-name = "Mightyena"
-primary_type = "Dark"
-species = "Bite"
+name = 'Mightyena'
+primary_type = 'Dark'
+species = 'Bite'
 height = 10
 weight = 370
+
 [training]
 base_exp = 147
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 70
 atk = 90
@@ -15,6 +17,10 @@ def = 70
 sp_atk = 60
 sp_def = 60
 speed = 70
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 28
 level = 1

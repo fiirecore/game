@@ -1,13 +1,15 @@
 [data]
 number = 157
-name = "Typhlosion"
-primary_type = "Fire"
-species = "Volcano"
+name = 'Typhlosion'
+primary_type = 'Fire'
+species = 'Volcano'
 height = 17
 weight = 795
+
 [training]
 base_exp = 240
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 78
 atk = 84
@@ -15,6 +17,10 @@ def = 78
 sp_atk = 109
 sp_def = 85
 speed = 100
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

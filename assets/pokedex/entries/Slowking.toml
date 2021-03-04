@@ -1,14 +1,16 @@
 [data]
 number = 199
-name = "Slowking"
-primary_type = "Water"
-secondary_type = "Psychic"
-species = "Royal"
+name = 'Slowking'
+primary_type = 'Water'
+secondary_type = 'Psychic'
+species = 'Royal'
 height = 20
 weight = 795
+
 [training]
 base_exp = 172
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 95
 atk = 75
@@ -16,6 +18,10 @@ def = 80
 sp_atk = 100
 sp_def = 110
 speed = 30
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 29

@@ -1,14 +1,16 @@
 [data]
 number = 123
-name = "Scyther"
-primary_type = "Bug"
-secondary_type = "Flying"
-species = "Mantis"
+name = 'Scyther'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Mantis'
 height = 15
 weight = 560
+
 [training]
 base_exp = 100
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 70
 atk = 110
@@ -16,6 +18,10 @@ def = 80
 sp_atk = 55
 sp_def = 80
 speed = 105
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 14
 level = 36

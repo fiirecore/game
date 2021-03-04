@@ -1,13 +1,15 @@
 [data]
 number = 134
-name = "Vaporeon"
-primary_type = "Water"
-species = "Bubble"
+name = 'Vaporeon'
+primary_type = 'Water'
+species = 'Bubble'
 height = 10
 weight = 290
+
 [training]
 base_exp = 184
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 130
 atk = 65
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 110
 sp_def = 95
 speed = 65
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 28
 level = 8

@@ -1,14 +1,16 @@
 [data]
 number = 178
-name = "Xatu"
-primary_type = "Psychic"
-secondary_type = "Flying"
-species = "Mystic"
+name = 'Xatu'
+primary_type = 'Psychic'
+secondary_type = 'Flying'
+species = 'Mystic'
 height = 15
 weight = 150
+
 [training]
 base_exp = 165
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 75
@@ -16,6 +18,10 @@ def = 70
 sp_atk = 95
 sp_def = 70
 speed = 95
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 43
 level = 1

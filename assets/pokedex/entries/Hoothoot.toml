@@ -1,14 +1,16 @@
 [data]
 number = 163
-name = "Hoothoot"
-primary_type = "Normal"
-secondary_type = "Flying"
-species = "Owl"
+name = 'Hoothoot'
+primary_type = 'Normal'
+secondary_type = 'Flying'
+species = 'Owl'
 height = 7
 weight = 212
+
 [training]
 base_exp = 52
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 30
@@ -16,6 +18,10 @@ def = 30
 sp_atk = 36
 sp_def = 56
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

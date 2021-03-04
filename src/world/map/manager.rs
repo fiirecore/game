@@ -1,3 +1,4 @@
+use crate::util::graphics::texture::byte_texture;
 use frc_audio::play_music;
 use crate::gui::Focus;
 use crate::gui::GuiComponent;
@@ -130,7 +131,7 @@ impl WorldManager {
         if self.window_manager.is_alive() {
             if self.window_manager.is_finished() {
                 if let Some(index) = self.current_map_mut().npc_manager.npc_active.take() {
-                    self.current_map_mut().npc_manager.npcs[index].after_interact();
+                    self.current_map_mut().after_interact(index);
                 }
                 self.window_manager.despawn();
             } else {
@@ -166,8 +167,6 @@ impl WorldManager {
                     self.window_manager.spawn();
                     self.current_map_mut().npc_manager.npcs[index].offset = None;
                     
-
-                    let mut battled = false;
                     if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
                         if !data.world_status.get_or_create_map_data(&self.current_map().name).battled.contains(&self.current_map().npc_manager.npcs[index].identifier.name) {
                             if let Some(trainer) = &self.current_map_mut().npc_manager.npcs[index].trainer {
@@ -177,24 +176,16 @@ impl WorldManager {
                                     trainer.encounter_message.clone()
                                 );
                                 self.window_manager.set_text(message_set);
-                                battled = true;
                             }
                         } else {
-                            info!("{:?}", &self.current_map().npc_manager.npcs[index].message);
-                            self.window_manager.set_text(self.current_map().npc_manager.npcs[index].message.clone());
-                        }
-                    }
-
-                    if battled {
-                        if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
-                            let npc_name = self.current_map_mut().npc_manager.npcs[index].identifier.name.clone();
-                            std::ops::DerefMut::deref_mut(&mut data).world_status.get_or_create_map_data(&self.current_map_mut().name).battled.insert(npc_name);
+                            // info!("{:?}", &self.current_map().npc_manager.npcs[index].message);
+                            self.window_manager.set_text(self.current_map().npc_manager.npcs[index].message_set.clone());
                         }
                     }
 
                     self.player.position.local.direction = self.current_map_mut().npc_manager.npcs[index].position.direction.inverse();
                     if self.player.frozen {
-                        self.player.move_update(0.0);
+                        // self.player.move_update(0.0);
                         self.player.frozen = false;
                     }
                 }
@@ -270,7 +261,7 @@ impl WorldManager {
                 self.map_sets.input(delta, &mut self.player);
             }
     
-            if self.player.position.local.x_offset == 0.0 && self.player.position.local.y_offset == 0.0 && !self.player.frozen {
+            if self.player.position.local.offset.x == 0.0 && self.player.position.local.offset.y == 0.0 && !self.player.frozen {
                 self.player.moving = true;
 
                 if input::down(Control::B) {
@@ -364,48 +355,48 @@ impl WorldManager {
             false
         };
         if test_move_code(move_code, jump || self.player.noclip) {
-            self.player.position.local.x_offset = offset.0;
-            self.player.position.local.y_offset = offset.1;
+            self.player.position.local.offset.x = offset.0;
+            self.player.position.local.offset.y = offset.1;
         }
     }
 
     fn player_movement(&mut self, delta: f32) {
-        if self.player.position.local.x_offset != 0.0 || self.player.position.local.y_offset != 0.0 {
+        if self.player.position.local.offset.x != 0.0 || self.player.position.local.offset.y != 0.0 {
             match self.player.position.local.direction {
                 Direction::Up => {
-                    self.player.position.local.y_offset -= (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.y_offset <= -16.0 {
+                    self.player.position.local.offset.y -= (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.offset.y <= -16.0 {
                         self.player.position.local.coords.y -= 1;
-                        self.player.position.local.y_offset = 0.0;
+                        self.player.position.local.offset.y = 0.0;
                         self.stop_player();
                     }
                 }
                 Direction::Down => {
-                    self.player.position.local.y_offset += (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.y_offset >= 16.0 {
+                    self.player.position.local.offset.y += (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.offset.y >= 16.0 {
                         self.player.position.local.coords.y += 1;
-                        self.player.position.local.y_offset = 0.0;
+                        self.player.position.local.offset.y = 0.0;
                         self.stop_player();
                     }
                 }
                 Direction::Left => {
-                    self.player.position.local.x_offset -= (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.x_offset <= -16.0 {
+                    self.player.position.local.offset.x -= (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.offset.x <= -16.0 {
                         self.player.position.local.coords.x -= 1;
-                        self.player.position.local.x_offset = 0.0;
+                        self.player.position.local.offset.x = 0.0;
                         self.stop_player();
                     }
                 }
                 Direction::Right => {
-                    self.player.position.local.x_offset += (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.x_offset >= 16.0 {
+                    self.player.position.local.offset.x += (self.player.speed as f32) * 60.0 * delta;
+                    if self.player.position.local.offset.x >= 16.0 {
                         self.player.position.local.coords.x += 1;
-                        self.player.position.local.x_offset = 0.0;
+                        self.player.position.local.offset.x = 0.0;
                         self.stop_player();
                     }
                 }
             }
-            self.player.move_update(delta);
+            // self.player.move_update(delta);
         }
     }
 
@@ -418,7 +409,7 @@ impl WorldManager {
 
     fn stop_player(&mut self) {
         //self.player.moving = false;
-        self.player.on_stopped_moving();
+        // self.player.on_stopped_moving();
         let x = self.player.position.local.coords.x;
         let y = self.player.position.local.coords.y;
         if self.chunk_active {
@@ -485,7 +476,9 @@ impl WorldManager {
 
     pub fn load_player(&mut self, player_data: &PlayerData) {
         self.player = Player::new(player_data);
-        self.player.load_textures();
+        self.player.walking_texture = Some(byte_texture(include_bytes!("../../../build/assets/player.png")));
+        self.player.running_texture = Some(byte_texture(include_bytes!("../../../build/assets/player_running.png")));
+        // self.player.load_textures();
         if player_data.location.map_id.as_str().eq("world") {
             self.chunk_active = true;
         } else {

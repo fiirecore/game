@@ -1,14 +1,16 @@
 [data]
 number = 267
-name = "Beautifly"
-primary_type = "Bug"
-secondary_type = "Flying"
-species = "Butterfly"
+name = 'Beautifly'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Butterfly'
 height = 10
 weight = 284
+
 [training]
 base_exp = 178
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 70
@@ -16,6 +18,10 @@ def = 50
 sp_atk = 100
 sp_def = 50
 speed = 65
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 16
 level = 13

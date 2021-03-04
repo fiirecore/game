@@ -1,13 +1,15 @@
 [data]
 number = 372
-name = "Shelgon"
-primary_type = "Dragon"
-species = "Endurance"
+name = 'Shelgon'
+primary_type = 'Dragon'
+species = 'Endurance'
 height = 11
 weight = 1105
+
 [training]
 base_exp = 147
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 65
 atk = 95
@@ -15,6 +17,10 @@ def = 100
 sp_atk = 60
 sp_def = 50
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 1

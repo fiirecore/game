@@ -1,14 +1,16 @@
 [data]
 number = 319
-name = "Sharpedo"
-primary_type = "Water"
-secondary_type = "Dark"
-species = "Brutal"
+name = 'Sharpedo'
+primary_type = 'Water'
+secondary_type = 'Dark'
+species = 'Brutal'
 height = 18
 weight = 888
+
 [training]
 base_exp = 161
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 70
 atk = 120
@@ -16,6 +18,10 @@ def = 40
 sp_atk = 95
 sp_def = 40
 speed = 95
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 43
 level = 1

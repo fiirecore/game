@@ -1,13 +1,15 @@
 [data]
 number = 88
-name = "Grimer"
-primary_type = "Poison"
-species = "Sludge"
+name = 'Grimer'
+primary_type = 'Poison'
+species = 'Sludge'
 height = 9
 weight = 300
+
 [training]
 base_exp = 65
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 80
 atk = 80
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 40
 sp_def = 50
 speed = 25
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 1
 level = 1

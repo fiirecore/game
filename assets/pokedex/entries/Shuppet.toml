@@ -1,13 +1,15 @@
 [data]
 number = 353
-name = "Shuppet"
-primary_type = "Ghost"
-species = "Puppet"
+name = 'Shuppet'
+primary_type = 'Ghost'
+species = 'Puppet'
 height = 6
 weight = 23
+
 [training]
 base_exp = 59
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 44
 atk = 75
@@ -15,6 +17,10 @@ def = 35
 sp_atk = 63
 sp_def = 33
 speed = 45
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 101
 level = 13

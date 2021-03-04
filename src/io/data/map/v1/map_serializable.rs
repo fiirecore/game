@@ -41,6 +41,7 @@ fn map_default_name() -> String {
 pub struct SerializedMapSettings {
 
     pub fly_position: Coordinate,
+    // pub draw_color: Option<[u8; 3]>,
 
 }
 

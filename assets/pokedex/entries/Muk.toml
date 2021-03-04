@@ -1,13 +1,15 @@
 [data]
 number = 89
-name = "Muk"
-primary_type = "Poison"
-species = "Sludge"
+name = 'Muk'
+primary_type = 'Poison'
+species = 'Sludge'
 height = 12
 weight = 300
+
 [training]
 base_exp = 175
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 105
 atk = 105
@@ -15,6 +17,10 @@ def = 75
 sp_atk = 65
 sp_def = 100
 speed = 50
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 1
 level = 1

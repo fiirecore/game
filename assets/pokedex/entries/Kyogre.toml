@@ -1,13 +1,15 @@
 [data]
 number = 382
-name = "Kyogre"
-primary_type = "Water"
-species = "Sea"
+name = 'Kyogre'
+primary_type = 'Water'
+species = 'Sea'
 height = 45
 weight = 3520
+
 [training]
 base_exp = 302
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 100
 atk = 100
@@ -15,6 +17,9 @@ def = 90
 sp_atk = 150
 sp_def = 140
 speed = 90
+
+[breeding]
+
 [[moves]]
 move_id = 34
 level = 20

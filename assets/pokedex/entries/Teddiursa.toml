@@ -1,13 +1,15 @@
 [data]
 number = 216
-name = "Teddiursa"
-primary_type = "Normal"
-species = "Little"
+name = 'Teddiursa'
+primary_type = 'Normal'
+species = 'Little'
 height = 6
 weight = 88
+
 [training]
 base_exp = 66
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 80
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 50
 sp_def = 50
 speed = 40
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

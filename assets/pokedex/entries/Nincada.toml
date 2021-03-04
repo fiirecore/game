@@ -1,14 +1,16 @@
 [data]
 number = 290
-name = "Nincada"
-primary_type = "Bug"
-secondary_type = "Ground"
-species = "Trainee"
+name = 'Nincada'
+primary_type = 'Bug'
+secondary_type = 'Ground'
+species = 'Trainee'
 height = 5
 weight = 55
+
 [training]
 base_exp = 53
-growth_rate = "slow-then-very-fast"
+growth_rate = 'slow-then-very-fast'
+
 [base]
 hp = 31
 atk = 45
@@ -16,6 +18,10 @@ def = 90
 sp_atk = 30
 sp_def = 30
 speed = 40
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

@@ -8,3 +8,6 @@ map_set_id = "viridian_forest"
 [wild]
 encounter_type = "original"
 wild_tiles = [0x0D]
+
+#[settings]
+# draw_color = [200, 200, 200]

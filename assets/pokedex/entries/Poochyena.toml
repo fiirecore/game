@@ -1,13 +1,15 @@
 [data]
 number = 261
-name = "Poochyena"
-primary_type = "Dark"
-species = "Bite"
+name = 'Poochyena'
+primary_type = 'Dark'
+species = 'Bite'
 height = 5
 weight = 136
+
 [training]
 base_exp = 56
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 35
 atk = 55
@@ -15,6 +17,10 @@ def = 35
 sp_atk = 30
 sp_def = 30
 speed = 35
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 28
 level = 9

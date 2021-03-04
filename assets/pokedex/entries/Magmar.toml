@@ -1,13 +1,15 @@
 [data]
 number = 126
-name = "Magmar"
-primary_type = "Fire"
-species = "Spitfire"
+name = 'Magmar'
+primary_type = 'Fire'
+species = 'Spitfire'
 height = 13
 weight = 445
+
 [training]
 base_exp = 173
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 95
@@ -15,6 +17,10 @@ def = 57
 sp_atk = 100
 sp_def = 85
 speed = 93
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 7
 level = 1

@@ -9,5 +9,17 @@
             "y": 10
         },
         "direction": "Down"
+    },
+    "message_set": {
+        "messages": [{
+                "message": "I'm raising POKEMON too."
+            },
+            {
+                "message": [
+                    "When they get strong, they can",
+                    "protect me."
+                ]
+            }
+        ]
     }
 }

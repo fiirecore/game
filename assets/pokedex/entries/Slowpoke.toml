@@ -1,14 +1,16 @@
 [data]
 number = 79
-name = "Slowpoke"
-primary_type = "Water"
-secondary_type = "Psychic"
-species = "Dopey"
+name = 'Slowpoke'
+primary_type = 'Water'
+secondary_type = 'Psychic'
+species = 'Dopey'
 height = 12
 weight = 360
+
 [training]
 base_exp = 63
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 90
 atk = 65
@@ -16,6 +18,10 @@ def = 65
 sp_atk = 40
 sp_def = 40
 speed = 15
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 29
 level = 29

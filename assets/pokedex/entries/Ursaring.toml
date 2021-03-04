@@ -1,13 +1,15 @@
 [data]
 number = 217
-name = "Ursaring"
-primary_type = "Normal"
-species = "Hibernator"
+name = 'Ursaring'
+primary_type = 'Normal'
+species = 'Hibernator'
 height = 18
 weight = 1258
+
 [training]
 base_exp = 175
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 90
 atk = 130
@@ -15,6 +17,10 @@ def = 75
 sp_atk = 75
 sp_def = 75
 speed = 55
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

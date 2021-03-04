@@ -1,13 +1,15 @@
 [data]
 number = 125
-name = "Electabuzz"
-primary_type = "Electric"
-species = "Electric"
+name = 'Electabuzz'
+primary_type = 'Electric'
+species = 'Electric'
 height = 11
 weight = 300
+
 [training]
 base_exp = 172
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 83
@@ -15,6 +17,10 @@ def = 57
 sp_atk = 95
 sp_def = 85
 speed = 105
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 9
 level = 1

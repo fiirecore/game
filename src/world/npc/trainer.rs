@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use frc_audio::music::Music;
 use crate::battle::battle_info::BattleType;
 use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
-use firecore_pokedex::party::PokemonParty;
+use firecore_pokedex::pokemon::party::PokemonParty;
 
 #[derive(Clone, Deserialize, Serialize)]
 pub struct Trainer {

@@ -1,13 +1,15 @@
 [data]
 number = 293
-name = "Whismur"
-primary_type = "Normal"
-species = "Whisper"
+name = 'Whismur'
+primary_type = 'Normal'
+species = 'Whisper'
 height = 6
 weight = 163
+
 [training]
 base_exp = 48
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 64
 atk = 51
@@ -15,6 +17,10 @@ def = 23
 sp_atk = 51
 sp_def = 23
 speed = 28
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 1
 level = 1

@@ -1,13 +1,15 @@
 [data]
 number = 8
-name = "Wartortle"
-primary_type = "Water"
-species = "Turtle"
+name = 'Wartortle'
+primary_type = 'Water'
+species = 'Turtle'
 height = 10
 weight = 225
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 59
 atk = 63
@@ -15,6 +17,10 @@ def = 80
 sp_atk = 65
 sp_def = 80
 speed = 58
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

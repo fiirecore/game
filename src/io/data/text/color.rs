@@ -14,7 +14,7 @@ pub enum TextColor {
 
 impl Default for TextColor {
     fn default() -> Self {
-        Self::White
+        Self::Black
     }
 }
 

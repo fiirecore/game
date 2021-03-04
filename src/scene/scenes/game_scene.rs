@@ -117,7 +117,7 @@ impl Scene for GameScene {
 	}
 
 	fn quit(&mut self) {
-        self.save_data(&mut storage::get_mut::<PlayerData>().expect("Could not get player data"));      
+        self.save_data(&mut storage::get_mut::<PlayerData>().expect("Could not get player data"));
 	}
 	
 	fn state(&self) -> SceneState {

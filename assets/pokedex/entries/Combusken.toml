@@ -1,14 +1,16 @@
 [data]
 number = 256
-name = "Combusken"
-primary_type = "Fire"
-secondary_type = "Fighting"
-species = "Young"
+name = 'Combusken'
+primary_type = 'Fire'
+secondary_type = 'Fighting'
+species = 'Young'
 height = 9
 weight = 195
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 60
 atk = 85
@@ -16,6 +18,10 @@ def = 60
 sp_atk = 85
 sp_def = 60
 speed = 55
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 10
 level = 1

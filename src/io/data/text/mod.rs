@@ -8,7 +8,7 @@ pub mod color;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Message {
 
-    #[serde(default)]
+    #[serde(default = "default_font")]
     pub font_id: usize,
     pub message: Vec<String>,
     #[serde(default)]
@@ -27,6 +27,10 @@ impl Default for Message {
             no_pause: true,
         }
     }
+}
+
+const fn default_font() -> usize {
+    1
 }
 
 impl Message {

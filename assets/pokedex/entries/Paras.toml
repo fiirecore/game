@@ -1,14 +1,16 @@
 [data]
 number = 46
-name = "Paras"
-primary_type = "Bug"
-secondary_type = "Grass"
-species = "Mushroom"
+name = 'Paras'
+primary_type = 'Bug'
+secondary_type = 'Grass'
+species = 'Mushroom'
 height = 3
 weight = 54
+
 [training]
 base_exp = 57
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 35
 atk = 70
@@ -16,6 +18,10 @@ def = 55
 sp_atk = 45
 sp_def = 55
 speed = 25
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

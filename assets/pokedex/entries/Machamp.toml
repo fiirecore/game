@@ -1,13 +1,15 @@
 [data]
 number = 68
-name = "Machamp"
-primary_type = "Fighting"
-species = "Superpower"
+name = 'Machamp'
+primary_type = 'Fighting'
+species = 'Superpower'
 height = 16
 weight = 1300
+
 [training]
 base_exp = 227
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 90
 atk = 130
@@ -15,6 +17,10 @@ def = 80
 sp_atk = 65
 sp_def = 85
 speed = 55
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 2
 level = 13

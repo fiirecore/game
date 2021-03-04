@@ -1,14 +1,16 @@
 [data]
 number = 278
-name = "Wingull"
-primary_type = "Water"
-secondary_type = "Flying"
-species = "Seagull"
+name = 'Wingull'
+primary_type = 'Water'
+secondary_type = 'Flying'
+species = 'Seagull'
 height = 6
 weight = 95
+
 [training]
 base_exp = 54
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 40
 atk = 30
@@ -16,6 +18,10 @@ def = 30
 sp_atk = 55
 sp_def = 30
 speed = 85
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 17
 level = 13

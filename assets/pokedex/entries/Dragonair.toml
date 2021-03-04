@@ -1,13 +1,15 @@
 [data]
 number = 148
-name = "Dragonair"
-primary_type = "Dragon"
-species = "Dragon"
+name = 'Dragonair'
+primary_type = 'Dragon'
+species = 'Dragon'
 height = 40
 weight = 165
+
 [training]
 base_exp = 147
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 61
 atk = 84
@@ -15,6 +17,10 @@ def = 65
 sp_atk = 70
 sp_def = 70
 speed = 70
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 21
 level = 29

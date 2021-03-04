@@ -1,13 +1,15 @@
 [data]
 number = 321
-name = "Wailord"
-primary_type = "Water"
-species = "Float"
+name = 'Wailord'
+primary_type = 'Water'
+species = 'Float'
 height = 145
 weight = 3980
+
 [training]
 base_exp = 175
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 170
 atk = 90
@@ -15,6 +17,10 @@ def = 45
 sp_atk = 90
 sp_def = 45
 speed = 60
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 45
 level = 1

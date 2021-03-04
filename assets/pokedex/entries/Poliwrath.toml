@@ -1,14 +1,16 @@
 [data]
 number = 62
-name = "Poliwrath"
-primary_type = "Water"
-secondary_type = "Fighting"
-species = "Tadpole"
+name = 'Poliwrath'
+primary_type = 'Water'
+secondary_type = 'Fighting'
+species = 'Tadpole'
 height = 13
 weight = 540
+
 [training]
 base_exp = 230
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 90
 atk = 95
@@ -16,6 +18,10 @@ def = 95
 sp_atk = 70
 sp_def = 90
 speed = 70
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 3
 level = 1

@@ -1,8 +1,9 @@
 use crate::io::data::player::PlayerData;
 use firecore_pokedex::moves::MoveCategory;
 use firecore_pokedex::moves::PokemonMove;
-use firecore_pokedex::party::PokemonParty;
-use firecore_pokedex::texture::PokemonTexture;
+use firecore_pokedex::pokemon::party::PokemonParty;
+use firecore_pokedex::pokemon::texture::PokemonTexture;
+use macroquad::prelude::warn;
 use crate::pokemon::pokemon_texture;
 use crate::util::graphics::Texture;
 use crate::util::Entity;
@@ -10,7 +11,7 @@ use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::util::graphics::draw_bottom;
 use super::battle_info::BattleType;
-use super::battle_pokemon::BattlePokemon;
+use firecore_pokedex::pokemon::battle::BattlePokemon;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 
 pub struct Battle {
@@ -75,24 +76,45 @@ impl Default for Battle {
 
 impl Battle {
 	
-	pub fn new(battle_type: BattleType, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Self {
+	pub fn new(battle_type: BattleType, player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty) -> Option<Self> {
 		
 		let mut player_active = 0;
 
-		Self {
-			
-			player_pokemon: player_pokemon.pokemon.iter().map(|pokemon| {
-				if let Some(hp) = pokemon.current_hp {
-					if hp == 0 {
-						player_active += 1;
-					}
+		let mut player_party = Vec::new();
+
+		for pokemon in &player_pokemon.pokemon {
+			if let Some(hp) = pokemon.current_hp {
+				if hp == 0 {
+					player_active += 1;
 				}
-				BattlePokemon::new(pokemon)
 			}
-			).collect(),
-			opponent_pokemon: opponent_pokemon.pokemon.iter().map(|pokemon| {
-				BattlePokemon::new(pokemon)
-			}).collect(),
+			if let Some(battle_pokemon) = BattlePokemon::new(pokemon) {
+				player_party.push(battle_pokemon);
+			} else {
+				warn!("Could not add pokemon with id {} to player pokemon party", pokemon.id);
+			}
+		}
+
+		let mut opponent_party = Vec::new();
+
+		for pokemon in &opponent_pokemon.pokemon {
+			if let Some(battle_pokemon) = BattlePokemon::new(pokemon) {
+				opponent_party.push(battle_pokemon);
+			} else {
+				warn!("Could not add pokemon with id {} to opponent pokemon party", pokemon.id);
+			}
+		}
+
+		if player_party.is_empty() || opponent_party.is_empty() {
+			warn!("Could not create battle because either player party or opponent party was empty!");
+			return None;
+		}
+
+		Some(Self {
+			
+			player_pokemon: player_party,
+
+			opponent_pokemon: opponent_party,
 			
 			player_active: player_active,
 
@@ -100,7 +122,7 @@ impl Battle {
 
 			..Battle::default()
 			
-		}
+		})
 		
 	}
 
@@ -231,14 +253,14 @@ impl Battle {
 
 		// ???
 
-		let mut vec: Vec<firecore_pokedex::instance::PokemonInstance> = self.player_pokemon.iter_mut().map(|pokemon| {
+		let vec: Vec<firecore_pokedex::pokemon::instance::PokemonInstance> = self.player_pokemon.iter_mut().map(|pokemon| {
 			pokemon.current_hp = pokemon.base.hp;
 			pokemon.to_instance()
 		}).collect();
 
-		vec.reverse();
+		// vec.reverse();
 		
-		player_data.party.pokemon = vec;
+		player_data.party.pokemon = vec.into();
 		
 	}
 

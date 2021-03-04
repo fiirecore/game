@@ -1,13 +1,15 @@
 [data]
 number = 78
-name = "Rapidash"
-primary_type = "Fire"
-species = "Fire"
+name = 'Rapidash'
+primary_type = 'Fire'
+species = 'Fire'
 height = 17
 weight = 950
+
 [training]
 base_exp = 175
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 65
 atk = 100
@@ -15,6 +17,10 @@ def = 70
 sp_atk = 80
 sp_def = 80
 speed = 105
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 23
 level = 19

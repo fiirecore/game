@@ -1,14 +1,16 @@
 [data]
 number = 174
-name = "Igglybuff"
-primary_type = "Normal"
-secondary_type = "Fairy"
-species = "Balloon"
+name = 'Igglybuff'
+primary_type = 'Normal'
+secondary_type = 'Fairy'
+species = 'Balloon'
 height = 3
 weight = 10
+
 [training]
 base_exp = 42
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 90
 atk = 30
@@ -16,6 +18,10 @@ def = 15
 sp_atk = 40
 sp_def = 20
 speed = 15
+
+[breeding]
+gender = 6
+
 [[moves]]
 move_id = 1
 level = 9

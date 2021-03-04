@@ -1,14 +1,16 @@
 [data]
 number = 343
-name = "Baltoy"
-primary_type = "Ground"
-secondary_type = "Psychic"
-species = "Clay"
+name = 'Baltoy'
+primary_type = 'Ground'
+secondary_type = 'Psychic'
+species = 'Clay'
 height = 5
 weight = 215
+
 [training]
 base_exp = 60
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 40
 atk = 40
@@ -16,6 +18,9 @@ def = 55
 sp_atk = 40
 sp_def = 70
 speed = 55
+
+[breeding]
+
 [[moves]]
 move_id = 60
 level = 11

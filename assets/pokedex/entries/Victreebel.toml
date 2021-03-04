@@ -1,14 +1,16 @@
 [data]
 number = 71
-name = "Victreebel"
-primary_type = "Grass"
-secondary_type = "Poison"
-species = "Flycatcher"
+name = 'Victreebel'
+primary_type = 'Grass'
+secondary_type = 'Poison'
+species = 'Flycatcher'
 height = 17
 weight = 155
+
 [training]
 base_exp = 221
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 80
 atk = 105
@@ -16,6 +18,10 @@ def = 65
 sp_atk = 100
 sp_def = 70
 speed = 70
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 22
 level = 1

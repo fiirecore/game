@@ -1,14 +1,16 @@
 [data]
 number = 82
-name = "Magneton"
-primary_type = "Electric"
-secondary_type = "Steel"
-species = "Magnet"
+name = 'Magneton'
+primary_type = 'Electric'
+secondary_type = 'Steel'
+species = 'Magnet'
 height = 10
 weight = 600
+
 [training]
 base_exp = 163
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 50
 atk = 60
@@ -16,6 +18,9 @@ def = 95
 sp_atk = 120
 sp_def = 70
 speed = 70
+
+[breeding]
+
 [[moves]]
 move_id = 33
 level = 1

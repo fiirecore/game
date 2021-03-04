@@ -1,13 +1,15 @@
 [data]
 number = 59
-name = "Arcanine"
-primary_type = "Fire"
-species = "Legendary"
+name = 'Arcanine'
+primary_type = 'Fire'
+species = 'Legendary'
 height = 19
 weight = 1550
+
 [training]
 base_exp = 194
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 90
 atk = 110
@@ -15,6 +17,10 @@ def = 80
 sp_atk = 100
 sp_def = 80
 speed = 95
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 44
 level = 1

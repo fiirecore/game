@@ -1,13 +1,15 @@
 [data]
 number = 289
-name = "Slaking"
-primary_type = "Normal"
-species = "Lazy"
+name = 'Slaking'
+primary_type = 'Normal'
+species = 'Lazy'
 height = 20
 weight = 1305
+
 [training]
 base_exp = 252
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 150
 atk = 160
@@ -15,6 +17,10 @@ def = 100
 sp_atk = 95
 sp_def = 65
 speed = 100
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 10
 level = 1

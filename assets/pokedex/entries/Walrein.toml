@@ -1,14 +1,16 @@
 [data]
 number = 365
-name = "Walrein"
-primary_type = "Ice"
-secondary_type = "Water"
-species = "Ice"
+name = 'Walrein'
+primary_type = 'Ice'
+secondary_type = 'Water'
+species = 'Ice'
 height = 14
 weight = 1506
+
 [training]
 base_exp = 239
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 110
 atk = 80
@@ -16,6 +18,10 @@ def = 90
 sp_atk = 95
 sp_def = 90
 speed = 65
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 34
 level = 19

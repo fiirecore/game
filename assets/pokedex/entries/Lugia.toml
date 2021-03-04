@@ -1,14 +1,16 @@
 [data]
 number = 249
-name = "Lugia"
-primary_type = "Psychic"
-secondary_type = "Flying"
-species = "Diving"
+name = 'Lugia'
+primary_type = 'Psychic'
+secondary_type = 'Flying'
+species = 'Diving'
 height = 52
 weight = 2160
+
 [training]
 base_exp = 306
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 106
 atk = 90
@@ -16,6 +18,9 @@ def = 130
 sp_atk = 90
 sp_def = 154
 speed = 110
+
+[breeding]
+
 [[moves]]
 move_id = 16
 level = 22

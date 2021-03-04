@@ -1,13 +1,15 @@
 [data]
 number = 310
-name = "Manectric"
-primary_type = "Electric"
-species = "Discharge"
+name = 'Manectric'
+primary_type = 'Electric'
+species = 'Discharge'
 height = 15
 weight = 402
+
 [training]
 base_exp = 166
-growth_rate = "slow"
+growth_rate = 'slow'
+
 [base]
 hp = 70
 atk = 75
@@ -15,6 +17,10 @@ def = 60
 sp_atk = 105
 sp_def = 60
 speed = 105
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 33
 level = 1

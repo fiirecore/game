@@ -1,3 +1,5 @@
+use macroquad::prelude::Vec2;
+
 use crate::util::TILE_SIZE;
 
 use super::player::Player;
@@ -10,8 +12,7 @@ pub struct RenderCoords {
     pub top: isize,
     pub bottom: isize,
 
-    pub x_focus: f32,
-    pub y_focus: f32,
+    pub focus: Vec2,
 
     pub x_tile_offset: isize,
     pub y_tile_offset: isize,
@@ -35,8 +36,7 @@ impl RenderCoords {
             top: player.position.get_y() - HALF_HEIGHT_TILE,
             bottom: player.position.get_y() + HALF_HEIGHT_TILE,
 
-            x_focus: (player.position.get_x() + 1 << 4) as f32 + player.position.local.x_offset - HALF_WIDTH as f32,
-            y_focus: (player.position.get_y() + 1 << 4) as f32 + player.position.local.y_offset - HALF_HEIGHT as f32,
+            focus: Vec2::new((player.position.get_x() + 1 << 4) as f32 + player.position.local.offset.x - HALF_WIDTH as f32, (player.position.get_y() + 1 << 4) as f32 + player.position.local.offset.y - HALF_HEIGHT as f32),
 
             ..Default::default()
         }

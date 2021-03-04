@@ -1,13 +1,15 @@
 [data]
 number = 296
-name = "Makuhita"
-primary_type = "Fighting"
-species = "Guts"
+name = 'Makuhita'
+primary_type = 'Fighting'
+species = 'Guts'
 height = 10
 weight = 864
+
 [training]
 base_exp = 47
-growth_rate = "fast-then-very-slow"
+growth_rate = 'fast-then-very-slow'
+
 [base]
 hp = 72
 atk = 60
@@ -15,6 +17,10 @@ def = 30
 sp_atk = 20
 sp_def = 30
 speed = 25
+
+[breeding]
+gender = 2
+
 [[moves]]
 move_id = 18
 level = 22

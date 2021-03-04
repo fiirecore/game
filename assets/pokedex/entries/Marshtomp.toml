@@ -1,14 +1,16 @@
 [data]
 number = 259
-name = "Marshtomp"
-primary_type = "Water"
-secondary_type = "Ground"
-species = "Mud"
+name = 'Marshtomp'
+primary_type = 'Water'
+secondary_type = 'Ground'
+species = 'Mud'
 height = 7
 weight = 280
+
 [training]
 base_exp = 142
-growth_rate = "medium-slow"
+growth_rate = 'medium-slow'
+
 [base]
 hp = 70
 atk = 85
@@ -16,6 +18,10 @@ def = 70
 sp_atk = 60
 sp_def = 70
 speed = 50
+
+[breeding]
+gender = 1
+
 [[moves]]
 move_id = 33
 level = 1

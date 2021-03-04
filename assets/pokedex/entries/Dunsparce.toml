@@ -1,13 +1,15 @@
 [data]
 number = 206
-name = "Dunsparce"
-primary_type = "Normal"
-species = "Land"
+name = 'Dunsparce'
+primary_type = 'Normal'
+species = 'Land'
 height = 15
 weight = 140
+
 [training]
 base_exp = 145
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 100
 atk = 70
@@ -15,6 +17,10 @@ def = 70
 sp_atk = 65
 sp_def = 65
 speed = 45
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 36
 level = 41

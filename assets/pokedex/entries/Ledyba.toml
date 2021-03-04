@@ -1,14 +1,16 @@
 [data]
 number = 165
-name = "Ledyba"
-primary_type = "Bug"
-secondary_type = "Flying"
-species = "Five"
+name = 'Ledyba'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Five'
 height = 10
 weight = 108
+
 [training]
 base_exp = 53
-growth_rate = "fast"
+growth_rate = 'fast'
+
 [base]
 hp = 40
 atk = 20
@@ -16,6 +18,10 @@ def = 30
 sp_atk = 40
 sp_def = 80
 speed = 55
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 4
 level = 15

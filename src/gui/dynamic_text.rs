@@ -61,11 +61,28 @@ impl DynamicText {
 	
 	pub fn new(text_x: f32, text_y: f32, panel_x: f32, panel_y: f32) -> Self {
 		Self {
+
 			x: text_x,
 			y: text_y,
 			panel_x: panel_x,
 			panel_y: panel_y,
-			..Default::default()
+
+			text: MessageSet::default(),
+
+			alive: false,
+			focus: false,
+
+			current_phrase: 0,
+			current_line: 0,
+
+			counter: 0.0,
+
+			can_continue: false,
+			finish_click: false,
+			timer: Timer::new(1.0),
+			
+			button_pos: 0.0,
+			button_up: true,
 		}
 	}
 
@@ -243,32 +260,6 @@ impl Entity for DynamicText {
 		self.alive
 	}
 
-}
-
-impl Default for DynamicText {
-    fn default() -> Self {
-        Self {
-			alive: false,
-			focus: false,
-
-			x: 0.0,
-			y: 0.0,
-			panel_x: 0.0,
-			panel_y: 0.0,
-			text: MessageSet::default(),
-			current_phrase: 0,
-			current_line: 0,
-
-			counter: 0.0,
-
-			can_continue: false,
-			finish_click: false,
-			timer: Timer::new(1.0),
-			
-			button_pos: 0.0,
-			button_up: true,
-		}
-    }
 }
 
 const fn dx() -> f32 {

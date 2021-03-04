@@ -1,13 +1,15 @@
 [data]
 number = 312
-name = "Minun"
-primary_type = "Electric"
-species = "Cheering"
+name = 'Minun'
+primary_type = 'Electric'
+species = 'Cheering'
 height = 4
 weight = 42
+
 [training]
 base_exp = 142
-growth_rate = "medium"
+growth_rate = 'medium'
+
 [base]
 hp = 60
 atk = 40
@@ -15,6 +17,10 @@ def = 50
 sp_atk = 75
 sp_def = 85
 speed = 95
+
+[breeding]
+gender = 4
+
 [[moves]]
 move_id = 45
 level = 1

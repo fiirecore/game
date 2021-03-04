@@ -78,17 +78,17 @@ impl NPC {
 
             let offsets = self.position.direction.offset();
             let offset = 60.0 * self.speed * delta;
-            self.position.x_offset += offsets.0 * offset;
-            self.position.y_offset += offsets.1 * offset;
+            self.position.offset.x += offsets.0 * offset;
+            self.position.offset.y += offsets.1 * offset;
 
-            if self.position.y_offset * offsets.1 >= 16.0 {
+            if self.position.offset.y * offsets.1 >= 16.0 {
                 self.position.coords.y += offsets.1 as isize;
-                self.position.y_offset = 0.0;
+                self.position.offset.y = 0.0;
             }
             
-            if self.position.x_offset * offsets.0 >= 16.0 {
+            if self.position.offset.x * offsets.0 >= 16.0 {
                 self.position.coords.x += offsets.0 as isize;
-                self.position.x_offset = 0.0;
+                self.position.offset.x = 0.0;
             }
             
         }
