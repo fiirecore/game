@@ -22,6 +22,9 @@ speed = 56
 [breeding]
 gender = 4
 
+[cry]
+path = "cry_pidgey.ogg"
+
 [[moves]]
 move_id = 16
 level = 9

@@ -46,7 +46,7 @@ impl PlayerPanel {
 	}
     
     pub fn input(&mut self, delta: f32, battle: &mut Battle) {
-        if self.battle_panel.in_focus() {
+        if self.battle_panel.is_alive() {
             self.battle_panel.input(delta);
             if input::pressed(input::Control::A) {
                 match self.battle_panel.cursor_x + self.battle_panel.cursor_y * 2 {
@@ -65,8 +65,8 @@ impl PlayerPanel {
                     _ => {}
                 }
             }        
-        } else if self.fight_panel.in_focus() {
-            self.fight_panel.input(delta);
+        } else if self.fight_panel.is_alive() {
+            self.fight_panel.input(battle);
             if input::pressed(input::Control::A) {
                 self.fight_panel.despawn();
 
@@ -86,7 +86,6 @@ impl PlayerPanel {
 
     pub fn start(&mut self) {
         self.battle_panel.spawn();
-        self.battle_panel.focus();
     }
 
 }
@@ -98,16 +97,14 @@ impl GuiComponent for PlayerPanel {
             if self.battle_panel.next == 1 {
                 self.battle_panel.despawn();
                 self.fight_panel.spawn();
-                self.fight_panel.focus();
             } else if self.fight_panel.next == 1 {
                 self.fight_panel.despawn();
                 self.battle_panel.spawn();
-                self.battle_panel.focus();
             }
             
-            if self.battle_panel.in_focus() {
+            if self.battle_panel.is_alive() {
                 self.battle_panel.update(delta);
-            } else if self.fight_panel.in_focus() {
+            } else if self.fight_panel.is_alive() {
                 self.fight_panel.update(delta);
             }
         }

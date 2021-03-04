@@ -1,6 +1,6 @@
 use firecore_pokedex::pokemon::battle::BattlePokemon;
+use crate::battle::battle::Battle;
 use crate::util::Entity;
-use crate::gui::Focus;
 use crate::util::graphics::Texture;
 
 use crate::gui::GuiComponent;
@@ -71,6 +71,53 @@ impl FightPanel {
         self.next = 0;
         self.cursor_x = 0;
         self.cursor_y = 0;
+        self.move_panel.has_move = false;
+    }
+
+    pub fn update_move(&mut self, battle: &Battle) {
+        if let Some(pmove) = battle.player().moves.get((self.cursor_x + self.cursor_y * 2) as usize) {
+            self.move_panel.update_with_move(pmove);
+        }        
+    }
+
+    pub fn input(&mut self, battle: &Battle) {
+
+        if !self.move_panel.has_move {
+            self.update_move(battle);
+            self.move_panel.has_move = true;
+        }
+
+        if input::pressed(Control::B) {
+            self.next = 1;
+        }
+        if input::pressed(Control::Up) {
+            if self.cursor_y > 0 {
+                self.cursor_y -= 1;
+                self.update_move(battle);
+            }            
+        } else if input::pressed(Control::Down) {
+            if self.cursor_y < 1 {
+                self.cursor_y += 1;
+                self.update_move(battle);
+            } 
+        } else if input::pressed(Control::Left) {
+            if self.cursor_x > 0 {
+                self.cursor_x -= 1;
+                self.update_move(battle);
+            }
+        } else if input::pressed(Control::Right) {
+            if self.cursor_x < 1 {
+                self.cursor_x += 1;
+                self.update_move(battle);
+            }
+        }
+
+        if (self.cursor_x + self.cursor_y * 2) >= self.move_names.len() as u8 {
+            let pos = self.move_names.len() as u8 - 1;
+            self.cursor_x = pos % 2;
+            self.cursor_y = pos / 2;            
+        }
+        
     }
 
 }
@@ -107,40 +154,6 @@ impl GuiComponent for FightPanel {
 
 }
 
-impl crate::util::Input for FightPanel {
-
-    fn input(&mut self, _delta: f32) {
-        if input::pressed(Control::B) {
-            self.next = 1;
-        }
-        if input::pressed(Control::Up) {
-            if self.cursor_y > 0 {
-                self.cursor_y -= 1;
-            }            
-        } else if input::pressed(Control::Down) {
-            if self.cursor_y < 1 {
-                self.cursor_y += 1;
-            } 
-        } else if input::pressed(Control::Left) {
-            if self.cursor_x > 0 {
-                self.cursor_x -= 1;
-            }
-        } else if input::pressed(Control::Right) {
-            if self.cursor_x < 1 {
-                self.cursor_x += 1;
-            }
-        }
-
-        if (self.cursor_x + self.cursor_y * 2) >= self.move_names.len() as u8 {
-            let pos = self.move_names.len() as u8 - 1;
-            self.cursor_x = pos % 2;
-            self.cursor_y = pos / 2;            
-        }
-        
-    }
-
-}
-
 impl Entity for FightPanel {
 
     fn spawn(&mut self) {
@@ -152,7 +165,7 @@ impl Entity for FightPanel {
     fn despawn(&mut self) {
         self.active = false;
         self.move_panel.despawn();
-        self.unfocus();
+        // self.unfocus();
     }
 
     fn is_alive(& self) -> bool {
@@ -161,18 +174,18 @@ impl Entity for FightPanel {
 
 }
 
-impl Focus for FightPanel {
+// impl Focus for FightPanel {
 
-    fn focus(&mut self) {
-        self.focus = true;
-    }
+//     fn focus(&mut self) {
+//         self.focus = true;
+//     }
 
-    fn unfocus(&mut self) {
-        self.focus = false;
-    }
+//     fn unfocus(&mut self) {
+//         self.focus = false;
+//     }
 
-    fn in_focus(&mut self) -> bool {
-        self.focus
-    }
+//     fn in_focus(&mut self) -> bool {
+//         self.focus
+//     }
 
-}
+// }

@@ -22,6 +22,9 @@ speed = 45
 [breeding]
 gender = 1
 
+[cry]
+path = "cry_bulbasaur.ogg"
+
 [[moves]]
 move_id = 22
 level = 10

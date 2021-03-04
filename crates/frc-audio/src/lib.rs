@@ -7,7 +7,7 @@ pub mod quadsnd;
 
 pub fn create() {
     #[cfg(not(target_arch = "wasm32"))]
-    macroquad::prelude::collections::storage::store(kira::context::AudioContext::new());
+    kira::context::AUDIO_CONTEXT.load();
     #[cfg(target_arch = "wasm32")]
     quadsnd::bind_gamefreak().await;
 }
@@ -54,9 +54,10 @@ impl std::fmt::Display for AudioError {
     }
 }
 
-// pub fn play_sound(sound: sound::Sound) {
-
-// }
+pub fn play_sound(sound: sound::Sound) {
+    #[cfg(not(target_arch = "wasm32"))]
+    self::kira::context::sound::SOUND_CONTEXT.play_sound(sound)
+}
 
 // pub fn stop_sound(sound: Sound) {
 //     let mut instances = SOUND_INSTANCE_MAP.lock();

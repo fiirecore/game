@@ -90,25 +90,26 @@ impl Music {
             Music::BattleWild => Some(include_bytes!("../music/vs_wild.ogg")),
             Music::BattleTrainer => Some(include_bytes!("../music/vs_trainer.ogg")),
             Music::BattleGym => Some(include_bytes!("../music/vs_gym.ogg")),
+            Music::Pewter => Some(include_bytes!("../music/pewter.ogg")),
+            Music::Route1 => Some(include_bytes!("../music/route1.ogg")),
+            Music::Route2 => Some(include_bytes!("../music/route2.ogg")),
             _ => None,
         };
         #[cfg(debug_assertions)] {
             if bytes.is_none() {
                 bytes = match self {
-                    Music::Pewter => Some(include_bytes!("../../../music/pewter.ogg")),
+                    
                     Music::Fuchsia => Some(include_bytes!("../../../music/fuchsia.ogg")),
                     Music::Lavender => Some(include_bytes!("../../../music/lavender.ogg")),
                     Music::Celadon => Some(include_bytes!("../../../music/celadon.ogg")),
                     Music::Cinnabar => Some(include_bytes!("../../../music/cinnabar.ogg")),
                     Music::Vermilion => Some(include_bytes!("../../../music/vermilion.ogg")),
-                    Music::Route1 => Some(include_bytes!("../../../music/route1.ogg")),
-                    Music::Route2 => Some(include_bytes!("../../../music/route2.ogg")),
                     Music::Route3 => Some(include_bytes!("../../../music/route3.ogg")),
-                    Music::Route4 => Some(include_bytes!("../../../music/route3.ogg")),
-                    Music::ViridianForest => Some(include_bytes!("../../../music/viridian_forest.ogg")),
+                    Music::Route4 => Some(include_bytes!("../../../music/route4.ogg")),
                     Music::MountMoon => Some(include_bytes!("../../../music/mt_moon.ogg")),
                     Music::Gym => Some(include_bytes!("../../../music/gym.ogg")),
                     Music::EncounterGirl => Some(include_bytes!("../../../music/encounter_girl.ogg")),
+                    Music::ViridianForest => Some(include_bytes!("../music/viridian_forest.ogg")),
                     _ => None,
                 }
             }

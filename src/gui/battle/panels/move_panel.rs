@@ -12,6 +12,8 @@ pub struct MovePanel {
 
     active: bool,
 
+    pub has_move: bool,
+
     x: f32,
     y: f32,
     panel_x: f32,
@@ -34,6 +36,8 @@ impl MovePanel {
         Self {
 
             active: false,
+
+            has_move: false,
     
             x: x,
             y: y,
@@ -49,6 +53,17 @@ impl MovePanel {
 
     }
 
+    pub fn update_with_move(&mut self, pmove: &firecore_pokedex::moves::instance::MoveInstance) {
+        self.remaining_pp.text = vec![pmove.remaining_pp.to_string() + "/" + &pmove.pokemon_move.pp.to_string()];
+        self.move_type.text = vec![format!("TYPE/{:?}", pmove.pokemon_move.pokemon_type.unwrap_or_default())];
+    }
+
+}
+
+impl crate::util::Reset for MovePanel {
+    fn reset(&mut self) {
+        self.has_move = false;
+    }
 }
 
 impl GuiComponent for MovePanel {

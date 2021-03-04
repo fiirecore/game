@@ -15,7 +15,7 @@ use crate::util::graphics::texture::byte_texture;
 pub struct BattlePanel {
 
     active: bool,
-    focus: bool,
+    // focus: bool,
 
 	x: f32,
     y: f32,
@@ -51,7 +51,7 @@ impl BattlePanel {
 		Self {
 
             active: false,
-            focus: false,
+            // focus: false,
 			
 			x: x,
             y: y,
@@ -120,7 +120,7 @@ impl GuiComponent for BattlePanel {
 impl Input for BattlePanel {
 
     fn input(&mut self, _delta: f32) {
-        if self.in_focus() {
+        if self.is_alive() {
             if input::pressed(Control::Up) {
                 if self.cursor_y > 0 {
                     self.cursor_y -= 1;
@@ -130,8 +130,8 @@ impl Input for BattlePanel {
                     self.cursor_y += 1;
                 } 
             } else if input::pressed(Control::Left) {
-                if self.cursor_y > 0 {
-                    self.cursor_y -= 1;
+                if self.cursor_x > 0 {
+                    self.cursor_x -= 1;
                 }
             } else if input::pressed(Control::Right) {
                 if self.cursor_x < 1 {
@@ -158,7 +158,7 @@ impl Entity for BattlePanel {
 
 	fn despawn(&mut self) {
         self.active = false;
-        self.unfocus();
+        // self.unfocus();
         self.fight_button.despawn();
         self.bag_button.despawn();
         self.pokemon_button.despawn();
@@ -172,18 +172,18 @@ impl Entity for BattlePanel {
 
 }
 
-impl Focus for BattlePanel {
+// impl Focus for BattlePanel {
 
-    fn focus(&mut self) {
-        self.focus = true;
-    }
+//     fn focus(&mut self) {
+//         self.focus = true;
+//     }
 
-    fn unfocus(&mut self) {
-        self.focus = false;
-    }
+//     fn unfocus(&mut self) {
+//         self.focus = false;
+//     }
 
-    fn in_focus(&mut self) -> bool {
-        self.focus
-    }
+//     fn in_focus(&mut self) -> bool {
+//         self.focus
+//     }
 
-}
+// }

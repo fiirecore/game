@@ -1,3 +1,6 @@
+use firecore_pokedex::PokemonId;
+use frc_audio::sound::Sound;
+
 use crate::util::Entity;
 use crate::gui::Focus;
 use crate::io::data::text::Message;
@@ -21,6 +24,9 @@ pub struct BasicBattleIntroduction {
     alive: bool,
     finished: bool,
 
+    player_id: PokemonId,
+    opponent_id: PokemonId,
+
     pub intro_text: DynamicText,
     pub player_intro: PlayerBattleIntro,
 
@@ -36,6 +42,9 @@ impl BasicBattleIntroduction {
 
             alive: false,
             finished: false,
+
+            player_id: 1,
+            opponent_id: 1,
 
             intro_text: DynamicText::new(11.0, 11.0, panel_x, panel_y),
             player_intro: PlayerBattleIntro::new(),
@@ -120,6 +129,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
             Message::with_color(vec![String::from("Wild ") + battle.opponent().pokemon.data.name.to_ascii_uppercase().as_str() + " appeared!"], false, TextColor::White),
             Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         ]};
+        self.player_id = battle.player().pokemon.data.number;
+        self.opponent_id = battle.opponent().pokemon.data.number;
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {
@@ -136,11 +147,13 @@ impl BattleIntroduction for BasicBattleIntroduction {
             if self.intro_text.current_phrase() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
                 battle_gui.opponent_pokemon_gui.reset();
                 battle_gui.opponent_pokemon_gui.spawn();
+                frc_audio::play_sound(Sound::Cry(self.opponent_id));
             }
         }
         if self.player_intro.is_finished() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
+            frc_audio::play_sound(Sound::Cry(self.player_id));
         }
         if battle_gui.opponent_pokemon_gui.is_alive() {
             if battle_gui.opponent_pokemon_gui.panel.x + 5.0 < battle_gui.opponent_pokemon_gui.orig_x {

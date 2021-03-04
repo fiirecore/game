@@ -1,7 +1,7 @@
 [package]
 name = "pokemon-firered-clone"
 version = "0.2.5"
-authors = ["Rhys Holloway <rhysholloway@pacbell.net>"]
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
 repository = "https://github.com/DoNotDoughnut/pokemon-game"

@@ -21,6 +21,9 @@ speed = 90
 [breeding]
 gender = 2
 
+[cry]
+path = "cry_abra.ogg"
+
 [[moves]]
 move_id = 100
 level = 1
