@@ -5,7 +5,6 @@ use firecore_input::Control;
 pub mod graphics;
 pub mod text;
 pub mod image;
-pub mod file;
 pub mod battle_data;
 
 pub static TILE_SIZE: u8 = 16;

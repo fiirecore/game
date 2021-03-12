@@ -1,7 +1,13 @@
+use macroquad::miniquad::fs::Error;
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
+use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use ahash::AHashSet as HashSet;
+
+lazy_static::lazy_static! {
+	static ref EPIC_FAIL: Mutex<Option<Result<Vec<u8>, Error>>> = Mutex::new(None);
+}
 
 #[derive(Default, Deserialize, Serialize)]
 pub struct SaveList {
@@ -39,11 +45,10 @@ impl SaveList {
 		{
 			match firecore_data::get_save_dir() {
 				Ok(dir) => {
-					let file = parking_lot::Mutex::new(None);
-					macroquad::miniquad::fs::load_file(&*dir.join(FILE).to_string_lossy(), move |bytes| {
-						*file.lock() = Some(bytes);
+					macroquad::miniquad::fs::load_file(&*dir.join(FILE).to_string_lossy(), |bytes| {
+						*EPIC_FAIL.lock() = Some(bytes);
 					});
-					if let Some(result) = file.lock().take() { 
+					if let Some(result) = EPIC_FAIL.lock().take() { 
 						match result {
 						    Ok(bytes) => {
 								String::from_utf8(bytes).ok()
