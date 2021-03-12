@@ -7,25 +7,39 @@ use crate::util::graphics::texture::image_texture;
 use crate::util::graphics::Texture;
 use crate::world::NpcTextures;
 
+const NPC_TYPES: &[&'static str] = &[
+    "brock",
+    "bug_catcher",
+    "camper",
+    "fat_man",
+    "lass",
+    "misty",
+    "mom",
+    "prof_oak",
+    "woman_1",
+    "youngster"
+];
+
+const BATTLE_NPC_TYPES: &[&'static str] = &[
+    "brock",
+    "bug_catcher",
+    "camper",
+    // "fat_man",
+    "lass",
+    "misty",
+    // "mom",
+    // "prof_oak",
+    // "woman_1",
+    "youngster"
+];
+
 #[deprecated]
 pub async fn load_npc_textures(npc_textures: &mut NpcTextures) {
     info!("Loading NPC textures...");
 
     //let files = ["idle_up.png", "idle_down.png", "idle_side.png"];
     let dir = "assets/world/textures/npcs";
-    for npc_texture_path in 
-    &[
-        "brock",
-        "bug_catcher",
-        "camper",
-        "fat_man",
-        "lass",
-        "misty",
-        "mom",
-        "prof_oak",
-        "woman_1",
-        "youngster"
-    ] {
+    for npc_texture_path in NPC_TYPES {
         let npc_texture_path = *npc_texture_path;
         // let npc_type =  npc_texture_path.file_name().unwrap().to_string_lossy().into_owned();
         let npc_type = npc_texture_path.to_owned();
@@ -57,6 +71,8 @@ pub async fn load_npc_textures(npc_textures: &mut NpcTextures) {
         }
     }
 
+    load_battle_sprites(BATTLE_NPC_TYPES).await;
+
     info!("Finished loading NPC textures!");
 }
 
@@ -84,14 +100,27 @@ fn idle_npc(image: Image) -> Option<ThreeWayTexture<StillTextureManager>> {
     return Some(twt);
 }
 
-pub fn battle_sprite(id: &str) -> Texture {
-    match crate::util::file::noasync::read_noasync(std::path::PathBuf::from("assets/world/textures/npcs/").join(id).join("battle.png")) {
-        Some(file) => {
-            return crate::util::graphics::texture::byte_texture(&file);
-        }
-        None => {
-            warn!("Could not find file of battle sprite {}", id);
-            return crate::util::graphics::texture::debug_texture();
+lazy_static::lazy_static! {
+    static ref BATTLE_SPRITES: dashmap::DashMap<&'static str, Texture> = dashmap::DashMap::new();
+}
+
+pub async fn load_battle_sprites(ids: &[&'static str]) {
+
+    let base_path = "assets/world/textures/npcs/".to_owned();
+
+    for id in ids {
+        let path = base_path.clone() + *id + "/battle.png";
+        match macroquad::prelude::load_file(&path).await {
+            Ok(bytes) => {
+                BATTLE_SPRITES.insert(*id, crate::util::graphics::texture::byte_texture(&bytes));
+            }
+            Err(err) => {
+                warn!("Could not load battle sprite {} with error {}", id, err);
+            }
         }
     }
+}
+
+pub fn battle_sprite(id: &str) -> Texture {
+    *BATTLE_SPRITES.get(id).unwrap()
 }

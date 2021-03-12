@@ -1,5 +1,4 @@
 use macroquad::prelude::Image;
-use macroquad::prelude::warn;
 
 use crate::util::TILE_SIZE;
 
@@ -24,24 +23,24 @@ fn from_rgba8(img: image::RgbaImage) -> Image {
     }
 }
 
-pub async fn open_image<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {
-    let path = path.as_ref();
-    match super::file::load_file(path).await {
-        Ok(bytes) => {
-            match byte_image(&bytes) {
-                Ok(image) => Some(image),
-                Err(err) => {
-                    warn!("Could not decode image with error {}", err);
-                    None
-                }
-            }
-        }
-        Err(err) => {
-            warn!("Could not open image at {:?} with error {}", path, err);
-            None
-        }
-    }
-}
+// pub async fn open_image<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {
+//     let path = path.as_ref();
+//     match super::file::load_file(path).await {
+//         Ok(bytes) => {
+//             match byte_image(&bytes) {
+//                 Ok(image) => Some(image),
+//                 Err(err) => {
+//                     warn!("Could not decode image with error {}", err);
+//                     None
+//                 }
+//             }
+//         }
+//         Err(err) => {
+//             warn!("Could not open image at {:?} with error {}", path, err);
+//             None
+//         }
+//     }
+// }
 
 pub fn get_subimage(image: &Image, id: usize) -> Image {
     return get_subimage_wh(image, id, TILE_SIZE as u32, TILE_SIZE as u32);

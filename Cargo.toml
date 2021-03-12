@@ -9,7 +9,7 @@ keywords = ["games", "pokemon"]
 categories = ["games"]
 build = "build/build.rs"
 readme = "README.md"
-include = ["/build", "/assets", "/crates", "/pokedex", "/world"]
+include = ["/build", "/assets", "/pokedex", "/world"]
 
 [profile.dev.package.'*']
 opt-level = 3
@@ -27,7 +27,6 @@ default = []
 
 ### Game Engine
 
-#macroquad = { git = "https://github.com/DoNotDoughnut/macroquad", default-features = false, features = ["log-impl", "experimental", "serde"] }
 macroquad = { git = "https://github.com/not-fl3/macroquad" }
 
 ### Game subcrates
@@ -47,7 +46,6 @@ firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
 ### Serialization
 
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.5"
 ron = "0.6"
 bincode = "1.3"
 
@@ -59,6 +57,7 @@ bincode = "1.3"
 
 ahash = { version = "0.7", features = ["serde"] }
 smallvec = { version = "1.6", features = ["serde"] }
+dashmap = "4.0"
 
 ### Global variables
 
@@ -73,18 +72,14 @@ async-trait = "0.1"
 
 image = { version = "0.23.12", default-features = false, features = ["png", "tga"] }
 
-# futures-lite = "1.11" # To - do: Remove
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 
 ### Build dependencies
 
 [build-dependencies]
 map-compressor = { git = "https://github.com/DoNotDoughnut/map-compressor" }
-bincode = "1.3"
-toml = "0.5"
-serde = { version = "1.0", features = ["derive"] }
-firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-#zip = "0.5"
-#walkdir = "2.3"
+dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
 
-[target.'cfg(windows)'.build-dependencies]
-winres = "0.1"
+#[target.'cfg(windows)'.build-dependencies]
+#winres = "0.1"

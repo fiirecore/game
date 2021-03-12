@@ -138,7 +138,7 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &HashMap<u8, u16>) -> u16 { /
 pub async fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> HashMap<u8, u16> {
 	let mut sizes: HashMap<u8, u16> = HashMap::new();
 
-	for index in 0..50u8 {
+	for index in 0..45u8 {
 		let filename = format!("Palette{}B.png", index);
 		let filepath = format!("assets/world/textures/tiles/{}", &filename);
 		match macroquad::prelude::load_file(&filepath).await {
@@ -154,7 +154,7 @@ pub async fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_shee
 				}
 			}
 			Err(err) => {
-				warn!("Could not find palette sheet #{}", index);
+				warn!("Could not find palette sheet #{} with error {}", index, err);
 				break;
 			}
 		}

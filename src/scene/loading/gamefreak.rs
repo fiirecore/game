@@ -53,10 +53,6 @@ impl super::LoadingScene for GamefreakLoadingScene {
 		draw_text_left(1, &format!("A is{:?}Button", input::keyboard::KEY_CONTROLS.read().get(&input::Control::A).unwrap()), 5.0, 5.0);
 		draw_text_left(1, &format!("B is{:?}Button", input::keyboard::KEY_CONTROLS.read().get(&input::Control::B).unwrap()), 125.0, 5.0);
 		draw_text_left(1, "D-Pad is Arrow Keys", 5.0, 15.0);
-		// #[cfg(target_arch = "wasm32")] {
-		// 	draw_text_left(1, "The game may stay on a black screen", 5.0, 130.0);
-		// 	draw_text_left(1, "while loading.", 5.0, 145.0);
-		// }
 	}
 
     fn state(&self) -> &LoadingState {

@@ -128,10 +128,10 @@ impl Battle {
 
 	fn load_textures(&mut self) {
 		self.opponent_textures = self.opponent_pokemon.iter().map(|i| {
-			pokemon_texture(&i.pokemon.data.name, PokemonTexture::Front)
+			pokemon_texture(&i.pokemon.data.number, PokemonTexture::Front)
 		}).collect();
 		self.player_textures = self.player_pokemon.iter().map(|i| {
-			pokemon_texture(&i.pokemon.data.name, PokemonTexture::Back)
+			pokemon_texture(&i.pokemon.data.number, PokemonTexture::Back)
 		}).collect();
 	}
 

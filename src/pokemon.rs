@@ -1,37 +1,42 @@
-use std::ffi::OsString;
-use std::io::Read;
 use std::path::PathBuf;
 
-use firecore_pokedex::moves::PokemonMove;
+use dashmap::DashMap;
+use firecore_pokedex::PokemonId;
 use firecore_pokedex::pokemon::Pokemon;
 use firecore_pokedex::pokemon::texture::PokemonTexture;
+use macroquad::prelude::info;
+use macroquad::prelude::load_file;
 use macroquad::prelude::warn;
+
+use crate::util::graphics::Texture;
+use crate::util::graphics::texture::byte_texture;
+use crate::util::graphics::texture::debug_texture;
 
 lazy_static::lazy_static! {
     pub static ref DEX_DIR: PathBuf = PathBuf::from("pokedex");
-}
-
-#[derive(serde::Deserialize, serde::Serialize)]
-pub struct DexSerialized {
-
-	pub pokemon: Vec<Pokemon>,
-	pub moves: Vec<PokemonMove>,
-
+	pub static ref FRONT_TEXTURES: DashMap<PokemonId, Texture> = DashMap::new();
+	pub static ref BACK_TEXTURES: DashMap<PokemonId, Texture> = DashMap::new();
+	pub static ref ICON_TEXTURES: DashMap<PokemonId, Texture> = DashMap::new();
 }
 
 pub async fn load() {
 
-	let dex: DexSerialized = bincode::deserialize(&macroquad::prelude::load_file("assets/dex.bin").await.unwrap()).unwrap();
+	let dex: firecore_pokedex::SerializedDex = bincode::deserialize(&macroquad::prelude::load_file("assets/dex.bin").await.unwrap()).unwrap();
 
 	// load_pokedex_v2();
 
+	info!("Loading pokedex and moves!");
+
 	for pokemon in dex.pokemon {
+		load_textures(&pokemon).await;
 		firecore_pokedex::POKEDEX.insert(pokemon.data.number, pokemon);
 	}
 
 	for pokemon_move in dex.moves {
 		firecore_pokedex::MOVEDEX.insert(pokemon_move.number, pokemon_move);
 	}
+
+	info!("Finished loading pokedex and moves!");
 
 }
 
@@ -76,16 +81,74 @@ async fn load_cry(pokemon: &Pokemon) {
 	}	
 }
 
-pub fn pokemon_texture(name: &str, side: PokemonTexture) -> crate::util::graphics::Texture {
-	let name: &str = &name.to_ascii_lowercase();
-    let path = String::from("assets/pokedex/textures/normal/") + side.path() + "/" + name + ".png";
-    match crate::util::file::noasync::read_noasync(&path) {
-        Some(file) => {
-            return crate::util::graphics::texture::byte_texture(&file);
-        }
-        None => {
-            macroquad::prelude::warn!("Could not find pokemon texture at {:?}", &path);
-            return crate::util::graphics::texture::debug_texture();
-        }
-    }
+// const SIDES: &[PokemonTexture] = &[PokemonTexture::Front, PokemonTexture::Back];
+
+pub async fn load_textures(pokemon: &Pokemon) {
+	let base_path = String::from("assets/pokedex/textures/");
+	let front_path = base_path.clone() + "normal/front/" + pokemon.data.name.as_str() + ".png";
+	let back_path = base_path.clone() + "normal/back/" + pokemon.data.name.as_str() + ".png";
+	let icon_path = base_path + "icon/" + pokemon.data.name.as_str() + ".png";
+	match load_file(&front_path).await {
+		Ok(bytes) => {
+			FRONT_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
+		}
+		Err(err) => {
+			warn!("Could not load front texture for {} with error {}", pokemon.data.name, err);
+		}
+	}
+	match load_file(&back_path).await {
+		Ok(bytes) => {
+			BACK_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
+		}
+		Err(err) => {
+			warn!("Could not load back texture for {} with error {}", pokemon.data.name, err);
+		}
+	}
+	#[cfg(not(target_arch = "wasm32"))]
+	match load_file(&icon_path).await {
+	    Ok(bytes) => {
+			ICON_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
+		}
+	    Err(_) => {}
+	}
+}
+
+pub fn pokemon_texture(id: &PokemonId, side: PokemonTexture) -> Texture {
+	match side {
+	    PokemonTexture::Front => match FRONT_TEXTURES.get(id) {
+	        Some(texture) => {
+				*texture
+			}
+	        None => {
+				debug_texture()
+			}
+	    },
+	    PokemonTexture::Back => match BACK_TEXTURES.get(id) {
+	        Some(texture) => {
+				*texture
+			}
+	        None => {
+				debug_texture()
+			}
+	    },
+	    PokemonTexture::Icon => match ICON_TEXTURES.get(id) {
+	        Some(texture) => {
+				*texture
+			}
+	        None => {
+				debug_texture()
+			}
+	    },
+	}
+	// let name: &str = &name.to_ascii_lowercase();
+    
+    // match crate::util::file::noasync::read_noasync(&path) {
+    //     Some(file) => {
+    //         return crate::util::graphics::texture::byte_texture(&file);
+    //     }
+    //     None => {
+    //         macroquad::prelude::warn!("Could not find pokemon texture at {:?}", &path);
+    //         return crate::util::graphics::texture::debug_texture();
+    //     }
+    // }
 }

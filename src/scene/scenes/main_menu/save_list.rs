@@ -44,9 +44,11 @@ impl SaveList {
 		}
 		#[cfg(target_arch = "wasm32")]
 		{
-			match path.as_ref().file_name() {
-				Some(fname) => return Some(miniquad_cookie::get_cookie("saves")),
-				None => return None,
+			let saves = miniquad_cookie::get_cookie("saves");
+			return if saves.is_empty() {
+				None
+			} else {
+				Some(saves)
 			}
 		}
 	}

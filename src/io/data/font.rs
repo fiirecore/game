@@ -9,6 +9,7 @@ use crate::util::graphics::texture::image_texture;
 pub struct FontSheetData {
 
     pub file: String,
+    pub id: usize,
     pub width: u8,
     pub height: u8,
     pub chars: String,
@@ -27,18 +28,21 @@ pub struct CustomChars {
 
 impl FontSheetData {
 
-    pub fn open_sheet(path: &str) -> Option<Font> {
-        match crate::util::file::noasync::read_to_string_noasync(path) {
-            Some(file) => match ron::from_str(&file) {
-                Ok(sheet) => return Self::sheet_image(sheet),
+    pub async fn open_sheet(path: &str) {
+        match macroquad::prelude::load_string(path).await {
+            Ok(file) => match ron::from_str(&file) {
+                Ok(sheet) => {
+                    if let Some((id, font)) = Self::sheet_image(sheet).await {
+                        crate::util::text::FONTS.insert(id, font);
+                    }
+                    
+                },
                 Err(err) => {
                     warn!("Could not parse font sheet data at {:?} with error {}", path, err);
-                    return None;
                 }
             },
-            None => {
-                warn!("Could not open font sheet config at {:?}", path);
-                return None;
+            Err(err) => {
+                warn!("Could not open font sheet config at {:?} with error {}", path, err);
             }
         }
 
@@ -52,17 +56,19 @@ impl FontSheetData {
         }        
     }
 
-    fn sheet_image(self) -> Option<Font> {
-        match crate::util::file::noasync::read_noasync(&self.file) {
-            Some(ref file) => match crate::util::image::byte_image(file) {
-                Ok(image) => Some(self.into_sheet(image)),
+    async fn sheet_image(self) -> Option<(usize, Font)> {
+        match macroquad::prelude::load_file(&self.file).await {
+            Ok(ref file) => match crate::util::image::byte_image(file) {
+                Ok(image) => {
+                    Some((self.id, self.into_sheet(image)))
+                },
                 Err(err) => {
                     warn!("Could not parse font sheet at {} with error {}", &self.file, err);
                     return None;
                 }
             },
-            None => {
-                warn!("Could not open font image at {}", &self.file);
+            Err(err) => {
+                warn!("Could not open font image at {} with error {}", &self.file, err);
                 return None;
             },
         }

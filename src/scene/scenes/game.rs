@@ -118,10 +118,6 @@ impl Scene for GameScene {
 			self.party_gui.input(delta);
 		} else if !self.battling {
 			self.world_manager.input(delta);
-			#[cfg(target_arch = "wasm32")]
-			if firecore_input::pressed(firecore_input::Control::Start) {
-				self.state = SceneState::Scene(super::Scenes::TitleScene);
-			}
 		} else {
 			self.battle_manager.input(delta);
 		}

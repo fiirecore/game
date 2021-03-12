@@ -1,5 +1,6 @@
 (
     file: "assets/fonts/images/font2.png",
+    id: 2,
     width: 6,
     height: 14,
     chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀!?",

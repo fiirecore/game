@@ -16,6 +16,7 @@ use scene::loading::manager::load_coroutine;
 use scene::manager::SceneManager;
 use firecore_data::data::PersistantDataLocation;
 use scene::Scene;
+use util::graphics::draw_text_left;
 
 pub mod util;
 pub mod scene;
@@ -43,15 +44,15 @@ lazy_static::lazy_static! {
     static ref SCENE_MANAGER: Mutex<SceneManager> = Mutex::new(SceneManager::new());
 }
 
+#[cfg(target_arch = "wasm32")]
+#[macroquad::main(settings)]
+async fn main() {
+    macroquad_main().await;
+}
 
+
+#[cfg(not(target_arch = "wasm32"))]
 fn main() {
-
-    info!("Starting {} v{}", TITLE, VERSION);
-    info!("By {}", AUTHORS);
-
-    #[cfg(debug_assertions)] {
-        info!("Running in debug mode");
-    }
 
     macroquad::Window::from_config(settings(), macroquad_main());
 
@@ -64,11 +65,20 @@ fn main() {
 
 async fn macroquad_main() {
 
+    info!("Starting {} v{}", TITLE, VERSION);
+    info!("By {}", AUTHORS);
+
+    #[cfg(debug_assertions)] {
+        info!("Running in debug mode");
+    }
+
     let config = Configuration::load_from_file().await;
 
     config.on_reload();
 
     storage::store(config);
+
+    crate::util::text::load().await;
 
     let args = crate::io::args::parse_args();
 
@@ -86,6 +96,9 @@ async fn macroquad_main() {
             loop {
                 clear_background(macroquad::prelude::BLUE);
                 macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
+                draw_text_left(0, VERSION, 1.0, 1.0);
+            	draw_text_left(1, "The game may stay on this screen", 5.0, 50.0);
+            	draw_text_left(1, "for up to two minutes.", 5.0, 65.0);
                 next_frame().await;
             }
         })
@@ -122,7 +135,7 @@ async fn macroquad_main() {
     loop {
 
         #[cfg(target_arch = "wasm32")]
-        firecore_audio::quadsnd::context::music::MIXER.lock().frame();
+        firecore_audio::backend::quadsnd::music::MIXER.lock().frame();
 
 
         scene_manager.input(get_frame_time());

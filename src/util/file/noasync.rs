@@ -1,13 +1,12 @@
 use std::path::Path;
 use macroquad::miniquad::fs::Error;
 use macroquad::prelude::warn;
-use crate::util::graphics::Texture;
 
 lazy_static::lazy_static! {
 	static ref FILE: parking_lot::Mutex<Option<Result<Vec<u8>, Error>>> = parking_lot::Mutex::new(None); // lol
 }
 
-pub fn read_noasync<P: AsRef<Path>>(path: P) -> Option<Vec<u8>> {
+fn read_noasync<P: AsRef<Path>>(path: P) -> Option<Vec<u8>> {
     let path2 = path.as_ref().clone();
     match read_noasync_result(&path) {
         Ok(bytes) => Some(bytes),
@@ -32,12 +31,13 @@ fn read_noasync_result<P: AsRef<Path>>(path: P) -> Result<Vec<u8>, Error> {
     
 }
 
+#[deprecated]
 pub fn read_to_string_noasync<P: AsRef<Path>>(path: P) -> Option<String> {
     let path = path.as_ref();
     match read_noasync(path) {
         Some(bytes) => {
-            match std::str::from_utf8(bytes.as_slice()) {
-                Ok(str) => return Some(str.to_string()),
+            match String::from_utf8(bytes) {
+                Ok(str) => return Some(str),
                 Err(err) => {
                     warn!("Could not read file at {:?} to string with error {}", path, err);
                     return None;
@@ -48,32 +48,4 @@ pub fn read_to_string_noasync<P: AsRef<Path>>(path: P) -> Option<String> {
             return None;
         }
     }
-}
-
-pub fn open_image_noasync<P: AsRef<std::path::Path>>(path: P) -> Option<macroquad::prelude::Image> {
-    let path = path.as_ref();
-    match read_noasync(path) {
-        Some(bytes) => match crate::util::image::byte_image(bytes.as_slice()) {
-            Ok(image) => return Some(image),
-            Err(err) => {
-                warn!("Could not parse image bytes at {:?} with error {}", path, err);
-                return None;
-            },
-        },
-        None => {
-            warn!("Could not read image bytes at {:?} with error", path);
-            return None;
-        }
-    }
-}
-
-pub fn load_texture_noasync<P: AsRef<std::path::Path>>(path: P) -> Texture {
-	let path = path.as_ref();
-	return match read_noasync(path) {
-	    Some(bytes) => crate::util::graphics::texture::byte_texture(bytes.as_slice()),
-	    None => {
-			macroquad::prelude::warn!("Could not read texture at path {:?} with error", path);
-			crate::util::graphics::texture::debug_texture()
-		}
-	}	
 }

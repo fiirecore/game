@@ -68,11 +68,7 @@ impl PokemonPartyGui {
                 let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
                 let curr = pokemon.1.current_hp.unwrap_or(max);
     
-                let texture = if let Some(file) = crate::util::file::noasync::read_noasync(format!("assets/pokedex/textures/icon/{}.png", pokemon_data.data.name.to_ascii_lowercase())) {
-                    byte_texture(&file)
-                } else {
-                    crate::util::graphics::texture::debug_texture()
-                };
+                let texture = crate::pokemon::pokemon_texture(&pokemon_data.data.number, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
     
                 self.pokemon[pokemon.0] = Some(PartyGuiData {
                     name: pokemon.1.nickname.as_ref().unwrap_or(&pokemon_data.data.name).to_ascii_uppercase(),
