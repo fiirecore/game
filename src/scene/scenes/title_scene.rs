@@ -1,5 +1,5 @@
 use firecore_audio::play_music;
-use frc_input as input;
+use firecore_input as input;
 use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::graphics::texture::byte_texture;

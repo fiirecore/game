@@ -37,7 +37,7 @@ impl SaveList {
 	fn load_noasync() -> Option<String> {
 		#[cfg(not(target_arch = "wasm32"))]
 		{
-			match frc_data::get_save_dir() {
+			match firecore_data::get_save_dir() {
 				Ok(dir) => return Some(crate::util::file::noasync::read_to_string_noasync(dir.join(FILE))?),
 				Err(_) => return None,
 			}        
@@ -54,13 +54,13 @@ impl SaveList {
     pub fn append(name: &str) {
         let mut list = Self::get();
         list.players.insert(name.to_owned());
-        frc_data::data::save_struct(FILE, &list);
+        firecore_data::data::save_struct(FILE, &list);
     }
 
 }
 
 fn default() -> SaveList {
     let default = SaveList::default();
-    frc_data::data::save_struct(FILE, &default);
+    firecore_data::data::save_struct(FILE, &default);
     default
 }

@@ -12,7 +12,7 @@ use macroquad::prelude::warn;
 use crate::util::Completable;
 use firecore_util::Entity;
 use firecore_util::Direction;
-use frc_input::{self as input, Control};
+use firecore_input::{self as input, Control};
 use super::WorldNpc;
 use super::gui::map_window_manager::MapWindowManager;
 use super::NpcTextures;

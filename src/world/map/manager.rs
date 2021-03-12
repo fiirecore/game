@@ -17,7 +17,7 @@ use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
 use firecore_audio::music::Music;
-use frc_input::{self as input, Control};
+use firecore_input::{self as input, Control};
 use firecore_util::Entity;
 use firecore_util::Direction;
 use crate::io::data::player::PlayerData;

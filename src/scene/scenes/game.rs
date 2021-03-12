@@ -6,7 +6,7 @@ use crate::io::data::player::PlayerData;
 use crate::scene::Scene;
 use crate::util::Completable;
 use crate::util::Input;
-use frc_data::data::PersistantData;
+use firecore_data::data::PersistantData;
 use crate::world::map::manager::WorldManager;
 use crate::util::Update;
 use crate::util::Render;
@@ -119,7 +119,7 @@ impl Scene for GameScene {
 		} else if !self.battling {
 			self.world_manager.input(delta);
 			#[cfg(target_arch = "wasm32")]
-			if frc_input::pressed(frc_input::Control::Start) {
+			if firecore_input::pressed(firecore_input::Control::Start) {
 				self.state = SceneState::Scene(super::Scenes::TitleScene);
 			}
 		} else {

@@ -5,7 +5,7 @@ use firecore_util::Entity;
 use crate::util::graphics::Texture;
 
 use crate::gui::GuiComponent;
-use frc_input::{self as input, Control};
+use firecore_input::{self as input, Control};
 
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;

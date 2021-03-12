@@ -3,7 +3,7 @@ use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
 use macroquad::prelude::collections::storage;
-use frc_data::data::PersistantData;
+use firecore_data::data::PersistantData;
 use std::path::{Path, PathBuf};
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
@@ -135,7 +135,7 @@ impl PersistantData for PlayerData {
 	
 	async fn load(path: PathBuf) -> Self {
 		info!("Loading player data...");
-		match frc_data::data::read_string(&path).await {
+		match firecore_data::data::read_string(&path).await {
 			Ok(data) => {
 				match ron::from_str(&data) {
 				    Ok(data) => data,
@@ -161,7 +161,7 @@ impl PersistantData for PlayerData {
 
 		crate::scene::scenes::main_menu::save_list::SaveList::append(&self.name);
 		
-		frc_data::data::save_struct(PathBuf::from(SAVE_DIRECTORY).join(self.name.clone() + SAVE_FILE_TYPE), &self);
+		firecore_data::data::save_struct(PathBuf::from(SAVE_DIRECTORY).join(self.name.clone() + SAVE_FILE_TYPE), &self);
 
 		crate::gui::set_message(MessageSet::new(
 			1, 

@@ -2,7 +2,7 @@ use macroquad::prelude::warn;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use firecore_util::Entity;
 use crate::util::Input;
-use frc_input as input;
+use firecore_input as input;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
 use crate::gui::battle::panels::battle_panel::BattlePanel;

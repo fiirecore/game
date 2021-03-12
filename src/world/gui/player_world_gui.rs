@@ -1,7 +1,7 @@
 use firecore_util::Entity;
 use crate::gui::Focus;
 use crate::util::Input;
-use frc_input::{self as input, Control};
+use firecore_input::{self as input, Control};
 use crate::util::graphics::Texture;
 
 use crate::gui::button::BasicButton;

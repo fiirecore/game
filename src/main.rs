@@ -1,7 +1,7 @@
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use io::args::Args;
-use frc_data::configuration::Configuration;
+use firecore_data::configuration::Configuration;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::BLACK;
 use macroquad::prelude::Conf;
@@ -14,7 +14,7 @@ use macroquad::prelude::coroutines::start_coroutine;
 use parking_lot::Mutex;
 use scene::loading::manager::load_coroutine;
 use scene::manager::SceneManager;
-use frc_data::data::PersistantDataLocation;
+use firecore_data::data::PersistantDataLocation;
 use scene::Scene;
 
 pub mod util;
@@ -138,10 +138,10 @@ async fn macroquad_main() {
 
         if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
             if let Some(mut config) = storage::get_mut::<Configuration>() {
-                frc_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
+                firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
             if let Some(mut player_data) = storage::get_mut::<crate::io::data::player::PlayerData>() {
-                frc_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut player_data)).await;
+                firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut player_data)).await;
             }
         }
 

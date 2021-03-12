@@ -1,6 +1,6 @@
 use firecore_util::Direction;
 
-use frc_input::Control;
+use firecore_input::Control;
 
 pub mod graphics;
 pub mod text;

@@ -35,9 +35,9 @@ macroquad = { git = "https://github.com/not-fl3/macroquad" }
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
 firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
 firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
-frc-input = { path = "crates/frc-input" }
-frc-data = { path = "crates/frc-data" }
 firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio" }
+firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
+firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
 # frc-text = { path = "crates/frc-text" }
 
 ### GUI

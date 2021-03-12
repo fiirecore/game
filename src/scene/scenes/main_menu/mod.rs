@@ -2,7 +2,7 @@ use ahash::AHashSet as HashSet;
 use macroquad::ui::widgets::InputText;
 
 use crate::io::data::player::PlayerData;
-use frc_input as input;
+use firecore_input as input;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::info;
 use macroquad::prelude::screen_height;

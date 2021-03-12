@@ -5,7 +5,7 @@ use crate::util::graphics::draw_text_left;
 use crate::util::graphics::fade_in;
 use crate::util::graphics::draw_rect;
 use crate::util::graphics::texture::byte_texture;
-use frc_input as input;
+use firecore_input as input;
 
 use super::LoadingState;
 

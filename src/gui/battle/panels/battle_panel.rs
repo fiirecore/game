@@ -2,7 +2,7 @@ use firecore_util::text::TextColor;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use firecore_util::Entity;
 use crate::util::Input;
-use frc_input::{self as input, Control};
+use firecore_input::{self as input, Control};
 use crate::gui::button::BasicButton;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;

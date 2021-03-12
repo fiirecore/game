@@ -5,7 +5,7 @@ use serde::Deserialize;
 use crate::util::Completable;
 use crate::util::Reset;
 use crate::util::graphics::draw_text_left_color;
-use frc_input as input;
+use firecore_input as input;
 
 use firecore_util::Entity;
 use crate::gui::GuiComponent;

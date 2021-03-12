@@ -138,7 +138,7 @@ impl crate::util::Render for PokemonPartyGui {
 
 impl crate::util::Input for PokemonPartyGui {
     fn input(&mut self, _delta: f32) {
-        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) || frc_input::pressed(frc_input::Control::Start) {
+        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) || firecore_input::pressed(firecore_input::Control::Start) {
             self.despawn();
         }
     }
