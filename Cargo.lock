@@ -1287,7 +1287,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.3.0-beta.1"
+version = "0.3.0-beta.2"
 dependencies = [
  "ahash 0.7.2",
  "async-trait",

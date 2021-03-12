@@ -223,7 +223,7 @@ impl GameWorld for WorldMap {
                                 pop = true;
                             }
                             WorldActionKind::NPCInteract(id) => {
-                                if let Some(npc) = self.script_npcs.get(id) {
+                                if let Some(npc) = self.script_npcs.get_mut(id) {
                                     self.npc_active = Some(self.npcs.len() + (*id) as usize);
                                     npc.interact(None, player);
                                 }
