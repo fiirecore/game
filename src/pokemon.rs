@@ -72,7 +72,7 @@ async fn load_cry(pokemon: &Pokemon) {
 	if let Some(cry_path) = pokemon.cry_file.as_ref() {
 		match macroquad::prelude::load_file(&(String::from("pokedex/pokemon/") + &pokemon.data.name + "/" + cry_path)).await {
 			Ok(bytes) => {
-				firecore_audio::add_sound(firecore_audio::sound::Sound::Cry(pokemon.data.number), &*bytes);
+				firecore_audio::add_sound(firecore_util::sound::Sound::Cry(pokemon.data.number), &*bytes);
 			}
 			Err(err) => {
 				warn!("Could not get bytes of cry for pokemon {} with error {}", pokemon.data.name, err);
@@ -85,9 +85,9 @@ async fn load_cry(pokemon: &Pokemon) {
 
 pub async fn load_textures(pokemon: &Pokemon) {
 	let base_path = String::from("assets/pokedex/textures/");
-	let front_path = base_path.clone() + "normal/front/" + pokemon.data.name.as_str() + ".png";
-	let back_path = base_path.clone() + "normal/back/" + pokemon.data.name.as_str() + ".png";
-	let icon_path = base_path + "icon/" + pokemon.data.name.as_str() + ".png";
+	let front_path = base_path.clone() + "normal/front/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
+	let back_path = base_path.clone() + "normal/back/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
+	let icon_path = base_path + "icon/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
 	match load_file(&front_path).await {
 		Ok(bytes) => {
 			FRONT_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));

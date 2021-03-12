@@ -78,7 +78,7 @@ miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 ### Build dependencies
 
 [build-dependencies]
-map-compressor = { git = "https://github.com/DoNotDoughnut/map-compressor" }
+map-builder = { git = "https://github.com/DoNotDoughnut/map-builder" }
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
 
 [target.'cfg(windows)'.build-dependencies]

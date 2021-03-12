@@ -1,5 +1,5 @@
 use firecore_pokedex::PokemonId;
-use firecore_audio::sound::Sound;
+use firecore_util::sound::Sound;
 use firecore_util::text::Message;
 use firecore_util::text::MessageSet;
 

@@ -17,7 +17,7 @@ use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
-use firecore_audio::music::Music;
+use firecore_util::music::Music;
 use firecore_input::{self as input, Control};
 use firecore_util::Entity;
 use firecore_util::Direction;
@@ -102,7 +102,7 @@ impl WorldManager {
 
     fn get_map_music(&self) -> Music {
         if self.chunk_active {
-            self.chunk_map.current_music
+            self.chunk_map.current_chunk().map.music
         } else {
             self.map_sets.map_set().map().music
         }
@@ -167,6 +167,11 @@ impl WorldManager {
         } else {
             warn!("Could not load chunk at ({}, {})", x, y);
             self.chunk_map.change_chunk(2, &mut self.player.position);
+        }
+        let music = self.chunk_map.current_chunk().map.music;
+        if music != self.current_music {
+            self.current_music = music;
+            play_music(music);
         }
     }
 
@@ -250,7 +255,16 @@ impl WorldManager {
                 // convert x and y to global coordinates
                 let x = x + self.player.position.offset.x;
                 let y = y + self.player.position.offset.y;
-                self.chunk_map.walk_connections(&mut self.player.position, x, y)
+                let id = self.chunk_map.current_chunk;
+                let move_code = self.chunk_map.walk_connections(&mut self.player.position, x, y);
+                if id != self.chunk_map.current_chunk {
+                    let music = self.chunk_map.current_chunk().map.music;
+                    if music != self.current_music {
+                        self.current_music = music;
+                        play_music(music);
+                    }
+                }
+                move_code
             }            
         } else {
             if self.map_sets.in_bounds(x, y) {

@@ -523,9 +523,10 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.0.1-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#bb83d33fbb92cfadca26b92207f7866bcf850e0c"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#fd8f95f99ddad957536ec49272d56076677d463e"
 dependencies = [
  "dashmap",
+ "firecore-util",
  "kira",
  "lazy_static",
  "lewton",
@@ -578,7 +579,7 @@ dependencies = [
 [[package]]
 name = "firecore-util"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#802e8cb14f07ab8c995c7b036fae09a6b287a2a2"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#3a973ecbbd4f1bb248252789027b67e5870caaa0"
 dependencies = [
  "glam",
  "serde",
@@ -587,10 +588,9 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#7f137b71ac28b4ee4a55f5254e1fbd4527ba5521"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#5e6698e3955da36e12170cc7780134cd90406424"
 dependencies = [
  "ahash 0.7.2",
- "firecore-audio",
  "firecore-pokedex",
  "firecore-util",
  "quad-rand",
@@ -934,13 +934,12 @@ version = "0.1.2"
 source = "git+https://github.com/not-fl3/macroquad#7911f48c329af2eaca5aeba44272f4eb63c761ce"
 
 [[package]]
-name = "map-compressor"
-version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/map-compressor#ca26c61edf2722d3f48b2fee29587e905adda6af"
+name = "map-builder"
+version = "0.1.1"
+source = "git+https://github.com/DoNotDoughnut/map-builder#d6f634dd4a19f6426c5fbcf38a5c1fb814483f43"
 dependencies = [
  "ahash 0.7.2",
  "bincode",
- "firecore-audio",
  "firecore-util",
  "firecore-world",
  "image",
@@ -1303,7 +1302,7 @@ dependencies = [
  "image",
  "lazy_static",
  "macroquad",
- "map-compressor",
+ "map-builder",
  "miniquad-cookie",
  "parking_lot",
  "ron",

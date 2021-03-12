@@ -1,3 +1,4 @@
+use std::convert::TryFrom;
 use std::path::PathBuf;
 use firecore_world::npc::NPC;
 use firecore_world::pokemon::WildEntry;
@@ -71,7 +72,7 @@ pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_set_manager: &mut WorldMa
 pub fn new_world_from_v1(gba_map: gba_map::GbaMap, config: &map_serializable::MapConfig, root_path: &PathBuf, map_index: Option<usize>) -> WorldMap {
     WorldMap {
         name: config.identifier.name.clone(),
-        music: firecore_audio::music::Music::from(gba_map.music),
+        music: firecore_util::music::Music::try_from(gba_map.music).unwrap_or_default(),
         width: gba_map.width,
         height: gba_map.height,
         tile_map: gba_map.tile_map,

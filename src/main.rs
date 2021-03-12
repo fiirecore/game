@@ -65,6 +65,14 @@ fn main() {
 
 async fn macroquad_main() {
 
+    let texture = crate::util::graphics::texture::byte_texture(include_bytes!("../build/assets/loading.png"));
+    clear_background(macroquad::prelude::BLUE);
+    macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
+    draw_text_left(0, VERSION, 1.0, 1.0);
+    draw_text_left(1, "The game may stay on this screen", 5.0, 50.0);
+    draw_text_left(1, "for up to two minutes.", 5.0, 65.0);
+    next_frame().await;
+
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
 
@@ -91,12 +99,11 @@ async fn macroquad_main() {
     let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
         start_coroutine(load_coroutine())
     } else {
-        start_coroutine(async {
-            let texture = crate::util::graphics::texture::byte_texture(include_bytes!("../build/assets/loading.png"));
+        start_coroutine(async move {
             loop {
                 clear_background(macroquad::prelude::BLUE);
                 macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
-                draw_text_left(0, VERSION, 1.0, 1.0);
+                draw_text_left(1, &format!("v{}", VERSION), 2.0, 0.0);
             	draw_text_left(1, "The game may stay on this screen", 5.0, 50.0);
             	draw_text_left(1, "for up to two minutes.", 5.0, 65.0);
                 next_frame().await;

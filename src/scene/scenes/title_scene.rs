@@ -4,7 +4,7 @@ use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::graphics::texture::byte_texture;
 use crate::util::graphics::draw;
-use firecore_audio::music::Music::Title;
+use firecore_util::music::Music::Title;
 
 use super::SceneState;
 

@@ -1,4 +1,4 @@
-use firecore_audio::music::Music;
+use firecore_util::music::Music;
 use firecore_audio::play_music;
 use crate::battle::transitions::BattleTransition;
 use firecore_util::Entity;
