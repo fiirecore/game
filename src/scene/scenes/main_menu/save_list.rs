@@ -38,9 +38,31 @@ impl SaveList {
 		#[cfg(not(target_arch = "wasm32"))]
 		{
 			match firecore_data::get_save_dir() {
-				Ok(dir) => return Some(crate::util::file::noasync::read_to_string_noasync(dir.join(FILE))?),
-				Err(_) => return None,
-			}        
+				Ok(dir) => {
+					let file = parking_lot::Mutex::new(None);
+					macroquad::miniquad::fs::load_file(&*dir.join(FILE).to_string_lossy(), move |bytes| {
+						*file.lock() = Some(bytes);
+					});
+					if let Some(result) = file.lock().take() { 
+						match result {
+						    Ok(bytes) => {
+								String::from_utf8(bytes).ok()
+							}
+						    Err(err) => {
+								warn!("{}", err);
+								None
+							}
+						}
+					} else {
+						None
+					}
+				}
+				Err(err) => {
+					warn!("Could not get save directory with error {}", err);
+					None
+				},
+			}
+			      
 		}
 		#[cfg(target_arch = "wasm32")]
 		{
