@@ -1,11 +1,9 @@
-use crate::io::data::text::color::TextColor;
+use firecore_util::text::TextColor;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
-use crate::util::Entity;
-use crate::gui::Focus;
+use firecore_util::Entity;
 use crate::util::Input;
 use frc_input::{self as input, Control};
 use crate::gui::button::BasicButton;
-use crate::util::Direction;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
 use crate::gui::text::StaticText;
@@ -15,7 +13,6 @@ use crate::util::graphics::texture::byte_texture;
 pub struct BattlePanel {
 
     active: bool,
-    // focus: bool,
 
 	x: f32,
     y: f32,
@@ -51,7 +48,6 @@ impl BattlePanel {
 		Self {
 
             active: false,
-            // focus: false,
 			
 			x: x,
             y: y,
@@ -69,7 +65,7 @@ impl BattlePanel {
             pokemon_button: BasicButton::new("Pokemon".to_ascii_uppercase().as_str(), font_id, 17.0, text_y + 16.0, x + panel_x, y + panel_y),
             run_button: BasicButton::new("Run".to_ascii_uppercase().as_str(), font_id, 73.0, text_y + 16.0, x + panel_x, y + panel_y),
 
-            text: StaticText::new(vec![String::from("What will"), String::from("POKEMON do?")], TextColor::White, 1, Direction::Left, -111.0, 10.0, x + panel_x, y + panel_y),
+            text: StaticText::new(vec![String::from("What will"), String::from("POKEMON do?")], TextColor::White, 1, false, -111.0, 10.0, x + panel_x, y + panel_y),
 
 		}
     }
@@ -171,19 +167,3 @@ impl Entity for BattlePanel {
 	}
 
 }
-
-// impl Focus for BattlePanel {
-
-//     fn focus(&mut self) {
-//         self.focus = true;
-//     }
-
-//     fn unfocus(&mut self) {
-//         self.focus = false;
-//     }
-
-//     fn in_focus(&mut self) -> bool {
-//         self.focus
-//     }
-
-// }

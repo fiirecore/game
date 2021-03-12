@@ -5,6 +5,7 @@ pub mod keyboard;
 //pub mod controller;
 
 pub type KeySet = ahash::AHashSet<macroquad::prelude::KeyCode>;
+pub type KeySetSerializable = ahash::AHashSet<keyboard::serialization::KeySerializable>;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Deserialize, Serialize)]
 pub enum Control {

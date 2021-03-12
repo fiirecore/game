@@ -1,9 +1,9 @@
-use game_scene::GameScene;
+use game::GameScene;
 
 use crate::scene::scenes::*;
 use super::Scene;
 use super::scenes::title_scene::TitleScene;
-use super::scenes::main_menu_scene::MainMenuScene;
+use super::scenes::main_menu::MainMenuScene;
 
 pub struct SceneManager {
 
@@ -11,7 +11,7 @@ pub struct SceneManager {
 
 	title_scene: TitleScene,
 	main_menu_scene: MainMenuScene,
-	game_scene: GameScene,
+	pub game_scene: GameScene,
 
 }
 
@@ -42,6 +42,12 @@ impl SceneManager {
 		}
 	}
 
+	pub async fn load_all(&mut self) {
+		self.title_scene.load().await;
+		self.main_menu_scene.load().await;
+		self.game_scene.load().await;
+	}
+
 	pub async fn poll(&mut self, delta: f32) {
 		match self.get().state() {
 		    SceneState::Continue => {
@@ -50,11 +56,7 @@ impl SceneManager {
 		    SceneState::Scene(scene) => {
 				self.get_mut().quit();
 				self.current_scene = scene;
-				let scene = self.get_mut();
-				if !scene.loaded() {
-					scene.load().await;
-				}
-				scene.on_start();
+				self.get_mut().on_start().await;
 			}
 		}
 	}
@@ -68,12 +70,8 @@ impl Scene for SceneManager {
 		self.get_mut().load().await;
 	}
 
-	fn loaded(&self) -> bool {
-		self.get().loaded()
-	}
-
-    fn on_start(&mut self) {
-        self.get_mut().on_start();
+    async fn on_start(&mut self) {
+        self.get_mut().on_start().await;
     }
 
     fn update(&mut self, _delta: f32) {

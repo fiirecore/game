@@ -10,9 +10,7 @@ pub trait Scene {
 
 	async fn load(&mut self);
 
-	fn loaded(&self) -> bool;
-
-	fn on_start(&mut self);
+	async fn on_start(&mut self);
 	
 	fn update(&mut self, delta: f32);
 	

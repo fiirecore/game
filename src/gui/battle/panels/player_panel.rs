@@ -1,7 +1,6 @@
 use macroquad::prelude::warn;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
-use crate::util::Entity;
-use crate::gui::Focus;
+use firecore_util::Entity;
 use crate::util::Input;
 use frc_input as input;
 use crate::util::graphics::Texture;
@@ -57,7 +56,7 @@ impl PlayerPanel {
                         warn!("bag button unimplemented");
                     },
                     2 => {
-                        crate::gui::game::pokemon_party_gui::toggle();
+                        unsafe { crate::gui::game::pokemon_party_gui::SPAWN = true; }
                     },
                     3 => {
                         battle.run();

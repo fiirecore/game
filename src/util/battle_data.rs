@@ -1,13 +1,11 @@
-use macroquad::prelude::info;
 use macroquad::rand::gen_range;
 use parking_lot::Mutex;
-use crate::battle::battle_info::BattleType;
-use crate::battle::transitions::managers::battle_screen_transition_manager::BattleScreenTransitions;
+use firecore_world::{BattleType, BattleScreenTransitions};
 use firecore_pokedex::PokemonId;
 use firecore_pokedex::pokemon::data::StatSet;
 use firecore_pokedex::pokemon::party::PokemonParty;
-use crate::world::npc::NPC;
-use crate::world::pokemon::wild_pokemon_table::WildPokemonTable;
+use firecore_world::npc::NPC;
+use firecore_world::pokemon::wild_pokemon_table::WildPokemonTable;
 
 lazy_static::lazy_static! {
 	pub static ref BATTLE_DATA: Mutex<Option<BattleData>> = Mutex::new(None);
@@ -39,7 +37,6 @@ pub fn wild_battle(table: &WildPokemonTable) {
 }
 
 pub fn trainer_battle(npc: &NPC) {
-    info!("Attempting trainer battle with: {}", npc.identifier.name);
     if let Some(trainer) = &npc.trainer {
         *BATTLE_DATA.lock() = Some(BattleData {
             battle_type: trainer.trainer_type.battle_type(),

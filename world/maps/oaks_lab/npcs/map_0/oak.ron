@@ -1,0 +1,20 @@
+(
+    identifier: (
+        name: "Oak",
+        npc_type: "prof_oak"
+    ),
+    position: (
+        coords: (
+            x: 6,
+            y: 3
+        ),
+        direction: Down
+    ),
+    message_set: (
+        messages: [
+            (
+                message: ["Temporary message"]
+            )
+        ]
+    )
+)

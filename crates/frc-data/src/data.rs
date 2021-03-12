@@ -1,7 +1,5 @@
 use std::path::PathBuf;
 
-use anyhow::{Error, Result};
-use macroquad::prelude::load_file;
 use macroquad::prelude::warn;
 
 #[async_trait::async_trait(?Send)]
@@ -73,15 +71,13 @@ pub fn save_struct<P: AsRef<std::path::Path>>(path: P, data: &impl serde::Serial
 
 }
 
-pub async fn read_string<P: AsRef<std::path::Path>>(path: P) -> Result<String> {
+pub async fn read_string<P: AsRef<std::path::Path>>(path: P) -> Result<String, crate::error::Error> {
     #[cfg(not(target_arch = "wasm32"))]
     {
-        if let Ok(dir) = crate::get_save_dir() {
-            return Ok((*String::from_utf8_lossy(&load_file(dir.join(path.as_ref())).await?)).to_owned());
-        } else {
-            return Err(Error::msg("Could not get data directory to read file!"));
-        }
-        
+        match crate::get_save_dir() {
+            Ok(dir) => return Ok((*String::from_utf8_lossy(&macroquad::prelude::load_file(&*dir.join(path.as_ref()).to_string_lossy()).await.map_err(|err| crate::error::Error::FileError(err))?)).to_owned()),
+            Err(err) => return Err(err),
+        }        
     }
     #[cfg(target_arch = "wasm32")]
     {

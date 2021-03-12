@@ -1,6 +1,6 @@
 use macroquad::prelude::Color;
 
-use crate::io::data::text::font::FontSheetData;
+use crate::io::data::font::FontSheetData;
 use crate::util::graphics::Texture;
 use crate::util::graphics::draw;
 
@@ -23,9 +23,9 @@ impl TextRenderer {
     pub fn new() -> TextRenderer {
         TextRenderer {
             fonts: [
-                FontSheetData::open_sheet("fonts/font0.json").expect("Could not load font sheet 0"),
-                FontSheetData::open_sheet("fonts/font1.json").expect("Could not load font sheet 1"),
-                FontSheetData::open_sheet("fonts/font2.json").expect("Could not load font sheet 2") // Font 2 deprecated
+                FontSheetData::open_sheet("fonts/font0.ron").expect("Could not load font sheet 0"),
+                FontSheetData::open_sheet("fonts/font1.ron").expect("Could not load font sheet 1"),
+                FontSheetData::open_sheet("fonts/font2.ron").expect("Could not load font sheet 2") // Font 2 deprecated
             ],
             button: byte_texture(include_bytes!("../../../build/assets/gui/button.png")),
             cursor: byte_texture(include_bytes!("../../../build/assets/gui/cursor.png")),

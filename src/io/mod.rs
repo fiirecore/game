@@ -5,11 +5,10 @@ use ahash::AHashSet as HashSet;
 use rust_embed::RustEmbed;
 
 pub mod data;
-// pub mod input;
 pub mod args;
 
 #[derive(RustEmbed)]
-#[folder = "assets"]
+#[folder = "embed"]
 pub struct AssetFolder;
 
 pub fn get_file<P: AsRef<Path>>(path: P) -> Option<Cow<'static, [u8]>> {

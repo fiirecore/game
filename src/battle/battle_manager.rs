@@ -8,7 +8,7 @@ use super::battle::Battle;
 use super::transitions::BattleCloser;
 use super::transitions::BattleOpener;
 use super::transitions::BattleTransition;
-use crate::util::Entity;
+use firecore_util::Entity;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 use super::transitions::managers::battle_screen_transition_manager::BattleScreenTransitionManager;
 use super::transitions::managers::battle_opener_manager::BattleOpenerManager;
@@ -67,8 +67,10 @@ impl Reset for BattleManager {
 
 	fn reset(&mut self) {
 		self.battle_gui.despawn();
-		self.battle_gui.spawn();		
+		self.battle_gui.spawn();	
 		self.battle_screen_transition_manager.spawn();
+		self.battle_opener_manager.reset();
+		self.battle_gui.reset();
 	}
 	
 }
@@ -76,7 +78,7 @@ impl Reset for BattleManager {
 impl BattleManager {
 
 	pub fn on_start(&mut self, player_data: &PlayerData, battle_data: BattleData) { // add battle type parameter
-		info!("Attemping to create battle!");
+		// info!("Attemping to create battle!");
 		self.finished = false;
 		self.battle_data = battle_data;
 		self.create_battle(player_data);

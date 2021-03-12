@@ -24,6 +24,8 @@ pub mod world;
 pub mod battle;
 pub mod gui;
 
+pub mod experimental;
+
 pub mod pokemon;
 
 pub static TITLE: &str = "Pokemon FireRed";
@@ -73,7 +75,7 @@ async fn macroquad_main() {
     macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
     if !args.contains(&Args::DisableAudio) {
-        frc_audio::create();
+        firecore_audio::create();
     }
 
     let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
@@ -91,13 +93,13 @@ async fn macroquad_main() {
 
     info!("Loading assets...");
 
-    frc_audio::bind_world_music().await;
+    firecore_audio::bind_world_music().await;
     
-    // storage::store(io::data::player::PlayerData::load_from_file().await);
-    
-    
+    pokemon::load().await;
 
-    pokemon::load();
+    let mut scene_manager = SCENE_MANAGER.lock();
+
+    scene_manager.load_all().await;
 
     info!("Finished loading assets!");
 
@@ -115,14 +117,12 @@ async fn macroquad_main() {
 
     info!("Starting game!");
 
-    let mut scene_manager = SCENE_MANAGER.lock();
-
-    scene_manager.on_start();
+    scene_manager.on_start().await;
 
     loop {
 
         #[cfg(target_arch = "wasm32")]
-        frc_audio::quadsnd::context::music::MIXER.lock().frame();
+        firecore_audio::quadsnd::context::music::MIXER.lock().frame();
 
 
         scene_manager.input(get_frame_time());
@@ -151,6 +151,8 @@ async fn macroquad_main() {
 
         next_frame().await;
     }
+
+    scene_manager.quit();
 
 }
 

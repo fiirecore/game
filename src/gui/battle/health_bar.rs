@@ -1,4 +1,4 @@
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw_rect;
 

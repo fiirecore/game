@@ -1,0 +1,72 @@
+{
+    identifier: "test_battle_script",
+    "run_type": "Always",
+    "location": {
+        "min": {
+            x: 3,
+            y: 27
+        },
+        "max": {
+            x: 3,
+            y: 27
+        }
+    },
+    "end_position": {
+        coords: (
+            x: 4,
+            y: 27
+        },
+        direction: Left "
+    },
+    "npc": {
+        "npc": {
+            identifier: {
+                name: "Bruh Moment",
+                npc_type: "mom"
+            },
+            position: (
+                coords: (
+                    x: 11,
+                    y: 36
+                },
+                direction: Up "
+            },
+            trainer: Some((
+                    trainer_type: GymLeader ",
+                    encounter_message: [
+
+                        [
+                            "Bruh"
+                        ],
+
+                        [
+                            "Bruh"
+                        ]
+
+                    ],
+                    victory_message: [
+                        "Test"
+                    ],
+                    party: (
+                        pokemon: [(
+                            id: 149,
+                            level: 100
+                        }]
+                    },
+                    worth: 5000
+                }
+            },
+            "message": {
+                "text": {
+                    "messages": [{
+                        "message": [
+                            "bruh",
+                            "moment"
+                        ],
+                        "color": "Blue",
+                        "font_id": 1
+                    }]
+                }
+            }
+        }
+    }

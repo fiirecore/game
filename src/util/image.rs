@@ -1,16 +1,43 @@
 use macroquad::prelude::Image;
+use macroquad::prelude::warn;
+
 use crate::util::TILE_SIZE;
 
-pub fn byte_image(bytes: &[u8]) -> Result<Image, macroquad::prelude::ImageError> {
-    Image::from_file_with_format(bytes, Some(macroquad::prelude::ImageFormat::Png))
+pub fn byte_image(bytes: &[u8]) -> Result<Image, image::ImageError> {
+    from_file_with_format(bytes, Some(image::ImageFormat::Png))
+}
+
+pub fn from_file_with_format(bytes: &[u8], format: Option<image::ImageFormat>) -> Result<Image, image::ImageError> {
+    match format {
+        Some(fmt) =>
+            image::load_from_memory_with_format(&bytes, fmt)
+            .map(|img| from_rgba8(img.to_rgba8()) ),
+        None => image::load_from_memory(&bytes).map(|img| from_rgba8(img.to_rgba8()) ),
+    }        
+}
+
+fn from_rgba8(img: image::RgbaImage) -> Image {
+    Image {
+        width: img.width() as u16,
+        height: img.height() as u16,
+        bytes: img.into_raw(),
+    }
 }
 
 pub async fn open_image<P: AsRef<std::path::Path>>(path: P) -> Option<Image> {
     let path = path.as_ref();
-    match macroquad::prelude::load_image(&path.to_string_lossy()).await {
-        Ok(image) => Some(image),
+    match super::file::load_file(path).await {
+        Ok(bytes) => {
+            match byte_image(&bytes) {
+                Ok(image) => Some(image),
+                Err(err) => {
+                    warn!("Could not decode image with error {}", err);
+                    None
+                }
+            }
+        }
         Err(err) => {
-            macroquad::prelude::warn!("Could not open image at {:?} with error {}", path, err);
+            warn!("Could not open image at {:?} with error {}", path, err);
             None
         }
     }
@@ -23,7 +50,13 @@ pub fn get_subimage(image: &Image, id: usize) -> Image {
 pub fn get_subimage_wh(image: &Image, id: usize, w: u32, h: u32) -> Image {
 	let x = id % (image.width() / w as usize);
 	let y = id / (image.width() / w as usize);
-	return image.get_subimage(x as u32 * w, y as u32 * h, w, h);
+	return get_subimage_old(&image, x as u32 * w, y as u32 * h, w, h);
+}
+
+fn get_subimage_old(image: &Image, x: u32, y: u32, width: u32, height: u32) -> Image {
+    let rgba = image::RgbaImage::from_raw(image.width as u32, image.height as u32, image.bytes.clone()).expect("Could not create image from bytes");
+    let img = image::SubImage::new(&rgba, x, y, width as u32, height as u32).to_image();
+    from_rgba8(img)
 }
 
 // pub fn get_subimage_at(image: &Image, x: u32, y: u32, w: u32, h: u32) -> Image {

@@ -1,6 +1,6 @@
 use crate::battle::transitions::introductions::trainer_battle_introduction::TrainerBattleIntroduction;
 use crate::util::battle_data::TrainerData;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;

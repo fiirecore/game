@@ -1,10 +1,11 @@
 use firecore_pokedex::PokemonId;
-use frc_audio::sound::Sound;
+use firecore_audio::sound::Sound;
+use firecore_util::text::Message;
+use firecore_util::text::MessageSet;
 
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::gui::Focus;
-use crate::io::data::text::Message;
-use crate::io::data::text::color::TextColor;
+use firecore_util::text::TextColor;
 use crate::util::Input;
 use crate::util::battle_data::TrainerData;
 use crate::battle::battle::Battle;
@@ -37,9 +38,7 @@ pub struct BasicBattleIntroduction {
 impl BasicBattleIntroduction {
 
     pub fn new(panel_x: f32, panel_y: f32) -> Self {
-
         Self {
-
             alive: false,
             finished: false,
 
@@ -50,9 +49,12 @@ impl BasicBattleIntroduction {
             player_intro: PlayerBattleIntro::new(),
             
             finished_panel: false,
-
         }
+    }
 
+    pub fn common_setup(&mut self, battle: &Battle) {
+        self.player_id = battle.player().pokemon.data.number;
+        self.opponent_id = battle.opponent().pokemon.data.number;
     }
 
 }
@@ -92,6 +94,7 @@ impl Reset for BasicBattleIntroduction {
 
     fn reset(&mut self) {
         self.player_intro.reset();
+        self.intro_text.reset();
         self.finished_panel = false;
     }
 
@@ -125,12 +128,11 @@ impl BattleIntroduction for BasicBattleIntroduction {
     }
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
-        self.intro_text.text = crate::io::data::text::MessageSet { messages: vec![
+        self.intro_text.text = MessageSet { messages: vec![
             Message::with_color(vec![String::from("Wild ") + battle.opponent().pokemon.data.name.to_ascii_uppercase().as_str() + " appeared!"], false, TextColor::White),
             Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         ]};
-        self.player_id = battle.player().pokemon.data.number;
-        self.opponent_id = battle.opponent().pokemon.data.number;
+        self.common_setup(battle);
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {
@@ -147,13 +149,13 @@ impl BattleIntroduction for BasicBattleIntroduction {
             if self.intro_text.current_phrase() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
                 battle_gui.opponent_pokemon_gui.reset();
                 battle_gui.opponent_pokemon_gui.spawn();
-                frc_audio::play_sound(Sound::Cry(self.opponent_id));
+                firecore_audio::play_sound(Sound::Cry(self.opponent_id));
             }
         }
         if self.player_intro.is_finished() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
-            frc_audio::play_sound(Sound::Cry(self.player_id));
+            firecore_audio::play_sound(Sound::Cry(self.player_id));
         }
         if battle_gui.opponent_pokemon_gui.is_alive() {
             if battle_gui.opponent_pokemon_gui.panel.x + 5.0 < battle_gui.opponent_pokemon_gui.orig_x {

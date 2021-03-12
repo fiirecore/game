@@ -1,0 +1,40 @@
+(
+    identifier: (
+        name: "Robin",
+        npc_type: "lass"
+    ),
+    position: (
+        coords: (
+            x: 40,
+            y: 11
+        ),
+        direction: Down
+    ),
+    movement: WalkUpDown,
+    message_set: (
+        messages: [(
+            message: ["Temporary message"]
+        )]
+    ),
+    trainer: Some((
+        trainer_type: Lass,
+        tracking_length: Some(2),
+        encounter_music: Some(EncounterGirl),
+        message_color: Red,
+        encounter_message: [
+            [
+                "Eek!",
+                "Did you touch me?"
+            ]
+        ],
+        party: (
+            pokemon: [
+                (
+                    id: 39,
+                    level: 14
+                )
+            ]
+        ),
+        worth: 0
+    ))
+)

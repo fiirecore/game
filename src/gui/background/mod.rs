@@ -41,7 +41,7 @@ impl super::GuiComponent for Background {
     
 }
 
-impl crate::util::Entity for Background {
+impl firecore_util::Entity for Background {
 
 	
 	fn spawn(&mut self) {

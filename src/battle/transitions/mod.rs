@@ -1,5 +1,5 @@
 use crate::util::battle_data::TrainerData;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;

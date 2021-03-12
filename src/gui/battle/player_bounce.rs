@@ -30,6 +30,12 @@ impl PlayerBounce {
 
     }
 
+    pub fn reset(&mut self) {
+        self.pokemon_up = false;
+        self.gui_up = true;
+        self.pokemon_offset = 1;
+    }
+
     pub fn update(&mut self, delta: f32, player_pokemon_gui: &mut PlayerPokemonGui) {
         self.counter = (self.counter + delta) % ONE_THIRD;
         if self.counter < delta {

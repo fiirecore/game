@@ -1,6 +1,6 @@
-use crate::battle::battle_info::BattleType;
+use firecore_world::BattleType;
 
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;

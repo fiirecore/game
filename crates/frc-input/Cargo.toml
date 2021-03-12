@@ -14,4 +14,5 @@ ahash = { version = "0.7", features = ["serde"] }
 lazy_static = "1.4"
 parking_lot = "0.11"
 
-macroquad = { git = "https://github.com/DoNotDoughnut/macroquad", default-features = false, features = ["log-impl", "experimental", "serde"] }
+#macroquad = { git = "https://github.com/DoNotDoughnut/macroquad", default-features = false, features = ["log-impl", "experimental", "serde"] }
+macroquad = { git = "https://github.com/not-fl3/macroquad" }

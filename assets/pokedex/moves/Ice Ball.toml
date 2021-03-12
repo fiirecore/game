@@ -1,7 +1,0 @@
-number = 301
-name = "Ice Ball"
-pokemon_type = "Ice"
-category = "Physical"
-power = 30
-accuracy = 90
-pp = 20

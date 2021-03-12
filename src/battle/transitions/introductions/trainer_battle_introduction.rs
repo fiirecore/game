@@ -1,12 +1,12 @@
-use crate::io::data::text::Message;
-use crate::io::data::text::MessageSet;
-use crate::io::data::text::color::TextColor;
+use firecore_util::text::Message;
+use firecore_util::text::MessageSet;
+use firecore_util::text::TextColor;
 use crate::util::battle_data::TrainerData;
 use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
 use super::basic_battle_introduction::BasicBattleIntroduction;
@@ -70,6 +70,8 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         self.basic_battle_introduction.intro_text.text.messages.push(
             Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         );
+
+        self.basic_battle_introduction.common_setup(battle);
         
     }
 

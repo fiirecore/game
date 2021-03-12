@@ -1,6 +1,5 @@
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::gui::Focus;
-use crate::io::data::player::PlayerData;
 use crate::util::Input;
 use frc_input::{self as input, Control};
 use crate::util::graphics::Texture;
@@ -96,11 +95,13 @@ impl Input for PlayerWorldGui {
             match self.cursor_position {
                 0 => {
                     // Save
-                    macroquad::prelude::collections::storage::get_mut::<PlayerData>().expect("Could not get Player Data").mark_dirty();
+                    unsafe { crate::io::data::player::DIRTY = true; }
+                    // macroquad::prelude::collections::storage::get_mut::<PlayerData>().expect("Could not get Player Data").mark_dirty();
+                    // macroquad::prelude::warn!("Unimplemented");
                 },
                 1 => {
                     // Pokemon
-                    crate::gui::game::pokemon_party_gui::toggle();
+                    unsafe { crate::gui::game::pokemon_party_gui::SPAWN = true; }
                 },
                 2 => {
                     // Exit Game
@@ -165,7 +166,7 @@ impl Focus for PlayerWorldGui {
 
 }
 
-#[derive(Debug, enum_iterator::IntoEnumIterator)]
+#[derive(Debug)]
 enum Button {
 
     Save,
@@ -174,6 +175,13 @@ enum Button {
     Close,
 
 }
+
+// const BUTTONS: [Button; 4] = [
+//     Button::Save,
+//     Button::Pokemon,
+//     Button::ExitGame,
+//     Button::Close,
+// ];
 
 impl Button {
 

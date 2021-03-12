@@ -14,7 +14,7 @@ static CONFIGURATION_FILENAME: &str = "config.ron";
 #[derive(Serialize, Deserialize)]
 pub struct Configuration {
 
-	pub controls: HashMap<Control, frc_input::KeySet>,	
+	pub controls: HashMap<Control, frc_input::KeySetSerializable>,	
 	// pub touchscreen: bool,
 
 }
@@ -23,7 +23,7 @@ impl Configuration {
 
 	pub fn on_reload(&self) {
 		info!("Running configuration reload tasks...");
-		*frc_input::keyboard::KEY_CONTROLS.write() = self.controls.clone();
+		*frc_input::keyboard::KEY_CONTROLS.write() = frc_input::keyboard::serialization::normal_map(&self.controls);
 		info!("Finished configuration reload tasks!");
 	}
 
@@ -53,7 +53,7 @@ impl Configuration {
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-			controls: frc_input::keyboard::default(),
+			controls: frc_input::keyboard::serialization::ser_map(frc_input::keyboard::default()),
 			// touchscreen: false,
 		}
     }
@@ -82,32 +82,7 @@ impl PersistantData for Configuration {
 	}
 
 	fn save(&self) {
-		if cfg!(not(target_arch = "wasm32")) {
-			crate::data::save_struct(Self::default_path(), &self);
-			// let path = PathBuf::from(CONFIGURATION_PATH);
-
-			// if !path.exists() {
-			// 	match std::fs::create_dir_all(&path) {
-			// 		Ok(()) => {}
-			// 		Err(err) => {
-			// 			warn!("Could not create folder for configuration directory with error {}", err);
-			// 		}
-			// 	}
-			// }
-	
-			// if let Ok(mut file) = File::create(path.join(CONFIGURATION_FILENAME)) {
-			// 	match serde_json::to_string_pretty(&self) {
-			// 		Ok(encoded) => {
-			// 			if let Err(err) = file.write(encoded.as_bytes()) {
-			// 				warn!("Failed to write to configuration file: {}", err);
-			// 			}
-			// 		},
-			// 		Err(err) => {
-			// 			warn!("Failed to parse configuration into a string with error: {}", err);
-			// 		}
-			// 	}
-			// }
-		}
+		crate::data::save_struct(Self::default_path(), &self);
 	}
 
 	async fn reload(&mut self) {

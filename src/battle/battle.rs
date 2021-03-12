@@ -6,11 +6,11 @@ use firecore_pokedex::pokemon::texture::PokemonTexture;
 use macroquad::prelude::warn;
 use crate::pokemon::pokemon_texture;
 use crate::util::graphics::Texture;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::util::graphics::draw_bottom;
-use super::battle_info::BattleType;
+use firecore_world::BattleType;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 
@@ -161,6 +161,7 @@ impl Battle {
 						self.faint = false;
 						self.player_active = pkmn_index;
 						battle_gui.update_gui(&self);
+						battle_gui.player_pokemon_gui.health_bar.update_bar(self.player().current_hp, self.player().base.hp);
 						break;
 					}
 				}

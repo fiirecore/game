@@ -1,7 +1,0 @@
-number = 26
-name = "Jump Kick"
-pokemon_type = "Fighting"
-category = "Physical"
-power = 100
-accuracy = 95
-pp = 10

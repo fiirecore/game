@@ -1,7 +1,7 @@
 use crate::util::graphics::Texture;
 
-use crate::util::Entity;
-use crate::util::timer::Timer;
+use firecore_util::Entity;
+use firecore_util::Timer;
 
 use super::movement_texture::MovementTexture;
 use super::texture_manager::TextureManager;

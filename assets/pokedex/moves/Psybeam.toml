@@ -1,7 +1,0 @@
-number = 60
-name = "Psybeam"
-pokemon_type = "Psychic"
-category = "Special"
-power = 65
-accuracy = 100
-pp = 20

@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::util::Coordinate;
+use firecore_util::Coordinate;
 
 #[derive(Deserialize)]
 pub struct MapConfig {
@@ -45,17 +45,17 @@ pub struct SerializedMapSettings {
 
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct SerializedChunkMap {
 
     pub piece_index: u16,
     pub x: isize,
     pub y: isize,
-    pub connections: Vec<u16>,
+    pub connections: smallvec::SmallVec<[u16; 6]>,
 
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct SerializedMapSet {
 
     pub map_set_id: String,

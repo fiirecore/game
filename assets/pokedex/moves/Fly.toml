@@ -1,7 +1,0 @@
-number = 19
-name = "Fly"
-pokemon_type = "Flying"
-category = "Physical"
-power = 90
-accuracy = 95
-pp = 15

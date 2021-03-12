@@ -1,6 +1,7 @@
 use firecore_pokedex::pokemon::battle::BattlePokemon;
+use firecore_util::text::TextColor;
 use crate::battle::battle::Battle;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::util::graphics::Texture;
 
 use crate::gui::GuiComponent;
@@ -13,7 +14,6 @@ use super::move_panel::MovePanel;
 pub struct FightPanel {
 
     active: bool,
-    focus: bool,
 
     x: f32,
     y: f32,
@@ -41,7 +41,6 @@ impl FightPanel {
         FightPanel {
 
             active: false,
-            focus: false,
 
             x: x,
             y: y,
@@ -144,7 +143,7 @@ impl GuiComponent for FightPanel {
                 if string_id / 2 == 1 {
                     y_offset = 17.0;
                 }
-                crate::util::graphics::draw_text_left_color(0, self.move_names[string_id].to_ascii_uppercase().as_str(), crate::io::data::text::color::TextColor::Black, self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
+                crate::util::graphics::draw_text_left_color(0, self.move_names[string_id].to_ascii_uppercase().as_str(), TextColor::Black, self.panel_x + self.x + 16.0 + x_offset, self.panel_y + self.y + 8.0 + y_offset);
                 if string_id == (self.cursor_x + self.cursor_y * 2) as usize {
                     crate::util::graphics::draw_cursor(self.panel_x + self.x + 10.0 + x_offset, self.panel_y + self.y + 10.0 + y_offset);
                 }

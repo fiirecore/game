@@ -1,10 +1,10 @@
-use frc_audio::play_music;
+use firecore_audio::play_music;
 use frc_input as input;
 use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::graphics::texture::byte_texture;
 use crate::util::graphics::draw;
-use frc_audio::music::Music::Title;
+use firecore_audio::music::Music::Title;
 
 use super::SceneState;
 
@@ -48,11 +48,7 @@ impl Scene for TitleScene {
 		
 	}
 
-	fn loaded(&self) -> bool {
-		true
-	}
-
-	fn on_start(&mut self) {
+	async fn on_start(&mut self) {
 		self.state = SceneState::Continue;
 		play_music(Title);
 		self.accumulator = 0.0;

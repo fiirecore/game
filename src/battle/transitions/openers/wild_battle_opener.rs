@@ -1,5 +1,5 @@
 use crate::util::graphics::Texture;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw;

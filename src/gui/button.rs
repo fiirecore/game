@@ -67,7 +67,7 @@ impl GuiText for BasicButton {
 
 }
 
-impl crate::util::Entity for BasicButton {
+impl firecore_util::Entity for BasicButton {
 
 	fn spawn(&mut self) {
 		self.alive = true;		

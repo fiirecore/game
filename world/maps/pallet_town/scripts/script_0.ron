@@ -1,0 +1,53 @@
+(
+    condition: (
+        location: (
+            min: (
+                x: 12,
+                y: 1
+            ),
+            max: (
+                x: 13,
+                y: 1
+            )
+        ),
+        event: Some(
+            WorldEvent(
+                id: "oak_catch_player",
+                happened: false,
+                activate: true,
+            )
+        ),
+    ),
+    actions: [
+        FreezePlayer,
+        SpawnNPC(
+            id: 0,
+            npc: NPC(
+                identifier: (
+                    name: "TestOak",
+                    npc_type: "prof_oak",
+                ),
+                position: (
+                    coords: (
+                        x: 10,
+                        y: 7
+                    ),
+                    direction: Up
+                ),
+                message_set: (
+                    messages: [(
+                            message: ["Test script NPC message"],
+                    )]
+                )
+            )
+        ),
+        MoveNPC(
+            id: 0,
+            pos: (
+                x: 12,
+                y: 2,
+            )
+        ),
+        UnfreezePlayer,
+    ]
+)

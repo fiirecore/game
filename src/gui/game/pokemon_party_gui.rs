@@ -1,8 +1,7 @@
 use std::ops::DerefMut;
-use parking_lot::RwLock;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::gui::battle::health_bar;
-use crate::io::data::text::color::TextColor;
+use firecore_util::text::TextColor;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
@@ -14,19 +13,17 @@ use crate::util::graphics::texture::byte_texture;
 
 const TEXTURE_TICK: f32 = 0.15;
 
-lazy_static::lazy_static! {
-    pub static ref PARTY_GUI: RwLock<PokemonPartyGui> = RwLock::new(PokemonPartyGui::new());
-}
+pub static mut SPAWN: bool = false;
 
-pub fn toggle() {
-    let mut gui = PARTY_GUI.write();
-    if gui.is_alive() {
-        gui.despawn();
-    } else {
-        gui.spawn();
-        gui.on_start();
-    }
-}
+// pub fn toggle() {
+//     let mut gui = PARTY_GUI.write();
+//     if gui.is_alive() {
+//         gui.despawn();
+//     } else {
+//         gui.spawn();
+//         gui.on_start();
+//     }
+// }
 
 pub struct PokemonPartyGui {
 
@@ -71,7 +68,7 @@ impl PokemonPartyGui {
                 let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
                 let curr = pokemon.1.current_hp.unwrap_or(max);
     
-                let texture = if let Some(file) = crate::io::get_file(format!("pokedex/textures/icon/{}.png", pokemon_data.data.name.to_ascii_lowercase())) {
+                let texture = if let Some(file) = crate::util::file::noasync::read_noasync(format!("assets/pokedex/textures/icon/{}.png", pokemon_data.data.name.to_ascii_lowercase())) {
                     byte_texture(&file)
                 } else {
                     crate::util::graphics::texture::debug_texture()

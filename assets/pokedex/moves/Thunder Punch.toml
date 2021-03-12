@@ -1,7 +1,0 @@
-number = 9
-name = "Thunder Punch"
-pokemon_type = "Electric"
-category = "Physical"
-power = 75
-accuracy = 100
-pp = 15

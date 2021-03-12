@@ -1,0 +1,28 @@
+(
+    identifier: (
+        name: "NPC 0",
+        npc_type: "woman_1"
+    ),
+    position: (
+        coords: (
+            x: 3,
+            y: 10
+        ),
+        direction: Down
+    ),
+    message_set: (
+        messages: [
+            (
+                message: [
+                    "I'm raising POKEMON too."
+                ],
+            ),
+            (
+                message: [
+                    "When they get strong, they can",
+                    "protect me."
+                ]
+            )
+        ]
+    )
+)

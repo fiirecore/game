@@ -1,4 +1,6 @@
 
+use firecore_util::text::TextColor;
+
 use crate::util::graphics::Texture;
 use crate::util::graphics::fade_in_out;
 use crate::util::graphics::texture::byte_texture;
@@ -39,7 +41,7 @@ impl super::LoadingScene for CopyrightLoadingScene {
 	
 	fn render(&self) {
 		fade_in_out(self.scene_texture, 0.0, 0.0, self.accumulator, 3.0, 0.5);
-		crate::util::graphics::draw_text_left_color(1, &format!("v{}", crate::VERSION), crate::io::data::text::color::TextColor::White, 2.0, 0.0);
+		crate::util::graphics::draw_text_left_color(1, &format!("v{}", crate::VERSION), TextColor::White, 2.0, 0.0);
 	}
 
     fn state(&self) -> &LoadingState {

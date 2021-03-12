@@ -1,8 +1,7 @@
 
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::util::graphics::Texture;
-use crate::io::data::text::color::TextColor;
-use crate::util::Direction;
+use firecore_util::text::TextColor;
 use crate::gui::text::StaticText;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw;
@@ -45,9 +44,9 @@ impl MovePanel {
             panel_y: panel_y,
 
             background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/move_info_panel.png")),
-            pp: StaticText::new(vec![String::from("PP")], TextColor::Black, 0, Direction::Left, 8.0, 11.0, x + panel_x, y + panel_y),
-            move_type: StaticText::new(vec![String::from("TYPE/")], TextColor::Black, 0, Direction::Left, 8.0, 27.0, x + panel_x, y + panel_y),
-            remaining_pp: StaticText::new(vec![String::from("x/y")], TextColor::Black, 0, Direction::Right, 72.0, 11.0, x + panel_x, y + panel_y),
+            pp: StaticText::new(vec![String::from("PP")], TextColor::Black, 0, false, 8.0, 11.0, x + panel_x, y + panel_y),
+            move_type: StaticText::new(vec![String::from("TYPE/")], TextColor::Black, 0, false, 8.0, 27.0, x + panel_x, y + panel_y),
+            remaining_pp: StaticText::new(vec![String::from("x/y")], TextColor::Black, 0, true, 72.0, 11.0, x + panel_x, y + panel_y),
 
         }
 

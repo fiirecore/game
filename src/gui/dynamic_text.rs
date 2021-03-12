@@ -1,15 +1,15 @@
+use firecore_util::text::Message;
+use firecore_util::text::MessageSet;
 use serde::Deserialize;
 
-use crate::io::data::text::Message;
-use crate::io::data::text::MessageSet;
 use crate::util::Completable;
 use crate::util::Reset;
 use crate::util::graphics::draw_text_left_color;
 use frc_input as input;
 
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::gui::GuiComponent;
-use crate::util::timer::Timer;
+use firecore_util::Timer;
 
 #[derive(Clone, Deserialize)]
 pub struct DynamicText {

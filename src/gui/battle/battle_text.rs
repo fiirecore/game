@@ -1,9 +1,9 @@
 
 use crate::battle::battle::Battle;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::gui::{GuiComponent, GuiText};
 use crate::util::graphics::draw_text_left;
-use crate::util::timer::Timer;
+use firecore_util::Timer;
 
 use super::battle_gui::BattleGui;
 use super::pokemon_gui::PokemonGui;

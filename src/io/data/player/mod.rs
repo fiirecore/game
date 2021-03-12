@@ -1,14 +1,14 @@
 use firecore_pokedex::pokemon::data::StatSet;
 use firecore_pokedex::pokemon::party::PokemonParty;
-use crate::util::Coordinate;
+use firecore_util::text::MessageSet;
+use firecore_util::text::TextColor;
+use macroquad::prelude::collections::storage;
 use frc_data::data::PersistantData;
 use std::path::{Path, PathBuf};
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use serde::{Deserialize, Serialize};
-use crate::util::GlobalPosition;
-use crate::util::Location;
-use crate::util::Position;
+use firecore_util::{GlobalPosition, Location, Position, Coordinate};
 use super::world::WorldStatus;
 use firecore_pokedex::pokemon::instance::PokemonInstance;
 
@@ -16,6 +16,11 @@ static SAVE_DIRECTORY: &str = "saves";
 static SAVE_FILE_TYPE: &str = ".ron";
 
 pub static mut PLAYER_SAVE: Option<String> = None;
+pub static mut DIRTY: bool = false;
+
+lazy_static::lazy_static! {
+	pub static ref PLAYER_DATA: parking_lot::RwLock<Option<PlayerData>> = parking_lot::RwLock::new(None);
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerData {
@@ -34,45 +39,53 @@ pub struct PlayerData {
 	#[serde(default)]
 	pub world_status: WorldStatus,
 
-	#[serde(skip)]
-	pub dirty: bool,
+	// #[serde(skip)]
+	// pub dirty: bool,
 
 }
 
 impl PlayerData {
 
-	pub fn select_data(data: String) {
-		unsafe { PLAYER_SAVE = Some(data) };
+	pub fn new(name: &str) -> Self {
+		Self {
+			name: name.to_owned(),
+			..Default::default()
+		}
 	}
 
-	pub async fn load_selected_data() -> Self {
-		match unsafe {PLAYER_SAVE.as_ref()} {
-		    Some(save_name) => Self::load(Path::new(SAVE_DIRECTORY).join(save_name.clone() + SAVE_FILE_TYPE)).await,
-		    None => {
-				warn!("Could not get player save data because no data has been selected");
-				return new_save();
-			}
+	pub fn select_data(name: &str) {
+		unsafe {
+			PLAYER_SAVE = Some(name.to_owned());
 		}
-		
 	}
+
+	pub async fn load_selected_data() {
+		if let Some(save) = unsafe{PLAYER_SAVE.take()} {
+			let data = Self::load(Path::new(SAVE_DIRECTORY).join( save + SAVE_FILE_TYPE)).await;
+			storage::store(data);
+		}
+	}
+
+	// fn from_string(data: &str) -> Self {
+	// 	match ron::from_str(data) {
+	// 		Ok(data) => return data,
+	// 		Err(err) => {
+	// 			warn!("Error parsing player save: {}", err);
+	// 			let name = path.file_name().unwrap().to_string_lossy();
+	// 			let name = &name[0..name.len() - 4];
+	// 			return new_save(name);
+	// 		}
+	// 	}
+	// }
+
 
 	pub fn add_pokemon_to_party(&mut self, pokemon: PokemonInstance) {
 		self.party.pokemon.push(pokemon);
 	}
 
-	pub fn mark_dirty(&mut self) {
-		self.dirty = true;
-	}
-	
-	fn from_string(data: &str) -> Self {
-		match ron::from_str(data) {
-			Ok(data) => return data,
-			Err(err) => {
-				warn!("Error parsing player save: {}", err);
-				return new_save();
-			}
-		}
-	}
+	// pub fn mark_dirty(&mut self) {
+	// 	self.dirty = true;
+	// }
 	
 }
 
@@ -84,7 +97,7 @@ impl Default for PlayerData {
 			location: player_location(),
 		    worth: 0,
 		    world_status: WorldStatus::default(),
-		    dirty: false,
+		    // dirty: false,
 		}
 	}
 
@@ -123,37 +136,50 @@ impl PersistantData for PlayerData {
 	async fn load(path: PathBuf) -> Self {
 		info!("Loading player data...");
 		match frc_data::data::read_string(&path).await {
-			Ok(data) => PlayerData::from_string(&data),
+			Ok(data) => {
+				match ron::from_str(&data) {
+				    Ok(data) => data,
+				    Err(err) => {
+						warn!("Could not read player data with error {}", err);
+						let name = path.file_name().unwrap().to_string_lossy();
+						let name = &name[0..name.len() - 4];
+						new_save(name)
+					}
+				}
+			},
 		    Err(err) => {
 				warn!("Could not open player data file at {:?} with error {}", path, err);
-				return new_save();
+				let name = path.file_name().unwrap().to_string_lossy();
+				let name = &name[0..name.len() - 4];
+				new_save(name)
 			}
-		}	
+		}
 	}
 
 	fn save(&self) {
-		// #[cfg(not(target_arch = "wasm32"))] {
-			info!("Saving player data...");
-			
-			frc_data::data::save_struct(PathBuf::from(SAVE_DIRECTORY).join(unsafe{PLAYER_SAVE.clone()}.unwrap_or(String::from("player")) + SAVE_FILE_TYPE), &self);
+		info!("Saving player data...");
 
-			crate::gui::set_message(super::text::MessageSet::new(
-				1, 
-				super::text::color::TextColor::Black, 
-				vec![vec![String::from("Saved player data!")]]
-			));
-			info!("Saved player data!");
+		crate::scene::scenes::main_menu::save_list::SaveList::append(&self.name);
+		
+		frc_data::data::save_struct(PathBuf::from(SAVE_DIRECTORY).join(self.name.clone() + SAVE_FILE_TYPE), &self);
+
+		crate::gui::set_message(MessageSet::new(
+			1, 
+			TextColor::Black, 
+			vec![vec![String::from("Saved player data!")]]
+		));
+		info!("Saved player data!");
 	}
 
 	async fn reload(&mut self) {
-		*self = PlayerData::load_selected_data().await;
+		*self = Self::load(Path::new(SAVE_DIRECTORY).join(self.name.clone() + SAVE_FILE_TYPE)).await;
 	}
 
 }
 
-fn new_save() -> PlayerData {
+fn new_save(name: &str) -> PlayerData {
 	info!("Creating a new player save file.");
-	let default = PlayerData::default();
+	let default = PlayerData::new(name);
 	default.save();
 	return default;
 }

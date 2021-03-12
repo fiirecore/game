@@ -1,9 +1,10 @@
-use crate::util::Entity;
+use firecore_util::text::MessageSet;
+
+use firecore_util::Entity;
 use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
 use crate::gui::dynamic_text::DynamicText;
-use crate::io::data::text::MessageSet;
 use crate::util::Completable;
 use crate::util::Input;
 use crate::util::Reset;

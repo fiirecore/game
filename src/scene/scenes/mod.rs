@@ -1,7 +1,7 @@
 pub mod first_scene;
-pub mod game_scene;
-pub mod main_menu_scene;
 pub mod title_scene;
+pub mod game;
+pub mod main_menu;
 
 #[derive(Clone, Copy)]
 pub enum SceneState {

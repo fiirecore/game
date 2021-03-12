@@ -1,15 +1,15 @@
 use ahash::AHashMap as HashMap;
-use crate::util::Coordinate;
+use firecore_world::TileId;
 use crate::util::graphics::texture::still_texture_manager::StillTextureManager;
 use crate::util::graphics::texture::three_way_texture::ThreeWayTexture;
-use crate::world::warp::WarpEntry;
+use self::gui::map_window_manager::MapWindowManager;
 use self::player::Player;
 use self::tile::TileTextureManager;
 
 pub mod map;
-pub mod warp;
-pub mod npc;
-pub mod pokemon;
+// pub mod warp;
+// pub mod npc;
+// pub mod pokemon;
 pub mod gui;
 pub mod player;
 // pub mod script;
@@ -19,26 +19,18 @@ mod render_coords;
 
 pub use render_coords::RenderCoords;
 
-pub type TileId = u16;
-pub type MovementId = u8;
-pub type MapSize = u16;
+// pub type TileId = u16;
+// pub type MovementId = u8;
+// pub type MapSize = u16;
 
 pub type TileTextures = TileTextureManager;
 pub type NpcTextures = HashMap<String, ThreeWayTexture<StillTextureManager>>;
 
-pub trait World {
-
-    fn in_bounds(&self, x: isize, y: isize) -> bool;
-
-    fn tile(&self, x: isize, y: isize) -> TileId;
-
-    fn walkable(&self, x: isize, y: isize) -> MovementId;
-
-    fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry>;
+pub trait GameWorld {
 
     fn on_tile(&mut self, player: &mut Player);
 
-    fn update(&mut self, delta: f32, player: &mut Player);
+    fn update(&mut self, delta: f32, player: &mut Player, window_manager: &mut MapWindowManager);
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool);
 
@@ -46,24 +38,47 @@ pub trait World {
 
 }
 
-#[derive(Debug, Clone, Copy, serde::Deserialize, serde::Serialize)]
-pub struct BoundingBox {
-    pub min: Coordinate,
-    pub max: Coordinate,
+pub trait WorldNpc {
+
+    fn interact(&mut self, direction: Option<firecore_util::Direction>, player: &mut Player);
+
+    fn after_interact(&mut self, map_name: &String);
+
+    fn render(&self, npc_textures: &NpcTextures, screen: &RenderCoords);
+
 }
 
-impl BoundingBox {
+impl WorldNpc for firecore_world::npc::NPC {
 
-    pub fn in_bounds(&self, coordinate: &Coordinate) -> bool{
-        if coordinate.x >= self.min.x && coordinate.x <= self.max.x {
-            return coordinate.y >= self.min.y && coordinate.y <= self.max.y;
-        } else {
-            return false;
+    fn interact(&mut self, direction: Option<firecore_util::Direction>, player: &mut Player) {
+        if let Some(direction) = direction {
+            self.position.direction = direction.inverse();
+        }
+        if self.trainer.is_some() {
+            macroquad::prelude::info!("Trainer battle with {}", &self.identifier.name);
+            self.walk_next_to(&player.position.local.coords);
+            player.freeze();
         }
     }
 
-    // pub fn intersects(&self, ) {
+    fn after_interact(&mut self, map_name: &String) {
+        if let Some(mut player_data) = macroquad::prelude::collections::storage::get_mut::<crate::io::data::player::PlayerData>() {
+            // macroquad::prelude::info!("Finished interacting with {}", self.identifier.name);
+            player_data.world_status.get_or_create_map_data(map_name).battle(&self);
+        } else {
+            macroquad::prelude::warn!("Could not get player data!");
+        }
+    }
 
-    // }
+    fn render(&self, npc_textures: &NpcTextures, screen: &RenderCoords) {
+        let x = ((self.position.coords.x + screen.x_tile_offset) << 4) as f32 - screen.focus.x + self.position.offset.x;
+        let y = ((self.position.coords.y - 1 + screen.y_tile_offset) << 4) as f32 - screen.focus.y + self.position.offset.y;
+        if let Some(twt) = npc_textures.get(&self.identifier.npc_type) {
+            let tuple = twt.of_direction(self.position.direction);
+            crate::util::graphics::draw_flip(tuple.0, x, y, tuple.1);
+        } else {
+            crate::util::graphics::draw_rect([1.0, 0.0, 0.0, 1.0], x, y + crate::util::TILE_SIZE as f32, 16, 16);
+        }
+    }
 
 }

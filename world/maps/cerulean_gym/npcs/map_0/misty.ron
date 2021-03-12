@@ -1,0 +1,49 @@
+(
+    identifier: (
+        name: "Misty",
+        npc_type: "misty"
+    ),
+    position: (
+        coords: (
+            x: 8,
+            y: 6
+        ),
+        direction: Down
+    ),
+    message_set: (
+        messages: [
+            (
+                color: Red,
+                message: [
+                    "Temporary post-battle message"
+                ]
+            )
+        ]
+    ),
+    trainer: Some((
+        trainer_type: GymLeader,
+        encounter_type: Some(Trainer),
+        encounter_message: [
+            [
+                "Temporary message"
+            ],
+        ],
+        party: (
+            pokemon: [
+                (
+                    id: 120,
+                    level: 18,
+                ),
+                (
+                    id: 121,
+                    level: 21,
+                )
+            ]
+        ),
+        disable_others: [
+
+        ],
+        worth: 1400,
+
+    ))
+)

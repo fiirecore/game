@@ -1,8 +1,7 @@
 use macroquad::prelude::DrawTextureParams;
 
-use crate::util::GlobalPosition;
+use firecore_util::{GlobalPosition, Direction};
 use crate::util::graphics::Texture;
-use crate::util::Direction;
 use crate::io::data::player::PlayerData;
 use crate::util::TILE_SIZE;
 
@@ -52,20 +51,7 @@ impl Player {
 			macroquad::prelude::draw_texture_ex(
 				texture, SCREEN_X, SCREEN_Y, macroquad::prelude::WHITE, DrawTextureParams {
 				    source: Some(macroquad::prelude::Rect::new(
-						if self.moving {
-							(*self.texture_index()
-								.get(
-									(if self.position.local.offset.x != 0.0 {
-											self.position.local.offset.x
-										} else {
-											self.position.local.offset.y
-										}.abs() as usize >> 3
-									) + self.sprite_index as usize
-								).unwrap_or(&3)
-							<< 4) as f32
-						} else {
-							0.0
-						},
+						self.current_texture_pos(),
 						0.0,
 						16.0,
 						32.0,
@@ -77,6 +63,7 @@ impl Player {
 		}
 		
 	}
+
 	pub fn on_try_move(&mut self, direction: Direction) {
 		self.position.local.direction = direction;
 		if self.sprite_index == 0 {
@@ -95,7 +82,25 @@ impl Player {
 		self.speed = BASE_SPEED;
 	}
 
-	pub fn texture_index(&self) -> [u8; 4] {
+	fn current_texture_pos(&self) -> f32 {
+		(
+			*self.texture_index()
+				.get(
+					(
+						if self.position.local.offset.x != 0.0 {
+							self.position.local.offset.x
+						} else {
+							self.position.local.offset.y
+						}.abs() as usize >> 3
+					) + self.sprite_index as usize
+				).unwrap_or(
+					&3
+				)
+			<< 4
+		) as f32
+	}
+
+	pub const fn texture_index(&self) -> [u8; 4] {
 		if self.running {
 			match self.position.local.direction {
 			    Direction::Up => [6, 7, 6, 8],

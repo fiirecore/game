@@ -1,5 +1,5 @@
+use firecore_util::text::MessageSet;
 use parking_lot::Mutex;
-use crate::io::data::text::MessageSet;
 
 pub mod background;
 pub mod text;
@@ -20,7 +20,7 @@ pub fn set_message(message_set: MessageSet) {
 	*MESSAGE.lock() = Some(message_set);
 }
 
-pub trait GuiComponent: crate::util::Entity {
+pub trait GuiComponent: firecore_util::Entity {
 
 	fn on_start(&mut self) {}
 

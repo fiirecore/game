@@ -1,7 +1,8 @@
 
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::GuiComponent;
+use crate::util::Reset;
 use super::battle_background::BattleBackground;
 use super::battle_text::BattleText;
 use super::panels::player_panel::PlayerPanel;
@@ -88,6 +89,14 @@ impl BattleGui {
 		self.player_pokemon_gui.render();
 	}
 
+}
+
+impl Reset for BattleGui {
+    fn reset(&mut self) {
+		self.player_pokemon_gui.reset();
+		self.opponent_pokemon_gui.reset();
+        self.player_bounce.reset();
+    }
 }
 
 impl Entity for BattleGui {

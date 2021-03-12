@@ -1,5 +1,4 @@
-use crate::io::data::text::color::TextColor;
-use crate::util::Direction;
+use firecore_util::text::TextColor;
 use super::GuiText;
 
 pub struct StaticText {
@@ -20,7 +19,7 @@ pub struct StaticText {
 
 impl StaticText {
 	
-	pub fn new(text: Vec<String>, text_color: TextColor, font_id: usize, direction: Direction, x: f32, y: f32, panel_x: f32, panel_y: f32) -> Self {
+	pub fn new(text: Vec<String>, text_color: TextColor, font_id: usize, from_right: bool, x: f32, y: f32, panel_x: f32, panel_y: f32) -> Self {
 		
 		Self {
 			
@@ -34,7 +33,7 @@ impl StaticText {
 			color: text_color,
 			font_id: font_id,
 
-			direction: direction == Direction::Right,
+			direction: from_right,
 			
 		}
 		
@@ -77,7 +76,7 @@ impl GuiText for StaticText {
 	
 }
 
-impl crate::util::Entity for StaticText {
+impl firecore_util::Entity for StaticText {
 
 	fn spawn(&mut self) {
 		self.alive = true;		

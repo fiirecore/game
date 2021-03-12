@@ -1,0 +1,48 @@
+(
+    identifier: (
+        name: "Ben",
+        npc_type: "youngster"
+    ),
+    position: (
+        coords: (
+            x: 18,
+            y: 4
+        ),
+        direction: Down
+    ),
+    message_set: (
+        messages: [(
+            message: ["Temporary message"]
+        )]
+    ),
+    trainer: Some((
+        trainer_type: Youngster,
+        tracking_length: Some(2),
+        encounter_music: Some(EncounterBoy),
+        encounter_message: [
+            [
+                "Hi!",
+                "I like shorts!"
+            ],
+            [
+                "They're delightfully comfy and",
+                "easy to wear!"
+            ]
+        ],
+        victory_message: [
+            "I don't believe it!"
+        ],
+        party: (
+            pokemon: [(
+                    id: 19,
+                    level: 11
+                ),
+                (
+                    id: 23,
+                    level: 11
+                )
+            ]
+        ),
+        worth: 176,
+    ))
+)

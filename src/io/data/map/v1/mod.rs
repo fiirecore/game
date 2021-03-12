@@ -1,17 +1,20 @@
 use std::path::PathBuf;
+use firecore_world::npc::NPC;
+use firecore_world::pokemon::WildEntry;
+use firecore_world::pokemon::wild_pokemon_table::WildPokemonTable;
+use firecore_world::warp::WarpEntry;
 use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
-use crate::world::map::chunk::WorldChunk;
-use crate::world::map::chunk::world_chunk_map::WorldChunkMap;
-use crate::world::npc::manager::MapNpcManager;
-use crate::world::map::set::WorldMapSet;
-use crate::world::map::set::manager::WorldMapSetManager;
-use crate::world::npc::NPC;
-use crate::world::pokemon::WildEntry;
-// use crate::world::map::script_manager::MapScriptManager;
-// use crate::world::script::npc::NPCScript;
-use crate::world::warp::WarpEntry;
+
+use firecore_world::script::WorldScript;
+use crate::io::get_dir;
+use crate::io::get_file_as_string;
+use firecore_world::map::WorldMap;
+use firecore_world::map::chunk::WorldChunk;
+use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
+use firecore_world::map::set::WorldMapSet;
+use firecore_world::map::set::manager::WorldMapSetManager;
 
 pub mod chunk_map_loader;
 pub mod map_set_loader;
@@ -19,7 +22,7 @@ pub mod map_set_loader;
 pub mod map_serializable;
 pub mod gba_map;
 
-pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetManager, bottom_textures: &mut crate::world::TileTextures, npc_textures: &mut crate::world::NpcTextures) {
+pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_set_manager: &mut WorldMapSetManager, tile_textures: &mut crate::world::TileTextures, npc_textures: &mut crate::world::NpcTextures) {
     let mut bottom_sheets: HashMap<u8, macroquad::prelude::Image> = HashMap::new();
     let palette_sizes = gba_map::fill_palette_map(&mut bottom_sheets);
 
@@ -38,9 +41,9 @@ pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetMan
     for maps in maps {
         if let Some(world_chunk) = maps.0 {
             // super::map_loader::create_file_test(&dir_entry, &world_chunk.1);
-            chunk_map.insert(world_chunk.0, world_chunk.1);
+            chunk_map.chunks.insert(world_chunk.0, world_chunk.1);
         } else if let Some(map_set) = maps.1 {
-            map_sets.insert(map_set.0, map_set.1);
+            map_set_manager.map_sets.insert(map_set.0, map_set.1);
         }
     }    
 
@@ -48,17 +51,15 @@ pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetMan
 
     info!("Loading textures...");
     for tile_id in chunk_map.tiles() {
-        if !(bottom_textures.tile_textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
+        if !(tile_textures.tile_textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
             //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-            bottom_textures.tile_textures.insert(tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, tile_id));
+            tile_textures.tile_textures.insert(tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, tile_id));
         }
     }
-    for wmapset in map_sets.values() {
-        for tile_id in &wmapset.tiles() {
-            if !(bottom_textures.tile_textures.contains_key(tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                bottom_textures.tile_textures.insert(*tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, *tile_id));
-            }
+    for tile_id in map_set_manager.tiles() {
+        if !(tile_textures.tile_textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
+            //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
+            tile_textures.tile_textures.insert(tile_id, gba_map::get_texture(&bottom_sheets, &palette_sizes, tile_id));
         }
     }
 
@@ -67,9 +68,28 @@ pub fn load_maps_v1(chunk_map: &mut WorldChunkMap, map_sets: &mut WorldMapSetMan
 
 }
 
+pub fn new_world_from_v1(gba_map: gba_map::GbaMap, config: &map_serializable::MapConfig, root_path: &PathBuf, map_index: Option<usize>) -> WorldMap {
+    WorldMap {
+        name: config.identifier.name.clone(),
+        music: firecore_audio::music::Music::from(gba_map.music),
+        width: gba_map.width,
+        height: gba_map.height,
+        tile_map: gba_map.tile_map,
+        border_blocks: gba_map.border_blocks,
+        movement_map: gba_map.movement_map,
+        fly_position: config.settings.fly_position,
+        wild: load_wild_entry(root_path, config.wild.clone(), map_index),
+        warps: load_warp_entries(root_path, map_index),
+        npcs: load_npc_entries(root_path, map_index),
+        scripts: load_script_entries(root_path, map_index),
+        script_npcs: HashMap::new(),
+        npc_active: None,
+    }
+}
+
 fn load_map(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &PathBuf) -> (Option<(u16, WorldChunk)>, Option<(String, WorldMapSet)>) {
 
-    match crate::io::get_file_as_string(file) {
+    match get_file_as_string(file) {
         Ok(data) => {
             match self::map_serializable::MapConfig::from_string(&data) {
                 Ok(map_config) => {
@@ -120,22 +140,19 @@ fn load_map(palette_sizes: &HashMap<u8, u16>, root_path: &PathBuf, file: &PathBu
     }
 }
 
-pub fn load_npc_entries(root_path: &PathBuf, map_index: Option<usize>) -> MapNpcManager {
+pub fn load_npc_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<NPC> {
     let mut npcs = Vec::new();
     let npc_dir = root_path.join("npcs");
     match map_index {
         Some(map_index) => get_npc_from_directory(&mut npcs, npc_dir.join(String::from("map_") + &map_index.to_string())),
         None => get_npc_from_directory(&mut npcs, npc_dir),
     }
-    return MapNpcManager {
-        npcs,
-        npc_active: None,
-    };
+    return npcs;
 }
 
 fn get_npc_from_directory(npcs: &mut Vec<NPC>, dir: PathBuf) {
-    for filepath in crate::io::get_dir(dir) {
-        match crate::io::get_file_as_string(&filepath) {
+    for filepath in get_dir(dir) {
+        match get_file_as_string(&filepath) {
             Ok(data) => {
                 let npc_result: Result<NPC, ron::Error> = ron::from_str(&data);
                 match npc_result {
@@ -166,9 +183,22 @@ pub fn load_warp_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<W
 }
 
 fn add_warp_under_directory(warps: &mut Vec<WarpEntry>, dir: PathBuf) {
-    for file in crate::io::get_dir(dir) {
-        if let Some(warp_entry) = WarpEntry::new(file) {
-            warps.push(warp_entry);
+    for file in get_dir(dir) {
+        match crate::io::get_file_as_string(&file) {
+            Ok(data) => {
+                match toml::from_str(&data) {
+                    Ok(warp_entry) => {
+                        warps.push(warp_entry);
+                    }
+                    Err(err) => {
+                        warn!("Could not parse warp entry at {:?} with error {}", &file, err);
+                    }
+                }
+
+            },
+            Err(err) => {
+                warn!("Could not read warp entry toml at {:?} to string with error {}", &file, err);
+            }
         }
     }
 }
@@ -181,34 +211,60 @@ pub fn load_wild_entry(root_path: &PathBuf, wild: Option<map_serializable::Seria
             wild_path = wild_path.join(String::from("map_") + &map_index.to_string());
         }
 
+        let file = wild_path.join("grass.toml");
+
+        let table = match toml_wild_entry.encounter_type.as_str() {
+            "original" => {
+                match crate::io::get_file_as_string(&file) {
+                    Ok(content) => {
+                        match toml::from_str(&content) {
+                            Ok(table) => table,
+                            Err(err) => {
+                                warn!("Could not parse wild pokemon table at {:?} with error {}, using random table instead!", &file, err);
+                                WildPokemonTable::default()
+                            }
+                        }
+                    }
+                    Err(err) => {
+                        warn!("Could not find wild toml file at {:?} with error {}!", file, err);
+                        WildPokemonTable::default()
+                    }
+                }
+            }
+            _ => {
+                WildPokemonTable::default()
+            }
+        };
+
         WildEntry {
             tiles: toml_wild_entry.wild_tiles,
-            table: crate::world::pokemon::wild_pokemon_table::get_table(toml_wild_entry.encounter_type.as_str(), wild_path.join("grass.toml")),
+            table: table,
         }
 
     })
 }
 
-/*
-
-pub fn load_script_entries(root_path: &PathBuf, map_index: Option<usize>) -> MapScriptManager {
-    let mut npc_scripts = Vec::new();
-    let script_root = root_path.join("scripts");
-
-
-    let mut npc_script_path = script_root.join("npcs");
-
-    if let Some(map_index) = map_index {
-        npc_script_path = npc_script_path.join(String::from("map_") + &map_index.to_string());
+pub fn load_script_entries(root_path: &PathBuf, map_index: Option<usize>) -> Vec<WorldScript> {
+    let mut scripts = Vec::new();
+    let mut script_dir = root_path.join("scripts");
+    if let Some(index) = map_index {
+        script_dir = script_dir.join(format!("map_{}", index));
     }
-
-    for file in crate::io::get_dir(npc_script_path) {
-        if let Some(npc_script) = NPCScript::new(file) {
-            npc_scripts.push(npc_script);
+    for file in get_dir(script_dir) {
+        match crate::io::get_file_as_string(&file) {
+            Ok(content) => {
+                let script: Result<WorldScript, ron::Error> = ron::from_str(&content);
+                match script {
+                    Ok(script) => scripts.push(script),
+                    Err(err) => {
+                        warn!("Could not parse script at {:?} with error {}", file, err);
+                    }
+                }
+            },
+            Err(err) => {
+                warn!("Could not get script entry at {:?} as string with error {}", file, err);
+            }
         }
     }
-
-    MapScriptManager::new(npc_scripts)
+    scripts
 }
-
-*/

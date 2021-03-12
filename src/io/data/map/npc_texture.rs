@@ -63,7 +63,7 @@ pub fn parse_image(image: Image) -> Option<ThreeWayTexture<StillTextureManager>>
 fn idle_npc(image: Image) -> Option<ThreeWayTexture<StillTextureManager>> {
     let mut twt = ThreeWayTexture::new();
     for i in 0..3 {
-        twt.add_texture_manager(StillTextureManager::new(image_texture(&image.get_subimage(i * 16, 0, 16, 32)), false));
+        twt.add_texture_manager(StillTextureManager::new(image_texture(&image.sub_image(macroquad::prelude::Rect::new((i << 4) as f32, 0.0, 16.0, 32.0))), false));
     }
     return Some(twt);
 }

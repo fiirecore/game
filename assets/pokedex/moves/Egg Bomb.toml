@@ -1,7 +1,0 @@
-number = 121
-name = "Egg Bomb"
-pokemon_type = "Normal"
-category = "Physical"
-power = 100
-accuracy = 75
-pp = 10

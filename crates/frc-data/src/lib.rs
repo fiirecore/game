@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use anyhow::{Error, Result};
+pub mod error;
 
 pub mod data;
 pub mod configuration;
@@ -9,12 +9,12 @@ lazy_static::lazy_static! {
 	pub static ref DATA_DIR: Option<directories_next::ProjectDirs> = directories_next::ProjectDirs::from("net", "rhysholloway", "pokemon-firered-clone");
 }
 
-pub fn get_save_dir() -> Result<PathBuf> {
+pub fn get_save_dir() -> Result<PathBuf, error::Error> {
     let path = DATA_DIR.as_ref().map(|dir| PathBuf::from(dir.data_dir()));
     if let Some(real_path) = path.as_ref() {
         if let Ok(metadata) = std::fs::metadata(real_path) {
             if !metadata.permissions().readonly() {
-                return path.ok_or(Error::msg("Read-only directory"));
+                return path.ok_or(error::Error::ReadOnly);
             }
         } else {
             if !real_path.exists() {
@@ -24,5 +24,5 @@ pub fn get_save_dir() -> Result<PathBuf> {
             }
         }
     }
-    std::env::current_dir().map_err(|err| Error::from(err))
+    std::env::current_dir().map_err(|err| error::Error::IOError(err))
 }

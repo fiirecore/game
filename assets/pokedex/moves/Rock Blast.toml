@@ -1,7 +1,0 @@
-number = 350
-name = "Rock Blast"
-pokemon_type = "Rock"
-category = "Physical"
-power = 25
-accuracy = 90
-pp = 10

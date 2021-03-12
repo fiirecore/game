@@ -36,7 +36,7 @@ impl super::LoadingScene for GamefreakLoadingScene {
 	fn on_start(&mut self) {
 		self.state = LoadingState::Continue;
 		self.accumulator = 0.0;
-		frc_audio::play_music(frc_audio::music::Music::IntroGamefreak);
+		firecore_audio::play_music(firecore_audio::music::Music::IntroGamefreak);
 	}
 	
 	fn update(&mut self, delta: f32) {

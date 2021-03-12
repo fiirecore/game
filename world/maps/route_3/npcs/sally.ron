@@ -1,0 +1,55 @@
+(
+    identifier: (
+        name: "Sally",
+        npc_type: "lass"
+    ),
+    position: (
+        coords: (
+            x: 30,
+            y: 3
+        ),
+        direction: Left,
+    ),
+    message_set: (
+        messages: [(
+            message: ["Temporary message"]
+        )]
+    ),
+    trainer: Some((
+        trainer_type: Lass,
+        tracking_length: Some(5),
+        encounter_music: Some(EncounterGirl),
+        message_color: Red,
+        encounter_message: [
+            [
+                "That look you gave me.",
+                "It's so intriguing!"
+            ]
+        ],
+        victory_message: [
+            "If a POKEMON BOX on the PC gets",
+            "full, just switch to another BOX."
+        ],
+        party: (
+            pokemon: [
+                (
+                    id: 19,
+                    level: 10
+                ),
+                (
+                    id: 29,
+                    level: 10
+                ),
+                (
+                    id: 14,
+                    level: 9
+                ),
+                (
+                    id: 11,
+                    level: 9
+                )
+            ]
+        ),
+        worth: 0
+    ))
+)

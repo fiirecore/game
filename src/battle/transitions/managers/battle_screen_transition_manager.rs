@@ -1,13 +1,14 @@
-use frc_audio::music::Music;
-use frc_audio::play_music;
+use firecore_audio::music::Music;
+use firecore_audio::play_music;
 use crate::battle::transitions::BattleTransition;
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
 //use crate::battle::transitions::screen_transitions::vertical_close_battle_screen_transition::VerticalCloseBattleScreenTransition;
 use crate::util::{Reset, Completable};
-use crate::battle::battle_info::BattleType;
+// use crate::battle::battle_info::BattleType;
+use firecore_world::{BattleType, BattleScreenTransitions};
 
 pub struct BattleScreenTransitionManager {
 
@@ -16,14 +17,6 @@ pub struct BattleScreenTransitionManager {
 
     flash: FlashBattleScreenTransition,
     trainer: TrainerBattleScreenTransition,
-
-}
-
-#[derive(Clone, Copy, serde::Deserialize, serde::Serialize)]
-pub enum BattleScreenTransitions {
-
-    Flash,
-    Trainer,
 
 }
 
@@ -126,10 +119,4 @@ impl Entity for BattleScreenTransitionManager {
         self.get().is_alive()
     }
 
-}
-
-impl Default for BattleScreenTransitions {
-    fn default() -> Self {
-        Self::Flash
-    }
 }

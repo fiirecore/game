@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use ahash::AHashSet as HashSet;
 
-use crate::world::npc::NPC;
+use firecore_world::npc::NPC;
 
 #[derive(Debug, Default, Deserialize, Serialize)]
 pub struct MapData {
@@ -16,7 +16,12 @@ impl MapData {
         if !self.battled.contains(&npc.identifier.name) {
             // if npc.trainer.is_some() {
                 crate::util::battle_data::trainer_battle(&npc);
-                self.battled.insert(npc.identifier.name.clone());
+                if let Some(trainer) = &npc.trainer {
+                    self.battled.insert(npc.identifier.name.clone());
+                    for name in &trainer.disable_others {
+                        self.battled.insert(name.clone());
+                    }
+                }
             // }
         } else {
             macroquad::prelude::info!("Player has already battled {}", npc.identifier.name);

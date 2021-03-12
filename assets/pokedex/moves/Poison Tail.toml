@@ -1,7 +1,0 @@
-number = 342
-name = "Poison Tail"
-pokemon_type = "Poison"
-category = "Physical"
-power = 50
-accuracy = 100
-pp = 25

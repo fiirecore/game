@@ -1,4 +1,4 @@
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::transitions::BattleCloser;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw_rect;

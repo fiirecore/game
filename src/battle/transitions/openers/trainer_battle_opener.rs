@@ -1,8 +1,8 @@
-use crate::util::Entity;
+use firecore_util::Entity;
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw_rect;
-use crate::util::timer::Timer;
+use firecore_util::Timer;
 use crate::util::{Reset, Completable};
 
 pub struct TrainerBattleOpener {
@@ -96,6 +96,8 @@ impl Reset for TrainerBattleOpener {
         self.offset = OFFSET;
         self.rect_size = RECT_SIZE;
         self.shrink_by = 1;
+        self.start_timer.reset();
+        self.finished = false;
     }
 
 }

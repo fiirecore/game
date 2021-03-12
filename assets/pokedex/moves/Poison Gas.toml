@@ -1,6 +1,0 @@
-number = 139
-name = "Poison Gas"
-pokemon_type = "Poison"
-category = "Status"
-accuracy = 90
-pp = 40
