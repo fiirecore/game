@@ -81,5 +81,5 @@ miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 map-compressor = { git = "https://github.com/DoNotDoughnut/map-compressor" }
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
 
-#[target.'cfg(windows)'.build-dependencies]
-#winres = "0.1"
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"

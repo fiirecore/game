@@ -587,7 +587,7 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#68daa927c6440b1f230e83838f2426120b55f480"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#7f137b71ac28b4ee4a55f5254e1fbd4527ba5521"
 dependencies = [
  "ahash 0.7.2",
  "firecore-audio",
@@ -936,7 +936,7 @@ source = "git+https://github.com/not-fl3/macroquad#7911f48c329af2eaca5aeba44272f
 [[package]]
 name = "map-compressor"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/map-compressor#57d1ee26d38076b2077db490356601a8b5e5c29e"
+source = "git+https://github.com/DoNotDoughnut/map-compressor#ca26c61edf2722d3f48b2fee29587e905adda6af"
 dependencies = [
  "ahash 0.7.2",
  "bincode",
@@ -1309,6 +1309,7 @@ dependencies = [
  "ron",
  "serde",
  "smallvec",
+ "winres",
 ]
 
 [[package]]
@@ -2056,6 +2057,15 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+
+[[package]]
+name = "winres"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ff4fb510bbfe5b8992ff15f77a2e6fe6cf062878f0eda00c0f44963a807ca5dc"
+dependencies = [
+ "toml",
+]
 
 [[package]]
 name = "xattr"

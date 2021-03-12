@@ -5,8 +5,10 @@ use firecore_world::World;
 use firecore_world::map::WorldMap;
 use firecore_world::script::Condition;
 use firecore_world::script::WorldActionKind;
+use macroquad::prelude::KeyCode;
 use macroquad::prelude::debug;
 use macroquad::prelude::info;
+use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
 
 use crate::util::Completable;
@@ -25,42 +27,6 @@ use super::GameWorld;
 pub mod manager;
 pub mod set;
 pub mod chunk;
-
-// pub mod script_manager;
-
-// #[derive(Default, Serialize, Deserialize)]
-// pub struct WorldMap {
-
-//     pub name: String,
-//     pub music: Music,
-
-//     pub width: MapSize,
-//     pub height: MapSize,
-
-//     pub tile_map: Vec<TileId>,
-//     pub border_blocks: [u16; 4],
-//     pub movement_map: Vec<MovementId>,
-
-//     pub fly_position: Coordinate,
-//     // pub draw_color: Option<macroquad::prelude::Color>,
-
-//     pub wild: Option<WildEntry>,
-
-//     pub warps: Vec<WarpEntry>,
-//     pub npcs: Vec<NPC>,
-    
-//     #[serde(skip)]
-//     pub npc_active: Option<usize>,
-
-//     // Scripts
-
-//     pub scripts: Vec<WorldScript>,
-
-//     #[serde(skip)]
-//     pub script_npcs: HashMap<u8, NPC>,
-//     // pub script_manager: MapScriptManager,
-
-// }
 
 pub trait GameWorldMap {
 
@@ -81,43 +47,6 @@ impl GameWorldMap for WorldMap {
     }
 
 }
-
-// impl World for WorldMap {
-
-//     fn in_bounds(&self, x: isize, y: isize) -> bool {
-//         return !(x < 0 || (x as u16) >= self.width || y < 0 || (y as u16) >= self.height);
-//     }
-
-//     fn tile(&self, x: isize, y: isize) -> TileId {
-//         self.tile_map[x as usize + y as usize * self.width as usize]
-//     }
-
-//     fn walkable(&self, x: isize, y: isize) -> MovementId {
-//         for npc in &self.npcs {
-//             if npc.position.coords.y == y && npc.position.coords.x == x {
-//                 return 1;
-//             }
-//         }
-//         for npc in self.script_npcs.values() {
-//             if npc.position.coords.y == y && npc.position.coords.x == x {
-//                 return 1;
-//             }
-//         }
-//         self.movement_map[x as usize + y as usize * self.width as usize]
-//     }
-
-//     fn check_warp(&self, x: isize, y: isize) -> Option<WarpEntry> {
-//         for warp in &self.warps {
-//             if warp.x == x {
-//                 if warp.y == y {
-//                     return Some(warp.clone());
-//                 }
-//             }
-//         }
-//         return None;
-//     }
-
-// }
 
 impl GameWorld for WorldMap {
 
@@ -246,12 +175,18 @@ impl GameWorld for WorldMap {
                                 pop = true;
                                 info!("Script unfroze player!");
                             }
-                            WorldActionKind::SpawnNPC { id, npc } => {
+                            WorldActionKind::NPCSpawn { id, npc } => {
                                 self.script_npcs.insert(*id, npc.clone());
                                 pop = true;
                                 info!("Script spawned NPC {} with id {}", &npc.identifier.name, id);
                             }
-                            WorldActionKind::MoveNPC { id, pos } => {
+                            WorldActionKind::NPCLook {id, direction} => {
+                                if let Some(npc) = self.script_npcs.get_mut(id) {
+                                    npc.position.direction = *direction;
+                                }
+                                pop = true;
+                            }
+                            WorldActionKind::NPCMove { id, pos } => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
                                     if npc.offset.is_some() {
                                         if npc.should_move() {
@@ -267,7 +202,7 @@ impl GameWorld for WorldMap {
                                     pop = true;
                                 }
                             }
-                            WorldActionKind::MoveNPCToPlayer { id } => {
+                            WorldActionKind::NPCMoveToPlayer ( id ) => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
                                     if npc.offset.is_some() {
                                         if npc.should_move() {
@@ -280,11 +215,26 @@ impl GameWorld for WorldMap {
                                     }
                                 }
                             }
-                            WorldActionKind::DespawnNPC { id } => {
+                            WorldActionKind::NPCDespawn (id) => {
                                 if self.script_npcs.remove(id).is_none() {
                                     warn!("Script attempted to despawn npc that doesn't exist!");
                                 }
                                 info!("Script Despawned NPC with id {}", id);
+                                pop = true;
+                            }
+                            WorldActionKind::NPCInteract(id) => {
+                                if let Some(npc) = self.script_npcs.get(id) {
+                                    self.npc_active = Some(self.npcs.len() + (*id) as usize);
+                                    npc.interact(None, player);
+                                }
+                                pop = true;
+                            }
+                            WorldActionKind::NPCBattle(id) => {
+                                if let Some(npc) = self.script_npcs.get(id) {
+                                    if let Some(trainer) = npc.trainer.as_ref() {
+                                        crate::util::battle_data::trainer_battle(trainer, &npc.identifier.name, &npc.identifier.npc_type);
+                                    }
+                                }
                                 pop = true;
                             }
                             WorldActionKind::DisplayText { message_set } => {
@@ -299,6 +249,11 @@ impl GameWorld for WorldMap {
                                     window_manager.spawn();
                                     window_manager.set_text(message_set.clone());
                                 }
+                            }
+
+                            WorldActionKind::Battle(battle_data) => {
+                                *crate::util::battle_data::BATTLE_DATA.lock() = Some(battle_data.clone());
+                                pop = true;
                             }
                         }
                     }
@@ -431,10 +386,13 @@ impl GameWorld for WorldMap {
     fn input(&mut self, _delta: f32, player: &mut Player) {
 
         if cfg!(debug_assertions) {
-            if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F4) {
+            if is_key_pressed(KeyCode::F4) {
                 for npc in &self.npcs {
                     info!("NPC {} is at {}, {}; looking {:?}", &npc.identifier.name, &npc.position.coords.x, &npc.position.coords.y, &npc.position.direction);
                 }
+            }
+            if is_key_pressed(KeyCode::F7) {
+                info!("There are {} scripts in this map.", self.scripts.len());
             }
         }
 

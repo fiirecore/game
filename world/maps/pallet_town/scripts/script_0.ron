@@ -41,13 +41,9 @@
                 )
             )
         ),
-        MoveNPC(
-            id: 0,
-            pos: (
-                x: 12,
-                y: 2,
-            )
-        ),
+        MoveNPCToPlayer(0),
+        Wait(5.0),
+        DespawnNPC(0),
         UnfreezePlayer,
     ]
 )

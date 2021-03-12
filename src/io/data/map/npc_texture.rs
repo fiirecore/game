@@ -122,5 +122,12 @@ pub async fn load_battle_sprites(ids: &[&'static str]) {
 }
 
 pub fn battle_sprite(id: &str) -> Texture {
-    *BATTLE_SPRITES.get(id).unwrap()
+    match BATTLE_SPRITES.get(id) {
+        Some(texture) => {
+            *texture
+        }
+        None => {
+            crate::util::graphics::texture::debug_texture()
+        }
+    }
 }

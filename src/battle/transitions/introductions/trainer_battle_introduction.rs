@@ -1,7 +1,7 @@
 use firecore_util::text::Message;
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
-use crate::util::battle_data::TrainerData;
+use firecore_world::npc::trainer::TrainerData;
 use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;

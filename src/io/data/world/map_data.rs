@@ -14,15 +14,13 @@ impl MapData {
 
     pub fn battle(&mut self, npc: &NPC) {
         if !self.battled.contains(&npc.identifier.name) {
-            // if npc.trainer.is_some() {
-                crate::util::battle_data::trainer_battle(&npc);
-                if let Some(trainer) = &npc.trainer {
-                    self.battled.insert(npc.identifier.name.clone());
-                    for name in &trainer.disable_others {
-                        self.battled.insert(name.clone());
-                    }
+            if let Some(trainer) = npc.trainer.as_ref() {
+                crate::util::battle_data::trainer_battle(&trainer, &npc.identifier.name, &npc.identifier.npc_type);
+                self.battled.insert(npc.identifier.name.clone());
+                for name in &trainer.disable_others {
+                    self.battled.insert(name.clone());
                 }
-            // }
+            }
         } else {
             macroquad::prelude::info!("Player has already battled {}", npc.identifier.name);
         }

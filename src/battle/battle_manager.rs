@@ -1,6 +1,6 @@
 use macroquad::prelude::info;
 use crate::util::Reset;
-use crate::util::battle_data::BattleData;
+use firecore_world::BattleData;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;
 use crate::io::data::player::PlayerData;

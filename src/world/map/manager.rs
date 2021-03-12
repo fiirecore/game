@@ -5,6 +5,7 @@ use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use firecore_world::World;
 use firecore_world::test_move_code;
+use macroquad::prelude::collections::storage::get_mut;
 use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::util::Input;
@@ -454,7 +455,7 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F5) {
-            if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
+            if let Some(mut data) = get_mut::<PlayerData>() {
                 let name = &self.current_map_mut().name;
                 info!("Resetting battled trainers in this map! ({})", name);
                 data.world_status.get_or_create_map_data(name).battled.clear();
@@ -462,7 +463,7 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F6) {
-            if let Some(mut data) = macroquad::prelude::collections::storage::get_mut::<PlayerData>() {
+            if let Some(mut data) = get_mut::<PlayerData>() {
                 info!("Clearing world events in player data!");
                 data.world_status.completed_events.clear();
             }
