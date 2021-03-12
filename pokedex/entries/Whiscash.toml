@@ -1,0 +1,79 @@
+[data]
+number = 340
+name = 'Whiscash'
+primary_type = 'Water'
+secondary_type = 'Ground'
+species = 'Whiskers'
+height = 9
+weight = 236
+
+[training]
+base_exp = 164
+growth_rate = 'medium'
+
+[base]
+hp = 110
+atk = 78
+def = 73
+sp_atk = 76
+sp_def = 71
+speed = 60
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 55
+level = 11
+
+[[moves]]
+move_id = 89
+level = 36
+
+[[moves]]
+move_id = 90
+level = 56
+
+[[moves]]
+move_id = 133
+level = 21
+
+[[moves]]
+move_id = 156
+level = 26
+
+[[moves]]
+move_id = 173
+level = 26
+
+[[moves]]
+move_id = 189
+level = 1
+
+[[moves]]
+move_id = 222
+level = 16
+
+[[moves]]
+move_id = 248
+level = 46
+
+[[moves]]
+move_id = 300
+level = 1
+
+[[moves]]
+move_id = 300
+level = 6
+
+[[moves]]
+move_id = 321
+level = 1
+
+[[moves]]
+move_id = 346
+level = 1
+
+[[moves]]
+move_id = 346
+level = 6

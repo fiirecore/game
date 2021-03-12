@@ -1,0 +1,67 @@
+[data]
+number = 74
+name = 'Geodude'
+primary_type = 'Rock'
+secondary_type = 'Ground'
+species = 'Rock'
+height = 4
+weight = 200
+
+[training]
+base_exp = 60
+growth_rate = 'medium-slow'
+
+[base]
+hp = 40
+atk = 80
+def = 100
+sp_atk = 30
+sp_def = 30
+speed = 20
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 38
+level = 46
+
+[[moves]]
+move_id = 88
+level = 11
+
+[[moves]]
+move_id = 89
+level = 36
+
+[[moves]]
+move_id = 111
+level = 1
+
+[[moves]]
+move_id = 120
+level = 21
+
+[[moves]]
+move_id = 153
+level = 41
+
+[[moves]]
+move_id = 205
+level = 26
+
+[[moves]]
+move_id = 222
+level = 16
+
+[[moves]]
+move_id = 300
+level = 6
+
+[[moves]]
+move_id = 350
+level = 31

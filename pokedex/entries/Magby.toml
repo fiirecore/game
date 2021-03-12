@@ -1,0 +1,58 @@
+[data]
+number = 240
+name = 'Magby'
+primary_type = 'Fire'
+species = 'Live'
+height = 7
+weight = 214
+
+[training]
+base_exp = 73
+growth_rate = 'medium'
+
+[base]
+hp = 45
+atk = 75
+def = 37
+sp_atk = 70
+sp_def = 55
+speed = 83
+
+[breeding]
+gender = 2
+
+[[moves]]
+move_id = 7
+level = 19
+
+[[moves]]
+move_id = 43
+level = 7
+
+[[moves]]
+move_id = 52
+level = 1
+
+[[moves]]
+move_id = 53
+level = 37
+
+[[moves]]
+move_id = 108
+level = 25
+
+[[moves]]
+move_id = 109
+level = 43
+
+[[moves]]
+move_id = 123
+level = 13
+
+[[moves]]
+move_id = 126
+level = 49
+
+[[moves]]
+move_id = 241
+level = 31

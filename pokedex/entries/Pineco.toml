@@ -1,0 +1,58 @@
+[data]
+number = 204
+name = 'Pineco'
+primary_type = 'Bug'
+species = 'Bagworm'
+height = 6
+weight = 72
+
+[training]
+base_exp = 58
+growth_rate = 'medium'
+
+[base]
+hp = 50
+atk = 65
+def = 90
+sp_atk = 35
+sp_def = 35
+speed = 15
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 15
+
+[[moves]]
+move_id = 38
+level = 50
+
+[[moves]]
+move_id = 117
+level = 29
+
+[[moves]]
+move_id = 120
+level = 8
+
+[[moves]]
+move_id = 153
+level = 36
+
+[[moves]]
+move_id = 182
+level = 1
+
+[[moves]]
+move_id = 191
+level = 43
+
+[[moves]]
+move_id = 229
+level = 22

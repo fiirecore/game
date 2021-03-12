@@ -1,0 +1,62 @@
+[data]
+number = 159
+name = 'Croconaw'
+primary_type = 'Water'
+species = 'Big'
+height = 11
+weight = 250
+
+[training]
+base_exp = 142
+growth_rate = 'medium-slow'
+
+[base]
+hp = 65
+atk = 80
+def = 80
+sp_atk = 59
+sp_def = 63
+speed = 58
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 44
+level = 21
+
+[[moves]]
+move_id = 55
+level = 13
+
+[[moves]]
+move_id = 56
+level = 55
+
+[[moves]]
+move_id = 99
+level = 1
+
+[[moves]]
+move_id = 99
+level = 7
+
+[[moves]]
+move_id = 103
+level = 45
+
+[[moves]]
+move_id = 163
+level = 37
+
+[[moves]]
+move_id = 184
+level = 28

@@ -1,0 +1,42 @@
+[data]
+number = 172
+name = 'Pichu'
+primary_type = 'Electric'
+species = 'Tiny'
+height = 3
+weight = 20
+
+[training]
+base_exp = 41
+growth_rate = 'medium'
+
+[base]
+hp = 20
+atk = 40
+def = 15
+sp_atk = 35
+sp_def = 35
+speed = 60
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 39
+level = 6
+
+[[moves]]
+move_id = 84
+level = 1
+
+[[moves]]
+move_id = 86
+level = 8
+
+[[moves]]
+move_id = 186
+level = 11
+
+[[moves]]
+move_id = 204
+level = 1

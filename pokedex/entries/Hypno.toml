@@ -1,0 +1,78 @@
+[data]
+number = 97
+name = 'Hypno'
+primary_type = 'Psychic'
+species = 'Hypnosis'
+height = 16
+weight = 756
+
+[training]
+base_exp = 169
+growth_rate = 'medium'
+
+[base]
+hp = 85
+atk = 73
+def = 70
+sp_atk = 73
+sp_def = 115
+speed = 67
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 29
+level = 17
+
+[[moves]]
+move_id = 50
+level = 1
+
+[[moves]]
+move_id = 50
+level = 7
+
+[[moves]]
+move_id = 93
+level = 1
+
+[[moves]]
+move_id = 93
+level = 11
+
+[[moves]]
+move_id = 94
+level = 35
+
+[[moves]]
+move_id = 95
+level = 1
+
+[[moves]]
+move_id = 96
+level = 29
+
+[[moves]]
+move_id = 139
+level = 21
+
+[[moves]]
+move_id = 171
+level = 1
+
+[[moves]]
+move_id = 207
+level = 49
+
+[[moves]]
+move_id = 244
+level = 43
+
+[[moves]]
+move_id = 248
+level = 57

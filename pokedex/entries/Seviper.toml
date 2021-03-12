@@ -1,0 +1,62 @@
+[data]
+number = 336
+name = 'Seviper'
+primary_type = 'Poison'
+species = 'Fang'
+height = 27
+weight = 525
+
+[training]
+base_exp = 160
+growth_rate = 'fast-then-very-slow'
+
+[base]
+hp = 73
+atk = 100
+def = 60
+sp_atk = 100
+sp_def = 60
+speed = 65
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 35
+level = 1
+
+[[moves]]
+move_id = 44
+level = 10
+
+[[moves]]
+move_id = 103
+level = 19
+
+[[moves]]
+move_id = 114
+level = 43
+
+[[moves]]
+move_id = 122
+level = 7
+
+[[moves]]
+move_id = 137
+level = 25
+
+[[moves]]
+move_id = 207
+level = 37
+
+[[moves]]
+move_id = 242
+level = 28
+
+[[moves]]
+move_id = 305
+level = 34
+
+[[moves]]
+move_id = 342
+level = 16

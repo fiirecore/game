@@ -1,0 +1,42 @@
+[data]
+number = 38
+name = 'Ninetales'
+primary_type = 'Fire'
+species = 'Fox'
+height = 11
+weight = 199
+
+[training]
+base_exp = 177
+growth_rate = 'medium'
+
+[base]
+hp = 73
+atk = 76
+def = 75
+sp_atk = 81
+sp_def = 100
+speed = 100
+
+[breeding]
+gender = 6
+
+[[moves]]
+move_id = 52
+level = 1
+
+[[moves]]
+move_id = 83
+level = 45
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 109
+level = 1
+
+[[moves]]
+move_id = 219
+level = 1

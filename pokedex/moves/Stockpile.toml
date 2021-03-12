@@ -1,0 +1,5 @@
+number = 254
+name = "Stockpile"
+pokemon_type = "Normal"
+category = "Status"
+pp = 20

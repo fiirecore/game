@@ -1,0 +1,79 @@
+[data]
+number = 6
+name = 'Charizard'
+primary_type = 'Fire'
+secondary_type = 'Flying'
+species = 'Flame'
+height = 17
+weight = 905
+
+[training]
+base_exp = 240
+growth_rate = 'medium-slow'
+
+[base]
+hp = 78
+atk = 84
+def = 78
+sp_atk = 109
+sp_def = 85
+speed = 100
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 17
+level = 36
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 52
+level = 1
+
+[[moves]]
+move_id = 52
+level = 7
+
+[[moves]]
+move_id = 53
+level = 34
+
+[[moves]]
+move_id = 82
+level = 54
+
+[[moves]]
+move_id = 83
+level = 64
+
+[[moves]]
+move_id = 108
+level = 20
+
+[[moves]]
+move_id = 163
+level = 44
+
+[[moves]]
+move_id = 184
+level = 27
+
+[[moves]]
+move_id = 232
+level = 1
+
+[[moves]]
+move_id = 232
+level = 13
+
+[[moves]]
+move_id = 257
+level = 1

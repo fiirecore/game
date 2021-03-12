@@ -1,0 +1,70 @@
+[data]
+number = 64
+name = 'Kadabra'
+primary_type = 'Psychic'
+species = 'Psi'
+height = 13
+weight = 565
+
+[training]
+base_exp = 140
+growth_rate = 'medium-slow'
+
+[base]
+hp = 40
+atk = 35
+def = 30
+sp_atk = 120
+sp_def = 70
+speed = 105
+
+[breeding]
+gender = 2
+
+[[moves]]
+move_id = 50
+level = 18
+
+[[moves]]
+move_id = 60
+level = 21
+
+[[moves]]
+move_id = 93
+level = 1
+
+[[moves]]
+move_id = 93
+level = 16
+
+[[moves]]
+move_id = 94
+level = 36
+
+[[moves]]
+move_id = 100
+level = 1
+
+[[moves]]
+move_id = 105
+level = 25
+
+[[moves]]
+move_id = 115
+level = 23
+
+[[moves]]
+move_id = 134
+level = 1
+
+[[moves]]
+move_id = 248
+level = 30
+
+[[moves]]
+move_id = 271
+level = 43
+
+[[moves]]
+move_id = 272
+level = 33

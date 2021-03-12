@@ -1,0 +1,7 @@
+number = 52
+name = "Ember"
+pokemon_type = "Fire"
+category = "Special"
+power = 40
+accuracy = 100
+pp = 25

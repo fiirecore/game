@@ -1,0 +1,63 @@
+[data]
+number = 227
+name = 'Skarmory'
+primary_type = 'Steel'
+secondary_type = 'Flying'
+species = 'Armor'
+height = 17
+weight = 505
+
+[training]
+base_exp = 163
+growth_rate = 'slow'
+
+[base]
+hp = 65
+atk = 80
+def = 140
+sp_atk = 40
+sp_def = 70
+speed = 70
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 28
+level = 10
+
+[[moves]]
+move_id = 31
+level = 26
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 97
+level = 16
+
+[[moves]]
+move_id = 129
+level = 13
+
+[[moves]]
+move_id = 191
+level = 42
+
+[[moves]]
+move_id = 211
+level = 32
+
+[[moves]]
+move_id = 314
+level = 29
+
+[[moves]]
+move_id = 319
+level = 45

@@ -1,0 +1,58 @@
+[data]
+number = 133
+name = 'Eevee'
+primary_type = 'Normal'
+species = 'Evolution'
+height = 3
+weight = 65
+
+[training]
+base_exp = 65
+growth_rate = 'medium'
+
+[base]
+hp = 55
+atk = 55
+def = 50
+sp_atk = 45
+sp_def = 65
+speed = 55
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 28
+level = 8
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 42
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 44
+level = 30
+
+[[moves]]
+move_id = 45
+level = 16
+
+[[moves]]
+move_id = 98
+level = 23
+
+[[moves]]
+move_id = 226
+level = 36
+
+[[moves]]
+move_id = 270
+level = 1

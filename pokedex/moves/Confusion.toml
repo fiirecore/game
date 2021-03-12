@@ -1,0 +1,7 @@
+number = 93
+name = "Confusion"
+pokemon_type = "Psychic"
+category = "Special"
+power = 50
+accuracy = 100
+pp = 25

@@ -1,0 +1,71 @@
+[data]
+number = 284
+name = 'Masquerain'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Eyeball'
+height = 8
+weight = 36
+
+[training]
+base_exp = 159
+growth_rate = 'medium'
+
+[base]
+hp = 70
+atk = 60
+def = 62
+sp_atk = 100
+sp_def = 82
+speed = 80
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 16
+level = 26
+
+[[moves]]
+move_id = 18
+level = 53
+
+[[moves]]
+move_id = 78
+level = 40
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 98
+level = 7
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 184
+level = 33
+
+[[moves]]
+move_id = 230
+level = 1
+
+[[moves]]
+move_id = 230
+level = 13
+
+[[moves]]
+move_id = 318
+level = 47
+
+[[moves]]
+move_id = 346
+level = 1
+
+[[moves]]
+move_id = 346
+level = 19

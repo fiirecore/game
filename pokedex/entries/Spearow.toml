@@ -1,0 +1,59 @@
+[data]
+number = 21
+name = 'Spearow'
+primary_type = 'Normal'
+secondary_type = 'Flying'
+species = 'Tiny'
+height = 3
+weight = 20
+
+[training]
+base_exp = 52
+growth_rate = 'medium'
+
+[base]
+hp = 40
+atk = 60
+def = 30
+sp_atk = 31
+sp_def = 31
+speed = 70
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 31
+level = 13
+
+[[moves]]
+move_id = 43
+level = 7
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 65
+level = 37
+
+[[moves]]
+move_id = 97
+level = 43
+
+[[moves]]
+move_id = 119
+level = 31
+
+[[moves]]
+move_id = 228
+level = 19
+
+[[moves]]
+move_id = 332
+level = 25

@@ -1,0 +1,58 @@
+[data]
+number = 144
+name = 'Articuno'
+primary_type = 'Ice'
+secondary_type = 'Flying'
+species = 'Freeze'
+height = 17
+weight = 554
+
+[training]
+base_exp = 261
+growth_rate = 'slow'
+
+[base]
+hp = 90
+atk = 85
+def = 100
+sp_atk = 95
+sp_def = 125
+speed = 85
+
+[breeding]
+
+[[moves]]
+move_id = 16
+level = 1
+
+[[moves]]
+move_id = 54
+level = 13
+
+[[moves]]
+move_id = 58
+level = 49
+
+[[moves]]
+move_id = 59
+level = 73
+
+[[moves]]
+move_id = 97
+level = 25
+
+[[moves]]
+move_id = 115
+level = 61
+
+[[moves]]
+move_id = 170
+level = 37
+
+[[moves]]
+move_id = 181
+level = 1
+
+[[moves]]
+move_id = 329
+level = 85

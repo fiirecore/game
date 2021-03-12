@@ -1,0 +1,7 @@
+number = 126
+name = "Fire Blast"
+pokemon_type = "Fire"
+category = "Special"
+power = 110
+accuracy = 85
+pp = 5

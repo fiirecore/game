@@ -1,0 +1,79 @@
+[data]
+number = 141
+name = 'Kabutops'
+primary_type = 'Rock'
+secondary_type = 'Water'
+species = 'Shellfish'
+height = 13
+weight = 405
+
+[training]
+base_exp = 173
+growth_rate = 'medium'
+
+[base]
+hp = 60
+atk = 115
+def = 105
+sp_atk = 65
+sp_def = 70
+speed = 80
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 28
+level = 31
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 43
+level = 19
+
+[[moves]]
+move_id = 71
+level = 1
+
+[[moves]]
+move_id = 71
+level = 13
+
+[[moves]]
+move_id = 72
+level = 55
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 163
+level = 40
+
+[[moves]]
+move_id = 203
+level = 37
+
+[[moves]]
+move_id = 210
+level = 1
+
+[[moves]]
+move_id = 246
+level = 65
+
+[[moves]]
+move_id = 319
+level = 46
+
+[[moves]]
+move_id = 341
+level = 25

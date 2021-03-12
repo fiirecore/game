@@ -7,18 +7,34 @@ use crate::util::graphics::texture::image_texture;
 use crate::util::graphics::Texture;
 use crate::world::NpcTextures;
 
-pub fn load_npc_textures(npc_textures: &mut NpcTextures) {
+#[deprecated]
+pub async fn load_npc_textures(npc_textures: &mut NpcTextures) {
     info!("Loading NPC textures...");
 
     //let files = ["idle_up.png", "idle_down.png", "idle_side.png"];
-    let dir = "world/textures/npcs";
-    for npc_texture_path in crate::io::get_dir(dir) {
-        let npc_type =  npc_texture_path.file_name().unwrap().to_string_lossy().into_owned();
-        let filepath = std::path::Path::new(dir).join(&npc_type);
-        let filepath = filepath.join(npc_type.clone() + ".png");
+    let dir = "assets/world/textures/npcs";
+    for npc_texture_path in 
+    &[
+        "brock",
+        "bug_catcher",
+        "camper",
+        "fat_man",
+        "lass",
+        "misty",
+        "mom",
+        "prof_oak",
+        "woman_1",
+        "youngster"
+    ] {
+        let npc_texture_path = *npc_texture_path;
+        // let npc_type =  npc_texture_path.file_name().unwrap().to_string_lossy().into_owned();
+        let npc_type = npc_texture_path.to_owned();
+        // let filepath = std::path::Path::new(dir).join(&npc_type);
+        // let filepath = filepath.join(npc_type.clone() + ".png");
+        let filepath = format!("{}/{}/{}.png", dir, npc_texture_path, npc_texture_path);
 
-        match crate::io::get_file(&filepath) {
-            Some(file) => {
+        match macroquad::prelude::load_file(&filepath).await {// crate::io::get_file(&filepath) {
+            Ok(file) => {
                 match crate::util::image::byte_image(&file) {
                     Ok(image) => match parse_image(image) {
                         Some(twt) => {
@@ -35,8 +51,8 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures) {
                 }
                 
             }
-            None => {
-                warn!("Could not get texture {} under NPC texture file {:?}", npc_type, filepath);
+            Err(err) => {
+                warn!("Could not get texture {} under NPC texture file {:?} with error {}", npc_type, filepath, err);
             },
         }
     }
@@ -69,7 +85,7 @@ fn idle_npc(image: Image) -> Option<ThreeWayTexture<StillTextureManager>> {
 }
 
 pub fn battle_sprite(id: &str) -> Texture {
-    match crate::io::get_file(std::path::PathBuf::from("world/textures/npcs/").join(id).join("battle.png")) {
+    match crate::util::file::noasync::read_noasync(std::path::PathBuf::from("assets/world/textures/npcs/").join(id).join("battle.png")) {
         Some(file) => {
             return crate::util::graphics::texture::byte_texture(&file);
         }

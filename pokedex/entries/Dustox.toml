@@ -1,0 +1,63 @@
+[data]
+number = 269
+name = 'Dustox'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'Poison'
+height = 12
+weight = 316
+
+[training]
+base_exp = 173
+growth_rate = 'medium'
+
+[breeding]
+gender = 4
+
+[base]
+hp = 60
+atk = 50
+def = 70
+sp_atk = 50
+sp_def = 90
+speed = 65
+
+[[moves]]
+move_id = 16
+level = 13
+
+[[moves]]
+move_id = 18
+level = 27
+
+[[moves]]
+move_id = 60
+level = 24
+
+[[moves]]
+move_id = 92
+level = 38
+
+[[moves]]
+move_id = 93
+level = 1
+
+[[moves]]
+move_id = 93
+level = 10
+
+[[moves]]
+move_id = 113
+level = 31
+
+[[moves]]
+move_id = 182
+level = 17
+
+[[moves]]
+move_id = 236
+level = 20
+
+[[moves]]
+move_id = 318
+level = 34

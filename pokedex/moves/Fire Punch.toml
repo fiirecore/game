@@ -1,0 +1,7 @@
+number = 7
+name = "Fire Punch"
+pokemon_type = "Fire"
+category = "Physical"
+power = 75
+accuracy = 100
+pp = 15

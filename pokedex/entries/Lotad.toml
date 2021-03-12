@@ -1,0 +1,51 @@
+[data]
+number = 270
+name = 'Lotad'
+primary_type = 'Water'
+secondary_type = 'Grass'
+species = 'Water'
+height = 5
+weight = 26
+
+[training]
+base_exp = 44
+growth_rate = 'medium-slow'
+
+[base]
+hp = 40
+atk = 30
+def = 30
+sp_atk = 40
+sp_def = 50
+speed = 30
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 45
+level = 3
+
+[[moves]]
+move_id = 54
+level = 21
+
+[[moves]]
+move_id = 71
+level = 7
+
+[[moves]]
+move_id = 72
+level = 43
+
+[[moves]]
+move_id = 240
+level = 31
+
+[[moves]]
+move_id = 267
+level = 13
+
+[[moves]]
+move_id = 310
+level = 1

@@ -27,18 +27,17 @@ pub struct CustomChars {
 
 impl FontSheetData {
 
-    pub fn open_sheet<P: AsRef<std::path::Path>>(path: P) -> Option<Font> {
-        let path = path.as_ref();
-        match crate::io::get_file_as_string(path) {
-            Ok(file) => match ron::from_str(&file) {
+    pub fn open_sheet(path: &str) -> Option<Font> {
+        match crate::util::file::noasync::read_to_string_noasync(path) {
+            Some(file) => match ron::from_str(&file) {
                 Ok(sheet) => return Self::sheet_image(sheet),
                 Err(err) => {
                     warn!("Could not parse font sheet data at {:?} with error {}", path, err);
                     return None;
                 }
             },
-            Err(err) => {
-                warn!("Could not open font sheet config at {:?} with error {}", path, err);
+            None => {
+                warn!("Could not open font sheet config at {:?}", path);
                 return None;
             }
         }
@@ -54,7 +53,7 @@ impl FontSheetData {
     }
 
     fn sheet_image(self) -> Option<Font> {
-        match crate::io::get_file(std::path::PathBuf::from("fonts").join(&self.file)) {
+        match crate::util::file::noasync::read_noasync(&self.file) {
             Some(ref file) => match crate::util::image::byte_image(file) {
                 Ok(image) => Some(self.into_sheet(image)),
                 Err(err) => {

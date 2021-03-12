@@ -1,0 +1,7 @@
+number = 120
+name = "Self-Destruct"
+pokemon_type = "Normal"
+category = "Physical"
+power = 200
+accuracy = 100
+pp = 5

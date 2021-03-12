@@ -1,0 +1,7 @@
+number = 89
+name = "Earthquake"
+pokemon_type = "Ground"
+category = "Physical"
+power = 100
+accuracy = 100
+pp = 10

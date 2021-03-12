@@ -1,0 +1,82 @@
+[data]
+number = 317
+name = 'Swalot'
+primary_type = 'Poison'
+species = 'Poison'
+height = 17
+weight = 800
+
+[training]
+base_exp = 163
+growth_rate = 'fast-then-very-slow'
+
+[base]
+hp = 100
+atk = 73
+def = 83
+sp_atk = 73
+sp_def = 83
+speed = 55
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 34
+level = 26
+
+[[moves]]
+move_id = 92
+level = 31
+
+[[moves]]
+move_id = 124
+level = 1
+
+[[moves]]
+move_id = 124
+level = 14
+
+[[moves]]
+move_id = 133
+level = 17
+
+[[moves]]
+move_id = 139
+level = 1
+
+[[moves]]
+move_id = 139
+level = 9
+
+[[moves]]
+move_id = 188
+level = 48
+
+[[moves]]
+move_id = 227
+level = 23
+
+[[moves]]
+move_id = 254
+level = 40
+
+[[moves]]
+move_id = 255
+level = 40
+
+[[moves]]
+move_id = 256
+level = 40
+
+[[moves]]
+move_id = 281
+level = 1
+
+[[moves]]
+move_id = 281
+level = 6

@@ -1,0 +1,62 @@
+[data]
+number = 50
+name = 'Diglett'
+primary_type = 'Ground'
+species = 'Mole'
+height = 2
+weight = 8
+
+[training]
+base_exp = 53
+growth_rate = 'medium'
+
+[base]
+hp = 10
+atk = 55
+def = 25
+sp_atk = 35
+sp_def = 45
+speed = 95
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 28
+level = 1
+
+[[moves]]
+move_id = 45
+level = 5
+
+[[moves]]
+move_id = 89
+level = 41
+
+[[moves]]
+move_id = 90
+level = 49
+
+[[moves]]
+move_id = 91
+level = 17
+
+[[moves]]
+move_id = 154
+level = 21
+
+[[moves]]
+move_id = 163
+level = 33
+
+[[moves]]
+move_id = 189
+level = 25
+
+[[moves]]
+move_id = 222
+level = 9

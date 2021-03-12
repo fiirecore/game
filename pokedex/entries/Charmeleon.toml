@@ -1,0 +1,66 @@
+[data]
+number = 5
+name = 'Charmeleon'
+primary_type = 'Fire'
+species = 'Flame'
+height = 11
+weight = 190
+
+[training]
+base_exp = 142
+growth_rate = 'medium-slow'
+
+[base]
+hp = 58
+atk = 64
+def = 58
+sp_atk = 80
+sp_def = 65
+speed = 80
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 52
+level = 1
+
+[[moves]]
+move_id = 52
+level = 7
+
+[[moves]]
+move_id = 53
+level = 34
+
+[[moves]]
+move_id = 82
+level = 48
+
+[[moves]]
+move_id = 83
+level = 55
+
+[[moves]]
+move_id = 108
+level = 20
+
+[[moves]]
+move_id = 163
+level = 41
+
+[[moves]]
+move_id = 184
+level = 27
+
+[[moves]]
+move_id = 232
+level = 13

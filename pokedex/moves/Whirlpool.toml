@@ -1,0 +1,7 @@
+number = 250
+name = "Whirlpool"
+pokemon_type = "Water"
+category = "Special"
+power = 35
+accuracy = 85
+pp = 15

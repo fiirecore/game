@@ -1,0 +1,7 @@
+number = 302
+name = "Needle Arm"
+pokemon_type = "Grass"
+category = "Physical"
+power = 60
+accuracy = 100
+pp = 15

@@ -1,0 +1,55 @@
+[data]
+number = 178
+name = 'Xatu'
+primary_type = 'Psychic'
+secondary_type = 'Flying'
+species = 'Mystic'
+height = 15
+weight = 150
+
+[training]
+base_exp = 165
+growth_rate = 'medium'
+
+[base]
+hp = 65
+atk = 75
+def = 70
+sp_atk = 95
+sp_def = 70
+speed = 95
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 94
+level = 65
+
+[[moves]]
+move_id = 100
+level = 20
+
+[[moves]]
+move_id = 101
+level = 10
+
+[[moves]]
+move_id = 109
+level = 50
+
+[[moves]]
+move_id = 248
+level = 35
+
+[[moves]]
+move_id = 273
+level = 35

@@ -1,0 +1,67 @@
+[data]
+number = 123
+name = 'Scyther'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Mantis'
+height = 15
+weight = 560
+
+[training]
+base_exp = 100
+growth_rate = 'medium'
+
+[base]
+hp = 70
+atk = 110
+def = 80
+sp_atk = 55
+sp_def = 80
+speed = 105
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 14
+level = 36
+
+[[moves]]
+move_id = 17
+level = 26
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 97
+level = 21
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 104
+level = 41
+
+[[moves]]
+move_id = 116
+level = 6
+
+[[moves]]
+move_id = 163
+level = 31
+
+[[moves]]
+move_id = 206
+level = 16
+
+[[moves]]
+move_id = 210
+level = 46
+
+[[moves]]
+move_id = 228
+level = 11

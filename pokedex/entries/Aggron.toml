@@ -1,0 +1,83 @@
+[data]
+number = 306
+name = 'Aggron'
+primary_type = 'Steel'
+secondary_type = 'Rock'
+species = 'Iron'
+height = 21
+weight = 3600
+
+[training]
+base_exp = 239
+growth_rate = 'slow'
+
+[base]
+hp = 70
+atk = 110
+def = 180
+sp_atk = 60
+sp_def = 60
+speed = 50
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 29
+level = 1
+
+[[moves]]
+move_id = 29
+level = 10
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 25
+
+[[moves]]
+move_id = 38
+level = 63
+
+[[moves]]
+move_id = 46
+level = 21
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 106
+level = 4
+
+[[moves]]
+move_id = 182
+level = 37
+
+[[moves]]
+move_id = 189
+level = 1
+
+[[moves]]
+move_id = 189
+level = 7
+
+[[moves]]
+move_id = 231
+level = 29
+
+[[moves]]
+move_id = 232
+level = 13
+
+[[moves]]
+move_id = 319
+level = 50
+
+[[moves]]
+move_id = 334
+level = 17

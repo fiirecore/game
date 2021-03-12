@@ -1,0 +1,63 @@
+[data]
+number = 69
+name = 'Bellsprout'
+primary_type = 'Grass'
+secondary_type = 'Poison'
+species = 'Flower'
+height = 7
+weight = 40
+
+[training]
+base_exp = 60
+growth_rate = 'medium-slow'
+
+[base]
+hp = 50
+atk = 75
+def = 35
+sp_atk = 70
+sp_def = 30
+speed = 40
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 21
+level = 45
+
+[[moves]]
+move_id = 22
+level = 1
+
+[[moves]]
+move_id = 35
+level = 11
+
+[[moves]]
+move_id = 51
+level = 23
+
+[[moves]]
+move_id = 74
+level = 6
+
+[[moves]]
+move_id = 75
+level = 37
+
+[[moves]]
+move_id = 77
+level = 17
+
+[[moves]]
+move_id = 78
+level = 19
+
+[[moves]]
+move_id = 79
+level = 15
+
+[[moves]]
+move_id = 230
+level = 30

@@ -1,0 +1,78 @@
+[data]
+number = 253
+name = 'Grovyle'
+primary_type = 'Grass'
+species = 'Wood'
+height = 9
+weight = 216
+
+[training]
+base_exp = 142
+growth_rate = 'medium-slow'
+
+[base]
+hp = 50
+atk = 65
+def = 45
+sp_atk = 85
+sp_def = 65
+speed = 95
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 21
+level = 41
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 71
+level = 1
+
+[[moves]]
+move_id = 71
+level = 6
+
+[[moves]]
+move_id = 97
+level = 35
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 98
+level = 11
+
+[[moves]]
+move_id = 103
+level = 23
+
+[[moves]]
+move_id = 197
+level = 47
+
+[[moves]]
+move_id = 206
+level = 53
+
+[[moves]]
+move_id = 210
+level = 16
+
+[[moves]]
+move_id = 228
+level = 17
+
+[[moves]]
+move_id = 348
+level = 29

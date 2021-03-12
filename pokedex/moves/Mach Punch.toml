@@ -1,0 +1,7 @@
+number = 183
+name = "Mach Punch"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 40
+accuracy = 100
+pp = 30

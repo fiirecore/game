@@ -1,0 +1,7 @@
+number = 157
+name = "Rock Slide"
+pokemon_type = "Rock"
+category = "Physical"
+power = 75
+accuracy = 90
+pp = 10

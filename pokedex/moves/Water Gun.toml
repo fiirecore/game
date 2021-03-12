@@ -1,0 +1,7 @@
+number = 55
+name = "Water Gun"
+pokemon_type = "Water"
+category = "Special"
+power = 40
+accuracy = 100
+pp = 25

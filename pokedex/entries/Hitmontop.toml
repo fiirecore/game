@@ -1,0 +1,66 @@
+[data]
+number = 237
+name = 'Hitmontop'
+primary_type = 'Fighting'
+species = 'Handstand'
+height = 14
+weight = 480
+
+[training]
+base_exp = 159
+growth_rate = 'medium'
+
+[base]
+hp = 50
+atk = 95
+def = 95
+sp_atk = 35
+sp_def = 110
+speed = 70
+
+[breeding]
+gender = 0
+
+[[moves]]
+move_id = 27
+level = 1
+
+[[moves]]
+move_id = 68
+level = 31
+
+[[moves]]
+move_id = 97
+level = 37
+
+[[moves]]
+move_id = 98
+level = 19
+
+[[moves]]
+move_id = 116
+level = 7
+
+[[moves]]
+move_id = 167
+level = 20
+
+[[moves]]
+move_id = 197
+level = 43
+
+[[moves]]
+move_id = 228
+level = 13
+
+[[moves]]
+move_id = 229
+level = 25
+
+[[moves]]
+move_id = 279
+level = 1
+
+[[moves]]
+move_id = 283
+level = 49

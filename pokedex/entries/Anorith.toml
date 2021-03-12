@@ -1,0 +1,63 @@
+[data]
+number = 347
+name = 'Anorith'
+primary_type = 'Rock'
+secondary_type = 'Bug'
+species = 'Old'
+height = 7
+weight = 125
+
+[training]
+base_exp = 71
+growth_rate = 'slow-then-very-fast'
+
+[base]
+hp = 45
+atk = 95
+def = 50
+sp_atk = 40
+sp_def = 50
+speed = 75
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 55
+level = 19
+
+[[moves]]
+move_id = 106
+level = 7
+
+[[moves]]
+move_id = 163
+level = 49
+
+[[moves]]
+move_id = 182
+level = 31
+
+[[moves]]
+move_id = 210
+level = 43
+
+[[moves]]
+move_id = 232
+level = 25
+
+[[moves]]
+move_id = 246
+level = 37
+
+[[moves]]
+move_id = 300
+level = 13
+
+[[moves]]
+move_id = 350
+level = 55

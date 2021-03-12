@@ -1,0 +1,66 @@
+[data]
+number = 309
+name = 'Electrike'
+primary_type = 'Electric'
+species = 'Lightning'
+height = 6
+weight = 152
+
+[training]
+base_exp = 59
+growth_rate = 'slow'
+
+[base]
+hp = 40
+atk = 45
+def = 40
+sp_atk = 65
+sp_def = 40
+speed = 65
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 43
+level = 9
+
+[[moves]]
+move_id = 44
+level = 33
+
+[[moves]]
+move_id = 46
+level = 28
+
+[[moves]]
+move_id = 86
+level = 4
+
+[[moves]]
+move_id = 87
+level = 36
+
+[[moves]]
+move_id = 98
+level = 17
+
+[[moves]]
+move_id = 209
+level = 20
+
+[[moves]]
+move_id = 268
+level = 41
+
+[[moves]]
+move_id = 316
+level = 25
+
+[[moves]]
+move_id = 336
+level = 12

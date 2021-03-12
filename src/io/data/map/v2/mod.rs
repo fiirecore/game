@@ -3,11 +3,11 @@ use ahash::AHashMap as HashMap;
 use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use macroquad::prelude::info;
-use super::v1::gba_map;
+use super::gba_map;
 
 pub async fn load_maps_v2(tile_textures: &mut crate::world::TileTextures, npc_textures: &mut crate::world::NpcTextures) -> (WorldChunkMap, WorldMapSetManager) {
     let mut bottom_sheets: HashMap<u8, macroquad::prelude::Image> = HashMap::new();
-    let palette_sizes = gba_map::fill_palette_map(&mut bottom_sheets);
+    let palette_sizes = gba_map::fill_palette_map(&mut bottom_sheets).await;
 
     info!("Loading maps...");
     
@@ -30,7 +30,7 @@ pub async fn load_maps_v2(tile_textures: &mut crate::world::TileTextures, npc_te
         }
     }
 
-    super::npc_texture::load_npc_textures(npc_textures);
+    super::npc_texture::load_npc_textures(npc_textures).await;
     info!("Finished loading textures!");
 
     (chunk_map, map_set_manager)

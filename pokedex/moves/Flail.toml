@@ -1,0 +1,6 @@
+number = 175
+name = "Flail"
+pokemon_type = "Normal"
+category = "Physical"
+accuracy = 100
+pp = 15

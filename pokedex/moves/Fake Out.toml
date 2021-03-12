@@ -1,0 +1,7 @@
+number = 252
+name = "Fake Out"
+pokemon_type = "Normal"
+category = "Physical"
+power = 40
+accuracy = 100
+pp = 10

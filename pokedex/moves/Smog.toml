@@ -1,0 +1,7 @@
+number = 123
+name = "Smog"
+pokemon_type = "Poison"
+category = "Special"
+power = 30
+accuracy = 70
+pp = 20

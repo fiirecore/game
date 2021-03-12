@@ -1,0 +1,62 @@
+[data]
+number = 52
+name = 'Meowth'
+primary_type = 'Normal'
+species = 'Scratch'
+height = 4
+weight = 42
+
+[training]
+base_exp = 58
+growth_rate = 'medium'
+
+[base]
+hp = 40
+atk = 45
+def = 35
+sp_atk = 40
+sp_def = 40
+speed = 90
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 6
+level = 18
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 44
+level = 10
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 103
+level = 31
+
+[[moves]]
+move_id = 154
+level = 36
+
+[[moves]]
+move_id = 163
+level = 40
+
+[[moves]]
+move_id = 185
+level = 25
+
+[[moves]]
+move_id = 207
+level = 45
+
+[[moves]]
+move_id = 252
+level = 43

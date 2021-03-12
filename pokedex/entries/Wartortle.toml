@@ -1,0 +1,74 @@
+[data]
+number = 8
+name = 'Wartortle'
+primary_type = 'Water'
+species = 'Turtle'
+height = 10
+weight = 225
+
+[training]
+base_exp = 142
+growth_rate = 'medium-slow'
+
+[base]
+hp = 59
+atk = 63
+def = 80
+sp_atk = 65
+sp_def = 80
+speed = 58
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 39
+level = 4
+
+[[moves]]
+move_id = 44
+level = 19
+
+[[moves]]
+move_id = 55
+level = 13
+
+[[moves]]
+move_id = 56
+level = 53
+
+[[moves]]
+move_id = 110
+level = 10
+
+[[moves]]
+move_id = 130
+level = 45
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 145
+level = 7
+
+[[moves]]
+move_id = 182
+level = 31
+
+[[moves]]
+move_id = 229
+level = 25
+
+[[moves]]
+move_id = 240
+level = 37

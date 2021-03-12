@@ -1,0 +1,7 @@
+number = 62
+name = "Aurora Beam"
+pokemon_type = "Ice"
+category = "Special"
+power = 65
+accuracy = 100
+pp = 20

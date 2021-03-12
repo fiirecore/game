@@ -1,0 +1,7 @@
+number = 292
+name = "Arm Thrust"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 15
+accuracy = 100
+pp = 20

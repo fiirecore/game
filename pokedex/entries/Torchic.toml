@@ -1,0 +1,66 @@
+[data]
+number = 255
+name = 'Torchic'
+primary_type = 'Fire'
+species = 'Chick'
+height = 4
+weight = 25
+
+[training]
+base_exp = 62
+growth_rate = 'medium-slow'
+
+[base]
+hp = 45
+atk = 60
+def = 40
+sp_atk = 70
+sp_def = 50
+speed = 45
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 28
+level = 19
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 52
+level = 10
+
+[[moves]]
+move_id = 53
+level = 43
+
+[[moves]]
+move_id = 64
+level = 16
+
+[[moves]]
+move_id = 83
+level = 25
+
+[[moves]]
+move_id = 98
+level = 28
+
+[[moves]]
+move_id = 116
+level = 7
+
+[[moves]]
+move_id = 119
+level = 37
+
+[[moves]]
+move_id = 163
+level = 34

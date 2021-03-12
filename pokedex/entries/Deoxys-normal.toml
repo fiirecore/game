@@ -1,0 +1,23 @@
+moves = []
+
+[data]
+number = 386
+name = "Deoxys-normal"
+primary_type = "Psychic"
+species = "DNA"
+height = 17
+weight = 608
+
+[training]
+base_exp = 270
+growth_rate = "slow"
+
+[base]
+hp = 50
+atk = 150
+def = 50
+sp_atk = 150
+sp_def = 50
+speed = 150
+
+[breeding]

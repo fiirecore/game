@@ -1,0 +1,63 @@
+[data]
+number = 246
+name = 'Larvitar'
+primary_type = 'Rock'
+secondary_type = 'Ground'
+species = 'Rock'
+height = 6
+weight = 720
+
+[training]
+base_exp = 60
+growth_rate = 'slow'
+
+[base]
+hp = 50
+atk = 64
+def = 50
+sp_atk = 45
+sp_def = 50
+speed = 41
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 37
+level = 29
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 44
+level = 1
+
+[[moves]]
+move_id = 63
+level = 57
+
+[[moves]]
+move_id = 89
+level = 50
+
+[[moves]]
+move_id = 103
+level = 15
+
+[[moves]]
+move_id = 157
+level = 22
+
+[[moves]]
+move_id = 184
+level = 36
+
+[[moves]]
+move_id = 201
+level = 8
+
+[[moves]]
+move_id = 242
+level = 43

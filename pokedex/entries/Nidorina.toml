@@ -1,0 +1,62 @@
+[data]
+number = 30
+name = 'Nidorina'
+primary_type = 'Poison'
+species = 'Poison'
+height = 8
+weight = 200
+
+[training]
+base_exp = 128
+growth_rate = 'medium-slow'
+
+[base]
+hp = 70
+atk = 62
+def = 67
+sp_atk = 55
+sp_def = 55
+speed = 56
+
+[breeding]
+gender = 8
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 24
+level = 12
+
+[[moves]]
+move_id = 39
+level = 8
+
+[[moves]]
+move_id = 40
+level = 18
+
+[[moves]]
+move_id = 44
+level = 22
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 154
+level = 34
+
+[[moves]]
+move_id = 242
+level = 53
+
+[[moves]]
+move_id = 260
+level = 43
+
+[[moves]]
+move_id = 270
+level = 26

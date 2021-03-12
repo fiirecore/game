@@ -1,0 +1,70 @@
+[data]
+number = 263
+name = 'Zigzagoon'
+primary_type = 'Normal'
+species = 'Tiny'
+height = 4
+weight = 175
+
+[training]
+base_exp = 56
+growth_rate = 'medium'
+
+[base]
+hp = 38
+atk = 30
+def = 41
+sp_atk = 30
+sp_def = 41
+speed = 60
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 28
+level = 13
+
+[[moves]]
+move_id = 29
+level = 9
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 39
+level = 5
+
+[[moves]]
+move_id = 42
+level = 25
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 156
+level = 37
+
+[[moves]]
+move_id = 175
+level = 33
+
+[[moves]]
+move_id = 187
+level = 41
+
+[[moves]]
+move_id = 300
+level = 21
+
+[[moves]]
+move_id = 316
+level = 17
+
+[[moves]]
+move_id = 343
+level = 29

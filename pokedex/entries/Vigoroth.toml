@@ -1,0 +1,70 @@
+[data]
+number = 288
+name = 'Vigoroth'
+primary_type = 'Normal'
+species = 'Wild'
+height = 14
+weight = 465
+
+[training]
+base_exp = 154
+growth_rate = 'slow'
+
+[base]
+hp = 80
+atk = 80
+def = 80
+sp_atk = 55
+sp_def = 55
+speed = 90
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 68
+level = 37
+
+[[moves]]
+move_id = 116
+level = 1
+
+[[moves]]
+move_id = 154
+level = 19
+
+[[moves]]
+move_id = 163
+level = 31
+
+[[moves]]
+move_id = 179
+level = 49
+
+[[moves]]
+move_id = 203
+level = 25
+
+[[moves]]
+move_id = 227
+level = 1
+
+[[moves]]
+move_id = 227
+level = 7
+
+[[moves]]
+move_id = 253
+level = 1
+
+[[moves]]
+move_id = 253
+level = 13
+
+[[moves]]
+move_id = 264
+level = 43

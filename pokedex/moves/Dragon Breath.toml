@@ -1,0 +1,7 @@
+number = 225
+name = "Dragon Breath"
+pokemon_type = "Dragon"
+category = "Special"
+power = 60
+accuracy = 100
+pp = 20

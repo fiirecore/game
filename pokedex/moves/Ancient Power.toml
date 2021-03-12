@@ -1,0 +1,7 @@
+number = 246
+name = "Ancient Power"
+pokemon_type = "Rock"
+category = "Special"
+power = 60
+accuracy = 100
+pp = 5

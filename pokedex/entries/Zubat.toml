@@ -1,0 +1,63 @@
+[data]
+number = 41
+name = 'Zubat'
+primary_type = 'Poison'
+secondary_type = 'Flying'
+species = 'Bat'
+height = 8
+weight = 75
+
+[training]
+base_exp = 49
+growth_rate = 'medium'
+
+[base]
+hp = 40
+atk = 45
+def = 35
+sp_atk = 30
+sp_def = 40
+speed = 55
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 17
+level = 21
+
+[[moves]]
+move_id = 44
+level = 16
+
+[[moves]]
+move_id = 48
+level = 11
+
+[[moves]]
+move_id = 109
+level = 26
+
+[[moves]]
+move_id = 114
+level = 46
+
+[[moves]]
+move_id = 141
+level = 1
+
+[[moves]]
+move_id = 212
+level = 36
+
+[[moves]]
+move_id = 305
+level = 41
+
+[[moves]]
+move_id = 310
+level = 6
+
+[[moves]]
+move_id = 314
+level = 31

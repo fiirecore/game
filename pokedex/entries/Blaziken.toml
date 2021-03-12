@@ -1,0 +1,87 @@
+[data]
+number = 257
+name = 'Blaziken'
+primary_type = 'Fire'
+secondary_type = 'Fighting'
+species = 'Blaze'
+height = 19
+weight = 520
+
+[training]
+base_exp = 239
+growth_rate = 'medium-slow'
+
+[base]
+hp = 80
+atk = 120
+def = 70
+sp_atk = 110
+sp_def = 70
+speed = 80
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 7
+level = 1
+
+[[moves]]
+move_id = 10
+level = 1
+
+[[moves]]
+move_id = 24
+level = 16
+
+[[moves]]
+move_id = 28
+level = 21
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 52
+level = 1
+
+[[moves]]
+move_id = 52
+level = 13
+
+[[moves]]
+move_id = 64
+level = 17
+
+[[moves]]
+move_id = 98
+level = 32
+
+[[moves]]
+move_id = 116
+level = 1
+
+[[moves]]
+move_id = 116
+level = 7
+
+[[moves]]
+move_id = 119
+level = 49
+
+[[moves]]
+move_id = 163
+level = 42
+
+[[moves]]
+move_id = 299
+level = 36
+
+[[moves]]
+move_id = 327
+level = 59
+
+[[moves]]
+move_id = 339
+level = 28

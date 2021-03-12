@@ -1,0 +1,6 @@
+number = 101
+name = "Night Shade"
+pokemon_type = "Ghost"
+category = "Special"
+accuracy = 100
+pp = 15

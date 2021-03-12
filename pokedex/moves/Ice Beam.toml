@@ -1,0 +1,7 @@
+number = 58
+name = "Ice Beam"
+pokemon_type = "Ice"
+category = "Special"
+power = 90
+accuracy = 100
+pp = 10

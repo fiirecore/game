@@ -1,0 +1,6 @@
+number = 213
+name = "Attract"
+pokemon_type = "Normal"
+category = "Status"
+accuracy = 100
+pp = 15

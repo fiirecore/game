@@ -1,0 +1,82 @@
+[data]
+number = 297
+name = 'Hariyama'
+primary_type = 'Fighting'
+species = 'Arm'
+height = 23
+weight = 2538
+
+[training]
+base_exp = 166
+growth_rate = 'fast-then-very-slow'
+
+[base]
+hp = 144
+atk = 120
+def = 60
+sp_atk = 40
+sp_def = 60
+speed = 50
+
+[breeding]
+gender = 2
+
+[[moves]]
+move_id = 18
+level = 22
+
+[[moves]]
+move_id = 28
+level = 1
+
+[[moves]]
+move_id = 28
+level = 4
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 69
+level = 51
+
+[[moves]]
+move_id = 116
+level = 1
+
+[[moves]]
+move_id = 179
+level = 55
+
+[[moves]]
+move_id = 187
+level = 40
+
+[[moves]]
+move_id = 203
+level = 44
+
+[[moves]]
+move_id = 233
+level = 13
+
+[[moves]]
+move_id = 252
+level = 19
+
+[[moves]]
+move_id = 265
+level = 33
+
+[[moves]]
+move_id = 282
+level = 29
+
+[[moves]]
+move_id = 292
+level = 1
+
+[[moves]]
+move_id = 292
+level = 10

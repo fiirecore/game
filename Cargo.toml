@@ -9,7 +9,7 @@ keywords = ["games", "pokemon"]
 categories = ["games"]
 build = "build/build.rs"
 readme = "README.md"
-include = ["build", "assets"]
+include = ["/build", "/assets", "/crates", "/pokedex", "/world"]
 
 [profile.dev.package.'*']
 opt-level = 3
@@ -53,9 +53,7 @@ bincode = "1.3"
 
 ### File management
 
-rust-embed = { version = "5.9", features = ["debug-embed"] } # To - do: Only partially embed files
-zip = "0.5"
-# To - do: Make program to read world files and save them as bincode files
+# rust-embed = { version = "5.9", features = ["debug-embed"] }
 
 ### Collections
 
@@ -81,6 +79,12 @@ image = { version = "0.23.12", default-features = false, features = ["png", "tga
 
 [build-dependencies]
 map-compressor = { git = "https://github.com/DoNotDoughnut/map-compressor" }
+bincode = "1.3"
+toml = "0.5"
+serde = { version = "1.0", features = ["derive"] }
+firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
+#zip = "0.5"
+#walkdir = "2.3"
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"

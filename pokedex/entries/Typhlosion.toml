@@ -1,0 +1,62 @@
+[data]
+number = 157
+name = 'Typhlosion'
+primary_type = 'Fire'
+species = 'Volcano'
+height = 17
+weight = 795
+
+[training]
+base_exp = 240
+growth_rate = 'medium-slow'
+
+[base]
+hp = 78
+atk = 84
+def = 78
+sp_atk = 109
+sp_def = 85
+speed = 100
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 52
+level = 1
+
+[[moves]]
+move_id = 52
+level = 12
+
+[[moves]]
+move_id = 53
+level = 60
+
+[[moves]]
+move_id = 98
+level = 21
+
+[[moves]]
+move_id = 108
+level = 1
+
+[[moves]]
+move_id = 108
+level = 6
+
+[[moves]]
+move_id = 129
+level = 45
+
+[[moves]]
+move_id = 172
+level = 31

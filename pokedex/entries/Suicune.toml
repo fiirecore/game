@@ -1,0 +1,61 @@
+[data]
+number = 245
+name = 'Suicune'
+primary_type = 'Water'
+species = 'Aurora'
+height = 20
+weight = 1870
+
+[training]
+base_exp = 261
+growth_rate = 'slow'
+
+[base]
+hp = 100
+atk = 75
+def = 115
+sp_atk = 90
+sp_def = 115
+speed = 85
+
+[breeding]
+
+[[moves]]
+move_id = 16
+level = 31
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 44
+level = 1
+
+[[moves]]
+move_id = 54
+level = 51
+
+[[moves]]
+move_id = 56
+level = 71
+
+[[moves]]
+move_id = 61
+level = 11
+
+[[moves]]
+move_id = 62
+level = 41
+
+[[moves]]
+move_id = 240
+level = 21
+
+[[moves]]
+move_id = 243
+level = 61
+
+[[moves]]
+move_id = 347
+level = 81

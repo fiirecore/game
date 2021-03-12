@@ -1,0 +1,66 @@
+[data]
+number = 252
+name = 'Treecko'
+primary_type = 'Grass'
+species = 'Wood'
+height = 5
+weight = 50
+
+[training]
+base_exp = 62
+growth_rate = 'medium-slow'
+
+[base]
+hp = 40
+atk = 45
+def = 35
+sp_atk = 65
+sp_def = 55
+speed = 70
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 21
+level = 36
+
+[[moves]]
+move_id = 43
+level = 1
+
+[[moves]]
+move_id = 71
+level = 6
+
+[[moves]]
+move_id = 72
+level = 26
+
+[[moves]]
+move_id = 97
+level = 31
+
+[[moves]]
+move_id = 98
+level = 11
+
+[[moves]]
+move_id = 103
+level = 21
+
+[[moves]]
+move_id = 197
+level = 41
+
+[[moves]]
+move_id = 202
+level = 46
+
+[[moves]]
+move_id = 228
+level = 16

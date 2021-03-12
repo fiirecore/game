@@ -1,0 +1,62 @@
+[data]
+number = 313
+name = 'Volbeat'
+primary_type = 'Bug'
+species = 'Firefly'
+height = 7
+weight = 177
+
+[training]
+base_exp = 151
+growth_rate = 'slow-then-very-fast'
+
+[base]
+hp = 65
+atk = 73
+def = 75
+sp_atk = 47
+sp_def = 85
+speed = 85
+
+[breeding]
+gender = 0
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 38
+level = 37
+
+[[moves]]
+move_id = 98
+level = 17
+
+[[moves]]
+move_id = 104
+level = 9
+
+[[moves]]
+move_id = 109
+level = 5
+
+[[moves]]
+move_id = 182
+level = 29
+
+[[moves]]
+move_id = 236
+level = 13
+
+[[moves]]
+move_id = 270
+level = 33
+
+[[moves]]
+move_id = 294
+level = 21
+
+[[moves]]
+move_id = 324
+level = 25

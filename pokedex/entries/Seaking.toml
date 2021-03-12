@@ -1,0 +1,70 @@
+[data]
+number = 119
+name = 'Seaking'
+primary_type = 'Water'
+species = 'Goldfish'
+height = 13
+weight = 390
+
+[training]
+base_exp = 158
+growth_rate = 'medium'
+
+[base]
+hp = 80
+atk = 92
+def = 65
+sp_atk = 65
+sp_def = 80
+speed = 68
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 30
+level = 15
+
+[[moves]]
+move_id = 31
+level = 29
+
+[[moves]]
+move_id = 32
+level = 49
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 48
+level = 1
+
+[[moves]]
+move_id = 48
+level = 10
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 97
+level = 61
+
+[[moves]]
+move_id = 127
+level = 41
+
+[[moves]]
+move_id = 175
+level = 24
+
+[[moves]]
+move_id = 224
+level = 69
+
+[[moves]]
+move_id = 346
+level = 1

@@ -1,0 +1,39 @@
+[data]
+number = 272
+name = 'Ludicolo'
+primary_type = 'Water'
+secondary_type = 'Grass'
+species = 'Carefree'
+height = 15
+weight = 550
+
+[training]
+base_exp = 216
+growth_rate = 'medium-slow'
+
+[base]
+hp = 80
+atk = 70
+def = 70
+sp_atk = 90
+sp_def = 100
+speed = 70
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 71
+level = 1
+
+[[moves]]
+move_id = 267
+level = 1
+
+[[moves]]
+move_id = 310
+level = 1

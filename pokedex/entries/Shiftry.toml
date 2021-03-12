@@ -1,0 +1,39 @@
+[data]
+number = 275
+name = 'Shiftry'
+primary_type = 'Grass'
+secondary_type = 'Dark'
+species = 'Wicked'
+height = 13
+weight = 596
+
+[training]
+base_exp = 216
+growth_rate = 'medium-slow'
+
+[base]
+hp = 90
+atk = 100
+def = 60
+sp_atk = 90
+sp_def = 60
+speed = 80
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 74
+level = 1
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 267
+level = 1

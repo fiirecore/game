@@ -1,0 +1,62 @@
+[data]
+number = 128
+name = 'Tauros'
+primary_type = 'Normal'
+species = 'Wild'
+height = 14
+weight = 884
+
+[training]
+base_exp = 172
+growth_rate = 'slow'
+
+[base]
+hp = 75
+atk = 100
+def = 95
+sp_atk = 40
+sp_def = 70
+speed = 110
+
+[breeding]
+gender = 0
+
+[[moves]]
+move_id = 30
+level = 8
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 53
+
+[[moves]]
+move_id = 37
+level = 43
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 99
+level = 4
+
+[[moves]]
+move_id = 156
+level = 34
+
+[[moves]]
+move_id = 184
+level = 13
+
+[[moves]]
+move_id = 207
+level = 26
+
+[[moves]]
+move_id = 228
+level = 19

@@ -1,0 +1,25 @@
+[data]
+number = 132
+name = 'Ditto'
+primary_type = 'Normal'
+species = 'Transform'
+height = 3
+weight = 40
+
+[training]
+base_exp = 101
+growth_rate = 'medium'
+
+[base]
+hp = 48
+atk = 48
+def = 48
+sp_atk = 48
+sp_def = 48
+speed = 48
+
+[breeding]
+
+[[moves]]
+move_id = 144
+level = 1

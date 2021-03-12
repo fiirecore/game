@@ -1,0 +1,31 @@
+[data]
+number = 14
+name = 'Kakuna'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'Cocoon'
+height = 6
+weight = 100
+
+[training]
+base_exp = 72
+growth_rate = 'medium'
+
+[base]
+hp = 45
+atk = 25
+def = 50
+sp_atk = 25
+sp_def = 25
+speed = 35
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 106
+level = 7

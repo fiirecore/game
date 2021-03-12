@@ -1,0 +1,7 @@
+number = 333
+name = "Icicle Spear"
+pokemon_type = "Ice"
+category = "Physical"
+power = 25
+accuracy = 100
+pp = 30

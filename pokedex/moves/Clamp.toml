@@ -1,0 +1,7 @@
+number = 128
+name = "Clamp"
+pokemon_type = "Water"
+category = "Physical"
+power = 35
+accuracy = 85
+pp = 15

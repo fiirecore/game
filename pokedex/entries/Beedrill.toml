@@ -1,0 +1,59 @@
+[data]
+number = 15
+name = 'Beedrill'
+primary_type = 'Bug'
+secondary_type = 'Poison'
+species = 'Poison'
+height = 10
+weight = 295
+
+[training]
+base_exp = 178
+growth_rate = 'medium'
+
+[base]
+hp = 65
+atk = 90
+def = 40
+sp_atk = 45
+sp_def = 80
+speed = 75
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 31
+level = 1
+
+[[moves]]
+move_id = 31
+level = 10
+
+[[moves]]
+move_id = 41
+level = 20
+
+[[moves]]
+move_id = 42
+level = 35
+
+[[moves]]
+move_id = 97
+level = 40
+
+[[moves]]
+move_id = 99
+level = 25
+
+[[moves]]
+move_id = 116
+level = 15
+
+[[moves]]
+move_id = 228
+level = 30
+
+[[moves]]
+move_id = 283
+level = 45

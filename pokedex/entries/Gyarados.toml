@@ -1,0 +1,59 @@
+[data]
+number = 130
+name = 'Gyarados'
+primary_type = 'Water'
+secondary_type = 'Flying'
+species = 'Atrocious'
+height = 65
+weight = 2350
+
+[training]
+base_exp = 189
+growth_rate = 'slow'
+
+[base]
+hp = 95
+atk = 125
+def = 79
+sp_atk = 60
+sp_def = 100
+speed = 81
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 37
+level = 1
+
+[[moves]]
+move_id = 43
+level = 30
+
+[[moves]]
+move_id = 44
+level = 20
+
+[[moves]]
+move_id = 56
+level = 40
+
+[[moves]]
+move_id = 63
+level = 55
+
+[[moves]]
+move_id = 82
+level = 25
+
+[[moves]]
+move_id = 239
+level = 35
+
+[[moves]]
+move_id = 240
+level = 45
+
+[[moves]]
+move_id = 349
+level = 50

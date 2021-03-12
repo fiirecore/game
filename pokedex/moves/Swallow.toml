@@ -1,0 +1,5 @@
+number = 256
+name = "Swallow"
+pokemon_type = "Normal"
+category = "Status"
+pp = 10

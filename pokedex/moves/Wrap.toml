@@ -1,0 +1,7 @@
+number = 35
+name = "Wrap"
+pokemon_type = "Normal"
+category = "Physical"
+power = 15
+accuracy = 90
+pp = 20

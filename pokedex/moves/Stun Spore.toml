@@ -1,0 +1,6 @@
+number = 78
+name = "Stun Spore"
+pokemon_type = "Grass"
+category = "Status"
+accuracy = 75
+pp = 30

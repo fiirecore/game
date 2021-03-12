@@ -1,0 +1,63 @@
+[data]
+number = 187
+name = 'Hoppip'
+primary_type = 'Grass'
+secondary_type = 'Flying'
+species = 'Cottonweed'
+height = 4
+weight = 5
+
+[training]
+base_exp = 50
+growth_rate = 'medium-slow'
+
+[base]
+hp = 35
+atk = 35
+def = 40
+sp_atk = 35
+sp_def = 55
+speed = 50
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 33
+level = 10
+
+[[moves]]
+move_id = 39
+level = 5
+
+[[moves]]
+move_id = 72
+level = 30
+
+[[moves]]
+move_id = 73
+level = 20
+
+[[moves]]
+move_id = 77
+level = 13
+
+[[moves]]
+move_id = 78
+level = 15
+
+[[moves]]
+move_id = 79
+level = 17
+
+[[moves]]
+move_id = 150
+level = 1
+
+[[moves]]
+move_id = 178
+level = 25
+
+[[moves]]
+move_id = 235
+level = 5

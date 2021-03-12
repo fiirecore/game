@@ -1,0 +1,67 @@
+[data]
+number = 380
+name = 'Latias'
+primary_type = 'Dragon'
+secondary_type = 'Psychic'
+species = 'Eon'
+height = 14
+weight = 400
+
+[training]
+base_exp = 270
+growth_rate = 'slow'
+
+[base]
+hp = 80
+atk = 80
+def = 90
+sp_atk = 110
+sp_def = 130
+speed = 110
+
+[breeding]
+gender = 8
+
+[[moves]]
+move_id = 94
+level = 40
+
+[[moves]]
+move_id = 105
+level = 45
+
+[[moves]]
+move_id = 149
+level = 1
+
+[[moves]]
+move_id = 204
+level = 50
+
+[[moves]]
+move_id = 219
+level = 15
+
+[[moves]]
+move_id = 225
+level = 20
+
+[[moves]]
+move_id = 270
+level = 10
+
+[[moves]]
+move_id = 273
+level = 5
+
+[[moves]]
+move_id = 287
+level = 30
+
+[[moves]]
+move_id = 296
+level = 35
+
+[[moves]]
+move_id = 346
+level = 25

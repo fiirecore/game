@@ -1,0 +1,7 @@
+number = 130
+name = "Skull Bash"
+pokemon_type = "Normal"
+category = "Physical"
+power = 130
+accuracy = 100
+pp = 10

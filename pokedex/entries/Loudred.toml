@@ -1,0 +1,78 @@
+[data]
+number = 294
+name = 'Loudred'
+primary_type = 'Normal'
+species = 'Big'
+height = 10
+weight = 405
+
+[training]
+base_exp = 126
+growth_rate = 'medium-slow'
+
+[base]
+hp = 84
+atk = 71
+def = 43
+sp_atk = 71
+sp_def = 43
+speed = 48
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 23
+level = 29
+
+[[moves]]
+move_id = 46
+level = 43
+
+[[moves]]
+move_id = 48
+level = 23
+
+[[moves]]
+move_id = 103
+level = 37
+
+[[moves]]
+move_id = 156
+level = 51
+
+[[moves]]
+move_id = 214
+level = 51
+
+[[moves]]
+move_id = 253
+level = 1
+
+[[moves]]
+move_id = 253
+level = 5
+
+[[moves]]
+move_id = 304
+level = 57
+
+[[moves]]
+move_id = 310
+level = 1
+
+[[moves]]
+move_id = 310
+level = 11
+
+[[moves]]
+move_id = 336
+level = 1
+
+[[moves]]
+move_id = 336
+level = 15

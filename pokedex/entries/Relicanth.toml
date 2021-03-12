@@ -1,0 +1,67 @@
+[data]
+number = 369
+name = 'Relicanth'
+primary_type = 'Water'
+secondary_type = 'Rock'
+species = 'Longevity'
+height = 10
+weight = 234
+
+[training]
+base_exp = 170
+growth_rate = 'slow'
+
+[base]
+hp = 100
+atk = 90
+def = 130
+sp_atk = 45
+sp_def = 65
+speed = 55
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 36
+level = 29
+
+[[moves]]
+move_id = 38
+level = 57
+
+[[moves]]
+move_id = 55
+level = 8
+
+[[moves]]
+move_id = 56
+level = 64
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 156
+level = 50
+
+[[moves]]
+move_id = 246
+level = 43
+
+[[moves]]
+move_id = 281
+level = 22
+
+[[moves]]
+move_id = 300
+level = 36
+
+[[moves]]
+move_id = 317
+level = 15

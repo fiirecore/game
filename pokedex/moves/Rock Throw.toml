@@ -1,0 +1,7 @@
+number = 88
+name = "Rock Throw"
+pokemon_type = "Rock"
+category = "Physical"
+power = 50
+accuracy = 90
+pp = 15

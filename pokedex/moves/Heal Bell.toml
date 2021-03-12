@@ -1,0 +1,5 @@
+number = 215
+name = "Heal Bell"
+pokemon_type = "Normal"
+category = "Status"
+pp = 5

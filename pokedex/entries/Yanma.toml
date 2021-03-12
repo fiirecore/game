@@ -1,0 +1,67 @@
+[data]
+number = 193
+name = 'Yanma'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Clear'
+height = 12
+weight = 380
+
+[training]
+base_exp = 78
+growth_rate = 'medium'
+
+[base]
+hp = 65
+atk = 65
+def = 45
+sp_atk = 75
+sp_def = 45
+speed = 95
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 17
+level = 39
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 48
+level = 45
+
+[[moves]]
+move_id = 49
+level = 17
+
+[[moves]]
+move_id = 95
+level = 23
+
+[[moves]]
+move_id = 98
+level = 6
+
+[[moves]]
+move_id = 103
+level = 50
+
+[[moves]]
+move_id = 104
+level = 12
+
+[[moves]]
+move_id = 193
+level = 1
+
+[[moves]]
+move_id = 197
+level = 28
+
+[[moves]]
+move_id = 253
+level = 34

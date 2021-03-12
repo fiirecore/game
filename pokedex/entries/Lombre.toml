@@ -1,0 +1,63 @@
+[data]
+number = 271
+name = 'Lombre'
+primary_type = 'Water'
+secondary_type = 'Grass'
+species = 'Jolly'
+height = 12
+weight = 325
+
+[training]
+base_exp = 119
+growth_rate = 'medium-slow'
+
+[base]
+hp = 60
+atk = 50
+def = 50
+sp_atk = 60
+sp_def = 70
+speed = 50
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 45
+level = 3
+
+[[moves]]
+move_id = 56
+level = 49
+
+[[moves]]
+move_id = 71
+level = 7
+
+[[moves]]
+move_id = 154
+level = 25
+
+[[moves]]
+move_id = 168
+level = 37
+
+[[moves]]
+move_id = 252
+level = 19
+
+[[moves]]
+move_id = 253
+level = 43
+
+[[moves]]
+move_id = 267
+level = 13
+
+[[moves]]
+move_id = 310
+level = 1
+
+[[moves]]
+move_id = 346
+level = 31

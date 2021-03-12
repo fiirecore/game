@@ -1,0 +1,71 @@
+[data]
+number = 303
+name = 'Mawile'
+primary_type = 'Steel'
+secondary_type = 'Fairy'
+species = 'Deceiver'
+height = 6
+weight = 115
+
+[training]
+base_exp = 133
+growth_rate = 'fast'
+
+[base]
+hp = 50
+atk = 85
+def = 85
+sp_atk = 55
+sp_def = 55
+speed = 50
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 11
+level = 21
+
+[[moves]]
+move_id = 44
+level = 11
+
+[[moves]]
+move_id = 185
+level = 26
+
+[[moves]]
+move_id = 226
+level = 31
+
+[[moves]]
+move_id = 230
+level = 16
+
+[[moves]]
+move_id = 242
+level = 36
+
+[[moves]]
+move_id = 254
+level = 46
+
+[[moves]]
+move_id = 255
+level = 46
+
+[[moves]]
+move_id = 256
+level = 46
+
+[[moves]]
+move_id = 310
+level = 1
+
+[[moves]]
+move_id = 313
+level = 6
+
+[[moves]]
+move_id = 334
+level = 41

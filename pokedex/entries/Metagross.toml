@@ -1,0 +1,74 @@
+[data]
+number = 376
+name = 'Metagross'
+primary_type = 'Steel'
+secondary_type = 'Psychic'
+species = 'Iron'
+height = 16
+weight = 5500
+
+[training]
+base_exp = 270
+growth_rate = 'slow'
+
+[base]
+hp = 80
+atk = 135
+def = 130
+sp_atk = 95
+sp_def = 90
+speed = 70
+
+[breeding]
+
+[[moves]]
+move_id = 36
+level = 1
+
+[[moves]]
+move_id = 63
+level = 77
+
+[[moves]]
+move_id = 93
+level = 1
+
+[[moves]]
+move_id = 93
+level = 20
+
+[[moves]]
+move_id = 94
+level = 38
+
+[[moves]]
+move_id = 97
+level = 66
+
+[[moves]]
+move_id = 184
+level = 1
+
+[[moves]]
+move_id = 184
+level = 26
+
+[[moves]]
+move_id = 228
+level = 32
+
+[[moves]]
+move_id = 232
+level = 1
+
+[[moves]]
+move_id = 232
+level = 20
+
+[[moves]]
+move_id = 309
+level = 55
+
+[[moves]]
+move_id = 334
+level = 44

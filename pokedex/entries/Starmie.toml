@@ -1,0 +1,42 @@
+[data]
+number = 121
+name = 'Starmie'
+primary_type = 'Water'
+secondary_type = 'Psychic'
+species = 'Mysterious'
+height = 11
+weight = 800
+
+[training]
+base_exp = 182
+growth_rate = 'slow'
+
+[base]
+hp = 60
+atk = 75
+def = 85
+sp_atk = 100
+sp_def = 85
+speed = 115
+
+[breeding]
+
+[[moves]]
+move_id = 55
+level = 1
+
+[[moves]]
+move_id = 105
+level = 1
+
+[[moves]]
+move_id = 109
+level = 33
+
+[[moves]]
+move_id = 129
+level = 1
+
+[[moves]]
+move_id = 229
+level = 1

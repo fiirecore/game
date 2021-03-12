@@ -1,0 +1,62 @@
+[data]
+number = 299
+name = 'Nosepass'
+primary_type = 'Rock'
+species = 'Compass'
+height = 10
+weight = 970
+
+[training]
+base_exp = 75
+growth_rate = 'medium'
+
+[base]
+hp = 30
+atk = 45
+def = 135
+sp_atk = 45
+sp_def = 90
+speed = 30
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 86
+level = 22
+
+[[moves]]
+move_id = 88
+level = 13
+
+[[moves]]
+move_id = 106
+level = 7
+
+[[moves]]
+move_id = 156
+level = 37
+
+[[moves]]
+move_id = 157
+level = 28
+
+[[moves]]
+move_id = 192
+level = 43
+
+[[moves]]
+move_id = 199
+level = 46
+
+[[moves]]
+move_id = 201
+level = 31
+
+[[moves]]
+move_id = 335
+level = 16

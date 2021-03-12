@@ -1,0 +1,7 @@
+number = 189
+name = "Mud-Slap"
+pokemon_type = "Ground"
+category = "Special"
+power = 20
+accuracy = 100
+pp = 10

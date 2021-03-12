@@ -1,0 +1,55 @@
+[data]
+number = 283
+name = 'Surskit'
+primary_type = 'Bug'
+secondary_type = 'Water'
+species = 'Pond'
+height = 5
+weight = 17
+
+[training]
+base_exp = 54
+growth_rate = 'medium'
+
+[base]
+hp = 40
+atk = 30
+def = 32
+sp_atk = 50
+sp_def = 52
+speed = 65
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 54
+level = 37
+
+[[moves]]
+move_id = 61
+level = 25
+
+[[moves]]
+move_id = 97
+level = 31
+
+[[moves]]
+move_id = 98
+level = 7
+
+[[moves]]
+move_id = 114
+level = 37
+
+[[moves]]
+move_id = 145
+level = 1
+
+[[moves]]
+move_id = 230
+level = 13
+
+[[moves]]
+move_id = 346
+level = 19

@@ -1,0 +1,66 @@
+[data]
+number = 312
+name = 'Minun'
+primary_type = 'Electric'
+species = 'Cheering'
+height = 4
+weight = 42
+
+[training]
+base_exp = 142
+growth_rate = 'medium'
+
+[base]
+hp = 60
+atk = 40
+def = 50
+sp_atk = 75
+sp_def = 85
+speed = 95
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 86
+level = 4
+
+[[moves]]
+move_id = 87
+level = 37
+
+[[moves]]
+move_id = 97
+level = 47
+
+[[moves]]
+move_id = 98
+level = 10
+
+[[moves]]
+move_id = 204
+level = 28
+
+[[moves]]
+move_id = 209
+level = 19
+
+[[moves]]
+move_id = 226
+level = 40
+
+[[moves]]
+move_id = 227
+level = 22
+
+[[moves]]
+move_id = 268
+level = 31
+
+[[moves]]
+move_id = 270
+level = 13

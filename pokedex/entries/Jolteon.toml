@@ -1,0 +1,66 @@
+[data]
+number = 135
+name = 'Jolteon'
+primary_type = 'Electric'
+species = 'Lightning'
+height = 8
+weight = 245
+
+[training]
+base_exp = 184
+growth_rate = 'medium'
+
+[base]
+hp = 65
+atk = 65
+def = 60
+sp_atk = 110
+sp_def = 95
+speed = 130
+
+[breeding]
+gender = 1
+
+[[moves]]
+move_id = 24
+level = 30
+
+[[moves]]
+move_id = 28
+level = 8
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 39
+level = 1
+
+[[moves]]
+move_id = 42
+level = 36
+
+[[moves]]
+move_id = 84
+level = 16
+
+[[moves]]
+move_id = 86
+level = 42
+
+[[moves]]
+move_id = 87
+level = 52
+
+[[moves]]
+move_id = 97
+level = 47
+
+[[moves]]
+move_id = 98
+level = 23
+
+[[moves]]
+move_id = 270
+level = 1

@@ -1,0 +1,46 @@
+[data]
+number = 186
+name = 'Politoed'
+primary_type = 'Water'
+species = 'Frog'
+height = 11
+weight = 339
+
+[training]
+base_exp = 225
+growth_rate = 'medium-slow'
+
+[base]
+hp = 90
+atk = 75
+def = 75
+sp_atk = 90
+sp_def = 100
+speed = 70
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 3
+level = 1
+
+[[moves]]
+move_id = 55
+level = 1
+
+[[moves]]
+move_id = 95
+level = 1
+
+[[moves]]
+move_id = 195
+level = 1
+
+[[moves]]
+move_id = 195
+level = 35
+
+[[moves]]
+move_id = 207
+level = 51

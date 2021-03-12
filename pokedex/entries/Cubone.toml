@@ -1,0 +1,70 @@
+[data]
+number = 104
+name = 'Cubone'
+primary_type = 'Ground'
+species = 'Lonely'
+height = 4
+weight = 65
+
+[training]
+base_exp = 64
+growth_rate = 'medium'
+
+[base]
+hp = 50
+atk = 50
+def = 95
+sp_atk = 40
+sp_def = 50
+speed = 35
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 29
+level = 13
+
+[[moves]]
+move_id = 37
+level = 37
+
+[[moves]]
+move_id = 38
+level = 45
+
+[[moves]]
+move_id = 39
+level = 5
+
+[[moves]]
+move_id = 43
+level = 17
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 99
+level = 29
+
+[[moves]]
+move_id = 116
+level = 21
+
+[[moves]]
+move_id = 125
+level = 9
+
+[[moves]]
+move_id = 155
+level = 25
+
+[[moves]]
+move_id = 198
+level = 41
+
+[[moves]]
+move_id = 206
+level = 33

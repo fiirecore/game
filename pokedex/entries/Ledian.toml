@@ -1,0 +1,67 @@
+[data]
+number = 166
+name = 'Ledian'
+primary_type = 'Bug'
+secondary_type = 'Flying'
+species = 'Five'
+height = 14
+weight = 356
+
+[training]
+base_exp = 137
+growth_rate = 'fast'
+
+[base]
+hp = 55
+atk = 35
+def = 50
+sp_atk = 55
+sp_def = 110
+speed = 85
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 4
+level = 15
+
+[[moves]]
+move_id = 33
+level = 1
+
+[[moves]]
+move_id = 38
+level = 60
+
+[[moves]]
+move_id = 48
+level = 1
+
+[[moves]]
+move_id = 48
+level = 8
+
+[[moves]]
+move_id = 97
+level = 51
+
+[[moves]]
+move_id = 113
+level = 24
+
+[[moves]]
+move_id = 115
+level = 24
+
+[[moves]]
+move_id = 129
+level = 42
+
+[[moves]]
+move_id = 219
+level = 24
+
+[[moves]]
+move_id = 226
+level = 33

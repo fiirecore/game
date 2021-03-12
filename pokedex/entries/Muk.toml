@@ -1,0 +1,66 @@
+[data]
+number = 89
+name = 'Muk'
+primary_type = 'Poison'
+species = 'Sludge'
+height = 12
+weight = 300
+
+[training]
+base_exp = 175
+growth_rate = 'medium'
+
+[base]
+hp = 105
+atk = 105
+def = 75
+sp_atk = 65
+sp_def = 100
+speed = 50
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 1
+level = 1
+
+[[moves]]
+move_id = 50
+level = 8
+
+[[moves]]
+move_id = 103
+level = 26
+
+[[moves]]
+move_id = 106
+level = 1
+
+[[moves]]
+move_id = 106
+level = 4
+
+[[moves]]
+move_id = 107
+level = 19
+
+[[moves]]
+move_id = 124
+level = 13
+
+[[moves]]
+move_id = 139
+level = 1
+
+[[moves]]
+move_id = 151
+level = 34
+
+[[moves]]
+move_id = 188
+level = 47
+
+[[moves]]
+move_id = 262
+level = 61

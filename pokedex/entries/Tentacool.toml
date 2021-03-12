@@ -1,0 +1,59 @@
+[data]
+number = 72
+name = 'Tentacool'
+primary_type = 'Water'
+secondary_type = 'Poison'
+species = 'Jellyfish'
+height = 9
+weight = 455
+
+[training]
+base_exp = 67
+growth_rate = 'slow'
+
+[base]
+hp = 40
+atk = 40
+def = 35
+sp_atk = 50
+sp_def = 100
+speed = 70
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 35
+level = 30
+
+[[moves]]
+move_id = 40
+level = 1
+
+[[moves]]
+move_id = 48
+level = 6
+
+[[moves]]
+move_id = 51
+level = 19
+
+[[moves]]
+move_id = 56
+level = 49
+
+[[moves]]
+move_id = 61
+level = 25
+
+[[moves]]
+move_id = 103
+level = 43
+
+[[moves]]
+move_id = 112
+level = 36
+
+[[moves]]
+move_id = 132
+level = 12

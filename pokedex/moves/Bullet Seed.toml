@@ -1,0 +1,7 @@
+number = 331
+name = "Bullet Seed"
+pokemon_type = "Grass"
+category = "Physical"
+power = 25
+accuracy = 100
+pp = 30

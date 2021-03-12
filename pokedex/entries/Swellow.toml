@@ -1,0 +1,67 @@
+[data]
+number = 277
+name = 'Swellow'
+primary_type = 'Normal'
+secondary_type = 'Flying'
+species = 'Swallow'
+height = 7
+weight = 198
+
+[training]
+base_exp = 159
+growth_rate = 'medium-slow'
+
+[base]
+hp = 60
+atk = 85
+def = 60
+sp_atk = 75
+sp_def = 50
+speed = 125
+
+[breeding]
+gender = 4
+
+[[moves]]
+move_id = 17
+level = 13
+
+[[moves]]
+move_id = 45
+level = 1
+
+[[moves]]
+move_id = 64
+level = 1
+
+[[moves]]
+move_id = 97
+level = 49
+
+[[moves]]
+move_id = 98
+level = 1
+
+[[moves]]
+move_id = 98
+level = 8
+
+[[moves]]
+move_id = 104
+level = 19
+
+[[moves]]
+move_id = 116
+level = 1
+
+[[moves]]
+move_id = 116
+level = 4
+
+[[moves]]
+move_id = 283
+level = 28
+
+[[moves]]
+move_id = 332
+level = 38

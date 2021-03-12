@@ -1,0 +1,6 @@
+number = 320
+name = "Grass Whistle"
+pokemon_type = "Grass"
+category = "Status"
+accuracy = 55
+pp = 15

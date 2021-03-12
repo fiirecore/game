@@ -1,0 +1,7 @@
+number = 167
+name = "Triple Kick"
+pokemon_type = "Fighting"
+category = "Physical"
+power = 10
+accuracy = 90
+pp = 10
