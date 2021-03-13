@@ -116,7 +116,7 @@ impl Scene for MainMenuScene {
 	}
 	
 	fn quit(&mut self) {
-		macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, crate::BASE_WIDTH as _, crate::BASE_HEIGHT as _)));
+		macroquad::camera::set_camera(Camera2D::from_display_rect(crate::CAMERA_SIZE));
 		// PlayerData::select_data("player".to_string());
 	}
 	

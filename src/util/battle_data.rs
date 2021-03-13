@@ -5,8 +5,7 @@ use firecore_world::{BattleType, BattleScreenTransitions};
 use firecore_pokedex::PokemonId;
 use firecore_pokedex::pokemon::data::StatSet;
 use firecore_pokedex::pokemon::party::PokemonParty;
-use firecore_world::npc::NPC;
-use firecore_world::pokemon::wild_pokemon_table::WildPokemonTable;
+use firecore_world::wild::table::WildPokemonTable;
 use firecore_world::npc::trainer::TrainerData;
 use firecore_world::BattleData;
 

@@ -1,11 +1,9 @@
-use std::ops::DerefMut;
 use firecore_util::Entity;
 use crate::gui::battle::health_bar;
 use firecore_util::text::TextColor;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
-use crate::io::data::player::PlayerData;
 use crate::util::graphics::draw;
 use crate::util::graphics::draw_rect;
 use crate::util::graphics::draw_text_left_color;
@@ -14,16 +12,6 @@ use crate::util::graphics::texture::byte_texture;
 const TEXTURE_TICK: f32 = 0.15;
 
 pub static mut SPAWN: bool = false;
-
-// pub fn toggle() {
-//     let mut gui = PARTY_GUI.write();
-//     if gui.is_alive() {
-//         gui.despawn();
-//     } else {
-//         gui.spawn();
-//         gui.on_start();
-//     }
-// }
 
 pub struct PokemonPartyGui {
 
@@ -54,30 +42,30 @@ impl PokemonPartyGui {
     }
 
     pub fn on_start(&mut self) {
-        let mut player_data = macroquad::prelude::collections::storage::get_mut::<PlayerData>().expect("Could not get player data!");
-        let player_data = player_data.deref_mut();
         self.pokemon.fill(None);
-        for pokemon in player_data.party.pokemon.iter().enumerate() {
-            if pokemon.0 == 6 {
-                break;
+        if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
+            for pokemon in player_data.party.pokemon.iter().enumerate() {
+                if pokemon.0 == 6 {
+                    break;
+                }
+                
+                if let Some(pokemon_data) = firecore_pokedex::POKEDEX.get(&pokemon.1.id) {
+                    let pokemon_data = pokemon_data.value();
+    
+                    let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
+                    let curr = pokemon.1.current_hp.unwrap_or(max);
+        
+                    let texture = crate::pokemon::pokemon_texture(&pokemon_data.data.number, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
+        
+                    self.pokemon[pokemon.0] = Some(PartyGuiData {
+                        name: pokemon.1.nickname.as_ref().unwrap_or(&pokemon_data.data.name).to_ascii_uppercase(),
+                        level: format!("Lv{}", pokemon.1.level),
+                        hp: format!("{}/{}", curr, max),
+                        health_width: ((curr as f32 / max as f32).ceil() * 48.0) as u32,
+                        texture: texture,
+                    });
+                }            
             }
-            
-            if let Some(pokemon_data) = firecore_pokedex::POKEDEX.get(&pokemon.1.id) {
-                let pokemon_data = pokemon_data.value();
-
-                let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
-                let curr = pokemon.1.current_hp.unwrap_or(max);
-    
-                let texture = crate::pokemon::pokemon_texture(&pokemon_data.data.number, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
-    
-                self.pokemon[pokemon.0] = Some(PartyGuiData {
-                    name: pokemon.1.nickname.as_ref().unwrap_or(&pokemon_data.data.name).to_ascii_uppercase(),
-                    level: format!("Lv{}", pokemon.1.level),
-                    hp: format!("{}/{}", curr, max),
-                    health_width: ((curr as f32 / max as f32).ceil() * 48.0) as u32,
-                    texture: texture,
-                });
-            }            
         }
     }
 

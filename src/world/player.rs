@@ -1,3 +1,4 @@
+use firecore_world::npc::movement::NPCDestination;
 use macroquad::prelude::DrawTextureParams;
 
 use firecore_util::{GlobalPosition, Direction};
@@ -28,6 +29,8 @@ pub struct Player {
 	pub frozen: bool,
 
 	pub noclip: bool,
+
+	pub destination: Option<NPCDestination>,
 	
 }
 
@@ -64,8 +67,97 @@ impl Player {
 		
 	}
 
+	pub fn do_move(&mut self, delta: f32) -> bool {
+		if self.position.local.offset.x != 0.0 || self.position.local.offset.y != 0.0 {
+            match self.position.local.direction {
+                Direction::Up => {
+                    self.position.local.offset.y -= (self.speed as f32) * 60.0 * delta;
+                    if self.position.local.offset.y <= -16.0 {
+                        self.position.local.coords.y -= 1;
+                        self.position.local.offset.y = 0.0;
+                        return true;
+                    }
+                }
+                Direction::Down => {
+                    self.position.local.offset.y += (self.speed as f32) * 60.0 * delta;
+                    if self.position.local.offset.y >= 16.0 {
+                        self.position.local.coords.y += 1;
+                        self.position.local.offset.y = 0.0;
+                        return true;
+                    }
+                }
+                Direction::Left => {
+                    self.position.local.offset.x -= (self.speed as f32) * 60.0 * delta;
+                    if self.position.local.offset.x <= -16.0 {
+                        self.position.local.coords.x -= 1;
+                        self.position.local.offset.x = 0.0;
+                        return true;
+                    }
+                }
+                Direction::Right => {
+                    self.position.local.offset.x += (self.speed as f32) * 60.0 * delta;
+                    if self.position.local.offset.x >= 16.0 {
+                        self.position.local.coords.x += 1;
+                        self.position.local.offset.x = 0.0;
+                        return true;
+                    }
+                }
+            }
+        }
+		false
+	}
+
+	pub fn should_move_to(&mut self) -> bool {
+		if let Some(offset) = self.destination.as_ref() {
+            self.position.local.coords != offset.coords
+        } else {
+            false
+        }
+	}
+
+	pub fn move_to_destination(&mut self, delta: f32) {
+		if let Some(offset) = self.destination.as_mut() {
+
+            if self.position.local.coords.y == offset.coords.y {
+                self.position.local.direction = if self.position.local.coords.x < offset.coords.x {
+                    Direction::Right
+                } else {
+                    Direction::Left
+                };
+            } else if self.position.local.coords.x == offset.coords.x {
+                self.position.local.direction = if self.position.local.coords.y < offset.coords.y {
+                    Direction::Down
+                } else {
+                    Direction::Up
+                };
+            }
+
+            let offsets = self.position.local.direction.offset_f32();
+            let offset = 60.0 * self.speed as f32 * delta;
+            self.position.local.offset.x += offsets.x * offset;
+            self.position.local.offset.y += offsets.y * offset;
+
+            if self.position.local.offset.y * offsets.y >= 16.0 {
+                self.position.local.coords.y += offsets.y as isize;
+                self.position.local.offset.y = 0.0;
+				self.change_sprite_index();
+            }
+            
+            if self.position.local.offset.x * offsets.x >= 16.0 {
+                self.position.local.coords.x += offsets.x as isize;
+                self.position.local.offset.x = 0.0;
+				self.change_sprite_index();
+            }
+            
+        }
+	}
+
 	pub fn on_try_move(&mut self, direction: Direction) {
 		self.position.local.direction = direction;
+		self.change_sprite_index();
+	}
+
+	fn change_sprite_index(&mut self) {
 		if self.sprite_index == 0 {
 			self.sprite_index = 2;
 		} else {

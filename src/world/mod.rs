@@ -62,7 +62,7 @@ impl WorldNpc for firecore_world::npc::NPC {
     }
 
     fn after_interact(&mut self, map_name: &String) {
-        if let Some(mut player_data) = macroquad::prelude::collections::storage::get_mut::<crate::io::data::player::PlayerData>() {
+        if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
             // macroquad::prelude::info!("Finished interacting with {}", self.identifier.name);
             player_data.world_status.get_or_create_map_data(map_name).battle(&self);
         } else {

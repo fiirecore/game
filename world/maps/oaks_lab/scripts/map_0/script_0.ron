@@ -1,0 +1,91 @@
+(
+    identifier: "oak_catch_player",
+    condition: (
+        location: (
+            min: (
+                x: 6,
+                y: 12
+            ),
+            max: (
+                x: 6,
+                y: 12
+            )
+        ),
+        event: Some(
+            WorldEvent(
+                id: "oak_introduce_pokemon",
+                happened: false,
+                activate: true,
+            )
+        ),
+    ),
+    actions: [
+        PlayerFreeze,
+        NPCSpawn(
+            id: 0,
+            npc: NPC(
+                identifier: (
+                    name: "Oak",
+                    npc_type: "prof_oak",
+                ),
+                position: (
+                    coords: (
+                        x: 6,
+                        y: 11
+                    ),
+                    direction: Up
+                ),
+                message_set: (
+                    messages: [(
+                            message: ["Test script NPC message"],
+                    )]
+                )
+            )
+        ),
+        PlayMusic(Oak),
+        Wait(0.5),
+        NPCMove(
+            id: 0,
+            pos: (
+                x: 6,
+                y: 7,
+            ),
+        ),
+        NPCDespawn(0),
+        PlayerMove((
+            x: 6,
+            y: 4,
+        )),
+        DisplayText(
+            message_set: (
+                messages: [
+                    (
+                        message: [
+                            "Here's some pokemon"
+                        ]
+                    )
+                ]
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 1,
+                level: 5,
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 4,
+                level: 5,
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 7,
+                level: 5,
+            )
+        ),
+        PlayMapMusic,
+        PlayerUnfreeze,
+    ]
+)

@@ -1,14 +1,14 @@
 [location.min]
-x = 0x1E
-y = 0x3F
+x = 0x12
+y = 0x29
 
 [location.max]
-x = 0x20
-y = 0x3F
+x = 0x13
+y = 0x29
 
 [destination]
 world_id = "firered"
 map_id = "route_2_houses"
-map_index = 0
+map_index = 2
 x = 7
 y = 1

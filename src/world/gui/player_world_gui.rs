@@ -96,8 +96,6 @@ impl Input for PlayerWorldGui {
                 0 => {
                     // Save
                     unsafe { crate::io::data::player::DIRTY = true; }
-                    // macroquad::prelude::collections::storage::get_mut::<PlayerData>().expect("Could not get Player Data").mark_dirty();
-                    // macroquad::prelude::warn!("Unimplemented");
                 },
                 1 => {
                     // Pokemon

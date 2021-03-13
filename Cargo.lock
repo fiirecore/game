@@ -523,7 +523,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.0.1-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#fd8f95f99ddad957536ec49272d56076677d463e"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#7b405642ec0b9a833ed70db1c1c83823ad2e85d2"
 dependencies = [
  "dashmap",
  "firecore-util",
@@ -579,7 +579,7 @@ dependencies = [
 [[package]]
 name = "firecore-util"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#3a973ecbbd4f1bb248252789027b67e5870caaa0"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#0478d234a81e6f5f2289f2ab26712d10fdf3ff92"
 dependencies = [
  "glam",
  "serde",
@@ -588,7 +588,7 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#5e6698e3955da36e12170cc7780134cd90406424"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#06608facdd9db06df4e63521de48040f8ec63268"
 dependencies = [
  "ahash 0.7.2",
  "firecore-pokedex",
@@ -936,14 +936,13 @@ source = "git+https://github.com/not-fl3/macroquad#7911f48c329af2eaca5aeba44272f
 [[package]]
 name = "map-builder"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/map-builder#d6f634dd4a19f6426c5fbcf38a5c1fb814483f43"
+source = "git+https://github.com/DoNotDoughnut/map-builder#efc2ac2d33f5104d63e724445ee31c33aae6a7b4"
 dependencies = [
  "ahash 0.7.2",
  "bincode",
  "firecore-util",
  "firecore-world",
  "image",
- "macroquad",
  "ron",
  "serde",
  "smallvec",
@@ -964,9 +963,9 @@ checksum = "0ee1c47aaa256ecabcaea351eae4a9b01ef39ed810004e298d2511ed284b1525"
 
 [[package]]
 name = "miniquad"
-version = "0.3.0-alpha.26"
+version = "0.3.0-alpha.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f93dc8b526b2d565063e819449f0e2e7d6acfbf638c9a14c017d5f6c57e3caf"
+checksum = "8712df10371bc8c8735952942f9fbadf9a0e945634f914fbf665f07c58c3a38f"
 dependencies = [
  "sapp-android",
  "sapp-darwin",
@@ -1286,7 +1285,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.3.0-beta.2"
+version = "0.3.0-beta.3"
 dependencies = [
  "ahash 0.7.2",
  "async-trait",
@@ -1538,24 +1537,24 @@ checksum = "95b6538a351f8e2066fb98c07e24ac616896d2ffb49b4843cceb3839e7dc0d65"
 
 [[package]]
 name = "sapp-linux"
-version = "0.1.11"
+version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "014328e7e348d068b6d655bd080ee0ca373321e59954eec8a865a87877b1d848"
+checksum = "22b66fa7effb2823d80997912186494d4a19aa74d3ac1ff5aa1cfb648537be92"
 dependencies = [
  "libc",
 ]
 
 [[package]]
 name = "sapp-wasm"
-version = "0.1.20"
+version = "0.1.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38b0cfb71996396a4e04131b260f6e53a4783c4a818076b32dd76729ab59fa28"
+checksum = "56a3ed22620cb1d405424b9adca073139e4c62b603f66afee1852ad7197c73d1"
 
 [[package]]
 name = "sapp-windows"
-version = "0.2.14"
+version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "74bf2c366504901527cdd5093d067f12f81250791a8187ddac90b2120832becb"
+checksum = "eac466bfa1ed7ae1cfb75ae7b12f1f1ec8b1a7bce69f49d20148e689cb9f300c"
 dependencies = [
  "winapi",
 ]

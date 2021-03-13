@@ -1,5 +1,3 @@
-use macroquad::prelude::collections::storage;
-
 use crate::battle::battle_manager::BattleManager;
 use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
 use crate::io::data::player::PlayerData;
@@ -12,13 +10,14 @@ use crate::util::Update;
 use crate::util::Render;
 use firecore_util::Entity;
 
+use crate::io::data::player::PLAYER_DATA;
 use super::SceneState;
 
 pub struct GameScene {
 
 	state: SceneState,
 	
-	world_manager: WorldManager,
+	pub world_manager: WorldManager,
 	battle_manager: BattleManager,
 	party_gui: PokemonPartyGui,
 
@@ -68,10 +67,13 @@ impl Scene for GameScene {
 	
 	fn update(&mut self, delta: f32) {
 		if unsafe { crate::io::data::player::DIRTY } {
-			self.data_dirty(&mut storage::get_mut::<PlayerData>().expect("Could not get Player Data"));
+			if let Some(player_data) = PLAYER_DATA.write().as_mut() {
+				self.data_dirty(player_data);
+			}	
 		}
 		if unsafe { crate::gui::game::pokemon_party_gui::SPAWN } {
 			self.party_gui.spawn();
+			self.party_gui.on_start();
 			unsafe { crate::gui::game::pokemon_party_gui::SPAWN = false; }
 		}
 
@@ -80,9 +82,11 @@ impl Scene for GameScene {
 			self.world_manager.update(delta);
 
 			if crate::util::battle_data::BATTLE_DATA.lock().is_some() {
-				self.battling = true;
-				self.swapped = true;
-				self.battle_manager.on_start(&storage::get::<PlayerData>().expect("Could not get Player Data"), crate::util::battle_data::BATTLE_DATA.lock().take().unwrap());
+				if let Some(player_data) = PLAYER_DATA.write().as_mut() {
+					self.battling = true;
+					self.swapped = true;
+					self.battle_manager.on_start(player_data, crate::util::battle_data::BATTLE_DATA.lock().take().unwrap());
+				}
 			}
 
 		} else {
@@ -92,7 +96,9 @@ impl Scene for GameScene {
 			}
 			self.battle_manager.update(delta);
 			if self.battle_manager.is_finished() {
-				self.battle_manager.current_battle.update_data(&mut storage::get_mut::<PlayerData>().expect("Could not get Player Data"));
+				if let Some(player_data) = PLAYER_DATA.write().as_mut() {
+					self.battle_manager.current_battle.update_data(player_data);
+				}
 				self.battling = false;
 				self.swapped = true;
 				self.world_manager.play_music();
@@ -124,7 +130,9 @@ impl Scene for GameScene {
 	}
 
 	fn quit(&mut self) {
-        self.save_data(&mut storage::get_mut::<PlayerData>().expect("Could not get player data"));
+		if let Some(player_data) = PLAYER_DATA.write().as_mut() {
+			self.save_data(player_data);
+		}
 	}
 	
 	fn state(&self) -> SceneState {

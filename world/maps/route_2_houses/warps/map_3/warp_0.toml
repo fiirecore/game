@@ -1,3 +1,8 @@
+[location.min]
+x = 7
+y = 0xB
+
+[location.max]
 x = 7
 y = 0xB
 
@@ -5,5 +10,5 @@ y = 0xB
 world_id = "firered"
 map_id = "viridian_forest"
 map_index = 0
-x = 5
+x = 7
 y = 9

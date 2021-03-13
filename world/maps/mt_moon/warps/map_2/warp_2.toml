@@ -1,4 +1,8 @@
+[location.min]
+x = 0x11
+y = 0x1F
 
+[location.max]
 x = 0x11
 y = 0x1F
 

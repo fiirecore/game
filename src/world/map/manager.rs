@@ -1,52 +1,60 @@
-use crate::util::graphics::texture::byte_texture;
-use crate::world::GameWorld;
 use firecore_audio::play_music;
 use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use firecore_world::World;
+use firecore_world::script::WorldActionKind;
 use firecore_world::test_move_code;
-use macroquad::prelude::collections::storage::get_mut;
+use firecore_world::warp::WarpDestination;
+use macroquad::prelude::KeyCode;
+use macroquad::prelude::info;
+use macroquad::prelude::is_key_pressed;
+use macroquad::prelude::warn;
+use firecore_util::music::Music;
+use firecore_input::{self as input, Control};
+use firecore_util::Entity;
+use firecore_util::Direction;
+
+use crate::io::data::player::PLAYER_DATA;
+use crate::util::graphics::texture::byte_texture;
+use crate::world::GameWorld;
 use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::util::Input;
 use crate::world::NpcTextures;
 use crate::world::TileTextures;
 use crate::world::gui::map_window_manager::MapWindowManager;
-use macroquad::prelude::KeyCode;
-use macroquad::prelude::info;
-use macroquad::prelude::is_key_pressed;
-use macroquad::prelude::warn;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
-use firecore_util::music::Music;
-use firecore_input::{self as input, Control};
-use firecore_util::Entity;
-use firecore_util::Direction;
 use crate::io::data::player::PlayerData;
 use crate::world::player::BASE_SPEED;
 use crate::world::player::Player;
 use crate::world::player::RUN_SPEED;
-use firecore_world::warp::WarpEntry;
+
 use super::RenderCoords;
 
 pub struct WorldManager {
 
-    chunk_map: WorldChunkMap,
-    map_sets: WorldMapSetManager,
-    chunk_active: bool,
+    pub chunk_map: WorldChunkMap,
+    pub map_sets: WorldMapSetManager,
+    pub chunk_active: bool,
 
     tile_textures: TileTextures,
     npc_textures: NpcTextures,
 
     current_music: Music,
 
-    player: Player,
+    pub player: Player,
 
     // warp_transition: WarpTransition,
 
     player_gui: PlayerWorldGui,
     window_manager: MapWindowManager,
 
+    // Other
+
     noclip_toggle: bool,
+    // command_alive: bool,
+    // command: Mutex<String>,
+    // tp: Mutex<Option<Coordinate>>,
 
 }
 
@@ -121,6 +129,29 @@ impl WorldManager {
                 self.window_manager.set_text(message);
             }
         }
+        
+        let mut warp = None;
+        for script in self.current_map_mut().scripts.iter_mut() {
+            if script.is_alive() {
+                if let Some(action) = script.actions_clone.front() {
+                    match action {
+                        WorldActionKind::Warp(destination) => {
+                            warp = Some(destination.clone());
+                            script.despawn();
+                        }
+                        _ => (),
+                    }
+                }
+            }
+        }
+        if let Some(warp) = warp {
+            self.warp(warp);
+            if self.chunk_active {
+                self.chunk_map.on_tile(&mut self.player);
+            } else {
+                self.map_sets.on_tile(&mut self.player);
+            }
+        }
 
         if self.chunk_active {
             self.chunk_map.update(delta, &mut self.player, &mut self.window_manager);
@@ -129,9 +160,10 @@ impl WorldManager {
         }
 
         if !self.player.frozen {
-            self.player_movement(delta);
-        }   
-
+            if self.player.do_move(delta) {
+                self.stop_player();
+            }
+        }
         
     }
 
@@ -145,6 +177,20 @@ impl WorldManager {
         self.player.render();
         self.player_gui.render(); 
         self.window_manager.render();
+
+        // if self.command_alive {
+        //     // macroquad::camera::set_camera(macroquad::camera::Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, macroquad::prelude::screen_width(), macroquad::prelude::screen_height())));
+        //     Window::new(hash!(), vec2(0.0, 0.0), vec2(200.0, 100.0))
+        //         .close_button(false)
+        //         .label("Run commands")
+        //         .ui(&mut macroquad::ui::root_ui(), |ui| {
+        //             InputText::new(0).label("Command").ui(ui, &mut self.command.lock());
+        //             if Button::new("Run").size(vec2(40.0, 50.0)).ui(ui) {
+        //             }
+        //         }
+        //     );
+        //     // macroquad::camera::set_camera(macroquad::camera::Camera2D::from_display_rect(crate::CAMERA_SIZE));
+        // }
         
     }
 
@@ -160,12 +206,11 @@ impl WorldManager {
     }
 
     pub fn load_chunk_map_at_player(&mut self) {
-        let x = self.player.position.get_x();
-        let y = self.player.position.get_y();
-        if let Some(chunk) = self.chunk_map.chunk_id_at(x, y) {
+        let coords = self.player.position.absolute();
+        if let Some(chunk) = self.chunk_map.chunk_id_at(&coords) {
             self.chunk_map.change_chunk(chunk, &mut self.player.position);
         } else {
-            warn!("Could not load chunk at ({}, {})", x, y);
+            warn!("Could not load chunk at {}", coords);
             self.chunk_map.change_chunk(2, &mut self.player.position);
         }
         let music = self.chunk_map.current_chunk().map.music;
@@ -241,22 +286,20 @@ impl WorldManager {
 
     fn move_direction(&mut self, direction: Direction, delta: f32) {
         self.player.on_try_move(direction);
-        let offset = direction.offset();
-        let x = self.player.position.local.coords.x + offset.0 as isize;
-        let y = self.player.position.local.coords.y + offset.1 as isize;
+        let offset = direction.tile_offset();
+        let coords = self.player.position.local.coords.add(offset.0, offset.1);
         let move_code = if self.chunk_active {
-            if self.chunk_map.in_bounds(x, y) {
-                if let Some(entry) = self.chunk_map.check_warp(x, y) {
-                    self.warp(entry);
+            if self.chunk_map.in_bounds(&coords) {
+                if let Some(entry) = self.chunk_map.check_warp(&coords) {
+                    self.warp(entry.destination);
                     return;
                 }            
-                self.chunk_map.walkable(x, y)
+                self.chunk_map.walkable(&coords)
             } else {
                 // convert x and y to global coordinates
-                let x = x + self.player.position.offset.x;
-                let y = y + self.player.position.offset.y;
+                let global = self.player.position.offset.add(coords.x, coords.y);
                 let id = self.chunk_map.current_chunk;
-                let move_code = self.chunk_map.walk_connections(&mut self.player.position, x, y);
+                let move_code = self.chunk_map.walk_connections(&mut self.player.position, &global);
                 if id != self.chunk_map.current_chunk {
                     let music = self.chunk_map.current_chunk().map.music;
                     if music != self.current_music {
@@ -267,28 +310,28 @@ impl WorldManager {
                 move_code
             }            
         } else {
-            if self.map_sets.in_bounds(x, y) {
-                if let Some(entry) = self.map_sets.check_warp(x, y) {
-                    self.warp(entry);
+            if self.map_sets.in_bounds(&coords) {
+                if let Some(entry) = self.map_sets.check_warp(&coords) {
+                    self.warp(entry.destination);
                     return;
                 }
-                self.map_sets.walkable(x, y)
+                self.map_sets.walkable(&coords)
             } else {
                 1
             }
         };
 
         let in_bounds = if self.chunk_active {
-            self.chunk_map.in_bounds(x, y)
+            self.chunk_map.in_bounds(&coords)
         } else {
-            self.map_sets.in_bounds(x, y)
+            self.map_sets.in_bounds(&coords)
         };
 
         let jump = if in_bounds {
             let tile_id = if self.chunk_active {
-                self.chunk_map.tile(x, y)
+                self.chunk_map.tile(&coords)
             } else {
-                self.map_sets.tile(x, y)
+                self.map_sets.tile(&coords)
             };
             match direction {
                 Direction::Up => false,
@@ -307,56 +350,15 @@ impl WorldManager {
         };
         if test_move_code(move_code, jump || self.player.noclip) {
             let mult = (self.player.speed as f32) * 60.0 * delta;
-            self.player.position.local.offset.x = offset.0 * mult;
-            self.player.position.local.offset.y = offset.1 * mult;
-        }
-    }
-
-    fn player_movement(&mut self, delta: f32) {
-        if self.player.position.local.offset.x != 0.0 || self.player.position.local.offset.y != 0.0 {
-            match self.player.position.local.direction {
-                Direction::Up => {
-                    self.player.position.local.offset.y -= (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.offset.y <= -16.0 {
-                        self.player.position.local.coords.y -= 1;
-                        self.player.position.local.offset.y = 0.0;
-                        self.stop_player();
-                    }
-                }
-                Direction::Down => {
-                    self.player.position.local.offset.y += (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.offset.y >= 16.0 {
-                        self.player.position.local.coords.y += 1;
-                        self.player.position.local.offset.y = 0.0;
-                        self.stop_player();
-                    }
-                }
-                Direction::Left => {
-                    self.player.position.local.offset.x -= (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.offset.x <= -16.0 {
-                        self.player.position.local.coords.x -= 1;
-                        self.player.position.local.offset.x = 0.0;
-                        self.stop_player();
-                    }
-                }
-                Direction::Right => {
-                    self.player.position.local.offset.x += (self.player.speed as f32) * 60.0 * delta;
-                    if self.player.position.local.offset.x >= 16.0 {
-                        self.player.position.local.coords.x += 1;
-                        self.player.position.local.offset.x = 0.0;
-                        self.stop_player();
-                    }
-                }
-            }
-            // self.player.move_update(delta);
+            self.player.position.local.offset.x = offset.0 as f32 * mult;
+            self.player.position.local.offset.y = offset.1 as f32 * mult;
         }
     }
 
     fn stop_player(&mut self) {
         //self.player.moving = false;
         // self.player.on_stopped_moving();
-        let x = self.player.position.local.coords.x;
-        let y = self.player.position.local.coords.y;
+        let coords = &self.player.position.local.coords;
         if self.noclip_toggle {
             self.noclip_toggle = false;
             self.player.noclip = !self.player.noclip;
@@ -368,48 +370,48 @@ impl WorldManager {
             info!("No clip toggled!");
         }
         if self.chunk_active {
-            if self.chunk_map.in_bounds(x, y) {
+            if self.chunk_map.in_bounds(coords) {
                 self.chunk_map.on_tile(&mut self.player);
             }
         } else {
-            if self.map_sets.in_bounds(x, y) {
+            if self.map_sets.in_bounds(coords) {
                 self.map_sets.on_tile(&mut self.player);
             }
         }        
     }
 
-    pub fn warp(&mut self, entry: WarpEntry) {
+    pub fn warp(&mut self, destination: WarpDestination) {
         // spawn warp transition here
-        if entry.destination.map_id.as_str().eq("world") {
-            self.warp_to_chunk_map(entry);
+        if destination.map_id.as_str().eq("world") {
+            self.warp_to_chunk_map(destination);
         } else {
-            self.warp_to_map_set(entry);
+            self.warp_to_map_set(destination);
         }
     }
 
-    pub fn warp_to_chunk_map(&mut self, entry: WarpEntry) {
+    pub fn warp_to_chunk_map(&mut self, destination: WarpDestination) {
         if !self.chunk_active {
             self.chunk_active = true;
         }
-        if let Some(chunk) = self.chunk_map.update_chunk(&entry.destination.map_index) {
+        if let Some(chunk) = self.chunk_map.update_chunk(&destination.map_index) {
             self.player.position.offset.x = chunk.x;
             self.player.position.offset.y = chunk.y;
-            self.player.position.local.coords.x = entry.destination.x;
-            self.player.position.local.coords.y = entry.destination.y;
+            self.player.position.local.coords.x = destination.x;
+            self.player.position.local.coords.y = destination.y;
             self.play_music();
         }
         
     }
 
-    pub fn warp_to_map_set(&mut self, entry: WarpEntry) {
+    pub fn warp_to_map_set(&mut self, destination: WarpDestination) {
         if self.chunk_active {
             self.chunk_active = false;
         }
-        self.load_map_set(&entry.destination.map_id, entry.destination.map_index);
+        self.load_map_set(&destination.map_id, destination.map_index);
         self.player.position.offset.x = 0;
         self.player.position.offset.y = 0;
-        self.player.position.local.coords.x = entry.destination.x;
-        self.player.position.local.coords.y = entry.destination.y;
+        self.player.position.local.coords.x = destination.x;
+        self.player.position.local.coords.y = destination.y;
         self.play_music();
     }
 
@@ -430,7 +432,7 @@ impl WorldManager {
     }
 
     pub fn load_player(&mut self) {
-        if let Some(player_data) = macroquad::prelude::collections::storage::get::<PlayerData>() {
+        if let Some(player_data) = crate::io::data::player::PLAYER_DATA.read().as_ref() {
             self.player = Player::new(&player_data);
             self.player.walking_texture = Some(byte_texture(include_bytes!("../../../build/assets/player.png")));
             self.player.running_texture = Some(byte_texture(include_bytes!("../../../build/assets/player_running.png")));
@@ -445,6 +447,11 @@ impl WorldManager {
     }
 
     fn debug_input(&mut self) {
+
+        // if is_key_pressed(KeyCode::GraveAccent) {
+        //     self.command_alive = !self.command_alive;
+        // }
+
         if is_key_pressed(KeyCode::F1) {
             crate::util::battle_data::random_wild_battle();
         }
@@ -454,22 +461,28 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F3) {
-            info!("Local Coordinates: ({}, {})", self.player.position.local.coords.x, self.player.position.local.coords.y);
+            info!("Local Coordinates: {}", self.player.position.local.coords);
             info!("Global Coordinates: ({}, {})", self.player.position.get_x(), self.player.position.get_y());
             let tile = if self.chunk_active {
-                self.chunk_map.tile(self.player.position.local.coords.x, self.player.position.local.coords.y)
+                self.chunk_map.tile(&self.player.position.local.coords)
             } else {
-                self.map_sets.tile(self.player.position.local.coords.x, self.player.position.local.coords.y)
+                self.map_sets.tile(&self.player.position.local.coords)
             };
             info!("Current Tile ID: {}", tile);
         }
 
         if is_key_pressed(KeyCode::F4) {
-            
+            if let Some(data) = PLAYER_DATA.read().as_ref() {
+                for (slot, instance) in data.party.pokemon.iter().enumerate() {
+                    if let Some(pokemon) = firecore_pokedex::POKEDEX.get(&instance.id) {
+                        info!("Party Slot {}: Lv{} {}", slot, instance.level, pokemon.data.name);
+                    }
+                }
+            }
         }
 
         if is_key_pressed(KeyCode::F5) {
-            if let Some(mut data) = get_mut::<PlayerData>() {
+            if let Some(data) = PLAYER_DATA.write().as_mut() {
                 let name = &self.current_map_mut().name;
                 info!("Resetting battled trainers in this map! ({})", name);
                 data.world_status.get_or_create_map_data(name).battled.clear();
@@ -477,7 +490,7 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F6) {
-            if let Some(mut data) = get_mut::<PlayerData>() {
+            if let Some(data) = PLAYER_DATA.write().as_mut() {
                 info!("Clearing world events in player data!");
                 data.world_status.completed_events.clear();
             }

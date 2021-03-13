@@ -1,3 +1,8 @@
+[location.min]
+x = 0x06
+y = 0x0D
+
+[location.max]
 x = 0x06
 y = 0x0D
 
@@ -5,5 +10,5 @@ y = 0x0D
 world_id = "firered"
 map_id = "world"
 map_index = 0
-x = 10
+x = 16
 y = 0x0D

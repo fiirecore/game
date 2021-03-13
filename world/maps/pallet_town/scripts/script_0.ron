@@ -1,4 +1,5 @@
 (
+    identifier: "oak_catch_player",
     condition: (
         location: (
             min: (
@@ -19,12 +20,12 @@
         ),
     ),
     actions: [
-        FreezePlayer,
-        SpawnNPC(
+        PlayerFreeze,
+        NPCSpawn(
             id: 0,
             npc: NPC(
                 identifier: (
-                    name: "TestOak",
+                    name: "Oak",
                     npc_type: "prof_oak",
                 ),
                 position: (
@@ -41,9 +42,118 @@
                 )
             )
         ),
-        MoveNPCToPlayer(0),
-        Wait(5.0),
-        DespawnNPC(0),
-        UnfreezePlayer,
+        PlayMusic(Oak),
+        DisplayText(
+            message_set: (
+                messages: [(
+                    message: [
+                        "OAK: Hey! Wait!",
+                        "Don't go out!"
+                    ],
+                    color: Blue,
+                )]
+            )
+        ),
+        NPCMove(
+            id: 0,
+            pos: (
+                x: 10,
+                y: 6,
+            ),
+        ),
+        NPCMove(
+            id: 0,
+            pos: (
+                x: 11,
+                y: 6,
+            ),
+        ),
+        NPCMove(
+            id: 0,
+            pos: (
+                x: 11,
+                y: 4,
+            ),
+        ),
+        NPCMove(
+            id: 0,
+            pos: (
+                x: 12,
+                y: 4,
+            ),
+        ),
+        NPCMoveToPlayer(0),
+        DisplayText(
+            message_set: (
+                messages: [
+                    (
+                        message: [
+                            "OAK: It's unsafe!",
+                            "Wild POKEMON live in tall grass!"
+                        ],
+                        color: Blue,
+                    ),
+                    (
+                        message: [
+                            "You need your own POKEMON for",
+                            "your protection."
+                        ],
+                        color: Blue,
+                    ),
+                    (
+                        message: [
+                            "I know!",
+                            "Here, come with me!"
+                        ],
+                        color: Blue,
+                    )
+                ]
+            )
+        ),
+        NPCLeadPlayer(
+            id: 0,
+            pos: (
+                x: 12,
+                y: 3,
+            )
+        ),
+        NPCLeadPlayer(
+            id: 0,
+            pos: (
+                x: 11,
+                y: 3,
+            )
+        ),
+        NPCLeadPlayer(
+            id: 0,
+            pos: (
+                x: 11,
+                y: 14,
+            )
+        ),
+        NPCLeadPlayer(
+            id: 0,
+            pos: (
+                x: 16,
+                y: 14,
+            )
+        ),
+        NPCLeadPlayer(
+            id: 0,
+            pos: (
+                x: 16,
+                y: 13,
+            )
+        ),
+        NPCDespawn(0),
+        PlayerUnfreeze,
+        Warp(
+            (
+                map_id: "oaks_lab",
+                map_index: 0,
+                x: 6,
+                y: 12,
+            )
+        ),
     ]
 )

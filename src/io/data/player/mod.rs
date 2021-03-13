@@ -1,8 +1,6 @@
-use firecore_pokedex::pokemon::data::StatSet;
 use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
-use macroquad::prelude::collections::storage;
 use firecore_data::data::PersistantData;
 use std::path::{Path, PathBuf};
 use macroquad::prelude::info;
@@ -30,7 +28,7 @@ pub struct PlayerData {
 	// pub world_id: String,
 	#[serde(default = "player_location")]
 	pub location: Location,
-	#[serde(default = "player_party")]
+	#[serde(default)] // #[serde(default = "player_party")]
 	pub party: PokemonParty,
 
 	#[serde(default)]
@@ -62,7 +60,7 @@ impl PlayerData {
 	pub async fn load_selected_data() {
 		if let Some(save) = unsafe{PLAYER_SAVE.take()} {
 			let data = Self::load(Path::new(SAVE_DIRECTORY).join( save + SAVE_FILE_TYPE)).await;
-			storage::store(data);
+			*PLAYER_DATA.write() = Some(data);
 		}
 	}
 
@@ -93,7 +91,7 @@ impl Default for PlayerData {
     fn default() -> Self {
 		Self {
 			name: "Red".to_string(),
-			party: player_party(),
+			party: PokemonParty::default(),
 			location: player_location(),
 		    worth: 0,
 		    world_status: WorldStatus::default(),
@@ -105,7 +103,7 @@ impl Default for PlayerData {
 
 fn player_location() -> Location {
 	Location {
-		map_id: String::from("pallet_town_player_house"),
+		map_id: String::from("pallet_town_player_house".to_owned()),
 		map_index: 1,
 		position: GlobalPosition {
 			local: Position {
@@ -120,15 +118,15 @@ fn player_location() -> Location {
 	}
 }
 
-fn player_party() -> PokemonParty {
-	PokemonParty {
-		pokemon: firecore_pokedex::smallvec![
-			PokemonInstance::generate_with_level(1, 11, Some(StatSet::uniform(15))),
-			PokemonInstance::generate_with_level(4, 11, Some(StatSet::uniform(15))),
-			PokemonInstance::generate_with_level(7, 11, Some(StatSet::uniform(15))),
-		],
-	}
-}
+// fn player_party() -> PokemonParty {
+// 	PokemonParty {
+// 		pokemon: firecore_pokedex::smallvec![
+// 			PokemonInstance::generate_with_level(1, 11, Some(StatSet::uniform(15))),
+// 			PokemonInstance::generate_with_level(4, 11, Some(StatSet::uniform(15))),
+// 			PokemonInstance::generate_with_level(7, 11, Some(StatSet::uniform(15))),
+// 		],
+// 	}
+// }
 
 #[async_trait::async_trait(?Send)]
 impl PersistantData for PlayerData {

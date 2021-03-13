@@ -49,7 +49,7 @@ impl GameWorld for WorldChunkMap {
 
     fn on_tile(&mut self, player: &mut Player) {
         let current_chunk = self.current_chunk_mut();
-        if current_chunk.in_bounds(player.position.local.coords.x, player.position.local.coords.y) {
+        if current_chunk.in_bounds(&player.position.local.coords) {
             current_chunk.on_tile(player);
         }
     }

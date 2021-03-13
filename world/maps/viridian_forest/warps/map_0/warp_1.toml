@@ -1,9 +1,14 @@
+[location.min]
 x = 6
-y = 14
+y = 9
+
+[location.max]
+x = 8
+y = 9
 
 [destination]
 world_id = "firered"
 map_id = "route_2_houses"
 map_index = 3
 x = 7
-y = 1
+y = 0xA

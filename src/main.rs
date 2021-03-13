@@ -5,6 +5,7 @@ use firecore_data::configuration::Configuration;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::BLACK;
 use macroquad::prelude::Conf;
+use macroquad::prelude::Rect;
 use macroquad::prelude::clear_background;
 use macroquad::prelude::collections::storage;
 use macroquad::prelude::get_frame_time;
@@ -36,6 +37,8 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;
 pub static BASE_HEIGHT: u32 = 160;
 
+pub static CAMERA_SIZE: Rect = Rect { x: 0.0, y: 0.0, w: crate::BASE_WIDTH as _, h: crate::BASE_HEIGHT as _ };
+
 pub static SCALE: f32 = 3.0;
 
 static mut QUIT: bool = false;
@@ -65,6 +68,11 @@ fn main() {
 
 async fn macroquad_main() {
 
+    info!("Starting {} v{}", TITLE, VERSION);
+    info!("By {}", AUTHORS);
+
+    macroquad::camera::set_camera(Camera2D::from_display_rect(CAMERA_SIZE));
+
     let texture = crate::util::graphics::texture::byte_texture(include_bytes!("../build/assets/loading.png"));
     clear_background(macroquad::prelude::BLUE);
     macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
@@ -72,9 +80,6 @@ async fn macroquad_main() {
     draw_text_left(1, "The game may stay on this screen", 5.0, 50.0);
     draw_text_left(1, "for up to two minutes.", 5.0, 65.0);
     next_frame().await;
-
-    info!("Starting {} v{}", TITLE, VERSION);
-    info!("By {}", AUTHORS);
 
     #[cfg(debug_assertions)] {
         info!("Running in debug mode");
@@ -89,8 +94,6 @@ async fn macroquad_main() {
     crate::util::text::load().await;
 
     let args = crate::io::args::parse_args();
-
-    macroquad::camera::set_camera(Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, BASE_WIDTH as _, BASE_HEIGHT as _)));
 
     if !args.contains(&Args::DisableAudio) {
         firecore_audio::create();
@@ -123,6 +126,7 @@ async fn macroquad_main() {
 
     info!("Finished loading assets!");
 
+
     if cfg!(not(target_arch = "wasm32")) {
         while !loading_coroutine.is_done() {
             macroquad::prelude::coroutines::wait_seconds(0.05).await;
@@ -133,7 +137,7 @@ async fn macroquad_main() {
 
     if cfg!(target_arch = "wasm32") {
         load_coroutine().await;
-    }  
+    }
 
     info!("Starting game!");
 
@@ -160,8 +164,8 @@ async fn macroquad_main() {
             if let Some(mut config) = storage::get_mut::<Configuration>() {
                 firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
-            if let Some(mut player_data) = storage::get_mut::<crate::io::data::player::PlayerData>() {
-                firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut player_data)).await;
+            if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
+                firecore_data::data::PersistantData::reload(player_data).await;
             }
         }
 
