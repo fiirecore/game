@@ -446,7 +446,7 @@ dependencies = [
 [[package]]
 name = "dex-builder"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/dex-builder#3d9ab8f72f73c841efacc18a7a8a1f610257a947"
+source = "git+https://github.com/DoNotDoughnut/dex-builder#106f4fb65c6d352998d2d4325bfca3c5304c3cf3"
 dependencies = [
  "bincode",
  "firecore-pokedex",
@@ -523,7 +523,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.0.1-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#7b405642ec0b9a833ed70db1c1c83823ad2e85d2"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#c8a2d14e65f87f770ae0162ec1897d930dfe07f6"
 dependencies = [
  "dashmap",
  "firecore-util",
@@ -567,7 +567,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#98b122ca874a7261f4db9cdee5dcaaa51f0c4f33"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#a984299a85fd30fc45e5f4e4ea79773c09ce385c"
 dependencies = [
  "dashmap",
  "lazy_static",

@@ -2,11 +2,11 @@ use std::path::PathBuf;
 
 use dashmap::DashMap;
 use firecore_pokedex::PokemonId;
-use firecore_pokedex::pokemon::Pokemon;
+// use firecore_pokedex::pokemon::Pokemon;
 use firecore_pokedex::pokemon::texture::PokemonTexture;
 use macroquad::prelude::info;
-use macroquad::prelude::load_file;
-use macroquad::prelude::warn;
+// use macroquad::prelude::load_file;
+// use macroquad::prelude::warn;
 
 use crate::util::graphics::Texture;
 use crate::util::graphics::texture::byte_texture;
@@ -21,15 +21,19 @@ lazy_static::lazy_static! {
 
 pub async fn load() {
 
-	let dex: firecore_pokedex::SerializedDex = bincode::deserialize(&macroquad::prelude::load_file("assets/dex.bin").await.unwrap()).unwrap();
+	let dex: firecore_pokedex::serialized::SerializedDex = bincode::deserialize(&macroquad::prelude::load_file("assets/dex.bin").await.unwrap()).unwrap();
 
 	// load_pokedex_v2();
 
 	info!("Loading pokedex and moves!");
 
 	for pokemon in dex.pokemon {
-		load_textures(&pokemon).await;
-		firecore_pokedex::POKEDEX.insert(pokemon.data.number, pokemon);
+		// load_textures(&pokemon).await;
+		
+		FRONT_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.front_png));
+		BACK_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.back_png));
+		
+		firecore_pokedex::POKEDEX.insert(pokemon.pokemon.data.number, pokemon.pokemon);
 	}
 
 	for pokemon_move in dex.moves {
@@ -68,50 +72,50 @@ pub async fn load() {
 // 	}
 // }
 
-async fn load_cry(pokemon: &Pokemon) {
-	if let Some(cry_path) = pokemon.cry_file.as_ref() {
-		match macroquad::prelude::load_file(&(String::from("pokedex/pokemon/") + &pokemon.data.name + "/" + cry_path)).await {
-			Ok(bytes) => {
-				firecore_audio::add_sound(firecore_util::sound::Sound::Cry(pokemon.data.number), &*bytes);
-			}
-			Err(err) => {
-				warn!("Could not get bytes of cry for pokemon {} with error {}", pokemon.data.name, err);
-			}
-		}	
-	}	
-}
+// async fn load_cry(pokemon: &Pokemon) {
+// 	if let Some(cry_path) = pokemon.cry_file.as_ref() {
+// 		match macroquad::prelude::load_file(&(String::from("pokedex/pokemon/") + &pokemon.data.name + "/" + cry_path)).await {
+// 			Ok(bytes) => {
+// 				firecore_audio::add_sound(firecore_util::sound::Sound::Cry(pokemon.data.number), &*bytes);
+// 			}
+// 			Err(err) => {
+// 				warn!("Could not get bytes of cry for pokemon {} with error {}", pokemon.data.name, err);
+// 			}
+// 		}	
+// 	}	
+// }
 
 // const SIDES: &[PokemonTexture] = &[PokemonTexture::Front, PokemonTexture::Back];
 
-pub async fn load_textures(pokemon: &Pokemon) {
-	let base_path = String::from("assets/pokedex/textures/");
-	let front_path = base_path.clone() + "normal/front/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
-	let back_path = base_path.clone() + "normal/back/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
-	let icon_path = base_path + "icon/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
-	match load_file(&front_path).await {
-		Ok(bytes) => {
-			FRONT_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
-		}
-		Err(err) => {
-			warn!("Could not load front texture for {} with error {}", pokemon.data.name, err);
-		}
-	}
-	match load_file(&back_path).await {
-		Ok(bytes) => {
-			BACK_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
-		}
-		Err(err) => {
-			warn!("Could not load back texture for {} with error {}", pokemon.data.name, err);
-		}
-	}
-	#[cfg(not(target_arch = "wasm32"))]
-	match load_file(&icon_path).await {
-	    Ok(bytes) => {
-			ICON_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
-		}
-	    Err(_) => {}
-	}
-}
+// pub async fn load_textures(pokemon: &Pokemon) {
+// 	let base_path = String::from("assets/pokedex/textures/");
+// 	let front_path = base_path.clone() + "normal/front/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
+// 	let back_path = base_path.clone() + "normal/back/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
+// 	let icon_path = base_path + "icon/" + pokemon.data.name.to_ascii_lowercase().as_str() + ".png";
+// 	match load_file(&front_path).await {
+// 		Ok(bytes) => {
+// 			FRONT_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
+// 		}
+// 		Err(err) => {
+// 			warn!("Could not load front texture for {} with error {}", pokemon.data.name, err);
+// 		}
+// 	}
+// 	match load_file(&back_path).await {
+// 		Ok(bytes) => {
+// 			BACK_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
+// 		}
+// 		Err(err) => {
+// 			warn!("Could not load back texture for {} with error {}", pokemon.data.name, err);
+// 		}
+// 	}
+// 	#[cfg(not(target_arch = "wasm32"))]
+// 	match load_file(&icon_path).await {
+// 	    Ok(bytes) => {
+// 			ICON_TEXTURES.insert(pokemon.data.number, byte_texture(&bytes));
+// 		}
+// 	    Err(_) => {}
+// 	}
+// }
 
 pub fn pokemon_texture(id: &PokemonId, side: PokemonTexture) -> Texture {
 	match side {

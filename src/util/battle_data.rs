@@ -22,7 +22,7 @@ pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
         battle_type: BattleType::Wild,
         party: PokemonParty {
-            pokemon: firecore_pokedex::smallvec![firecore_pokedex::pokemon::instance::PokemonInstance::generate(gen_range(0, firecore_pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
+            pokemon: smallvec::smallvec![firecore_pokedex::pokemon::instance::PokemonInstance::generate(gen_range(0, firecore_pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
         },
         trainer_data: None,
     });
@@ -32,7 +32,7 @@ pub fn wild_battle(table: &WildPokemonTable) {
     *BATTLE_DATA.lock() = Some(BattleData {
         battle_type: BattleType::Wild,
         party: PokemonParty {
-            pokemon: firecore_pokedex::smallvec![table.generate()],
+            pokemon: smallvec::smallvec![table.generate()],
         },
         trainer_data: None,
     });
