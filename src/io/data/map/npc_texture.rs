@@ -43,47 +43,6 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures, npc_types: Vec<NPCType>
     }
 }
 
-// pub fn parse_image(image: Image) -> Option<ThreeWayTexture<StillTextureManager>> {
-//     match image.width {
-//         48 => idle_npc(image),
-
-//         // Not actually idle npcs, this is temporary
-//         144 => idle_npc(image),
-//         160 => idle_npc(image),
-
-//         _ => {
-//             warn!("Could not parse NPC sprites!");
-//             return None;
-//         }
-//     }
-
-// }
-
-// fn idle_npc(image: Image) -> Option<ThreeWayTexture<StillTextureManager>> {
-//     let mut twt = ThreeWayTexture::new();
-//     for i in 0..3 {
-//         twt.add_texture_manager(StillTextureManager::new(image_texture(&image.sub_image(macroquad::prelude::Rect::new((i << 4) as f32, 0.0, 16.0, 32.0))), false));
-//     }
-//     return Some(twt);
-// }
-
-// pub async fn load_battle_sprites(ids: &[&'static str]) {
-
-//     let base_path = "assets/world/textures/npcs/".to_owned();
-
-//     for id in ids {
-//         let path = base_path.clone() + *id + "/battle.png";
-//         match macroquad::prelude::load_file(&path).await {
-//             Ok(bytes) => {
-//                 BATTLE_SPRITES.insert(*id, crate::util::graphics::texture::byte_texture(&bytes));
-//             }
-//             Err(err) => {
-//                 warn!("Could not load battle sprite {} with error {}", id, err);
-//             }
-//         }
-//     }
-// }
-
 pub fn battle_sprite(id: &str) -> Texture {
     match BATTLE_SPRITES.get(id) {
         Some(texture) => {

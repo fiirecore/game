@@ -37,7 +37,7 @@ firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
 firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio" }
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
 firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
-# frc-text = { path = "crates/frc-text" }
+firecore-font-lib = { path = "../firecore/firecore-font-lib" }
 
 ### GUI
 
@@ -78,6 +78,7 @@ miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 ### Build dependencies
 
 [build-dependencies]
+firecore-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-builder" }
 world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
 

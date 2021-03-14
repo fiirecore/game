@@ -1,82 +1,48 @@
+use firecore_font_lib::CustomChar;
 use macroquad::prelude::Rect;
 use macroquad::prelude::warn;
-use serde::Deserialize;
+use firecore_font_lib::FontSheet;
 use ahash::AHashMap as HashMap;
 
 use crate::util::text::font::Font;
 use crate::util::graphics::texture::image_texture;
-#[derive(Debug, Deserialize)]
-pub struct FontSheetData {
 
-    pub file: String,
-    pub id: usize,
-    pub width: u8,
-    pub height: u8,
-    pub chars: String,
-    pub custom: Vec<CustomChars>,
+pub async fn open_sheets() {
 
-}
+    let font_sheets: firecore_font_lib::SerializedFonts = bincode::deserialize(
+        // &macroquad::prelude::load_file("assets/fonts.bin").await.unwrap()
+        include_bytes!("../../../assets/fonts.bin")
+    ).unwrap();
 
-#[derive(Debug, Deserialize)]
-pub struct CustomChars {
-
-    pub id: char,
-    pub width: u8,
-    pub height: Option<u8>,
-
-}
-
-impl FontSheetData {
-
-    pub async fn open_sheet(path: &str) {
-        match macroquad::prelude::load_string(path).await {
-            Ok(file) => match ron::from_str(&file) {
-                Ok(sheet) => {
-                    if let Some((id, font)) = Self::sheet_image(sheet).await {
-                        crate::util::text::FONTS.insert(id, font);
-                    }
-                    
-                },
-                Err(err) => {
-                    warn!("Could not parse font sheet data at {:?} with error {}", path, err);
-                }
-            },
-            Err(err) => {
-                warn!("Could not open font sheet config at {:?} with error {}", path, err);
-            }
-        }
-
-    }
-    
-    pub fn into_sheet(self, sheet: macroquad::prelude::Image) -> Font {
-        Font {
-            font_width: self.width,
-            font_height: self.height,
-            chars: iterate_fontsheet(self.chars, self.width, self.height, self.custom, sheet),
-        }        
-    }
-
-    async fn sheet_image(self) -> Option<(usize, Font)> {
-        match macroquad::prelude::load_file(&self.file).await {
-            Ok(ref file) => match crate::util::image::byte_image(file) {
-                Ok(image) => {
-                    Some((self.id, self.into_sheet(image)))
-                },
-                Err(err) => {
-                    warn!("Could not parse font sheet at {} with error {}", &self.file, err);
-                    return None;
-                }
-            },
-            Err(err) => {
-                warn!("Could not open font image at {} with error {}", &self.file, err);
-                return None;
-            },
+    for font_sheet in font_sheets.fonts {
+        if let Some((id, font)) = sheet_image(font_sheet) {
+            crate::util::text::FONTS.insert(id, font);
         }
     }
 
 }
 
-fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChars>, sheet: macroquad::prelude::Image) -> HashMap<char, crate::util::graphics::Texture> {
+pub fn into_sheet(font_sheet: FontSheet, sheet: macroquad::prelude::Image) -> Font {
+    Font {
+        font_width: font_sheet.data.width,
+        font_height: font_sheet.data.height,
+        chars: iterate_fontsheet(font_sheet.data.chars, font_sheet.data.width, font_sheet.data.height, font_sheet.data.custom, sheet),
+    }        
+}
+
+fn sheet_image(font_sheet: FontSheet) -> Option<(usize, Font)> {
+    match crate::util::image::byte_image(&font_sheet.image) {
+        Ok(image) => {
+            Some((font_sheet.data.id, into_sheet(font_sheet, image)))
+        },
+        Err(err) => {
+            warn!("Could not parse font sheet {}'s image with error {}", &font_sheet.data.id, err);
+            return None;
+        }
+    }
+}
+
+fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChar>, sheet: macroquad::prelude::Image) -> HashMap<char, crate::util::graphics::Texture> {
 
     let mut customchars = HashMap::new();
     for cchar in custom {

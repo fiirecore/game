@@ -553,6 +553,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-font-builder"
+version = "0.1.0"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-builder#84159a02c87acfaf7a00c3726085ad55af263215"
+dependencies = [
+ "bincode",
+ "firecore-font-lib 0.1.0 (git+https://github.com/DoNotDoughnut/firecore-font-lib)",
+ "ron",
+ "serde",
+]
+
+[[package]]
+name = "firecore-font-lib"
+version = "0.1.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "firecore-font-lib"
+version = "0.1.0"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#d8967fa2b8940b6fd121544c4145112a40d14c75"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "firecore-input"
 version = "0.1.0"
 source = "git+https://github.com/DoNotDoughnut/firecore-input#df43139c95f02f714eb4cdcbdbf0fe027f49f8c2"
@@ -1278,6 +1304,8 @@ dependencies = [
  "dex-builder",
  "firecore-audio",
  "firecore-data",
+ "firecore-font-builder",
+ "firecore-font-lib 0.1.0",
  "firecore-input",
  "firecore-pokedex",
  "firecore-util",

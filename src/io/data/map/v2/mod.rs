@@ -10,7 +10,10 @@ pub async fn load_maps_v2(tile_textures: &mut crate::world::TileTextures, npc_te
 
     info!("Loading maps...");
 
-    let world: firecore_world::serialized::SerializedWorld = bincode::deserialize(&macroquad::prelude::load_file("assets/world.bin").await.unwrap()).unwrap();
+    let world: firecore_world::serialized::SerializedWorld = bincode::deserialize(
+        // &macroquad::prelude::load_file("assets/world.bin").await.unwrap()
+        include_bytes!("../../../../../assets/world.bin")
+    ).unwrap();
 
     info!("Loaded world file.");
     

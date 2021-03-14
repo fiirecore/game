@@ -1,0 +1,52 @@
+(
+    file: "fonts/images/font1.png",
+    data: (
+        id: 1,
+        width: 6,
+        height: 14,
+        chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/♂♀!?-.,'",
+        custom: [
+            (
+                id: 'i',
+                width: 4
+            ),
+            (
+                id: 'k',
+                width: 5
+            ),
+            (
+                id: 'l',
+                width: 5
+            ),
+            (
+                id: 'n',
+                width: 5
+            ),
+            (
+                id: 'r',
+                width: 5
+            ),
+            (
+                id: 's',
+                width: 5
+            ),
+            (
+                id: 't',
+                width: 5
+            ),
+            (
+                id: '.',
+                width: 5
+            ),
+            (
+                id: ',',
+                width: 5,
+                height: Some(15)
+            ),
+            (
+                id: '\'',
+                width: 3
+            )
+        ]
+    )
+)

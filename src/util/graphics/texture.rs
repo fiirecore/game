@@ -9,7 +9,7 @@ pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 	texture
 }
 
-pub fn byte_texture(bytes: &[u8]) -> Texture {
+pub fn byte_texture(bytes: &[u8]) -> Texture { // To - do: change to Result<Texture, ImageError>
 	image_texture(&crate::util::image::byte_image(bytes).expect("Could not get bytes from image!"))
 }
 

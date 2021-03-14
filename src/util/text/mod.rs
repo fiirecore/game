@@ -1,7 +1,6 @@
 use dashmap::DashMap;
 use macroquad::prelude::Color;
 
-use crate::io::data::font::FontSheetData;
 use crate::util::graphics::Texture;
 use crate::util::graphics::draw;
 
@@ -16,9 +15,7 @@ lazy_static::lazy_static! {
 }
 
 pub async fn load() {
-    FontSheetData::open_sheet("assets/fonts/font0.ron").await;
-    FontSheetData::open_sheet("assets/fonts/font1.ron").await;
-    FontSheetData::open_sheet("assets/fonts/font2.ron").await; // Font 2 deprecated
+    crate::io::data::font::open_sheets().await;
 }
 
 pub struct TextRenderer {
