@@ -10,7 +10,7 @@
         ),
         direction: Down
     ),
-    message_set: (
+    message: Some((
         messages: [
             (
                 color: Red,
@@ -19,7 +19,7 @@
                 ]
             )
         ]
-    ),
+    )),
     trainer: Some((
         trainer_type: GymLeader,
         encounter_type: Some(Trainer),

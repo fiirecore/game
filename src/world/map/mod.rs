@@ -2,8 +2,8 @@ use firecore_audio::play_music;
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
 use firecore_world::World;
+use firecore_world::character::movement::Destination;
 use firecore_world::map::WorldMap;
-use firecore_world::npc::movement::NPCDestination;
 use firecore_world::script::Condition;
 use firecore_world::script::WorldActionKind;
 use macroquad::prelude::KeyCode;
@@ -186,16 +186,20 @@ impl GameWorld for WorldMap {
                                 pop = true;
                                 info!("Script unfroze player!");
                             }
+                            WorldActionKind::PlayerLook(direction) => {
+                                player.position.local.direction = *direction;
+                                pop = true;
+                            }
                             WorldActionKind::PlayerMove(pos) => {
-                                if player.destination.is_some() {
+                                if player.properties.destination.is_some() {
                                     if player.should_move_to() {
                                         player.move_to_destination(delta);
                                     } else {
-                                        player.destination = None;
+                                        player.properties.destination = None;
                                         pop = true;
                                     }
                                 } else {
-                                    player.destination = Some(NPCDestination::to(&player.position.local, pos));
+                                    player.properties.destination = Some(Destination::to(&player.position.local, pos));
                                 }
                             }
                             WorldActionKind::PlayerGivePokemon(instance) => {
@@ -221,15 +225,15 @@ impl GameWorld for WorldMap {
                             }
                             WorldActionKind::NPCMove { id, pos } => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
-                                    if npc.offset.is_some() {
+                                    if npc.properties.destination.is_some() {
                                         if npc.should_move() {
                                             npc.do_move(delta);
                                         } else {
-                                            npc.offset = None;
+                                            npc.properties.destination = None;
                                             pop = true;
                                         }
                                     } else {
-                                        npc.walk_to(pos);
+                                        npc.walk_to(&pos.coords);
                                     }
                                 } else {
                                     warn!("NPC script tried to move an unknown NPC (with id {})", id);
@@ -238,32 +242,32 @@ impl GameWorld for WorldMap {
                             },
                             WorldActionKind::NPCLeadPlayer { id, pos } => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
-                                    if npc.offset.is_some() {
+                                    if npc.properties.destination.is_some() {
                                         if npc.should_move() {
                                             npc.do_move(delta);
                                         } else {
-                                            npc.offset = None;
-                                            if player.destination.is_none() {
+                                            npc.properties.destination = None;
+                                            if player.properties.destination.is_none() {
                                                 pop = true;
                                             }
                                         }
                                     } else {
-                                        if npc.position.coords.ne(pos) {
-                                            npc.walk_to(pos);
+                                        if npc.position.coords.ne(&pos.coords) {
+                                            npc.walk_to(&pos.coords);
                                         }
                                     }
-                                    if player.destination.is_some() {
+                                    if player.properties.destination.is_some() {
                                         if player.should_move_to() {
                                             player.move_to_destination(delta);
                                         } else {
-                                            player.destination = None;
-                                            if npc.offset.is_none() {
+                                            player.properties.destination = None;
+                                            if npc.properties.destination.is_none() {
                                                 pop = true;
                                             }
                                         }
                                     } else {
-                                        if player.position.local.coords.ne(pos) {
-                                            player.destination = Some(NPCDestination::next_to(&player.position.local, pos));
+                                        if player.position.local.coords.ne(&pos.coords) {
+                                            player.properties.destination = Some(Destination::next_to(&player.position.local, &pos.coords));
                                         }
                                     }
                                 } else {
@@ -273,11 +277,11 @@ impl GameWorld for WorldMap {
                             }
                             WorldActionKind::NPCMoveToPlayer ( id ) => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
-                                    if npc.offset.is_some() {
+                                    if npc.properties.destination.is_some() {
                                         if npc.should_move() {
                                             npc.do_move(delta);
                                         } else {
-                                            npc.offset = None;
+                                            npc.properties.destination = None;
                                             pop = true;
                                         }
                                     } else {
@@ -373,11 +377,12 @@ impl GameWorld for WorldMap {
                     npc.do_move(delta) 
                 } else {
                     window_manager.spawn();
-                    npc.offset = None;
+                    npc.properties.destination = None;
 
-                    if let Some(trainer) = npc.trainer.as_ref() {
-                        if let Some(data) = PLAYER_DATA.write().as_mut() {
-                            if !data.world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.name) {
+                    
+                    if let Some(data) = PLAYER_DATA.write().as_mut() {
+                        if !data.world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.name) {
+                            if let Some(trainer) = npc.trainer.as_ref() {
 
                                 // Spawn text window
 
@@ -400,9 +405,13 @@ impl GameWorld for WorldMap {
                                     }
                                 }
                             }   
+                        } else {
+                            if let Some(message_set) = npc.message.as_ref() {
+                                window_manager.set_text(message_set.clone());
+                            } else {
+                                window_manager.despawn();
+                            }
                         }
-                    } else {
-                        window_manager.set_text(npc.message_set.clone());
                     }
 
                     player.position.local.direction = npc.position.direction.inverse();

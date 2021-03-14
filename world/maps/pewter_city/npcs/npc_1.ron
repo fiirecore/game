@@ -10,10 +10,5 @@
         ),
         direction: Down
     ),
-    message_set: (
-        messages: [(
-            message: ["Temporary message"]
-        )]
-    ),
     movement_type: LookAround
 )

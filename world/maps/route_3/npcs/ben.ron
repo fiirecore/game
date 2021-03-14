@@ -10,11 +10,6 @@
         ),
         direction: Down
     ),
-    message_set: (
-        messages: [(
-            message: ["Temporary message"]
-        )]
-    ),
     trainer: Some((
         trainer_type: Youngster,
         tracking_length: Some(2),

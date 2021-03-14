@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use ahash::AHashSet as HashSet;
 
-use firecore_world::npc::NPC;
+use firecore_world::character::npc::NPC;
 
 #[derive(Debug, Default, Deserialize, Serialize)]
 pub struct MapData {

@@ -1,4 +1,4 @@
-use firecore_world::npc::movement::NPCDestination;
+use firecore_world::character::CharacterProperties;
 use macroquad::prelude::DrawTextureParams;
 
 use firecore_util::{GlobalPosition, Direction};
@@ -18,19 +18,13 @@ pub struct Player {
 	
 	pub position: GlobalPosition,
 
-	pub speed: u8,
+	pub properties: CharacterProperties,
 
 	pub walking_texture: Option<Texture>,
 	pub running_texture: Option<Texture>,
-	sprite_index: u8,
-	
-	pub moving: bool,
-	pub running: bool,
 	pub frozen: bool,
 
 	pub noclip: bool,
-
-	pub destination: Option<NPCDestination>,
 	
 }
 
@@ -41,7 +35,6 @@ impl Player {
 		Player {
 			
 			position: data.location.position,
-			speed: BASE_SPEED,
 
 			..Default::default()
 			
@@ -50,7 +43,7 @@ impl Player {
 	}
 
 	pub fn render(&self) {
-		if let Some(texture) = if self.running {self.running_texture} else {self.walking_texture} {
+		if let Some(texture) = if self.properties.running {self.running_texture} else {self.walking_texture} {
 			macroquad::prelude::draw_texture_ex(
 				texture, SCREEN_X, SCREEN_Y, macroquad::prelude::WHITE, DrawTextureParams {
 				    source: Some(macroquad::prelude::Rect::new(
@@ -71,7 +64,7 @@ impl Player {
 		if self.position.local.offset.x != 0.0 || self.position.local.offset.y != 0.0 {
             match self.position.local.direction {
                 Direction::Up => {
-                    self.position.local.offset.y -= (self.speed as f32) * 60.0 * delta;
+                    self.position.local.offset.y -= (self.properties.speed as f32) * 60.0 * delta;
                     if self.position.local.offset.y <= -16.0 {
                         self.position.local.coords.y -= 1;
                         self.position.local.offset.y = 0.0;
@@ -79,7 +72,7 @@ impl Player {
                     }
                 }
                 Direction::Down => {
-                    self.position.local.offset.y += (self.speed as f32) * 60.0 * delta;
+                    self.position.local.offset.y += (self.properties.speed as f32) * 60.0 * delta;
                     if self.position.local.offset.y >= 16.0 {
                         self.position.local.coords.y += 1;
                         self.position.local.offset.y = 0.0;
@@ -87,7 +80,7 @@ impl Player {
                     }
                 }
                 Direction::Left => {
-                    self.position.local.offset.x -= (self.speed as f32) * 60.0 * delta;
+                    self.position.local.offset.x -= (self.properties.speed as f32) * 60.0 * delta;
                     if self.position.local.offset.x <= -16.0 {
                         self.position.local.coords.x -= 1;
                         self.position.local.offset.x = 0.0;
@@ -95,7 +88,7 @@ impl Player {
                     }
                 }
                 Direction::Right => {
-                    self.position.local.offset.x += (self.speed as f32) * 60.0 * delta;
+                    self.position.local.offset.x += (self.properties.speed as f32) * 60.0 * delta;
                     if self.position.local.offset.x >= 16.0 {
                         self.position.local.coords.x += 1;
                         self.position.local.offset.x = 0.0;
@@ -108,7 +101,7 @@ impl Player {
 	}
 
 	pub fn should_move_to(&mut self) -> bool {
-		if let Some(offset) = self.destination.as_ref() {
+		if let Some(offset) = self.properties.destination.as_ref() {
             self.position.local.coords != offset.coords
         } else {
             false
@@ -116,7 +109,7 @@ impl Player {
 	}
 
 	pub fn move_to_destination(&mut self, delta: f32) {
-		if let Some(offset) = self.destination.as_mut() {
+		if let Some(offset) = self.properties.destination.as_mut() {
 
             if self.position.local.coords.y == offset.coords.y {
                 self.position.local.direction = if self.position.local.coords.x < offset.coords.x {
@@ -133,7 +126,7 @@ impl Player {
             }
 
             let offsets = self.position.local.direction.offset_f32();
-            let offset = 60.0 * self.speed as f32 * delta;
+            let offset = 60.0 * self.properties.speed as f32 * delta;
             self.position.local.offset.x += offsets.x * offset;
             self.position.local.offset.y += offsets.y * offset;
 
@@ -158,10 +151,10 @@ impl Player {
 	}
 
 	fn change_sprite_index(&mut self) {
-		if self.sprite_index == 0 {
-			self.sprite_index = 2;
+		if self.properties.sprite_index == 0 {
+			self.properties.sprite_index = 2;
 		} else {
-			self.sprite_index = 0;
+			self.properties.sprite_index = 0;
 		}
 	}
 
@@ -169,9 +162,9 @@ impl Player {
 		self.frozen = true;
 		self.position.local.offset.x = 0.0;
 		self.position.local.offset.y = 0.0;
-		self.moving = false;
-		self.running = false;
-		self.speed = BASE_SPEED;
+		self.properties.moving = false;
+		self.properties.running = false;
+		self.properties.speed = BASE_SPEED as f32;
 	}
 
 	fn current_texture_pos(&self) -> f32 {
@@ -184,7 +177,7 @@ impl Player {
 						} else {
 							self.position.local.offset.y
 						}.abs() as usize >> 3
-					) + self.sprite_index as usize
+					) + self.properties.sprite_index as usize
 				).unwrap_or(
 					&3
 				)
@@ -193,7 +186,7 @@ impl Player {
 	}
 
 	pub const fn texture_index(&self) -> [u8; 4] {
-		if self.running {
+		if self.properties.running {
 			match self.position.local.direction {
 			    Direction::Up => [6, 7, 6, 8],
 			    Direction::Down => [3, 4, 3, 5],

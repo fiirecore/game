@@ -2,17 +2,31 @@
 use ahash::AHashMap as HashMap;
 use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
 use firecore_world::map::set::manager::WorldMapSetManager;
+use macroquad::prelude::Image;
 use macroquad::prelude::info;
 use super::gba_map;
 
 pub async fn load_maps_v2(tile_textures: &mut crate::world::TileTextures, npc_textures: &mut crate::world::NpcTextures) -> (WorldChunkMap, WorldMapSetManager) {
-    let mut bottom_sheets: HashMap<u8, macroquad::prelude::Image> = HashMap::new();
-    let palette_sizes = gba_map::fill_palette_map(&mut bottom_sheets).await;
 
     info!("Loading maps...");
+
+    let world: firecore_world::serialized::SerializedWorld = bincode::deserialize(&macroquad::prelude::load_file("assets/world.bin").await.unwrap()).unwrap();
+
+    info!("Loaded world file.");
     
-    let chunk_map: WorldChunkMap = bincode::deserialize(&macroquad::prelude::load_file("assets/chunks.bin").await.unwrap()).unwrap();
-    let map_set_manager: WorldMapSetManager = bincode::deserialize(&macroquad::prelude::load_file("assets/mapsets.bin").await.unwrap()).unwrap();
+    let chunk_map: WorldChunkMap = world.chunks;
+    let map_set_manager: WorldMapSetManager = world.map_sets;
+
+    let images: Vec<(u8, Image)> = world.palettes.into_iter().map(|palette|
+        (palette.id, Image::from_file_with_format(&palette.bottom, Some(image::ImageFormat::Png)))
+    ).collect();
+    
+    let mut bottom_sheets = HashMap::new();
+    let mut palette_sizes = HashMap::new();
+    for (id, image) in images {
+        palette_sizes.insert(id, (image.width >> 4) * (image.height >> 4));
+        bottom_sheets.insert(id, image);
+    }
 
     info!("Finished loading maps!");
 
@@ -30,7 +44,7 @@ pub async fn load_maps_v2(tile_textures: &mut crate::world::TileTextures, npc_te
         }
     }
 
-    super::npc_texture::load_npc_textures(npc_textures).await;
+    super::npc_texture::load_npc_textures(npc_textures, world.npc_types);
     info!("Finished loading textures!");
 
     (chunk_map, map_set_manager)

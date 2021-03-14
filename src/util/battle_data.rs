@@ -1,4 +1,4 @@
-use firecore_world::npc::trainer::Trainer;
+use firecore_world::character::npc::trainer::Trainer;
 use macroquad::rand::gen_range;
 use parking_lot::Mutex;
 use firecore_world::{BattleType, BattleScreenTransitions};
@@ -6,7 +6,7 @@ use firecore_pokedex::PokemonId;
 use firecore_pokedex::pokemon::data::StatSet;
 use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_world::wild::table::WildPokemonTable;
-use firecore_world::npc::trainer::TrainerData;
+use firecore_world::character::npc::trainer::TrainerData;
 use firecore_world::BattleData;
 
 lazy_static::lazy_static! {
@@ -39,6 +39,7 @@ pub fn wild_battle(table: &WildPokemonTable) {
 }
 
 pub fn trainer_battle(trainer: &Trainer, name: &str, npc_type: &String) {
+    macroquad::prelude::info!("Trainer battle with {}", name);
     *BATTLE_DATA.lock() = Some(BattleData {
         battle_type: trainer.trainer_type.battle_type(),
         party: trainer.party.clone(),

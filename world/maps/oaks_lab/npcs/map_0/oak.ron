@@ -10,11 +10,4 @@
         ),
         direction: Down
     ),
-    message_set: (
-        messages: [
-            (
-                message: ["Temporary message"]
-            )
-        ]
-    )
 )

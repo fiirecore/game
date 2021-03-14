@@ -1,7 +1,7 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     dex_builder::build_dex("pokedex/entries", "pokedex/moves", "pokedex/textures", "assets/dex.bin")?;
-    map_builder::with_dirs("world/maps", "assets/world/textures/tiles", "assets")?;
+    world_builder::with_dirs("world/maps", "world/textures/tiles", "world/textures/npcs", "assets/world.bin")?;
 
     #[cfg(all(windows, not(debug_assertions)))] {
         let mut res = winres::WindowsResource::new();

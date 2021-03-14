@@ -35,11 +35,6 @@
                     ),
                     direction: Up
                 ),
-                message_set: (
-                    messages: [(
-                            message: ["Test script NPC message"],
-                    )]
-                )
             )
         ),
         PlayMusic(Oak),

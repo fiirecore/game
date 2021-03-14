@@ -10,11 +10,6 @@
         ),
         direction: Right,
     ),
-    message_set: (
-        messages: [(
-            message: ["Temporary message"]
-        )]
-    ),
     trainer: Some((
         trainer_type: BugCatcher,
         tracking_length: Some(4),

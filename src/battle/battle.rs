@@ -47,8 +47,8 @@ impl Default for Battle {
 		
 		Self {
 		
-			player_pokemon: Vec::new(),
-			opponent_pokemon: Vec::new(),
+			player_pokemon: Vec::with_capacity(6),
+			opponent_pokemon: Vec::with_capacity(6),
 
 			player_active: 0,
 			opponent_active: 0,
@@ -56,8 +56,8 @@ impl Default for Battle {
 			player_move: PokemonMove::default(),
 			opponent_move: PokemonMove::default(),
 
-			player_textures: Vec::new(),
-			opponent_textures: Vec::new(),
+			player_textures: Vec::with_capacity(6),
+			opponent_textures: Vec::with_capacity(6),
 
 			pmove_queued: false,
 			omove_queued: false,
@@ -80,7 +80,7 @@ impl Battle {
 		
 		let mut player_active = 0;
 
-		let mut player_party = Vec::new();
+		let mut player_party = Vec::with_capacity(6);
 
 		for pokemon in &player_pokemon.pokemon {
 			if let Some(hp) = pokemon.current_hp {
@@ -95,7 +95,7 @@ impl Battle {
 			}
 		}
 
-		let mut opponent_party = Vec::new();
+		let mut opponent_party = Vec::with_capacity(6);
 
 		for pokemon in &opponent_pokemon.pokemon {
 			if let Some(battle_pokemon) = BattlePokemon::new(pokemon) {

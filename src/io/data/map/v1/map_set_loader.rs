@@ -11,7 +11,7 @@ pub fn new_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, config
     
     macroquad::prelude::debug!("Loading map set {}", &config.identifier.name);
 
-    let mut maps: Vec<WorldMap> = Vec::new();
+    let mut maps: Vec<WorldMap> = Vec::with_capacity(config.identifier.map_files.len());
 
     for index in 0..config.identifier.map_files.len() {
 

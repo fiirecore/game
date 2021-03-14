@@ -10,14 +10,14 @@
         ),
         direction: Down
     ),
-    message_set: (
+    message: Some((
         messages: [(
             message: [
                 "If a POKEMON BOX on the PC gets",
                 "full, just switch to another BOX."
             ]
         )]
-    ),
+    )),
     trainer: Some(Trainer(
         trainer_type: BugCatcher,
         tracking_length: Some(2),

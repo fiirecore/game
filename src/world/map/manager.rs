@@ -248,20 +248,20 @@ impl WorldManager {
             }
     
             if self.player.position.local.offset.x == 0.0 && self.player.position.local.offset.y == 0.0 && !self.player.frozen {
-                self.player.moving = true;
+                self.player.properties.moving = true;
 
                 if input::down(Control::B) {
-                    if !self.player.running {
-                        self.player.running = true;
-                        self.player.speed = if self.player.noclip {
+                    if !self.player.properties.running {
+                        self.player.properties.running = true;
+                        self.player.properties.speed = if self.player.noclip {
                             RUN_SPEED << 1
                         } else {
                             RUN_SPEED
-                        };
+                        } as f32;
                     }
-                } else if self.player.running {
-                    self.player.running = false;
-                    self.player.speed = BASE_SPEED;
+                } else if self.player.properties.running {
+                    self.player.properties.running = false;
+                    self.player.properties.speed = BASE_SPEED as f32;
                 }
 
                 if !input::down(crate::util::keybind(self.player.position.local.direction)) {
@@ -275,7 +275,7 @@ impl WorldManager {
                 } else if input::down(crate::util::keybind(self.player.position.local.direction)) {
                     self.move_direction(self.player.position.local.direction, delta);
                 } else {
-                    self.player.moving = false;
+                    self.player.properties.moving = false;
                 }
 
             }
@@ -349,23 +349,23 @@ impl WorldManager {
             false
         };
         if test_move_code(move_code, jump || self.player.noclip) {
-            let mult = (self.player.speed as f32) * 60.0 * delta;
+            let mult = (self.player.properties.speed as f32) * 60.0 * delta;
             self.player.position.local.offset.x = offset.0 as f32 * mult;
             self.player.position.local.offset.y = offset.1 as f32 * mult;
         }
     }
 
     fn stop_player(&mut self) {
-        //self.player.moving = false;
+        //self.player.properties.moving = false;
         // self.player.on_stopped_moving();
         let coords = &self.player.position.local.coords;
         if self.noclip_toggle {
             self.noclip_toggle = false;
             self.player.noclip = !self.player.noclip;
             if self.player.noclip {
-                self.player.speed *= 4;
+                self.player.properties.speed *= 4.0;
             } else {
-                self.player.speed /= 4;
+                self.player.properties.speed /= 4.0;
             }
             info!("No clip toggled!");
         }

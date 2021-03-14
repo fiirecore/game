@@ -54,7 +54,7 @@ impl FightPanel {
             cursor_y: 0,
             next: 0,
 
-            move_names: Vec::new(),
+            move_names: Vec::with_capacity(4),
 
         }
 

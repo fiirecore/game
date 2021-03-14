@@ -46,10 +46,10 @@ pub fn get_gba_map(file: Cow<[u8]>) -> GbaMap  {
 		
 	}
 	
-	let mut tile_map: Vec<u16> = Vec::new();
-	let mut movement_map: Vec<u8> = Vec::new();
-	
 	let size = width as usize * height as usize;
+	
+	let mut tile_map: Vec<u16> = Vec::with_capacity(size);
+	let mut movement_map: Vec<u8> = Vec::with_capacity(size);
 	
 	for x in 0..size {
 		
@@ -135,66 +135,67 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &HashMap<u8, u16>) -> u16 { /
 
 // Map conversion utility
 
-pub async fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> HashMap<u8, u16> {
-	let mut sizes: HashMap<u8, u16> = HashMap::new();
+// #[deprecated(note = "fix")]
+// pub async fn fill_palette_map(bottom_sheets: &mut HashMap<u8, Image>/*, top_sheets: &mut HashMap<u8, RgbaImage>*/) -> HashMap<u8, u16> {
+// 	let mut sizes: HashMap<u8, u16> = HashMap::new();
 
-	for index in 0..45u8 {
-		let filename = format!("Palette{}B.png", index);
-		let filepath = format!("assets/world/textures/tiles/{}", &filename);
-		match macroquad::prelude::load_file(&filepath).await {
-			Ok(bytes) => {
-				match crate::util::image::byte_image(&bytes) {
-					Ok(img) => {
-						sizes.insert(index, ((img.width() >> 4) * (img.height() >> 4)) as u16);
-						bottom_sheets.insert(index, img);
-					}
-					Err(err) => {
-						warn!("Could not parse image of sprite palette #{} with error {}", index, err);
-					}
-				}
-			}
-			Err(err) => {
-				warn!("Could not find palette sheet #{} with error {}", index, err);
-				break;
-			}
-		}
-	}
+// 	for index in 0..45u8 {
+// 		let filename = format!("Palette{}B.png", index);
+// 		let filepath = format!("assets/world/textures/tiles/{}", &filename);
+// 		match macroquad::prelude::load_file(&filepath).await {
+// 			Ok(bytes) => {
+// 				match crate::util::image::byte_image(&bytes) {
+// 					Ok(img) => {
+// 						sizes.insert(index, ((img.width() >> 4) * (img.height() >> 4)) as u16);
+// 						bottom_sheets.insert(index, img);
+// 					}
+// 					Err(err) => {
+// 						warn!("Could not parse image of sprite palette #{} with error {}", index, err);
+// 					}
+// 				}
+// 			}
+// 			Err(err) => {
+// 				warn!("Could not find palette sheet #{} with error {}", index, err);
+// 				break;
+// 			}
+// 		}
+// 	}
 
-	// for filepath in crate::io::get_dir("world/textures/tiles") {
-	// 	match crate::io::get_file(&filepath) {
-	// 	    Some(file) => {
-	// 			let filename = filepath.file_name().unwrap().to_string_lossy();
-	// 			if filename.starts_with("P") {
-	// 				if filename.ends_with("B.png") {
-	// 					match filename[7..filename.len()-5].parse::<u8>() {
-	// 						Ok(index) => {
-	// 							match crate::util::image::byte_image(&file) {
-	// 								Ok(img) => {
-	// 									sizes.insert(index, ((img.width() >> 4) * (img.height() >> 4)) as u16);
-	// 									bottom_sheets.insert(index, img);
-	// 								}
-	// 								Err(err) => {
-	// 									warn!("Could not parse image of sprite palette #{} with error {}", index, err);
-	// 								}
-	// 							}
+// 	// for filepath in crate::io::get_dir("world/textures/tiles") {
+// 	// 	match crate::io::get_file(&filepath) {
+// 	// 	    Some(file) => {
+// 	// 			let filename = filepath.file_name().unwrap().to_string_lossy();
+// 	// 			if filename.starts_with("P") {
+// 	// 				if filename.ends_with("B.png") {
+// 	// 					match filename[7..filename.len()-5].parse::<u8>() {
+// 	// 						Ok(index) => {
+// 	// 							match crate::util::image::byte_image(&file) {
+// 	// 								Ok(img) => {
+// 	// 									sizes.insert(index, ((img.width() >> 4) * (img.height() >> 4)) as u16);
+// 	// 									bottom_sheets.insert(index, img);
+// 	// 								}
+// 	// 								Err(err) => {
+// 	// 									warn!("Could not parse image of sprite palette #{} with error {}", index, err);
+// 	// 								}
+// 	// 							}
 								
-	// 						}
-	// 						Err(err) => {
-	// 							warn!("Could not parse tile palette named {} with error {}", filename, err);
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	    None => {
-	// 			warn!("Could not get palette sheet at {:?}", &filepath);
-	// 		}
-	// 	}
+// 	// 						}
+// 	// 						Err(err) => {
+// 	// 							warn!("Could not parse tile palette named {} with error {}", filename, err);
+// 	// 						}
+// 	// 					}
+// 	// 				}
+// 	// 			}
+// 	// 		}
+// 	// 	    None => {
+// 	// 			warn!("Could not get palette sheet at {:?}", &filepath);
+// 	// 		}
+// 	// 	}
 		
-	// }
+// 	// }
 
-	sizes
-}
+// 	sizes
+// }
 
 pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>, tile_id: u16) -> Texture {
 	
