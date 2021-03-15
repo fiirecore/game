@@ -523,7 +523,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.0.1-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#c8a2d14e65f87f770ae0162ec1897d930dfe07f6"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#899a9492e714eca7b1816513dc159c897a9232b5"
 dependencies = [
  "dashmap",
  "firecore-util",
@@ -605,7 +605,7 @@ dependencies = [
 [[package]]
 name = "firecore-util"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#0478d234a81e6f5f2289f2ab26712d10fdf3ff92"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#2d74bd119750795231f89aa8e6b1c9c1ac31b3d3"
 dependencies = [
  "glam",
  "serde",
@@ -614,7 +614,7 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#47c5711342099ce7d511c0b8bc182c1c66581c03"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#b230e3ff75e3229effe9ee5718928799c5c25f63"
 dependencies = [
  "ahash 0.7.2",
  "firecore-pokedex",
@@ -2080,7 +2080,7 @@ dependencies = [
 [[package]]
 name = "world-builder"
 version = "0.2.0"
-source = "git+https://github.com/DoNotDoughnut/world-builder#6d06e53f35ed580ba815eb24ac68ff25e55f8f67"
+source = "git+https://github.com/DoNotDoughnut/world-builder#1534876e3d9a456361b5ff365afab743e7159224"
 dependencies = [
  "ahash 0.7.2",
  "bincode",

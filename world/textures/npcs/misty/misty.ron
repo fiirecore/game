@@ -1,0 +1,9 @@
+(
+    identifier: "Gym Leader",
+    trainer: Some(
+        (
+            battle_type: GymLeader,
+            encounter_music: Fuchsia, // fix
+        )
+    )
+)

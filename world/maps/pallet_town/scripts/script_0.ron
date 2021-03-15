@@ -1,24 +1,22 @@
 (
-    identifier: "oak_catch_player",
-    condition: (
-        location: (
-            min: (
-                x: 12,
-                y: 1
-            ),
-            max: (
-                x: 13,
-                y: 1
-            )
+    // identifier: "oak_catch_player",
+    location: Some((
+        min: (
+            x: 12,
+            y: 1
         ),
-        event: Some(
-            WorldEvent(
-                id: "oak_catch_player",
-                happened: false,
-                activate: true,
-            )
-        ),
-    ),
+        max: (
+            x: 13,
+            y: 1
+        )
+    )),
+    conditions: [
+        WorldEvent(
+            id: "oak_catch_player",
+            happened: false,
+            activate: true,
+        )
+    ],
     actions: [
         PlayerFreeze,
         NPCSpawn(
@@ -39,7 +37,7 @@
         ),
         PlayMusic(Oak),
         DisplayText(
-            message_set: (
+            (
                 messages: [(
                     message: [
                         "OAK: Hey! Wait!",
@@ -50,36 +48,44 @@
             )
         ),
         NPCMove(
-            id: 0,
-            pos: (
-                x: 10,
-                y: 6,
+            0,
+            (
+                coords: (
+                    x: 10,
+                    y: 6,
+                ),
             ),
         ),
         NPCMove(
-            id: 0,
-            pos: (
-                x: 11,
-                y: 6,
+            0,
+            (
+                coords: (
+                    x: 11,
+                    y: 6,
+                ),
             ),
         ),
         NPCMove(
-            id: 0,
-            pos: (
-                x: 11,
-                y: 4,
+            0,
+            (
+                coords: (
+                    x: 11,
+                    y: 4,
+                ),
             ),
         ),
         NPCMove(
-            id: 0,
-            pos: (
-                x: 12,
-                y: 4,
+            0,
+            (
+                coords: (
+                    x: 12,
+                    y: 4,
+                ),
             ),
         ),
         NPCMoveToPlayer(0),
         DisplayText(
-            message_set: (
+            (
                 messages: [
                     (
                         message: [
@@ -106,38 +112,48 @@
             )
         ),
         NPCLeadPlayer(
-            id: 0,
-            pos: (
-                x: 12,
-                y: 3,
+            0,
+            (
+                coords: (
+                    x: 12,
+                    y: 3,
+                ),
             )
         ),
         NPCLeadPlayer(
-            id: 0,
-            pos: (
-                x: 11,
-                y: 3,
+            0,
+            (
+                coords: (
+                    x: 11,
+                    y: 3,
+                ),
             )
         ),
         NPCLeadPlayer(
-            id: 0,
-            pos: (
-                x: 11,
-                y: 14,
+            0,
+            (
+                coords: (
+                    x: 11,
+                    y: 14,
+                ),
             )
         ),
         NPCLeadPlayer(
-            id: 0,
-            pos: (
-                x: 16,
-                y: 14,
+            0,
+            (
+                coords: (
+                    x: 16,
+                    y: 14,
+                ),
             )
         ),
         NPCLeadPlayer(
-            id: 0,
-            pos: (
-                x: 16,
-                y: 13,
+            0,
+            (
+                coords: (
+                    x: 16,
+                    y: 13,
+                ),
             )
         ),
         NPCDespawn(0),

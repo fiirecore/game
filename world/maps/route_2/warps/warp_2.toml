@@ -8,7 +8,7 @@ y = 0x0B
 
 [destination]
 world_id = "firered"
-#map_id = "digletts_cave"
+map_id = "digletts_cave"
 map_index = 0
 x = 0x4
 y = 0x6

@@ -5,10 +5,8 @@ use firecore_util::Entity;
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
-//use crate::battle::transitions::screen_transitions::vertical_close_battle_screen_transition::VerticalCloseBattleScreenTransition;
 use crate::util::{Reset, Completable};
-// use crate::battle::battle_info::BattleType;
-use firecore_world::{BattleType, BattleScreenTransitions};
+use firecore_world::battle::{BattleType, BattleScreenTransitions};
 
 pub struct BattleScreenTransitionManager {
 

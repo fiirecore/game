@@ -7,7 +7,7 @@ use firecore_util::Entity;
 use crate::gui::Focus;
 use firecore_util::text::TextColor;
 use crate::util::Input;
-use firecore_world::character::npc::trainer::TrainerData;
+use crate::util::battle_data::TrainerData;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;

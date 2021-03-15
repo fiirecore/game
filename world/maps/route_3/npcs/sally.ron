@@ -11,9 +11,7 @@
         direction: Left,
     ),
     trainer: Some((
-        trainer_type: Lass,
         tracking_length: Some(5),
-        encounter_music: Some(EncounterGirl),
         message_color: Red,
         encounter_message: [
             [

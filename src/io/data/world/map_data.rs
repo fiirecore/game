@@ -14,10 +14,10 @@ impl MapData {
 
     pub fn battle(&mut self, npc: &NPC) {
         if !self.battled.contains(&npc.identifier.name) {
-            if let Some(trainer) = npc.trainer.as_ref() {
-                crate::util::battle_data::trainer_battle(&trainer, &npc.identifier.name, &npc.identifier.npc_type);
+            if npc.trainer.is_some() {
+                crate::util::battle_data::trainer_battle(&npc);
                 self.battled.insert(npc.identifier.name.clone());
-                for name in &trainer.disable_others {
+                for name in &npc.trainer.as_ref().unwrap().disable_others {
                     self.battled.insert(name.clone());
                 }
             }

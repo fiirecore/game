@@ -1,4 +1,4 @@
-use firecore_world::character::npc::trainer::TrainerData;
+use crate::util::battle_data::TrainerData;
 use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::battle::battle_gui::BattleGui;

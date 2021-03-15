@@ -1,13 +1,11 @@
-use firecore_world::character::npc::trainer::Trainer;
+use firecore_world::character::npc::NPC;
+use firecore_world::character::npc::NPCType;
 use macroquad::rand::gen_range;
 use parking_lot::Mutex;
-use firecore_world::{BattleType, BattleScreenTransitions};
 use firecore_pokedex::PokemonId;
 use firecore_pokedex::pokemon::data::StatSet;
 use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_world::wild::table::WildPokemonTable;
-use firecore_world::character::npc::trainer::TrainerData;
-use firecore_world::BattleData;
 
 lazy_static::lazy_static! {
 	pub static ref BATTLE_DATA: Mutex<Option<BattleData>> = Mutex::new(None);
@@ -18,9 +16,23 @@ lazy_static::lazy_static! {
 //     pub data: Option<BattleData>
 // }
 
+#[derive(Default)]
+pub struct BattleData {
+
+    pub party: PokemonParty,
+    pub trainer_data: Option<TrainerData>,
+
+}
+
+pub struct TrainerData {
+
+    pub npc_name: String,
+    pub npc_data: dashmap::mapref::one::Ref<'static, String, NPCType>,
+
+}
+
 pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
-        battle_type: BattleType::Wild,
         party: PokemonParty {
             pokemon: smallvec::smallvec![firecore_pokedex::pokemon::instance::PokemonInstance::generate(gen_range(0, firecore_pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
         },
@@ -30,7 +42,6 @@ pub fn random_wild_battle() {
 
 pub fn wild_battle(table: &WildPokemonTable) {
     *BATTLE_DATA.lock() = Some(BattleData {
-        battle_type: BattleType::Wild,
         party: PokemonParty {
             pokemon: smallvec::smallvec![table.generate()],
         },
@@ -38,15 +49,15 @@ pub fn wild_battle(table: &WildPokemonTable) {
     });
 }
 
-pub fn trainer_battle(trainer: &Trainer, name: &str, npc_type: &String) {
-    macroquad::prelude::info!("Trainer battle with {}", name);
-    *BATTLE_DATA.lock() = Some(BattleData {
-        battle_type: trainer.trainer_type.battle_type(),
-        party: trainer.party.clone(),
-        trainer_data: Some(TrainerData {
-            name: trainer.trainer_type.to_string().to_string() + " " + name,
-            npc_type: npc_type.clone(),
-            transition: trainer.battle_transition.unwrap_or(BattleScreenTransitions::Trainer),        
-        }),
-    });     
+pub fn trainer_battle(npc: &NPC) {
+    if let Some(trainer) = npc.trainer.as_ref() {
+        *BATTLE_DATA.lock() = Some( BattleData {
+            party: trainer.party.clone(),
+            trainer_data: Some(TrainerData {
+                npc_name: npc.identifier.name.clone(),
+                npc_data: crate::world::npc::NPC_TYPES.get(&npc.identifier.npc_type).unwrap(),
+            })
+        });
+        macroquad::prelude::info!("Trainer battle with {}", npc.identifier.name);
+    }
 }

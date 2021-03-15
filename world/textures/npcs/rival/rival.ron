@@ -1,0 +1,9 @@
+(
+    identifier: "Rival",
+    trainer: Some(
+        (
+            battle_type: Trainer,
+            encounter_music: EncounterRival,
+        )
+    )
+)

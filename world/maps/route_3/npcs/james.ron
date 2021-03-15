@@ -11,9 +11,7 @@
         direction: Right,
     ),
     trainer: Some((
-        trainer_type: BugCatcher,
         tracking_length: Some(4),
-        encounter_music: Some(EncounterBoy),
         encounter_message: [
             [
                 "I'll battle you with the POKEMON",

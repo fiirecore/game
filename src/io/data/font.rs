@@ -10,8 +10,8 @@ use crate::util::graphics::texture::image_texture;
 pub async fn open_sheets() {
 
     let font_sheets: firecore_font_lib::SerializedFonts = bincode::deserialize(
-        // &macroquad::prelude::load_file("assets/fonts.bin").await.unwrap()
-        include_bytes!("../../../assets/fonts.bin")
+        &macroquad::prelude::load_file("assets/fonts.bin").await.unwrap()
+        // include_bytes!("../../../assets/fonts.bin")
     ).unwrap();
 
     for font_sheet in font_sheets.fonts {

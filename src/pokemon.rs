@@ -22,8 +22,8 @@ lazy_static::lazy_static! {
 pub async fn load() {
 
 	let dex: firecore_pokedex::serialized::SerializedDex = bincode::deserialize(
-		// &macroquad::prelude::load_file("assets/dex.bin").await.unwrap()
-		include_bytes!("../assets/dex.bin")
+		&macroquad::prelude::load_file("assets/dex.bin").await.unwrap()
+		// include_bytes!("../assets/dex.bin")
 	).unwrap();
 
 	// load_pokedex_v2();

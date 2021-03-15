@@ -10,7 +10,7 @@ use firecore_util::Entity;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::util::graphics::draw_bottom;
-use firecore_world::BattleType;
+use firecore_world::battle::BattleType;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 

@@ -12,9 +12,7 @@
     ),
     movement: WalkUpDown,
     trainer: Some((
-        trainer_type: Lass,
         tracking_length: Some(2),
-        encounter_music: Some(EncounterGirl),
         message_color: Red,
         encounter_message: [
             [

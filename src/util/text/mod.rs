@@ -1,4 +1,5 @@
 use dashmap::DashMap;
+use firecore_util::text::MessageSet;
 use macroquad::prelude::Color;
 
 use crate::util::graphics::Texture;
@@ -16,6 +17,31 @@ lazy_static::lazy_static! {
 
 pub async fn load() {
     crate::io::data::font::open_sheets().await;
+}
+
+pub fn process_message_set(message_set: &mut MessageSet) {
+    for message in &mut message_set.messages {
+        for message in &mut message.message {
+            *message = message
+                .replace("%r", &rival_name())
+                .replace("%p", &player_name())
+                
+            ;
+        }
+    }
+}
+
+pub fn player_name() -> String {
+    if let Some(player_data) = crate::io::data::player::PLAYER_DATA.try_read() {
+        if let Some(player_data) = player_data.as_ref() {
+            return player_data.name.clone();
+        }
+    }
+    crate::io::data::player::default_name()
+}
+
+pub fn rival_name() -> &'static str {
+    "Gary"
 }
 
 pub struct TextRenderer {

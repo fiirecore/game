@@ -90,7 +90,7 @@ impl PlayerData {
 impl Default for PlayerData {
     fn default() -> Self {
 		Self {
-			name: "Red".to_string(),
+			name: default_name(),
 			party: PokemonParty::default(),
 			location: player_location(),
 		    worth: 0,
@@ -99,6 +99,10 @@ impl Default for PlayerData {
 		}
 	}
 
+}
+
+pub fn default_name() -> String {
+	"Red".to_string()
 }
 
 fn player_location() -> Location {

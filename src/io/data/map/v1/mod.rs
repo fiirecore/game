@@ -8,7 +8,7 @@ use macroquad::prelude::info;
 use macroquad::prelude::warn;
 use ahash::AHashMap as HashMap;
 
-use firecore_world::script::WorldScript;
+use firecore_world::script::world::WorldScript;
 use crate::io::get_dir;
 use crate::io::get_file_as_string;
 use firecore_world::map::WorldMap;

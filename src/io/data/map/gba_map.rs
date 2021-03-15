@@ -156,8 +156,8 @@ pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>
 			crate::util::graphics::texture::image_texture(
 				&sheet.sub_image(
 					macroquad::prelude::Rect::new(
-						(id % (sheet.width() / TILE_SIZE as usize)) as f32, 
-						(id / (sheet.width() / TILE_SIZE as usize)) as f32,
+						((id % (sheet.width() / TILE_SIZE as usize)) * TILE_SIZE as usize) as f32, 
+						((id / (sheet.width() / TILE_SIZE as usize)) * TILE_SIZE as usize) as f32,
 						TILE_SIZE as f32,
 						TILE_SIZE as f32,
 					)

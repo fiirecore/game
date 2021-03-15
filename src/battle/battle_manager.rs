@@ -1,6 +1,7 @@
+use firecore_world::battle::BattleType;
 use macroquad::prelude::info;
 use crate::util::Reset;
-use firecore_world::BattleData;
+use crate::util::battle_data::BattleData;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::util::Completable;
 use crate::io::data::player::PlayerData;
@@ -17,6 +18,7 @@ pub struct BattleManager {
 	
 	pub current_battle: Battle,
 	pub battle_data: BattleData,
+	battle_type: BattleType,
 	
 	battle_screen_transition_manager: BattleScreenTransitionManager,
 	battle_opener_manager: BattleOpenerManager,
@@ -40,6 +42,7 @@ impl BattleManager {
 		
 			current_battle: Battle::default(),
 			battle_data: BattleData::default(),
+			battle_type: BattleType::default(),
 
 			battle_gui: BattleGui::new(),
 
@@ -81,13 +84,14 @@ impl BattleManager {
 		// info!("Attemping to create battle!");
 		self.finished = false;
 		self.battle_data = battle_data;
+		self.battle_type = self.battle_data.trainer_data.as_ref().map(|data| data.npc_data.trainer.as_ref().unwrap().battle_type).unwrap_or_default();
 		self.create_battle(player_data);
 		self.reset();
-		self.battle_screen_transition_manager.set_type(self.battle_data.battle_type);
+		self.battle_screen_transition_manager.set_type(self.battle_type);
 	}
 
 	pub fn create_battle(&mut self, player_data: &PlayerData) {
-		let battle = Battle::new(self.battle_data.battle_type, &player_data.party, &self.battle_data.party);
+		let battle = Battle::new(self.battle_type, &player_data.party, &self.battle_data.party);
 		if let Some(battle) = battle {
 			info!("Loading Battle: {}", battle);
 			self.current_battle = battle;
@@ -103,7 +107,7 @@ impl BattleManager {
 		if self.battle_screen_transition_manager.is_alive() {
 			if self.battle_screen_transition_manager.is_finished() {
 				self.battle_screen_transition_manager.despawn();
-				self.battle_opener_manager.spawn_type(self.battle_data.battle_type);
+				self.battle_opener_manager.spawn_type(self.battle_type);
 				self.battle_opener_manager.on_start();
 				self.battle_opener_manager.battle_introduction_manager.setup_text(&self.current_battle, self.battle_data.trainer_data.as_ref());
 			} else {

@@ -11,9 +11,7 @@
         direction: Down
     ),
     trainer: Some((
-        trainer_type: Youngster,
         tracking_length: Some(2),
-        encounter_music: Some(EncounterBoy),
         encounter_message: [
             [
                 "Hi!",

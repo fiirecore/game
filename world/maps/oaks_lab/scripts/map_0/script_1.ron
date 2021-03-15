@@ -1,0 +1,66 @@
+(
+    identifier: "gary_fight_1",
+    location: Some(
+        (
+            min: (
+                x: 5,
+                y: 8,
+            ),
+            max: (
+                x: 7,
+                y: 8,
+            ),
+        )
+    ),
+    conditions: [
+        WorldEvent(
+            id: "oak_introduce_pokemon",
+            happened: true,
+            activate: false,
+        ),
+        WorldEvent(
+            id: "gary_fight_1",
+            happened: false,
+            activate: true,
+        ),
+        PlayerPokemonAny([1, 4, 7])
+    ],
+    actions: [
+        PlayerFreeze,
+        PlayMusic(EncounterRival),
+        // Wait(0.5),
+        DisplayText(
+            (
+                messages: [
+                    (
+                        message: [
+                            "%r: Wait, %p!",
+                            "Let's check out our POKEMON!"
+                        ],
+                        color: Blue,
+                    ),
+                    (
+                        message: [
+                            "Come on, I'll take you on!"
+                        ],
+                        color: Blue,
+                    )
+                ]
+            )
+        ),
+        NPCMoveToPlayer(1),
+        NPCBattle(1),
+        NPCMove(
+            1,
+            (
+                coords: (
+                    x: 6,
+                    y: 12,
+                )
+            )
+        ),
+        NPCDespawn(1),
+        PlayMapMusic,
+        PlayerUnfreeze,
+    ]
+)

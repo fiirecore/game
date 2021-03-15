@@ -1,5 +1,5 @@
 use crate::battle::transitions::introductions::trainer_battle_introduction::TrainerBattleIntroduction;
-use firecore_world::character::npc::trainer::TrainerData;
+use crate::util::battle_data::TrainerData;
 use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;

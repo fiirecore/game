@@ -2,7 +2,7 @@ use firecore_audio::play_music;
 use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use firecore_world::World;
-use firecore_world::script::WorldActionKind;
+use firecore_world::script::world::WorldActionKind;
 use firecore_world::test_move_code;
 use firecore_world::warp::WarpDestination;
 use macroquad::prelude::KeyCode;

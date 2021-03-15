@@ -11,9 +11,7 @@
         direction: Left
     ),
     trainer: Some((
-        trainer_type: Youngster,
         tracking_length: Some(5),
-        encounter_music: Some(EncounterBoy),
         encounter_message: [
             [
                 "Hey! You're not wearing shorts!",
