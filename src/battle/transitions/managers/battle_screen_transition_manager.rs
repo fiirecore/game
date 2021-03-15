@@ -1,5 +1,3 @@
-use firecore_util::music::Music;
-use firecore_audio::play_music;
 use crate::battle::transitions::BattleTransition;
 use firecore_util::Entity;
 use crate::battle::transitions::BattleScreenTransition;
@@ -7,6 +5,7 @@ use crate::battle::transitions::screen_transitions::flash_battle_screen_transiti
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
 use crate::util::{Reset, Completable};
 use firecore_world::battle::{BattleType, BattleScreenTransitions};
+use firecore_audio::play_music_named as play_music;
 
 pub struct BattleScreenTransitionManager {
 
@@ -31,13 +30,13 @@ impl BattleScreenTransitionManager {
     pub fn set_type(&mut self, battle_type: BattleType) {
         match battle_type {
             BattleType::Wild => {
-                play_music(Music::BattleWild);
+                play_music("BattleWild");
             }
             BattleType::Trainer => {
-                play_music(Music::BattleTrainer);
+                play_music("BattleTrainer");
             }
             BattleType::GymLeader => {
-                play_music(Music::BattleGym);
+                play_music("BattleGym");
             }
         }
     }

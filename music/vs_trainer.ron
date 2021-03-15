@@ -1,0 +1,10 @@
+(
+    file: "music/files/vs_trainer.ogg",
+    data: (
+        track: 0x29,
+        name: "BattleTrainer",
+        data: (
+            loop_start: None,
+        )
+    )
+)

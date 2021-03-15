@@ -27,7 +27,7 @@
     ],
     actions: [
         PlayerFreeze,
-        PlayMusic(EncounterRival),
+        PlayMusic("EncounterRival"),
         // Wait(0.5),
         DisplayText(
             (

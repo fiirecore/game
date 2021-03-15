@@ -3,7 +3,7 @@
     trainer: Some(
         (
             battle_type: GymLeader,
-            encounter_music: Fuchsia, // fix
+            encounter_music: "Fuchsia", // fix
         )
     )
 )

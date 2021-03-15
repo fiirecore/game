@@ -1,0 +1,10 @@
+(
+    file: "music/files/title.ogg",
+    data: (
+        track: 0x16,
+        name: "Title",
+        data: (
+            loop_start: None,
+        )
+    )
+)

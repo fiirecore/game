@@ -1,0 +1,10 @@
+(
+    file: "music/files/lavender.ogg",
+    data: (
+        track: 0x18,
+        name: "Lavender",
+        data: (
+            loop_start: None,
+        )
+    )
+)

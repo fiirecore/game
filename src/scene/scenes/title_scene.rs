@@ -1,10 +1,9 @@
-use firecore_audio::play_music;
+use firecore_audio::play_music_named;
 use firecore_input as input;
 use crate::util::graphics::Texture;
 use crate::scene::Scene;
 use crate::util::graphics::texture::byte_texture;
 use crate::util::graphics::draw;
-use firecore_util::music::Music::Title;
 
 use super::SceneState;
 
@@ -50,7 +49,7 @@ impl Scene for TitleScene {
 
 	async fn on_start(&mut self) {
 		self.state = SceneState::Continue;
-		play_music(Title);
+		play_music_named("Title");
 		self.accumulator = 0.0;
 	}
 	 

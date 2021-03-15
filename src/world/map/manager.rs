@@ -1,4 +1,4 @@
-use firecore_audio::play_music;
+use firecore_audio::play_music_id;
 use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use firecore_world::World;
@@ -9,7 +9,6 @@ use macroquad::prelude::KeyCode;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
-use firecore_util::music::Music;
 use firecore_input::{self as input, Control};
 use firecore_util::Entity;
 use firecore_util::Direction;
@@ -40,7 +39,7 @@ pub struct WorldManager {
     tile_textures: TileTextures,
     npc_textures: NpcTextures,
 
-    current_music: Music,
+    current_music: u8,
 
     pub player: Player,
 
@@ -66,7 +65,7 @@ impl WorldManager {
             map_sets: WorldMapSetManager::default(),
             chunk_active: true,
             player: Player::default(),
-            current_music: Music::default(),
+            current_music: 0,
             player_gui: PlayerWorldGui::new(),
             window_manager: MapWindowManager::default(),
             tile_textures: TileTextures::new(),
@@ -98,17 +97,17 @@ impl WorldManager {
         let music = self.get_map_music();
         if music != self.current_music {
             self.current_music = music;  
-            play_music(self.current_music);
+            play_music_id(self.current_music);
         }
-        if let Some(playing_music) = firecore_audio::get_music_playing() {
+        if let Some(playing_music) = firecore_audio::get_current_music() {
             if music != playing_music {
                 self.current_music = music;  
-                play_music(self.current_music);
+                play_music_id(self.current_music);
             }
         }
     }
 
-    fn get_map_music(&self) -> Music {
+    fn get_map_music(&self) -> u8 {
         if self.chunk_active {
             self.chunk_map.current_chunk().map.music
         } else {
@@ -216,7 +215,7 @@ impl WorldManager {
         let music = self.chunk_map.current_chunk().map.music;
         if music != self.current_music {
             self.current_music = music;
-            play_music(music);
+            play_music_id(music);
         }
     }
 
@@ -304,7 +303,7 @@ impl WorldManager {
                     let music = self.chunk_map.current_chunk().map.music;
                     if music != self.current_music {
                         self.current_music = music;
-                        play_music(music);
+                        play_music_id(music);
                     }
                 }
                 move_code

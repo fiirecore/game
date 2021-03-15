@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.3.0-beta.3"
+version = "0.3.0-beta.4"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -78,9 +78,10 @@ miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 ### Build dependencies
 
 [build-dependencies]
-firecore-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-builder" }
+font-builder = { git = "https://github.com/DoNotDoughnut/font-builder" }
 world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
+audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder" }
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"

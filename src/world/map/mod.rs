@@ -1,10 +1,11 @@
+use firecore_audio::play_music_named;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::debug;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
 
-use firecore_audio::play_music;
+use firecore_audio::play_music_id;
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
 use firecore_world::World;
@@ -197,15 +198,15 @@ impl GameWorld for WorldMap {
                                 }
                             },
                             WorldActionKind::PlayMusic(music) => {
-                                play_music(*music);
+                                play_music_named(&music);
                                 pop = true;
                             },
                             WorldActionKind::PlayMapMusic => {
-                                play_music(self.music);
+                                play_music_id(self.music);
                                 pop = true;
                             },
                             WorldActionKind::PlaySound(sound) => {
-                                firecore_audio::play_sound(*sound);
+                                // firecore_audio::play_sound(*sound);
                                 pop = true;
                             }
                             WorldActionKind::PlayerFreeze => {
@@ -438,12 +439,12 @@ impl GameWorld for WorldMap {
 
                                 if let Some(npc_type) = super::npc::NPC_TYPES.get(&npc.identifier.npc_type) {
                                     if let Some(trainer) = npc_type.trainer.as_ref() {
-                                        if let Some(playing_music) = firecore_audio::get_music_playing() {
-                                            if playing_music != trainer.encounter_music {
-                                                play_music(trainer.encounter_music);
+                                        if let Some(playing_music) = firecore_audio::get_current_music() {
+                                            if playing_music != firecore_audio::get_music_id(&trainer.encounter_music).unwrap() {
+                                                play_music_named(&trainer.encounter_music);
                                             }
                                         } else {
-                                            play_music(trainer.encounter_music);
+                                            play_music_named(&trainer.encounter_music);
                                         }
                                     }
                                 }

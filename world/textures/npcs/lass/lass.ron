@@ -3,7 +3,7 @@
     trainer: Some(
         (
             battle_type: Trainer,
-            encounter_music: EncounterGirl,
+            encounter_music: "EncounterGirl",
         )
     )
 )

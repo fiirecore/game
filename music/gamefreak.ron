@@ -1,0 +1,10 @@
+(
+    file: "music/files/gamefreak.ogg",
+    data: (
+        track: 65,
+        name: "IntroGamefreak",
+        data: (
+            loop_start: None,
+        )
+    )
+)

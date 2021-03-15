@@ -149,13 +149,13 @@ impl BattleIntroduction for BasicBattleIntroduction {
             if self.intro_text.current_phrase() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
                 battle_gui.opponent_pokemon_gui.reset();
                 battle_gui.opponent_pokemon_gui.spawn();
-                firecore_audio::play_sound(Sound::Cry(self.opponent_id));
+                // firecore_audio::play_sound(Sound::Cry(self.opponent_id));
             }
         }
         if self.player_intro.is_finished() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
-            firecore_audio::play_sound(Sound::Cry(self.player_id));
+            // firecore_audio::play_sound(Sound::Cry(self.player_id));
         }
         if battle_gui.opponent_pokemon_gui.is_alive() {
             if battle_gui.opponent_pokemon_gui.panel.x + 5.0 < battle_gui.opponent_pokemon_gui.orig_x {

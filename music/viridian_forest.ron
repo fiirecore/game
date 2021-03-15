@@ -1,0 +1,10 @@
+(
+    file: "music/files/viridian_forest.ogg",
+    data: (
+        track: 0x1F,
+        name: "ViridianForest",
+        data: (
+            loop_start: None,
+        )
+    )
+)

@@ -1,0 +1,10 @@
+(
+    file: "music/files/pallet.ogg",
+    data: (
+        track: 0x2C,
+        name: "Pallet",
+        data: (
+            loop_start: None,
+        )
+    )
+)

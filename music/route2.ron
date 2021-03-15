@@ -1,0 +1,10 @@
+(
+    file: "music/files/route2.ogg",
+    data: (
+        track: 0x24,
+        name: "Route2",
+        data: (
+            loop_start: None,
+        )
+    )
+)

@@ -1,0 +1,10 @@
+(
+    file: "music/files/vs_gym.ogg",
+    data: (
+        track: 0x2A,
+        name: "BattleGymLeader",
+        data: (
+            loop_start: None,
+        )
+    )
+)

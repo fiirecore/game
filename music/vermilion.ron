@@ -1,0 +1,10 @@
+(
+    file: "music/files/vermilion.ogg",
+    data: (
+        track: 0x39,
+        name: "Vermilion",
+        data: (
+            loop_start: None,
+        )
+    )
+)

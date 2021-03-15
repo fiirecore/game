@@ -116,7 +116,10 @@ async fn macroquad_main() {
 
     info!("Loading assets...");
 
-    firecore_audio::bind_world_music().await;
+    let audio = bincode::deserialize(
+    &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
+    ).unwrap();
+    firecore_audio::load(audio);
     
     pokemon::load().await;
 

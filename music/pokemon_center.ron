@@ -1,0 +1,10 @@
+(
+    file: "music/files/pokemon_center.ogg",
+    data: (
+        track: 0x2F,
+        name: "PokemonCenter",
+        data: (
+            loop_start: None,
+        )
+    )
+)

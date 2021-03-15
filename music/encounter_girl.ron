@@ -1,0 +1,10 @@
+(
+    file: "music/files/encounter_girl.ogg",
+    data: (
+        track: 28,
+        name: "EncounterGirl",
+        data: (
+            loop_start: None,
+        )
+    )
+)
