@@ -1,5 +1,6 @@
 use crate::battle::transitions::BattleTransition;
 use firecore_util::Entity;
+use macroquad::prelude::warn;
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
@@ -28,16 +29,18 @@ impl BattleScreenTransitionManager {
     }
 
     pub fn set_type(&mut self, battle_type: BattleType) {
-        match battle_type {
+        if let Err(err) = match battle_type {
             BattleType::Wild => {
-                play_music("BattleWild");
+                play_music("BattleWild")
             }
             BattleType::Trainer => {
-                play_music("BattleTrainer");
+                play_music("BattleTrainer")
             }
             BattleType::GymLeader => {
-                play_music("BattleGym");
+                play_music("BattleGym")
             }
+        } {
+            warn!("Could not play battle music with error {}", err);
         }
     }
 
@@ -66,7 +69,13 @@ impl BattleTransition for BattleScreenTransitionManager {
 
     fn update(&mut self, delta: f32) {
         if self.is_alive() {
-            self.get_mut().update(delta);
+            self.get_mut().update(delta
+                //  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+                //     8.0
+                // } else {
+                //     1.0
+                // }
+            );
         }        
     }
 

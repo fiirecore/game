@@ -10,7 +10,9 @@
         ),
         direction: Down
     ),
-    movement: WalkUpDown,
+    properties: (
+        movement: WalkUpAndDown(2),
+    ),
     trainer: Some((
         tracking_length: Some(2),
         message_color: Red,

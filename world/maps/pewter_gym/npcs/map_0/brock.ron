@@ -10,37 +10,39 @@
         ),
         direction: Down
     ),
-    message: Some((
-        messages: [
-            (
-                color: Blue,
-                message: [
-                    "There are all kinds of TRAINERS in",
-                    "this huge world of ours."
-                ]
-            ),
-            (
-                color: Blue,
-                message: [
-                    "You appear to be very gifted as a",
-                    "POKEMON TRAINER."
-                ]
-            ),
-            (
-                color: Blue,
-                message: [
-                    "So let me make a suggestion."
-                ]
-            ),
-            (
-                color: Blue,
-                message: [
-                    "Go to the GYM in CERULEAN and test",
-                    "your abilities."
-                ]
-            )
-        ]
-    )),
+    properties: (
+        message: Some((
+            messages: [
+                (
+                    color: Blue,
+                    message: [
+                        "There are all kinds of TRAINERS in",
+                        "this huge world of ours."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "You appear to be very gifted as a",
+                        "POKEMON TRAINER."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "So let me make a suggestion."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "Go to the GYM in CERULEAN and test",
+                        "your abilities."
+                    ]
+                )
+            ]
+        )),
+    ),
     trainer: Some((
         trainer_type: GymLeader,
         encounter_type: Some(Trainer),

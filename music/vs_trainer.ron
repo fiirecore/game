@@ -1,6 +1,6 @@
 (
     file: "music/files/vs_trainer.ogg",
-    data: (
+    music: (
         track: 0x29,
         name: "BattleTrainer",
         data: (

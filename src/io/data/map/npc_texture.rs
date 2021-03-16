@@ -23,7 +23,6 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures, npc_types: Vec<Serializ
                     if let Some(battle_sprite) = npc_type.battle_sprite {
                         match byte_image(&battle_sprite) {
                             Ok(image) => {
-                                crate::world::npc::NPC_TYPES.insert(npc_type.identifier.clone(), npc_type.data);
                                 BATTLE_SPRITES.insert(npc_type.identifier.clone(), image_texture(&image));
                             }
                             Err(err) => {
@@ -31,6 +30,7 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures, npc_types: Vec<Serializ
                             }
                         }
                     }
+                    crate::world::npc::NPC_TYPES.insert(npc_type.identifier.clone(), npc_type.data);
                     npc_textures.insert(npc_type.identifier, texture);
                 // },
                 // None => {

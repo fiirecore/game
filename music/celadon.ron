@@ -1,6 +1,6 @@
 (
     file: "music/files/celadon.ogg",
-    data: (
+    music: (
         track: 0x35,
         name: "Celadon",
         data: (

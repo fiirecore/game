@@ -54,7 +54,13 @@ impl BattleTransition for TrainerBattleOpener {
                 self.offset = 0.0;
                 self.finished = true;
             } else {
-                self.offset -= 120.0 * delta;
+                self.offset -= 120.0 * delta
+                //  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+				// 	8.0
+				// } else {
+				// 	1.0
+				// }
+                ;
             }
             if self.rect_size > 0.0 {
                 if self.rect_size as isize - self.shrink_by as isize > 0 {

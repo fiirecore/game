@@ -1,11 +1,11 @@
-use firecore_audio::play_music_named;
+use crate::audio::{play_music_named, play_music};
+use firecore_world::character::Character;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::debug;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
 use macroquad::prelude::warn;
 
-use firecore_audio::play_music_id;
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
 use firecore_world::World;
@@ -16,7 +16,6 @@ use firecore_world::script::world::WorldActionKind;
 use firecore_world::wild::WildEntry;
 
 use firecore_util::Entity;
-use firecore_util::Direction;
 use firecore_input::{self as input, Control};
 
 use crate::io::data::player::PLAYER_DATA;
@@ -26,7 +25,6 @@ use super::npc::WorldNpc;
 use super::gui::map_window_manager::MapWindowManager;
 use super::NpcTextures;
 use super::TileTextures;
-use super::npc::on_sight;
 use super::player::Player;
 use super::RenderCoords;
 use super::GameWorld;
@@ -39,18 +37,12 @@ pub trait GameWorldMap {
 
     fn tile_row(&self, x: isize, offset: isize) -> u16;
 
-    fn after_interact(&mut self, index: usize);
-
 }
 
 impl GameWorldMap for WorldMap {
 
     fn tile_row(&self, x: isize, offset: isize) -> u16 {
         self.tile_map[x as usize + offset as usize]
-    }
-
-    fn after_interact(&mut self, index: usize) {
-        self.npcs[index].after_interact(&self.name);
     }
 
 }
@@ -72,53 +64,14 @@ impl GameWorld for WorldMap {
             }            
         }
 
-        for npc in self.npcs.iter_mut().enumerate() {
-            let (npc_index, npc) = npc;
-            if let Some(trainer) = &npc.trainer {
+        // look for player
+
+        for (npc_index, npc) in self.npcs.iter_mut().enumerate() {
+            if npc.trainer.is_some() {
                 if let Some(data) = PLAYER_DATA.write().as_mut() {
-                    if !data.world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.name) {
-                        if let Some(tracker) = trainer.tracking_length {
-                            let tracker = tracker as isize;
-                            match npc.position.direction {
-                                Direction::Up => {
-                                    if player.position.local.coords.x == npc.position.coords.x {
-                                        if player.position.local.coords.y < npc.position.coords.y && player.position.local.coords.y >= npc.position.coords.y - tracker {
-                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.coords.x, player.position.local.coords.y);
-                                            self.npc_active = Some(npc_index);
-                                            on_sight(npc, None, player);
-                                            
-                                            //npc.movement.walk_to_player();
-                                        }
-                                    }
-                                }
-                                Direction::Down => {
-                                    if player.position.local.coords.x == npc.position.coords.x {
-                                        if player.position.local.coords.y > npc.position.coords.y && player.position.local.coords.y <= npc.position.coords.y + tracker {
-                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.coords.x, player.position.local.coords.y);
-                                            self.npc_active = Some(npc_index);
-                                            on_sight(npc, None, player);
-                                        }
-                                    }
-                                }
-                                Direction::Left => {
-                                    if player.position.local.coords.y == npc.position.coords.y {
-                                        if player.position.local.coords.x < npc.position.coords.x && player.position.local.coords.x >= npc.position.coords.x - tracker {
-                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.coords.x, player.position.local.coords.y);
-                                            self.npc_active = Some(npc_index);
-                                            on_sight(npc, None, player);
-                                        }
-                                    }
-                                }
-                                Direction::Right => {
-                                    if player.position.local.coords.y == npc.position.coords.y {
-                                        if player.position.local.coords.x > npc.position.coords.x && player.position.local.coords.x <= npc.position.coords.x + tracker {
-                                            // info!("NPC {} Found player at tile {}, {}", npc.identifier.name, player.position.local.coords.x, player.position.local.coords.y);
-                                            self.npc_active = Some(npc_index);
-                                            on_sight(npc, None, player);
-                                        }
-                                    }
-                                }
-                            }
+                    if !data.has_battled(&self.name, &npc.identifier.name) {
+                        if npc.find_player(player.position.local.coords, player) {
+                            self.npc_active = Some(npc_index);
                         }
                     }
                 }
@@ -127,7 +80,7 @@ impl GameWorld for WorldMap {
         if let Some(player_data) = PLAYER_DATA.write().as_mut() {
             for script in self.scripts.iter_mut() {
 
-                if script.location.as_ref().map(|location| location.in_bounds(&player.position.local.coords)).unwrap_or(true) {
+                if script.test_pos(&player.position.local.coords) {
                     let mut run = script.conditions.len() == 0;
                     for condition in &script.conditions {
                         match condition {
@@ -199,14 +152,22 @@ impl GameWorld for WorldMap {
                             },
                             WorldActionKind::PlayMusic(music) => {
                                 play_music_named(&music);
+                                // if let Err(err) = play_music_named(&music) {
+                                //     warn!("Could not play music named {} for script {} with error {}", music, script.identifier, err);
+                                // }
                                 pop = true;
                             },
                             WorldActionKind::PlayMapMusic => {
-                                play_music_id(self.music);
+                                play_music(self.music);
+                                // if let Err(err) = play_music_id(self.music) {
+                                    // warn!("Could not play music id {:x} for script {} with error {}", self.music, script.identifier, err);
+                                // }
                                 pop = true;
                             },
                             WorldActionKind::PlaySound(sound) => {
-                                // firecore_audio::play_sound(*sound);
+                                if let Err(err) = firecore_audio::play_sound(sound.clone()) {
+                                    warn!("Could not play sound {:?} for script {} with error {}", sound, script.identifier, err);
+                                }
                                 pop = true;
                             }
                             WorldActionKind::PlayerFreeze => {
@@ -225,7 +186,7 @@ impl GameWorld for WorldMap {
                             }
                             WorldActionKind::PlayerMove(pos) => {
                                 if player.properties.destination.is_some() {
-                                    if player.should_move_to() {
+                                    if player.should_move_to_destination() {
                                         player.move_to_destination(delta);
                                     } else {
                                         player.properties.destination = None;
@@ -258,11 +219,11 @@ impl GameWorld for WorldMap {
                             }
                             WorldActionKind::NPCMove( id, pos ) => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
-                                    if npc.properties.destination.is_some() {
-                                        if npc.should_move() {
-                                            npc.do_move(delta);
+                                    if npc.properties.character.destination.is_some() {
+                                        if npc.should_move_to_destination() {
+                                            npc.move_to_destination(delta);
                                         } else {
-                                            npc.properties.destination = None;
+                                            npc.properties.character.destination = None;
                                             pop = true;
                                         }
                                     } else {
@@ -275,11 +236,11 @@ impl GameWorld for WorldMap {
                             },
                             WorldActionKind::NPCLeadPlayer( id, pos ) => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
-                                    if npc.properties.destination.is_some() {
-                                        if npc.should_move() {
-                                            npc.do_move(delta);
+                                    if npc.properties.character.destination.is_some() {
+                                        if npc.should_move_to_destination() {
+                                            npc.move_to_destination(delta);
                                         } else {
-                                            npc.properties.destination = None;
+                                            npc.properties.character.destination = None;
                                             if player.properties.destination.is_none() {
                                                 pop = true;
                                             }
@@ -290,11 +251,11 @@ impl GameWorld for WorldMap {
                                         }
                                     }
                                     if player.properties.destination.is_some() {
-                                        if player.should_move_to() {
+                                        if player.should_move_to_destination() {
                                             player.move_to_destination(delta);
                                         } else {
                                             player.properties.destination = None;
-                                            if npc.properties.destination.is_none() {
+                                            if npc.properties.character.destination.is_none() {
                                                 pop = true;
                                             }
                                         }
@@ -310,11 +271,11 @@ impl GameWorld for WorldMap {
                             }
                             WorldActionKind::NPCMoveToPlayer(id) => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
-                                    if npc.properties.destination.is_some() {
-                                        if npc.should_move() {
-                                            npc.do_move(delta);
+                                    if npc.properties.character.destination.is_some() {
+                                        if npc.should_move_to_destination() {
+                                            npc.move_to_destination(delta);
                                         } else {
-                                            npc.properties.destination = None;
+                                            npc.properties.character.destination = None;
                                             pop = true;
                                         }
                                     } else {
@@ -335,13 +296,15 @@ impl GameWorld for WorldMap {
                             WorldActionKind::NPCInteract(id) => {
                                 if let Some(npc) = self.script_npcs.get_mut(id) {
                                     self.npc_active = Some(self.npcs.len() + (*id) as usize);
-                                    on_sight(npc, None, player);
+                                    if npc.interact_from(&player.position.local) {
+
+                                    }
                                 }
                                 pop = true;
                             }
                             WorldActionKind::NPCBattle(id) => {
                                 if let Some(npc) = self.script_npcs.get(id) {
-                                    if let Some(trainer) = npc.trainer.as_ref() {
+                                    if npc.trainer.is_some() {
                                         crate::util::battle_data::trainer_battle(&npc);
                                     }
                                 }
@@ -393,7 +356,7 @@ impl GameWorld for WorldMap {
                 } else {
                     None
                 } {
-                    npc.after_interact(&self.name);
+                    super::npc::try_battle(&self.name, npc);
                 }
                 window_manager.despawn();
             } else {
@@ -409,17 +372,17 @@ impl GameWorld for WorldMap {
             } else {
                 None
             } {
-                if npc.should_move() {
-                    npc.do_move(delta) 
+                if npc.should_move_to_destination() {
+                    npc.move_to_destination(delta) 
                 } else {
-                    warn!("npc has message: {}", npc.message.is_some());
                     window_manager.spawn();
-                    npc.properties.destination = None;
+                    npc.properties.character.destination = None;
 
-                    let hash = window_manager.text_hash();
+                    let mut message_ran = false;
 
-                    if let Some(message_set) = npc.message.as_ref() {
+                    if let Some(message_set) = npc.properties.message.as_ref() {
                         window_manager.set_text(message_set.clone());
+                        message_ran = true;
                     }
                     
                     if let Some(data) = PLAYER_DATA.write().as_mut() {
@@ -434,17 +397,22 @@ impl GameWorld for WorldMap {
                                     trainer.encounter_message.clone()
                                 );
                                 window_manager.set_text(message_set);
+                                message_ran = true;
 
                                 // Play Trainer music
 
                                 if let Some(npc_type) = super::npc::NPC_TYPES.get(&npc.identifier.npc_type) {
                                     if let Some(trainer) = npc_type.trainer.as_ref() {
-                                        if let Some(playing_music) = firecore_audio::get_current_music() {
+                                        if let Err(err) = if let Some(playing_music) = firecore_audio::get_current_music() {
                                             if playing_music != firecore_audio::get_music_id(&trainer.encounter_music).unwrap() {
-                                                play_music_named(&trainer.encounter_music);
+                                                firecore_audio::play_music_named(&trainer.encounter_music)
+                                            } else {
+                                                Ok(())
                                             }
                                         } else {
-                                            play_music_named(&trainer.encounter_music);
+                                            firecore_audio::play_music_named(&trainer.encounter_music)
+                                        } {
+                                            warn!("Could not play music named {} with error {}", self.name, err);
                                         }
                                     }
                                 }
@@ -452,8 +420,9 @@ impl GameWorld for WorldMap {
                         }
                     }
 
-                    if hash == window_manager.text_hash() {
+                    if !message_ran {
                         window_manager.despawn();
+                        self.npc_active = None;
                     }
 
                     player.position.local.direction = npc.position.direction.inverse();
@@ -523,44 +492,13 @@ impl GameWorld for WorldMap {
         if input::pressed(Control::A) {
             let len = self.npcs.len();
             for npc_index in 0..(len + self.script_npcs.len()) {
-                // info!("npc index: {}, len: {}", npc_index, len);
                 let npc = if npc_index < len {
                     self.npcs.get_mut(npc_index)
                 } else {
                     self.script_npcs.values_mut().nth(npc_index - len)
                 }.unwrap();
-                if player.position.local.coords.x == npc.position.coords.x {
-                    match player.position.local.direction {
-                        Direction::Up => {
-                            if player.position.local.coords.y - 1 == npc.position.coords.y {
-                                self.npc_active = Some(npc_index);
-                                on_sight(npc, Some(player.position.local.direction), player);
-                            }
-                        },
-                        Direction::Down => {
-                            if player.position.local.coords.y + 1 == npc.position.coords.y {
-                                self.npc_active = Some(npc_index);
-                                on_sight(npc, Some(player.position.local.direction), player);
-                            }
-                        },
-                        _ => (),
-                    }
-                } else if player.position.local.coords.y == npc.position.coords.y {
-                    match player.position.local.direction {
-                        Direction::Right => {
-                            if player.position.local.coords.x + 1 == npc.position.coords.x {
-                                self.npc_active = Some(npc_index);
-                                on_sight(npc, Some(player.position.local.direction), player);
-                            }
-                        },
-                        Direction::Left => {
-                            if player.position.local.coords.x - 1 == npc.position.coords.x {
-                                self.npc_active = Some(npc_index);
-                                on_sight(npc, Some(player.position.local.direction), player);
-                            }
-                        },
-                        _ => (),
-                    }
+                if npc.interact_from(&player.position.local) {
+                    self.npc_active = Some(npc_index);
                 }
             }
         }

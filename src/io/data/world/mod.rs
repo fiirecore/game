@@ -9,7 +9,7 @@ pub mod map_data;
 pub struct WorldStatus {
 
     // battled trainers, map stops, etc.
-    map_data: HashMap<String, MapData>,
+    pub map_data: HashMap<String, MapData>,
     pub completed_events: HashSet<String>,
 
 }

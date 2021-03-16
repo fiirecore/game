@@ -1,6 +1,6 @@
 (
     file: "music/files/cinnabar.ogg",
-    data: (
+    music: (
         track: 0x17,
         name: "Cinnabar",
         data: (

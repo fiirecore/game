@@ -35,6 +35,8 @@ pub async fn load() {
 		
 		FRONT_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.front_png));
 		BACK_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.back_png));
+		// println!("Adding texture for {}", pokemon.pokemon.data.name);
+		ICON_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.icon_png));
 		
 		firecore_pokedex::POKEDEX.insert(pokemon.pokemon.data.number, pokemon.pokemon);
 	}

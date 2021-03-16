@@ -33,8 +33,13 @@ macroquad = { git = "https://github.com/not-fl3/macroquad" }
 
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
 firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
+
 firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
+#firecore-world = { path = "../firecore/firecore-world" }
+
 firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio" }
+#firecore-audio = { path = "../firecore/firecore-audio" }
+
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
 firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
 firecore-font-lib = { path = "../firecore/firecore-font-lib" }
@@ -79,7 +84,10 @@ miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 
 [build-dependencies]
 font-builder = { git = "https://github.com/DoNotDoughnut/font-builder" }
+
 world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
+#world-builder = { path = "../Subprojects/world-builder" }
+
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
 audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder" }
 

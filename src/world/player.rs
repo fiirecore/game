@@ -1,3 +1,4 @@
+use firecore_world::character::Character;
 use firecore_world::character::CharacterProperties;
 use macroquad::prelude::DrawTextureParams;
 
@@ -100,71 +101,12 @@ impl Player {
 		false
 	}
 
-	pub fn should_move_to(&mut self) -> bool {
-		if let Some(offset) = self.properties.destination.as_ref() {
-            self.position.local.coords != offset.coords
-        } else {
-            false
-        }
-	}
-
-	pub fn move_to_destination(&mut self, delta: f32) {
-		if let Some(offset) = self.properties.destination.as_mut() {
-
-            if self.position.local.coords.y == offset.coords.y {
-                self.position.local.direction = if self.position.local.coords.x < offset.coords.x {
-                    Direction::Right
-                } else {
-                    Direction::Left
-                };
-            } else if self.position.local.coords.x == offset.coords.x {
-                self.position.local.direction = if self.position.local.coords.y < offset.coords.y {
-                    Direction::Down
-                } else {
-                    Direction::Up
-                };
-            }
-
-            let offsets = self.position.local.direction.offset_f32();
-            let offset = 60.0 * self.properties.speed as f32 * delta;
-            self.position.local.offset.x += offsets.x * offset;
-            self.position.local.offset.y += offsets.y * offset;
-
-            if self.position.local.offset.y * offsets.y >= 16.0 {
-                self.position.local.coords.y += offsets.y as isize;
-                self.position.local.offset.y = 0.0;
-				self.change_sprite_index();
-            }
-            
-            if self.position.local.offset.x * offsets.x >= 16.0 {
-                self.position.local.coords.x += offsets.x as isize;
-                self.position.local.offset.x = 0.0;
-				self.change_sprite_index();
-            }
-            
-        }
-	}
-
-	pub fn on_try_move(&mut self, direction: Direction) {
-		self.position.local.direction = direction;
-		self.change_sprite_index();
-	}
-
 	fn change_sprite_index(&mut self) {
 		if self.properties.sprite_index == 0 {
 			self.properties.sprite_index = 2;
 		} else {
 			self.properties.sprite_index = 0;
 		}
-	}
-
-	pub fn freeze(&mut self) {
-		self.frozen = true;
-		self.position.local.offset.x = 0.0;
-		self.position.local.offset.y = 0.0;
-		self.properties.moving = false;
-		self.properties.running = false;
-		self.properties.speed = BASE_SPEED as f32;
 	}
 
 	fn current_texture_pos(&self) -> f32 {
@@ -201,4 +143,65 @@ impl Player {
 		}
 	}
 	
+}
+
+impl Character for Player {
+    fn on_try_move(&mut self, direction: Direction) {
+        self.position.local.direction = direction;
+		self.change_sprite_index();
+    }
+
+    fn freeze(&mut self) {
+		self.frozen = true;
+		self.position.local.offset.x = 0.0;
+		self.position.local.offset.y = 0.0;
+		self.properties.moving = false;
+		self.properties.running = false;
+		self.properties.reset_speed();
+    }
+
+    fn should_move_to_destination(&self) -> bool {
+        if let Some(offset) = self.properties.destination.as_ref() {
+            self.position.local.coords != offset.coords
+        } else {
+            false
+        }
+    }
+
+    fn move_to_destination(&mut self, delta: f32) {
+        if let Some(offset) = self.properties.destination.as_ref() {
+
+            if self.position.local.coords.y == offset.coords.y {
+                self.position.local.direction = if self.position.local.coords.x < offset.coords.x {
+                    Direction::Right
+                } else {
+                    Direction::Left
+                };
+            } else if self.position.local.coords.x == offset.coords.x {
+                self.position.local.direction = if self.position.local.coords.y < offset.coords.y {
+                    Direction::Down
+                } else {
+                    Direction::Up
+                };
+            }
+
+            let offsets = self.position.local.direction.offset_f32();
+            let offset = 60.0 * self.properties.speed as f32 * delta;
+            self.position.local.offset.x += offsets.x * offset;
+            self.position.local.offset.y += offsets.y * offset;
+
+            if self.position.local.offset.y * offsets.y >= 16.0 {
+                self.position.local.coords.y += offsets.y as isize;
+                self.position.local.offset.y = 0.0;
+				self.change_sprite_index();
+            }
+            
+            if self.position.local.offset.x * offsets.x >= 16.0 {
+                self.position.local.coords.x += offsets.x as isize;
+                self.position.local.offset.x = 0.0;
+				self.change_sprite_index();
+            }
+            
+        }
+    }
 }

@@ -1,5 +1,6 @@
 (
     identifier: "Lass",
+    sprite_indexes: 1,
     trainer: Some(
         (
             battle_type: Trainer,

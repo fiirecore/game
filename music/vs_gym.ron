@@ -1,6 +1,6 @@
 (
     file: "music/files/vs_gym.ogg",
-    data: (
+    music: (
         track: 0x2A,
         name: "BattleGymLeader",
         data: (

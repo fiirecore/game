@@ -100,7 +100,7 @@ dependencies = [
 [[package]]
 name = "audio-builder"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/audio-builder#d047e5c0db7f4556364235ee05468a4a317736a2"
+source = "git+https://github.com/DoNotDoughnut/audio-builder#759753ff4aa22043b593559379eb67b594d48069"
 dependencies = [
  "bincode",
  "firecore-audio-lib",
@@ -457,7 +457,7 @@ dependencies = [
 [[package]]
 name = "dex-builder"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/dex-builder#106f4fb65c6d352998d2d4325bfca3c5304c3cf3"
+source = "git+https://github.com/DoNotDoughnut/dex-builder#3f88b4e58db2c24ba993a37ecdd017094329592d"
 dependencies = [
  "bincode",
  "firecore-pokedex",
@@ -534,7 +534,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#696ec708b650462655cbeff40fc5052a80a01fb2"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#5af27253fcf5b1a455ee9b208fc8b876714e9bae"
 dependencies = [
  "dashmap",
  "firecore-audio-lib",
@@ -548,7 +548,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio-lib"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio-lib#0256ac1c3e31e365b48e13374228c3209179023d"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio-lib#7af8c7ece8be9f8126ec0124457d697e674cc44a"
 dependencies = [
  "serde",
 ]
@@ -599,7 +599,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#a984299a85fd30fc45e5f4e4ea79773c09ce385c"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#eb0b8d884c82a3befe65e4be2f343639d5a8decb"
 dependencies = [
  "dashmap",
  "lazy_static",
@@ -611,7 +611,7 @@ dependencies = [
 [[package]]
 name = "firecore-util"
 version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#f3bd02c75f86231cbb7a979832db0fa69fb425ed"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#2274a21abe771eb7fb009a8c76f3cb8d16d01edd"
 dependencies = [
  "glam",
  "serde",
@@ -619,10 +619,11 @@ dependencies = [
 
 [[package]]
 name = "firecore-world"
-version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#4c1caff44f1e89b259f7b712a02a6973b8dbcb63"
+version = "0.2.0"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#55b8b7d5555303c723f3a0d11bfae166d2c1d4e3"
 dependencies = [
  "ahash 0.7.2",
+ "firecore-audio-lib",
  "firecore-pokedex",
  "firecore-util",
  "quad-rand",

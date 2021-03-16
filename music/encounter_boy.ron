@@ -1,6 +1,6 @@
 (
     file: "music/files/encounter_boy.ogg",
-    data: (
+    music: (
         track: 29,
         name: "EncounterBoy",
         data: (

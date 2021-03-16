@@ -10,15 +10,17 @@
         ),
         direction: Right
     ),
-    message: Some((
-        messages: [(
-            color: Blue,
-            message: [
-                "You're pretty hot.",
-                "...But not as hot as BROCK!"
-            ]
-        )]
-    )),
+    properties: (
+        message: Some((
+            messages: [(
+                color: Blue,
+                message: [
+                    "You're pretty hot.",
+                    "...But not as hot as BROCK!"
+                ]
+            )]
+        )),
+    ),
     trainer: Some((
         trainer_type: Camper,
         tracking_length: Some(3),

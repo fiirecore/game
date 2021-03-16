@@ -107,10 +107,22 @@ impl BattleTransition for BattleOpenerManager {
                     self.battle_introduction_manager.spawn();
                     self.battle_introduction_manager.on_start();
                 } else {
-                    opener.update(delta);
+                    opener.update(delta
+                        // * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+                        //     8.0
+                        // } else {
+                        //     1.0
+                        // }
+                    );
                 }
             } else if self.battle_introduction_manager.is_alive() {
-                self.battle_introduction_manager.update(delta);
+                self.battle_introduction_manager.update(delta
+                    //  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+                    //     8.0
+                    // } else {
+                    //     1.0
+                    // }
+                );
             }
         }
     }

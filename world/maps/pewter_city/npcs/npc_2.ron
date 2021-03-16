@@ -10,30 +10,33 @@
         ),
         direction: Down
     ),
-    movement_type: LookAround,
-    message: Some((
-        messages: [
-            (
-                color: Blue,
-                message: [
-                    "There aren't many serious POKEMON",
-                    "TRAINERS here."
-                ]
-            ),
-            (
-                color: Blue,
-                message: [
-                    "They're all like BUG CATCHERS,",
-                    "you know, just hobbyists."
-                ]
-            ),
-            (
-                color: Blue,
-                message: [
-                    "But PEWTER GYM's BROCK isn't like",
-                    "that, not one bit."
-                ]
-            )
-        ]
-    )),
+    properties: (
+        movement: LookAround,
+        message: Some((
+            messages: [
+                (
+                    color: Blue,
+                    message: [
+                        "There aren't many serious POKEMON",
+                        "TRAINERS here."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "They're all like BUG CATCHERS,",
+                        "you know, just hobbyists."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "But PEWTER GYM's BROCK isn't like",
+                        "that, not one bit."
+                    ]
+                )
+            ]
+        )),
+    ),
+    
 )

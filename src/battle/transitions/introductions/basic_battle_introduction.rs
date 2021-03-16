@@ -1,11 +1,11 @@
 use firecore_pokedex::PokemonId;
-use firecore_util::sound::Sound;
 use firecore_util::text::Message;
 use firecore_util::text::MessageSet;
-
 use firecore_util::Entity;
-use crate::gui::Focus;
 use firecore_util::text::TextColor;
+use firecore_audio::{play_sound, Sound};
+use macroquad::prelude::warn;
+
 use crate::util::Input;
 use crate::util::battle_data::TrainerData;
 use crate::battle::battle::Battle;
@@ -28,7 +28,7 @@ pub struct BasicBattleIntroduction {
     player_id: PokemonId,
     opponent_id: PokemonId,
 
-    pub intro_text: DynamicText,
+    pub text: DynamicText,
     pub player_intro: PlayerBattleIntro,
 
     finished_panel: bool,
@@ -45,7 +45,7 @@ impl BasicBattleIntroduction {
             player_id: 1,
             opponent_id: 1,
 
-            intro_text: DynamicText::new(11.0, 11.0, panel_x, panel_y),
+            text: DynamicText::new(11.0, 11.0, panel_x, panel_y),
             player_intro: PlayerBattleIntro::new(),
             
             finished_panel: false,
@@ -65,19 +65,19 @@ impl BattleTransition for BasicBattleIntroduction {
     }
 
     fn update(&mut self, delta: f32) {
-        self.intro_text.update(delta);
-        if self.intro_text.current_phrase() + 1 == self.intro_text.text.len() as u8 {
+        self.text.update(delta);
+        if self.text.current_phrase() + 1 == self.text.text.len() as u8 {
             if !self.player_intro.is_finished() {
                 self.player_intro.update(delta);                
-            } else if self.intro_text.timer.is_finished() {
-                self.intro_text.despawn();
+            } else if self.text.timer.is_finished() {
+                self.text.despawn();
                 self.finished = true;
             }
         }
 	}
 
     fn render(&self) {
-        self.intro_text.render();
+        self.text.render();
 	}
     
 }
@@ -94,7 +94,7 @@ impl Reset for BasicBattleIntroduction {
 
     fn reset(&mut self) {
         self.player_intro.reset();
-        self.intro_text.reset();
+        self.text.reset();
         self.finished_panel = false;
     }
 
@@ -105,14 +105,13 @@ impl Entity for BasicBattleIntroduction {
     fn spawn(&mut self) {
         self.alive = true;
         self.finished = false;
-        self.intro_text.spawn();
-        self.intro_text.focus();
+        self.text.spawn();
     }
 
     fn despawn(&mut self) {
         self.alive = false;
         self.finished = false;
-        self.intro_text.despawn();
+        self.text.despawn();
     }
 
     fn is_alive(&self) -> bool {
@@ -124,11 +123,11 @@ impl Entity for BasicBattleIntroduction {
 impl BattleIntroduction for BasicBattleIntroduction {
 
     fn input(&mut self, delta: f32) {
-        self.intro_text.input(delta);
+        self.text.input(delta);
     }
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
-        self.intro_text.text = MessageSet { messages: vec![
+        self.text.text = MessageSet { messages: vec![
             Message::with_color(vec![String::from("Wild ") + battle.opponent().pokemon.data.name.to_ascii_uppercase().as_str() + " appeared!"], false, TextColor::White),
             Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         ]};
@@ -145,17 +144,21 @@ impl BattleIntroduction for BasicBattleIntroduction {
     }
 
     fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32) {
-        if self.intro_text.can_continue {
-            if self.intro_text.current_phrase() >= self.intro_text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
+        if self.text.can_continue {
+            if self.text.current_phrase() >= self.text.text.len() as u8 - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
                 battle_gui.opponent_pokemon_gui.reset();
                 battle_gui.opponent_pokemon_gui.spawn();
-                // firecore_audio::play_sound(Sound::Cry(self.opponent_id));
+                if let Err(err) = play_sound(Sound::of("Cry", self.opponent_id)) {
+                    warn!("Could not play opponent cry with error {}", err);
+                }
             }
         }
         if self.player_intro.is_finished() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
-            // firecore_audio::play_sound(Sound::Cry(self.player_id));
+            if let Err(err) = play_sound(Sound::of("Cry", self.player_id)) {
+                warn!("Could not play opponent cry with error {}", err);
+            }
         }
         if battle_gui.opponent_pokemon_gui.is_alive() {
             if battle_gui.opponent_pokemon_gui.panel.x + 5.0 < battle_gui.opponent_pokemon_gui.orig_x {

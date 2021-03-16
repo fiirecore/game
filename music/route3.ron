@@ -1,6 +1,6 @@
 (
     file: "music/files/route3.ogg",
-    data: (
+    music: (
         track: 0x25,
         name: "Route3",
         data: (

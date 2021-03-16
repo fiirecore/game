@@ -1,6 +1,6 @@
 (
     file: "music/files/vermilion.ogg",
-    data: (
+    music: (
         track: 0x39,
         name: "Vermilion",
         data: (

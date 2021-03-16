@@ -1,6 +1,6 @@
 (
     file: "music/files/mt_moon.ogg",
-    data: (
+    music: (
         track: 0x20,
         name: "MountMoon",
         data: (

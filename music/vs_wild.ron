@@ -1,6 +1,6 @@
 (
     file: "music/files/vs_wild.ogg",
-    data: (
+    music: (
         track: 0x28,
         name: "BattleWild",
         data: (

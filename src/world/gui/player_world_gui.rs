@@ -1,5 +1,4 @@
 use firecore_util::Entity;
-use crate::gui::Focus;
 use crate::util::Input;
 use firecore_input::{self as input, Control};
 use crate::util::graphics::Texture;
@@ -99,7 +98,7 @@ impl Input for PlayerWorldGui {
                 },
                 1 => {
                     // Pokemon
-                    unsafe { crate::gui::game::pokemon_party_gui::SPAWN = true; }
+                    crate::gui::game::pokemon_party_gui::spawn(false);
                 },
                 2 => {
                     // Exit Game
@@ -134,32 +133,14 @@ impl Entity for PlayerWorldGui {
 
     fn spawn(&mut self) {
         self.active = true;
-        self.focus();
     }
 
     fn despawn(&mut self) {
         self.active = false;
-        self.unfocus();
     }
 
     fn is_alive(&self) -> bool {
         self.active
-    }
-
-}
-
-impl Focus for PlayerWorldGui {
-
-    fn focus(&mut self) {
-        self.focused = true;
-    }
-
-    fn unfocus(&mut self) {
-        self.focused = false;
-    }
-
-    fn in_focus(&mut self) -> bool {
-        return self.focused;
     }
 
 }

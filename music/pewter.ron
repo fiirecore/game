@@ -1,6 +1,6 @@
 (
     file: "music/files/pewter.ogg",
-    data: (
+    music: (
         track: 0x3A,
         name: "Pewter",
         data: (

@@ -1,6 +1,6 @@
 (
     file: "music/files/pallet.ogg",
-    data: (
+    music: (
         track: 0x2C,
         name: "Pallet",
         data: (

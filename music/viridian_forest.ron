@@ -1,6 +1,6 @@
 (
     file: "music/files/viridian_forest.ogg",
-    data: (
+    music: (
         track: 0x1F,
         name: "ViridianForest",
         data: (

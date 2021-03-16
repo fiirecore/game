@@ -1,6 +1,6 @@
 (
     file: "music/files/lavender.ogg",
-    data: (
+    music: (
         track: 0x18,
         name: "Lavender",
         data: (

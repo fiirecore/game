@@ -1,5 +1,9 @@
+use firecore_input::Control;
+use firecore_input::pressed;
+use firecore_pokedex::pokemon::battle::BattlePokemon;
 use firecore_util::Entity;
 use crate::gui::battle::health_bar;
+use crate::util::Reset;
 use firecore_util::text::TextColor;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
@@ -11,7 +15,11 @@ use crate::util::graphics::texture::byte_texture;
 
 const TEXTURE_TICK: f32 = 0.15;
 
-pub static mut SPAWN: bool = false;
+pub static mut SPAWN: Option<bool> = None;
+
+pub fn spawn(despawn_on_select: bool) {
+    unsafe { SPAWN = Some(despawn_on_select); }
+}
 
 pub struct PokemonPartyGui {
 
@@ -25,6 +33,11 @@ pub struct PokemonPartyGui {
     
     pokemon: [Option<PartyGuiData>; 6],
 
+    despawn_on_select: bool,
+    cursor_pos: u8,
+
+    pub selected: Option<u8>,
+
 }
 
 impl PokemonPartyGui {
@@ -37,12 +50,32 @@ impl PokemonPartyGui {
             pokemon_texture: byte_texture(include_bytes!("../../../build/assets/gui/party/pokemon.png")),
             accumulator: 0.0,
             pokemon: [None, None, None, None, None, None],
+            cursor_pos: 0,
+            selected: None,
+            despawn_on_select: false,
         }
 
     }
 
-    pub fn on_start(&mut self) {
-        self.pokemon.fill(None);
+    fn on_start(&mut self, despawn_on_select: bool) {
+        self.despawn_on_select = despawn_on_select;
+    }
+
+    pub fn on_battle_start(&mut self, player_pokemon: &Vec<BattlePokemon>) {
+        for (index, pokemon) in player_pokemon.iter().enumerate() {
+            let texture = crate::pokemon::pokemon_texture(&pokemon.pokemon.data.number, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
+            self.pokemon[index] = Some(PartyGuiData {
+                name: pokemon.nickname.as_ref().unwrap_or(&pokemon.pokemon.data.name).to_ascii_uppercase(),
+                level: format!("Lv{}", pokemon.level),
+                hp: format!("{}/{}", pokemon.current_hp, pokemon.base.hp),
+                health_width: ((pokemon.current_hp as f32 / pokemon.base.hp as f32).ceil() * 48.0) as u32,
+                texture,
+            });
+        }
+        self.on_start(true);
+    }
+
+    pub fn on_world_start(&mut self, despawn_on_select: bool) {
         if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
             for pokemon in player_data.party.pokemon.iter().enumerate() {
                 if pokemon.0 == 6 {
@@ -67,6 +100,7 @@ impl PokemonPartyGui {
                 }            
             }
         }
+        self.on_start(despawn_on_select);
     }
 
     fn render_cell(&self, index: usize, data: &PartyGuiData) {
@@ -115,6 +149,12 @@ impl crate::util::Render for PokemonPartyGui {
                     }
                 }
             }
+            if self.cursor_pos == 0 {
+                macroquad::prelude::draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, macroquad::prelude::RED);
+            } else {
+                let index = -14.0 + (24.0 * self.cursor_pos as f32);
+                macroquad::prelude::draw_rectangle_lines(89.0, index, 150.0, 22.0, 2.0, macroquad::prelude::RED);
+            }
         }        
     }
 
@@ -122,8 +162,24 @@ impl crate::util::Render for PokemonPartyGui {
 
 impl crate::util::Input for PokemonPartyGui {
     fn input(&mut self, _delta: f32) {
-        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) || firecore_input::pressed(firecore_input::Control::Start) {
+        if pressed(Control::Start) || macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
             self.despawn();
+        }
+        if pressed(Control::Up) {
+            if self.cursor_pos > 0 {
+                self.cursor_pos -= 1;
+            }
+        }
+        if pressed(Control::Down) {
+            if self.cursor_pos < 5 {
+                self.cursor_pos += 1;
+            }
+        }
+        if pressed(Control::A) {
+            self.selected = Some(self.cursor_pos);
+            if self.despawn_on_select {
+                self.despawn();
+            }
         }
     }
 }
@@ -131,6 +187,7 @@ impl crate::util::Input for PokemonPartyGui {
 impl Entity for PokemonPartyGui {
     fn spawn(&mut self) {
         self.alive = true;
+        self.reset();
         self.background.spawn();
     }
 
@@ -141,6 +198,12 @@ impl Entity for PokemonPartyGui {
 
     fn is_alive(&self) -> bool {
         self.alive
+    }
+}
+
+impl Reset for PokemonPartyGui {
+    fn reset(&mut self) {
+        self.cursor_pos = 0;
     }
 }
 

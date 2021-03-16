@@ -1,3 +1,4 @@
+use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
 use crate::io::data::player::PlayerData;
 use firecore_pokedex::moves::MoveCategory;
 use firecore_pokedex::moves::PokemonMove;
@@ -139,7 +140,7 @@ impl Battle {
 		self.load_textures();
 	}
 
-	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, battle_closer_manager: &mut BattleCloserManager) {
+	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, battle_closer_manager: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui) {
 		if self.try_run {
 			if self.battle_type == BattleType::Wild {
 				battle_closer_manager.spawn();
@@ -156,18 +157,34 @@ impl Battle {
 			}
 		} else if self.faint {
 			if self.player().faint() {
-				for pkmn_index in 0..self.player_pokemon.len() {
-					if self.player_pokemon[pkmn_index].current_hp != 0 {
-						self.faint = false;
-						self.player_active = pkmn_index;
-						battle_gui.update_gui(&self);
-						battle_gui.player_pokemon_gui.health_bar.update_bar(self.player().current_hp, self.player().base.hp);
-						break;
-					}
-				}
-				if self.faint {
+				let faint_count: Vec<&BattlePokemon> = self.player_pokemon.iter().filter(|pkmn| pkmn.current_hp == 0).collect();
+				if faint_count.len() == 6 {
 					battle_closer_manager.spawn();
 				}
+				if !party_gui.is_alive() {
+					if let Some(selected) = party_gui.selected {
+						if self.player_pokemon[selected as usize].current_hp != 0 {
+							self.faint = false;
+							self.select_pokemon(selected, battle_gui);
+						} else {
+							party_gui.spawn();
+							party_gui.on_battle_start(&self.player_pokemon);
+						}
+					} else {
+						party_gui.spawn();
+						party_gui.on_battle_start(&self.player_pokemon);
+					}
+				}
+				// for pkmn_index in 0..self.player_pokemon.len() {
+				// 	if self.player_pokemon[pkmn_index].current_hp != 0 {
+				// 		self.faint = false;
+				// 		self.player_active = pkmn_index;
+				// 		battle_gui.update_gui(&self);
+				// 		battle_gui.player_pokemon_gui.health_bar.update_bar(self.player().current_hp, self.player().base.hp);
+				// 		break;
+				// 	}
+				// }
+				
 			} else {
 				for pkmn_index in 0..self.opponent_pokemon.len() {
 
@@ -204,6 +221,15 @@ impl Battle {
 			//self.finished = false;
 			battle_gui.player_panel.start();
 		}
+		if let Some(selected) = party_gui.selected {
+			self.select_pokemon(selected, battle_gui);
+		}
+	}
+
+	pub fn select_pokemon(&mut self, selected: u8, battle_gui: &mut BattleGui) {
+		self.player_active = selected as usize;
+		battle_gui.update_gui(&self);
+		battle_gui.player_pokemon_gui.health_bar.update_bar(self.player().current_hp, self.player().base.hp);
 	}
 	
 	pub fn render(&self, offset: f32, ppp_y_o: u8) {

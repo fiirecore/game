@@ -1,6 +1,6 @@
 (
     file: "music/files/fuchsia.ogg",
-    data: (
+    music: (
         track: 0x34,
         name: "Fuchsia",
         data: (

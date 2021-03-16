@@ -64,26 +64,14 @@ impl PlayerData {
 		}
 	}
 
-	// fn from_string(data: &str) -> Self {
-	// 	match ron::from_str(data) {
-	// 		Ok(data) => return data,
-	// 		Err(err) => {
-	// 			warn!("Error parsing player save: {}", err);
-	// 			let name = path.file_name().unwrap().to_string_lossy();
-	// 			let name = &name[0..name.len() - 4];
-	// 			return new_save(name);
-	// 		}
-	// 	}
-	// }
-
 
 	pub fn add_pokemon_to_party(&mut self, pokemon: PokemonInstance) {
 		self.party.pokemon.push(pokemon);
 	}
 
-	// pub fn mark_dirty(&mut self) {
-	// 	self.dirty = true;
-	// }
+	pub fn has_battled(&self, map: &String, npc: &String) -> bool {
+		self.world_status.map_data.get(map).map(|map| map.battled.contains(npc)).unwrap_or(false)
+	}
 	
 }
 

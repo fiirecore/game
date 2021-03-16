@@ -1,10 +1,9 @@
-
 use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::GuiComponent;
+use crate::gui::dynamic_text::DynamicText;
 use crate::util::Reset;
 use super::battle_background::BattleBackground;
-use super::battle_text::BattleText;
 use super::panels::player_panel::PlayerPanel;
 use super::player_bounce::PlayerBounce;
 use super::pokemon_gui::OpponentPokemonGui;
@@ -21,7 +20,7 @@ pub struct BattleGui {
 	pub opponent_pokemon_gui: OpponentPokemonGui,
 	pub player_panel: PlayerPanel,
 
-	pub battle_text: BattleText,
+	pub battle_text: DynamicText,
 
 	pub player_bounce: PlayerBounce,
 
@@ -41,7 +40,7 @@ impl BattleGui {
 			player_pokemon_gui: PlayerPokemonGui::new(127.0, 75.0),
 			opponent_pokemon_gui: OpponentPokemonGui::new(14.0, 18.0),
 
-			battle_text: BattleText::new(0.0, 113.0),
+			battle_text: DynamicText::new(11.0, 11.0, 0.0, 113.0),
 
 			player_bounce: PlayerBounce::new(),
 
@@ -118,38 +117,3 @@ impl Entity for BattleGui {
         self.alive
     }
 }
-
-/*
-
-pub trait BattleGuiComponent {
-	
-	//fn update_gui(&mut self, battle_manager: &mut BattleManager);
-
-	// fn on health change
-
-	// fn on ...
-	
-}
-
-*/
-
-pub trait BattleGuiButton {
-
-	fn on_use(&mut self, delta: f32, battle: &mut Battle);
-
-}
-
-pub trait BattleActivatable {
-
-	fn focus(&mut self);
-
-	fn unfocus(&mut self);
-
-	fn in_focus(&mut self) -> bool;
-
-	fn input(&mut self, delta: f32, battle: &mut Battle, pp_gui: &mut PlayerPokemonGui, op_gui: &mut OpponentPokemonGui);
-
-	fn next(&self) -> u8;
-
-}
-

@@ -4,7 +4,6 @@ use std::hash::Hasher;
 use firecore_util::text::MessageSet;
 
 use firecore_util::Entity;
-use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
 use crate::gui::dynamic_text::DynamicText;
@@ -74,7 +73,6 @@ impl Entity for MapWindowManager {
         self.alive = true;
         self.reset();
         self.text.spawn();
-        self.text.focus();
     }
 
     fn despawn(&mut self) {

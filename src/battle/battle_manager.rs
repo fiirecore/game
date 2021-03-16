@@ -1,5 +1,6 @@
 use firecore_world::battle::BattleType;
 use macroquad::prelude::info;
+use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
 use crate::util::Reset;
 use crate::util::battle_data::BattleData;
 use crate::gui::battle::battle_gui::BattleGui;
@@ -102,7 +103,7 @@ impl BattleManager {
 		}		
 	}
 
-	pub fn update(&mut self, delta: f32) {
+	pub fn update(&mut self, delta: f32, party_gui: &mut PokemonPartyGui) {
 		
 		if self.battle_screen_transition_manager.is_alive() {
 			if self.battle_screen_transition_manager.is_finished() {
@@ -131,7 +132,7 @@ impl BattleManager {
 				self.battle_closer_manager.update(delta);
 			}
 		} else /*if !self.current_battle.is_finished()*/ {
-			self.current_battle.update(delta, &mut self.battle_gui, &mut self.battle_closer_manager);
+			self.current_battle.update(delta, &mut self.battle_gui, &mut self.battle_closer_manager, party_gui);
 			self.battle_gui.update(delta);
 		}
 

@@ -1,6 +1,6 @@
 (
     file: "music/files/gym.ogg",
-    data: (
+    music: (
         track: 0x13,
         name: "Gym",
         data: (

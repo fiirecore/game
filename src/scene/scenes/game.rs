@@ -66,15 +66,23 @@ impl Scene for GameScene {
 	}
 	
 	fn update(&mut self, delta: f32) {
+		let delta = delta *  if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+			4.0
+		} else {
+			1.0
+		};
 		if unsafe { crate::io::data::player::DIRTY } {
 			if let Some(player_data) = PLAYER_DATA.write().as_mut() {
 				self.data_dirty(player_data);
 			}	
 		}
-		if unsafe { crate::gui::game::pokemon_party_gui::SPAWN } {
+		if let Some(despawn_on_select) = unsafe { crate::gui::game::pokemon_party_gui::SPAWN.take() } {
 			self.party_gui.spawn();
-			self.party_gui.on_start();
-			unsafe { crate::gui::game::pokemon_party_gui::SPAWN = false; }
+			if self.battling {
+				self.party_gui.on_battle_start(&self.battle_manager.current_battle.player_pokemon);
+			} else {
+				self.party_gui.on_world_start(despawn_on_select);
+			}
 		}
 
 		if !self.battling {
@@ -94,7 +102,7 @@ impl Scene for GameScene {
 				// context.battle_context.reset();
 				self.swapped = false;				
 			}
-			self.battle_manager.update(delta);
+			self.battle_manager.update(delta, &mut self.party_gui);
 			if self.battle_manager.is_finished() {
 				if let Some(player_data) = PLAYER_DATA.write().as_mut() {
 					self.battle_manager.current_battle.update_data(player_data);

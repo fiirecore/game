@@ -1,6 +1,6 @@
 (
     file: "music/files/pokemon_center.ogg",
-    data: (
+    music: (
         track: 0x2F,
         name: "PokemonCenter",
         data: (

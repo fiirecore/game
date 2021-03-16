@@ -1,48 +1,42 @@
+use dashmap::DashMap;
 use firecore_util::Direction;
 use firecore_world::character::npc::NPC;
 use firecore_world::character::npc::NPCType;
 
+use crate::io::data::player::PLAYER_DATA;
+
 use super::NpcTextures;
 use super::RenderCoords;
-use super::player::Player;
 
 lazy_static::lazy_static! {
-    pub static ref NPC_TYPES: dashmap::DashMap<String, NPCType> = dashmap::DashMap::new();
+    pub static ref NPC_TYPES: DashMap<String, NPCType> = DashMap::new();
 }
 
 pub trait WorldNpc {
 
-    fn after_interact(&mut self, map_name: &String);
+    // fn interact(&mut self, direction: Option<Direction>, map_name: &String, player: &mut Player);
+
+    // fn after_interact(&mut self, map_name: &String);
 
     fn render(&self, npc_textures: &NpcTextures, screen: &RenderCoords);
 
     fn current_texture_pos(&self) -> f32;
 
-    
-
 }
 
-#[deprecated(note = "add trainer flag to not battle on interact")]
-pub fn on_sight(npc: &mut NPC, direction: Option<Direction>, player: &mut Player) {
-    if let Some(direction) = direction {
-        npc.position.direction = direction.inverse();
-    }
-    if npc.trainer.is_some() {
-        npc.walk_next_to(&player.position.local.coords);
-        player.freeze();
+pub fn has_battled(map_name: &String, npc: &NPC) -> bool {
+    npc.trainer.is_some() && !PLAYER_DATA.read().as_ref().map(|data| data.has_battled(map_name, &npc.identifier.name)).unwrap_or(true)
+}
+
+pub fn try_battle(map_name: &String, npc: &NPC) {
+    if let Some(player_data) = PLAYER_DATA.write().as_mut() {
+        player_data.world_status.get_or_create_map_data(map_name).battle(npc);
+    } else {
+        macroquad::prelude::warn!("Could not get player data!");
     }
 }
 
 impl WorldNpc for NPC {
-
-    fn after_interact(&mut self, map_name: &String) {
-        if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
-            // macroquad::prelude::info!("Finished interacting with {}", self.identifier.name);
-            player_data.world_status.get_or_create_map_data(map_name).battle(&self);
-        } else {
-            macroquad::prelude::warn!("Could not get player data!");
-        }
-    }
 
     fn render(&self, npc_textures: &NpcTextures, screen: &RenderCoords) {
         let x = ((self.position.coords.x + screen.x_tile_offset) << 4) as f32 - screen.focus.x + self.position.offset.x;
@@ -65,26 +59,26 @@ impl WorldNpc for NPC {
     }
 
     fn current_texture_pos(&self) -> f32 {
-        match self.position.direction {
-            Direction::Down => 0.0,
-            Direction::Up => 16.0,
-            _ => 32.0
+        if let Some(npc_type) = NPC_TYPES.get(&self.identifier.npc_type) {
+            let index = (
+                if self.position.offset.x != 0.0 {
+                    self.position.offset.x
+                } else {
+                    self.position.offset.y
+                }.abs() as usize >> 3
+            ) + self.properties.character.sprite_index as usize;
+
+            let sprite_indexes = firecore_world::character::sprite::get_indexes(npc_type.sprite_indexes);
+            
+            (match self.position.direction {
+                Direction::Down => sprite_indexes.down[index],
+                Direction::Up => sprite_indexes.up[index],
+                _ => sprite_indexes.side[index]
+            } << 4) as f32
+        } else {
+            0.0
         }
-        // (
-		// 	*self.texture_index()
-		// 		.get(
-		// 			(
-		// 				if self.position.offset.x != 0.0 {
-		// 					self.position.offset.x
-		// 				} else {
-		// 					self.position.offset.y
-		// 				}.abs() as usize >> 3
-		// 			) + self.sprite_index as usize
-		// 		).unwrap_or(
-		// 			&3
-		// 		)
-		// 	<< 4
-		// ) as f32
+        
     }
 
 }

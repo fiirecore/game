@@ -56,7 +56,7 @@ impl PlayerPanel {
                         warn!("bag button unimplemented");
                     },
                     2 => {
-                        unsafe { crate::gui::game::pokemon_party_gui::SPAWN = true; }
+                        crate::gui::game::pokemon_party_gui::spawn(true);
                     },
                     3 => {
                         battle.run();

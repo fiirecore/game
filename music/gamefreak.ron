@@ -1,6 +1,6 @@
 (
     file: "music/files/gamefreak.ogg",
-    data: (
+    music: (
         track: 65,
         name: "IntroGamefreak",
         data: (

@@ -1,4 +1,4 @@
-use firecore_audio::play_music_named;
+use crate::audio::play_music_named;
 use firecore_input as input;
 use crate::util::graphics::Texture;
 use crate::scene::Scene;

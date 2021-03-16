@@ -42,14 +42,4 @@ pub trait GuiText: GuiComponent {
 
 }
 
-pub trait Focus {
-	
-	fn focus(&mut self);
-
-	fn unfocus(&mut self);
-
-	fn in_focus(&mut self) -> bool;
-
-}
-
-pub trait WindowManager: GuiComponent + crate::util::Input + Focus {}
+pub trait WindowManager: GuiComponent + crate::util::Input {}

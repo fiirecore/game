@@ -1,4 +1,4 @@
-use firecore_audio::play_music_id;
+use firecore_world::character::Character;
 use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use firecore_world::World;
@@ -13,10 +13,10 @@ use firecore_input::{self as input, Control};
 use firecore_util::Entity;
 use firecore_util::Direction;
 
+use crate::audio::play_music;
 use crate::io::data::player::PLAYER_DATA;
 use crate::util::graphics::texture::byte_texture;
 use crate::world::GameWorld;
-use crate::gui::Focus;
 use crate::gui::GuiComponent;
 use crate::util::Input;
 use crate::world::NpcTextures;
@@ -97,12 +97,12 @@ impl WorldManager {
         let music = self.get_map_music();
         if music != self.current_music {
             self.current_music = music;  
-            play_music_id(self.current_music);
+            play_music(self.current_music);
         }
         if let Some(playing_music) = firecore_audio::get_current_music() {
             if music != playing_music {
                 self.current_music = music;  
-                play_music_id(self.current_music);
+                play_music(self.current_music);
             }
         }
     }
@@ -176,20 +176,6 @@ impl WorldManager {
         self.player.render();
         self.player_gui.render(); 
         self.window_manager.render();
-
-        // if self.command_alive {
-        //     // macroquad::camera::set_camera(macroquad::camera::Camera2D::from_display_rect(macroquad::prelude::Rect::new(0.0, 0.0, macroquad::prelude::screen_width(), macroquad::prelude::screen_height())));
-        //     Window::new(hash!(), vec2(0.0, 0.0), vec2(200.0, 100.0))
-        //         .close_button(false)
-        //         .label("Run commands")
-        //         .ui(&mut macroquad::ui::root_ui(), |ui| {
-        //             InputText::new(0).label("Command").ui(ui, &mut self.command.lock());
-        //             if Button::new("Run").size(vec2(40.0, 50.0)).ui(ui) {
-        //             }
-        //         }
-        //     );
-        //     // macroquad::camera::set_camera(macroquad::camera::Camera2D::from_display_rect(crate::CAMERA_SIZE));
-        // }
         
     }
 
@@ -215,7 +201,7 @@ impl WorldManager {
         let music = self.chunk_map.current_chunk().map.music;
         if music != self.current_music {
             self.current_music = music;
-            play_music_id(music);
+            play_music(music);
         }
     }
 
@@ -236,7 +222,7 @@ impl WorldManager {
 
         if self.window_manager.is_alive() {
             self.window_manager.input(delta);
-        } else if self.player_gui.in_focus() {
+        } else if self.player_gui.is_alive() {
             self.player_gui.input(delta);
         } else {
 
@@ -303,7 +289,7 @@ impl WorldManager {
                     let music = self.chunk_map.current_chunk().map.music;
                     if music != self.current_music {
                         self.current_music = music;
-                        play_music_id(music);
+                        play_music(music);
                     }
                 }
                 move_code

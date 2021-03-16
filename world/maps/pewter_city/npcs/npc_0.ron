@@ -10,5 +10,7 @@
         ),
         direction: Down
     ),
-    movement_type: LookAround
+    properties: (
+        movement: LookAround
+    ),   
 )

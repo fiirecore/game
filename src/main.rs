@@ -8,6 +8,7 @@ use macroquad::prelude::Conf;
 use macroquad::prelude::Rect;
 use macroquad::prelude::clear_background;
 use macroquad::prelude::collections::storage;
+use macroquad::prelude::error;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
 use macroquad::prelude::next_frame;
@@ -29,6 +30,7 @@ pub mod gui;
 pub mod experimental;
 
 pub mod pokemon;
+pub mod audio;
 
 pub static TITLE: &str = "Pokemon FireRed";
 pub static DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
@@ -96,7 +98,9 @@ async fn macroquad_main() {
     let args = crate::io::args::parse_args();
 
     if !args.contains(&Args::DisableAudio) {
-        firecore_audio::create();
+        if let Err(err) = firecore_audio::create() {
+            error!("Could not create audio instance with error {}", err);
+        }
     }
 
     let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
@@ -119,7 +123,9 @@ async fn macroquad_main() {
     let audio = bincode::deserialize(
     &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
     ).unwrap();
-    firecore_audio::load(audio);
+    if let Err(err) = firecore_audio::load(audio) {
+        error!("Could not load audio files with error {}", err);
+    }
     
     pokemon::load().await;
 

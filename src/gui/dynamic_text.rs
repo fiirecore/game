@@ -139,11 +139,13 @@ impl GuiComponent for DynamicText {
 					}
 				}
 			} else if self.counter <= line_len as f32 {
-				self.counter += delta * 60.0 * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
-					8.0
-				} else {
-					1.0
-				}
+				self.counter += delta * 60.0
+				//  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+				// 	8.0
+				// } else {
+				// 	1.0
+				// }
+				;
 			} else if self.current_line < self.current_message().message.len() - 1 {
 				self.current_line += 1;
 				self.counter = 0.0;
@@ -186,21 +188,21 @@ impl GuiComponent for DynamicText {
 	
 }
 
-impl super::Focus for DynamicText {
+// impl super::Focus for DynamicText {
 
-    fn focus(&mut self) {
-        self.focus = true;
-    }
+//     fn focus(&mut self) {
+//         self.focus = true;
+//     }
 
-    fn unfocus(&mut self) {
-		self.focus = false;
-    }
+//     fn unfocus(&mut self) {
+// 		self.focus = false;
+//     }
 
-    fn in_focus(&mut self) -> bool {
-        self.focus
-    }
+//     fn in_focus(&mut self) -> bool {
+//         self.focus
+//     }
 
-}
+// }
 
 impl crate::util::Input for DynamicText {
 

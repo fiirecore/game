@@ -10,19 +10,22 @@
         ),
         direction: Down
     ),
-    message: Some((
-        messages: [
-            (
-                message: [
-                    "Technology is incredible!"
-                ]
-            ),
-            (
-                message: [
-                    "You can now store and recall items",
-                    "and POKEMON as data via PC."
-                ]
-            )
-        ]
-    )),
+    properties: (
+        message: Some((
+            messages: [
+                (
+                    message: [
+                        "Technology is incredible!"
+                    ]
+                ),
+                (
+                    message: [
+                        "You can now store and recall items",
+                        "and POKEMON as data via PC."
+                    ]
+                )
+            ]
+        )),
+    ),
+    
 )

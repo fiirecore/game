@@ -10,14 +10,16 @@
         ),
         direction: Down
     ),
-    message: Some((
-        messages: [(
-            message: [
-                "If a POKEMON BOX on the PC gets",
-                "full, just switch to another BOX."
-            ]
-        )]
-    )),
+    properties: (
+        message: Some((
+            messages: [(
+                message: [
+                    "If a POKEMON BOX on the PC gets",
+                    "full, just switch to another BOX."
+                ]
+            )]
+        )),
+    ),
     trainer: Some(Trainer(
         tracking_length: Some(2),
         battle_transition: Trainer,

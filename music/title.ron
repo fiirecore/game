@@ -1,6 +1,6 @@
 (
     file: "music/files/title.ogg",
-    data: (
+    music: (
         track: 0x16,
         name: "Title",
         data: (

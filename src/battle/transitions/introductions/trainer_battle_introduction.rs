@@ -1,12 +1,13 @@
+use firecore_util::Entity;
 use firecore_util::text::Message;
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
+
 use crate::util::battle_data::TrainerData;
 use crate::util::graphics::Texture;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
-use firecore_util::Entity;
 use crate::util::graphics::draw_bottom;
 use crate::util::{Reset, Completable};
 use super::basic_battle_introduction::BasicBattleIntroduction;
@@ -39,8 +40,8 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
     fn update_gui(&mut self, battle_gui: &mut crate::gui::battle::battle_gui::BattleGui, delta: f32) {
         self.basic_battle_introduction.update_gui(battle_gui, delta);
-        if self.basic_battle_introduction.intro_text.can_continue {
-            if self.basic_battle_introduction.intro_text.current_phrase() == self.basic_battle_introduction.intro_text.text.len() as u8 - 2 {
+        if self.basic_battle_introduction.text.can_continue {
+            if self.basic_battle_introduction.text.current_phrase() == self.basic_battle_introduction.text.text.len() as u8 - 2 {
                 self.trainer_leaving = true;
             }
         }
@@ -56,9 +57,9 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
             self.trainer_texture = Some(crate::io::data::map::npc_texture::battle_sprite(trainer_data.npc_data.key()));
 
-            let name = trainer_data.npc_data.identifier.clone() + trainer_data.npc_name.as_str();
+            let name = trainer_data.npc_data.identifier.clone() + " " + trainer_data.npc_name.as_str();
 
-            self.basic_battle_introduction.intro_text.text = MessageSet {
+            self.basic_battle_introduction.text.text = MessageSet {
                 messages: vec![
                     Message::with_color(vec![name.clone(), String::from("would like to battle!")], false, TextColor::White), 
                     Message::with_color(vec![name + " sent", String::from("out ") + &battle.opponent().pokemon.data.name.to_ascii_uppercase()], true, TextColor::White),
@@ -66,10 +67,10 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             };
             
         } else {
-            self.basic_battle_introduction.intro_text.text = MessageSet { messages: vec![Message::with_color(vec![String::from("No trainer data found!")], false, TextColor::White)] };
+            self.basic_battle_introduction.text.text = MessageSet { messages: vec![Message::with_color(vec![String::from("No trainer data found!")], false, TextColor::White)] };
         }        
 
-        self.basic_battle_introduction.intro_text.text.messages.push(
+        self.basic_battle_introduction.text.text.messages.push(
             Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
         );
 

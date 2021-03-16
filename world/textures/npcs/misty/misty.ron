@@ -1,5 +1,6 @@
 (
     identifier: "Gym Leader",
+    sprite_indexes: 0,
     trainer: Some(
         (
             battle_type: GymLeader,

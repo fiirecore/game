@@ -116,25 +116,23 @@ impl GuiComponent for BattlePanel {
 impl Input for BattlePanel {
 
     fn input(&mut self, _delta: f32) {
-        if self.is_alive() {
-            if input::pressed(Control::Up) {
-                if self.cursor_y > 0 {
-                    self.cursor_y -= 1;
-                }            
-            } else if input::pressed(Control::Down) {
-                if self.cursor_y < 1 {
-                    self.cursor_y += 1;
-                } 
-            } else if input::pressed(Control::Left) {
-                if self.cursor_x > 0 {
-                    self.cursor_x -= 1;
-                }
-            } else if input::pressed(Control::Right) {
-                if self.cursor_x < 1 {
-                    self.cursor_x += 1;
-                }
+        if input::pressed(Control::Up) {
+            if self.cursor_y > 0 {
+                self.cursor_y -= 1;
+            }            
+        } else if input::pressed(Control::Down) {
+            if self.cursor_y < 1 {
+                self.cursor_y += 1;
+            } 
+        } else if input::pressed(Control::Left) {
+            if self.cursor_x > 0 {
+                self.cursor_x -= 1;
             }
-        }        
+        } else if input::pressed(Control::Right) {
+            if self.cursor_x < 1 {
+                self.cursor_x += 1;
+            }
+        }      
     }
 
 }

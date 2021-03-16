@@ -1,9 +1,8 @@
-
 use crate::battle::battle::Battle;
+use crate::gui::dynamic_text::DynamicText;
+use firecore_util::text::MessageSet;
+use firecore_util::text::TextColor;
 use firecore_util::Entity;
-use crate::gui::{GuiComponent, GuiText};
-use crate::util::graphics::draw_text_left;
-use firecore_util::Timer;
 
 use super::battle_gui::BattleGui;
 use super::pokemon_gui::PokemonGui;
@@ -34,9 +33,11 @@ pub fn pmove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
         } else {
             battle.player_move();
             battle_gui.battle_text.spawn();
-            battle_gui
-                .battle_text
-                .update_text(&battle.player().pokemon.data.name, &battle.player_move.name);
+            update_text(
+                &mut battle_gui.battle_text,
+                &battle.player().pokemon.data.name,
+                &battle.player_move.name,
+            );
         }
     } else if battle.faint_queued {
         faint_queued(delta, battle, battle_gui);
@@ -70,9 +71,11 @@ pub fn omove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
         } else {
             battle.opponent_move();
             battle_gui.battle_text.spawn();
-            battle_gui
-                .battle_text
-                .update_text(&battle.opponent().pokemon.data.name, &battle.opponent_move.name);
+            update_text(
+                &mut battle_gui.battle_text,
+                &battle.opponent().pokemon.data.name,
+                &battle.opponent_move.name,
+            );
         }
     } else if battle.faint_queued {
         faint_queued(delta, battle, battle_gui);
@@ -96,9 +99,10 @@ fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             }
         } else {
             battle_gui.battle_text.spawn();
-            battle_gui
-                .battle_text
-                .update_faint(&battle.player().pokemon.data.name);
+            update_faint(
+                &mut battle_gui.battle_text,
+                &battle.player().pokemon.data.name,
+            );
         }
     } else {
         if battle_gui.battle_text.is_alive() {
@@ -114,146 +118,26 @@ fn faint_queued(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
             }
         } else {
             battle_gui.battle_text.spawn();
-            battle_gui
-                .battle_text
-                .update_faint(&battle.opponent().pokemon.data.name);
+            update_faint(
+                &mut battle_gui.battle_text,
+                &battle.opponent().pokemon.data.name,
+            );
         }
     }
 }
 
-pub struct BattleText {
-    alive: bool,
-
-    x: f32,
-    y: f32,
-    panel_x: f32,
-    panel_y: f32,
-
-    pub text: Vec<String>,
-    current_line: usize,
-    pub font_id: usize,
-
-    counter: f32,
-
-    pub can_continue: bool,
-
-    pub timer: Timer,
+fn update_text(text: &mut DynamicText, pokemon: &String, pmove: &String) {
+    text.text = MessageSet::new(
+        1,
+        TextColor::White,
+        vec![vec![pokemon.clone() + " used " + pmove.as_str() + "!"]],
+    );
 }
 
-impl BattleText {
-    pub fn new(panel_x: f32, panel_y: f32) -> BattleText {
-        BattleText {
-            alive: false,
-
-            x: 11.0,
-            y: 11.0,
-            panel_x: panel_x,
-            panel_y: panel_y,
-
-            text: vec![String::from("null")],
-            font_id: 1,
-            current_line: 0,
-
-            counter: 0.0,
-
-            can_continue: false,
-
-            timer: Timer::new(1.0),
-        }
-    }
-
-    pub fn update_text(&mut self, pokemon: &String, pmove: &String) {
-        self.text = vec![pokemon.clone() + " used " + pmove.as_str() + "!"];
-    }
-
-    pub fn update_faint(&mut self, pokemon: &String) {
-        self.text = vec![pokemon.clone() + " fainted!"];
-    }
-
-    fn reset(&mut self) {
-        self.counter = 0.0;
-		self.current_line = 0;
-        self.can_continue = false;
-        self.timer.despawn();
-    }
-
-}
-
-impl GuiComponent for BattleText {
-
-    fn update(&mut self, delta: f32) {
-        if self.is_alive() {
-            if !self.can_continue {
-                let line_len = self.get_line(self.current_line).len() as u16 * 4;
-                if self.counter <= line_len as f32 {
-                    self.counter += delta * 60.0;
-                } else if self.current_line < self.get_text().len() - 1 {
-                    self.current_line += 1;
-                    self.counter = 0.0;
-                } else {
-                    self.counter = line_len as f32;
-                    self.can_continue = true;
-                }
-            }
-        }
-    }
-
-    fn render(&self) {
-        if self.is_alive() {
-            let mut string = String::new();
-            let mut count = 0;
-            
-            for character in self.get_line(self.current_line).chars() {
-				if count >= self.counter as u16 / 4 {
-					break;
-				}
-				string.push(character);
-				count+=1;
-			}
-
-			draw_text_left(self.font_id, string.as_str(), self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
-
-			for line_index in 0..self.current_line {
-				draw_text_left(self.font_id, self.get_line(line_index), self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
-			}         
-        }
-    }
-
-    fn update_position(&mut self, x: f32, y: f32) {
-        self.panel_x = x;
-        self.panel_y = y;
-    }
-}
-
-impl GuiText for BattleText {
-    
-    fn get_line(&self, index: usize) -> &String {
-        &self.get_text()[index]
-    }
-
-    fn get_text(&self) -> &Vec<String> {
-        &self.text
-    }
-
-    fn get_font_id(&self) -> usize {
-        self.font_id
-    }
-}
-
-impl Entity for BattleText {
-
-    fn spawn(&mut self) {
-        self.alive = true;
-        self.reset();
-    }
-
-    fn despawn(&mut self) {
-        self.alive = false;
-        self.timer.despawn();
-    }
-
-    fn is_alive(&self) -> bool {
-        self.alive
-    }
-
+fn update_faint(text: &mut DynamicText, pokemon: &String) {
+    text.text = MessageSet::new(
+        1,
+        TextColor::White,
+        vec![vec![pokemon.clone() + " fainted!"]],
+    );
 }
