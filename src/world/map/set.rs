@@ -6,15 +6,15 @@ use crate::world::NpcTextures;
 use crate::world::RenderCoords;
 use crate::world::TileTextures;
 use crate::world::gui::map_window_manager::MapWindowManager;
-use crate::world::player::Player;
+use firecore_world::character::player::PlayerCharacter;
 
 impl GameWorld for WorldMapSet {
 
-    fn on_tile(&mut self, player: &mut Player) {
+    fn on_tile(&mut self, player: &mut PlayerCharacter) {
         self.maps[self.current_map].on_tile(player)
     }
 
-    fn update(&mut self, delta: f32, player: &mut Player, window_manager: &mut MapWindowManager) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager) {
         self.maps[self.current_map].update(delta, player, window_manager);
     }
 
@@ -22,7 +22,7 @@ impl GameWorld for WorldMapSet {
         self.maps[self.current_map].render(tile_textures, npc_textures, screen, border)
     }
 
-    fn input(&mut self, delta: f32, player: &mut Player) {
+    fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
         self.maps[self.current_map].input(delta, player)
     }
 
@@ -30,11 +30,11 @@ impl GameWorld for WorldMapSet {
 
 impl GameWorld for WorldMapSetManager {
 
-    fn on_tile(&mut self, player: &mut Player) {
+    fn on_tile(&mut self, player: &mut PlayerCharacter) {
         self.map_set_mut().on_tile(player)
     }
 
-    fn update(&mut self, delta: f32, player: &mut Player, window_manager: &mut MapWindowManager) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager) {
         self.map_set_mut().update(delta, player, window_manager);
     }
 
@@ -42,7 +42,7 @@ impl GameWorld for WorldMapSetManager {
         self.map_set().render(tile_textures, npc_textures, screen, border)
     }
 
-    fn input(&mut self, delta: f32, player: &mut Player) {
+    fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
         self.map_set_mut().input(delta, player)
     }
 

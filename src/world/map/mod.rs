@@ -1,6 +1,11 @@
 use crate::audio::{play_music_named, play_music};
+use crate::data::player::list::PlayerSaves;
 use firecore_world::character::Character;
+use firecore_world::character::npc::NPCId;
+use firecore_world::map::manager::test_move_code;
+use firecore_world::script::world::WorldScript;
 use macroquad::prelude::KeyCode;
+use macroquad::prelude::collections::storage::{get, get_mut};
 use macroquad::prelude::debug;
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
@@ -8,24 +13,23 @@ use macroquad::prelude::warn;
 
 use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
-use firecore_world::World;
-use firecore_world::character::movement::Destination;
+use firecore_world::map::World;
+use firecore_util::Destination;
+use firecore_world::character::player::PlayerCharacter;
 use firecore_world::map::WorldMap;
 use firecore_world::script::world::Condition;
 use firecore_world::script::world::WorldActionKind;
-use firecore_world::wild::WildEntry;
+use firecore_world::map::wild::WildEntry;
 
 use firecore_util::Entity;
 use firecore_input::{self as input, Control};
 
-use crate::io::data::player::PLAYER_DATA;
-use crate::util::Completable;
+use firecore_util::Completable;
 
 use super::npc::WorldNpc;
 use super::gui::map_window_manager::MapWindowManager;
 use super::NpcTextures;
 use super::TileTextures;
-use super::player::Player;
 use super::RenderCoords;
 use super::GameWorld;
 
@@ -49,8 +53,8 @@ impl GameWorldMap for WorldMap {
 
 impl GameWorld for WorldMap {
 
-    fn on_tile(&mut self, player: &mut Player) {
-        let tile_id = self.tile(&player.position.local.coords);
+    fn on_tile(&mut self, player: &mut PlayerCharacter) {
+        let tile_id = self.tile(player.position.local.coords);
 
         if let Some(wild) = &self.wild {
             if let Some(tiles) = &wild.tiles {
@@ -66,70 +70,53 @@ impl GameWorld for WorldMap {
 
         // look for player
 
-        for (npc_index, npc) in self.npcs.iter_mut().enumerate() {
+        for (npc_index, npc) in self.npcs.iter_mut() {
             if npc.trainer.is_some() {
-                if let Some(data) = PLAYER_DATA.write().as_mut() {
-                    if !data.has_battled(&self.name, &npc.identifier.name) {
+                if let Some(saves) = get::<PlayerSaves>() {
+                    if !saves.get().has_battled(&self.name, &npc.identifier.name) {
                         if npc.find_player(player.position.local.coords, player) {
-                            self.npc_active = Some(npc_index);
+                            self.npc_active = Some(*npc_index);
                         }
                     }
                 }
             }            
         }
-        if let Some(player_data) = PLAYER_DATA.write().as_mut() {
+        if let Some(mut saves) = get_mut::<PlayerSaves>() {
+            let player_data = saves.get_mut();
             for script in self.scripts.iter_mut() {
 
                 if script.test_pos(&player.position.local.coords) {
-                    let mut run = script.conditions.len() == 0;
+                    let mut break_script = false;
                     for condition in &script.conditions {
                         match condition {
-                            Condition::WorldEvent { id, happened, activate} => {
-                                if player_data.world_status.completed_events.contains(id).eq(happened) {
-                                    run = true;
-                                    if true.eq(activate) {
-                                        player_data.world_status.completed_events.insert(id.clone());
-                                    }
-                                }                                
+                            Condition::Scripts(scripts) => {
+                                for script_condition in scripts {
+                                    if player_data.world_status.ran_scripts.contains(&script_condition.identifier).ne(&script_condition.happened) {
+                                        break_script = true;
+                                    }  
+                                }                          
                             },
-                            Condition::PlayerPokemonAny(pokemon_ids) => {
-                                for pokemon in &player_data.party.pokemon {
-                                    if run {
-                                        break;
-                                    }
-                                    for id in pokemon_ids {
-                                        if pokemon.id.eq(id) {
-                                            run = true;
-                                            break;
-                                        }
-                                    }
+                            Condition::PlayerHasPokemon(is_true) => {
+                                if player_data.party.pokemon.is_empty().eq(is_true) {
+                                    break_script = true;
                                 }
-                            },
-                            Condition::PlayerPokemonAll(pokemon_ids) => {
-                                // let mut has 
-                                // for id in pokemon_ids {
-                                //     let mut has = true;
-                                //     for pokemon in &player_data.party.pokemon {
-                                //         if pokemon.id.eq(id) {
-                                //             continue;
-                                //         }
-                                //     }
-                                // }
                             }
                         }
+                        if break_script {
+                            break;
+                        }
                     }
-                    if run {
+                    if !break_script {
                         debug!("Attempting to spawn script \"{}\"!", script.identifier);
                         script.spawn();
-                    }                    
+                    }                
                 }
             }
         }
-
     }
 
-    fn update(&mut self, delta: f32, player: &mut Player, window_manager: &mut MapWindowManager) {
-        
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager) {
+
         for script in self.scripts.iter_mut() {
 
             if script.is_alive() {
@@ -170,21 +157,24 @@ impl GameWorld for WorldMap {
                                 }
                                 pop = true;
                             }
-                            WorldActionKind::PlayerFreeze => {
-                                player.freeze();
+                            WorldActionKind::PlayerFreezeInput => {
+                                player.input_frozen = true;
+                                player.stop_move();
                                 pop = true;
-                                info!("Script froze player!");
                             },
-                            WorldActionKind::PlayerUnfreeze => {
-                                player.frozen = false;
+                            WorldActionKind::PlayerUnfreezeInput => {
+                                player.input_frozen = false;
                                 pop = true;
-                                info!("Script unfroze player!");
+                            }
+                            WorldActionKind::PlayerUnfreeze => {
+                                player.properties.frozen = false;
+                                pop = true;
                             }
                             WorldActionKind::PlayerLook(direction) => {
                                 player.position.local.direction = *direction;
                                 pop = true;
                             }
-                            WorldActionKind::PlayerMove(pos) => {
+                            WorldActionKind::PlayerMove(destination) => {
                                 if player.properties.destination.is_some() {
                                     if player.should_move_to_destination() {
                                         player.move_to_destination(delta);
@@ -193,32 +183,32 @@ impl GameWorld for WorldMap {
                                         pop = true;
                                     }
                                 } else {
-                                    player.properties.destination = Some(Destination::to(&player.position.local, pos));
+                                    player.properties.destination = Some(*destination);
                                 }
                             }
                             WorldActionKind::PlayerGivePokemon(instance) => {
-                                if let Some(player_data) = PLAYER_DATA.write().as_mut() {
-                                    if player_data.party.pokemon.len() < 6 {
-                                        player_data.party.pokemon.push(instance.clone());
+                                if let Some(mut saves) = get_mut::<PlayerSaves>() {
+                                    if saves.get().party.pokemon.len() < 6 {
+                                        saves.get_mut().party.pokemon.push(instance.clone());
                                     } else {
                                         warn!("Could not add pokemon #{} to player party because it is full", instance.id);
                                     }
                                 }
                                 pop = true;
                             }
-                            WorldActionKind::NPCSpawn { id, npc } => {
-                                self.script_npcs.insert(*id, npc.clone());
+                            WorldActionKind::NPCSpawn(npc) => {
+                                self.npcs.insert(npc.identifier.index, npc.clone());
                                 pop = true;
-                                info!("Script spawned NPC {} with id {}", &npc.identifier.name, id);
+                                info!("Script spawned NPC {} with id {}", &npc.identifier.name, npc.identifier.index);
                             }
                             WorldActionKind::NPCLook(id, direction) => {
-                                if let Some(npc) = self.script_npcs.get_mut(id) {
+                                if let Some(npc) = self.npcs.get_mut(id) {
                                     npc.position.direction = *direction;
                                 }
                                 pop = true;
                             }
                             WorldActionKind::NPCMove( id, pos ) => {
-                                if let Some(npc) = self.script_npcs.get_mut(id) {
+                                if let Some(npc) = self.npcs.get_mut(id) {
                                     if npc.properties.character.destination.is_some() {
                                         if npc.should_move_to_destination() {
                                             npc.move_to_destination(delta);
@@ -235,7 +225,7 @@ impl GameWorld for WorldMap {
                                 }
                             },
                             WorldActionKind::NPCLeadPlayer( id, pos ) => {
-                                if let Some(npc) = self.script_npcs.get_mut(id) {
+                                if let Some(npc) = self.npcs.get_mut(id) {
                                     if npc.properties.character.destination.is_some() {
                                         if npc.should_move_to_destination() {
                                             npc.move_to_destination(delta);
@@ -246,7 +236,7 @@ impl GameWorld for WorldMap {
                                             }
                                         }
                                     } else {
-                                        if npc.position.coords.ne(&pos.coords) {
+                                        if npc.position.coords != pos.coords {
                                             npc.walk_to(&pos.coords);
                                         }
                                     }
@@ -270,7 +260,7 @@ impl GameWorld for WorldMap {
                                 }
                             }
                             WorldActionKind::NPCMoveToPlayer(id) => {
-                                if let Some(npc) = self.script_npcs.get_mut(id) {
+                                if let Some(npc) = self.npcs.get_mut(id) {
                                     if npc.properties.character.destination.is_some() {
                                         if npc.should_move_to_destination() {
                                             npc.move_to_destination(delta);
@@ -279,31 +269,47 @@ impl GameWorld for WorldMap {
                                             pop = true;
                                         }
                                     } else {
-                                        npc.walk_next_to(&player.position.local.coords);
+                                        npc.walk_next_to(&player.position.local.coords)
                                     }
                                 } else {
                                     warn!("NPC script tried to move to player with an unknown NPC (with id {})", id);
                                     pop = true;
                                 }
                             }
+                            WorldActionKind::NPCRespawn(id) => {
+                                // match self.despawned_npcs.remove(id) {
+                                //     Some(npc) => {
+                                //         // self.npcs.insert(*id, npc);
+                                //         info!("Script Respawned NPC with id {}", id);
+                                //     }
+                                //     None => {
+                                //         warn!("Script attempted to respawn npc that doesn't exist!");
+                                //     }
+                                // }
+                                pop = true;
+                            }
                             WorldActionKind::NPCDespawn(id) => {
-                                if self.script_npcs.remove(id).is_none() {
-                                    warn!("Script attempted to despawn npc that doesn't exist!");
-                                }
-                                info!("Script Despawned NPC with id {}", id);
+                                match self.npcs.remove(id) {
+                                    Some(npc) => {
+                                        // self.despawned_npcs.insert(*id, npc);
+                                        info!("Script Despawned NPC with id {}", id);
+                                    }
+                                    None => {
+                                        warn!("Script attempted to despawn npc that doesn't exist!");
+                                    }
+                                }                                
                                 pop = true;
                             }
                             WorldActionKind::NPCInteract(id) => {
-                                if let Some(npc) = self.script_npcs.get_mut(id) {
-                                    self.npc_active = Some(self.npcs.len() + (*id) as usize);
+                                if let Some(npc) = self.npcs.get_mut(id) {
                                     if npc.interact_from(&player.position.local) {
-
+                                        self.npc_active = Some(*id);
                                     }
                                 }
                                 pop = true;
                             }
                             WorldActionKind::NPCBattle(id) => {
-                                if let Some(npc) = self.script_npcs.get(id) {
+                                if let Some(npc) = self.npcs.get(id) {
                                     if npc.trainer.is_some() {
                                         crate::util::battle_data::trainer_battle(&npc);
                                     }
@@ -324,17 +330,11 @@ impl GameWorld for WorldMap {
                                 }
                             }
 
-                            // WorldActionKind::Battle(battle_data) => {
-                            //     *crate::util::battle_data::BATTLE_DATA.lock() = Some(battle_data.clone());
-                            //     pop = true;
-                            // }
-
-                            WorldActionKind::Warp(_) => {},
-
+                            WorldActionKind::Warp(_, _) => {},
                         }
                     }
                     None => {
-                        script.despawn();
+                        despawn_script(script);
                     }
                 }
                 if pop {
@@ -348,11 +348,7 @@ impl GameWorld for WorldMap {
         if window_manager.is_alive() {
             if window_manager.is_finished() {
                 if let Some(npc) = if let Some(index) = self.npc_active.take() {
-                    if let Some(npc) = self.npcs.get_mut(index) {
-                        Some(npc)
-                    } else {
-                        self.script_npcs.get_mut(&((index - self.npcs.len()) as u8))
-                    }
+                    self.npcs.get_mut(&index)
                 } else {
                     None
                 } {
@@ -364,11 +360,7 @@ impl GameWorld for WorldMap {
             }
         } else {
             if let Some(npc) = if let Some(index) = self.npc_active {
-                if let Some(npc) = self.npcs.get_mut(index) {
-                    Some(npc)
-                } else {
-                    self.script_npcs.get_mut(&((index - self.npcs.len()) as u8))
-                }
+                self.npcs.get_mut(&index)
             } else {
                 None
             } {
@@ -385,8 +377,8 @@ impl GameWorld for WorldMap {
                         message_ran = true;
                     }
                     
-                    if let Some(data) = PLAYER_DATA.write().as_mut() {
-                        if !data.world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.name) {
+                    if let Some(mut saves) = get_mut::<PlayerSaves>() {
+                        if !saves.get_mut().world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.name) {
                             if let Some(trainer) = npc.trainer.as_ref() {
 
                                 // Spawn text window
@@ -423,12 +415,13 @@ impl GameWorld for WorldMap {
                     if !message_ran {
                         window_manager.despawn();
                         self.npc_active = None;
+                    } else {
+                        window_manager.on_start();
                     }
 
                     player.position.local.direction = npc.position.direction.inverse();
-                    if player.frozen {
-                        // self.player.move_update(0.0);
-                        player.frozen = false;
+                    if player.is_frozen() {
+                        player.unfreeze();
                     }
 
                 }
@@ -439,13 +432,13 @@ impl GameWorld for WorldMap {
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
-            let y = yy - screen.y_tile_offset;
+            let y = yy - screen.tile_offset.y;
             let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
             
             let row_offset = y * self.width as isize;
             
             for xx in screen.left..screen.right {
-                let x = xx - screen.x_tile_offset;
+                let x = xx - screen.tile_offset.x;
                 let render_x = (xx << 4) as f32 - screen.focus.x;
 
                 if !(x < 0 || y < 0 || y >= self.height as isize || x >= self.width as isize) {
@@ -467,38 +460,35 @@ impl GameWorld for WorldMap {
                 }
             }
         }
-        for npc in &self.npcs {
-            npc.render(npc_textures, &screen);
-        }
-        for npc in self.script_npcs.values() {
+        for npc in self.npcs.values() {
             npc.render(npc_textures, &screen);
         }
         // self.script_manager.render(tile_textures, npc_textures, &screen);
     }
 
-    fn input(&mut self, _delta: f32, player: &mut Player) {
+    fn input(&mut self, _delta: f32, player: &mut PlayerCharacter) {
 
-        if cfg!(debug_assertions) {
+        if crate::debug() {
             if is_key_pressed(KeyCode::F7) {
-                info!("There are {} scripts in this map.", self.scripts.len());
+                player.freeze();
+                player.unfreeze();
+                player.properties.noclip = true;
+                info!("Unfroze player!");
             }
+            // if is_key_pressed(KeyCode::F7) {
+            //     info!("There are {} scripts in this map.", self.scripts.len());
+            // }
             if is_key_pressed(KeyCode::F8) {
-                for npc in &self.npcs {
+                for npc in self.npcs.values() {
                     info!("NPC {} is at {}, {}; looking {:?}", &npc.identifier.name, &npc.position.coords.x, &npc.position.coords.y, &npc.position.direction);
                 }
             }
         }
 
         if input::pressed(Control::A) {
-            let len = self.npcs.len();
-            for npc_index in 0..(len + self.script_npcs.len()) {
-                let npc = if npc_index < len {
-                    self.npcs.get_mut(npc_index)
-                } else {
-                    self.script_npcs.values_mut().nth(npc_index - len)
-                }.unwrap();
+            for (npc_index, npc) in self.npcs.iter_mut() {
                 if npc.interact_from(&player.position.local) {
-                    self.npc_active = Some(npc_index);
+                    self.npc_active = Some(*npc_index);
                 }
             }
         }
@@ -511,4 +501,11 @@ fn try_wild_battle(wild: &WildEntry) {
     if macroquad::rand::gen_range(0, 255) < wild.table.encounter_rate() {
         crate::util::battle_data::wild_battle(&wild.table);
     }
+}
+
+pub fn despawn_script(script: &mut WorldScript) {
+    if let Some(mut saves) = get_mut::<PlayerSaves>() {
+        saves.get_mut().world_status.ran_scripts.insert(script.identifier.clone());
+    }
+    script.despawn();
 }

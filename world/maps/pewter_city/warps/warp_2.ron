@@ -1,0 +1,23 @@
+(
+    location: (
+        min: (
+            x: 15,
+            y: 16,
+        ),
+        max: (
+            x: 15,
+            y: 16,
+        )
+    ),
+    destination: (
+        map_id: "gyms",
+        map_index: 0,
+        position: (
+            coords: (
+                x: 6,
+                y: 14,
+            ),
+            direction: Some(Up),
+        )
+    )
+)

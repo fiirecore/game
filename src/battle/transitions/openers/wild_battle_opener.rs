@@ -3,7 +3,7 @@ use firecore_util::Entity;
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 use super::trainer_battle_opener::TrainerBattleOpener;
 pub struct WildBattleOpener {
 
@@ -17,8 +17,8 @@ pub struct WildBattleOpener {
 
 }
 
-static GRASS_X_OFFSET: f32 = 128.0 * 60.0; // width of image
-static GRASS_Y_OFFSET: f32 = 47.0 * 60.0; // height of image
+const GRASS_X_OFFSET: f32 = 128.0 * 60.0; // width of image
+const GRASS_Y_OFFSET: f32 = 47.0 * 60.0; // height of image
 
 impl WildBattleOpener {
 

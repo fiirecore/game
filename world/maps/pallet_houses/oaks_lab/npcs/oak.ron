@@ -1,0 +1,14 @@
+(
+    identifier: (
+        index: 0,
+        name: "Oak",
+        npc_type: "prof_oak"
+    ),
+    position: (
+        coords: (
+            x: 6,
+            y: 3
+        ),
+        direction: Down
+    ),
+)

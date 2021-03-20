@@ -1,0 +1,14 @@
+(
+    chunk: Some((
+        config: (
+            name: "Vermilion City",
+            file: "3.5_VERMILION CITY.map",
+        ),
+        piece_index: 5,
+        coords: (
+            x: 264,
+            y: 200,
+        ),
+        connections: [24, 29],
+    ))
+)

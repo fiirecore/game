@@ -1,5 +1,5 @@
-use crate::util::Completable;
-use crate::util::Reset;
+use firecore_util::Completable;
+use firecore_util::Reset;
 use crate::util::graphics::Texture;
 use crate::util::graphics::draw;
 use crate::util::graphics::texture::byte_texture;

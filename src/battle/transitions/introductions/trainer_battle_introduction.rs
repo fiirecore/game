@@ -9,7 +9,7 @@ use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw_bottom;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 use super::basic_battle_introduction::BasicBattleIntroduction;
 
 static FINAL_TRAINER_OFFSET: f32 = 126.0;
@@ -55,23 +55,23 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
         if let Some(trainer_data) = trainer_data {
 
-            self.trainer_texture = Some(crate::io::data::map::npc_texture::battle_sprite(trainer_data.npc_data.key()));
+            self.trainer_texture = Some(crate::data::map::npc_texture::battle_sprite(trainer_data.npc_data.key()));
 
             let name = trainer_data.npc_data.identifier.clone() + " " + trainer_data.npc_name.as_str();
 
             self.basic_battle_introduction.text.text = MessageSet {
                 messages: vec![
-                    Message::with_color(vec![name.clone(), String::from("would like to battle!")], false, TextColor::White), 
-                    Message::with_color(vec![name + " sent", String::from("out ") + &battle.opponent().pokemon.data.name.to_ascii_uppercase()], true, TextColor::White),
+                    Message::with_color(vec![name.clone(), String::from("would like to battle!")], true, TextColor::White), 
+                    Message::with_color(vec![name + " sent", String::from("out ") + &battle.opponent().pokemon.data.name.to_ascii_uppercase()], false, TextColor::White),
                 ]
             };
             
         } else {
-            self.basic_battle_introduction.text.text = MessageSet { messages: vec![Message::with_color(vec![String::from("No trainer data found!")], false, TextColor::White)] };
+            self.basic_battle_introduction.text.text = MessageSet { messages: vec![Message::with_color(vec![String::from("No trainer data found!")], true, TextColor::White)] };
         }        
 
         self.basic_battle_introduction.text.text.messages.push(
-            Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
+            Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], false, TextColor::White),
         );
 
         self.basic_battle_introduction.common_setup(battle);

@@ -1,9 +1,0 @@
-[identifier]
-name = "Vermilion City"
-map_files = ["3.5_VERMILION CITY.map"]
-
-[jigsaw_map]
-piece_index = 5
-x = 264
-y = 200
-connections = [24, 29]

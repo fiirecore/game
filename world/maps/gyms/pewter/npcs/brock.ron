@@ -1,0 +1,101 @@
+(
+    identifier: (
+        index: 0,
+        name: "Brock",
+        npc_type: "brock"
+    ),
+    position: (
+        coords: (
+            x: 6,
+            y: 5
+        ),
+        direction: Down
+    ),
+    properties: (
+        message: Some((
+            messages: [
+                (
+                    color: Blue,
+                    message: [
+                        "There are all kinds of TRAINERS in",
+                        "this huge world of ours."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "You appear to be very gifted as a",
+                        "POKEMON TRAINER."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "So let me make a suggestion."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    message: [
+                        "Go to the GYM in CERULEAN and test",
+                        "your abilities."
+                    ]
+                )
+            ]
+        )),
+    ),
+    trainer: Some((
+        trainer_type: GymLeader,
+        encounter_type: Some(Trainer),
+        encounter_message: [
+            [
+                "So, you're here. I'm BROCK.",
+                "I'm PEWTER's GYM LEADER."
+            ],
+            [
+                "My rock-hard willpower is evident",
+                "even in my POKEMON."
+            ],
+            [
+                "My POKEMON are all rock hard, and",
+                "have true-grit determination."
+            ],
+            [
+                "That's right - my POKEMON are all",
+                "the ROCK type!"
+            ],
+            [
+                "Fuhaha! You're going to challenge",
+                "me knowing that you'll lose?"
+            ],
+            [
+                "That's the TRAINER's honor that",
+                "compels you to challenge me."
+            ],
+            [
+                "Fine, then!",
+                "Show me your best!"
+            ]
+        ],
+
+        party: (
+            pokemon: [
+                (
+                    id: 74,
+                    level: 10
+                ),
+                (
+                    id: 95,
+                    level: 10
+                )
+            ]
+        ),
+
+        disable_others: [
+            "Liam"
+        ],
+
+        worth: 1400,
+
+    ))
+)

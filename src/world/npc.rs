@@ -1,9 +1,10 @@
 use dashmap::DashMap;
 use firecore_util::Direction;
 use firecore_world::character::npc::NPC;
-use firecore_world::character::npc::NPCType;
+use firecore_world::character::npc::npc_type::NPCType;
+use macroquad::prelude::collections::storage::{get, get_mut};
 
-use crate::io::data::player::PLAYER_DATA;
+use crate::data::player::list::PlayerSaves;
 
 use super::NpcTextures;
 use super::RenderCoords;
@@ -25,12 +26,12 @@ pub trait WorldNpc {
 }
 
 pub fn has_battled(map_name: &String, npc: &NPC) -> bool {
-    npc.trainer.is_some() && !PLAYER_DATA.read().as_ref().map(|data| data.has_battled(map_name, &npc.identifier.name)).unwrap_or(true)
+    npc.trainer.is_some() && !get::<PlayerSaves>().as_ref().map(|saves| saves.get().has_battled(map_name, &npc.identifier.name)).unwrap_or(true)
 }
 
 pub fn try_battle(map_name: &String, npc: &NPC) {
-    if let Some(player_data) = PLAYER_DATA.write().as_mut() {
-        player_data.world_status.get_or_create_map_data(map_name).battle(npc);
+    if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
+        player_saves.get_mut().world_status.get_or_create_map_data(map_name).battle(npc);
     } else {
         macroquad::prelude::warn!("Could not get player data!");
     }
@@ -39,8 +40,8 @@ pub fn try_battle(map_name: &String, npc: &NPC) {
 impl WorldNpc for NPC {
 
     fn render(&self, npc_textures: &NpcTextures, screen: &RenderCoords) {
-        let x = ((self.position.coords.x + screen.x_tile_offset) << 4) as f32 - screen.focus.x + self.position.offset.x;
-        let y = ((self.position.coords.y - 1 + screen.y_tile_offset) << 4) as f32 - screen.focus.y + self.position.offset.y;
+        let x = ((self.position.coords.x + screen.tile_offset.x) << 4) as f32 - screen.focus.x + self.position.offset.x;
+        let y = ((self.position.coords.y - 1 + screen.tile_offset.y) << 4) as f32 - screen.focus.y + self.position.offset.y;
         
         if let Some(texture) = npc_textures.get(&self.identifier.npc_type) {
             macroquad::prelude::draw_texture_ex(*texture, x, y, macroquad::prelude::WHITE, macroquad::prelude::DrawTextureParams {
@@ -54,7 +55,7 @@ impl WorldNpc for NPC {
                 ..Default::default()
             })
         } else {
-            crate::util::graphics::draw_rect([1.0, 0.0, 0.0, 1.0], x, y + crate::util::TILE_SIZE as f32, 16, 16);
+            crate::util::graphics::draw_rect([1.0, 0.0, 0.0, 1.0], x, y + crate::util::TILE_SIZE as f32, 16.0, 16.0);
         }
     }
 
@@ -68,7 +69,7 @@ impl WorldNpc for NPC {
                 }.abs() as usize >> 3
             ) + self.properties.character.sprite_index as usize;
 
-            let sprite_indexes = firecore_world::character::sprite::get_indexes(npc_type.sprite_indexes);
+            let sprite_indexes = firecore_world::character::sprite::SpriteIndexes::from_index(npc_type.sprite_type);
             
             (match self.position.direction {
                 Direction::Down => sprite_indexes.down[index],

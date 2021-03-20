@@ -2,7 +2,7 @@ use firecore_util::Entity;
 use crate::battle::battle::Battle;
 use crate::gui::GuiComponent;
 use crate::gui::dynamic_text::DynamicText;
-use crate::util::Reset;
+use firecore_util::Reset;
 use super::battle_background::BattleBackground;
 use super::panels::player_panel::PlayerPanel;
 use super::player_bounce::PlayerBounce;

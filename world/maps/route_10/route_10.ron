@@ -1,0 +1,18 @@
+(
+    chunk: Some((
+        config: (
+            name: "Route 10",
+            file: "3.28_ROUTE 10.map",
+            wild: Some((
+                type: "original",
+                tiles: Some([0x0D]),
+            )),
+        ),
+        piece_index: 28,
+        coords: (
+            x: 384,
+            y: 50,
+        ),
+        connections: [4, 27],
+    ))
+)

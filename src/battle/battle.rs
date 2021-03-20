@@ -1,5 +1,5 @@
+use crate::data::player::save::PlayerSave;
 use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
-use crate::io::data::player::PlayerData;
 use firecore_pokedex::moves::MoveCategory;
 use firecore_pokedex::moves::PokemonMove;
 use firecore_pokedex::pokemon::party::PokemonParty;
@@ -11,10 +11,11 @@ use firecore_util::Entity;
 use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::battle_text;
 use crate::util::graphics::draw_bottom;
-use firecore_world::battle::BattleType;
+use firecore_util::battle::BattleType;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use super::transitions::managers::battle_closer_manager::BattleCloserManager;
 
+// #[deprecated(since = "0.4.0", note = "Move to seperate crate")]
 pub struct Battle {
 	
 	pub player_pokemon: Vec<BattlePokemon>,
@@ -147,7 +148,7 @@ impl Battle {
 			}
 		}
 		if self.pmove_queued || self.omove_queued || self.faint_queued {
-			if battle_gui.opponent_pokemon_gui.health_bar.get_width() == 0 {
+			if battle_gui.opponent_pokemon_gui.health_bar.previous_width == 0.0 {
 				battle_gui.update_gui(&self);
 			}
 			if self.player().base.speed > self.opponent().base.speed {
@@ -274,7 +275,7 @@ impl Battle {
 		}
 	}
 
-	pub fn update_data(&mut self, player_data: &mut PlayerData) {
+	pub fn update_data(&mut self, player_data: &mut PlayerSave) {
 
 		// Heal all pokemon in party (temporary)
 

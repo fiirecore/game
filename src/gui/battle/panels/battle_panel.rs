@@ -1,7 +1,6 @@
 use firecore_util::text::TextColor;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use firecore_util::Entity;
-use crate::util::Input;
 use firecore_input::{self as input, Control};
 use crate::gui::button::BasicButton;
 use crate::util::graphics::Texture;
@@ -78,7 +77,25 @@ impl BattlePanel {
 
 impl GuiComponent for BattlePanel {
 
-	fn update(&mut self, _delta: f32) {}
+    fn input(&mut self, _delta: f32) {
+        if input::pressed(Control::Up) {
+            if self.cursor_y > 0 {
+                self.cursor_y -= 1;
+            }            
+        } else if input::pressed(Control::Down) {
+            if self.cursor_y < 1 {
+                self.cursor_y += 1;
+            } 
+        } else if input::pressed(Control::Left) {
+            if self.cursor_x > 0 {
+                self.cursor_x -= 1;
+            }
+        } else if input::pressed(Control::Right) {
+            if self.cursor_x < 1 {
+                self.cursor_x += 1;
+            }
+        }      
+    }
 
 	fn render(&self) {
 		if self.is_alive() {
@@ -111,30 +128,6 @@ impl GuiComponent for BattlePanel {
         self.pokemon_button.update_position(panel_x, panel_y);
         self.run_button.update_position(panel_x, panel_y);
 	}
-}
-
-impl Input for BattlePanel {
-
-    fn input(&mut self, _delta: f32) {
-        if input::pressed(Control::Up) {
-            if self.cursor_y > 0 {
-                self.cursor_y -= 1;
-            }            
-        } else if input::pressed(Control::Down) {
-            if self.cursor_y < 1 {
-                self.cursor_y += 1;
-            } 
-        } else if input::pressed(Control::Left) {
-            if self.cursor_x > 0 {
-                self.cursor_x -= 1;
-            }
-        } else if input::pressed(Control::Right) {
-            if self.cursor_x < 1 {
-                self.cursor_x += 1;
-            }
-        }      
-    }
-
 }
 
 impl Entity for BattlePanel {

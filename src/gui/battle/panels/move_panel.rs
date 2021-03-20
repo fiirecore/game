@@ -59,7 +59,7 @@ impl MovePanel {
 
 }
 
-impl crate::util::Reset for MovePanel {
+impl firecore_util::Reset for MovePanel {
     fn reset(&mut self) {
         self.has_move = false;
     }

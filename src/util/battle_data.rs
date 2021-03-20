@@ -1,11 +1,11 @@
 use firecore_world::character::npc::NPC;
-use firecore_world::character::npc::NPCType;
+use firecore_world::character::npc::npc_type::NPCType;
 use macroquad::rand::gen_range;
 use parking_lot::Mutex;
 use firecore_pokedex::PokemonId;
 use firecore_pokedex::pokemon::data::StatSet;
 use firecore_pokedex::pokemon::party::PokemonParty;
-use firecore_world::wild::table::WildPokemonTable;
+use firecore_world::map::wild::table::WildPokemonTable;
 
 lazy_static::lazy_static! {
 	pub static ref BATTLE_DATA: Mutex<Option<BattleData>> = Mutex::new(None);

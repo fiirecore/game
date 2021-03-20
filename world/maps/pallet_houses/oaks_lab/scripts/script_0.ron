@@ -1,0 +1,113 @@
+(
+    identifier: "oak_introduce_pokemon",
+    location: None,
+    conditions: [
+        Scripts([
+            (
+                identifier: "oak_introduce_pokemon",
+                happened: false,
+            ),
+        ])
+    ],
+    actions: [
+        PlayerFreezeInput,
+        NPCSpawn(
+            (
+                identifier: (
+                    index: 10,
+                    name: "Oak",
+                    npc_type: "prof_oak",
+                ),
+                position: (
+                    coords: (
+                        x: 6,
+                        y: 11
+                    ),
+                    direction: Up
+                ),
+            )
+        ),
+        PlayMusic("Oak"),
+        Wait(0.5),
+        NPCMove(
+            10,
+            (
+                coords: (
+                    x: 6,
+                    y: 7,
+                ),
+            ),
+        ),
+        NPCDespawn(10),
+        NPCSpawn(
+            (
+                identifier: (
+                    index: 11,
+                    name: "Rival",
+                    npc_type: "rival",
+                ),
+                position: (
+                    coords: (
+                        x: 5,
+                        y: 4,
+                    ),
+                    direction: Down,
+                ),
+                trainer: Some(
+                    (
+                        encounter_message: [],
+                        party: (
+                            pokemon: [
+                                (
+                                    id: 7,
+                                    level: 5
+                                ),
+                            ]
+                        ),
+                        worth: 0
+                    )
+                ),
+            )
+        ),
+        PlayerMove(
+            (
+                coords: (
+                    x: 6,
+                    y: 4,
+                ),
+                direction: Some(Up),
+            )
+        ),
+        DisplayText(
+            (
+                messages: [
+                    (
+                        message: [
+                            "Here's some pokemon"
+                        ]
+                    )
+                ]
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 1,
+                level: 5,
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 4,
+                level: 5,
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 7,
+                level: 5,
+            )
+        ),
+        PlayMapMusic,
+        PlayerUnfreezeInput,
+    ]
+)

@@ -1,0 +1,14 @@
+(
+    chunk: Some((
+        config: (
+            name: "Route 14",
+            file: "3.32_ROUTE 14.map",
+        ),
+        piece_index: 32,
+        coords: (
+            x: 312,
+            y: 270,
+        ),
+        connections: [31, 33],
+    ))
+)

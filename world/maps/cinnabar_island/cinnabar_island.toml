@@ -1,9 +1,0 @@
-[identifier]
-name = "Cinnabar Island"
-map_files = ["3.8_CINNABAR ISLAND.map"]
-
-[jigsaw_map]
-piece_index = 8
-x = 60
-y = 380
-connections = [38, 40]

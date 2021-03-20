@@ -4,7 +4,7 @@ pub use macroquad::prelude::Texture2D as Texture;
 use macroquad::prelude::WHITE;
 use macroquad::prelude::draw_texture;
 
-use crate::io::data::IntoMQColor;
+use crate::data::text::IntoMQColor;
 
 use super::text::TextRenderer;
 
@@ -48,8 +48,8 @@ pub fn draw_bottom(texture: Texture, x: f32, y: f32) {
 	draw(texture, x, y - texture.height());
 }
 
-pub fn draw_rect<C: Into<macroquad::prelude::Color>>(color: C, x: f32, y: f32, width: u32, height: u32) {
-	macroquad::prelude::draw_rectangle(x, y, width as f32, height as f32, color.into());
+pub fn draw_rect<C: Into<macroquad::prelude::Color>>(color: C, x: f32, y: f32, width: f32, height: f32) {
+	macroquad::prelude::draw_rectangle(x, y, width, height, color.into());
 }
 
 pub fn draw_message(message: Message, x: f32, y: f32) {

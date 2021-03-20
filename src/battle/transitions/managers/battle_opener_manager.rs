@@ -1,4 +1,4 @@
-use firecore_world::battle::BattleType;
+use firecore_util::battle::BattleType;
 use firecore_util::Entity;
 
 use crate::battle::battle::Battle;
@@ -6,7 +6,7 @@ use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::battle::transitions::openers::trainer_battle_opener::TrainerBattleOpener;
 use crate::battle::transitions::openers::wild_battle_opener::WildBattleOpener;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 
 use super::battle_introduction_manager::BattleIntroductionManager;
 use super::battle_introduction_manager::Introductions;

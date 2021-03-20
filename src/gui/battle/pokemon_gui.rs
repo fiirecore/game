@@ -99,7 +99,7 @@ impl PokemonGui for PlayerPokemonGui {
 			self.level.render();
 			self.health_text.render();
 			self.health_bar.render();
-			draw_rect(Self::EXP_COLOR, self.panel.x + 32.0, self.panel.y + 33.0, (self.exp_width * 64.0) as u32, 2);
+			draw_rect(Self::EXP_COLOR, self.panel.x + 32.0, self.panel.y + 33.0, self.exp_width * 64.0, 2.0);
 		}		
 	}
 

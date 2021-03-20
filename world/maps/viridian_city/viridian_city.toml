@@ -1,9 +1,0 @@
-[identifier]
-name = "Viridian City"
-map_files = ["3.1_VIRIDIAN CITY.map"]
-
-[jigsaw_map]
-piece_index = 1
-x = 48
-y = 180
-connections = [19, 20, 41]

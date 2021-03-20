@@ -6,7 +6,6 @@ use firecore_util::text::TextColor;
 use firecore_audio::{play_sound, Sound};
 use macroquad::prelude::warn;
 
-use crate::util::Input;
 use crate::util::battle_data::TrainerData;
 use crate::battle::battle::Battle;
 use crate::battle::transitions::BattleIntroduction;
@@ -15,7 +14,7 @@ use crate::gui::battle::battle_gui::BattleGui;
 use crate::gui::battle::pokemon_gui::PokemonGui;
 use crate::gui::GuiComponent;
 use crate::util::graphics::draw_bottom;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 
 use crate::gui::dynamic_text::DynamicText;
 use super::util::player_intro::PlayerBattleIntro;
@@ -128,8 +127,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
         self.text.text = MessageSet { messages: vec![
-            Message::with_color(vec![String::from("Wild ") + battle.opponent().pokemon.data.name.to_ascii_uppercase().as_str() + " appeared!"], false, TextColor::White),
-            Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], true, TextColor::White),
+            Message::with_color(vec![String::from("Wild ") + battle.opponent().pokemon.data.name.to_ascii_uppercase().as_str() + " appeared!"], true, TextColor::White),
+            Message::with_color(vec![String::from("Go! ") + battle.player().pokemon.data.name.to_ascii_uppercase().as_str() + "!"], false, TextColor::White),
         ]};
         self.common_setup(battle);
     }

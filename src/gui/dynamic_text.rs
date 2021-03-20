@@ -2,8 +2,8 @@ use firecore_util::text::Message;
 use firecore_util::text::MessageSet;
 use serde::Deserialize;
 
-use crate::util::Completable;
-use crate::util::Reset;
+use firecore_util::Completable;
+use firecore_util::Reset;
 use crate::util::graphics::draw_text_left_color;
 use firecore_input as input;
 
@@ -113,7 +113,7 @@ impl GuiComponent for DynamicText {
 		if self.is_alive() {
 			let line_len = (self.current_line().len() as u16) << 2;
 			if self.can_continue {
-				if self.current_message().no_pause {
+				if !self.current_message().wait_for_input {
 					if !self.timer.is_alive() {
 						self.timer.spawn();
 					}
@@ -173,7 +173,7 @@ impl GuiComponent for DynamicText {
 				draw_text_left_color(self.current_message().font_id, &self.current_message().message[line_index], self.current_message().color, self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
 			}
 
-			if self.can_continue && !self.current_message().no_pause {
+			if self.can_continue && self.current_message().wait_for_input {
 				crate::util::graphics::draw_button(current_line, self.current_message().font_id, self.panel_x + self.x, self.panel_y + self.y + self.button_pos + (self.current_line << 4) as f32);
 			}			
 		
@@ -181,34 +181,9 @@ impl GuiComponent for DynamicText {
 		
 	}
 
-	fn update_position(&mut self, x: f32, y: f32) {
-		self.panel_x = x as f32;
-		self.panel_y = y as f32;
-	}
-	
-}
-
-// impl super::Focus for DynamicText {
-
-//     fn focus(&mut self) {
-//         self.focus = true;
-//     }
-
-//     fn unfocus(&mut self) {
-// 		self.focus = false;
-//     }
-
-//     fn in_focus(&mut self) -> bool {
-//         self.focus
-//     }
-
-// }
-
-impl crate::util::Input for DynamicText {
-
 	fn input(&mut self, _delta: f32) {
 		if self.can_continue && self.focus {
-			if input::pressed(input::Control::A) && !self.current_message().no_pause {
+			if input::pressed(input::Control::A) && self.current_message().wait_for_input {
 				if self.current_phrase() + 1 == self.text.len() as u8 {
 					self.finish_click = true;
 				} else {
@@ -219,6 +194,11 @@ impl crate::util::Input for DynamicText {
 		}
 	}
 
+	fn update_position(&mut self, x: f32, y: f32) {
+		self.panel_x = x as f32;
+		self.panel_y = y as f32;
+	}
+	
 }
 
 impl Reset for DynamicText {
@@ -235,10 +215,10 @@ impl Completable for DynamicText {
     fn is_finished(&self) -> bool {
 		self.can_continue && 
 		self.current_phrase() + 1 == self.text.len() as u8 &&
-		if self.current_message().no_pause {
-			self.timer.is_finished()
-		} else {
+		if self.current_message().wait_for_input {
 			self.finish_click
+		} else {
+			self.timer.is_finished()
 		}
     }
 }

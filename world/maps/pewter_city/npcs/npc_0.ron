@@ -1,5 +1,6 @@
 (
     identifier: (
+        index: 0,
         name: "NPC 0",
         npc_type: "woman_1"
     ),

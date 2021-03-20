@@ -1,9 +1,0 @@
-[identifier]
-name = "Pallet Town"
-map_files = ["3.0_PALLET TOWN.map"]
-
-[jigsaw_map]
-piece_index = 0
-x = 60
-y = 260
-connections = [19, 39]

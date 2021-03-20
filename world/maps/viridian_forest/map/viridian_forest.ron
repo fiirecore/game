@@ -1,0 +1,8 @@
+(
+    name: "Viridian Forest",
+    file: "1.0_VIRIDIAN FOREST.map",
+    wild: Some((
+        type: "original",
+        tiles: Some([0x0D]),
+    )),
+)

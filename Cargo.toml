@@ -1,5 +1,3 @@
-cargo-features = ["profile-overrides"]
-
 [package]
 name = "pokemon-firered-clone"
 version = "0.3.0-beta.4"
@@ -22,8 +20,7 @@ codegen-units = 1
 lto = true
 
 [features]
-default = []
-# args = ["getopts"]
+default = ["firecore-audio/kira"]
 
 [dependencies]
 
@@ -34,31 +31,24 @@ macroquad = { git = "https://github.com/not-fl3/macroquad" }
 ### Game subcrates
 
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
+
 firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
+#firecore-util = { path = "../firecore/firecore-util" }
 
 firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
 #firecore-world = { path = "../firecore/firecore-world" }
 
-firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio" }
+firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", default-features = false }
 #firecore-audio = { path = "../firecore/firecore-audio" }
 
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
 firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
 firecore-font-lib = { git = "https://github.com/DoNotDoughnut/firecore-font-lib" }
 
-### GUI
-
-# megaui-macroquad = "0.1.3"
-
 ### Serialization
 
 serde = { version = "1.0", features = ["derive"] }
-ron = "0.6"
 bincode = "1.3"
-
-### File management
-
-# rust-embed = { version = "5.9", features = ["debug-embed"] }
 
 ### Collections
 
@@ -69,13 +59,16 @@ dashmap = "4.0"
 ### Global variables
 
 lazy_static = "1.4"
-parking_lot = { version = "0.11" }
+parking_lot = "0.11"
 
 ### Other
 
 async-trait = "0.1"
+getopts = "0.2"
 
-# getopts = { version = "0.2", optional = true }
+### Extra dependencies that other packages use
+
+ron = "0.6"
 
 image = { version = "0.23.12", default-features = false, features = ["png", "tga"] }
 
@@ -93,5 +86,4 @@ world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
 audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder" }
 
-[target.'cfg(windows)'.build-dependencies]
-winres = "0.1"
+embed-resource = "1.6"

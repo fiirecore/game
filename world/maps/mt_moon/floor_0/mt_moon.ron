@@ -1,0 +1,7 @@
+(
+    name: "Mt. Moon",
+    file: "1.1_MT. MOON.map",
+    wild: Some((
+        type: "original",
+    )),
+)

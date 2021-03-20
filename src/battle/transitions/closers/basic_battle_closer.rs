@@ -2,7 +2,7 @@ use firecore_util::Entity;
 use crate::battle::transitions::BattleCloser;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw_rect;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 
 #[derive(Default)]
 pub struct BasicBattleCloser {
@@ -33,7 +33,7 @@ impl BattleTransition for BasicBattleCloser {
     }
 
     fn render(&self) {
-        draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::BASE_WIDTH, crate::BASE_HEIGHT);
+        draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::WIDTH_F32, crate::HEIGHT_F32);
     }
 
 }

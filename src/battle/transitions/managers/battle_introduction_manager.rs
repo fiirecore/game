@@ -6,7 +6,7 @@ use crate::battle::transitions::BattleIntroduction;
 use crate::battle::transitions::BattleTransition;
 use crate::battle::transitions::introductions::basic_battle_introduction::BasicBattleIntroduction;
 use crate::gui::battle::battle_gui::BattleGui;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 
 use super::battle_opener_manager::Openers;
 

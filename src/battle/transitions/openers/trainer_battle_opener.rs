@@ -3,12 +3,11 @@ use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::draw_rect;
 use firecore_util::Timer;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 
 pub struct TrainerBattleOpener {
 
-    active: bool,
-    finished: bool,
+    alive: bool,
 
     start_timer: Timer,
 
@@ -19,8 +18,8 @@ pub struct TrainerBattleOpener {
 
 }
 
-static RECT_SIZE: f32 = 80.0;
-static OFFSET: f32 = 153.0 * 2.0;
+const RECT_SIZE: f32 = 80.0;
+const OFFSET: f32 = 153.0 * 2.0;
 
 impl TrainerBattleOpener {
 
@@ -28,8 +27,7 @@ impl TrainerBattleOpener {
 
         Self {
 
-            active: false,
-            finished: false,
+            alive: false,
 
             start_timer: Timer::new(0.5),
 
@@ -52,7 +50,6 @@ impl BattleTransition for TrainerBattleOpener {
         if self.start_timer.is_finished() {
             if self.offset - delta <= 0.0 {
                 self.offset = 0.0;
-                self.finished = true;
             } else {
                 self.offset -= 120.0 * delta
                 //  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
@@ -82,15 +79,15 @@ impl BattleTransition for TrainerBattleOpener {
             [0.0, 0.0, 0.0, 1.0],
             0.0,
             0.0,
-            240,
-            self.rect_size as u32,
+            240.0,
+            self.rect_size,
         );
         draw_rect(
             [0.0, 0.0, 0.0, 1.0],
             0.0,
             160.0 - self.rect_size,
-            240,
-            self.rect_size as u32,
+            240.0,
+            self.rect_size,
         );
     }
 
@@ -103,7 +100,6 @@ impl Reset for TrainerBattleOpener {
         self.rect_size = RECT_SIZE;
         self.shrink_by = 1;
         self.start_timer.reset();
-        self.finished = false;
     }
 
 }
@@ -111,7 +107,7 @@ impl Reset for TrainerBattleOpener {
 impl Completable for TrainerBattleOpener {
 
     fn is_finished(&self) -> bool {
-        return self.finished;
+        return self.offset <= 0.0;
     }
 
 }
@@ -128,15 +124,15 @@ impl Entity for TrainerBattleOpener {
 
     fn spawn(&mut self) {
         self.reset();
-        self.active = true;
+        self.alive = true;
     }
 
     fn despawn(&mut self) {
-        self.finished = false;
-        self.active = false;
+        self.alive = false;
+        self.start_timer.despawn();
     }
 
     fn is_alive(&self) -> bool {
-        return self.active;
+        self.alive
     }
 }

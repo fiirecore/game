@@ -1,0 +1,10 @@
+(
+    identifier: "Camper",
+    sprite_type: 1,
+    trainer: Some(
+        (
+            battle_type: Trainer,
+            encounter_music: "EncounterBoy",
+        )
+    )
+)

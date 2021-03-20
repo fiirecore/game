@@ -1,11 +1,13 @@
-use firecore_world::battle::BattleType;
+use firecore_pokedex::pokemon::party::PokemonParty;
+use firecore_util::battle::BattleType;
+use macroquad::prelude::collections::storage::get_mut;
 use macroquad::prelude::info;
+use crate::data::player::list::PlayerSaves;
 use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
-use crate::util::Reset;
+use firecore_util::Reset;
 use crate::util::battle_data::BattleData;
 use crate::gui::battle::battle_gui::BattleGui;
-use crate::util::Completable;
-use crate::io::data::player::PlayerData;
+use firecore_util::Completable;
 use super::battle::Battle;
 use super::transitions::BattleCloser;
 use super::transitions::BattleOpener;
@@ -81,18 +83,18 @@ impl Reset for BattleManager {
 
 impl BattleManager {
 
-	pub fn on_start(&mut self, player_data: &PlayerData, battle_data: BattleData) { // add battle type parameter
+	pub fn on_start(&mut self, player_party: &PokemonParty, battle_data: BattleData) { // add battle type parameter
 		// info!("Attemping to create battle!");
 		self.finished = false;
 		self.battle_data = battle_data;
 		self.battle_type = self.battle_data.trainer_data.as_ref().map(|data| data.npc_data.trainer.as_ref().unwrap().battle_type).unwrap_or_default();
-		self.create_battle(player_data);
+		self.create_battle(player_party);
 		self.reset();
 		self.battle_screen_transition_manager.set_type(self.battle_type);
 	}
 
-	pub fn create_battle(&mut self, player_data: &PlayerData) {
-		let battle = Battle::new(self.battle_type, &player_data.party, &self.battle_data.party);
+	pub fn create_battle(&mut self, player_party: &PokemonParty) {
+		let battle = Battle::new(self.battle_type, &player_party, &self.battle_data.party);
 		if let Some(battle) = battle {
 			info!("Loading Battle: {}", battle);
 			self.current_battle = battle;
@@ -166,13 +168,13 @@ impl BattleManager {
 	
 	pub fn input(&mut self, delta: f32) {
 
-		if cfg!(debug_assertions) {
+		if crate::debug() {
 
 			if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F1) {
 				//self.battle_closer_manager.spawn() // exit shortcut
 				self.finished = true;
-				if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
-					self.current_battle.update_data(player_data);
+				if let Some(mut saves) = get_mut::<PlayerSaves>() {
+					self.current_battle.update_data(saves.get_mut());
 				}
 			}
 

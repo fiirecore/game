@@ -3,7 +3,7 @@ use macroquad::camera::set_camera;
 use macroquad::prelude::Rect;
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::BattleTransition;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 
 use firecore_util::Entity;
 
@@ -67,10 +67,10 @@ impl BattleTransition for FlashBattleScreenTransition {
         }
         if self.zoom {
             self.zoom_offset += 600.0 * delta;
-            set_camera(Camera2D::from_display_rect(Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, crate::BASE_WIDTH as f32 - self.zoom_offset, crate::BASE_HEIGHT as f32 - self.zoom_offset)))
+            set_camera(Camera2D::from_display_rect(Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, crate::WIDTH_F32 - self.zoom_offset, crate::HEIGHT_F32 - self.zoom_offset)))
         }
         if self.index >= FINAL_INDEX && self.waning {
-            set_camera(Camera2D::from_display_rect(Rect::new(0.0, 0.0, crate::BASE_WIDTH as f32, crate::BASE_HEIGHT as f32)));
+            set_camera(Camera2D::from_display_rect(Rect::new(0.0, 0.0, crate::WIDTH_F32, crate::HEIGHT_F32)));
             self.finished = true;
         }
     }
@@ -80,8 +80,8 @@ impl BattleTransition for FlashBattleScreenTransition {
             self.screen,
             0.0,
             0.0,
-            crate::BASE_WIDTH,
-            crate::BASE_HEIGHT,
+            crate::WIDTH_F32,
+            crate::HEIGHT_F32,
         );
     }
 

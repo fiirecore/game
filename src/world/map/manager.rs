@@ -1,49 +1,39 @@
-use firecore_world::character::Character;
-use firecore_world::map::chunk::world_chunk_map::WorldChunkMap;
-use firecore_world::map::set::manager::WorldMapSetManager;
-use firecore_world::World;
+use firecore_util::Completable;
+use firecore_world::map::manager::WorldMapManager;
+use firecore_world::map::World;
 use firecore_world::script::world::WorldActionKind;
-use firecore_world::test_move_code;
-use firecore_world::warp::WarpDestination;
 use macroquad::prelude::KeyCode;
+use macroquad::prelude::collections::storage::{get, get_mut};
 use macroquad::prelude::info;
 use macroquad::prelude::is_key_pressed;
-use macroquad::prelude::warn;
 use firecore_input::{self as input, Control};
 use firecore_util::Entity;
-use firecore_util::Direction;
+use firecore_world::character::Character;
 
 use crate::audio::play_music;
-use crate::io::data::player::PLAYER_DATA;
+use crate::data::player::list::PlayerSaves;
+use crate::data::player::save::PlayerSave;
 use crate::util::graphics::texture::byte_texture;
 use crate::world::GameWorld;
 use crate::gui::GuiComponent;
-use crate::util::Input;
 use crate::world::NpcTextures;
 use crate::world::TileTextures;
 use crate::world::gui::map_window_manager::MapWindowManager;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
-use crate::io::data::player::PlayerData;
-use crate::world::player::BASE_SPEED;
-use crate::world::player::Player;
-use crate::world::player::RUN_SPEED;
+use crate::world::player::PlayerTexture;
+use crate::world::warp_transition::WarpTransition;
 
 use super::RenderCoords;
 
 pub struct WorldManager {
 
-    pub chunk_map: WorldChunkMap,
-    pub map_sets: WorldMapSetManager,
-    pub chunk_active: bool,
+    pub map_manager: WorldMapManager,
 
     tile_textures: TileTextures,
     npc_textures: NpcTextures,
+    player_texture: PlayerTexture,
 
-    current_music: u8,
-
-    pub player: Player,
-
-    // warp_transition: WarpTransition,
+    warp_transition: WarpTransition,
 
     player_gui: PlayerWorldGui,
     window_manager: MapWindowManager,
@@ -51,9 +41,7 @@ pub struct WorldManager {
     // Other
 
     noclip_toggle: bool,
-    // command_alive: bool,
-    // command: Mutex<String>,
-    // tp: Mutex<Option<Coordinate>>,
+    
 
 }
 
@@ -61,11 +49,10 @@ impl WorldManager {
 
     pub fn new() -> Self {        
         Self {
-            chunk_map: WorldChunkMap::new(),
-            map_sets: WorldMapSetManager::default(),
-            chunk_active: true,
-            player: Player::default(),
-            current_music: 0,
+            map_manager: WorldMapManager::default(),
+            player_texture: PlayerTexture::default(),
+            // current_music: 0,
+            warp_transition: WarpTransition::new(),
             player_gui: PlayerWorldGui::new(),
             window_manager: MapWindowManager::default(),
             tile_textures: TileTextures::new(),
@@ -75,91 +62,98 @@ impl WorldManager {
     }
 
     pub async fn load(&mut self) {
-        if let Some(message) = crate::gui::MESSAGE.lock().take() {
-            info!("WorldManager cleared previous global message: {:?}", message);
-        }
+        // if let Some(message) = crate::gui::MESSAGE.lock().take() {
+        //     info!("WorldManager cleared previous global message: {:?}", message);
+        // }
         self.tile_textures.setup();
-        let maps = crate::io::data::map::v2::load_maps_v2(&mut self.tile_textures, &mut self.npc_textures).await;
-        self.chunk_map = maps.0;
-        self.map_sets = maps.1;
+        self.map_manager = crate::data::map::load_maps(&mut self.tile_textures, &mut self.npc_textures).await;
     }
 
     pub async fn on_start(&mut self) {
-        PlayerData::load_selected_data().await;
         self.load_player();
-        if self.chunk_active {
-            self.load_chunk_map_at_player();
-        }
         self.play_music();
     }
 
     pub fn play_music(&mut self) {
-        let music = self.get_map_music();
-        if music != self.current_music {
-            self.current_music = music;  
-            play_music(self.current_music);
-        }
-        if let Some(playing_music) = firecore_audio::get_current_music() {
-            if music != playing_music {
-                self.current_music = music;  
-                play_music(self.current_music);
-            }
-        }
-    }
-
-    fn get_map_music(&self) -> u8 {
-        if self.chunk_active {
-            self.chunk_map.current_chunk().map.music
-        } else {
-            self.map_sets.map_set().map().music
+        let music = self.map_manager.get_map_music();
+        if firecore_audio::get_current_music().map(|current| current != music).unwrap_or(true) {
+            play_music(music);
         }
     }
 
     pub fn update(&mut self, delta: f32) {
         self.tile_textures.update(delta);
 
-        // Check global message to see if anything is there
-
-        {
-            let mut message = crate::gui::MESSAGE.lock();
-            if message.is_some() {
-                let message = message.take().unwrap();
-                self.window_manager.spawn();
-                self.window_manager.set_text(message);
-            }
-        }
+        let map = if self.map_manager.chunk_active {
+            &mut self.map_manager.chunk_map.current_chunk_mut().map
+        } else {
+            self.map_manager.map_set_manager.map_set_mut().map_mut()
+        };
         
-        let mut warp = None;
-        for script in self.current_map_mut().scripts.iter_mut() {
+        for script in map.scripts.iter_mut() {
             if script.is_alive() {
                 if let Some(action) = script.actions_clone.front() {
                     match action {
-                        WorldActionKind::Warp(destination) => {
-                            warp = Some(destination.clone());
-                            script.despawn();
+                        WorldActionKind::Warp(destination, change_music) => {
+                            self.map_manager.warp = Some(destination.clone());
+                            super::despawn_script(script);
                         }
                         _ => (),
                     }
                 }
             }
         }
-        if let Some(warp) = warp {
-            self.warp(warp);
-            if self.chunk_active {
-                self.chunk_map.on_tile(&mut self.player);
-            } else {
-                self.map_sets.on_tile(&mut self.player);
+
+        if self.warp_transition.is_alive() {
+            self.warp_transition.update(delta);
+            if self.warp_transition.switch() && !self.warp_transition.recognize_switch {
+                self.warp_transition.recognize_switch = true;
+                if let Some(destination) = self.map_manager.warp.clone() {
+                    self.player_texture.draw = !destination.transition.move_on_exit;
+                    self.map_manager.warp(destination);
+                    if self.map_manager.chunk_active {
+                        self.map_manager.chunk_map.on_tile(&mut self.map_manager.player);
+                    } else {
+                        self.map_manager.map_set_manager.on_tile(&mut self.map_manager.player);
+                    }
+                }
+            }
+            if self.warp_transition.is_finished() {
+                self.player_texture.draw = true;
+                self.warp_transition.despawn();
+                self.map_manager.player.unfreeze();
+                if let Some(destination) = self.map_manager.warp.take() {
+                    if destination.transition.move_on_exit {
+                        self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.position.local.direction), delta);
+                    }
+                }
+                
+            }
+        } else {
+            if self.map_manager.warp.is_some() {
+                self.warp_transition.spawn();
+                self.map_manager.player.freeze_input();
             }
         }
 
-        if self.chunk_active {
-            self.chunk_map.update(delta, &mut self.player, &mut self.window_manager);
+        
+
+        // if let Some((warp, change_music)) = warp {
+        //     self.map_manager.warp(delta, warp);
+            
+        //     if change_music {
+        //         self.play_music();
+        //     }
+        // }
+
+        if self.map_manager.chunk_active {
+            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, &mut self.window_manager);
         } else {
-            self.map_sets.update(delta, &mut self.player, &mut self.window_manager);
+            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, &mut self.window_manager);
         }
 
-        if !self.player.frozen {
-            if self.player.do_move(delta) {
+        if !self.map_manager.player.is_frozen() {
+            if self.map_manager.player.do_move(delta) {
                 self.stop_player();
             }
         }
@@ -167,52 +161,32 @@ impl WorldManager {
     }
 
     pub fn render(&self) {
-        let coords = RenderCoords::new(&self.player);
-        if self.chunk_active {
-            self.chunk_map.render(&self.tile_textures, &self.npc_textures, coords, true);
+        let coords = RenderCoords::new(&self.map_manager.player);
+        if self.map_manager.chunk_active {
+            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, coords, true);
         } else {
-            self.map_sets.render(&self.tile_textures, &self.npc_textures, coords, true);
+            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, coords, true);
         }
-        self.player.render();
+        self.player_texture.render(&self.map_manager.player);
         self.player_gui.render(); 
         self.window_manager.render();
-        
+        self.warp_transition.render();
     }
 
-    pub fn save_data(&self, player_data: &mut PlayerData) {
-        if self.chunk_active {
+    pub fn save_data(&self, player_data: &mut PlayerSave) {
+        if self.map_manager.chunk_active {
             player_data.location.map_id = String::from("world");
-            player_data.location.map_index = 0;
+            player_data.location.map_index = self.map_manager.chunk_map.current_chunk;
         } else {
-            player_data.location.map_id = self.map_sets.current_map_set.clone();
-            player_data.location.map_index = self.map_sets.map_set().current_map as u16;
+            player_data.location.map_id = self.map_manager.map_set_manager.current_map_set.clone();
+            player_data.location.map_index = self.map_manager.map_set_manager.map_set().current_map as u16;
 		}
-		player_data.location.position = self.player.position;
-    }
-
-    pub fn load_chunk_map_at_player(&mut self) {
-        let coords = self.player.position.absolute();
-        if let Some(chunk) = self.chunk_map.chunk_id_at(&coords) {
-            self.chunk_map.change_chunk(chunk, &mut self.player.position);
-        } else {
-            warn!("Could not load chunk at {}", coords);
-            self.chunk_map.change_chunk(2, &mut self.player.position);
-        }
-        let music = self.chunk_map.current_chunk().map.music;
-        if music != self.current_music {
-            self.current_music = music;
-            play_music(music);
-        }
-    }
-
-    pub fn load_map_set(&mut self, id: &String, index: u16) {
-        self.map_sets.set(id);
-        self.map_sets.set_index(index as usize);
+		player_data.location.position = self.map_manager.player.position;
     }
 
     pub fn input(&mut self, delta: f32) {
 
-        if cfg!(debug_assertions) {
+        if crate::debug() {
             self.debug_input()
         }
 
@@ -226,41 +200,45 @@ impl WorldManager {
             self.player_gui.input(delta);
         } else {
 
-            if self.chunk_active {
-                self.chunk_map.input(delta, &mut self.player);
+            if self.map_manager.chunk_active {
+                self.map_manager.chunk_map.input(delta, &mut self.map_manager.player);
             } else {
-                self.map_sets.input(delta, &mut self.player);
+                self.map_manager.map_set_manager.input(delta, &mut self.map_manager.player);
             }
     
-            if self.player.position.local.offset.x == 0.0 && self.player.position.local.offset.y == 0.0 && !self.player.frozen {
-                self.player.properties.moving = true;
+            if self.map_manager.player.position.local.offset.is_none() && !self.map_manager.player.is_frozen() {
+                self.map_manager.player.properties.moving = true;
 
                 if input::down(Control::B) {
-                    if !self.player.properties.running {
-                        self.player.properties.running = true;
-                        self.player.properties.speed = if self.player.noclip {
-                            RUN_SPEED << 1
-                        } else {
-                            RUN_SPEED
-                        } as f32;
+                    if !self.map_manager.player.properties.running {
+                        self.map_manager.player.properties.running = true;
+                        self.map_manager.player.properties.speed = 
+                            ((self.map_manager.player.properties.base_speed as u8) << (
+                                if self.map_manager.player.properties.noclip {
+                                    2
+                                } else {
+                                    1
+                                }
+                            )) as f32;
                     }
-                } else if self.player.properties.running {
-                    self.player.properties.running = false;
-                    self.player.properties.speed = BASE_SPEED as f32;
+                } else if self.map_manager.player.properties.running {
+                    self.map_manager.player.properties.running = false;
+                    self.map_manager.player.properties.reset_speed();
                 }
 
-                if !input::down(crate::util::keybind(self.player.position.local.direction)) {
-                    for direction in firecore_util::DIRECTIONS {
+                if !input::down(crate::util::keybind(self.map_manager.player.position.local.direction)) {
+                    for direction in &firecore_util::Direction::DIRECTIONS {
                         let direction = *direction;
                         if input::down(crate::util::keybind(direction)) {
-                            self.move_direction(direction, delta);
+                            self.map_manager.try_move(direction, delta);
                             break;
                         }
                     }
-                } else if input::down(crate::util::keybind(self.player.position.local.direction)) {
-                    self.move_direction(self.player.position.local.direction, delta);
+                } else if input::down(crate::util::keybind(self.map_manager.player.position.local.direction)) {
+                    self.map_manager.try_move(self.map_manager.player.position.local.direction, delta);
                 } else {
-                    self.player.properties.moving = false;
+                    self.map_manager.player.properties.moving = false;
+                    self.map_manager.player.properties.running = false;
                 }
 
             }
@@ -269,173 +247,52 @@ impl WorldManager {
         
     }
 
-    fn move_direction(&mut self, direction: Direction, delta: f32) {
-        self.player.on_try_move(direction);
-        let offset = direction.tile_offset();
-        let coords = self.player.position.local.coords.add(offset.0, offset.1);
-        let move_code = if self.chunk_active {
-            if self.chunk_map.in_bounds(&coords) {
-                if let Some(entry) = self.chunk_map.check_warp(&coords) {
-                    self.warp(entry.destination);
-                    return;
-                }            
-                self.chunk_map.walkable(&coords)
-            } else {
-                // convert x and y to global coordinates
-                let global = self.player.position.offset.add(coords.x, coords.y);
-                let id = self.chunk_map.current_chunk;
-                let move_code = self.chunk_map.walk_connections(&mut self.player.position, &global);
-                if id != self.chunk_map.current_chunk {
-                    let music = self.chunk_map.current_chunk().map.music;
-                    if music != self.current_music {
-                        self.current_music = music;
-                        play_music(music);
-                    }
-                }
-                move_code
-            }            
-        } else {
-            if self.map_sets.in_bounds(&coords) {
-                if let Some(entry) = self.map_sets.check_warp(&coords) {
-                    self.warp(entry.destination);
-                    return;
-                }
-                self.map_sets.walkable(&coords)
-            } else {
-                1
-            }
-        };
-
-        let in_bounds = if self.chunk_active {
-            self.chunk_map.in_bounds(&coords)
-        } else {
-            self.map_sets.in_bounds(&coords)
-        };
-
-        let jump = if in_bounds {
-            let tile_id = if self.chunk_active {
-                self.chunk_map.tile(&coords)
-            } else {
-                self.map_sets.tile(&coords)
-            };
-            match direction {
-                Direction::Up => false,
-                Direction::Down => {
-                    tile_id == 135 || tile_id == 176 || tile_id == 177 || tile_id == 143 || tile_id == 151 || tile_id == 184 || tile_id == 185 || tile_id == 192 || tile_id == 193 || tile_id == 217 || tile_id == 1234
-                }
-                Direction::Left => {
-                    tile_id == 133
-                }
-                Direction::Right => {
-                    tile_id == 134
-                }
-            }
-        } else {
-            false
-        };
-        if test_move_code(move_code, jump || self.player.noclip) {
-            let mult = (self.player.properties.speed as f32) * 60.0 * delta;
-            self.player.position.local.offset.x = offset.0 as f32 * mult;
-            self.player.position.local.offset.y = offset.1 as f32 * mult;
-        }
-    }
-
     fn stop_player(&mut self) {
-        //self.player.properties.moving = false;
-        // self.player.on_stopped_moving();
-        let coords = &self.player.position.local.coords;
+        self.map_manager.player.stop_move();
         if self.noclip_toggle {
             self.noclip_toggle = false;
-            self.player.noclip = !self.player.noclip;
-            if self.player.noclip {
-                self.player.properties.speed *= 4.0;
+            self.map_manager.player.properties.noclip = !self.map_manager.player.properties.noclip;
+            if self.map_manager.player.properties.noclip {
+                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed * 4.0;
             } else {
-                self.player.properties.speed /= 4.0;
+                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed;
             }
             info!("No clip toggled!");
         }
-        if self.chunk_active {
-            if self.chunk_map.in_bounds(coords) {
-                self.chunk_map.on_tile(&mut self.player);
+        if self.map_manager.chunk_active {
+            if let Some(destination) = self.map_manager.chunk_map.check_warp(self.map_manager.player.position.local.coords) { // Warping does not trigger tile actions!
+                self.map_manager.warp = Some(destination);
+            } else if self.map_manager.chunk_map.in_bounds(self.map_manager.player.position.local.coords) {
+                self.map_manager.chunk_map.on_tile(&mut self.map_manager.player);
             }
         } else {
-            if self.map_sets.in_bounds(coords) {
-                self.map_sets.on_tile(&mut self.player);
+            if let Some(destination) = self.map_manager.map_set_manager.check_warp(self.map_manager.player.position.local.coords) {
+                self.map_manager.warp = Some(destination);
+            } else if self.map_manager.map_set_manager.in_bounds(self.map_manager.player.position.local.coords) {
+                self.map_manager.map_set_manager.on_tile(&mut self.map_manager.player);
             }
         }        
     }
 
-    pub fn warp(&mut self, destination: WarpDestination) {
-        // spawn warp transition here
-        if destination.map_id.as_str().eq("world") {
-            self.warp_to_chunk_map(destination);
-        } else {
-            self.warp_to_map_set(destination);
-        }
-    }
-
-    pub fn warp_to_chunk_map(&mut self, destination: WarpDestination) {
-        if !self.chunk_active {
-            self.chunk_active = true;
-        }
-        if let Some(chunk) = self.chunk_map.update_chunk(&destination.map_index) {
-            self.player.position.offset.x = chunk.x;
-            self.player.position.offset.y = chunk.y;
-            self.player.position.local.coords.x = destination.x;
-            self.player.position.local.coords.y = destination.y;
-            self.play_music();
-        }
-        
-    }
-
-    pub fn warp_to_map_set(&mut self, destination: WarpDestination) {
-        if self.chunk_active {
-            self.chunk_active = false;
-        }
-        self.load_map_set(&destination.map_id, destination.map_index);
-        self.player.position.offset.x = 0;
-        self.player.position.offset.y = 0;
-        self.player.position.local.coords.x = destination.x;
-        self.player.position.local.coords.y = destination.y;
-        self.play_music();
-    }
-
-    pub fn current_map(&self) -> &super::WorldMap {
-        if self.chunk_active {
-            &self.chunk_map.current_chunk().map
-        } else {
-            self.map_sets.map_set().map()
-        }
-    }
-
-    pub fn current_map_mut(&mut self) -> &mut super::WorldMap {
-        if self.chunk_active {
-            &mut self.chunk_map.current_chunk_mut().map
-        } else {
-            self.map_sets.map_set_mut().map_mut()
-        }
-    }
-
     pub fn load_player(&mut self) {
-        if let Some(player_data) = crate::io::data::player::PLAYER_DATA.read().as_ref() {
-            self.player = Player::new(&player_data);
-            self.player.walking_texture = Some(byte_texture(include_bytes!("../../../build/assets/player.png")));
-            self.player.running_texture = Some(byte_texture(include_bytes!("../../../build/assets/player_running.png")));
-            // self.player.load_textures();
-            if player_data.location.map_id.as_str().eq("world") {
-                self.chunk_active = true;
+        if let Some(player_saves) = macroquad::prelude::collections::storage::get::<PlayerSaves>() {
+            let data = player_saves.get();
+            let location = &data.location;
+            self.map_manager.player.position = location.position;
+            self.player_texture.walking_texture = Some(byte_texture(include_bytes!("../../../build/assets/player.png")));
+            self.player_texture.running_texture = Some(byte_texture(include_bytes!("../../../build/assets/player_running.png")));
+
+            if location.map_id.as_str().eq("world") {
+                self.map_manager.chunk_active = true;
+                self.map_manager.update_chunk(location.map_index);
             } else {
-                self.chunk_active = false;
-                self.load_map_set(&player_data.location.map_id, player_data.location.map_index);
+                self.map_manager.chunk_active = false;
+                self.map_manager.update_map_set(&location.map_id, location.map_index);
             }
         }        
     }
 
     fn debug_input(&mut self) {
-
-        // if is_key_pressed(KeyCode::GraveAccent) {
-        //     self.command_alive = !self.command_alive;
-        // }
 
         if is_key_pressed(KeyCode::F1) {
             crate::util::battle_data::random_wild_battle();
@@ -446,19 +303,20 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F3) {
-            info!("Local Coordinates: {}", self.player.position.local.coords);
-            info!("Global Coordinates: ({}, {})", self.player.position.get_x(), self.player.position.get_y());
-            let tile = if self.chunk_active {
-                self.chunk_map.tile(&self.player.position.local.coords)
+            info!("Local Coordinates: {}", self.map_manager.player.position.local.coords);
+            info!("Global Coordinates: ({}, {})", self.map_manager.player.position.get_x(), self.map_manager.player.position.get_y());
+
+            let tile = if self.map_manager.chunk_active {
+                self.map_manager.chunk_map.tile(self.map_manager.player.position.local.coords)
             } else {
-                self.map_sets.tile(&self.player.position.local.coords)
+                self.map_manager.map_set_manager.tile(self.map_manager.player.position.local.coords)
             };
             info!("Current Tile ID: {}", tile);
         }
 
         if is_key_pressed(KeyCode::F4) {
-            if let Some(data) = PLAYER_DATA.read().as_ref() {
-                for (slot, instance) in data.party.pokemon.iter().enumerate() {
+            if let Some(saves) = get::<PlayerSaves>() {
+                for (slot, instance) in saves.get().party.pokemon.iter().enumerate() {
                     if let Some(pokemon) = firecore_pokedex::POKEDEX.get(&instance.id) {
                         info!("Party Slot {}: Lv{} {}", slot, instance.level, pokemon.data.name);
                     }
@@ -467,17 +325,24 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F5) {
-            if let Some(data) = PLAYER_DATA.write().as_mut() {
-                let name = &self.current_map_mut().name;
+            if let Some(mut saves) = get_mut::<PlayerSaves>() {
+
+                let map = if self.map_manager.chunk_active {
+                    &self.map_manager.chunk_map.current_chunk().map
+                } else {
+                    self.map_manager.map_set_manager.map_set().map()
+                };
+
+                let name = &map.name;
                 info!("Resetting battled trainers in this map! ({})", name);
-                data.world_status.get_or_create_map_data(name).battled.clear();
+                saves.get_mut().world_status.get_or_create_map_data(name).battled.clear();
             }
         }
 
         if is_key_pressed(KeyCode::F6) {
-            if let Some(data) = PLAYER_DATA.write().as_mut() {
-                info!("Clearing world events in player data!");
-                data.world_status.completed_events.clear();
+            if let Some(mut saves) = get_mut::<PlayerSaves>() {
+                info!("Clearing used scripts in player data!");
+                saves.get_mut().world_status.ran_scripts.clear();
             }
         }
         

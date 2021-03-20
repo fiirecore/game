@@ -1,0 +1,23 @@
+(
+    location: (
+        min: (
+            x: 15,
+            y: 7,
+        ),
+        max: (
+            x: 15,
+            y: 7,
+        )
+    ),
+    destination: (
+        map_id: "pallet_houses",
+        map_index: 2,
+        position: (
+            coords: (
+                x: 4,
+                y: 8,
+            ),
+            direction: Some(Up),
+        )
+    )
+)

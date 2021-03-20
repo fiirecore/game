@@ -1,0 +1,22 @@
+(
+    location: (
+        min: (
+            x: 6,
+            y: 4,
+        ),
+        max: (
+            x: 6,
+            y: 4,
+        ),
+    ),
+    destination: (
+        map_id: "digletts_cave",
+        map_index: 1,
+        position: (
+            coords: (
+                x: 0x52,
+                y: 0x47,
+            ),
+        ),
+    ),
+)

@@ -2,6 +2,7 @@ use dashmap::DashMap;
 use firecore_util::text::MessageSet;
 use macroquad::prelude::Color;
 
+use crate::data::player::list::PlayerSaves;
 use crate::util::graphics::Texture;
 use crate::util::graphics::draw;
 
@@ -15,15 +16,11 @@ lazy_static::lazy_static! {
     pub static ref FONTS: DashMap<usize, Font> = DashMap::new();
 }
 
-pub async fn load() {
-    crate::io::data::font::open_sheets().await;
-}
-
 pub fn process_message_set(message_set: &mut MessageSet) {
     for message in &mut message_set.messages {
         for message in &mut message.message {
             *message = message
-                .replace("%r", &rival_name())
+                .replace("%r", rival_name())
                 .replace("%p", &player_name())
                 
             ;
@@ -32,12 +29,11 @@ pub fn process_message_set(message_set: &mut MessageSet) {
 }
 
 pub fn player_name() -> String {
-    if let Some(player_data) = crate::io::data::player::PLAYER_DATA.try_read() {
-        if let Some(player_data) = player_data.as_ref() {
-            return player_data.name.clone();
-        }
+    if let Some(player_saves) = macroquad::prelude::collections::storage::get::<PlayerSaves>() {
+        player_saves.get().name.clone()
+    } else {
+        crate::data::player::save::default_name()
     }
-    crate::io::data::player::default_name()
 }
 
 pub fn rival_name() -> &'static str {

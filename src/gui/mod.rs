@@ -1,6 +1,3 @@
-use firecore_util::text::MessageSet;
-use parking_lot::Mutex;
-
 pub mod background;
 pub mod text;
 pub mod button;
@@ -12,23 +9,29 @@ pub mod game {
 	pub mod pokemon_party_gui;
 }
 
-lazy_static::lazy_static! {
-	pub static ref MESSAGE: Mutex<Option<MessageSet>> = Mutex::new(None);
-}
+// lazy_static::lazy_static! {
+// 	pub static ref MESSAGE: Mutex<Option<MessageSet>> = Mutex::new(None);
+// }
 
-pub fn set_message(message_set: MessageSet) {
-	*MESSAGE.lock() = Some(message_set);
-}
+// pub fn set_message(message_set: MessageSet) {
+// 	*MESSAGE.lock() = Some(message_set);
+// }
 
 pub trait GuiComponent: firecore_util::Entity {
 
 	fn on_start(&mut self) {}
+
+	fn input(&mut self, _delta: f32) {}
 
 	fn update(&mut self, _delta: f32) {}
 
 	fn render(&self);
 
 	fn update_position(&mut self, x: f32, y: f32);
+	
+}
+
+pub trait ActiveGuiComponent: GuiComponent {
 	
 }
 
@@ -42,4 +45,4 @@ pub trait GuiText: GuiComponent {
 
 }
 
-pub trait WindowManager: GuiComponent + crate::util::Input {}
+pub trait WindowManager: GuiComponent {}

@@ -1,9 +1,9 @@
-use game::GameScene;
-
-use crate::scene::scenes::*;
 use super::Scene;
+use super::scenes::SceneState;
+use super::scenes::Scenes;
 use super::scenes::title_scene::TitleScene;
 use super::scenes::main_menu::MainMenuScene;
+use super::scenes::game::GameScene;
 
 pub struct SceneManager {
 
@@ -67,11 +67,17 @@ impl SceneManager {
 impl Scene for SceneManager {
 
 	async fn load(&mut self) {
-		self.get_mut().load().await;
+
 	}
 
     async fn on_start(&mut self) {
-        self.get_mut().on_start().await;
+		let scene = self.get_mut();
+        scene.load().await;
+		scene.on_start().await;
+    }
+
+    fn input(&mut self, delta: f32) {
+        self.get_mut().input(delta);
     }
 
     fn update(&mut self, _delta: f32) {
@@ -82,9 +88,9 @@ impl Scene for SceneManager {
         self.get().render();
     }
 
-    fn input(&mut self, delta: f32) {
-        self.get_mut().input(delta);
-    }
+	fn ui(&mut self) {
+		self.get_mut().ui();
+	}
 
     fn quit(&mut self) {
         self.get_mut().quit();

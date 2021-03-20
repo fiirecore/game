@@ -1,0 +1,14 @@
+(
+    chunk: Some((
+        config: (
+            name: "Viridian City",
+            file: "3.1_VIRIDIAN CITY.map",
+        ),
+        piece_index: 1,
+        coords: (
+            x: 48,
+            y: 180,
+        ),
+        connections: [19, 20, 41],
+    ))
+)

@@ -12,11 +12,13 @@ pub trait Scene {
 
 	async fn on_start(&mut self);
 	
+	fn input(&mut self, delta: f32);
+	
 	fn update(&mut self, delta: f32);
 	
 	fn render(&self);
-	
-	fn input(&mut self, delta: f32);
+
+	fn ui(&mut self) {}
 	
 	fn quit(&mut self);
 	

@@ -2,8 +2,10 @@ use firecore_input::Control;
 use firecore_input::pressed;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use firecore_util::Entity;
+use macroquad::prelude::collections::storage::get;
+use crate::data::player::list::PlayerSaves;
 use crate::gui::battle::health_bar;
-use crate::util::Reset;
+use firecore_util::Reset;
 use firecore_util::text::TextColor;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;
@@ -68,7 +70,7 @@ impl PokemonPartyGui {
                 name: pokemon.nickname.as_ref().unwrap_or(&pokemon.pokemon.data.name).to_ascii_uppercase(),
                 level: format!("Lv{}", pokemon.level),
                 hp: format!("{}/{}", pokemon.current_hp, pokemon.base.hp),
-                health_width: ((pokemon.current_hp as f32 / pokemon.base.hp as f32).ceil() * 48.0) as u32,
+                health_width: (pokemon.current_hp as f32 / pokemon.base.hp as f32).ceil() * 48.0,
                 texture,
             });
         }
@@ -76,8 +78,8 @@ impl PokemonPartyGui {
     }
 
     pub fn on_world_start(&mut self, despawn_on_select: bool) {
-        if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
-            for pokemon in player_data.party.pokemon.iter().enumerate() {
+        if let Some(saves) = get::<PlayerSaves>() {
+            for pokemon in saves.get().party.pokemon.iter().enumerate() {
                 if pokemon.0 == 6 {
                     break;
                 }
@@ -94,7 +96,7 @@ impl PokemonPartyGui {
                         name: pokemon.1.nickname.as_ref().unwrap_or(&pokemon_data.data.name).to_ascii_uppercase(),
                         level: format!("Lv{}", pokemon.1.level),
                         hp: format!("{}/{}", curr, max),
-                        health_width: ((curr as f32 / max as f32).ceil() * 48.0) as u32,
+                        health_width: (curr as f32 / max as f32).ceil() * 48.0,
                         texture: texture,
                     });
                 }            
@@ -113,13 +115,36 @@ impl PokemonPartyGui {
         draw_text_left_color(0, &data.name, TextColor::White, 119.0, offset/* + 1.0*/);
         draw_text_left_color(0, &data.level, TextColor::White, 129.0, offset + 13.0 - 4.0);
         draw_text_left_color(0, &data.hp, TextColor::White, 209.0, offset + 13.0 - 1.0);
-        draw_rect(health_bar::UPPER_COLOR, 185.0, offset + 8.0, data.health_width, 1);
-        draw_rect(health_bar::LOWER_COLOR, 185.0, offset + 9.0, data.health_width, 2);
+        draw_rect(health_bar::UPPER_COLOR, 185.0, offset + 8.0, data.health_width, 1.0);
+        draw_rect(health_bar::LOWER_COLOR, 185.0, offset + 9.0, data.health_width, 2.0);
     }
 
 }
 
-impl crate::util::Update for PokemonPartyGui {
+impl GuiComponent for PokemonPartyGui {
+
+    fn input(&mut self, _delta: f32) {
+        if pressed(Control::Start) || macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
+            self.despawn();
+        }
+        if pressed(Control::Up) {
+            if self.cursor_pos > 0 {
+                self.cursor_pos -= 1;
+            }
+        }
+        if pressed(Control::Down) {
+            if self.cursor_pos < 5 {
+                self.cursor_pos += 1;
+            }
+        }
+        if pressed(Control::A) {
+            self.selected = Some(self.cursor_pos);
+            if self.despawn_on_select {
+                self.despawn();
+            }
+        }
+    }
+
     fn update(&mut self, delta: f32) {
         if self.is_alive() {
             self.accumulator += delta;
@@ -128,10 +153,7 @@ impl crate::util::Update for PokemonPartyGui {
             }
         }
     }
-}
-
-impl crate::util::Render for PokemonPartyGui {
-
+    
     fn render(&self) {
         if self.is_alive() {
             self.background.render();
@@ -158,30 +180,10 @@ impl crate::util::Render for PokemonPartyGui {
         }        
     }
 
-}
-
-impl crate::util::Input for PokemonPartyGui {
-    fn input(&mut self, _delta: f32) {
-        if pressed(Control::Start) || macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
-            self.despawn();
-        }
-        if pressed(Control::Up) {
-            if self.cursor_pos > 0 {
-                self.cursor_pos -= 1;
-            }
-        }
-        if pressed(Control::Down) {
-            if self.cursor_pos < 5 {
-                self.cursor_pos += 1;
-            }
-        }
-        if pressed(Control::A) {
-            self.selected = Some(self.cursor_pos);
-            if self.despawn_on_select {
-                self.despawn();
-            }
-        }
+    fn update_position(&mut self, _x: f32, _y: f32) {
+        macroquad::prelude::warn!("Cannot update position of party gui!");
     }
+
 }
 
 impl Entity for PokemonPartyGui {
@@ -214,6 +216,6 @@ pub struct PartyGuiData {
     name: String,
     level: String,
     hp: String,
-    health_width: u32,
+    health_width: f32,
 
 }

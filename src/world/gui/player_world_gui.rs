@@ -1,5 +1,4 @@
 use firecore_util::Entity;
-use crate::util::Input;
 use firecore_input::{self as input, Control};
 use crate::util::graphics::Texture;
 
@@ -68,33 +67,13 @@ impl PlayerWorldGui {
 
 impl GuiComponent for PlayerWorldGui {
 
-    fn update_position(&mut self, x: f32, y: f32) {
-        self.x = x;
-        self.y = y;
-    }
-
-    fn render(&self) {
-        if self.is_alive() {
-            draw(self.background, self.x, self.y);
-            self.save_button.render();
-            self.pokemon_button.render();
-            self.exit_menu_button.render();
-            self.exit_game_button.render();
-            crate::util::graphics::draw_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
-        }
-    }
-
-}
-
-impl Input for PlayerWorldGui {
-
     fn input(&mut self, _delta: f32) {
 
         if input::pressed(Control::A) {
             match self.cursor_position {
                 0 => {
                     // Save
-                    unsafe { crate::io::data::player::DIRTY = true; }
+                    unsafe { crate::data::player::DIRTY = true; }
                 },
                 1 => {
                     // Pokemon
@@ -125,6 +104,22 @@ impl Input for PlayerWorldGui {
                 self.cursor_position = 0;
             }
         }
+    }
+
+    fn render(&self) {
+        if self.is_alive() {
+            draw(self.background, self.x, self.y);
+            self.save_button.render();
+            self.pokemon_button.render();
+            self.exit_menu_button.render();
+            self.exit_game_button.render();
+            crate::util::graphics::draw_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
+        }
+    }
+
+    fn update_position(&mut self, x: f32, y: f32) {
+        self.x = x;
+        self.y = y;
     }
 
 }

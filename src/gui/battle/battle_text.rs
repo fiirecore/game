@@ -7,6 +7,7 @@ use firecore_util::Entity;
 use super::battle_gui::BattleGui;
 use super::pokemon_gui::PokemonGui;
 
+#[deprecated(note = "fix the timer so it uses \"wait_for_input = false\" timer instead")]
 pub fn pmove(delta: f32, battle: &mut Battle, battle_gui: &mut BattleGui) {
     if battle.pmove_queued {
         if battle_gui.battle_text.is_alive() {

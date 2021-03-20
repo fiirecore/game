@@ -1,0 +1,14 @@
+(
+    identifier: (
+        index: 0,
+        name: "Mom",
+        npc_type: "mom"
+    ),
+    position: (
+        coords: (
+            x: 8,
+            y: 4
+        ),
+        direction: Left
+    ),
+)

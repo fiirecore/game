@@ -17,7 +17,7 @@ pub struct HealthBar {
 	panel_y: f32,
 
 	width: u8,
-	previous_width: f32,
+	pub previous_width: f32,
 
 	has_width: bool,
 	
@@ -59,10 +59,6 @@ impl HealthBar {
 		return self.previous_width > self.width as f32;
 	}
 
-	pub fn get_width(&self) -> u8 {
-		return self.previous_width as u8;
-	}
-
 	pub fn reset(&mut self) {
 		self.width = WIDTH;
 		self.previous_width = self.width as f32;
@@ -84,8 +80,8 @@ impl GuiComponent for HealthBar {
 	}
 
 	fn render(&self) {
-		draw_rect(UPPER_COLOR, self.x + self.panel_x, self.y + self.panel_y, self.get_width() as u32, 1);
-		draw_rect(LOWER_COLOR, self.x + self.panel_x, self.y + self.panel_y + 1.0, self.get_width() as u32, 2);
+		draw_rect(UPPER_COLOR, self.x + self.panel_x, self.y + self.panel_y, self.previous_width, 1.0);
+		draw_rect(LOWER_COLOR, self.x + self.panel_x, self.y + self.panel_y + 1.0, self.previous_width, 2.0);
 	}
 	
 }

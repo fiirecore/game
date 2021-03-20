@@ -1,0 +1,14 @@
+(
+    chunk: Some((
+        config: (
+            name: "Fuchsia City",
+            file: "3.7_FUCHSIA CITY.map",
+        ),
+        piece_index: 7,
+        coords: (
+            x: 192,
+            y: 300,
+        ),
+        connections: [33, 36, 37],
+    ))
+)

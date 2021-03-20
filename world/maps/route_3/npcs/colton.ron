@@ -1,5 +1,6 @@
 (
     identifier: (
+        index: 2,
         name: "Colton",
         npc_type: "bug_catcher"
     ),

@@ -3,7 +3,7 @@ use firecore_util::Entity;
 use crate::battle::transitions::BattleCloser;
 use crate::battle::transitions::BattleTransition;
 use crate::battle::transitions::closers::basic_battle_closer::BasicBattleCloser;
-use crate::util::{Reset, Completable};
+use firecore_util::{Reset, Completable};
 
 #[derive(Default)]
 pub struct BattleCloserManager {

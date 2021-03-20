@@ -4,8 +4,8 @@ use macroquad::prelude::warn;
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::screen_transitions::flash_battle_screen_transition::FlashBattleScreenTransition;
 use crate::battle::transitions::screen_transitions::trainer_battle_screen_transition::TrainerBattleScreenTransition;
-use crate::util::{Reset, Completable};
-use firecore_world::battle::{BattleType, BattleScreenTransitions};
+use firecore_util::{Reset, Completable};
+use firecore_util::battle::{BattleType, BattleScreenTransitions};
 use firecore_audio::play_music_named as play_music;
 
 pub struct BattleScreenTransitionManager {
@@ -37,7 +37,7 @@ impl BattleScreenTransitionManager {
                 play_music("BattleTrainer")
             }
             BattleType::GymLeader => {
-                play_music("BattleGym")
+                play_music("BattleGymLeader")
             }
         } {
             warn!("Could not play battle music with error {}", err);

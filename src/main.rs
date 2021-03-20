@@ -1,6 +1,6 @@
+use data::player::list::PlayerSaves;
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use io::args::Args;
 use firecore_data::configuration::Configuration;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::BLACK;
@@ -22,7 +22,7 @@ use util::graphics::draw_text_left;
 
 pub mod util;
 pub mod scene;
-pub mod io;
+pub mod data;
 pub mod world;
 pub mod battle;
 pub mod gui;
@@ -39,10 +39,14 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 pub static BASE_WIDTH: u32 = 240;
 pub static BASE_HEIGHT: u32 = 160;
 
-pub static CAMERA_SIZE: Rect = Rect { x: 0.0, y: 0.0, w: crate::BASE_WIDTH as _, h: crate::BASE_HEIGHT as _ };
+pub static WIDTH_F32: f32 = crate::BASE_WIDTH as f32;
+pub static HEIGHT_F32: f32 = crate::BASE_HEIGHT as f32;
+
+pub static CAMERA_SIZE: Rect = Rect { x: 0.0, y: 0.0, w: WIDTH_F32, h: HEIGHT_F32 };
 
 pub static SCALE: f32 = 3.0;
 
+static mut DEBUG: bool = cfg!(debug_assertions);
 static mut QUIT: bool = false;
 
 lazy_static::lazy_static! {
@@ -53,6 +57,16 @@ lazy_static::lazy_static! {
 #[macroquad::main(settings)]
 async fn main() {
     macroquad_main().await;
+}
+
+fn settings() -> Conf {
+    Conf {
+        window_title: TITLE.to_string(),
+        window_width: (BASE_WIDTH * SCALE as u32) as _,
+        window_height: (BASE_HEIGHT * SCALE as u32) as _,
+        sample_count: 1,
+        ..Default::default()
+    }
 }
 
 
@@ -83,24 +97,32 @@ async fn macroquad_main() {
     draw_text_left(1, "for up to two minutes.", 5.0, 65.0);
     next_frame().await;
 
-    #[cfg(debug_assertions)] {
-        info!("Running in debug mode");
-    }
-
     let config = Configuration::load_from_file().await;
 
     config.on_reload();
 
+    let saves = PlayerSaves::load_from_file().await;
+
+    storage::store(saves);
+
     storage::store(config);
 
-    crate::util::text::load().await;
+    crate::data::text::font::open_sheets().await;
 
-    let args = crate::io::args::parse_args();
+    let args = getopts();
 
     if !args.contains(&Args::DisableAudio) {
         if let Err(err) = firecore_audio::create() {
             error!("Could not create audio instance with error {}", err);
         }
+    }
+
+    if args.contains(&Args::Debug) {
+        unsafe { DEBUG = true; }
+    }
+    
+    if debug() {
+        info!("Running in debug mode");
     }
 
     let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
@@ -121,8 +143,17 @@ async fn macroquad_main() {
     info!("Loading assets...");
 
     let audio = bincode::deserialize(
-    &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
+    // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
+        include_bytes!("../assets/audio.bin")
     ).unwrap();
+    #[cfg(not(target = "wasm32"))] {
+        std::thread::spawn( || {
+            if let Err(err) = firecore_audio::load(audio) {
+                error!("Could not load audio files with error {}", err);
+            }
+        });
+    }
+    #[cfg(target = "wasm32")]
     if let Err(err) = firecore_audio::load(audio) {
         error!("Could not load audio files with error {}", err);
     }
@@ -132,6 +163,8 @@ async fn macroquad_main() {
     let mut scene_manager = SCENE_MANAGER.lock();
 
     scene_manager.load_all().await;
+
+    // let mut egui_mq = egui_miniquad::EguiMq::new(unsafe{macroquad::window::get_internal_gl().quad_context});
 
     info!("Finished loading assets!");
 
@@ -166,17 +199,18 @@ async fn macroquad_main() {
         clear_background(BLACK);
 
         scene_manager.render();
+        scene_manager.ui();
         // io::input::touchscreen::TOUCH_CONTROLS.render();
 
 
-        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
-            if let Some(mut config) = storage::get_mut::<Configuration>() {
-                firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
-            }
-            if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
-                firecore_data::data::PersistantData::reload(player_data).await;
-            }
-        }
+        // if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
+        //     if let Some(mut config) = storage::get_mut::<Configuration>() {
+        //         firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
+        //     }
+        //     if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
+        //         firecore_data::data::PersistantData::reload(player_data).await;
+        //     }
+        // }
 
         if unsafe{QUIT} {
             break;
@@ -195,12 +229,38 @@ pub fn queue_quit() {
     }
 }
 
-fn settings() -> Conf {
-    Conf {
-        window_title: TITLE.to_string(),
-        window_width: (BASE_WIDTH * SCALE as u32) as _,
-        window_height: (BASE_HEIGHT * SCALE as u32) as _,
-        sample_count: 1,
-        ..Default::default()
-    }
+pub fn debug() -> bool {
+    unsafe{DEBUG}
+}
+
+#[derive(PartialEq)]
+pub enum Args {
+
+    DisableAudio,
+    Debug,
+
+}
+
+fn getopts() -> Vec<Args> {
+    let args: Vec<String> = std::env::args().collect();
+    let mut opts = getopts::Options::new();
+    let mut list = Vec::new();
+
+    opts.optflag("a", "disable-audio", "Disable audio");
+    opts.optflag("d", "debug", "Add debug keybinds and other stuff");
+
+    match opts.parse(&args[1..]) {
+        Ok(m) => {
+            if m.opt_present("a") {
+                list.push(Args::DisableAudio);
+            }
+            if m.opt_present("d") {
+                list.push(Args::Debug);
+            }
+        }
+        Err(f) => {
+            macroquad::prelude::warn!("Could not parse command line arguments with error {}", f.to_string());
+        }
+    };
+    return list;
 }

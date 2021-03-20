@@ -1,9 +1,0 @@
-[identifier]
-name = "Route 19"
-map_files = ["3.37_ROUTE 19.map"]
-
-[jigsaw_map]
-piece_index = 37
-x = 204
-y = 340
-connections = [7, 38]

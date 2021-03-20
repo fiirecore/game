@@ -1,0 +1,14 @@
+(
+    chunk: Some((
+        config: (
+            name: "Lavender Town",
+            file: "3.4_LAVENDER TOWN.map",
+        ),
+        piece_index: 4,
+        coords: (
+            x: 384,
+            y: 130,
+        ),
+        connections: [26, 28, 30],
+    ))
+)

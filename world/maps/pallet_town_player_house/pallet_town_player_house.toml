@@ -1,6 +1,0 @@
-[identifier]
-name = "Your House"
-map_files = ["gba/4.0_PALLET TOWN.map", "gba/4.1_PALLET TOWN.map"]
-
-[warp_map]
-map_set_id = "pallet_town_player_house"

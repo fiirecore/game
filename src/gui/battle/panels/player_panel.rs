@@ -1,7 +1,6 @@
 use macroquad::prelude::warn;
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 use firecore_util::Entity;
-use crate::util::Input;
 use firecore_input as input;
 use crate::util::graphics::Texture;
 use crate::gui::GuiComponent;

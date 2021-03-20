@@ -1,15 +1,11 @@
-use std::hash::Hash;
-use std::hash::Hasher;
-
 use firecore_util::text::MessageSet;
-
 use firecore_util::Entity;
+use firecore_util::Completable;
+use firecore_util::Reset;
+
 use crate::gui::GuiComponent;
 use crate::gui::background::Background;
 use crate::gui::dynamic_text::DynamicText;
-use crate::util::Completable;
-use crate::util::Input;
-use crate::util::Reset;
 use crate::util::text::process_message_set;
 
 pub struct MapWindowManager {
@@ -34,13 +30,16 @@ impl MapWindowManager {
 
     pub fn set_text(&mut self, message_set: MessageSet) {
         self.text.text = message_set;
-        process_message_set(&mut self.text.text);
     }
 
-    pub fn text_hash(&self) -> u64 {
-        let mut hasher = ahash::AHasher::default();
-        self.text.text.hash(&mut hasher);
-        hasher.finish()
+    // pub fn text_hash(&self) -> u64 {
+    //     let mut hasher = ahash::AHasher::default();
+    //     self.text.text.hash(&mut hasher);
+    //     hasher.finish()
+    // }
+
+    pub fn on_start(&mut self) {
+        process_message_set(&mut self.text.text);
     }
 
     pub fn update(&mut self, delta: f32) {

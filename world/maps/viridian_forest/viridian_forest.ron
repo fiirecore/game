@@ -1,0 +1,8 @@
+(
+    map_set: Some((
+        identifier: "viridian_forest",
+        dirs: [
+            "map",
+        ],
+    )),
+)

@@ -1,0 +1,23 @@
+(
+    location: (
+        min: (
+            x: 7,
+            y: 9,
+        ),
+        max: (
+            x: 7,
+            y: 9,
+        ),
+    ),
+    destination: (
+        map_id: "world",
+        map_index: 1,
+        position: (
+            coords: (
+                x: 0x1A,
+                y: 0x1A,
+            ),
+            direction: Some(Down),
+        ),
+    ),
+)

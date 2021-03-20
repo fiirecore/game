@@ -1,0 +1,23 @@
+(
+    location: (
+        min: (
+            x: 17,
+            y: 22,
+        ),
+        max: (
+            x: 17,
+            y: 22,
+        )
+    ),
+    destination: (
+        map_id: "route_2_houses",
+        map_index: 1,
+        position: (
+            coords: (
+                x: 4,
+                y: 8,
+            ),
+            direction: Some(Up),
+        )
+    )
+)

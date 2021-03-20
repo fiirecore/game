@@ -1,16 +1,15 @@
+use crate::gui::GuiComponent;
+use macroquad::prelude::collections::storage::{get, get_mut};
 use crate::battle::battle_manager::BattleManager;
 use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
-use crate::io::data::player::PlayerData;
 use crate::scene::Scene;
-use crate::util::Completable;
-use crate::util::Input;
+use firecore_util::Completable;
 use firecore_data::data::PersistantData;
 use crate::world::map::manager::WorldManager;
-use crate::util::Update;
-use crate::util::Render;
 use firecore_util::Entity;
 
-use crate::io::data::player::PLAYER_DATA;
+use crate::data::player::list::PlayerSaves;
+
 use super::SceneState;
 
 pub struct GameScene {
@@ -42,13 +41,13 @@ impl GameScene {
 		}
 	}
 
-	pub fn data_dirty(&mut self, player_data: &mut PlayerData) {
+	pub fn data_dirty(&mut self, player_data: &mut PlayerSaves) {
 		self.save_data(player_data);
-		unsafe { crate::io::data::player::DIRTY = false; }
+		unsafe { crate::data::player::DIRTY = false; }
 	}
 
-    pub fn save_data(&mut self, player_data: &mut PlayerData) {
-        self.world_manager.save_data(player_data);
+    pub fn save_data(&mut self, player_data: &mut PlayerSaves) {
+        self.world_manager.save_data(player_data.get_mut());
 		player_data.save();
     }
 	
@@ -71,9 +70,9 @@ impl Scene for GameScene {
 		} else {
 			1.0
 		};
-		if unsafe { crate::io::data::player::DIRTY } {
-			if let Some(player_data) = PLAYER_DATA.write().as_mut() {
-				self.data_dirty(player_data);
+		if unsafe { crate::data::player::DIRTY } {
+			if let Some(mut saves) = get_mut::<PlayerSaves>() {
+				self.data_dirty(&mut saves);
 			}	
 		}
 		if let Some(despawn_on_select) = unsafe { crate::gui::game::pokemon_party_gui::SPAWN.take() } {
@@ -90,10 +89,10 @@ impl Scene for GameScene {
 			self.world_manager.update(delta);
 
 			if crate::util::battle_data::BATTLE_DATA.lock().is_some() {
-				if let Some(player_data) = PLAYER_DATA.write().as_mut() {
+				if let Some(player_saves) = get::<PlayerSaves>() {
 					self.battling = true;
 					self.swapped = true;
-					self.battle_manager.on_start(player_data, crate::util::battle_data::BATTLE_DATA.lock().take().unwrap());
+					self.battle_manager.on_start(&player_saves.get().party, crate::util::battle_data::BATTLE_DATA.lock().take().unwrap());
 				}
 			}
 
@@ -104,8 +103,8 @@ impl Scene for GameScene {
 			}
 			self.battle_manager.update(delta, &mut self.party_gui);
 			if self.battle_manager.is_finished() {
-				if let Some(player_data) = PLAYER_DATA.write().as_mut() {
-					self.battle_manager.current_battle.update_data(player_data);
+				if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
+					self.battle_manager.current_battle.update_data(player_saves.get_mut());
 				}
 				self.battling = false;
 				self.swapped = true;
@@ -138,8 +137,8 @@ impl Scene for GameScene {
 	}
 
 	fn quit(&mut self) {
-		if let Some(player_data) = PLAYER_DATA.write().as_mut() {
-			self.save_data(player_data);
+		if let Some(mut player_data) = get_mut::<PlayerSaves>() {
+			self.save_data(&mut player_data);
 		}
 	}
 	

@@ -1,9 +1,0 @@
-[identifier]
-name = "Mt. Moon"
-map_files = ["gba/1.1_MT. MOON.map", "gba/1.2_MT. MOON.map", "gba/1.3_MT. MOON.map"]
-
-[warp_map]
-map_set_id = "mt_moon"
-
-[wild]
-encounter_type = "original"
