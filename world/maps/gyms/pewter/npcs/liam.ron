@@ -12,15 +12,13 @@
         direction: Right
     ),
     properties: (
-        message: Some((
-            messages: [(
-                color: Blue,
-                message: [
-                    "You're pretty hot.",
-                    "...But not as hot as BROCK!"
-                ]
-            )]
-        )),
+        message: Some([(
+            color: Blue,
+            lines: [
+                "You're pretty hot.",
+                "...But not as hot as BROCK!"
+            ]
+        )]),
     ),
     trainer: Some((
         trainer_type: Camper,
@@ -38,11 +36,13 @@
         party: (
             pokemon: [(
                     id: 74,
-                    level: 10
+                    level: 10,
+                    gender: Male,
                 ),
                 (
                     id: 27,
-                    level: 11
+                    level: 11,
+                    gender: Male,
                 )
             ]
         ),

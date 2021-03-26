@@ -37,17 +37,13 @@
             )
         ),
         PlayMusic("Oak"),
-        DisplayText(
-            (
-                messages: [(
-                    message: [
-                        "OAK: Hey! Wait!",
-                        "Don't go out!"
-                    ],
-                    color: Blue,
-                )]
-            )
-        ),
+        DisplayText([(
+            lines: [
+                "OAK: Hey! Wait!",
+                "Don't go out!"
+            ],
+            color: Blue,
+        )]),
         NPCMove(
             10,
             (
@@ -85,33 +81,29 @@
             ),
         ),
         NPCMoveToPlayer(10),
-        DisplayText(
+        DisplayText([
             (
-                messages: [
-                    (
-                        message: [
-                            "OAK: It's unsafe!",
-                            "Wild POKEMON live in tall grass!"
-                        ],
-                        color: Blue,
-                    ),
-                    (
-                        message: [
-                            "You need your own POKEMON for",
-                            "your protection."
-                        ],
-                        color: Blue,
-                    ),
-                    (
-                        message: [
-                            "I know!",
-                            "Here, come with me!"
-                        ],
-                        color: Blue,
-                    )
-                ]
+                lines: [
+                    "OAK: It's unsafe!",
+                    "Wild POKEMON live in tall grass!"
+                ],
+                color: Blue,
+            ),
+            (
+                lines: [
+                    "You need your own POKEMON for",
+                    "your protection."
+                ],
+                color: Blue,
+            ),
+            (
+                lines: [
+                    "I know!",
+                    "Here, come with me!"
+                ],
+                color: Blue,
             )
-        ),
+        ]),
         NPCLeadPlayer(
             10,
             (

@@ -11,16 +11,14 @@
         ),
         direction: Down
     ),
-    message: Some((
-        messages: [
-            (
-                color: Red,
-                message: [
-                    "Temporary post-battle message"
-                ]
-            )
-        ]
-    )),
+    message: Some([
+        (
+            color: Red,
+            message: [
+                "Temporary post-battle message"
+            ]
+        )
+    ]),
     trainer: Some((
         trainer_type: GymLeader,
         encounter_type: Some(Trainer),
@@ -34,10 +32,12 @@
                 (
                     id: 120,
                     level: 18,
+                    gender: None,
                 ),
                 (
                     id: 121,
                     level: 21,
+                    gender: None,
                 )
             ]
         ),

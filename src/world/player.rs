@@ -5,8 +5,8 @@ use firecore_util::Direction;
 use crate::util::graphics::Texture;
 use crate::util::TILE_SIZE;
 
-static SCREEN_X: f32 = ((crate::BASE_WIDTH as isize - TILE_SIZE as isize) >> 1) as f32 + 0.0;
-static SCREEN_Y: f32 = ((crate::BASE_HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - 16.0;
+const SCREEN_X: f32 = ((crate::BASE_WIDTH as isize - TILE_SIZE as isize) >> 1) as f32 + 0.0;
+const SCREEN_Y: f32 = ((crate::BASE_HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - 16.0;
 
 pub struct PlayerTexture {
 

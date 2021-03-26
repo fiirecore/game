@@ -11,7 +11,7 @@
     ),
     destination: (
         map_id: "pokemon_centers",
-        map_index: 5,
+        map_index: 4,
         position: (
             coords: (
                 x: 7,

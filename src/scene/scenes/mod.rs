@@ -25,6 +25,11 @@ pub enum Scenes {
 
 impl Default for Scenes {
     fn default() -> Self {
-        Self::TitleScene
+        #[cfg(debug_assertions)] {
+            Self::TitleScene
+        }
+        #[cfg(not(debug_assertions))] {
+            Self::GameScene
+        }
     }
 }

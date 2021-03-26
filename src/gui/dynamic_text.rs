@@ -1,78 +1,74 @@
 use firecore_util::text::Message;
-use firecore_util::text::MessageSet;
-use serde::Deserialize;
+use macroquad::prelude::Vec2;
 
 use firecore_util::Completable;
 use firecore_util::Reset;
-use crate::util::graphics::draw_text_left_color;
+use crate::util::graphics::draw_text_left;
 use firecore_input as input;
 
 use firecore_util::Entity;
-use crate::gui::GuiComponent;
 use firecore_util::Timer;
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone)]
 pub struct DynamicText {
 
-	#[serde(skip)]
+	// #[serde(skip)]
 	alive: bool,
-	#[serde(skip)]
-    focus: bool,
     
-	#[serde(default = "dx")]
-	x: f32,
-	#[serde(default = "dy")]
-	y: f32,
-	#[serde(default = "px")]
-	panel_x: f32,
-	#[serde(default = "py")]
-	panel_y: f32,
+	// #[serde(default = "pos")]
+	pos: Vec2,
+	// #[serde(default = "panel")]
+	panel: Vec2,
 	
-	pub text: MessageSet,
-	#[serde(skip)]
-	current_phrase: u8,
-	#[serde(skip)]
+	pub messages: Option<Vec<Message>>,
+	// #[serde(skip)]
+	current_message: usize,
+	// #[serde(skip)]
 	current_line: usize,
-	#[serde(skip)]
+
+	// #[serde(skip)]
 	counter: f32,
 	
-	#[serde(skip)]
+	// #[serde(skip)]
 	pub can_continue: bool,
-	#[serde(skip)]
+	// #[serde(skip)]
 	finish_click: bool,
-	#[serde(skip)]
-	pub timer: Timer,
+	// #[serde(skip)]
+	timer: Timer,
 
-	#[serde(skip)]
+	// #[serde(skip)]
 	button_pos: f32,
-	#[serde(skip)]
+	// #[serde(skip)]
 	button_up: bool,
 
 }
 
 impl DynamicText {
 
-	pub fn from_text(text_x: f32, text_y: f32, panel_x: f32, panel_y: f32, text: MessageSet) -> Self {
+	pub fn with_size(size: usize, pos: Vec2, panel: Vec2) -> Self {
 		Self {
-			text,
-			..Self::new(text_x, text_y, panel_x, panel_y)
+			messages: Some(Vec::with_capacity(size)),
+			..Self::new(pos, panel)
+		}
+	}
+
+	pub fn from_text(pos: Vec2, panel: Vec2, messages: Vec<Message>) -> Self {
+		Self {
+			messages: Some(messages),
+			..Self::new(pos, panel)
 		}
 	}
 	
-	pub fn new(text_x: f32, text_y: f32, panel_x: f32, panel_y: f32) -> Self {
+	pub fn new(pos: Vec2, panel: Vec2) -> Self {
 		Self {
 
-			x: text_x,
-			y: text_y,
-			panel_x: panel_x,
-			panel_y: panel_y,
-
-			text: MessageSet::default(),
-
 			alive: false,
-			focus: false,
 
-			current_phrase: 0,
+			pos,
+			panel,
+
+			messages: None,
+			current_message: 0,
 			current_line: 0,
 
 			counter: 0.0,
@@ -86,153 +82,143 @@ impl DynamicText {
 		}
 	}
 
-	fn reset_phrase(&mut self) {
+	fn reset_message(&mut self) {
 		self.can_continue = false;
-		//self.no_pause = self.current_phrase >= 1;
 		self.current_line = 0;
 		self.counter = 0.0;
+		self.timer.hard_reset();
 	}
 
-	fn current_line(&self) -> &String {
-		&self.current_message().message[self.current_line]
+	pub fn input(&mut self) {
+		if self.can_continue {
+			if let Some(messages) = self.messages.as_ref() {
+				if input::pressed(input::Control::A) && messages[self.current_message].wait.is_none() {
+					if self.current_message + 1 >= messages.len() {
+						self.finish_click = true;
+					} else {
+						self.current_message += 1;
+						self.reset_message();
+					}	
+				}				
+			}
+			
+		}
 	}
 
-	fn current_message(&self) -> &Message {
-		&self.text.get_phrase(self.current_phrase as usize)
-	}
-
-	pub fn current_phrase(&self) -> u8 {
-		self.current_phrase
-	}
-
-}
-
-impl GuiComponent for DynamicText {
-
-	fn update(&mut self, delta: f32) {
-		if self.is_alive() {
-			let line_len = (self.current_line().len() as u16) << 2;
-			if self.can_continue {
-				if !self.current_message().wait_for_input {
-					if !self.timer.is_alive() {
-						self.timer.spawn();
-					}
-					self.timer.update(delta);
-					if self.timer.is_finished() {
-						if self.current_phrase() + 1 != self.text.len() as u8 {
-							self.current_phrase += 1;
-							self.reset_phrase();
-							self.timer.reset();
-							self.timer.despawn();
+	pub fn update(&mut self, delta: f32) {
+		if self.alive {
+			if let Some(messages) = self.messages.as_ref() {
+				let current = &messages[self.current_message];
+				let line_len = current.lines[self.current_line].len() << 2;
+				if self.can_continue {
+					
+					if let Some(time) = current.wait {
+						if !self.timer.is_alive() {
+							self.timer.spawn();
+							self.timer.set_target(time);
+						}
+						self.timer.update(delta);
+						if self.timer.is_finished() {
+							if self.current_message + 1 != messages.len() {
+								self.current_message += 1;
+								self.reset_message();
+								self.timer.soft_reset();
+								self.timer.despawn();
+							}
 						}
 					}
-				}
-				if self.button_up {
-					self.button_pos += delta * 7.5;
-					if self.button_pos > 3.0 {
-						self.button_up = !self.button_up;
+					if self.button_up {
+						self.button_pos += delta * 7.5;
+						if self.button_pos > 3.0 {
+							self.button_up = !self.button_up;
+						}
+					} else {
+						self.button_pos -= delta * 7.5;
+						if self.button_pos < 0.0 {
+							self.button_up = !self.button_up;
+						}
 					}
+				} else if self.counter <= line_len as f32 {
+					self.counter += delta * 60.0
+				} else if self.current_line < current.lines.len() - 1 {
+					self.current_line += 1;
+					self.counter = 0.0;
 				} else {
-					self.button_pos -= delta * 7.5;
-					if self.button_pos < 0.0 {
-						self.button_up = !self.button_up;
-					}
+					self.counter = line_len as f32;
+					self.can_continue = true;
 				}
-			} else if self.counter <= line_len as f32 {
-				self.counter += delta * 60.0
-				//  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
-				// 	8.0
-				// } else {
-				// 	1.0
-				// }
-				;
-			} else if self.current_line < self.current_message().message.len() - 1 {
-				self.current_line += 1;
-				self.counter = 0.0;
-			} else {
-				self.counter = line_len as f32;
-				self.can_continue = true;
-			}
-		}
-	}
-
-	fn render(&self) {
-		if self.is_alive() {
-
-			let current_line = self.current_line();
-
-			let string = if current_line.len() > (self.counter / 4.0) as usize {
-				&current_line[..(self.counter / 4.0) as usize]
-			} else {
-				current_line
-			};		
-
-			draw_text_left_color(self.current_message().font_id, string, self.current_message().color, self.panel_x + self.x, self.panel_y + self.y + (self.current_line << 4) as f32);
-
-			for line_index in 0..self.current_line {
-				draw_text_left_color(self.current_message().font_id, &self.current_message().message[line_index], self.current_message().color, self.panel_x + self.x, self.panel_y + self.y + (line_index << 4) as f32);
-			}
-
-			if self.can_continue && self.current_message().wait_for_input {
-				crate::util::graphics::draw_button(current_line, self.current_message().font_id, self.panel_x + self.x, self.panel_y + self.y + self.button_pos + (self.current_line << 4) as f32);
 			}			
-		
 		}
-		
 	}
 
-	fn input(&mut self, _delta: f32) {
-		if self.can_continue && self.focus {
-			if input::pressed(input::Control::A) && self.current_message().wait_for_input {
-				if self.current_phrase() + 1 == self.text.len() as u8 {
-					self.finish_click = true;
+	pub fn render(&self) {
+		if self.alive {
+			if let Some(messages) = self.messages.as_ref() {
+				let current_line = &messages[self.current_message].lines[self.current_line];
+
+				let string = if current_line.len() > (self.counter as usize) >> 2 {
+					&current_line[..(self.counter as usize) >> 2]
 				} else {
-					self.current_phrase += 1;
-					self.reset_phrase();
+					current_line
+				};
+
+				let current = &messages[self.current_message];
+
+				draw_text_left(current.font_id, string, current.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (self.current_line << 4) as f32);
+
+				for index in 0..self.current_line {
+					draw_text_left(current.font_id, &current.lines[index], current.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (index << 4) as f32);
 				}
+
+				if self.can_continue && current.wait.is_none() {
+					crate::util::graphics::draw_button(current_line, current.font_id, self.panel.x + self.pos.x, self.panel.y + self.pos.y + self.button_pos + (self.current_line << 4) as f32);
+				}		
+
 			}
+
 		}
+		
 	}
 
-	fn update_position(&mut self, x: f32, y: f32) {
-		self.panel_x = x as f32;
-		self.panel_y = y as f32;
+	pub fn current_message(&self) -> usize {
+		self.current_message
 	}
-	
+
 }
 
 impl Reset for DynamicText {
     fn reset(&mut self) {
-        self.current_phrase = 0;
+        self.current_message = 0;
 		self.button_pos = 0.0;
 		self.button_up = true;
 		self.finish_click = false;
-		self.reset_phrase();
+		self.reset_message();
     }
 }
 
 impl Completable for DynamicText {
     fn is_finished(&self) -> bool {
-		self.can_continue && 
-		self.current_phrase() + 1 == self.text.len() as u8 &&
-		if self.current_message().wait_for_input {
-			self.finish_click
+		if let Some(messages) = self.messages.as_ref() {
+			self.current_message + 1 == messages.len() && if messages[self.current_message].wait.is_none() {
+				self.finish_click
+			} else {
+				self.timer.is_finished()
+			} &&
+			self.can_continue
 		} else {
-			self.timer.is_finished()
-		}
+			false
+		}		
     }
 }
 
 impl Entity for DynamicText {
 
 	fn spawn(&mut self) {
-		self.focus = true;
 		self.alive = true;	
 		self.reset();
 	}
 	
 	fn despawn(&mut self) {
-		self.focus = false;
 		self.alive = false;		
         self.timer.despawn();
 		self.reset();
@@ -242,20 +228,4 @@ impl Entity for DynamicText {
 		self.alive
 	}
 
-}
-
-const fn dx() -> f32 {
-	6.0
-}
-
-const fn dy() -> f32 {
-	116.0
-}
-
-const fn px() -> f32 {
-	11.0
-}
-
-const fn py() -> f32 {
-	5.0
 }

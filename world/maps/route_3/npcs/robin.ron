@@ -13,6 +13,15 @@
     ),
     properties: (
         movement: WalkUpAndDown(2),
+        message: Some([
+            (
+                lines: [
+                    "ROUTE 4 is at the foot of",
+                    "MT. MOON."
+                ],
+                color: Red,
+            )
+        ])
     ),
     trainer: Some((
         tracking_length: Some(2),
@@ -27,7 +36,8 @@
             pokemon: [
                 (
                     id: 39,
-                    level: 14
+                    level: 14,
+                    gender: Female,
                 )
             ]
         ),

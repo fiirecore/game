@@ -1,30 +1,27 @@
-use firecore_util::Entity;
+use firecore_util::{Entity, text::TextColor};
 use firecore_input::{self as input, Control};
-use crate::util::graphics::Texture;
+use macroquad::prelude::Vec2;
 
-use crate::gui::button::BasicButton;
-use crate::gui::GuiComponent;
-use crate::util::graphics::draw;
-use crate::util::graphics::texture::byte_texture;
+use crate::gui::text::StaticText;
+use crate::util::graphics::{Texture, texture::byte_texture, draw};
 
-static BUTTON_COUNT: u8 = 4;
+const BUTTON_COUNT: u8 = 4;
 
 pub struct PlayerWorldGui {
 
     active: bool,
     focused: bool,
 
-    x: f32,
-    y: f32,
+    pos: Vec2,
 
     background: Texture,
 
     cursor_position: u8,
 
-    save_button: BasicButton,
-    pokemon_button: BasicButton,
-    exit_menu_button: BasicButton,
-    exit_game_button: BasicButton,
+    save_button: StaticText,
+    pokemon_button: StaticText,
+    exit_menu_button: StaticText,
+    exit_game_button: StaticText,
 
 }
 
@@ -34,25 +31,23 @@ impl PlayerWorldGui {
 
         use Button::*;
 
-        let x = 169.0;
-        let y = 1.0;
+        let pos = Vec2::new(169.0, 1.0);
 
         Self {
 
             active: false,
             focused: false,
 
-            x: x,
-            y: y,
+            pos,
 
             background: byte_texture(include_bytes!("../../../build/assets/gui/world/start_menu.png")),
 
             cursor_position: 0,
 
-            save_button: Save.to_button(x, y),
-            pokemon_button: Pokemon.to_button(x, y),
-            exit_game_button: ExitGame.to_button(x, y),
-            exit_menu_button: Close.to_button(x, y),
+            save_button: Save.to_button(pos),
+            pokemon_button: Pokemon.to_button(pos),
+            exit_game_button: ExitGame.to_button(pos),
+            exit_menu_button: Close.to_button(pos),
 
         }
 
@@ -63,11 +58,7 @@ impl PlayerWorldGui {
         self.focused = !self.focused;
     }
 
-}
-
-impl GuiComponent for PlayerWorldGui {
-
-    fn input(&mut self, _delta: f32) {
+    pub fn input(&mut self) {
 
         if input::pressed(Control::A) {
             match self.cursor_position {
@@ -77,7 +68,7 @@ impl GuiComponent for PlayerWorldGui {
                 },
                 1 => {
                     // Pokemon
-                    crate::gui::game::pokemon_party_gui::spawn(false);
+                    crate::gui::game::party::spawn();
                 },
                 2 => {
                     // Exit Game
@@ -106,20 +97,15 @@ impl GuiComponent for PlayerWorldGui {
         }
     }
 
-    fn render(&self) {
+    pub fn render(&self) {
         if self.is_alive() {
-            draw(self.background, self.x, self.y);
+            draw(self.background, self.pos.x, self.pos.y);
             self.save_button.render();
             self.pokemon_button.render();
             self.exit_menu_button.render();
             self.exit_game_button.render();
-            crate::util::graphics::draw_cursor(self.x + 8.0, self.y + 9.0 + 15.0 * self.cursor_position as f32);
+            crate::util::graphics::draw_cursor(self.pos.x + 8.0, self.pos.y + 9.0 + 15.0 * self.cursor_position as f32);
         }
-    }
-
-    fn update_position(&mut self, x: f32, y: f32) {
-        self.x = x;
-        self.y = y;
     }
 
 }
@@ -150,16 +136,9 @@ enum Button {
 
 }
 
-// const BUTTONS: [Button; 4] = [
-//     Button::Save,
-//     Button::Pokemon,
-//     Button::ExitGame,
-//     Button::Close,
-// ];
-
 impl Button {
 
-    pub fn name(&self) -> &str {
+    pub const fn name(&self) -> &'static str {
         match self {
             Button::Save => "SAVE",
             Button::Pokemon => "POKEMON",
@@ -168,7 +147,7 @@ impl Button {
         }
     }
 
-    pub fn position(&self) -> u8 {
+    pub const fn position(&self) -> u8 {
         match self {
             Button::Save => 0,
             Button::Pokemon => 1,
@@ -177,8 +156,8 @@ impl Button {
         }
     }
 
-    pub fn to_button(self, panel_x: f32, panel_y: f32) -> BasicButton {
-        BasicButton::new(self.name(), 2, 15.0, 7.0 + 15.0 * self.position() as f32, panel_x, panel_y)
+    pub fn to_button(self, panel: Vec2) -> StaticText {
+        StaticText::new(vec![self.name().to_owned()], TextColor::Black, 1, false, Vec2::new(15.0, 7.0 + 15.0 * self.position() as f32), panel)
     }
 
 }

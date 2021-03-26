@@ -1,13 +1,11 @@
-use data::player::list::PlayerSaves;
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use firecore_data::configuration::Configuration;
+use firecore_util::text::TextColor;
 use macroquad::camera::Camera2D;
 use macroquad::prelude::BLACK;
 use macroquad::prelude::Conf;
 use macroquad::prelude::Rect;
 use macroquad::prelude::clear_background;
-use macroquad::prelude::collections::storage;
 use macroquad::prelude::error;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
@@ -16,7 +14,6 @@ use macroquad::prelude::coroutines::start_coroutine;
 use parking_lot::Mutex;
 use scene::loading::manager::load_coroutine;
 use scene::manager::SceneManager;
-use firecore_data::data::PersistantDataLocation;
 use scene::Scene;
 use util::graphics::draw_text_left;
 
@@ -32,19 +29,19 @@ pub mod experimental;
 pub mod pokemon;
 pub mod audio;
 
-pub static TITLE: &str = "Pokemon FireRed";
-pub static DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
-pub static AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
-pub static VERSION: &str = env!("CARGO_PKG_VERSION");
-pub static BASE_WIDTH: u32 = 240;
-pub static BASE_HEIGHT: u32 = 160;
+pub const TITLE: &str = "Pokemon FireRed";
+pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
+pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+pub const BASE_WIDTH: u32 = 240;
+pub const BASE_HEIGHT: u32 = 160;
 
-pub static WIDTH_F32: f32 = crate::BASE_WIDTH as f32;
-pub static HEIGHT_F32: f32 = crate::BASE_HEIGHT as f32;
+pub const WIDTH_F32: f32 = crate::BASE_WIDTH as f32;
+pub const HEIGHT_F32: f32 = crate::BASE_HEIGHT as f32;
 
-pub static CAMERA_SIZE: Rect = Rect { x: 0.0, y: 0.0, w: WIDTH_F32, h: HEIGHT_F32 };
+pub const CAMERA_SIZE: Rect = Rect { x: 0.0, y: 0.0, w: WIDTH_F32, h: HEIGHT_F32 };
 
-pub static SCALE: f32 = 3.0;
+pub const SCALE: f32 = 3.0;
 
 static mut DEBUG: bool = cfg!(debug_assertions);
 static mut QUIT: bool = false;
@@ -89,32 +86,56 @@ async fn macroquad_main() {
 
     macroquad::camera::set_camera(Camera2D::from_display_rect(CAMERA_SIZE));
 
+    // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
+
     let texture = crate::util::graphics::texture::byte_texture(include_bytes!("../build/assets/loading.png"));
-    clear_background(macroquad::prelude::BLUE);
-    macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
-    draw_text_left(0, VERSION, 1.0, 1.0);
-    draw_text_left(1, "The game may stay on this screen", 5.0, 50.0);
-    draw_text_left(1, "for up to two minutes.", 5.0, 65.0);
-    next_frame().await;
+    
+    loading_screen(texture);
 
-    let config = Configuration::load_from_file().await;
+    let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
+        start_coroutine(load_coroutine())
+    } else {
+        start_coroutine(async move {
+            loop {
+                loading_screen(texture);
+                next_frame().await;
+            }
+        })
+    };
 
-    config.on_reload();
+    info!("Loading assets...");
 
-    let saves = PlayerSaves::load_from_file().await;
-
-    storage::store(saves);
-
-    storage::store(config);
-
-    crate::data::text::font::open_sheets().await;
+    // Parses arguments
 
     let args = getopts();
 
     if !args.contains(&Args::DisableAudio) {
+
+        // Load audio files and setup audio
+
         if let Err(err) = firecore_audio::create() {
             error!("Could not create audio instance with error {}", err);
+        } else {
+            let audio = bincode::deserialize(
+                // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
+                include_bytes!("../assets/audio.bin")
+            ).unwrap();
+
+            #[cfg(not(target = "wasm32"))] {
+                std::thread::spawn( || {
+                    if let Err(err) = firecore_audio::load(audio) {
+                        error!("Could not load audio files with error {}", err);
+                    }
+                });
+            }
+            #[cfg(target = "wasm32")] {
+                if let Err(err) = firecore_audio::load(audio) {
+                    error!("Could not load audio files with error {}", err);
+                }
+            }
+
         }
+
     }
 
     if args.contains(&Args::Debug) {
@@ -125,46 +146,21 @@ async fn macroquad_main() {
         info!("Running in debug mode");
     }
 
-    let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
-        start_coroutine(load_coroutine())
-    } else {
-        start_coroutine(async move {
-            loop {
-                clear_background(macroquad::prelude::BLUE);
-                macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
-                draw_text_left(1, &format!("v{}", VERSION), 2.0, 0.0);
-            	draw_text_left(1, "The game may stay on this screen", 5.0, 50.0);
-            	draw_text_left(1, "for up to two minutes.", 5.0, 65.0);
-                next_frame().await;
-            }
-        })
-    };
+    // Loads configuration and player saves
 
-    info!("Loading assets...");
+    firecore_data::load().await;
 
-    let audio = bincode::deserialize(
-    // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
-        include_bytes!("../assets/audio.bin")
-    ).unwrap();
-    #[cfg(not(target = "wasm32"))] {
-        std::thread::spawn( || {
-            if let Err(err) = firecore_audio::load(audio) {
-                error!("Could not load audio files with error {}", err);
-            }
-        });
-    }
-    #[cfg(target = "wasm32")]
-    if let Err(err) = firecore_audio::load(audio) {
-        error!("Could not load audio files with error {}", err);
-    }
+    // Loads fonts
+
+    crate::data::text::font::open_sheets().await;    
     
+    // Load the pokedex, pokemon textures and moves
+
     pokemon::load().await;
 
     let mut scene_manager = SCENE_MANAGER.lock();
 
     scene_manager.load_all().await;
-
-    // let mut egui_mq = egui_miniquad::EguiMq::new(unsafe{macroquad::window::get_internal_gl().quad_context});
 
     info!("Finished loading assets!");
 
@@ -263,4 +259,12 @@ fn getopts() -> Vec<Args> {
         }
     };
     return list;
+}
+
+fn loading_screen(texture: crate::util::graphics::Texture) {
+    clear_background(macroquad::prelude::BLUE);
+    macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
+    draw_text_left(0, VERSION, TextColor::White, 1.0, 1.0);
+    draw_text_left(1, "The game may stay on this screen", TextColor::White, 5.0, 50.0);
+    draw_text_left(1, "for up to two minutes.", TextColor::White, 5.0, 65.0);
 }

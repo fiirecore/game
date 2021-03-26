@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use dashmap::DashMap;
-use firecore_pokedex::PokemonId;
+use firecore_pokedex::pokemon::PokemonId;
 use firecore_pokedex::pokemon::texture::PokemonTexture;
 use macroquad::prelude::info;
 
@@ -32,6 +32,18 @@ pub async fn load() {
 		BACK_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.back_png));
 		// info!("Adding texture for {}", pokemon.pokemon.data.name);
 		ICON_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.icon_png));
+
+		if !pokemon.cry_ogg.is_empty() {
+			if let Err(err) = firecore_audio::add_sound(firecore_audio::SerializedSoundData {
+				bytes: pokemon.cry_ogg,
+				sound: firecore_audio::Sound {
+				    name: String::from("Cry"),
+				    variant: pokemon.pokemon.data.number,
+				}
+			}) {
+				macroquad::prelude::warn!("Error adding pokemon cry: {}", err);
+			}
+		}
 		
 		firecore_pokedex::POKEDEX.insert(pokemon.pokemon.data.number, pokemon.pokemon);
 	}

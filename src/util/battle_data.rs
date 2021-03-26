@@ -1,20 +1,24 @@
-use firecore_world::character::npc::NPC;
-use firecore_world::character::npc::npc_type::NPCType;
+use firecore_world::character::npc::{
+    NPC, 
+    npc_type::NPCType
+};
+use firecore_world::map::wild::table::WildPokemonTable;
+
+use firecore_pokedex::pokemon::{
+    PokemonId,
+    party::PokemonParty,
+    instance::PokemonInstance,
+    data::StatSet,
+    random::RandomSet,
+    generate::Generate,
+};
+
 use macroquad::rand::gen_range;
 use parking_lot::Mutex;
-use firecore_pokedex::PokemonId;
-use firecore_pokedex::pokemon::data::StatSet;
-use firecore_pokedex::pokemon::party::PokemonParty;
-use firecore_world::map::wild::table::WildPokemonTable;
 
 lazy_static::lazy_static! {
 	pub static ref BATTLE_DATA: Mutex<Option<BattleData>> = Mutex::new(None);
 }
-
-// #[derive(Default)]
-// pub struct BattleDataContainer {
-//     pub data: Option<BattleData>
-// }
 
 #[derive(Default)]
 pub struct BattleData {
@@ -34,7 +38,7 @@ pub struct TrainerData {
 pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
         party: PokemonParty {
-            pokemon: smallvec::smallvec![firecore_pokedex::pokemon::instance::PokemonInstance::generate(gen_range(0, firecore_pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::iv_random()))],
+            pokemon: smallvec::smallvec![PokemonInstance::generate(gen_range(0, firecore_pokedex::POKEDEX.len()) as PokemonId + 1, 1, 100, Some(StatSet::random()))],
         },
         trainer_data: None,
     });

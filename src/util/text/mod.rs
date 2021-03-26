@@ -1,5 +1,5 @@
 use dashmap::DashMap;
-use firecore_util::text::MessageSet;
+use firecore_util::text::Message;
 use macroquad::prelude::Color;
 
 use crate::data::player::list::PlayerSaves;
@@ -16,9 +16,10 @@ lazy_static::lazy_static! {
     pub static ref FONTS: DashMap<usize, Font> = DashMap::new();
 }
 
-pub fn process_message_set(message_set: &mut MessageSet) {
-    for message in &mut message_set.messages {
-        for message in &mut message.message {
+#[deprecated(note = "make better")]
+pub fn process_messages(messages: &mut Vec<Message>) {
+    for message in messages.iter_mut() {
+        for message in &mut message.lines {
             *message = message
                 .replace("%r", rival_name())
                 .replace("%p", &player_name())

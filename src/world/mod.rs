@@ -19,14 +19,17 @@ pub use render_coords::RenderCoords;
 
 pub type TileTextures = TileTextureManager;
 pub type NpcTextures = HashMap<String, Texture>;
+pub type GuiTextures = HashMap<u8, Texture>;
 
 pub trait GameWorld {
+
+    fn on_start(&self, music: bool);
 
     fn on_tile(&mut self, player: &mut PlayerCharacter);
 
     fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager);
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool);
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool);
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter);
 

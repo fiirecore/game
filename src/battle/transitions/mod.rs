@@ -1,38 +1,14 @@
+use firecore_util::{Entity, Completable};
+
+use crate::battle::{Battle, gui::BattleGui};
 use crate::util::battle_data::TrainerData;
-use firecore_util::Entity;
-use crate::battle::battle::Battle;
-use crate::gui::battle::battle_gui::BattleGui;
-use firecore_util::Completable;
 
-pub mod managers {
-    pub mod battle_screen_transition_manager;
-    pub mod battle_opener_manager;
-    pub mod battle_introduction_manager;
-    pub mod battle_closer_manager;
-}
+pub mod managers;
 
-pub mod screen_transitions {
-    pub mod flash_battle_screen_transition;
-    pub mod trainer_battle_screen_transition;
-    //pub mod vertical_close_battle_screen_transition;
-}
-
-pub mod openers {             
-    pub mod trainer_battle_opener;
-    pub mod wild_battle_opener;
-}
-
-pub mod introductions {
-    pub mod trainer_battle_introduction;
-    pub mod basic_battle_introduction;
-    pub mod util {
-        pub mod player_intro;
-    }
-}
-
-pub mod closers {
-    pub mod basic_battle_closer;
-}
+pub mod screen_transitions;
+pub mod openers;
+pub mod introductions;
+pub mod closers;
 
 pub trait BattleTransition: Entity + Completable {
 
@@ -62,7 +38,7 @@ pub trait BattleIntroduction: BattleTransition {
 
     fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32);
 
-    fn input(&mut self, delta: f32);
+    fn input(&mut self);
 
     fn setup(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>);
 

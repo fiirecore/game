@@ -4,6 +4,10 @@
     conditions: [
         Scripts([
             (
+                identifier: "oak_catch_player",
+                happened: true,
+            ),
+            (
                 identifier: "oak_introduce_pokemon",
                 happened: false,
             ),
@@ -60,7 +64,8 @@
                             pokemon: [
                                 (
                                     id: 7,
-                                    level: 5
+                                    level: 5,
+                                    gender: Male,
                                 ),
                             ]
                         ),
@@ -78,33 +83,30 @@
                 direction: Some(Up),
             )
         ),
-        DisplayText(
-            (
-                messages: [
-                    (
-                        message: [
-                            "Here's some pokemon"
-                        ]
-                    )
-                ]
-            )
-        ),
+        DisplayText([(
+            lines: [
+                "Here's some pokemon"
+            ]
+        )]),
         PlayerGivePokemon(
             (
                 id: 1,
                 level: 5,
+                gender: Male,
             )
         ),
         PlayerGivePokemon(
             (
                 id: 4,
                 level: 5,
+                gender: Male,
             )
         ),
         PlayerGivePokemon(
             (
                 id: 7,
                 level: 5,
+                gender: Female,
             )
         ),
         PlayMapMusic,

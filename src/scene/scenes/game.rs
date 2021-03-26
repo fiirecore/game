@@ -1,16 +1,16 @@
-use crate::gui::GuiComponent;
-use macroquad::prelude::collections::storage::{get, get_mut};
-use crate::battle::battle_manager::BattleManager;
-use crate::gui::game::pokemon_party_gui::PokemonPartyGui;
-use crate::scene::Scene;
-use firecore_util::Completable;
-use firecore_data::data::PersistantData;
-use crate::world::map::manager::WorldManager;
 use firecore_util::Entity;
+use firecore_data::data::PersistantData;
+
+use macroquad::prelude::collections::storage::{get, get_mut};
+
+use crate::scene::Scene;
+use super::SceneState;
+
+use crate::world::map::manager::WorldManager;
+use crate::battle::manager::BattleManager;
+use crate::gui::game::party::PokemonPartyGui;
 
 use crate::data::player::list::PlayerSaves;
-
-use super::SceneState;
 
 pub struct GameScene {
 
@@ -21,14 +21,13 @@ pub struct GameScene {
 	party_gui: PokemonPartyGui,
 
 	battling: bool,
-	swapped: bool,
 
 }
 
 impl GameScene {
 	
-	pub fn new() -> GameScene {
-		GameScene {
+	pub fn new() -> Self {
+		Self {
 
 			state: SceneState::Continue,
 
@@ -37,7 +36,6 @@ impl GameScene {
 			party_gui: PokemonPartyGui::new(),
 
 			battling: false,
-			swapped: false,
 		}
 	}
 
@@ -65,22 +63,32 @@ impl Scene for GameScene {
 	}
 	
 	fn update(&mut self, delta: f32) {
+
+		// Speed game up if spacebar is held down
+
 		let delta = delta *  if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
 			4.0
 		} else {
 			1.0
 		};
+
+		// save player data if asked to
+
 		if unsafe { crate::data::player::DIRTY } {
 			if let Some(mut saves) = get_mut::<PlayerSaves>() {
 				self.data_dirty(&mut saves);
 			}	
 		}
-		if let Some(despawn_on_select) = unsafe { crate::gui::game::pokemon_party_gui::SPAWN.take() } {
+
+		// spawn party gui if asked to
+
+		if unsafe { crate::gui::game::party::SPAWN } {
+			unsafe { crate::gui::game::party::SPAWN = false; }
 			self.party_gui.spawn();
 			if self.battling {
-				self.party_gui.on_battle_start(&self.battle_manager.current_battle.player_pokemon);
+				self.party_gui.on_battle_start(self.battle_manager.player_party());
 			} else {
-				self.party_gui.on_world_start(despawn_on_select);
+				self.party_gui.on_world_start();
 			}
 		}
 
@@ -91,27 +99,24 @@ impl Scene for GameScene {
 			if crate::util::battle_data::BATTLE_DATA.lock().is_some() {
 				if let Some(player_saves) = get::<PlayerSaves>() {
 					self.battling = true;
-					self.swapped = true;
 					self.battle_manager.on_start(&player_saves.get().party, crate::util::battle_data::BATTLE_DATA.lock().take().unwrap());
 				}
 			}
 
 		} else {
-			if self.swapped {
-				// context.battle_context.reset();
-				self.swapped = false;				
-			}
+
 			self.battle_manager.update(delta, &mut self.party_gui);
+			
 			if self.battle_manager.is_finished() {
-				if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
-					self.battle_manager.current_battle.update_data(player_saves.get_mut());
-				}
+				self.battle_manager.update_data();
 				self.battling = false;
-				self.swapped = true;
-				self.world_manager.play_music();
+				self.world_manager.map_start(true);
 			}
+
 		}
+
 		self.party_gui.update(delta);
+
 	}
 	
 	fn render(&self) {

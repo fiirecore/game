@@ -11,6 +11,17 @@
         ),
         direction: Right,
     ),
+    properties: (
+        message: Some([
+            (
+                lines: [
+                    "Trained POKEMON are stronger than",
+                    "the wild ones."
+                ],
+                color: Blue
+            )
+        ])
+    ),
     trainer: Some((
         tracking_length: Some(4),
         encounter_message: [
@@ -23,11 +34,13 @@
             pokemon: [
                 (
                     id: 10,
-                    level: 11
+                    level: 11,
+                    gender: Male,
                 ),
                 (
                     id: 11,
-                    level: 11
+                    level: 11,
+                    gender: Male,
                 )
             ]
         ),

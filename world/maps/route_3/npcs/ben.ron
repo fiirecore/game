@@ -11,6 +11,24 @@
         ),
         direction: Down
     ),
+    properties: (
+        message: Some([
+            (
+                lines: [
+                    "Are you using a POKEMON CENTER's",
+                    "PC for storing your POKEMON?"
+                ],
+                color: Blue,
+            ),
+            (
+                lines: [
+                    "Each box can hold up to",
+                    "30 POKEMON."
+                ],
+                color: Blue,
+            )
+        ])
+    ),
     trainer: Some((
         tracking_length: Some(2),
         encounter_message: [
@@ -29,11 +47,13 @@
         party: (
             pokemon: [(
                     id: 19,
-                    level: 11
+                    level: 11,
+                    gender: Male,
                 ),
                 (
                     id: 23,
-                    level: 11
+                    level: 11,
+                    gender: Male,
                 )
             ]
         ),

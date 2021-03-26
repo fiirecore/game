@@ -71,6 +71,9 @@ impl Scene for SceneManager {
 	}
 
     async fn on_start(&mut self) {
+		#[cfg(debug_assertions)] {
+			macroquad::prelude::collections::storage::get_mut::<firecore_data_lib::player::list::PlayerSaves>().expect("Could not get player saves").select(0);
+		}
 		let scene = self.get_mut();
         scene.load().await;
 		scene.on_start().await;

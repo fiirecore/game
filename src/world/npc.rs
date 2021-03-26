@@ -26,12 +26,12 @@ pub trait WorldNpc {
 }
 
 pub fn has_battled(map_name: &String, npc: &NPC) -> bool {
-    npc.trainer.is_some() && !get::<PlayerSaves>().as_ref().map(|saves| saves.get().has_battled(map_name, &npc.identifier.name)).unwrap_or(true)
+    npc.trainer.is_some() && !get::<PlayerSaves>().as_ref().map(|saves| saves.get().has_battled(map_name, &npc.identifier.index)).unwrap_or(true)
 }
 
 pub fn try_battle(map_name: &String, npc: &NPC) {
     if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
-        player_saves.get_mut().world_status.get_or_create_map_data(map_name).battle(npc);
+        crate::data::player::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), npc);
     } else {
         macroquad::prelude::warn!("Could not get player data!");
     }

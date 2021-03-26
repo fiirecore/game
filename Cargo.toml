@@ -13,6 +13,7 @@ include = ["/build", "/assets", "/pokedex", "/world"]
 
 [profile.dev.package.'*']
 opt-level = 3
+debug-assertions = true
 
 
 [profile.release]
@@ -20,7 +21,8 @@ codegen-units = 1
 lto = true
 
 [features]
-default = ["firecore-audio/kira"]
+default = ["audio"]
+audio = ["firecore-audio/kira"]
 
 [dependencies]
 
@@ -31,6 +33,7 @@ macroquad = { git = "https://github.com/not-fl3/macroquad" }
 ### Game subcrates
 
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
+#firecore-pokedex = { path = "../firecore/firecore-pokedex" }
 
 firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
 #firecore-util = { path = "../firecore/firecore-util" }
@@ -42,8 +45,15 @@ firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", defa
 #firecore-audio = { path = "../firecore/firecore-audio" }
 
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
+
+firecore-data-lib = { git = "https://github.com/DoNotDoughnut/firecore-data-lib" }
+#firecore-data-lib = { path = "../firecore/firecore-data-lib" }
+
 firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
+#firecore-data = { path = "../firecore/firecore-data" }
+
 firecore-font-lib = { git = "https://github.com/DoNotDoughnut/firecore-font-lib" }
+
 
 ### Serialization
 
@@ -84,6 +94,8 @@ world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
 #world-builder = { path = "../Subprojects/world-builder" }
 
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
+#dex-builder = { path = "../Subprojects/dex-builder" }
+
 audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder" }
 
 embed-resource = "1.6"

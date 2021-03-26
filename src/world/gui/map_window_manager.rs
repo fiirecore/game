@@ -1,45 +1,35 @@
-use firecore_util::text::MessageSet;
-use firecore_util::Entity;
-use firecore_util::Completable;
-use firecore_util::Reset;
+use firecore_util::{Entity, Reset, Completable, text::Message};
+use macroquad::prelude::Vec2;
 
-use crate::gui::GuiComponent;
-use crate::gui::background::Background;
 use crate::gui::dynamic_text::DynamicText;
-use crate::util::text::process_message_set;
+use crate::util::text::process_messages;
+
+use crate::util::graphics::{Texture, draw};
 
 pub struct MapWindowManager {
 
     alive: bool,
-    background: Background,
+    pos: Vec2,
+    background: Texture,
     text: DynamicText,
 
 }
 
 impl MapWindowManager {
 
-    pub fn new() -> MapWindowManager {
-        let panel_x = 6.0;
-        let panel_y = 116.0;
-        MapWindowManager {
-            alive: false,
-            background: Background::default(),
-            text: DynamicText::new(11.0, 5.0, panel_x, panel_y),
-        }
+    pub fn reset_text(&mut self) {
+        self.text.reset();
     }
 
-    pub fn set_text(&mut self, message_set: MessageSet) {
-        self.text.text = message_set;
+    pub fn set_text(&mut self, messages: Vec<Message>) {
+        self.text.messages = Some(messages);
     }
-
-    // pub fn text_hash(&self) -> u64 {
-    //     let mut hasher = ahash::AHasher::default();
-    //     self.text.text.hash(&mut hasher);
-    //     hasher.finish()
-    // }
 
     pub fn on_start(&mut self) {
-        process_message_set(&mut self.text.text);
+        if let Some(messages) = self.text.messages.as_mut() {
+            process_messages(messages);
+        }
+        
     }
 
     pub fn update(&mut self, delta: f32) {
@@ -50,20 +40,26 @@ impl MapWindowManager {
 
     pub fn render(&self) {
         if self.is_alive() {
-            self.background.render();
+            draw(self.background, self.pos.x, self.pos.y);
             self.text.render();
         }
     }
 
-    pub fn input(&mut self, delta: f32) {
-        self.text.input(delta);
+    pub fn input(&mut self) {
+        self.text.input();
     }
 
 }
 
 impl Default for MapWindowManager {
     fn default() -> Self {
-        Self::new()
+        let pos = Vec2::new(6.0, 116.0);
+        MapWindowManager {
+            alive: false,
+            pos,
+            background: crate::util::graphics::texture::byte_texture(include_bytes!("../../../build/assets/gui/message.png")),
+            text: DynamicText::new(Vec2::new(11.0, 5.0), pos),
+        }
     }
 }
 

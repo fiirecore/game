@@ -18,6 +18,10 @@
                 y: 5,
             ),
             direction: Some(Down),
-        )
+        ),
+        transition: (
+            move_on_exit: true,
+            warp_on_tile: false,
+        ),
     )
 )

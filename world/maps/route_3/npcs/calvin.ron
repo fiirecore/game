@@ -11,6 +11,17 @@
         ),
         direction: Left
     ),
+    properties: (
+        message: Some([
+            (
+                lines: [
+                    "I always wear shorts, even in",
+                    "winter. That's my policy."
+                ],
+                color: Blue,
+            )
+        ])
+    ),
     trainer: Some((
         tracking_length: Some(5),
         encounter_message: [
@@ -23,7 +34,8 @@
             pokemon: [
                 (
                     id: 21,
-                    level: 14
+                    level: 14,
+                    gender: Male,
                 )
             ]
         ),

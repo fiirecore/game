@@ -28,19 +28,23 @@
             pokemon: [
                 (
                     id: 19,
-                    level: 10
+                    level: 10,
+                    gender: Female,
                 ),
                 (
                     id: 29,
-                    level: 10
+                    level: 10,
+                    gender: Female,
                 ),
                 (
                     id: 14,
-                    level: 9
+                    level: 9,
+                    gender: Female,
                 ),
                 (
                     id: 11,
-                    level: 9
+                    level: 9,
+                    gender: Female,
                 )
             ]
         ),

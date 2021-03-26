@@ -11,6 +11,17 @@
         ),
         direction: Right
     ),
+    properties: (
+        message: Some([
+            (
+                lines: [
+                    "There are other kinds of POKEMON", 
+                    "than the ones you find in forests."
+                ],
+                color: Blue,
+            )
+        ])
+    ),
     trainer: Some((
         tracking_length: Some(3),
         encounter_message: [
@@ -23,15 +34,18 @@
             pokemon: [
                 (
                     id: 10,
-                    level: 10
+                    level: 10,
+                    gender: Male,
                 ),
                 (
                     id: 13,
-                    level: 10
+                    level: 10,
+                    gender: Male,
                 ),
                 (
                     id: 10,
-                    level: 10
+                    level: 10,
+                    gender: Male,
                 )
             ]
         ),

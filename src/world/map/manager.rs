@@ -10,20 +10,14 @@ use firecore_input::{self as input, Control};
 use firecore_util::Entity;
 use firecore_world::character::Character;
 
-use crate::audio::play_music;
 use crate::data::player::list::PlayerSaves;
 use crate::data::player::save::PlayerSave;
 use crate::util::graphics::texture::byte_texture;
-use crate::world::GameWorld;
-use crate::gui::GuiComponent;
-use crate::world::NpcTextures;
-use crate::world::TileTextures;
+use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::map_window_manager::MapWindowManager;
 use crate::world::gui::player_world_gui::PlayerWorldGui;
 use crate::world::player::PlayerTexture;
 use crate::world::warp_transition::WarpTransition;
-
-use super::RenderCoords;
 
 pub struct WorldManager {
 
@@ -31,6 +25,7 @@ pub struct WorldManager {
 
     tile_textures: TileTextures,
     npc_textures: NpcTextures,
+    gui_textures: GuiTextures,
     player_texture: PlayerTexture,
 
     warp_transition: WarpTransition,
@@ -49,14 +44,17 @@ impl WorldManager {
 
     pub fn new() -> Self {        
         Self {
+
             map_manager: WorldMapManager::default(),
+
+            tile_textures: TileTextures::new(),
+            npc_textures: NpcTextures::new(),
+            gui_textures: GuiTextures::new(),
             player_texture: PlayerTexture::default(),
-            // current_music: 0,
+
             warp_transition: WarpTransition::new(),
             player_gui: PlayerWorldGui::new(),
             window_manager: MapWindowManager::default(),
-            tile_textures: TileTextures::new(),
-            npc_textures: NpcTextures::new(),
             noclip_toggle: false,
         }
     }
@@ -67,17 +65,19 @@ impl WorldManager {
         // }
         self.tile_textures.setup();
         self.map_manager = crate::data::map::load_maps(&mut self.tile_textures, &mut self.npc_textures).await;
+        self.gui_textures.insert(0, byte_texture(include_bytes!("../../../build/assets/condition.png")));
     }
 
     pub async fn on_start(&mut self) {
         self.load_player();
-        self.play_music();
+        self.map_start(true);
     }
 
-    pub fn play_music(&mut self) {
-        let music = self.map_manager.get_map_music();
-        if firecore_audio::get_current_music().map(|current| current != music).unwrap_or(true) {
-            play_music(music);
+    pub fn map_start(&self, music: bool) {
+        if self.map_manager.chunk_active {
+            self.map_manager.chunk_map.on_start(music);
+        } else {
+            self.map_manager.map_set_manager.on_start(music);
         }
     }
 
@@ -92,7 +92,7 @@ impl WorldManager {
         
         for script in map.scripts.iter_mut() {
             if script.is_alive() {
-                if let Some(action) = script.actions_clone.front() {
+                if let Some(action) = script.actions.front() {
                     match action {
                         WorldActionKind::Warp(destination, change_music) => {
                             self.map_manager.warp = Some(destination.clone());
@@ -111,6 +111,7 @@ impl WorldManager {
                 if let Some(destination) = self.map_manager.warp.clone() {
                     self.player_texture.draw = !destination.transition.move_on_exit;
                     self.map_manager.warp(destination);
+                    self.map_start(true);
                     if self.map_manager.chunk_active {
                         self.map_manager.chunk_map.on_tile(&mut self.map_manager.player);
                     } else {
@@ -136,16 +137,6 @@ impl WorldManager {
             }
         }
 
-        
-
-        // if let Some((warp, change_music)) = warp {
-        //     self.map_manager.warp(delta, warp);
-            
-        //     if change_music {
-        //         self.play_music();
-        //     }
-        // }
-
         if self.map_manager.chunk_active {
             self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, &mut self.window_manager);
         } else {
@@ -163,9 +154,9 @@ impl WorldManager {
     pub fn render(&self) {
         let coords = RenderCoords::new(&self.map_manager.player);
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, coords, true);
+            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, &self.gui_textures, coords, true);
         } else {
-            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, coords, true);
+            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, &self.gui_textures, coords, true);
         }
         self.player_texture.render(&self.map_manager.player);
         self.player_gui.render(); 
@@ -195,9 +186,9 @@ impl WorldManager {
         }
 
         if self.window_manager.is_alive() {
-            self.window_manager.input(delta);
+            self.window_manager.input();
         } else if self.player_gui.is_alive() {
-            self.player_gui.input(delta);
+            self.player_gui.input();
         } else {
 
             if self.map_manager.chunk_active {
@@ -230,12 +221,16 @@ impl WorldManager {
                     for direction in &firecore_util::Direction::DIRECTIONS {
                         let direction = *direction;
                         if input::down(crate::util::keybind(direction)) {
-                            self.map_manager.try_move(direction, delta);
+                            if self.map_manager.try_move(direction, delta) {
+                                self.map_start(true);
+                            }
                             break;
                         }
                     }
                 } else if input::down(crate::util::keybind(self.map_manager.player.position.local.direction)) {
-                    self.map_manager.try_move(self.map_manager.player.position.local.direction, delta);
+                    if self.map_manager.try_move(self.map_manager.player.position.local.direction, delta) {
+                        self.map_start(true);
+                    }
                 } else {
                     self.map_manager.player.properties.moving = false;
                     self.map_manager.player.properties.running = false;
@@ -303,15 +298,20 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F3) {
+
             info!("Local Coordinates: {}", self.map_manager.player.position.local.coords);
             info!("Global Coordinates: ({}, {})", self.map_manager.player.position.get_x(), self.map_manager.player.position.get_y());
 
-            let tile = if self.map_manager.chunk_active {
+            if let Some(tile) = if self.map_manager.chunk_active {
                 self.map_manager.chunk_map.tile(self.map_manager.player.position.local.coords)
             } else {
                 self.map_manager.map_set_manager.tile(self.map_manager.player.position.local.coords)
-            };
-            info!("Current Tile ID: {}", tile);
+            } {
+                info!("Current Tile ID: {}", tile);
+            } else {
+                info!("Currently out of bounds");
+            }
+            
         }
 
         if is_key_pressed(KeyCode::F4) {

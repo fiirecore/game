@@ -1,14 +1,15 @@
 use firecore_world::map::set::WorldMapSet;
 use firecore_world::map::set::manager::WorldMapSetManager;
 
-use crate::world::GameWorld;
-use crate::world::NpcTextures;
-use crate::world::RenderCoords;
-use crate::world::TileTextures;
+use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::map_window_manager::MapWindowManager;
 use firecore_world::character::player::PlayerCharacter;
 
 impl GameWorld for WorldMapSet {
+
+    fn on_start(&self, music: bool) {
+        self.map().on_start(music);
+    }
 
     fn on_tile(&mut self, player: &mut PlayerCharacter) {
         self.maps[self.current_map].on_tile(player)
@@ -18,8 +19,8 @@ impl GameWorld for WorldMapSet {
         self.maps[self.current_map].update(delta, player, window_manager);
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
-        self.maps[self.current_map].render(tile_textures, npc_textures, screen, border)
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+        self.maps[self.current_map].render(tile_textures, npc_textures, gui_textures, screen, border)
     }
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
@@ -30,6 +31,10 @@ impl GameWorld for WorldMapSet {
 
 impl GameWorld for WorldMapSetManager {
 
+    fn on_start(&self, music: bool) {
+        self.map_set().on_start(music);
+    }
+
     fn on_tile(&mut self, player: &mut PlayerCharacter) {
         self.map_set_mut().on_tile(player)
     }
@@ -38,8 +43,8 @@ impl GameWorld for WorldMapSetManager {
         self.map_set_mut().update(delta, player, window_manager);
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
-        self.map_set().render(tile_textures, npc_textures, screen, border)
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+        self.map_set().render(tile_textures, npc_textures, gui_textures, screen, border)
     }
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {

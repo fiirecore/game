@@ -11,6 +11,17 @@
         ),
         direction: Left
     ),
+    properties: (
+        message: Some([
+            (
+                lines: [
+                    "You shouldn't be staring if you",
+                    "don't want to battle!"
+                ],
+                color: Red,
+            )
+        ])
+    ),
     trainer: Some((
         tracking_length: Some(5),
         message_color: Red,
@@ -24,11 +35,13 @@
             pokemon: [
                 (
                     id: 16,
-                    level: 9
+                    level: 9,
+                    gender: Female,
                 ),
                 (
                     id: 16,
-                    level: 9
+                    level: 9,
+                    gender: Female,
                 )
             ]
         ),

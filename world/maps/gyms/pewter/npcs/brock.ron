@@ -12,37 +12,35 @@
         direction: Down
     ),
     properties: (
-        message: Some((
-            messages: [
-                (
-                    color: Blue,
-                    message: [
-                        "There are all kinds of TRAINERS in",
-                        "this huge world of ours."
-                    ]
-                ),
-                (
-                    color: Blue,
-                    message: [
-                        "You appear to be very gifted as a",
-                        "POKEMON TRAINER."
-                    ]
-                ),
-                (
-                    color: Blue,
-                    message: [
-                        "So let me make a suggestion."
-                    ]
-                ),
-                (
-                    color: Blue,
-                    message: [
-                        "Go to the GYM in CERULEAN and test",
-                        "your abilities."
-                    ]
-                )
-            ]
-        )),
+        message: Some([
+            (
+                color: Blue,
+                lines: [
+                    "There are all kinds of TRAINERS in",
+                    "this huge world of ours."
+                ]
+            ),
+            (
+                color: Blue,
+                lines: [
+                    "You appear to be very gifted as a",
+                    "POKEMON TRAINER."
+                ]
+            ),
+            (
+                color: Blue,
+                lines: [
+                    "So let me make a suggestion."
+                ]
+            ),
+            (
+                color: Blue,
+                lines: [
+                    "Go to the GYM in CERULEAN and test",
+                    "your abilities."
+                ]
+            )
+        ]),
     ),
     trainer: Some((
         trainer_type: GymLeader,
@@ -82,17 +80,19 @@
             pokemon: [
                 (
                     id: 74,
-                    level: 10
+                    level: 10,
+                    gender: Male,
                 ),
                 (
                     id: 95,
-                    level: 10
+                    level: 10,
+                    gender: Male,
                 )
             ]
         ),
 
         disable_others: [
-            "Liam"
+            2
         ],
 
         worth: 1400,

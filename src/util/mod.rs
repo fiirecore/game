@@ -7,7 +7,7 @@ pub mod text;
 pub mod image;
 pub mod battle_data;
 
-pub static TILE_SIZE: u8 = 16;
+pub const TILE_SIZE: u8 = 16;
 
 pub fn keybind(direction: Direction) -> Control {
 	match direction {

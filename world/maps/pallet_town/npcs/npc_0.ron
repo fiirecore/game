@@ -12,20 +12,18 @@
         direction: Down
     ),
     properties: (
-        message: Some((
-            messages: [
-                (
-                    message: [
-                        "I'm raising POKEMON too."
-                    ],
-                ),
-                (
-                    message: [
-                        "When they get strong, they can",
-                        "protect me."
-                    ]
-                )
-            ]
-        )),
+        message: Some([
+            (
+                lines: [
+                    "I'm raising POKEMON too."
+                ],
+            ),
+            (
+                lines: [
+                    "When they get strong, they can",
+                    "protect me."
+                ]
+            )
+        ]),
     ),
 )

@@ -1,17 +1,12 @@
 use crate::audio::{play_music_named, play_music};
 use crate::data::player::list::PlayerSaves;
+use firecore_util::text::Message;
 use firecore_world::character::Character;
-use firecore_world::character::npc::NPCId;
-use firecore_world::map::manager::test_move_code;
 use firecore_world::script::world::WorldScript;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::collections::storage::{get, get_mut};
-use macroquad::prelude::debug;
-use macroquad::prelude::info;
-use macroquad::prelude::is_key_pressed;
-use macroquad::prelude::warn;
+use macroquad::prelude::{info, warn, is_key_pressed};
 
-use firecore_util::text::MessageSet;
 use firecore_util::text::TextColor;
 use firecore_world::map::World;
 use firecore_util::Destination;
@@ -22,96 +17,92 @@ use firecore_world::script::world::WorldActionKind;
 use firecore_world::map::wild::WildEntry;
 
 use firecore_util::Entity;
-use firecore_input::{self as input, Control};
+use firecore_input::{pressed, Control};
 
 use firecore_util::Completable;
 
 use super::npc::WorldNpc;
 use super::gui::map_window_manager::MapWindowManager;
-use super::NpcTextures;
-use super::TileTextures;
-use super::RenderCoords;
-use super::GameWorld;
+use super::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 
 pub mod manager;
 pub mod set;
 pub mod chunk;
 
-pub trait GameWorldMap {
-
-    fn tile_row(&self, x: isize, offset: isize) -> u16;
-
-}
-
-impl GameWorldMap for WorldMap {
-
-    fn tile_row(&self, x: isize, offset: isize) -> u16 {
-        self.tile_map[x as usize + offset as usize]
-    }
-
-}
-
 impl GameWorld for WorldMap {
 
-    fn on_tile(&mut self, player: &mut PlayerCharacter) {
-        let tile_id = self.tile(player.position.local.coords);
-
-        if let Some(wild) = &self.wild {
-            if let Some(tiles) = &wild.tiles {
-                tiles.iter().for_each(|tile| {
-                    if tile_id.eq(tile) {
-                        try_wild_battle(wild);
-                    }
-                });
-            } else {
-                try_wild_battle(wild);
-            }            
+    fn on_start(&self, music: bool) {
+        if music {
+            if firecore_audio::get_current_music().map(|current| current != self.music).unwrap_or(true) {
+                play_music(self.music);
+            }
         }
+    }
 
-        // look for player
+    fn on_tile(&mut self, player: &mut PlayerCharacter) {
+        if let Some(tile_id) = self.tile(player.position.local.coords) {
 
-        for (npc_index, npc) in self.npcs.iter_mut() {
-            if npc.trainer.is_some() {
-                if let Some(saves) = get::<PlayerSaves>() {
-                    if !saves.get().has_battled(&self.name, &npc.identifier.name) {
-                        if npc.find_player(player.position.local.coords, player) {
-                            self.npc_active = Some(*npc_index);
+            if let Some(wild) = &self.wild {
+                if let Some(tiles) = wild.tiles.as_ref() {
+                    tiles.iter().for_each(|tile| {
+                        if tile_id.eq(tile) {
+                            try_wild_battle(wild);
+                        }
+                    });
+                } else {
+                    try_wild_battle(wild);
+                }            
+            }
+    
+            // look for player
+    
+            for (npc_index, npc) in self.npcs.iter_mut() {
+                if npc.trainer.is_some() {
+                    if let Some(saves) = get::<PlayerSaves>() {
+                        if !saves.get().has_battled(&self.name, &npc.identifier.index) {
+                            if npc.find_player(player.position.local.coords, player) {
+                                self.npc_active = Some(*npc_index);
+                            }
                         }
                     }
-                }
-            }            
-        }
-        if let Some(mut saves) = get_mut::<PlayerSaves>() {
-            let player_data = saves.get_mut();
-            for script in self.scripts.iter_mut() {
-
-                if script.test_pos(&player.position.local.coords) {
-                    let mut break_script = false;
-                    for condition in &script.conditions {
-                        match condition {
-                            Condition::Scripts(scripts) => {
-                                for script_condition in scripts {
-                                    if player_data.world_status.ran_scripts.contains(&script_condition.identifier).ne(&script_condition.happened) {
+                }            
+            }
+            if let Some(mut saves) = get_mut::<PlayerSaves>() {
+                let player_data = saves.get_mut();
+                for script in self.scripts.iter_mut() {
+    
+                    if script.in_location(&player.position.local.coords) {
+                        let mut break_script = false;
+                        for condition in &script.conditions {
+                            match condition {
+                                Condition::Scripts(scripts) => {
+                                    for script_condition in scripts {
+                                        if player_data.world_status.ran_scripts.contains(&script_condition.identifier).ne(&script_condition.happened) {
+                                            break_script = true;
+                                        }  
+                                    }                          
+                                },
+                                Condition::PlayerHasPokemon(is_true) => {
+                                    if player_data.party.pokemon.is_empty().eq(is_true) {
                                         break_script = true;
-                                    }  
-                                }                          
-                            },
-                            Condition::PlayerHasPokemon(is_true) => {
-                                if player_data.party.pokemon.is_empty().eq(is_true) {
+                                    }
+                                }
+                                _ => {
                                     break_script = true;
                                 }
                             }
+                            if break_script {
+                                break;
+                            }
                         }
-                        if break_script {
-                            break;
-                        }
+                        if !break_script {
+                            // debug!("Attempting to spawn script \"{}\"!", script.identifier);
+                            script.spawn();
+                        }                
                     }
-                    if !break_script {
-                        debug!("Attempting to spawn script \"{}\"!", script.identifier);
-                        script.spawn();
-                    }                
                 }
             }
+
         }
     }
 
@@ -121,22 +112,9 @@ impl GameWorld for WorldMap {
 
             if script.is_alive() {
                 let mut pop = false;
-                match script.actions_clone.front() {
+                match script.actions.front() {
                     Some(action) => {
                         match action {
-                            WorldActionKind::Wait(time) => {
-                                if script.timer.is_alive() {
-                                    script.timer.update(delta);
-                                    if script.timer.is_finished() {
-                                        script.timer.despawn();
-                                        pop = true;
-                                    }
-                                } else {
-                                    script.timer.spawn();
-                                    script.timer.set_target(*time);
-                                    script.timer.update(delta);
-                                }
-                            },
                             WorldActionKind::PlayMusic(music) => {
                                 play_music_named(&music);
                                 // if let Err(err) = play_music_named(&music) {
@@ -192,6 +170,14 @@ impl GameWorld for WorldMap {
                                         saves.get_mut().party.pokemon.push(instance.clone());
                                     } else {
                                         warn!("Could not add pokemon #{} to player party because it is full", instance.id);
+                                    }
+                                }
+                                pop = true;
+                            }
+                            WorldActionKind::PlayerHealPokemon => {
+                                if let Some(mut saves) = get_mut::<PlayerSaves>() {
+                                    for pokemon in saves.get_mut().party.pokemon.iter_mut() {
+                                        pokemon.current_hp = None;
                                     }
                                 }
                                 pop = true;
@@ -316,17 +302,104 @@ impl GameWorld for WorldMap {
                                 }
                                 pop = true;
                             }
-                            WorldActionKind::DisplayText(message_set) => {
-                                if window_manager.is_alive() {
-                                    if window_manager.is_finished() {
-                                        window_manager.despawn();
+
+                            WorldActionKind::Wait(time) => {
+                                if script.timer.is_alive() {
+                                    script.timer.update(delta);
+                                    if script.timer.is_finished() {
+                                        script.timer.despawn();
                                         pop = true;
-                                    } else {
-                                        window_manager.update(delta);
                                     }
                                 } else {
-                                    window_manager.spawn();
-                                    window_manager.set_text(message_set.clone());
+                                    script.timer.hard_reset();
+                                    script.timer.spawn();
+                                    script.timer.set_target(*time);
+                                    script.timer.update(delta);
+                                }
+                            },
+
+                            WorldActionKind::Info(string) => {
+                                info!("{}: {}", script.identifier, string);
+                                pop = true;
+                            }
+
+                            WorldActionKind::DisplayText(messages) => {
+                                if display_text(delta, window_manager, messages) {
+                                    pop = true;
+                                }
+                            },
+
+                            WorldActionKind::Conditional { messages, end_messages, unfreeze } => {
+
+                                /*
+                                * 0 = first message (default)
+                                * 1 = end message
+                                * 2 or 3 = yes/no option and cursor pos
+                                */
+
+                                if script.option == 0 {
+                                    if window_manager.is_alive() {
+                                        if window_manager.is_finished() {
+                                            script.option = 2;
+                                        } else {
+                                            window_manager.update(delta);
+                                        }
+                                    } else {
+                                        window_manager.spawn();
+                                        window_manager.set_text(messages.clone());
+                                    }
+                                } else if script.option == 1 {
+
+                                    if end_messages.is_some() {
+
+                                        if window_manager.is_finished() {
+                                            window_manager.despawn();
+                                            if *unfreeze {
+                                                player.unfreeze();
+                                            }
+                                            script.option = 0;
+                                            despawn_script(script);
+                                        } else {
+                                            window_manager.update(delta);
+                                        }
+
+                                    } else {
+                                        if *unfreeze {
+                                            player.unfreeze();
+                                        }
+                                        script.option = 0;
+                                        despawn_script(script);
+                                    }
+                                } else {
+                                    if pressed(Control::A) {
+                                        if script.option == 2 {
+                                            script.option = 0;
+                                            window_manager.despawn();
+                                            pop = true;
+                                        } else if script.option == 3 {
+
+                                            script.option = 1;
+                                            if let Some(end_messages) = end_messages {
+                                                window_manager.reset_text();
+                                                window_manager.set_text(end_messages.clone());
+                                            }
+
+                                        }
+                                    } else if pressed(Control::B) {
+
+                                        script.option = 1;
+                                        if let Some(end_messages) = end_messages {
+                                            window_manager.reset_text();
+                                            window_manager.set_text(end_messages.clone());
+                                        }
+
+                                    }
+                                    if pressed(Control::Up) && script.option == 3 {
+                                        script.option = 2;
+                                    }
+                                    if pressed(Control::Down) && script.option == 2 {
+                                        script.option = 3;
+                                    }
                                 }
                             }
 
@@ -338,61 +411,60 @@ impl GameWorld for WorldMap {
                     }
                 }
                 if pop {
-                    script.actions_clone.pop_front();
+                    script.actions.pop_front();
                 }
             }
         }
 
-        
+        // Npc window manager code
 
-        if window_manager.is_alive() {
-            if window_manager.is_finished() {
-                if let Some(npc) = if let Some(index) = self.npc_active.take() {
-                    self.npcs.get_mut(&index)
-                } else {
-                    None
-                } {
-                    super::npc::try_battle(&self.name, npc);
-                }
-                window_manager.despawn();
-            } else {
-                window_manager.update(delta);
-            }
+        if let Some(npc) = if let Some(index) = self.npc_active {
+            self.npcs.get_mut(&index)
         } else {
-            if let Some(npc) = if let Some(index) = self.npc_active {
-                self.npcs.get_mut(&index)
+            None
+        } {
+            if window_manager.is_alive() {
+                if window_manager.is_finished() {
+                    {
+                        self.npc_active = None;
+                        super::npc::try_battle(&self.name, npc);
+                    }
+                    window_manager.despawn();
+                } else {
+                    window_manager.update(delta);
+                }
             } else {
-                None
-            } {
                 if npc.should_move_to_destination() {
                     npc.move_to_destination(delta) 
                 } else {
                     window_manager.spawn();
                     npc.properties.character.destination = None;
-
+    
                     let mut message_ran = false;
-
-                    if let Some(message_set) = npc.properties.message.as_ref() {
-                        window_manager.set_text(message_set.clone());
+    
+                    if let Some(messages) = npc.properties.message.as_ref() {
+                        window_manager.set_text(messages.clone());
                         message_ran = true;
                     }
                     
                     if let Some(mut saves) = get_mut::<PlayerSaves>() {
-                        if !saves.get_mut().world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.name) {
+                        if !saves.get_mut().world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.index) {
                             if let Some(trainer) = npc.trainer.as_ref() {
-
+    
                                 // Spawn text window
-
-                                let message_set = MessageSet::new(
-                                    1, 
-                                    TextColor::Blue, 
-                                    trainer.encounter_message.clone()
-                                );
-                                window_manager.set_text(message_set);
+    
+                                let messages = trainer.encounter_message.iter().map(|message| {
+                                    Message::new(
+                                        message.clone(),
+                                        TextColor::Blue,
+                                        None,
+                                    )
+                                }).collect();
+                                window_manager.set_text(messages);
                                 message_ran = true;
-
+    
                                 // Play Trainer music
-
+    
                                 if let Some(npc_type) = super::npc::NPC_TYPES.get(&npc.identifier.npc_type) {
                                     if let Some(trainer) = npc_type.trainer.as_ref() {
                                         if let Err(err) = if let Some(playing_music) = firecore_audio::get_current_music() {
@@ -411,50 +483,46 @@ impl GameWorld for WorldMap {
                             }   
                         }
                     }
-
+    
                     if !message_ran {
                         window_manager.despawn();
                         self.npc_active = None;
                     } else {
                         window_manager.on_start();
                     }
-
+    
                     player.position.local.direction = npc.position.direction.inverse();
                     if player.is_frozen() {
                         player.unfreeze();
                     }
-
-                }
-            } 
+                } 
+            }
         }
-        // self.script_manager.update(delta, player);
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
             let y = yy - screen.tile_offset.y;
             let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
-            
-            let row_offset = y * self.width as isize;
             
             for xx in screen.left..screen.right {
                 let x = xx - screen.tile_offset.x;
                 let render_x = (xx << 4) as f32 - screen.focus.x;
 
                 if !(x < 0 || y < 0 || y >= self.height as isize || x >= self.width as isize) {
-                    tile_textures.render_tile(&self.tile_row(x, row_offset), render_x, render_y);
+                    tile_textures.render_tile(&self.tile_or_panic(x as usize, y as usize), render_x, render_y);
                 } else if border {
                     if x % 2 == 0 {
                         if y % 2 == 0 {
-                            tile_textures.render_tile(&self.border_blocks[0], render_x, render_y);
+                            tile_textures.render_tile(&self.border.tiles[0], render_x, render_y);
                         } else {
-                            tile_textures.render_tile(&self.border_blocks[2], render_x, render_y);
+                            tile_textures.render_tile(&self.border.tiles[2], render_x, render_y);
                         }
                     } else {
                         if y % 2 == 0 {
-                            tile_textures.render_tile(&self.border_blocks[1], render_x, render_y);
+                            tile_textures.render_tile(&self.border.tiles[1], render_x, render_y);
                         } else {
-                            tile_textures.render_tile(&self.border_blocks[3], render_x, render_y);
+                            tile_textures.render_tile(&self.border.tiles[3], render_x, render_y);
                         }
                     }
                 }
@@ -462,6 +530,23 @@ impl GameWorld for WorldMap {
         }
         for npc in self.npcs.values() {
             npc.render(npc_textures, &screen);
+        }
+        for script in self.scripts.iter() {
+            if script.is_alive() {
+                if let Some(action) = script.actions.front() {
+                    match action {
+                        WorldActionKind::Conditional{ .. } => {
+                            if let Some(texture) = gui_textures.get(&0) {
+                                if script.option > 1 {
+                                    crate::util::graphics::draw(*texture, 162.0, 66.0);
+                                    crate::util::graphics::draw_cursor(170.0, 77.0 + (script.option - 2) as f32 * 16.0);
+                                }                                
+                            }
+                        }
+                        _ => (),
+                    }                    
+                }
+            }            
         }
         // self.script_manager.render(tile_textures, npc_textures, &screen);
     }
@@ -485,11 +570,31 @@ impl GameWorld for WorldMap {
             }
         }
 
-        if input::pressed(Control::A) {
+        if pressed(Control::A) {
             for (npc_index, npc) in self.npcs.iter_mut() {
                 if npc.interact_from(&player.position.local) {
                     self.npc_active = Some(*npc_index);
                 }
+            }
+            for script in self.scripts.iter_mut() {
+                if !script.is_alive() {
+                    if script.in_location(&player.position.local.coords) {
+                        let mut spawn = false;
+                        for condition in script.conditions.iter() {
+                            match condition {
+                                Condition::Activate(direction) => {
+                                    if player.position.local.direction.eq(direction) {
+                                        spawn = true;
+                                    }
+                                }
+                                _ => (),
+                            }
+                        }
+                        if spawn {
+                            script.spawn();
+                        }
+                    }
+                }                
             }
         }
     }
@@ -497,7 +602,8 @@ impl GameWorld for WorldMap {
 
 }
 
-fn try_wild_battle(wild: &WildEntry) {
+#[deprecated(note = "move this function")]
+fn try_wild_battle(wild: &WildEntry) { // move
     if macroquad::rand::gen_range(0, 255) < wild.table.encounter_rate() {
         crate::util::battle_data::wild_battle(&wild.table);
     }
@@ -507,5 +613,19 @@ pub fn despawn_script(script: &mut WorldScript) {
     if let Some(mut saves) = get_mut::<PlayerSaves>() {
         saves.get_mut().world_status.ran_scripts.insert(script.identifier.clone());
     }
-    script.despawn();
+}
+
+fn display_text(delta: f32, window_manager: &mut MapWindowManager, messages: &Vec<Message>) -> bool {
+    if window_manager.is_alive() {
+        if window_manager.is_finished() {
+            window_manager.despawn();
+            return true;
+        } else {
+            window_manager.update(delta);
+        }
+    } else {
+        window_manager.spawn();
+        window_manager.set_text(messages.clone());
+    }
+    false
 }

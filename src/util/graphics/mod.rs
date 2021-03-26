@@ -1,7 +1,6 @@
 use firecore_util::text::Message;
 use macroquad::prelude::Color;
 pub use macroquad::prelude::Texture2D as Texture;
-use macroquad::prelude::WHITE;
 use macroquad::prelude::draw_texture;
 
 use crate::data::text::IntoMQColor;
@@ -14,7 +13,7 @@ lazy_static::lazy_static! {
 	static ref TEXT_RENDERER: TextRenderer = TextRenderer::new();
 }
 
-pub static DRAW_COLOR: Color = macroquad::prelude::WHITE;
+pub const DRAW_COLOR: Color = macroquad::prelude::WHITE;
 
 pub fn draw(texture: Texture, x: f32, y: f32) {
 	draw_texture(texture, x, y, DRAW_COLOR);
@@ -28,7 +27,7 @@ pub fn draw_o(texture: Option<&Texture>, x: f32, y: f32) {
 
 pub fn draw_flip(texture: Texture, x: f32, y: f32, flip: bool) {
 	if flip {
-		macroquad::prelude::draw_texture_ex(texture, x + texture.width(), y, WHITE, macroquad::prelude::DrawTextureParams {
+		macroquad::prelude::draw_texture_ex(texture, x + texture.width(), y, DRAW_COLOR, macroquad::prelude::DrawTextureParams {
 			dest_size: Some(macroquad::prelude::vec2(texture.width() * -1.0, texture.height())),
 			..Default::default()
 		});
@@ -53,27 +52,20 @@ pub fn draw_rect<C: Into<macroquad::prelude::Color>>(color: C, x: f32, y: f32, w
 }
 
 pub fn draw_message(message: Message, x: f32, y: f32) {
-	for y_offset in 0..message.message.len() {
-		TEXT_RENDERER.render_text_from_left(message.font_id, &message.message[y_offset], message.color.into_color(), x, y + (y_offset * 15) as f32);
+	for y_offset in 0..message.lines.len() {
+		TEXT_RENDERER.render_text_from_left(message.font_id, &message.lines[y_offset], message.color.into_color(), x, y + (y_offset * 15) as f32);
 	}
 }
 
-pub fn draw_text_left(font_id: usize, text: &str, x: f32, y: f32) {
-	TEXT_RENDERER.render_text_from_left(font_id, text, WHITE, x, y);
-}
-
-pub fn draw_text_left_color(font_id: usize, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
+pub fn draw_text_left(font_id: usize, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
 	TEXT_RENDERER.render_text_from_left(font_id, text, color.into_color(), x, y);
 }
 
-pub fn draw_text_right(font_id: usize, text: &str, x: f32, y: f32) {
-	TEXT_RENDERER.render_text_from_right(font_id, text, WHITE, x, y);
-}
-
-pub fn draw_text_right_color(font_id: usize, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
+pub fn draw_text_right(font_id: usize, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
 	TEXT_RENDERER.render_text_from_right(font_id, text, color.into_color(), x, y);
 }
 
+// #[deprecated(note = "make button panel class")]
 pub fn draw_cursor(x: f32, y: f32) {
 	TEXT_RENDERER.render_cursor(x, y);
 }

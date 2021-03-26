@@ -12,14 +12,12 @@
         direction: Down
     ),
     properties: (
-        message: Some((
-            messages: [(
-                message: [
-                    "If a POKEMON BOX on the PC gets",
-                    "full, just switch to another BOX."
-                ]
-            )]
-        )),
+        message: Some([(
+            lines: [
+                "If a POKEMON BOX on the PC gets",
+                "full, just switch to another BOX."
+            ]
+        )]),
     ),
     trainer: Some(Trainer(
         tracking_length: Some(2),
@@ -34,19 +32,23 @@
             pokemon: [
                 (
                     id: 13,
-                    level: 9
+                    level: 9,
+                    gender: Male,
                 ),
                 (
                     id: 13,
-                    level: 9
+                    level: 9,
+                    gender: Male,
                 ),
                 (
                     id: 14,
-                    level: 9
+                    level: 9,
+                    gender: Male,
                 ),
                 (
                     id: 11,
-                    level: 9
+                    level: 9,
+                    gender: Male,
                 )
             ]
         ),

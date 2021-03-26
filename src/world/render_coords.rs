@@ -19,11 +19,11 @@ pub struct RenderCoords {
 
 }
 
-static HALF_WIDTH: isize = (crate::BASE_WIDTH as isize + TILE_SIZE as isize) >> 1;
-static HALF_HEIGHT: isize = (crate::BASE_HEIGHT as isize + TILE_SIZE as isize) >> 1;
+const HALF_WIDTH: isize = (crate::BASE_WIDTH as isize + TILE_SIZE as isize) >> 1;
+const HALF_HEIGHT: isize = (crate::BASE_HEIGHT as isize + TILE_SIZE as isize) >> 1;
 
-static HALF_WIDTH_TILE: isize = HALF_WIDTH >> 4;
-static HALF_HEIGHT_TILE: isize = (HALF_HEIGHT >> 4) + 2;
+const HALF_WIDTH_TILE: isize = HALF_WIDTH >> 4;
+const HALF_HEIGHT_TILE: isize = (HALF_HEIGHT >> 4) + 2;
 
 impl RenderCoords {
 
