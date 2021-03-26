@@ -91,11 +91,11 @@ miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 [build-dependencies]
 font-builder = { git = "https://github.com/DoNotDoughnut/font-builder" }
 
-#world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
-world-builder = { path = "../Subprojects/world-builder" }
+world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
+#world-builder = { path = "../Subprojects/world-builder" }
 
-#dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
-dex-builder = { path = "../Subprojects/dex-builder" }
+dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
+#dex-builder = { path = "../Subprojects/dex-builder" }
 
 audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder", optional = true }
 

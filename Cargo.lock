@@ -334,9 +334,10 @@ dependencies = [
 [[package]]
 name = "dex-builder"
 version = "0.3.0-beta.2"
+source = "git+https://github.com/DoNotDoughnut/dex-builder#5a8b7973da6fabf29c88c9272923d6e414344e2d"
 dependencies = [
  "bincode",
- "firecore-pokedex-lib 0.3.0-beta.1",
+ "firecore-pokedex-lib",
  "serde",
  "toml",
 ]
@@ -417,7 +418,7 @@ source = "git+https://github.com/DoNotDoughnut/firecore-data-lib#c68d36770b9c57b
 dependencies = [
  "ahash 0.7.2",
  "firecore-input",
- "firecore-pokedex-lib 0.3.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-pokedex-lib)",
+ "firecore-pokedex-lib",
  "firecore-util",
  "serde",
 ]
@@ -448,17 +449,9 @@ version = "0.3.0-beta.2"
 source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#0f0b2477fa1dfde21119431f998d9885078a7029"
 dependencies = [
  "dashmap",
- "firecore-pokedex-lib 0.3.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-pokedex-lib)",
+ "firecore-pokedex-lib",
  "lazy_static",
  "quad-rand",
- "serde",
- "smallvec",
-]
-
-[[package]]
-name = "firecore-pokedex-lib"
-version = "0.3.0-beta.1"
-dependencies = [
  "serde",
  "smallvec",
 ]
@@ -478,19 +471,6 @@ version = "0.3.0-beta.1"
 source = "git+https://github.com/DoNotDoughnut/firecore-util#ffad75c879a10dffa230626d933612732ff860f8"
 dependencies = [
  "serde",
-]
-
-[[package]]
-name = "firecore-world"
-version = "0.3.0-beta.1"
-dependencies = [
- "ahash 0.7.2",
- "firecore-audio-lib",
- "firecore-pokedex",
- "firecore-util",
- "quad-rand",
- "serde",
- "smallvec",
 ]
 
 [[package]]
@@ -1122,7 +1102,7 @@ dependencies = [
  "firecore-input",
  "firecore-pokedex",
  "firecore-util",
- "firecore-world 0.3.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-world)",
+ "firecore-world",
  "font-builder",
  "getopts",
  "image",
@@ -1586,11 +1566,12 @@ dependencies = [
 [[package]]
 name = "world-builder"
 version = "0.3.0-beta.4"
+source = "git+https://github.com/DoNotDoughnut/world-builder#e121b764cc99226260f1b207c3a235722f41c1d1"
 dependencies = [
  "ahash 0.7.2",
  "bincode",
  "firecore-util",
- "firecore-world 0.3.0-beta.1",
+ "firecore-world",
  "image",
  "ron",
  "serde",
