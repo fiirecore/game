@@ -1,6 +1,6 @@
-number = 56
+id = 56
 name = "Hydro Pump"
-pokemon_type = "Water"
+type = "Water"
 category = "Special"
 power = 110
 accuracy = 80

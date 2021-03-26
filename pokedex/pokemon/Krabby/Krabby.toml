@@ -1,5 +1,5 @@
 [data]
-number = 98
+id = 98
 name = 'Krabby'
 primary_type = 'Water'
 species = 'River'

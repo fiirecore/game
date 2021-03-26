@@ -1,6 +1,6 @@
-number = 49
+id = 49
 name = "Sonic Boom"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Special"
 accuracy = 90
 pp = 20

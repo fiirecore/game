@@ -1,6 +1,6 @@
-number = 311
+id = 311
 name = "Weather Ball"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Special"
 power = 50
 accuracy = 100

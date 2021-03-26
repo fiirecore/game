@@ -1,5 +1,5 @@
-number = 100
+id = 100
 name = "Teleport"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 20

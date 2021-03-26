@@ -1,6 +1,6 @@
-number = 330
+id = 330
 name = "Muddy Water"
-pokemon_type = "Water"
+type = "Water"
 category = "Special"
 power = 90
 accuracy = 85

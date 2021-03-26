@@ -1,6 +1,6 @@
-number = 89
+id = 89
 name = "Earthquake"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Physical"
 power = 100
 accuracy = 100

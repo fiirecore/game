@@ -334,10 +334,9 @@ dependencies = [
 [[package]]
 name = "dex-builder"
 version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/dex-builder#cd81ad977ad3174b4299ba62dd2569aea3b05ecd"
 dependencies = [
  "bincode",
- "firecore-pokedex-lib",
+ "firecore-pokedex-lib 0.3.0-beta.1",
  "serde",
  "toml",
 ]
@@ -377,7 +376,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#2564f259626fce76c8f27ba6bc52e7e4426ea1e2"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#d81313254c34c2a7af720227c13bb4fd40655d9d"
 dependencies = [
  "dashmap",
  "firecore-audio-lib",
@@ -398,14 +397,13 @@ dependencies = [
 [[package]]
 name = "firecore-data"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#7842d0a5f1c6270ad912fd9ff932a7ddf2b61d0e"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#ec814a7cd275245156bee08af3cab3f872425f6c"
 dependencies = [
  "ahash 0.7.2",
  "async-trait",
  "directories-next",
  "firecore-data-lib",
  "firecore-input",
- "lazy_static",
  "macroquad",
  "miniquad-cookie",
  "ron",
@@ -414,11 +412,12 @@ dependencies = [
 
 [[package]]
 name = "firecore-data-lib"
-version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data-lib#e84c294ecb5381905472d823ebeee3b32434bb46"
+version = "0.3.0-beta.2"
+source = "git+https://github.com/DoNotDoughnut/firecore-data-lib#c68d36770b9c57be44a9382d5d8f7b09738caffc"
 dependencies = [
  "ahash 0.7.2",
- "firecore-pokedex-lib",
+ "firecore-input",
+ "firecore-pokedex-lib 0.3.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-pokedex-lib)",
  "firecore-util",
  "serde",
 ]
@@ -433,8 +432,8 @@ dependencies = [
 
 [[package]]
 name = "firecore-input"
-version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-input#df43139c95f02f714eb4cdcbdbf0fe027f49f8c2"
+version = "0.3.0-beta.4"
+source = "git+https://github.com/DoNotDoughnut/firecore-input#4eaa5aa5d02b8e02e0601fe5d7ba4ffa7fa58e3e"
 dependencies = [
  "ahash 0.7.2",
  "lazy_static",
@@ -446,10 +445,10 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#b4c38dfc0faf728869c18cc3410d472519d5dcad"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#0f0b2477fa1dfde21119431f998d9885078a7029"
 dependencies = [
  "dashmap",
- "firecore-pokedex-lib",
+ "firecore-pokedex-lib 0.3.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-pokedex-lib)",
  "lazy_static",
  "quad-rand",
  "serde",
@@ -458,8 +457,16 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex-lib"
-version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-lib#0bad4e2ef45befcf9f909a16b4e74a8cb4fe258c"
+version = "0.3.0-beta.1"
+dependencies = [
+ "serde",
+ "smallvec",
+]
+
+[[package]]
+name = "firecore-pokedex-lib"
+version = "0.3.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-lib#14b8d2e10651c95b7685fcfac5995dbd08a35d94"
 dependencies = [
  "serde",
  "smallvec",
@@ -476,7 +483,20 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#3f74975096e99e5af72b184d09626fec568111a3"
+dependencies = [
+ "ahash 0.7.2",
+ "firecore-audio-lib",
+ "firecore-pokedex",
+ "firecore-util",
+ "quad-rand",
+ "serde",
+ "smallvec",
+]
+
+[[package]]
+name = "firecore-world"
+version = "0.3.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#d4ee45523472866eed043ba98fe07c196dc9f3fe"
 dependencies = [
  "ahash 0.7.2",
  "firecore-audio-lib",
@@ -1087,7 +1107,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.3.0-beta.4"
+version = "0.3.0-beta.5"
 dependencies = [
  "ahash 0.7.2",
  "async-trait",
@@ -1098,12 +1118,11 @@ dependencies = [
  "embed-resource",
  "firecore-audio",
  "firecore-data",
- "firecore-data-lib",
  "firecore-font-lib",
  "firecore-input",
  "firecore-pokedex",
  "firecore-util",
- "firecore-world",
+ "firecore-world 0.3.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-world)",
  "font-builder",
  "getopts",
  "image",
@@ -1340,9 +1359,9 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "syn"
-version = "1.0.64"
+version = "1.0.65"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fd9d1e9976102a03c542daa2eff1b43f9d72306342f3f8b3ed5fb8908195d6f"
+checksum = "f3a1d708c221c5a612956ef9f75b37e454e88d1f7b899fbd3a18d4252012d663"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1567,12 +1586,11 @@ dependencies = [
 [[package]]
 name = "world-builder"
 version = "0.3.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/world-builder#e121b764cc99226260f1b207c3a235722f41c1d1"
 dependencies = [
  "ahash 0.7.2",
  "bincode",
  "firecore-util",
- "firecore-world",
+ "firecore-world 0.3.0-beta.1",
  "image",
  "ron",
  "serde",

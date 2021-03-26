@@ -1,8 +1,7 @@
-use firecore_util::{Entity, Reset, text::TextColor};
+use firecore_util::{Entity, text::TextColor};
 use firecore_pokedex::pokemon::battle::BattlePokemon;
 
-use macroquad::prelude::Color;
-use macroquad::prelude::Vec2;
+use macroquad::prelude::{Vec2, Color};
 
 use crate::util::graphics::{Texture, draw, draw_rect, draw_text_left, draw_text_right, texture::byte_texture};
 use crate::gui::game::health_bar::HealthBar;
@@ -106,9 +105,9 @@ impl PokemonGui for PlayerPokemonGui {
 	}
 
 	fn update_gui(&mut self, pokemon: &BattlePokemon, new_pokemon: bool) {
-		self.name = pokemon.name().clone();
-		self.level = format!("Lv{}", pokemon.level);
-		self.exp_width = pokemon.exp as f32 / pokemon.pokemon.training.growth_rate.level_exp(pokemon.level) as f32;
+		self.name = pokemon.name();
+		self.level = format!("Lv{}", pokemon.data.level);
+		self.exp_width = pokemon.data.experience as f32 / pokemon.pokemon.training.growth_rate.level_exp(pokemon.data.level) as f32;
 		self.update_hp(new_pokemon, pokemon.current_hp, pokemon.base.hp);
 	}
 

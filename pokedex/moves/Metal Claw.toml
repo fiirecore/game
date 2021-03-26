@@ -1,6 +1,6 @@
-number = 232
+id = 232
 name = "Metal Claw"
-pokemon_type = "Steel"
+type = "Steel"
 category = "Physical"
 power = 50
 accuracy = 95

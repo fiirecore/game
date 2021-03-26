@@ -1,6 +1,6 @@
-number = 23
+id = 23
 name = "Stomp"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 65
 accuracy = 100

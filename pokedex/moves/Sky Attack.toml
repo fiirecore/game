@@ -1,6 +1,6 @@
-number = 143
+id = 143
 name = "Sky Attack"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Physical"
 power = 140
 accuracy = 90

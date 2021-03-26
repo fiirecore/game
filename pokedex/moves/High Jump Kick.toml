@@ -1,6 +1,6 @@
-number = 136
+id = 136
 name = "High Jump Kick"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 130
 accuracy = 90

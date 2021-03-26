@@ -1,6 +1,6 @@
-number = 180
+id = 180
 name = "Spite"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Status"
 accuracy = 100
 pp = 10

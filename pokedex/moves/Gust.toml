@@ -1,6 +1,6 @@
-number = 16
+id = 16
 name = "Gust"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Special"
 power = 40
 accuracy = 100

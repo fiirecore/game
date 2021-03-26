@@ -1,5 +1,5 @@
-number = 112
+id = 112
 name = "Barrier"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 20

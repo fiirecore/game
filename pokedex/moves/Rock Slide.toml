@@ -1,6 +1,6 @@
-number = 157
+id = 157
 name = "Rock Slide"
-pokemon_type = "Rock"
+type = "Rock"
 category = "Physical"
 power = 75
 accuracy = 90

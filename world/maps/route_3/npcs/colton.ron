@@ -30,25 +30,29 @@
                 "I saw you in VIRIDIAN FOREST!"
             ]
         ],
-        party: (
-            pokemon: [
-                (
-                    id: 10,
+        party: [
+            (
+                id: 10,
+                data: (
                     level: 10,
                     gender: Male,
                 ),
-                (
-                    id: 13,
+            ),
+            (
+                id: 13,
+                data: (
                     level: 10,
                     gender: Male,
                 ),
-                (
-                    id: 10,
+            ),
+            (
+                id: 10,
+                data: (
                     level: 10,
                     gender: Male,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         victory_message: [
             "You beat me again!"
         ],

@@ -1,6 +1,6 @@
-number = 125
+id = 125
 name = "Bone Club"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Physical"
 power = 65
 accuracy = 85

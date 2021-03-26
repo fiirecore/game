@@ -1,6 +1,6 @@
-number = 211
+id = 211
 name = "Steel Wing"
-pokemon_type = "Steel"
+type = "Steel"
 category = "Physical"
 power = 70
 accuracy = 90

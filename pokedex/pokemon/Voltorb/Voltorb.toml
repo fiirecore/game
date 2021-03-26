@@ -1,5 +1,5 @@
 [data]
-number = 100
+id = 100
 name = 'Voltorb'
 primary_type = 'Electric'
 species = 'Ball'

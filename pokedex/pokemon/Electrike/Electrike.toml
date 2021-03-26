@@ -1,5 +1,5 @@
 [data]
-number = 309
+id = 309
 name = 'Electrike'
 primary_type = 'Electric'
 species = 'Lightning'

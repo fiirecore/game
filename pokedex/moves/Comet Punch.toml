@@ -1,6 +1,6 @@
-number = 4
+id = 4
 name = "Comet Punch"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 18
 accuracy = 85

@@ -1,6 +1,6 @@
-number = 167
+id = 167
 name = "Triple Kick"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 10
 accuracy = 90

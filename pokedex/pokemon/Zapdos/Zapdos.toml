@@ -1,5 +1,5 @@
 [data]
-number = 145
+id = 145
 name = 'Zapdos'
 primary_type = 'Electric'
 secondary_type = 'Flying'

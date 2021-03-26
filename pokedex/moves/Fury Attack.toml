@@ -1,6 +1,6 @@
-number = 31
+id = 31
 name = "Fury Attack"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 15
 accuracy = 85

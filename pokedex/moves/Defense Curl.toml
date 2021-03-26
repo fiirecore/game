@@ -1,5 +1,5 @@
-number = 111
+id = 111
 name = "Defense Curl"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 40

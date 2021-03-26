@@ -1,6 +1,6 @@
-number = 146
+id = 146
 name = "Dizzy Punch"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 70
 accuracy = 100

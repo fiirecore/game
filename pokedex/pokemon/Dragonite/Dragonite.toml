@@ -1,5 +1,5 @@
 [data]
-number = 149
+id = 149
 name = 'Dragonite'
 primary_type = 'Dragon'
 secondary_type = 'Flying'

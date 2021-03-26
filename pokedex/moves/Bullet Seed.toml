@@ -1,6 +1,6 @@
-number = 331
+id = 331
 name = "Bullet Seed"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Physical"
 power = 25
 accuracy = 100

@@ -1,6 +1,6 @@
-number = 217
+id = 217
 name = "Present"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 accuracy = 90
 pp = 15

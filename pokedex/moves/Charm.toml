@@ -1,6 +1,6 @@
-number = 204
+id = 204
 name = "Charm"
-pokemon_type = "Fairy"
+type = "Fairy"
 category = "Status"
 accuracy = 100
 pp = 20

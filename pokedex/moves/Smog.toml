@@ -1,6 +1,6 @@
-number = 123
+id = 123
 name = "Smog"
-pokemon_type = "Poison"
+type = "Poison"
 category = "Special"
 power = 30
 accuracy = 70

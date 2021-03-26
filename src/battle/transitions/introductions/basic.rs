@@ -9,10 +9,8 @@ use firecore_util::{
 };
 
 use firecore_audio::{play_sound, Sound};
-use firecore_pokedex::pokemon::PokemonId;
 
-use macroquad::prelude::Vec2;
-use macroquad::prelude::warn;
+use macroquad::prelude::{Vec2, warn};
 
 use crate::battle::{
     Battle,
@@ -26,7 +24,6 @@ use crate::battle::{
     }
 };
 
-use crate::util::battle_data::TrainerData;
 use crate::util::graphics::draw_bottom;
 use crate::gui::dynamic_text::DynamicText;
 
@@ -36,9 +33,6 @@ pub struct BasicBattleIntroduction {
 
     alive: bool,
     finished: bool,
-
-    player_id: PokemonId,
-    opponent_id: PokemonId,
 
     pub text: DynamicText,
     pub player_intro: PlayerBattleIntro,
@@ -54,19 +48,11 @@ impl BasicBattleIntroduction {
             alive: false,
             finished: false,
 
-            player_id: 1,
-            opponent_id: 1,
-
             text: DynamicText::new(Vec2::new(11.0, 11.0), panel),
             player_intro: PlayerBattleIntro::new(),
             
             finished_panel: false,
         }
-    }
-
-    pub fn common_setup(&mut self, battle: &Battle) {
-        self.player_id = battle.player.active().pokemon.data.number;
-        self.opponent_id = battle.opponent.active().pokemon.data.number;
     }
 
 }
@@ -141,7 +127,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
         self.text.input();
     }
 
-    fn setup(&mut self, battle: &Battle, _trainer_data: Option<&TrainerData>) {
+    fn setup(&mut self, battle: &Battle) {
         self.text.messages = Some(vec![
             Message::new(
                 vec![
@@ -158,7 +144,6 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 Some(0.5),
             ),
         ]);
-        self.common_setup(battle);
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {
@@ -170,13 +155,13 @@ impl BattleIntroduction for BasicBattleIntroduction {
         }        
     }
 
-    fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32) {
+    fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
         if self.text.can_continue {
             if let Some(messages) = self.text.messages.as_ref() {
                 if self.text.current_message() >= messages.len() - 2 && !battle_gui.opponent_pokemon_gui.is_alive() {
                     battle_gui.opponent_pokemon_gui.reset();
                     battle_gui.opponent_pokemon_gui.spawn();
-                    if let Err(err) = play_sound(Sound::of("Cry", self.opponent_id)) {
+                    if let Err(err) = play_sound(Sound::of("Cry", battle.opponent.active().pokemon.data.id)) {
                         warn!("Could not play opponent cry with error {}", err);
                     }
                 }
@@ -185,7 +170,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
         if self.player_intro.is_finished() && !battle_gui.player_pokemon_gui.is_alive() {
             battle_gui.player_pokemon_gui.reset();
             battle_gui.player_pokemon_gui.spawn();
-            if let Err(err) = play_sound(Sound::of("Cry", self.player_id)) {
+            if let Err(err) = play_sound(Sound::of("Cry", battle.player.active().pokemon.data.id)) {
                 warn!("Could not play opponent cry with error {}", err);
             }
         }

@@ -1,6 +1,6 @@
-number = 131
+id = 131
 name = "Spike Cannon"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 20
 accuracy = 100

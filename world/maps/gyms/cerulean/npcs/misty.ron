@@ -27,20 +27,22 @@
                 "Temporary message"
             ],
         ],
-        party: (
-            pokemon: [
-                (
-                    id: 120,
+        party: [
+            (
+                id: 120,
+                data: (
                     level: 18,
                     gender: None,
-                ),
-                (
-                    id: 121,
+                ),                
+            ),
+            (
+                id: 121,
+                data: (
                     level: 21,
                     gender: None,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         disable_others: [
 
         ],

@@ -67,7 +67,7 @@ impl BattlePanel {
     }
     
     pub fn update_text(&mut self, instance: &BattlePokemon) {
-        self.text.text[1] = instance.name().clone() + " do?";
+        self.text.text[1] = instance.name() + " do?";
     }
 
     pub fn input(&mut self, _delta: f32, battle: &mut Battle) {

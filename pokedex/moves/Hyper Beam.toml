@@ -1,6 +1,6 @@
-number = 63
+id = 63
 name = "Hyper Beam"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Special"
 power = 150
 accuracy = 90

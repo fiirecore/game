@@ -1,6 +1,6 @@
-number = 238
+id = 238
 name = "Cross Chop"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 100
 accuracy = 80

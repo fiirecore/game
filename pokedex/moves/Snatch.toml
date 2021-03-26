@@ -1,5 +1,5 @@
-number = 289
+id = 289
 name = "Snatch"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Status"
 pp = 10

@@ -1,6 +1,6 @@
-number = 223
+id = 223
 name = "Dynamic Punch"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 100
 accuracy = 50

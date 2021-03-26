@@ -1,5 +1,5 @@
-number = 241
+id = 241
 name = "Sunny Day"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Status"
 pp = 5

@@ -1,6 +1,6 @@
-number = 168
+id = 168
 name = "Thief"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Physical"
 power = 60
 accuracy = 100

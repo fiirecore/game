@@ -1,5 +1,5 @@
 [data]
-number = 60
+id = 60
 name = 'Poliwag'
 primary_type = 'Water'
 species = 'Tadpole'

@@ -1,6 +1,6 @@
-number = 58
+id = 58
 name = "Ice Beam"
-pokemon_type = "Ice"
+type = "Ice"
 category = "Special"
 power = 90
 accuracy = 100

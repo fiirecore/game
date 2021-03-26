@@ -1,6 +1,6 @@
-number = 47
+id = 47
 name = "Sing"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 accuracy = 55
 pp = 15

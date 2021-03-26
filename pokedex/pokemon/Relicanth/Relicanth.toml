@@ -1,5 +1,5 @@
 [data]
-number = 369
+id = 369
 name = 'Relicanth'
 primary_type = 'Water'
 secondary_type = 'Rock'

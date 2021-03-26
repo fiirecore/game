@@ -30,15 +30,15 @@
                 "What's wrong with you?"
             ]
         ],
-        party: (
-            pokemon: [
-                (
-                    id: 21,
+        party: [
+            (
+                id: 21,
+                data: (
                     level: 14,
                     gender: Male,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         victory_message: [
             "Lost!",
             "Lost! Lost!"

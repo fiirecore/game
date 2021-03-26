@@ -1,6 +1,6 @@
-number = 301
+id = 301
 name = "Ice Ball"
-pokemon_type = "Ice"
+type = "Ice"
 category = "Physical"
 power = 30
 accuracy = 90

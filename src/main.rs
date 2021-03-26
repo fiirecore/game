@@ -6,7 +6,6 @@ use macroquad::prelude::BLACK;
 use macroquad::prelude::Conf;
 use macroquad::prelude::Rect;
 use macroquad::prelude::clear_background;
-use macroquad::prelude::error;
 use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
 use macroquad::prelude::next_frame;
@@ -115,7 +114,7 @@ async fn macroquad_main() {
 
         #[cfg(feature = "audio")]
         if let Err(err) = firecore_audio::create() {
-            error!("Could not create audio instance with error {}", err);
+            macroquad::prelude::error!("Could not create audio instance with error {}", err);
         } else {
             let audio = bincode::deserialize(
                 // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
@@ -125,13 +124,13 @@ async fn macroquad_main() {
             #[cfg(not(target = "wasm32"))] {
                 std::thread::spawn( || {
                     if let Err(err) = firecore_audio::load(audio) {
-                        error!("Could not load audio files with error {}", err);
+                        macroquad::prelude::error!("Could not load audio files with error {}", err);
                     }
                 });
             }
             #[cfg(target = "wasm32")] {
                 if let Err(err) = firecore_audio::load(audio) {
-                    error!("Could not load audio files with error {}", err);
+                    macroquad::prelude::error!("Could not load audio files with error {}", err);
                 }
             }
 
@@ -184,7 +183,7 @@ async fn macroquad_main() {
 
     loop {
 
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(all(target_arch = "wasm32", feature = "audio"))]
         firecore_audio::backend::quadsnd::music::MIXER.lock().frame();
 
 

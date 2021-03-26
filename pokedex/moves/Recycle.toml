@@ -1,5 +1,5 @@
-number = 278
+id = 278
 name = "Recycle"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 10

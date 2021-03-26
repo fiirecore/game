@@ -1,6 +1,6 @@
-number = 253
+id = 253
 name = "Uproar"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Special"
 power = 90
 accuracy = 100

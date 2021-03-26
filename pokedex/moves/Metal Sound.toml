@@ -1,6 +1,6 @@
-number = 319
+id = 319
 name = "Metal Sound"
-pokemon_type = "Steel"
+type = "Steel"
 category = "Status"
 accuracy = 85
 pp = 40

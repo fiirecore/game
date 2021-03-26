@@ -1,5 +1,5 @@
 [data]
-number = 150
+id = 150
 name = 'Mewtwo'
 primary_type = 'Psychic'
 species = 'Genetic'

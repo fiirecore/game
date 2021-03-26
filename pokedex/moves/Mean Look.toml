@@ -1,5 +1,5 @@
-number = 212
+id = 212
 name = "Mean Look"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 5

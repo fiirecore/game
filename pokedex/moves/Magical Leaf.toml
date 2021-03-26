@@ -1,6 +1,6 @@
-number = 345
+id = 345
 name = "Magical Leaf"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Special"
 power = 60
 pp = 20

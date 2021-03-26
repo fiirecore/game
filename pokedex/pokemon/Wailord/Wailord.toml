@@ -1,5 +1,5 @@
 [data]
-number = 321
+id = 321
 name = 'Wailord'
 primary_type = 'Water'
 species = 'Float'

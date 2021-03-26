@@ -1,6 +1,6 @@
-number = 323
+id = 323
 name = "Water Spout"
-pokemon_type = "Water"
+type = "Water"
 category = "Special"
 power = 150
 accuracy = 100

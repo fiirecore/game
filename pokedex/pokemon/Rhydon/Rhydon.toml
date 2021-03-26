@@ -1,5 +1,5 @@
 [data]
-number = 112
+id = 112
 name = 'Rhydon'
 primary_type = 'Ground'
 secondary_type = 'Rock'

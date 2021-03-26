@@ -1,6 +1,6 @@
-number = 8
+id = 8
 name = "Ice Punch"
-pokemon_type = "Ice"
+type = "Ice"
 category = "Physical"
 power = 75
 accuracy = 100

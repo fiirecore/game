@@ -1,6 +1,6 @@
-number = 221
+id = 221
 name = "Sacred Fire"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Physical"
 power = 100
 accuracy = 95

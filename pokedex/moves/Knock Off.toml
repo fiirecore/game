@@ -1,6 +1,6 @@
-number = 282
+id = 282
 name = "Knock Off"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Physical"
 power = 65
 accuracy = 100

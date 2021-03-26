@@ -1,6 +1,6 @@
-number = 302
+id = 302
 name = "Needle Arm"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Physical"
 power = 60
 accuracy = 100

@@ -1,5 +1,5 @@
 [data]
-number = 99
+id = 99
 name = 'Kingler'
 primary_type = 'Water'
 species = 'Pincer'

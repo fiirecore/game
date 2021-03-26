@@ -1,5 +1,5 @@
 [data]
-number = 275
+id = 275
 name = 'Shiftry'
 primary_type = 'Grass'
 secondary_type = 'Dark'

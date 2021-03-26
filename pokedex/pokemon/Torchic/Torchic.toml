@@ -1,5 +1,5 @@
 [data]
-number = 255
+id = 255
 name = 'Torchic'
 primary_type = 'Fire'
 species = 'Chick'

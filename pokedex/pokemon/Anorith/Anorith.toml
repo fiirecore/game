@@ -1,5 +1,5 @@
 [data]
-number = 347
+id = 347
 name = 'Anorith'
 primary_type = 'Rock'
 secondary_type = 'Bug'

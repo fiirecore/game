@@ -1,5 +1,5 @@
 [data]
-number = 55
+id = 55
 name = 'Golduck'
 primary_type = 'Water'
 species = 'Duck'

@@ -1,6 +1,6 @@
-number = 24
+id = 24
 name = "Double Kick"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 30
 accuracy = 100

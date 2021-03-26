@@ -1,5 +1,5 @@
-number = 334
+id = 334
 name = "Iron Defense"
-pokemon_type = "Steel"
+type = "Steel"
 category = "Status"
 pp = 15

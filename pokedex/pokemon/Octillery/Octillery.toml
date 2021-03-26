@@ -1,5 +1,5 @@
 [data]
-number = 224
+id = 224
 name = 'Octillery'
 primary_type = 'Water'
 species = 'Jet'

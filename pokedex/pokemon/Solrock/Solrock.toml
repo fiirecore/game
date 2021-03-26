@@ -1,5 +1,5 @@
 [data]
-number = 338
+id = 338
 name = 'Solrock'
 primary_type = 'Rock'
 secondary_type = 'Psychic'

@@ -1,6 +1,6 @@
-number = 52
+id = 52
 name = "Ember"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Special"
 power = 40
 accuracy = 100

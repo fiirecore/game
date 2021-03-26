@@ -1,6 +1,6 @@
-number = 90
+id = 90
 name = "Fissure"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Physical"
 accuracy = 30
 pp = 5

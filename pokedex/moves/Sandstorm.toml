@@ -1,5 +1,5 @@
-number = 201
+id = 201
 name = "Sandstorm"
-pokemon_type = "Rock"
+type = "Rock"
 category = "Status"
 pp = 10

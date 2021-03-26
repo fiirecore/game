@@ -1,6 +1,6 @@
-number = 17
+id = 17
 name = "Wing Attack"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Physical"
 power = 60
 accuracy = 100

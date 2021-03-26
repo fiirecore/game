@@ -1,6 +1,6 @@
-number = 188
+id = 188
 name = "Sludge Bomb"
-pokemon_type = "Poison"
+type = "Poison"
 category = "Special"
 power = 90
 accuracy = 100

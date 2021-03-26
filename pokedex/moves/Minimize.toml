@@ -1,5 +1,5 @@
-number = 107
+id = 107
 name = "Minimize"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 10

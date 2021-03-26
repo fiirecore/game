@@ -1,6 +1,6 @@
-number = 189
+id = 189
 name = "Mud-Slap"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Special"
 power = 20
 accuracy = 100

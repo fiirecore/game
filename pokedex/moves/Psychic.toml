@@ -1,6 +1,6 @@
-number = 94
+id = 94
 name = "Psychic"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Special"
 power = 90
 accuracy = 100

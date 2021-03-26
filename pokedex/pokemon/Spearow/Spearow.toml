@@ -1,5 +1,5 @@
 [data]
-number = 21
+id = 21
 name = 'Spearow'
 primary_type = 'Normal'
 secondary_type = 'Flying'

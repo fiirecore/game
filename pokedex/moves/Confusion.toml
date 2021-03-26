@@ -1,6 +1,6 @@
-number = 93
+id = 93
 name = "Confusion"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Special"
 power = 50
 accuracy = 100

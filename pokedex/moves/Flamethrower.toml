@@ -1,6 +1,6 @@
-number = 53
+id = 53
 name = "Flamethrower"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Special"
 power = 90
 accuracy = 100

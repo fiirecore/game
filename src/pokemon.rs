@@ -1,16 +1,25 @@
-use std::path::PathBuf;
-
 use dashmap::DashMap;
-use firecore_pokedex::pokemon::PokemonId;
-use firecore_pokedex::pokemon::texture::PokemonTexture;
-use macroquad::prelude::info;
 
-use crate::util::graphics::Texture;
-use crate::util::graphics::texture::byte_texture;
-use crate::util::graphics::texture::debug_texture;
+use macroquad::prelude::{info, warn};
+
+use firecore_pokedex::{
+	POKEDEX,
+	MOVEDEX,
+	pokemon::{
+		PokemonId,
+		texture::PokemonTexture,
+	}
+};
+
+use firecore_audio::{
+	add_sound,
+	SerializedSoundData,
+	Sound
+};
+
+use crate::util::graphics::{Texture, texture::{byte_texture, debug_texture}};
 
 lazy_static::lazy_static! {
-    pub static ref DEX_DIR: PathBuf = PathBuf::from("pokedex");
 	pub static ref FRONT_TEXTURES: DashMap<PokemonId, Texture> = DashMap::new();
 	pub static ref BACK_TEXTURES: DashMap<PokemonId, Texture> = DashMap::new();
 	pub static ref ICON_TEXTURES: DashMap<PokemonId, Texture> = DashMap::new();
@@ -26,30 +35,30 @@ pub async fn load() {
 	info!("Loading pokedex and moves!");
 
 	for pokemon in dex.pokemon {
-		// load_textures(&pokemon).await;
 		
-		FRONT_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.front_png));
-		BACK_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.back_png));
-		// info!("Adding texture for {}", pokemon.pokemon.data.name);
-		ICON_TEXTURES.insert(pokemon.pokemon.data.number, byte_texture(&pokemon.icon_png));
+		FRONT_TEXTURES.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.front_png));
+		BACK_TEXTURES.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.back_png));
+		ICON_TEXTURES.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.icon_png));
 
 		if !pokemon.cry_ogg.is_empty() {
-			if let Err(err) = firecore_audio::add_sound(firecore_audio::SerializedSoundData {
-				bytes: pokemon.cry_ogg,
-				sound: firecore_audio::Sound {
-				    name: String::from("Cry"),
-				    variant: pokemon.pokemon.data.number,
+			if let Err(err) = add_sound(
+				SerializedSoundData {
+					bytes: pokemon.cry_ogg,
+					sound: Sound {
+						name: String::from("Cry"),
+						variant: pokemon.pokemon.data.id,
+					}
 				}
-			}) {
-				macroquad::prelude::warn!("Error adding pokemon cry: {}", err);
+			) {
+				warn!("Error adding pokemon cry: {}", err);
 			}
 		}
 		
-		firecore_pokedex::POKEDEX.insert(pokemon.pokemon.data.number, pokemon.pokemon);
+		POKEDEX.insert(pokemon.pokemon.data.id, pokemon.pokemon);
 	}
 
 	for pokemon_move in dex.moves {
-		firecore_pokedex::MOVEDEX.insert(pokemon_move.number, pokemon_move);
+		MOVEDEX.insert(pokemon_move.id, pokemon_move);
 	}
 
 	info!("Finished loading pokedex and moves!");
@@ -58,29 +67,8 @@ pub async fn load() {
 
 pub fn pokemon_texture(id: &PokemonId, side: PokemonTexture) -> Texture {
 	match side {
-	    PokemonTexture::Front => match FRONT_TEXTURES.get(id) {
-	        Some(texture) => {
-				*texture
-			}
-	        None => {
-				debug_texture()
-			}
-	    },
-	    PokemonTexture::Back => match BACK_TEXTURES.get(id) {
-	        Some(texture) => {
-				*texture
-			}
-	        None => {
-				debug_texture()
-			}
-	    },
-	    PokemonTexture::Icon => match ICON_TEXTURES.get(id) {
-	        Some(texture) => {
-				*texture
-			}
-	        None => {
-				debug_texture()
-			}
-	    },
-	}
+	    PokemonTexture::Front => FRONT_TEXTURES.get(id).map(|tex| *tex),
+	    PokemonTexture::Back => BACK_TEXTURES.get(id).map(|tex| *tex),
+	    PokemonTexture::Icon => ICON_TEXTURES.get(id).map(|tex| *tex),
+	}.unwrap_or(debug_texture())
 }

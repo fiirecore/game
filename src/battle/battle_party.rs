@@ -6,47 +6,66 @@ use macroquad::prelude::Vec2;
 use macroquad::prelude::warn;
 use smallvec::SmallVec;
 
+use crate::util::battle_data::BattlePokemonParty;
 use crate::util::graphics::Texture;
 
 use super::gui::pokemon_texture::ActivePokemonRenderer;
 
-#[derive(Default)]
 pub struct BattleParty {
 
     pub pokemon: SmallVec<[GameBattlePokemon; 6]>,
     pub active: usize,
 
     pub renderer: ActivePokemonRenderer,
-    pub next_move: BattleMoveStatus,
+
+    pub next_move: Option<BattleMoveStatus>,
 
 }
 
 impl BattleParty {
 
-    pub fn new(party: &PokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn from_saved(party: &PokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
 
-        let mut pokemon = SmallVec::new();
+        let mut battle_party = BattlePokemonParty::new();
 
-        for pokemon_instance in &party.pokemon {
-			if let Some(battle_pokemon) = BattlePokemon::new(pokemon_instance) {
-				pokemon.push(
-                    GameBattlePokemon {
-                        texture: crate::pokemon::pokemon_texture(&battle_pokemon.pokemon.data.number, side),
-                        pokemon: battle_pokemon,
-                    }
-                );
+        for pokemon in party {
+			if let Some(pokemon) = BattlePokemon::new(pokemon) {
+				battle_party.push(pokemon);
 			} else {
-				warn!("Could not add pokemon with id {} to pokemon party", pokemon_instance.id);
+				warn!("Could not add pokemon with id {} to pokemon party", pokemon.id);
 			}
 		}
 
+        Self::new(
+            battle_party,
+            side, 
+            active_pos,
+        )       
+
+    }
+
+    pub fn new(party: BattlePokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+
+        let mut active = 0;
+
+        for (index, pokemon) in party.iter().enumerate() {
+			if pokemon.current_hp != 0 {
+				active = index;
+				break;
+			}
+		}
 
         Self {
-            pokemon,
+            pokemon: party.into_iter().map(|pokemon| 
+                GameBattlePokemon {
+                    texture: crate::pokemon::pokemon_texture(&pokemon.pokemon.data.id, side),
+                    pokemon: pokemon,
+                }
+            ).collect(),
             renderer: ActivePokemonRenderer::new(active_pos),
-            ..Default::default()
+            active,
+            next_move: None,
         }
-
     }
 
     pub fn select_pokemon(&mut self, selected: usize) {
@@ -61,6 +80,10 @@ impl BattleParty {
             }
         }
         true
+    }
+
+    pub fn next_move_queued(&self) -> bool {
+        self.next_move.as_ref().map(|next_move| next_move.queued).unwrap_or_default()
     }
 
     pub fn active(&self) -> &BattlePokemon {
@@ -85,7 +108,6 @@ pub struct GameBattlePokemon {
 
 }
 
-#[derive(Default)]
 pub struct BattleMoveStatus {
 
     pub pokemon_move: PokemonMove,

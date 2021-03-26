@@ -1,6 +1,6 @@
-number = 190
+id = 190
 name = "Octazooka"
-pokemon_type = "Water"
+type = "Water"
 category = "Special"
 power = 65
 accuracy = 85

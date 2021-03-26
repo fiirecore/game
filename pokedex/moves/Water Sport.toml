@@ -1,5 +1,5 @@
-number = 346
+id = 346
 name = "Water Sport"
-pokemon_type = "Water"
+type = "Water"
 category = "Status"
 pp = 15

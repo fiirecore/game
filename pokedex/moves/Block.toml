@@ -1,5 +1,5 @@
-number = 335
+id = 335
 name = "Block"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 5

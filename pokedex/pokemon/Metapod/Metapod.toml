@@ -1,5 +1,5 @@
 [data]
-number = 11
+id = 11
 name = 'Metapod'
 primary_type = 'Bug'
 species = 'Cocoon'

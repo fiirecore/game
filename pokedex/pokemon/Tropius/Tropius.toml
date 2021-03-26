@@ -1,5 +1,5 @@
 [data]
-number = 357
+id = 357
 name = 'Tropius'
 primary_type = 'Grass'
 secondary_type = 'Flying'

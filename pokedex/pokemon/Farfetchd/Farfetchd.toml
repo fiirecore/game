@@ -1,5 +1,5 @@
 [data]
-number = 83
+id = 83
 name = 'Farfetchd'
 primary_type = 'Normal'
 secondary_type = 'Flying'

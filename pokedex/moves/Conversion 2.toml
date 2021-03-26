@@ -1,5 +1,5 @@
-number = 176
+id = 176
 name = "Conversion 2"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 30

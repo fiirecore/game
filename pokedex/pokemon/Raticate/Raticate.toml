@@ -1,5 +1,5 @@
 [data]
-number = 20
+id = 20
 name = 'Raticate'
 primary_type = 'Normal'
 species = 'Mouse'

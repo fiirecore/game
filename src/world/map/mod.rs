@@ -22,7 +22,7 @@ use firecore_input::{pressed, Control};
 use firecore_util::Completable;
 
 use super::npc::WorldNpc;
-use super::gui::map_window_manager::MapWindowManager;
+use super::gui::text_window::TextWindow;
 use super::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 
 pub mod manager;
@@ -83,7 +83,7 @@ impl GameWorld for WorldMap {
                                     }                          
                                 },
                                 Condition::PlayerHasPokemon(is_true) => {
-                                    if player_data.party.pokemon.is_empty().eq(is_true) {
+                                    if player_data.party.is_empty().eq(is_true) {
                                         break_script = true;
                                     }
                                 }
@@ -106,7 +106,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow) {
 
         for script in self.scripts.iter_mut() {
 
@@ -164,19 +164,19 @@ impl GameWorld for WorldMap {
                                     player.properties.destination = Some(*destination);
                                 }
                             }
-                            WorldActionKind::PlayerGivePokemon(instance) => {
+                            WorldActionKind::PlayerGivePokemon(saved) => {
                                 if let Some(mut saves) = get_mut::<PlayerSaves>() {
-                                    if saves.get().party.pokemon.len() < 6 {
-                                        saves.get_mut().party.pokemon.push(instance.clone());
+                                    if saves.get().party.len() < 6 {
+                                        saves.get_mut().party.push(saved.clone());
                                     } else {
-                                        warn!("Could not add pokemon #{} to player party because it is full", instance.id);
+                                        warn!("Could not add pokemon #{} to player party because it is full", saved.id);
                                     }
                                 }
                                 pop = true;
                             }
                             WorldActionKind::PlayerHealPokemon => {
                                 if let Some(mut saves) = get_mut::<PlayerSaves>() {
-                                    for pokemon in saves.get_mut().party.pokemon.iter_mut() {
+                                    for pokemon in saves.get_mut().party.iter_mut() {
                                         pokemon.current_hp = None;
                                     }
                                 }
@@ -324,7 +324,7 @@ impl GameWorld for WorldMap {
                             }
 
                             WorldActionKind::DisplayText(messages) => {
-                                if display_text(delta, window_manager, messages) {
+                                if display_text(delta, text_window, messages) {
                                     pop = true;
                                 }
                             },
@@ -338,29 +338,29 @@ impl GameWorld for WorldMap {
                                 */
 
                                 if script.option == 0 {
-                                    if window_manager.is_alive() {
-                                        if window_manager.is_finished() {
+                                    if text_window.is_alive() {
+                                        if text_window.is_finished() {
                                             script.option = 2;
                                         } else {
-                                            window_manager.update(delta);
+                                            text_window.update(delta);
                                         }
                                     } else {
-                                        window_manager.spawn();
-                                        window_manager.set_text(messages.clone());
+                                        text_window.spawn();
+                                        text_window.set_text(messages.clone());
                                     }
                                 } else if script.option == 1 {
 
                                     if end_messages.is_some() {
 
-                                        if window_manager.is_finished() {
-                                            window_manager.despawn();
+                                        if text_window.is_finished() {
+                                            text_window.despawn();
                                             if *unfreeze {
                                                 player.unfreeze();
                                             }
                                             script.option = 0;
                                             despawn_script(script);
                                         } else {
-                                            window_manager.update(delta);
+                                            text_window.update(delta);
                                         }
 
                                     } else {
@@ -374,14 +374,14 @@ impl GameWorld for WorldMap {
                                     if pressed(Control::A) {
                                         if script.option == 2 {
                                             script.option = 0;
-                                            window_manager.despawn();
+                                            text_window.despawn();
                                             pop = true;
                                         } else if script.option == 3 {
 
                                             script.option = 1;
                                             if let Some(end_messages) = end_messages {
-                                                window_manager.reset_text();
-                                                window_manager.set_text(end_messages.clone());
+                                                text_window.reset_text();
+                                                text_window.set_text(end_messages.clone());
                                             }
 
                                         }
@@ -389,8 +389,8 @@ impl GameWorld for WorldMap {
 
                                         script.option = 1;
                                         if let Some(end_messages) = end_messages {
-                                            window_manager.reset_text();
-                                            window_manager.set_text(end_messages.clone());
+                                            text_window.reset_text();
+                                            text_window.set_text(end_messages.clone());
                                         }
 
                                     }
@@ -423,27 +423,27 @@ impl GameWorld for WorldMap {
         } else {
             None
         } {
-            if window_manager.is_alive() {
-                if window_manager.is_finished() {
+            if text_window.is_alive() {
+                if text_window.is_finished() {
                     {
                         self.npc_active = None;
                         super::npc::try_battle(&self.name, npc);
                     }
-                    window_manager.despawn();
+                    text_window.despawn();
                 } else {
-                    window_manager.update(delta);
+                    text_window.update(delta);
                 }
             } else {
                 if npc.should_move_to_destination() {
                     npc.move_to_destination(delta) 
                 } else {
-                    window_manager.spawn();
+                    text_window.spawn();
                     npc.properties.character.destination = None;
     
                     let mut message_ran = false;
     
                     if let Some(messages) = npc.properties.message.as_ref() {
-                        window_manager.set_text(messages.clone());
+                        text_window.set_text(messages.clone());
                         message_ran = true;
                     }
                     
@@ -460,7 +460,7 @@ impl GameWorld for WorldMap {
                                         None,
                                     )
                                 }).collect();
-                                window_manager.set_text(messages);
+                                text_window.set_text(messages);
                                 message_ran = true;
     
                                 // Play Trainer music
@@ -485,10 +485,12 @@ impl GameWorld for WorldMap {
                     }
     
                     if !message_ran {
-                        window_manager.despawn();
+                        text_window.despawn();
                         self.npc_active = None;
                     } else {
-                        window_manager.on_start();
+                        if let Some(saves) = get::<PlayerSaves>() {
+                            text_window.on_start(saves.get());
+                        }
                     }
     
                     player.position.local.direction = npc.position.direction.inverse();
@@ -602,9 +604,9 @@ impl GameWorld for WorldMap {
 
 }
 
-#[deprecated(note = "move this function")]
+// #[deprecated(note = "move this function")]
 fn try_wild_battle(wild: &WildEntry) { // move
-    if macroquad::rand::gen_range(0, 255) < wild.table.encounter_rate() {
+    if wild.table.try_encounter() {
         crate::util::battle_data::wild_battle(&wild.table);
     }
 }
@@ -615,17 +617,17 @@ pub fn despawn_script(script: &mut WorldScript) {
     }
 }
 
-fn display_text(delta: f32, window_manager: &mut MapWindowManager, messages: &Vec<Message>) -> bool {
-    if window_manager.is_alive() {
-        if window_manager.is_finished() {
-            window_manager.despawn();
+fn display_text(delta: f32, text_window: &mut TextWindow, messages: &Vec<Message>) -> bool {
+    if text_window.is_alive() {
+        if text_window.is_finished() {
+            text_window.despawn();
             return true;
         } else {
-            window_manager.update(delta);
+            text_window.update(delta);
         }
     } else {
-        window_manager.spawn();
-        window_manager.set_text(messages.clone());
+        text_window.spawn();
+        text_window.set_text(messages.clone());
     }
     false
 }

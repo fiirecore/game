@@ -1,6 +1,6 @@
-number = 65
+id = 65
 name = "Drill Peck"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Physical"
 power = 80
 accuracy = 100

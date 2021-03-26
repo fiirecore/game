@@ -1,3 +1,4 @@
+use firecore_data::player::save::PlayerSave;
 use firecore_util::{Entity, Reset, Completable, text::Message};
 use macroquad::prelude::Vec2;
 
@@ -6,7 +7,7 @@ use crate::util::text::process_messages;
 
 use crate::util::graphics::{Texture, draw};
 
-pub struct MapWindowManager {
+pub struct TextWindow {
 
     alive: bool,
     pos: Vec2,
@@ -15,7 +16,7 @@ pub struct MapWindowManager {
 
 }
 
-impl MapWindowManager {
+impl TextWindow {
 
     pub fn reset_text(&mut self) {
         self.text.reset();
@@ -25,21 +26,20 @@ impl MapWindowManager {
         self.text.messages = Some(messages);
     }
 
-    pub fn on_start(&mut self) {
+    pub fn on_start(&mut self, player_save: &PlayerSave) {
         if let Some(messages) = self.text.messages.as_mut() {
-            process_messages(messages);
+            process_messages(player_save, messages);
         }
-        
     }
 
     pub fn update(&mut self, delta: f32) {
-        if self.is_alive() {
+        if self.alive {
             self.text.update(delta);
         }
     }
 
     pub fn render(&self) {
-        if self.is_alive() {
+        if self.alive {
             draw(self.background, self.pos.x, self.pos.y);
             self.text.render();
         }
@@ -51,10 +51,10 @@ impl MapWindowManager {
 
 }
 
-impl Default for MapWindowManager {
+impl Default for TextWindow {
     fn default() -> Self {
         let pos = Vec2::new(6.0, 116.0);
-        MapWindowManager {
+        Self {
             alive: false,
             pos,
             background: crate::util::graphics::texture::byte_texture(include_bytes!("../../../build/assets/gui/message.png")),
@@ -63,7 +63,7 @@ impl Default for MapWindowManager {
     }
 }
 
-impl Entity for MapWindowManager {
+impl Entity for TextWindow {
     fn spawn(&mut self) {
         self.alive = true;
         self.reset();
@@ -80,16 +80,14 @@ impl Entity for MapWindowManager {
     }
 }
 
-impl Reset for MapWindowManager {
+impl Reset for TextWindow {
     fn reset(&mut self) {
         self.text.reset();
     }
 }
 
-impl Completable for MapWindowManager {
-
+impl Completable for TextWindow {
     fn is_finished(&self) -> bool {
         self.text.is_finished()
     }
-
 }

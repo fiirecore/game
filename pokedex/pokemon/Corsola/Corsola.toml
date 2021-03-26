@@ -1,5 +1,5 @@
 [data]
-number = 222
+id = 222
 name = 'Corsola'
 primary_type = 'Water'
 secondary_type = 'Rock'

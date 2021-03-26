@@ -31,20 +31,22 @@
                 "You looked at me, didn't you?"
             ]
         ],
-        party: (
-            pokemon: [
-                (
-                    id: 16,
+        party: [
+            (
+                id: 16,
+                data: (
                     level: 9,
                     gender: Female,
                 ),
-                (
-                    id: 16,
+            ),
+            (
+                id: 16,
+                data: (
                     level: 9,
                     gender: Female,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         worth: 0
     ))
 )

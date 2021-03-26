@@ -1,6 +1,6 @@
-number = 237
+id = 237
 name = "Hidden Power"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Special"
 power = 60
 accuracy = 100

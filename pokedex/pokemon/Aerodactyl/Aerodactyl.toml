@@ -1,5 +1,5 @@
 [data]
-number = 142
+id = 142
 name = 'Aerodactyl'
 primary_type = 'Rock'
 secondary_type = 'Flying'

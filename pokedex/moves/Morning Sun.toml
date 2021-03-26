@@ -1,5 +1,5 @@
-number = 234
+id = 234
 name = "Morning Sun"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 5

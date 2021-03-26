@@ -44,19 +44,22 @@
         victory_message: [
             "I don't believe it!"
         ],
-        party: (
-            pokemon: [(
-                    id: 19,
+        party: [
+            (
+                id: 19,
+                data: (
                     level: 11,
                     gender: Male,
                 ),
-                (
-                    id: 23,
+            ),
+            (
+                id: 23,
+                data: (
                     level: 11,
                     gender: Male,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         worth: 176,
     ))
 )

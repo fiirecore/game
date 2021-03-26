@@ -1,6 +1,6 @@
-number = 36
+id = 36
 name = "Take Down"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 90
 accuracy = 85

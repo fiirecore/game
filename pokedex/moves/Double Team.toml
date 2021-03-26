@@ -1,5 +1,5 @@
-number = 104
+id = 104
 name = "Double Team"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 15

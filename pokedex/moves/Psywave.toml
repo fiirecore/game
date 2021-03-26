@@ -1,6 +1,6 @@
-number = 149
+id = 149
 name = "Psywave"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Special"
 accuracy = 100
 pp = 15

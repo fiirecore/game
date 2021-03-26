@@ -1,6 +1,6 @@
-number = 250
+id = 250
 name = "Whirlpool"
-pokemon_type = "Water"
+type = "Water"
 category = "Special"
 power = 35
 accuracy = 85

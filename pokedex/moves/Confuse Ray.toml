@@ -1,6 +1,6 @@
-number = 109
+id = 109
 name = "Confuse Ray"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Status"
 accuracy = 100
 pp = 10

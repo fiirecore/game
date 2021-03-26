@@ -4,9 +4,9 @@ pub mod text;
 pub mod player {
     pub static mut DIRTY: bool = false;
 
-    pub use firecore_data_lib::player::{list, save, world};
+    pub use firecore_data::player::{list, save, world};
 
-    pub fn battle(data: &mut firecore_data_lib::player::world::map::MapData, npc: &firecore_world::character::npc::NPC) {
+    pub fn battle(data: &mut firecore_data::player::world::map::MapData, npc: &firecore_world::character::npc::NPC) {
         if !data.battled.contains(&npc.identifier.index) {
             if npc.trainer.is_some() {
                 crate::util::battle_data::trainer_battle(&npc);

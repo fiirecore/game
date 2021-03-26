@@ -1,4 +1,14 @@
-use macroquad::prelude::collections::storage::get;
+use macroquad::prelude::{
+    collections::storage::get,
+    WHITE,
+    RED,
+    draw_texture_ex,
+    draw_rectangle_lines,
+    DrawTextureParams,
+    Rect,
+    is_key_pressed,
+    KeyCode,
+};
 use firecore_util::{Entity, Reset, text::TextColor};
 
 use firecore_input::{pressed, Control};
@@ -54,10 +64,10 @@ impl PokemonPartyGui {
 
     pub fn on_battle_start(&mut self, party: &BattleParty) {
         for (index, pokemon) in party.pokemon.iter().map(|pokemon| &pokemon.pokemon).enumerate() {
-            let texture = crate::pokemon::pokemon_texture(&pokemon.pokemon.data.number, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
+            let texture = crate::pokemon::pokemon_texture(&pokemon.pokemon.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
             self.pokemon[index] = Some(PartyGuiData {
-                name: pokemon.nickname.as_ref().unwrap_or(&pokemon.pokemon.data.name).to_ascii_uppercase(),
-                level: format!("Lv{}", pokemon.level),
+                name: pokemon.name(),
+                level: format!("Lv{}", pokemon.data.level),
                 hp: format!("{}/{}", pokemon.current_hp, pokemon.base.hp),
                 health_width: (pokemon.current_hp as f32 / pokemon.base.hp as f32).ceil() * 48.0,
                 texture,
@@ -67,22 +77,22 @@ impl PokemonPartyGui {
 
     pub fn on_world_start(&mut self) {
         if let Some(saves) = get::<PlayerSaves>() {
-            for pokemon in saves.get().party.pokemon.iter().enumerate() {
-                if pokemon.0 == 6 {
+            for (index, pokemon) in saves.get().party.iter().enumerate() {
+                if index == 6 {
                     break;
                 }
                 
-                if let Some(pokemon_data) = firecore_pokedex::POKEDEX.get(&pokemon.1.id) {
+                if let Some(pokemon_data) = firecore_pokedex::POKEDEX.get(&pokemon.id) {
                     let pokemon_data = pokemon_data.value();
     
-                    let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.1.ivs.hp, pokemon.1.evs.hp, pokemon.1.level);
-                    let curr = pokemon.1.current_hp.unwrap_or(max);
+                    let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.data.ivs.hp, pokemon.data.evs.hp, pokemon.data.level);
+                    let curr = pokemon.current_hp.unwrap_or(max);
         
-                    let texture = crate::pokemon::pokemon_texture(&pokemon_data.data.number, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
+                    let texture = crate::pokemon::pokemon_texture(&pokemon_data.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
         
-                    self.pokemon[pokemon.0] = Some(PartyGuiData {
-                        name: pokemon.1.nickname.as_ref().unwrap_or(&pokemon_data.data.name).to_ascii_uppercase(),
-                        level: format!("Lv{}", pokemon.1.level),
+                    self.pokemon[index] = Some(PartyGuiData {
+                        name: pokemon.data.nickname.as_ref().map(|nick| nick.clone()).unwrap_or(pokemon_data.data.name.to_ascii_uppercase()),
+                        level: format!("Lv{}", pokemon.data.level),
                         hp: format!("{}/{}", curr, max),
                         health_width: (curr as f32 / max as f32).ceil() * 48.0,
                         texture: texture,
@@ -96,8 +106,15 @@ impl PokemonPartyGui {
     fn render_cell(&self, index: usize, data: &PartyGuiData) {
         let offset = -14.0 + (24.0 * index as f32);
         draw(self.pokemon_texture, 89.0, offset);
-        macroquad::prelude::draw_texture_ex(data.texture, 84.0, offset - 8.0, macroquad::prelude::WHITE, macroquad::prelude::DrawTextureParams {
-            source: Some(macroquad::prelude::Rect::new(0.0, if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 32.0, 32.0)),
+        draw_texture_ex(data.texture, 84.0, offset - 8.0, WHITE, DrawTextureParams {
+            source: Some(
+                Rect::new(
+                    0.0, 
+                    if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 
+                    32.0, 
+                    32.0
+                )
+            ),
             ..Default::default()
         });
         draw_text_left(0, &data.name, TextColor::White, 119.0, offset/* + 1.0*/);
@@ -108,7 +125,7 @@ impl PokemonPartyGui {
     }
 
     pub fn input(&mut self, _delta: f32) {
-        if pressed(Control::Start) || macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
+        if pressed(Control::Start) || is_key_pressed(KeyCode::Escape) {
             self.despawn();
         }
         if pressed(Control::Up) {
@@ -144,22 +161,35 @@ impl PokemonPartyGui {
             for pokemon in self.pokemon.iter().enumerate() {
                 if let Some(data) = pokemon.1 {
                     if pokemon.0 == 0 {
-                        const OFFSET: f32 = 26.0;
-                        draw(self.primary_texture, 3.0, OFFSET - 6.0);
-                        macroquad::prelude::draw_texture_ex(data.texture, 0.0, OFFSET, macroquad::prelude::WHITE, macroquad::prelude::DrawTextureParams {
-                            source: Some(macroquad::prelude::Rect::new(0.0, if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 32.0, 32.0)),
+                        
+                        draw(self.primary_texture, 3.0, 20.0);
+                        draw_texture_ex(data.texture, 0.0, 26.0, WHITE, DrawTextureParams {
+                            source: Some(
+                                    Rect::new(
+                                        0.0, 
+                                        if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 
+                                        32.0, 
+                                        32.0
+                                    )
+                                ),
                             ..Default::default()
                         });
+                        draw_text_left(0, &data.name, TextColor::White, 33.0, 36.0);
+                        draw_text_left(0, &data.level, TextColor::White, 41.0, 45.0);
+                        draw_text_left(0, &data.hp, TextColor::White, 52.0, 61.0);
+                        draw_rect(health_bar::UPPER_COLOR, 33.0, 59.0, data.health_width, 1.0);
+                        draw_rect(health_bar::LOWER_COLOR, 33.0, 60.0, data.health_width, 2.0);
+                        
                     } else {
                         self.render_cell(pokemon.0, data);
                     }
                 }
             }
             if self.cursor_pos == 0 {
-                macroquad::prelude::draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, macroquad::prelude::RED);
+                draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, RED);
             } else {
                 let index = -14.0 + (24.0 * self.cursor_pos as f32);
-                macroquad::prelude::draw_rectangle_lines(89.0, index, 150.0, 22.0, 2.0, macroquad::prelude::RED);
+                draw_rectangle_lines(89.0, index, 150.0, 22.0, 2.0, RED);
             }
         }        
     }

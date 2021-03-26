@@ -1,5 +1,5 @@
 [data]
-number = 3
+id = 3
 name = 'Venusaur'
 primary_type = 'Grass'
 secondary_type = 'Poison'

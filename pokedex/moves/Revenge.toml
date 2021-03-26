@@ -1,6 +1,6 @@
-number = 279
+id = 279
 name = "Revenge"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 60
 accuracy = 100

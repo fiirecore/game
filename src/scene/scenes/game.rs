@@ -86,7 +86,9 @@ impl Scene for GameScene {
 			unsafe { crate::gui::game::party::SPAWN = false; }
 			self.party_gui.spawn();
 			if self.battling {
-				self.party_gui.on_battle_start(self.battle_manager.player_party());
+				if let Some(party) = self.battle_manager.player_party() {
+					self.party_gui.on_battle_start(party);
+				}				
 			} else {
 				self.party_gui.on_world_start();
 			}
@@ -98,8 +100,9 @@ impl Scene for GameScene {
 
 			if crate::util::battle_data::BATTLE_DATA.lock().is_some() {
 				if let Some(player_saves) = get::<PlayerSaves>() {
-					self.battling = true;
-					self.battle_manager.on_start(&player_saves.get().party, crate::util::battle_data::BATTLE_DATA.lock().take().unwrap());
+					if self.battle_manager.battle(&player_saves.get().party, crate::util::battle_data::BATTLE_DATA.lock().take().unwrap()) {
+						self.battling = true;
+					}
 				}
 			}
 

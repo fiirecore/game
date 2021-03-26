@@ -1,5 +1,5 @@
 [data]
-number = 279
+id = 279
 name = 'Pelipper'
 primary_type = 'Water'
 secondary_type = 'Flying'

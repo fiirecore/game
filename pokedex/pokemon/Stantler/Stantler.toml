@@ -1,5 +1,5 @@
 [data]
-number = 234
+id = 234
 name = 'Stantler'
 primary_type = 'Normal'
 species = 'Big'

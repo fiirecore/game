@@ -1,6 +1,6 @@
-number = 257
+id = 257
 name = "Heat Wave"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Special"
 power = 95
 accuracy = 90

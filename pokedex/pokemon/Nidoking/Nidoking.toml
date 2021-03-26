@@ -1,5 +1,5 @@
 [data]
-number = 34
+id = 34
 name = 'Nidoking'
 primary_type = 'Poison'
 secondary_type = 'Ground'

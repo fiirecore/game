@@ -1,6 +1,6 @@
-number = 64
+id = 64
 name = "Peck"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Physical"
 power = 35
 accuracy = 100

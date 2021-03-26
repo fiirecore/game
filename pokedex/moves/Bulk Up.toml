@@ -1,5 +1,5 @@
-number = 339
+id = 339
 name = "Bulk Up"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Status"
 pp = 20

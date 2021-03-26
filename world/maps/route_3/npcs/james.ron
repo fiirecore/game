@@ -30,20 +30,22 @@
                 "I just caught."
             ]
         ],
-        party: (
-            pokemon: [
-                (
-                    id: 10,
+        party: [
+            (
+                id: 10,
+                data: (
                     level: 11,
                     gender: Male,
                 ),
-                (
-                    id: 11,
+            ),
+            (
+                id: 11,
+                data: (
                     level: 11,
                     gender: Male,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         victory_message: [
             "Done like dinner!"
         ],

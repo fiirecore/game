@@ -1,2 +1,2 @@
-pub mod player_world_gui;
-pub mod map_window_manager;
+pub mod start_menu;
+pub mod text_window;

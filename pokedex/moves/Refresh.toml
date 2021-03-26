@@ -1,5 +1,5 @@
-number = 287
+id = 287
 name = "Refresh"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 20

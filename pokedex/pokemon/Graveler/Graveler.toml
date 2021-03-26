@@ -1,5 +1,5 @@
 [data]
-number = 75
+id = 75
 name = 'Graveler'
 primary_type = 'Rock'
 secondary_type = 'Ground'

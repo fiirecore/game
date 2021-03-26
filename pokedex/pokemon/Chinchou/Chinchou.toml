@@ -1,5 +1,5 @@
 [data]
-number = 170
+id = 170
 name = 'Chinchou'
 primary_type = 'Water'
 secondary_type = 'Electric'

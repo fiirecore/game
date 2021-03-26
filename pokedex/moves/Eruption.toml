@@ -1,6 +1,6 @@
-number = 284
+id = 284
 name = "Eruption"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Special"
 power = 150
 accuracy = 100

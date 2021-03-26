@@ -1,6 +1,6 @@
-number = 185
+id = 185
 name = "Feint Attack"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Physical"
 power = 60
 pp = 20

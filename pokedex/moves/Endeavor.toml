@@ -1,6 +1,6 @@
-number = 283
+id = 283
 name = "Endeavor"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 accuracy = 100
 pp = 5

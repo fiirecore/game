@@ -1,5 +1,5 @@
 [data]
-number = 315
+id = 315
 name = 'Roselia'
 primary_type = 'Grass'
 secondary_type = 'Poison'

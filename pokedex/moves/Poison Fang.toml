@@ -1,6 +1,6 @@
-number = 305
+id = 305
 name = "Poison Fang"
-pokemon_type = "Poison"
+type = "Poison"
 category = "Physical"
 power = 50
 accuracy = 100

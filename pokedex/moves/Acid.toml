@@ -1,6 +1,6 @@
-number = 51
+id = 51
 name = "Acid"
-pokemon_type = "Poison"
+type = "Poison"
 category = "Special"
 power = 40
 accuracy = 100

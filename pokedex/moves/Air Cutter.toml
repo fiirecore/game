@@ -1,6 +1,6 @@
-number = 314
+id = 314
 name = "Air Cutter"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Special"
 power = 60
 accuracy = 95

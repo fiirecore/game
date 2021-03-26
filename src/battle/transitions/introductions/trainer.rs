@@ -21,7 +21,6 @@ use crate::battle::{
 };
 
 use crate::util::graphics::{Texture, draw_bottom};
-use crate::util::battle_data::TrainerData;
 
 const FINAL_TRAINER_OFFSET: f32 = 126.0;
 
@@ -49,8 +48,8 @@ impl TrainerBattleIntroduction {
 
 impl BattleIntroduction for TrainerBattleIntroduction {
 
-    fn update_gui(&mut self, battle_gui: &mut BattleGui, delta: f32) {
-        self.introduction.update_gui(battle_gui, delta);
+    fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
+        self.introduction.update_gui(battle, battle_gui, delta);
         if self.introduction.text.can_continue {
             if let Some(messages) = self.introduction.text.messages.as_ref() {
                 if self.introduction.text.current_message() == messages.len() - 2 {
@@ -67,13 +66,13 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         self.introduction.input();
     }
 
-    fn setup(&mut self, battle: &Battle, trainer_data: Option<&TrainerData>) {
+    fn setup(&mut self, battle: &Battle) {
 
-        if let Some(trainer_data) = trainer_data {
+        if let Some(trainer_data) = battle.trainer.as_ref() {
 
-            self.trainer_texture = Some(crate::data::map::npc_texture::battle_sprite(trainer_data.npc_data.key()));
+            self.trainer_texture = Some(crate::data::map::npc_texture::battle_sprite(trainer_data.npc.key()));
 
-            let name = trainer_data.npc_data.identifier.clone() + " " + trainer_data.npc_name.as_str();
+            let name = trainer_data.npc.identifier.clone() + " " + trainer_data.name.as_str();
 
             self.introduction.text.messages = Some(vec![
                 Message::new(
@@ -114,9 +113,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
                     Some(0.5),
                 ),
             );
-        }        
-
-        self.introduction.common_setup(battle);
+        }
         
     }
 

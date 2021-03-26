@@ -1,6 +1,6 @@
-number = 40
+id = 40
 name = "Poison Sting"
-pokemon_type = "Poison"
+type = "Poison"
 category = "Physical"
 power = 15
 accuracy = 100

@@ -1,5 +1,5 @@
 [data]
-number = 314
+id = 314
 name = 'Illumise'
 primary_type = 'Bug'
 species = 'Firefly'

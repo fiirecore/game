@@ -1,5 +1,5 @@
-number = 277
+id = 277
 name = "Magic Coat"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 15

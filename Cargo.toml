@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.3.0-beta.4"
+version = "0.3.0-beta.5"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -45,8 +45,9 @@ firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", defa
 #firecore-audio = { path = "../firecore/firecore-audio" }
 
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
+#firecore-input = { path = "../firecore/firecore-input" }
 
-firecore-data-lib = { git = "https://github.com/DoNotDoughnut/firecore-data-lib" }
+#firecore-data-lib = { git = "https://github.com/DoNotDoughnut/firecore-data-lib" }
 #firecore-data-lib = { path = "../firecore/firecore-data-lib" }
 
 firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
@@ -90,11 +91,11 @@ miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
 [build-dependencies]
 font-builder = { git = "https://github.com/DoNotDoughnut/font-builder" }
 
-world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
-#world-builder = { path = "../Subprojects/world-builder" }
+#world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
+world-builder = { path = "../Subprojects/world-builder" }
 
-dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
-#dex-builder = { path = "../Subprojects/dex-builder" }
+#dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
+dex-builder = { path = "../Subprojects/dex-builder" }
 
 audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder", optional = true }
 

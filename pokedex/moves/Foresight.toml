@@ -1,5 +1,5 @@
-number = 193
+id = 193
 name = "Foresight"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 40

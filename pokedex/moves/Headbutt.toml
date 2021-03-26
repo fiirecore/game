@@ -1,6 +1,6 @@
-number = 29
+id = 29
 name = "Headbutt"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 70
 accuracy = 100

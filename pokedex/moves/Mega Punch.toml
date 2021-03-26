@@ -1,6 +1,6 @@
-number = 5
+id = 5
 name = "Mega Punch"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 80
 accuracy = 85

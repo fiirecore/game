@@ -60,15 +60,15 @@
                 trainer: Some(
                     (
                         encounter_message: [],
-                        party: (
-                            pokemon: [
-                                (
-                                    id: 7,
+                        party: [
+                            (
+                                id: 7,
+                                data: (
                                     level: 5,
                                     gender: Male,
                                 ),
-                            ]
-                        ),
+                            ),
+                        ],
                         worth: 0
                     )
                 ),
@@ -91,22 +91,28 @@
         PlayerGivePokemon(
             (
                 id: 1,
-                level: 5,
-                gender: Male,
+                data: (
+                    level: 5,
+                    gender: Male,
+                ),
             )
         ),
         PlayerGivePokemon(
             (
                 id: 4,
-                level: 5,
-                gender: Male,
+                data: (
+                    level: 5,
+                    gender: Male,
+                ),
             )
         ),
         PlayerGivePokemon(
             (
                 id: 7,
-                level: 5,
-                gender: Female,
+                data: (
+                    level: 5,
+                    gender: Female,
+                ),
             )
         ),
         PlayMapMusic,

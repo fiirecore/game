@@ -1,5 +1,5 @@
-number = 272
+id = 272
 name = "Role Play"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 10

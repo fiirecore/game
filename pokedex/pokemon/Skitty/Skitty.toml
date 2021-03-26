@@ -1,5 +1,5 @@
 [data]
-number = 300
+id = 300
 name = 'Skitty'
 primary_type = 'Normal'
 species = 'Kitten'

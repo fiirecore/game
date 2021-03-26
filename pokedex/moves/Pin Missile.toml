@@ -1,6 +1,6 @@
-number = 42
+id = 42
 name = "Pin Missile"
-pokemon_type = "Bug"
+type = "Bug"
 category = "Physical"
 power = 25
 accuracy = 95

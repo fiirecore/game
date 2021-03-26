@@ -1,5 +1,5 @@
 [data]
-number = 25
+id = 25
 name = 'Pikachu'
 primary_type = 'Electric'
 species = 'Mouse'

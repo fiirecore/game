@@ -1,6 +1,6 @@
-number = 337
+id = 337
 name = "Dragon Claw"
-pokemon_type = "Dragon"
+type = "Dragon"
 category = "Physical"
 power = 80
 accuracy = 100

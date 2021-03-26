@@ -1,6 +1,6 @@
-number = 348
+id = 348
 name = "Leaf Blade"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Physical"
 power = 90
 accuracy = 100

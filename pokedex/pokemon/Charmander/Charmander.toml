@@ -1,5 +1,5 @@
 [data]
-number = 4
+id = 4
 name = 'Charmander'
 primary_type = 'Fire'
 species = 'Lizard'

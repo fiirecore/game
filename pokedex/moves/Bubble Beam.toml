@@ -1,6 +1,6 @@
-number = 61
+id = 61
 name = "Bubble Beam"
-pokemon_type = "Water"
+type = "Water"
 category = "Special"
 power = 65
 accuracy = 100

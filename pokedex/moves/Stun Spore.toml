@@ -1,6 +1,6 @@
-number = 78
+id = 78
 name = "Stun Spore"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Status"
 accuracy = 75
 pp = 30

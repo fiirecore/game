@@ -1,5 +1,5 @@
-number = 114
+id = 114
 name = "Haze"
-pokemon_type = "Ice"
+type = "Ice"
 category = "Status"
 pp = 30

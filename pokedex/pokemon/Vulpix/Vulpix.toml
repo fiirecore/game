@@ -1,5 +1,5 @@
 [data]
-number = 37
+id = 37
 name = 'Vulpix'
 primary_type = 'Fire'
 species = 'Fox'

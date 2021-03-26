@@ -1,5 +1,5 @@
 [data]
-number = 80
+id = 80
 name = 'Slowbro'
 primary_type = 'Water'
 secondary_type = 'Psychic'

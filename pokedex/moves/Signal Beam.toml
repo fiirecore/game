@@ -1,6 +1,6 @@
-number = 324
+id = 324
 name = "Signal Beam"
-pokemon_type = "Bug"
+type = "Bug"
 category = "Special"
 power = 75
 accuracy = 100

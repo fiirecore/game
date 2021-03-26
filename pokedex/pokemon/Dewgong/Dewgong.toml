@@ -1,5 +1,5 @@
 [data]
-number = 87
+id = 87
 name = 'Dewgong'
 primary_type = 'Water'
 secondary_type = 'Ice'

@@ -1,6 +1,6 @@
-number = 153
+id = 153
 name = "Explosion"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 250
 accuracy = 100

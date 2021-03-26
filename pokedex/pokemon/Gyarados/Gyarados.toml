@@ -1,5 +1,5 @@
 [data]
-number = 130
+id = 130
 name = 'Gyarados'
 primary_type = 'Water'
 secondary_type = 'Flying'

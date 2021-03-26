@@ -1,6 +1,6 @@
-number = 198
+id = 198
 name = "Bone Rush"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Physical"
 power = 25
 accuracy = 90

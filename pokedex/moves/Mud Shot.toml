@@ -1,6 +1,6 @@
-number = 341
+id = 341
 name = "Mud Shot"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Special"
 power = 55
 accuracy = 95

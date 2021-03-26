@@ -1,6 +1,6 @@
-number = 171
+id = 171
 name = "Nightmare"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Status"
 accuracy = 100
 pp = 15

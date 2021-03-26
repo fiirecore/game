@@ -1,6 +1,6 @@
-number = 128
+id = 128
 name = "Clamp"
-pokemon_type = "Water"
+type = "Water"
 category = "Physical"
 power = 35
 accuracy = 85

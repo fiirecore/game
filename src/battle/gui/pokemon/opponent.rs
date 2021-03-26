@@ -89,8 +89,8 @@ impl PokemonGui for OpponentPokemonGui {
 	}
 
 	fn update_gui(&mut self, pokemon: &BattlePokemon, new_pokemon: bool) {
-		self.name = pokemon.name().clone();
-		self.level = format!("Lv{}", pokemon.level);
+		self.name = pokemon.name();
+		self.level = format!("Lv{}", pokemon.data.level);
 		self.update_hp(new_pokemon, pokemon.current_hp, pokemon.base.hp)
 	}
 

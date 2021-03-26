@@ -1,6 +1,6 @@
-number = 120
+id = 120
 name = "Self-Destruct"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 200
 accuracy = 100

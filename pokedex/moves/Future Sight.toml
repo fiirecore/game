@@ -1,6 +1,6 @@
-number = 248
+id = 248
 name = "Future Sight"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Special"
 power = 120
 accuracy = 100

@@ -1,7 +1,7 @@
 moves = []
 
 [data]
-number = 386
+id = 386
 name = "Deoxys-normal"
 primary_type = "Psychic"
 species = "DNA"

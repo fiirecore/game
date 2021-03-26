@@ -1,5 +1,5 @@
-number = 300
+id = 300
 name = "Mud Sport"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Status"
 pp = 15

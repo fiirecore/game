@@ -1,5 +1,5 @@
 [data]
-number = 131
+id = 131
 name = 'Lapras'
 primary_type = 'Water'
 secondary_type = 'Ice'

@@ -1,6 +1,6 @@
-number = 129
+id = 129
 name = "Swift"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Special"
 power = 60
 pp = 20

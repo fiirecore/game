@@ -1,6 +1,6 @@
-number = 12
+id = 12
 name = "Guillotine"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 accuracy = 30
 pp = 5

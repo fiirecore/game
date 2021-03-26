@@ -1,5 +1,5 @@
-number = 133
+id = 133
 name = "Amnesia"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 20

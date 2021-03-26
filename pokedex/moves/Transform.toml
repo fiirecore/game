@@ -1,5 +1,5 @@
-number = 144
+id = 144
 name = "Transform"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 10

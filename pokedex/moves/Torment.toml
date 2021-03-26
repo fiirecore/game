@@ -1,6 +1,6 @@
-number = 259
+id = 259
 name = "Torment"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Status"
 accuracy = 100
 pp = 15

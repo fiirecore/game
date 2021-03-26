@@ -3,7 +3,7 @@ use firecore_world::map::chunk::WorldChunk;
 use firecore_world::map::chunk::map::WorldChunkMap;
 
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
-use crate::world::gui::map_window_manager::MapWindowManager;
+use crate::world::gui::text_window::TextWindow;
 use firecore_world::character::player::PlayerCharacter;
 
 impl GameWorld for WorldChunk {
@@ -12,8 +12,8 @@ impl GameWorld for WorldChunk {
         self.map.on_start(music);
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager) {
-        self.map.update(delta, player, window_manager);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow) {
+        self.map.update(delta, player, text_window);
     }
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
@@ -36,8 +36,8 @@ impl GameWorld for WorldChunkMap {
         self.current_chunk().on_start(music);
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager) {
-        self.current_chunk_mut().update(delta, player, window_manager);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow) {
+        self.current_chunk_mut().update(delta, player, text_window);
     }
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {

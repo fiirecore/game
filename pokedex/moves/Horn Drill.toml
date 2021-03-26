@@ -1,6 +1,6 @@
-number = 32
+id = 32
 name = "Horn Drill"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 accuracy = 30
 pp = 5

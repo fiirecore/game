@@ -1,5 +1,5 @@
-number = 286
+id = 286
 name = "Imprison"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 10

@@ -1,6 +1,6 @@
-number = 158
+id = 158
 name = "Hyper Fang"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 80
 accuracy = 90

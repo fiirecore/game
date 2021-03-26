@@ -1,6 +1,6 @@
-number = 60
+id = 60
 name = "Psybeam"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Special"
 power = 65
 accuracy = 100

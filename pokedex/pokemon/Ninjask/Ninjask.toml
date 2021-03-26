@@ -1,5 +1,5 @@
 [data]
-number = 291
+id = 291
 name = 'Ninjask'
 primary_type = 'Bug'
 secondary_type = 'Flying'

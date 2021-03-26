@@ -1,6 +1,6 @@
-number = 132
+id = 132
 name = "Constrict"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 10
 accuracy = 100

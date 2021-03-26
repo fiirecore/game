@@ -1,6 +1,6 @@
-number = 296
+id = 296
 name = "Mist Ball"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Special"
 power = 70
 accuracy = 100

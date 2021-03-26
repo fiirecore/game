@@ -1,6 +1,6 @@
-number = 181
+id = 181
 name = "Powder Snow"
-pokemon_type = "Ice"
+type = "Ice"
 category = "Special"
 power = 40
 accuracy = 100

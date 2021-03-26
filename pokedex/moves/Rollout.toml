@@ -1,6 +1,6 @@
-number = 205
+id = 205
 name = "Rollout"
-pokemon_type = "Rock"
+type = "Rock"
 category = "Physical"
 power = 30
 accuracy = 90

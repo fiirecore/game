@@ -1,5 +1,5 @@
 [data]
-number = 125
+id = 125
 name = 'Electabuzz'
 primary_type = 'Electric'
 species = 'Electric'

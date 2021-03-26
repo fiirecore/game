@@ -1,6 +1,6 @@
-number = 161
+id = 161
 name = "Tri Attack"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Special"
 power = 80
 accuracy = 100

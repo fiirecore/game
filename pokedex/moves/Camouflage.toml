@@ -1,5 +1,5 @@
-number = 293
+id = 293
 name = "Camouflage"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 20

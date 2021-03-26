@@ -1,6 +1,6 @@
-number = 261
+id = 261
 name = "Will-O-Wisp"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Status"
 accuracy = 85
 pp = 15

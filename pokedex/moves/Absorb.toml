@@ -1,6 +1,6 @@
-number = 71
+id = 71
 name = "Absorb"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Special"
 power = 20
 accuracy = 100

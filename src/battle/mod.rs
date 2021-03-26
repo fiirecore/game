@@ -1,5 +1,7 @@
 use crate::data::player::save::PlayerSave;
 use crate::gui::game::party::PokemonPartyGui;
+use crate::util::battle_data::BattleData;
+use crate::util::battle_data::TrainerData;
 use firecore_pokedex::moves::MoveCategory;
 use firecore_pokedex::moves::PokemonMove;
 use firecore_pokedex::pokemon::party::PokemonParty;
@@ -27,6 +29,7 @@ pub mod transitions;
 pub struct Battle {
 
 	battle_type: BattleType,
+	trainer: Option<TrainerData>,
 	
 	pub player: BattleParty,
 	pub opponent: BattleParty,
@@ -35,43 +38,21 @@ pub struct Battle {
 	
 }
 
-impl Default for Battle {
-    fn default() -> Self {
-        Self {
-			player: BattleParty::default(),
-			opponent: BattleParty::default(),
-
-			try_run: bool::default(),
-			battle_type: BattleType::default(),
-		}
-    }
-}
-
 impl Battle {
 	
-	pub fn new(player_pokemon: &PokemonParty, opponent_pokemon: &PokemonParty, battle_type: BattleType) -> Self {
-		let mut player = BattleParty::new(player_pokemon, PokemonTexture::Back, Vec2::new(40.0, 113.0));
-		for (index, pokemon) in player.pokemon.iter().enumerate() {
-			if pokemon.pokemon.current_hp != 0 {
-				player.select_pokemon(index);
-				break;
-			}
-		}
-		Self {
-			player,
-			opponent: BattleParty::new(opponent_pokemon, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
-			battle_type,
-			..Battle::default()
-		}
-	}
-
-	pub fn verify(&self) -> bool {
-		if self.player.pokemon.is_empty() {
-			false
-		} else if self.opponent.pokemon.is_empty() {
-			false
+	pub fn new(player: &PokemonParty, data: BattleData) -> Option<Self> {		
+		if !(player.is_empty() || data.party.is_empty()) {
+			Some(
+				Self {
+					battle_type: data.get_type(),
+					player: BattleParty::from_saved(player, PokemonTexture::Back, Vec2::new(40.0, 113.0)),
+					opponent: BattleParty::new(data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
+					trainer: data.trainer,
+					try_run: false,
+				}
+			)
 		} else {
-			true
+			None
 		}
 	}
 
@@ -120,28 +101,28 @@ impl Battle {
 
 					// Handle opponent fainting to player's move
 
-					if self.opponent.active().faint() {
+					if self.opponent.active().is_faint() {
 
 						// add exp to player
 
 						let gain = self.exp_gain();
-						self.player.active_mut().exp += gain;
+						self.player.active_mut().data.experience += gain;
 
 						// get the maximum exp a player can have at their level
 
 						let max_exp = {
 							let player = self.player.active();
-							player.pokemon.training.growth_rate.level_exp(player.level)
+							player.pokemon.training.growth_rate.level_exp(player.data.level)
 						};
 
 						// level the player up if they reach a certain amount of exp (and then subtract the exp by the maximum for the previous level)
 
-						let level = if self.player.active().exp > max_exp {
-							self.player.pokemon[self.player.active].pokemon.level += 1;
-							self.player.pokemon[self.player.active].pokemon.exp -= max_exp;
+						let level = if self.player.active().data.experience > max_exp {
+							self.player.pokemon[self.player.active].pokemon.data.level += 1;
+							self.player.pokemon[self.player.active].pokemon.data.experience -= max_exp;
 							let player = self.player.active();
 							// info!("{} levelled up to Lv. {}", &player.pokemon.data.name, player.level);
-							Some(player.level)
+							Some(player.data.level)
 						} else {
 							// info!("{} gained {} exp. {} is needed to level up!", self.player.active().pokemon.data.name, gain, max_exp - self.player.active().exp);
 							None
@@ -150,13 +131,13 @@ impl Battle {
 						// add the exp gain and level up text to the battle text
 
 						let player = self.player.active();
-						battle_gui.battle_text.player_level_up(player.name(), player.exp, level);
+						battle_gui.battle_text.player_level_up(player.name(), player.data.experience, level);
 
 					}
 
 					// make sure the actions do not repeat
 
-					self.player.next_move.queued = false;
+					self.player.next_move = None; // queued = false;
 
 				} else
 
@@ -172,7 +153,7 @@ impl Battle {
 
 					// make sure the actions do not repeat
 
-					self.opponent.next_move.queued = false;
+					self.opponent.next_move = None; // queued = false;
 
 				}
 
@@ -184,13 +165,13 @@ impl Battle {
 
 				if let Some(faint_index) = battle_gui.battle_text.faint_index {
 					if battle_gui.battle_text.text.can_continue && battle_gui.battle_text.text.current_message() == faint_index {
-						if self.player.active().faint() {
+						if self.player.active().is_faint() {
 
 							if !self.player.renderer.is_finished() {
 								self.player.renderer.update(delta);
 							}
 
-						} else if self.opponent.active().faint() {
+						} else if self.opponent.active().is_faint() {
 
 							if !self.opponent.renderer.is_finished() {
 								self.opponent.renderer.update(delta);
@@ -204,7 +185,7 @@ impl Battle {
 
 				// Handle player fainting
 
-				if self.player.active().faint() {
+				if self.player.active().is_faint() {
 
 					/*
 					*	If the player's active pokemon has fainted, check if the player has whited out,
@@ -229,7 +210,7 @@ impl Battle {
 				
 				// Handle opponent fainting
 				
-				else if self.opponent.active().faint() {
+				else if self.opponent.active().is_faint() {
 
 					// check if all of the opponent's pokemon have fainted, and if so, end the battle, else select a pokemon from the opponent's party
 					
@@ -278,7 +259,7 @@ impl Battle {
 	}
 
 	pub fn player_move(&mut self) {
-		let damage = get_move_damage(&self.player.next_move.pokemon_move, self.player.active(), self.opponent.active());
+		let damage = get_move_damage(&self.player.next_move.as_ref().unwrap().pokemon_move, self.player.active(), self.opponent.active());
 		let opponent = &mut self.opponent.active_mut();
 		if damage >= opponent.current_hp {
 			opponent.current_hp = 0;
@@ -288,7 +269,7 @@ impl Battle {
 	}
 
 	pub fn opponent_move(&mut self) {
-		let damage = get_move_damage(&self.opponent.next_move.pokemon_move, self.opponent.active(), self.player.active());
+		let damage = get_move_damage(&self.opponent.next_move.as_ref().unwrap().pokemon_move, self.opponent.active(), self.player.active());
 		let player = self.player.active_mut();
 		if damage >= player.current_hp {
 			player.current_hp = 0;
@@ -297,10 +278,10 @@ impl Battle {
 		}
 	}
 
-	pub fn update_data(&self, player_data: &mut PlayerSave) {
+	pub fn update_data(self, player_data: &mut PlayerSave) {
 		
-		player_data.party.pokemon = self.player.pokemon.iter().map(|pokemon| {
-			pokemon.pokemon.to_instance()
+		player_data.party = self.player.pokemon.into_iter().map(|pokemon| {
+			pokemon.pokemon.to_saved()
 		}).collect();
 		
 	}
@@ -310,7 +291,7 @@ impl Battle {
 	}
 
 	fn exp_gain(&self) -> u32 {
-		((self.opponent.active().pokemon.training.base_exp * self.opponent.active().level as u16) as f32 * match self.battle_type {
+		((self.opponent.active().pokemon.training.base_exp * self.opponent.active().data.level as u16) as f32 * match self.battle_type {
 			BattleType::Wild => 1.0,
 			_ => 1.5,
 		} / 7.0) as u32
@@ -328,17 +309,17 @@ fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokem
 		true
 	} {
 		if let Some(power) = pmove.power {
-			let effective = pmove.pokemon_type.unwrap_or_default().effective(recieving_pokemon.pokemon.data.primary_type) as f64 * match recieving_pokemon.pokemon.data.secondary_type {
-				Some(ptype) => pmove.pokemon_type.unwrap_or_default().effective(ptype) as f64,
+			let effective = pmove.pokemon_type.effective(recieving_pokemon.pokemon.data.primary_type) as f64 * match recieving_pokemon.pokemon.data.secondary_type {
+				Some(ptype) => pmove.pokemon_type.effective(ptype) as f64,
 				None => 1.0,
 			};
 			match pmove.category {
 				MoveCategory::Status => return 0,
 				MoveCategory::Physical => {
-					return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk    as f64 * power as f64 / recieving_pokemon.base.def    as f64).floor() / 50.0).floor() * effective) as u16 + 2;
+					return ((((2.0 * pokemon.data.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk    as f64 * power as f64 / recieving_pokemon.base.def    as f64).floor() / 50.0).floor() * effective) as u16 + 2;
 				},
 				MoveCategory::Special => {
-					return ((((2.0 * pokemon.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() * effective) as u16 + 2;
+					return ((((2.0 * pokemon.data.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() * effective) as u16 + 2;
 				}
 			}
 		} else {

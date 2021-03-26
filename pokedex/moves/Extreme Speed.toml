@@ -1,6 +1,6 @@
-number = 245
+id = 245
 name = "Extreme Speed"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 80
 accuracy = 100

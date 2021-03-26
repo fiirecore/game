@@ -1,6 +1,6 @@
-number = 280
+id = 280
 name = "Brick Break"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 75
 accuracy = 100

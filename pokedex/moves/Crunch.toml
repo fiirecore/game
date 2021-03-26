@@ -1,6 +1,6 @@
-number = 242
+id = 242
 name = "Crunch"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Physical"
 power = 80
 accuracy = 100

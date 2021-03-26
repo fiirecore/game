@@ -1,6 +1,6 @@
-number = 228
+id = 228
 name = "Pursuit"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Physical"
 power = 40
 accuracy = 100

@@ -1,6 +1,6 @@
-number = 48
+id = 48
 name = "Supersonic"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 accuracy = 55
 pp = 20

@@ -1,5 +1,5 @@
 [data]
-number = 2
+id = 2
 name = 'Ivysaur'
 primary_type = 'Grass'
 secondary_type = 'Poison'

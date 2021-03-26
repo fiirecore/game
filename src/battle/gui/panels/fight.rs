@@ -114,19 +114,19 @@ impl FightPanel {
             self.despawn();        
 
             if self.cursor < battle.player.active().moves.len() {
-                battle.player.next_move = BattleMoveStatus::new(battle.player.active_mut().moves[self.cursor].use_move());
+                battle.player.next_move = Some(BattleMoveStatus::new(battle.player.active_mut().moves[self.cursor].use_move()));
             }
 
             let index = macroquad::rand::gen_range(0, battle.opponent.active().moves.len());
-		    battle.opponent.next_move = BattleMoveStatus::new(battle.opponent.active_mut().moves[index].use_move());
+		    battle.opponent.next_move = Some(BattleMoveStatus::new(battle.opponent.active_mut().moves[index].use_move()));
             
             text.reset_text();
 
             let player = battle.player.active();
             let opponent = battle.opponent.active();
 
-            text.add_moves(player.name(), &battle.player.next_move.pokemon_move.name);
-            text.add_moves(opponent.name(), &battle.opponent.next_move.pokemon_move.name);
+            text.add_moves(player.name(), &battle.player.next_move.as_ref().unwrap().pokemon_move.name);
+            text.add_moves(opponent.name(), &battle.opponent.next_move.as_ref().unwrap().pokemon_move.name);
         
             if player.base.speed < opponent.base.speed {
                 if let Some(messages) = text.text.messages.as_mut() {

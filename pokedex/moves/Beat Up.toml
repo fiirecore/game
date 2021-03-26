@@ -1,6 +1,6 @@
-number = 251
+id = 251
 name = "Beat Up"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Physical"
 accuracy = 100
 pp = 10

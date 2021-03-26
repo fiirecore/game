@@ -1,6 +1,6 @@
-number = 59
+id = 59
 name = "Blizzard"
-pokemon_type = "Ice"
+type = "Ice"
 category = "Special"
 power = 110
 accuracy = 70

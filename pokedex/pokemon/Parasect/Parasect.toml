@@ -1,5 +1,5 @@
 [data]
-number = 47
+id = 47
 name = 'Parasect'
 primary_type = 'Bug'
 secondary_type = 'Grass'

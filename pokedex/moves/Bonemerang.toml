@@ -1,6 +1,6 @@
-number = 155
+id = 155
 name = "Bonemerang"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Physical"
 power = 50
 accuracy = 90

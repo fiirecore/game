@@ -1,6 +1,6 @@
-number = 154
+id = 154
 name = "Fury Swipes"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 18
 accuracy = 80

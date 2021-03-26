@@ -1,6 +1,6 @@
-number = 172
+id = 172
 name = "Flame Wheel"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Physical"
 power = 60
 accuracy = 100

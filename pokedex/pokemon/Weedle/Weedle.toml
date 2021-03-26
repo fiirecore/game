@@ -1,5 +1,5 @@
 [data]
-number = 13
+id = 13
 name = 'Weedle'
 primary_type = 'Bug'
 secondary_type = 'Poison'

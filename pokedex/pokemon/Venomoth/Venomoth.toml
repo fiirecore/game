@@ -1,5 +1,5 @@
 [data]
-number = 49
+id = 49
 name = 'Venomoth'
 primary_type = 'Bug'
 secondary_type = 'Poison'

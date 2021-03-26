@@ -1,6 +1,6 @@
-number = 350
+id = 350
 name = "Rock Blast"
-pokemon_type = "Rock"
+type = "Rock"
 category = "Physical"
 power = 25
 accuracy = 90

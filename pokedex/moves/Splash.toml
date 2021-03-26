@@ -1,5 +1,5 @@
-number = 150
+id = 150
 name = "Splash"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 40

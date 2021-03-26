@@ -1,8 +1,8 @@
 use dashmap::DashMap;
+use firecore_data::player::save::PlayerSave;
 use firecore_util::text::Message;
 use macroquad::prelude::Color;
 
-use crate::data::player::list::PlayerSaves;
 use crate::util::graphics::Texture;
 use crate::util::graphics::draw;
 
@@ -16,25 +16,20 @@ lazy_static::lazy_static! {
     pub static ref FONTS: DashMap<usize, Font> = DashMap::new();
 }
 
-#[deprecated(note = "make better")]
-pub fn process_messages(messages: &mut Vec<Message>) {
+// #[deprecated(note = "make better")]
+pub fn process_messages(player_save: &PlayerSave, messages: &mut Vec<Message>) {
     for message in messages.iter_mut() {
         for message in &mut message.lines {
             *message = message
                 .replace("%r", rival_name())
-                .replace("%p", &player_name())
-                
+                .replace("%p", player_name(player_save))
             ;
         }
     }
 }
 
-pub fn player_name() -> String {
-    if let Some(player_saves) = macroquad::prelude::collections::storage::get::<PlayerSaves>() {
-        player_saves.get().name.clone()
-    } else {
-        crate::data::player::save::default_name()
-    }
+pub fn player_name(player_save: &PlayerSave) -> &String {
+    &player_save.name
 }
 
 pub fn rival_name() -> &'static str {

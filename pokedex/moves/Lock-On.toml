@@ -1,5 +1,5 @@
-number = 199
+id = 199
 name = "Lock-On"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 5

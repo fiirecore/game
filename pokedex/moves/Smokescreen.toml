@@ -1,6 +1,6 @@
-number = 108
+id = 108
 name = "Smokescreen"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 accuracy = 100
 pp = 20

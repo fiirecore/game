@@ -1,6 +1,6 @@
-number = 206
+id = 206
 name = "False Swipe"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 40
 accuracy = 100

@@ -1,6 +1,6 @@
-number = 262
+id = 262
 name = "Memento"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Status"
 accuracy = 100
 pp = 10

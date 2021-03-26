@@ -1,5 +1,5 @@
 [data]
-number = 56
+id = 56
 name = 'Mankey'
 primary_type = 'Fighting'
 species = 'Pig'

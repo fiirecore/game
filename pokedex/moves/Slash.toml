@@ -1,6 +1,6 @@
-number = 163
+id = 163
 name = "Slash"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 70
 accuracy = 100

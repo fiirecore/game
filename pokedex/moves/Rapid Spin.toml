@@ -1,6 +1,6 @@
-number = 229
+id = 229
 name = "Rapid Spin"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 50
 accuracy = 100

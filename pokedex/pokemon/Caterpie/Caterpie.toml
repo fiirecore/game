@@ -1,5 +1,5 @@
 [data]
-number = 10
+id = 10
 name = 'Caterpie'
 primary_type = 'Bug'
 species = 'Worm'

@@ -1,5 +1,5 @@
 [data]
-number = 365
+id = 365
 name = 'Walrein'
 primary_type = 'Ice'
 secondary_type = 'Water'

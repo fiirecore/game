@@ -44,7 +44,7 @@ impl MovePanel {
 
     pub fn update_with_move(&mut self, pmove: &firecore_pokedex::moves::instance::MoveInstance) {
         self.remaining_pp.text = vec![pmove.remaining_pp.to_string() + "/" + &pmove.pokemon_move.pp.to_string()];
-        self.move_type.text = vec![format!("TYPE/{:?}", pmove.pokemon_move.pokemon_type.unwrap_or_default())];
+        self.move_type.text = vec![format!("TYPE/{:?}", pmove.pokemon_move.pokemon_type)];
     }
 
     pub fn render(&self) {

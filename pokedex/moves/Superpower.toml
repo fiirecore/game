@@ -1,6 +1,6 @@
-number = 276
+id = 276
 name = "Superpower"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 120
 accuracy = 100

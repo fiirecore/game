@@ -1,5 +1,5 @@
 [data]
-number = 169
+id = 169
 name = 'Crobat'
 primary_type = 'Poison'
 secondary_type = 'Flying'

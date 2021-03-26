@@ -1,5 +1,5 @@
-number = 322
+id = 322
 name = "Cosmic Power"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 20

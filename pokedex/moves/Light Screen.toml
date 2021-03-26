@@ -1,5 +1,5 @@
-number = 113
+id = 113
 name = "Light Screen"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 30

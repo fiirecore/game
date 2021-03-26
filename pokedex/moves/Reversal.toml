@@ -1,6 +1,6 @@
-number = 179
+id = 179
 name = "Reversal"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 accuracy = 100
 pp = 15

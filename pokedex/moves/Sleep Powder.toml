@@ -1,6 +1,6 @@
-number = 79
+id = 79
 name = "Sleep Powder"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Status"
 accuracy = 75
 pp = 15

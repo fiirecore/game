@@ -1,5 +1,5 @@
-number = 316
+id = 316
 name = "Odor Sleuth"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 40

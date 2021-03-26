@@ -1,6 +1,6 @@
-number = 186
+id = 186
 name = "Sweet Kiss"
-pokemon_type = "Fairy"
+type = "Fairy"
 category = "Status"
 accuracy = 75
 pp = 10

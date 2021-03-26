@@ -1,6 +1,6 @@
-number = 37
+id = 37
 name = "Thrash"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 120
 accuracy = 100

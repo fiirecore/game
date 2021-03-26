@@ -1,6 +1,6 @@
-number = 264
+id = 264
 name = "Focus Punch"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 power = 150
 accuracy = 100

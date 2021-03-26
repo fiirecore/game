@@ -1,6 +1,6 @@
-number = 98
+id = 98
 name = "Quick Attack"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 40
 accuracy = 100

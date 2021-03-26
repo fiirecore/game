@@ -1,6 +1,6 @@
-number = 84
+id = 84
 name = "Thunder Shock"
-pokemon_type = "Electric"
+type = "Electric"
 category = "Special"
 power = 40
 accuracy = 100

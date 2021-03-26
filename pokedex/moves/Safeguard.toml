@@ -1,5 +1,5 @@
-number = 219
+id = 219
 name = "Safeguard"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 25

@@ -1,5 +1,5 @@
 [data]
-number = 8
+id = 8
 name = 'Wartortle'
 primary_type = 'Water'
 species = 'Turtle'

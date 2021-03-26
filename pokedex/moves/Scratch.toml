@@ -1,6 +1,6 @@
-number = 10
+id = 10
 name = "Scratch"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 40
 accuracy = 100

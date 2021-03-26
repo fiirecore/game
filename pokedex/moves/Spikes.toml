@@ -1,5 +1,5 @@
-number = 191
+id = 191
 name = "Spikes"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Status"
 pp = 20

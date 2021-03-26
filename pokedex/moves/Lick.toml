@@ -1,6 +1,6 @@
-number = 122
+id = 122
 name = "Lick"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Physical"
 power = 30
 accuracy = 100

@@ -1,6 +1,6 @@
-number = 222
+id = 222
 name = "Magnitude"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Physical"
 accuracy = 100
 pp = 30

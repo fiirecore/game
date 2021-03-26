@@ -1,6 +1,6 @@
-number = 320
+id = 320
 name = "Grass Whistle"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Status"
 accuracy = 55
 pp = 15

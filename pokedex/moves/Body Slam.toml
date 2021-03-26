@@ -1,6 +1,6 @@
-number = 34
+id = 34
 name = "Body Slam"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 85
 accuracy = 100

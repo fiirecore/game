@@ -1,5 +1,5 @@
 [data]
-number = 333
+id = 333
 name = 'Swablu'
 primary_type = 'Normal'
 secondary_type = 'Flying'

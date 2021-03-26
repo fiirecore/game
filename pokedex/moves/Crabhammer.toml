@@ -1,6 +1,6 @@
-number = 152
+id = 152
 name = "Crabhammer"
-pokemon_type = "Water"
+type = "Water"
 category = "Physical"
 power = 100
 accuracy = 90

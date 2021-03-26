@@ -1,6 +1,6 @@
-number = 91
+id = 91
 name = "Dig"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Physical"
 power = 80
 accuracy = 100

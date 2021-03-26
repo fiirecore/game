@@ -1,5 +1,5 @@
 [data]
-number = 94
+id = 94
 name = 'Gengar'
 primary_type = 'Ghost'
 secondary_type = 'Poison'

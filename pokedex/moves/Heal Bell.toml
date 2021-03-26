@@ -1,5 +1,5 @@
-number = 215
+id = 215
 name = "Heal Bell"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 5

@@ -1,5 +1,5 @@
 [data]
-number = 200
+id = 200
 name = 'Misdreavus'
 primary_type = 'Ghost'
 species = 'Screech'

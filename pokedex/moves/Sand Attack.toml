@@ -1,6 +1,6 @@
-number = 28
+id = 28
 name = "Sand Attack"
-pokemon_type = "Ground"
+type = "Ground"
 category = "Status"
 accuracy = 100
 pp = 15

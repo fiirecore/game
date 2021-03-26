@@ -1,6 +1,6 @@
-number = 309
+id = 309
 name = "Meteor Mash"
-pokemon_type = "Steel"
+type = "Steel"
 category = "Physical"
 power = 90
 accuracy = 90

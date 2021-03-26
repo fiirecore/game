@@ -1,5 +1,5 @@
-number = 194
+id = 194
 name = "Destiny Bond"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Status"
 pp = 5

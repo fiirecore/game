@@ -24,30 +24,36 @@
             "If a POKEMON BOX on the PC gets",
             "full, just switch to another BOX."
         ],
-        party: (
-            pokemon: [
-                (
-                    id: 19,
+        party: [
+            (
+                id: 19,
+                data: (
                     level: 10,
                     gender: Female,
                 ),
-                (
-                    id: 29,
+            ),
+            (
+                id: 29,
+                data: (
                     level: 10,
                     gender: Female,
                 ),
-                (
-                    id: 14,
+            ),
+            (
+                id: 14,
+                data: (
                     level: 9,
                     gender: Female,
                 ),
-                (
-                    id: 11,
+            ),
+            (
+                id: 11,
+                data: (
                     level: 9,
                     gender: Female,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         worth: 0
     ))
 )

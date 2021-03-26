@@ -1,5 +1,5 @@
 [data]
-number = 101
+id = 101
 name = 'Electrode'
 primary_type = 'Electric'
 species = 'Ball'

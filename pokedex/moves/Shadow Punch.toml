@@ -1,6 +1,6 @@
-number = 325
+id = 325
 name = "Shadow Punch"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Physical"
 power = 60
 pp = 20

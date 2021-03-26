@@ -1,6 +1,6 @@
-number = 295
+id = 295
 name = "Luster Purge"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Special"
 power = 70
 accuracy = 100

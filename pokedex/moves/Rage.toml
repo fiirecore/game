@@ -1,6 +1,6 @@
-number = 99
+id = 99
 name = "Rage"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 20
 accuracy = 100

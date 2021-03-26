@@ -1,6 +1,6 @@
-number = 88
+id = 88
 name = "Rock Throw"
-pokemon_type = "Rock"
+type = "Rock"
 category = "Physical"
 power = 50
 accuracy = 90

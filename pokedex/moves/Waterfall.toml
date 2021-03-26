@@ -1,6 +1,6 @@
-number = 127
+id = 127
 name = "Waterfall"
-pokemon_type = "Water"
+type = "Water"
 category = "Physical"
 power = 80
 accuracy = 100

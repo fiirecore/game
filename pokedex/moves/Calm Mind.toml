@@ -1,5 +1,5 @@
-number = 347
+id = 347
 name = "Calm Mind"
-pokemon_type = "Psychic"
+type = "Psychic"
 category = "Status"
 pp = 20

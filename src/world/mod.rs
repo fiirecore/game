@@ -1,7 +1,7 @@
 use ahash::AHashMap as HashMap;
 use firecore_world::TileId;
 use crate::util::graphics::Texture;
-use self::gui::map_window_manager::MapWindowManager;
+use self::gui::text_window::TextWindow;
 use firecore_world::character::player::PlayerCharacter;
 use self::tile::TileTextureManager;
 
@@ -27,7 +27,7 @@ pub trait GameWorld {
 
     fn on_tile(&mut self, player: &mut PlayerCharacter);
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut MapWindowManager);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, window_manager: &mut TextWindow);
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool);
 

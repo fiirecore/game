@@ -1,5 +1,5 @@
-number = 349
+id = 349
 name = "Dragon Dance"
-pokemon_type = "Dragon"
+type = "Dragon"
 category = "Status"
 pp = 20

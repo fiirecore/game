@@ -1,6 +1,6 @@
-number = 38
+id = 38
 name = "Double-Edge"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 120
 accuracy = 100

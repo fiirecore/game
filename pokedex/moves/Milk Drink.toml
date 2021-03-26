@@ -1,5 +1,5 @@
-number = 208
+id = 208
 name = "Milk Drink"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 10

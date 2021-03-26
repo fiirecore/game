@@ -1,6 +1,6 @@
-number = 69
+id = 69
 name = "Seismic Toss"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 accuracy = 100
 pp = 20

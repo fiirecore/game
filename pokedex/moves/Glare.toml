@@ -1,6 +1,6 @@
-number = 137
+id = 137
 name = "Glare"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 accuracy = 100
 pp = 30

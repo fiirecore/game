@@ -33,19 +33,22 @@
                 "from facing BROCK!"
             ]
         ],
-        party: (
-            pokemon: [(
-                    id: 74,
+        party: [
+            (
+                id: 74,
+                data: (
                     level: 10,
                     gender: Male,
                 ),
-                (
-                    id: 27,
+            ),
+            (
+                id: 27,
+                data: (
                     level: 11,
                     gender: Male,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         worth: 0
     ))
 )

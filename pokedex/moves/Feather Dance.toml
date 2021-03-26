@@ -1,6 +1,6 @@
-number = 297
+id = 297
 name = "Feather Dance"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Status"
 accuracy = 100
 pp = 15

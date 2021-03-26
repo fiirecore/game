@@ -1,5 +1,5 @@
 [data]
-number = 72
+id = 72
 name = 'Tentacool'
 primary_type = 'Water'
 secondary_type = 'Poison'

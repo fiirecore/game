@@ -1,6 +1,6 @@
-number = 313
+id = 313
 name = "Fake Tears"
-pokemon_type = "Dark"
+type = "Dark"
 category = "Status"
 accuracy = 100
 pp = 20

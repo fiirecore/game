@@ -1,6 +1,6 @@
-number = 11
+id = 11
 name = "Vice Grip"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 55
 accuracy = 100

@@ -1,5 +1,5 @@
 [data]
-number = 24
+id = 24
 name = 'Arbok'
 primary_type = 'Poison'
 species = 'Cobra'

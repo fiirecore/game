@@ -1,6 +1,6 @@
-number = 340
+id = 340
 name = "Bounce"
-pokemon_type = "Flying"
+type = "Flying"
 category = "Physical"
 power = 85
 accuracy = 85

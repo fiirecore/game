@@ -1,6 +1,6 @@
-number = 353
+id = 353
 name = "Doom Desire"
-pokemon_type = "Steel"
+type = "Steel"
 category = "Special"
 power = 140
 accuracy = 100

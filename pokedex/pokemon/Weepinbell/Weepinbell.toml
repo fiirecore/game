@@ -1,5 +1,5 @@
 [data]
-number = 70
+id = 70
 name = 'Weepinbell'
 primary_type = 'Grass'
 secondary_type = 'Poison'

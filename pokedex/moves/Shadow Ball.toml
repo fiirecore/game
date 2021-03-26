@@ -1,6 +1,6 @@
-number = 247
+id = 247
 name = "Shadow Ball"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Special"
 power = 80
 accuracy = 100

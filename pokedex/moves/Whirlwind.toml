@@ -1,5 +1,5 @@
-number = 18
+id = 18
 name = "Whirlwind"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 20

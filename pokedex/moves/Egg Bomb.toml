@@ -1,6 +1,6 @@
-number = 121
+id = 121
 name = "Egg Bomb"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 100
 accuracy = 75

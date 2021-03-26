@@ -1,6 +1,6 @@
-number = 126
+id = 126
 name = "Fire Blast"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Special"
 power = 110
 accuracy = 85

@@ -14,8 +14,8 @@ use crate::data::player::list::PlayerSaves;
 use crate::data::player::save::PlayerSave;
 use crate::util::graphics::texture::byte_texture;
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
-use crate::world::gui::map_window_manager::MapWindowManager;
-use crate::world::gui::player_world_gui::PlayerWorldGui;
+use crate::world::gui::text_window::TextWindow;
+use crate::world::gui::start_menu::StartMenu;
 use crate::world::player::PlayerTexture;
 use crate::world::warp_transition::WarpTransition;
 
@@ -30,8 +30,8 @@ pub struct WorldManager {
 
     warp_transition: WarpTransition,
 
-    player_gui: PlayerWorldGui,
-    window_manager: MapWindowManager,
+    start_menu: StartMenu,
+    text_window: TextWindow,
 
     // Other
 
@@ -53,8 +53,8 @@ impl WorldManager {
             player_texture: PlayerTexture::default(),
 
             warp_transition: WarpTransition::new(),
-            player_gui: PlayerWorldGui::new(),
-            window_manager: MapWindowManager::default(),
+            start_menu: StartMenu::new(),
+            text_window: TextWindow::default(),
             noclip_toggle: false,
         }
     }
@@ -83,19 +83,19 @@ impl WorldManager {
 
     pub fn update(&mut self, delta: f32) {
         self.tile_textures.update(delta);
-
-        let map = if self.map_manager.chunk_active {
+        
+        for script in 
+        if self.map_manager.chunk_active {
             &mut self.map_manager.chunk_map.current_chunk_mut().map
         } else {
             self.map_manager.map_set_manager.map_set_mut().map_mut()
-        };
-        
-        for script in map.scripts.iter_mut() {
+        }
+        .scripts.iter_mut() {
             if script.is_alive() {
                 if let Some(action) = script.actions.front() {
                     match action {
                         WorldActionKind::Warp(destination, change_music) => {
-                            self.map_manager.warp = Some(destination.clone());
+                            self.map_manager.warp = Some((destination.clone(), *change_music));
                             super::despawn_script(script);
                         }
                         _ => (),
@@ -108,10 +108,10 @@ impl WorldManager {
             self.warp_transition.update(delta);
             if self.warp_transition.switch() && !self.warp_transition.recognize_switch {
                 self.warp_transition.recognize_switch = true;
-                if let Some(destination) = self.map_manager.warp.clone() {
+                if let Some((destination, music)) = self.map_manager.warp.clone() {
                     self.player_texture.draw = !destination.transition.move_on_exit;
                     self.map_manager.warp(destination);
-                    self.map_start(true);
+                    self.map_start(music);
                     if self.map_manager.chunk_active {
                         self.map_manager.chunk_map.on_tile(&mut self.map_manager.player);
                     } else {
@@ -123,7 +123,7 @@ impl WorldManager {
                 self.player_texture.draw = true;
                 self.warp_transition.despawn();
                 self.map_manager.player.unfreeze();
-                if let Some(destination) = self.map_manager.warp.take() {
+                if let Some((destination, _)) = self.map_manager.warp.take() {
                     if destination.transition.move_on_exit {
                         self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.position.local.direction), delta);
                     }
@@ -138,9 +138,9 @@ impl WorldManager {
         }
 
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, &mut self.window_manager);
+            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, &mut self.text_window);
         } else {
-            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, &mut self.window_manager);
+            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, &mut self.text_window);
         }
 
         if !self.map_manager.player.is_frozen() {
@@ -159,8 +159,8 @@ impl WorldManager {
             self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, &self.gui_textures, coords, true);
         }
         self.player_texture.render(&self.map_manager.player);
-        self.player_gui.render(); 
-        self.window_manager.render();
+        self.text_window.render();
+        self.start_menu.render(); 
         self.warp_transition.render();
     }
 
@@ -182,13 +182,13 @@ impl WorldManager {
         }
 
         if input::pressed(Control::Start) {
-            self.player_gui.toggle();
+            self.start_menu.toggle();
         }
 
-        if self.window_manager.is_alive() {
-            self.window_manager.input();
-        } else if self.player_gui.is_alive() {
-            self.player_gui.input();
+        if self.text_window.is_alive() {
+            self.text_window.input();
+        } else if self.start_menu.is_alive() {
+            self.start_menu.input();
         } else {
 
             if self.map_manager.chunk_active {
@@ -256,13 +256,13 @@ impl WorldManager {
         }
         if self.map_manager.chunk_active {
             if let Some(destination) = self.map_manager.chunk_map.check_warp(self.map_manager.player.position.local.coords) { // Warping does not trigger tile actions!
-                self.map_manager.warp = Some(destination);
+                self.map_manager.warp = Some((destination, true));
             } else if self.map_manager.chunk_map.in_bounds(self.map_manager.player.position.local.coords) {
                 self.map_manager.chunk_map.on_tile(&mut self.map_manager.player);
             }
         } else {
             if let Some(destination) = self.map_manager.map_set_manager.check_warp(self.map_manager.player.position.local.coords) {
-                self.map_manager.warp = Some(destination);
+                self.map_manager.warp = Some((destination, true));
             } else if self.map_manager.map_set_manager.in_bounds(self.map_manager.player.position.local.coords) {
                 self.map_manager.map_set_manager.on_tile(&mut self.map_manager.player);
             }
@@ -316,9 +316,9 @@ impl WorldManager {
 
         if is_key_pressed(KeyCode::F4) {
             if let Some(saves) = get::<PlayerSaves>() {
-                for (slot, instance) in saves.get().party.pokemon.iter().enumerate() {
+                for (slot, instance) in saves.get().party.iter().enumerate() {
                     if let Some(pokemon) = firecore_pokedex::POKEDEX.get(&instance.id) {
-                        info!("Party Slot {}: Lv{} {}", slot, instance.level, pokemon.data.name);
+                        info!("Party Slot {}: Lv{} {}", slot, instance.data.level, pokemon.data.name);
                     }
                 }
             }

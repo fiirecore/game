@@ -1,5 +1,5 @@
-number = 275
+id = 275
 name = "Ingrain"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Status"
 pp = 20

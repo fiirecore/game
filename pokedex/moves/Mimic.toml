@@ -1,5 +1,5 @@
-number = 102
+id = 102
 name = "Mimic"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Status"
 pp = 10

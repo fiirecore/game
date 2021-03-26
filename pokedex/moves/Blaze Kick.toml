@@ -1,6 +1,6 @@
-number = 299
+id = 299
 name = "Blaze Kick"
-pokemon_type = "Fire"
+type = "Fire"
 category = "Physical"
 power = 85
 accuracy = 90

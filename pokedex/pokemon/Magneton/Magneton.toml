@@ -1,5 +1,5 @@
 [data]
-number = 82
+id = 82
 name = 'Magneton'
 primary_type = 'Electric'
 secondary_type = 'Steel'

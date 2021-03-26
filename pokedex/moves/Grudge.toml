@@ -1,5 +1,5 @@
-number = 288
+id = 288
 name = "Grudge"
-pokemon_type = "Ghost"
+type = "Ghost"
 category = "Status"
 pp = 5

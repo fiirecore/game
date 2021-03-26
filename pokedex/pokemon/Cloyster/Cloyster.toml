@@ -1,5 +1,5 @@
 [data]
-number = 91
+id = 91
 name = 'Cloyster'
 primary_type = 'Water'
 secondary_type = 'Ice'

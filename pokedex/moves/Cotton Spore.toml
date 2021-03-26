@@ -1,6 +1,6 @@
-number = 178
+id = 178
 name = "Cotton Spore"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Status"
 accuracy = 100
 pp = 40

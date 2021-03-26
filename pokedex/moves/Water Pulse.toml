@@ -1,6 +1,6 @@
-number = 352
+id = 352
 name = "Water Pulse"
-pokemon_type = "Water"
+type = "Water"
 category = "Special"
 power = 60
 accuracy = 100

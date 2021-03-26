@@ -1,6 +1,6 @@
-number = 147
+id = 147
 name = "Spore"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Status"
 accuracy = 100
 pp = 15

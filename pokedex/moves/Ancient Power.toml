@@ -1,6 +1,6 @@
-number = 246
+id = 246
 name = "Ancient Power"
-pokemon_type = "Rock"
+type = "Rock"
 category = "Special"
 power = 60
 accuracy = 100

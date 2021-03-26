@@ -1,6 +1,6 @@
-number = 20
+id = 20
 name = "Bind"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 15
 accuracy = 85

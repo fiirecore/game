@@ -1,6 +1,6 @@
-number = 209
+id = 209
 name = "Spark"
-pokemon_type = "Electric"
+type = "Electric"
 category = "Physical"
 power = 65
 accuracy = 100

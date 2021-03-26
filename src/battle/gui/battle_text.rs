@@ -27,11 +27,11 @@ impl BattleText {
         }
     }
 
-    pub fn add_moves(&mut self, pokemon: &String, move_name: &String) {
+    pub fn add_moves(&mut self, pokemon: String, move_name: &String) {
         if let Some(messages) = self.text.messages.as_mut() {
             messages.push(
                 Message::new(
-                    vec![pokemon.clone() + " used " + move_name + "!"],
+                    vec![pokemon + " used " + move_name + "!"],
                     TextColor::White,
                     Some(0.5),
                 )
@@ -40,12 +40,12 @@ impl BattleText {
         
     }
 
-    pub fn add_faint_text(&mut self, name: &String) {
+    pub fn add_faint_text(&mut self, name: String) {
         if let Some(messages) = self.text.messages.as_mut() {
             self.faint_index = Some(messages.len());
             messages.push(
                 Message::new(
-                    vec![name.clone() + " fainted!"],
+                    vec![name + " fainted!"],
                     TextColor::White,
                     Some(1.0), 
                 )            
@@ -53,7 +53,7 @@ impl BattleText {
         }
     }
 
-    pub fn player_level_up(&mut self, name: &String, exp: u32, level: Option<u8>) {
+    pub fn player_level_up(&mut self, name: String, exp: u32, level: Option<u8>) {
         if let Some(messages) = self.text.messages.as_mut() {
             messages.push(
                 Message::new(
@@ -82,7 +82,7 @@ impl BattleText {
 
         gui.update_gui(other_pokemon, false);
 
-        if other_pokemon.faint() {
+        if other_pokemon.is_faint() {
             let next = self.text.current_message() + 1;
             if let Some(messages) = self.text.messages.as_mut() {
                 if next < messages.len() {
@@ -96,7 +96,10 @@ impl BattleText {
 
     pub fn perform_player(&self, battle: &Battle) -> bool {
 
-        self.text.can_continue && battle.player.next_move.queued && !battle.player.active().faint() && self.text.current_message() == if battle.player.active().base.speed >= battle.opponent.active().base.speed {
+        self.text.can_continue && 
+        battle.player.next_move_queued() && 
+        !battle.player.active().is_faint() && 
+        self.text.current_message() == if battle.player.active().base.speed >= battle.opponent.active().base.speed {
             0
         } else {
             1
@@ -104,7 +107,10 @@ impl BattleText {
     }
 
     pub fn perform_opponent(&self, battle: &Battle) -> bool {
-        self.text.can_continue && battle.opponent.next_move.queued && !battle.opponent.active().faint() && self.text.current_message() == if battle.player.active().base.speed >= battle.opponent.active().base.speed {
+        self.text.can_continue && 
+        battle.opponent.next_move_queued() && 
+        !battle.opponent.active().is_faint() && 
+        self.text.current_message() == if battle.player.active().base.speed >= battle.opponent.active().base.speed {
             1
         } else {
             0

@@ -1,6 +1,6 @@
-number = 87
+id = 87
 name = "Thunder"
-pokemon_type = "Electric"
+type = "Electric"
 category = "Special"
 power = 110
 accuracy = 70

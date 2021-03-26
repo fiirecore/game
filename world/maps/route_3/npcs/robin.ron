@@ -32,15 +32,15 @@
                 "Did you touch me?"
             ]
         ],
-        party: (
-            pokemon: [
-                (
-                    id: 39,
+        party: [
+            (
+                id: 39,
+                data: (
                     level: 14,
                     gender: Female,
-                )
-            ]
-        ),
+                ),
+            )
+        ],
         worth: 0
     ))
 )

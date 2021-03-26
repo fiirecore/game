@@ -1,5 +1,5 @@
 [data]
-number = 6
+id = 6
 name = 'Charizard'
 primary_type = 'Fire'
 secondary_type = 'Flying'

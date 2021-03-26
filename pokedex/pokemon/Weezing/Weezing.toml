@@ -1,5 +1,5 @@
 [data]
-number = 110
+id = 110
 name = 'Weezing'
 primary_type = 'Poison'
 species = 'Poison'

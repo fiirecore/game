@@ -1,6 +1,6 @@
-number = 22
+id = 22
 name = "Vine Whip"
-pokemon_type = "Grass"
+type = "Grass"
 category = "Physical"
 power = 45
 accuracy = 100

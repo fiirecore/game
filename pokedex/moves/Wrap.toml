@@ -1,6 +1,6 @@
-number = 35
+id = 35
 name = "Wrap"
-pokemon_type = "Normal"
+type = "Normal"
 category = "Physical"
 power = 15
 accuracy = 90

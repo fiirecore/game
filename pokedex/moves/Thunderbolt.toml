@@ -1,6 +1,6 @@
-number = 85
+id = 85
 name = "Thunderbolt"
-pokemon_type = "Electric"
+type = "Electric"
 category = "Special"
 power = 90
 accuracy = 100

@@ -1,6 +1,6 @@
-number = 68
+id = 68
 name = "Counter"
-pokemon_type = "Fighting"
+type = "Fighting"
 category = "Physical"
 accuracy = 100
 pp = 20
