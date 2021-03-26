@@ -113,6 +113,7 @@ async fn macroquad_main() {
 
         // Load audio files and setup audio
 
+        #[cfg(feature = "audio")]
         if let Err(err) = firecore_audio::create() {
             error!("Could not create audio instance with error {}", err);
         } else {

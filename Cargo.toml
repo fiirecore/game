@@ -22,7 +22,7 @@ lto = true
 
 [features]
 default = ["audio"]
-audio = ["firecore-audio/kira"]
+audio = ["firecore-audio/kira", "audio-builder"]
 
 [dependencies]
 
@@ -96,6 +96,6 @@ world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
 #dex-builder = { path = "../Subprojects/dex-builder" }
 
-audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder" }
+audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder", optional = true }
 
 embed-resource = "1.6"
