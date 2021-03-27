@@ -1,5 +1,6 @@
 use firecore_world::map::set::WorldMapSet;
 use firecore_world::map::set::manager::WorldMapSetManager;
+use macroquad::prelude::warn;
 
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
@@ -32,7 +33,12 @@ impl GameWorld for WorldMapSet {
 impl GameWorld for WorldMapSetManager {
 
     fn on_start(&self, music: bool) {
-        self.map_set().on_start(music);
+        match self.map_sets.get(&self.current_map_set) {
+            Some(map_set) => map_set.on_start(music),
+            None => {
+                warn!("Could not get current map set {}!", self.current_map_set);
+            },
+        }
     }
 
     fn on_tile(&mut self, player: &mut PlayerCharacter) {
@@ -44,7 +50,12 @@ impl GameWorld for WorldMapSetManager {
     }
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
-        self.map_set().render(tile_textures, npc_textures, gui_textures, screen, border)
+        match self.map_sets.get(&self.current_map_set) {
+            Some(map_set) => map_set.render(tile_textures, npc_textures, gui_textures, screen, border),
+            None => {
+                warn!("Could not get current map set {}!", self.current_map_set);
+            }
+        }
     }
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {

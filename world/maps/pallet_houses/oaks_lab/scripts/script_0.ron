@@ -47,7 +47,7 @@
             (
                 identifier: (
                     index: 11,
-                    name: "Rival",
+                    name: "%r",
                     npc_type: "rival",
                 ),
                 position: (
@@ -69,7 +69,8 @@
                                 ),
                             ),
                         ],
-                        worth: 0
+                        worth: 0,
+                        dont_battle_on_interact: true,
                     )
                 ),
             )

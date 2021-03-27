@@ -84,6 +84,17 @@ impl WorldManager {
     pub fn update(&mut self, delta: f32) {
         self.tile_textures.update(delta);
         
+        if self.noclip_toggle && self.map_manager.player.position.local.offset.is_none() {
+            self.noclip_toggle = false;
+            self.map_manager.player.properties.noclip = !self.map_manager.player.properties.noclip;
+            if self.map_manager.player.properties.noclip {
+                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed * 4.0;
+            } else {
+                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed;
+            }
+            info!("No clip toggled!");
+        }
+
         for script in 
         if self.map_manager.chunk_active {
             &mut self.map_manager.chunk_map.current_chunk_mut().map
@@ -244,16 +255,11 @@ impl WorldManager {
 
     fn stop_player(&mut self) {
         self.map_manager.player.stop_move();
-        if self.noclip_toggle {
-            self.noclip_toggle = false;
-            self.map_manager.player.properties.noclip = !self.map_manager.player.properties.noclip;
-            if self.map_manager.player.properties.noclip {
-                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed * 4.0;
-            } else {
-                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed;
-            }
-            info!("No clip toggled!");
-        }
+
+        // if self.map_manager.chunk_active {
+        //     self.map_manager.ch
+        // }
+
         if self.map_manager.chunk_active {
             if let Some(destination) = self.map_manager.chunk_map.check_warp(self.map_manager.player.position.local.coords) { // Warping does not trigger tile actions!
                 self.map_manager.warp = Some((destination, true));

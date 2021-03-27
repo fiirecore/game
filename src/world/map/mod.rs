@@ -451,35 +451,40 @@ impl GameWorld for WorldMap {
                         if !saves.get_mut().world_status.get_or_create_map_data(&self.name).battled.contains(&npc.identifier.index) {
                             if let Some(trainer) = npc.trainer.as_ref() {
     
-                                // Spawn text window
-    
-                                let messages = trainer.encounter_message.iter().map(|message| {
-                                    Message::new(
-                                        message.clone(),
-                                        TextColor::Blue,
-                                        None,
-                                    )
-                                }).collect();
-                                text_window.set_text(messages);
-                                message_ran = true;
-    
-                                // Play Trainer music
-    
-                                if let Some(npc_type) = super::npc::NPC_TYPES.get(&npc.identifier.npc_type) {
-                                    if let Some(trainer) = npc_type.trainer.as_ref() {
-                                        if let Err(err) = if let Some(playing_music) = firecore_audio::get_current_music() {
-                                            if playing_music != firecore_audio::get_music_id(&trainer.encounter_music).unwrap() {
-                                                firecore_audio::play_music_named(&trainer.encounter_music)
+                                if !trainer.dont_battle_on_interact {
+
+                                    // Spawn text window
+                                        
+                                    let messages = trainer.encounter_message.iter().map(|message| {
+                                        Message::new(
+                                            message.clone(),
+                                            TextColor::Blue,
+                                            None,
+                                        )
+                                    }).collect();
+                                    text_window.set_text(messages);
+                                    message_ran = true;
+
+                                    // Play Trainer music
+
+                                    if let Some(npc_type) = super::npc::NPC_TYPES.get(&npc.identifier.npc_type) {
+                                        if let Some(trainer) = npc_type.trainer.as_ref() {
+                                            if let Err(err) = if let Some(playing_music) = firecore_audio::get_current_music() {
+                                                if playing_music != firecore_audio::get_music_id(&trainer.encounter_music).unwrap() {
+                                                    firecore_audio::play_music_named(&trainer.encounter_music)
+                                                } else {
+                                                    Ok(())
+                                                }
                                             } else {
-                                                Ok(())
+                                                firecore_audio::play_music_named(&trainer.encounter_music)
+                                            } {
+                                                warn!("Could not play music named {} with error {}", self.name, err);
                                             }
-                                        } else {
-                                            firecore_audio::play_music_named(&trainer.encounter_music)
-                                        } {
-                                            warn!("Could not play music named {} with error {}", self.name, err);
                                         }
                                     }
+
                                 }
+                                
                             }   
                         }
                     }
@@ -615,6 +620,7 @@ pub fn despawn_script(script: &mut WorldScript) {
     if let Some(mut saves) = get_mut::<PlayerSaves>() {
         saves.get_mut().world_status.ran_scripts.insert(script.identifier.clone());
     }
+    script.despawn();
 }
 
 fn display_text(delta: f32, text_window: &mut TextWindow, messages: &Vec<Message>) -> bool {
@@ -628,6 +634,10 @@ fn display_text(delta: f32, text_window: &mut TextWindow, messages: &Vec<Message
     } else {
         text_window.spawn();
         text_window.set_text(messages.clone());
+        if let Some(saves) = get::<PlayerSaves>() {
+            text_window.on_start(saves.get());
+        }
+        
     }
     false
 }

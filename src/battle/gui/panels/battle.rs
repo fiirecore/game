@@ -1,5 +1,5 @@
 use firecore_util::text::TextColor;
-use firecore_pokedex::pokemon::battle::BattlePokemon;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 use firecore_util::Entity;
 use firecore_input::{self as input, Control};
 use macroquad::prelude::Vec2;
@@ -66,7 +66,7 @@ impl BattlePanel {
 		}
     }
     
-    pub fn update_text(&mut self, instance: &BattlePokemon) {
+    pub fn update_text(&mut self, instance: &PokemonInstance) {
         self.text.text[1] = instance.name() + " do?";
     }
 

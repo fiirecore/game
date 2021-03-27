@@ -1,9 +1,13 @@
-use firecore_pokedex::moves::PokemonMove;
-use firecore_pokedex::pokemon::battle::BattlePokemon;
-use firecore_pokedex::pokemon::party::PokemonParty;
-use firecore_pokedex::pokemon::texture::PokemonTexture;
-use macroquad::prelude::Vec2;
-use macroquad::prelude::warn;
+use firecore_pokedex::{
+    pokemon::{
+        instance::PokemonInstance,
+        party::PokemonParty,
+        texture::PokemonTexture,
+    },
+    moves::PokemonMove,
+};
+
+use macroquad::prelude::{Vec2, warn};
 use smallvec::SmallVec;
 
 use crate::util::battle_data::BattlePokemonParty;
@@ -13,7 +17,7 @@ use super::gui::pokemon_texture::ActivePokemonRenderer;
 
 pub struct BattleParty {
 
-    pub pokemon: SmallVec<[GameBattlePokemon; 6]>,
+    pub pokemon: SmallVec<[BattlePokemon; 6]>,
     pub active: usize,
 
     pub renderer: ActivePokemonRenderer,
@@ -29,7 +33,7 @@ impl BattleParty {
         let mut battle_party = BattlePokemonParty::new();
 
         for pokemon in party {
-			if let Some(pokemon) = BattlePokemon::new(pokemon) {
+			if let Some(pokemon) = PokemonInstance::new(pokemon) {
 				battle_party.push(pokemon);
 			} else {
 				warn!("Could not add pokemon with id {} to pokemon party", pokemon.id);
@@ -57,7 +61,7 @@ impl BattleParty {
 
         Self {
             pokemon: party.into_iter().map(|pokemon| 
-                GameBattlePokemon {
+                BattlePokemon {
                     texture: crate::pokemon::pokemon_texture(&pokemon.pokemon.data.id, side),
                     pokemon: pokemon,
                 }
@@ -86,11 +90,11 @@ impl BattleParty {
         self.next_move.as_ref().map(|next_move| next_move.queued).unwrap_or_default()
     }
 
-    pub fn active(&self) -> &BattlePokemon {
+    pub fn active(&self) -> &PokemonInstance {
         &self.pokemon.get(self.active).expect("Could not get pokemon from battle party!").pokemon
     }
 
-    pub fn active_mut(&mut self) -> &mut BattlePokemon {
+    pub fn active_mut(&mut self) -> &mut PokemonInstance {
         &mut self.pokemon.get_mut(self.active).expect("Could not get pokemon from battle party!").pokemon
     }
 
@@ -101,9 +105,9 @@ impl BattleParty {
 }
 
 
-pub struct GameBattlePokemon {
+pub struct BattlePokemon {
 
-    pub pokemon: BattlePokemon,
+    pub pokemon: PokemonInstance,
     pub texture: Texture,
 
 }
@@ -117,11 +121,13 @@ pub struct BattleMoveStatus {
 
 impl BattleMoveStatus {
 
-    pub fn new(pokemon_move: &PokemonMove) -> Self {
-        Self {
-            pokemon_move: pokemon_move.clone(),
-            queued: true,
-        }
+    pub fn new(pokemon_move: Option<&PokemonMove>) -> Option<Self> {
+        pokemon_move.map(|pokemon_move| {
+            Self {
+                pokemon_move: pokemon_move.clone(),
+                queued: true,
+            }
+        })        
     }
 
 }

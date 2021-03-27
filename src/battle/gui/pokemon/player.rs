@@ -1,10 +1,11 @@
 use firecore_util::{Entity, text::TextColor};
-use firecore_pokedex::pokemon::battle::BattlePokemon;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 
-use macroquad::prelude::{Vec2, Color};
+use macroquad::prelude::Vec2;
 
-use crate::util::graphics::{Texture, draw, draw_rect, draw_text_left, draw_text_right, texture::byte_texture};
+use crate::battle::gui::exp_bar::ExperienceBar;
 use crate::gui::game::health_bar::HealthBar;
+use crate::util::graphics::{Texture, draw, draw_text_left, draw_text_right, texture::byte_texture};
 
 use super::PokemonGui;
 
@@ -22,13 +23,11 @@ pub struct PlayerPokemonGui {
 	level: String,
 	health_text: String,
 	health_bar: HealthBar,
-	exp_width: f32,
+	pub exp_bar: ExperienceBar,
 
 }
 
 impl PlayerPokemonGui {
-
-	const EXP_COLOR: Color = macroquad::color_u8!(64, 200, 248, 255);
 
 	pub fn new(x: f32, y: f32) -> PlayerPokemonGui {
 
@@ -49,15 +48,14 @@ impl PlayerPokemonGui {
 			name: String::from("Player"),
 			level: String::from("Lv"),
 			health_text: String::from("/"),
-			health_bar: HealthBar::new(Vec2::default(), panel + Vec2::new(super::HEALTH_X_OFFSET, super::HEALTH_Y_OFFSET)),
-			exp_width: 0.0,
+			health_bar: HealthBar::new(Vec2::new(super::HEALTH_X_OFFSET, super::HEALTH_Y_OFFSET), panel),
+			exp_bar: ExperienceBar::new(Vec2::new(32.0, 33.0), panel),
 
 		}
 	}
 
 	pub fn vertical_offset(&mut self, offset: f32) {
 		self.y_offset = offset;
-		self.health_bar.pos.y = offset; // lol
 	}
 
 }
@@ -88,39 +86,41 @@ impl PokemonGui for PlayerPokemonGui {
 	}
 
 	fn update(&mut self, delta: f32) {
-		if self.is_alive() {
+		if self.alive {
 			self.health_bar.update(delta);
+			self.exp_bar.update(delta);
 		}		
 	}
 
 	fn render(&self) {
-		if self.is_alive() {
+		if self.alive {
 			draw(self.panel, self.pos.x, self.pos.y + self.y_offset);
 			draw_text_left(0, &self.name, TextColor::Black, self.pos.x + 17.0, self.pos.y + 2.0 + self.y_offset);
 			draw_text_right(0, &self.level, TextColor::Black, self.pos.x + 95.0, self.pos.y + 2.0 + self.y_offset);
 			draw_text_right(0, &self.health_text, TextColor::Black, self.pos.x + 95.0, self.pos.y + 20.0 + self.y_offset);
-			self.health_bar.render();
-			draw_rect(Self::EXP_COLOR, self.pos.x + 32.0, self.pos.y + 33.0 + self.y_offset, self.exp_width * 64.0, 2.0);
+			self.health_bar.render(self.y_offset);
+			self.exp_bar.render(self.y_offset);
 		}		
 	}
 
-	fn update_gui(&mut self, pokemon: &BattlePokemon, new_pokemon: bool) {
+	fn update_gui(&mut self, pokemon: &PokemonInstance, new_pokemon: bool) {
+
 		self.name = pokemon.name();
 		self.level = format!("Lv{}", pokemon.data.level);
-		self.exp_width = pokemon.data.experience as f32 / pokemon.pokemon.training.growth_rate.level_exp(pokemon.data.level) as f32;
-		self.update_hp(new_pokemon, pokemon.current_hp, pokemon.base.hp);
-	}
+		self.health_bar.update_bar(new_pokemon, pokemon.current_hp, pokemon.base.hp);
+		self.health_text = format!("{}/{}", pokemon.current_hp, pokemon.base.hp);
 
-	fn update_hp(&mut self, new_pokemon: bool, current_health: u16, max_health: u16)  {
-		self.health_bar.update_bar(new_pokemon, current_health, max_health);
-		self.health_text = format!("{}/{}", current_health, max_health);
+		self.exp_bar.update_exp(pokemon, new_pokemon);
+
 	}
 
 	fn update_position(&mut self, x: f32, y: f32) {
 		self.pos.x = x;
 		self.pos.y = y;
-		self.health_bar.panel.x = x + super::HEALTH_X_OFFSET;
-		self.health_bar.panel.y = y + super::HEALTH_Y_OFFSET;
+		self.health_bar.panel.x = x;
+		self.health_bar.panel.y = y;
+		self.exp_bar.panel.x = x;
+		self.exp_bar.panel.y = y;
 	}
 
 	fn offset_position(&mut self, x: f32, y: f32) {

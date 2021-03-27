@@ -1,4 +1,4 @@
-use firecore_pokedex::pokemon::battle::BattlePokemon;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 use firecore_util::Entity;
 use macroquad::prelude::Vec2;
 
@@ -10,7 +10,7 @@ use self::fight::FightPanel;
 
 pub mod battle;
 pub mod fight;
-pub mod moves;
+pub mod move_info;
 
 pub struct PlayerPanel {
 
@@ -43,9 +43,10 @@ impl PlayerPanel {
         self.battle_panel.spawn();
     }
 
-    pub fn update_text(&mut self, instance: &BattlePokemon) {
+    pub fn update_text(&mut self, instance: &PokemonInstance) {
         self.battle_panel.update_text(instance);
-        self.fight_panel.update_names(instance);
+        self.fight_panel.move_panel.update_names(instance);
+        self.fight_panel.update_move(instance);
     }
     
     pub fn input(&mut self, delta: f32, battle: &mut Battle, text: &mut BattleText) {

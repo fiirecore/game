@@ -4,6 +4,7 @@ use crate::util::battle_data::BattleData;
 use crate::util::battle_data::TrainerData;
 use firecore_pokedex::moves::MoveCategory;
 use firecore_pokedex::moves::PokemonMove;
+use firecore_pokedex::moves::instance::MoveInstance;
 use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_pokedex::pokemon::texture::PokemonTexture;
 use firecore_util::Completable;
@@ -12,8 +13,9 @@ use macroquad::prelude::Vec2;
 use macroquad::prelude::info;
 use firecore_util::Entity;
 use self::gui::BattleGui;
+use self::gui::pokemon::PokemonGui;
 use firecore_util::battle::BattleType;
-use firecore_pokedex::pokemon::battle::BattlePokemon;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 use self::battle_party::BattleParty;
 use self::transitions::managers::closer::BattleCloserManager;
 
@@ -41,7 +43,12 @@ pub struct Battle {
 impl Battle {
 	
 	pub fn new(player: &PokemonParty, data: BattleData) -> Option<Self> {		
-		if !(player.is_empty() || data.party.is_empty()) {
+		if !(
+			player.is_empty() || 
+			data.party.is_empty() ||
+			// Checks if player has any pokemon in party that aren' fainted (temporary)
+			player.iter().filter(|pokemon| pokemon.current_hp.map(|hp| hp != 0).unwrap_or(true)).next().is_none()
+		) {
 			Some(
 				Self {
 					battle_type: data.get_type(),
@@ -73,11 +80,20 @@ impl Battle {
 
 				self.player.select_pokemon(selected as usize);
 
-				battle_gui.update_gui(&self, true);
+				// battle_gui.player_pokemon_gui.exp_bar.update_exp(self.player.active(), true); // level up is true to reset the xp display width
+				battle_gui.update_gui(&self, true, false);
 
 				battle_gui.player_panel.start();
 				
 			}
+		}
+
+		// Update the level up move thing
+
+		else if battle_gui.level_up.is_alive() {
+
+			battle_gui.level_up.update(delta, self.player.active_mut());
+
 		}
 
 		// Update the battle text
@@ -106,7 +122,7 @@ impl Battle {
 						// add exp to player
 
 						let gain = self.exp_gain();
-						self.player.active_mut().data.experience += gain;
+						self.player.active_mut().data.experience += gain * 5;
 
 						// get the maximum exp a player can have at their level
 
@@ -120,7 +136,23 @@ impl Battle {
 						let level = if self.player.active().data.experience > max_exp {
 							self.player.pokemon[self.player.active].pokemon.data.level += 1;
 							self.player.pokemon[self.player.active].pokemon.data.experience -= max_exp;
-							let player = self.player.active();
+							let player = self.player.active_mut();
+
+							let mut moves = player.moves_at_level();
+
+							while player.moves.len() < 4 && !moves.is_empty() {
+								info!("{} learned {}!", player.name(), moves[0].name);
+								player.moves.push(MoveInstance::new(moves.remove(0)));
+							}
+
+							if !moves.is_empty() {
+								battle_gui.level_up.setup(player, moves);
+								// battle_gui.level_up.wants_to_spawn = true;
+								battle_gui.level_up.spawn();
+							}
+
+							
+
 							// info!("{} levelled up to Lv. {}", &player.pokemon.data.name, player.level);
 							Some(player.data.level)
 						} else {
@@ -131,6 +163,7 @@ impl Battle {
 						// add the exp gain and level up text to the battle text
 
 						let player = self.player.active();
+						battle_gui.player_pokemon_gui.update_gui(player, false);
 						battle_gui.battle_text.player_level_up(player.name(), player.data.experience, level);
 
 					}
@@ -181,6 +214,8 @@ impl Battle {
 					}
 				}
 				
+			// } else if battle_gui.level_up.wants_to_spawn {
+			// 	battle_gui.level_up.spawn();
 			} else {
 
 				// Handle player fainting
@@ -225,7 +260,7 @@ impl Battle {
 
 						// Update the opponent's pokemon GUI
 
-						battle_gui.update_gui(self, true);
+						battle_gui.update_gui(self, false, true);
 
 						// Reset the pokemon renderer so it renders pokemon
 	
@@ -299,7 +334,7 @@ impl Battle {
 	
 }
 
-fn get_move_damage(pmove: &PokemonMove, pokemon: &BattlePokemon, recieving_pokemon: &BattlePokemon) -> u16 {
+fn get_move_damage(pmove: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
 	if if let Some(accuracy) = pmove.accuracy {
 		let hit: u8 = macroquad::rand::gen_range(0, 100);
 		let test = hit < accuracy;

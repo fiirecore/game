@@ -2,11 +2,6 @@ use firecore_util::{Entity, Reset};
 use macroquad::prelude::Vec2;
 use crate::util::graphics::draw_rect;
 
-pub const UPPER_COLOR: [f32; 4] = [88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0, 1.0];
-pub const LOWER_COLOR: [f32; 4] = [112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0, 1.0];
-
-const WIDTH: f32 = 48.0;
-
 pub struct HealthBar {
 	
 	alive: bool,
@@ -20,24 +15,33 @@ pub struct HealthBar {
 }
 
 impl HealthBar {
+
+	pub const WIDTH: f32 = 48.0;
+
+	pub const UPPER_COLOR: [f32; 4] = [88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0, 1.0];
+	pub const LOWER_COLOR: [f32; 4] = [112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0, 1.0];
 	
 	pub fn new(pos: Vec2, panel: Vec2) -> HealthBar {
 		HealthBar {
 			
 			alive: true,
 
-			pos,
 			panel,
+			pos,
 
-			width: WIDTH,
+			width: Self::WIDTH,
 			gap: 0.0,
 
 		}
 	}
+
+	pub fn get_hp_width(current: u16, max: u16) -> f32 {
+		current as f32 * Self::WIDTH / max as f32
+	}
 	
 	pub fn update_bar(&mut self, new_pokemon: bool, current: u16, max: u16) {
 		
-		let new = current as f32 * WIDTH / max as f32;
+		let new = Self::get_hp_width(current, max);
 		self.gap = if new_pokemon {
 			0.0
 		} else {
@@ -63,13 +67,12 @@ impl HealthBar {
 					self.gap = 0.0;
 				}
 			}
-			
 		}
 	}
 
-	pub fn render(&self) {
-		draw_rect(UPPER_COLOR, self.pos.x + self.panel.x, self.pos.y + self.panel.y, self.width + self.gap, 1.0);
-		draw_rect(LOWER_COLOR, self.pos.x + self.panel.x, self.pos.y + self.panel.y + 1.0, self.width + self.gap, 2.0);
+	pub fn render(&self, y_offset: f32) {
+		draw_rect(Self::UPPER_COLOR, self.pos.x + self.panel.x, self.pos.y + self.panel.y + y_offset, self.width + self.gap, 1.0);
+		draw_rect(Self::LOWER_COLOR, self.pos.x + self.panel.x, self.pos.y + self.panel.y + 1.0 + y_offset, self.width + self.gap, 2.0);
 	}
 
 }
@@ -94,7 +97,7 @@ impl Entity for HealthBar {
 
 impl Reset for HealthBar {
 	fn reset(&mut self) {
-		self.width = WIDTH;
+		self.width = Self::WIDTH;
 		self.gap = 0.0;
 	}
 }

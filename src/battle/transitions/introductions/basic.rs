@@ -1,3 +1,4 @@
+use firecore_data::player::list::PlayerSaves;
 use firecore_util::{
     Entity,
     Reset,
@@ -26,6 +27,7 @@ use crate::battle::{
 
 use crate::util::graphics::draw_bottom;
 use crate::gui::dynamic_text::DynamicText;
+use crate::util::text::process_messages;
 
 use super::util::player_intro::PlayerBattleIntro;
 
@@ -52,6 +54,24 @@ impl BasicBattleIntroduction {
             player_intro: PlayerBattleIntro::new(),
             
             finished_panel: false,
+        }
+    }
+
+    pub fn common_setup(&mut self, battle: &Battle) {
+        if let Some(messages) = self.text.messages.as_mut() {
+            messages.push(
+                Message::new(
+                    vec![
+                        format!("Go! {}!", battle.player.active().name())
+                    ],
+                    TextColor::White,
+                    Some(0.5),
+                )
+            );
+            if let Some(saves) = macroquad::prelude::collections::storage::get::<PlayerSaves>() {
+                process_messages(saves.get(), messages);
+            }
+            
         }
     }
 
@@ -136,14 +156,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 TextColor::White,
                 None, 
             ),
-            Message::new(
-                vec![
-                    format!("Go! {}!", battle.player.active().name())
-                ],
-                TextColor::White,
-                Some(0.5),
-            ),
         ]);
+        self.common_setup(battle);
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {

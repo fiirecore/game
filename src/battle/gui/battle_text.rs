@@ -1,6 +1,6 @@
 use crate::battle::Battle;
 use crate::gui::dynamic_text::DynamicText;
-use firecore_pokedex::pokemon::battle::BattlePokemon;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 use firecore_util::text::{Message, TextColor};
 use macroquad::prelude::Vec2;
 use super::pokemon::PokemonGui;
@@ -78,7 +78,7 @@ impl BattleText {
         }        
     }
 
-    pub fn on_move(&mut self, other_pokemon: &BattlePokemon, gui: &mut impl PokemonGui) {
+    pub fn on_move(&mut self, other_pokemon: &PokemonInstance, gui: &mut impl PokemonGui) {
 
         gui.update_gui(other_pokemon, false);
 

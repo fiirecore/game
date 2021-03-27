@@ -446,7 +446,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#0f0b2477fa1dfde21119431f998d9885078a7029"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#57f9d2f32883e95b8b3e46bcaa88bf0c104b4a0a"
 dependencies = [
  "dashmap",
  "firecore-pokedex-lib",
@@ -459,7 +459,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-lib"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-lib#14b8d2e10651c95b7685fcfac5995dbd08a35d94"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-lib#1c73e8e27ac39f38001ce6523f26ed6519853e7f"
 dependencies = [
  "serde",
  "smallvec",
@@ -476,7 +476,7 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#d4ee45523472866eed043ba98fe07c196dc9f3fe"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#dfd11db00a942439a92372f3e48c9e6402d653d7"
 dependencies = [
  "ahash 0.7.2",
  "firecore-audio-lib",

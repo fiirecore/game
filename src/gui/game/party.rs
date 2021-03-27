@@ -18,7 +18,7 @@ use crate::data::player::list::PlayerSaves;
 
 use crate::util::graphics::{Texture, texture::byte_texture, draw, draw_rect, draw_text_left};
 
-use super::health_bar;
+use super::health_bar::HealthBar;
 
 const TEXTURE_TICK: f32 = 0.15;
 
@@ -85,16 +85,16 @@ impl PokemonPartyGui {
                 if let Some(pokemon_data) = firecore_pokedex::POKEDEX.get(&pokemon.id) {
                     let pokemon_data = pokemon_data.value();
     
-                    let max = firecore_pokedex::pokemon::battle::calculate_hp(pokemon_data.base.hp, pokemon.data.ivs.hp, pokemon.data.evs.hp, pokemon.data.level);
-                    let curr = pokemon.current_hp.unwrap_or(max);
+                    let max = firecore_pokedex::pokemon::instance::calculate_hp(pokemon_data.base.hp, pokemon.data.ivs.hp, pokemon.data.evs.hp, pokemon.data.level);
+                    let current = pokemon.current_hp.unwrap_or(max);
         
                     let texture = crate::pokemon::pokemon_texture(&pokemon_data.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
         
                     self.pokemon[index] = Some(PartyGuiData {
                         name: pokemon.data.nickname.as_ref().map(|nick| nick.clone()).unwrap_or(pokemon_data.data.name.to_ascii_uppercase()),
                         level: format!("Lv{}", pokemon.data.level),
-                        hp: format!("{}/{}", curr, max),
-                        health_width: (curr as f32 / max as f32).ceil() * 48.0,
+                        hp: format!("{}/{}", current, max),
+                        health_width: HealthBar::get_hp_width(current, max),
                         texture: texture,
                     });
                 }            
@@ -120,8 +120,8 @@ impl PokemonPartyGui {
         draw_text_left(0, &data.name, TextColor::White, 119.0, offset/* + 1.0*/);
         draw_text_left(0, &data.level, TextColor::White, 129.0, offset + 13.0 - 4.0);
         draw_text_left(0, &data.hp, TextColor::White, 209.0, offset + 13.0 - 1.0);
-        draw_rect(health_bar::UPPER_COLOR, 185.0, offset + 8.0, data.health_width, 1.0);
-        draw_rect(health_bar::LOWER_COLOR, 185.0, offset + 9.0, data.health_width, 2.0);
+        draw_rect(HealthBar::UPPER_COLOR, 185.0, offset + 8.0, data.health_width, 1.0);
+        draw_rect(HealthBar::LOWER_COLOR, 185.0, offset + 9.0, data.health_width, 2.0);
     }
 
     pub fn input(&mut self, _delta: f32) {
@@ -158,9 +158,9 @@ impl PokemonPartyGui {
     pub fn render(&self) {
         if self.is_alive() {
             draw(self.background, 0.0, 0.0);
-            for pokemon in self.pokemon.iter().enumerate() {
-                if let Some(data) = pokemon.1 {
-                    if pokemon.0 == 0 {
+            for (index, pokemon) in self.pokemon.iter().enumerate() {
+                if let Some(data) = pokemon {
+                    if index == 0 {
                         
                         draw(self.primary_texture, 3.0, 20.0);
                         draw_texture_ex(data.texture, 0.0, 26.0, WHITE, DrawTextureParams {
@@ -177,11 +177,11 @@ impl PokemonPartyGui {
                         draw_text_left(0, &data.name, TextColor::White, 33.0, 36.0);
                         draw_text_left(0, &data.level, TextColor::White, 41.0, 45.0);
                         draw_text_left(0, &data.hp, TextColor::White, 52.0, 61.0);
-                        draw_rect(health_bar::UPPER_COLOR, 33.0, 59.0, data.health_width, 1.0);
-                        draw_rect(health_bar::LOWER_COLOR, 33.0, 60.0, data.health_width, 2.0);
+                        draw_rect(HealthBar::UPPER_COLOR, 33.0, 59.0, data.health_width, 1.0);
+                        draw_rect(HealthBar::LOWER_COLOR, 33.0, 60.0, data.health_width, 2.0);
                         
                     } else {
-                        self.render_cell(pokemon.0, data);
+                        self.render_cell(index, data);
                     }
                 }
             }

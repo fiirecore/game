@@ -1,6 +1,7 @@
 use firecore_world::map::World;
 use firecore_world::map::chunk::WorldChunk;
 use firecore_world::map::chunk::map::WorldChunkMap;
+use macroquad::prelude::warn;
 
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
@@ -41,11 +42,18 @@ impl GameWorld for WorldChunkMap {
     }
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
-        let current_chunk = self.current_chunk();
-        current_chunk.render(tile_textures, npc_textures, gui_textures, screen, border);
-        for connection in &current_chunk.connections {
-            self.chunks.get(connection).expect("Could not get connected chunk").render(tile_textures, npc_textures, gui_textures, screen, false);
+        match self.chunks.get(&self.current_chunk) {
+            Some(chunk) => {
+                chunk.render(tile_textures, npc_textures, gui_textures, screen, border);
+                for connection in &chunk.connections {
+                    self.chunks.get(connection).expect("Could not get connected chunk").render(tile_textures, npc_textures, gui_textures, screen, false);
+                }
+            }
+            None => {
+                warn!("Could not get current chunk to render");
+            }
         }
+        
     }
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {

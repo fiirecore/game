@@ -92,9 +92,9 @@ impl StartMenu {
         if self.alive {
             draw(self.background, self.pos.x, self.pos.y);
             for (index, text) in self.buttons.iter().enumerate() {
-                draw_text_left(1, text, TextColor::Black, self.pos.x + 15.0, self.pos.y + 7.0 + 16.0 * index as f32);
+                draw_text_left(1, text, TextColor::Black, self.pos.x + 15.0, self.pos.y + 7.0 + (index << 4) as f32);
             }
-            draw_cursor(self.pos.x + 8.0, self.pos.y + 9.0 + 15.0 * self.cursor as f32);
+            draw_cursor(self.pos.x + 8.0, self.pos.y + 9.0 + (self.cursor << 4) as f32);
         }
     }
 

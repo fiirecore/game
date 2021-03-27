@@ -1,5 +1,5 @@
 use firecore_util::{Entity, text::TextColor};
-use firecore_pokedex::pokemon::battle::BattlePokemon;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 
 use macroquad::prelude::Vec2;
 
@@ -84,18 +84,14 @@ impl PokemonGui for OpponentPokemonGui {
 			draw(self.panel, self.pos.x, self.pos.y);
             draw_text_left(0, &self.name, TextColor::Black, self.pos.x + 8.0, self.pos.y + 2.0);
             draw_text_right(0, &self.level, TextColor::Black, self.pos.x + 86.0, self.pos.y + 2.0);
-			self.health_bar.render();
+			self.health_bar.render(0.0);
 		}		
 	}
 
-	fn update_gui(&mut self, pokemon: &BattlePokemon, new_pokemon: bool) {
+	fn update_gui(&mut self, pokemon: &PokemonInstance, new_pokemon: bool) {
 		self.name = pokemon.name();
 		self.level = format!("Lv{}", pokemon.data.level);
-		self.update_hp(new_pokemon, pokemon.current_hp, pokemon.base.hp)
-	}
-
-	fn update_hp(&mut self, new_pokemon: bool, current_hp: u16, max_hp: u16) {
-		self.health_bar.update_bar(new_pokemon, current_hp, max_hp);
+		self.health_bar.update_bar(new_pokemon, pokemon.current_hp, pokemon.base.hp);
 	}
 
 	fn update_position(&mut self, x: f32, y: f32) {

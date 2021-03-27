@@ -19,7 +19,7 @@ pub fn load_npc_textures(npc_textures: &mut NpcTextures, npc_types: Vec<Serializ
             Ok(image) => {//match image_texture(&image) {
                 // Some(texture) => {
                     let texture = image_texture(&image);
-                    macroquad::prelude::debug!("Added NPC texture type: {}", &npc_type.identifier);
+                    // macroquad::prelude::debug!("Added NPC texture type: {}", &npc_type.identifier);
                     if let Some(battle_sprite) = npc_type.battle_sprite {
                         match byte_image(&battle_sprite) {
                             Ok(image) => {

@@ -13,7 +13,7 @@ use firecore_world::{
 use firecore_pokedex::pokemon::{
     PokemonId,
     party::PokemonParty,
-    battle::BattlePokemon,
+    instance::PokemonInstance,
     data::StatSet,
     random::RandomSet,
     generate::GeneratePokemon,
@@ -28,9 +28,8 @@ lazy_static::lazy_static! {
 	pub static ref BATTLE_DATA: Mutex<Option<BattleData>> = Mutex::new(None);
 }
 
-pub type BattlePokemonParty = SmallVec<[BattlePokemon; 6]>;
+pub type BattlePokemonParty = SmallVec<[PokemonInstance; 6]>;
 
-#[derive(Default)]
 pub struct BattleData {
 
     pub party: BattlePokemonParty,
@@ -55,7 +54,7 @@ pub struct TrainerData {
 
 pub fn random_wild_battle() {
     *BATTLE_DATA.lock() = Some(BattleData {
-        party: smallvec![BattlePokemon::generate(
+        party: smallvec![PokemonInstance::generate(
             gen_range(0, firecore_pokedex::POKEDEX.len()) as PokemonId + 1, 
             1, 
             100, 
@@ -85,10 +84,10 @@ pub fn trainer_battle(npc: &NPC) {
     }
 }
 
-pub fn to_battle_party(party: &PokemonParty) -> SmallVec<[BattlePokemon; 6]> {
+pub fn to_battle_party(party: &PokemonParty) -> BattlePokemonParty {
     let mut battle_party = BattlePokemonParty::new();
     for pokemon in party {
-        if let Some(pokemon) = BattlePokemon::new(pokemon) {
+        if let Some(pokemon) = PokemonInstance::new(pokemon) {
             battle_party.push(pokemon)
         } else {
             warn!("Could not create battle pokemon from ID {}", pokemon.id);

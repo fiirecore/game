@@ -103,19 +103,11 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             ]);
         }        
 
-        if let Some(messages) = self.introduction.text.messages.as_mut() {
-            messages.push(
-                Message::new(
-                    vec![
-                        format!("Go! {}!", battle.player.active().name())
-                    ],
-                    TextColor::White,
-                    Some(0.5),
-                ),
-            );
-        }
+        self.introduction.common_setup(battle);
         
     }
+
+    
 
     fn render_offset(&self, battle: &Battle, offset: f32) {
         if self.trainer_offset < FINAL_TRAINER_OFFSET {
