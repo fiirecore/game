@@ -1,7 +1,7 @@
 use super::Scene;
 use super::scenes::SceneState;
 use super::scenes::Scenes;
-use super::scenes::title_scene::TitleScene;
+use super::scenes::title::TitleScene;
 use super::scenes::main_menu::MainMenuScene;
 use super::scenes::game::GameScene;
 

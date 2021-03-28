@@ -1,9 +1,10 @@
 use firecore_util::{Entity, text::TextColor};
 use firecore_input::{pressed, Control};
 
-use macroquad::prelude::Vec2;
+use macroquad::prelude::{Vec2, Texture2D};
 
-use crate::util::graphics::{Texture, texture::byte_texture, draw, draw_text_left, draw_cursor};
+use crate::scene::scenes::{SceneState, Scenes};
+use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_cursor};
 
 pub struct StartMenu {
 
@@ -11,7 +12,7 @@ pub struct StartMenu {
 
     pos: Vec2,
 
-    background: Texture,
+    background: Texture2D,
 
     buttons: Vec<String>,
 
@@ -34,6 +35,7 @@ impl StartMenu {
             buttons: vec![
                 "Save",
                 "Pokemon",
+                "Main Menu",
                 "Exit Game",
                 "Close",
             ].into_iter().map(|text| text.to_ascii_uppercase()).collect(),
@@ -48,7 +50,7 @@ impl StartMenu {
         self.alive = !self.alive;
     }
 
-    pub fn input(&mut self) {
+    pub fn input(&mut self, scene_state: &mut SceneState) {
 
         if pressed(Control::A) {
             match self.cursor {
@@ -61,11 +63,16 @@ impl StartMenu {
                     crate::gui::game::party::spawn();
                 },
                 2 => {
+                    // Exit to Main Menu
+                    *scene_state = SceneState::Scene(Scenes::MainMenuScene);
+                    self.despawn();
+                },
+                3 => {
                     // Exit Game
                     crate::queue_quit();
                 },
-                3 => {
-                    // Exit Menu
+                4 => {
+                    // Close Menu
                     self.despawn();
                 }
                 _ => (),

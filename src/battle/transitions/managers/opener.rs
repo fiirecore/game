@@ -22,7 +22,7 @@ pub struct BattleOpenerManager {
     wild: WildBattleOpener,
     trainer: TrainerBattleOpener,
 
-    pub battle_introduction_manager: BattleIntroductionManager,
+    pub introduction: BattleIntroductionManager,
 }
 
 impl BattleOpenerManager {
@@ -35,13 +35,13 @@ impl BattleOpenerManager {
             wild: WildBattleOpener::new(),
             trainer: TrainerBattleOpener::new(),
 
-            battle_introduction_manager: BattleIntroductionManager::new(),
+            introduction: BattleIntroductionManager::new(),
 
         }
     }
 
     pub fn render_below_panel(&self, battle: &Battle) {
-        self.battle_introduction_manager.render_with_offset(battle, self.offset());
+        self.introduction.render_with_offset(battle, self.offset());
         self.get().render_below_panel();
     }
 
@@ -51,7 +51,7 @@ impl BattleOpenerManager {
             BattleType::Trainer => Openers::Trainer,
             BattleType::GymLeader => Openers::Trainer,
         };
-        self.battle_introduction_manager.spawn_type(&self.current_opener);
+        self.introduction.spawn_type(&self.current_opener);
         self.spawn();
     }
 
@@ -83,8 +83,8 @@ impl BattleTransition for BattleOpenerManager {
             if opener.is_alive() {
                 if opener.is_finished() {
                     opener.despawn();
-                    self.battle_introduction_manager.spawn();
-                    self.battle_introduction_manager.on_start();
+                    self.introduction.spawn();
+                    self.introduction.on_start();
                 } else {
                     opener.update(delta
                         // * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
@@ -94,8 +94,8 @@ impl BattleTransition for BattleOpenerManager {
                         // }
                     );
                 }
-            } else if self.battle_introduction_manager.is_alive() {
-                self.battle_introduction_manager.update(delta
+            } else if self.introduction.is_alive() {
+                self.introduction.update(delta
                     //  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
                     //     8.0
                     // } else {
@@ -108,8 +108,8 @@ impl BattleTransition for BattleOpenerManager {
 
     fn render(&self) {
         if self.is_alive() {
-            if self.battle_introduction_manager.is_alive() {
-                self.battle_introduction_manager.render();
+            if self.introduction.is_alive() {
+                self.introduction.render();
             } else {
                 self.get().render();
             }
@@ -133,7 +133,7 @@ impl Reset for BattleOpenerManager {
 
     fn reset(&mut self) {
         self.get_mut().reset();
-        self.battle_introduction_manager.reset();
+        self.introduction.reset();
     }
 
 }
@@ -141,7 +141,7 @@ impl Reset for BattleOpenerManager {
 impl Completable for BattleOpenerManager {
 
     fn is_finished(&self) -> bool {
-        return self.battle_introduction_manager.is_finished();
+        return self.introduction.is_finished();
     }
     
 }
@@ -156,7 +156,7 @@ impl Entity for BattleOpenerManager {
     fn despawn(&mut self) {
         self.alive = false;
         self.get_mut().despawn();
-        self.battle_introduction_manager.despawn();
+        self.introduction.despawn();
         self.reset();
     }
 

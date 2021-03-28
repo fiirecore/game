@@ -1,15 +1,14 @@
-use crate::util::graphics::Texture;
-use firecore_util::Entity;
+use firecore_util::{Entity, Reset, Completable};
+use macroquad::prelude::Texture2D;
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
-use crate::util::graphics::draw;
-use firecore_util::{Reset, Completable};
+use crate::util::graphics::{byte_texture, draw};
 use super::trainer::TrainerBattleOpener;
 pub struct WildBattleOpener {
 
     trainer_battle_opener: TrainerBattleOpener,
     
-    grass: Texture,
+    grass: Texture2D,
     
     grass_active: bool,
     grass_x_offset: f32,
@@ -31,7 +30,7 @@ impl WildBattleOpener {
             grass_active: true,
             grass_x_offset: GRASS_X_OFFSET,
             grass_y_offset: GRASS_Y_OFFSET,
-            grass: crate::util::graphics::texture::byte_texture(include_bytes!("../../../../build/assets/gui/battle/grass.png")),
+            grass: byte_texture(include_bytes!("../../../../build/assets/battle/grass.png")),
         }
 
     }

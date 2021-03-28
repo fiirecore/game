@@ -83,13 +83,12 @@ pub fn rival_name() -> &'static str {
 }
 
 use firecore_font_lib::CustomChar;
-use macroquad::prelude::Image;
-use macroquad::prelude::Rect;
+use macroquad::prelude::{Image, Rect, Texture2D};
 use ahash::AHashMap as HashMap;
 
-use crate::util::graphics::texture::image_texture;
+use crate::util::graphics::image_texture;
 
-pub fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChar>, sheet: macroquad::prelude::Image) -> HashMap<char, crate::util::graphics::Texture> {
+pub fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChar>, sheet: Image) -> HashMap<char, Texture2D> {
 
     let mut customchars = HashMap::new();
     for cchar in custom {

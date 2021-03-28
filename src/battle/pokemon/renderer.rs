@@ -1,7 +1,5 @@
 use firecore_util::{Reset, Completable};
-use macroquad::prelude::{Vec2, draw_texture_ex, DrawTextureParams, Rect, WHITE};
-
-use crate::util::graphics::Texture;
+use macroquad::prelude::{Texture2D, Vec2, draw_texture_ex, DrawTextureParams, Rect, WHITE};
 
 const SIZE: f32 = 64.0;
 
@@ -26,7 +24,7 @@ impl ActivePokemonRenderer {
         self.missing += delta * 128.0;
     }
 
-    pub fn render(&self, texture: Texture, y_offset: f32) {
+    pub fn render(&self, texture: Texture2D, y_offset: f32) {
         if self.missing < SIZE {
             draw_texture_ex(
                 texture,

@@ -1,16 +1,15 @@
 
 use firecore_pokedex::moves::instance::MoveInstance;
-use macroquad::prelude::Vec2;
-use crate::util::graphics::Texture;
+use macroquad::prelude::{Vec2, Texture2D};
 use firecore_util::text::TextColor;
-use crate::util::graphics::{draw, draw_text_left, draw_text_right, texture::byte_texture};
+use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_text_right};
 
 pub struct MoveInfoPanel {
 
     pos: Vec2,
     panel: Vec2,
 
-    background: Texture,
+    background: Texture2D,
     pp: String,
     remaining_pp: String,
     move_type: String,

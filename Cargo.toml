@@ -9,7 +9,7 @@ keywords = ["games", "pokemon"]
 categories = ["games"]
 build = "build/build.rs"
 readme = "README.md"
-include = ["/build", "/assets", "/pokedex", "/world"]
+include = ["/build", "/pokedex", "/world"]
 
 [profile.dev]
 opt-level = 3

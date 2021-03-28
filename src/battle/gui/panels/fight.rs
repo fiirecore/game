@@ -1,18 +1,24 @@
+use firecore_util::{Entity, Reset};
 use firecore_pokedex::pokemon::instance::PokemonInstance;
-use firecore_util::Reset;
-use macroquad::prelude::Vec2;
-use firecore_util::Entity;
-use crate::battle::Battle;
-use crate::battle::party::BattleMoveStatus;
-use crate::battle::gui::battle_text::BattleText;
-use crate::battle::gui::move_panel::MovePanel;
-
 use firecore_input::{pressed, Control};
 
-use super::move_info::MoveInfoPanel;
+use macroquad::prelude::Vec2;
+
+use crate::battle::{
+    Battle,
+    pokemon::BattleMoveStatus,
+    gui::{
+        text::BattleText,
+        panels::{
+            moves::MovePanel,
+            move_info::MoveInfoPanel,
+        },
+    }
+};
+
 pub struct FightPanel {
 
-    pub move_panel: MovePanel,
+    move_panel: MovePanel,
     move_info: MoveInfoPanel,
 
     pub spawn_battle_panel: bool,
@@ -34,6 +40,11 @@ impl FightPanel {
 
     }
 
+    pub fn update_gui(&mut self, instance: &PokemonInstance) {
+        self.move_panel.update_names(instance);
+        self.update_move(instance);
+    }
+
     pub fn update_move(&mut self, pokemon: &PokemonInstance) {
         if let Some(pmove) = pokemon.moves.get(self.move_panel.cursor) {
             self.move_info.update_with_move(pmove);
@@ -41,7 +52,7 @@ impl FightPanel {
     }
 
     pub fn render(&self) {
-        if self.move_panel.alive {
+        if self.move_panel.is_alive() {
             self.move_panel.render();
             self.move_info.render();
         }        
@@ -99,16 +110,16 @@ impl FightPanel {
 impl Entity for FightPanel {
 
     fn spawn(&mut self) {
-        self.move_panel.alive = true;
+        self.move_panel.spawn();
         self.reset();
     }
 
     fn despawn(&mut self) {
-        self.move_panel.alive = false;
+        self.move_panel.despawn();
     }
 
     fn is_alive(& self) -> bool {
-        self.move_panel.alive
+        self.move_panel.is_alive()
     }
 
 }

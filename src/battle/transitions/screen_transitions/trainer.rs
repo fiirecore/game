@@ -1,14 +1,12 @@
-use macroquad::prelude::DrawTextureParams;
-use macroquad::prelude::draw_texture_ex;
+use firecore_util::{Entity, Reset, Completable};
+use macroquad::prelude::{Texture2D, draw_texture_ex, DrawTextureParams};
 
+use crate::battle::transitions::{BattleTransition, BattleScreenTransition};
 use crate::WIDTH_F32;
-use crate::util::graphics::Texture;
-use crate::battle::transitions::BattleScreenTransition;
-use crate::battle::transitions::BattleTransition;
-use firecore_util::{Reset, Completable};
 
-use firecore_util::Entity;
-use crate::util::graphics::draw_rect;
+use crate::util::graphics::{byte_texture, draw_rect};
+
+const DEF_RECT_WIDTH: f32 = -16.0;
 
 pub struct TrainerBattleScreenTransition {
 
@@ -17,7 +15,7 @@ pub struct TrainerBattleScreenTransition {
 
     rect_width: f32,
 
-    texture: Texture,
+    texture: Texture2D,
 
 }
 
@@ -27,8 +25,8 @@ impl TrainerBattleScreenTransition { // To - do: Two grey flashes before rectang
         Self {
             active: false,
             finished: false,
-            rect_width: -16.0,
-            texture: crate::util::graphics::texture::byte_texture(include_bytes!("../../../../build/assets/battle/trainer_encounter_ball.png")),
+            rect_width: DEF_RECT_WIDTH,
+            texture: byte_texture(include_bytes!("../../../../build/assets/battle/encounter_ball.png")),
         }
     }
 
@@ -90,7 +88,7 @@ impl BattleTransition for TrainerBattleScreenTransition {
 impl Reset for TrainerBattleScreenTransition {
 
     fn reset(&mut self) {
-        self.rect_width = -16.0;
+        self.rect_width = DEF_RECT_WIDTH;
         self.finished = false;
     }
 

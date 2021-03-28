@@ -96,10 +96,15 @@ impl Scene for MainMenuScene {
 		
 	}
 	
-	fn input(&mut self, _delta: f32) {}
+	fn input(&mut self, _delta: f32) {
+		if firecore_input::pressed(firecore_input::Control::B) {
+			self.state = SceneState::Scene(Scenes::TitleScene);
+		}
+	}
 	
 	fn quit(&mut self) {
 		set_camera(Camera2D::from_display_rect(crate::CAMERA_SIZE));
+		self.state = SceneState::Continue;
 	}
 	
 	fn state(&self) -> SceneState {

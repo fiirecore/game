@@ -1,12 +1,5 @@
 /target
 
-/*.lib
-/*.dll
-
 /.vscode
 
-/logs
-/config
-/saves
-
-/Extra Assets and Old Files
+/assets

@@ -25,7 +25,7 @@ impl PlayerBounce {
     }
 
     pub fn reset(&mut self) {
-        self.offset = MAX;
+        self.offset = MIN;
     }
 
     pub fn update(&mut self, delta: f32, player_pokemon_gui: &mut PlayerPokemonGui) {

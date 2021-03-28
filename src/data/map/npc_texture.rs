@@ -2,7 +2,7 @@ use firecore_world::serialized::SerializedNPCType;
 use macroquad::prelude::info;
 
 use crate::battle::manager::BattleManager;
-use crate::util::graphics::texture::byte_texture;
+use crate::util::graphics::byte_texture;
 use crate::world::NPCTypes;
 use crate::world::NpcTextures;
 

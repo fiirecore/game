@@ -26,11 +26,6 @@ pub mod world;
 pub mod battle;
 pub mod gui;
 
-pub mod experimental;
-
-pub mod pokemon;
-pub mod audio;
-
 pub const TITLE: &str = "Pokemon FireRed";
 pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
@@ -98,7 +93,7 @@ pub async fn start() {
 
     // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
 
-    let texture = crate::util::graphics::texture::byte_texture(include_bytes!("../build/assets/loading.png"));
+    let texture = crate::util::graphics::byte_texture(include_bytes!("../build/assets/loading.png"));
     
     loading_screen(texture);
 
@@ -163,7 +158,7 @@ pub async fn start() {
     
     // Load the pokedex, pokemon textures and moves
 
-    pokemon::load(&mut scene_manager.game_scene.pokemon_textures).await;
+    util::pokemon::load(&mut scene_manager.game_scene.pokemon_textures).await;
 
     scene_manager.load_all().await;
 
@@ -204,14 +199,14 @@ pub async fn start() {
         // io::input::touchscreen::TOUCH_CONTROLS.render();
 
 
-        // if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
-        //     if let Some(mut config) = storage::get_mut::<Configuration>() {
-        //         firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
-        //     }
-        //     if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
-        //         firecore_data::data::PersistantData::reload(player_data).await;
-        //     }
-        // }
+        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
+            if let Some(mut config) = firecore_data::get_mut::<Configuration>() {
+                firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
+            }
+            // if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
+            //     firecore_data::data::PersistantData::reload(player_data).await;
+            // }
+        }
 
         if unsafe{QUIT} {
             break;
@@ -276,7 +271,7 @@ fn getopts() -> Vec<Args> {
     }
 }
 
-fn loading_screen(texture: crate::util::graphics::Texture) {
+fn loading_screen(texture: macroquad::prelude::Texture2D) {
     clear_background(macroquad::prelude::BLUE);
     macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
     draw_text_left(0, VERSION, TextColor::White, 1.0, 1.0);

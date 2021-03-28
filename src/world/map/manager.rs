@@ -13,7 +13,8 @@ use firecore_world::character::Character;
 use crate::battle::manager::BattleManager;
 use crate::data::player::list::PlayerSaves;
 use crate::data::player::save::PlayerSave;
-use crate::util::graphics::texture::byte_texture;
+use crate::scene::scenes::SceneState;
+use crate::util::graphics::byte_texture;
 use crate::world::NPCTypes;
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
@@ -190,7 +191,7 @@ impl WorldManager {
 		player_data.location.position = self.map_manager.player.position;
     }
 
-    pub fn input(&mut self, delta: f32) {
+    pub fn input(&mut self, delta: f32, scene_state: &mut SceneState) {
 
         if crate::debug() {
             self.debug_input()
@@ -203,7 +204,7 @@ impl WorldManager {
         if self.text_window.is_alive() {
             self.text_window.input();
         } else if self.start_menu.is_alive() {
-            self.start_menu.input();
+            self.start_menu.input(scene_state);
         } else {
 
             if self.map_manager.chunk_active {
@@ -284,8 +285,8 @@ impl WorldManager {
             let data = player_saves.get();
             let location = &data.location;
             self.map_manager.player.position = location.position;
-            self.player_texture.walking_texture = Some(byte_texture(include_bytes!("../../../build/assets/player.png")));
-            self.player_texture.running_texture = Some(byte_texture(include_bytes!("../../../build/assets/player_running.png")));
+            self.player_texture.walking_texture = Some(byte_texture(include_bytes!("../../../build/assets/player/walking.png")));
+            self.player_texture.running_texture = Some(byte_texture(include_bytes!("../../../build/assets/player/running.png")));
 
             if location.map_id.as_str().eq("world") {
                 self.map_manager.chunk_active = true;

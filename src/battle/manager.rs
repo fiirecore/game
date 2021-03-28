@@ -10,7 +10,7 @@ use crate::util::pokemon::PokemonTextures;
 use super::{
 	Battle,
 	data::BattleData,
-	party::BattleParty,
+	pokemon::BattleParty,
 	gui::BattleGui,
 	transitions::{
 		BattleTransition,
@@ -30,9 +30,9 @@ pub struct BattleManager {
 	
 	battle: Option<Battle>,
 	
-	screen_transition_manager: BattleScreenTransitionManager,
-	opener_manager: BattleOpenerManager,
-	closer_manager: BattleCloserManager,
+	screen_transition: BattleScreenTransitionManager,
+	opener: BattleOpenerManager,
+	closer: BattleCloserManager,
 
 	gui: BattleGui,
 
@@ -50,9 +50,9 @@ impl BattleManager {
 
 			battle: None,
 
-			screen_transition_manager: BattleScreenTransitionManager::new(),
-			opener_manager: BattleOpenerManager::new(),
-			closer_manager: BattleCloserManager::default(),
+			screen_transition: BattleScreenTransitionManager::new(),
+			opener: BattleOpenerManager::new(),
+			closer: BattleCloserManager::default(),
 
 			gui: BattleGui::new(),
 
@@ -79,7 +79,7 @@ impl BattleManager {
 		// Setup transition and GUI
 
 		if let Some(battle) = self.battle.as_ref() {
-			self.screen_transition_manager.spawn_with_type(battle.battle_type);
+			self.screen_transition.spawn_with_type(battle.battle_type);
 			self.gui.on_battle_start(battle);
 		}
 
@@ -90,11 +90,11 @@ impl BattleManager {
 	pub fn input(&mut self, delta: f32) {
 
 		if let Some(battle) = self.battle.as_mut() {
-			if !self.screen_transition_manager.is_alive() {	
-				if self.opener_manager.is_alive() {
-					self.opener_manager.battle_introduction_manager.input();
-				} else if self.closer_manager.is_alive() {
-					//self.closer_manager.input(context);
+			if !self.screen_transition.is_alive() {	
+				if self.opener.is_alive() {
+					self.opener.introduction.input();
+				} else if self.closer.is_alive() {
+					//self.closer.input(context);
 				} else {
 					self.gui.input(delta, battle);
 				}
@@ -119,34 +119,34 @@ impl BattleManager {
 		
 		if let Some(battle) = self.battle.as_mut() {
 
-			if self.screen_transition_manager.is_alive() {
-				if self.screen_transition_manager.is_finished() {
-					self.screen_transition_manager.despawn();
-					self.opener_manager.spawn_type(battle.battle_type);
-					self.opener_manager.on_start();
-					self.opener_manager.battle_introduction_manager.setup_text(battle, &self.trainer_sprites);
+			if self.screen_transition.is_alive() {
+				if self.screen_transition.is_finished() {
+					self.screen_transition.despawn();
+					self.opener.spawn_type(battle.battle_type);
+					self.opener.on_start();
+					self.opener.introduction.setup_text(battle, &self.trainer_sprites);
 				} else {
-					self.screen_transition_manager.update(delta);
+					self.screen_transition.update(delta);
 				}
-			} else if self.opener_manager.is_alive() {
-				if self.opener_manager.is_finished() {
-					self.opener_manager.despawn();
-					self.gui.player_panel.start();
+			} else if self.opener.is_alive() {
+				if self.opener.is_finished() {
+					self.opener.despawn();
+					self.gui.panel.start();
 				} else {
-					self.opener_manager.update(delta);
-					self.opener_manager.battle_introduction_manager.update_gui(battle, &mut self.gui, delta);
+					self.opener.update(delta);
+					self.opener.introduction.update_gui(battle, &mut self.gui, delta);
 					//self.gui.opener_update(context);
 				}
-			} else if self.closer_manager.is_alive() {
-				if self.closer_manager.is_finished() {
-					// self.closer_manager.update_player(player_data);
-					self.closer_manager.despawn();
+			} else if self.closer.is_alive() {
+				if self.closer.is_finished() {
+					// self.closer.update_player(player_data);
+					self.closer.despawn();
 					self.finished = true;
 				} else {
-					self.closer_manager.update(delta);
+					self.closer.update(delta);
 				}
 			} else /*if !self.current_battle.is_finished()*/ {
-				battle.update(delta, &mut self.gui, &mut self.closer_manager, party_gui, pokemon_textures);
+				battle.update(delta, &mut self.gui, &mut self.closer, party_gui, pokemon_textures);
 				self.gui.update(delta);
 			}
 
@@ -158,25 +158,25 @@ impl BattleManager {
 
 		if let Some(battle) = self.battle.as_ref() {
 
-			if self.screen_transition_manager.is_alive() {
-				self.screen_transition_manager.render();
-			} else if self.opener_manager.is_alive() {
-				self.gui.render_background(self.opener_manager.offset());
-				self.opener_manager.render_below_panel(battle);
+			if self.screen_transition.is_alive() {
+				self.screen_transition.render();
+			} else if self.opener.is_alive() {
+				self.gui.render_background(self.opener.offset());
+				self.opener.render_below_panel(battle);
 				self.gui.render();
 				self.gui.render_panel();
-				self.opener_manager.render();
-			} else if self.closer_manager.is_alive() {
+				self.opener.render();
+			} else if self.closer.is_alive() {
 				if !self.world_active() {
 					self.gui.render_background(0.0);
-					battle.render_pokemon(self.gui.player_bounce.offset);
+					battle.render_pokemon(self.gui.bounce.offset);
 					self.gui.render();
 					self.gui.render_panel();
 				}
-				self.closer_manager.render();
+				self.closer.render();
 			} else {
 				self.gui.render_background(0.0);
-				battle.render_pokemon(self.gui.player_bounce.offset);
+				battle.render_pokemon(self.gui.bounce.offset);
 				self.gui.render();
 				self.gui.render_panel();
 			}
@@ -198,7 +198,7 @@ impl BattleManager {
 	}
 
 	pub fn world_active(&self) -> bool {
-		return self.screen_transition_manager.is_alive() || self.closer_manager.world_active();
+		return self.screen_transition.is_alive() || self.closer.world_active();
 	}
 
 	pub fn is_finished(&self) -> bool {

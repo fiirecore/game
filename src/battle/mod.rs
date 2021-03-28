@@ -17,17 +17,16 @@ use self::gui::BattleGui;
 use self::gui::pokemon::PokemonGui;
 use firecore_util::battle::BattleType;
 use firecore_pokedex::pokemon::instance::PokemonInstance;
-use self::party::BattleParty;
+use self::pokemon::BattleParty;
 use self::transitions::managers::closer::BattleCloserManager;
 
 pub mod data;
 
 pub mod manager;
 
+pub mod pokemon;
 pub mod gui;
 pub mod transitions;
-
-pub mod party;
 
 // #[deprecated(since = "0.4.0", note = "Move to seperate crate")]
 pub struct Battle {
@@ -85,7 +84,7 @@ impl Battle {
 				// battle_gui.player_pokemon_gui.exp_bar.update_exp(self.player.active(), true); // level up is true to reset the xp display width
 				battle_gui.update_gui(&self, true, false);
 
-				battle_gui.player_panel.start();
+				battle_gui.panel.start();
 				
 			}
 		}
@@ -105,8 +104,8 @@ impl Battle {
 
 				// Despawn the player button panel
 
-				if battle_gui.player_panel.is_alive() {
-					battle_gui.player_panel.despawn();
+				if battle_gui.panel.is_alive() {
+					battle_gui.panel.despawn();
 				}
 
 				// Perform the player's move
@@ -115,7 +114,7 @@ impl Battle {
 
 					self.player_move();
 
-					battle_gui.battle_text.on_move(self.opponent.active(), &mut battle_gui.opponent_pokemon_gui);
+					battle_gui.battle_text.on_move(self.opponent.active(), &mut battle_gui.opponent);
 
 					// Handle opponent fainting to player's move
 
@@ -165,7 +164,7 @@ impl Battle {
 						// add the exp gain and level up text to the battle text
 
 						let player = self.player.active();
-						battle_gui.player_pokemon_gui.update_gui(player, false);
+						battle_gui.player.update_gui(player, false);
 						battle_gui.battle_text.player_level_up(player.name(), player.data.experience, level);
 
 					}
@@ -184,7 +183,7 @@ impl Battle {
 
 					// Update the player's health bar and add faint text if the player has fainted
 
-					battle_gui.battle_text.on_move(self.player.active(), &mut battle_gui.player_pokemon_gui);
+					battle_gui.battle_text.on_move(self.player.active(), &mut battle_gui.player);
 
 					// make sure the actions do not repeat
 
@@ -273,7 +272,7 @@ impl Battle {
 					// Once the text is finished, despawn it
 
 					battle_gui.battle_text.text.despawn(); 
-					battle_gui.player_panel.start();
+					battle_gui.panel.start();
 
 				}
 				
@@ -283,7 +282,7 @@ impl Battle {
 					// Once the text is finished, despawn it
 					battle_gui.battle_text.text.despawn();
 					// Spawn the player panel
-					battle_gui.player_panel.start();
+					battle_gui.panel.start();
 				}				
 			}
 		}

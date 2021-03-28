@@ -1,8 +1,8 @@
-use macroquad::prelude::Color;
+use macroquad::prelude::{Color, Texture2D, draw_texture_ex, WHITE, DrawTextureParams};
 use firecore_util::text::TextColor;
 use firecore_input as input;
 
-use crate::util::graphics::{Texture, texture::byte_texture, draw_text_left, draw_rect, fade_in};
+use crate::util::graphics::{byte_texture, draw_text_left, draw_rect, fade_in};
 
 use super::LoadingState;
 
@@ -13,8 +13,9 @@ pub struct GamefreakLoadingScene {
     state: LoadingState,
 	accumulator: f32,
 	rect_size: f32,
-	logo_texture: Texture,
-	text_texture: Texture,
+	star: Texture2D,
+	logo: Texture2D,
+	text: Texture2D,
 
 }
 
@@ -24,8 +25,9 @@ impl GamefreakLoadingScene {
 			state: LoadingState::Continue,
 			rect_size: 0.0,
 			accumulator: 0.0,
-			logo_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/logo.png")),
-			text_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/text.png")),
+			star: byte_texture(include_bytes!("../../../build/assets/scenes/loading/star.png")),
+			logo: byte_texture(include_bytes!("../../../build/assets/scenes/loading/logo.png")),
+			text: byte_texture(include_bytes!("../../../build/assets/scenes/loading/text.png")),
 		}
 	}
 }
@@ -36,13 +38,13 @@ impl super::LoadingScene for GamefreakLoadingScene {
 		self.state = LoadingState::Continue;
 		self.accumulator = 0.0;
 		self.rect_size = 0.0;
-		crate::audio::play_music_named("IntroGamefreak");
+		crate::util::play_music_named("IntroGamefreak");
 	}
 	
 	fn update(&mut self, delta: f32) {
 		self.accumulator += delta;
 		if self.rect_size < 96.0 {
-			self.rect_size += delta * 120.0;
+			self.rect_size += delta * 480.0;
 			if self.rect_size > 96.0 {
 				self.rect_size = 96.0;
 			}
@@ -54,11 +56,22 @@ impl super::LoadingScene for GamefreakLoadingScene {
 	
 	fn render(&self) {
 		draw_rect(BACKGROUND_COLOR, 0.0, (crate::HEIGHT_F32 - self.rect_size) / 2.0, 240.0, self.rect_size);
-		fade_in(self.logo_texture, 108.0, 45.0, self.accumulator - 6.0, 1.0); //108x, 12y
-		fade_in(self.text_texture, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
+
+		if self.accumulator < 2.0 {
+			draw_texture_ex(self.star, crate::WIDTH_F32 - self.accumulator * 240.0, 64.0 + self.accumulator * 5.0, WHITE, DrawTextureParams {
+			    rotation: self.accumulator * 2.0,
+				..Default::default()
+			})
+		}
+
+		fade_in(self.logo, 108.0, 45.0, self.accumulator - 6.0, 1.0); //108x, 12y
+		fade_in(self.text, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
+
+
 		draw_text_left(1, &format!("A Button is{:?}Key", unsafe{input::keyboard::KEY_CONTROLS.as_ref().unwrap().get(&input::Control::A).unwrap()}), TextColor::White, 5.0, 5.0);
 		draw_text_left(1, &format!("B Button is{:?}Key", unsafe{input::keyboard::KEY_CONTROLS.as_ref().unwrap().get(&input::Control::B).unwrap()}), TextColor::White, 125.0, 5.0);
 		draw_text_left(1, "D-Pad is Arrow Keys", TextColor::White, 5.0, 15.0);
+
 	}
 
     fn state(&self) -> &LoadingState {

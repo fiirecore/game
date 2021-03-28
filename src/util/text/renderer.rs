@@ -1,19 +1,17 @@
 use macroquad::prelude::Color;
 use ahash::AHashMap as HashMap;
-
-use crate::util::graphics::Texture;
-use crate::util::graphics::draw;
+use macroquad::prelude::Texture2D;
 
 use super::font::Font;
 
-use crate::util::graphics::texture::byte_texture;
+use crate::util::graphics::{byte_texture, draw};
 
-#[deprecated(note = "move to own crate")]
+// #[deprecated(note = "move to own crate")]
 pub struct TextRenderer {
 
     pub fonts: HashMap<u8, Font>,
-    pub button: Texture,
-    pub cursor: Texture,
+    pub button: Texture2D,
+    pub cursor: Texture2D,
 
 }
 

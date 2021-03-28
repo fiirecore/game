@@ -153,7 +153,7 @@ impl Scene for GameScene {
 				}
 			}
 		} else if !self.battling {
-			self.world_manager.input(delta);
+			self.world_manager.input(delta, &mut self.state);
 		} else {
 			self.battle_manager.input(delta);
 		}
@@ -163,6 +163,7 @@ impl Scene for GameScene {
 		if let Some(mut player_data) = get_mut::<PlayerSaves>() {
 			self.save_data(&mut player_data);
 		}
+		self.state = SceneState::Continue;
 	}
 	
 	fn state(&self) -> SceneState {

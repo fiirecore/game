@@ -1,19 +1,16 @@
-use firecore_world::character::player::PlayerCharacter;
-use macroquad::prelude::DrawTextureParams;
-
 use firecore_util::Direction;
-use crate::util::graphics::Texture;
-use crate::util::TILE_SIZE;
+use firecore_world::character::player::PlayerCharacter;
+use macroquad::prelude::{Texture2D, draw_texture_ex, WHITE, DrawTextureParams, Rect};
 
-const SCREEN_X: f32 = ((crate::BASE_WIDTH as isize - TILE_SIZE as isize) >> 1) as f32 + 0.0;
-const SCREEN_Y: f32 = ((crate::BASE_HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - 16.0;
+const SCREEN_X: f32 = ((crate::BASE_WIDTH as isize - crate::util::TILE_SIZE as isize) >> 1) as f32;
+const SCREEN_Y: f32 = ((crate::BASE_HEIGHT as isize - crate::util::TILE_SIZE as isize) >> 1) as f32 - crate::util::TILE_SIZE as f32;
 
 pub struct PlayerTexture {
 
 	pub draw: bool,
 
-	pub walking_texture: Option<Texture>,
-	pub running_texture: Option<Texture>,
+	pub walking_texture: Option<Texture2D>,
+	pub running_texture: Option<Texture2D>,
 	
 }
 
@@ -22,9 +19,9 @@ impl PlayerTexture {
 	pub fn render(&self, character: &PlayerCharacter) {
 		if self.draw {
 			if let Some(texture) = if character.properties.running {self.running_texture} else {self.walking_texture} {
-				macroquad::prelude::draw_texture_ex(
-					texture, SCREEN_X, SCREEN_Y, macroquad::prelude::WHITE, DrawTextureParams {
-						source: Some(macroquad::prelude::Rect::new(
+				draw_texture_ex(
+					texture, SCREEN_X, SCREEN_Y, WHITE, DrawTextureParams {
+						source: Some(Rect::new(
 							self.current_texture_pos(character),
 							0.0,
 							16.0,

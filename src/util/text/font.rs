@@ -1,14 +1,12 @@
 pub use ahash::AHashMap as HashMap;
-use macroquad::prelude::Color;
-use macroquad::prelude::draw_texture;
-pub use crate::util::graphics::Texture;
+use macroquad::prelude::{Color, Texture2D, draw_texture};
 
 pub struct Font {
 
     pub font_width: u8,
     pub font_height: u8,
 
-    pub chars: HashMap<char, Texture>,
+    pub chars: HashMap<char, Texture2D>,
     //custom_chars: HashMap<char, CustomChar>,
 
 }

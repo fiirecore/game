@@ -1,20 +1,21 @@
-use firecore_pokedex::{
-    pokemon::{
-        instance::PokemonInstance,
-        party::PokemonParty,
-        texture::PokemonTexture,
-    },
-    moves::PokemonMove,
+use firecore_pokedex::pokemon::{
+    instance::PokemonInstance,
+    party::PokemonParty,
+    texture::PokemonTexture,
 };
 
-use macroquad::prelude::{Vec2, warn};
+use macroquad::prelude::{Vec2, Texture2D, warn};
 use smallvec::SmallVec;
 
-use crate::battle::data::BattlePokemonParty;
-use crate::util::graphics::Texture;
 use crate::util::pokemon::PokemonTextures;
-
-use super::gui::pokemon_texture::ActivePokemonRenderer;
+use crate::battle::{
+    pokemon::{
+        BattlePokemon,
+        ActivePokemonRenderer,
+        BattleMoveStatus,
+    },
+    data::BattlePokemonParty,
+};
 
 pub struct BattleParty {
 
@@ -100,36 +101,8 @@ impl BattleParty {
         &mut self.pokemon.get_mut(self.active).expect("Could not get pokemon from battle party!").pokemon
     }
 
-    pub fn active_texture(&self) -> Texture {
+    pub fn active_texture(&self) -> Texture2D {
         self.pokemon[self.active].texture
-    }
-
-}
-
-
-pub struct BattlePokemon {
-
-    pub pokemon: PokemonInstance,
-    pub texture: Texture,
-
-}
-
-pub struct BattleMoveStatus {
-
-    pub pokemon_move: PokemonMove,
-    pub queued: bool,
-
-}
-
-impl BattleMoveStatus {
-
-    pub fn new(pokemon_move: Option<&PokemonMove>) -> Option<Self> {
-        pokemon_move.map(|pokemon_move| {
-            Self {
-                pokemon_move: pokemon_move.clone(),
-                queued: true,
-            }
-        })        
     }
 
 }

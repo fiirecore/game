@@ -1,16 +1,15 @@
 
 use firecore_util::text::TextColor;
+use macroquad::prelude::Texture2D;
 
-use crate::util::graphics::Texture;
-use crate::util::graphics::fade_in_out;
-use crate::util::graphics::texture::byte_texture;
+use crate::util::graphics::{byte_texture, fade_in_out};
 
 use super::LoadingState;
 
 pub struct CopyrightLoadingScene {
 	state: LoadingState,
 	accumulator: f32,
-	scene_texture: Texture,
+	scene_texture: Texture2D,
 }
 
 impl CopyrightLoadingScene {

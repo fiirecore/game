@@ -8,7 +8,7 @@ use firecore_input::{pressed, Control};
 
 use crate::gui::dynamic_text::DynamicText;
 
-use super::move_panel::MovePanel;
+use super::moves::MovePanel;
 
 pub struct LevelUpMovePanel {
  

@@ -1,17 +1,16 @@
-use firecore_data::player::save::PlayerSave;
 use firecore_util::{Entity, Reset, Completable, text::Message};
-use macroquad::prelude::Vec2;
+use macroquad::prelude::{Vec2, Texture2D};
+use firecore_data::player::save::PlayerSave;
 
 use crate::gui::dynamic_text::DynamicText;
 use crate::util::text::process_messages;
-
-use crate::util::graphics::{Texture, draw};
+use crate::util::graphics::{byte_texture, draw};
 
 pub struct TextWindow {
 
     alive: bool,
     pos: Vec2,
-    background: Texture,
+    background: Texture2D,
     text: DynamicText,
 
 }
@@ -57,7 +56,7 @@ impl Default for TextWindow {
         Self {
             alive: false,
             pos,
-            background: crate::util::graphics::texture::byte_texture(include_bytes!("../../../build/assets/gui/message.png")),
+            background: byte_texture(include_bytes!("../../../build/assets/gui/message.png")),
             text: DynamicText::new(Vec2::new(11.0, 5.0), pos),
         }
     }

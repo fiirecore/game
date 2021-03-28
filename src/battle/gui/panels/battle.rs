@@ -5,10 +5,9 @@ use firecore_input::{self as input, Control};
 use macroquad::prelude::Texture2D;
 use macroquad::prelude::warn;
 use crate::battle::Battle;
-use crate::util::graphics::{draw, draw_text_left, draw_cursor};
-use crate::util::graphics::texture::byte_texture;
+use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_cursor};
 
-pub struct BattlePanel {
+pub struct BattleOptions {
 
     active: bool,
     
@@ -24,7 +23,7 @@ pub struct BattlePanel {
 
 }
 
-impl BattlePanel {
+impl BattleOptions {
 
 	pub fn new() -> Self {
 
@@ -126,7 +125,7 @@ impl BattlePanel {
 
 }
 
-impl Entity for BattlePanel {
+impl Entity for BattleOptions {
 
 	fn spawn(&mut self) {
         self.active = true;

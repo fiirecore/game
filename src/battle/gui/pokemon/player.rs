@@ -1,11 +1,12 @@
 use firecore_util::{Entity, text::TextColor};
 use firecore_pokedex::pokemon::instance::PokemonInstance;
 
+use macroquad::prelude::Texture2D;
 use macroquad::prelude::Vec2;
 
 use crate::battle::gui::exp_bar::ExperienceBar;
 use crate::gui::game::health_bar::HealthBar;
-use crate::util::graphics::{Texture, draw, draw_text_left, draw_text_right, texture::byte_texture};
+use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_text_right};
 
 use super::PokemonGui;
 
@@ -18,12 +19,12 @@ pub struct PlayerPokemonGui {
 	pub orig_x: f32,
 	y_offset: f32,
 
-	panel: Texture,
+	panel: Texture2D,
 	name: String,
 	level: String,
 	health_text: String,
 	health_bar: HealthBar,
-	pub exp_bar: ExperienceBar,
+	exp_bar: ExperienceBar,
 
 }
 

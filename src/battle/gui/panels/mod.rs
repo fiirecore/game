@@ -1,29 +1,41 @@
-use firecore_pokedex::pokemon::instance::PokemonInstance;
 use firecore_util::Entity;
-use macroquad::prelude::Vec2;
+use firecore_pokedex::pokemon::instance::PokemonInstance;
 
-use crate::battle::gui::battle_text::BattleText;
-use crate::battle::Battle;
+use macroquad::prelude::{Vec2, Texture2D};
 
-use self::battle::BattlePanel;
-use self::fight::FightPanel;
+use crate::battle::{
+    Battle,
+    gui::{
+        text::BattleText,
+        panels::{
+            battle::BattleOptions,
+            fight::FightPanel,
+        }
+    }
+};
 
+use crate::util::graphics::{byte_texture, draw};
+
+pub mod moves;
 pub mod battle;
 pub mod fight;
+pub mod level_up;
 pub mod move_info;
 
-pub struct PlayerPanel {
+pub struct BattlePanel {
 
     alive: bool,
     
-	pub pos: Vec2,
+	pos: Vec2,
 
-    pub battle_panel: BattlePanel,
-    pub fight_panel: FightPanel,
+    background: Texture2D,
+
+    battle: BattleOptions,
+    fight: FightPanel,
 
 }
 
-impl PlayerPanel {
+impl BattlePanel {
 
 	pub fn new(pos: Vec2) -> Self {
 		Self {
@@ -32,65 +44,67 @@ impl PlayerPanel {
 
             pos,
 
-            battle_panel: BattlePanel::new(),
-            fight_panel: FightPanel::new(pos),
+            background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/panel.png")),
+
+            battle: BattleOptions::new(),
+            fight: FightPanel::new(pos),
             
         }
 	}
 
     pub fn start(&mut self) {
         self.spawn();
-        self.battle_panel.spawn();
+        self.battle.spawn();
     }
 
     pub fn update_text(&mut self, instance: &PokemonInstance) {
-        self.battle_panel.update_text(instance);
-        self.fight_panel.move_panel.update_names(instance);
-        self.fight_panel.update_move(instance);
+        self.battle.update_text(instance);
+        self.fight.update_gui(instance);
     }
     
     pub fn input(&mut self, delta: f32, battle: &mut Battle, text: &mut BattleText) {
-        if self.battle_panel.is_alive() {
-            self.battle_panel.input(delta, battle);
-        } else if self.fight_panel.is_alive() {
-            self.fight_panel.input(battle, text);
+        if self.battle.is_alive() {
+            self.battle.input(delta, battle);
+        } else if self.fight.is_alive() {
+            self.fight.input(battle, text);
         }
     }
 
     pub fn update(&mut self) {
         if self.alive {
-            if self.battle_panel.is_alive() && self.battle_panel.spawn_fight_panel {
-                self.battle_panel.spawn_fight_panel = false;
-                self.battle_panel.despawn();
-                self.fight_panel.spawn();
-            } else if self.fight_panel.is_alive() && self.fight_panel.spawn_battle_panel {
-                self.fight_panel.spawn_battle_panel = false;
-                self.fight_panel.despawn();
-                self.battle_panel.spawn();
+            if self.battle.is_alive() && self.battle.spawn_fight_panel {
+                self.battle.spawn_fight_panel = false;
+                self.battle.despawn();
+                self.fight.spawn();
+            } else if self.fight.is_alive() && self.fight.spawn_battle_panel {
+                self.fight.spawn_battle_panel = false;
+                self.fight.despawn();
+                self.battle.spawn();
             }
         }              
 	}
 
 	pub fn render(&self) {
+        draw(self.background, self.pos.x, self.pos.y);
 		if self.alive {
-            self.battle_panel.render();
-            self.fight_panel.render();
+            self.battle.render();
+            self.fight.render();
 		}
 	}
 
 }
 
-impl Entity for PlayerPanel {
+impl Entity for BattlePanel {
 
 	fn spawn(&mut self) {
         self.alive = true;
-        self.battle_panel.spawn();
+        self.battle.spawn();
 	}
 
 	fn despawn(&mut self) {
 		self.alive = false;
-        self.battle_panel.despawn();
-        self.fight_panel.despawn();
+        self.battle.despawn();
+        self.fight.despawn();
 	}
 
 	fn is_alive(& self) -> bool {

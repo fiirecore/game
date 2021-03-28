@@ -1,11 +1,10 @@
 use ahash::AHashMap as HashMap;
 use firecore_world::map::manager::WorldMapManager;
 use firecore_world::serialized::SerializedWorld;
-use macroquad::prelude::Image;
-use macroquad::prelude::info;
+use macroquad::prelude::{Image, Texture2D, info};
 
 use crate::battle::manager::BattleManager;
-use crate::util::{TILE_SIZE, graphics::Texture};
+use crate::util::TILE_SIZE;
 use crate::world::NPCTypes;
 use crate::world::NpcTextures;
 use crate::world::TileTextures;
@@ -58,7 +57,7 @@ pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut T
 
 }
 
-pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>, tile_id: u16) -> Texture {
+pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>, tile_id: u16) -> Texture2D {
 	
 	let mut count: u16 = *palette_sizes.get(&0).unwrap();
 	let mut index: u8 = 0;
@@ -75,7 +74,7 @@ pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>
 	match sheets.get(&index) {
 		Some(sheet) => {
 			let id = (tile_id - (count - *palette_sizes.get(&index).unwrap())) as usize;
-			crate::util::graphics::texture::image_texture(
+			crate::util::graphics::image_texture(
 				&sheet.sub_image(
 					macroquad::prelude::Rect::new(
 						((id % (sheet.width() / TILE_SIZE as usize)) * TILE_SIZE as usize) as f32, 
@@ -88,7 +87,7 @@ pub fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>
 		}
 		None => {
 			macroquad::prelude::debug!("Could not get texture for tile ID {}", &tile_id);
-			crate::util::graphics::texture::debug_texture()
+			crate::util::graphics::debug_texture()
 		}
 	}
     

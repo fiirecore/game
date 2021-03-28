@@ -1,16 +1,16 @@
 use firecore_util::{Entity, Reset, text::TextColor};
 use firecore_pokedex::pokemon::instance::PokemonInstance;
 use firecore_input::{pressed, Control};
-use macroquad::prelude::Vec2;
+use macroquad::prelude::{Vec2, Texture2D};
 use smallvec::SmallVec;
 
-use crate::util::graphics::{Texture, draw, draw_text_left, draw_cursor, texture::byte_texture};
+use crate::util::graphics::{byte_texture,draw, draw_text_left, draw_cursor};
 
 pub struct MovePanel {
 
-    pub alive: bool,
+    alive: bool,
     panel: Vec2,
-    background: Texture,
+    background: Texture2D,
     pub cursor: usize,
     pub move_names: SmallVec<[String; 4]>,
 
@@ -22,7 +22,7 @@ impl MovePanel {
         Self {
             alive: false,
             panel,
-            background: byte_texture(include_bytes!("../../../build/assets/gui/battle/move_panel.png")),
+            background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/move_panel.png")),
             cursor: 0,
             move_names: SmallVec::new(),
         }

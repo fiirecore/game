@@ -1,7 +1,7 @@
 use ahash::AHashMap as HashMap;
 use firecore_world::TileId;
 use firecore_world::character::npc::npc_type::NPCType;
-use crate::util::graphics::Texture;
+use macroquad::prelude::Texture2D;
 use self::gui::text_window::TextWindow;
 use firecore_world::character::player::PlayerCharacter;
 use self::tile::TileTextureManager;
@@ -20,8 +20,8 @@ pub use render_coords::RenderCoords;
 
 pub type NPCTypes = HashMap<String, NPCType>;
 pub type TileTextures = TileTextureManager;
-pub type NpcTextures = HashMap<String, Texture>;
-pub type GuiTextures = HashMap<u8, Texture>;
+pub type NpcTextures = HashMap<String, Texture2D>;
+pub type GuiTextures = HashMap<u8, Texture2D>;
 
 pub trait GameWorld {
 

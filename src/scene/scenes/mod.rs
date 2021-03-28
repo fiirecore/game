@@ -1,5 +1,5 @@
 pub mod first_scene;
-pub mod title_scene;
+pub mod title;
 pub mod game;
 pub mod main_menu;
 

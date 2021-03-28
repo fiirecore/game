@@ -1,9 +1,9 @@
 use firecore_util::{Entity, text::TextColor};
 use firecore_pokedex::pokemon::instance::PokemonInstance;
 
-use macroquad::prelude::Vec2;
+use macroquad::prelude::{Vec2, Texture2D};
 
-use crate::util::graphics::{Texture, draw, draw_text_left, draw_text_right, texture::byte_texture};
+use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_text_right};
 use crate::gui::game::health_bar::HealthBar;
 
 use super::PokemonGui;
@@ -16,7 +16,7 @@ pub struct OpponentPokemonGui {
 
 	pub orig_x: f32,
 
-	panel: Texture,
+	panel: Texture2D,
 	name: String,
 	level: String,
 	health_bar: HealthBar,
