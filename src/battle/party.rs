@@ -10,8 +10,9 @@ use firecore_pokedex::{
 use macroquad::prelude::{Vec2, warn};
 use smallvec::SmallVec;
 
-use crate::util::battle_data::BattlePokemonParty;
+use crate::battle::data::BattlePokemonParty;
 use crate::util::graphics::Texture;
+use crate::util::pokemon::PokemonTextures;
 
 use super::gui::pokemon_texture::ActivePokemonRenderer;
 
@@ -28,7 +29,7 @@ pub struct BattleParty {
 
 impl BattleParty {
 
-    pub fn from_saved(party: &PokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn from_saved(textures: &PokemonTextures, party: &PokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
 
         let mut battle_party = BattlePokemonParty::new();
 
@@ -41,6 +42,7 @@ impl BattleParty {
 		}
 
         Self::new(
+            textures,
             battle_party,
             side, 
             active_pos,
@@ -48,7 +50,7 @@ impl BattleParty {
 
     }
 
-    pub fn new(party: BattlePokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn new(textures: &PokemonTextures, party: BattlePokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
 
         let mut active = 0;
 
@@ -62,7 +64,7 @@ impl BattleParty {
         Self {
             pokemon: party.into_iter().map(|pokemon| 
                 BattlePokemon {
-                    texture: crate::pokemon::pokemon_texture(&pokemon.pokemon.data.id, side),
+                    texture: textures.pokemon_texture(&pokemon.pokemon.data.id, side),
                     pokemon: pokemon,
                 }
             ).collect(),

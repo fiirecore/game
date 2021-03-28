@@ -10,6 +10,7 @@ use firecore_util::{
 
 use macroquad::prelude::Vec2;
 
+use crate::battle::manager::TrainerTextures;
 use crate::battle::{
     Battle,
     gui::BattleGui,
@@ -66,13 +67,13 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         self.introduction.input();
     }
 
-    fn setup(&mut self, battle: &Battle) {
+    fn setup(&mut self, battle: &Battle, trainer_sprites: &TrainerTextures) {
 
         if let Some(trainer_data) = battle.trainer.as_ref() {
 
-            self.trainer_texture = Some(crate::data::map::npc_texture::battle_sprite(trainer_data.npc.key()));
+            self.trainer_texture = trainer_sprites.get(&trainer_data.npc_type_id).map(|texture| *texture);
 
-            let name = trainer_data.npc.identifier.clone() + " " + trainer_data.name.as_str();
+            let name = trainer_data.npc_type.identifier.clone() + " " + trainer_data.name.as_str();
 
             self.introduction.text.messages = Some(vec![
                 Message::new(

@@ -1,7 +1,8 @@
 use crate::data::player::save::PlayerSave;
 use crate::gui::game::party::PokemonPartyGui;
-use crate::util::battle_data::BattleData;
-use crate::util::battle_data::TrainerData;
+use crate::util::pokemon::PokemonTextures;
+use data::BattleData;
+use data::TrainerData;
 use firecore_pokedex::moves::MoveCategory;
 use firecore_pokedex::moves::PokemonMove;
 use firecore_pokedex::moves::instance::MoveInstance;
@@ -16,16 +17,17 @@ use self::gui::BattleGui;
 use self::gui::pokemon::PokemonGui;
 use firecore_util::battle::BattleType;
 use firecore_pokedex::pokemon::instance::PokemonInstance;
-use self::battle_party::BattleParty;
+use self::party::BattleParty;
 use self::transitions::managers::closer::BattleCloserManager;
+
+pub mod data;
 
 pub mod manager;
 
-pub mod battle_party;
-
 pub mod gui;
-
 pub mod transitions;
+
+pub mod party;
 
 // #[deprecated(since = "0.4.0", note = "Move to seperate crate")]
 pub struct Battle {
@@ -42,7 +44,7 @@ pub struct Battle {
 
 impl Battle {
 	
-	pub fn new(player: &PokemonParty, data: BattleData) -> Option<Self> {		
+	pub fn new(textures: &PokemonTextures, player: &PokemonParty, data: BattleData) -> Option<Self> {		
 		if !(
 			player.is_empty() || 
 			data.party.is_empty() ||
@@ -52,8 +54,8 @@ impl Battle {
 			Some(
 				Self {
 					battle_type: data.get_type(),
-					player: BattleParty::from_saved(player, PokemonTexture::Back, Vec2::new(40.0, 113.0)),
-					opponent: BattleParty::new(data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
+					player: BattleParty::from_saved(textures, player, PokemonTexture::Back, Vec2::new(40.0, 113.0)),
+					opponent: BattleParty::new(textures, data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
 					trainer: data.trainer,
 					try_run: false,
 				}
@@ -63,7 +65,7 @@ impl Battle {
 		}
 	}
 
-	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer_manager: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui) {
+	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer_manager: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui, pokemon_textures: &PokemonTextures) {
 		
 		if self.try_run {
 			if self.battle_type == BattleType::Wild {
@@ -233,7 +235,7 @@ impl Battle {
 					} else {
 
 						party_gui.spawn();
-						party_gui.on_battle_start(&self.player);
+						party_gui.on_battle_start(&pokemon_textures, &self.player);
 						
 						// Reset the pokemon renderer so it renders pokemon
 

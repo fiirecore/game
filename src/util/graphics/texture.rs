@@ -1,4 +1,5 @@
 use macroquad::prelude::FilterMode::Nearest;
+use macroquad::prelude::Image;
 use macroquad::prelude::set_texture_filter;
 use super::Texture;
 
@@ -10,7 +11,7 @@ pub async fn load_texture<P: AsRef<std::path::Path>>(path: P) -> Texture {
 }
 
 pub fn byte_texture(bytes: &[u8]) -> Texture { // To - do: change to Result<Texture, ImageError>
-	image_texture(&crate::util::image::byte_image(bytes).expect("Could not get bytes from image!"))
+	image_texture(&Image::from_file_with_format(bytes, None))
 }
 
 pub fn image_texture(image: &macroquad::prelude::Image) -> Texture {

@@ -1,65 +1,65 @@
-use firecore_util::text::TextColor;
-use macroquad::prelude::Vec2;
+// use firecore_util::text::TextColor;
+// use macroquad::prelude::Vec2;
 
-use crate::util::graphics;
-pub struct StaticText {
+// use crate::util::graphics;
+// pub struct StaticText {
 	
-	alive: bool,
-	pos: Vec2,
-	pub panel: Vec2,
+// 	alive: bool,
+// 	pos: Vec2,
+// 	pub panel: Vec2,
 
-	pub text: Vec<String>,
-	pub color: TextColor,
-	pub font_id: usize,
+// 	pub text: Vec<String>,
+// 	pub color: TextColor,
+// 	pub font_id: usize,
 
-	direction: bool,
+// 	direction: bool,
 	
-}
+// }
 
-impl StaticText {
+// impl StaticText {
 	
-	pub fn new(text: Vec<String>, text_color: TextColor, font_id: usize, from_right: bool, pos: Vec2, panel: Vec2) -> Self {
+// 	pub fn new(text: Vec<String>, text_color: TextColor, font_id: usize, from_right: bool, pos: Vec2, panel: Vec2) -> Self {
 		
-		Self {
+// 		Self {
 			
-			alive: false,
-			pos,
-			panel,
+// 			alive: false,
+// 			pos,
+// 			panel,
 
-			text,
-			color: text_color,
-			font_id,
+// 			text,
+// 			color: text_color,
+// 			font_id,
 
-			direction: from_right,
+// 			direction: from_right,
 			
-		}
+// 		}
 		
-	}
+// 	}
 	
-	pub fn render(&self) {
-		for (index, string) in self.text.iter().enumerate() {
-			if self.direction {
-				graphics::draw_text_right(self.font_id, string, self.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (index << 4) as f32);
-			} else {
-				graphics::draw_text_left(self.font_id, string, self.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (index << 4) as f32);
-			}
-		}		
-	}
+// 	pub fn render(&self) {
+// 		for (index, string) in self.text.iter().enumerate() {
+// 			if self.direction {
+// 				graphics::draw_text_right(self.font_id, string, self.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (index << 4) as f32);
+// 			} else {
+// 				graphics::draw_text_left(self.font_id, string, self.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (index << 4) as f32);
+// 			}
+// 		}		
+// 	}
 
-}
+// }
 
-impl firecore_util::Entity for StaticText {
+// impl firecore_util::Entity for StaticText {
 
-	fn spawn(&mut self) {
-		self.alive = true;		
-	}
+// 	fn spawn(&mut self) {
+// 		self.alive = true;		
+// 	}
 	
-	fn despawn(&mut self) {
-		self.alive = false;
-	}
+// 	fn despawn(&mut self) {
+// 		self.alive = false;
+// 	}
 	
-	fn is_alive(& self) -> bool {
-		self.alive
-	}
+// 	fn is_alive(& self) -> bool {
+// 		self.alive
+// 	}
 
-}
+// }

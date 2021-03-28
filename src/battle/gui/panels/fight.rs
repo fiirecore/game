@@ -3,7 +3,7 @@ use firecore_util::Reset;
 use macroquad::prelude::Vec2;
 use firecore_util::Entity;
 use crate::battle::Battle;
-use crate::battle::battle_party::BattleMoveStatus;
+use crate::battle::party::BattleMoveStatus;
 use crate::battle::gui::battle_text::BattleText;
 use crate::battle::gui::move_panel::MovePanel;
 

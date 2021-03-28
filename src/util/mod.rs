@@ -4,8 +4,7 @@ use firecore_input::Control;
 
 pub mod graphics;
 pub mod text;
-pub mod image;
-pub mod battle_data;
+pub mod pokemon;
 
 pub const TILE_SIZE: u8 = 16;
 

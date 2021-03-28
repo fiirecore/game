@@ -2,6 +2,7 @@ use firecore_world::map::set::WorldMapSet;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use macroquad::prelude::warn;
 
+use crate::world::NPCTypes;
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
 use firecore_world::character::player::PlayerCharacter;
@@ -16,12 +17,12 @@ impl GameWorld for WorldMapSet {
         self.maps[self.current_map].on_tile(player)
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow) {
-        self.maps[self.current_map].update(delta, player, text_window);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+        self.maps[self.current_map].update(delta, player, text_window, npc_types);
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
-        self.maps[self.current_map].render(tile_textures, npc_textures, gui_textures, screen, border)
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+        self.maps[self.current_map].render(tile_textures, npc_textures, npc_types, gui_textures, screen, border)
     }
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
@@ -45,13 +46,13 @@ impl GameWorld for WorldMapSetManager {
         self.map_set_mut().on_tile(player)
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow) {
-        self.map_set_mut().update(delta, player, text_window);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+        self.map_set_mut().update(delta, player, text_window, npc_types);
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
         match self.map_sets.get(&self.current_map_set) {
-            Some(map_set) => map_set.render(tile_textures, npc_textures, gui_textures, screen, border),
+            Some(map_set) => map_set.render(tile_textures, npc_textures, npc_types, gui_textures, screen, border),
             None => {
                 warn!("Could not get current map set {}!", self.current_map_set);
             }

@@ -13,6 +13,7 @@ use firecore_audio::{play_sound, Sound};
 
 use macroquad::prelude::{Vec2, warn};
 
+use crate::battle::manager::TrainerTextures;
 use crate::battle::{
     Battle,
     gui::{
@@ -147,7 +148,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
         self.text.input();
     }
 
-    fn setup(&mut self, battle: &Battle) {
+    fn setup(&mut self, battle: &Battle, _trainer_sprites: &TrainerTextures) {
         self.text.messages = Some(vec![
             Message::new(
                 vec![

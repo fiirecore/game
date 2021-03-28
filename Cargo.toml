@@ -11,10 +11,9 @@ build = "build/build.rs"
 readme = "README.md"
 include = ["/build", "/assets", "/pokedex", "/world"]
 
-[profile.dev.package.'*']
+[profile.dev]
 opt-level = 3
 debug-assertions = true
-
 
 [profile.release]
 codegen-units = 1
@@ -22,13 +21,13 @@ lto = true
 
 [features]
 default = ["audio"]
-audio = ["firecore-audio/kira", "audio-builder"]
+audio = ["firecore-audio/play", "audio-builder"]
 
 [dependencies]
 
 ### Game Engine
 
-macroquad = { git = "https://github.com/not-fl3/macroquad" }
+macroquad = "0.3.0-alpha.17"
 
 ### Game subcrates
 
@@ -42,7 +41,7 @@ firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
 #firecore-world = { path = "../firecore/firecore-world" }
 
 firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", default-features = false }
-#firecore-audio = { path = "../firecore/firecore-audio" }
+#firecore-audio = { path = "../firecore/firecore-audio", default-features = false }
 
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
 #firecore-input = { path = "../firecore/firecore-input" }
@@ -54,41 +53,26 @@ firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
 #firecore-data = { path = "../firecore/firecore-data" }
 
 firecore-font-lib = { git = "https://github.com/DoNotDoughnut/firecore-font-lib" }
+#firecore-font-lib = { path = "../firecore/firecore-font-lib" }
 
+### Deserialization
 
-### Serialization
-
-serde = { version = "1.0", features = ["derive"] }
 bincode = "1.3"
 
 ### Collections
 
 ahash = { version = "0.7", features = ["serde"] }
 smallvec = { version = "1.6", features = ["serde"] }
-dashmap = "4.0"
-
-### Global variables
-
-lazy_static = "1.4"
-parking_lot = "0.11"
 
 ### Other
 
 async-trait = "0.1"
 getopts = "0.2"
 
-### Extra dependencies that other packages use
-
-ron = "0.6"
-
-image = { version = "0.23.12", default-features = false, features = ["png", "tga"] }
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }
-
 ### Build dependencies
 
 [build-dependencies]
+
 font-builder = { git = "https://github.com/DoNotDoughnut/font-builder" }
 
 world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }

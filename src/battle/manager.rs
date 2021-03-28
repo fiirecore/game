@@ -1,13 +1,17 @@
 use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_util::{Entity, Completable};
+use macroquad::prelude::Texture2D;
 use macroquad::prelude::collections::storage::get_mut;
+use ahash::AHashMap as HashMap;
 use crate::data::player::list::PlayerSaves;
 use crate::gui::game::party::PokemonPartyGui;
-use crate::util::battle_data::BattleData;
-use super::battle_party::BattleParty;
-use super::gui::BattleGui;
+use crate::util::pokemon::PokemonTextures;
+
 use super::{
 	Battle,
+	data::BattleData,
+	party::BattleParty,
+	gui::BattleGui,
 	transitions::{
 		BattleTransition,
 		BattleOpener,
@@ -20,6 +24,8 @@ use super::{
 	}
 };
 
+pub type TrainerTextures = HashMap<String, Texture2D>;
+
 pub struct BattleManager {
 	
 	battle: Option<Battle>,
@@ -29,6 +35,8 @@ pub struct BattleManager {
 	closer_manager: BattleCloserManager,
 
 	gui: BattleGui,
+
+	pub trainer_sprites: TrainerTextures,
 
 	finished: bool,
 	
@@ -48,19 +56,21 @@ impl BattleManager {
 
 			gui: BattleGui::new(),
 
+			trainer_sprites: HashMap::new(),
+
 			finished: false,
 
 		}
 		
 	}
 
-	pub fn battle(&mut self, player: &PokemonParty, data: BattleData) -> bool { // add battle type parameter
+	pub fn battle(&mut self, textures: &PokemonTextures, player: &PokemonParty, data: BattleData) -> bool { // add battle type parameter
 
 		self.finished = false;
 
 		// Create the battle
 
-		self.battle = Battle::new(&player, data);
+		self.battle = Battle::new(textures, &player, data);
 
 		// Despawn anything from previous battle
 
@@ -105,7 +115,7 @@ impl BattleManager {
 
 	}
 
-	pub fn update(&mut self, delta: f32, party_gui: &mut PokemonPartyGui) {
+	pub fn update(&mut self, delta: f32, party_gui: &mut PokemonPartyGui, pokemon_textures: &PokemonTextures) {
 		
 		if let Some(battle) = self.battle.as_mut() {
 
@@ -114,7 +124,7 @@ impl BattleManager {
 					self.screen_transition_manager.despawn();
 					self.opener_manager.spawn_type(battle.battle_type);
 					self.opener_manager.on_start();
-					self.opener_manager.battle_introduction_manager.setup_text(battle);
+					self.opener_manager.battle_introduction_manager.setup_text(battle, &self.trainer_sprites);
 				} else {
 					self.screen_transition_manager.update(delta);
 				}
@@ -136,7 +146,7 @@ impl BattleManager {
 					self.closer_manager.update(delta);
 				}
 			} else /*if !self.current_battle.is_finished()*/ {
-				battle.update(delta, &mut self.gui, &mut self.closer_manager, party_gui);
+				battle.update(delta, &mut self.gui, &mut self.closer_manager, party_gui, pokemon_textures);
 				self.gui.update(delta);
 			}
 

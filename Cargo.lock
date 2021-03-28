@@ -376,13 +376,12 @@ dependencies = [
 
 [[package]]
 name = "firecore-audio"
-version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#d81313254c34c2a7af720227c13bb4fd40655d9d"
+version = "0.3.0-beta.2"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#2236e263d7eba8ed28771087ea8fc15147fe233d"
 dependencies = [
- "dashmap",
+ "ahash 0.7.2",
  "firecore-audio-lib",
  "kira",
- "lazy_static",
  "lewton",
  "parking_lot",
 ]
@@ -398,7 +397,7 @@ dependencies = [
 [[package]]
 name = "firecore-data"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#ec814a7cd275245156bee08af3cab3f872425f6c"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#4f719da53dfad45afeabda675d688981bd126d64"
 dependencies = [
  "ahash 0.7.2",
  "async-trait",
@@ -425,32 +424,29 @@ dependencies = [
 
 [[package]]
 name = "firecore-font-lib"
-version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#d8967fa2b8940b6fd121544c4145112a40d14c75"
+version = "0.1.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#405267df974ebb6f931b68436b3ea3440de9c27b"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "firecore-input"
-version = "0.3.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-input#4eaa5aa5d02b8e02e0601fe5d7ba4ffa7fa58e3e"
+version = "0.3.0-beta.2"
+source = "git+https://github.com/DoNotDoughnut/firecore-input#ce29d24a82349c282e5e4cb8075527f88431c516"
 dependencies = [
  "ahash 0.7.2",
- "lazy_static",
  "macroquad",
- "parking_lot",
  "serde",
 ]
 
 [[package]]
 name = "firecore-pokedex"
 version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#57f9d2f32883e95b8b3e46bcaa88bf0c104b4a0a"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#bdec33f4707c541861ec31661a663c3d185e731d"
 dependencies = [
  "dashmap",
  "firecore-pokedex-lib",
- "lazy_static",
  "quad-rand",
  "serde",
  "smallvec",
@@ -468,7 +464,7 @@ dependencies = [
 [[package]]
 name = "firecore-util"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#ffad75c879a10dffa230626d933612732ff860f8"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#f10b72fd3e5a4945e146a3e5fe691d4e0716c830"
 dependencies = [
  "serde",
 ]
@@ -476,7 +472,7 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#dfd11db00a942439a92372f3e48c9e6402d653d7"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#c3fd5a0712cf2c31dcbea717f8d34aa9a0d837c7"
 dependencies = [
  "ahash 0.7.2",
  "firecore-audio-lib",
@@ -508,8 +504,8 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
 name = "font-builder"
-version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/font-builder#77e334ec82746a4f9d6deb516c28d956a8ca6d1a"
+version = "0.3.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/font-builder#5f934c559a28aa62156d303a0f298e970f7d298a"
 dependencies = [
  "bincode",
  "firecore-font-lib",
@@ -764,7 +760,8 @@ dependencies = [
 [[package]]
 name = "macroquad"
 version = "0.3.0-alpha.17"
-source = "git+https://github.com/not-fl3/macroquad#fa486ff74caa8b94b2eeee3cad1da50eb393b53b"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d278eaf76c3fa5eac8c487002ac01646f8be47484a77db040a9a7b767a19fc1"
 dependencies = [
  "bumpalo",
  "fontdue",
@@ -778,7 +775,8 @@ dependencies = [
 [[package]]
 name = "macroquad_macro"
 version = "0.1.2"
-source = "git+https://github.com/not-fl3/macroquad#fa486ff74caa8b94b2eeee3cad1da50eb393b53b"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88dc77cec2b364f6e0cba5701b20482ef5c7c87f5587ee9e9296240936eaaf8a"
 
 [[package]]
 name = "memchr"
@@ -1093,7 +1091,6 @@ dependencies = [
  "async-trait",
  "audio-builder",
  "bincode",
- "dashmap",
  "dex-builder",
  "embed-resource",
  "firecore-audio",
@@ -1105,13 +1102,7 @@ dependencies = [
  "firecore-world",
  "font-builder",
  "getopts",
- "image",
- "lazy_static",
  "macroquad",
- "miniquad-cookie",
- "parking_lot",
- "ron",
- "serde",
  "smallvec",
  "world-builder",
 ]

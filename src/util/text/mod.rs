@@ -1,19 +1,65 @@
-use dashmap::DashMap;
 use firecore_data::player::save::PlayerSave;
 use firecore_util::text::Message;
-use macroquad::prelude::Color;
+use renderer::TextRenderer;
 
-use crate::util::graphics::Texture;
-use crate::util::graphics::draw;
+use firecore_util::text::TextColor;
+use macroquad::prelude::{Color, color_u8};
 
 use self::font::Font;
 
-use super::graphics::texture::byte_texture;
-
+pub mod renderer;
 pub mod font;
 
-lazy_static::lazy_static! {
-    pub static ref FONTS: DashMap<usize, Font> = DashMap::new();
+pub static mut TEXT_RENDERER: Option<TextRenderer> = None;
+
+pub trait IntoMQColor {
+
+    fn into_color(self) -> Color;
+
+}
+
+impl IntoMQColor for TextColor {
+    fn into_color(self) -> Color {
+        match self {
+            TextColor::White => WHITE_COLOR,
+            TextColor::Gray => macroquad::prelude::GRAY,
+            TextColor::Black => BLACK_COLOR,
+            TextColor::Red => macroquad::prelude::RED,
+            TextColor::Blue => BLUE_COLOR,
+        }
+    }
+}
+
+const WHITE_COLOR: Color = color_u8!(240, 240, 240, 255);
+const BLACK_COLOR: Color = color_u8!(20, 20, 20, 255);
+const BLUE_COLOR: Color = color_u8!(48, 80, 200, 255); // 48, 80, 200
+
+pub async fn init_text() {
+	let mut text_renderer = TextRenderer::new();
+
+	let font_sheets: firecore_font_lib::SerializedFonts = bincode::deserialize(
+        // &macroquad::prelude::load_file("assets/fonts.bin").await.unwrap()
+        include_bytes!("../../../assets/fonts.bin")
+    ).unwrap();
+
+    for font_sheet in font_sheets.fonts {
+        text_renderer.fonts.insert(
+            font_sheet.data.id, 
+            Font {
+                font_width: font_sheet.data.width,
+                font_height: font_sheet.data.height,
+                chars: iterate_fontsheet(
+                    font_sheet.data.chars, 
+                    font_sheet.data.width, 
+                    font_sheet.data.height, 
+                    font_sheet.data.custom, 
+                    Image::from_file_with_format(&font_sheet.image, None)
+                ),
+            }
+        );
+    }
+
+	unsafe { TEXT_RENDERER = Some(text_renderer); }
 }
 
 // #[deprecated(note = "make better")]
@@ -36,43 +82,46 @@ pub fn rival_name() -> &'static str {
     "Gary"
 }
 
-pub struct TextRenderer {
+use firecore_font_lib::CustomChar;
+use macroquad::prelude::Image;
+use macroquad::prelude::Rect;
+use ahash::AHashMap as HashMap;
 
-    // pub fonts: [Font; 3],
-    pub button: Texture,
-    pub cursor: Texture,
+use crate::util::graphics::texture::image_texture;
 
-}
+pub fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChar>, sheet: macroquad::prelude::Image) -> HashMap<char, crate::util::graphics::Texture> {
 
-impl TextRenderer {
+    let mut customchars = HashMap::new();
+    for cchar in custom {
+        customchars.insert(cchar.id, (cchar.width, cchar.height));
+    }
 
-    pub fn new() -> TextRenderer {
-        TextRenderer {
-            button: byte_texture(include_bytes!("../../../build/assets/gui/button.png")),
-            cursor: byte_texture(include_bytes!("../../../build/assets/gui/cursor.png")),
+    let chars: Vec<char> = chars.chars().collect();
+    let sheet_width = sheet.width() as u32;
+    let sheet_height = sheet.height() as u32;// - font_height as u32;
+
+    let mut charmap = HashMap::new();
+
+    let mut counter: usize = 0;
+    let mut x: u32 = 0;
+    let mut y: u32 = 0;
+
+    while y < sheet_height {
+        while x < sheet_width {
+            if let Some(cchar) = customchars.remove(&chars[counter]) {
+                charmap.insert(chars[counter], image_texture(&sheet.sub_image(Rect::new(x as f32, y as f32, cchar.0 as f32, cchar.1.unwrap_or(font_height) as f32))));
+            } else {
+                charmap.insert(chars[counter], image_texture(&sheet.sub_image(Rect::new(x as f32, y as f32, font_width as f32, font_height as f32))));
+            }
+            x += font_width as u32;
+            counter+=1;
+            if counter >= chars.len() {
+                return charmap;
+            }
         }
+        x = 0;
+        y += font_height as u32;
     }
 
-    pub fn render_text_from_left(&self, font_id: usize, text: &str, color: Color, x: f32, y: f32) {
-        if let Some(font) = FONTS.get(&font_id) {
-            font.render_text_from_left(text, x, y, color);
-        }
-    }
-
-    pub fn render_text_from_right(&self, font_id: usize, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
-        if let Some(font) = FONTS.get(&font_id) {
-            font.render_text_from_right(text, x, y, color);
-        }
-    }
-
-    pub fn render_button(&self, text: &str, font_id: usize, x: f32, y: f32) {
-        if let Some(font) = FONTS.get(&font_id) {
-            draw(self.button, x + font.text_pixel_length(text) as f32, y + 2.0);
-        }
-    }
-
-    pub fn render_cursor(&self, x: f32, y: f32) {
-        draw(self.cursor, x, y);
-    }
-
+    return charmap;
 }

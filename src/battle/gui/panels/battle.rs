@@ -2,29 +2,21 @@ use firecore_util::text::TextColor;
 use firecore_pokedex::pokemon::instance::PokemonInstance;
 use firecore_util::Entity;
 use firecore_input::{self as input, Control};
-use macroquad::prelude::Vec2;
+use macroquad::prelude::Texture2D;
 use macroquad::prelude::warn;
 use crate::battle::Battle;
-use crate::util::graphics::Texture;
-use crate::gui::text::StaticText;
-use crate::util::graphics::draw;
+use crate::util::graphics::{draw, draw_text_left, draw_cursor};
 use crate::util::graphics::texture::byte_texture;
 
 pub struct BattlePanel {
 
     active: bool,
-
-	pos: Vec2,
-    panel: Vec2,
     
-    background: Texture,
+    background: Texture2D,
 
-    pub fight_button: StaticText,
-    pub bag_button: StaticText,
-    pub pokemon_button: StaticText,
-    pub run_button: StaticText,
+    buttons: [String; 4],
 
-    text: StaticText,
+    text: [String; 2],
     
     cursor: usize,
 
@@ -34,30 +26,25 @@ pub struct BattlePanel {
 
 impl BattlePanel {
 
-	pub fn new(panel: Vec2) -> Self {
-
-        let pos = Vec2::new(121.0, 0.0);
-
-        let font_id = 0;
-
-        let text_x = 17.0;
-        let text_y = 10.0;
+	pub fn new() -> Self {
 
 		Self {
 
             active: false,
-			
-			pos,
-            panel,
             
             background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/button_panel.png")),
 
-            fight_button: StaticText::new(vec!["FIGHT".to_owned()], TextColor::Black, font_id, false, Vec2::new(text_x, text_y), pos + panel),
-            bag_button: StaticText::new(vec!["BAG".to_owned()], TextColor::Black, font_id, false, Vec2::new(text_x + 56.0, text_y), pos + panel),
-            pokemon_button: StaticText::new(vec!["POKEMON".to_owned()], TextColor::Black, font_id,false,  Vec2::new(text_x, text_y + 16.0), pos + panel),
-            run_button: StaticText::new(vec!["RUN".to_owned()], TextColor::Black, font_id, false, Vec2::new(text_x + 56.0, text_y + 16.0), pos + panel),
+            buttons: [
+                "FIGHT".to_owned(),
+                "BAG".to_owned(),
+                "POKEMON".to_owned(),
+                "RUN".to_owned()
+            ],
 
-            text: StaticText::new(vec![String::from("What will"), String::from("POKEMON do?")], TextColor::White, 1, false, Vec2::new(-111.0, 10.0), pos + panel),
+            text: [
+                "What will".to_owned(), 
+                "POKEMON do?".to_owned(),
+            ],
 
             cursor: 0,
 
@@ -67,7 +54,7 @@ impl BattlePanel {
     }
     
     pub fn update_text(&mut self, instance: &PokemonInstance) {
-        self.text.text[1] = instance.name() + " do?";
+        self.text[1] = instance.name() + " do?";
     }
 
     pub fn input(&mut self, _delta: f32, battle: &mut Battle) {
@@ -112,13 +99,15 @@ impl BattlePanel {
     pub fn render(&self) {
 		if self.active {
 
-            draw(self.background, self.panel.x + self.pos.x, self.panel.y + self.pos.y);
+            draw(self.background, 120.0, 113.0);
 
-            self.text.render();
-            self.fight_button.render();
-            self.bag_button.render();
-            self.pokemon_button.render();
-            self.run_button.render();
+            for (index, string) in self.text.iter().enumerate() {
+                draw_text_left(1, string, TextColor::White, 11.0, 123.0 + (index << 4) as f32);
+            }
+
+            for (index, string) in self.buttons.iter().enumerate() {
+                draw_text_left(0, string, TextColor::Black, 138.0 + if index % 2 == 0 { 0.0 } else { 56.0 }, 123.0 + if index >> 1 == 0 { 0.0 } else { 16.0 })
+            }
 
             let cursor_x = if self.cursor % 2 == 0 {
                 0.0
@@ -131,7 +120,7 @@ impl BattlePanel {
                 16.0
             };
 
-            crate::util::graphics::draw_cursor(self.panel.x + self.pos.x + 10.0 + cursor_x, self.panel.y + self.pos.y + 13.0 + cursor_y);
+            draw_cursor(131.0 + cursor_x, 126.0 + cursor_y);
 		}		
 	}
 
@@ -143,18 +132,10 @@ impl Entity for BattlePanel {
         self.active = true;
         self.cursor = 0;
         self.spawn_fight_panel = false;
-        self.fight_button.spawn();
-        self.bag_button.spawn();
-        self.pokemon_button.spawn();
-        self.run_button.spawn();
 	}
 
 	fn despawn(&mut self) {
         self.active = false;
-        self.fight_button.despawn();
-        self.bag_button.despawn();
-        self.pokemon_button.despawn();
-        self.run_button.despawn();
 	}
 
 	fn is_alive(& self) -> bool {

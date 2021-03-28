@@ -1,17 +1,12 @@
-use dashmap::DashMap;
 use firecore_util::Direction;
 use firecore_world::character::npc::NPC;
-use firecore_world::character::npc::npc_type::NPCType;
 use macroquad::prelude::collections::storage::{get, get_mut};
 
 use crate::data::player::list::PlayerSaves;
 
+use super::NPCTypes;
 use super::NpcTextures;
 use super::RenderCoords;
-
-lazy_static::lazy_static! {
-    pub static ref NPC_TYPES: DashMap<String, NPCType> = DashMap::new();
-}
 
 pub trait WorldNpc {
 
@@ -19,9 +14,9 @@ pub trait WorldNpc {
 
     // fn after_interact(&mut self, map_name: &String);
 
-    fn render(&self, npc_textures: &NpcTextures, screen: &RenderCoords);
+    fn render(&self, npc_textures: &NpcTextures, npc_types: &NPCTypes, screen: &RenderCoords);
 
-    fn current_texture_pos(&self) -> f32;
+    fn current_texture_pos(&self, npc_types: &NPCTypes) -> f32;
 
 }
 
@@ -29,9 +24,9 @@ pub fn has_battled(map_name: &String, npc: &NPC) -> bool {
     npc.trainer.is_some() && !get::<PlayerSaves>().as_ref().map(|saves| saves.get().has_battled(map_name, &npc.identifier.index)).unwrap_or(true)
 }
 
-pub fn try_battle(map_name: &String, npc: &NPC) {
+pub fn try_battle(map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
     if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
-        crate::data::player::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), npc);
+        crate::data::player::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), npc, npc_types);
     } else {
         macroquad::prelude::warn!("Could not get player data!");
     }
@@ -39,14 +34,14 @@ pub fn try_battle(map_name: &String, npc: &NPC) {
 
 impl WorldNpc for NPC {
 
-    fn render(&self, npc_textures: &NpcTextures, screen: &RenderCoords) {
+    fn render(&self, npc_textures: &NpcTextures, npc_types: &NPCTypes, screen: &RenderCoords) {
         let x = ((self.position.coords.x + screen.tile_offset.x) << 4) as f32 - screen.focus.x + self.position.offset.x;
         let y = ((self.position.coords.y - 1 + screen.tile_offset.y) << 4) as f32 - screen.focus.y + self.position.offset.y;
         
         if let Some(texture) = npc_textures.get(&self.identifier.npc_type) {
             macroquad::prelude::draw_texture_ex(*texture, x, y, macroquad::prelude::WHITE, macroquad::prelude::DrawTextureParams {
                 source: Some(macroquad::prelude::Rect::new(
-                    self.current_texture_pos(),
+                    self.current_texture_pos(npc_types),
                     0.0,
                     16.0,
                     32.0,
@@ -59,8 +54,8 @@ impl WorldNpc for NPC {
         }
     }
 
-    fn current_texture_pos(&self) -> f32 {
-        if let Some(npc_type) = NPC_TYPES.get(&self.identifier.npc_type) {
+    fn current_texture_pos(&self, npc_types: &NPCTypes) -> f32 {
+        if let Some(npc_type) = npc_types.get(&self.identifier.npc_type) {
             let index = (
                 if self.position.offset.x != 0.0 {
                     self.position.offset.x

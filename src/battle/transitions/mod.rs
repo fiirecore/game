@@ -2,6 +2,8 @@ use firecore_util::{Entity, Completable};
 
 use crate::battle::{Battle, gui::BattleGui};
 
+use super::manager::TrainerTextures;
+
 pub mod managers;
 
 pub mod screen_transitions;
@@ -35,7 +37,7 @@ pub trait BattleOpener: BattleTransition  {
 
 pub trait BattleIntroduction: BattleTransition {
 
-    fn setup(&mut self, battle: &Battle);
+    fn setup(&mut self, battle: &Battle, trainer_sprites: &TrainerTextures);
 
     fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32);
 

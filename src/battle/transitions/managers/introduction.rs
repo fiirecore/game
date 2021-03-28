@@ -1,6 +1,7 @@
 use firecore_util::{Entity, Reset, Completable};
 use macroquad::prelude::Vec2;
 
+use crate::battle::manager::TrainerTextures;
 use crate::battle::{
     Battle,
     gui::BattleGui,
@@ -44,8 +45,8 @@ impl BattleIntroductionManager {
         }
     }
     
-    pub fn setup_text(&mut self, battle: &Battle) {
-        self.get_mut().setup(battle);
+    pub fn setup_text(&mut self, battle: &Battle, trainer_sprites: &TrainerTextures) {
+        self.get_mut().setup(battle, trainer_sprites);
     }
 
     pub fn render_with_offset(&self, battle: &Battle, offset: f32) {

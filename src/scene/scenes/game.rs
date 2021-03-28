@@ -4,6 +4,7 @@ use firecore_data::data::PersistantData;
 use macroquad::prelude::collections::storage::{get, get_mut};
 
 use crate::scene::Scene;
+use crate::util::pokemon::PokemonTextures;
 use super::SceneState;
 
 use crate::world::map::manager::WorldManager;
@@ -11,6 +12,7 @@ use crate::battle::manager::BattleManager;
 use crate::gui::game::party::PokemonPartyGui;
 
 use crate::data::player::list::PlayerSaves;
+use crate::battle::data::BATTLE_DATA;
 
 pub struct GameScene {
 
@@ -19,6 +21,8 @@ pub struct GameScene {
 	pub world_manager: WorldManager,
 	battle_manager: BattleManager,
 	party_gui: PokemonPartyGui,
+
+	pub pokemon_textures: PokemonTextures,
 
 	battling: bool,
 
@@ -34,6 +38,8 @@ impl GameScene {
 			world_manager: WorldManager::new(),
 			battle_manager: BattleManager::new(),
 			party_gui: PokemonPartyGui::new(),
+
+			pokemon_textures: PokemonTextures::default(),
 
 			battling: false,
 		}
@@ -55,7 +61,8 @@ impl GameScene {
 impl Scene for GameScene {
 
 	async fn load(&mut self) {
-		self.world_manager.load().await;
+		
+		self.world_manager.load(&mut self.battle_manager).await;
 	}
 
 	async fn on_start(&mut self) {
@@ -87,10 +94,10 @@ impl Scene for GameScene {
 			self.party_gui.spawn();
 			if self.battling {
 				if let Some(party) = self.battle_manager.player_party() {
-					self.party_gui.on_battle_start(party);
+					self.party_gui.on_battle_start(&self.pokemon_textures, party);
 				}				
 			} else {
-				self.party_gui.on_world_start();
+				self.party_gui.on_world_start(&self.pokemon_textures);
 			}
 		}
 
@@ -98,9 +105,9 @@ impl Scene for GameScene {
 
 			self.world_manager.update(delta);
 
-			if crate::util::battle_data::BATTLE_DATA.lock().is_some() {
+			if unsafe { BATTLE_DATA.is_some() } {
 				if let Some(player_saves) = get::<PlayerSaves>() {
-					if self.battle_manager.battle(&player_saves.get().party, crate::util::battle_data::BATTLE_DATA.lock().take().unwrap()) {
+					if self.battle_manager.battle(&self.pokemon_textures, &player_saves.get().party, unsafe { BATTLE_DATA.take().unwrap() }) {
 						self.battling = true;
 					}
 				}
@@ -108,7 +115,7 @@ impl Scene for GameScene {
 
 		} else {
 
-			self.battle_manager.update(delta, &mut self.party_gui);
+			self.battle_manager.update(delta, &mut self.party_gui, &self.pokemon_textures);
 			
 			if self.battle_manager.is_finished() {
 				self.battle_manager.update_data();

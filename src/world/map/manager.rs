@@ -10,9 +10,11 @@ use firecore_input::{self as input, Control};
 use firecore_util::Entity;
 use firecore_world::character::Character;
 
+use crate::battle::manager::BattleManager;
 use crate::data::player::list::PlayerSaves;
 use crate::data::player::save::PlayerSave;
 use crate::util::graphics::texture::byte_texture;
+use crate::world::NPCTypes;
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
 use crate::world::gui::start_menu::StartMenu;
@@ -23,6 +25,7 @@ pub struct WorldManager {
 
     pub map_manager: WorldMapManager,
 
+    npc_types: NPCTypes,
     tile_textures: TileTextures,
     npc_textures: NpcTextures,
     gui_textures: GuiTextures,
@@ -47,6 +50,7 @@ impl WorldManager {
 
             map_manager: WorldMapManager::default(),
 
+            npc_types: NPCTypes::new(),
             tile_textures: TileTextures::new(),
             npc_textures: NpcTextures::new(),
             gui_textures: GuiTextures::new(),
@@ -59,12 +63,12 @@ impl WorldManager {
         }
     }
 
-    pub async fn load(&mut self) {
+    pub async fn load(&mut self, battle_manager: &mut BattleManager) {
         // if let Some(message) = crate::gui::MESSAGE.lock().take() {
         //     info!("WorldManager cleared previous global message: {:?}", message);
         // }
         self.tile_textures.setup();
-        self.map_manager = crate::data::map::load_maps(&mut self.tile_textures, &mut self.npc_textures).await;
+        self.map_manager = crate::data::map::load_maps(battle_manager, &mut self.tile_textures, &mut self.npc_textures, &mut self.npc_types).await;
         self.gui_textures.insert(0, byte_texture(include_bytes!("../../../build/assets/condition.png")));
     }
 
@@ -149,9 +153,9 @@ impl WorldManager {
         }
 
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, &mut self.text_window);
+            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, &mut self.text_window, &self.npc_types);
         } else {
-            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, &mut self.text_window);
+            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, &mut self.text_window, &self.npc_types);
         }
 
         if !self.map_manager.player.is_frozen() {
@@ -165,9 +169,9 @@ impl WorldManager {
     pub fn render(&self) {
         let coords = RenderCoords::new(&self.map_manager.player);
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, &self.gui_textures, coords, true);
+            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, &self.npc_types, &self.gui_textures, coords, true);
         } else {
-            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, &self.gui_textures, coords, true);
+            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, &self.npc_types, &self.gui_textures, coords, true);
         }
         self.player_texture.render(&self.map_manager.player);
         self.text_window.render();
@@ -296,7 +300,7 @@ impl WorldManager {
     fn debug_input(&mut self) {
 
         if is_key_pressed(KeyCode::F1) {
-            crate::util::battle_data::random_wild_battle();
+            crate::battle::data::random_wild_battle();
         }
 
         if is_key_pressed(KeyCode::F2) {
@@ -323,7 +327,7 @@ impl WorldManager {
         if is_key_pressed(KeyCode::F4) {
             if let Some(saves) = get::<PlayerSaves>() {
                 for (slot, instance) in saves.get().party.iter().enumerate() {
-                    if let Some(pokemon) = firecore_pokedex::POKEDEX.get(&instance.id) {
+                    if let Some(pokemon) = firecore_pokedex::pokedex().get(&instance.id) {
                         info!("Party Slot {}: Lv{} {}", slot, instance.data.level, pokemon.data.name);
                     }
                 }

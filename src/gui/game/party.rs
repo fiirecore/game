@@ -13,10 +13,11 @@ use firecore_util::{Entity, Reset, text::TextColor};
 
 use firecore_input::{pressed, Control};
 
-use crate::battle::battle_party::BattleParty;
+use crate::battle::party::BattleParty;
 use crate::data::player::list::PlayerSaves;
 
 use crate::util::graphics::{Texture, texture::byte_texture, draw, draw_rect, draw_text_left};
+use crate::util::pokemon::PokemonTextures;
 
 use super::health_bar::HealthBar;
 
@@ -62,9 +63,9 @@ impl PokemonPartyGui {
 
     }
 
-    pub fn on_battle_start(&mut self, party: &BattleParty) {
+    pub fn on_battle_start(&mut self, textures: &PokemonTextures, party: &BattleParty) {
         for (index, pokemon) in party.pokemon.iter().map(|pokemon| &pokemon.pokemon).enumerate() {
-            let texture = crate::pokemon::pokemon_texture(&pokemon.pokemon.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
+            let texture = textures.pokemon_texture(&pokemon.pokemon.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
             self.pokemon[index] = Some(PartyGuiData {
                 name: pokemon.name(),
                 level: format!("Lv{}", pokemon.data.level),
@@ -75,20 +76,20 @@ impl PokemonPartyGui {
         }
     }
 
-    pub fn on_world_start(&mut self) {
+    pub fn on_world_start(&mut self, textures: &PokemonTextures) {
         if let Some(saves) = get::<PlayerSaves>() {
             for (index, pokemon) in saves.get().party.iter().enumerate() {
                 if index == 6 {
                     break;
                 }
                 
-                if let Some(pokemon_data) = firecore_pokedex::POKEDEX.get(&pokemon.id) {
+                if let Some(pokemon_data) = firecore_pokedex::pokedex().get(&pokemon.id) {
                     let pokemon_data = pokemon_data.value();
     
                     let max = firecore_pokedex::pokemon::instance::calculate_hp(pokemon_data.base.hp, pokemon.data.ivs.hp, pokemon.data.evs.hp, pokemon.data.level);
                     let current = pokemon.current_hp.unwrap_or(max);
         
-                    let texture = crate::pokemon::pokemon_texture(&pokemon_data.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
+                    let texture = textures.pokemon_texture(&pokemon_data.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
         
                     self.pokemon[index] = Some(PartyGuiData {
                         name: pokemon.data.nickname.as_ref().map(|nick| nick.clone()).unwrap_or(pokemon_data.data.name.to_ascii_uppercase()),

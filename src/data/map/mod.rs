@@ -1,18 +1,23 @@
 use ahash::AHashMap as HashMap;
 use firecore_world::map::manager::WorldMapManager;
+use firecore_world::serialized::SerializedWorld;
 use macroquad::prelude::Image;
 use macroquad::prelude::info;
 
+use crate::battle::manager::BattleManager;
 use crate::util::{TILE_SIZE, graphics::Texture};
+use crate::world::NPCTypes;
+use crate::world::NpcTextures;
+use crate::world::TileTextures;
 
 
 pub mod npc_texture;
 
-pub async fn load_maps(tile_textures: &mut crate::world::TileTextures, npc_textures: &mut crate::world::NpcTextures) -> WorldMapManager {
+pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut TileTextures, npc_textures: &mut NpcTextures, npc_types: &mut NPCTypes) -> WorldMapManager {
 
     info!("Loading maps...");
 
-    let world: firecore_world::serialized::SerializedWorld = bincode::deserialize(
+    let world: SerializedWorld = bincode::deserialize(
         // &macroquad::prelude::load_file("assets/world.bin").await.unwrap()
         include_bytes!("../../../assets/world.bin")
     ).unwrap();
@@ -20,7 +25,7 @@ pub async fn load_maps(tile_textures: &mut crate::world::TileTextures, npc_textu
     info!("Loaded world file.");
 
     let images: Vec<(u8, Image)> = world.palettes.into_iter().map(|palette|
-        (palette.id, Image::from_file_with_format(&palette.bottom, Some(image::ImageFormat::Png)))
+        (palette.id, Image::from_file_with_format(&palette.bottom, None))
     ).collect();
     
     let mut bottom_sheets = HashMap::new();
@@ -46,7 +51,7 @@ pub async fn load_maps(tile_textures: &mut crate::world::TileTextures, npc_textu
         }
     }
 
-    npc_texture::load_npc_textures(npc_textures, world.npc_types);
+    npc_texture::load_npc_textures(battle_manager, npc_textures, npc_types, world.npc_types);
     info!("Finished loading textures!");
 
     world.manager

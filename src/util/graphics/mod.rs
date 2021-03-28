@@ -3,15 +3,10 @@ use macroquad::prelude::Color;
 pub use macroquad::prelude::Texture2D as Texture;
 use macroquad::prelude::draw_texture;
 
-use crate::data::text::IntoMQColor;
-
-use super::text::TextRenderer;
+use super::text::IntoMQColor;
+use super::text::TEXT_RENDERER;
 
 pub mod texture;
-
-lazy_static::lazy_static! {
-	static ref TEXT_RENDERER: TextRenderer = TextRenderer::new();
-}
 
 pub const DRAW_COLOR: Color = macroquad::prelude::WHITE;
 
@@ -53,25 +48,25 @@ pub fn draw_rect<C: Into<macroquad::prelude::Color>>(color: C, x: f32, y: f32, w
 
 pub fn draw_message(message: Message, x: f32, y: f32) {
 	for y_offset in 0..message.lines.len() {
-		TEXT_RENDERER.render_text_from_left(message.font_id, &message.lines[y_offset], message.color.into_color(), x, y + (y_offset * 15) as f32);
+		unsafe {TEXT_RENDERER.as_ref().unwrap()}.render_text_from_left(message.font_id, &message.lines[y_offset], message.color.into_color(), x, y + (y_offset * 15) as f32);
 	}
 }
 
-pub fn draw_text_left(font_id: usize, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
-	TEXT_RENDERER.render_text_from_left(font_id, text, color.into_color(), x, y);
+pub fn draw_text_left(font_id: u8, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
+	unsafe {TEXT_RENDERER.as_ref().unwrap()}.render_text_from_left(font_id, text, color.into_color(), x, y);
 }
 
-pub fn draw_text_right(font_id: usize, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
-	TEXT_RENDERER.render_text_from_right(font_id, text, color.into_color(), x, y);
+pub fn draw_text_right(font_id: u8, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
+	unsafe {TEXT_RENDERER.as_ref().unwrap()}.render_text_from_right(font_id, text, color.into_color(), x, y);
 }
 
 // #[deprecated(note = "make button panel class")]
 pub fn draw_cursor(x: f32, y: f32) {
-	TEXT_RENDERER.render_cursor(x, y);
+	unsafe {TEXT_RENDERER.as_ref().unwrap()}.render_cursor(x, y);
 }
 
-pub fn draw_button(text: &str, font_id: usize, x: f32, y: f32) {
-	TEXT_RENDERER.render_button(text, font_id, x, y)
+pub fn draw_button(text: &str, font_id: u8, x: f32, y: f32) {
+	unsafe {TEXT_RENDERER.as_ref().unwrap()}.render_button(text, font_id, x, y)
 }
 
 pub fn fade_in_out(texture: Texture, x: f32, y: f32, accumulator: f32, end_time: f32, fade_time: f32) {

@@ -1,3 +1,5 @@
+use firecore_data::configuration::Configuration;
+use firecore_data::get;
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use firecore_util::text::TextColor;
@@ -10,7 +12,6 @@ use macroquad::prelude::get_frame_time;
 use macroquad::prelude::info;
 use macroquad::prelude::next_frame;
 use macroquad::prelude::coroutines::start_coroutine;
-use parking_lot::Mutex;
 use scene::loading::manager::load_coroutine;
 use scene::manager::SceneManager;
 use scene::Scene;
@@ -45,14 +46,12 @@ pub const SCALE: f32 = 3.0;
 static mut DEBUG: bool = cfg!(debug_assertions);
 static mut QUIT: bool = false;
 
-lazy_static::lazy_static! {
-    static ref SCENE_MANAGER: Mutex<SceneManager> = Mutex::new(SceneManager::new());
-}
+static mut SCENE_MANAGER: Option<SceneManager> = None;
 
 #[cfg(target_arch = "wasm32")]
 #[macroquad::main(settings)]
 async fn main() {
-    macroquad_main().await;
+    start().await;
 }
 
 fn settings() -> Conf {
@@ -69,21 +68,31 @@ fn settings() -> Conf {
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
 
-    macroquad::Window::from_config(settings(), macroquad_main());
+    macroquad::Window::from_config(settings(), start());
 
     info!("Quitting game...");
 
-    unsafe{SCENE_MANAGER.force_unlock();}
-    SCENE_MANAGER.lock().quit();
+    unsafe { SCENE_MANAGER.as_mut().unwrap().quit() };
 
 }
 
-async fn macroquad_main() {
+pub async fn start() {
 
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
 
     macroquad::camera::set_camera(Camera2D::from_display_rect(CAMERA_SIZE));
+    
+
+    // Loads configuration and player saves
+
+    firecore_data::load().await;  
+
+    firecore_input::load(firecore_input::keyboard::serialization::normal_map(&get::<Configuration>().unwrap().controls));
+
+    // Loads fonts
+
+    crate::util::text::init_text().await;  
 
     // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
 
@@ -146,19 +155,13 @@ async fn macroquad_main() {
         info!("Running in debug mode");
     }
 
-    // Loads configuration and player saves
+    unsafe { SCENE_MANAGER = Some(SceneManager::new()) };
 
-    firecore_data::load().await;
-
-    // Loads fonts
-
-    crate::data::text::font::open_sheets().await;    
+    let scene_manager = unsafe { SCENE_MANAGER.as_mut().unwrap() };
     
     // Load the pokedex, pokemon textures and moves
 
-    pokemon::load().await;
-
-    let mut scene_manager = SCENE_MANAGER.lock();
+    pokemon::load(&mut scene_manager.game_scene.pokemon_textures).await;
 
     scene_manager.load_all().await;
 
@@ -237,28 +240,38 @@ pub enum Args {
 
 }
 
+
 fn getopts() -> Vec<Args> {
-    let args: Vec<String> = std::env::args().collect();
-    let mut opts = getopts::Options::new();
-    let mut list = Vec::new();
 
-    opts.optflag("a", "disable-audio", "Disable audio");
-    opts.optflag("d", "debug", "Add debug keybinds and other stuff");
+    #[cfg(not(target_arch = "wasm32"))] {
+        let mut list = Vec::new();
+        let args: Vec<String> = std::env::args().collect();
+        let mut opts = getopts::Options::new();
 
-    match opts.parse(&args[1..]) {
-        Ok(m) => {
-            if m.opt_present("a") {
-                list.push(Args::DisableAudio);
-            }
-            if m.opt_present("d") {
-                list.push(Args::Debug);
-            }
+        opts.optflag("a", "disable-audio", "Disable audio");
+        opts.optflag("d", "debug", "Add debug keybinds and other stuff");
+
+        if args.len() > 0 {
+            match opts.parse(&args[1..]) {
+                Ok(m) => {
+                    if m.opt_present("a") {
+                        list.push(Args::DisableAudio);
+                    }
+                    if m.opt_present("d") {
+                        list.push(Args::Debug);
+                    }
+                }
+                Err(f) => {
+                    macroquad::prelude::warn!("Could not parse command line arguments with error {}", f.to_string());
+                }
+            };
         }
-        Err(f) => {
-            macroquad::prelude::warn!("Could not parse command line arguments with error {}", f.to_string());
-        }
-    };
-    return list;
+
+        list
+    }
+    #[cfg(target_arch = "wasm32")] {
+        Vec::new()
+    }
 }
 
 fn loading_screen(texture: crate::util::graphics::Texture) {

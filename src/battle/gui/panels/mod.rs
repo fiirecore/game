@@ -32,7 +32,7 @@ impl PlayerPanel {
 
             pos,
 
-            battle_panel: BattlePanel::new(pos),
+            battle_panel: BattlePanel::new(),
             fight_panel: FightPanel::new(pos),
             
         }
