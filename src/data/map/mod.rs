@@ -18,7 +18,7 @@ pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut T
 
     let world: SerializedWorld = bincode::deserialize(
         // &macroquad::prelude::load_file("assets/world.bin").await.unwrap()
-        include_bytes!("../../../assets/world.bin")
+        include_bytes!("../../../build/data/world.bin")
     ).unwrap();
 
     info!("Loaded world file.");

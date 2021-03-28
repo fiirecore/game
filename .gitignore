@@ -2,4 +2,4 @@
 
 /.vscode
 
-/assets
+/build/data/*.bin

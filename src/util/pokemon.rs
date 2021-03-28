@@ -21,7 +21,7 @@ pub async fn load(textures: &mut PokemonTextures) {
 
 	let dex: SerializedDex = bincode::deserialize(
 		// &macroquad::prelude::load_file("assets/dex.bin").await.unwrap()
-		include_bytes!("../../assets/dex.bin")
+		include_bytes!("../../build/data/dex.bin")
 	).unwrap();
 
 	info!("Loading pokedex and moves!");

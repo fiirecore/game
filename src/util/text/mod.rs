@@ -39,7 +39,7 @@ pub async fn init_text() {
 
 	let font_sheets: firecore_font_lib::SerializedFonts = bincode::deserialize(
         // &macroquad::prelude::load_file("assets/fonts.bin").await.unwrap()
-        include_bytes!("../../../assets/fonts.bin")
+        include_bytes!("../../../build/data/fonts.bin")
     ).unwrap();
 
     for font_sheet in font_sheets.fonts {

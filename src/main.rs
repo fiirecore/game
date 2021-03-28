@@ -124,7 +124,7 @@ pub async fn start() {
         } else {
             let audio = bincode::deserialize(
                 // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
-                include_bytes!("../assets/audio.bin")
+                include_bytes!("../build/data/audio.bin")
             ).unwrap();
 
             #[cfg(not(target = "wasm32"))] {
