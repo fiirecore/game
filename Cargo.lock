@@ -443,7 +443,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#bdec33f4707c541861ec31661a663c3d185e731d"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#8e75c635433ef2794b010946dc9b8ec5ceede759"
 dependencies = [
  "dashmap",
  "firecore-pokedex-lib",
@@ -455,7 +455,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-lib"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-lib#1c73e8e27ac39f38001ce6523f26ed6519853e7f"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-lib#e832780b2db041fd938084fc038a251a9c9f6665"
 dependencies = [
  "serde",
  "smallvec",

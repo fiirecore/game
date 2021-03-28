@@ -144,6 +144,14 @@ impl Scene for GameScene {
 	fn input(&mut self, delta: f32) {
 		if self.party_gui.is_alive() {
 			self.party_gui.input(delta);
+			if firecore_input::pressed(firecore_input::Control::Start) || macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
+				self.party_gui.despawn();
+				if !self.battling {
+					if let Some(mut saves) = get_mut::<PlayerSaves>() {
+						self.party_gui.on_finish(&mut saves.get_mut().party)
+					}
+				}
+			}
 		} else if !self.battling {
 			self.world_manager.input(delta);
 		} else {

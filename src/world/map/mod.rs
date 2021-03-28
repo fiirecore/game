@@ -179,6 +179,11 @@ impl GameWorld for WorldMap {
                                 if let Some(mut saves) = get_mut::<PlayerSaves>() {
                                     for pokemon in saves.get_mut().party.iter_mut() {
                                         pokemon.current_hp = None;
+                                        if let Some(moves) = pokemon.moves.as_mut() {
+                                            for saved_move in moves {
+                                                saved_move.pp = None;
+                                            }
+                                        }
                                     }
                                 }
                                 pop = true;

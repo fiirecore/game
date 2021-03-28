@@ -1,17 +1,8 @@
-use macroquad::prelude::{
-    collections::storage::get,
-    WHITE,
-    RED,
-    draw_texture_ex,
-    draw_rectangle_lines,
-    DrawTextureParams,
-    Rect,
-    is_key_pressed,
-    KeyCode,
-};
+use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_util::{Entity, Reset, text::TextColor};
-
 use firecore_input::{pressed, Control};
+
+use macroquad::prelude::{DrawTextureParams, KeyCode, LIME, RED, Rect, WHITE, collections::storage::get, draw_rectangle_lines, draw_texture_ex, is_key_pressed};
 
 use crate::battle::party::BattleParty;
 use crate::data::player::list::PlayerSaves;
@@ -44,6 +35,9 @@ pub struct PokemonPartyGui {
     cursor_pos: u8,
 
     pub selected: Option<u8>,
+    #[deprecated(note = "add menu, not just swap")]
+    menu_on_select: bool,
+    swaps: Vec<(usize, usize)>,
 
 }
 
@@ -59,6 +53,8 @@ impl PokemonPartyGui {
             pokemon: [None, None, None, None, None, None],
             cursor_pos: 0,
             selected: None,
+            menu_on_select: false,
+            swaps: Vec::new(),
         }
 
     }
@@ -74,6 +70,7 @@ impl PokemonPartyGui {
                 texture,
             });
         }
+        self.menu_on_select = false;
     }
 
     pub fn on_world_start(&mut self, textures: &PokemonTextures) {
@@ -101,6 +98,8 @@ impl PokemonPartyGui {
                 }            
             }
         }
+        self.menu_on_select = true;
+        self.swaps = Vec::new();
         // self.on_start(despawn_on_select);
     }
 
@@ -118,17 +117,15 @@ impl PokemonPartyGui {
             ),
             ..Default::default()
         });
-        draw_text_left(0, &data.name, TextColor::White, 119.0, offset/* + 1.0*/);
-        draw_text_left(0, &data.level, TextColor::White, 129.0, offset + 13.0 - 4.0);
-        draw_text_left(0, &data.hp, TextColor::White, 209.0, offset + 13.0 - 1.0);
+        draw_text_left(0, &data.name, TextColor::White, 119.0, offset);
+        draw_text_left(0, &data.level, TextColor::White, 129.0, offset + 9.0);
+        draw_text_left(0, &data.hp, TextColor::White, 209.0, offset + 11.0);
         draw_rect(HealthBar::UPPER_COLOR, 185.0, offset + 8.0, data.health_width, 1.0);
         draw_rect(HealthBar::LOWER_COLOR, 185.0, offset + 9.0, data.health_width, 2.0);
     }
 
     pub fn input(&mut self, _delta: f32) {
-        if pressed(Control::Start) || is_key_pressed(KeyCode::Escape) {
-            self.despawn();
-        }
+        
         if pressed(Control::Up) {
             if self.cursor_pos > 0 {
                 self.cursor_pos -= 1;
@@ -140,10 +137,16 @@ impl PokemonPartyGui {
             }
         }
         if pressed(Control::A) {
-            self.selected = Some(self.cursor_pos);
-            // if self.despawn_on_select {
-            //     self.despawn();
-            // }
+            if self.menu_on_select {
+                if let Some(selected) = self.selected.take() {
+                    self.pokemon.swap(self.cursor_pos as usize, selected as usize);
+                    self.swaps.push((self.cursor_pos as usize, selected as usize));
+                } else {
+                    self.selected = Some(self.cursor_pos);
+                }
+            } else {
+                self.selected = Some(self.cursor_pos);
+            }
         }
     }
 
@@ -189,10 +192,25 @@ impl PokemonPartyGui {
             if self.cursor_pos == 0 {
                 draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, RED);
             } else {
-                let index = -14.0 + (24.0 * self.cursor_pos as f32);
-                draw_rectangle_lines(89.0, index, 150.0, 22.0, 2.0, RED);
+                draw_rectangle_lines(89.0, -14.0 + 24.0 * self.cursor_pos as f32, 150.0, 22.0, 2.0, RED);
+            }
+            if self.menu_on_select {
+                if let Some(selected) = self.selected {
+                    if selected == 0 {
+                        draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, LIME);
+                    } else {
+                        draw_rectangle_lines(89.0, -14.0 + 24.0 * selected as f32, 150.0, 22.0, 2.0, LIME);
+                    }
+                }
             }
         }        
+    }
+
+    pub fn on_finish(&mut self, party: &mut PokemonParty) {
+        for swap in &self.swaps {
+            party.swap(swap.0, swap.1);
+        }
+        self.swaps.clear();
     }
 
 }

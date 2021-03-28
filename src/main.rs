@@ -1,17 +1,19 @@
-use firecore_data::configuration::Configuration;
-use firecore_data::get;
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use firecore_util::text::TextColor;
 use macroquad::camera::Camera2D;
-use macroquad::prelude::BLACK;
-use macroquad::prelude::Conf;
-use macroquad::prelude::Rect;
-use macroquad::prelude::clear_background;
-use macroquad::prelude::get_frame_time;
-use macroquad::prelude::info;
-use macroquad::prelude::next_frame;
-use macroquad::prelude::coroutines::start_coroutine;
+use macroquad::prelude::{
+    Conf,
+    Rect,
+    clear_background,
+    BLACK,
+    get_frame_time,
+    next_frame,
+    info,
+    coroutines::start_coroutine,
+};
+use firecore_data::configuration::Configuration;
+use firecore_data::get;
 use scene::loading::manager::load_coroutine;
 use scene::manager::SceneManager;
 use scene::Scene;
