@@ -1,38 +1,31 @@
 use firecore_util::{Entity, Reset, Completable};
 use macroquad::prelude::Texture2D;
+use macroquad::prelude::Vec2;
 use crate::battle::transitions::BattleOpener;
 use crate::battle::transitions::BattleTransition;
 use crate::util::graphics::{byte_texture, draw};
 use super::trainer::TrainerBattleOpener;
 pub struct WildBattleOpener {
 
-    trainer_battle_opener: TrainerBattleOpener,
+    opener: TrainerBattleOpener,
     
     grass: Texture2D,
-    
-    grass_active: bool,
-    grass_x_offset: f32,
-    grass_y_offset: f32,
+    offset: Vec2,
 
 }
 
-const GRASS_X_OFFSET: f32 = 128.0; // width of image
-const GRASS_Y_OFFSET: f32 = 47.0; // height of image
-
 impl WildBattleOpener {
+    
+    const GRASS_WIDTH: f32 = 128.0;
+    const GRASS_HEIGHT: f32 = 47.0;
 
     pub fn new() -> Self {
-
         Self {
+            opener: TrainerBattleOpener::new(),
 
-            trainer_battle_opener: TrainerBattleOpener::new(),
-
-            grass_active: true,
-            grass_x_offset: GRASS_X_OFFSET,
-            grass_y_offset: GRASS_Y_OFFSET,
             grass: byte_texture(include_bytes!("../../../../build/assets/battle/grass.png")),
+            offset: Vec2::new(Self::GRASS_WIDTH, Self::GRASS_HEIGHT),
         }
-
     }
 
 }
@@ -40,53 +33,50 @@ impl WildBattleOpener {
 impl BattleTransition for WildBattleOpener {
     
     fn on_start(&mut self) {
-        self.trainer_battle_opener.on_start();
+        self.opener.on_start();
     }
 
     fn update(&mut self, delta: f32) {
-        self.trainer_battle_opener.update(delta);
-        if self.grass_active {
-            self.grass_x_offset -= 360.0 * delta;
-            if self.grass_x_offset < 0.0 {
-                self.grass_x_offset += GRASS_X_OFFSET;
+        self.opener.update(delta);
+        if self.offset.y > 0.0 {
+            self.offset.x -= 360.0 * delta;
+            if self.offset.x < 0.0 {
+                self.offset.x += Self::GRASS_WIDTH;
             }
-            if self.trainer_battle_opener.offset() <= 130.0 {
-                self.grass_y_offset -= 60.0 * delta;
-                if self.grass_y_offset < 0.0 {
-                    self.grass_active = false;
-                }
+            if self.opener.offset() <= 130.0 {
+                self.offset.y -= 60.0 * delta;
             }
         }
         
     }
 
     fn render(&self) {
-        self.trainer_battle_opener.render();
+        self.opener.render();
     }
 
 }
 
 impl BattleOpener for WildBattleOpener {
     fn offset(&self) -> f32 {
-        return self.trainer_battle_opener.offset();
+        self.opener.offset()
     }
 
     fn render_below_panel(&self) {
-        if self.grass_active {
-            let y = 114.0 - self.grass_y_offset;
+        if self.offset.y > 0.0 {
+            let y = 114.0 - self.offset.y;
             draw(
                 self.grass,
-                self.grass_x_offset - GRASS_X_OFFSET,
+                self.offset.x - Self::GRASS_WIDTH,
                 y,
             );
             draw(
                 self.grass,
-                self.grass_x_offset,
+                self.offset.x,
                 y,
             );
             draw(
                 self.grass,
-                self.grass_x_offset + GRASS_X_OFFSET,
+                self.offset.x + Self::GRASS_WIDTH,
                 y,
             );
         }
@@ -96,10 +86,8 @@ impl BattleOpener for WildBattleOpener {
 impl Reset for WildBattleOpener {
 
     fn reset(&mut self) {
-        self.grass_active = true;
-        self.grass_x_offset = GRASS_X_OFFSET;
-        self.grass_y_offset = GRASS_Y_OFFSET;
-        self.trainer_battle_opener.reset();
+        self.offset = Vec2::new(Self::GRASS_WIDTH, Self::GRASS_HEIGHT);
+        self.opener.reset();
     }
     
 }
@@ -107,22 +95,22 @@ impl Reset for WildBattleOpener {
 impl Completable for WildBattleOpener {
 
     fn is_finished(&self) -> bool {
-        return self.trainer_battle_opener.is_finished() && !self.grass_active;
+        self.opener.is_finished() && self.offset.y <= 0.0
     }
 
 }
 
 impl Entity for WildBattleOpener {
     fn spawn(&mut self) {
+        self.opener.spawn();
         self.reset();
-        self.trainer_battle_opener.spawn();
     }
 
     fn despawn(&mut self) {
-        self.trainer_battle_opener.despawn();
+        self.opener.despawn();
     }
 
     fn is_alive(&self) -> bool {
-        return self.trainer_battle_opener.is_alive();
+        self.opener.is_alive()
     }
 }

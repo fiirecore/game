@@ -19,9 +19,9 @@ pub mod player {
                     data.battled.insert(*index);
                 }
             }
-        } else {
-            macroquad::prelude::info!("Player has already battled {}", npc.identifier.name);
-        }
+        }// else {
+        //     macroquad::prelude::info!("Player has already battled {}", npc.identifier.name);
+        // }
     }
 
 }

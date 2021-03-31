@@ -27,7 +27,7 @@ pub type GuiTextures = HashMap<u8, Texture2D>;
 
 pub trait GameWorld {
 
-    fn on_start(&self, music: bool);
+    fn on_start(&mut self, music: bool);
 
     fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter);
 

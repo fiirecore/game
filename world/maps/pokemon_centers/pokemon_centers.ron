@@ -2,14 +2,14 @@
     map_set: Some((
         identifier: "pokemon_centers",
         dirs: [
-            "viridian_lower",
-            "viridian_upper",
-            "pewter_lower",
-            "pewter_upper",
-            "route_4_lower",
-            "route_4_upper",
-            "cerulean_lower",
-            "cerulean_upper",
+            "viridian/lower",
+            "viridian/upper",
+            "pewter/lower",
+            "pewter/upper",
+            "route_4/lower",
+            "route_4/upper",
+            "cerulean/lower",
+            "cerulean/upper",
         ]
     ))
 )

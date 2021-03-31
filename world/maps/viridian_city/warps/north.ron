@@ -1,0 +1,27 @@
+(
+    location: (
+        min: (
+            x: 0x19,
+            y: 0x0B,
+        ),
+        max: (
+            x: 0x19,
+            y: 0x0B,
+        ),
+    ),
+    destination: (
+        map_id: "viridian_houses",
+        map_index: 0,
+        position: (
+            coords: (
+                x: 4,
+                y: 7,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    )
+)

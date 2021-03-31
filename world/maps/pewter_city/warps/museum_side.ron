@@ -1,0 +1,27 @@
+(
+    location: (
+        min: (
+            x: 0x19,
+            y: 0x04,
+        ),
+        max: (
+            x: 0x19,
+            y: 0x04,
+        )
+    ),
+    destination: (
+        map_id: "pewter_houses",
+        map_index: 0,
+        position: (
+            coords: (
+                x: 0x15,
+                y: 0x09,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    ),
+)

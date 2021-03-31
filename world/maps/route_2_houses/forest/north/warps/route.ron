@@ -1,0 +1,27 @@
+(
+    location: (
+        min: (
+            x: 7,
+            y: 1,
+        ),
+        max: (
+            x: 7,
+            y: 1,
+        )
+    ),
+    destination: (
+        map_id: "world",
+        map_index: 20,
+        position: (
+            coords: (
+                x: 0x05,
+                y: 0x0D,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    )
+)

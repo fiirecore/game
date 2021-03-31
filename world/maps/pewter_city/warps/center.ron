@@ -1,0 +1,27 @@
+(
+    location: (
+        min: (
+            x: 0x11,
+            y: 0x19,
+        ),
+        max: (
+            x: 0x11,
+            y: 0x19,
+        ),
+    ),
+    destination: (
+        map_id: "pokemon_centers",
+        map_index: 2,
+        position: (
+            coords: (
+                x: 7,
+                y: 8,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    ),
+)

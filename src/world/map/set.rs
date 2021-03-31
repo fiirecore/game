@@ -10,8 +10,8 @@ use firecore_world::character::player::PlayerCharacter;
 
 impl GameWorld for WorldMapSet {
 
-    fn on_start(&self, music: bool) {
-        self.map().on_start(music);
+    fn on_start(&mut self, music: bool) {
+        self.map_mut().on_start(music);
     }
 
     fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
@@ -34,8 +34,8 @@ impl GameWorld for WorldMapSet {
 
 impl GameWorld for WorldMapSetManager {
 
-    fn on_start(&self, music: bool) {
-        match self.map_sets.get(&self.current_map_set) {
+    fn on_start(&mut self, music: bool) {
+        match self.map_sets.get_mut(&self.current_map_set) {
             Some(map_set) => map_set.on_start(music),
             None => {
                 warn!("Could not get current map set {}!", self.current_map_set);

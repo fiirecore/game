@@ -86,33 +86,22 @@ impl BattleTransition for BattleOpenerManager {
                     self.introduction.spawn();
                     self.introduction.on_start();
                 } else {
-                    opener.update(delta
-                        // * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
-                        //     8.0
-                        // } else {
-                        //     1.0
-                        // }
-                    );
+                    opener.update(delta);
                 }
             } else if self.introduction.is_alive() {
-                self.introduction.update(delta
-                    //  * if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
-                    //     8.0
-                    // } else {
-                    //     1.0
-                    // }
-                );
+                self.introduction.update(delta);
             }
         }
     }
 
     fn render(&self) {
-        if self.is_alive() {
-            if self.introduction.is_alive() {
-                self.introduction.render();
-            } else {
+        if self.alive {
+            // if self.introduction.is_alive() {
+                // self.introduction.render();
+            // } else {
                 self.get().render();
-            }
+                self.introduction.render();
+            // }
         }
     }
 
@@ -121,7 +110,7 @@ impl BattleTransition for BattleOpenerManager {
 impl BattleOpener for BattleOpenerManager {
 
     fn offset(&self) -> f32 {
-        return self.get().offset();
+        self.get().offset()
     }
 
     fn render_below_panel(&self) {
@@ -141,7 +130,7 @@ impl Reset for BattleOpenerManager {
 impl Completable for BattleOpenerManager {
 
     fn is_finished(&self) -> bool {
-        return self.introduction.is_finished();
+        self.introduction.is_finished()
     }
     
 }
@@ -161,6 +150,6 @@ impl Entity for BattleOpenerManager {
     }
 
     fn is_alive(&self) -> bool {
-        return self.alive;
+        self.alive
     }
 }

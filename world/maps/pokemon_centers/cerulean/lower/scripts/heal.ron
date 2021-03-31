@@ -1,0 +1,66 @@
+(
+    identifier: "cerulean_heal",
+    location: Some((
+        min: (
+            x: 7,
+            y: 4
+        ),
+        max: (
+            x: 7,
+            y: 4
+        )
+    )),
+    conditions: [
+        Activate(Up),
+    ],
+    actions: [
+        PlayerFreezeInput,
+        Conditional(
+            messages: [
+                (
+                    lines: ["Welcome to our POKEMON CENTER!"],
+                    color: Red,
+                ),
+                (
+                    lines: [
+                        "Would you like me to heal your",
+                        "POKEMON back to perfect health?"
+                    ],
+                    color: Red,
+                    wait: Some(0.0),
+                )
+            ],
+            end_messages: Some([(
+                lines: ["We hope to see you again!"],
+                color: Red,
+            )]),
+            unfreeze: true,
+        ),
+        DisplayText([(
+            lines: [
+                "Okay, I'll take your POKEMON for a",
+                "few seconds."
+            ],
+            color: Red,
+            wait: Some(2.0),
+        )]),
+        PlayerHealPokemon,
+        Info("Healed player pokemon"),
+        DisplayText([
+            (
+                lines: [
+                    "Thank you for waiting. We've restored", // change to text scrolling (3 lines)
+                    "your POKEMON to full health.",
+                ],
+                color: Red,
+            ),
+            (
+                lines: [
+                    "We hope to see you again!",
+                ],
+                color: Red,
+            )
+        ]),
+        PlayerUnfreezeInput,
+    ]
+)

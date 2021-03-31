@@ -11,7 +11,7 @@ use firecore_world::character::player::PlayerCharacter;
 
 impl GameWorld for WorldChunk {
 
-    fn on_start(&self, music: bool) {
+    fn on_start(&mut self, music: bool) {
         self.map.on_start(music);
     }
 
@@ -35,8 +35,8 @@ impl GameWorld for WorldChunk {
 
 impl GameWorld for WorldChunkMap {
 
-    fn on_start(&self, music: bool) {
-        self.current_chunk().on_start(music);
+    fn on_start(&mut self, music: bool) {
+        self.current_chunk_mut().on_start(music);
     }
 
     fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, text_window: &mut TextWindow, npc_types: &NPCTypes) {

@@ -1,0 +1,27 @@
+(
+    location: (
+        min: (
+            x: 0x12,
+            y: 0x2A,
+        ),
+        max: (
+            x: 0x13,
+            y: 0x2A,
+        )
+    ),
+    destination: (
+        map_id: "route_2_houses",
+        map_index: 2,
+        position: (
+            coords: (
+                x: 7,
+                y: 1,
+            ),
+            direction: Some(Down),
+        ),
+        transition: (
+            move_on_exit: true,
+            warp_on_tile: false,
+        ),
+    )
+)

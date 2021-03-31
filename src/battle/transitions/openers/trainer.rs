@@ -79,14 +79,14 @@ impl BattleTransition for TrainerBattleOpener {
             [0.0, 0.0, 0.0, 1.0],
             0.0,
             0.0,
-            240.0,
+            crate::WIDTH,
             self.rect_size,
         );
         draw_rect(
             [0.0, 0.0, 0.0, 1.0],
             0.0,
             160.0 - self.rect_size,
-            240.0,
+            crate::WIDTH,
             self.rect_size,
         );
     }

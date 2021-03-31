@@ -1,0 +1,9 @@
+(
+    map_set: Some((
+        identifier: "viridian_houses",
+        dirs: [
+            "north",
+            "south"
+        ]
+    )),    
+)

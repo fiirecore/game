@@ -1,8 +1,13 @@
 use crate::battle::data::BattleData;
 use crate::util::{play_music_named, play_music};
 use crate::data::player::list::PlayerSaves;
+use firecore_util::Direction;
 use firecore_util::text::Message;
 use firecore_world::character::Character;
+use firecore_world::character::movement::MovementType;
+use firecore_world::character::npc::NPC;
+use firecore_world::character::npc::NPCId;
+use firecore_world::map::manager::can_move;
 use firecore_world::script::world::WorldScript;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::collections::storage::{get, get_mut};
@@ -21,6 +26,7 @@ use firecore_util::Entity;
 use firecore_input::{pressed, Control};
 
 use firecore_util::Completable;
+use rand::Rng;
 
 use super::NPCTypes;
 use super::npc::WorldNpc;
@@ -31,9 +37,14 @@ pub mod manager;
 pub mod set;
 pub mod chunk;
 
+const NPC_MOVE_CHANCE: f64 = 1.0 / 12.0;
+const NPC_MOVE_TICK: f32 = 0.5;
+
 impl GameWorld for WorldMap {
 
-    fn on_start(&self, music: bool) {
+    fn on_start(&mut self, music: bool) {
+        self.npc_timer.spawn();
+        self.npc_timer.set_target(NPC_MOVE_TICK);
         if music {
             if firecore_audio::get_current_music().map(|current| current != self.music).unwrap_or(true) {
                 play_music(self.music);
@@ -63,13 +74,15 @@ impl GameWorld for WorldMap {
                 if npc.trainer.is_some() {
                     if let Some(saves) = get::<PlayerSaves>() {
                         if !saves.get().has_battled(&self.name, &npc.identifier.index) && saves.get().party.iter().filter(|pokemon| pokemon.current_hp.map(|hp| hp != 0).unwrap_or(true)).next().is_some() {
-                            if npc.find_player(player.position.local.coords, player) {
+                            if npc.find_character(player.position.local.coords, player) {
                                 self.npc_active = Some(*npc_index);
                             }
                         }
                     }
                 }            
             }
+
+
             if let Some(mut saves) = get_mut::<PlayerSaves>() {
                 let player_data = saves.get_mut();
                 for script in self.scripts.iter_mut() {
@@ -110,6 +123,68 @@ impl GameWorld for WorldMap {
     }
 
     fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+
+        // Move NPCs
+
+        for (index, npc) in self.npcs.iter_mut() {
+            if self.npc_active.map(|active| active.ne(index)).unwrap_or(true) {
+                if npc.properties.character.destination.is_some() {
+                    if npc.should_move_to_destination() {
+                        npc.move_to_destination(delta);
+                    } else {
+                        npc.properties.character.destination = None;
+                    }
+                }
+            }
+        }
+
+        if self.npc_timer.is_finished() {
+            self.npc_timer.soft_reset();
+            for (index, npc) in self.npcs.iter_mut() {
+                if !npc.should_move_to_destination() {
+                    if rand::thread_rng().gen_bool(NPC_MOVE_CHANCE) {
+                        match npc.properties.movement {
+                            MovementType::Still => (),
+                            MovementType::LookAround => {
+                                npc.position.direction = firecore_util::Direction::DIRECTIONS[rand::thread_rng().gen_range(0..4)];
+                                find_battle(index, npc, &mut self.npc_active, player, &self.name);
+                            },
+                            MovementType::WalkUpAndDown(steps) => {
+                                let origin = npc.origin.get_or_insert(npc.position.coords);
+                                let direction = 
+                                    if npc.position.coords.y <= origin.y - steps {
+                                        Direction::Down
+                                    } else if npc.position.coords.y >= origin.y + steps {
+                                        Direction::Up
+                                    } else 
+                                if rand::thread_rng().gen_bool(0.5) {
+                                    Direction::Down
+                                } else {
+                                    Direction::Up
+                                };
+                                let coords = npc.position.coords.in_direction(direction);
+                                if can_move(firecore_world::map::tile_walkable(coords, &self.movements, self.width)) {
+                                    npc.position.direction = direction;
+                                    if !find_battle(index, npc, &mut self.npc_active, player, &self.name) {
+                                        if coords.y != player.position.local.coords.y {
+                                            npc.walk_to(coords);
+                                            // println!("{} Walking to {}", npc.identifier.name, coords);
+                                        }                                        
+                                    }                                    
+                                }
+                            },
+                        }
+                    }  
+                }            
+            }
+
+        } else {
+            self.npc_timer.update(delta);
+        }
+
+        
+
+        // Update scripts
 
         for script in self.scripts.iter_mut() {
 
@@ -211,7 +286,7 @@ impl GameWorld for WorldMap {
                                             pop = true;
                                         }
                                     } else {
-                                        npc.walk_to(&pos.coords);
+                                        npc.walk_to(pos.coords);
                                     }
                                 } else {
                                     warn!("NPC script tried to move an unknown NPC (with id {})", id);
@@ -231,7 +306,7 @@ impl GameWorld for WorldMap {
                                         }
                                     } else {
                                         if npc.position.coords != pos.coords {
-                                            npc.walk_to(&pos.coords);
+                                            npc.walk_to(pos.coords);
                                         }
                                     }
                                     if player.properties.destination.is_some() {
@@ -245,7 +320,7 @@ impl GameWorld for WorldMap {
                                         }
                                     } else {
                                         if player.position.local.coords.ne(&pos.coords) {
-                                            player.properties.destination = Some(Destination::next_to(&player.position.local, &pos.coords));
+                                            player.properties.destination = Some(Destination::next_to(&player.position.local, pos.coords));
                                         }
                                     }
                                 } else {
@@ -263,7 +338,7 @@ impl GameWorld for WorldMap {
                                             pop = true;
                                         }
                                     } else {
-                                        npc.walk_next_to(&player.position.local.coords)
+                                        npc.walk_next_to(player.position.local.coords)
                                     }
                                 } else {
                                     warn!("NPC script tried to move to player with an unknown NPC (with id {})", id);
@@ -646,6 +721,18 @@ fn display_text(delta: f32, text_window: &mut TextWindow, messages: &Vec<Message
             text_window.on_start(saves.get());
         }
         
+    }
+    false
+}
+
+fn find_battle(index: &NPCId, npc: &mut NPC, active: &mut Option<NPCId>, player: &mut PlayerCharacter, map_name: &String) -> bool {
+    if npc.find_character(player.position.local.coords, player) {
+        if let Some(saves) = get::<PlayerSaves>() {
+            if !saves.get().has_battled(map_name, index) {
+                *active = Some(*index);
+                return true;
+            }                                            
+        }
     }
     false
 }

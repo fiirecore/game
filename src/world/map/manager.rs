@@ -81,7 +81,7 @@ impl WorldManager {
         self.map_start(true);
     }
 
-    pub fn map_start(&self, music: bool) {
+    pub fn map_start(&mut self, music: bool) {
         if self.map_manager.chunk_active {
             self.map_manager.chunk_map.on_start(music);
         } else {

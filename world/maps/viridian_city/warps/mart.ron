@@ -1,0 +1,27 @@
+(
+    location: (
+        min: (
+            x: 0x24,
+            y: 0x13,
+        ),
+        max: (
+            x: 0x24,
+            y: 0x13,
+        )
+    ),
+    destination: (
+        map_id: "pokemarts",
+        map_index: 1,
+        position: (
+            coords: (
+                x: 4,
+                y: 7,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    ),
+)

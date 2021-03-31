@@ -17,13 +17,14 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
 - [X] Reorganized player and map data
 - [X] Basic warp transitions
 - [X] Conditional (yes/no) actions in scripts
-- [ ] NPCs can move by themselves
+- [X] NPCs can move by themselves
 - [ ] Battles close properly
-- [ ] All maps and warps up to Cerulean are added
-    - [ ] Pokemon centers up to cerulean work
+- [X] All maps and warps up to Cerulean are added
+    - [X] Pokemon centers up to cerulean work
 
 ### v0.4.X
 
+- [ ] Independent world random, battle random, and wild random
 - [ ] Finished Party GUI
 - [ ] Fixed all warp transitions
 - [ ] Move battle code to separate crates
