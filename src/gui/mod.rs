@@ -1,5 +1,4 @@
 pub mod text;
-pub mod dynamic_text;
 pub mod game;
 
 

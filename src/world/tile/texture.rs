@@ -5,7 +5,7 @@ use ahash::{
 
 use macroquad::prelude::{Texture2D, draw_texture_ex, WHITE, DrawTextureParams, Rect};
 
-use crate::util::graphics::{byte_texture, draw_o};
+use crate::util::graphics::byte_texture;
 use crate::world::TileId;
 
 const SIZE: f32 = crate::util::TILE_SIZE as f32;

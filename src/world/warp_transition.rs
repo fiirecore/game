@@ -1,7 +1,7 @@
 use firecore_util::{Entity, Reset, Completable};
 
 use crate::util::graphics::draw_rect;
-use crate::{WIDTH_F32, HEIGHT_F32};
+use crate::{WIDTH, HEIGHT};
 
 pub struct WarpTransition {
 
@@ -20,7 +20,7 @@ impl WarpTransition {
         Self {
             alive: false,
             alpha: 0.0,
-            rect_width: WIDTH_F32 / 2.0,
+            rect_width: WIDTH / 2.0,
             switch: false,
             recognize_switch: false,
         }
@@ -44,10 +44,10 @@ impl WarpTransition {
 
     pub fn render(&self) {
         if self.alive {
-            draw_rect([0.0, 0.0, 0.0, self.alpha], 0.0, 0.0, WIDTH_F32, HEIGHT_F32);
+            draw_rect([0.0, 0.0, 0.0, self.alpha], 0.0, 0.0, WIDTH, HEIGHT);
             if self.switch {
-                draw_rect(macroquad::prelude::BLACK, 0.0, 0.0, self.rect_width, HEIGHT_F32);
-                draw_rect(macroquad::prelude::BLACK, WIDTH_F32 - self.rect_width, 0.0, self.rect_width, HEIGHT_F32);
+                draw_rect(macroquad::prelude::BLACK, 0.0, 0.0, self.rect_width, HEIGHT);
+                draw_rect(macroquad::prelude::BLACK, WIDTH - self.rect_width, 0.0, self.rect_width, HEIGHT);
             }
         }        
     }
@@ -76,7 +76,7 @@ impl Entity for WarpTransition {
 impl Reset for WarpTransition {
     fn reset(&mut self) {
         self.alpha = 0.0;
-        self.rect_width = crate::WIDTH_F32 / 2.0;
+        self.rect_width = WIDTH / 2.0;
         self.switch = false;
         self.recognize_switch = false;
     }

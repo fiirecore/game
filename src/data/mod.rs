@@ -7,12 +7,13 @@ pub mod player {
     pub use firecore_data::player::{list, save, world};
     use firecore_world::character::npc::NPC;
 
+    use crate::battle::data::BattleData;
     use crate::world::NPCTypes;
 
-    pub fn battle(data: &mut MapData, npc: &NPC, npc_types: &NPCTypes) {
+    pub fn battle(data: &mut MapData, battle_data: &mut Option<BattleData>,  npc: &NPC, npc_types: &NPCTypes) {
         if !data.battled.contains(&npc.identifier.index) {
             if npc.trainer.is_some() {
-                crate::battle::data::trainer_battle(&npc, npc_types);
+                crate::battle::data::trainer_battle(battle_data, &npc, npc_types);
                 data.battled.insert(npc.identifier.index.clone());
                 for index in &npc.trainer.as_ref().unwrap().disable_others {
                     data.battled.insert(*index);

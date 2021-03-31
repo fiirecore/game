@@ -15,12 +15,12 @@ pub struct RenderCoords {
 
     pub focus: Vec2,
 
-    pub tile_offset: Coordinate,
+    pub offset: Coordinate,
 
 }
 
-const HALF_WIDTH: isize = (crate::BASE_WIDTH as isize + TILE_SIZE as isize) >> 1;
-const HALF_HEIGHT: isize = (crate::BASE_HEIGHT as isize + TILE_SIZE as isize) >> 1;
+const HALF_WIDTH: isize = (crate::WIDTH as isize + TILE_SIZE as isize) >> 1;
+const HALF_HEIGHT: isize = (crate::HEIGHT as isize + TILE_SIZE as isize) >> 1;
 
 const HALF_WIDTH_TILE: isize = HALF_WIDTH >> 4;
 const HALF_HEIGHT_TILE: isize = (HALF_HEIGHT >> 4) + 2;
@@ -43,9 +43,9 @@ impl RenderCoords {
 
     }
 
-    pub fn offset(&self, tile_offset: Coordinate) -> RenderCoords { // return offset x & y
+    pub fn offset(&self, offset: Coordinate) -> RenderCoords { // return offset x & y
         RenderCoords {
-            tile_offset,
+            offset,
             ..*self
         }
     }

@@ -1,3 +1,4 @@
+use crate::battle::data::BattleData;
 use crate::util::{play_music_named, play_music};
 use crate::data::player::list::PlayerSaves;
 use firecore_util::text::Message;
@@ -40,18 +41,19 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn on_tile(&mut self, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
         if let Some(tile_id) = self.tile(player.position.local.coords) {
 
             if let Some(wild) = &self.wild {
                 if let Some(tiles) = wild.tiles.as_ref() {
-                    tiles.iter().for_each(|tile| {
+                    for tile in tiles.iter() {
                         if tile_id.eq(tile) {
-                            try_wild_battle(wild);
+                            try_wild_battle(battle_data, wild);
+                            break;
                         }
-                    });
+                    }
                 } else {
-                    try_wild_battle(wild);
+                    try_wild_battle(battle_data, wild);
                 }            
             }
     
@@ -107,7 +109,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
 
         for script in self.scripts.iter_mut() {
 
@@ -303,7 +305,7 @@ impl GameWorld for WorldMap {
                             WorldActionKind::NPCBattle(id) => {
                                 if let Some(npc) = self.npcs.get(id) {
                                     if npc.trainer.is_some() {
-                                        crate::battle::data::trainer_battle(&npc, npc_types);
+                                        crate::battle::data::trainer_battle(battle_data, &npc, npc_types);
                                     }
                                 }
                                 pop = true;
@@ -433,7 +435,7 @@ impl GameWorld for WorldMap {
                 if text_window.is_finished() {
                     {
                         self.npc_active = None;
-                        super::npc::try_battle(&self.name, npc, npc_types);
+                        super::npc::try_battle(battle_data, &self.name, npc, npc_types);
                     }
                     text_window.despawn();
                 } else {
@@ -515,11 +517,11 @@ impl GameWorld for WorldMap {
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
-            let y = yy - screen.tile_offset.y;
+            let y = yy - screen.offset.y;
             let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
             
             for xx in screen.left..screen.right {
-                let x = xx - screen.tile_offset.x;
+                let x = xx - screen.offset.x;
                 let render_x = (xx << 4) as f32 - screen.focus.x;
 
                 if !(x < 0 || y < 0 || y >= self.height as isize || x >= self.width as isize) {
@@ -616,9 +618,9 @@ impl GameWorld for WorldMap {
 }
 
 // #[deprecated(note = "move this function")]
-fn try_wild_battle(wild: &WildEntry) { // move
+fn try_wild_battle(battle_data: &mut Option<BattleData>, wild: &WildEntry) { // move
     if wild.table.try_encounter() {
-        crate::battle::data::wild_battle(&wild.table);
+        crate::battle::data::wild_battle(battle_data, &wild.table);
     }
 }
 

@@ -2,6 +2,8 @@ use firecore_util::Entity;
 use macroquad::prelude::Vec2;
 
 use crate::battle::Battle;
+use crate::gui::game::party::PokemonPartyGui;
+use crate::util::pokemon::PokemonTextures;
 use background::BattleBackground;
 use text::BattleText;
 use panels::BattlePanel;
@@ -93,8 +95,8 @@ impl BattleGui {
 		self.opponent.update(delta);
 	}
 
-	pub fn input(&mut self, delta: f32, battle: &mut Battle) {
-		self.panel.input(delta, battle, &mut self.battle_text);
+	pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
+		self.panel.input(battle, &mut self.battle_text, party_gui, textures);
 	}
 
 	pub fn render_background(&self, offset: f32) {

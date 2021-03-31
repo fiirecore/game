@@ -27,7 +27,7 @@ use crate::battle::{
 };
 
 use crate::util::graphics::{byte_texture, draw_bottom};
-use crate::gui::dynamic_text::DynamicText;
+use crate::gui::text::DynamicText;
 use crate::util::text::process_messages;
 
 pub struct BasicBattleIntroduction {

@@ -2,6 +2,7 @@ use firecore_util::Direction;
 use firecore_world::character::npc::NPC;
 use macroquad::prelude::collections::storage::{get, get_mut};
 
+use crate::battle::data::BattleData;
 use crate::data::player::list::PlayerSaves;
 
 use super::NPCTypes;
@@ -24,9 +25,9 @@ pub fn has_battled(map_name: &String, npc: &NPC) -> bool {
     npc.trainer.is_some() && !get::<PlayerSaves>().as_ref().map(|saves| saves.get().has_battled(map_name, &npc.identifier.index)).unwrap_or(true)
 }
 
-pub fn try_battle(map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
+pub fn try_battle(battle_data: &mut Option<BattleData>, map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
     if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
-        crate::data::player::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), npc, npc_types);
+        crate::data::player::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), battle_data, npc, npc_types);
     } else {
         macroquad::prelude::warn!("Could not get player data!");
     }
@@ -35,8 +36,8 @@ pub fn try_battle(map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
 impl WorldNpc for NPC {
 
     fn render(&self, npc_textures: &NpcTextures, npc_types: &NPCTypes, screen: &RenderCoords) {
-        let x = ((self.position.coords.x + screen.tile_offset.x) << 4) as f32 - screen.focus.x + self.position.offset.x;
-        let y = ((self.position.coords.y - 1 + screen.tile_offset.y) << 4) as f32 - screen.focus.y + self.position.offset.y;
+        let x = ((self.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x + self.position.offset.x;
+        let y = ((self.position.coords.y - 1 + screen.offset.y) << 4) as f32 - screen.focus.y + self.position.offset.y;
         
         if let Some(texture) = npc_textures.get(&self.identifier.npc_type) {
             macroquad::prelude::draw_texture_ex(*texture, x, y, macroquad::prelude::WHITE, macroquad::prelude::DrawTextureParams {

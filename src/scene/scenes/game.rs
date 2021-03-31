@@ -1,8 +1,8 @@
-use firecore_util::Entity;
 use firecore_data::data::PersistantData;
 
 use macroquad::prelude::collections::storage::{get, get_mut};
 
+use crate::battle::data::BattleData;
 use crate::scene::Scene;
 use crate::util::pokemon::PokemonTextures;
 use super::SceneState;
@@ -12,17 +12,17 @@ use crate::battle::manager::BattleManager;
 use crate::gui::game::party::PokemonPartyGui;
 
 use crate::data::player::list::PlayerSaves;
-use crate::battle::data::BATTLE_DATA;
 
 pub struct GameScene {
 
 	state: SceneState,
 	
-	pub world_manager: WorldManager,
+	world_manager: WorldManager,
 	battle_manager: BattleManager,
-	party_gui: PokemonPartyGui,
 
+	party_gui: PokemonPartyGui,
 	pub pokemon_textures: PokemonTextures,
+	battle_data: Option<BattleData>,
 
 	battling: bool,
 
@@ -40,6 +40,8 @@ impl GameScene {
 			party_gui: PokemonPartyGui::new(),
 
 			pokemon_textures: PokemonTextures::default(),
+
+			battle_data: None,
 
 			battling: false,
 		}
@@ -89,25 +91,25 @@ impl Scene for GameScene {
 
 		// spawn party gui if asked to
 
-		if unsafe { crate::gui::game::party::SPAWN } {
-			unsafe { crate::gui::game::party::SPAWN = false; }
-			self.party_gui.spawn();
-			if self.battling {
-				if let Some(party) = self.battle_manager.player_party() {
-					self.party_gui.on_battle_start(&self.pokemon_textures, party);
-				}				
-			} else {
-				self.party_gui.on_world_start(&self.pokemon_textures);
-			}
-		}
+		// if unsafe { crate::gui::game::party::SPAWN } {
+		// 	unsafe { crate::gui::game::party::SPAWN = false; }
+		// 	self.party_gui.spawn();
+		// 	if self.battling {
+		// 		if let Some(party) = self.battle_manager.player_party() {
+		// 			self.party_gui.on_battle_start(&self.pokemon_textures, party);
+		// 		}				
+		// 	} else {
+		// 		self.party_gui.on_world_start(&self.pokemon_textures);
+		// 	}
+		// }
 
 		if !self.battling {
 
-			self.world_manager.update(delta);
+			self.world_manager.update(delta, &mut self.battle_data);
 
-			if unsafe { BATTLE_DATA.is_some() } {
+			if self.battle_data.is_some() {
 				if let Some(player_saves) = get::<PlayerSaves>() {
-					if self.battle_manager.battle(&self.pokemon_textures, &player_saves.get().party, unsafe { BATTLE_DATA.take().unwrap() }) {
+					if self.battle_manager.battle(&self.pokemon_textures, &player_saves.get().party, self.battle_data.take().unwrap()) {
 						self.battling = true;
 					}
 				}
@@ -153,9 +155,9 @@ impl Scene for GameScene {
 				}
 			}
 		} else if !self.battling {
-			self.world_manager.input(delta, &mut self.state);
+			self.world_manager.input(delta, &mut self.battle_data, &mut self.party_gui, &self.pokemon_textures, &mut self.state);
 		} else {
-			self.battle_manager.input(delta);
+			self.battle_manager.input(&mut self.party_gui, &self.pokemon_textures);
 		}
 	}
 

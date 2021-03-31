@@ -1,23 +1,31 @@
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use firecore_util::text::TextColor;
-use macroquad::camera::Camera2D;
 use macroquad::prelude::{
     Conf,
-    Rect,
     clear_background,
     BLACK,
     get_frame_time,
     next_frame,
     info,
-    coroutines::start_coroutine,
+    coroutines::{
+        start_coroutine,
+        stop_coroutine,
+        wait_seconds,
+    },
 };
-use firecore_data::configuration::Configuration;
-use firecore_data::get;
-use scene::loading::manager::load_coroutine;
-use scene::manager::SceneManager;
-use scene::Scene;
-use util::graphics::draw_text_left;
+
+use firecore_data::{get, get_mut, configuration::Configuration};
+
+use scene::{
+    Scene,
+    loading::manager::load_coroutine,
+    manager::SceneManager,
+};
+
+use util::{
+    Args,
+    loading_screen,
+};
 
 pub mod util;
 pub mod scene;
@@ -30,15 +38,10 @@ pub const TITLE: &str = "Pokemon FireRed";
 pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-pub const BASE_WIDTH: u32 = 240;
-pub const BASE_HEIGHT: u32 = 160;
 
-pub const WIDTH_F32: f32 = crate::BASE_WIDTH as f32;
-pub const HEIGHT_F32: f32 = crate::BASE_HEIGHT as f32;
-
-pub const CAMERA_SIZE: Rect = Rect { x: 0.0, y: 0.0, w: WIDTH_F32, h: HEIGHT_F32 };
-
-pub const SCALE: f32 = 3.0;
+pub const WIDTH: f32 = 240.0;
+pub const HEIGHT: f32 = 160.0;
+pub const DEFAULT_SCALE: f32 = 3.0;
 
 static mut DEBUG: bool = cfg!(debug_assertions);
 static mut QUIT: bool = false;
@@ -54,8 +57,8 @@ async fn main() {
 fn settings() -> Conf {
     Conf {
         window_title: TITLE.to_string(),
-        window_width: (BASE_WIDTH * SCALE as u32) as _,
-        window_height: (BASE_HEIGHT * SCALE as u32) as _,
+        window_width: (WIDTH * DEFAULT_SCALE) as _,
+        window_height: (HEIGHT * DEFAULT_SCALE) as _,
         sample_count: 1,
         ..Default::default()
     }
@@ -78,7 +81,7 @@ pub async fn start() {
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
 
-    macroquad::camera::set_camera(Camera2D::from_display_rect(CAMERA_SIZE));
+    macroquad::camera::set_camera(util::game_camera());
     
 
     // Loads configuration and player saves
@@ -112,7 +115,7 @@ pub async fn start() {
 
     // Parses arguments
 
-    let args = getopts();
+    let args = util::getopts();
 
     if !args.contains(&Args::DisableAudio) {
 
@@ -167,11 +170,11 @@ pub async fn start() {
 
     if cfg!(not(target_arch = "wasm32")) {
         while !loading_coroutine.is_done() {
-            macroquad::prelude::coroutines::wait_seconds(0.05).await;
+            wait_seconds(0.05).await;
         } 
     }
 
-    macroquad::prelude::coroutines::stop_coroutine(loading_coroutine); 
+    stop_coroutine(loading_coroutine); 
 
     if cfg!(target_arch = "wasm32") {
         load_coroutine().await;
@@ -200,7 +203,7 @@ pub async fn start() {
 
 
         if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
-            if let Some(mut config) = firecore_data::get_mut::<Configuration>() {
+            if let Some(mut config) = get_mut::<Configuration>() {
                 firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
             // if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
@@ -209,6 +212,8 @@ pub async fn start() {
         }
 
         if unsafe{QUIT} {
+            util::graphics::draw_rect(BLACK, 0.0, 0.0, WIDTH, HEIGHT);
+            // next_frame().await;
             break;
         }
 
@@ -219,7 +224,7 @@ pub async fn start() {
 
 }
 
-pub fn queue_quit() {
+pub fn quit() {
     unsafe {
         QUIT = true;
     }
@@ -227,54 +232,4 @@ pub fn queue_quit() {
 
 pub fn debug() -> bool {
     unsafe{DEBUG}
-}
-
-#[derive(PartialEq)]
-pub enum Args {
-
-    DisableAudio,
-    Debug,
-
-}
-
-
-fn getopts() -> Vec<Args> {
-
-    #[cfg(not(target_arch = "wasm32"))] {
-        let mut list = Vec::new();
-        let args: Vec<String> = std::env::args().collect();
-        let mut opts = getopts::Options::new();
-
-        opts.optflag("a", "disable-audio", "Disable audio");
-        opts.optflag("d", "debug", "Add debug keybinds and other stuff");
-
-        if args.len() > 0 {
-            match opts.parse(&args[1..]) {
-                Ok(m) => {
-                    if m.opt_present("a") {
-                        list.push(Args::DisableAudio);
-                    }
-                    if m.opt_present("d") {
-                        list.push(Args::Debug);
-                    }
-                }
-                Err(f) => {
-                    macroquad::prelude::warn!("Could not parse command line arguments with error {}", f.to_string());
-                }
-            };
-        }
-
-        list
-    }
-    #[cfg(target_arch = "wasm32")] {
-        Vec::new()
-    }
-}
-
-fn loading_screen(texture: macroquad::prelude::Texture2D) {
-    clear_background(macroquad::prelude::BLUE);
-    macroquad::prelude::draw_texture(texture, 0.0, 0.0, macroquad::prelude::WHITE);
-    draw_text_left(0, VERSION, TextColor::White, 1.0, 1.0);
-    draw_text_left(1, "The game may stay on this screen", TextColor::White, 5.0, 50.0);
-    draw_text_left(1, "for up to two minutes.", TextColor::White, 5.0, 65.0);
 }

@@ -1,4 +1,4 @@
-use crate::{WIDTH_F32, HEIGHT_F32};
+use crate::{WIDTH, HEIGHT};
 use crate::util::{Update, Render};
 use crate::battle::transitions::BattleScreenTransition;
 use crate::battle::transitions::BattleTransition;
@@ -87,8 +87,8 @@ impl Update for VerticalCloseBattleScreenTransition {
 impl Render for VerticalCloseBattleScreenTransition {
 
     fn render(&self) {
-        draw_rect([0.0, 0.0, 0.0, 1.0], 0f32, 0f32, WIDTH_F32, self.offset);
-        draw_rect([0.0, 0.0, 0.0, 1.0], 0f32, HEIGHT_F32 - self.offset, WIDTH_F32, self.offset.ceil());    
+        draw_rect([0.0, 0.0, 0.0, 1.0], 0f32, 0f32, WIDTH, self.offset);
+        draw_rect([0.0, 0.0, 0.0, 1.0], 0f32, HEIGHT - self.offset, WIDTH, self.offset.ceil());    
     }
 
 }

@@ -2,8 +2,10 @@ use firecore_util::Direction;
 use firecore_world::character::player::PlayerCharacter;
 use macroquad::prelude::{Texture2D, draw_texture_ex, WHITE, DrawTextureParams, Rect};
 
-const SCREEN_X: f32 = ((crate::BASE_WIDTH as isize - crate::util::TILE_SIZE as isize) >> 1) as f32;
-const SCREEN_Y: f32 = ((crate::BASE_HEIGHT as isize - crate::util::TILE_SIZE as isize) >> 1) as f32 - crate::util::TILE_SIZE as f32;
+use crate::util::TILE_SIZE;
+
+const SCREEN_X: f32 = ((crate::WIDTH as isize - TILE_SIZE as isize) >> 1) as f32;
+const SCREEN_Y: f32 = ((crate::HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - TILE_SIZE as f32;
 
 pub struct PlayerTexture {
 

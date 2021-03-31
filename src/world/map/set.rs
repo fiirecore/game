@@ -2,6 +2,7 @@ use firecore_world::map::set::WorldMapSet;
 use firecore_world::map::set::manager::WorldMapSetManager;
 use macroquad::prelude::warn;
 
+use crate::battle::data::BattleData;
 use crate::world::NPCTypes;
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
@@ -13,12 +14,12 @@ impl GameWorld for WorldMapSet {
         self.map().on_start(music);
     }
 
-    fn on_tile(&mut self, player: &mut PlayerCharacter) {
-        self.maps[self.current_map].on_tile(player)
+    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
+        self.maps[self.current_map].on_tile(battle_data, player)
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow, npc_types: &NPCTypes) {
-        self.maps[self.current_map].update(delta, player, text_window, npc_types);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+        self.maps[self.current_map].update(delta, player, battle_data, text_window, npc_types);
     }
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
@@ -42,12 +43,12 @@ impl GameWorld for WorldMapSetManager {
         }
     }
 
-    fn on_tile(&mut self, player: &mut PlayerCharacter) {
-        self.map_set_mut().on_tile(player)
+    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
+        self.map_set_mut().on_tile(battle_data, player)
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, text_window: &mut TextWindow, npc_types: &NPCTypes) {
-        self.map_set_mut().update(delta, player, text_window, npc_types);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+        self.map_set_mut().update(delta, player, battle_data, text_window, npc_types);
     }
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {

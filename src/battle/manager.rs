@@ -87,7 +87,7 @@ impl BattleManager {
 
 	}
 
-	pub fn input(&mut self, delta: f32) {
+	pub fn input(&mut self, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
 
 		if let Some(battle) = self.battle.as_mut() {
 			if !self.screen_transition.is_alive() {	
@@ -96,7 +96,7 @@ impl BattleManager {
 				} else if self.closer.is_alive() {
 					//self.closer.input(context);
 				} else {
-					self.gui.input(delta, battle);
+					self.gui.input(battle, party_gui, textures);
 				}
 			}
 		}

@@ -55,10 +55,10 @@ impl super::LoadingScene for GamefreakLoadingScene {
 	}
 	
 	fn render(&self) {
-		draw_rect(BACKGROUND_COLOR, 0.0, (crate::HEIGHT_F32 - self.rect_size) / 2.0, 240.0, self.rect_size);
+		draw_rect(BACKGROUND_COLOR, 0.0, (crate::HEIGHT - self.rect_size) / 2.0, 240.0, self.rect_size);
 
 		if self.accumulator < 2.0 {
-			draw_texture_ex(self.star, crate::WIDTH_F32 - self.accumulator * 240.0, 64.0 + self.accumulator * 5.0, WHITE, DrawTextureParams {
+			draw_texture_ex(self.star, crate::WIDTH - self.accumulator * 240.0, 64.0 + self.accumulator * 5.0, WHITE, DrawTextureParams {
 			    rotation: self.accumulator * 2.0,
 				..Default::default()
 			})

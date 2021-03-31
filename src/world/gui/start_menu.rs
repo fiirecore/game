@@ -3,8 +3,10 @@ use firecore_input::{pressed, Control};
 
 use macroquad::prelude::{Vec2, Texture2D};
 
+use crate::gui::game::party::PokemonPartyGui;
 use crate::scene::scenes::{SceneState, Scenes};
 use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_cursor};
+use crate::util::pokemon::PokemonTextures;
 
 pub struct StartMenu {
 
@@ -50,7 +52,7 @@ impl StartMenu {
         self.alive = !self.alive;
     }
 
-    pub fn input(&mut self, scene_state: &mut SceneState) {
+    pub fn input(&mut self, scene_state: &mut SceneState, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
 
         if pressed(Control::A) {
             match self.cursor {
@@ -60,7 +62,7 @@ impl StartMenu {
                 },
                 1 => {
                     // Pokemon
-                    crate::gui::game::party::spawn();
+                    party_gui.spawn_world(textures);
                 },
                 2 => {
                     // Exit to Main Menu
@@ -69,7 +71,7 @@ impl StartMenu {
                 },
                 3 => {
                     // Exit Game
-                    crate::queue_quit();
+                    crate::quit();
                 },
                 4 => {
                     // Close Menu

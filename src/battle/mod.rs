@@ -233,8 +233,7 @@ impl Battle {
 						closer_manager.spawn();
 					} else {
 
-						party_gui.spawn();
-						party_gui.on_battle_start(&pokemon_textures, &self.player);
+						party_gui.spawn_battle(&pokemon_textures, &self.player);
 						
 						// Reset the pokemon renderer so it renders pokemon
 

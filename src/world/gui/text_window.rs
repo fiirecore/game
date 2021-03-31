@@ -2,7 +2,7 @@ use firecore_util::{Entity, Reset, Completable, text::Message};
 use macroquad::prelude::{Vec2, Texture2D};
 use firecore_data::player::save::PlayerSave;
 
-use crate::gui::dynamic_text::DynamicText;
+use crate::gui::text::DynamicText;
 use crate::util::text::process_messages;
 use crate::util::graphics::{byte_texture, draw};
 

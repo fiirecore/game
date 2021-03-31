@@ -2,7 +2,7 @@ use firecore_util::{Entity, Reset, Completable};
 use macroquad::prelude::{Texture2D, draw_texture_ex, DrawTextureParams};
 
 use crate::battle::transitions::{BattleTransition, BattleScreenTransition};
-use crate::WIDTH_F32;
+use crate::WIDTH;
 
 use crate::util::graphics::{byte_texture, draw_rect};
 
@@ -34,7 +34,7 @@ impl TrainerBattleScreenTransition { // To - do: Two grey flashes before rectang
         draw_rect(
             [0.0, 0.0, 0.0, 1.0], 
             if invert {
-                WIDTH_F32 - self.rect_width
+                WIDTH - self.rect_width
             } else {
                 0.0
             }, 
@@ -45,7 +45,7 @@ impl TrainerBattleScreenTransition { // To - do: Two grey flashes before rectang
         draw_texture_ex(
             self.texture, 
             if invert {
-                WIDTH_F32 - self.rect_width - 16.0
+                WIDTH - self.rect_width - 16.0
             } else {
                 self.rect_width - 16.0
             }, 
@@ -70,7 +70,7 @@ impl BattleTransition for TrainerBattleScreenTransition {
 
     fn update(&mut self, delta: f32) {
         self.rect_width += 240.0 * delta;
-        if self.rect_width >= WIDTH_F32 + 16.0 {
+        if self.rect_width >= WIDTH + 16.0 {
             self.finished = true;
         }
     }

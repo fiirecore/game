@@ -14,7 +14,9 @@ use crate::battle::{
     }
 };
 
+use crate::gui::game::party::PokemonPartyGui;
 use crate::util::graphics::{byte_texture, draw};
+use crate::util::pokemon::PokemonTextures;
 
 pub mod moves;
 pub mod battle;
@@ -62,9 +64,9 @@ impl BattlePanel {
         self.fight.update_gui(instance);
     }
     
-    pub fn input(&mut self, delta: f32, battle: &mut Battle, text: &mut BattleText) {
+    pub fn input(&mut self, battle: &mut Battle, text: &mut BattleText, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
         if self.battle.is_alive() {
-            self.battle.input(delta, battle);
+            self.battle.input(battle, party_gui, textures);
         } else if self.fight.is_alive() {
             self.fight.input(battle, text);
         }

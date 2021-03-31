@@ -5,7 +5,9 @@ use firecore_input::{self as input, Control};
 use macroquad::prelude::Texture2D;
 use macroquad::prelude::warn;
 use crate::battle::Battle;
+use crate::gui::game::party::PokemonPartyGui;
 use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_cursor};
+use crate::util::pokemon::PokemonTextures;
 
 pub struct BattleOptions {
 
@@ -56,7 +58,7 @@ impl BattleOptions {
         self.text[1] = instance.name() + " do?";
     }
 
-    pub fn input(&mut self, _delta: f32, battle: &mut Battle) {
+    pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
         if input::pressed(Control::Up) {
             if self.cursor >= 2 {
                 self.cursor -= 2;
@@ -84,7 +86,7 @@ impl BattleOptions {
                     warn!("bag button unimplemented");
                 },
                 2 => {
-                    crate::gui::game::party::spawn();
+                    party_gui.spawn_battle(textures, &battle.player);
                 },
                 3 => {
                     battle.run();

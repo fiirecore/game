@@ -1,8 +1,6 @@
 use macroquad::camera::set_camera;
-use macroquad::prelude::Rect;
 use macroquad::prelude::collections::storage::{get, get_mut};
 use macroquad::ui::widgets::InputText;
-use macroquad::camera::Camera2D;
 use macroquad::prelude::info;
 use macroquad::prelude::screen_height;
 use macroquad::prelude::screen_width;
@@ -50,7 +48,7 @@ impl Scene for MainMenuScene {
 	}
 
 	async fn on_start(&mut self) {
-		set_camera(Camera2D::from_display_rect(Rect::new(0.0, 0.0, screen_width(), screen_height())));
+		set_camera(crate::util::window_camera());
 	}
 	
 	fn update(&mut self, _delta: f32) {}
@@ -103,7 +101,7 @@ impl Scene for MainMenuScene {
 	}
 	
 	fn quit(&mut self) {
-		set_camera(Camera2D::from_display_rect(crate::CAMERA_SIZE));
+		set_camera(crate::util::game_camera());
 		self.state = SceneState::Continue;
 	}
 	

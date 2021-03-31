@@ -1,4 +1,4 @@
-use firecore_util::{Entity, Reset, text::TextColor};
+use firecore_util::{Reset, text::TextColor};
 use firecore_input::{pressed, Control};
 use firecore_pokedex::pokemon::party::PokemonParty;
 
@@ -15,12 +15,6 @@ use super::health_bar::HealthBar;
 
 const TEXTURE_TICK: f32 = 0.15;
 
-pub static mut SPAWN: bool = false;
-
-pub fn spawn() {
-    unsafe { SPAWN = true }
-}
-
 pub struct PokemonPartyGui {
 
     alive: bool,
@@ -28,17 +22,17 @@ pub struct PokemonPartyGui {
     background: Texture2D,
     primary_slot: Texture2D,
     pokemon_slot: Texture2D,
-
-    accumulator: f32,
     
     pokemon: SmallVec<[PartyGuiData; 6]>,
+
+    pub selected: Option<u8>,
+
+    accumulator: f32,
 
     cursor: u8,
     right_cursor: Option<u8>,
 
-    pub selected: Option<u8>,
-
-    #[deprecated(note = "add menu, not just swap (always use this, even in battle, but change INFO to USE)")]
+    #[deprecated(note = "add menu with SWAP/USE and INFO buttons, not just swap, use this variable as a specifier")]
     menu_on_select: bool, // change to a menu that pops up asking if player wants to see info/use pokemon or swap the pokemon with another
 
     swaps: Vec<(usize, usize)>, // keeps track of swaps
@@ -54,7 +48,7 @@ impl PokemonPartyGui {
             primary_slot: byte_texture(include_bytes!("../../../build/assets/gui/party/primary.png")),
             pokemon_slot: byte_texture(include_bytes!("../../../build/assets/gui/party/pokemon.png")),
             accumulator: 0.0,
-            pokemon: SmallVec::with_capacity(6),
+            pokemon: SmallVec::new(),
             cursor: 0,
             right_cursor: None,
             selected: None,
@@ -64,7 +58,7 @@ impl PokemonPartyGui {
 
     }
 
-    pub fn on_battle_start(&mut self, textures: &PokemonTextures, party: &BattleParty) {
+    pub fn spawn_battle(&mut self, textures: &PokemonTextures, party: &BattleParty) {
         for pokemon in party.pokemon.iter().map(|pokemon| &pokemon.pokemon){
             let texture = textures.pokemon_texture(&pokemon.pokemon.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
             self.pokemon.push(PartyGuiData {
@@ -76,9 +70,10 @@ impl PokemonPartyGui {
             });
         }
         self.menu_on_select = false;
+        self.alive = true;
     }
 
-    pub fn on_world_start(&mut self, textures: &PokemonTextures) {
+    pub fn spawn_world(&mut self, textures: &PokemonTextures) {
         if let Some(saves) = get::<PlayerSaves>() {
             for pokemon in saves.get().party.iter() {
                 if let Some(pokemon_data) = firecore_pokedex::pokedex().get(&pokemon.id) {
@@ -101,6 +96,8 @@ impl PokemonPartyGui {
         }
         self.menu_on_select = true;
         self.swaps = Vec::new();
+
+        self.alive = true;
         // self.on_start(despawn_on_select);
     }
 
@@ -162,7 +159,7 @@ impl PokemonPartyGui {
     }
 
     pub fn update(&mut self, delta: f32) {
-        if self.is_alive() {
+        if self.alive {
             self.accumulator += delta;
             if self.accumulator > TEXTURE_TICK * 2.0 {
                 self.accumulator = 0.0;
@@ -171,7 +168,7 @@ impl PokemonPartyGui {
     }
 
     pub fn render(&self) {
-        if self.is_alive() {
+        if self.alive {
             draw(self.background, 0.0, 0.0);
             for (index, pokemon) in self.pokemon.iter().enumerate() {
                 if index == 0 {
@@ -222,22 +219,30 @@ impl PokemonPartyGui {
         self.swaps.clear();
     }
 
-}
-
-impl Entity for PokemonPartyGui {
-    fn spawn(&mut self) {
-        self.alive = true;
-        self.reset();
-    }
-
-    fn despawn(&mut self) {
+    pub fn despawn(&mut self) {
         self.alive = false;
     }
 
-    fn is_alive(&self) -> bool {
+    pub fn is_alive(&self) -> bool {
         self.alive
     }
+
 }
+
+// impl Entity for PokemonPartyGui {
+//     fn spawn(&mut self) {
+//         self.alive = true;
+//         self.reset();
+//     }
+
+//     fn despawn(&mut self) {
+//         self.alive = false;
+//     }
+
+//     fn is_alive(&self) -> bool {
+//         self.alive
+//     }
+// }
 
 impl Reset for PokemonPartyGui {
     fn reset(&mut self) {

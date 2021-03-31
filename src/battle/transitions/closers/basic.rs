@@ -33,7 +33,7 @@ impl BattleTransition for BasicBattleCloser {
     }
 
     fn render(&self) {
-        draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::WIDTH_F32, crate::HEIGHT_F32);
+        draw_rect([0.0, 0.0, 0.0, (self.alpha as f32) / 32.0], 0.0, 0.0, crate::WIDTH, crate::HEIGHT);
     }
 
 }

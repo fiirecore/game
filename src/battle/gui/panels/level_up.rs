@@ -6,7 +6,7 @@ use macroquad::prelude::Vec2;
 
 use firecore_input::{pressed, Control};
 
-use crate::gui::dynamic_text::DynamicText;
+use crate::gui::text::DynamicText;
 
 use super::moves::MovePanel;
 

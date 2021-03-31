@@ -1,5 +1,5 @@
 use crate::battle::Battle;
-use crate::gui::dynamic_text::DynamicText;
+use crate::gui::text::DynamicText;
 use firecore_pokedex::pokemon::instance::PokemonInstance;
 use firecore_util::text::{Message, TextColor};
 use macroquad::prelude::Vec2;

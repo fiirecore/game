@@ -10,11 +10,14 @@ use firecore_input::{self as input, Control};
 use firecore_util::Entity;
 use firecore_world::character::Character;
 
+use crate::battle::data::BattleData;
 use crate::battle::manager::BattleManager;
 use crate::data::player::list::PlayerSaves;
 use crate::data::player::save::PlayerSave;
+use crate::gui::game::party::PokemonPartyGui;
 use crate::scene::scenes::SceneState;
 use crate::util::graphics::byte_texture;
+use crate::util::pokemon::PokemonTextures;
 use crate::world::NPCTypes;
 use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
@@ -86,7 +89,7 @@ impl WorldManager {
         }
     }
 
-    pub fn update(&mut self, delta: f32) {
+    pub fn update(&mut self, delta: f32, battle_data: &mut Option<BattleData>) {
         self.tile_textures.update(delta);
         
         if self.noclip_toggle && self.map_manager.player.position.local.offset.is_none() {
@@ -129,9 +132,9 @@ impl WorldManager {
                     self.map_manager.warp(destination);
                     self.map_start(music);
                     if self.map_manager.chunk_active {
-                        self.map_manager.chunk_map.on_tile(&mut self.map_manager.player);
+                        self.map_manager.chunk_map.on_tile(battle_data, &mut self.map_manager.player);
                     } else {
-                        self.map_manager.map_set_manager.on_tile(&mut self.map_manager.player);
+                        self.map_manager.map_set_manager.on_tile(battle_data, &mut self.map_manager.player);
                     }
                 }
             }
@@ -154,14 +157,14 @@ impl WorldManager {
         }
 
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, &mut self.text_window, &self.npc_types);
+            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle_data, &mut self.text_window, &self.npc_types);
         } else {
-            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, &mut self.text_window, &self.npc_types);
+            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, battle_data, &mut self.text_window, &self.npc_types);
         }
 
         if !self.map_manager.player.is_frozen() {
             if self.map_manager.player.do_move(delta) {
-                self.stop_player();
+                self.stop_player(battle_data);
             }
         }
         
@@ -191,10 +194,10 @@ impl WorldManager {
 		player_data.location.position = self.map_manager.player.position;
     }
 
-    pub fn input(&mut self, delta: f32, scene_state: &mut SceneState) {
+    pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures, scene_state: &mut SceneState) {
 
         if crate::debug() {
-            self.debug_input()
+            self.debug_input(battle_data)
         }
 
         if input::pressed(Control::Start) {
@@ -204,7 +207,7 @@ impl WorldManager {
         if self.text_window.is_alive() {
             self.text_window.input();
         } else if self.start_menu.is_alive() {
-            self.start_menu.input(scene_state);
+            self.start_menu.input(scene_state, party_gui, textures);
         } else {
 
             if self.map_manager.chunk_active {
@@ -258,7 +261,7 @@ impl WorldManager {
         
     }
 
-    fn stop_player(&mut self) {
+    fn stop_player(&mut self, battle_data: &mut Option<BattleData>) {
         self.map_manager.player.stop_move();
 
         // if self.map_manager.chunk_active {
@@ -269,13 +272,13 @@ impl WorldManager {
             if let Some(destination) = self.map_manager.chunk_map.check_warp(self.map_manager.player.position.local.coords) { // Warping does not trigger tile actions!
                 self.map_manager.warp = Some((destination, true));
             } else if self.map_manager.chunk_map.in_bounds(self.map_manager.player.position.local.coords) {
-                self.map_manager.chunk_map.on_tile(&mut self.map_manager.player);
+                self.map_manager.chunk_map.on_tile(battle_data, &mut self.map_manager.player);
             }
         } else {
             if let Some(destination) = self.map_manager.map_set_manager.check_warp(self.map_manager.player.position.local.coords) {
                 self.map_manager.warp = Some((destination, true));
             } else if self.map_manager.map_set_manager.in_bounds(self.map_manager.player.position.local.coords) {
-                self.map_manager.map_set_manager.on_tile(&mut self.map_manager.player);
+                self.map_manager.map_set_manager.on_tile(battle_data, &mut self.map_manager.player);
             }
         }        
     }
@@ -298,10 +301,10 @@ impl WorldManager {
         }        
     }
 
-    fn debug_input(&mut self) {
+    fn debug_input(&mut self, battle_data: &mut Option<BattleData>) {
 
         if is_key_pressed(KeyCode::F1) {
-            crate::battle::data::random_wild_battle();
+            crate::battle::data::random_wild_battle(battle_data);
         }
 
         if is_key_pressed(KeyCode::F2) {
