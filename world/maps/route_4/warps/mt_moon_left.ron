@@ -1,0 +1,23 @@
+(
+    location: (
+        min: (
+            x: 0x13,
+            y: 0x05,
+        ),
+        max: (
+            x: 0x13,
+            y: 0x05,
+        ),
+    ),
+    destination: (
+        map: Some("mt_moon"),
+        index: "floor_0",
+        position: (
+            coords: (
+                x: 0x12,
+                y: 0x25,
+            ),
+            direction: Some(Up),
+        ),
+    ),
+)

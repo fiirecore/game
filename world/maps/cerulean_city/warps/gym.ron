@@ -10,8 +10,8 @@
         ),
     ),
     destination: (
-        map_id: "gyms",
-        map_index: 1,
+        map: Some("gyms"),
+        index: "cerulean",
         position: (
             coords: (
                 x: 8,

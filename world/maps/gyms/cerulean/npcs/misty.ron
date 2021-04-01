@@ -2,7 +2,7 @@
     identifier: (
         index: 0,
         name: "Misty",
-        npc_type: "misty"
+        type: "misty"
     ),
     position: (
         coords: (

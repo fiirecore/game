@@ -2,7 +2,7 @@
     identifier: (
         index: 2,
         name: "Liam",
-        npc_type: "camper"
+        type: "camper"
     ),
     position: (
         coords: (

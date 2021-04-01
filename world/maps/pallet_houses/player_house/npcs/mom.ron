@@ -2,7 +2,7 @@
     identifier: (
         index: 0,
         name: "Mom",
-        npc_type: "mom"
+        type: "mom"
     ),
     position: (
         coords: (

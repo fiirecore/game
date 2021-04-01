@@ -1,0 +1,22 @@
+(
+    location: (
+        min: (
+            x: 0x2D,
+            y: 0x04,
+        ),
+        max: (
+            x: 0x2D,
+            y: 0x04,
+        ),
+    ),
+    destination: (
+        index: "route_4",
+        position: (
+            coords: (
+                x: 32,
+                y: 5,
+            ),
+            direction: Some(Down),
+        ),
+    ),
+)

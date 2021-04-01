@@ -1,18 +1,19 @@
 (
-    chunk: Some((
-        config: (
-            name: "Route 2",
-            file: "3.20_ROUTE 2.map",
-            wild: Some((
-                type: "original",
-                tiles: Some([0x0D]),
-            )),
-        ),
-        piece_index: 20,
-        coords: (
-            x: 60,
-            y: 100,
-        ),
-        connections: [1, 2],
-    ))
+    config: (
+        identifier: "route_2",
+        name: "Route 2",
+        file: "3.20_ROUTE 2.map",
+        wild: Some((
+            type: "original",
+            tiles: Some([0x0D]),
+        )),
+    ),
+    coords: (
+        x: 60,
+        y: 100,
+    ),
+    connections: [
+        "viridian",
+        "pewter",
+    ],
 )

@@ -1,10 +1,8 @@
 (
-    map_set: Some((
-        identifier: "digletts_cave",
-        dirs: [
-            "route_2",
-            "cave",
-            "route_11",
-        ],
-    ))
+    identifier: "digletts_cave",
+    dirs: [
+        "route_2",
+        "cave",
+        "route_11",
+    ],
 )

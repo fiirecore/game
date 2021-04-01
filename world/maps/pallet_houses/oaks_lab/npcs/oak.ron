@@ -2,7 +2,7 @@
     identifier: (
         index: 0,
         name: "Oak",
-        npc_type: "prof_oak"
+        type: "prof_oak"
     ),
     position: (
         coords: (

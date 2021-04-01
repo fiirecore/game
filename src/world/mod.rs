@@ -1,6 +1,7 @@
 use ahash::AHashMap as HashMap;
 use firecore_world::TileId;
 use firecore_world::character::npc::npc_type::NPCType;
+use firecore_world::map::warp::WarpDestination;
 use macroquad::prelude::Texture2D;
 use crate::battle::data::BattleData;
 
@@ -31,10 +32,16 @@ pub trait GameWorld {
 
     fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter);
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, text_window: &mut TextWindow, npc_types: &NPCTypes);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow, npc_types: &NPCTypes);
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool);
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter);
 
 }
+
+// pub trait GameWorldMap {
+
+//     fn despawn_npc(&mut self, index: u8);
+
+// }

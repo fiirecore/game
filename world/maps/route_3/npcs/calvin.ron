@@ -2,7 +2,7 @@
     identifier: (
         index: 1,
         name: "Calvin",
-        npc_type: "youngster"
+        type: "youngster"
     ),
     position: (
         coords: (

@@ -2,7 +2,7 @@
     identifier: (
         index: 5,
         name: "Janice",
-        npc_type: "lass"
+        type: "lass"
     ),
     position: (
         coords: (

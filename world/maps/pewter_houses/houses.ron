@@ -1,11 +1,9 @@
 (
-    map_set: Some((
-        identifier: "pewter_houses",
-        dirs: [
-            "museum/lower",
-            "museum/upper",
-            "east",
-            "west"
-        ]
-    )),    
+    identifier: "pewter_houses",
+    dirs: [
+        "museum/lower",
+        "museum/upper",
+        "east",
+        "west"
+    ]    
 )

@@ -1,0 +1,15 @@
+(
+    config: (
+        identifier: "route_21_south",
+        name: "Route 21 South",
+        file: "3.40_ROUTE 21.map",
+    ),
+    coords: (
+        x: 60,
+        y: 330,
+    ),
+    connections: [
+        "cinnabar",
+        "route_21_north",
+    ],
+)

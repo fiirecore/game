@@ -413,7 +413,7 @@ dependencies = [
 [[package]]
 name = "firecore-data-lib"
 version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-data-lib#c68d36770b9c57be44a9382d5d8f7b09738caffc"
+source = "git+https://github.com/DoNotDoughnut/firecore-data-lib#ffcab69b2a6538b8b527b45897a751e72a21c554"
 dependencies = [
  "ahash 0.7.2",
  "firecore-input",
@@ -463,15 +463,16 @@ dependencies = [
 
 [[package]]
 name = "firecore-util"
-version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#b827c9e27f9cccd9a0f0601aa26325e50b8438b3"
+version = "0.3.0-beta.2"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#20d344565717acc0ebe4f9345fcdb41c69221266"
 dependencies = [
  "serde",
+ "tinystr",
 ]
 
 [[package]]
 name = "firecore-world"
-version = "0.3.0-beta.2"
+version = "0.3.0-beta.3"
 dependencies = [
  "ahash 0.7.2",
  "firecore-audio-lib",
@@ -480,12 +481,13 @@ dependencies = [
  "quad-rand",
  "serde",
  "smallvec",
+ "tinystr",
 ]
 
 [[package]]
 name = "firecore-world"
-version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#fa3677acc3b74f8fe45a46114e5307c8186a931b"
+version = "0.3.0-beta.3"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#cb74818852acf86ad99ed6d01850d79648fec0bb"
 dependencies = [
  "ahash 0.7.2",
  "firecore-audio-lib",
@@ -494,6 +496,7 @@ dependencies = [
  "quad-rand",
  "serde",
  "smallvec",
+ "tinystr",
 ]
 
 [[package]]
@@ -1112,7 +1115,7 @@ dependencies = [
  "firecore-input",
  "firecore-pokedex",
  "firecore-util",
- "firecore-world 0.3.0-beta.2",
+ "firecore-world 0.3.0-beta.3",
  "font-builder",
  "getopts",
  "macroquad",
@@ -1420,6 +1423,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "tinystr"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27aaed4540fcc2440c36fe3a98ca56450ee3da6d166da64369f40dc980aba459"
+dependencies = [
+ "serde",
+ "tinystr-macros",
+ "tinystr-raw",
+]
+
+[[package]]
+name = "tinystr-macros"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f65be51117c325c2b58eec529be7a0857d11527a9029973b58810a4c63e77a6"
+dependencies = [
+ "tinystr-raw",
+]
+
+[[package]]
+name = "tinystr-raw"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b975dd2af5824896acaeebf7336471fcafebfa417da0a290ded5509f297ccedb"
+
+[[package]]
 name = "tinyvec"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1616,16 +1645,15 @@ dependencies = [
 
 [[package]]
 name = "world-builder"
-version = "0.3.0-beta.5"
-source = "git+https://github.com/DoNotDoughnut/world-builder#27cd00b1060ab0f0cffb03c7e063ab83582f3fd8"
+version = "0.3.0-beta.6"
+source = "git+https://github.com/DoNotDoughnut/world-builder#f8011aac367795c4b1ecdf23347687b3b84cad35"
 dependencies = [
  "ahash 0.7.2",
  "bincode",
  "firecore-util",
- "firecore-world 0.3.0-beta.2 (git+https://github.com/DoNotDoughnut/firecore-world)",
+ "firecore-world 0.3.0-beta.3 (git+https://github.com/DoNotDoughnut/firecore-world)",
  "image",
  "ron",
  "serde",
- "smallvec",
  "toml",
 ]

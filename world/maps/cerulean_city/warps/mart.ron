@@ -10,8 +10,8 @@
         )
     ),
     destination: (
-        map_id: "pokemarts",
-        map_index: 2,
+        map: Some("pokemarts"),
+        index: "cerulean",
         position: (
             coords: (
                 x: 4,

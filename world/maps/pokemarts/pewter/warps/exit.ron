@@ -10,8 +10,7 @@
         )
     ),
     destination: (
-        map_id: "world",
-        map_index: 2,
+        index: "pewter",
         position: (
             coords: (
                 x: 0x1C,

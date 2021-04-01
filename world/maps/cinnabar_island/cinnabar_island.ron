@@ -1,14 +1,15 @@
 (
-    chunk: Some((
-        config: (
-            name: "Cinnabar Island",
-            file: "3.8_CINNABAR ISLAND.map",
-        ),
-        piece_index: 8,
-        coords: (
-            x: 60,
-            y: 380,
-        ),
-        connections: [38, 40],
-    ))
+    config: (
+        identifier: "cinnabar",
+        name: "Cinnabar Island",
+        file: "3.8_CINNABAR ISLAND.map",
+    ),
+    coords: (
+        x: 60,
+        y: 380,
+    ),
+    connections: [
+        "route_20",
+        "route_21_south",
+    ],
 )

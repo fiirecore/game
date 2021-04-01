@@ -1,14 +1,15 @@
 (
-    chunk: Some((
-        config: (
-            name: "Route 16",
-            file: "3.34_ROUTE 16.map",
-        ),
-        piece_index: 34,
-        coords: (
-            x: 132,
-            y: 130,
-        ),
-        connections: [6, 35],
-    ))
+    config: (
+        identifier: "route_16",
+        name: "Route 16",
+        file: "3.34_ROUTE 16.map",
+    ),
+    coords: (
+        x: 132,
+        y: 130,
+    ),
+    connections: [
+        "celadon",
+        "route_17"
+    ],
 )

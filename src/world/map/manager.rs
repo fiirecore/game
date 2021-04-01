@@ -1,7 +1,6 @@
 use firecore_util::Completable;
 use firecore_world::map::manager::WorldMapManager;
 use firecore_world::map::World;
-use firecore_world::script::world::WorldActionKind;
 use macroquad::prelude::KeyCode;
 use macroquad::prelude::collections::storage::{get, get_mut};
 use macroquad::prelude::info;
@@ -103,24 +102,10 @@ impl WorldManager {
             info!("No clip toggled!");
         }
 
-        for script in 
         if self.map_manager.chunk_active {
-            &mut self.map_manager.chunk_map.current_chunk_mut().map
+            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle_data, &mut self.map_manager.warp, &mut self.text_window, &self.npc_types);
         } else {
-            self.map_manager.map_set_manager.map_set_mut().map_mut()
-        }
-        .scripts.iter_mut() {
-            if script.is_alive() {
-                if let Some(action) = script.actions.front() {
-                    match action {
-                        WorldActionKind::Warp(destination, change_music) => {
-                            self.map_manager.warp = Some((destination.clone(), *change_music));
-                            super::despawn_script(script);
-                        }
-                        _ => (),
-                    }
-                }
-            }
+            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, battle_data, &mut self.map_manager.warp, &mut self.text_window, &self.npc_types);
         }
 
         if self.warp_transition.is_alive() {
@@ -156,12 +141,6 @@ impl WorldManager {
             }
         }
 
-        if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle_data, &mut self.text_window, &self.npc_types);
-        } else {
-            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, battle_data, &mut self.text_window, &self.npc_types);
-        }
-
         if !self.map_manager.player.is_frozen() {
             if self.map_manager.player.do_move(delta) {
                 self.stop_player(battle_data);
@@ -185,11 +164,11 @@ impl WorldManager {
 
     pub fn save_data(&self, player_data: &mut PlayerSave) {
         if self.map_manager.chunk_active {
-            player_data.location.map_id = String::from("world");
-            player_data.location.map_index = self.map_manager.chunk_map.current_chunk;
+            player_data.location.map = None;
+            player_data.location.index = self.map_manager.chunk_map.current.unwrap_or(firecore_data::player::save::default_index());
         } else {
-            player_data.location.map_id = self.map_manager.map_set_manager.current_map_set.clone();
-            player_data.location.map_index = self.map_manager.map_set_manager.map_set().current_map as u16;
+            player_data.location.map = Some(self.map_manager.map_set_manager.current.unwrap_or(firecore_data::player::save::default_map()));
+            player_data.location.index = self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(firecore_data::player::save::default_index());
 		}
 		player_data.location.position = self.map_manager.player.position;
     }
@@ -291,12 +270,12 @@ impl WorldManager {
             self.player_texture.walking_texture = Some(byte_texture(include_bytes!("../../../build/assets/player/walking.png")));
             self.player_texture.running_texture = Some(byte_texture(include_bytes!("../../../build/assets/player/running.png")));
 
-            if location.map_id.as_str().eq("world") {
-                self.map_manager.chunk_active = true;
-                self.map_manager.update_chunk(location.map_index);
-            } else {
+            if let Some(map) = location.map {
                 self.map_manager.chunk_active = false;
-                self.map_manager.update_map_set(&location.map_id, location.map_index);
+                self.map_manager.update_map_set(map, location.index);
+            } else {
+                self.map_manager.chunk_active = true;
+                self.map_manager.update_chunk(location.index);
             }
         }        
     }
@@ -341,15 +320,17 @@ impl WorldManager {
         if is_key_pressed(KeyCode::F5) {
             if let Some(mut saves) = get_mut::<PlayerSaves>() {
 
-                let map = if self.map_manager.chunk_active {
-                    &self.map_manager.chunk_map.current_chunk().map
+                if let Some(map) = if self.map_manager.chunk_active {
+                    self.map_manager.chunk_map.chunk().map(|chunk| &chunk.map)
                 } else {
-                    self.map_manager.map_set_manager.map_set().map()
-                };
+                    self.map_manager.map_set_manager.set().map(|map| map.map()).flatten()
+                } {
 
-                let name = &map.name;
-                info!("Resetting battled trainers in this map! ({})", name);
-                saves.get_mut().world_status.get_or_create_map_data(name).battled.clear();
+                    let name = &map.name;
+                    info!("Resetting battled trainers in this map! ({})", name);
+                    saves.get_mut().world_status.get_or_create_map_data(name).battled.clear();
+
+                }               
             }
         }
 

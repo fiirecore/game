@@ -1,0 +1,26 @@
+(
+    location: (
+        min: (
+            x: 0x6,
+            y: 0xD,
+        ),
+        max: (
+            x: 0x6,
+            y: 0xD,
+        )
+    ),
+    destination: (
+        index: "pallet",
+        position: (
+            coords: (
+                x: 16,
+                y: 0xD,
+            ),
+            direction: Some(Down),
+        ),
+        transition: (
+            move_on_exit: true,
+            warp_on_tile: false,
+        ),
+    )
+)

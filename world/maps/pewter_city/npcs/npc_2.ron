@@ -2,7 +2,7 @@
     identifier: (
         index: 2,
         name: "NPC 2",
-        npc_type: "fat_man"
+        type: "fat_man"
     ),
     position: (
         coords: (

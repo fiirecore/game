@@ -10,8 +10,8 @@
         )
     ),
     destination: (
-        map_id: "route_2_houses",
-        map_index: 2,
+        map: Some("route_2_houses"),
+        index: "east_warp",
         position: (
             coords: (
                 x: 7,

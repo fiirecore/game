@@ -10,8 +10,8 @@
         )
     ),
     destination: (
-        map_id: "pewter_houses",
-        map_index: 0,
+        map: Some("pewter_houses"),
+        index: "museum",
         position: (
             coords: (
                 x: 9,

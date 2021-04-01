@@ -1,0 +1,169 @@
+(
+    identifier: "oak_catch_player",
+    location: Some((
+        min: (
+            x: 12,
+            y: 1
+        ),
+        max: (
+            x: 13,
+            y: 1
+        )
+    )),
+    conditions: [
+        Scripts([
+            (
+                identifier: "oak_catch_player",
+                happened: false,
+            ),
+        ])
+    ],
+    actions: [
+        PlayerFreezeInput,
+        NPCAdd(
+            (
+                identifier: (
+                    index: 10,
+                    name: "Oak",
+                    type: "prof_oak",
+                ),
+                position: (
+                    coords: (
+                        x: 10,
+                        y: 7
+                    ),
+                    direction: Up
+                ),
+            )
+        ),
+        PlayMusic("Oak"),
+        DisplayText([(
+            lines: [
+                "OAK: Hey! Wait!",
+                "Don't go out!"
+            ],
+            color: Blue,
+        )]),
+        NPCMove(
+            10,
+            (
+                coords: (
+                    x: 10,
+                    y: 6,
+                ),
+            ),
+        ),
+        NPCMove(
+            10,
+            (
+                coords: (
+                    x: 11,
+                    y: 6,
+                ),
+            ),
+        ),
+        NPCMove(
+            10,
+            (
+                coords: (
+                    x: 11,
+                    y: 4,
+                ),
+            ),
+        ),
+        NPCMove(
+            10,
+            (
+                coords: (
+                    x: 12,
+                    y: 4,
+                ),
+            ),
+        ),
+        NPCMoveToPlayer(10),
+        DisplayText([
+            (
+                lines: [
+                    "OAK: It's unsafe!",
+                    "Wild POKEMON live in tall grass!"
+                ],
+                color: Blue,
+            ),
+            (
+                lines: [
+                    "You need your own POKEMON for",
+                    "your protection."
+                ],
+                color: Blue,
+            ),
+            (
+                lines: [
+                    "I know!",
+                    "Here, come with me!"
+                ],
+                color: Blue,
+            )
+        ]),
+        NPCLeadPlayer(
+            10,
+            (
+                coords: (
+                    x: 12,
+                    y: 3,
+                ),
+            )
+        ),
+        NPCLeadPlayer(
+            10,
+            (
+                coords: (
+                    x: 11,
+                    y: 3,
+                ),
+            )
+        ),
+        NPCLeadPlayer(
+            10,
+            (
+                coords: (
+                    x: 11,
+                    y: 14,
+                ),
+            )
+        ),
+        NPCLeadPlayer(
+            10,
+            (
+                coords: (
+                    x: 16,
+                    y: 14,
+                ),
+            )
+        ),
+        NPCLeadPlayer(
+            10,
+            (
+                coords: (
+                    x: 16,
+                    y: 13,
+                ),
+            )
+        ),
+        NPCRemove(10),
+        PlayerUnfreezeInput,
+        Warp(
+            (
+                map: Some("pallet_houses"),
+                index: "oaks_lab",
+                position: (
+                    coords: (
+                        x: 6,
+                        y: 12,
+                    ),
+                    direction: Some(Up),
+                )
+            ),
+            false,
+        ),
+    ]
+)

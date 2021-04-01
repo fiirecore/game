@@ -1,0 +1,27 @@
+(
+    location: (
+        min: (
+            x: 9,
+            y: 2,
+        ),
+        max: (
+            x: 9,
+            y: 2,
+        ),
+    ),
+    destination: (
+        map: Some("pallet_houses"),
+        index: "player_house",
+        position: (
+            coords: (
+                x: 10,
+                y: 2,
+            ),
+            direction: Some(Left),
+        ),
+        transition: (
+            move_on_exit: true,
+            warp_on_tile: true,
+        ),
+    )
+)

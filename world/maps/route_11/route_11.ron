@@ -1,18 +1,19 @@
 (
-    chunk: Some((
-        config: (
-            name: "Route 11",
-            file: "3.29_ROUTE 11.map",
-            wild: Some((
-                type: "original",
-                tiles: Some([0x0D]),
-            )),
-        ),
-        piece_index: 29,
-        coords: (
-            x: 312,
-            y: 210,
-        ),
-        connections: [5, 30],
-    ))
+    config: (
+        identifier: "route_11",
+        name: "Route 11",
+        file: "3.29_ROUTE 11.map",
+        wild: Some((
+            type: "original",
+            tiles: Some([0x0D]),
+        )),
+    ),
+    coords: (
+        x: 312,
+        y: 210,
+    ),
+    connections: [
+        "vermilion",
+        "route_12",
+    ],
 )

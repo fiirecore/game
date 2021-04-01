@@ -1,4 +1,5 @@
 (
-    name: "Viridian Forest Warp - Bottom",
+    identifier: "forest_south",
+    name: "Viridian Forest Warp - South",
     file: "15.0_ROUTE 2.map",
 )

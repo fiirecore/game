@@ -10,8 +10,8 @@
         ),
     ),
     destination: (
-        map_id: "pokemon_centers",
-        map_index: 6,
+        map: Some("pokemon_centers"),
+        index: "cerulean",
         position: (
             coords: (
                 x: 7,

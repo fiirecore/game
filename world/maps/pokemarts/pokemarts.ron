@@ -1,10 +1,8 @@
 (
-    map_set: Some((
-        identifier: "pokemarts",
-        dirs: [
-            "viridian",
-            "pewter",
-            "cerulean",
-        ]
-    ))
+    identifier: "pokemarts",
+    dirs: [
+        "viridian",
+        "pewter",
+        "cerulean",
+    ]
 )

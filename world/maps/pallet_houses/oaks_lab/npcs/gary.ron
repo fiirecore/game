@@ -1,0 +1,30 @@
+(
+    identifier: (
+        index: 10,
+        name: "%r",
+        type: "rival",
+    ),
+    position: (
+        coords: (
+            x: 5,
+            y: 4,
+        ),
+        direction: Down,
+    ),
+    trainer: Some(
+        (
+            battle_on_interact: false,
+            encounter_message: [],
+            party: [
+                (
+                    id: 7,
+                    data: (
+                        level: 5,
+                        gender: Male,
+                    ),
+                ),
+            ],
+            worth: 80,
+        )
+    ),
+)

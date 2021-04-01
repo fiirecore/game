@@ -1,9 +1,7 @@
 (
-    map_set: Some((
-        identifier: "gyms",
-        dirs: [
-            "pewter",
-            "cerulean"
-        ],
-    ))
+    identifier: "gyms",
+    dirs: [
+        "pewter",
+        "cerulean"
+    ],
 )

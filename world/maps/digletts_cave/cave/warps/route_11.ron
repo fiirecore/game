@@ -1,0 +1,22 @@
+(
+    location: (
+        min: (
+            x: 0x52,
+            y: 0x47,
+        ),
+        max: (
+            x: 0x52,
+            y: 0x47,
+        ),
+    ),
+    destination: (
+        map: Some("digletts_cave"),
+        index: "route_11",
+        position: (
+            coords: (
+                x: 6,
+                y: 4,
+            ),
+        )
+    ),
+)

@@ -1,14 +1,15 @@
 (
-    chunk: Some((
-        config: (
-            name: "Pallet Town",
-            file: "3.0_PALLET TOWN.map",
-        ),
-        piece_index: 0,
-        coords: (
-            x: 60,
-            y: 260,
-        ),
-        connections: [19, 39],
-    ))
+    config: (
+        identifier: "pallet",
+        name: "Pallet Town",
+        file: "3.0_PALLET TOWN.map",
+    ),
+    coords: (
+        x: 60,
+        y: 260,
+    ),
+    connections: [
+        "route_1",
+        "route_21_north"
+    ],
 )

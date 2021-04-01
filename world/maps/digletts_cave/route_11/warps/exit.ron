@@ -10,8 +10,7 @@
         ),
     ),
     destination: (
-        map_id: "world",
-        map_index: 29,
+        index: "route_11",
         position: (
             coords: (
                 x: 6,

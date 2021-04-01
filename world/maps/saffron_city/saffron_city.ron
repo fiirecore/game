@@ -1,14 +1,17 @@
 (
-    chunk: Some((
-        config: (
-            name: "Saffron City",
-            file: "3.11_SAFFRON CITY.map",
-        ),
-        piece_index: 11,
-        coords: (
-            x: 264,
-            y: 120,
-        ),
-        connections: [23, 24, 25, 26],
-    ))
+    config: (
+        identifier: "saffron",
+        name: "Saffron City",
+        file: "3.11_SAFFRON CITY.map",
+    ),
+    coords: (
+        x: 264,
+        y: 120,
+    ),
+    connections: [
+        "route_5",
+        "route_6",
+        "route_7",
+        "route_8",
+    ],
 )

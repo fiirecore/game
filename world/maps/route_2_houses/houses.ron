@@ -1,11 +1,9 @@
 (
-    map_set: Some((
-        identifier: "route_2_houses",
-        dirs: [
-            "forest/south",
-            "house",
-            "east_warp",
-            "forest/north",
-        ]
-    ))
+    identifier: "route_2_houses",
+    dirs: [
+        "forest/south",
+        "house",
+        "east_warp",
+        "forest/north",
+    ]
 )
