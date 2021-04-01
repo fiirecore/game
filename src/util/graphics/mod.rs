@@ -103,3 +103,8 @@ pub fn fade_in(texture: Texture2D, x: f32, y: f32, accumulator: f32, fade_time: 
 		draw(texture, x, y);
 	}
 }
+
+pub fn draw_touch_button(button: &firecore_input::touchscreen::TouchButton) {
+	crate::util::graphics::draw_rect(button.color, button.pos.x, button.pos.y, firecore_input::touchscreen::TouchButton::BUTTON_SIZE, firecore_input::touchscreen::TouchButton::BUTTON_SIZE);
+	crate::util::graphics::draw_text_left(0, &format!("{:?}", button.control), firecore_util::text::TextColor::White, button.pos.x + 1.0, button.pos.y);
+}

@@ -397,7 +397,7 @@ dependencies = [
 [[package]]
 name = "firecore-data"
 version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#4f719da53dfad45afeabda675d688981bd126d64"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#0c0679aa23d54a07b99f03fef038ac3d45ecf938"
 dependencies = [
  "ahash 0.7.2",
  "async-trait",
@@ -413,7 +413,7 @@ dependencies = [
 [[package]]
 name = "firecore-data-lib"
 version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-data-lib#ffcab69b2a6538b8b527b45897a751e72a21c554"
+source = "git+https://github.com/DoNotDoughnut/firecore-data-lib#7360fdd8943927d978681559acb2415a0d404ff8"
 dependencies = [
  "ahash 0.7.2",
  "firecore-input",
@@ -432,8 +432,8 @@ dependencies = [
 
 [[package]]
 name = "firecore-input"
-version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-input#ce29d24a82349c282e5e4cb8075527f88431c516"
+version = "0.3.0-beta.3"
+source = "git+https://github.com/DoNotDoughnut/firecore-input#b4b8fd8444ba4f2dab1b683e4974e4a11eb88c07"
 dependencies = [
  "ahash 0.7.2",
  "macroquad",

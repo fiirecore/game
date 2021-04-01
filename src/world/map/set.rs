@@ -33,7 +33,7 @@ impl GameWorld for WorldMapSet {
 
     fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
         if let Some(map) = self.map() {
-            self.map().unwrap().render(tile_textures, npc_textures, npc_types, gui_textures, screen, border);
+            map.render(tile_textures, npc_textures, npc_types, gui_textures, screen, border);
         }
     }
 

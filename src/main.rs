@@ -25,6 +25,7 @@ use scene::{
 use util::{
     Args,
     loading_screen,
+    graphics::draw_touch_button
 };
 
 pub mod util;
@@ -88,7 +89,19 @@ pub async fn start() {
 
     firecore_data::load().await;  
 
-    firecore_input::load(firecore_input::keyboard::serialization::normal_map(&get::<Configuration>().unwrap().controls));
+    {
+
+        let config = get::<Configuration>().unwrap();
+
+        firecore_input::keyboard::load(firecore_input::keyboard::serialization::normal_map(&config.controls));
+
+        if config.touchscreen {
+            firecore_input::touchscreen::touchscreen(true);
+        }
+
+    }
+
+     
 
     // Loads fonts
 
@@ -199,6 +212,16 @@ pub async fn start() {
 
         scene_manager.render();
         scene_manager.ui();
+
+        if let Some(touchscreen) = unsafe { firecore_input::touchscreen::TOUCHSCREEN.as_ref() } {
+            draw_touch_button(&touchscreen.a);
+            draw_touch_button(&touchscreen.b);
+            draw_touch_button(&touchscreen.up);
+            draw_touch_button(&touchscreen.down);
+            draw_touch_button(&touchscreen.left);
+            draw_touch_button(&touchscreen.right);
+        }
+
         // io::input::touchscreen::TOUCH_CONTROLS.render();
 
 
@@ -206,14 +229,10 @@ pub async fn start() {
             if let Some(mut config) = get_mut::<Configuration>() {
                 firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
-            // if let Some(player_data) = crate::io::data::player::PLAYER_DATA.write().as_mut() {
-            //     firecore_data::data::PersistantData::reload(player_data).await;
-            // }
         }
 
         if unsafe{QUIT} {
             util::graphics::draw_rect(BLACK, 0.0, 0.0, WIDTH, HEIGHT);
-            // next_frame().await;
             break;
         }
 
