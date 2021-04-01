@@ -28,7 +28,6 @@ use firecore_util::Entity;
 use firecore_input::{pressed, Control};
 
 use firecore_util::Completable;
-use rand::Rng;
 
 use super::NPCTypes;
 use super::npc::WorldNpc;
@@ -39,7 +38,9 @@ pub mod manager;
 pub mod set;
 pub mod chunk;
 
-const NPC_MOVE_CHANCE: f64 = 1.0 / 12.0;
+static mut RAND: Option<oorandom::Rand32> = None;
+
+const NPC_MOVE_CHANCE: f32 = 1.0 / 12.0;
 // const NPC_MOVE_TICK: f32 = 0.5;
 
 // impl GameWorldMap for WorldMap {
@@ -53,6 +54,10 @@ const NPC_MOVE_CHANCE: f64 = 1.0 / 12.0;
 impl GameWorld for WorldMap {
 
     fn on_start(&mut self, music: bool) {
+
+        if unsafe{RAND.is_none()} {
+            unsafe{RAND=Some(oorandom::Rand32::new((macroquad::prelude::get_frame_time() as f64 * 100000.0 ) as u64))}
+        }
 
         self.npc_manager.timer.spawn();
         // self.npc_timer.set_target(NPC_MOVE_TICK);
@@ -150,11 +155,11 @@ impl GameWorld for WorldMap {
                 let save = saves.get();
                 for (index, npc) in self.npc_manager.npcs.iter_mut() {
                     if npc.is_alive() && !npc.should_move_to_destination() {
-                        if rand::thread_rng().gen_bool(NPC_MOVE_CHANCE) {
+                        if unsafe{RAND.as_mut().unwrap()}.rand_float() < NPC_MOVE_CHANCE {
                             match npc.properties.movement {
                                 MovementType::Still => (),
                                 MovementType::LookAround => {
-                                    npc.position.direction = firecore_util::Direction::DIRECTIONS[rand::thread_rng().gen_range(0..4)];
+                                    npc.position.direction = firecore_util::Direction::DIRECTIONS[unsafe{RAND.as_mut().unwrap()}.rand_range(0..4) as usize];
                                     find_battle(save, &self.name, index, npc, &mut self.npc_manager.active, player);
                                 },
                                 MovementType::WalkUpAndDown(steps) => {
@@ -165,7 +170,7 @@ impl GameWorld for WorldMap {
                                         } else if npc.position.coords.y >= origin.y + steps {
                                             Direction::Up
                                         } else 
-                                    if rand::thread_rng().gen_bool(0.5) {
+                                    if unsafe{RAND.as_mut().unwrap()}.rand_range(0..2) == 0 {//rand::thread_rng().gen_bool(0.5) {
                                         Direction::Down
                                     } else {
                                         Direction::Up
