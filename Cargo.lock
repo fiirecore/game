@@ -416,7 +416,7 @@ source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#8e75c635433ef279
 dependencies = [
  "dashmap",
  "firecore-pokedex-lib",
- "quad-rand 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quad-rand",
  "serde",
  "smallvec",
 ]
@@ -429,6 +429,11 @@ dependencies = [
  "serde",
  "smallvec",
 ]
+
+[[package]]
+name = "firecore-rand"
+version = "0.3.0"
+source = "git+https://github.com/DoNotDoughnut/firecore-rand#ec1d792e8c29912cf8518ac0bae33075fbb44a97"
 
 [[package]]
 name = "firecore-saves"
@@ -453,13 +458,13 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.3.0-beta.3"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#ee4f44e893fdec7e7d113c910523e9d987f9eac3"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#4b16c5029012bfe20ee7633ccea8a7b58208f17a"
 dependencies = [
  "ahash",
  "firecore-audio-lib",
  "firecore-pokedex",
+ "firecore-rand",
  "firecore-util",
- "quad-rand 0.2.1 (git+https://github.com/DoNotDoughnut/quad-rand)",
  "serde",
  "smallvec",
  "tinystr",
@@ -722,20 +727,20 @@ dependencies = [
 [[package]]
 name = "macroquad"
 version = "0.3.0-alpha.17"
-source = "git+https://github.com/DoNotDoughnut/macroquad#f50a3b117acff52e3c4aa3c58e617ec6caa2dc82"
+source = "git+https://github.com/DoNotDoughnut/macroquad#933b49aacd31c238aba749956e8ecac2091c7b62"
 dependencies = [
  "ahash",
+ "firecore-rand",
  "glam",
  "image",
  "macroquad_macro",
  "miniquad",
- "quad-rand 0.2.1 (git+https://github.com/DoNotDoughnut/quad-rand)",
 ]
 
 [[package]]
 name = "macroquad_macro"
 version = "0.1.2"
-source = "git+https://github.com/DoNotDoughnut/macroquad#f50a3b117acff52e3c4aa3c58e617ec6caa2dc82"
+source = "git+https://github.com/DoNotDoughnut/macroquad#933b49aacd31c238aba749956e8ecac2091c7b62"
 
 [[package]]
 name = "memchr"
@@ -1088,11 +1093,6 @@ name = "quad-rand"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "658fa1faf7a4cc5f057c9ee5ef560f717ad9d8dc66d975267f709624d6e1ab88"
-
-[[package]]
-name = "quad-rand"
-version = "0.2.1"
-source = "git+https://github.com/DoNotDoughnut/quad-rand#9f34e81df453fb51716b2637affc05659b636d29"
 
 [[package]]
 name = "quote"

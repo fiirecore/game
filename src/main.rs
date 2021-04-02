@@ -19,7 +19,6 @@ use macroquad::prelude::{
 use firecore_data::{
     get, get_mut, 
     configuration::Configuration,
-    reload::Reloadable,
 };
 
 use scene::{
