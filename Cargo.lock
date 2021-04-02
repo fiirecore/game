@@ -380,7 +380,7 @@ dependencies = [
 [[package]]
 name = "firecore-data"
 version = "0.3.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#bc2ebecc43e62801421a974b25978cad11285ffe"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#0a4d5a4eaef741bb1ac05b0ba2e03b2f2f85f860"
 dependencies = [
  "directories-next",
  "firecore-input",
@@ -402,7 +402,7 @@ dependencies = [
 [[package]]
 name = "firecore-input"
 version = "0.3.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-input#a4252ab77353409f2fac0f7fdd52dd982e6f9458"
+source = "git+https://github.com/DoNotDoughnut/firecore-input#43611f30767c9b8715347afa68e773ead4208ead"
 dependencies = [
  "ahash",
  "macroquad",

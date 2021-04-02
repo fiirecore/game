@@ -46,9 +46,6 @@ firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", defa
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
 #firecore-input = { path = "../firecore/firecore-input" }
 
-#firecore-data-lib = { git = "https://github.com/DoNotDoughnut/firecore-data-lib" }
-#firecore-data-lib = { path = "../firecore/firecore-data-lib" }
-
 firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
 #firecore-data = { path = "../firecore/firecore-data" }
 

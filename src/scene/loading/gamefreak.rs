@@ -1,6 +1,6 @@
 use macroquad::prelude::{Color, Texture2D, draw_texture_ex, WHITE, DrawTextureParams};
 use firecore_util::text::TextColor;
-use firecore_input as input;
+use firecore_input::{keyboard::keys, Control};
 use crate::util::graphics::{byte_texture, draw_text_left, draw_rect, fade_in};
 use super::LoadingState;
 
@@ -64,8 +64,8 @@ impl super::LoadingScene for GamefreakLoadingScene {
 		fade_in(self.text, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
 
 
-		draw_text_left(1, &format!("A Button is{:?}Key", unsafe{input::keyboard::KEY_CONTROLS.as_ref().unwrap().get(&input::Control::A).unwrap()}), TextColor::White, 5.0, 5.0);
-		draw_text_left(1, &format!("B Button is{:?}Key", unsafe{input::keyboard::KEY_CONTROLS.as_ref().unwrap().get(&input::Control::B).unwrap()}), TextColor::White, 125.0, 5.0);
+		draw_text_left(1, &format!("A Button is{:?}Key", keys(&Control::A).expect("Could not get keys for A button")), TextColor::White, 5.0, 5.0);
+		draw_text_left(1, &format!("B Button is{:?}Key", keys(&Control::B).expect("Could not get keys for B button")), TextColor::White, 125.0, 5.0);
 		draw_text_left(1, "D-Pad is Arrow Keys", TextColor::White, 5.0, 15.0);
 
 	}

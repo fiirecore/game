@@ -216,6 +216,14 @@ pub async fn start() {
             draw_touch_button(&touchscreen.right);
         }
 
+        // Toggle debug on key press
+
+        if is_key_pressed(KeyCode::O) {
+            let debug = !DEBUG.load(Relaxed);
+            DEBUG.store(debug, Relaxed);
+            info!("Debug: {}", debug)
+        }
+
         // Reload configuration on key press
 
         if is_key_pressed(KeyCode::P) {
