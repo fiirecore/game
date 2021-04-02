@@ -21,10 +21,9 @@ pub struct TitleScene {
 	
 }
 
+impl Scene for TitleScene {
 
-impl TitleScene {	
-	
-	pub fn new() -> TitleScene {
+	fn new() -> TitleScene {
 		TitleScene {
 		    state: SceneState::Continue,
 			background: byte_texture(include_bytes!("../../../build/assets/scenes/title/background.png")),		
@@ -36,17 +35,8 @@ impl TitleScene {
 		    accumulator: 0.0,
 		}		
 	}
-	
-}
 
-#[async_trait::async_trait(?Send)]
-impl Scene for TitleScene {
-
-	async fn load(&mut self) {
-		
-	}
-
-	async fn on_start(&mut self) {
+	fn on_start(&mut self) {
 		self.state = SceneState::Continue;
 		play_music_named("Title");
 		self.accumulator = 0.0;
@@ -70,7 +60,7 @@ impl Scene for TitleScene {
 	fn input(&mut self, _delta: f32) {
 		if input::pressed(input::Control::A) {
 			macroquad::prelude::rand::srand(self.accumulator as u64 % 256);
-			self.state = SceneState::Scene(super::Scenes::MainMenuScene);
+			self.state = SceneState::Scene(super::Scenes::MainMenu);
 		}
 	}
 	

@@ -1,6 +1,7 @@
 pub mod first_scene;
 pub mod title;
 pub mod game;
+pub mod character;
 pub mod main_menu;
 
 #[derive(Clone, Copy)]
@@ -16,20 +17,22 @@ pub enum SceneState {
 pub enum Scenes {
 
     // FirstLoadScene,
-    TitleScene,
-    MainMenuScene,
+    Title,
+    MainMenu,
 
-    GameScene,
+    CharacterCreation,
+
+    Game,
 
 }
 
 impl Default for Scenes {
     fn default() -> Self {
         #[cfg(not(debug_assertions))] {
-            Self::TitleScene
+            Self::Title
         }
         #[cfg(debug_assertions)] {
-            Self::GameScene
+            Self::Game
         }
     }
 }

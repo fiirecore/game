@@ -27,7 +27,7 @@ audio = ["firecore-audio/play", "audio-builder"]
 
 ### Game Engine
 
-macroquad = "0.3.0-alpha.17"
+macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
 
 ### Game subcrates
 
@@ -66,7 +66,6 @@ smallvec = { version = "1.6", features = ["serde"] }
 
 ### Other
 
-async-trait = "0.1"
 getopts = "0.2"
 
 oorandom = "11.1"

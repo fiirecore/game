@@ -66,7 +66,7 @@ impl StartMenu {
                 },
                 2 => {
                     // Exit to Main Menu
-                    *scene_state = SceneState::Scene(Scenes::MainMenuScene);
+                    *scene_state = SceneState::Scene(Scenes::MainMenu);
                     self.despawn();
                 },
                 3 => {

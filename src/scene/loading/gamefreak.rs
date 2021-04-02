@@ -1,9 +1,7 @@
 use macroquad::prelude::{Color, Texture2D, draw_texture_ex, WHITE, DrawTextureParams};
 use firecore_util::text::TextColor;
 use firecore_input as input;
-
 use crate::util::graphics::{byte_texture, draw_text_left, draw_rect, fade_in};
-
 use super::LoadingState;
 
 const BACKGROUND_COLOR: Color = macroquad::color_u8!(24, 40, 72, 255);
@@ -19,8 +17,9 @@ pub struct GamefreakLoadingScene {
 
 }
 
-impl GamefreakLoadingScene {
-	pub fn new() -> Self {
+impl super::LoadingScene for GamefreakLoadingScene {
+
+	fn new() -> Self {
 		Self {
 			state: LoadingState::Continue,
 			rect_size: 0.0,
@@ -30,9 +29,6 @@ impl GamefreakLoadingScene {
 			text: byte_texture(include_bytes!("../../../build/assets/scenes/loading/text.png")),
 		}
 	}
-}
-
-impl super::LoadingScene for GamefreakLoadingScene {
 
 	fn on_start(&mut self) {
 		self.state = LoadingState::Continue;
@@ -50,7 +46,7 @@ impl super::LoadingScene for GamefreakLoadingScene {
 			}
 		}
 		if self.accumulator > 8.5 {
-			self.state = LoadingState::End
+			self.state = LoadingState::End;
 		}
 	}
 	
@@ -74,8 +70,8 @@ impl super::LoadingScene for GamefreakLoadingScene {
 
 	}
 
-    fn state(&self) -> &LoadingState {
-        &self.state
+    fn state(&self) -> LoadingState {
+        self.state
     }
 	
 }

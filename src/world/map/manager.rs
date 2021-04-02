@@ -67,15 +67,12 @@ impl WorldManager {
     }
 
     pub async fn load(&mut self, battle_manager: &mut BattleManager) {
-        // if let Some(message) = crate::gui::MESSAGE.lock().take() {
-        //     info!("WorldManager cleared previous global message: {:?}", message);
-        // }
         self.tile_textures.setup();
         self.map_manager = crate::data::map::load_maps(battle_manager, &mut self.tile_textures, &mut self.npc_textures, &mut self.npc_types).await;
         self.gui_textures.insert(0, byte_texture(include_bytes!("../../../build/assets/condition.png")));
     }
 
-    pub async fn on_start(&mut self) {
+    pub fn on_start(&mut self) {
         self.load_player();
         self.map_start(true);
     }

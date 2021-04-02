@@ -29,8 +29,35 @@ pub struct GameScene {
 }
 
 impl GameScene {
+
+	pub async fn load(&mut self) {
+
+		// Load the pokedex, pokemon textures and moves
+
+		crate::util::pokemon::load(&mut self.pokemon_textures).await;
+
+		// Load maps
+		
+		self.world_manager.load(&mut self.battle_manager).await;
+
+	}
+
+	pub fn data_dirty(&mut self, player_data: &mut PlayerSaves) {
+		self.save_data(player_data);
+		unsafe { crate::data::player::DIRTY = false; }
+	}
+
+    pub fn save_data(&mut self, player_data: &mut PlayerSaves) {
+        self.world_manager.save_data(player_data.get_mut());
+		macroquad::prelude::info!("Saving player data!");
+		player_data.save();
+    }
 	
-	pub fn new() -> Self {
+}
+
+impl Scene for GameScene {
+
+	fn new() -> Self {
 		Self {
 
 			state: SceneState::Continue,
@@ -47,28 +74,8 @@ impl GameScene {
 		}
 	}
 
-	pub fn data_dirty(&mut self, player_data: &mut PlayerSaves) {
-		self.save_data(player_data);
-		unsafe { crate::data::player::DIRTY = false; }
-	}
-
-    pub fn save_data(&mut self, player_data: &mut PlayerSaves) {
-        self.world_manager.save_data(player_data.get_mut());
-		player_data.save();
-    }
-	
-}
-
-#[async_trait::async_trait(?Send)]
-impl Scene for GameScene {
-
-	async fn load(&mut self) {
-		
-		self.world_manager.load(&mut self.battle_manager).await;
-	}
-
-	async fn on_start(&mut self) {
-		self.world_manager.on_start().await;
+	fn on_start(&mut self) {
+		self.world_manager.on_start();
 	}
 	
 	fn update(&mut self, delta: f32) {

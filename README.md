@@ -14,13 +14,14 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
          - [X] Pokemon cry support
          - [X] Pokemon icon support
 - [X] New player saves system
+    - [X] New main menu
 - [X] Reorganized player and map data
 - [X] Basic warp transitions
 - [X] Conditional (yes/no) actions in scripts
 - [X] NPCs can move by themselves
-- [ ] Battles close properly
 - [X] All maps and warps up to Cerulean are added
     - [X] Pokemon centers up to cerulean work
+- [ ] Battles close properly
 
 ### v0.4.X
 

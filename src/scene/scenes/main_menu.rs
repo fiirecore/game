@@ -1,107 +1,140 @@
-use macroquad::camera::set_camera;
+use firecore_util::text::TextColor;
+use macroquad::prelude::Texture2D;
+use macroquad::prelude::{RED, DARKBLUE};
 use macroquad::prelude::collections::storage::{get, get_mut};
-use macroquad::ui::widgets::InputText;
-use macroquad::prelude::info;
-use macroquad::prelude::screen_height;
-use macroquad::prelude::screen_width;
-use macroquad::prelude::vec2;
+
+use firecore_input::{pressed, Control};
+use macroquad::prelude::draw_rectangle;
+use macroquad::prelude::draw_rectangle_lines;
+use macroquad::prelude::warn;
 
 use crate::data::player::list::PlayerSaves;
 use crate::scene::Scene;
+use crate::util::graphics::{byte_texture, draw, draw_text_left};
 
 use super::SceneState;
 use super::Scenes;
 
-use macroquad::ui::{
-    hash, root_ui,
-    widgets::{Window, Group}
-};
+const GAP: f32 = 35.0;
 
 pub struct MainMenuScene {
+
 	state: SceneState,
+
+	button: Texture2D,
+	cursor: usize,
+
 	saves: Vec<String>,
-	name: String,
+
+	delete: bool,
+	// name: String,
 
 }
 
 impl MainMenuScene {
 
-	pub fn new() -> MainMenuScene {
-		MainMenuScene {
-			state: SceneState::Continue,
-			saves: Vec::new(),
-			name: String::new(),
-		}
+	fn update_saves(&mut self, saves: &PlayerSaves) {
+		self.saves = saves.name_list().into_iter().map(|name| name.clone()).collect();
 	}
 
 }
 
-#[async_trait::async_trait(?Send)]
+// have normal main menu + video settings + controls + exit
+
 impl Scene for MainMenuScene {
 
-	// have normal main menu + video settings + controls + exit
-
-	async fn load(&mut self) {
-		if let Some(saves) = get::<PlayerSaves>() {
-			self.saves = saves.name_list().into_iter().map(|name| name.clone()).collect();
+	fn new() -> MainMenuScene {
+		MainMenuScene {
+			state: SceneState::Continue,
+			button: byte_texture(include_bytes!("../../../build/assets/menu_button.png")),
+			cursor: 0,
+			saves: Vec::new(),
+			delete: false,
+			// name: String::new(),
 		}
 	}
 
-	async fn on_start(&mut self) {
-		set_camera(crate::util::window_camera());
+	fn on_start(&mut self) {
+		// set_camera(crate::util::window_camera());
+		self.cursor = 0;
+		self.delete = false;
+		if let Some(saves) = get::<PlayerSaves>() {
+			self.update_saves(&saves);
+		}
 	}
 	
 	fn update(&mut self, _delta: f32) {}
 	
-	fn render(&self) {}
+	fn render(&self) {
 
-	fn ui(&mut self) {
+		draw_rectangle(0.0, 0.0, crate::WIDTH, crate::HEIGHT, DARKBLUE);
 
-		Window::new(hash!(), vec2(0.0, 0.0), vec2(screen_width(), screen_height()))
-			.label("Player Saves")
-			.movable(false)
-			.titlebar(true)
-			.close_button(false)
-			.ui(&mut *root_ui(), |ui| {
-				for i in 0..self.saves.len() {
-					Group::new(hash!("sav", i), vec2(220.0, 50.0)).ui(ui, |ui| {
-						ui.label(vec2(5.0, 5.0), &self.saves[i]);
-						if ui.button(vec2(80.0, 5.0), "Play") {
-							if let Some(mut saves) = get_mut::<PlayerSaves>() {
-								saves.select(i);
-								self.state = SceneState::Scene(Scenes::GameScene);
-							}							
-						}
-					});
-				}
-				Group::new(hash!("new"), vec2(220.0, 50.0)).ui(ui, |ui| {
-					ui.label(vec2(5.0, 30.0), "New Game");
-					InputText::new(0).label("Name").ui(ui, &mut self.name);
-					if ui.button(vec2(150.0, 5.0), "Play") {
-						if !self.name.is_empty() {
-							if let Some(mut saves) = get_mut::<PlayerSaves>() {
-								saves.select_new(&self.name);
-								self.state = SceneState::Scene(Scenes::GameScene);
-							}
-						} else {
-							info!("Could not create new game because player name is empty!");
-						}
-					}
-				});
-			}
-		);
+		for (index, save) in self.saves.iter().enumerate() {
+			let y = 5.0 + index as f32 * GAP;
+			draw(self.button, 20.0, y);
+			draw_text_left(1, save, TextColor::Black, 31.0, y + 5.0);
+		}
 
-		
+		let saves_len = self.saves.len() as f32;
+
+		{
+			let y = 5.0 + saves_len * GAP;
+			draw(self.button, 20.0, y);
+			draw_text_left(1, "New Game", TextColor::Black, 31.0, y + 5.0);
+		}
+
+		{
+			let y = 5.0 + (saves_len + 1.0) * GAP;
+			draw(self.button, 20.0, y);
+			draw_text_left(1, if self.delete { "Play" } else { "Delete" }, TextColor::Black, 31.0, y + 5.0);
+		}
+
+		draw_rectangle_lines(20.0, 5.0 + self.cursor as f32 * GAP, 206.0, 30.0, 2.0, RED);
+
+		draw_text_left(1, if self.delete { "Delete Mode: ON" } else { "Delete Mode: OFF" }, TextColor::Black, 5.0, 145.0);
+
 	}
 	
 	fn input(&mut self, _delta: f32) {
-		if firecore_input::pressed(firecore_input::Control::B) {
-			self.state = SceneState::Scene(Scenes::TitleScene);
+		if pressed(Control::A) {
+			if self.cursor == self.saves.len() {
+				self.state = SceneState::Scene(Scenes::CharacterCreation);
+				// saves.select_new(&firecore_data::player::save::default_name());
+			} else if self.cursor == self.saves.len() + 1 {
+				self.delete = !self.delete;
+			} else {
+				if let Some(mut saves) = get_mut::<PlayerSaves>() {
+					if self.delete {
+						if saves.delete(self.cursor) {
+							self.cursor -= 1;
+							self.update_saves(&saves);
+						};
+					} else {
+						saves.select(self.cursor);
+						self.state = SceneState::Scene(Scenes::Game);
+					}					
+				} else {
+					warn!("Could not get player save data!");
+				}
+			}
+					
 		}
+
+		if pressed(Control::B) {
+			self.state = SceneState::Scene(Scenes::Title);
+		}
+
+		if pressed(Control::Up) && self.cursor > 0 {
+			self.cursor -= 1;
+		}
+
+		if pressed(Control::Down) && self.cursor <= self.saves.len() {
+			self.cursor += 1;
+		}
+
 	}
 	
 	fn quit(&mut self) {
-		set_camera(crate::util::game_camera());
 		self.state = SceneState::Continue;
 	}
 	

@@ -1,29 +1,31 @@
-pub struct PokemonLoadingScene {
-	finished: bool,
-}
+use super::LoadingState;
 
-impl PokemonLoadingScene {
-	pub fn new() -> Self {
-		Self {
-            finished: false,
-        }
-	}
+pub struct PokemonLoadingScene {
+	state: LoadingState,
 }
 
 impl super::LoadingScene for PokemonLoadingScene {
 
+	fn new() -> Self {
+		Self {
+            state: LoadingState::Continue,
+        }
+	}
+
 	fn on_start(&mut self) {
-		self.finished = false;
+		todo!()
 	}
 	
 	fn update(&mut self, _delta: f32) {
-        self.finished = true;
+        todo!()
     }
 	   
-	fn render(&self) {}
+	fn render(&self) {
+		todo!()
+	}
 
-    fn finished(&self) -> bool {
-        self.finished
-    }
+    fn state(&self) -> LoadingState {
+		self.state
+	}
 	
 }

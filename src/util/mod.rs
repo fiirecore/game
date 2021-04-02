@@ -24,6 +24,37 @@ pub fn play_music_named(music: &str) {
     }
 }
 
+pub async fn load_audio() {
+
+    use macroquad::prelude::error;
+
+    #[cfg(feature = "audio")]
+    if let Err(err) = firecore_audio::create() {
+        error!("Could not create audio instance with error {}", err);
+    } else {
+        
+        let audio = bincode::deserialize(
+            // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
+            include_bytes!("../../build/data/audio.bin")
+        ).unwrap();
+
+        #[cfg(not(target = "wasm32"))] {
+            std::thread::spawn( || {
+                if let Err(err) = firecore_audio::load(audio) {
+                    error!("Could not load audio files with error {}", err);
+                }
+            });
+        }
+        #[cfg(target = "wasm32")] {
+            if let Err(err) = firecore_audio::load(audio) {
+                error!("Could not load audio files with error {}", err);
+            }
+        }
+
+    }
+
+}
+
 #[derive(PartialEq)]
 pub enum Args {
 
@@ -31,7 +62,6 @@ pub enum Args {
     Debug,
 
 }
-
 
 pub fn getopts() -> Vec<Args> {
 

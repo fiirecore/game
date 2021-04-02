@@ -12,13 +12,15 @@ use macroquad::prelude::{
         stop_coroutine,
         wait_seconds,
     },
+    is_key_pressed,
+    KeyCode,
 };
 
 use firecore_data::{get, get_mut, configuration::Configuration};
 
 use scene::{
     Scene,
-    loading::manager::load_coroutine,
+    loading::{LOADING_FINISHED, load_coroutine},
     manager::SceneManager,
 };
 
@@ -27,6 +29,8 @@ use util::{
     loading_screen,
     graphics::draw_touch_button
 };
+
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 pub mod util;
 pub mod scene;
@@ -44,8 +48,8 @@ pub const WIDTH: f32 = 240.0;
 pub const HEIGHT: f32 = 160.0;
 pub const DEFAULT_SCALE: f32 = 3.0;
 
-static mut DEBUG: bool = cfg!(debug_assertions);
-static mut QUIT: bool = false;
+static DEBUG: AtomicBool = AtomicBool::new(cfg!(debug_assertions));
+static QUIT: AtomicBool = AtomicBool::new(false);
 
 static mut SCENE_MANAGER: Option<SceneManager> = None;
 
@@ -101,8 +105,6 @@ pub async fn start() {
 
     }
 
-     
-
     // Loads fonts
 
     crate::util::text::init_text().await;  
@@ -111,6 +113,8 @@ pub async fn start() {
 
     let texture = crate::util::graphics::byte_texture(include_bytes!("../build/assets/loading.png"));
     
+    // Flash the loading screen once so the screen freezes on this instead of a blank one
+
     loading_screen(texture);
 
     let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
@@ -134,34 +138,12 @@ pub async fn start() {
 
         // Load audio files and setup audio
 
-        #[cfg(feature = "audio")]
-        if let Err(err) = firecore_audio::create() {
-            macroquad::prelude::error!("Could not create audio instance with error {}", err);
-        } else {
-            let audio = bincode::deserialize(
-                // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
-                include_bytes!("../build/data/audio.bin")
-            ).unwrap();
-
-            #[cfg(not(target = "wasm32"))] {
-                std::thread::spawn( || {
-                    if let Err(err) = firecore_audio::load(audio) {
-                        macroquad::prelude::error!("Could not load audio files with error {}", err);
-                    }
-                });
-            }
-            #[cfg(target = "wasm32")] {
-                if let Err(err) = firecore_audio::load(audio) {
-                    macroquad::prelude::error!("Could not load audio files with error {}", err);
-                }
-            }
-
-        }
+        util::load_audio().await;
 
     }
 
     if args.contains(&Args::Debug) {
-        unsafe { DEBUG = true; }
+        DEBUG.store(true, Relaxed);
     }
     
     if debug() {
@@ -171,31 +153,32 @@ pub async fn start() {
     unsafe { SCENE_MANAGER = Some(SceneManager::new()) };
 
     let scene_manager = unsafe { SCENE_MANAGER.as_mut().unwrap() };
-    
-    // Load the pokedex, pokemon textures and moves
 
-    util::pokemon::load(&mut scene_manager.game_scene.pokemon_textures).await;
-
-    scene_manager.load_all().await;
+    scene_manager.load().await;
 
     info!("Finished loading assets!");
+    LOADING_FINISHED.store(true, Relaxed);
 
 
-    if cfg!(not(target_arch = "wasm32")) {
+    // Wait for the loading scenes to finish, then stop the coroutine
+
+    #[cfg(not(target_arch = "wasm32"))] {
         while !loading_coroutine.is_done() {
-            wait_seconds(0.05).await;
+            wait_seconds(0.1).await;
         } 
     }
 
     stop_coroutine(loading_coroutine); 
 
-    if cfg!(target_arch = "wasm32") {
+    // Start the loading scenes on wasm32 because they lag in a coroutine
+
+    #[cfg(target_arch = "wasm32")] {
         load_coroutine().await;
     }
 
     info!("Starting game!");
 
-    scene_manager.on_start().await;
+    scene_manager.on_start();
 
     loop {
 
@@ -205,13 +188,15 @@ pub async fn start() {
 
         scene_manager.input(get_frame_time());
         
-        scene_manager.poll(get_frame_time()).await;
+        scene_manager.update(get_frame_time());
 
 
         clear_background(BLACK);
 
         scene_manager.render();
-        scene_manager.ui();
+        // scene_manager.ui();
+
+        // Render touchscreen controls if they are active
 
         if let Some(touchscreen) = unsafe { firecore_input::touchscreen::TOUCHSCREEN.as_ref() } {
             draw_touch_button(&touchscreen.a);
@@ -222,16 +207,17 @@ pub async fn start() {
             draw_touch_button(&touchscreen.right);
         }
 
-        // io::input::touchscreen::TOUCH_CONTROLS.render();
+        // Reload configuration on key press
 
-
-        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F12) {
+        if is_key_pressed(KeyCode::P) {
             if let Some(mut config) = get_mut::<Configuration>() {
                 firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
             }
         }
 
-        if unsafe{QUIT} {
+        // Quit game if asked to
+
+        if QUIT.load(Relaxed) {
             util::graphics::draw_rect(BLACK, 0.0, 0.0, WIDTH, HEIGHT);
             break;
         }
@@ -244,11 +230,9 @@ pub async fn start() {
 }
 
 pub fn quit() {
-    unsafe {
-        QUIT = true;
-    }
+    QUIT.store(true, Relaxed);
 }
 
 pub fn debug() -> bool {
-    unsafe{DEBUG}
+    DEBUG.load(Relaxed)
 }
