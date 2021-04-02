@@ -58,7 +58,13 @@ impl PokemonPartyGui {
 
     }
 
+    fn on_spawn(&mut self) {
+        self.pokemon.clear();
+        self.alive = true;
+    }
+
     pub fn spawn_battle(&mut self, textures: &PokemonTextures, party: &BattleParty) {
+        self.on_spawn();
         for pokemon in party.pokemon.iter().map(|pokemon| &pokemon.pokemon){
             let texture = textures.pokemon_texture(&pokemon.pokemon.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon);
             self.pokemon.push(PartyGuiData {
@@ -69,12 +75,14 @@ impl PokemonPartyGui {
                 texture,
             });
         }
-        self.pokemon.clear();
+        
         self.menu_on_select = false;
-        self.alive = true;
     }
 
     pub fn spawn_world(&mut self, textures: &PokemonTextures) {
+
+        self.on_spawn();
+
         if let Some(saves) = get::<PlayerSaves>() {
             for pokemon in saves.get().party.iter() {
                 if let Some(pokemon_data) = firecore_pokedex::pokedex().get(&pokemon.id) {
@@ -96,13 +104,8 @@ impl PokemonPartyGui {
             }
         }
 
-        self.pokemon.clear();
-
         self.menu_on_select = true;
         self.swaps = Vec::new();
-
-        self.alive = true;
-        // self.on_start(despawn_on_select);
     }
 
     fn render_cell(&self, index: usize, data: &PartyGuiData) {

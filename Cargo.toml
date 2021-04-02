@@ -57,7 +57,7 @@ firecore-font-lib = { git = "https://github.com/DoNotDoughnut/firecore-font-lib"
 
 ### Deserialization
 
-bincode = "1.3"
+bincode = "1.3" # Replace with postcard
 
 ### Collections
 
