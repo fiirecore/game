@@ -37,8 +37,8 @@ firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
 firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
 #firecore-util = { path = "../firecore/firecore-util" }
 
-#firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
-firecore-world = { path = "../firecore/firecore-world" }
+firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
+#firecore-world = { path = "../firecore/firecore-world" }
 
 firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", default-features = false }
 #firecore-audio = { path = "../firecore/firecore-audio", default-features = false }

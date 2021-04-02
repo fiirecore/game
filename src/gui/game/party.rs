@@ -69,6 +69,7 @@ impl PokemonPartyGui {
                 texture,
             });
         }
+        self.pokemon.clear();
         self.menu_on_select = false;
         self.alive = true;
     }
@@ -94,6 +95,9 @@ impl PokemonPartyGui {
                 }            
             }
         }
+
+        self.pokemon.clear();
+
         self.menu_on_select = true;
         self.swaps = Vec::new();
 

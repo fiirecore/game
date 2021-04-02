@@ -473,20 +473,6 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.3.0-beta.3"
-dependencies = [
- "ahash 0.7.2",
- "firecore-audio-lib",
- "firecore-pokedex",
- "firecore-util",
- "quad-rand",
- "serde",
- "smallvec",
- "tinystr",
-]
-
-[[package]]
-name = "firecore-world"
-version = "0.3.0-beta.3"
 source = "git+https://github.com/DoNotDoughnut/firecore-world#cb74818852acf86ad99ed6d01850d79648fec0bb"
 dependencies = [
  "ahash 0.7.2",
@@ -1121,7 +1107,7 @@ dependencies = [
  "firecore-input",
  "firecore-pokedex",
  "firecore-util",
- "firecore-world 0.3.0-beta.3",
+ "firecore-world",
  "font-builder",
  "getopts",
  "macroquad",
@@ -1611,7 +1597,7 @@ dependencies = [
  "ahash 0.7.2",
  "bincode",
  "firecore-util",
- "firecore-world 0.3.0-beta.3 (git+https://github.com/DoNotDoughnut/firecore-world)",
+ "firecore-world",
  "image",
  "ron",
  "serde",
