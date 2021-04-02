@@ -1,4 +1,4 @@
-use crate::data::player::save::PlayerSave;
+use firecore_data::player::PlayerSave;
 use crate::gui::game::party::PokemonPartyGui;
 use crate::util::pokemon::PokemonTextures;
 use data::BattleData;
@@ -19,6 +19,7 @@ use firecore_util::battle::BattleType;
 use firecore_pokedex::pokemon::instance::PokemonInstance;
 use self::pokemon::BattleParty;
 use self::transitions::managers::closer::BattleCloserManager;
+use macroquad::rand::Random;
 
 pub mod data;
 
@@ -27,6 +28,8 @@ pub mod manager;
 pub mod pokemon;
 pub mod gui;
 pub mod transitions;
+
+pub static BATTLE_RANDOM: Random = Random::new();
 
 // #[deprecated(since = "0.4.0", note = "Move to seperate crate")]
 pub struct Battle {
@@ -256,7 +259,7 @@ impl Battle {
 							.filter(|(_, pkmn)| pkmn.pokemon.current_hp != 0)
 							.map(|(index, _)| index)
 							.collect();
-						self.opponent.select_pokemon(available[macroquad::rand::gen_range(0, available.len())]);
+						self.opponent.select_pokemon(available[BATTLE_RANDOM.gen_range(0..available.len() as u32) as usize]);
 
 						// Update the opponent's pokemon GUI
 
@@ -336,7 +339,7 @@ impl Battle {
 
 fn get_move_damage(pmove: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
 	if if let Some(accuracy) = pmove.accuracy {
-		let hit: u8 = macroquad::rand::gen_range(0, 100);
+		let hit: u8 = BATTLE_RANDOM.gen_range(0..100) as u8;
 		let test = hit < accuracy;
 		// macroquad::prelude::debug!("{} accuracy: {} < {} = {}",  pmove, hit, accuracy, if test { "Hit! "} else { "Miss!" });
 		test

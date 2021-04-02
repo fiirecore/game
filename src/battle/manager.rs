@@ -3,7 +3,7 @@ use firecore_util::{Entity, Completable};
 use macroquad::prelude::Texture2D;
 use macroquad::prelude::collections::storage::get_mut;
 use ahash::AHashMap as HashMap;
-use crate::data::player::list::PlayerSaves;
+use firecore_data::player::PlayerSaves;
 use crate::gui::game::party::PokemonPartyGui;
 use crate::util::pokemon::PokemonTextures;
 

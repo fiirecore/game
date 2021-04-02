@@ -57,7 +57,7 @@ impl Scene for SceneManager {
 
     fn on_start(&mut self) {
 		#[cfg(debug_assertions)] {
-			let mut saves = macroquad::prelude::collections::storage::get_mut::<firecore_data::player::list::PlayerSaves>().expect("Could not get player saves");
+			let mut saves = macroquad::prelude::collections::storage::get_mut::<firecore_data::player::PlayerSaves>().expect("Could not get player saves");
 			if saves.saves.is_empty() {
 				self.current = Scenes::Title;
 			} else {

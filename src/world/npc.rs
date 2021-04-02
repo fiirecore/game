@@ -3,7 +3,7 @@ use firecore_world::character::npc::NPC;
 use macroquad::prelude::collections::storage::{get, get_mut};
 
 use crate::battle::data::BattleData;
-use crate::data::player::list::PlayerSaves;
+use firecore_data::player::PlayerSaves;
 
 use super::NPCTypes;
 use super::NpcTextures;
@@ -27,7 +27,7 @@ pub fn has_battled(map_name: &String, npc: &NPC) -> bool {
 
 pub fn try_battle(battle_data: &mut Option<BattleData>, map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
     if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
-        crate::data::player::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), battle_data, npc, npc_types);
+        crate::data::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), battle_data, npc, npc_types);
     } else {
         macroquad::prelude::warn!("Could not get player data!");
     }

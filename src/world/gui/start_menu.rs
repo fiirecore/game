@@ -58,7 +58,7 @@ impl StartMenu {
             match self.cursor {
                 0 => {
                     // Save
-                    unsafe { crate::data::player::DIRTY = true; }
+                    crate::data::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
                 },
                 1 => {
                     // Pokemon

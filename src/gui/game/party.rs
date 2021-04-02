@@ -6,7 +6,7 @@ use macroquad::prelude::{collections::storage::get, Texture2D, draw_rectangle_li
 use smallvec::SmallVec;
 
 use crate::battle::pokemon::BattleParty;
-use crate::data::player::list::PlayerSaves;
+use firecore_data::player::PlayerSaves;
 
 use crate::util::graphics::{byte_texture, draw, draw_rect, draw_text_left};
 use crate::util::pokemon::PokemonTextures;

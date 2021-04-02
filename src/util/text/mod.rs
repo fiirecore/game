@@ -1,4 +1,4 @@
-use firecore_data::player::save::PlayerSave;
+use firecore_data::player::PlayerSave;
 use firecore_util::text::Message;
 use renderer::TextRenderer;
 

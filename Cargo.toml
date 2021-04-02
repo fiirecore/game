@@ -68,8 +68,6 @@ smallvec = { version = "1.6", features = ["serde"] }
 
 getopts = "0.2"
 
-oorandom = "11.1"
-
 ### Build dependencies
 
 [build-dependencies]

@@ -1,10 +1,11 @@
+use std::sync::atomic::AtomicBool;
+
 pub mod map;
 
-pub mod player {
-    pub static mut DIRTY: bool = false;
+pub static DIRTY: AtomicBool = AtomicBool::new(false); // if true, save player data
 
-    use firecore_data::player::world::map::MapData;
-    pub use firecore_data::player::{list, save, world};
+use firecore_data::player::world::map::MapData;
+    pub use firecore_data::player::{PlayerSave, PlayerSaves, world};
     use firecore_world::character::npc::NPC;
 
     use crate::battle::data::BattleData;
@@ -23,5 +24,3 @@ pub mod player {
         //     macroquad::prelude::info!("Player has already battled {}", npc.identifier.name);
         // }
     }
-
-}

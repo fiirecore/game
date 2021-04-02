@@ -20,7 +20,7 @@ use firecore_pokedex::pokemon::{
 };
 
 use macroquad::prelude::warn;
-use macroquad::rand::gen_range;
+use crate::battle::BATTLE_RANDOM;
 use smallvec::{smallvec, SmallVec};
 
 use crate::world::NPCTypes;
@@ -53,7 +53,7 @@ pub struct TrainerData {
 pub fn random_wild_battle(battle_data: &mut Option<BattleData>) {
     *battle_data = Some(BattleData {
         party: smallvec![PokemonInstance::generate(
-            gen_range(0, firecore_pokedex::pokedex().len()) as PokemonId + 1, 
+            BATTLE_RANDOM.gen_range(0..firecore_pokedex::pokedex().len() as u32) as PokemonId + 1, 
             1, 
             100, 
             Some(StatSet::random())

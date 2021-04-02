@@ -16,7 +16,11 @@ use macroquad::prelude::{
     KeyCode,
 };
 
-use firecore_data::{get, get_mut, configuration::Configuration};
+use firecore_data::{
+    get, get_mut, 
+    configuration::Configuration,
+    reload::Reloadable,
+};
 
 use scene::{
     Scene,
@@ -91,13 +95,13 @@ pub async fn start() {
 
     // Loads configuration and player saves
 
-    firecore_data::load().await;  
+    firecore_data::store().await;  
 
     {
 
-        let config = get::<Configuration>().unwrap();
+        let config = get::<Configuration>().expect("Could not get configuration!");
 
-        firecore_input::keyboard::load(firecore_input::keyboard::serialization::normal_map(&config.controls));
+        firecore_input::keyboard::load(config.controls.clone());
 
         if config.touchscreen {
             firecore_input::touchscreen::touchscreen(true);
@@ -134,6 +138,7 @@ pub async fn start() {
 
     let args = util::getopts();
 
+    #[cfg(feature = "audio")]
     if !args.contains(&Args::DisableAudio) {
 
         // Load audio files and setup audio
@@ -142,14 +147,19 @@ pub async fn start() {
 
     }
 
-    if args.contains(&Args::Debug) {
-        DEBUG.store(true, Relaxed);
-    }
-    
-    if debug() {
-        info!("Running in debug mode");
+    {
+
+        if args.contains(&Args::Debug) {
+            DEBUG.store(true, Relaxed);
+        }
+        
+        if debug() {
+            info!("Running in debug mode");
+        }    
+
     }
 
+   
     unsafe { SCENE_MANAGER = Some(SceneManager::new()) };
 
     let scene_manager = unsafe { SCENE_MANAGER.as_mut().unwrap() };
@@ -211,7 +221,9 @@ pub async fn start() {
 
         if is_key_pressed(KeyCode::P) {
             if let Some(mut config) = get_mut::<Configuration>() {
-                firecore_data::data::PersistantData::reload(std::ops::DerefMut::deref_mut(&mut config)).await; // maybe change into coroutine
+                if let Err(err) = firecore_data::reload(std::ops::DerefMut::deref_mut(&mut config)).await {
+                    macroquad::prelude::warn!("Could not reload configuration with error {}", err);
+                }
             }
         }
 

@@ -8,7 +8,7 @@ use macroquad::prelude::draw_rectangle;
 use macroquad::prelude::draw_rectangle_lines;
 use macroquad::prelude::warn;
 
-use crate::data::player::list::PlayerSaves;
+use firecore_data::player::PlayerSaves;
 use crate::scene::Scene;
 use crate::util::graphics::{byte_texture, draw, draw_text_left};
 
@@ -99,7 +99,7 @@ impl Scene for MainMenuScene {
 		if pressed(Control::A) {
 			if self.cursor == self.saves.len() {
 				self.state = SceneState::Scene(Scenes::CharacterCreation);
-				// saves.select_new(&firecore_data::player::save::default_name());
+				// saves.select_new(&firecore_data::player::default_name());
 			} else if self.cursor == self.saves.len() + 1 {
 				self.delete = !self.delete;
 			} else {

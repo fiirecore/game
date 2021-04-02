@@ -59,7 +59,10 @@ impl Scene for TitleScene {
 	
 	fn input(&mut self, _delta: f32) {
 		if input::pressed(input::Control::A) {
-			macroquad::prelude::rand::srand(self.accumulator as u64 % 256);
+			let seed = self.accumulator as u64 % 256;
+			firecore_world::map::wild::WILD_RANDOM.seed(seed);
+			crate::world::map::NPC_RANDOM.seed(seed);
+			crate::battle::BATTLE_RANDOM.seed(seed);
 			self.state = SceneState::Scene(super::Scenes::MainMenu);
 		}
 	}

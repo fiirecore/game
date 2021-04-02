@@ -1,4 +1,4 @@
-use firecore_data::data::PersistantData;
+use std::sync::atomic::Ordering::Relaxed;
 
 use macroquad::prelude::collections::storage::{get, get_mut};
 
@@ -11,7 +11,7 @@ use crate::world::map::manager::WorldManager;
 use crate::battle::manager::BattleManager;
 use crate::gui::game::party::PokemonPartyGui;
 
-use crate::data::player::list::PlayerSaves;
+use firecore_data::{save, player::PlayerSaves};
 
 pub struct GameScene {
 
@@ -44,13 +44,15 @@ impl GameScene {
 
 	pub fn data_dirty(&mut self, player_data: &mut PlayerSaves) {
 		self.save_data(player_data);
-		unsafe { crate::data::player::DIRTY = false; }
+		crate::data::DIRTY.store(false, Relaxed);
 	}
 
     pub fn save_data(&mut self, player_data: &mut PlayerSaves) {
         self.world_manager.save_data(player_data.get_mut());
 		macroquad::prelude::info!("Saving player data!");
-		player_data.save();
+		if let Err(err) = save(player_data) {
+			macroquad::prelude::warn!("Could not save player data with error: {}", err);
+		}
     }
 	
 }
@@ -90,25 +92,11 @@ impl Scene for GameScene {
 
 		// save player data if asked to
 
-		if unsafe { crate::data::player::DIRTY } {
+		if crate::data::DIRTY.load(Relaxed) {
 			if let Some(mut saves) = get_mut::<PlayerSaves>() {
 				self.data_dirty(&mut saves);
 			}	
 		}
-
-		// spawn party gui if asked to
-
-		// if unsafe { crate::gui::game::party::SPAWN } {
-		// 	unsafe { crate::gui::game::party::SPAWN = false; }
-		// 	self.party_gui.spawn();
-		// 	if self.battling {
-		// 		if let Some(party) = self.battle_manager.player_party() {
-		// 			self.party_gui.on_battle_start(&self.pokemon_textures, party);
-		// 		}				
-		// 	} else {
-		// 		self.party_gui.on_world_start(&self.pokemon_textures);
-		// 	}
-		// }
 
 		if !self.battling {
 

@@ -1,33 +1,40 @@
-use crate::battle::data::BattleData;
-use crate::util::{play_music_named, play_music};
-use crate::data::player::list::PlayerSaves;
-use firecore_data::player::save::PlayerSave;
-use firecore_util::Direction;
-use firecore_util::text::Message;
-use firecore_world::character::Character;
-use firecore_world::character::movement::MovementType;
-use firecore_world::character::npc::NPC;
-use firecore_world::character::npc::NPCId;
-use firecore_world::map::manager::can_move;
-use firecore_world::map::warp::WarpDestination;
-use firecore_world::script::world::WorldScript;
-use macroquad::prelude::KeyCode;
-use macroquad::prelude::collections::storage::{get, get_mut};
-use macroquad::prelude::{info, warn, is_key_pressed};
+use firecore_util::{Entity, Completable, Direction, Destination, text::{Message, TextColor}};
 
-use firecore_util::text::TextColor;
-use firecore_world::map::World;
-use firecore_util::Destination;
-use firecore_world::character::player::PlayerCharacter;
-use firecore_world::map::WorldMap;
-use firecore_world::script::world::Condition;
-use firecore_world::script::world::WorldActionKind;
-use firecore_world::map::wild::WildEntry;
+use firecore_world::{
+    character::{
+        Character,
+        movement::MovementType,
+        npc::{NPC, NPCId},
+        player::PlayerCharacter,
+    },
+    map::{
+        World,
+        WorldMap,
+        wild::WildEntry,
+        warp::WarpDestination,
+        manager::can_move,
+    },
+    script::world::{WorldScript, Condition, WorldActionKind},
+};
 
-use firecore_util::Entity;
 use firecore_input::{pressed, Control};
 
-use firecore_util::Completable;
+use firecore_data::{get, get_mut,
+    player::{
+        PlayerSave,
+        PlayerSaves,
+    }
+};
+
+use macroquad::{
+    prelude::{
+        KeyCode, info, warn, is_key_pressed
+    },
+    rand::Random,
+};
+
+use crate::battle::data::BattleData;
+use crate::util::{play_music_named, play_music};
 
 use super::NPCTypes;
 use super::npc::WorldNpc;
@@ -38,7 +45,7 @@ pub mod manager;
 pub mod set;
 pub mod chunk;
 
-static mut RAND: Option<oorandom::Rand32> = None;
+pub static NPC_RANDOM: Random = Random::new();
 
 const NPC_MOVE_CHANCE: f32 = 1.0 / 12.0;
 // const NPC_MOVE_TICK: f32 = 0.5;
@@ -54,10 +61,6 @@ const NPC_MOVE_CHANCE: f32 = 1.0 / 12.0;
 impl GameWorld for WorldMap {
 
     fn on_start(&mut self, music: bool) {
-
-        if unsafe{RAND.is_none()} {
-            unsafe{RAND=Some(oorandom::Rand32::new((macroquad::prelude::get_frame_time() as f64 * 100000.0 ) as u64))}
-        }
 
         self.npc_manager.timer.spawn();
         // self.npc_timer.set_target(NPC_MOVE_TICK);
@@ -155,11 +158,11 @@ impl GameWorld for WorldMap {
                 let save = saves.get();
                 for (index, npc) in self.npc_manager.npcs.iter_mut() {
                     if npc.is_alive() && !npc.should_move_to_destination() {
-                        if unsafe{RAND.as_mut().unwrap()}.rand_float() < NPC_MOVE_CHANCE {
+                        if NPC_RANDOM.gen_float() < NPC_MOVE_CHANCE {
                             match npc.properties.movement {
                                 MovementType::Still => (),
                                 MovementType::LookAround => {
-                                    npc.position.direction = firecore_util::Direction::DIRECTIONS[unsafe{RAND.as_mut().unwrap()}.rand_range(0..4) as usize];
+                                    npc.position.direction = firecore_util::Direction::DIRECTIONS[NPC_RANDOM.gen_range(0..4) as usize];
                                     find_battle(save, &self.name, index, npc, &mut self.npc_manager.active, player);
                                 },
                                 MovementType::WalkUpAndDown(steps) => {
@@ -170,7 +173,7 @@ impl GameWorld for WorldMap {
                                         } else if npc.position.coords.y >= origin.y + steps {
                                             Direction::Up
                                         } else 
-                                    if unsafe{RAND.as_mut().unwrap()}.rand_range(0..2) == 0 {//rand::thread_rng().gen_bool(0.5) {
+                                    if NPC_RANDOM.gen_range(0..2) == 0 {//rand::thread_rng().gen_bool(0.5) {
                                         Direction::Down
                                     } else {
                                         Direction::Up

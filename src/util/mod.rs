@@ -24,11 +24,11 @@ pub fn play_music_named(music: &str) {
     }
 }
 
+#[cfg(feature = "audio")]
 pub async fn load_audio() {
 
     use macroquad::prelude::error;
-
-    #[cfg(feature = "audio")]
+    
     if let Err(err) = firecore_audio::create() {
         error!("Could not create audio instance with error {}", err);
     } else {

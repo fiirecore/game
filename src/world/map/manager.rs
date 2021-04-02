@@ -11,8 +11,7 @@ use firecore_world::character::Character;
 
 use crate::battle::data::BattleData;
 use crate::battle::manager::BattleManager;
-use crate::data::player::list::PlayerSaves;
-use crate::data::player::save::PlayerSave;
+use firecore_data::player::{PlayerSave, PlayerSaves};
 use crate::gui::game::party::PokemonPartyGui;
 use crate::scene::scenes::SceneState;
 use crate::util::graphics::byte_texture;
@@ -162,10 +161,10 @@ impl WorldManager {
     pub fn save_data(&self, player_data: &mut PlayerSave) {
         if self.map_manager.chunk_active {
             player_data.location.map = None;
-            player_data.location.index = self.map_manager.chunk_map.current.unwrap_or(firecore_data::player::save::default_index());
+            player_data.location.index = self.map_manager.chunk_map.current.unwrap_or(firecore_data::player::default_index());
         } else {
-            player_data.location.map = Some(self.map_manager.map_set_manager.current.unwrap_or(firecore_data::player::save::default_map()));
-            player_data.location.index = self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(firecore_data::player::save::default_index());
+            player_data.location.map = Some(self.map_manager.map_set_manager.current.unwrap_or(firecore_data::player::default_map()));
+            player_data.location.index = self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(firecore_data::player::default_index());
 		}
 		player_data.location.position = self.map_manager.player.position;
     }

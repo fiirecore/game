@@ -1,4 +1,4 @@
-use firecore_data::player::list::PlayerSaves;
+use firecore_data::player::PlayerSaves;
 use firecore_util::{
     Entity,
     Reset,

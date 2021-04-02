@@ -80,7 +80,7 @@ impl FightPanel {
                     battle.player.next_move = Some(player_move);
                 }
     
-                let index = macroquad::rand::gen_range(0, battle.opponent.active().moves.len());
+                let index = crate::battle::BATTLE_RANDOM.gen_range(0..battle.opponent.active().moves.len() as u32) as usize;
                 battle.opponent.next_move = BattleMoveStatus::new(battle.opponent.active_mut().moves[index].use_move());
                 
                 text.reset_text();

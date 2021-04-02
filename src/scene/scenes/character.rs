@@ -1,5 +1,5 @@
 use firecore_data::get_mut;
-use firecore_data::player::list::PlayerSaves;
+use firecore_data::player::PlayerSaves;
 
 use crate::scene::Scene;
 use super::{SceneState, Scenes};
