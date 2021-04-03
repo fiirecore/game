@@ -4,13 +4,10 @@ use firecore_world::serialized::SerializedWorld;
 use macroquad::prelude::{Image, Texture2D, info};
 
 use crate::battle::manager::BattleManager;
-use crate::util::TILE_SIZE;
+use crate::util::{TILE_SIZE, graphics::byte_texture};
 use crate::world::NPCTypes;
 use crate::world::NpcTextures;
 use crate::world::TileTextures;
-
-
-pub mod npc_texture;
 
 pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut TileTextures, npc_textures: &mut NpcTextures, npc_types: &mut NPCTypes) -> WorldMapManager {
 
@@ -18,7 +15,7 @@ pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut T
 
     let world: SerializedWorld = bincode::deserialize(
         // &macroquad::prelude::load_file("assets/world.bin").await.unwrap()
-        include_bytes!("../../../build/data/world.bin")
+        include_bytes!("../../build/data/world.bin")
     ).unwrap();
 
     info!("Loaded world file.");
@@ -50,7 +47,17 @@ pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut T
         }
     }
 
-    npc_texture::load_npc_textures(battle_manager, npc_textures, npc_types, world.npc_types);
+    info!("Loading NPC textures...");
+
+    for npc_type in world.npc_types {
+        let texture = byte_texture(&npc_type.sprite);
+        if let Some(battle_sprite) = npc_type.battle_sprite {
+            battle_manager.trainer_sprites.insert(npc_type.identifier.clone(), byte_texture(&battle_sprite));
+        }
+        npc_types.insert(npc_type.identifier.clone(), npc_type.data);
+        npc_textures.insert(npc_type.identifier, texture);
+    }
+    
     info!("Finished loading textures!");
 
     world.manager

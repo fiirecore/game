@@ -1,21 +1,21 @@
 use firecore_util::Entity;
-use crate::battle::transitions::BattleCloser;
-use crate::battle::transitions::BattleTransition;
+use crate::battle::transitions::{BattleTransition, BattleTransitionGui, BattleCloser};
 use crate::util::graphics::draw_rect;
 use firecore_util::{Reset, Completable};
 
 #[derive(Default)]
-pub struct BasicBattleCloser {
+pub struct WildBattleCloser {
 
     alive: bool,
-    finished: bool,
 
     alpha: f32,
     world_active: bool,
 
 }
 
-impl BattleTransition for BasicBattleCloser {
+impl BattleTransitionGui for WildBattleCloser {}
+
+impl BattleTransition for WildBattleCloser {
     
     fn on_start(&mut self) {
         
@@ -23,9 +23,9 @@ impl BattleTransition for BasicBattleCloser {
 
     fn update(&mut self, delta: f32) {
         if self.world_active {
-            self.alpha -= 60.0 * delta;
+            self.alpha -= 45.0 * delta;
         } else {
-            self.alpha += 60.0 * delta;
+            self.alpha += 45.0 * delta;
         }
         if self.alpha >= 32.0 {
             self.world_active = true;
@@ -38,15 +38,14 @@ impl BattleTransition for BasicBattleCloser {
 
 }
 
-impl BattleCloser for BasicBattleCloser {
-    
+impl BattleCloser for WildBattleCloser {
+
     fn world_active(&self) -> bool {
         self.world_active
     }
-
 }
 
-impl Reset for BasicBattleCloser {
+impl Reset for WildBattleCloser {
 
     fn reset(&mut self) {
         self.alpha = 0.0;
@@ -55,7 +54,7 @@ impl Reset for BasicBattleCloser {
 
 }
 
-impl Completable for BasicBattleCloser {
+impl Completable for WildBattleCloser {
 
     fn is_finished(&self) -> bool {
         return self.alpha <= 0.0 && self.world_active;
@@ -63,7 +62,7 @@ impl Completable for BasicBattleCloser {
 
 }
 
-impl Entity for BasicBattleCloser {
+impl Entity for WildBattleCloser {
 
     fn spawn(&mut self) {
         self.reset();
@@ -71,8 +70,8 @@ impl Entity for BasicBattleCloser {
     }
 
     fn despawn(&mut self) {
-        self.finished = false;
         self.alive = false;
+        self.world_active = false;
     }
 
     fn is_alive(&self) -> bool {

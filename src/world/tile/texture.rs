@@ -55,7 +55,7 @@ impl TileTextureManager {
                 });
             }
         } else {
-            crate::util::graphics::draw_o(self.tile_textures.get(tile_id), x, y);
+            crate::util::graphics::draw_o(self.tile_textures.get(tile_id).map(|texture| *texture), x, y);
         }
     }
 

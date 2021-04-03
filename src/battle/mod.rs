@@ -40,8 +40,17 @@ pub struct Battle {
 	pub player: BattleParty,
 	pub opponent: BattleParty,
 
+	winner: Option<BattleWinner>,
 	try_run: bool,
 	
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum BattleWinner {
+
+	Player,
+	Opponent,
+
 }
 
 impl Battle {
@@ -59,6 +68,7 @@ impl Battle {
 					player: BattleParty::from_saved(textures, player, PokemonTexture::Back, Vec2::new(40.0, 113.0)),
 					opponent: BattleParty::new(textures, data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
 					trainer: data.trainer,
+					winner: None,
 					try_run: false,
 				}
 			)
@@ -67,11 +77,11 @@ impl Battle {
 		}
 	}
 
-	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer_manager: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui, pokemon_textures: &PokemonTextures) {
+	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui, pokemon_textures: &PokemonTextures, trainer_sprites: &manager::TrainerTextures) {
 		
 		if self.try_run {
 			if self.battle_type == BattleType::Wild {
-				closer_manager.spawn();
+				closer.spawn_closer(self, trainer_sprites);
 			}
 		}
 
@@ -233,7 +243,9 @@ impl Battle {
 					*/  
 
 					if self.player.all_fainted() {
-						closer_manager.spawn();
+						battle_gui.panel.despawn();
+						self.winner = Some(BattleWinner::Opponent);
+						closer.spawn_closer(self, trainer_sprites);
 					} else {
 
 						party_gui.spawn_battle(&pokemon_textures, &self.player);
@@ -253,7 +265,9 @@ impl Battle {
 					// check if all of the opponent's pokemon have fainted, and if so, end the battle, else select a pokemon from the opponent's party
 					
 					if self.opponent.all_fainted() {
-						closer_manager.spawn();
+						battle_gui.panel.despawn();
+						self.winner = Some(BattleWinner::Player);
+						closer.spawn_closer(self, trainer_sprites);
 					} else {
 						let available: Vec<usize> = self.opponent.pokemon.iter().enumerate()
 							.filter(|(_, pkmn)| pkmn.pokemon.current_hp != 0)
@@ -268,13 +282,15 @@ impl Battle {
 						// Reset the pokemon renderer so it renders pokemon
 	
 						self.opponent.renderer.reset();
+
+						battle_gui.panel.start();
 						
 					}
 
 					// Once the text is finished, despawn it
 
 					battle_gui.battle_text.text.despawn(); 
-					battle_gui.panel.start();
+					
 
 				}
 				
@@ -316,15 +332,33 @@ impl Battle {
 		}
 	}
 
-	pub fn update_data(self, player_data: &mut PlayerSave) {
+	pub fn update_data(self, player: &mut PlayerSave) {
+
+		if let Some(winner) = self.winner {
+			match winner {
+			    BattleWinner::Player => {
+					if let Some(trainer) = self.trainer {
+						player.worth += trainer.worth as usize;
+						let battled = &mut player.world_status.get_or_create_map_data(&trainer.map).battled;
+						battled.insert(trainer.identifier.index);
+						for npc in trainer.disable_others {
+							battled.insert(npc);
+						}
+					}		
+				}
+			    BattleWinner::Opponent => {
+
+				}
+			}
+		}
 		
-		player_data.party = self.player.pokemon.into_iter().map(|pokemon| {
+		player.party = self.player.pokemon.into_iter().map(|pokemon| {
 			pokemon.pokemon.to_saved()
 		}).collect();
 		
 	}
 
-	pub fn run(&mut self) {
+	pub fn try_run(&mut self) {
 		self.try_run = true;
 	}
 

@@ -31,9 +31,9 @@ pub fn draw(texture: Texture2D, x: f32, y: f32) {
 	draw_texture(texture, x, y, DRAW_COLOR);
 }
 
-pub fn draw_o(texture: Option<&Texture2D>, x: f32, y: f32) {
+pub fn draw_o(texture: Option<Texture2D>, x: f32, y: f32) {
 	if let Some(texture) = texture {
-		draw(*texture, x, y);
+		draw(texture, x, y);
 	}
 }
 

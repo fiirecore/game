@@ -1,12 +1,13 @@
 use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_util::{Entity, Completable};
-use macroquad::prelude::Texture2D;
+use macroquad::prelude::{Texture2D, is_key_pressed, KeyCode};
 use macroquad::prelude::collections::storage::get_mut;
 use ahash::AHashMap as HashMap;
 use firecore_data::player::PlayerSaves;
 use crate::gui::game::party::PokemonPartyGui;
 use crate::util::pokemon::PokemonTextures;
 
+use super::transitions::BattleTransitionGui;
 use super::{
 	Battle,
 	data::BattleData,
@@ -52,7 +53,7 @@ impl BattleManager {
 
 			screen_transition: BattleScreenTransitionManager::new(),
 			opener: BattleOpenerManager::new(),
-			closer: BattleCloserManager::default(),
+			closer: BattleCloserManager::new(),
 
 			gui: BattleGui::new(),
 
@@ -94,7 +95,7 @@ impl BattleManager {
 				if self.opener.is_alive() {
 					self.opener.introduction.input();
 				} else if self.closer.is_alive() {
-					//self.closer.input(context);
+					self.closer.input();
 				} else {
 					self.gui.input(battle, party_gui, textures);
 				}
@@ -102,7 +103,7 @@ impl BattleManager {
 		}
 
 		if crate::debug() {
-			if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::F1) {
+			if is_key_pressed(KeyCode::F1) {
 				// exit shortcut
 				self.finished = true;
 				if let Some(mut saves) = get_mut::<PlayerSaves>() {
@@ -146,7 +147,7 @@ impl BattleManager {
 					self.closer.update(delta);
 				}
 			} else /*if !self.current_battle.is_finished()*/ {
-				battle.update(delta, &mut self.gui, &mut self.closer, party_gui, pokemon_textures);
+				battle.update(delta, &mut self.gui, &mut self.closer, party_gui, pokemon_textures, &self.trainer_sprites);
 				self.gui.update(delta);
 			}
 
@@ -170,8 +171,9 @@ impl BattleManager {
 				if !self.world_active() {
 					self.gui.render_background(0.0);
 					battle.render_pokemon(self.gui.bounce.offset);
-					self.gui.render();
 					self.gui.render_panel();
+					self.gui.render();
+					self.closer.render_battle();
 				}
 				self.closer.render();
 			} else {

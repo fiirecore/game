@@ -1,8 +1,11 @@
+use firecore_data::{get, player::PlayerSaves};
 use firecore_util::battle::BattleType;
+use firecore_world::character::npc::NPCId;
+use firecore_world::character::npc::NPCIdentifier;
+use firecore_world::map::wild::WildEntry;
 use firecore_world::{
     map::wild::{
         GenerateWild,
-        table::WildPokemonTable,
     },
     character::npc::{
         NPC, 
@@ -34,19 +37,22 @@ pub struct BattleData {
 
 }
 
+pub struct TrainerData {
+
+    pub identifier: NPCIdentifier,
+    pub npc_type: NPCType,
+    pub victory_message: Vec<Vec<String>>,
+    pub disable_others: ahash::AHashSet<NPCId>,
+    pub worth: u16,
+    pub map: String,
+
+}
+
 impl BattleData {
 
     pub fn get_type(&self) -> BattleType {
         self.trainer.as_ref().map(|data| data.npc_type.trainer.as_ref().unwrap().battle_type).unwrap_or_default()
     }
-
-}
-
-pub struct TrainerData {
-
-    pub name: String,
-    pub npc_type: NPCType,
-    pub npc_type_id: String,
 
 }
 
@@ -62,28 +68,40 @@ pub fn random_wild_battle(battle_data: &mut Option<BattleData>) {
     });
 }
 
-pub fn wild_battle(battle_data: &mut Option<BattleData>, table: &WildPokemonTable) {
-    *battle_data = Some(BattleData {
-        party: smallvec![table.generate()],
-        trainer: None,
-    });
+pub fn wild_battle(battle_data: &mut Option<BattleData>, wild: &WildEntry) {
+    if wild.table.try_encounter() {
+        *battle_data = Some(BattleData {
+            party: smallvec![wild.table.generate()],
+            trainer: None,
+        });
+    }
 }
 
-pub fn trainer_battle(battle_data: &mut Option<BattleData>, npc: &NPC, npc_types: &NPCTypes) {
+pub fn trainer_battle(battle_data: &mut Option<BattleData>, map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
     if let Some(trainer) = npc.trainer.as_ref() {
-        *battle_data = Some(
-            BattleData {
-                party: to_battle_party(&trainer.party),
-                trainer: Some(
-                    TrainerData {
-                        name: npc.identifier.name.clone(),
-                        npc_type_id: npc.identifier.npc_type.clone(),
-                        npc_type: npc_types.get(&npc.identifier.npc_type).map(|npc_type| npc_type.clone()).unwrap(),
-                    }
-                )
+        if let Some(saves) = get::<PlayerSaves>() {
+            let save = saves.get();
+            if let Some(map) = save.world_status.map_data.get(map_name) {
+                if !map.battled.contains(&npc.identifier.index) {
+                    *battle_data = Some(
+                        BattleData {
+                            party: to_battle_party(&trainer.party),
+                            trainer: Some(
+                                TrainerData {
+                                    identifier: npc.identifier.clone(),
+                                    npc_type: npc_types.get(&npc.identifier.npc_type).map(|npc_type| npc_type.clone()).unwrap(),
+                                    victory_message: trainer.victory_message.clone(),
+                                    disable_others: trainer.disable_others.clone(),
+                                    worth: trainer.worth,
+                                    map: map_name.clone(),
+                                }
+                            )
+                        }
+                    );
+                    // macroquad::prelude::info!("Trainer battle with {}", npc.identifier.name);
+                }
             }
-        );
-        macroquad::prelude::info!("Trainer battle with {}", npc.identifier.name);
+        }
     }
 }
 

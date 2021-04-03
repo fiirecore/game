@@ -10,7 +10,6 @@ use firecore_world::{
     map::{
         World,
         WorldMap,
-        wild::WildEntry,
         warp::WarpDestination,
         manager::can_move,
     },
@@ -33,7 +32,9 @@ use macroquad::{
     rand::Random,
 };
 
-use crate::battle::data::BattleData;
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
+
+use crate::battle::data::{BattleData, wild_battle};
 use crate::util::{play_music_named, play_music};
 
 use super::NPCTypes;
@@ -46,6 +47,7 @@ pub mod set;
 pub mod chunk;
 
 pub static NPC_RANDOM: Random = Random::new();
+pub static WILD_ENCOUNTERS: AtomicBool = AtomicBool::new(true);
 
 const NPC_MOVE_CHANCE: f32 = 1.0 / 12.0;
 // const NPC_MOVE_TICK: f32 = 0.5;
@@ -86,18 +88,20 @@ impl GameWorld for WorldMap {
     fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
         if let Some(tile_id) = self.tile(player.position.local.coords) {
 
-            if let Some(wild) = &self.wild {
-                if let Some(tiles) = wild.tiles.as_ref() {
-                    for tile in tiles.iter() {
-                        if tile_id.eq(tile) {
-                            try_wild_battle(battle_data, wild);
-                            break;
+            if WILD_ENCOUNTERS.load(Relaxed) {
+                if let Some(wild) = &self.wild {
+                    if let Some(tiles) = wild.tiles.as_ref() {
+                        for tile in tiles.iter() {
+                            if tile_id.eq(tile) {
+                                wild_battle(battle_data, wild);
+                                break;
+                            }
                         }
-                    }
-                } else {
-                    try_wild_battle(battle_data, wild);
-                }            
-            }
+                    } else {
+                        wild_battle(battle_data, wild);
+                    }            
+                }
+            }            
     
             // look for player
             if let Some(saves) = get::<PlayerSaves>() {
@@ -184,7 +188,6 @@ impl GameWorld for WorldMap {
                                         if !find_battle(save, &self.name, index, npc, &mut self.npc_manager.active, player) {
                                             if coords.y != player.position.local.coords.y {
                                                 npc.go_to(coords);
-                                                // println!("{} Walking to {}", npc.identifier.name, coords);
                                             }                                        
                                         }                                    
                                     }
@@ -401,7 +404,7 @@ impl GameWorld for WorldMap {
                         WorldActionKind::NPCBattle(id) => {
                             if let Some(npc) = self.npc_manager.get(id) {
                                 if npc.trainer.is_some() {
-                                    crate::battle::data::trainer_battle(battle_data, &npc, npc_types);
+                                    crate::battle::data::trainer_battle(battle_data, &self.name, &npc, npc_types);
                                 }
                             }
                             pop = true;
@@ -541,7 +544,7 @@ impl GameWorld for WorldMap {
                 if text_window.is_finished() {
                     {
                         self.npc_manager.active = None;
-                        super::npc::try_battle(battle_data, &self.name, npc, npc_types);
+                        crate::battle::data::trainer_battle(battle_data, &self.name, npc, npc_types);
                     }
                     text_window.despawn();
                 } else {
@@ -691,6 +694,25 @@ impl GameWorld for WorldMap {
                     info!("NPC {} (id: {}), {} is at {}, {}; looking {:?}", &npc.identifier.name, index, if npc.is_alive() {""} else {" (despawned)"}, &npc.position.coords.x, &npc.position.coords.y, &npc.position.direction);
                 }
             }
+            if is_key_pressed(KeyCode::F9) {
+                let wild = !WILD_ENCOUNTERS.load(Relaxed);
+                WILD_ENCOUNTERS.store(wild, Relaxed);
+                info!("Wild Encounters: {}", wild);
+            }
+            if is_key_pressed(KeyCode::H) {
+				if let Some(mut saves) = get_mut::<PlayerSaves>() {
+					saves.get_mut().party.iter_mut().for_each(|pokemon| {
+                        pokemon.current_hp = None;
+                        pokemon.moves.as_mut().map(
+                            | moves | 
+                            moves.iter_mut().for_each(
+                                | pmove | 
+                                pmove.pp = None
+                            )
+                        );
+                    });
+				}
+			}
         }
 
         if pressed(Control::A) {
@@ -725,13 +747,6 @@ impl GameWorld for WorldMap {
     }
 
 
-}
-
-// #[deprecated(note = "move this function")]
-fn try_wild_battle(battle_data: &mut Option<BattleData>, wild: &WildEntry) { // move
-    if wild.table.try_encounter() {
-        crate::battle::data::wild_battle(battle_data, &wild.table);
-    }
 }
 
 pub fn despawn_script(script: &mut WorldScript) {

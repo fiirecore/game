@@ -47,7 +47,9 @@
             )
         ],
         victory_message: [
-            "Done like dinner!"
+            [
+                "Done like dinner!"
+            ]
         ],
         worth: 0
     ))

@@ -22,6 +22,7 @@ use crate::battle::{
     },
     transitions::{
         BattleTransition,
+        BattleTransitionGui,
         BattleIntroduction,
     }
 };
@@ -108,11 +109,15 @@ impl BasicBattleIntroduction {
 
 }
 
-impl BattleIntroduction for BasicBattleIntroduction {
+impl BattleTransitionGui for BasicBattleIntroduction {
 
     fn input(&mut self) {
         self.text.input();
     }
+
+}
+
+impl BattleIntroduction for BasicBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle, _trainer_sprites: &TrainerTextures) {
         self.text.messages = Some(vec![
@@ -125,11 +130,6 @@ impl BattleIntroduction for BasicBattleIntroduction {
             ),
         ]);
         self.common_setup(battle);
-    }
-
-    fn render_offset(&self, battle: &Battle, offset: f32) {
-        draw_bottom(battle.opponent.active_texture(), 144.0 - offset, 74.0);
-        self.render_player(battle, offset);
     }
 
     fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
@@ -166,6 +166,11 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 self.finished_panel = true;
             }
         }
+    }
+
+    fn render_offset(&self, battle: &Battle, offset: f32) {
+        draw_bottom(battle.opponent.active_texture(), 144.0 - offset, 74.0);
+        self.render_player(battle, offset);
     }
 
 }

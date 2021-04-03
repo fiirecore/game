@@ -11,6 +11,8 @@ use crate::world::map::manager::WorldManager;
 use crate::battle::manager::BattleManager;
 use crate::gui::game::party::PokemonPartyGui;
 
+use crate::util::DIRTY;
+
 use firecore_data::{save, player::PlayerSaves};
 
 pub struct GameScene {
@@ -44,7 +46,7 @@ impl GameScene {
 
 	pub fn data_dirty(&mut self, player_data: &mut PlayerSaves) {
 		self.save_data(player_data);
-		crate::data::DIRTY.store(false, Relaxed);
+		DIRTY.store(false, Relaxed);
 	}
 
     pub fn save_data(&mut self, player_data: &mut PlayerSaves) {
@@ -92,7 +94,7 @@ impl Scene for GameScene {
 
 		// save player data if asked to
 
-		if crate::data::DIRTY.load(Relaxed) {
+		if DIRTY.load(Relaxed) {
 			if let Some(mut saves) = get_mut::<PlayerSaves>() {
 				self.data_dirty(&mut saves);
 			}	

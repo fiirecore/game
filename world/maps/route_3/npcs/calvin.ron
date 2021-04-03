@@ -40,8 +40,10 @@
             )
         ],
         victory_message: [
-            "Lost!",
-            "Lost! Lost!"
+            [
+                "Lost!",
+                "Lost! Lost!"
+            ]
         ],
         worth: 224,
     ))

@@ -47,7 +47,7 @@ impl BattleText {
                 Message::new(
                     vec![name + " fainted!"],
                     TextColor::White,
-                    Some(1.0), 
+                    None, 
                 )            
             );
         }
@@ -58,17 +58,19 @@ impl BattleText {
             messages.push(
                 Message::new(
                     vec![
-                        format!("{} gained {} exp!", name, exp)
+                        format!("{} gained", name),
+                        format!("{} EXP. points!", exp),
                     ],
                     TextColor::White,
-                    Some(0.5),
+                    None,
                 )
             );
             if let Some(level) = level {
                 messages.push(
                     Message::new(
                         vec![
-                            format!("{} leveled up to level {}!", name, level)
+                            name + " grew to",
+                            format!("LV. {}", level),
                         ],
                         TextColor::White,
                         Some(0.5),

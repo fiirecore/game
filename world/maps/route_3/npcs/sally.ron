@@ -20,10 +20,6 @@
                 "It's so intriguing!"
             ]
         ],
-        victory_message: [
-            "If a POKEMON BOX on the PC gets",
-            "full, just switch to another BOX."
-        ],
         party: [
             (
                 id: 19,

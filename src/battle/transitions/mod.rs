@@ -1,8 +1,6 @@
 use firecore_util::{Entity, Completable};
 
-use crate::battle::{Battle, gui::BattleGui};
-
-use super::manager::TrainerTextures;
+use crate::battle::{Battle, manager::TrainerTextures, gui::BattleGui};
 
 pub mod managers;
 
@@ -35,20 +33,29 @@ pub trait BattleOpener: BattleTransition  {
 
 }
 
-pub trait BattleIntroduction: BattleTransition {
+pub trait BattleIntroduction: BattleTransition + BattleTransitionGui {
 
-    fn setup(&mut self, battle: &Battle, trainer_sprites: &TrainerTextures);
+    fn setup(&mut self, battle: &Battle, textures: &TrainerTextures);
 
     fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32);
-
-    fn input(&mut self);
 
     fn render_offset(&self, battle: &Battle, offset: f32);
 
 }
 
-pub trait BattleCloser: BattleTransition {
+pub trait BattleCloser: BattleTransition + BattleTransitionGui {
+
+    #[allow(unused_variables)]
+    fn setup(&mut self, battle: &Battle, textures: &TrainerTextures) {}
 
     fn world_active(&self) -> bool;
+
+    fn render_battle(&self) {}
+
+}
+
+pub trait BattleTransitionGui: BattleTransition {
+
+    fn input(&mut self) {}
 
 }

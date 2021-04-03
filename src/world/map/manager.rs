@@ -67,7 +67,7 @@ impl WorldManager {
 
     pub async fn load(&mut self, battle_manager: &mut BattleManager) {
         self.tile_textures.setup();
-        self.map_manager = crate::data::map::load_maps(battle_manager, &mut self.tile_textures, &mut self.npc_textures, &mut self.npc_types).await;
+        self.map_manager = crate::util::map::load_maps(battle_manager, &mut self.tile_textures, &mut self.npc_textures, &mut self.npc_types).await;
         self.gui_textures.insert(0, byte_texture(include_bytes!("../../../build/assets/condition.png")));
     }
 

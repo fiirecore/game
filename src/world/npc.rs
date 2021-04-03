@@ -1,9 +1,5 @@
 use firecore_util::Direction;
 use firecore_world::character::npc::NPC;
-use macroquad::prelude::collections::storage::{get, get_mut};
-
-use crate::battle::data::BattleData;
-use firecore_data::player::PlayerSaves;
 
 use super::NPCTypes;
 use super::NpcTextures;
@@ -11,26 +7,10 @@ use super::RenderCoords;
 
 pub trait WorldNpc {
 
-    // fn interact(&mut self, direction: Option<Direction>, map_name: &String, player: &mut Player);
-
-    // fn after_interact(&mut self, map_name: &String);
-
     fn render(&self, npc_textures: &NpcTextures, npc_types: &NPCTypes, screen: &RenderCoords);
 
     fn current_texture_pos(&self, npc_types: &NPCTypes) -> f32;
 
-}
-
-pub fn has_battled(map_name: &String, npc: &NPC) -> bool {
-    npc.trainer.is_some() && !get::<PlayerSaves>().as_ref().map(|saves| saves.get().has_battled(map_name, &npc.identifier.index)).unwrap_or(true)
-}
-
-pub fn try_battle(battle_data: &mut Option<BattleData>, map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
-    if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
-        crate::data::battle(player_saves.get_mut().world_status.get_or_create_map_data(map_name), battle_data, npc, npc_types);
-    } else {
-        macroquad::prelude::warn!("Could not get player data!");
-    }
 }
 
 impl WorldNpc for NPC {

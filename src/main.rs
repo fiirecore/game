@@ -37,7 +37,6 @@ use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 pub mod util;
 pub mod scene;
-pub mod data;
 pub mod world;
 pub mod battle;
 pub mod gui;

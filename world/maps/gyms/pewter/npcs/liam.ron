@@ -49,6 +49,15 @@
                 ),
             )
         ],
-        worth: 0
+        victory_message: [
+            [
+                "Darn!",
+            ],
+            [
+                "Light-years isn't time...",
+                "It measures distance!",
+            ]
+        ],
+        worth: 220,
     ))
 )

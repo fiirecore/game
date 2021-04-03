@@ -458,7 +458,7 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.3.0-beta.3"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#4b16c5029012bfe20ee7633ccea8a7b58208f17a"
+source = "git+https://github.com/DoNotDoughnut/firecore-world#0d67b0a4a3a92a89f41c9d94d4aed4c129bb5445"
 dependencies = [
  "ahash",
  "firecore-audio-lib",
@@ -699,9 +699,9 @@ dependencies = [
 
 [[package]]
 name = "lock_api"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd96ffd135b2fd7b973ac026d28085defbe8983df057ced3eb4f2130b0831312"
+checksum = "5a3c91c24eae6777794bb1997ad98bbb87daf92890acab859f7eaa4320333176"
 dependencies = [
  "scopeguard",
 ]
@@ -1049,7 +1049,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.3.0-beta.6"
+version = "0.3.0"
 dependencies = [
  "ahash",
  "audio-builder",

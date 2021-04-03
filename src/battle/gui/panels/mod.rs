@@ -100,7 +100,7 @@ impl Entity for BattlePanel {
 
 	fn spawn(&mut self) {
         self.alive = true;
-        self.battle.spawn();
+        // self.battle.spawn();
 	}
 
 	fn despawn(&mut self) {

@@ -89,7 +89,7 @@ impl BattleOptions {
                     party_gui.spawn_battle(textures, &battle.player);
                 },
                 3 => {
-                    battle.run();
+                    battle.try_run();
                 },
                 _ => {}
             }

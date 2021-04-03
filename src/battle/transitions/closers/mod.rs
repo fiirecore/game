@@ -1,13 +1,15 @@
-pub mod basic;
+pub mod wild;
+pub mod trainer;
 
 pub enum Closers {
 
-    Basic,
+    Wild,
+    Trainer,
 
 }
 
 impl Default for Closers {
     fn default() -> Self {
-        Self::Basic
+        Self::Wild
     }
 }

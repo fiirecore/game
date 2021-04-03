@@ -16,6 +16,7 @@ use crate::battle::{
     gui::BattleGui,
     transitions::{
         BattleTransition,
+        BattleTransitionGui,
         BattleIntroduction,
         introductions::basic::BasicBattleIntroduction,
     }
@@ -23,7 +24,7 @@ use crate::battle::{
 
 use crate::util::graphics::{draw_bottom, draw_o_bottom};
 
-const FINAL_TRAINER_OFFSET: f32 = 126.0;
+pub const FINAL_TRAINER_OFFSET: f32 = 126.0;
 
 pub struct TrainerBattleIntroduction {
 
@@ -50,31 +51,13 @@ impl TrainerBattleIntroduction {
 
 impl BattleIntroduction for TrainerBattleIntroduction {
 
-    fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
-        self.introduction.update_gui(battle, battle_gui, delta);
-        if self.introduction.text.can_continue {
-            if let Some(messages) = self.introduction.text.messages.as_ref() {
-                if self.introduction.text.current_message() == messages.len() - 2 {
-                    self.leaving = true;
-                }
-            } else {
-                self.leaving = true;
-            }
-            
-        }
-    }
-
-    fn input(&mut self) {
-        self.introduction.input();
-    }
-
     fn setup(&mut self, battle: &Battle, trainer_sprites: &TrainerTextures) {
 
         if let Some(trainer_data) = battle.trainer.as_ref() {
 
-            self.texture = trainer_sprites.get(&trainer_data.npc_type_id).map(|texture| *texture);
+            self.texture = trainer_sprites.get(&trainer_data.identifier.npc_type).map(|texture| *texture);
 
-            let name = trainer_data.npc_type.identifier.clone() + " " + trainer_data.name.as_str();
+            let name = trainer_data.npc_type.identifier.clone() + " " + trainer_data.identifier.name.as_str();
 
             self.introduction.text.messages = Some(vec![
                 Message::new(
@@ -109,7 +92,19 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         
     }
 
-    
+    fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
+        self.introduction.update_gui(battle, battle_gui, delta);
+        if self.introduction.text.can_continue {
+            if let Some(messages) = self.introduction.text.messages.as_ref() {
+                if self.introduction.text.current_message() == messages.len() - 2 {
+                    self.leaving = true;
+                }
+            } else {
+                self.leaving = true;
+            }
+            
+        }
+    }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {
         if self.offset < FINAL_TRAINER_OFFSET {
@@ -118,6 +113,12 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             draw_bottom(battle.opponent.active_texture(), 144.0 - offset, 74.0);
         }
         self.introduction.render_player(battle, offset);  
+    }
+}
+
+impl BattleTransitionGui for TrainerBattleIntroduction {
+    fn input(&mut self) {
+        self.introduction.input();
     }
 }
 

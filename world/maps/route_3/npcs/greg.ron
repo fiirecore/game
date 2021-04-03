@@ -59,8 +59,10 @@
             )
         ],
         victory_message: [
-            "If a POKEMON BOX on the PC gets",
-            "full, just switch to another BOX."
+            [
+                "If a POKEMON BOX on the PC gets",
+                "full, just switch to another BOX."
+            ]
         ],
         worth: 0
     ))

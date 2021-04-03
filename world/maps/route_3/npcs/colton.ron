@@ -54,7 +54,9 @@
             )
         ],
         victory_message: [
-            "You beat me again!"
+            [
+                "You beat me again!"
+            ]
         ],
         worth: 0
     ))

@@ -1,46 +1,78 @@
-
 use firecore_util::{
     Entity, 
     Reset, 
     Completable
 };
-use crate::battle::transitions::{
-    BattleTransition,
-    BattleCloser,
-    closers::{
-        Closers,
-        basic::BasicBattleCloser,
+use crate::battle::{
+    Battle,
+    manager::TrainerTextures,
+    transitions::{
+        BattleTransition,
+        BattleTransitionGui,
+        BattleCloser,
+        closers::{
+            Closers,
+            wild::WildBattleCloser,
+            trainer::TrainerBattleCloser,
+        }
     }
 };
-
-#[derive(Default)]
 pub struct BattleCloserManager {
     
     alive: bool,
 
-    current_closer: Closers,
-    basic: BasicBattleCloser,
+    current: Closers,
+
+    wild: WildBattleCloser,
+    trainer: TrainerBattleCloser,
 
 }
 
 impl BattleCloserManager { // return player data
 
+    pub fn new() -> Self {
+        Self {
+            alive: false,
+            current: Closers::Wild,
+            wild: WildBattleCloser::default(),
+            trainer: TrainerBattleCloser::new(),
+        }
+    }
+
+    pub fn spawn_closer(&mut self, battle: &Battle, textures: &TrainerTextures) {
+        match battle.battle_type {
+            firecore_util::battle::BattleType::Wild => self.current = Closers::Wild,
+            _ => self.current = Closers::Trainer,
+        }
+        self.spawn();
+        self.setup(battle, textures);
+    }
+
     fn get(&self) -> &dyn BattleCloser {
-        match self.current_closer {
-            Closers::Basic => &self.basic,
+        match self.current {
+            Closers::Wild => &self.wild,
+            Closers::Trainer => &self.trainer,
         }
     }
 
     fn get_mut(&mut self) -> &mut dyn BattleCloser {
-        match self.current_closer {
-            Closers::Basic => &mut self.basic,
+        match self.current {
+            Closers::Wild => &mut self.wild,
+            Closers::Trainer => &mut self.trainer,
         }
     }
 
 }
 
-impl BattleTransition for BattleCloserManager {
+impl BattleTransitionGui for BattleCloserManager {
 
+    fn input(&mut self) {
+        self.get_mut().input();
+    }
+}
+
+impl BattleTransition for BattleCloserManager {
+ 
     fn on_start(&mut self) {
         self.get_mut().on_start();
     }
@@ -56,8 +88,17 @@ impl BattleTransition for BattleCloserManager {
 }
 
 impl BattleCloser for BattleCloserManager {
+
+    fn setup(&mut self, battle: &Battle, textures: &TrainerTextures) {
+        self.get_mut().setup(battle, textures);
+    }
+
     fn world_active(&self) -> bool {
         self.get().world_active()
+    }
+
+    fn render_battle(&self) {
+        self.get().render_battle();
     }
 }
 
@@ -81,18 +122,17 @@ impl Entity for BattleCloserManager {
 
     fn spawn(&mut self) {
         self.alive = true;
-        self.get_mut().spawn();
         self.reset();
+        self.get_mut().spawn();
     }    
 
     fn despawn(&mut self) {
         self.alive = false;
         self.get_mut().despawn();
-        self.reset();
     }
 
     fn is_alive(&self) -> bool {
-        return self.alive;
+        self.alive
     }
 
 }

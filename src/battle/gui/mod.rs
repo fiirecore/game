@@ -96,6 +96,7 @@ impl BattleGui {
 	}
 
 	pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
+		self.battle_text.text.input();
 		self.panel.input(battle, &mut self.battle_text, party_gui, textures);
 	}
 

@@ -6,7 +6,7 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
 
 ## Roadmap
 
-### v0.3.X
+### v0.3.0
 
 - [X] Working Party GUI (its not fully textured or completely functional yet though)
 - [X] New asset loading system
@@ -21,9 +21,11 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
 - [X] NPCs can move by themselves
 - [X] All maps and warps up to Cerulean are added
     - [X] Pokemon centers up to cerulean work
-- [ ] Battles close properly
+- [X] Battles close properly
 
-### v0.4.X
+- [ ] Party GUI select menu
+
+### v0.4.0
 
 - [ ] Independent world random, battle random, and wild random
 - [ ] Finished Party GUI
@@ -35,7 +37,7 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
 - [ ] All NPCs up to Cerulean are added
 - [ ] Player has money
 
-### v0.5.X
+### v0.5.0
 
 - [ ] Touchscreen support
 - [ ] Basic player bag
