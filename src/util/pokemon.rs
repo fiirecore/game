@@ -28,7 +28,7 @@ pub async fn load(textures: &mut PokemonTextures) {
 
 	firecore_pokedex::new();
 
-	let pokedex = unsafe { POKEDEX.as_ref().unwrap() };
+	let pokedex = unsafe { POKEDEX.as_mut().unwrap() };
 
 	for pokemon in dex.pokemon {
 		
@@ -53,7 +53,7 @@ pub async fn load(textures: &mut PokemonTextures) {
 		pokedex.insert(pokemon.pokemon.data.id, pokemon.pokemon);
 	}
 
-	let movedex = unsafe { MOVEDEX.as_ref().unwrap() };
+	let movedex = unsafe { MOVEDEX.as_mut().unwrap() };
 
 	for pokemon_move in dex.moves {
 		movedex.insert(pokemon_move.id, pokemon_move);

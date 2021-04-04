@@ -86,7 +86,6 @@ impl PokemonPartyGui {
         if let Some(saves) = get::<PlayerSaves>() {
             for pokemon in saves.get().party.iter() {
                 if let Some(pokemon_data) = firecore_pokedex::pokedex().get(&pokemon.id) {
-                    let pokemon_data = pokemon_data.value();
     
                     let max = firecore_pokedex::pokemon::instance::calculate_hp(pokemon_data.base.hp, pokemon.data.ivs.hp, pokemon.data.evs.hp, pokemon.data.level);
                     let current = pokemon.current_hp.unwrap_or(max);

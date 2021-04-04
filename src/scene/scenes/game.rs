@@ -11,7 +11,7 @@ use crate::world::map::manager::WorldManager;
 use crate::battle::manager::BattleManager;
 use crate::gui::game::party::PokemonPartyGui;
 
-use crate::util::DIRTY;
+use firecore_data::DIRTY;
 
 use firecore_data::{save, player::PlayerSaves};
 

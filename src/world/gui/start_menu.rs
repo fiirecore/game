@@ -58,7 +58,7 @@ impl StartMenu {
             match self.cursor {
                 0 => {
                     // Save
-                    crate::util::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
+                    firecore_data::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
                 },
                 1 => {
                     // Pokemon

@@ -1,5 +1,3 @@
-use std::sync::atomic::AtomicBool;
-
 use firecore_util::{Direction, text::TextColor};
 
 use firecore_input::Control;
@@ -14,9 +12,6 @@ pub mod map;
 pub mod pokemon;
 
 pub const TILE_SIZE: u8 = 16;
-
-// #[deprecated(note = "move to data crate")]
-pub static DIRTY: AtomicBool = AtomicBool::new(false); // if true, save player data
 
 pub fn play_music(id: firecore_audio::MusicId) {
     if let Err(err) = firecore_audio::play_music_id(id) {

@@ -380,7 +380,7 @@ dependencies = [
 [[package]]
 name = "firecore-data"
 version = "0.3.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#0a4d5a4eaef741bb1ac05b0ba2e03b2f2f85f860"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#2d856059e211c468e06b7dee835d6bb71d9a07e8"
 dependencies = [
  "directories-next",
  "firecore-input",

@@ -10,7 +10,6 @@ use macroquad::prelude::{
     coroutines::{
         start_coroutine,
         stop_coroutine,
-        wait_seconds,
     },
     is_key_pressed,
     KeyCode,
@@ -172,7 +171,7 @@ pub async fn start() {
 
     #[cfg(not(target_arch = "wasm32"))] {
         while !loading_coroutine.is_done() {
-            wait_seconds(0.1).await;
+            macroquad::prelude::coroutines::wait_seconds(0.1).await;
         } 
     }
 
