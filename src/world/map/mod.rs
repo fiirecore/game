@@ -37,10 +37,8 @@ use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use crate::battle::data::{BattleData, wild_battle};
 use crate::util::{play_music_named, play_music};
 
-use super::NPCTypes;
-use super::npc::WorldNpc;
 use super::gui::text_window::TextWindow;
-use super::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
+use super::{GameWorld, TileTextures, NpcTextures, RenderCoords};
 
 pub mod manager;
 pub mod set;
@@ -151,7 +149,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow) {
 
         // Move NPCs
         self.npc_manager.do_move(delta);
@@ -404,7 +402,7 @@ impl GameWorld for WorldMap {
                         WorldActionKind::NPCBattle(id) => {
                             if let Some(npc) = self.npc_manager.get(id) {
                                 if npc.trainer.is_some() {
-                                    crate::battle::data::trainer_battle(battle_data, &self.name, &npc, npc_types);
+                                    crate::battle::data::trainer_battle(battle_data, &self.name, &npc);
                                 }
                             }
                             pop = true;
@@ -544,7 +542,7 @@ impl GameWorld for WorldMap {
                 if text_window.is_finished() {
                     {
                         self.npc_manager.active = None;
-                        crate::battle::data::trainer_battle(battle_data, &self.name, npc, npc_types);
+                        crate::battle::data::trainer_battle(battle_data, &self.name, npc);
                     }
                     text_window.despawn();
                 } else {
@@ -584,18 +582,20 @@ impl GameWorld for WorldMap {
 
                                     // Play Trainer music
 
-                                    if let Some(npc_type) = npc_types.get(&npc.identifier.npc_type) {
+                                    if let Some(npc_type) = super::npc::npc_type(&npc.identifier.npc_type) {
                                         if let Some(trainer) = npc_type.trainer.as_ref() {
-                                            if let Err(err) = if let Some(playing_music) = firecore_audio::get_current_music() {
-                                                if playing_music != firecore_audio::get_music_id(&trainer.encounter_music).unwrap() {
-                                                    firecore_audio::play_music_named(&trainer.encounter_music)
+                                            if let Some(encounter_music) = trainer.music.as_ref() {
+                                                if let Err(err) = if let Some(playing_music) = firecore_audio::get_current_music() {
+                                                    if playing_music != firecore_audio::get_music_id(encounter_music).unwrap() {
+                                                        firecore_audio::play_music_named(encounter_music)
+                                                    } else {
+                                                        Ok(())
+                                                    }
                                                 } else {
-                                                    Ok(())
+                                                    firecore_audio::play_music_named(encounter_music)
+                                                } {
+                                                    warn!("Could not play music named {} with error {}", self.name, err);
                                                 }
-                                            } else {
-                                                firecore_audio::play_music_named(&trainer.encounter_music)
-                                            } {
-                                                warn!("Could not play music named {} with error {}", self.name, err);
                                             }
                                         }
                                     }
@@ -624,7 +624,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         for yy in screen.top..screen.bottom {
             let y = yy - screen.offset.y;
             let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
@@ -654,7 +654,7 @@ impl GameWorld for WorldMap {
         }
         for npc in self.npc_manager.npcs.values() {
             if npc.is_alive() {
-                npc.render(npc_textures, npc_types, &screen);
+                super::npc::render(npc, npc_textures, &screen);
             }
         }
         for script in self.scripts.iter() {
@@ -662,9 +662,9 @@ impl GameWorld for WorldMap {
                 if let Some(action) = script.actions.front() {
                     match action {
                         WorldActionKind::Conditional{ .. } => {
-                            if let Some(texture) = gui_textures.get(&0) {
+                            if let Some(texture) = super::gui::gui_texture(0) {
                                 if script.option > 1 {
-                                    crate::util::graphics::draw(*texture, 162.0, 66.0);
+                                    crate::util::graphics::draw(texture, 162.0, 66.0);
                                     crate::util::graphics::draw_cursor(170.0, 77.0 + (script.option - 2) as f32 * 16.0);
                                 }                                
                             }

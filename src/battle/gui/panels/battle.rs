@@ -7,7 +7,6 @@ use macroquad::prelude::warn;
 use crate::battle::Battle;
 use crate::gui::game::party::PokemonPartyGui;
 use crate::util::graphics::{byte_texture, draw, draw_text_left, draw_cursor};
-use crate::util::pokemon::PokemonTextures;
 
 pub struct BattleOptions {
 
@@ -15,9 +14,10 @@ pub struct BattleOptions {
     
     background: Texture2D,
 
-    buttons: [String; 4],
+    buttons: [&'static str; 4],
 
-    text: [String; 2],
+    what_will: &'static str,
+    pokemon_do: String,
     
     cursor: usize,
 
@@ -36,16 +36,14 @@ impl BattleOptions {
             background: byte_texture(include_bytes!("../../../../build/assets/gui/battle/button_panel.png")),
 
             buttons: [
-                "FIGHT".to_owned(),
-                "BAG".to_owned(),
-                "POKEMON".to_owned(),
-                "RUN".to_owned()
+                "FIGHT",
+                "BAG",
+                "POKEMON",
+                "RUN"
             ],
 
-            text: [
-                "What will".to_owned(), 
-                "POKEMON do?".to_owned(),
-            ],
+            what_will: "What will",
+            pokemon_do: "POKEMON do?".to_owned(),
 
             cursor: 0,
 
@@ -55,10 +53,10 @@ impl BattleOptions {
     }
     
     pub fn update_text(&mut self, instance: &PokemonInstance) {
-        self.text[1] = instance.name() + " do?";
+        self.pokemon_do = instance.name() + " do?";
     }
 
-    pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
+    pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PokemonPartyGui) {
         if input::pressed(Control::Up) {
             if self.cursor >= 2 {
                 self.cursor -= 2;
@@ -86,7 +84,7 @@ impl BattleOptions {
                     warn!("bag button unimplemented");
                 },
                 2 => {
-                    party_gui.spawn_battle(textures, &battle.player);
+                    party_gui.spawn_battle(&battle.player);
                 },
                 3 => {
                     battle.try_run();
@@ -102,26 +100,22 @@ impl BattleOptions {
 
             draw(self.background, 120.0, 113.0);
 
-            for (index, string) in self.text.iter().enumerate() {
-                draw_text_left(1, string, TextColor::White, 11.0, 123.0 + (index << 4) as f32);
-            }
+            draw_text_left(1, self.what_will, TextColor::White, 11.0, 123.0);
+            draw_text_left(1, &self.pokemon_do, TextColor::White, 11.0, 139.0);
 
             for (index, string) in self.buttons.iter().enumerate() {
                 draw_text_left(0, string, TextColor::Black, 138.0 + if index % 2 == 0 { 0.0 } else { 56.0 }, 123.0 + if index >> 1 == 0 { 0.0 } else { 16.0 })
             }
 
-            let cursor_x = if self.cursor % 2 == 0 {
+            draw_cursor(131.0 + if self.cursor % 2 == 0 {
                 0.0
             } else {
                 56.0
-            };
-            let cursor_y = if (self.cursor >> 1) == 0 {
+            }, 126.0 + if (self.cursor >> 1) == 0 {
                 0.0
             } else {
                 16.0
-            };
-
-            draw_cursor(131.0 + cursor_x, 126.0 + cursor_y);
+            });
 		}		
 	}
 

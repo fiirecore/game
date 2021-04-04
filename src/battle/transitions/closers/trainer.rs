@@ -5,7 +5,6 @@ use macroquad::prelude::{Vec2, Texture2D};
 use crate::battle::{
     Battle,
     BattleWinner,
-    manager::TrainerTextures,
     transitions::{
         BattleTransition,
         BattleTransitionGui,
@@ -55,17 +54,17 @@ impl BattleTransitionGui for TrainerBattleCloser {
 
 impl BattleCloser for TrainerBattleCloser {
 
-    fn setup(&mut self, battle: &Battle, textures: &TrainerTextures) {
+    fn setup(&mut self, battle: &Battle) {
         match battle.winner {
             Some(winner) => match winner {
                 BattleWinner::Player => {
                     if let Some(trainer) = &battle.trainer {
-                        self.trainer = textures.get(&trainer.identifier.npc_type).map(|texture| *texture);
+                        self.trainer = Some(trainer.texture);
                         self.text.messages = Some(vec![
                             Message::new(
                                 vec![
                                     String::from("Player defeated"), 
-                                    format!("{} {}!", trainer.npc_type.identifier, trainer.identifier.name),
+                                    format!("{} {}!", trainer.npc_type, trainer.identifier.name),
                                 ], 
                                 TextColor::White,
                                 None, 

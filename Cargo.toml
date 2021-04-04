@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -33,29 +33,29 @@ macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
 ### Game subcrates
 
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-#firecore-pokedex = { path = "../firecore/firecore-pokedex" }
+# firecore-pokedex = { path = "../firecore/firecore-pokedex" }
 
 firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
-#firecore-util = { path = "../firecore/firecore-util" }
+# firecore-util = { path = "../firecore/firecore-util" }
 
 firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
-#firecore-world = { path = "../firecore/firecore-world" }
+# firecore-world = { path = "../firecore/firecore-world" }
 
 firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", default-features = false }
-#firecore-audio = { path = "../firecore/firecore-audio", default-features = false }
+# firecore-audio = { path = "../firecore/firecore-audio", default-features = false }
 
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
-#firecore-input = { path = "../firecore/firecore-input" }
+# firecore-input = { path = "../firecore/firecore-input" }
 
 firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
-#firecore-data = { path = "../firecore/firecore-data" }
+# firecore-data = { path = "../firecore/firecore-data" }
 
 firecore-font-lib = { git = "https://github.com/DoNotDoughnut/firecore-font-lib" }
-#firecore-font-lib = { path = "../firecore/firecore-font-lib" }
+# firecore-font-lib = { path = "../firecore/firecore-font-lib" }
 
 ### Deserialization
 
-bincode = "1.3" # Replace with postcard
+postcard = { version = "0.6", default-features = false }
 
 ### Collections
 
@@ -73,10 +73,10 @@ getopts = "0.2"
 font-builder = { git = "https://github.com/DoNotDoughnut/font-builder" }
 
 world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
-#world-builder = { path = "../Subprojects/world-builder" }
+# world-builder = { path = "../Subprojects/world-builder" }
 
 dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
-#dex-builder = { path = "../Subprojects/dex-builder" }
+# dex-builder = { path = "../Subprojects/dex-builder" }
 
 audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder", optional = true }
 

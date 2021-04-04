@@ -5,7 +5,6 @@ use firecore_util::{
 };
 use crate::battle::{
     Battle,
-    manager::TrainerTextures,
     transitions::{
         BattleTransition,
         BattleTransitionGui,
@@ -39,13 +38,13 @@ impl BattleCloserManager { // return player data
         }
     }
 
-    pub fn spawn_closer(&mut self, battle: &Battle, textures: &TrainerTextures) {
+    pub fn spawn_closer(&mut self, battle: &Battle) {
         match battle.battle_type {
             firecore_util::battle::BattleType::Wild => self.current = Closers::Wild,
             _ => self.current = Closers::Trainer,
         }
         self.spawn();
-        self.setup(battle, textures);
+        self.setup(battle);
     }
 
     fn get(&self) -> &dyn BattleCloser {
@@ -89,8 +88,8 @@ impl BattleTransition for BattleCloserManager {
 
 impl BattleCloser for BattleCloserManager {
 
-    fn setup(&mut self, battle: &Battle, textures: &TrainerTextures) {
-        self.get_mut().setup(battle, textures);
+    fn setup(&mut self, battle: &Battle) {
+        self.get_mut().setup(battle);
     }
 
     fn world_active(&self) -> bool {

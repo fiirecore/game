@@ -1,6 +1,5 @@
 use firecore_data::player::PlayerSave;
 use crate::gui::game::party::PokemonPartyGui;
-use crate::util::pokemon::PokemonTextures;
 use data::BattleData;
 use data::TrainerData;
 use firecore_pokedex::moves::MoveCategory;
@@ -24,6 +23,7 @@ use macroquad::rand::Random;
 pub mod data;
 
 pub mod manager;
+pub mod textures;
 
 pub mod pokemon;
 pub mod gui;
@@ -55,7 +55,7 @@ pub enum BattleWinner {
 
 impl Battle {
 	
-	pub fn new(textures: &PokemonTextures, player: &PokemonParty, data: BattleData) -> Option<Self> {		
+	pub fn new(player: &PokemonParty, data: BattleData) -> Option<Self> {		
 		if !(
 			player.is_empty() || 
 			data.party.is_empty() ||
@@ -65,8 +65,8 @@ impl Battle {
 			Some(
 				Self {
 					battle_type: data.get_type(),
-					player: BattleParty::from_saved(textures, player, PokemonTexture::Back, Vec2::new(40.0, 113.0)),
-					opponent: BattleParty::new(textures, data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
+					player: BattleParty::from_saved(player, PokemonTexture::Back, Vec2::new(40.0, 113.0)),
+					opponent: BattleParty::new(data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
 					trainer: data.trainer,
 					winner: None,
 					try_run: false,
@@ -77,11 +77,11 @@ impl Battle {
 		}
 	}
 
-	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui, pokemon_textures: &PokemonTextures, trainer_sprites: &manager::TrainerTextures) {
+	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui) {
 		
 		if self.try_run {
 			if self.battle_type == BattleType::Wild {
-				closer.spawn_closer(self, trainer_sprites);
+				closer.spawn_closer(self);
 			}
 		}
 
@@ -245,10 +245,10 @@ impl Battle {
 					if self.player.all_fainted() {
 						battle_gui.panel.despawn();
 						self.winner = Some(BattleWinner::Opponent);
-						closer.spawn_closer(self, trainer_sprites);
+						closer.spawn_closer(self);
 					} else {
 
-						party_gui.spawn_battle(&pokemon_textures, &self.player);
+						party_gui.spawn_battle(&self.player);
 						
 						// Reset the pokemon renderer so it renders pokemon
 
@@ -267,7 +267,7 @@ impl Battle {
 					if self.opponent.all_fainted() {
 						battle_gui.panel.despawn();
 						self.winner = Some(BattleWinner::Player);
-						closer.spawn_closer(self, trainer_sprites);
+						closer.spawn_closer(self);
 					} else {
 						let available: Vec<usize> = self.opponent.pokemon.iter().enumerate()
 							.filter(|(_, pkmn)| pkmn.pokemon.current_hp != 0)

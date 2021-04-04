@@ -1,10 +1,11 @@
 (
-    identifier: "Lass",
-    sprite_type: 1,
+    identifier: "lass",
+    sprite: Walk,
     trainer: Some(
         (
-            battle_type: Trainer,
-            encounter_music: "EncounterGirl",
+            name: "Lass",
+            music: Some("EncounterGirl"),
+            type: Trainer,
         )
     )
 )

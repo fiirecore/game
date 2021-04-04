@@ -5,8 +5,7 @@ use firecore_world::map::warp::WarpDestination;
 use macroquad::prelude::warn;
 
 use crate::battle::data::BattleData;
-use crate::world::NPCTypes;
-use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
+use crate::world::{GameWorld, TileTextures, NpcTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
 use firecore_world::character::player::PlayerCharacter;
 
@@ -16,12 +15,12 @@ impl GameWorld for WorldChunk {
         self.map.on_start(music);
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
-        self.map.update(delta, player, battle_data, warp, text_window, npc_types);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow) {
+        self.map.update(delta, player, battle_data, warp, text_window);
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
-        self.map.render(tile_textures, npc_textures, npc_types, gui_textures, screen.offset(self.coords), border)
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+        self.map.render(tile_textures, npc_textures, screen.offset(self.coords), border)
     }
 
     fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
@@ -44,17 +43,19 @@ impl GameWorld for WorldChunkMap {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow) {
         if let Some(chunk) = self.chunk_mut() {
-            chunk.update(delta, player, battle_data, warp, text_window, npc_types);
+            chunk.update(delta, player, battle_data, warp, text_window);
         }
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         if let Some(chunk) = self.chunk() {
-            chunk.render(tile_textures, npc_textures, npc_types, gui_textures, screen, border);
+            chunk.render(tile_textures, npc_textures, screen, border);
             for connection in &chunk.connections {
-                self.chunks.get(connection).expect("Could not get connected chunk").render(tile_textures, npc_textures, npc_types, gui_textures, screen, false);
+                if let Some(chunk) = self.chunks.get(connection) {
+                    chunk.render(tile_textures, npc_textures, screen, false);
+                }
             }
         }        
     }

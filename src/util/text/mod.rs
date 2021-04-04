@@ -37,7 +37,7 @@ const BLUE_COLOR: Color = color_u8!(48, 80, 200, 255); // 48, 80, 200
 pub async fn init_text() {
 	let mut text_renderer = TextRenderer::new();
 
-	let font_sheets: firecore_font_lib::SerializedFonts = bincode::deserialize(
+	let font_sheets: firecore_font_lib::SerializedFonts = postcard::from_bytes(
         // &macroquad::prelude::load_file("assets/fonts.bin").await.unwrap()
         include_bytes!("../../../build/data/fonts.bin")
     ).unwrap();

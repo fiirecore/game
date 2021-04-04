@@ -1,4 +1,4 @@
 (
-    identifier: "Fat Man",
-    sprite_type: 1,
+    identifier: "fat_man",
+    sprite: Walk,
 )

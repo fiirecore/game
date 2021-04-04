@@ -1,12 +1,9 @@
 use firecore_pokedex::pokemon::party::PokemonParty;
 use firecore_util::{Entity, Completable};
-use macroquad::prelude::{Texture2D, is_key_pressed, KeyCode};
+use macroquad::prelude::{is_key_pressed, KeyCode};
 use macroquad::prelude::collections::storage::get_mut;
-use ahash::AHashMap as HashMap;
 use firecore_data::player::PlayerSaves;
 use crate::gui::game::party::PokemonPartyGui;
-use crate::util::pokemon::PokemonTextures;
-
 use super::transitions::BattleTransitionGui;
 use super::{
 	Battle,
@@ -25,7 +22,7 @@ use super::{
 	}
 };
 
-pub type TrainerTextures = HashMap<String, Texture2D>;
+// pub type TrainerTextures = HashMap<String, Texture2D>;
 
 pub struct BattleManager {
 	
@@ -36,8 +33,6 @@ pub struct BattleManager {
 	closer: BattleCloserManager,
 
 	gui: BattleGui,
-
-	pub trainer_sprites: TrainerTextures,
 
 	finished: bool,
 	
@@ -57,21 +52,19 @@ impl BattleManager {
 
 			gui: BattleGui::new(),
 
-			trainer_sprites: HashMap::new(),
-
 			finished: false,
 
 		}
 		
 	}
 
-	pub fn battle(&mut self, textures: &PokemonTextures, player: &PokemonParty, data: BattleData) -> bool { // add battle type parameter
+	pub fn battle(&mut self, player: &PokemonParty, data: BattleData) -> bool { // add battle type parameter
 
 		self.finished = false;
 
 		// Create the battle
 
-		self.battle = Battle::new(textures, &player, data);
+		self.battle = Battle::new(&player, data);
 
 		// Despawn anything from previous battle
 
@@ -88,7 +81,7 @@ impl BattleManager {
 
 	}
 
-	pub fn input(&mut self, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures) {
+	pub fn input(&mut self, party_gui: &mut PokemonPartyGui) {
 
 		if let Some(battle) = self.battle.as_mut() {
 			if !self.screen_transition.is_alive() {	
@@ -97,7 +90,7 @@ impl BattleManager {
 				} else if self.closer.is_alive() {
 					self.closer.input();
 				} else {
-					self.gui.input(battle, party_gui, textures);
+					self.gui.input(battle, party_gui);
 				}
 			}
 		}
@@ -116,7 +109,7 @@ impl BattleManager {
 
 	}
 
-	pub fn update(&mut self, delta: f32, party_gui: &mut PokemonPartyGui, pokemon_textures: &PokemonTextures) {
+	pub fn update(&mut self, delta: f32, party_gui: &mut PokemonPartyGui) {
 		
 		if let Some(battle) = self.battle.as_mut() {
 
@@ -125,7 +118,7 @@ impl BattleManager {
 					self.screen_transition.despawn();
 					self.opener.spawn_type(battle.battle_type);
 					self.opener.on_start();
-					self.opener.introduction.setup_text(battle, &self.trainer_sprites);
+					self.opener.introduction.setup_text(battle);
 				} else {
 					self.screen_transition.update(delta);
 				}
@@ -147,7 +140,7 @@ impl BattleManager {
 					self.closer.update(delta);
 				}
 			} else /*if !self.current_battle.is_finished()*/ {
-				battle.update(delta, &mut self.gui, &mut self.closer, party_gui, pokemon_textures, &self.trainer_sprites);
+				battle.update(delta, &mut self.gui, &mut self.closer, party_gui);
 				self.gui.update(delta);
 			}
 

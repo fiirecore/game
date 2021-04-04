@@ -1,10 +1,10 @@
 (
-    identifier: "Gym Leader",
-    sprite_type: 0,
+    identifier: "misty",
+    sprite: Still,
     trainer: Some(
         (
-            battle_type: GymLeader,
-            encounter_music: "Fuchsia", // fix
+            name: "Gym Leader",
+            type: GymLeader,
         )
     )
 )

@@ -10,14 +10,11 @@ use firecore_util::Entity;
 use firecore_world::character::Character;
 
 use crate::battle::data::BattleData;
-use crate::battle::manager::BattleManager;
 use firecore_data::player::{PlayerSave, PlayerSaves};
 use crate::gui::game::party::PokemonPartyGui;
 use crate::scene::scenes::SceneState;
 use crate::util::graphics::byte_texture;
-use crate::util::pokemon::PokemonTextures;
-use crate::world::NPCTypes;
-use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
+use crate::world::{GameWorld, TileTextures, NpcTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
 use crate::world::gui::start_menu::StartMenu;
 use crate::world::player::PlayerTexture;
@@ -27,10 +24,8 @@ pub struct WorldManager {
 
     pub map_manager: WorldMapManager,
 
-    npc_types: NPCTypes,
     tile_textures: TileTextures,
     npc_textures: NpcTextures,
-    gui_textures: GuiTextures,
     player_texture: PlayerTexture,
 
     warp_transition: WarpTransition,
@@ -52,10 +47,8 @@ impl WorldManager {
 
             map_manager: WorldMapManager::default(),
 
-            npc_types: NPCTypes::new(),
             tile_textures: TileTextures::new(),
             npc_textures: NpcTextures::new(),
-            gui_textures: GuiTextures::new(),
             player_texture: PlayerTexture::default(),
 
             warp_transition: WarpTransition::new(),
@@ -65,10 +58,9 @@ impl WorldManager {
         }
     }
 
-    pub async fn load(&mut self, battle_manager: &mut BattleManager) {
+    pub async fn load(&mut self) {
         self.tile_textures.setup();
-        self.map_manager = crate::util::map::load_maps(battle_manager, &mut self.tile_textures, &mut self.npc_textures, &mut self.npc_types).await;
-        self.gui_textures.insert(0, byte_texture(include_bytes!("../../../build/assets/condition.png")));
+        self.map_manager = crate::util::map::load_maps(&mut self.tile_textures, &mut self.npc_textures).await;
     }
 
     pub fn on_start(&mut self) {
@@ -99,9 +91,9 @@ impl WorldManager {
         }
 
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle_data, &mut self.map_manager.warp, &mut self.text_window, &self.npc_types);
+            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle_data, &mut self.map_manager.warp, &mut self.text_window);
         } else {
-            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, battle_data, &mut self.map_manager.warp, &mut self.text_window, &self.npc_types);
+            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, battle_data, &mut self.map_manager.warp, &mut self.text_window);
         }
 
         if self.warp_transition.is_alive() {
@@ -148,9 +140,9 @@ impl WorldManager {
     pub fn render(&self) {
         let coords = RenderCoords::new(&self.map_manager.player);
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, &self.npc_types, &self.gui_textures, coords, true);
+            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, coords, true);
         } else {
-            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, &self.npc_types, &self.gui_textures, coords, true);
+            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, coords, true);
         }
         self.player_texture.render(&self.map_manager.player);
         self.text_window.render();
@@ -169,7 +161,7 @@ impl WorldManager {
 		player_data.location.position = self.map_manager.player.position;
     }
 
-    pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PokemonPartyGui, textures: &PokemonTextures, scene_state: &mut SceneState) {
+    pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PokemonPartyGui, scene_state: &mut SceneState) {
 
         if crate::debug() {
             self.debug_input(battle_data)
@@ -182,7 +174,7 @@ impl WorldManager {
         if self.text_window.is_alive() {
             self.text_window.input();
         } else if self.start_menu.is_alive() {
-            self.start_menu.input(scene_state, party_gui, textures);
+            self.start_menu.input(scene_state, party_gui);
         } else {
 
             if self.map_manager.chunk_active {

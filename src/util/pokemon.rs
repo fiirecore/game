@@ -1,5 +1,4 @@
 use ahash::AHashMap as HashMap;
-
 use macroquad::prelude::{Texture2D, info, warn};
 
 use firecore_pokedex::{
@@ -17,9 +16,17 @@ use firecore_audio::{
 
 use crate::util::graphics::byte_texture;
 
-pub async fn load(textures: &mut PokemonTextures) {
+static mut POKEMON_TEXTURES: Option<PokemonTextures> = None;
 
-	let dex: SerializedDex = bincode::deserialize(
+pub fn pokemon_texture(id: &PokemonId, side: PokemonTexture) -> Texture2D {
+	unsafe{POKEMON_TEXTURES.as_ref()}.expect("Could not get pokemon textures!").get(&id, side)
+}
+
+pub async fn load() {
+
+	let mut textures = PokemonTextures::default();
+
+	let dex: SerializedDex = postcard::from_bytes(
 		// &macroquad::prelude::load_file("assets/dex.bin").await.unwrap()
 		include_bytes!("../../build/data/dex.bin")
 	).unwrap();
@@ -61,6 +68,8 @@ pub async fn load(textures: &mut PokemonTextures) {
 
 	info!("Finished loading pokedex and moves!");
 
+	unsafe { POKEMON_TEXTURES = Some(textures); }
+
 }
 
 use super::graphics::debug_texture;
@@ -76,12 +85,12 @@ pub struct PokemonTextures {
 
 impl PokemonTextures {
 
-    pub fn pokemon_texture(&self, id: &PokemonId, side: PokemonTexture) -> Texture2D {
+    pub fn get(&self, id: &PokemonId, side: PokemonTexture) -> Texture2D {
         match side {
-            PokemonTexture::Front => self.front.get(id).map(|tex| *tex),
-            PokemonTexture::Back => self.back.get(id).map(|tex| *tex),
-            PokemonTexture::Icon => self.icon.get(id).map(|tex| *tex),
-        }.unwrap_or(debug_texture())
+            PokemonTexture::Front => self.front.get(id),
+            PokemonTexture::Back => self.back.get(id),
+            PokemonTexture::Icon => self.icon.get(id),
+        }.map(|texture| *texture).unwrap_or(debug_texture())
     }
 
 }

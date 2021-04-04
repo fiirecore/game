@@ -1,4 +1,4 @@
 (
-    identifier: "Professor",
-    sprite_type: 1,
+    identifier: "prof_oak",
+    sprite: Walk,
 )

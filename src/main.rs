@@ -156,6 +156,10 @@ pub async fn start() {
 
     }
 
+    // Load pokedex and movedex;
+
+    crate::util::pokemon::load().await;
+
    
     unsafe { SCENE_MANAGER = Some(SceneManager::new()) };
 

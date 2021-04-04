@@ -4,7 +4,6 @@ use macroquad::prelude::collections::storage::{get, get_mut};
 
 use crate::battle::data::BattleData;
 use crate::scene::Scene;
-use crate::util::pokemon::PokemonTextures;
 use super::SceneState;
 
 use crate::world::map::manager::WorldManager;
@@ -23,7 +22,7 @@ pub struct GameScene {
 	battle_manager: BattleManager,
 
 	party_gui: PokemonPartyGui,
-	pub pokemon_textures: PokemonTextures,
+	// pub pokemon_textures: PokemonTextures,
 	battle_data: Option<BattleData>,
 
 	battling: bool,
@@ -36,11 +35,11 @@ impl GameScene {
 
 		// Load the pokedex, pokemon textures and moves
 
-		crate::util::pokemon::load(&mut self.pokemon_textures).await;
+		
 
 		// Load maps
 		
-		self.world_manager.load(&mut self.battle_manager).await;
+		self.world_manager.load().await;
 
 	}
 
@@ -70,7 +69,7 @@ impl Scene for GameScene {
 			battle_manager: BattleManager::new(),
 			party_gui: PokemonPartyGui::new(),
 
-			pokemon_textures: PokemonTextures::default(),
+			// pokemon_textures: PokemonTextures::default(),
 
 			battle_data: None,
 
@@ -106,7 +105,7 @@ impl Scene for GameScene {
 
 			if self.battle_data.is_some() {
 				if let Some(player_saves) = get::<PlayerSaves>() {
-					if self.battle_manager.battle(&self.pokemon_textures, &player_saves.get().party, self.battle_data.take().unwrap()) {
+					if self.battle_manager.battle(&player_saves.get().party, self.battle_data.take().unwrap()) {
 						self.battling = true;
 					}
 				}
@@ -114,7 +113,7 @@ impl Scene for GameScene {
 
 		} else {
 
-			self.battle_manager.update(delta, &mut self.party_gui, &self.pokemon_textures);
+			self.battle_manager.update(delta, &mut self.party_gui);
 			
 			if self.battle_manager.is_finished() {
 				self.battle_manager.update_data();
@@ -142,7 +141,7 @@ impl Scene for GameScene {
 	
 	fn input(&mut self, delta: f32) {
 		if self.party_gui.is_alive() {
-			self.party_gui.input(delta);
+			self.party_gui.input();
 			if firecore_input::pressed(firecore_input::Control::Start) || macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
 				self.party_gui.despawn();
 				if !self.battling {
@@ -152,9 +151,9 @@ impl Scene for GameScene {
 				}
 			}
 		} else if !self.battling {
-			self.world_manager.input(delta, &mut self.battle_data, &mut self.party_gui, &self.pokemon_textures, &mut self.state);
+			self.world_manager.input(delta, &mut self.battle_data, &mut self.party_gui, &mut self.state);
 		} else {
-			self.battle_manager.input(&mut self.party_gui, &self.pokemon_textures);
+			self.battle_manager.input(&mut self.party_gui);
 		}
 	}
 

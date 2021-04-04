@@ -7,7 +7,6 @@ use firecore_pokedex::pokemon::{
 use macroquad::prelude::{Vec2, Texture2D, warn};
 use smallvec::SmallVec;
 
-use crate::util::pokemon::PokemonTextures;
 use crate::battle::{
     pokemon::{
         BattlePokemon,
@@ -30,7 +29,7 @@ pub struct BattleParty {
 
 impl BattleParty {
 
-    pub fn from_saved(textures: &PokemonTextures, party: &PokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn from_saved(party: &PokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
 
         let mut battle_party = BattlePokemonParty::new();
 
@@ -43,7 +42,6 @@ impl BattleParty {
 		}
 
         Self::new(
-            textures,
             battle_party,
             side, 
             active_pos,
@@ -51,7 +49,7 @@ impl BattleParty {
 
     }
 
-    pub fn new(textures: &PokemonTextures, party: BattlePokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn new(party: BattlePokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
 
         let mut active = 0;
 
@@ -65,7 +63,7 @@ impl BattleParty {
         Self {
             pokemon: party.into_iter().map(|pokemon| 
                 BattlePokemon {
-                    texture: textures.pokemon_texture(&pokemon.pokemon.data.id, side),
+                    texture: crate::util::pokemon::pokemon_texture(&pokemon.pokemon.data.id, side),
                     pokemon: pokemon,
                 }
             ).collect(),

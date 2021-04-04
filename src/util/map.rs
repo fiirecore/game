@@ -1,19 +1,19 @@
 use ahash::AHashMap as HashMap;
+use firecore_world::character::npc::npc_type::NPCType;
 use firecore_world::map::manager::WorldMapManager;
 use firecore_world::serialized::SerializedWorld;
 use macroquad::prelude::{Image, Texture2D, info};
 
-use crate::battle::manager::BattleManager;
+use crate::battle::textures::*;
 use crate::util::{TILE_SIZE, graphics::byte_texture};
-use crate::world::NPCTypes;
 use crate::world::NpcTextures;
 use crate::world::TileTextures;
 
-pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut TileTextures, npc_textures: &mut NpcTextures, npc_types: &mut NPCTypes) -> WorldMapManager {
+pub async fn load_maps(tile_textures: &mut TileTextures, npc_textures: &mut NpcTextures) -> WorldMapManager {
 
     info!("Loading maps...");
 
-    let world: SerializedWorld = bincode::deserialize(
+    let world: SerializedWorld = postcard::from_bytes(
         // &macroquad::prelude::load_file("assets/world.bin").await.unwrap()
         include_bytes!("../../build/data/world.bin")
     ).unwrap();
@@ -49,14 +49,24 @@ pub async fn load_maps(battle_manager: &mut BattleManager, tile_textures: &mut T
 
     info!("Loading NPC textures...");
 
+    let mut npc_types = crate::world::npc::NPCTypes::with_capacity(world.npc_types.len());
+    let mut trainer_sprites = TrainerSprites::new();
+
     for npc_type in world.npc_types {
-        let texture = byte_texture(&npc_type.sprite);
-        if let Some(battle_sprite) = npc_type.battle_sprite {
-            battle_manager.trainer_sprites.insert(npc_type.identifier.clone(), byte_texture(&battle_sprite));
+        let texture = byte_texture(&npc_type.texture);
+        if let Some(battle_sprite) = npc_type.battle_texture {
+            trainer_sprites.insert(npc_type.config.identifier, byte_texture(&battle_sprite));
         }
-        npc_types.insert(npc_type.identifier.clone(), npc_type.data);
-        npc_textures.insert(npc_type.identifier, texture);
+        npc_types.insert(npc_type.config.identifier, NPCType {
+            sprite: firecore_world::character::sprite::SpriteIndexes::from_index(npc_type.config.sprite),
+            trainer: npc_type.config.trainer,
+        });
+        npc_textures.insert(npc_type.config.identifier, texture);
     }
+
+    unsafe {crate::world::npc::NPC_TYPES = Some(npc_types); }
+
+    unsafe { TRAINER_SPRITES =Some(trainer_sprites); }
     
     info!("Finished loading textures!");
 

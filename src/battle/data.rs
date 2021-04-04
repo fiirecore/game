@@ -7,10 +7,7 @@ use firecore_world::{
     map::wild::{
         GenerateWild,
     },
-    character::npc::{
-        NPC, 
-        npc_type::NPCType
-    }
+    character::npc::NPC,
 };
 
 use firecore_pokedex::pokemon::{
@@ -22,11 +19,10 @@ use firecore_pokedex::pokemon::{
     generate::GeneratePokemon,
 };
 
+use macroquad::prelude::Texture2D;
 use macroquad::prelude::warn;
 use crate::battle::BATTLE_RANDOM;
 use smallvec::{smallvec, SmallVec};
-
-use crate::world::NPCTypes;
 
 pub type BattlePokemonParty = SmallVec<[PokemonInstance; 6]>;
 
@@ -40,7 +36,8 @@ pub struct BattleData {
 pub struct TrainerData {
 
     pub identifier: NPCIdentifier,
-    pub npc_type: NPCType,
+    pub npc_type: String,
+    pub texture: Texture2D,
     pub victory_message: Vec<Vec<String>>,
     pub disable_others: ahash::AHashSet<NPCId>,
     pub worth: u16,
@@ -51,7 +48,7 @@ pub struct TrainerData {
 impl BattleData {
 
     pub fn get_type(&self) -> BattleType {
-        self.trainer.as_ref().map(|data| data.npc_type.trainer.as_ref().unwrap().battle_type).unwrap_or_default()
+        self.trainer.as_ref().map(|data| crate::world::npc::npc_type(&data.identifier.npc_type).map(|npc| npc.trainer.as_ref().map(|trainer| trainer.battle_type)).flatten()).flatten().unwrap_or_default()
     }
 
 }
@@ -77,7 +74,7 @@ pub fn wild_battle(battle_data: &mut Option<BattleData>, wild: &WildEntry) {
     }
 }
 
-pub fn trainer_battle(battle_data: &mut Option<BattleData>, map_name: &String, npc: &NPC, npc_types: &NPCTypes) {
+pub fn trainer_battle(battle_data: &mut Option<BattleData>, map_name: &String, npc: &NPC) {
     if let Some(trainer) = npc.trainer.as_ref() {
         if let Some(saves) = get::<PlayerSaves>() {
             let save = saves.get();
@@ -89,7 +86,8 @@ pub fn trainer_battle(battle_data: &mut Option<BattleData>, map_name: &String, n
                             trainer: Some(
                                 TrainerData {
                                     identifier: npc.identifier.clone(),
-                                    npc_type: npc_types.get(&npc.identifier.npc_type).map(|npc_type| npc_type.clone()).unwrap(),
+                                    npc_type: crate::world::npc::npc_type(&npc.identifier.npc_type).map(|npc_type| npc_type.trainer.as_ref().map(|trainer| trainer.name.clone())).flatten().unwrap_or(String::from("Trainer")),
+                                    texture: super::textures::trainer_texture(&npc.identifier.npc_type),
                                     victory_message: trainer.victory_message.clone(),
                                     disable_others: trainer.disable_others.clone(),
                                     worth: trainer.worth,

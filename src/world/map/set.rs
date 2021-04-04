@@ -4,8 +4,7 @@ use firecore_world::map::warp::WarpDestination;
 use macroquad::prelude::warn;
 
 use crate::battle::data::BattleData;
-use crate::world::NPCTypes;
-use crate::world::{GameWorld, TileTextures, NpcTextures, GuiTextures, RenderCoords};
+use crate::world::{GameWorld, TileTextures, NpcTextures, RenderCoords};
 use crate::world::gui::text_window::TextWindow;
 use firecore_world::character::player::PlayerCharacter;
 
@@ -25,15 +24,15 @@ impl GameWorld for WorldMapSet {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow) {
         if let Some(map) = self.map_mut() {
-            map.update(delta, player, battle_data, warp, text_window, npc_types);
+            map.update(delta, player, battle_data, warp, text_window);
         }
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         if let Some(map) = self.map() {
-            map.render(tile_textures, npc_textures, npc_types, gui_textures, screen, border);
+            map.render(tile_textures, npc_textures, screen, border);
         }
     }
 
@@ -61,15 +60,15 @@ impl GameWorld for WorldMapSetManager {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow, npc_types: &NPCTypes) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow) {
         if let Some(set) = self.set_mut() {
-            set.update(delta, player, battle_data, warp, text_window, npc_types);
+            set.update(delta, player, battle_data, warp, text_window);
         }
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, npc_types: &NPCTypes, gui_textures: &GuiTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
         if let Some(set) = self.set() {
-            set.render(tile_textures, npc_textures, npc_types, gui_textures, screen, border);
+            set.render(tile_textures, npc_textures, screen, border);
         }
     }
 

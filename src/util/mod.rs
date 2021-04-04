@@ -34,7 +34,7 @@ pub async fn load_audio() {
         error!("Could not create audio instance with error {}", err);
     } else {
         
-        let audio = bincode::deserialize(
+        let audio = postcard::from_bytes(
             // &macroquad::prelude::load_file("assets/audio.bin").await.unwrap()
             include_bytes!("../../build/data/audio.bin")
         ).unwrap();
