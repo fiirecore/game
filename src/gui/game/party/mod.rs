@@ -13,6 +13,7 @@ use crate::util::graphics::{byte_texture, draw, draw_rect, draw_text_left};
 use crate::util::pokemon::pokemon_texture;
 
 use self::select::SelectMenu;
+use self::summary::SummaryGui;
 
 use super::health_bar::HealthBar;
 
@@ -24,6 +25,9 @@ const TEXTURE_TICK: f32 = 0.15;
 pub struct PokemonPartyGui {
 
     alive: bool,
+    
+    select: SelectMenu,
+    summary: SummaryGui,
 
     background: Texture2D,
     primary_slot: Texture2D,
@@ -32,8 +36,6 @@ pub struct PokemonPartyGui {
     pokemon: SmallVec<[PartyGuiData; 6]>,
 
     pub selected: Option<u8>,
-    
-    select: SelectMenu,
 
     accumulator: f32,
 
@@ -49,12 +51,13 @@ impl PokemonPartyGui {
     pub fn new() -> Self {
         Self {
             alive: false,
+            select: SelectMenu::new(),
+            summary: SummaryGui::new(),
             background: byte_texture(include_bytes!("../../../../build/assets/gui/party/background.png")),
             primary_slot: byte_texture(include_bytes!("../../../../build/assets/gui/party/primary.png")),
             pokemon_slot: byte_texture(include_bytes!("../../../../build/assets/gui/party/pokemon.png")),
             accumulator: 0.0,
             pokemon: SmallVec::new(),
-            select: SelectMenu::new(),
             cursor: 0,
             right_cursor: None,
             selected: None,
@@ -73,6 +76,7 @@ impl PokemonPartyGui {
         self.on_spawn(false);
         for pokemon in party.pokemon.iter().map(|pokemon| &pokemon.pokemon){
             self.pokemon.push(PartyGuiData {
+                id: pokemon.pokemon.data.id,
                 name: pokemon.name(),
                 level: format!("Lv{}", pokemon.data.level),
                 hp: format!("{}/{}", pokemon.current_hp, pokemon.base.hp),
@@ -92,6 +96,7 @@ impl PokemonPartyGui {
                     let current = pokemon.current_hp.unwrap_or(max);
         
                     self.pokemon.push(PartyGuiData {
+                        id: pokemon.id,
                         name: pokemon.data.nickname.as_ref().map(|nick| nick.clone()).unwrap_or(pokemon_data.data.name.to_ascii_uppercase()),
                         level: format!("Lv{}", pokemon.data.level),
                         hp: format!("{}/{}", current, max),
@@ -105,7 +110,9 @@ impl PokemonPartyGui {
 
     pub fn input(&mut self) {
 
-        if self.select.alive {
+        if self.summary.alive {
+            self.summary.input();
+        } else if self.select.alive {
             if let Some(action) = self.select.input() {
                 match action {
                     select::SelectAction::Select => {
@@ -113,7 +120,8 @@ impl PokemonPartyGui {
                         self.select.alive = false;
                     }
                     select::SelectAction::Summary => {
-                        macroquad::prelude::warn!("Function not implemented!");
+                        self.summary.spawn(self.pokemon[self.cursor as usize].clone());
+                        self.select.alive = false;
                     }
                 }
             }            
@@ -160,30 +168,36 @@ impl PokemonPartyGui {
 
     pub fn render(&self) {
         if self.alive {
-            draw(self.background, 0.0, 0.0);
-            self.pokemon.iter().enumerate().for_each(|(index, pokemon)| {
-                if index == 0 {
-                    self.render_primary(pokemon);                    
-                } else {
-                    self.render_cell(index, pokemon);
-                }
-            });
-            if self.cursor == 0 {
-                draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, RED);
+            if self.summary.alive {
+                self.summary.render();
             } else {
-                draw_rectangle_lines(89.0, -14.0 + 24.0 * self.cursor as f32, 150.0, 22.0, 2.0, RED);
-            }
-            if self.select.is_world {
-                if let Some(selected) = self.selected {
-                    if selected == 0 {
-                        draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, LIME);
+                draw(self.background, 0.0, 0.0);
+                self.pokemon.iter().enumerate().for_each(|(index, pokemon)| {
+                    if index == 0 {
+                        self.render_primary(pokemon);                    
                     } else {
-                        draw_rectangle_lines(89.0, -14.0 + 24.0 * selected as f32, 150.0, 22.0, 2.0, LIME);
+                        self.render_cell(index, pokemon);
+                    }
+                });
+                if self.cursor == 0 {
+                    draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, RED);
+                } else {
+                    draw_rectangle_lines(89.0, -14.0 + 24.0 * self.cursor as f32, 150.0, 22.0, 2.0, RED);
+                }
+                if self.select.is_world {
+                    if let Some(selected) = self.selected {
+                        if selected == 0 {
+                            draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, LIME);
+                        } else {
+                            draw_rectangle_lines(89.0, -14.0 + 24.0 * selected as f32, 150.0, 22.0, 2.0, LIME);
+                        }
                     }
                 }
+                self.select.render();
             }
         }
-        self.select.render();
+        
+        
     }
 
     fn render_primary(&self, pokemon: &PartyGuiData) {
@@ -258,6 +272,7 @@ impl Reset for PokemonPartyGui {
 #[derive(Clone)]
 pub struct PartyGuiData {
 
+    id: firecore_pokedex::pokemon::PokemonId,
     texture: Texture2D,
     name: String,
     level: String,

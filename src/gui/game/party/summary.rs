@@ -1,12 +1,18 @@
-use firecore_pokedex::pokemon::instance::PokemonInstance;
+use firecore_pokedex::pokedex;
+use firecore_pokedex::pokemon::texture::PokemonTexture;
+use firecore_util::text::TextColor;
 use macroquad::prelude::Texture2D;
 use firecore_input::{pressed, Control};
 
+use crate::util::graphics::draw_text_left;
 use crate::util::graphics::{byte_texture, draw};
+use crate::util::pokemon::pokemon_texture;
+
+use super::PartyGuiData;
 
 pub struct SummaryGui {
 
-    alive: bool,
+    pub alive: bool,
 
     pages: [Texture2D; 1],
 
@@ -50,30 +56,48 @@ impl SummaryGui {
     }
 
     pub fn render(&self) {
-        match self.page {
-            Page::Info => {
-                draw(self.pages[0], 0.0, 0.0);
+        if self.alive {
+            match self.page {
+                Page::Info => {
+                    draw(self.pages[0], 0.0, 0.0);
+                    if let Some(pokemon) = self.pokemon.as_ref() {
+                        draw(pokemon.texture, 28.0, pokemon.texture_pos);
+                        draw_text_left(1, &pokemon.pokemon.level, TextColor::White, 5.0, 19.0);
+                        draw_text_left(1, &pokemon.pokemon_name, TextColor::White, 41.0, 19.0);
+                        draw_text_left(1, &pokemon.pokemon_id, TextColor::Black, 168.0, 21.0);
+                        draw_text_left(1, &pokemon.pokemon.name, TextColor::Black, 168.0, 36.0);
+                    }
+                }
             }
-        }
+        }        
     }
 
-    pub fn spawn(&mut self, pokemon: PokemonInstance) {
+    pub fn spawn(&mut self, pokemon: PartyGuiData) {
         self.alive = true;
+        let dex_pokemon = pokedex().get(&pokemon.id).unwrap();
+        let texture = pokemon_texture(&pokemon.id, PokemonTexture::Front);
         self.pokemon = Some(
             SummaryPokemon {
-                texture: crate::util::pokemon::pokemon_texture(&pokemon.pokemon.data.id, firecore_pokedex::pokemon::texture::PokemonTexture::Front),
+                pokemon_id: format!("{:#03}", pokemon.id),
+                pokemon_name: dex_pokemon.data.name.to_ascii_uppercase(),
+                texture_pos: 34.0 + (64.0 - texture.height()) / 2.0,
                 pokemon,
+                texture,
             }
         );
     }
 
     pub fn despawn(&mut self) {
         self.alive = false;
+        self.pokemon = None;
     }
 
 }
 
 pub struct SummaryPokemon {
-    pokemon: PokemonInstance,
+    pokemon: PartyGuiData,
+    pokemon_id: String,
+    pokemon_name: String,
     texture: Texture2D,
+    texture_pos: f32,
 }
