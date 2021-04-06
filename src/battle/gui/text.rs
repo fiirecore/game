@@ -47,7 +47,7 @@ impl BattleText {
                 Message::new(
                     vec![name + " fainted!"],
                     TextColor::White,
-                    None, 
+                    Some(1.0), 
                 )            
             );
         }

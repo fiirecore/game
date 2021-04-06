@@ -14,9 +14,8 @@ pub struct SummaryGui {
 
     pub alive: bool,
 
-    pages: [Texture2D; 1],
-
     page: Page,
+    pages: [Texture2D; 1],
 
     pokemon: Option<SummaryPokemon>,
 

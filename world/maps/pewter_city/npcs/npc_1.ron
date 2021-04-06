@@ -2,7 +2,7 @@
     identifier: (
         index: 1,
         name: "NPC 1",
-        type: "woman_1"
+        type: "woman"
     ),
     position: (
         coords: (

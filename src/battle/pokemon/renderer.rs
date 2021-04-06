@@ -1,6 +1,7 @@
 use firecore_util::{Reset, Completable};
 use macroquad::prelude::{Texture2D, Vec2, draw_texture_ex, DrawTextureParams, Rect, WHITE};
 
+const MISSING: f32 = 0.0;
 const SIZE: f32 = 64.0;
 
 #[derive(Default)]
@@ -16,7 +17,7 @@ impl ActivePokemonRenderer {
     pub fn new(pos: Vec2) -> Self {
         Self {
             pos,
-            missing: 0.0,
+            missing: MISSING,
         }
     }
 
@@ -49,12 +50,12 @@ impl ActivePokemonRenderer {
 
 impl Reset for ActivePokemonRenderer {
     fn reset(&mut self) {
-        self.missing = 0.0;
+        self.missing = MISSING;
     }
 }
 
 impl Completable for ActivePokemonRenderer {
     fn is_finished(&self) -> bool {
-        self.missing >= 64.0
+        self.missing >= SIZE
     }
 }
