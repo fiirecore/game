@@ -10,8 +10,8 @@ pub static LOADING_FINISHED: AtomicBool = AtomicBool::new(false);
 
 pub async fn load_coroutine() {
 
-    use macroquad::prelude::{info, get_frame_time, clear_background, BLACK, next_frame};
-    use firecore_input::{pressed, Control};
+    use game::macroquad::prelude::{info, get_frame_time, clear_background, BLACK, next_frame};
+    use game::input::{pressed, Control};
 
     info!("Starting loading scene coroutine");
 

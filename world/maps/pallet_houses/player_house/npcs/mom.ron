@@ -1,14 +1,16 @@
 (
-    identifier: (
-        index: 0,
+    index: 0,
+    npc: (
         name: "Mom",
-        type: "mom"
-    ),
-    position: (
-        coords: (
-            x: 8,
-            y: 4
+        position: (
+            coords: (
+                x: 8,
+                y: 4
+            ),
+            direction: Left
         ),
-        direction: Left
-    ),
+        properties: (
+            type: "mom",
+        ),
+    )
 )

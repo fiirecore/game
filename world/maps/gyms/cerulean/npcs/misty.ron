@@ -1,52 +1,54 @@
 (
-    identifier: (
-        index: 0,
+    index: 0,
+    npc: (
         name: "Misty",
-        type: "misty"
-    ),
-    position: (
-        coords: (
-            x: 8,
-            y: 6
-        ),
-        direction: Down
-    ),
-    message: Some([
-        (
-            color: Red,
-            message: [
-                "Temporary post-battle message"
-            ]
-        )
-    ]),
-    trainer: Some((
-        trainer_type: GymLeader,
-        encounter_type: Some(Trainer),
-        encounter_message: [
-            [
-                "Temporary message"
-            ],
-        ],
-        party: [
-            (
-                id: 120,
-                data: (
-                    level: 18,
-                    gender: None,
-                ),                
+        position: (
+            coords: (
+                x: 8,
+                y: 6
             ),
-            (
-                id: 121,
-                data: (
-                    level: 21,
-                    gender: None,
+            direction: Down
+        ),
+        properties: (
+            type: "misty",
+            message: Some([
+                (
+                    color: Red,
+                    lines: [
+                        "Temporary post-battle message"
+                    ]
+                )
+            ]),
+        ),    
+        trainer: Some((
+            trainer_type: GymLeader,
+            encounter_type: Some(Trainer),
+            encounter_message: [
+                [
+                    "Temporary message"
+                ],
+            ],
+            party: [
+                (
+                    id: 120,
+                    data: (
+                        level: 18,
+                        gender: None,
+                    ),                
                 ),
-            )
-        ],
-        disable_others: [
+                (
+                    id: 121,
+                    data: (
+                        level: 21,
+                        gender: None,
+                    ),
+                )
+            ],
+            disable_others: [
 
-        ],
-        worth: 1400,
+            ],
+            worth: 1400,
 
-    ))
+        ))
+    )
 )

@@ -17,6 +17,10 @@
                 y: 0x2E,
             ),
             direction: Some(Down),
-        )
+        ),
+        transition: (
+            move_on_exit: true,
+            warp_on_tile: false,
+        ),
     )
 )

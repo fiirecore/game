@@ -1,23 +1,39 @@
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use macroquad::prelude::{
-    Conf,
-    clear_background,
-    BLACK,
-    get_frame_time,
-    next_frame,
-    info,
-    coroutines::{
-        start_coroutine,
-        stop_coroutine,
-    },
-    is_key_pressed,
-    KeyCode,
-};
+extern crate firecore_game as game;
+extern crate firecore_world as world;
+extern crate firecore_battle as battle;
 
-use firecore_data::{
-    get, get_mut, 
-    configuration::Configuration,
+use game::{
+    macroquad::{
+        Window,
+        camera::set_camera,
+        prelude::{
+            Conf,
+            clear_background,
+            BLACK,
+            get_frame_time,
+            next_frame,
+            info,
+            coroutines::{
+                start_coroutine,
+                stop_coroutine,
+                wait_seconds,
+            },
+            is_key_pressed,
+            KeyCode,
+            warn,
+            error,
+            draw_rectangle,
+        }
+    },
+    data::{
+        get, get_mut, 
+        configuration::Configuration,
+    },
+    util::{
+        WIDTH, HEIGHT,
+    }
 };
 
 use scene::{
@@ -29,33 +45,25 @@ use scene::{
 use util::{
     Args,
     loading_screen,
-    graphics::draw_touch_button
+    draw_touch_button
 };
 
-use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
+use std::sync::atomic::Ordering::Relaxed;
 
 pub mod util;
 pub mod scene;
-pub mod world;
-pub mod battle;
-pub mod gui;
 
 pub const TITLE: &str = "Pokemon FireRed";
 pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-pub const WIDTH: f32 = 240.0;
-pub const HEIGHT: f32 = 160.0;
 pub const DEFAULT_SCALE: f32 = 3.0;
-
-static DEBUG: AtomicBool = AtomicBool::new(cfg!(debug_assertions));
-static QUIT: AtomicBool = AtomicBool::new(false);
 
 static mut SCENE_MANAGER: Option<SceneManager> = None;
 
 #[cfg(target_arch = "wasm32")]
-#[macroquad::main(settings)]
+#[game::macroquad::main(settings)]
 async fn main() {
     start().await;
 }
@@ -74,7 +82,7 @@ fn settings() -> Conf {
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
 
-    macroquad::Window::from_config(settings(), start());
+    Window::from_config(settings(), start());
 
     info!("Quitting game...");
 
@@ -87,32 +95,38 @@ pub async fn start() {
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
 
-    macroquad::camera::set_camera(util::game_camera());
+    set_camera(util::game_camera());
     
 
     // Loads configuration and player saves
 
-    firecore_data::store().await;  
+    game::data::store().await;  
 
     {
 
         let config = get::<Configuration>().expect("Could not get configuration!");
 
-        firecore_input::keyboard::load(config.controls.clone());
+        game::input::keyboard::load(config.controls.clone());
 
         if config.touchscreen {
-            firecore_input::touchscreen::touchscreen(true);
+            game::input::touchscreen::touchscreen(true);
         }
 
     }
 
     // Loads fonts
 
-    crate::util::text::init_text().await;  
+    match postcard::from_bytes(include_bytes!("../build/data/fonts.bin")) {
+        Ok(font_sheets) => game::init::text(font_sheets),
+        Err(err) => {
+            warn!("Could not load font sheets with error {}", err);
+            warn!("Game will start with no text display.");
+        }
+    }
 
     // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
 
-    let texture = crate::util::graphics::byte_texture(include_bytes!("../build/assets/loading.png"));
+    let texture = game::graphics::byte_texture(include_bytes!("../build/assets/loading.png"));
     
     // Flash the loading screen once so the screen freezes on this instead of a blank one
 
@@ -139,18 +153,21 @@ pub async fn start() {
     if !args.contains(&Args::DisableAudio) {
 
         // Load audio files and setup audio
-
-        util::load_audio().await;
+        match postcard::from_bytes(include_bytes!("../build/data/audio.bin")) {
+            Ok(sound) => game::init::audio(sound),
+            Err(err) => error!("Could not read sound file with error {}", err)
+        }
+        
 
     }
 
     {
 
         if args.contains(&Args::Debug) {
-            DEBUG.store(true, Relaxed);
+            game::DEBUG.store(true, Relaxed);
         }
         
-        if debug() {
+        if game::is_debug() {
             info!("Running in debug mode");
         }    
 
@@ -158,8 +175,10 @@ pub async fn start() {
 
     // Load pokedex and movedex;
 
-    crate::util::pokemon::load().await;
-
+    match postcard::from_bytes(include_bytes!("../build/data/dex.bin")) {
+        Ok(dex) => game::init::pokedex(dex),
+        Err(err) => panic!("Could not load pokedex with error {}", err),
+    };
    
     unsafe { SCENE_MANAGER = Some(SceneManager::new()) };
 
@@ -175,7 +194,7 @@ pub async fn start() {
 
     #[cfg(not(target_arch = "wasm32"))] {
         while !loading_coroutine.is_done() {
-            macroquad::prelude::coroutines::wait_seconds(0.1).await;
+            wait_seconds(0.1).await;
         } 
     }
 
@@ -209,7 +228,7 @@ pub async fn start() {
 
         // Render touchscreen controls if they are active
 
-        if let Some(touchscreen) = unsafe { firecore_input::touchscreen::TOUCHSCREEN.as_ref() } {
+        if let Some(touchscreen) = unsafe { game::input::touchscreen::TOUCHSCREEN.as_ref() } {
             draw_touch_button(&touchscreen.a);
             draw_touch_button(&touchscreen.b);
             draw_touch_button(&touchscreen.up);
@@ -221,8 +240,8 @@ pub async fn start() {
         // Toggle debug on key press
 
         if is_key_pressed(KeyCode::O) {
-            let debug = !DEBUG.load(Relaxed);
-            DEBUG.store(debug, Relaxed);
+            let debug = !game::DEBUG.load(Relaxed);
+            game::DEBUG.store(debug, Relaxed);
             info!("Debug: {}", debug)
         }
 
@@ -230,16 +249,16 @@ pub async fn start() {
 
         if is_key_pressed(KeyCode::P) {
             if let Some(mut config) = get_mut::<Configuration>() {
-                if let Err(err) = firecore_data::reload(std::ops::DerefMut::deref_mut(&mut config)).await {
-                    macroquad::prelude::warn!("Could not reload configuration with error {}", err);
+                if let Err(err) = game::data::reload(std::ops::DerefMut::deref_mut(&mut config)).await {
+                    warn!("Could not reload configuration with error {}", err);
                 }
             }
         }
 
         // Quit game if asked to
 
-        if QUIT.load(Relaxed) {
-            util::graphics::draw_rect(BLACK, 0.0, 0.0, WIDTH, HEIGHT);
+        if game::should_quit() {
+            draw_rectangle(0.0, 0.0, WIDTH, HEIGHT, BLACK);
             break;
         }
 
@@ -248,12 +267,4 @@ pub async fn start() {
 
     scene_manager.quit();
 
-}
-
-pub fn quit() {
-    QUIT.store(true, Relaxed);
-}
-
-pub fn debug() -> bool {
-    DEBUG.load(Relaxed)
 }

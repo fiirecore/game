@@ -1,63 +1,63 @@
 (
-    identifier: (
-        index: 2,
+    index: 2,
+    npc: (
         name: "Colton",
-        type: "bug_catcher"
-    ),
-    position: (
-        coords: (
-            x: 13,
-            y: 6
+        position: (
+            coords: (
+                x: 13,
+                y: 6
+            ),
+            direction: Right
         ),
-        direction: Right
+        properties: (
+            type: "bug_catcher",
+            message: Some([
+                (
+                    lines: [
+                        "There are other kinds of POKEMON", 
+                        "than the ones you find in forests."
+                    ],
+                    color: Blue,
+                )
+            ])
+        ),
+        trainer: Some((
+            tracking_length: Some(3),
+            encounter_message: [
+                [
+                    "Hey!",
+                    "I saw you in VIRIDIAN FOREST!"
+                ]
+            ],
+            party: [
+                (
+                    id: 10,
+                    data: (
+                        level: 10,
+                        gender: Male,
+                    ),
+                ),
+                (
+                    id: 13,
+                    data: (
+                        level: 10,
+                        gender: Male,
+                    ),
+                ),
+                (
+                    id: 10,
+                    data: (
+                        level: 10,
+                        gender: Male,
+                    ),
+                )
+            ],
+            victory_message: [
+                [
+                    "You beat me again!"
+                ]
+            ],
+            worth: 0
+        )),
     ),
-    properties: (
-        message: Some([
-            (
-                lines: [
-                    "There are other kinds of POKEMON", 
-                    "than the ones you find in forests."
-                ],
-                color: Blue,
-            )
-        ])
-    ),
-    trainer: Some((
-        tracking_length: Some(3),
-        encounter_message: [
-            [
-                "Hey!",
-                "I saw you in VIRIDIAN FOREST!"
-            ]
-        ],
-        party: [
-            (
-                id: 10,
-                data: (
-                    level: 10,
-                    gender: Male,
-                ),
-            ),
-            (
-                id: 13,
-                data: (
-                    level: 10,
-                    gender: Male,
-                ),
-            ),
-            (
-                id: 10,
-                data: (
-                    level: 10,
-                    gender: Male,
-                ),
-            )
-        ],
-        victory_message: [
-            [
-                "You beat me again!"
-            ]
-        ],
-        worth: 0
-    ))
 )

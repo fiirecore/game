@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.3.1"
+version = "0.4.0-beta.1"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -14,6 +14,7 @@ include = ["/build", "/pokedex", "/world"]
 [profile.dev]
 opt-level = 3
 debug-assertions = true
+panic = "abort"
 
 [profile.release]
 codegen-units = 1
@@ -22,45 +23,17 @@ panic = "abort"
 
 [features]
 default = ["audio"]
-audio = ["firecore-audio/play", "audio-builder"]
+audio = ["firecore-game/audio", "audio-builder"]
 
 [dependencies]
 
-### Game Engine
-
-macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
-
-### Game subcrates
-
-firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-# firecore-pokedex = { path = "../firecore/firecore-pokedex" }
-
-firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
-# firecore-util = { path = "../firecore/firecore-util" }
-
+firecore-game = { git = "https://github.com/DoNotDoughnut/firecore-game", default-features = false }
 firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
-# firecore-world = { path = "../firecore/firecore-world" }
-
-firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", default-features = false }
-# firecore-audio = { path = "../firecore/firecore-audio", default-features = false }
-
-firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
-# firecore-input = { path = "../firecore/firecore-input" }
-
-firecore-data = { git = "https://github.com/DoNotDoughnut/firecore-data" }
-# firecore-data = { path = "../firecore/firecore-data" }
-
-firecore-font-lib = { git = "https://github.com/DoNotDoughnut/firecore-font-lib" }
-# firecore-font-lib = { path = "../firecore/firecore-font-lib" }
+firecore-battle = { git = "https://github.com/DoNotDoughnut/firecore-battle" }
 
 ### Deserialization
 
 postcard = { version = "0.6", default-features = false }
-
-### Collections
-
-ahash = { version = "0.7", features = ["serde"] }
-smallvec = { version = "1.6", features = ["serde"] }
 
 ### Other
 

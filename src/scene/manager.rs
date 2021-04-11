@@ -1,6 +1,8 @@
+use game::scene::{Scenes, SceneState};
+
+use game::data::{get_mut, player::PlayerSaves};
+
 use super::Scene;
-use super::scenes::SceneState;
-use super::scenes::Scenes;
 use super::scenes::title::TitleScene;
 use super::scenes::main_menu::MainMenuScene;
 use super::scenes::character::CharacterCreationScene;
@@ -57,7 +59,7 @@ impl Scene for SceneManager {
 
     fn on_start(&mut self) {
 		#[cfg(debug_assertions)] {
-			let mut saves = macroquad::prelude::collections::storage::get_mut::<firecore_data::player::PlayerSaves>().expect("Could not get player saves");
+			let mut saves = get_mut::<PlayerSaves>().expect("Could not get player saves");
 			if saves.saves.is_empty() {
 				self.current = Scenes::Title;
 			} else {

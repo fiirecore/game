@@ -1,41 +1,41 @@
 (
-    identifier: (
-        index: 2,
+    index: 2,
+    npc: (
         name: "NPC 2",
-        type: "fat_man"
-    ),
-    position: (
-        coords: (
-            x: 21,
-            y: 29
+        position: (
+            coords: (
+                x: 21,
+                y: 29
+            ),
+            direction: Down
         ),
-        direction: Down
-    ),
-    properties: (
-        movement: LookAround,
-        message: Some([
-            (
-                color: Blue,
-                lines: [
-                    "There aren't many serious POKEMON",
-                    "TRAINERS here."
-                ]
-            ),
-            (
-                color: Blue,
-                lines: [
-                    "They're all like BUG CATCHERS,",
-                    "you know, just hobbyists."
-                ]
-            ),
-            (
-                color: Blue,
-                lines: [
-                    "But PEWTER GYM's BROCK isn't like",
-                    "that, not one bit."
-                ]
-            )
-        ]),
+        properties: (
+            type: "fat_man",
+            movement: LookAround,
+            message: Some([
+                (
+                    color: Blue,
+                    lines: [
+                        "There aren't many serious POKEMON",
+                        "TRAINERS here."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    lines: [
+                        "They're all like BUG CATCHERS,",
+                        "you know, just hobbyists."
+                    ]
+                ),
+                (
+                    color: Blue,
+                    lines: [
+                        "But PEWTER GYM's BROCK isn't like",
+                        "that, not one bit."
+                    ]
+                )
+            ]),
+        ),
     ),
     
 )

@@ -1,56 +1,56 @@
 (
-    identifier: (
-        index: 4,
+    index: 4,
+    npc: (
         name: "James",
-        type: "bug_catcher"
-    ),
-    position: (
-        coords: (
-            x: 32,
-            y: 6
-        ),
-        direction: Right,
-    ),
-    properties: (
-        message: Some([
-            (
-                lines: [
-                    "Trained POKEMON are stronger than",
-                    "the wild ones."
-                ],
-                color: Blue
-            )
-        ])
-    ),
-    trainer: Some((
-        tracking_length: Some(4),
-        encounter_message: [
-            [
-                "I'll battle you with the POKEMON",
-                "I just caught."
-            ]
-        ],
-        party: [
-            (
-                id: 10,
-                data: (
-                    level: 11,
-                    gender: Male,
-                ),
+        position: (
+            coords: (
+                x: 32,
+                y: 6
             ),
-            (
-                id: 11,
-                data: (
-                    level: 11,
-                    gender: Male,
+            direction: Right,
+        ),
+        properties: (
+            type: "bug_catcher",
+            message: Some([
+                (
+                    lines: [
+                        "Trained POKEMON are stronger than",
+                        "the wild ones."
+                    ],
+                    color: Blue
+                )
+            ])
+        ),
+        trainer: Some((
+            tracking_length: Some(4),
+            encounter_message: [
+                [
+                    "I'll battle you with the POKEMON",
+                    "I just caught."
+                ]
+            ],
+            party: [
+                (
+                    id: 10,
+                    data: (
+                        level: 11,
+                        gender: Male,
+                    ),
                 ),
-            )
-        ],
-        victory_message: [
-            [
-                "Done like dinner!"
-            ]
-        ],
-        worth: 0
-    ))
+                (
+                    id: 11,
+                    data: (
+                        level: 11,
+                        gender: Male,
+                    ),
+                )
+            ],
+            victory_message: [
+                [
+                    "Done like dinner!"
+                ]
+            ],
+            worth: 0
+        )),
+    ),
 )

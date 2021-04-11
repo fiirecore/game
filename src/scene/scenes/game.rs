@@ -1,18 +1,19 @@
 use std::sync::atomic::Ordering::Relaxed;
 
-use macroquad::prelude::collections::storage::{get, get_mut};
+use game::{
+	data::{get, get_mut, DIRTY, save, player::PlayerSaves},
+	input::{pressed, Control},
+	scene::SceneState,
+	macroquad::prelude::{info, warn, is_key_down, is_key_pressed, KeyCode},
+	gui::party::PokemonPartyGui,
+	battle::BattleData,
+};
 
-use crate::battle::data::BattleData;
+use world::map::manager::WorldManager;
+use battle::manager::BattleManager;
+
 use crate::scene::Scene;
-use super::SceneState;
 
-use crate::world::map::manager::WorldManager;
-use crate::battle::manager::BattleManager;
-use crate::gui::game::party::PokemonPartyGui;
-
-use firecore_data::DIRTY;
-
-use firecore_data::{save, player::PlayerSaves};
 
 pub struct GameScene {
 
@@ -32,15 +33,14 @@ pub struct GameScene {
 impl GameScene {
 
 	pub async fn load(&mut self) {
-
-		// Load the pokedex, pokemon textures and moves
-
-		
-
-		// Load maps
-		
-		self.world_manager.load().await;
-
+		match postcard::from_bytes(include_bytes!("../../../build/data/world.bin")) {
+			Ok(world) => {
+				self.world_manager.load(world);
+			}
+			Err(err) => {
+				panic!("Could not load world file with error {}", err);
+			}
+		}
 	}
 
 	pub fn data_dirty(&mut self, player_data: &mut PlayerSaves) {
@@ -50,9 +50,9 @@ impl GameScene {
 
     pub fn save_data(&mut self, player_data: &mut PlayerSaves) {
         self.world_manager.save_data(player_data.get_mut());
-		macroquad::prelude::info!("Saving player data!");
+		info!("Saving player data!");
 		if let Err(err) = save(player_data) {
-			macroquad::prelude::warn!("Could not save player data with error: {}", err);
+			warn!("Could not save player data with error: {}", err);
 		}
     }
 	
@@ -85,7 +85,7 @@ impl Scene for GameScene {
 
 		// Speed game up if spacebar is held down
 
-		let delta = delta *  if macroquad::prelude::is_key_down(macroquad::prelude::KeyCode::Space) {
+		let delta = delta *  if is_key_down(KeyCode::Space) {
 			4.0
 		} else {
 			1.0
@@ -116,7 +116,12 @@ impl Scene for GameScene {
 			self.battle_manager.update(delta, &mut self.party_gui);
 			
 			if self.battle_manager.is_finished() {
-				self.battle_manager.update_data();
+				if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
+					let save = player_saves.get_mut();
+					if let Some(data) = self.battle_manager.update_data(save) {
+						world::battle::update_world(save, data.0, data.1);
+					}
+				}				
 				self.battling = false;
 				self.world_manager.map_start(true);
 			}
@@ -142,7 +147,7 @@ impl Scene for GameScene {
 	fn input(&mut self, delta: f32) {
 		if self.party_gui.is_alive() {
 			self.party_gui.input();
-			if firecore_input::pressed(firecore_input::Control::Start) || macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
+			if pressed(Control::Start) || is_key_pressed(KeyCode::Escape) {
 				self.party_gui.despawn();
 				if !self.battling {
 					if let Some(mut saves) = get_mut::<PlayerSaves>() {

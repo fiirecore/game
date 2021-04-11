@@ -1,69 +1,69 @@
 (
-    identifier: (
-        index: 3,
+    index: 3,
+    npc: (
         name: "Greg",
-        type: "bug_catcher"
-    ),
-    position: (
-        coords: (
-            x: 25,
-            y: 4
+        position: (
+            coords: (
+                x: 25,
+                y: 4
+            ),
+            direction: Down
         ),
-        direction: Down
+        properties: (
+            type: "bug_catcher",
+            message: Some([(
+                lines: [
+                    "If a POKEMON BOX on the PC gets",
+                    "full, just switch to another BOX."
+                ]
+            )]),
+        ),
+        trainer: Some(Trainer(
+            tracking_length: Some(2),
+            battle_transition: Trainer,
+            encounter_message: [
+                [
+                    "Are you a TRAINER?",
+                    "Let's get with it right away!"
+                ]
+            ],
+            party: [
+                (
+                    id: 13,
+                    data: (
+                        level: 9,
+                        gender: Male,
+                    ),
+                ),
+                (
+                    id: 13,
+                    data: (
+                        level: 9,
+                        gender: Male,
+                    ),
+                ),
+                (
+                    id: 14,
+                    data: (
+                        level: 9,
+                        gender: Male,
+                    ),
+                ),
+                (
+                    id: 11,
+                    data: (
+                        level: 9,
+                        gender: Male,
+                    ),
+                )
+            ],
+            victory_message: [
+                [
+                    "If a POKEMON BOX on the PC gets",
+                    "full, just switch to another BOX."
+                ]
+            ],
+            worth: 0
+        )),
     ),
-    properties: (
-        message: Some([(
-            lines: [
-                "If a POKEMON BOX on the PC gets",
-                "full, just switch to another BOX."
-            ]
-        )]),
-    ),
-    trainer: Some(Trainer(
-        tracking_length: Some(2),
-        battle_transition: Trainer,
-        encounter_message: [
-            [
-                "Are you a TRAINER?",
-                "Let's get with it right away!"
-            ]
-        ],
-        party: [
-            (
-                id: 13,
-                data: (
-                    level: 9,
-                    gender: Male,
-                ),
-            ),
-            (
-                id: 13,
-                data: (
-                    level: 9,
-                    gender: Male,
-                ),
-            ),
-            (
-                id: 14,
-                data: (
-                    level: 9,
-                    gender: Male,
-                ),
-            ),
-            (
-                id: 11,
-                data: (
-                    level: 9,
-                    gender: Male,
-                ),
-            )
-        ],
-        victory_message: [
-            [
-                "If a POKEMON BOX on the PC gets",
-                "full, just switch to another BOX."
-            ]
-        ],
-        worth: 0
-    ))
 )

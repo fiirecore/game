@@ -1,46 +1,46 @@
 (
-    identifier: (
-        index: 6,
+    index: 6,
+    npc: (
         name: "Robin",
-        type: "lass"
-    ),
-    position: (
-        coords: (
-            x: 40,
-            y: 11
+        position: (
+            coords: (
+                x: 40,
+                y: 11
+            ),
+            direction: Down
         ),
-        direction: Down
+        properties: (
+            type: "lass",
+            movement: WalkUpAndDown(2),
+            message: Some([
+                (
+                    lines: [
+                        "ROUTE 4 is at the foot of",
+                        "MT. MOON."
+                    ],
+                    color: Red,
+                )
+            ])
+        ),
+        trainer: Some((
+            tracking_length: Some(2),
+            message_color: Red,
+            encounter_message: [
+                [
+                    "Eek!",
+                    "Did you touch me?"
+                ]
+            ],
+            party: [
+                (
+                    id: 39,
+                    data: (
+                        level: 14,
+                        gender: Female,
+                    ),
+                )
+            ],
+            worth: 0
+        )),
     ),
-    properties: (
-        movement: WalkUpAndDown(2),
-        message: Some([
-            (
-                lines: [
-                    "ROUTE 4 is at the foot of",
-                    "MT. MOON."
-                ],
-                color: Red,
-            )
-        ])
-    ),
-    trainer: Some((
-        tracking_length: Some(2),
-        message_color: Red,
-        encounter_message: [
-            [
-                "Eek!",
-                "Did you touch me?"
-            ]
-        ],
-        party: [
-            (
-                id: 39,
-                data: (
-                    level: 14,
-                    gender: Female,
-                ),
-            )
-        ],
-        worth: 0
-    ))
 )

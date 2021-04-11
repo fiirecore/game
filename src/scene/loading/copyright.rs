@@ -1,7 +1,10 @@
 
-use firecore_util::text::TextColor;
-use macroquad::prelude::Texture2D;
-use crate::util::graphics::{byte_texture, fade_in_out, draw_text_left};
+use game::{
+	util::text::TextColor,
+	macroquad::prelude::Texture2D,
+	graphics::{byte_texture, fade_in_out, draw_text_left},
+};
+
 use super::{LoadingState, LoadingScenes};
 
 pub struct CopyrightLoadingScene {

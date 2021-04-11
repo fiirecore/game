@@ -1,4 +1,4 @@
-use self::scenes::SceneState;
+use game::scene::SceneState;
 
 pub mod loading;
 

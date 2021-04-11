@@ -1,8 +1,9 @@
-use firecore_data::get_mut;
-use firecore_data::player::PlayerSaves;
-
 use crate::scene::Scene;
-use super::{SceneState, Scenes};
+use game::{
+	data::{get_mut, player::PlayerSaves},
+	scene::{SceneState, Scenes},
+	macroquad::miniquad::date,
+};
 
 pub struct CharacterCreationScene {
 	state: SceneState,
@@ -18,7 +19,7 @@ impl Scene for CharacterCreationScene {
 	
 	fn on_start(&mut self) {
 		if let Some(mut saves) = get_mut::<PlayerSaves>() {
-			saves.select_new(&format!("Player{}", macroquad::miniquad::date::now() as u64 % 1000000));
+			saves.select_new(&format!("Player{}", date::now() as u64 % 1000000));
 		} else {
 			panic!("Could not get player data!");
 		}

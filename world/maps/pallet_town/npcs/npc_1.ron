@@ -1,30 +1,29 @@
 (
-    identifier: (
-        index: 1,
+    index: 1,
+    npc: (
         name: "NPC 1",
-        type: "fat_man"
-    ),
-    position: (
-        coords: (
-            x: 13,
-            y: 17
-        ),
-        direction: Down
-    ),
-    properties: (
-        message: Some([
-            (
-                lines: [
-                    "Technology is incredible!"
-                ]
+        position: (
+            coords: (
+                x: 13,
+                y: 17
             ),
-            (
-                lines: [
-                    "You can now store and recall items",
-                    "and POKEMON as data via PC."
-                ]
-            )
-        ]),
-    ),
-    
+            direction: Down
+        ),
+        properties: (
+            type: "fat_man",
+            message: Some([
+                (
+                    lines: [
+                        "Technology is incredible!"
+                    ]
+                ),
+                (
+                    lines: [
+                        "You can now store and recall items",
+                        "and POKEMON as data via PC."
+                    ]
+                )
+            ]),
+        ),
+    )
 )

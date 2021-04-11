@@ -1,52 +1,52 @@
 (
-    identifier: (
-        index: 5,
+    index: 5,
+    npc: (
         name: "Janice",
-        type: "lass"
-    ),
-    position: (
-        coords: (
-            x: 19,
-            y: 9
-        ),
-        direction: Left
-    ),
-    properties: (
-        message: Some([
-            (
-                lines: [
-                    "You shouldn't be staring if you",
-                    "don't want to battle!"
-                ],
-                color: Red,
-            )
-        ])
-    ),
-    trainer: Some((
-        tracking_length: Some(5),
-        message_color: Red,
-        encounter_message: [
-            [
-                "Excuse me?",
-                "You looked at me, didn't you?"
-            ]
-        ],
-        party: [
-            (
-                id: 16,
-                data: (
-                    level: 9,
-                    gender: Female,
-                ),
+        position: (
+            coords: (
+                x: 19,
+                y: 9
             ),
-            (
-                id: 16,
-                data: (
-                    level: 9,
-                    gender: Female,
+            direction: Left
+        ),
+        properties: (
+            type: "lass",
+            message: Some([
+                (
+                    lines: [
+                        "You shouldn't be staring if you",
+                        "don't want to battle!"
+                    ],
+                    color: Red,
+                )
+            ])
+        ),
+        trainer: Some((
+            tracking_length: Some(5),
+            message_color: Red,
+            encounter_message: [
+                [
+                    "Excuse me?",
+                    "You looked at me, didn't you?"
+                ]
+            ],
+            party: [
+                (
+                    id: 16,
+                    data: (
+                        level: 9,
+                        gender: Female,
+                    ),
                 ),
-            )
-        ],
-        worth: 0
-    ))
+                (
+                    id: 16,
+                    data: (
+                        level: 9,
+                        gender: Female,
+                    ),
+                )
+            ],
+            worth: 0
+        )),
+    ),
 )

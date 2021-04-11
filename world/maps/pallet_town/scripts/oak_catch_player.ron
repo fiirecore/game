@@ -21,12 +21,9 @@
     actions: [
         PlayerFreezeInput,
         NPCAdd(
+            10,
             (
-                identifier: (
-                    index: 10,
-                    name: "Oak",
-                    type: "prof_oak",
-                ),
+                name: "Oak",
                 position: (
                     coords: (
                         x: 10,
@@ -34,6 +31,9 @@
                     ),
                     direction: Up
                 ),
+                properties: (
+                    type: "prof_oak",
+                )
             )
         ),
         PlayMusic("Oak"),

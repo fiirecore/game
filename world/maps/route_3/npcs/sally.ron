@@ -1,55 +1,57 @@
 (
-    identifier: (
-        index: 7,
+    index: 7,
+    npc: (
         name: "Sally",
-        type: "lass"
-    ),
-    position: (
-        coords: (
-            x: 30,
-            y: 3
+        position: (
+            coords: (
+                x: 30,
+                y: 3
+            ),
+            direction: Left,
         ),
-        direction: Left,
+        properties: (
+            type: "lass",
+        ),
+        trainer: Some((
+            tracking_length: Some(5),
+            message_color: Red,
+            encounter_message: [
+                [
+                    "That look you gave me.",
+                    "It's so intriguing!"
+                ]
+            ],
+            party: [
+                (
+                    id: 19,
+                    data: (
+                        level: 10,
+                        gender: Female,
+                    ),
+                ),
+                (
+                    id: 29,
+                    data: (
+                        level: 10,
+                        gender: Female,
+                    ),
+                ),
+                (
+                    id: 14,
+                    data: (
+                        level: 9,
+                        gender: Female,
+                    ),
+                ),
+                (
+                    id: 11,
+                    data: (
+                        level: 9,
+                        gender: Female,
+                    ),
+                )
+            ],
+            worth: 0
+        )),
     ),
-    trainer: Some((
-        tracking_length: Some(5),
-        message_color: Red,
-        encounter_message: [
-            [
-                "That look you gave me.",
-                "It's so intriguing!"
-            ]
-        ],
-        party: [
-            (
-                id: 19,
-                data: (
-                    level: 10,
-                    gender: Female,
-                ),
-            ),
-            (
-                id: 29,
-                data: (
-                    level: 10,
-                    gender: Female,
-                ),
-            ),
-            (
-                id: 14,
-                data: (
-                    level: 9,
-                    gender: Female,
-                ),
-            ),
-            (
-                id: 11,
-                data: (
-                    level: 9,
-                    gender: Female,
-                ),
-            )
-        ],
-        worth: 0
-    ))
 )

@@ -1,19 +1,20 @@
-use firecore_util::text::TextColor;
-use macroquad::prelude::Texture2D;
-use macroquad::prelude::{RED, DARKBLUE};
-use macroquad::prelude::collections::storage::{get, get_mut};
+use game::{
+	util::text::TextColor,
+	input::{pressed, Control},
+	data::{get, get_mut, player::PlayerSaves},
+	graphics::{byte_texture, draw, draw_text_left},
+	macroquad::prelude::{
+		Texture2D,
+		RED,
+		DARKBLUE,
+		draw_rectangle,
+		draw_rectangle_lines,
+		warn,
+	},
+	scene::{Scenes, SceneState},
+};
 
-use firecore_input::{pressed, Control};
-use macroquad::prelude::draw_rectangle;
-use macroquad::prelude::draw_rectangle_lines;
-use macroquad::prelude::warn;
-
-use firecore_data::player::PlayerSaves;
 use crate::scene::Scene;
-use crate::util::graphics::{byte_texture, draw, draw_text_left};
-
-use super::SceneState;
-use super::Scenes;
 
 const GAP: f32 = 35.0;
 
@@ -46,7 +47,7 @@ impl Scene for MainMenuScene {
 	fn new() -> MainMenuScene {
 		MainMenuScene {
 			state: SceneState::Continue,
-			button: byte_texture(include_bytes!("../../../build/assets/menu_button.png")),
+			button: byte_texture(include_bytes!("../../../build/assets/scenes/menu/button.png")),
 			cursor: 0,
 			saves: Vec::new(),
 			delete: false,

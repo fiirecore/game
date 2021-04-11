@@ -1,10 +1,10 @@
-use crate::util::play_music_named;
-use firecore_input as input;
-use macroquad::prelude::Texture2D;
+use game::play_music_named;
+use game::input;
+use game::macroquad::prelude::Texture2D;
 use crate::scene::Scene;
-use crate::util::graphics::{byte_texture, draw};
+use game::graphics::{byte_texture, draw};
 
-use super::SceneState;
+use game::scene::{SceneState, Scenes};
 
 pub struct TitleScene {	
 	
@@ -42,8 +42,8 @@ impl Scene for TitleScene {
 		self.accumulator = 0.0;
 	}
 	 
-	fn update(&mut self, _delta: f32) {	
-		self.accumulator += macroquad::prelude::get_frame_time();
+	fn update(&mut self, delta: f32) {	
+		self.accumulator += delta;
 	}
 	
 	fn render(&self) {
@@ -60,10 +60,8 @@ impl Scene for TitleScene {
 	fn input(&mut self, _delta: f32) {
 		if input::pressed(input::Control::A) {
 			let seed = self.accumulator as u64 % 256;
-			firecore_world::map::wild::WILD_RANDOM.seed(seed);
-			crate::world::map::NPC_RANDOM.seed(seed);
-			crate::battle::BATTLE_RANDOM.seed(seed);
-			self.state = SceneState::Scene(super::Scenes::MainMenu);
+			crate::util::seed_randoms(seed);
+			self.state = SceneState::Scene(Scenes::MainMenu);
 		}
 	}
 	

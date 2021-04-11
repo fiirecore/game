@@ -1,67 +1,67 @@
 (
-    identifier: (
-        index: 0,
+    index: 0,
+    npc: (
         name: "Ben",
-        type: "youngster"
-    ),
-    position: (
-        coords: (
-            x: 18,
-            y: 4
+        position: (
+            coords: (
+                x: 18,
+                y: 4
+            ),
+            direction: Down
         ),
-        direction: Down
-    ),
-    properties: (
-        message: Some([
-            (
-                lines: [
-                    "Are you using a POKEMON CENTER's",
-                    "PC for storing your POKEMON?"
+        properties: (
+            type: "youngster",
+            message: Some([
+                (
+                    lines: [
+                        "Are you using a POKEMON CENTER's",
+                        "PC for storing your POKEMON?"
+                    ],
+                    color: Blue,
+                ),
+                (
+                    lines: [
+                        "Each box can hold up to",
+                        "30 POKEMON."
+                    ],
+                    color: Blue,
+                )
+            ])
+        ),
+        trainer: Some((
+            tracking_length: Some(2),
+            encounter_message: [
+                [
+                    "Hi!",
+                    "I like shorts!"
                 ],
-                color: Blue,
-            ),
-            (
-                lines: [
-                    "Each box can hold up to",
-                    "30 POKEMON."
-                ],
-                color: Blue,
-            )
-        ])
-    ),
-    trainer: Some((
-        tracking_length: Some(2),
-        encounter_message: [
-            [
-                "Hi!",
-                "I like shorts!"
+                [
+                    "They're delightfully comfy and",
+                    "easy to wear!"
+                ]
             ],
-            [
-                "They're delightfully comfy and",
-                "easy to wear!"
-            ]
-        ],
-        party: [
-            (
-                id: 19,
-                data: (
-                    level: 11,
-                    gender: Male,
+            party: [
+                (
+                    id: 19,
+                    data: (
+                        level: 11,
+                        gender: Male,
+                    ),
                 ),
-            ),
-            (
-                id: 23,
-                data: (
-                    level: 11,
-                    gender: Male,
-                ),
-            )
-        ],
-        victory_message: [
-            [
-                "I don't believe it!"
-            ]            
-        ],
-        worth: 176,
-    ))
+                (
+                    id: 23,
+                    data: (
+                        level: 11,
+                        gender: Male,
+                    ),
+                )
+            ],
+            victory_message: [
+                [
+                    "I don't believe it!"
+                ]            
+            ],
+            worth: 176,
+        )),
+    ),
 )

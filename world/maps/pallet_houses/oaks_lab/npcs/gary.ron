@@ -1,32 +1,38 @@
 (
-    alive: false,
-    
-    identifier: (
-        index: 10,
+    index: 10,
+    npc: (
+        alive: false,
         name: "%r",
-        type: "rival",
-    ),
-    position: (
-        coords: (
-            x: 5,
-            y: 4,
+        identifier: (
+            index: 10,
+            
+            
         ),
-        direction: Down,
-    ),
-    trainer: Some(
-        (
-            battle_on_interact: false,
-            encounter_message: [],
-            party: [
-                (
-                    id: 7,
-                    data: (
-                        level: 5,
-                        gender: Male,
+        position: (
+            coords: (
+                x: 5,
+                y: 4,
+            ),
+            direction: Down,
+        ),
+        properties: (
+            type: "rival",
+        ),
+        trainer: Some(
+            (
+                battle_on_interact: false,
+                encounter_message: [],
+                party: [
+                    (
+                        id: 7,
+                        data: (
+                            level: 5,
+                            gender: Male,
+                        ),
                     ),
-                ),
-            ],
-            worth: 80,
-        )
-    ),
+                ],
+                worth: 80,
+            )
+        ),
+    )
 )

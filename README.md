@@ -23,15 +23,16 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
     - [X] Pokemon centers up to cerulean work
 - [X] Battles close properly
 
-- [ ] Party GUI select menu
+- [X] Party GUI select menu
+- [X] Basic party GUI summary gui
 
 ### v0.4.0
 
-- [ ] Independent world random, battle random, and wild random
+- [X] Independent world random, battle random, and wild random
 - [ ] Finished Party GUI
 - [ ] Fixed all warp transitions
-- [ ] Move battle code to separate crates
-- [ ] Move world rendering code to seperate crate
+- [X] Move battle code to separate crates
+- [X] Move world rendering code to seperate crate
 - [ ] Battle move scripting
 - [ ] Battle animations with scripting
 - [ ] All NPCs up to Cerulean are added

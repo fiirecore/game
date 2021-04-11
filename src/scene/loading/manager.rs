@@ -5,6 +5,8 @@ use super::{
     pokemon::PokemonLoadingScene,
 };
 
+use game::macroquad::prelude::info;
+
 pub struct LoadingSceneManager {
     
     current_scene: LoadingScenes,
@@ -53,7 +55,7 @@ impl LoadingSceneManager {
 
     fn finish(&mut self) {
         self.finished = true;
-        macroquad::prelude::info!("Finished loading scene sequence.");
+        info!("Finished loading scene sequence.");
     }
 
     fn get(&self) -> &dyn LoadingScene {

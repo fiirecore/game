@@ -1,10 +1,14 @@
-use macroquad::prelude::{Color, Texture2D, draw_texture_ex, WHITE, DrawTextureParams};
-use firecore_util::text::TextColor;
-use firecore_input::{keyboard::keys, Control};
-use crate::util::graphics::{byte_texture, draw_text_left, draw_rect, fade_in};
+use game::{
+	play_music_named,
+	util::text::TextColor,
+	input::{keyboard::keys, Control},
+	macroquad::prelude::{Color, color_u8, Texture2D, draw_texture_ex, draw_rectangle, WHITE, DrawTextureParams},
+	graphics::{byte_texture, draw_text_left, fade_in},
+};
+
 use super::LoadingState;
 
-const BACKGROUND_COLOR: Color = macroquad::color_u8!(24, 40, 72, 255);
+const BACKGROUND_COLOR: Color = color_u8!(24, 40, 72, 255);
 
 pub struct GamefreakLoadingScene {
 	
@@ -34,7 +38,7 @@ impl super::LoadingScene for GamefreakLoadingScene {
 		self.state = LoadingState::Continue;
 		self.accumulator = 0.0;
 		self.rect_size = 0.0;
-		crate::util::play_music_named("IntroGamefreak");
+		play_music_named("IntroGamefreak");
 	}
 	
 	fn update(&mut self, delta: f32) {
@@ -51,7 +55,7 @@ impl super::LoadingScene for GamefreakLoadingScene {
 	}
 	
 	fn render(&self) {
-		draw_rect(BACKGROUND_COLOR, 0.0, (crate::HEIGHT - self.rect_size) / 2.0, 240.0, self.rect_size);
+		draw_rectangle(0.0, (crate::HEIGHT - self.rect_size) / 2.0, 240.0, self.rect_size, BACKGROUND_COLOR);
 
 		if self.accumulator < 2.0 {
 			draw_texture_ex(self.star, crate::WIDTH - self.accumulator * 240.0, 64.0 + self.accumulator * 5.0, WHITE, DrawTextureParams {

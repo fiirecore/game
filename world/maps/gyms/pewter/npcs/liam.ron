@@ -1,63 +1,63 @@
 (
-    identifier: (
-        index: 2,
+    index: 2,
+    npc: (
         name: "Liam",
-        type: "camper"
-    ),
-    position: (
-        coords: (
-            x: 3,
-            y: 8
-        ),
-        direction: Right
-    ),
-    properties: (
-        message: Some([(
-            color: Blue,
-            lines: [
-                "You're pretty hot.",
-                "...But not as hot as BROCK!"
-            ]
-        )]),
-    ),
-    trainer: Some((
-        trainer_type: Camper,
-        tracking_length: Some(3),
-        encounter_music: Some(EncounterBoy),
-        encounter_message: [
-            [
-                "Stop right there, kid!"
-            ],
-            [
-                "You're ten thousand light-years",
-                "from facing BROCK!"
-            ]
-        ],
-        party: [
-            (
-                id: 74,
-                data: (
-                    level: 10,
-                    gender: Male,
-                ),
+        position: (
+            coords: (
+                x: 3,
+                y: 8
             ),
-            (
-                id: 27,
-                data: (
-                    level: 11,
-                    gender: Male,
-                ),
-            )
-        ],
-        victory_message: [
-            [
-                "Darn!",
+            direction: Right
+        ),
+        properties: (
+            type: "camper",
+            message: Some([(
+                color: Blue,
+                lines: [
+                    "You're pretty hot.",
+                    "...But not as hot as BROCK!"
+                ]
+            )]),
+        ),
+        trainer: Some((
+            trainer_type: Camper,
+            tracking_length: Some(3),
+            encounter_music: Some(EncounterBoy),
+            encounter_message: [
+                [
+                    "Stop right there, kid!"
+                ],
+                [
+                    "You're ten thousand light-years",
+                    "from facing BROCK!"
+                ]
             ],
-            [
-                "Light-years isn't time...",
-                "It measures distance!",
-            ]
-        ],
-        worth: 220,
-    ))
+            party: [
+                (
+                    id: 74,
+                    data: (
+                        level: 10,
+                        gender: Male,
+                    ),
+                ),
+                (
+                    id: 27,
+                    data: (
+                        level: 11,
+                        gender: Male,
+                    ),
+                )
+            ],
+            victory_message: [
+                [
+                    "Darn!",
+                ],
+                [
+                    "Light-years isn't time...",
+                    "It measures distance!",
+                ]
+            ],
+            worth: 220,
+        ))
+    )
 )

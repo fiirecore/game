@@ -1,50 +1,50 @@
 (
-    identifier: (
-        index: 1,
+    index: 1,
+    npc: (
         name: "Calvin",
-        type: "youngster"
-    ),
-    position: (
-        coords: (
-            x: 29,
-            y: 10
+        position: (
+            coords: (
+                x: 29,
+                y: 10
+            ),
+            direction: Left
         ),
-        direction: Left
+        properties: (
+            type: "youngster",
+            message: Some([
+                (
+                    lines: [
+                        "I always wear shorts, even in",
+                        "winter. That's my policy."
+                    ],
+                    color: Blue,
+                )
+            ])
+        ),
+        trainer: Some((
+            tracking_length: Some(5),
+            encounter_message: [
+                [
+                    "Hey! You're not wearing shorts!",
+                    "What's wrong with you?"
+                ]
+            ],
+            party: [
+                (
+                    id: 21,
+                    data: (
+                        level: 14,
+                        gender: Male,
+                    ),
+                )
+            ],
+            victory_message: [
+                [
+                    "Lost!",
+                    "Lost! Lost!"
+                ]
+            ],
+            worth: 224,
+        )),
     ),
-    properties: (
-        message: Some([
-            (
-                lines: [
-                    "I always wear shorts, even in",
-                    "winter. That's my policy."
-                ],
-                color: Blue,
-            )
-        ])
-    ),
-    trainer: Some((
-        tracking_length: Some(5),
-        encounter_message: [
-            [
-                "Hey! You're not wearing shorts!",
-                "What's wrong with you?"
-            ]
-        ],
-        party: [
-            (
-                id: 21,
-                data: (
-                    level: 14,
-                    gender: Male,
-                ),
-            )
-        ],
-        victory_message: [
-            [
-                "Lost!",
-                "Lost! Lost!"
-            ]
-        ],
-        worth: 224,
-    ))
 )
