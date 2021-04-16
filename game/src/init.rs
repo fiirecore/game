@@ -55,7 +55,7 @@ pub fn pokedex(dex: SerializedDex) {
 		textures.icon.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.icon_png));
 
 		if !pokemon.cry_ogg.is_empty() {
-			if let Err(err) = add_sound(
+			if let Err(_) = add_sound(
 				SerializedSoundData {
 					bytes: pokemon.cry_ogg,
 					sound: Sound {
@@ -64,7 +64,7 @@ pub fn pokedex(dex: SerializedDex) {
 					}
 				}
 			) {
-				warn!("Error adding pokemon cry: {}", err);
+				// warn!("Error adding pokemon cry: {}", err);
 			}
 		}
 		

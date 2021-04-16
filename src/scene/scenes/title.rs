@@ -60,7 +60,7 @@ impl Scene for TitleScene {
 	fn input(&mut self, _delta: f32) {
 		if input::pressed(input::Control::A) {
 			let seed = self.accumulator as u64 % 256;
-			crate::util::seed_randoms(seed);
+			crate::seed_randoms(seed);
 			self.state = SceneState::Scene(Scenes::MainMenu);
 		}
 	}
