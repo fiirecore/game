@@ -18,6 +18,9 @@ use crate::scene::Scene;
 pub struct GameScene {
 
 	state: SceneState,
+
+	// server: Option<crate::net::Server>,
+	// players: game::hash::HashMap<PlayerId, LocalPlayerData>,
 	
 	world_manager: WorldManager,
 	battle_manager: BattleManager,
@@ -65,6 +68,9 @@ impl Scene for GameScene {
 
 			state: SceneState::Continue,
 
+			// server: None,
+			// players: game::hash::HashMap::new(),
+
 			world_manager: WorldManager::new(),
 			battle_manager: BattleManager::new(),
 			party_gui: PokemonPartyGui::new(),
@@ -78,6 +84,24 @@ impl Scene for GameScene {
 	}
 
 	fn on_start(&mut self) {
+		// unsafe { self.server = crate::net::SERVER.take(); }
+		// if let Some(data) = get::<PlayerSaves>() {
+		// 	let save = data.get();
+		// 	if let Some(server) = self.server.as_mut() {
+		// 		server.sender.send(Packet::new(postcard::to_allocvec(&ClientMessage::Join(
+		// 			firecore_game::network::message::FullPlayerData {
+		// 				map: save.location.map,
+		// 				index: save.location.index,
+		// 				data: PlayerData {
+		// 					pos: PlayerPos {
+		// 						coords: save.location.position.local.coords,
+		// 						direction: save.location.position.local.direction,
+		// 					},
+		// 				}
+		// 			}
+		// 		)).unwrap())).unwrap();
+		// 	}
+		// }
 		self.world_manager.on_start();
 	}
 	
@@ -90,6 +114,44 @@ impl Scene for GameScene {
 		} else {
 			1.0
 		};
+
+		// if let Some(server) = self.server.as_mut() {
+		// 	if let Some(id) = server.id {
+		// 		while let Some(packet) = server.socket.receive().ok().flatten() {
+		// 			match postcard::from_bytes(packet.payload()) {
+		// 				Ok(message) => match message {
+		// 					ServerMessage::MapPlayers(map) => {
+		// 						info!("Received players on map! ({})", map.len());
+		// 						self.players = map.into_iter().map(|(id, data)| (id, LocalPlayerData::from(data))).collect();
+		// 					}
+							
+		// 				    ServerMessage::Connect(_) => {
+		// 						info!("Received unknown connect message!");
+		// 					}
+		// 				    ServerMessage::SpawnPlayer(id, data) => {
+		// 						info!("Spawned player #{}", id);
+		// 						self.players.insert(id, LocalPlayerData::from(data));
+		// 					}
+		// 				    ServerMessage::MovePlayer(id, pos) => {
+		// 						if let Some(player) = self.players.get_mut(&id) {
+		// 							player.pos = firecore_game::util::Position {
+		// 							    coords: pos.coords,
+		// 							    direction: pos.direction,
+		// 								..Default::default()
+		// 							}
+		// 						}
+		// 					}
+		// 				    ServerMessage::DespawnPlayer(id) => {
+		// 						self.players.remove(&id);
+		// 					}
+		// 				}
+		// 				Err(err) => {
+
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		// save player data if asked to
 
@@ -135,6 +197,19 @@ impl Scene for GameScene {
 	fn render(&self) {
 		if !self.battling {
 			self.world_manager.render();
+			
+			// if let Some(server) = &self.server {
+			// 	if let Some(selfid) = server.id {
+			// 		for (id, player) in &self.players {
+			// 			if selfid.ne(id) {
+			// 				println!("Rendering player #{}", id);
+			// 				let x = ((player.pos.coords.x + self.world_manager.render_coords.offset.x) << 4) as f32 - self.world_manager.render_coords.focus.x + player.pos.offset.x;
+    		// 				let y = ((player.pos.coords.y - 1 + self.world_manager.render_coords.offset.y) << 4) as f32 - self.world_manager.render_coords.focus.y + player.pos.offset.y;
+			// 				game::macroquad::prelude::draw_rectangle(x, y, 16.0, 32.0, game::macroquad::prelude::RED);
+			// 			}
+			// 		}
+			// 	}
+			// }
 		} else {
 			if self.battle_manager.world_active() {
 				self.world_manager.render();
@@ -166,6 +241,9 @@ impl Scene for GameScene {
 		if let Some(mut player_data) = get_mut::<PlayerSaves>() {
 			self.save_data(&mut player_data);
 		}
+		// if let Some(server) = self.server.as_mut() {
+		// 	// server.sender.send(Packet::new(postcard::to_allocvec(&ClientMessage::Disconnect).unwrap()));
+		// }
 		self.state = SceneState::Continue;
 	}
 	

@@ -15,6 +15,7 @@ pub struct SceneManager {
 	title: TitleScene,
 	main_menu: MainMenuScene,
 	character: CharacterCreationScene,
+	// connect: crate::net::connect_scene::ConnectScene,
 	game: GameScene,
 
 }
@@ -26,6 +27,7 @@ impl SceneManager {
 		    Scenes::Title => &self.title,
 		    Scenes::MainMenu => &self.main_menu,
 			Scenes::CharacterCreation => &self.character,
+			// Scenes::Connect => &self.connect,
 		    Scenes::Game => &self.game,
 		}
 	}
@@ -35,6 +37,7 @@ impl SceneManager {
 		    Scenes::Title => &mut self.title,
 		    Scenes::MainMenu => &mut self.main_menu,
 			Scenes::CharacterCreation => &mut self.character,
+			// Scenes::Connect => &mut self.connect,
 		    Scenes::Game => &mut self.game,
 		}
 	}
@@ -53,6 +56,7 @@ impl Scene for SceneManager {
 			title: TitleScene::new(),
 			main_menu: MainMenuScene::new(),
 			character: CharacterCreationScene::new(),
+			// connect: crate::net::connect_scene::ConnectScene::new(),
 			game: GameScene::new(),
 		}
 	}

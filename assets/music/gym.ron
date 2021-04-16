@@ -1,0 +1,10 @@
+(
+    file: "files/gym.ogg",
+    music: (
+        track: 0x13,
+        name: "Gym",
+        data: (
+            loop_start: None,
+        )
+    )
+)

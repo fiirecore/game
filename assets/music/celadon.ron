@@ -1,0 +1,10 @@
+(
+    file: "files/celadon.ogg",
+    music: (
+        track: 0x35,
+        name: "Celadon",
+        data: (
+            loop_start: None,
+        )
+    )
+)

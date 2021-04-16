@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.4.0-beta.1"
+version = "0.4.0-beta.2"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -9,7 +9,7 @@ keywords = ["games", "pokemon"]
 categories = ["games"]
 build = "build/build.rs"
 readme = "README.md"
-include = ["/build", "/pokedex", "/world"]
+include = ["/build", "/assets"]
 
 [profile.dev]
 opt-level = 3
@@ -27,9 +27,9 @@ audio = ["firecore-game/audio", "audio-builder"]
 
 [dependencies]
 
-firecore-game = { git = "https://github.com/DoNotDoughnut/firecore-game", default-features = false }
-firecore-world = { git = "https://github.com/DoNotDoughnut/firecore-world" }
-firecore-battle = { git = "https://github.com/DoNotDoughnut/firecore-battle" }
+firecore-game = { path = "./game/", default-features = false }
+firecore-world = { path = "./game/world", default-features = false }
+firecore-battle = { path = "./game/battle", default-features = false }
 
 ### Deserialization
 
@@ -43,14 +43,22 @@ getopts = "0.2"
 
 [build-dependencies]
 
-font-builder = { git = "https://github.com/DoNotDoughnut/font-builder" }
+font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-lib", package = "font-builder" }
 
-world-builder = { git = "https://github.com/DoNotDoughnut/world-builder" }
-# world-builder = { path = "../Subprojects/world-builder" }
+world-builder = { path = "./game/world/builder" }
 
-dex-builder = { git = "https://github.com/DoNotDoughnut/dex-builder" }
-# dex-builder = { path = "../Subprojects/dex-builder" }
+dex-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex", package = "dex-builder" }
+# dex-builder = { path = "../firecore/firecore-pokedex/builder" }
 
-audio-builder = { git = "https://github.com/DoNotDoughnut/audio-builder", optional = true }
+audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-audio", package = "audio-builder", optional = true }
 
 embed-resource = "1.6"
+
+[workspace]
+members = [
+    "game",
+    "game/world",
+    "game/world/lib",
+    "game/world/builder",
+    "game/battle",
+]

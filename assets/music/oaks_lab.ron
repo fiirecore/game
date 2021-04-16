@@ -1,0 +1,10 @@
+(
+    file: "files/oaks_lab.ogg",
+    music: (
+        track: 0x2D,
+        name: "OaksLab",
+        data: (
+            loop_start: None,
+        )
+    )
+)

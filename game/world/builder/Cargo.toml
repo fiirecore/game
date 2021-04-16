@@ -1,0 +1,35 @@
+[package]
+name = "world-builder"
+version = "0.4.0-beta.1"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+### Map specifications
+
+firecore-world-lib = { path = "../lib" }
+
+firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
+# firecore-util = { path = "../../firecore/firecore-util" }
+
+### Serialization
+
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.5"
+ron = "0.6"
+postcard = { version = "0.6", default-features = false, features = ["alloc"] }
+
+### Collections
+
+ahash = { version = "0.7", features = ["serde"] }
+
+### Other
+
+image = { version = "0.23.12", default-features = false, features = ["png", "tga"] }
+
+[[example]]
+name = "pathfind"
+required-features = ["firecore-world-lib/pathfind"]

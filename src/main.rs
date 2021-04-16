@@ -23,12 +23,11 @@ use game::{
             is_key_pressed,
             KeyCode,
             warn,
-            error,
             draw_rectangle,
         }
     },
     data::{
-        get, get_mut, 
+        get_mut, 
         configuration::Configuration,
     },
     util::{
@@ -98,21 +97,9 @@ pub async fn start() {
     set_camera(util::game_camera());
     
 
-    // Loads configuration and player saves
+    // Loads configuration and player saves, sets up controls
 
-    game::data::store().await;  
-
-    {
-
-        let config = get::<Configuration>().expect("Could not get configuration!");
-
-        game::input::keyboard::load(config.controls.clone());
-
-        if config.touchscreen {
-            game::input::touchscreen::touchscreen(true);
-        }
-
-    }
+    game::init::data().await;
 
     // Loads fonts
 
@@ -155,7 +142,7 @@ pub async fn start() {
         // Load audio files and setup audio
         match postcard::from_bytes(include_bytes!("../build/data/audio.bin")) {
             Ok(sound) => game::init::audio(sound),
-            Err(err) => error!("Could not read sound file with error {}", err)
+            Err(err) => game::macroquad::prelude::error!("Could not read sound file with error {}", err)
         }
         
 
@@ -179,6 +166,8 @@ pub async fn start() {
         Ok(dex) => game::init::pokedex(dex),
         Err(err) => panic!("Could not load pokedex with error {}", err),
     };
+
+    // Load scenes
    
     unsafe { SCENE_MANAGER = Some(SceneManager::new()) };
 
@@ -188,7 +177,6 @@ pub async fn start() {
 
     info!("Finished loading assets!");
     LOADING_FINISHED.store(true, Relaxed);
-
 
     // Wait for the loading scenes to finish, then stop the coroutine
 
@@ -214,7 +202,6 @@ pub async fn start() {
 
         #[cfg(all(target_arch = "wasm32", feature = "audio"))]
         firecore_audio::backend::quadsnd::music::MIXER.lock().frame();
-
 
         scene_manager.input(get_frame_time());
         

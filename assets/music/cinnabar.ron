@@ -1,0 +1,10 @@
+(
+    file: "files/cinnabar.ogg",
+    music: (
+        track: 0x17,
+        name: "Cinnabar",
+        data: (
+            loop_start: None,
+        )
+    )
+)

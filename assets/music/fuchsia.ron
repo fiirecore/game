@@ -1,0 +1,10 @@
+(
+    file: "files/fuchsia.ogg",
+    music: (
+        track: 0x34,
+        name: "Fuchsia",
+        data: (
+            loop_start: None,
+        )
+    )
+)

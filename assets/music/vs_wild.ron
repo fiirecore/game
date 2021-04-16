@@ -1,0 +1,10 @@
+(
+    file: "files/vs_wild.ogg",
+    music: (
+        track: 0x28,
+        name: "BattleWild",
+        data: (
+            loop_start: None,
+        )
+    )
+)

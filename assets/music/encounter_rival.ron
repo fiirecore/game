@@ -1,0 +1,10 @@
+(
+    file: "files/encounter_rival.ogg",
+    music: (
+        track: 59,
+        name: "EncounterRival",
+        data: (
+            loop_start: None,
+        )
+    )
+)

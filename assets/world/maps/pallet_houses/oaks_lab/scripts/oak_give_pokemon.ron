@@ -1,0 +1,123 @@
+(
+    identifier: "oak_introduce_pokemon",
+    location: None,
+    conditions: [
+        Scripts([
+            (
+                identifier: "oak_catch_player",
+                happened: true,
+            ),
+            (
+                identifier: "oak_introduce_pokemon",
+                happened: false,
+            ),
+        ])
+    ],
+    actions: [
+        PlayerFreezeInput,
+        NPCAdd(
+            20,
+            (
+                name: "Oak",
+                position: (
+                    coords: (
+                        x: 6,
+                        y: 11
+                    ),
+                    direction: Up
+                ),
+                properties: (
+                    type: "prof_oak",
+                )
+            )
+        ),
+        PlayMusic("Oak"),
+        Wait(0.5),
+        NPCMove(
+            20,
+            (
+                coords: (
+                    x: 6,
+                    y: 7,
+                ),
+            ),
+        ),
+        NPCRemove(20),
+        NPCAdd(
+            21,
+            (
+                alive: true,
+                name: "%r",
+                position: (
+                    coords: (
+                        x: 5,
+                        y: 4,
+                    ),
+                    direction: Down,
+                ),
+                properties: (
+                    type: "rival",
+                ),
+                trainer: Some(
+                    (
+                        battle_on_interact: false,
+                        encounter_message: [],
+                        party: [
+                            (
+                                id: 7,
+                                data: (
+                                    level: 5,
+                                    gender: Male,
+                                ),
+                            ),
+                        ],
+                        worth: 80,
+                    )
+                ),
+            )
+        ),
+        PlayerMove(
+            (
+                coords: (
+                    x: 6,
+                    y: 4,
+                ),
+                direction: Some(Up),
+            )
+        ),
+        DisplayText([(
+            lines: [
+                "Here's some pokemon"
+            ]
+        )]),
+        PlayerGivePokemon(
+            (
+                id: 1,
+                data: (
+                    level: 5,
+                    gender: Male,
+                ),
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 4,
+                data: (
+                    level: 5,
+                    gender: Male,
+                ),
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                id: 7,
+                data: (
+                    level: 5,
+                    gender: Female,
+                ),
+            )
+        ),
+        PlayMapMusic,
+        PlayerUnfreezeInput,
+    ]
+)

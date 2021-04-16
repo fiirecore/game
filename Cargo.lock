@@ -8,6 +8,12 @@ checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
 
 [[package]]
 name = "ahash"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e8fd72866655d1904d6b0997d0b07ba561047d070fbe29de039031c641b61217"
+
+[[package]]
+name = "ahash"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f200cbb1e856866d9eade941cf3aa0c5d7dd36f74311c4273b494f4ef036957"
@@ -63,8 +69,8 @@ dependencies = [
 
 [[package]]
 name = "audio-builder"
-version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/audio-builder#016fd267f3ac3549c5b7cac171bfb0b6505502df"
+version = "0.4.0-alpha.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#97b3590f076a41f506ba49d79c5c1c6adaa32919"
 dependencies = [
  "firecore-audio-lib",
  "postcard",
@@ -309,19 +315,20 @@ dependencies = [
 [[package]]
 name = "dex-builder"
 version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/dex-builder#2ed34741deb10a03f92dd4d9f5a2063f96714f9c"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#4088bc01d62e4d1693734bdbdc2b3c2b09da20ed"
 dependencies = [
- "firecore-pokedex-lib",
+ "firecore-pokedex",
  "postcard",
+ "ron",
  "serde",
  "toml",
 ]
 
 [[package]]
-name = "directories-next"
+name = "dirs-next"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "339ee130d97a610ea5a5872d2bbb130fdf68884ff09d3028b81bec8a1ac23bbc"
+checksum = "b98cf8ebf19c3d1b223e151f99a4f9f0690dca41414773390fc824184ac833e1"
 dependencies = [
  "cfg-if",
  "dirs-sys-next",
@@ -351,10 +358,10 @@ dependencies = [
 
 [[package]]
 name = "firecore-audio"
-version = "0.4.0-alpha.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#3aeaf59a9d96cc896fe6dad16f097e368b972a68"
+version = "0.4.0-alpha.2.0"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#97b3590f076a41f506ba49d79c5c1c6adaa32919"
 dependencies = [
- "ahash",
+ "ahash 0.7.2",
  "firecore-audio-lib",
  "kira",
  "lewton",
@@ -364,7 +371,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio-lib"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio-lib#7af8c7ece8be9f8126ec0124457d697e674cc44a"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#97b3590f076a41f506ba49d79c5c1c6adaa32919"
 dependencies = [
  "serde",
 ]
@@ -372,19 +379,27 @@ dependencies = [
 [[package]]
 name = "firecore-battle"
 version = "0.4.0-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-battle#07ecb39967609e07efad59f0e09c6f4a212e1f4d"
 dependencies = [
  "firecore-game",
+ "postcard",
+]
+
+[[package]]
+name = "firecore-configuration"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
+dependencies = [
+ "firecore-data",
+ "firecore-input",
+ "serde",
 ]
 
 [[package]]
 name = "firecore-data"
-version = "0.3.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#2d856059e211c468e06b7dee835d6bb71d9a07e8"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
 dependencies = [
- "directories-next",
- "firecore-input",
- "firecore-saves",
+ "dirs-next",
  "macroquad",
  "miniquad-cookie",
  "ron",
@@ -393,8 +408,8 @@ dependencies = [
 
 [[package]]
 name = "firecore-font-lib"
-version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#405267df974ebb6f931b68436b3ea3440de9c27b"
+version = "0.2.0-alpha.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#8f80f2f49ee2d5ce970622129b8cfb99685bbf5a"
 dependencies = [
  "serde",
 ]
@@ -402,17 +417,14 @@ dependencies = [
 [[package]]
 name = "firecore-game"
 version = "0.4.0-alpha.1.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-game#70374c3b35a19dda7e52a091eb1fcce69f896c2d"
 dependencies = [
- "ahash",
  "firecore-audio",
- "firecore-data",
  "firecore-font-lib",
  "firecore-input",
  "firecore-pokedex",
+ "firecore-storage",
  "firecore-util",
  "macroquad",
- "smallvec",
 ]
 
 [[package]]
@@ -420,30 +432,18 @@ name = "firecore-input"
 version = "0.3.0-beta.4"
 source = "git+https://github.com/DoNotDoughnut/firecore-input#43611f30767c9b8715347afa68e773ead4208ead"
 dependencies = [
- "ahash",
+ "ahash 0.7.2",
  "macroquad",
  "serde",
 ]
 
 [[package]]
 name = "firecore-pokedex"
-version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#c17a3a7fefd30f74932e132a005f11aedf017bf9"
+version = "0.4.0-beta.3"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#4088bc01d62e4d1693734bdbdc2b3c2b09da20ed"
 dependencies = [
- "ahash",
- "firecore-pokedex-lib",
- "firecore-rand",
+ "firecore-util",
  "serde",
- "smallvec",
-]
-
-[[package]]
-name = "firecore-pokedex-lib"
-version = "0.3.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-lib#244816ee8e770bce65dafcb9c88715c45e9180cc"
-dependencies = [
- "serde",
- "smallvec",
 ]
 
 [[package]]
@@ -453,28 +453,39 @@ source = "git+https://github.com/DoNotDoughnut/firecore-rand#ec1d792e8c29912cf85
 
 [[package]]
 name = "firecore-saves"
-version = "0.3.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-saves#e54ca9d63d84c5944c1fe9f61fe48c08086c5fab"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
 dependencies = [
- "ahash",
- "firecore-pokedex-lib",
+ "firecore-data",
+ "firecore-pokedex",
  "firecore-util",
  "serde",
 ]
 
 [[package]]
-name = "firecore-util"
-version = "0.3.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#3a4c33e37f8790d62383680d7c3d895bd275c531"
+name = "firecore-storage"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
 dependencies = [
+ "firecore-configuration",
+ "firecore-data",
+ "firecore-saves",
+]
+
+[[package]]
+name = "firecore-util"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#8793525c6928800efc984a9116b63e646cc6936c"
+dependencies = [
+ "ahash 0.7.2",
  "serde",
+ "smallvec",
  "tinystr",
 ]
 
 [[package]]
 name = "firecore-world"
 version = "0.4.0-alpha.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-world#d1cacf791ac3852add768112aff592eec4a28b9d"
 dependencies = [
  "firecore-game",
  "firecore-world-lib",
@@ -483,23 +494,20 @@ dependencies = [
 [[package]]
 name = "firecore-world-lib"
 version = "0.4.0-alpha.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-world-lib#c2a781ff0b145a12a5a33912da322ef8a02144a2"
 dependencies = [
- "ahash",
  "firecore-audio-lib",
  "firecore-pokedex",
- "firecore-rand",
  "firecore-util",
+ "indexmap",
+ "num-traits",
  "serde",
- "smallvec",
- "tinystr",
 ]
 
 [[package]]
 name = "flume"
-version = "0.10.3"
+version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "859e0fa5d4a9b5f73671712ce3e400fa17133c9b9faac607ada8e469f0b6be6c"
+checksum = "11fce69af4d4582ea989e6adfc5c9b81fd2071ff89234e5c14675c82a85217df"
 dependencies = [
  "futures-core",
  "futures-sink",
@@ -517,12 +525,22 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 [[package]]
 name = "font-builder"
 version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/font-builder#eef8bc1e648e4b6d9b39839b319c7c3d898ea223"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#8f80f2f49ee2d5ce970622129b8cfb99685bbf5a"
 dependencies = [
  "firecore-font-lib",
  "postcard",
  "ron",
  "serde",
+]
+
+[[package]]
+name = "fontdue"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3203e88e086474e56b0785255804a0c23542f76253584d3f43152cd2bb95d0b7"
+dependencies = [
+ "hashbrown 0.8.2",
+ "ttf-parser",
 ]
 
 [[package]]
@@ -613,6 +631,16 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e91b62f79061a0bc2e046024cb7ba44b08419ed238ecbd9adbd787434b9e8c25"
+dependencies = [
+ "ahash 0.3.8",
+ "autocfg",
+]
+
+[[package]]
+name = "hashbrown"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7afe4a420e3fe79967a00898cc1f4db7c8a49a9333a29f8a4bd76a253d5cd04"
@@ -658,7 +686,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "824845a0bf897a9042383849b02c1bc219c2383772efcd5c6f9766fa4b81aef3"
 dependencies = [
  "autocfg",
- "hashbrown",
+ "hashbrown 0.9.1",
 ]
 
 [[package]]
@@ -795,8 +823,9 @@ name = "macroquad"
 version = "0.3.0-alpha.17"
 source = "git+https://github.com/DoNotDoughnut/macroquad#cdf2dbebd2947aae786d1a25ceb766bebe79358f"
 dependencies = [
- "ahash",
+ "ahash 0.7.2",
  "firecore-rand",
+ "fontdue",
  "glam",
  "image",
  "macroquad_macro",
@@ -1105,7 +1134,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.4.0-beta.1"
+version = "0.4.0-beta.2"
 dependencies = [
  "audio-builder",
  "dex-builder",
@@ -1165,9 +1194,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.5"
+version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94341e4e44e24f6b591b59e47a8a027df12e008d73fd5672dbea9cc22f4507d9"
+checksum = "8270314b5ccceb518e7e578952f0b72b88222d02e8f77f5ecf7abbb673539041"
 dependencies = [
  "bitflags",
 ]
@@ -1383,9 +1412,9 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.4.3"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27aaed4540fcc2440c36fe3a98ca56450ee3da6d166da64369f40dc980aba459"
+checksum = "5b0bc8f45dc08e13992f1596a7cbd410e3cdcac1d165ca909ab6ae5568566cbb"
 dependencies = [
  "serde",
  "tinystr-macros",
@@ -1430,6 +1459,12 @@ checksum = "a31142970826733df8241ef35dc040ef98c679ab14d7c3e54d827099b3acecaa"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "ttf-parser"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7622061403fd00f0820df288e5a580e87d3ce15a1c4313c59fd1ffb77129903f"
 
 [[package]]
 name = "typenum"
@@ -1605,9 +1640,8 @@ dependencies = [
 [[package]]
 name = "world-builder"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/world-builder#944c7e6b25886e7b163b0fc933dea40f81b1daae"
 dependencies = [
- "ahash",
+ "ahash 0.7.2",
  "firecore-util",
  "firecore-world-lib",
  "image",

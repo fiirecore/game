@@ -1,0 +1,34 @@
+[package]
+name = "firecore-game"
+version = "0.4.0-alpha.1.2"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = ["audio"]
+audio = ["firecore-audio/play"]
+ui = ["macroquad/ui"]
+
+[dependencies]
+
+macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
+
+firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", features = ["hash", "smallvec", "tinystr"] }
+# firecore-util = { path = "../firecore-util" }
+
+firecore-storage = { git = "https://github.com/DoNotDoughnut/firecore-data", package = "firecore-storage" }
+# firecore-storage = { path = "../firecore-data/storage" }
+
+firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
+# firecore-input = { path = "../firecore-input" }
+
+firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
+# firecore-pokedex = { path = "../firecore-pokedex" }
+
+firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", default-features = false }
+# firecore-audio = { path = "../firecore-audio" }
+
+firecore-font-lib = { git = "https://github.com/DoNotDoughnut/firecore-font-lib" }
