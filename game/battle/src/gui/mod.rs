@@ -1,7 +1,10 @@
 use game::{
 	util::Entity,
 	macroquad::prelude::Vec2,
-	gui::party::PokemonPartyGui
+	gui::{
+		party::PartyGui,
+		bag::BagGui,
+	},
 };
 
 use background::BattleBackground;
@@ -97,9 +100,9 @@ impl BattleGui {
 		self.opponent.update(delta);
 	}
 
-	pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PokemonPartyGui) {
+	pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 		self.battle_text.text.input();
-		self.panel.input(battle, &mut self.battle_text, party_gui);
+		self.panel.input(battle, &mut self.battle_text, party_gui, bag_gui);
 	}
 
 	pub fn render_background(&self, offset: f32) {

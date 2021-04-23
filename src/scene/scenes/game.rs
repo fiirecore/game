@@ -5,7 +5,10 @@ use game::{
 	input::{pressed, Control},
 	scene::SceneState,
 	macroquad::prelude::{info, warn, is_key_down, is_key_pressed, KeyCode},
-	gui::party::PokemonPartyGui,
+	gui::{
+		party::PartyGui,
+		bag::BagGui,
+	},
 	battle::BattleData,
 };
 
@@ -25,7 +28,8 @@ pub struct GameScene {
 	world_manager: WorldManager,
 	battle_manager: BattleManager,
 
-	party_gui: PokemonPartyGui,
+	party_gui: PartyGui,
+	bag_gui: BagGui,
 	// pub pokemon_textures: PokemonTextures,
 	battle_data: Option<BattleData>,
 
@@ -73,7 +77,8 @@ impl Scene for GameScene {
 
 			world_manager: WorldManager::new(),
 			battle_manager: BattleManager::new(),
-			party_gui: PokemonPartyGui::new(),
+			party_gui: PartyGui::new(),
+			bag_gui: BagGui::new(),
 
 			// pokemon_textures: PokemonTextures::default(),
 
@@ -102,7 +107,8 @@ impl Scene for GameScene {
 		// 		)).unwrap())).unwrap();
 		// 	}
 		// }
-		self.world_manager.on_start();
+		self.world_manager.load_with_data();
+		self.world_manager.on_start(&mut self.battle_data);
 	}
 	
 	fn update(&mut self, delta: f32) {
@@ -175,7 +181,7 @@ impl Scene for GameScene {
 
 		} else {
 
-			self.battle_manager.update(delta, &mut self.party_gui);
+			self.battle_manager.update(delta, &mut self.party_gui, &mut self.bag_gui);
 			
 			if self.battle_manager.is_finished() {
 				if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
@@ -190,6 +196,7 @@ impl Scene for GameScene {
 
 		}
 
+		self.bag_gui.update(&mut self.party_gui);
 		self.party_gui.update(delta);
 
 	}
@@ -202,7 +209,6 @@ impl Scene for GameScene {
 			// 	if let Some(selfid) = server.id {
 			// 		for (id, player) in &self.players {
 			// 			if selfid.ne(id) {
-			// 				println!("Rendering player #{}", id);
 			// 				let x = ((player.pos.coords.x + self.world_manager.render_coords.offset.x) << 4) as f32 - self.world_manager.render_coords.focus.x + player.pos.offset.x;
     		// 				let y = ((player.pos.coords.y - 1 + self.world_manager.render_coords.offset.y) << 4) as f32 - self.world_manager.render_coords.focus.y + player.pos.offset.y;
 			// 				game::macroquad::prelude::draw_rectangle(x, y, 16.0, 32.0, game::macroquad::prelude::RED);
@@ -216,11 +222,14 @@ impl Scene for GameScene {
 			}
 			self.battle_manager.render();
 		}
+		self.bag_gui.render();
 		self.party_gui.render();
 	}
 	
 	fn input(&mut self, delta: f32) {
-		if self.party_gui.is_alive() {
+		if self.bag_gui.is_alive() {
+			self.bag_gui.input(&mut self.party_gui);
+		} else if self.party_gui.is_alive() {
 			self.party_gui.input();
 			if pressed(Control::Start) || is_key_pressed(KeyCode::Escape) {
 				self.party_gui.despawn();
@@ -231,9 +240,9 @@ impl Scene for GameScene {
 				}
 			}
 		} else if !self.battling {
-			self.world_manager.input(delta, &mut self.battle_data, &mut self.party_gui, &mut self.state);
+			self.world_manager.input(delta, &mut self.battle_data, &mut self.party_gui, &mut self.bag_gui, &mut self.state);
 		} else {
-			self.battle_manager.input(&mut self.party_gui);
+			self.battle_manager.input(&mut self.party_gui, &mut self.bag_gui);
 		}
 	}
 

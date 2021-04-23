@@ -1,8 +1,11 @@
 use game::{
 	util::{Entity, Completable},
 	pokedex::pokemon::party::PokemonParty,
-	data::{get_mut, player::{PlayerSaves, PlayerSave}},
-	gui::party::PokemonPartyGui,
+	data::player::PlayerSave,
+	gui::{
+		party::PartyGui,
+		bag::BagGui,
+	},
 	macroquad::prelude::{is_key_pressed, KeyCode},
 	battle::{BattleData, BattleWinner},
 };
@@ -83,7 +86,7 @@ impl BattleManager {
 
 	}
 
-	pub fn input(&mut self, party_gui: &mut PokemonPartyGui) {
+	pub fn input(&mut self, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 
 		if let Some(battle) = self.battle.as_mut() {
 			if !self.screen_transition.is_alive() {	
@@ -92,7 +95,7 @@ impl BattleManager {
 				} else if self.closer.is_alive() {
 					self.closer.input();
 				} else {
-					self.gui.input(battle, party_gui);
+					self.gui.input(battle, party_gui, bag_gui);
 				}
 			}
 		}
@@ -101,18 +104,15 @@ impl BattleManager {
 			if is_key_pressed(KeyCode::F1) {
 				// exit shortcut
 				self.finished = true;
-				if let Some(mut saves) = get_mut::<PlayerSaves>() {
-					if let Some(mut battle) = self.battle.take() {
-						battle.winner = Some(BattleWinner::Player);
-						battle.update_data(saves.get_mut());
-					}
+				if let Some(battle) = self.battle.as_mut() {
+					battle.winner = Some(BattleWinner::Player);
 				}
 			}
 		}
 
 	}
 
-	pub fn update(&mut self, delta: f32, party_gui: &mut PokemonPartyGui) {
+	pub fn update(&mut self, delta: f32, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 		
 		if let Some(battle) = self.battle.as_mut() {
 
@@ -143,7 +143,7 @@ impl BattleManager {
 					self.closer.update(delta);
 				}
 			} else /*if !self.current_battle.is_finished()*/ {
-				battle.update(delta, &mut self.gui, &mut self.closer, party_gui);
+				battle.update(delta, &mut self.gui, &mut self.closer, party_gui, bag_gui);
 				self.gui.update(delta);
 			}
 

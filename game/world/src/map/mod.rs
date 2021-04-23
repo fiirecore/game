@@ -272,7 +272,15 @@ impl GameWorld for WorldMap {
                         }
 
                         WorldActionKind::PlayerGiveItem(item) => {
-
+                            if let Some(mut saves) = get_mut::<PlayerSaves>() {
+                                if !saves.get_mut().add_item(firecore_game::pokedex::item::ItemStack {
+                                    id: *item,
+                                    count: 1,
+                                }) {
+                                    warn!("Could not give item \"{}\"to player!", item);
+                                }
+                            }
+                            pop = true;
                         }
 
                         WorldActionKind::NPCAdd(id, npc) => {

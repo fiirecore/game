@@ -2,8 +2,11 @@ use game::{
     util::{Entity, text::TextColor},
     pokedex::pokemon::instance::PokemonInstance,
     input::{self as input, Control},
-    macroquad::prelude::{Texture2D, warn},
-    gui::party::PokemonPartyGui,
+    macroquad::prelude::Texture2D,
+    gui::{
+        party::PartyGui,
+        bag::BagGui,
+    },
     graphics::{byte_texture, draw, draw_text_left, draw_cursor},
 };
 
@@ -58,7 +61,7 @@ impl BattleOptions {
         self.pokemon_do = instance.name() + " do?";
     }
 
-    pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PokemonPartyGui) {
+    pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
         if input::pressed(Control::Up) {
             if self.cursor >= 2 {
                 self.cursor -= 2;
@@ -83,7 +86,7 @@ impl BattleOptions {
                     self.spawn_fight_panel = true;
                 },
                 1 => {
-                    warn!("bag button unimplemented");
+                    bag_gui.spawn(true);
                 },
                 2 => {
                     battle_party_gui(party_gui, &battle.player);

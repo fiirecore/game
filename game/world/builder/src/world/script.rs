@@ -1,6 +1,5 @@
 use std::path::PathBuf;
-
-use firecore_world_lib::script::world::WorldScript;
+use worldlib::script::world::WorldScript;
 
 pub fn load_script_entries(script_path: PathBuf) -> Vec<WorldScript> {
     let mut scripts = Vec::new();

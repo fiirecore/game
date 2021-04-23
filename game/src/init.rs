@@ -11,7 +11,7 @@ use audio::{
     Sound
 };
 use firecore_font_lib::SerializedFonts;
-use macroquad::prelude::{warn, Texture2D, Image, Rect};
+use macroquad::prelude::{Texture2D, Image, Rect};
 
 use crate::graphics::text::{TextRenderer, TEXT_RENDERER, Font};
 use crate::graphics::{image_texture, byte_texture};

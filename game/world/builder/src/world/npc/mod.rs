@@ -1,8 +1,7 @@
 use std::path::PathBuf;
-use ahash::AHashMap as HashMap;
-
-use firecore_world_lib::serialized::SerializedNPC;
-use firecore_world_lib::map::npc::NPCManager;
+use util::hash::HashMap;
+use worldlib::serialized::SerializedNPC;
+use worldlib::map::npc::NPCManager;
 
 pub mod npc_type;
 

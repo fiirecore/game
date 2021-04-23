@@ -22,7 +22,10 @@ use game::{
     textures::{TrainerSprites, TRAINER_SPRITES},
     graphics::byte_texture,
     battle::BattleData,
-    gui::party::PokemonPartyGui,
+    gui::{
+        party::PartyGui,
+        bag::BagGui,
+    },
     scene::SceneState,
 };
 
@@ -154,9 +157,20 @@ impl WorldManager {
     
     }
 
-    pub fn on_start(&mut self) {
-        self.load_player();
+    pub fn load_with_data(&mut self) {
+        if let Some(saves) = get::<PlayerSaves>() {
+            let save = saves.get();
+            self.load_player(save);
+        }
+    }
+
+    pub fn on_start(&mut self, battle_data: &mut Option<BattleData>) {
         self.map_start(true);
+        if self.map_manager.chunk_active {
+            self.map_manager.chunk_map.on_tile(battle_data, &mut self.map_manager.player);
+        } else {
+            self.map_manager.map_set_manager.on_tile(battle_data, &mut self.map_manager.player);
+        }
     }
 
     pub fn map_start(&mut self, music: bool) {
@@ -253,7 +267,7 @@ impl WorldManager {
 		player_data.location.position = self.map_manager.player.position;
     }
 
-    pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PokemonPartyGui, scene_state: &mut SceneState) {
+    pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PartyGui, bag_gui: &mut BagGui, scene_state: &mut SceneState) {
 
         if firecore_game::is_debug() {
             self.debug_input(battle_data)
@@ -266,7 +280,7 @@ impl WorldManager {
         if self.text_window.is_alive() {
             self.text_window.input();
         } else if self.start_menu.is_alive() {
-            self.start_menu.input(scene_state, party_gui);
+            self.start_menu.input(scene_state, party_gui, bag_gui);
         } else {
 
             if self.map_manager.chunk_active {
@@ -355,21 +369,18 @@ impl WorldManager {
         }        
     }
 
-    pub fn load_player(&mut self) {
-        if let Some(player_saves) = firecore_game::macroquad::prelude::collections::storage::get::<PlayerSaves>() {
-            let data = player_saves.get();
-            let location = &data.location;
-            self.map_manager.player.position = location.position;
-            self.player_texture.load();
+    pub fn load_player(&mut self, data: &PlayerSave) {
+        let location = &data.location;
+        self.map_manager.player.position = location.position;
+        self.player_texture.load();
 
-            if let Some(map) = location.map {
-                self.map_manager.chunk_active = false;
-                self.map_manager.update_map_set(map, location.index);
-            } else {
-                self.map_manager.chunk_active = true;
-                self.map_manager.update_chunk(location.index);
-            }
-        }        
+        if let Some(map) = location.map {
+            self.map_manager.chunk_active = false;
+            self.map_manager.update_map_set(map, location.index);
+        } else {
+            self.map_manager.chunk_active = true;
+            self.map_manager.update_chunk(location.index);
+        }     
     }
 
     fn debug_input(&mut self, battle_data: &mut Option<BattleData>) {

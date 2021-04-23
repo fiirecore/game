@@ -1,9 +1,8 @@
 use std::ops::AddAssign;
 use std::path::Path;
 use std::path::PathBuf;
-
-use ahash::AHashMap as HashMap;
-use firecore_world_lib::{MapSize, TileId, MovementId};
+use util::hash::HashMap;
+use worldlib::{MapSize, TileId, MovementId};
 use image::GenericImageView;
 
 pub struct GbaMap {

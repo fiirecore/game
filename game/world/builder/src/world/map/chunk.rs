@@ -1,10 +1,7 @@
 use std::path::PathBuf;
-
-use ahash::AHashMap as HashMap;
-use firecore_world_lib::map::MapIdentifier;
+use util::hash::HashMap;
+use worldlib::map::{MapIdentifier, chunk::WorldChunk};
 use crate::world::SerializedChunkMap;
-
-use firecore_world_lib::map::chunk::WorldChunk;
 
 pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, serialized_chunk: SerializedChunkMap) -> (MapIdentifier, WorldChunk) {
     println!("    Loading chunk map {}", serialized_chunk.config.name);

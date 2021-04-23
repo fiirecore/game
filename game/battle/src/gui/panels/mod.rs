@@ -2,7 +2,10 @@ use game::{
     util::Entity,
     pokedex::pokemon::instance::PokemonInstance,
     macroquad::prelude::{Vec2, Texture2D},
-    gui::party::PokemonPartyGui,
+    gui::{
+        party::PartyGui,
+        bag::BagGui,
+    },
     graphics::{byte_texture, draw},
 };
 
@@ -63,9 +66,9 @@ impl BattlePanel {
         self.fight.update_gui(instance);
     }
     
-    pub fn input(&mut self, battle: &mut Battle, text: &mut BattleText, party_gui: &mut PokemonPartyGui) {
+    pub fn input(&mut self, battle: &mut Battle, text: &mut BattleText, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
         if self.battle.is_alive() {
-            self.battle.input(battle, party_gui);
+            self.battle.input(battle, party_gui, bag_gui);
         } else if self.fight.is_alive() {
             self.fight.input(battle, text);
         }

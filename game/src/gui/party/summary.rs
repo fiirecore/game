@@ -3,6 +3,7 @@ use firecore_pokedex::pokemon::texture::PokemonTexture;
 use firecore_util::text::TextColor;
 use macroquad::prelude::Texture2D;
 use firecore_input::{pressed, Control};
+use macroquad::prelude::draw_rectangle;
 
 use crate::graphics::{byte_texture, draw, draw_text_left};
 use crate::textures::pokemon_texture;
@@ -64,6 +65,15 @@ impl SummaryGui {
                         draw_text_left(1, &pokemon.pokemon_name, TextColor::White, 41.0, 19.0);
                         draw_text_left(1, &pokemon.pokemon_id, TextColor::Black, 168.0, 21.0);
                         draw_text_left(1, &pokemon.pokemon.name, TextColor::Black, 168.0, 36.0);
+
+                        for (index, (name, (upper, lower))) in pokemon.pokemon.types.iter().enumerate() {
+                            let x = 168.0 + 37.0 * index as f32;
+                            draw_rectangle(x, 52.0, 32.0, 6.0, *upper);
+                            draw_rectangle(x, 58.0, 32.0, 6.0, *lower);
+                            crate::graphics::draw_text_center(0, name, TextColor::White, x + 16.0, 52.0)
+                        }
+
+                        draw_text_left(1, &pokemon.pokemon.item, TextColor::Black, 168.0, 96.0);
                     }
                 }
             }

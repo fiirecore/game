@@ -1,7 +1,5 @@
 use std::path::PathBuf;
-
-use firecore_world_lib::map::wild::{WildEntry, table::WildPokemonTable};
-
+use worldlib::map::wild::{WildEntry, table::WildPokemonTable};
 use crate::world::SerializedWildEntry;
 
 pub fn load_wild_entry(wild: Option<SerializedWildEntry>, wild_path: PathBuf) -> Option<WildEntry> {

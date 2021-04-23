@@ -14,12 +14,14 @@ use game::{
         saved::{SavedPokemon, PokemonData},
         data::StatSet,
         instance::PokemonInstance,
-        InPokedex,
         GeneratePokemon,
         texture::PokemonTexture,
     },
     battle::BattleData,
-    gui::party::PokemonPartyGui,
+    gui::{
+        party::PartyGui,
+        bag::BagGui,
+    },
     textures::pokemon_texture,
     macroquad::{
         self,
@@ -178,7 +180,8 @@ async fn main() {
     
     set_camera(Camera2D::from_display_rect(Rect::new(0.0, 0.0, WIDTH, HEIGHT)));
 
-    let mut party_gui = PokemonPartyGui::new();
+    let mut party_gui = PartyGui::new();
+    let mut bag_gui = BagGui::new();
     let mut manager = BattleManager::new();
 
     let player: SmallVec<[SavedPokemon; 6]> = player.into_iter().map(|pokemon| {
@@ -188,11 +191,13 @@ async fn main() {
                 nickname: None,
                 level: 30,
                 gender: pokemon.generate_gender(),
+                status: None,
                 ivs: StatSet::uniform(15),
                 evs: StatSet::default(),
                 experience: 500,
                 friendship: 70,
             },
+            item: None,
             moves: None,
             current_hp: None,
             owned_data: None,
@@ -215,16 +220,21 @@ async fn main() {
 
         let delta = if is_key_down(KeyCode::Space) { get_frame_time() * 8.0 } else { get_frame_time() };        
 
-        if !party_gui.is_alive() {
-            manager.input(&mut party_gui);
-        } else {
+        if party_gui.is_alive() {
             party_gui.input();
+        } else if bag_gui.is_alive() {
+            bag_gui.input(&mut party_gui);
+        } else {
+            manager.input(&mut party_gui, &mut bag_gui);
         }
 
-        manager.update(delta, &mut party_gui);
+        manager.update(delta, &mut party_gui, &mut bag_gui);
         manager.render();
         
         party_gui.update(delta);
+        party_gui.render();
+
+        bag_gui.update(&mut party_gui);
         party_gui.render();
 
         next_frame().await;

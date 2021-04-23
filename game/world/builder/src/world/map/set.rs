@@ -1,8 +1,6 @@
 use std::path::PathBuf;
-
-use firecore_world_lib::map::MapIdentifier;
-use firecore_world_lib::map::set::WorldMapSet;
-use ahash::AHashMap as HashMap;
+use util::hash::HashMap;
+use worldlib::map::{MapIdentifier, set::WorldMapSet};
 use crate::world::{SerializedMapSet, MapConfig};
 
 pub fn load_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, serialized_map_set: SerializedMapSet) -> (MapIdentifier, WorldMapSet) {

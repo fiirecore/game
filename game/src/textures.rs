@@ -19,8 +19,8 @@ pub fn trainer_texture(npc_type: &TinyStr16) -> Texture2D {
 
 pub static mut ITEM_TEXTURES: Option<TrainerSprites> = None;
 
-pub fn item_texture(id: &TinyStr16) -> Texture2D {
-    unsafe{ITEM_TEXTURES.as_ref()}.expect("Could not get item textures!").get(id).map(|texture| *texture).unwrap_or(crate::graphics::debug_texture())
+pub fn item_texture(id: &TinyStr16) -> Option<Texture2D> {
+    unsafe{ITEM_TEXTURES.as_ref()}.expect("Could not get item textures!").get(id).map(|texture| *texture)
 }
 
 pub static mut POKEMON_TEXTURES: Option<PokemonTextures> = None;

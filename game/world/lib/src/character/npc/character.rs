@@ -83,18 +83,21 @@ impl Character for NPC {
                     if let Some(direction) = destination.queued_movements.pop_front() {
                         self.position.direction = direction;
                     } else if let Some(direction) = destination.final_direction {
-                        let destination = ();
                         self.properties.character.destination = None;
                         self.position.direction = direction;
                         return true;
                     };
-                    let destination = ();
                     self.update_sprite();
                 }
             } else if let Some(direction) = destination.queued_movements.pop_front() {
                 destination.started = true;
                 self.position.direction = direction;
                 self.move_to_destination(delta);
+            } else if destination.queued_movements.is_empty() {
+                if let Some(direction) = destination.final_direction {
+                    self.position.direction = direction;
+                }
+                self.properties.character.destination = None;
             }
         }
         false

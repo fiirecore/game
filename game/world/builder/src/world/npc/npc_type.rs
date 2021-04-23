@@ -1,10 +1,8 @@
+use std::path::{Path, PathBuf};
 use std::ffi::OsString;
 use std::fs::read_dir;
-use std::path::Path;
-use std::path::PathBuf;
 
-use firecore_world_lib::serialized::SerializedNPCType;
-use firecore_world_lib::serialized::SerializedNPCTypeConfig;
+use worldlib::serialized::{SerializedNPCType, SerializedNPCTypeConfig};
 
 pub fn load_npc_types<P: AsRef<Path>>(npc_types: P) -> Vec<SerializedNPCType> {
     let npc_types = npc_types.as_ref();

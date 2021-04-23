@@ -1,0 +1,14 @@
+(
+    id: "super_potion",
+    item: (
+        name: "Super Potion",
+        description: [
+            "Heals a pokemon for 50 HP."
+        ],
+        script: (
+            actions: [
+                HealPokemon(50),
+            ],
+        ),
+    )
+)

@@ -1,11 +1,11 @@
-use firecore_game::util::{Entity, text::TextColor};
-use firecore_game::input::{pressed, Control};
-
-use firecore_game::macroquad::prelude::{Vec2, Texture2D};
-
-use firecore_game::gui::party::PokemonPartyGui;
-use firecore_game::scene::{SceneState, Scenes};
-use firecore_game::graphics::{byte_texture, draw, draw_text_left, draw_cursor};
+use game::{
+    util::{Entity, text::TextColor},
+    input::{pressed, Control},
+    macroquad::prelude::{Vec2, Texture2D},
+    gui::{party::PartyGui, bag::BagGui},
+    scene::{SceneState, Scenes},
+    graphics::{byte_texture, draw, draw_text_left, draw_cursor}
+};
 
 pub struct StartMenu {
 
@@ -15,9 +15,9 @@ pub struct StartMenu {
 
     background: Texture2D,
 
-    buttons: Vec<String>,
+    buttons: [&'static str; 6],
 
-    cursor: u8,
+    cursor: usize,
 
 }
 
@@ -33,13 +33,14 @@ impl StartMenu {
 
             background: byte_texture(include_bytes!("../../assets/gui/world/start_menu.png")),
 
-            buttons: vec![
+            buttons: [
                 "Save",
+                "Bag",
                 "Pokemon",
-                "Main Menu",
-                "Exit Game",
-                "Close",
-            ].into_iter().map(|text| text.to_ascii_uppercase()).collect(),
+                "Menu",
+                "Exit",
+                "Cancel",
+            ],
 
             cursor: 0,
 
@@ -51,7 +52,7 @@ impl StartMenu {
         self.alive = !self.alive;
     }
 
-    pub fn input(&mut self, scene_state: &mut SceneState, party_gui: &mut PokemonPartyGui) {
+    pub fn input(&mut self, scene_state: &mut SceneState, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 
         if pressed(Control::A) {
             match self.cursor {
@@ -60,19 +61,23 @@ impl StartMenu {
                     firecore_game::data::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
                 },
                 1 => {
+                    // Bag
+                    bag_gui.spawn(true);
+                },
+                2 => {
                     // Pokemon
                     party_gui.spawn_world();
                 },
-                2 => {
+                3 => {
                     // Exit to Main Menu
                     *scene_state = SceneState::Scene(Scenes::MainMenu);
                     self.despawn();
                 },
-                3 => {
+                4 => {
                     // Exit Game
                     firecore_game::quit();
                 },
-                4 => {
+                5 => {
                     // Close Menu
                     self.despawn();
                 }
@@ -84,11 +89,11 @@ impl StartMenu {
             if self.cursor > 0 {
                 self.cursor -= 1;
             } else {
-                self.cursor = self.buttons.len() as u8 - 1;
+                self.cursor = self.buttons.len() - 1;
             }    
         }
         if pressed(Control::Down) {
-            if self.cursor < self.buttons.len() as u8 - 1 {
+            if self.cursor < self.buttons.len() - 1 {
                 self.cursor += 1;
             } else {
                 self.cursor = 0;

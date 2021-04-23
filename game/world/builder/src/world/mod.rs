@@ -1,8 +1,6 @@
-use firecore_world_lib::map::MapIdentifier;
-use firecore_world_lib::map::chunk::Connections;
 use serde::Deserialize;
-
-use firecore_util::Coordinate;
+use util::Coordinate;
+use worldlib::map::{MapIdentifier, chunk::Connections};
 
 pub mod map;
 

@@ -1,3 +1,4 @@
+use macroquad::prelude::Color;
 use util::{Reset, text::TextColor};
 use input::{pressed, Control};
 use pokedex::pokemon::party::PokemonParty;
@@ -9,7 +10,7 @@ use util::smallvec::SmallVec;
 use crate::graphics::{byte_texture, draw, draw_text_left};
 use crate::textures::pokemon_texture;
 
-use self::select::SelectMenu;
+use self::select::PartySelectMenu;
 use self::summary::SummaryGui;
 
 use super::health_bar::HealthBar;
@@ -17,13 +18,11 @@ use super::health_bar::HealthBar;
 pub mod select;
 pub mod summary;
 
-const TEXTURE_TICK: f32 = 0.15;
+pub struct PartyGui {
 
-pub struct PokemonPartyGui {
-
-    alive: bool,
+    pub alive: bool,
     
-    select: SelectMenu,
+    select: PartySelectMenu,
     summary: SummaryGui,
 
     background: Texture2D,
@@ -43,12 +42,12 @@ pub struct PokemonPartyGui {
 
 }
 
-impl PokemonPartyGui {
+impl PartyGui {
 
     pub fn new() -> Self {
         Self {
             alive: false,
-            select: SelectMenu::new(),
+            select: PartySelectMenu::new(),
             summary: SummaryGui::new(),
             background: byte_texture(include_bytes!("../../../assets/gui/party/background.png")),
             primary_slot: byte_texture(include_bytes!("../../../assets/gui/party/primary.png")),
@@ -63,47 +62,44 @@ impl PokemonPartyGui {
 
     }
 
-    pub fn on_spawn(&mut self, world: bool) {
+    pub fn on_spawn(&mut self, world: Option<bool>) {
         self.alive = true;
         self.reset();        
         self.select.is_world = world;
     }
 
-    // In battle crate
-
-    // pub fn spawn_battle(&mut self, party: &BattleParty) {
-    //     self.on_spawn(false);
-    //     for pokemon in party.pokemon.iter().map(|pokemon| &pokemon.pokemon){
-    //         self.pokemon.push(PartyGuiData {
-    //             id: pokemon.pokemon.data.id,
-    //             name: pokemon.name(),
-    //             level: format!("Lv{}", pokemon.data.level),
-    //             hp: format!("{}/{}", pokemon.current_hp, pokemon.base.hp),
-    //             health_width: (pokemon.current_hp as f32 / pokemon.base.hp as f32).ceil() * 48.0,
-    //             texture: pokemon_texture(&pokemon.pokemon.data.id, Icon),
-    //         });
-    //     }
-    // }
+    pub fn spawn(&mut self, party: SmallVec<[PartyGuiData; 6]>) {
+        self.on_spawn(None);
+        self.reset();
+        self.pokemon = party;
+    }
 
     pub fn spawn_world(&mut self) {
-        self.on_spawn(true);
+        self.on_spawn(Some(true));
         if let Some(saves) = get::<PlayerSaves>() {
-            for pokemon in saves.get().party.iter() {
-                if let Some(pokemon_data) = firecore_pokedex::pokedex().get(&pokemon.id) {
+            self.pokemon = saves.get().party.iter().map(|saved| firecore_pokedex::pokedex().get(&saved.id).map(|pokemon| {
+                let max = firecore_pokedex::pokemon::instance::calculate_hp(pokemon.base.hp, saved.data.ivs.hp, saved.data.evs.hp, saved.data.level);
+                let current = saved.current_hp.unwrap_or(max);
     
-                    let max = firecore_pokedex::pokemon::instance::calculate_hp(pokemon_data.base.hp, pokemon.data.ivs.hp, pokemon.data.evs.hp, pokemon.data.level);
-                    let current = pokemon.current_hp.unwrap_or(max);
-        
-                    self.pokemon.push(PartyGuiData {
-                        id: pokemon.id,
-                        name: pokemon.data.nickname.as_ref().map(|nick| nick.clone()).unwrap_or(pokemon_data.data.name.to_ascii_uppercase()),
-                        level: format!("Lv{}", pokemon.data.level),
-                        hp: format!("{}/{}", current, max),
-                        health_width: HealthBar::get_hp_width(current, max),
-                        texture: pokemon_texture(&pokemon_data.data.id, Icon),
-                    });
-                }            
-            }
+                let mut types = Vec::with_capacity(if pokemon.data.secondary_type.is_some() { 2 } else { 1 });
+
+                types.push(pokemon_type_display(pokemon.data.primary_type));
+
+                if let Some(secondary) = pokemon.data.secondary_type {
+                    types.push(pokemon_type_display(secondary));
+                }
+
+                PartyGuiData {
+                    id: saved.id,
+                    name: saved.data.nickname.as_ref().map(|nick| nick.clone()).unwrap_or(pokemon.data.name.to_ascii_uppercase()),
+                    level: format!("Lv{}", saved.data.level),
+                    hp: format!("{}/{}", current, max),
+                    types,
+                    item: saved.item.as_ref().map(|id| pokedex::itemdex().get(id)).flatten().map(|item| item.name.to_ascii_uppercase()).unwrap_or("NONE".to_owned()),
+                    health_width: HealthBar::get_hp_width(current, max),
+                    texture: pokemon_texture(&pokemon.data.id, Icon),
+                }
+            })).flatten().collect();
         }
     }
 
@@ -114,11 +110,11 @@ impl PokemonPartyGui {
         } else if self.select.alive {
             if let Some(action) = self.select.input() {
                 match action {
-                    select::SelectAction::Select => {
+                    select::PartySelectAction::Select => {
                         self.selected = Some(self.cursor);
                         self.select.alive = false;
                     }
-                    select::SelectAction::Summary => {
+                    select::PartySelectAction::Summary => {
                         self.summary.spawn(self.pokemon[self.cursor as usize].clone());
                         self.select.alive = false;
                     }
@@ -128,13 +124,19 @@ impl PokemonPartyGui {
 
             if pressed(Control::A) {
                 if let Some(selected) = self.selected.take() {
-                    if self.select.is_world {
-                        let swap = (self.cursor as usize, selected as usize);
-                        self.pokemon.swap(swap.0, swap.1);
-                        self.swaps.push(swap);
+                    if let Some(is_world) = self.select.is_world {
+                        if is_world {
+                            let swap = (self.cursor as usize, selected as usize);
+                            self.pokemon.swap(swap.0, swap.1);
+                            self.swaps.push(swap);
+                        }
                     }
                 } else {
-                    self.select.toggle();
+                    if self.select.is_world.is_some() {
+                        self.select.toggle();
+                    } else {
+                        self.selected = Some(self.cursor);
+                    }
                 }
             } else {
                 if pressed(Control::Up) && self.cursor > 1 {
@@ -152,6 +154,9 @@ impl PokemonPartyGui {
                 if pressed(Control::Right) && self.cursor == 0 {
                     self.cursor = self.right_cursor.unwrap_or(1);
                 }
+                if pressed(Control::B) {
+                    self.despawn();
+                }
             }           
         }
     }
@@ -159,7 +164,7 @@ impl PokemonPartyGui {
     pub fn update(&mut self, delta: f32) {
         if self.alive {
             self.accumulator += delta;
-            if self.accumulator > TEXTURE_TICK * 2.0 {
+            if self.accumulator > PartyGuiData::TEXTURE_TICK * 2.0 {
                 self.accumulator = 0.0;
             }
         }
@@ -183,16 +188,19 @@ impl PokemonPartyGui {
                 } else {
                     draw_rectangle_lines(89.0, -14.0 + 24.0 * self.cursor as f32, 150.0, 22.0, 2.0, RED);
                 }
-                if self.select.is_world {
-                    if let Some(selected) = self.selected {
-                        if selected == 0 {
-                            draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, LIME);
-                        } else {
-                            draw_rectangle_lines(89.0, -14.0 + 24.0 * selected as f32, 150.0, 22.0, 2.0, LIME);
+                if let Some(is_world) = self.select.is_world {
+                    if is_world {
+                        if let Some(selected) = self.selected {
+                            if selected == 0 {
+                                draw_rectangle_lines(8.0, 26.0, 79.0, 49.0, 2.0, LIME);
+                            } else {
+                                draw_rectangle_lines(89.0, -14.0 + 24.0 * selected as f32, 150.0, 22.0, 2.0, LIME);
+                            }
                         }
                     }
+                    self.select.render();
+
                 }
-                self.select.render();
             }
         }
         
@@ -205,7 +213,7 @@ impl PokemonPartyGui {
             source: Some(
                     Rect::new(
                         0.0, 
-                        if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 
+                        if self.accumulator > PartyGuiData::TEXTURE_TICK { 32.0 } else { 0.0 }, 
                         32.0, 
                         32.0
                     )
@@ -226,7 +234,7 @@ impl PokemonPartyGui {
             source: Some(
                 Rect::new(
                     0.0, 
-                    if self.accumulator > TEXTURE_TICK { 32.0 } else { 0.0 }, 
+                    if self.accumulator > PartyGuiData::TEXTURE_TICK { 32.0 } else { 0.0 }, 
                     32.0, 
                     32.0
                 )
@@ -258,7 +266,7 @@ impl PokemonPartyGui {
 
 }
 
-impl Reset for PokemonPartyGui {
+impl Reset for PartyGui {
     fn reset(&mut self) {
         self.cursor = 0;
         self.right_cursor = None;
@@ -275,7 +283,17 @@ pub struct PartyGuiData {
     pub texture: Texture2D,
     pub name: String,
     pub level: String,
+    pub types: Vec<(String, (Color, Color))>,
+    pub item: String,
     pub hp: String,
     pub health_width: f32,
 
+}
+
+impl PartyGuiData {
+    const TEXTURE_TICK: f32 = 0.15;
+}
+
+pub fn pokemon_type_display(pokemon_type: firecore_pokedex::pokemon::types::PokemonType) -> (String, (Color, Color)) {
+    (format!("{:?}", pokemon_type), crate::graphics::pokemon_type_color(pokemon_type))
 }

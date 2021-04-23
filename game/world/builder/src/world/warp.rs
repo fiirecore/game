@@ -1,6 +1,5 @@
 use std::path::PathBuf;
-
-use firecore_world_lib::map::warp::WarpEntry;
+use worldlib::map::warp::WarpEntry;
 
 pub fn load_warp_entries(warp_path: PathBuf) -> Vec<WarpEntry> {
     let mut warps = Vec::new();

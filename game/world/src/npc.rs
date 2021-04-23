@@ -56,8 +56,6 @@ pub fn current_texture_pos(npc: &NPC) -> f32 {
                 npc.position.offset.y
             }.abs() as usize >> 3
         ) + npc.properties.character.sprite_index as usize;
-
-        // println!("{}", index);
         
         (match npc.position.direction {
             Direction::Down => npc_type.sprite.down[index],

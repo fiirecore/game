@@ -1,16 +1,15 @@
-extern crate firecore_world_lib;
+extern crate firecore_world_lib as worldlib;
+extern crate firecore_util as util;
 
 use std::io::Write;
 use std::path::Path;
 
-use firecore_world_lib::map::chunk::map::WorldChunkMap;
-use firecore_world_lib::map::manager::WorldMapManager;
-use firecore_world_lib::map::warp::WarpEntry;
+use worldlib::map::chunk::map::WorldChunkMap;
+use worldlib::map::manager::WorldMapManager;
+use worldlib::map::warp::WarpEntry;
 
-mod world;
-mod gba_map;
-
-// pub type ResultT<T> = Result<T, Box<dyn std::error::Error>>;
+pub mod world;
+pub mod gba_map;
 
 pub fn compile<P: AsRef<Path>>(maps: P, tile_textures: P, npc_types: P, output_file: P) {
 

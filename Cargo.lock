@@ -47,18 +47,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "as-slice"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45403b49e3954a4b8428a0ac21a4b7afadccf92bfd96273f1a58cd4812496ae0"
-dependencies = [
- "generic-array 0.12.4",
- "generic-array 0.13.3",
- "generic-array 0.14.4",
- "stable_deref_trait",
-]
-
-[[package]]
 name = "atomic"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -70,7 +58,7 @@ dependencies = [
 [[package]]
 name = "audio-builder"
 version = "0.4.0-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#97b3590f076a41f506ba49d79c5c1c6adaa32919"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#3e3936818c24807c1a034d4e2b45280ccd4f4bc9"
 dependencies = [
  "firecore-audio-lib",
  "postcard",
@@ -314,8 +302,8 @@ dependencies = [
 
 [[package]]
 name = "dex-builder"
-version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#4088bc01d62e4d1693734bdbdc2b3c2b09da20ed"
+version = "0.4.0-beta.2"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#2b49dedff8df237f60bf1ffaac5622818dac9a37"
 dependencies = [
  "firecore-pokedex",
  "postcard",
@@ -347,9 +335,9 @@ dependencies = [
 
 [[package]]
 name = "embed-resource"
-version = "1.6.1"
+version = "1.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04e03c3dae04b8f252f2866d25e0ec8f2f488efba43bc6e307274b65c4321f94"
+checksum = "d0ea6debf1262982d24274dc85f3374b42534df140897c25cea86b81e017d470"
 dependencies = [
  "cc",
  "vswhom",
@@ -359,10 +347,10 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.4.0-alpha.2.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#97b3590f076a41f506ba49d79c5c1c6adaa32919"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#3e3936818c24807c1a034d4e2b45280ccd4f4bc9"
 dependencies = [
- "ahash 0.7.2",
  "firecore-audio-lib",
+ "firecore-util",
  "kira",
  "lewton",
  "parking_lot",
@@ -371,7 +359,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio-lib"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#97b3590f076a41f506ba49d79c5c1c6adaa32919"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#3e3936818c24807c1a034d4e2b45280ccd4f4bc9"
 dependencies = [
  "serde",
 ]
@@ -387,7 +375,7 @@ dependencies = [
 [[package]]
 name = "firecore-configuration"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
 dependencies = [
  "firecore-data",
  "firecore-input",
@@ -397,7 +385,7 @@ dependencies = [
 [[package]]
 name = "firecore-data"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
 dependencies = [
  "dirs-next",
  "macroquad",
@@ -409,7 +397,7 @@ dependencies = [
 [[package]]
 name = "firecore-font-lib"
 version = "0.2.0-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#8f80f2f49ee2d5ce970622129b8cfb99685bbf5a"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#89de928ae0ce58efa60b51953660ac6303d145da"
 dependencies = [
  "serde",
 ]
@@ -430,17 +418,17 @@ dependencies = [
 [[package]]
 name = "firecore-input"
 version = "0.3.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-input#43611f30767c9b8715347afa68e773ead4208ead"
+source = "git+https://github.com/DoNotDoughnut/firecore-input#ff9cd726b8ea5851031cb0754e46575f019fcf0a"
 dependencies = [
- "ahash 0.7.2",
+ "firecore-util",
  "macroquad",
  "serde",
 ]
 
 [[package]]
 name = "firecore-pokedex"
-version = "0.4.0-beta.3"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#4088bc01d62e4d1693734bdbdc2b3c2b09da20ed"
+version = "0.4.0-beta.4"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#2b49dedff8df237f60bf1ffaac5622818dac9a37"
 dependencies = [
  "firecore-util",
  "serde",
@@ -454,7 +442,7 @@ source = "git+https://github.com/DoNotDoughnut/firecore-rand#ec1d792e8c29912cf85
 [[package]]
 name = "firecore-saves"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
 dependencies = [
  "firecore-data",
  "firecore-pokedex",
@@ -465,7 +453,7 @@ dependencies = [
 [[package]]
 name = "firecore-storage"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#bf7632838efd9da34b0984669067b378529dae0e"
+source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
 dependencies = [
  "firecore-configuration",
  "firecore-data",
@@ -524,8 +512,8 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
 name = "font-builder"
-version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#8f80f2f49ee2d5ce970622129b8cfb99685bbf5a"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#89de928ae0ce58efa60b51953660ac6303d145da"
 dependencies = [
  "firecore-font-lib",
  "postcard",
@@ -554,34 +542,6 @@ name = "futures-sink"
 version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c5629433c555de3d82861a7a4e3794a4c40040390907cfbfd7143a92a426c23"
-
-[[package]]
-name = "generic-array"
-version = "0.12.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffdf9f34f1447443d37393cc6c2b8313aebddcd96906caf34e54c68d8e57d7bd"
-dependencies = [
- "typenum",
-]
-
-[[package]]
-name = "generic-array"
-version = "0.13.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f797e67af32588215eaaab8327027ee8e71b9dd0b2b26996aedf20c030fce309"
-dependencies = [
- "typenum",
-]
-
-[[package]]
-name = "generic-array"
-version = "0.14.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "501466ecc8a30d1d3b7fc9229b122b2ce8ed6e9d9223f1138d4babb253e51817"
-dependencies = [
- "typenum",
- "version_check",
-]
 
 [[package]]
 name = "getopts"
@@ -621,15 +581,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
 
 [[package]]
-name = "hash32"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4041af86e63ac4298ce40e5cca669066e75b6f1aa3390fe2561ffa5e1d9f4cc"
-dependencies = [
- "byteorder",
-]
-
-[[package]]
 name = "hashbrown"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -644,19 +595,6 @@ name = "hashbrown"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7afe4a420e3fe79967a00898cc1f4db7c8a49a9333a29f8a4bd76a253d5cd04"
-
-[[package]]
-name = "heapless"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "634bd4d29cbf24424d0a4bfcbf80c6960129dc24424752a7d1d1390607023422"
-dependencies = [
- "as-slice",
- "generic-array 0.14.4",
- "hash32",
- "serde",
- "stable_deref_trait",
-]
 
 [[package]]
 name = "ident_case"
@@ -720,9 +658,9 @@ checksum = "8eaf4bc02d17cbdd7ff4c7438cafcdf7fb9a4613313ad11b4f8fefe7d3fa0130"
 
 [[package]]
 name = "jobserver"
-version = "0.1.21"
+version = "0.1.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c71313ebb9439f74b00d9d2dcec36440beaf57a6aa0623068441dd7cd81a7f2"
+checksum = "972f5ae5d1cb9c6ae417789196c803205313edde988685da5e3aae0827b9e7fd"
 dependencies = [
  "libc",
 ]
@@ -1096,18 +1034,18 @@ checksum = "19b17cddbe7ec3f8bc800887bab5e717348c95ea2ca0b1bf0837fb964dc67099"
 
 [[package]]
 name = "pin-project"
-version = "1.0.6"
+version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc174859768806e91ae575187ada95c91a29e96a98dc5d2cd9a1fed039501ba6"
+checksum = "c7509cc106041c40a4518d2af7a61530e1eed0e6285296a3d8c5472806ccc4a4"
 dependencies = [
  "pin-project-internal",
 ]
 
 [[package]]
 name = "pin-project-internal"
-version = "1.0.6"
+version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a490329918e856ed1b083f244e3bfe2d8c4f336407e4ea9e1a9f479ff09049e5"
+checksum = "48c950132583b500556b1efd71d45b319029f2b71518d979fcc208e16b42426f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1134,7 +1072,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.4.0-beta.2"
+version = "0.4.0-beta.3"
 dependencies = [
  "audio-builder",
  "dex-builder",
@@ -1154,7 +1092,6 @@ version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "66acf3cf8ab62785852a0f67ae3bfcd38324da6561e52e7f4a049ca555c6d55e"
 dependencies = [
- "heapless",
  "postcard-cobs",
  "serde",
 ]
@@ -1213,9 +1150,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.4.5"
+version = "1.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "957056ecddbeba1b26965114e191d2e8589ce74db242b6ea25fc4062427a5c19"
+checksum = "2a26af418b574bd56588335b3a3659a65725d4e636eb1016c2f9e3b38c7cc759"
 dependencies = [
  "regex-syntax",
 ]
@@ -1362,12 +1299,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "stable_deref_trait"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
-
-[[package]]
 name = "stdweb"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1381,9 +1312,9 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "syn"
-version = "1.0.69"
+version = "1.0.70"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48fe99c6bd8b1cc636890bcc071842de909d902c81ac7dab53ba33c421ab8ffb"
+checksum = "b9505f307c872bab8eb46f77ae357c8eba1fdacead58ee5a850116b1d7f82883"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1465,12 +1396,6 @@ name = "ttf-parser"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7622061403fd00f0820df288e5a580e87d3ce15a1c4313c59fd1ffb77129903f"
-
-[[package]]
-name = "typenum"
-version = "1.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "879f6906492a7cd215bfa4cf595b600146ccfac0c79bcbd1f3000162af5e8b06"
 
 [[package]]
 name = "unicode-width"
@@ -1641,7 +1566,6 @@ dependencies = [
 name = "world-builder"
 version = "0.4.0-beta.1"
 dependencies = [
- "ahash 0.7.2",
  "firecore-util",
  "firecore-world-lib",
  "image",

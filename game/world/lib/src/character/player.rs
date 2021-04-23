@@ -92,13 +92,11 @@ impl Character for PlayerCharacter {
                     if let Some(direction) = destination.queued_movements.pop_front() {
                         self.position.local.direction = direction;
                     } else if let Some(direction) = destination.final_direction {
-                        let destination = ();
                         self.properties.moving = false;
-                        self.properties.destination = None;
                         self.position.local.direction = direction;
+                        self.properties.destination = None;
                         return true;
                     };
-                    let destination = ();
                     self.update_sprite();
                 }
             } else if let Some(direction) = destination.queued_movements.pop_front() {
@@ -106,6 +104,11 @@ impl Character for PlayerCharacter {
                 destination.started = true;
                 self.position.local.direction = direction;
                 self.move_to_destination(delta);
+            } else if destination.queued_movements.is_empty() {
+                if let Some(direction) = destination.final_direction {
+                    self.position.local.direction = direction;
+                }
+                self.properties.destination = None;
             }
         }
         false

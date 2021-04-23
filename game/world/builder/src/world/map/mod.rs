@@ -1,8 +1,6 @@
 use std::path::{Path, PathBuf};
-
-use ahash::AHashMap as HashMap;
-
-use firecore_world_lib::{
+use util::hash::HashMap;
+use worldlib::{
     serialized::Palette,
     map::{
         WorldMap,
@@ -131,7 +129,6 @@ fn load_map(
 
 pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> (MapIdentifier, WorldMap) {
     let root_path = root_path.as_ref();
-    // println!("Loading map: \"{}\"", map_config.name);
     let mut gba_map = get_gba_map(
         std::fs::read(root_path.join(config.file)).unwrap_or_else(|err| panic!("Could not get map file at {:?} with error {}", root_path, err))
     );

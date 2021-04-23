@@ -73,7 +73,7 @@ impl BattleText {
                     Message::new(
                         vec![
                             name + " grew to",
-                            format!("LV. {}", level),
+                            format!("LV. {}!", level),
                         ],
                         TextColor::White,
                         Some(0.5),

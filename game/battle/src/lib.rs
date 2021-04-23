@@ -7,7 +7,10 @@ use game::{
 		Reset,
 		battle::BattleType,
 	},
-	gui::party::PokemonPartyGui,
+	gui::{
+		party::PartyGui,
+		bag::BagGui,
+	},
 	battle::{
 		BattleData,
 		TrainerData,
@@ -84,7 +87,7 @@ impl Battle {
 		}
 	}
 
-	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PokemonPartyGui) {
+	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 		
 		if self.try_run {
 			if self.battle_type == BattleType::Wild {
@@ -92,9 +95,18 @@ impl Battle {
 			}
 		}
 
+		// 
+
+		if bag_gui.is_alive() {
+			if let Some(selected) = bag_gui.take_selected_despawn() {
+				self.player.active_mut().use_item(selected);
+				battle_gui.update_gui(self, false, false);
+			}
+		}
+
 		// Test if there is a pokemon being selected in the party gui while it is alive
 
-		if party_gui.is_alive() {
+		else if party_gui.is_alive() {
 			if let Some(selected) = party_gui.selected.take() {
 
 				party_gui.despawn();

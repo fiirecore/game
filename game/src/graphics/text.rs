@@ -35,6 +35,12 @@ impl TextRenderer {
         }
     }
 
+    pub fn render_text_from_center(&self, font_id: u8, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
+        if let Some(font) = self.fonts.get(&font_id) {
+            font.render_text_from_center(text, x, y, color);
+        }
+    }
+
     pub fn render_button(&self, text: &str, font_id: u8, x: f32, y: f32) {
         if let Some(font) = self.fonts.get(&font_id) {
             draw(self.button, x + font.text_pixel_length(text) as f32, y + 2.0);
@@ -74,6 +80,19 @@ impl Font {
     pub fn render_text_from_right(&self, text: &str, x: f32, y: f32, color: Color) {
         let mut len = 0.0;
         let x_offset = self.text_pixel_length(text);
+        for character in text.chars() {
+            len += if let Some(texture) = self.chars.get(&character) {
+                draw_texture(*texture, x - x_offset + len, y, color);
+                texture.width()
+            } else {
+                self.font_width as f32
+            };
+        }
+    }
+
+    pub fn render_text_from_center(&self, text: &str, x: f32, y: f32, color: Color) {
+        let mut len = 0.0;
+        let x_offset = self.text_pixel_length(text) / 2.0;
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
                 draw_texture(*texture, x - x_offset + len, y, color);
