@@ -20,13 +20,13 @@ firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", featur
 # firecore-util = { path = "../firecore-util" }
 
 firecore-storage = { git = "https://github.com/DoNotDoughnut/firecore-data", package = "firecore-storage" }
-# firecore-storage = { path = "../firecore-data/storage" }
+# firecore-storage = { path = "../../firecore/firecore-data/storage" }
 
 firecore-input = { git = "https://github.com/DoNotDoughnut/firecore-input" }
 # firecore-input = { path = "../firecore-input" }
 
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-# firecore-pokedex = { path = "../firecore-pokedex" }
+# firecore-pokedex = { path = "../../firecore/firecore-pokedex" }
 
 firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio", default-features = false }
 # firecore-audio = { path = "../firecore-audio" }

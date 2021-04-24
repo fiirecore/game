@@ -69,7 +69,7 @@ impl BattleParty {
                     pokemon: pokemon,
                 }
             ).collect(),
-            renderer: ActivePokemonRenderer::new(active_pos),
+            renderer: ActivePokemonRenderer::new(active_pos, side == PokemonTexture::Front),
             active,
             next_move: None,
         }

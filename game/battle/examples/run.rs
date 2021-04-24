@@ -60,8 +60,8 @@ use game::{
 use firecore_battle::manager::BattleManager;
 
 const AUDIO_PATH: &str = "examples/audio.bin";
-const DEX_PATH: &str = "../../pokemon-game/build/data/dex.bin";
-const FONTS_PATH: &str = "../../pokemon-game/build/data/fonts.bin";
+const DEX_PATH: &str = "../build/data/dex.bin";
+const FONTS_PATH: &str = "../build/data/fonts.bin";
 
 #[macroquad::main(config)]
 async fn main() {

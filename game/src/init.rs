@@ -83,7 +83,7 @@ pub fn pokedex(dex: SerializedDex) {
 
     for item in dex.items {
         item_textures.insert(item.item.id, byte_texture(&item.texture));
-        itemdex.insert(item.item.id, item.item.item);
+        itemdex.insert(item.item.id, item.item);
     }
 
     unsafe { ITEM_TEXTURES = Some(item_textures); }

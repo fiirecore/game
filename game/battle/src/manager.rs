@@ -10,7 +10,9 @@ use game::{
 	battle::{BattleData, BattleWinner},
 };
 
-use super::{
+// use crate::script::action::ActionTextures;
+
+use crate::{
 	Battle,
 	pokemon::BattleParty,
 	gui::BattleGui,
@@ -39,6 +41,8 @@ pub struct BattleManager {
 
 	gui: BattleGui,
 
+	// action_textures: ActionTextures,
+
 	finished: bool,
 	
 }
@@ -56,6 +60,8 @@ impl BattleManager {
 			closer: BattleCloserManager::new(),
 
 			gui: BattleGui::new(),
+
+			// action_textures: ActionTextures::new(),
 
 			finished: false,
 

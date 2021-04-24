@@ -1,0 +1,14 @@
+(
+    id: 33,
+    name: "Tackle",
+    type: Normal,
+    category: Physical,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 35,
+    battle_script: Some((
+        actions: [
+            MoveAndReturn(30.0),
+        ],
+    )),
+)

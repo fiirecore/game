@@ -1,16 +1,15 @@
 (
     id: "antidote",
-    item: (
-        name: "Antidote",
-        description: [
-            "A spray-type medicine.",
-            "It heals one POKEMON from a",
-            "poisoning."
+    name: "Antidote",
+    description: [
+        "A spray-type medicine.",
+        "It heals one POKEMON from a",
+        "poisoning."
+    ],
+    script: (
+        consume: true,
+        actions: [
+            CurePokemon(Some(Poison)),
         ],
-        script: (
-            actions: [
-                CurePokemon(Some(Poison)),
-            ],
-        ),
-    )
+    ),
 )

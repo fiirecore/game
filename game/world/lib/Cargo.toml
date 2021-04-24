@@ -16,7 +16,7 @@ firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", defaul
 #firecore-util = { path = "../firecore-util" }
 
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-#firecore-pokedex = { path = "../firecore-pokedex" }
+# firecore-pokedex = { path = "../../../../firecore/firecore-pokedex" }
 
 firecore-audio-lib = { git = "https://github.com/DoNotDoughnut/firecore-audio", package = "firecore-audio-lib" }
 

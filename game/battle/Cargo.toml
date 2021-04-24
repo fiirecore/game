@@ -8,11 +8,16 @@ publish = false
 [features]
 default = ["audio"]
 audio = ["firecore-game/audio"]
+ui = ["firecore-game/ui"]
 
 [dependencies]
 
 firecore-game = { path = "../", default-features = false }
+serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 postcard = { version = "0.6", default-features = false, features = ["alloc"] }
-firecore-game = { path = "../", features = ["ui"] }
+
+[[example]]
+name = "run"
+required-features = ["ui"]

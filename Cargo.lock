@@ -302,8 +302,8 @@ dependencies = [
 
 [[package]]
 name = "dex-builder"
-version = "0.4.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#2b49dedff8df237f60bf1ffaac5622818dac9a37"
+version = "0.4.0-beta.3"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#6c3ccd0754454f44fe00a0f9435a09bf756fcaea"
 dependencies = [
  "firecore-pokedex",
  "postcard",
@@ -370,6 +370,7 @@ version = "0.4.0-alpha.1"
 dependencies = [
  "firecore-game",
  "postcard",
+ "serde",
 ]
 
 [[package]]
@@ -428,7 +429,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.4.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#2b49dedff8df237f60bf1ffaac5622818dac9a37"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#6c3ccd0754454f44fe00a0f9435a09bf756fcaea"
 dependencies = [
  "firecore-util",
  "serde",

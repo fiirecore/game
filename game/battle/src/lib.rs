@@ -1,5 +1,8 @@
 extern crate firecore_game as game;
 
+use game::pokedex::moves::script::DamageKind;
+use game::pokedex::moves::script::MoveAction;
+use game::pokedex::pokemon::Health;
 use game::{
 	util::{
 		Entity,
@@ -34,6 +37,8 @@ use game::{
 		prelude::{info, Vec2},
 	}
 };
+use pokemon::BattleMoveStatus;
+use pokemon::BattleMoveType;
 
 use self::gui::BattleGui;
 use self::gui::pokemon::PokemonGui;
@@ -59,7 +64,9 @@ pub struct Battle {
 	pub opponent: BattleParty,
 
 	pub winner: Option<BattleWinner>,
+	post_run: bool,
 	try_run: bool,
+
 	
 }
 
@@ -79,6 +86,7 @@ impl Battle {
 					opponent: BattleParty::new(data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
 					trainer: data.trainer,
 					winner: None,
+					post_run: false,
 					try_run: false,
 				}
 			)
@@ -99,7 +107,10 @@ impl Battle {
 
 		if bag_gui.is_alive() {
 			if let Some(selected) = bag_gui.take_selected_despawn() {
-				self.player.active_mut().use_item(selected);
+				self.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::UseItem(selected)));
+				// self.player.active_mut().use_item(selected);
+				battle_gui.battle_text.run(self);
+
 				battle_gui.update_gui(self, false, false);
 			}
 		}
@@ -111,12 +122,21 @@ impl Battle {
 
 				party_gui.despawn();
 
-				self.player.select_pokemon(selected as usize);
+				if self.player.active().is_faint() {
 
-				// battle_gui.player_pokemon_gui.exp_bar.update_exp(self.player.active(), true); // level up is true to reset the xp display width
-				battle_gui.update_gui(&self, true, false);
+					self.player.select_pokemon(selected as usize);
 
-				battle_gui.panel.start();
+					// battle_gui.player_pokemon_gui.exp_bar.update_exp(self.player.active(), true); // level up is true to reset the xp display width
+					battle_gui.update_gui(&self, true, false);
+	
+					battle_gui.panel.start();
+
+				} else {
+
+					self.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::Switch(selected as usize)));
+					battle_gui.battle_text.run(self);
+
+				}
 				
 			}
 		}
@@ -144,7 +164,7 @@ impl Battle {
 
 				if battle_gui.battle_text.perform_player(self) {
 
-					self.player_move();
+					self.player_move(battle_gui);
 
 					battle_gui.battle_text.on_move(self.opponent.active(), &mut battle_gui.opponent);
 
@@ -203,7 +223,7 @@ impl Battle {
 
 					// make sure the actions do not repeat
 
-					self.player.next_move = None; // queued = false;
+					// self.player.next_move = None; // queued = false;
 
 				} else
 
@@ -219,13 +239,24 @@ impl Battle {
 
 					// make sure the actions do not repeat
 
-					self.opponent.next_move = None; // queued = false;
+					// self.opponent.next_move = None; // queued = false;
+
+				} else
+
+				if battle_gui.battle_text.perform_post(self) {
+
+					self.post_move();
+
+					battle_gui.update_gui(self, false, false);
 
 				}
 
 				// Update the text (so it scrolls)
 
 				battle_gui.battle_text.text.update(delta);
+
+				self.player.renderer.update_other(delta);
+				self.opponent.renderer.update_other(delta);
 
 				// if a pokemon has fainted, remove them from screen gradually using BattlePokemonTextureHandler (bad name)
 
@@ -234,13 +265,13 @@ impl Battle {
 						if self.player.active().is_faint() {
 
 							if !self.player.renderer.is_finished() {
-								self.player.renderer.update(delta);
+								self.player.renderer.update_faint(delta);
 							}
 
 						} else if self.opponent.active().is_faint() {
 
 							if !self.opponent.renderer.is_finished() {
-								self.opponent.renderer.update(delta);
+								self.opponent.renderer.update_faint(delta);
 							}
 
 						}
@@ -331,24 +362,131 @@ impl Battle {
 		self.opponent.renderer.render(self.opponent.active_texture(), 0.0);
 	}
 
-	pub fn player_move(&mut self) {
-		let damage = get_move_damage(&self.player.next_move.as_ref().unwrap().pokemon_move, self.player.active(), self.opponent.active());
-		let opponent = &mut self.opponent.active_mut();
-		if damage >= opponent.current_hp {
-			opponent.current_hp = 0;
+	pub fn player_first(&self) -> bool {
+		if let Some(player) = self.player.next_move.as_ref() {
+			match player.action {
+			    BattleMoveType::Move(_) => {
+					self.player.active().base.speed >= self.opponent.active().base.speed
+				}
+			    BattleMoveType::UseItem(_) => {
+					true
+				}
+			    BattleMoveType::Switch(_) => {
+					// if let Some(opponent) = self.opponent.next_move.as_ref() {
+					// 	if let BattleMoveType::Move(pokemon_move) = opponent.action {
+					// 		pokemon_move.use_before_switch
+					// 	} else {
+					// 		true
+					// 	}
+					// } else {
+						true
+					// }
+				}
+			}
 		} else {
-			opponent.current_hp -= damage;
+			false
 		}
 	}
 
-	pub fn opponent_move(&mut self) {
-		let damage = get_move_damage(&self.opponent.next_move.as_ref().unwrap().pokemon_move, self.opponent.active(), self.player.active());
-		let player = self.player.active_mut();
-		if damage >= player.current_hp {
-			player.current_hp = 0;
-		} else {
-			player.current_hp -= damage;
+	pub fn player_move(&mut self, battle_gui: &mut BattleGui) {
+
+		if let Some(remaining) = self.player.active_mut().data.status.map(|effect | effect.remaining).flatten().as_mut() {
+			*remaining -= 1;
+			if *remaining == 0 {
+				self.player.active_mut().data.status = None;
+			}
 		}
+
+		if let Some(move_type) = self.player.next_move.take() {
+			match move_type.action {
+			    BattleMoveType::Move(pokemon_move) => {
+					if let Some(script) = pokemon_move.battle_script.as_ref() {
+						self.player.renderer.move_actions = Some(script.actions.clone());
+					}
+
+					if let Some(script) = &pokemon_move.script {
+						// script.conditions
+						// let player = self.player.pokemon.get_mut(self.player.active).unwrap();
+						for action in &script.actions {
+							match action {
+							    MoveAction::Damage(damage) => {
+									let opponent = self.opponent.active_mut();
+									let damage = match *damage {
+									    DamageKind::PercentCurrent(percent) => {
+											(opponent.current_hp as f32 * (1.0 - percent)) as Health
+										}
+									    DamageKind::PercentMax(percent) => {
+											(opponent.base.hp as f32 * (1.0 - percent)) as Health
+										}
+									    DamageKind::Constant(damage) => damage,
+									};
+									opponent.current_hp = opponent.current_hp.saturating_sub(damage);
+									if damage != 0 {
+										self.opponent.renderer.flicker();
+									}
+								}
+							    MoveAction::Status(chance, effect) => {
+									if *chance >= BATTLE_RANDOM.gen_range(1..11) as u8 {
+										self.opponent.active_mut().data.status = Some(*effect);
+									}
+								}
+							    MoveAction::Persist(persistent, current_turn) => {
+									let opponent = self.opponent.active_mut();
+									opponent.persistent.push(*persistent.clone());
+									if *current_turn {
+										opponent.run_persistent_moves();
+									}
+								}
+							}
+						}
+					}
+
+
+					let damage = get_move_damage(pokemon_move, self.player.active(), self.opponent.active());
+					let opponent = &mut self.opponent.active_mut();
+					opponent.current_hp = opponent.current_hp.saturating_sub(damage);
+					if damage != 0 {
+						self.opponent.renderer.flicker();
+					}
+				}
+			    BattleMoveType::UseItem(item) => {
+					self.player.active_mut().execute_item(item);
+					battle_gui.update_gui(&self, true, false);
+				}
+			    BattleMoveType::Switch(selected) => {
+					self.player.select_pokemon(selected as usize);
+					battle_gui.update_gui(&self, true, false);
+				}
+			}
+		}
+		
+	}
+
+	pub fn opponent_move(&mut self) {
+		if let Some(move_type) = self.opponent.next_move.take() {
+			if let BattleMoveType::Move(pokemon_move) = move_type.action {
+				let damage = get_move_damage(pokemon_move, self.opponent.active(), self.player.active());
+				let player = self.player.active_mut();
+				player.current_hp = player.current_hp.saturating_sub(damage);
+				if damage != 0 {
+					self.player.renderer.flicker();
+				}
+			}
+		}		
+	}
+
+	pub fn post_move(&mut self) {
+		// flicker here
+		self.player.active_mut().run_persistent_moves();
+		self.opponent.active_mut().run_persistent_moves();
+		self.post_run = false;
+	}
+
+	// warning: ignores PP
+	pub fn generate_opponent_move(&mut self) {
+		let index = crate::BATTLE_RANDOM.gen_range(0..self.opponent.active().moves.len() as u32) as usize;
+		self.opponent.next_move = Some(BattleMoveStatus::new(BattleMoveType::Move(self.opponent.active_mut().moves[index].pokemon_move)));
+		self.post_run = true;
 	}
 
 	pub fn update_data(self, player: &mut PlayerSave) -> Option<(BattleWinner, bool)> {
@@ -388,34 +526,32 @@ impl Battle {
 	
 }
 
-fn get_move_damage(pmove: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
-	if if let Some(accuracy) = pmove.accuracy {
+pub fn get_move_damage(pokemon_move: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
+	if pokemon_move.accuracy.map(|accuracy| {
 		let hit: u8 = BATTLE_RANDOM.gen_range(0..100) as u8;
-		let test = hit < accuracy;
-		// macroquad::prelude::debug!("{} accuracy: {} < {} = {}",  pmove, hit, accuracy, if test { "Hit! "} else { "Miss!" });
-		test
-	} else {
-		true
-	} {
-		if let Some(power) = pmove.power {
-			let effective = pmove.pokemon_type.effective(recieving_pokemon.pokemon.data.primary_type) as f64 * match recieving_pokemon.pokemon.data.secondary_type {
-				Some(ptype) => pmove.pokemon_type.effective(ptype) as f64,
-				None => 1.0,
-			};
-			match pmove.category {
-				MoveCategory::Status => return 0,
-				MoveCategory::Physical => {
-					return ((((2.0 * pokemon.data.level as f64 / 5.0 + 2.0).floor() * pokemon.base.atk    as f64 * power as f64 / recieving_pokemon.base.def    as f64).floor() / 50.0).floor() * effective) as u16 + 2;
-				},
-				MoveCategory::Special => {
-					return ((((2.0 * pokemon.data.level as f64 / 5.0 + 2.0).floor() * pokemon.base.sp_atk as f64 * power as f64 / recieving_pokemon.base.sp_def as f64).floor() / 50.0).floor() * effective) as u16 + 2;
-				}
+		hit < accuracy
+	}).unwrap_or(true) {
+		if let Some(power) = pokemon_move.power {
+			let effective = recieving_pokemon.move_effective(pokemon_move);
+			if effective == game::pokedex::pokemon::types::effective::Effective::Ineffective {
+				return 0;
 			}
+			let effective = effective.multiplier() as f64;
+			let (atk, def) = match pokemon_move.category {
+			    MoveCategory::Physical => (pokemon.base.atk as f64, recieving_pokemon.base.def as f64),
+			    MoveCategory::Special => (pokemon.base.sp_atk as f64, recieving_pokemon.base.sp_def as f64),
+			    MoveCategory::Status => (0.0, 0.0),
+			};
+			(
+				(((((2.0 * pokemon.data.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
+			 	* (BATTLE_RANDOM.gen_range(85..101) as f64 / 100.0)
+				* (if pokemon_move.pokemon_type == pokemon.pokemon.data.primary_type { 1.5 } else { 1.0 })
+			) as Health
 		} else {
-			return 0;
+			0
 		}
 	} else {
 		info!("{} missed!", pokemon);
-		return 0;
+		0
 	}	
 }

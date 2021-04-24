@@ -2,7 +2,7 @@ use std::ops::AddAssign;
 use std::ops::SubAssign;
 
 use data::{get, get_mut, player::PlayerSaves};
-use firecore_pokedex::item::Item;
+use firecore_pokedex::item::ItemRef;
 use firecore_pokedex::itemdex;
 use firecore_util::text::TextColor;
 use input::{pressed, Control};
@@ -229,7 +229,7 @@ impl BagGui {
         }
     }
 
-    pub fn take_selected_despawn(&mut self) -> Option<&Item> {
+    pub fn take_selected_despawn(&mut self) -> Option<ItemRef> {
         self.selected.take().map(|selected| {
             let item = self.items.remove(selected);
             self.despawn();

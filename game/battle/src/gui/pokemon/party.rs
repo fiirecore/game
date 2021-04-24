@@ -24,7 +24,7 @@ pub fn battle_party_gui(party_gui: &mut PartyGui, party: &BattleParty) {
             level: format!("Lv{}", pokemon.data.level),
             hp: format!("{}/{}", pokemon.current_hp, pokemon.base.hp),
             types,
-            item: pokemon.item.as_ref().map(|(_, item)| item.name.to_ascii_uppercase()).unwrap_or("NONE".to_owned()),
+            item: pokemon.item.map(|item| item.name.to_ascii_uppercase()).unwrap_or("NONE".to_owned()),
             health_width: game::gui::health_bar::HealthBar::get_hp_width(pokemon.current_hp, pokemon.base.hp),
             texture: pokemon_texture(&pokemon.pokemon.data.id, Icon),
         }

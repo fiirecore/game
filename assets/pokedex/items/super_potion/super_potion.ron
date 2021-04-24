@@ -1,14 +1,13 @@
 (
     id: "super_potion",
-    item: (
-        name: "Super Potion",
-        description: [
-            "Heals a pokemon for 50 HP."
+    name: "Super Potion",
+    description: [
+        "Heals a pokemon for 50 HP."
+    ],
+    script: (
+        consume: true,
+        actions: [
+            HealPokemon(50),
         ],
-        script: (
-            actions: [
-                HealPokemon(50),
-            ],
-        ),
-    )
+    ),
 )

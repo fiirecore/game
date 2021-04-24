@@ -5,6 +5,7 @@ use game::{
     macroquad::prelude::Vec2
 };
 
+use crate::pokemon::BattleMoveType;
 use crate::{
     Battle,
     pokemon::BattleMoveStatus,
@@ -73,32 +74,12 @@ impl FightPanel {
 
             // Despawn the panel, set the text for the battle text, and spawn the battle text.
 
-            if let Some(player_move) = BattleMoveStatus::new(battle.player.active_mut().moves[self.move_panel.cursor].use_move()) {
+            if let Some(pokemon_move) = battle.player.active_mut().moves.get_mut(self.move_panel.cursor).map(|instance| instance.use_move()).flatten() {
+                self.despawn();
 
-                self.despawn();        
+                battle.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::Move(pokemon_move)));
 
-                if self.move_panel.cursor < battle.player.active().moves.len() {
-                    battle.player.next_move = Some(player_move);
-                }
-    
-                let index = crate::BATTLE_RANDOM.gen_range(0..battle.opponent.active().moves.len() as u32) as usize;
-                battle.opponent.next_move = BattleMoveStatus::new(battle.opponent.active_mut().moves[index].use_move());
-                
-                text.reset_text();
-    
-                let player = battle.player.active();
-                let opponent = battle.opponent.active();
-    
-                text.add_moves(player.name(), &battle.player.next_move.as_ref().unwrap().pokemon_move.name);
-                text.add_moves(opponent.name(), &battle.opponent.next_move.as_ref().unwrap().pokemon_move.name);
-            
-                if player.base.speed < opponent.base.speed {
-                    if let Some(messages) = text.text.messages.as_mut() {
-                        messages.swap(0, 1);
-                    }
-                }
-    
-                text.text.spawn();
+                text.run(battle);
 
             }
             
