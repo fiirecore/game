@@ -19,7 +19,7 @@ pub struct DynamicText {
 
 	counter: f32,
 	
-	pub can_continue: bool,
+	can_continue: bool,
 	finish_click: bool,
 	timer: Timer,
 
@@ -167,6 +167,10 @@ impl DynamicText {
 
 	pub fn current_message(&self) -> usize {
 		self.current_message
+	}
+
+	pub fn can_continue(&self) -> bool {
+		self.can_continue
 	}
 
 }

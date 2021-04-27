@@ -1,5 +1,3 @@
-#[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
 extern crate firecore_game as game;
 extern crate firecore_world as world;
 extern crate firecore_battle as battle;

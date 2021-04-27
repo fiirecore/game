@@ -1,3 +1,4 @@
+use firecore_pokedex::pokemon::Health;
 use firecore_util::{Entity, Reset};
 use macroquad::color_u8;
 use macroquad::prelude::Color;
@@ -7,8 +8,8 @@ pub struct HealthBar {
 	
 	alive: bool,
 
-	pub pos: Vec2,
-	pub panel: Vec2,
+	origin: Vec2,
+	pub offset: Vec2,
 
 	width: f32,
 	gap: f32,
@@ -22,13 +23,13 @@ impl HealthBar {
 	pub const UPPER_COLOR: Color = color_u8!(88, 208, 128, 255);
 	pub const LOWER_COLOR: Color = color_u8!(112, 248, 168, 255);
 	
-	pub fn new(pos: Vec2, panel: Vec2) -> HealthBar {
+	pub fn new(origin: Vec2, offset: Vec2) -> HealthBar {
 		HealthBar {
 			
-			alive: true,
+			alive: false,
 
-			panel,
-			pos,
+			origin,
+			offset,
 
 			width: Self::WIDTH,
 			gap: 0.0,
@@ -36,11 +37,11 @@ impl HealthBar {
 		}
 	}
 
-	pub fn get_hp_width(current: u16, max: u16) -> f32 {
+	pub fn get_hp_width(current: Health, max: Health) -> f32 {
 		current as f32 * Self::WIDTH / max as f32
 	}
 	
-	pub fn update_bar(&mut self, new_pokemon: bool, current: u16, max: u16) {
+	pub fn update_bar(&mut self, new_pokemon: bool, current: Health, max: Health) {
 		
 		let new = Self::get_hp_width(current, max);
 		self.gap = if new_pokemon {
@@ -71,9 +72,12 @@ impl HealthBar {
 		}
 	}
 
-	pub fn render(&self, y_offset: f32) {
-		draw_rectangle(self.pos.x + self.panel.x, self.pos.y + self.panel.y + y_offset, self.width + self.gap, 1.0, Self::UPPER_COLOR);
-		draw_rectangle(self.pos.x + self.panel.x, self.pos.y + self.panel.y + 1.0 + y_offset, self.width + self.gap, 2.0, Self::LOWER_COLOR);
+	pub fn render(&self) {
+		let x = self.origin.x + self.offset.x;
+		let y = self.origin.y + self.offset.y;// + y_offset;
+		let w = self.width + self.gap;
+		draw_rectangle(x, y, w, 1.0, Self::UPPER_COLOR);
+		draw_rectangle(x, y + 1.0, w, 2.0, Self::LOWER_COLOR);
 	}
 
 }

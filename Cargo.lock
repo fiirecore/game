@@ -303,7 +303,7 @@ dependencies = [
 [[package]]
 name = "dex-builder"
 version = "0.4.0-beta.3"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#6c3ccd0754454f44fe00a0f9435a09bf756fcaea"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#ed271e6da58529b02a8fe2f8e839b18fcf67f58b"
 dependencies = [
  "firecore-pokedex",
  "postcard",
@@ -429,7 +429,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.4.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#6c3ccd0754454f44fe00a0f9435a09bf756fcaea"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#ed271e6da58529b02a8fe2f8e839b18fcf67f58b"
 dependencies = [
  "firecore-util",
  "serde",
@@ -494,9 +494,9 @@ dependencies = [
 
 [[package]]
 name = "flume"
-version = "0.10.4"
+version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11fce69af4d4582ea989e6adfc5c9b81fd2071ff89234e5c14675c82a85217df"
+checksum = "fa9d66b91e902db43baefd8e40c8678ce29db2cf1d88ebd715174368d5fe70a9"
 dependencies = [
  "futures-core",
  "futures-sink",
@@ -716,9 +716,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.93"
+version = "0.2.94"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9385f66bf6105b241aa65a61cb923ef20efc665cb9f9bb50ac2f0c4b7f378d41"
+checksum = "18794a8ad5b29321f790b55d93dfba91e125cb1a9edbd4f8e3150acc771c1a5e"
 
 [[package]]
 name = "libloading"

@@ -202,28 +202,18 @@ impl Scene for GameScene {
 	}
 	
 	fn render(&self) {
-		if !self.battling {
+		if self.party_gui.is_alive() {
+			self.party_gui.render();
+		} else if self.bag_gui.is_alive() {
+			self.bag_gui.render();
+		} else if !self.battling {
 			self.world_manager.render();
-			
-			// if let Some(server) = &self.server {
-			// 	if let Some(selfid) = server.id {
-			// 		for (id, player) in &self.players {
-			// 			if selfid.ne(id) {
-			// 				let x = ((player.pos.coords.x + self.world_manager.render_coords.offset.x) << 4) as f32 - self.world_manager.render_coords.focus.x + player.pos.offset.x;
-    		// 				let y = ((player.pos.coords.y - 1 + self.world_manager.render_coords.offset.y) << 4) as f32 - self.world_manager.render_coords.focus.y + player.pos.offset.y;
-			// 				game::macroquad::prelude::draw_rectangle(x, y, 16.0, 32.0, game::macroquad::prelude::RED);
-			// 			}
-			// 		}
-			// 	}
-			// }
 		} else {
 			if self.battle_manager.world_active() {
 				self.world_manager.render();
 			}
 			self.battle_manager.render();
 		}
-		self.bag_gui.render();
-		self.party_gui.render();
 	}
 	
 	fn input(&mut self, delta: f32) {

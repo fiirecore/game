@@ -86,7 +86,7 @@ impl BattleOptions {
                     self.spawn_fight_panel = true;
                 },
                 1 => {
-                    bag_gui.spawn(true);
+                    bag_gui.spawn(false);
                 },
                 2 => {
                     battle_party_gui(party_gui, &battle.player);

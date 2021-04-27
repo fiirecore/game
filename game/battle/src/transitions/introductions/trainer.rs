@@ -23,8 +23,6 @@ use crate::{
     }
 };
 
-pub const FINAL_TRAINER_OFFSET: f32 = 126.0;
-
 pub struct TrainerBattleIntroduction {
 
     introduction: BasicBattleIntroduction,
@@ -36,6 +34,8 @@ pub struct TrainerBattleIntroduction {
 }
 
 impl TrainerBattleIntroduction {
+
+    const FINAL_TRAINER_OFFSET: f32 = 126.0;
 
     pub fn new(panel: Vec2) -> Self {
         Self {
@@ -93,7 +93,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
     fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
         self.introduction.update_gui(battle, battle_gui, delta);
-        if self.introduction.text.can_continue {
+        if self.introduction.text.can_continue() {
             if let Some(messages) = self.introduction.text.messages.as_ref() {
                 if self.introduction.text.current_message() == messages.len() - 2 {
                     self.leaving = true;
@@ -106,7 +106,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
     }
 
     fn render_offset(&self, battle: &Battle, offset: f32) {
-        if self.offset < FINAL_TRAINER_OFFSET {
+        if self.offset < Self::FINAL_TRAINER_OFFSET {
             draw_o_bottom(self.texture, 144.0 - offset + self.offset, 74.0);
         } else {
             draw_bottom(battle.opponent.active_texture(), 144.0 - offset, 74.0);
@@ -129,7 +129,7 @@ impl BattleTransition for TrainerBattleIntroduction {
 
     fn update(&mut self, delta: f32) {
         self.introduction.update(delta);
-        if self.leaving && self.offset < FINAL_TRAINER_OFFSET {
+        if self.leaving && self.offset < Self::FINAL_TRAINER_OFFSET {
             self.offset += 300.0 * delta;
         }
     }

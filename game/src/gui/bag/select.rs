@@ -1,20 +1,18 @@
 use firecore_input::{pressed, Control};
 use firecore_util::text::TextColor;
-use macroquad::prelude::Texture2D;
-
-use crate::graphics::byte_texture;
-use crate::graphics::draw;
 use crate::graphics::draw_cursor;
 use crate::graphics::draw_text_left;
+use crate::gui::panel::Panel;
 
 pub struct BagSelectMenu {
 
     pub alive: bool,
 
-    background: Texture2D,
+    // background: Texture2D,
+    background: Panel,
 
-    pub world: [&'static str; 4],
-    pub battle: [&'static str; 2],
+    pub world: [&'static str; Self::WORLD_LEN],
+    pub battle: [&'static str; Self::BATTLE_LEN],
 
     cursor: usize,
 
@@ -30,19 +28,21 @@ pub enum BagSelectAction {
 
 impl BagSelectMenu {
 
+    const WORLD_LEN: usize = 3;
+    const BATTLE_LEN: usize = 1;
+
     pub fn new() -> Self {
         Self {
             alive: false,
-            background: byte_texture(include_bytes!("../../../assets/gui/party/select.png")),
+            background: Panel::new(),
+            // background: byte_texture(include_bytes!("../../../assets/gui/party/select.png")),
             world: [
                 "Use",
                 "Give",
                 "Toss",
-                "Cancel",
             ],
             battle: [
                 "Use",
-                "Cancel",
             ],
             cursor: 0,
             is_world: true,
@@ -61,28 +61,22 @@ impl BagSelectMenu {
         if pressed(Control::Up) && self.cursor > 0 {
             self.cursor -= 1;
         }
-        if pressed(Control::Down) && self.cursor < 3 {
+        if pressed(Control::Down) && self.cursor < if self.is_world { Self::WORLD_LEN } else { Self::BATTLE_LEN } {
             self.cursor += 1;
         }
         if pressed(Control::A) {
-            if self.is_world {
+            if self.cursor == if self.is_world { Self::WORLD_LEN } else { Self::BATTLE_LEN } {
+                self.alive = false;
+                None
+            } else if self.is_world {
                 match self.cursor {
                     0 => Some(BagSelectAction::Use),
                     1 => Some(BagSelectAction::Give),
-                    2 => Some(BagSelectAction::Toss),
-                    3 => {
-                        self.alive = false;
-                        None
-                    },
                     _ => None,
                 }
             } else {
                 match self.cursor {
                     0 => Some(BagSelectAction::Use),
-                    1 => {
-                        self.alive = false;
-                        None
-                    },
                     _ => None,
                 }
             }            
@@ -93,11 +87,15 @@ impl BagSelectMenu {
 
     pub fn render(&self) {
         if self.alive {
-            draw(self.background, 146.0, 83.0);
+            let h = if self.is_world { 78.0 } else { 46.0 };
+            self.background.render(146.0, util::HEIGHT - h, 94.0, h);
+            let len = if self.is_world { self.world.len() } else { self.battle.len() };
             for (index, option) in if self.is_world { self.world.iter() } else { self.battle.iter() }.enumerate() {
-                draw_text_left(1, option, TextColor::Black, 161.0, 94.0 + (index << 4) as f32);
+                let index = len - index;
+                draw_text_left(1, option, TextColor::Black, 161.0, 140.0 - (index << 4) as f32);
             }
-            draw_cursor(154.0, 94.0 + (self.cursor << 4) as f32);
+            draw_text_left(1, "Cancel", TextColor::Black, 161.0, 140.0);
+            draw_cursor(154.0, ((util::HEIGHT + 12.0) - h) + (self.cursor << 4) as f32);
         }
     }
 

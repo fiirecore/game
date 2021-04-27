@@ -1,13 +1,15 @@
 use firecore_util::text::Message;
 use macroquad::color_u8;
-use macroquad::prelude::{Texture2D, Image, load_texture_from_image, set_texture_filter, FilterMode::Nearest, draw_texture, Color, WHITE};
+use macroquad::prelude::{Texture2D, Image, load_texture_from_image, set_texture_filter, FilterMode::Nearest, draw_texture, Color, WHITE as MQWHITE};
 
 use text::IntoMQColor;
 use text::TEXT_RENDERER;
 
 pub mod text;
 
-pub const DRAW_COLOR: Color = WHITE;
+pub const WHITE: Color = color_u8!(248, 248, 248, 255);
+
+pub const DRAW_COLOR: Color = MQWHITE;
 
 pub fn byte_texture(bytes: &[u8]) -> Texture2D {
 	image_texture(&Image::from_file_with_format(bytes, None))

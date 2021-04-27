@@ -58,6 +58,9 @@ impl PartySelectMenu {
             if pressed(Control::Down) && self.cursor < if is_world { self.world.len() } else { self.battle.len() } {
                 self.cursor += 1;
             }
+            if pressed(Control::B) {
+                self.alive = false;
+            }
             if pressed(Control::A) {
                 match is_world {
                     true => {
@@ -84,7 +87,6 @@ impl PartySelectMenu {
                         }
                     }
                 }
-                
             } else {
                 None
             }

@@ -58,8 +58,8 @@ impl BattleGui {
 
 			panel: BattlePanel::new(panel),
 
-			player: PlayerPokemonGui::new(127.0, 76.0),
-			opponent: OpponentPokemonGui::new(14.0, 18.0),
+			player: PlayerPokemonGui::new(Vec2::new(127.0, 76.0)),
+			opponent: OpponentPokemonGui::new(Vec2::new(14.0, 18.0)),
 
 			battle_text: BattleText::new(),
 

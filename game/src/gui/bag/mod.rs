@@ -19,12 +19,11 @@ use crate::graphics::{
     draw_text_right,
     draw_cursor,
 };
-use crate::textures::pokemon_texture;
 
 use self::select::BagSelectAction;
 
 use super::party::PartyGui;
-use super::party::PartyGuiData;
+use super::pokemon::PokemonDisplay;
 
 pub mod select;
 
@@ -93,33 +92,8 @@ impl BagGui {
                     },
                     BagSelectAction::Give => {
                         self.selected = BagOption::Selected(self.cursor);
-                        if let Some(mut saves) = get_mut::<PlayerSaves>() {
-                            let save = saves.get_mut();
-                            party_gui.spawn(save.party.iter().map(|saved| pokedex::pokedex().get(&saved.id).map(|pokemon| -> PartyGuiData {
-
-                                let mut types = Vec::with_capacity(if pokemon.data.secondary_type.is_some() { 2 } else { 1 });
-
-                                types.push(super::party::pokemon_type_display(pokemon.data.primary_type));
-            
-                                if let Some(secondary) = pokemon.data.secondary_type {
-                                    types.push(super::party::pokemon_type_display(secondary));
-                                }
-
-                                let max = firecore_pokedex::pokemon::instance::calculate_hp(pokemon.base.hp, saved.data.ivs.hp, saved.data.evs.hp, saved.data.level);
-                                let current = saved.current_hp.unwrap_or(max);
-
-                                PartyGuiData {
-                                    texture: pokemon_texture(&saved.id, firecore_pokedex::pokemon::texture::PokemonTexture::Icon),
-                                    id: saved.id,
-                                    name: saved.data.nickname.as_ref().map(|nick| nick.clone()).unwrap_or(pokemon.data.name.to_ascii_uppercase()),
-                                    level: format!("Lv{}", saved.data.level),
-                                    hp: format!("{}/{}", current, max),
-                                    types,
-                                    item: saved.item.as_ref().map(|id| pokedex::itemdex().get(id)).flatten().map(|item| item.name.to_ascii_uppercase()).unwrap_or("NONE".to_owned()),
-                                    health_width: super::health_bar::HealthBar::get_hp_width(current, max),
-
-                                }
-                            })).flatten().collect());
+                        if let Some(saves) = get::<PlayerSaves>() {
+                            party_gui.spawn(saves.get().party.iter().map(|saved| PokemonDisplay::new_saved(saved)).flatten().collect(), None);
                         }
                         self.select.alive = false;
                     }
@@ -155,7 +129,7 @@ impl BagGui {
                 if let Some(pokemon) = party_gui.selected.take() {
                     if let Some(mut saves) = get_mut::<PlayerSaves>() {
                         let save = saves.get_mut();
-                        if let Some(pokemon) = save.party.get_mut(pokemon as usize) {
+                        if let Some(pokemon) = save.party.get_mut(pokemon) {
                             if let BagOption::Selected(selected) = self.selected {
                                 let mut push_item = None;
                                 if let Some(instance) = self.items.get_mut(selected) {
@@ -209,24 +183,22 @@ impl BagGui {
     }
 
     pub fn render(&self) {
-        if self.alive {
-            draw(self.background, 0.0, 0.0);
-            for (index, item) in self.items.iter().enumerate() {
-                let y = 11.0 + (index << 4) as f32;
-                draw_text_left(1, &item.item.name, TextColor::Black, 98.0, y);
-                draw_text_left(1, "x", TextColor::Black, 200.0, y);
-                draw_text_right(1, &item.count_string, TextColor::Black, 221.0, y);
-            }
-            draw_text_left(1, "Cancel", TextColor::Black, 98.0, 11.0 + (self.items.len() << 4) as f32);
-            if let Some(item) = self.items.get(self.cursor) {
-                draw_o(item_texture(&item.id), 8.0, 125.0);
-                for (index, line) in item.item.description.iter().enumerate() {
-                    draw_text_left(1, line, TextColor::White, 41.0, 117.0 + (index * 14) as f32);
-                }
-            }
-            draw_cursor(91.0, 13.0 + (self.cursor << 4) as f32);
-            self.select.render();
+        draw(self.background, 0.0, 0.0);
+        for (index, item) in self.items.iter().enumerate() {
+            let y = 11.0 + (index << 4) as f32;
+            draw_text_left(1, &item.item.name, TextColor::Black, 98.0, y);
+            draw_text_left(1, "x", TextColor::Black, 200.0, y);
+            draw_text_right(1, &item.count_string, TextColor::Black, 221.0, y);
         }
+        draw_text_left(1, "Cancel", TextColor::Black, 98.0, 11.0 + (self.items.len() << 4) as f32);
+        if let Some(item) = self.items.get(self.cursor) {
+            draw_o(item_texture(&item.id), 8.0, 125.0);
+            for (index, line) in item.item.description.iter().enumerate() {
+                draw_text_left(1, line, TextColor::White, 41.0, 117.0 + (index * 14) as f32);
+            }
+        }
+        draw_cursor(91.0, 13.0 + (self.cursor << 4) as f32);
+        self.select.render();
     }
 
     pub fn take_selected_despawn(&mut self) -> Option<ItemRef> {

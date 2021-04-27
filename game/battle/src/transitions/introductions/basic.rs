@@ -131,10 +131,9 @@ impl BattleIntroduction for BasicBattleIntroduction {
     }
 
     fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
-        if self.text.can_continue {
+        if self.text.can_continue() {
             if let Some(messages) = self.text.messages.as_ref() {
                 if self.text.current_message() >= messages.len() - 2 && !battle_gui.opponent.is_alive() {
-                    battle_gui.opponent.reset();
                     battle_gui.opponent.spawn();
                     if let Err(err) = play_sound(Sound::variant("Cry", Some(battle.opponent.active().pokemon.data.id))) {
                         warn!("Could not play opponent cry with error {}", err);
@@ -142,27 +141,18 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 }
             }            
         }
+
         if self.counter >= 104.0 && !battle_gui.player.is_alive() {
-            battle_gui.player.reset();
             battle_gui.player.spawn();
             if let Err(err) = play_sound(Sound::variant("Cry", Some(battle.player.active().pokemon.data.id))) {
                 warn!("Could not play opponent cry with error {}", err);
             }
         }
-        if battle_gui.opponent.is_alive() {
-            if battle_gui.opponent.pos.x + 5.0 < battle_gui.opponent.orig_x {
-                battle_gui.opponent.offset_position(240.0 * delta, 0.0);
-            } else if battle_gui.opponent.pos.x < battle_gui.opponent.orig_x {
-                battle_gui.opponent.update_position(battle_gui.opponent.orig_x, battle_gui.opponent.pos.y);
-            }
-        }
-        if battle_gui.player.is_alive() {
-            if battle_gui.player.pos.x - 5.0 > battle_gui.player.orig_x {
-                battle_gui.player.offset_position(-240.0 * delta, 0.0);
-            } else {
-                battle_gui.player.update_position(battle_gui.player.orig_x, battle_gui.player.pos.y);
-                self.finished_panel = true;
-            }
+
+        battle_gui.opponent.offset(delta);
+        
+        if battle_gui.player.offset(delta) {
+            self.finished_panel = true;
         }
     }
 

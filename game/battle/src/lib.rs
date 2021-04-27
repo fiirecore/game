@@ -76,7 +76,7 @@ impl Battle {
 		if !(
 			player.is_empty() || 
 			data.party.is_empty() ||
-			// Checks if player has any pokemon in party that aren' fainted (temporary)
+			// Checks if player has any pokemon in party that aren't fainted (temporary)
 			player.iter().filter(|pokemon| pokemon.current_hp.map(|hp| hp != 0).unwrap_or(true)).next().is_none()
 		) {
 			Some(
@@ -97,18 +97,20 @@ impl Battle {
 
 	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 		
+		// Checks if the player wants to run, and ends the battle if able to do so.
+
 		if self.try_run {
 			if self.battle_type == BattleType::Wild {
 				closer.spawn_closer(self);
 			}
 		}
 
-		// 
+		// Checks if the player is using an item when the Bag GUI is alive and queues it if they do, and then despawns the Bag GUI.
 
 		if bag_gui.is_alive() {
 			if let Some(selected) = bag_gui.take_selected_despawn() {
+
 				self.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::UseItem(selected)));
-				// self.player.active_mut().use_item(selected);
 				battle_gui.battle_text.run(self);
 
 				battle_gui.update_gui(self, false, false);
@@ -124,16 +126,19 @@ impl Battle {
 
 				if self.player.active().is_faint() {
 
-					self.player.select_pokemon(selected as usize);
+					// If the player pokemon has fainted, switch to a new one without queuing up a move.
 
-					// battle_gui.player_pokemon_gui.exp_bar.update_exp(self.player.active(), true); // level up is true to reset the xp display width
+					self.player.select_pokemon(selected);
+
 					battle_gui.update_gui(&self, true, false);
 	
 					battle_gui.panel.start();
 
 				} else {
 
-					self.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::Switch(selected as usize)));
+					// If the player switches pokemon while the current one has not fainted, queue it as a move so the opponent also moves
+
+					self.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::Switch(selected)));
 					battle_gui.battle_text.run(self);
 
 				}
@@ -166,7 +171,7 @@ impl Battle {
 
 					self.player_move(battle_gui);
 
-					battle_gui.battle_text.on_move(self.opponent.active(), &mut battle_gui.opponent);
+					battle_gui.battle_text.on_move(self.opponent.active(), &mut battle_gui.opponent, false);
 
 					// Handle opponent fainting to player's move
 
@@ -191,12 +196,18 @@ impl Battle {
 							self.player.pokemon[self.player.active].pokemon.data.experience -= max_exp;
 							let player = self.player.active_mut();
 
+							// Get the moves the pokemon learns at the level it just gained.
+
 							let mut moves = player.moves_at_level();
+
+							// Add moves if the player's pokemon does not have a full set of moves;
 
 							while player.moves.len() < 4 && !moves.is_empty() {
 								info!("{} learned {}!", player.name(), moves[0].name);
 								player.moves.push(MoveInstance::new(moves.remove(0)));
 							}
+							
+							// If the player's pokemon has a full move set, spawn the level up move GUI.
 
 							if !moves.is_empty() {
 								battle_gui.level_up.setup(player, moves);
@@ -204,12 +215,8 @@ impl Battle {
 								battle_gui.level_up.spawn();
 							}
 
-							
-
-							// info!("{} levelled up to Lv. {}", &player.pokemon.data.name, player.level);
 							Some(player.data.level)
 						} else {
-							// info!("{} gained {} exp. {} is needed to level up!", self.player.active().pokemon.data.name, gain, max_exp - self.player.active().exp);
 							None
 						};
 
@@ -221,25 +228,19 @@ impl Battle {
 
 					}
 
-					// make sure the actions do not repeat
-
-					// self.player.next_move = None; // queued = false;
-
 				} else
 
 				// Perform the opponent's move
 
 				if battle_gui.battle_text.perform_opponent(self) {
 
+					// Calculate move stuff
+
 					self.opponent_move();
 
 					// Update the player's health bar and add faint text if the player has fainted
 
-					battle_gui.battle_text.on_move(self.player.active(), &mut battle_gui.player);
-
-					// make sure the actions do not repeat
-
-					// self.opponent.next_move = None; // queued = false;
+					battle_gui.battle_text.on_move(self.player.active(), &mut battle_gui.player, true);
 
 				} else
 
@@ -260,8 +261,8 @@ impl Battle {
 
 				// if a pokemon has fainted, remove them from screen gradually using BattlePokemonTextureHandler (bad name)
 
-				if let Some(faint_index) = battle_gui.battle_text.faint_index {
-					if battle_gui.battle_text.text.can_continue && battle_gui.battle_text.text.current_message() == faint_index {
+				if let Some(faint_index) = battle_gui.battle_text.faint.as_ref().map(|text| text.pos) {
+					if battle_gui.battle_text.text.can_continue() && battle_gui.battle_text.text.current_message() == faint_index {
 						if self.player.active().is_faint() {
 
 							if !self.player.renderer.is_finished() {
@@ -278,8 +279,6 @@ impl Battle {
 					}
 				}
 				
-			// } else if battle_gui.level_up.wants_to_spawn {
-			// 	battle_gui.level_up.spawn();
 			} else {
 
 				// Handle player fainting
@@ -454,7 +453,7 @@ impl Battle {
 					battle_gui.update_gui(&self, true, false);
 				}
 			    BattleMoveType::Switch(selected) => {
-					self.player.select_pokemon(selected as usize);
+					self.player.select_pokemon(selected);
 					battle_gui.update_gui(&self, true, false);
 				}
 			}
@@ -476,7 +475,7 @@ impl Battle {
 	}
 
 	pub fn post_move(&mut self) {
-		// flicker here
+		// flicker here <-- what does this mean?
 		self.player.active_mut().run_persistent_moves();
 		self.opponent.active_mut().run_persistent_moves();
 		self.post_run = false;

@@ -1,24 +1,24 @@
 use game::{
-	util::{Entity, text::TextColor},
+	util::{Entity, Reset, text::TextColor},
 	pokedex::pokemon::instance::PokemonInstance,
 	macroquad::prelude::{Vec2, Texture2D},
-	gui::health_bar::HealthBar,
+	gui::health::HealthBar,
 	graphics::{byte_texture, draw, draw_text_left, draw_text_right},
 };
 
+use super::{PokemonGui, PokemonGuiOffset};
 use crate::gui::exp_bar::ExperienceBar;
-use super::PokemonGui;
 
 pub struct PlayerPokemonGui {
 
 	alive: bool,
 
-	pub pos: Vec2,
+	origin: Vec2,
+	offset: PokemonGuiOffset,
+	bounce: f32,
 
-	pub orig_x: f32,
-	y_offset: f32,
+	background: Texture2D,
 
-	panel: Texture2D,
 	name: String,
 	level: String,
 	health_text: String,
@@ -29,33 +29,31 @@ pub struct PlayerPokemonGui {
 
 impl PlayerPokemonGui {
 
-	pub fn new(x: f32, y: f32) -> PlayerPokemonGui {
+	const OFFSET: Vec2 = game::macroquad::prelude::const_vec2!([super::OFFSET, 0.0]);
 
-		let ppp_x = x + super::OFFSET;
-
-		let panel = Vec2::new(ppp_x, y);
+	pub fn new(origin: Vec2) -> PlayerPokemonGui {
 
 		PlayerPokemonGui {
 
 			alive: false,
 
-			pos: panel,
+			origin,
+			offset: PokemonGuiOffset::new(),
+			bounce: 0.0,
 
-			orig_x: x,
-			y_offset: 0.0,
-
-			panel: byte_texture(include_bytes!("../../../assets/gui/player_pokemon.png")),
-			name: String::from("Player"),
-			level: String::from("Lv"),
-			health_text: String::from("/"),
-			health_bar: HealthBar::new(Vec2::new(super::HEALTH_X_OFFSET, super::HEALTH_Y_OFFSET), panel),
-			exp_bar: ExperienceBar::new(Vec2::new(32.0, 33.0), panel),
+			background: byte_texture(include_bytes!("../../../assets/gui/player_pokemon.png")),
+			name: String::new(),
+			level: String::new(),
+			health_text: String::new(),
+			health_bar: HealthBar::new(origin + Vec2::new(48.0, super::HEALTH_Y_OFFSET), Self::OFFSET),
+			exp_bar: ExperienceBar::new(origin + Vec2::new(32.0, 33.0), Self::OFFSET),
 
 		}
 	}
 
 	pub fn vertical_offset(&mut self, offset: f32) {
-		self.y_offset = offset;
+		self.bounce = offset;
+		self.health_bar.offset.y = offset;
 	}
 
 }
@@ -65,13 +63,13 @@ impl Entity for PlayerPokemonGui {
     fn spawn(&mut self) {
 		self.alive = true;
 		self.health_bar.spawn();
-		self.reset();
+		self.offset.reset();
+		self.bounce = 0.0;
     }
 
     fn despawn(&mut self) {
 		self.alive = false;
 		self.health_bar.despawn();
-		self.reset();
     }
 
     fn is_alive(&self) -> bool {
@@ -80,10 +78,6 @@ impl Entity for PlayerPokemonGui {
 }
 
 impl PokemonGui for PlayerPokemonGui {
-
-	fn reset(&mut self) {
-		self.update_position(self.orig_x + super::OFFSET, self.pos.y);
-	}
 
 	fn update(&mut self, delta: f32) {
 		if self.alive {
@@ -94,12 +88,16 @@ impl PokemonGui for PlayerPokemonGui {
 
 	fn render(&self) {
 		if self.alive {
-			draw(self.panel, self.pos.x, self.pos.y + self.y_offset);
-			draw_text_left(0, &self.name, TextColor::Black, self.pos.x + 17.0, self.pos.y + 2.0 + self.y_offset);
-			draw_text_right(0, &self.level, TextColor::Black, self.pos.x + 95.0, self.pos.y + 2.0 + self.y_offset);
-			draw_text_right(0, &self.health_text, TextColor::Black, self.pos.x + 95.0, self.pos.y + 20.0 + self.y_offset);
-			self.health_bar.render(self.y_offset);
-			self.exp_bar.render(self.y_offset);
+			let x = self.origin.x + self.offset.x;
+			let y = self.origin.y + self.bounce;
+			draw(self.background, x, y);
+			let x2 = x + 95.0;
+			let y2 = y + 2.0;
+			draw_text_left(0, &self.name, TextColor::Black, x + 17.0, y2);
+			draw_text_right(0, &self.level, TextColor::Black, x2, y2);
+			draw_text_right(0, &self.health_text, TextColor::Black, x2, y + 20.0);
+			self.health_bar.render();
+			self.exp_bar.render(y);
 		}		
 	}
 
@@ -114,17 +112,14 @@ impl PokemonGui for PlayerPokemonGui {
 
 	}
 
-	fn update_position(&mut self, x: f32, y: f32) {
-		self.pos.x = x;
-		self.pos.y = y;
-		self.health_bar.panel.x = x;
-		self.health_bar.panel.y = y;
-		self.exp_bar.panel.x = x;
-		self.exp_bar.panel.y = y;
-	}
-
-	fn offset_position(&mut self, x: f32, y: f32) {
-		self.update_position(self.pos.x + x, self.pos.y + y);
+	fn offset(&mut self, delta: f32) -> bool {
+		if self.alive {
+			let done = self.offset.update(delta);
+			self.health_bar.offset.x = self.offset.x;
+			done
+		} else {
+			false
+		}
 	}
 
 }
