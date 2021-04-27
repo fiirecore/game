@@ -11,16 +11,15 @@ use game::{
 		draw_rectangle_lines,
 		warn,
 	},
-	scene::{Scenes, SceneState},
 };
 
-use crate::scene::Scene;
+use super::{MenuState, MenuStateAction, MenuStates};
 
 const GAP: f32 = 35.0;
 
-pub struct MainMenuScene {
+pub struct MainMenuState {
 
-	state: SceneState,
+	action: Option<MenuStateAction>,
 
 	button: Texture2D,
 	cursor: usize,
@@ -32,7 +31,7 @@ pub struct MainMenuScene {
 
 }
 
-impl MainMenuScene {
+impl MainMenuState {
 
 	fn update_saves(&mut self, saves: &PlayerSaves) {
 		self.saves = saves.name_list().into_iter().map(|name| name.clone()).collect();
@@ -42,11 +41,11 @@ impl MainMenuScene {
 
 // have normal main menu + video settings + controls + exit
 
-impl Scene for MainMenuScene {
+impl MenuState for MainMenuState {
 
-	fn new() -> MainMenuScene {
-		MainMenuScene {
-			state: SceneState::Continue,
+	fn new() -> Self {
+		Self {
+			action: None,
 			button: byte_texture(include_bytes!("../../../build/assets/scenes/menu/button.png")),
 			cursor: 0,
 			saves: Vec::new(),
@@ -99,7 +98,7 @@ impl Scene for MainMenuScene {
 	fn input(&mut self, _delta: f32) {
 		if pressed(Control::A) {
 			if self.cursor == self.saves.len() {
-				self.state = SceneState::Scene(Scenes::CharacterCreation);
+				self.action = Some(MenuStateAction::Goto(MenuStates::CharacterCreation));
 				// saves.select_new(&firecore_data::player::default_name());
 			} else if self.cursor == self.saves.len() + 1 {
 				self.delete = !self.delete;
@@ -112,7 +111,7 @@ impl Scene for MainMenuScene {
 						};
 					} else {
 						saves.select(self.cursor);
-						self.state = SceneState::Scene(Scenes::Game);
+						self.action = Some(MenuStateAction::StartGame);
 					}					
 				} else {
 					warn!("Could not get player save data!");
@@ -122,7 +121,7 @@ impl Scene for MainMenuScene {
 		}
 
 		if pressed(Control::B) {
-			self.state = SceneState::Scene(Scenes::Title);
+			self.action = Some(MenuStateAction::Goto(MenuStates::Title));
 		}
 
 		if pressed(Control::Up) && self.cursor > 0 {
@@ -136,11 +135,11 @@ impl Scene for MainMenuScene {
 	}
 	
 	fn quit(&mut self) {
-		self.state = SceneState::Continue;
+		
 	}
 	
-	fn state(&self) -> SceneState {
-		self.state
+	fn action(&mut self) -> &mut Option<MenuStateAction> {
+		&mut self.action
 	}
 	
 }

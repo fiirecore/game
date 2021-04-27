@@ -3,8 +3,8 @@ use game::{
     input::{pressed, Control},
     macroquad::prelude::{Vec2, Texture2D},
     gui::{party::PartyGui, bag::BagGui},
-    scene::{SceneState, Scenes},
-    graphics::{byte_texture, draw, draw_text_left, draw_cursor}
+    graphics::{byte_texture, draw, draw_text_left, draw_cursor},
+    state::GameStateAction,
 };
 
 pub struct StartMenu {
@@ -52,12 +52,13 @@ impl StartMenu {
         self.alive = !self.alive;
     }
 
-    pub fn input(&mut self, scene_state: &mut SceneState, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
+    pub fn input(&mut self, action: &mut Option<GameStateAction>, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 
         if pressed(Control::A) {
             match self.cursor {
                 0 => {
                     // Save
+                    #[deprecated(note = "change to function")]
                     firecore_game::data::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
                 },
                 1 => {
@@ -70,7 +71,7 @@ impl StartMenu {
                 },
                 3 => {
                     // Exit to Main Menu
-                    *scene_state = SceneState::Scene(Scenes::MainMenu);
+                    *action = Some(GameStateAction::ExitToMenu);
                     self.despawn();
                 },
                 4 => {

@@ -26,7 +26,7 @@ use game::{
         party::PartyGui,
         bag::BagGui,
     },
-    scene::SceneState,
+    state::GameStateAction,
 };
 
 use firecore_world_lib::{
@@ -267,7 +267,7 @@ impl WorldManager {
 		player_data.location.position = self.map_manager.player.position;
     }
 
-    pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PartyGui, bag_gui: &mut BagGui, scene_state: &mut SceneState) {
+    pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PartyGui, bag_gui: &mut BagGui, action: &mut Option<GameStateAction>) {
 
         if firecore_game::is_debug() {
             self.debug_input(battle_data)
@@ -280,7 +280,7 @@ impl WorldManager {
         if self.text_window.is_alive() {
             self.text_window.input();
         } else if self.start_menu.is_alive() {
-            self.start_menu.input(scene_state, party_gui, bag_gui);
+            self.start_menu.input(action, party_gui, bag_gui);
         } else {
 
             if self.map_manager.chunk_active {

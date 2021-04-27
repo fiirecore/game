@@ -21,6 +21,7 @@ use game::{
                 stop_coroutine,
                 wait_seconds,
             },
+            is_key_down,
             is_key_pressed,
             KeyCode,
             warn,
@@ -45,15 +46,14 @@ use game::{
     },
 };
 
-use scene::{
-    Scene,
+use state::{
     loading::{LOADING_FINISHED, load_coroutine},
-    manager::SceneManager,
+    manager::StateManager,
 };
 
 use std::sync::atomic::Ordering::Relaxed;
 
-pub mod scene;
+pub mod state;
 
 pub const TITLE: &str = "Pokemon FireRed";
 pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
@@ -62,7 +62,7 @@ pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub const DEFAULT_SCALE: f32 = 3.0;
 
-static mut SCENE_MANAGER: Option<SceneManager> = None;
+static mut STATE_MANAGER: Option<StateManager> = None;
 
 #[cfg(target_arch = "wasm32")]
 #[game::macroquad::main(settings)]
@@ -88,7 +88,7 @@ fn main() {
 
     info!("Quitting game...");
 
-    unsafe { SCENE_MANAGER.as_mut().unwrap().quit() };
+    unsafe { STATE_MANAGER.as_mut().unwrap().quit() };
 
 }
 
@@ -172,11 +172,11 @@ pub async fn start() {
 
     // Load scenes
    
-    unsafe { SCENE_MANAGER = Some(SceneManager::new()) };
+    unsafe { STATE_MANAGER = Some(StateManager::new()) };
 
-    let scene_manager = unsafe { SCENE_MANAGER.as_mut().unwrap() };
+    let state_manager = unsafe { STATE_MANAGER.as_mut().unwrap() };
 
-    scene_manager.load().await;
+    state_manager.load().await;
 
     info!("Finished loading assets!");
     LOADING_FINISHED.store(true, Relaxed);
@@ -199,22 +199,52 @@ pub async fn start() {
 
     info!("Starting game!");
 
-    scene_manager.on_start();
+    state_manager.on_start();
+
+    let mut paused = false;
 
     loop {
 
-        #[cfg(all(target_arch = "wasm32", feature = "audio"))]
-        firecore_audio::backend::quadsnd::music::MIXER.lock().frame();
+        if is_key_down(KeyCode::LeftControl) && is_key_pressed(KeyCode::P) {
+            paused = !paused;
+        }
 
-        scene_manager.input(get_frame_time());
+        if !paused {
+
+            #[cfg(all(target_arch = "wasm32", feature = "audio"))]
+            firecore_audio::backend::quadsnd::music::MIXER.lock().frame();
+
+            if is_key_down(KeyCode::LeftControl) || is_key_down(KeyCode::RightControl) {
+
+                // Toggle debug on key press
+
+                if is_key_pressed(KeyCode::O) {
+                    let debug = !game::DEBUG.load(Relaxed);
+                    game::DEBUG.store(debug, Relaxed);
+                    info!("Debug: {}", debug)
+                }
         
-        scene_manager.update(get_frame_time());
+                // Reload configuration on key press
+        
+                if is_key_pressed(KeyCode::P) {
+                    if let Some(mut config) = get_mut::<Configuration>() {
+                        if let Err(err) = game::data::reload(std::ops::DerefMut::deref_mut(&mut config)).await {
+                            warn!("Could not reload configuration with error {}", err);
+                        }
+                    }
+                }
 
+            }
+            
+            state_manager.input(get_frame_time());
+            
+            state_manager.update(get_frame_time());
 
+        }
+    
         clear_background(BLACK);
 
-        scene_manager.render();
-        // scene_manager.ui();
+        state_manager.render();
 
         // Render touchscreen controls if they are active
 
@@ -226,25 +256,7 @@ pub async fn start() {
             draw_touch_button(&touchscreen.left);
             draw_touch_button(&touchscreen.right);
         }
-
-        // Toggle debug on key press
-
-        if is_key_pressed(KeyCode::O) {
-            let debug = !game::DEBUG.load(Relaxed);
-            game::DEBUG.store(debug, Relaxed);
-            info!("Debug: {}", debug)
-        }
-
-        // Reload configuration on key press
-
-        if is_key_pressed(KeyCode::P) {
-            if let Some(mut config) = get_mut::<Configuration>() {
-                if let Err(err) = game::data::reload(std::ops::DerefMut::deref_mut(&mut config)).await {
-                    warn!("Could not reload configuration with error {}", err);
-                }
-            }
-        }
-
+    
         // Quit game if asked to
 
         if game::should_quit() {
@@ -255,7 +267,7 @@ pub async fn start() {
         next_frame().await;
     }
 
-    scene_manager.quit();
+    state_manager.quit();
 
 }
 

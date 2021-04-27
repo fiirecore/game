@@ -1,19 +1,19 @@
-use crate::scene::Scene;
 use game::{
 	data::{get_mut, player::PlayerSaves},
-	scene::{SceneState, Scenes},
 	macroquad::miniquad::date,
 };
 
-pub struct CharacterCreationScene {
-	state: SceneState,
+use super::{MenuState, MenuStateAction, MenuStates};
+
+pub struct CharacterCreationState {
+	action: Option<MenuStateAction>,
 }
 
-impl Scene for CharacterCreationScene {
+impl MenuState for CharacterCreationState {
 
 	fn new() -> Self {
 		Self {
-			state: SceneState::Continue,
+			action: None,
 		}
 	}
 	
@@ -23,7 +23,7 @@ impl Scene for CharacterCreationScene {
 		} else {
 			panic!("Could not get player data!");
 		}
-		self.state = SceneState::Scene(Scenes::MainMenu);
+		self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
 	}
 	
 	fn input(&mut self, _delta: f32) {
@@ -37,10 +37,9 @@ impl Scene for CharacterCreationScene {
 	fn render(&self) {}
 
 	fn quit(&mut self) {
-		self.state = SceneState::Continue;
 	}
 
-	fn state(&self) -> SceneState {
-        self.state
-    }
+	fn action(&mut self) -> &mut Option<MenuStateAction> {
+		&mut self.action
+	}
 }

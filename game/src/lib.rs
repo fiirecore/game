@@ -10,7 +10,7 @@ pub mod npc;
 pub mod battle;
 pub mod gui;
 pub mod text;
-pub mod scene;
+pub mod state;
 pub mod init;
 pub mod graphics;
 pub mod textures;

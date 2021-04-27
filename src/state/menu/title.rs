@@ -1,14 +1,15 @@
-use game::play_music_named;
-use game::input;
-use game::macroquad::prelude::Texture2D;
-use crate::scene::Scene;
-use game::graphics::{byte_texture, draw};
+use game::{
+	play_music_named,
+	input::{pressed, Control},
+	macroquad::prelude::Texture2D,
+	graphics::{byte_texture, draw},
+};
 
-use game::scene::{SceneState, Scenes};
+use super::{MenuState, MenuStateAction, MenuStates};
 
-pub struct TitleScene {	
+pub struct TitleState {	
 	
-	state: SceneState,
+	action: Option<MenuStateAction>,
 	
 	accumulator: f32,
 
@@ -21,11 +22,11 @@ pub struct TitleScene {
 	
 }
 
-impl Scene for TitleScene {
+impl MenuState for TitleState {
 
-	fn new() -> TitleScene {
-		TitleScene {
-		    state: SceneState::Continue,
+	fn new() -> Self {
+		Self {
+		    action: None,
 			background: byte_texture(include_bytes!("../../../build/assets/scenes/title/background.png")),		
 			title: byte_texture(include_bytes!("../../../build/assets/scenes/title/title.png")),
 			trademark: byte_texture(include_bytes!("../../../build/assets/scenes/title/trademark.png")),
@@ -37,7 +38,6 @@ impl Scene for TitleScene {
 	}
 
 	fn on_start(&mut self) {
-		self.state = SceneState::Continue;
 		play_music_named("Title");
 		self.accumulator = 0.0;
 	}
@@ -58,19 +58,19 @@ impl Scene for TitleScene {
 	}
 	
 	fn input(&mut self, _delta: f32) {
-		if input::pressed(input::Control::A) {
+		if pressed(Control::A) {
 			let seed = self.accumulator as u64 % 256;
 			crate::seed_randoms(seed);
-			self.state = SceneState::Scene(Scenes::MainMenu);
+			self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
 		}
 	}
 	
 	fn quit(&mut self) {
-		self.state = SceneState::Continue;
+		
 	}
 	
-	fn state(&self) -> SceneState {
-		self.state
+	fn action(&mut self) -> &mut Option<MenuStateAction> {
+		&mut self.action
 	}
 	
 }
