@@ -1,0 +1,25 @@
+[package]
+name = "firecore-storage"
+version = "0.4.0-beta.1"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+readme = "README.md"
+
+[dependencies]
+
+### Serialization
+
+serde = "1.0"
+ron = "0.6"
+
+### Game engine used for loading files
+
+macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
+
+### File management
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+dirs-next = "2.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }

@@ -467,7 +467,7 @@ fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>, ti
     match sheets.get(&index) {
         Some(sheet) => {
             let id = (tile_id - (count - *palette_sizes.get(&index).unwrap())) as usize;
-            firecore_game::graphics::image_texture(
+            firecore_game::macroquad::prelude::Texture2D::from_image(
                 &sheet.sub_image(
                     firecore_game::macroquad::prelude::Rect::new(
                         (id % (sheet.width() / TILE_SIZE as usize)) as f32 * TILE_SIZE, 

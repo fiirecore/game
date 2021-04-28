@@ -18,7 +18,7 @@ firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", defaul
 firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
 # firecore-pokedex = { path = "../../../../firecore/firecore-pokedex" }
 
-firecore-audio-lib = { git = "https://github.com/DoNotDoughnut/firecore-audio", package = "firecore-audio-lib" }
+firecore-audio-lib = { path = "../../firecore/audio/lib" }
 
 ### pathfinding temporary crates
 indexmap = { version = "1.6", optional = true }

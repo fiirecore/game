@@ -1,0 +1,17 @@
+[package]
+name = "firecore-configuration"
+version = "0.4.0-beta.1"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+### Specifications
+
+firecore-storage = { path = "../" }
+
+firecore-input = { path = "../../input" }
+
+### Serialization
+
+serde = { version = "1.0", features = ["derive"] }

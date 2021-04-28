@@ -58,7 +58,6 @@ dependencies = [
 [[package]]
 name = "audio-builder"
 version = "0.4.0-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#3e3936818c24807c1a034d4e2b45280ccd4f4bc9"
 dependencies = [
  "firecore-audio-lib",
  "postcard",
@@ -347,7 +346,6 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.4.0-alpha.2.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#3e3936818c24807c1a034d4e2b45280ccd4f4bc9"
 dependencies = [
  "firecore-audio-lib",
  "firecore-util",
@@ -359,7 +357,6 @@ dependencies = [
 [[package]]
 name = "firecore-audio-lib"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#3e3936818c24807c1a034d4e2b45280ccd4f4bc9"
 dependencies = [
  "serde",
 ]
@@ -376,29 +373,15 @@ dependencies = [
 [[package]]
 name = "firecore-configuration"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
 dependencies = [
- "firecore-data",
  "firecore-input",
+ "firecore-storage",
  "serde",
 ]
 
 [[package]]
-name = "firecore-data"
-version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
-dependencies = [
- "dirs-next",
- "macroquad",
- "miniquad-cookie",
- "ron",
- "serde",
-]
-
-[[package]]
-name = "firecore-font-lib"
+name = "firecore-font"
 version = "0.2.0-alpha.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#89de928ae0ce58efa60b51953660ac6303d145da"
 dependencies = [
  "serde",
 ]
@@ -408,18 +391,17 @@ name = "firecore-game"
 version = "0.4.0-alpha.1.2"
 dependencies = [
  "firecore-audio",
- "firecore-font-lib",
  "firecore-input",
  "firecore-pokedex",
- "firecore-storage",
+ "firecore-text",
  "firecore-util",
  "macroquad",
+ "pokemon-firered-clone-storage",
 ]
 
 [[package]]
 name = "firecore-input"
 version = "0.3.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-input#ff9cd726b8ea5851031cb0754e46575f019fcf0a"
 dependencies = [
  "firecore-util",
  "macroquad",
@@ -436,17 +418,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "firecore-rand"
-version = "0.3.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-rand#ec1d792e8c29912cf8518ac0bae33075fbb44a97"
-
-[[package]]
 name = "firecore-saves"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
 dependencies = [
- "firecore-data",
  "firecore-pokedex",
+ "firecore-storage",
  "firecore-util",
  "serde",
 ]
@@ -454,11 +430,22 @@ dependencies = [
 [[package]]
 name = "firecore-storage"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-data#285244722af728f37240381398eb935fb78d0e73"
 dependencies = [
- "firecore-configuration",
- "firecore-data",
- "firecore-saves",
+ "dirs-next",
+ "macroquad",
+ "miniquad-cookie",
+ "ron",
+ "serde",
+]
+
+[[package]]
+name = "firecore-text"
+version = "0.4.0-beta.1"
+dependencies = [
+ "firecore-font",
+ "firecore-util",
+ "macroquad",
+ "serde",
 ]
 
 [[package]]
@@ -514,9 +501,8 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 [[package]]
 name = "font-builder"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-font-lib#89de928ae0ce58efa60b51953660ac6303d145da"
 dependencies = [
- "firecore-font-lib",
+ "firecore-font",
  "postcard",
  "ron",
  "serde",
@@ -568,12 +554,9 @@ dependencies = [
 
 [[package]]
 name = "glam"
-version = "0.10.2"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "579160312273c954cc51bd440f059dde741029ac8daf8c84fece76cb77f62c15"
-dependencies = [
- "version_check",
-]
+checksum = "333928d5eb103c5d4050533cec0384302db6be8ef7d3cebd30ec6a35350353da"
 
 [[package]]
 name = "glob"
@@ -759,11 +742,11 @@ dependencies = [
 
 [[package]]
 name = "macroquad"
-version = "0.3.0-alpha.17"
-source = "git+https://github.com/DoNotDoughnut/macroquad#cdf2dbebd2947aae786d1a25ceb766bebe79358f"
+version = "0.3.1"
+source = "git+https://github.com/DoNotDoughnut/macroquad#7da189b715f09650159fbb638fd6230c0072dc2b"
 dependencies = [
  "ahash 0.7.2",
- "firecore-rand",
+ "firecore-util",
  "fontdue",
  "glam",
  "image",
@@ -774,7 +757,7 @@ dependencies = [
 [[package]]
 name = "macroquad_macro"
 version = "0.1.2"
-source = "git+https://github.com/DoNotDoughnut/macroquad#cdf2dbebd2947aae786d1a25ceb766bebe79358f"
+source = "git+https://github.com/DoNotDoughnut/macroquad#7da189b715f09650159fbb638fd6230c0072dc2b"
 
 [[package]]
 name = "memchr"
@@ -784,8 +767,8 @@ checksum = "0ee1c47aaa256ecabcaea351eae4a9b01ef39ed810004e298d2511ed284b1525"
 
 [[package]]
 name = "miniquad"
-version = "0.3.0-alpha.29"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+version = "0.3.0-alpha.30"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 dependencies = [
  "sapp-android",
  "sapp-darwin",
@@ -1088,6 +1071,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "pokemon-firered-clone-storage"
+version = "0.4.0-beta.1"
+dependencies = [
+ "firecore-configuration",
+ "firecore-saves",
+ "firecore-storage",
+]
+
+[[package]]
 name = "postcard"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1193,7 +1185,7 @@ dependencies = [
 [[package]]
 name = "sapp-android"
 version = "0.1.5"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 dependencies = [
  "cc",
 ]
@@ -1201,7 +1193,7 @@ dependencies = [
 [[package]]
 name = "sapp-darwin"
 version = "0.1.6"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 dependencies = [
  "cc",
 ]
@@ -1209,7 +1201,7 @@ dependencies = [
 [[package]]
 name = "sapp-dummy"
 version = "0.1.5"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 dependencies = [
  "libc",
 ]
@@ -1217,7 +1209,7 @@ dependencies = [
 [[package]]
 name = "sapp-ios"
 version = "0.1.2"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 dependencies = [
  "cc",
 ]
@@ -1231,20 +1223,20 @@ checksum = "bb8ababa867431fa6c0a178248bfe7e77b5d1de357c9848883ba8e3946bb21d4"
 [[package]]
 name = "sapp-linux"
 version = "0.1.12"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 dependencies = [
  "libc",
 ]
 
 [[package]]
 name = "sapp-wasm"
-version = "0.1.23"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+version = "0.1.24"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 
 [[package]]
 name = "sapp-windows"
 version = "0.2.16"
-source = "git+https://github.com/DoNotDoughnut/miniquad#dbe9fbd5b57740fce50e1f30c90a976ac2591bad"
+source = "git+https://github.com/DoNotDoughnut/miniquad#3786ab3dd92fdcb1d4a27581d54f639932bef19c"
 dependencies = [
  "winapi",
 ]

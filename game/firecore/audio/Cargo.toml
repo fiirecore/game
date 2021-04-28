@@ -1,0 +1,31 @@
+[package]
+name = "firecore-audio"
+version = "0.4.0-alpha.2.0"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+
+[features]
+default = ["play"]
+play = ["parking_lot", "firecore-util/hash", "kira", "lewton"]
+
+[dependencies]
+
+### Audio variables
+
+firecore-audio-lib = { path = "./lib" }
+
+### Global, mutable variables
+
+parking_lot = { version = "0.11", optional = true }
+firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", default-features = false }
+
+### Audio libraries
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+kira = { version = "0.4", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
+lewton = { version = "0.10.1", optional = true } # Included in kira
+
+### this library is replaced by audio in macroquad 0.3
+
+# [target.'cfg(target_arch="wasm32")'.dependencies]
+# quad-snd = { git = "https://github.com/not-fl3/quad-snd", optional = true } # WebAudio

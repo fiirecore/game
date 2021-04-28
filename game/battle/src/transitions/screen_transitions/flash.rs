@@ -67,10 +67,10 @@ impl BattleTransition for FlashBattleScreenTransition {
         }
         if self.zoom {
             self.zoom_offset += 600.0 * delta;
-            set_camera(Camera2D::from_display_rect(Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, WIDTH - self.zoom_offset, HEIGHT - self.zoom_offset)))
+            set_camera(&Camera2D::from_display_rect(Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, WIDTH - self.zoom_offset, HEIGHT - self.zoom_offset)))
         }
         if self.index >= FINAL_INDEX && self.waning {
-            set_camera(Camera2D::from_display_rect(Rect::new(0.0, 0.0, WIDTH, HEIGHT)));
+            set_camera(&Camera2D::from_display_rect(Rect::new(0.0, 0.0, WIDTH, HEIGHT)));
             self.finished = true;
         }
     }

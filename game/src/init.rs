@@ -10,11 +10,10 @@ use audio::{
     SerializedSoundData,
     Sound
 };
-use firecore_font_lib::SerializedFonts;
-use macroquad::prelude::{Texture2D, Image, Rect};
 
-use crate::graphics::text::{TextRenderer, TEXT_RENDERER, Font};
-use crate::graphics::{image_texture, byte_texture};
+pub use firecore_text::init as text;
+
+use crate::graphics::byte_texture;
 use crate::textures::{PokemonTextures, POKEMON_TEXTURES, ITEM_TEXTURES};
 use util::hash::HashMap;
 
@@ -113,61 +112,4 @@ pub fn audio(audio: audio::SerializedAudio) {
             }
         }
     }    
-}
-
-pub fn text(font_sheets: SerializedFonts) {
-	let mut text_renderer = TextRenderer::new();
-
-    for font_sheet in font_sheets.fonts {
-        text_renderer.fonts.insert(
-            font_sheet.data.id, 
-            Font {
-                font_width: font_sheet.data.width,
-                font_height: font_sheet.data.height,
-                chars: iterate_fontsheet(
-                    font_sheet.data.chars, 
-                    font_sheet.data.width, 
-                    font_sheet.data.height, 
-                    font_sheet.data.custom, 
-                    Image::from_file_with_format(&font_sheet.image, None)
-                ),
-            }
-        );
-    }
-
-	unsafe { TEXT_RENDERER = Some(text_renderer); }
-}
-
-fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<firecore_font_lib::CustomChar>, sheet: Image) -> HashMap<char, Texture2D> {
-
-    let mut customchars: HashMap<char, (u8, Option<u8>)> = custom.into_iter().map(|cchar| (cchar.id, (cchar.width, cchar.height))).collect();
-
-    let chars: Vec<char> = chars.chars().collect();
-    let sheet_width = sheet.width() as f32;
-    let sheet_height = sheet.height() as f32;// - font_height as u32;
-
-    let mut charmap = HashMap::with_capacity(chars.len());
-
-    let mut counter: usize = 0;
-    let mut x: f32 = 0.0;
-    let mut y: f32 = 0.0;
-
-    'yloop: while y < sheet_height {
-        while x < sheet_width {
-            if let Some(cchar) = customchars.remove(&chars[counter]) {
-                charmap.insert(chars[counter], image_texture(&sheet.sub_image(Rect::new(x, y, cchar.0 as f32, cchar.1.unwrap_or(font_height) as f32))));
-            } else {
-                charmap.insert(chars[counter], image_texture(&sheet.sub_image(Rect::new(x, y, font_width as f32, font_height as f32))));
-            }
-            x += font_width as f32;
-            counter+=1;
-            if counter >= chars.len() {
-                break 'yloop;
-            }
-        }
-        x = 0.0;
-        y += font_height as f32;
-    }
-
-    charmap
 }

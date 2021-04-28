@@ -4,8 +4,8 @@ use macroquad::prelude::draw_line;
 use util::{Reset, text::TextColor};
 use input::{pressed, Control};
 use pokedex::pokemon::party::PokemonParty;
-use data::player::PlayerSaves;
-use macroquad::prelude::{collections::storage::get, Texture2D, draw_rectangle, draw_texture_ex, WHITE, DrawTextureParams, Rect};
+use data::{get, player::PlayerSaves};
+use macroquad::prelude::{Texture2D, draw_rectangle, draw_texture_ex, WHITE, DrawTextureParams, Rect};
 use util::smallvec::SmallVec;
 
 use crate::graphics::{byte_texture, draw, draw_text_left};

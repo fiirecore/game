@@ -1,0 +1,14 @@
+[package]
+name = "audio-builder"
+version = "0.4.0-alpha.1"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+firecore-audio-lib = { path = "../lib", features = ["file"] }
+
+serde = { version = "1.0", features = ["derive"] }
+postcard = { version = "0.6", default-features = false, features = ["alloc"] }
+ron = "0.6"

@@ -54,11 +54,15 @@ impl StartMenu {
 
     pub fn input(&mut self, action: &mut Option<GameStateAction>, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
 
+        if pressed(Control::B) {
+            self.despawn();
+        }
+
         if pressed(Control::A) {
             match self.cursor {
                 0 => {
                     // Save
-                    #[deprecated(note = "change to function")]
+                    // #[deprecated(note = "change this")]
                     firecore_game::data::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
                 },
                 1 => {
@@ -118,6 +122,7 @@ impl Entity for StartMenu {
 
     fn spawn(&mut self) {
         self.alive = true;
+        self.cursor = 0;
     }
 
     fn despawn(&mut self) {

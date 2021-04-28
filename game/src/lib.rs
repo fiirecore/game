@@ -1,7 +1,7 @@
-pub use macroquad;
+pub extern crate macroquad;
 
 pub extern crate firecore_util as util;
-pub extern crate firecore_storage as data;
+pub extern crate pokemon_firered_clone_storage as data; // rename storage or something
 pub extern crate firecore_input as input;
 pub extern crate firecore_pokedex as pokedex;
 pub extern crate firecore_audio as audio;
@@ -14,9 +14,6 @@ pub mod state;
 pub mod init;
 pub mod graphics;
 pub mod textures;
-
-// pub extern crate naia_client_socket as client;
-// pub mod network;
 
 use macroquad::prelude::warn;
 use util::Direction;

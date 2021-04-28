@@ -97,7 +97,7 @@ pub async fn start() {
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
 
-    set_camera(game_camera());
+    set_camera(&game_camera());
     
 
     // Loads configuration and player saves, sets up controls

@@ -42,14 +42,14 @@ getopts = "0.2"
 
 [build-dependencies]
 
-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-lib", package = "font-builder" }
+font-builder = { path = "game/firecore/text/builder" }
 
-world-builder = { path = "./game/world/builder" }
+world-builder = { path = "game/world/builder" }
 
 dex-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex", package = "dex-builder" }
 # dex-builder = { path = "../firecore/firecore-pokedex/builder" }
 
-audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-audio", package = "audio-builder", optional = true }
+audio-builder = { path = "game/firecore/audio/builder", optional = true }
 
 embed-resource = "1.6"
 
@@ -60,4 +60,15 @@ members = [
     "game/world/lib",
     "game/world/builder",
     "game/battle",
+    "game/firecore/input",
+    "game/firecore/text",
+    "game/firecore/text/font",
+    "game/firecore/text/builder",
+    "game/firecore/storage",
+    "game/firecore/storage/configuration",
+    "game/firecore/storage/player",
+    "game/firecore/storage/game",
+    "game/firecore/audio",
+    "game/firecore/audio/lib",
+    "game/firecore/audio/builder",
 ]
