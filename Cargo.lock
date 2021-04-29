@@ -347,7 +347,7 @@ name = "firecore-audio"
 version = "0.4.0-alpha.2.0"
 dependencies = [
  "firecore-audio-lib",
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "kira",
  "lewton",
  "parking_lot",
@@ -389,14 +389,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "firecore-dependencies"
-version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#e3e8fa967bdd90248db18dd9c4222484942793ae"
-dependencies = [
- "ahash 0.7.2",
-]
-
-[[package]]
 name = "firecore-font"
 version = "0.2.0-alpha.1"
 dependencies = [
@@ -408,7 +400,7 @@ name = "firecore-game"
 version = "0.4.0-alpha.1.2"
 dependencies = [
  "firecore-audio",
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "firecore-input",
  "firecore-pokedex",
  "firecore-text",
@@ -421,7 +413,7 @@ dependencies = [
 name = "firecore-input"
 version = "0.3.0-beta.4"
 dependencies = [
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "macroquad",
  "serde",
 ]
@@ -430,7 +422,7 @@ dependencies = [
 name = "firecore-pokedex"
 version = "0.4.0-beta.4"
 dependencies = [
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "serde",
 ]
 
@@ -438,7 +430,7 @@ dependencies = [
 name = "firecore-saves"
 version = "0.4.0-beta.1"
 dependencies = [
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "firecore-pokedex",
  "firecore-storage",
  "firecore-util",
@@ -460,7 +452,7 @@ dependencies = [
 name = "firecore-text"
 version = "0.4.0-beta.1"
 dependencies = [
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "firecore-font",
  "macroquad",
  "serde",
@@ -470,7 +462,7 @@ dependencies = [
 name = "firecore-util"
 version = "0.4.0-beta.1"
 dependencies = [
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "serde",
 ]
 
@@ -487,7 +479,7 @@ name = "firecore-world-lib"
 version = "0.4.0-alpha.1.1"
 dependencies = [
  "firecore-audio-lib",
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-dependencies",
  "firecore-font",
  "firecore-pokedex",
  "firecore-util",
@@ -760,9 +752,9 @@ dependencies = [
 [[package]]
 name = "macroquad"
 version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/macroquad#5ee72d818807b36a326c5a7c727d8c90f33909b9"
+source = "git+https://github.com/DoNotDoughnut/macroquad#859dd9b40e4a7acc20406354c811a78978cf8325"
 dependencies = [
- "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-util)",
+ "firecore-dependencies",
  "fontdue",
  "glam",
  "image",
@@ -773,7 +765,7 @@ dependencies = [
 [[package]]
 name = "macroquad_macro"
 version = "0.1.2"
-source = "git+https://github.com/DoNotDoughnut/macroquad#5ee72d818807b36a326c5a7c727d8c90f33909b9"
+source = "git+https://github.com/DoNotDoughnut/macroquad#859dd9b40e4a7acc20406354c811a78978cf8325"
 
 [[package]]
 name = "memchr"
@@ -1140,9 +1132,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.6"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8270314b5ccceb518e7e578952f0b72b88222d02e8f77f5ecf7abbb673539041"
+checksum = "85dd92e586f7355c633911e11f77f3d12f04b1b1bd76a198bd34ae3af8341ef2"
 dependencies = [
  "bitflags",
 ]
