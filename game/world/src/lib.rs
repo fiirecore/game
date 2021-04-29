@@ -2,7 +2,7 @@ extern crate firecore_game as game;
 extern crate firecore_world_lib as world;
 
 use game::{
-    util::{
+    deps::{
         hash::HashMap,
         tinystr::TinyStr16,
     },
@@ -37,7 +37,7 @@ pub trait GameWorld {
 
     fn on_start(&mut self, music: bool);
 
-    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter);
+    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, character: &mut PlayerCharacter);
 
     fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow);
 

@@ -1,13 +1,14 @@
 use std::path::PathBuf;
-use util::hash::HashMap;
-use worldlib::map::{MapIdentifier, set::WorldMapSet};
+use worldlib::map::{MapIdentifier, set::WorldMapSet, set::Maps};
 use crate::world::{SerializedMapSet, MapConfig};
 
-pub fn load_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, serialized_map_set: SerializedMapSet) -> (MapIdentifier, WorldMapSet) {
+use super::PaletteSizes;
+
+pub fn load_map_set(root_path: &PathBuf, palette_sizes: &PaletteSizes, serialized_map_set: SerializedMapSet) -> (MapIdentifier, WorldMapSet) {
 
     println!("    Loading map set \"{}\"", serialized_map_set.identifier);
 
-    let mut maps = HashMap::new();
+    let mut maps = Maps::new();
 
     for dir_string in serialized_map_set.dirs {
         let map_path = root_path.join(dir_string);
@@ -19,9 +20,9 @@ pub fn load_map_set(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, seria
                         &std::fs::read_to_string(&file).unwrap_or_else(|err| panic!("Could not read map set configuration at {:?} to string with error {}", file, err))
                     ).unwrap_or_else(|err| panic!("Could not deserialize map set configuration at {:?} with error {}", file, err));
                     println!("        Loaded map set map \"{}\"", config.name);
-                    let (identifier, map) = super::load_map_from_config(&map_path, palette_sizes, config);
+                    let map = super::load_map_from_config(&map_path, palette_sizes, config);
                     maps.insert(
-                        identifier,
+                        map.id,
                         map,
                     );
                 }

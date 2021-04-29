@@ -1,4 +1,5 @@
 (
     identifier: "fat_man",
+    text_color: Blue,
     sprite: Walk,
 )

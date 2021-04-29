@@ -3,10 +3,9 @@ use game::{
         Entity, 
         Completable, 
         Direction, 
-        hash::HashMap,
     },
     pokedex::pokedex,
-    data::{
+    storage::{
         {get, get_mut},
         player::{PlayerSave, PlayerSaves},
     },
@@ -27,6 +26,7 @@ use game::{
         bag::BagGui,
     },
     state::GameStateAction,
+    deps::hash::HashMap,
 };
 
 use firecore_world_lib::{
@@ -35,7 +35,7 @@ use firecore_world_lib::{
         World,
         manager::WorldMapManager,
     },
-    character::{Character, npc::npc_type::NPCType},
+    character::npc::npc_type::NPCType,
 };
 
 use crate::{
@@ -140,6 +140,7 @@ impl WorldManager {
             }
             npc_types.insert(npc_type.config.identifier, NPCType {
                 sprite: firecore_world_lib::character::sprite::SpriteIndexes::from_index(npc_type.config.sprite),
+                text_color: npc_type.config.text_color,
                 trainer: npc_type.config.trainer,
             });
             self.npc_textures.insert(npc_type.config.identifier, texture);
@@ -184,13 +185,13 @@ impl WorldManager {
     pub fn update(&mut self, delta: f32, battle_data: &mut Option<BattleData>) {
         self.tile_textures.update(delta);
         
-        if self.noclip_toggle && self.map_manager.player.position.local.offset.is_none() {
+        if self.noclip_toggle && self.map_manager.player.character.position.offset.is_none() {
             self.noclip_toggle = false;
-            self.map_manager.player.properties.noclip = !self.map_manager.player.properties.noclip;
-            if self.map_manager.player.properties.noclip {
-                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed * 4.0;
+            self.map_manager.player.character.noclip = !self.map_manager.player.character.noclip;
+            if self.map_manager.player.character.noclip {
+                self.map_manager.player.character.speed = self.map_manager.player.character.base_speed * 4.0;
             } else {
-                self.map_manager.player.properties.speed = self.map_manager.player.properties.base_speed;
+                self.map_manager.player.character.speed = self.map_manager.player.character.base_speed;
             }
             info!("No clip toggled!");
         }
@@ -222,7 +223,7 @@ impl WorldManager {
                 self.map_manager.player.unfreeze();
                 if let Some((destination, _)) = self.map_manager.warp.take() {
                     if destination.transition.move_on_exit {
-                        self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.position.local.direction), delta);
+                        self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.character.position.direction), delta);
                     }
                 }
                 
@@ -240,7 +241,13 @@ impl WorldManager {
             }
         }
 
-        self.render_coords = RenderCoords::new(&self.map_manager.player);
+        let offset = if self.map_manager.chunk_active {
+            self.map_manager.chunk_map.chunk().map(|chunk| chunk.coords)
+        } else {
+            None
+        }.unwrap_or(firecore_game::util::Coordinate { x: 0, y: 0 });
+
+        self.render_coords = RenderCoords::new(offset, &self.map_manager.player.character);
         
     }
 
@@ -250,21 +257,22 @@ impl WorldManager {
         } else {
             self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, self.render_coords, true);
         }
-        self.player_texture.render(&self.map_manager.player);
+        self.player_texture.render(&self.map_manager.player.character);
         self.text_window.render();
         self.start_menu.render(); 
         self.warp_transition.render();
     }
 
     pub fn save_data(&self, player_data: &mut PlayerSave) {
+        use firecore_game::storage::player;
         if self.map_manager.chunk_active {
             player_data.location.map = None;
-            player_data.location.index = self.map_manager.chunk_map.current.unwrap_or(firecore_game::data::player::default_index());
+            player_data.location.index = self.map_manager.chunk_map.current.unwrap_or(player::default_index());
         } else {
-            player_data.location.map = Some(self.map_manager.map_set_manager.current.unwrap_or(firecore_game::data::player::default_map()));
-            player_data.location.index = self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(firecore_game::data::player::default_index());
+            player_data.location.map = Some(self.map_manager.map_set_manager.current.unwrap_or(player::default_map()));
+            player_data.location.index = self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(player::default_index());
 		}
-		player_data.location.position = self.map_manager.player.position;
+		player_data.location.position = self.map_manager.player.character.position;
     }
 
     pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PartyGui, bag_gui: &mut BagGui, action: &mut Option<GameStateAction>) {
@@ -289,24 +297,24 @@ impl WorldManager {
                 self.map_manager.map_set_manager.input(delta, &mut self.map_manager.player);
             }
     
-            if self.map_manager.player.position.local.offset.is_none() && !self.map_manager.player.is_frozen() {
-                // self.map_manager.player.properties.moving = true;
+            if !(!self.map_manager.player.character.position.offset.is_none() || self.map_manager.player.is_frozen() ) {
+                // self.map_manager.player.moving = true;
 
                 if down(Control::B) {
-                    if !self.map_manager.player.properties.running {
-                        self.map_manager.player.properties.running = true;
-                        self.map_manager.player.properties.speed = 
-                            ((self.map_manager.player.properties.base_speed as u8) << (
-                                if self.map_manager.player.properties.noclip {
+                    if !self.map_manager.player.character.running {
+                        self.map_manager.player.character.running = true;
+                        self.map_manager.player.character.speed = 
+                            ((self.map_manager.player.character.base_speed as u8) << (
+                                if self.map_manager.player.character.noclip {
                                     2
                                 } else {
                                     1
                                 }
                             )) as f32;
                     }
-                } else if self.map_manager.player.properties.running {
-                    self.map_manager.player.properties.running = false;
-                    self.map_manager.player.properties.reset_speed();
+                } else if self.map_manager.player.character.running {
+                    self.map_manager.player.character.running = false;
+                    self.map_manager.player.character.reset_speed();
                 }
 
                 if down(firecore_game::keybind(self.first_direction)) {
@@ -333,13 +341,13 @@ impl WorldManager {
                         }                        
                     }
                     if let Some(direction) = movdir {
-                        self.map_manager.player.position.local.direction = direction;
+                        self.map_manager.player.character.position.direction = direction;
                         self.first_direction = direction;
                     } else {
                         self.player_move_accumulator = 0.0;
-                        self.map_manager.player.properties.reset_speed();
-                        self.map_manager.player.properties.moving = false;
-                        self.map_manager.player.properties.running = false;
+                        self.map_manager.player.character.reset_speed();
+                        self.map_manager.player.character.moving = false;
+                        self.map_manager.player.character.running = false;
                     }
                 }
             }
@@ -348,22 +356,22 @@ impl WorldManager {
     }
 
     fn stop_player(&mut self, battle_data: &mut Option<BattleData>) {
-        self.map_manager.player.stop_move();
+        self.map_manager.player.character.stop_move();
 
         // if self.map_manager.chunk_active {
         //     self.map_manager.ch
         // }
 
         if self.map_manager.chunk_active {
-            if let Some(destination) = self.map_manager.chunk_map.check_warp(self.map_manager.player.position.local.coords) { // Warping does not trigger tile actions!
+            if let Some(destination) = self.map_manager.chunk_map.check_warp(self.map_manager.player.character.position.coords) { // Warping does not trigger tile actions!
                 self.map_manager.warp = Some((destination, true));
-            } else if self.map_manager.chunk_map.in_bounds(self.map_manager.player.position.local.coords) {
+            } else if self.map_manager.chunk_map.in_bounds(self.map_manager.player.character.position.coords) {
                 self.map_manager.chunk_map.on_tile(battle_data, &mut self.map_manager.player);
             }
         } else {
-            if let Some(destination) = self.map_manager.map_set_manager.check_warp(self.map_manager.player.position.local.coords) {
+            if let Some(destination) = self.map_manager.map_set_manager.check_warp(self.map_manager.player.character.position.coords) {
                 self.map_manager.warp = Some((destination, true));
-            } else if self.map_manager.map_set_manager.in_bounds(self.map_manager.player.position.local.coords) {
+            } else if self.map_manager.map_set_manager.in_bounds(self.map_manager.player.character.position.coords) {
                 self.map_manager.map_set_manager.on_tile(battle_data, &mut self.map_manager.player);
             }
         }        
@@ -371,7 +379,7 @@ impl WorldManager {
 
     pub fn load_player(&mut self, data: &PlayerSave) {
         let location = &data.location;
-        self.map_manager.player.position = location.position;
+        self.map_manager.player.character.position = location.position;
         self.player_texture.load();
 
         if let Some(map) = location.map {
@@ -395,13 +403,13 @@ impl WorldManager {
 
         if is_key_pressed(KeyCode::F3) {
 
-            info!("Local Coordinates: {}", self.map_manager.player.position.local.coords);
-            info!("Global Coordinates: ({}, {})", self.map_manager.player.position.get_x(), self.map_manager.player.position.get_y());
+            info!("Local Coordinates: {}", self.map_manager.player.character.position.coords);
+            // info!("Global Coordinates: ({}, {})", self.map_manager.player.position.get_x(), self.map_manager.player.position.get_y());
 
             if let Some(tile) = if self.map_manager.chunk_active {
-                self.map_manager.chunk_map.tile(self.map_manager.player.position.local.coords)
+                self.map_manager.chunk_map.tile(self.map_manager.player.character.position.coords)
             } else {
-                self.map_manager.map_set_manager.tile(self.map_manager.player.position.local.coords)
+                self.map_manager.map_set_manager.tile(self.map_manager.player.character.position.coords)
             } {
                 info!("Current Tile ID: {}", tile);
             } else {
@@ -429,9 +437,8 @@ impl WorldManager {
                     self.map_manager.map_set_manager.set().map(|map| map.map()).flatten()
                 } {
 
-                    let name = &map.name;
-                    info!("Resetting battled trainers in this map! ({})", name);
-                    saves.get_mut().world_status.get_or_create_map_data(name).battled.clear();
+                    info!("Resetting battled trainers in this map! ({})", map.name);
+                    saves.get_mut().world.get_map(&map.id).battled.clear();
 
                 }               
             }
@@ -440,7 +447,7 @@ impl WorldManager {
         if is_key_pressed(KeyCode::F6) {
             if let Some(mut saves) = get_mut::<PlayerSaves>() {
                 info!("Clearing used scripts in player data!");
-                saves.get_mut().world_status.ran_scripts.clear();
+                saves.get_mut().world.scripts.clear();
             }
         }
         
@@ -467,7 +474,7 @@ fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>, ti
     match sheets.get(&index) {
         Some(sheet) => {
             let id = (tile_id - (count - *palette_sizes.get(&index).unwrap())) as usize;
-            firecore_game::macroquad::prelude::Texture2D::from_image(
+            let texture = firecore_game::macroquad::prelude::Texture2D::from_image(
                 &sheet.sub_image(
                     firecore_game::macroquad::prelude::Rect::new(
                         (id % (sheet.width() / TILE_SIZE as usize)) as f32 * TILE_SIZE, 
@@ -476,7 +483,9 @@ fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>, ti
                         TILE_SIZE,
                     )
                 )
-            )
+            );
+            texture.set_filter(firecore_game::macroquad::prelude::FilterMode::Nearest);
+            texture
         }
         None => {
             firecore_game::macroquad::prelude::debug!("Could not get texture for tile ID {}", &tile_id);

@@ -1,6 +1,6 @@
 use firecore_game::macroquad::prelude::Texture2D;
 use firecore_game::graphics::byte_texture;
-use firecore_game::util::hash::HashMap;
+use firecore_game::deps::hash::HashMap;
 
 pub mod start_menu;
 pub mod text_window;

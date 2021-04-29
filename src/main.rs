@@ -31,15 +31,15 @@ use game::{
             BLUE,
         }
     },
-    data::{
+    storage::{
         get_mut, 
         configuration::Configuration,
     },
     util::{
         WIDTH,
         HEIGHT,
-        text::TextColor,
     },
+    text::TextColor,
     graphics::{
         draw,
         draw_text_left,
@@ -228,7 +228,7 @@ pub async fn start() {
         
                 if is_key_pressed(KeyCode::P) {
                     if let Some(mut config) = get_mut::<Configuration>() {
-                        if let Err(err) = game::data::reload(std::ops::DerefMut::deref_mut(&mut config)).await {
+                        if let Err(err) = game::storage::reload(std::ops::DerefMut::deref_mut(&mut config)).await {
                             warn!("Could not reload configuration with error {}", err);
                         }
                     }
@@ -338,6 +338,6 @@ pub fn game_camera() -> Camera2D {
 
 pub fn draw_touch_button(button: &game::input::touchscreen::TouchButton) {
 	game::macroquad::prelude::draw_rectangle(button.pos.x, button.pos.y, game::input::touchscreen::TouchButton::BUTTON_SIZE, game::input::touchscreen::TouchButton::BUTTON_SIZE, button.color);
-	game::graphics::draw_text_left(0, &format!("{:?}", button.control), game::util::text::TextColor::White, button.pos.x + 1.0, button.pos.y);
+	game::graphics::draw_text_left(0, &format!("{:?}", button.control), TextColor::White, button.pos.x + 1.0, button.pos.y);
 }
 

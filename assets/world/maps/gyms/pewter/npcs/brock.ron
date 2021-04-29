@@ -1,49 +1,47 @@
 (
-    index: 0,
+    id: "brock",
     npc: (
         name: "Brock",
-        position: (
-            coords: (
-                x: 6,
-                y: 5
+        type: "brock",
+        character: (
+            position: (
+                coords: (
+                    x: 6,
+                    y: 5
+                ),
+                direction: Down
             ),
-            direction: Down
         ),
-        properties: (
-            type: "brock",
-            message: Some([
-                (
-                    color: Blue,
-                    lines: [
-                        "There are all kinds of TRAINERS in",
-                        "this huge world of ours."
-                    ]
-                ),
-                (
-                    color: Blue,
-                    lines: [
-                        "You appear to be very gifted as a",
-                        "POKEMON TRAINER."
-                    ]
-                ),
-                (
-                    color: Blue,
-                    lines: [
-                        "So let me make a suggestion."
-                    ]
-                ),
-                (
-                    color: Blue,
-                    lines: [
-                        "Go to the GYM in CERULEAN and test",
-                        "your abilities."
-                    ]
-                )
-            ]),
-        ),
+        message: Some([
+            (
+                color: Blue,
+                lines: [
+                    "There are all kinds of TRAINERS in",
+                    "this huge world of ours."
+                ]
+            ),
+            (
+                color: Blue,
+                lines: [
+                    "You appear to be very gifted as a",
+                    "POKEMON TRAINER."
+                ]
+            ),
+            (
+                color: Blue,
+                lines: [
+                    "So let me make a suggestion."
+                ]
+            ),
+            (
+                color: Blue,
+                lines: [
+                    "Go to the GYM in CERULEAN and test",
+                    "your abilities."
+                ]
+            )
+        ]),
         trainer: Some((
-            trainer_type: GymLeader,
-            encounter_type: Some(Trainer),
             encounter_message: [
                 [
                     "So, you're here. I'm BROCK.",
@@ -92,8 +90,8 @@
                 )
             ],
 
-            disable_others: [
-                2
+            disable: [
+                "liam",
             ],
 
             worth: 1400,

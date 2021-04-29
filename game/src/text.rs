@@ -1,10 +1,10 @@
-use util::text::Message;
-use data::player::PlayerSave;
+pub use firecore_text::message::*;
+use storage::player::PlayerSave;
 
-pub fn process_messages(player_save: &PlayerSave, messages: &mut Vec<Message>) {
-    for message in messages.iter_mut() {
-        for message in &mut message.lines {
-            *message = message
+pub fn process_messages(player_save: &PlayerSave, message: &mut Message) {
+    for message in message.message_set.iter_mut() {
+        for lines in message.lines.iter_mut() {
+            *lines = lines
                 .replace("%r", rival_name())
                 .replace("%p", player_name(player_save))
             ;

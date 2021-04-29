@@ -1,5 +1,5 @@
 use game::{
-	data::{get_mut, player::PlayerSaves},
+	storage::{get_mut, player::PlayerSaves},
 	macroquad::miniquad::date,
 };
 

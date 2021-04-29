@@ -1,4 +1,4 @@
-use util::{
+use deps::{
     hash::HashMap,
     tinystr::TinyStr16,
 };

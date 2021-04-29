@@ -1,4 +1,4 @@
-use game::data::{get_mut, player::PlayerSaves};
+use game::storage::{get_mut, player::PlayerSaves};
 
 use super::{
 	State,

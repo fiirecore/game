@@ -1,13 +1,16 @@
-use firecore_pokedex::item::StackSize;
+extern crate firecore_dependencies as deps;
+
+use firecore_dependencies::{
+	tinystr::TinyStr16,
+	hash::HashMap,
+};
 use firecore_pokedex::{
-	item::{ItemId, ItemStack},
-	pokemon::party::PokemonParty,
+	item::{ItemId, ItemStack, StackSize},
+	pokemon::saved::SavedPokemonParty,
 };
 use serde::{Deserialize, Serialize};
 use firecore_util::{
-	GlobalPosition, Location, Position, Coordinate, Direction,
-	tinystr::TinyStr16,
-	hash::HashMap,
+	Location, Position, Coordinate, Direction,
 };
 
 use world::WorldStatus;
@@ -29,16 +32,16 @@ pub struct PlayerSave {
 	pub location: Location,
 
 	#[serde(default)]
-	pub party: PokemonParty,
+	pub party: SavedPokemonParty,
 
 	#[serde(default)]
 	pub items: HashMap<ItemId, StackSize>,
 
 	#[serde(default)]
-	pub worth: usize,
+	pub worth: u32,
 
 	#[serde(default)]
-	pub world_status: WorldStatus,
+	pub world: WorldStatus,
 
 }
 
@@ -49,10 +52,6 @@ impl PlayerSave {
 			name: name.to_owned(),
 			..Default::default()
 		}
-	}
-
-	pub fn has_battled(&self, map: &String, npc: &u8) -> bool {
-		self.world_status.map_data.get(map).map(|map| map.battled.contains(npc)).unwrap_or(false)
 	}
 
 	pub fn add_item(&mut self, stack: ItemStack) -> bool {
@@ -92,11 +91,11 @@ impl Default for PlayerSave {
     fn default() -> Self {
 		Self {
 			name: default_name(),
-			party: PokemonParty::default(),
+			party: SavedPokemonParty::default(),
 			location: default_location(),
 			items: HashMap::new(),
 		    worth: 0,
-		    world_status: WorldStatus::default(),
+		    world: WorldStatus::default(),
 		}
 	}
 
@@ -110,8 +109,8 @@ pub fn default_location() -> Location {
 	Location {
 		map: Some(default_map()),
 		index: default_index(),
-		position: GlobalPosition {
-			local: Position {
+		// position: GlobalPosition {
+			position: Position {
 				coords: Coordinate {
 					x: 6,
 					y: 6,
@@ -119,8 +118,8 @@ pub fn default_location() -> Location {
 				direction: Direction::Down,
 				..Default::default()
 			},
-			..Default::default()
-		}		
+			// ..Default::default()
+		// }		
 	}
 }
 

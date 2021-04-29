@@ -2,7 +2,7 @@ use std::sync::atomic::Ordering::Relaxed;
 
 use firecore_game::state::GameStateAction;
 use game::{
-	data::{get, get_mut, DIRTY, save, player::PlayerSaves},
+	storage::{get, get_mut, DIRTY, save, player::PlayerSaves},
 	input::{pressed, Control},
 	macroquad::prelude::{info, warn, is_key_down, is_key_pressed, KeyCode},
 	gui::{
@@ -120,8 +120,8 @@ impl State for GameState {
 			if self.battle.is_finished() {
 				if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
 					let save = player_saves.get_mut();
-					if let Some(data) = self.battle.update_data(save) {
-						world::battle::update_world(save, data.0, data.1);
+					if let Some((winner, trainer)) = self.battle.update_data(save) {
+						world::battle::update_world(&mut self.world, save, winner, trainer);
 					}
 				}				
 				self.battling = false;

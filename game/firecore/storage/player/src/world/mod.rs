@@ -1,29 +1,47 @@
+use firecore_util::Location;
 use serde::{Deserialize, Serialize};
-use firecore_util::hash::{HashMap, HashSet};
+use deps::{
+    hash::{HashMap, HashSet},
+    tinystr::{TinyStr8, TinyStr16},
+};
 
 use self::map::MapData;
 
 pub mod map;
 
-#[derive(Debug, Default, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct WorldStatus {
 
     // battled trainers, map stops, etc.
-    pub map_data: HashMap<String, MapData>,
-    pub ran_scripts: HashSet<String>,
-    // pub completed_events: HashSet<String>,
+    pub map: HashMap<TinyStr16, MapData>,
+    pub scripts: HashSet<TinyStr16>,
+    pub badges: HashSet<TinyStr16>,
+    pub heal: Location,
 
 }
 
 impl WorldStatus {
 
-    pub fn get_or_create_map_data(&mut self, name: &String) -> &mut MapData {
-        if self.map_data.contains_key(name) {
-            return self.map_data.get_mut(name).unwrap();
-        } else {
-            self.map_data.insert(name.clone(), MapData::default());
-            return self.get_or_create_map_data(name);
+    pub fn get_map(&mut self, id: &TinyStr16) -> &mut MapData {
+        if !self.map.contains_key(id) {
+            self.map.insert(*id, MapData::default());            
         }
+        self.map.get_mut(id).unwrap()
     }
 
+    pub fn has_battled(&mut self, map: &TinyStr16, npc: &TinyStr8) -> bool {
+		self.get_map(map).battled.contains(npc)
+	}
+
+}
+
+impl Default for WorldStatus {
+    fn default() -> Self {
+        Self {
+            map: HashMap::default(),
+            scripts: HashSet::default(),
+            badges: HashSet::default(),
+            heal: crate::default_location(),
+        }
+    }
 }

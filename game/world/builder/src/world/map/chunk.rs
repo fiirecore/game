@@ -1,20 +1,15 @@
 use std::path::PathBuf;
-use util::hash::HashMap;
-use worldlib::map::{MapIdentifier, chunk::WorldChunk};
+use worldlib::map::chunk::WorldChunk;
 use crate::world::SerializedChunkMap;
+use super::PaletteSizes;
 
-pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &HashMap<u8, u16>, serialized_chunk: SerializedChunkMap) -> (MapIdentifier, WorldChunk) {
+pub fn new_chunk_map(root_path: &PathBuf, palette_sizes: &PaletteSizes, serialized_chunk: SerializedChunkMap) -> WorldChunk {
     println!("    Loading chunk map {}", serialized_chunk.config.name);
 
-    let (identifier, map) = super::load_map_from_config(root_path, palette_sizes, serialized_chunk.config);
-    (
-        identifier,
-        WorldChunk {
-            // index: serialized_chunk.piece_index,
-            map,
-            coords: serialized_chunk.coords,
-            connections: serialized_chunk.connections,
-        }
-    )
+    WorldChunk {
+        map: super::load_map_from_config(root_path, palette_sizes, serialized_chunk.config),
+        coords: serialized_chunk.coords,
+        connections: serialized_chunk.connections,
+    }
     
 }

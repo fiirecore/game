@@ -2,10 +2,6 @@ use game::{
     util::{
         Entity,
         Completable,
-        text::{
-            Message,
-            TextColor
-        },
     },
     pokedex::{
         moves::{
@@ -14,6 +10,7 @@ use game::{
         },
         pokemon::instance::PokemonInstance,
     },
+    text::{Message, TextColor},
     input::{pressed, Control},
     macroquad::prelude::Vec2,
     gui::text::DynamicText,
@@ -22,8 +19,6 @@ use game::{
 use super::moves::MovePanel;
 
 pub struct LevelUpMovePanel {
- 
-    // pub wants_to_spawn: bool,
 
     alive: bool,
 
@@ -41,9 +36,8 @@ impl LevelUpMovePanel {
 
     pub fn new(panel: Vec2) -> Self {
         Self {
-            // wants_to_spawn: false,
             alive: false,
-            text: DynamicText::new(Vec2::new(11.0, 11.0), panel),
+            text: DynamicText::empty(Vec2::new(11.0, 11.0), panel),
             move_panel: MovePanel::new(panel),
             name: String::new(),
             moves: Vec::new(),
@@ -68,17 +62,15 @@ impl LevelUpMovePanel {
                 }
             } else {
                 self.text.spawn();
-                self.text.messages = Some(
-                    vec![
-                        Message::new(
-                            vec![
-                                format!("{} is trying to", self.name),
-                                format!("learn {}", self.moves[0].name)
-                            ], 
-                            TextColor::White,
-                            None,
-                        )
-                    ]
+                self.text.message = Some(
+                    Message::single(
+                        vec![
+                            format!("{} is trying to", self.name),
+                            format!("learn {}", self.moves[0].name)
+                        ], 
+                        TextColor::White,
+                        None,
+                    )
                 )
             }
         } else {

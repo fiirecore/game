@@ -1,12 +1,11 @@
 use game::{
     pokedex::pokemon::{
-        instance::PokemonInstance,
-        party::PokemonParty,
+        instance::{PokemonInstance, PokemonInstanceParty},
+        saved::SavedPokemonParty,
         texture::PokemonTexture,
     },
-    macroquad::prelude::{Vec2, Texture2D, warn},
-    util::smallvec::SmallVec,
-    battle::BattlePokemonParty,
+    macroquad::prelude::{Vec2, Texture2D},
+    deps::smallvec::SmallVec,
     textures::pokemon_texture,
 };
 
@@ -31,27 +30,15 @@ pub struct BattleParty {
 
 impl BattleParty {
 
-    pub fn from_saved(party: &PokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
-
-        let mut battle_party = BattlePokemonParty::new();
-
-        for pokemon in party {
-			if let Some(pokemon) = PokemonInstance::new(pokemon) {
-				battle_party.push(pokemon);
-			} else {
-				warn!("Could not add pokemon with id {} to pokemon party", pokemon.id);
-			}
-		}
-
+    pub fn from_saved(party: &SavedPokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
         Self::new(
-            battle_party,
+            party.iter().map(|pokemon| PokemonInstance::new(pokemon)).flatten().collect(),
             side, 
             active_pos,
-        )       
-
+        )
     }
 
-    pub fn new(party: BattlePokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn new(party: PokemonInstanceParty, side: PokemonTexture, active_pos: Vec2) -> Self {
 
         let mut active = 0;
 

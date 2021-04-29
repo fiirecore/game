@@ -1,5 +1,5 @@
 use firecore_pokedex::pokemon::texture::PokemonTexture::Front;
-use firecore_util::text::TextColor;
+use crate::text::TextColor;
 use macroquad::color_u8;
 use macroquad::prelude::Color;
 use macroquad::prelude::Texture2D;

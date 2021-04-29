@@ -16,13 +16,11 @@ ui = ["macroquad/ui"]
 
 macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
 
-firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", features = ["hash", "smallvec", "tinystr"] }
-# firecore-util = { path = "../firecore-util" }
+firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies", features = ["hash", "smallvec", "tinystr"] }
 
-pokemon-firered-clone-storage = { path = "firecore/storage/game" }
+firecore-util = { path = "firecore/util" }
+firecore-pokedex = { path = "firecore/pokedex" }
 firecore-input = { path = "firecore/input" }
+pokemon-firered-clone-storage = { path = "firecore/storage/game" }
 firecore-audio = { path = "firecore/audio" }
 firecore-text = { path = "firecore/text" }
-
-firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-# firecore-pokedex = { path = "../../firecore/firecore-pokedex" }

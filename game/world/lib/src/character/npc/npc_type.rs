@@ -1,3 +1,4 @@
+use firecore_font::message::TextColor;
 use serde::{Deserialize, Serialize};
 
 use firecore_audio_lib::music::MusicName;
@@ -8,6 +9,7 @@ use crate::character::sprite::SpriteIndexes;
 #[derive(Debug)]
 pub struct NPCType {
 
+    pub text_color: TextColor,
     pub sprite: &'static SpriteIndexes,
     pub trainer: Option<TrainerType>,
 

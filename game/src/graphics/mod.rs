@@ -1,4 +1,3 @@
-use firecore_util::text::Message;
 use macroquad::prelude::{Texture2D, FilterMode::Nearest, draw_texture, Color, color_u8, WHITE as MQWHITE};
 
 use firecore_text::{TEXT_RENDERER, IntoMQColor};
@@ -37,13 +36,16 @@ pub fn draw_o_bottom(texture: Option<Texture2D>, x: f32, y: f32) {
 	}
 }
 
-pub fn draw_message(message: Message, x: f32, y: f32) {
-	if let Some(renderer) = unsafe{TEXT_RENDERER.as_ref()} {
-		for y_offset in 0..message.lines.len() {
-			renderer.render_text_from_left(message.font_id, &message.lines[y_offset], message.color.into_color(), x, y + (y_offset * 15) as f32);
-		}
-	}	
-}
+// #[deprecated]
+// pub fn draw_message(message: &Message, x: f32, y: f32) {
+// 	if let Some(renderer) = unsafe{TEXT_RENDERER.as_ref()} {
+// 		_draw_message(renderer, message.font, &message.message_set[0], message.color.into_color(), x, y)
+// 	}	
+// }
+
+// fn _draw_message(renderer: &firecore_text::TextRenderer, font_id: u8, message: &MessagePage, color: Color, x: f32, y: f32) {
+// 	message.lines.iter().enumerate().for_each(|(index, line)| renderer.render_text_from_left(font_id, line, color, x, y + (index << 4) as f32));
+// }
 
 pub fn draw_text_left(font_id: u8, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
 	if let Some(renderer) = unsafe {TEXT_RENDERER.as_ref()} {

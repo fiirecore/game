@@ -1,15 +1,18 @@
-use firecore_util::Coordinate;
-use firecore_util::GlobalPosition;
 use serde::{Deserialize, Serialize};
-use firecore_util::hash::HashMap;
-use firecore_util::smallvec::SmallVec;
 
-use crate::MovementId;
-use crate::TileId;
+use deps::{
+    hash::HashMap,
+    smallvec::SmallVec,
+};
 
-use crate::map::MapIdentifier;
-use crate::map::World;
-use crate::map::warp::WarpDestination;
+use util::Position;
+use util::{
+    Coordinate,
+};
+
+use crate::{TileId, MovementId};
+
+use crate::map::{MapIdentifier, World, warp::WarpDestination};
 
 use super::WorldChunk;
 
@@ -36,13 +39,19 @@ impl WorldChunkMap {
         }
     }
 
-    pub fn change_chunk(&mut self, id: MapIdentifier, player_pos: &mut GlobalPosition) {
-        if let Some(chunk) = self.update_chunk(id) {
-            {
-                player_pos.local.coords = player_pos.absolute() - chunk.coords;
-                player_pos.global = chunk.coords;
-            }            
-        }        
+    pub fn change_chunk(&mut self, id: MapIdentifier, position: &mut Position) {
+        if let Some(chunk) = self.chunk() {
+            let coords = chunk.coords;
+            if let Some(chunk) = self.update_chunk(id) {
+                {
+
+                    position.coords = coords + position.coords - chunk.coords;
+        
+                    // player_pos.local.coords = player_pos.absolute() - chunk.coords;
+                    // player_pos.global = chunk.coords;
+                }            
+            }  
+        }      
     }
 
     pub fn chunk_at(&self, coords: Coordinate) -> Option<(&MapIdentifier, &WorldChunk)> {
@@ -92,8 +101,8 @@ impl WorldChunkMap {
         return tiles;
     }
 
-    pub fn walk_connections(&mut self, player_pos: &mut GlobalPosition, coords: Coordinate) -> (MovementId, bool) {
-        let absolute = player_pos.global + coords;
+    pub fn walk_connections(&mut self, position: &mut Position, coords: Coordinate) -> (MovementId, bool) {
+        let absolute = self.chunk().unwrap().coords + coords;
         let mut move_code = 1;
         let mut chunk = None;
         for (index, connection) in self.connections() {
@@ -105,7 +114,7 @@ impl WorldChunkMap {
         }
         if let Some(chunk) = chunk {
             if crate::map::manager::can_move(move_code) {
-                self.change_chunk(chunk, player_pos);
+                self.change_chunk(chunk, position);
                 return (move_code, true);
             }
         }

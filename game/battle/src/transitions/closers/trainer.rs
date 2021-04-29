@@ -1,19 +1,16 @@
+use game::text::MessagePage;
 use game::{
     util::{
         Entity,
         Reset,
         Completable,
-        text::{
-            Message,
-            TextColor
-        },
         WIDTH,
     },
-    data::{get, player::PlayerSaves},
+    storage::{get, player::PlayerSaves},
     macroquad::prelude::{Vec2, Texture2D},
     graphics::draw_o_bottom,
     gui::text::DynamicText,
-    text::process_messages,
+    text::{process_messages, Message, TextColor},
     battle::BattleWinner,
 };
 
@@ -48,7 +45,7 @@ impl TrainerBattleCloser {
         Self {
             alive: false,
             wild: WildBattleCloser::default(),
-            text: DynamicText::new(Vec2::new(11.0, 11.0), Vec2::new(0.0, 113.0)),
+            text: DynamicText::empty(Vec2::new(11.0, 11.0), Vec2::new(0.0, 113.0)),
             trainer: None,
             offset: WIDTH,
         }
@@ -70,36 +67,34 @@ impl BattleCloser for TrainerBattleCloser {
                 BattleWinner::Player => {
                     if let Some(trainer) = &battle.trainer {
                         self.trainer = Some(trainer.texture);
-                        self.text.messages = Some(vec![
-                            Message::new(
+                        self.text.message = Some(
+                            Message::single(
                                 vec![
                                     String::from("Player defeated"), 
                                     format!("{} {}!", trainer.npc_type, trainer.name),
                                 ], 
                                 TextColor::White,
                                 None, 
-                            ),
-                            
-                        ]);
-                        let messages = self.text.messages.as_mut().unwrap();
+                            ),    
+                        );
+                        let message = self.text.message.as_mut().unwrap();
+                        let messages = &mut message.message_set;
                         for message in trainer.victory_message.iter() {
-                            messages.push(Message::new(
+                            messages.push(MessagePage::new(
                                 message.clone(),
-                                TextColor::White,
                                 None,
                             ));
                         }
                         messages.push(
-                            Message::new(
+                            MessagePage::new(
                                 vec![
                                     format!("%p got ${}", trainer.worth),
                                     String::from("for winning!")
                                 ],
-                                TextColor::White,
                                 None
                             )
                         );
-                        process_messages(get::<PlayerSaves>().unwrap().get(), messages);
+                        process_messages(get::<PlayerSaves>().unwrap().get(), message);
                     }
                 }
                 BattleWinner::Opponent => {

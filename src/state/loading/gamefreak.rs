@@ -1,9 +1,9 @@
 use game::{
 	play_music_named,
-	util::text::TextColor,
 	input::{keyboard::keys, Control},
-	macroquad::prelude::{Color, color_u8, Texture2D, draw_texture_ex, draw_rectangle, WHITE, DrawTextureParams},
+	text::TextColor,
 	graphics::{byte_texture, draw_text_left, fade_in},
+	macroquad::prelude::{Color, color_u8, Texture2D, draw_texture_ex, draw_rectangle, WHITE, DrawTextureParams},
 };
 
 use super::LoadingState;

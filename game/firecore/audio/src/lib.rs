@@ -1,5 +1,5 @@
 #[cfg(feature = "play")]
-extern crate firecore_util as util;
+extern crate firecore_dependencies as deps;
 
 use error::AddAudioError;
 
@@ -19,7 +19,7 @@ pub use sound::{add_sound, play_sound};
 
 #[cfg(feature = "play")]
 pub fn create() -> Result<(), AddAudioError> {
-    *music::MUSIC_ID_MAP.lock() = Some(util::hash::HashMap::new());
+    *music::MUSIC_ID_MAP.lock() = Some(deps::hash::HashMap::new());
     #[cfg(not(target_arch = "wasm32"))] {
         backend::kira::context::create().map_err(|err| AddAudioError::SetupError(err))
     }

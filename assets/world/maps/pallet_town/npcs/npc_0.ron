@@ -1,29 +1,29 @@
 (
-    index: 0,
+    id: "0",
     npc: (
         name: "NPC 0",
-        position: (
-            coords: (
-                x: 3,
-                y: 10
-            ),
-            direction: Down
-        ),
-        properties: (
-            type: "woman",
-            message: Some([
-                (
-                    lines: [
-                        "I'm raising POKEMON too."
-                    ],
+        type: "woman",
+        character: (
+            position: (
+                coords: (
+                    x: 3,
+                    y: 10
                 ),
-                (
-                    lines: [
-                        "When they get strong, they can",
-                        "protect me."
-                    ]
-                )
-            ]),
+                direction: Down
+            ),
         ),
+        message: Some([
+            (
+                lines: [
+                    "I'm raising POKEMON too."
+                ],
+            ),
+            (
+                lines: [
+                    "When they get strong, they can",
+                    "protect me."
+                ]
+            )
+        ]),
     )
 )

@@ -1,8 +1,8 @@
 
 use game::{
-	util::text::TextColor,
-	macroquad::prelude::Texture2D,
+	text::TextColor,
 	graphics::{byte_texture, fade_in_out, draw_text_left},
+	macroquad::prelude::Texture2D,
 };
 
 use super::{LoadingState, LoadingScenes};

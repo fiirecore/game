@@ -1,5 +1,5 @@
 use firecore_input::{pressed, Control};
-use firecore_util::text::TextColor;
+use crate::text::TextColor;
 use crate::graphics::draw_cursor;
 use crate::graphics::draw_text_left;
 use crate::gui::panel::Panel;

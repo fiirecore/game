@@ -33,15 +33,15 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
 - [ ] Fixed all warp transitions
 - [X] Move battle code to separate crates
 - [X] Move world rendering code to seperate crate
-- [ ] Battle move scripting
-- [ ] Battle animations with scripting
+- [X] Battle move scripting
+- [X] Battle animations with scripting
 - [ ] All NPCs up to Cerulean are added
 - [X] Player has money
 
 ### v0.5.0
 
 - [ ] Touchscreen support
-- [ ] Basic player bag
+- [X] Basic player bag
 - [ ] Pokemarts
 - [ ] All scripts up to Cerulean are added
 - [ ] Proper texture animation support

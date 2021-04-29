@@ -15,7 +15,7 @@
     conditions: [
         Scripts([
             (
-                identifier: "oak_introduce_pokemon",
+                identifier: "oak_pokemon",
                 happened: true,
             ),
             (
@@ -28,25 +28,26 @@
     actions: [
         PlayerFreezeInput,
         PlayMusic("EncounterRival"),
-        DisplayText([
-            (
-                lines: [
-                    "%r: Wait, %p!",
-                    "Let's check out our POKEMON!"
-                ],
-                color: Blue,
-            ),
-            (
-                lines: [
-                    "Come on, I'll take you on!"
-                ],
-                color: Blue,
-            )
-        ]),
-        NPCMoveToPlayer(21),
-        NPCBattle(21),
+        NPCSay(
+            "gary",
+            [
+                (
+                    lines: [
+                        "%r: Wait, %p!",
+                        "Let's check out our POKEMON!"
+                    ],
+                ),
+                (
+                    lines: [
+                        "Come on, I'll take you on!"
+                    ],
+                )
+            ],
+        ),
+        NPCMoveToPlayer("gary"),
+        NPCBattle("gary"),
         NPCMove(
-            21,
+            "gary",
             (
                 coords: (
                     x: 6,
@@ -54,7 +55,7 @@
                 )
             )
         ),
-        NPCRemove(21),
+        NPCRemove("gary"),
         PlayMapMusic,
         PlayerUnfreezeInput,
     ]

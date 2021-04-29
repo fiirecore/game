@@ -1,25 +1,25 @@
 (
-    index: 3,
+    id: "greg",
     npc: (
         name: "Greg",
-        position: (
-            coords: (
-                x: 25,
-                y: 4
+        type: "bug_catcher",
+        character: (
+            position: (
+                coords: (
+                    x: 25,
+                    y: 4
+                ),
+                direction: Down
             ),
-            direction: Down
         ),
-        properties: (
-            type: "bug_catcher",
-            message: Some([(
-                lines: [
-                    "If a POKEMON BOX on the PC gets",
-                    "full, just switch to another BOX."
-                ]
-            )]),
-        ),
-        trainer: Some(Trainer(
-            tracking_length: Some(2),
+        message: Some([(
+            lines: [
+                "If a POKEMON BOX on the PC gets",
+                "full, just switch to another BOX."
+            ]
+        )]),
+        trainer: Some((
+            tracking: Some(2),
             battle_transition: Trainer,
             encounter_message: [
                 [

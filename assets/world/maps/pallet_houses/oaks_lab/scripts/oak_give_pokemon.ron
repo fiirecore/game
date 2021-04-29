@@ -1,14 +1,14 @@
 (
-    identifier: "oak_introduce_pokemon",
+    identifier: "oak_pokemon",
     location: None,
     conditions: [
         Scripts([
             (
-                identifier: "oak_catch_player",
+                identifier: "oak_catch",
                 happened: true,
             ),
             (
-                identifier: "oak_introduce_pokemon",
+                identifier: "oak_pokemon",
                 happened: false,
             ),
         ])
@@ -16,25 +16,25 @@
     actions: [
         PlayerFreezeInput,
         NPCAdd(
-            20,
+            "oak_temp",
             (
                 name: "Oak",
-                position: (
-                    coords: (
-                        x: 6,
-                        y: 11
+                type: "prof_oak",
+                character: (
+                    position: (
+                        coords: (
+                            x: 6,
+                            y: 11
+                        ),
+                        direction: Up
                     ),
-                    direction: Up
                 ),
-                properties: (
-                    type: "prof_oak",
-                )
             )
         ),
         PlayMusic("Oak"),
         Wait(0.5),
         NPCMove(
-            20,
+            "oak_temp",
             (
                 coords: (
                     x: 6,
@@ -42,21 +42,21 @@
                 ),
             ),
         ),
-        NPCRemove(20),
+        NPCRemove("oak_temp"),
         NPCAdd(
-            21,
+            "gary",
             (
                 alive: true,
                 name: "%r",
-                position: (
-                    coords: (
-                        x: 5,
-                        y: 4,
+                type: "rival",
+                character: (
+                    position: (
+                        coords: (
+                            x: 5,
+                            y: 4,
+                        ),
+                        direction: Down,
                     ),
-                    direction: Down,
-                ),
-                properties: (
-                    type: "rival",
                 ),
                 trainer: Some(
                     (
@@ -85,11 +85,14 @@
                 direction: Some(Up),
             )
         ),
-        DisplayText([(
-            lines: [
-                "Here's some pokemon"
-            ]
-        )]),
+        NPCSay(
+            "oak",
+            [(
+                lines: [
+                    "Here's some pokemon"
+                ]                
+            )],
+        ),
         PlayerGivePokemon(
             (
                 id: 1,

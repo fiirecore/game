@@ -1,7 +1,8 @@
+use firecore_font::message::MessageSet;
 use serde::{Deserialize, Serialize};
 
 use firecore_util::{Direction, Destination};
-use firecore_util::text::Message;
+use firecore_font::message::Message;
 
 use firecore_audio_lib::music::MusicName;
 use firecore_audio_lib::sound::Sound;
@@ -36,8 +37,8 @@ pub enum WorldActionKind {
 
     NPCAdd(NPCId, NPC),
     NPCRemove(NPCId),
-    NPCSpawn(NPCId),
-    NPCDespawn(NPCId),
+    // NPCSpawn(NPCId),
+    // NPCDespawn(NPCId),
 
     NPCLook(NPCId, Direction),
     NPCMove(NPCId, Destination),
@@ -46,6 +47,7 @@ pub enum WorldActionKind {
     NPCMoveToPlayer(NPCId),
 
     NPCInteract(NPCId),
+    NPCSay(NPCId, MessageSet),
     NPCBattle(NPCId),
 
 
@@ -54,12 +56,12 @@ pub enum WorldActionKind {
 
     Wait(f32),
 
-    DisplayText(Vec<Message>),
+    DisplayText(Message),
     
     Conditional {
-        messages: Vec<Message>,
+        message: Message,
 
-        #[serde(default)] end_messages: Option<Vec<Message>>,
+        #[serde(default)] end_message: Option<Message>,
         // false_next: Vec<WorldActionKind>,
         #[serde(default = "def_true")]
         unfreeze: bool,

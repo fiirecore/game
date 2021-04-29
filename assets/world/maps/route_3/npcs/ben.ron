@@ -1,35 +1,35 @@
 (
-    index: 0,
+    id: "ben",
     npc: (
         name: "Ben",
-        position: (
-            coords: (
-                x: 18,
-                y: 4
-            ),
-            direction: Down
-        ),
-        properties: (
-            type: "youngster",
-            message: Some([
-                (
-                    lines: [
-                        "Are you using a POKEMON CENTER's",
-                        "PC for storing your POKEMON?"
-                    ],
-                    color: Blue,
+        type: "youngster",
+        character: (
+            position: (
+                coords: (
+                    x: 18,
+                    y: 4
                 ),
-                (
-                    lines: [
-                        "Each box can hold up to",
-                        "30 POKEMON."
-                    ],
-                    color: Blue,
-                )
-            ])
+                direction: Down
+            ),
         ),
+        message: Some([
+            (
+                lines: [
+                    "Are you using a POKEMON CENTER's",
+                    "PC for storing your POKEMON?"
+                ],
+                color: Blue,
+            ),
+            (
+                lines: [
+                    "Each box can hold up to",
+                    "30 POKEMON."
+                ],
+                color: Blue,
+            )
+        ]),
         trainer: Some((
-            tracking_length: Some(2),
+            tracking: Some(2),
             encounter_message: [
                 [
                     "Hi!",

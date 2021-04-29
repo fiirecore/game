@@ -3,8 +3,9 @@ use game::pokedex::item::ItemRef;
 use game::pokedex::moves::MoveCategory;
 use game::pokedex::moves::MoveRef;
 use game::pokedex::pokemon::types::effective::Effective;
+use game::text::MessagePage;
 use game::{
-    util::text::{Message, TextColor},
+    text::TextColor,
     pokedex::pokemon::instance::PokemonInstance,
     macroquad::prelude::Vec2,
 };
@@ -48,7 +49,7 @@ impl BattleText {
 
     pub fn new() -> Self {
         Self {
-            text: DynamicText::with_size(5, Vec2::new(11.0, 11.0), Vec2::new(0.0, 113.0)),
+            text: DynamicText::new(Vec2::new(11.0, 11.0), Vec2::new(0.0, 113.0), 1, TextColor::White),
 
             player: None,
             opponent: None,
@@ -58,8 +59,8 @@ impl BattleText {
     }
 
     pub fn reset_text(&mut self) {
-        if let Some(messages) = self.text.messages.as_mut() {
-            messages.clear();
+        if let Some(message) = self.text.message.as_mut() {
+            message.message_set.clear();
             self.player = None;
             self.opponent = None;
             self.post = None;
@@ -78,29 +79,28 @@ impl BattleText {
     }
 
     pub fn add_move_status(&mut self, battle: &Battle) {
-        if self.text.messages.is_some() {
+        if self.text.message.is_some() {
             let player_first = battle.player_first();
             if player_first {
                 self.add_player(battle);
             }
 
             if let Some(action) = battle.opponent.next_move.as_ref().map(|status| status.action) {
-                self.opponent = Some(Text::new(self.text.messages.as_ref().unwrap().len(), self.add_user(&battle.opponent, &battle.player, action, false)));
+                self.opponent = Some(Text::new(self.text.message.as_ref().unwrap().message_set.len(), self.add_user(&battle.opponent, &battle.player, action, false)));
             }
 
             if !player_first {
                 self.add_player(battle);
             }
 
-            if let Some(messages) = self.text.messages.as_mut() {
+            if let Some(message) = self.text.message.as_mut() {
 
-                let pos = messages.len();
+                let pos = message.message_set.len();
                 let mut len = 0;
 
                 if !battle.opponent.active().persistent.is_empty() {
-                    messages.push(Message::new(
-                        vec![format!("{} was hurt by Leech Seed!", battle.opponent.active().name())], 
-                        TextColor::White,
+                    message.message_set.push(MessagePage::new(
+                        vec![format!("{} was hurt by Leech Seed!", battle.opponent.active().name())],
                         Some(0.5),
                     ));
                     len += 1;
@@ -116,7 +116,7 @@ impl BattleText {
 
     fn add_player(&mut self, battle: &Battle) {
         if let Some(action) = battle.player.next_move.as_ref().map(|status| status.action) {
-            self.player = Some(Text::new(self.text.messages.as_ref().unwrap().len(), self.add_user(&battle.player, &battle.opponent, action, true)));
+            self.player = Some(Text::new(self.text.message.as_ref().unwrap().message_set.len(), self.add_user(&battle.player, &battle.opponent, action, true)));
         } else {
             warn!("Could not add player text, no move action was found.");
         }
@@ -132,12 +132,11 @@ impl BattleText {
 
     fn add_move(&mut self, user: &PokemonInstance, pokemon_move: MoveRef, opponent: &BattleParty) -> usize {
         let mut len = 0;
-        if let Some(messages) = self.text.messages.as_mut() {
+        if let Some(message) = self.text.message.as_mut() {
             len += 1;
-            messages.push(
-                Message::new(
+            message.message_set.push(
+                MessagePage::new(
                     vec![user.name() + " used " + &pokemon_move.name + "!"],
-                    TextColor::White,
                     Some(0.5),
                 )
             );
@@ -155,7 +154,12 @@ impl BattleText {
 
             if effective != Effective::Effective && pokemon_move.category != MoveCategory::Status {
                 len += 1;
-                messages.push(Message::new(vec![format!("It was {}{}", effective, if effective == Effective::SuperEffective { "!" } else { "..." })], TextColor::White, Some(0.5)));
+                message.message_set.push(
+                    MessagePage::new(
+                        vec![format!("It was {}{}", effective, if effective == Effective::SuperEffective { "!" } else { "..." })], 
+                        Some(0.5)
+                    )
+                );
             }
             
         } else {
@@ -165,11 +169,10 @@ impl BattleText {
     }
 
     fn add_item(&mut self, user: &PokemonInstance, item: ItemRef) -> usize {
-        if let Some(messages) = self.text.messages.as_mut() {
-            messages.push(
-                Message::new(
+        if let Some(message) = self.text.message.as_mut() {
+            message.message_set.push(
+                MessagePage::new(
                     vec![format!("A {} was used on {}", item.name, user.name())], 
-                    TextColor::White, 
                     Some(0.5)
                 )
             );
@@ -181,21 +184,19 @@ impl BattleText {
     }
 
     fn add_switch(&mut self, leaving: &PokemonInstance, coming: &PokemonInstance, player: bool) -> usize {
-        if let Some(messages) = self.text.messages.as_mut() {
+        if let Some(message) = self.text.message.as_mut() {
             if let Some(text) = if player { &mut self.player } else { &mut self.opponent } {
                 text.active += 1;
             }
-            messages.push(
-                Message::new(
-                    vec![format!("Come back, {}!", leaving.name())], 
-                    TextColor::White, 
+            message.message_set.push(
+                MessagePage::new(
+                    vec![format!("Come back, {}!", leaving.name())],
                     Some(0.5),
                 )
             );
-            messages.push(
-                Message::new(
-                    vec![format!("Go, {}!", coming.name())], 
-                    TextColor::White, 
+            message.message_set.push(
+                MessagePage::new(
+                    vec![format!("Go, {}!", coming.name())],
                     Some(0.5),
                 )
             );
@@ -207,12 +208,11 @@ impl BattleText {
     }
 
     pub fn add_faint_text(&mut self, name: String) {
-        if let Some(messages) = self.text.messages.as_mut() {
-            self.faint = Some(Text::new(messages.len(), 1));
-            messages.push(
-                Message::new(
+        if let Some(message) = self.text.message.as_mut() {
+            self.faint = Some(Text::new(message.message_set.len(), 1));
+            message.message_set.push(
+                MessagePage::new(
                     vec![name + " fainted!"],
-                    TextColor::White,
                     Some(1.0), 
                 )            
             );
@@ -220,25 +220,23 @@ impl BattleText {
     }
 
     pub fn player_level_up(&mut self, name: String, exp: u32, level: Option<u8>) {
-        if let Some(messages) = self.text.messages.as_mut() {
-            messages.push(
-                Message::new(
+        if let Some(message) = self.text.message.as_mut() {
+            message.message_set.push(
+                MessagePage::new(
                     vec![
                         format!("{} gained", name),
                         format!("{} EXP. points!", exp),
                     ],
-                    TextColor::White,
                     None,
                 )
             );
             if let Some(level) = level {
-                messages.push(
-                    Message::new(
+                message.message_set.push(
+                    MessagePage::new(
                         vec![
                             name + " grew to",
                             format!("LV. {}!", level),
                         ],
-                        TextColor::White,
                         Some(0.5),
                     )
                 );                
@@ -259,14 +257,14 @@ impl BattleText {
                 opponent.pos
             };
             if pos >= self.text.current_message() {
-                if let Some(messages) = self.text.messages.as_mut() {
+                if let Some(message) = self.text.message.as_mut() {
                     let len = if is_player {
                         player.len
                     } else {
                         opponent.len
                     };
                     for _ in 0..len {
-                        messages.remove(pos);
+                        message.message_set.remove(pos);
                     }
                 }
             }            

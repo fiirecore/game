@@ -76,7 +76,7 @@ impl GameWorld for WorldChunkMap {
 
     fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
         if let Some(chunk) = self.chunk_mut() {
-            if chunk.in_bounds(player.position.local.coords) {
+            if chunk.in_bounds(player.character.position.coords) {
                 chunk.on_tile(battle_data, player);
             }
         }

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use firecore_util::Direction;
 
-use crate::character::Character;
+// use crate::character::Character;
 use crate::character::player::PlayerCharacter;
 
 use super::MapIdentifier;
@@ -36,10 +36,10 @@ impl WorldMapManager {
 
         let mut update = false;
 
-        self.player.on_try_move(direction);
+        self.player.character.on_try_move(direction);
 
         let offset = direction.tile_offset();
-        let coords = self.player.position.local.coords + offset;
+        let coords = self.player.character.position.coords + offset;
 
         let in_bounds = if self.chunk_active {
             self.chunk_map.in_bounds(coords)
@@ -51,7 +51,7 @@ impl WorldMapManager {
             if in_bounds {
                 self.chunk_map.walkable(coords)
             } else {
-               let (code, do_update) = self.chunk_map.walk_connections(&mut self.player.position, coords);
+               let (code, do_update) = self.chunk_map.walk_connections(&mut self.player.character.position, coords);
                update = do_update;
                code
             }
@@ -103,10 +103,10 @@ impl WorldMapManager {
             false
         };
 
-        if can_move(move_code) || allow || self.player.properties.noclip {
-            let mult = self.player.properties.speed * 60.0 * delta;
-            self.player.position.local.offset = direction.pixel_offset().scale(mult);
-            self.player.properties.moving = true;
+        if can_move(move_code) || allow || self.player.character.noclip {
+            let mult = self.player.character.speed * 60.0 * delta;
+            self.player.character.position.offset = direction.pixel_offset().scale(mult);
+            self.player.character.moving = true;
         }
 
         update
@@ -133,9 +133,8 @@ impl WorldMapManager {
         if !self.chunk_active {
             self.chunk_active = true;
         }
-        if let Some(chunk) = self.chunk_map.update_chunk(destination.index) {
-            self.player.position.global = chunk.coords;
-            self.player.position.local.from_destination(destination.position);
+        if self.chunk_map.update_chunk(destination.index).is_some() {
+            self.player.character.position.from_destination(destination.position);
         }
     }
 
@@ -144,8 +143,7 @@ impl WorldMapManager {
             self.chunk_active = false;
         }
         self.update_map_set(destination.map.unwrap(), destination.index);
-        self.player.position.global = firecore_util::Coordinate { x: 0, y: 0 };
-        self.player.position.local.from_destination(destination.position);
+        self.player.character.position.from_destination(destination.position);
     }
 
 }

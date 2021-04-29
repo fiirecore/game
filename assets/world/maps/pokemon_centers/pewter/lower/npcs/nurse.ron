@@ -1,16 +1,16 @@
 (
-    index: 0,
+    id: "nurse",
     npc: (
-        name: "Joy",
-        position: (
-            coords: (
-                x: 7,
-                y: 2,
+        name: "Joy",    
+        type: "nurse",
+        character: (
+            position: (
+                coords: (
+                    x: 7,
+                    y: 2,
+                ),
+                direction: Down
             ),
-            direction: Down
-        ),
-        properties: (    
-            type: "nurse",
         ),
     ),
 )

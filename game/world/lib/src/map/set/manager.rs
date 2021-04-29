@@ -1,6 +1,6 @@
 use firecore_util::Coordinate;
 use serde::{Serialize, Deserialize};
-use firecore_util::hash::HashMap;
+use deps::hash::HashMap;
 
 use crate::MovementId;
 use crate::TileId;

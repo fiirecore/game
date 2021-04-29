@@ -1,5 +1,5 @@
 (
-    identifier: "cerulean_heal",
+    identifier: "viridian_heal",
     location: Some((
         min: (
             x: 7,
@@ -16,51 +16,57 @@
     actions: [
         PlayerFreezeInput,
         Conditional(
-            messages: [
+            message: (
+                color: Red,
+                message_set: [
+                    (
+                        lines: ["Welcome to our POKEMON CENTER!"],
+                    ),
+                    (
+                        lines: [
+                            "Would you like me to heal your",
+                            "POKEMON back to perfect health?"
+                        ],
+                        wait: Some(0.0),
+                    )
+                ],
+            ),
+            end_message: Some((
+                color: Red,
+                message_set: [(
+                    lines: ["We hope to see you again!"],
+                )],
+            )),
+            unfreeze: true,
+        ),
+        NPCSay(
+            "nurse",
+            [(
+                lines: [
+                    "Okay, I'll take your POKEMON for a",
+                    "few seconds."
+                ],
+                wait: Some(2.0),
+            )]
+        ),
+        PlayerHealPokemon,
+        Info("Healed player pokemon"),
+        NPCSay(
+            "nurse",
+            [
                 (
-                    lines: ["Welcome to our POKEMON CENTER!"],
-                    color: Red,
+                    lines: [
+                        "Thank you for waiting. We've restored", // change to text scrolling (3 lines)
+                        "your POKEMON to full health.",
+                    ],
                 ),
                 (
                     lines: [
-                        "Would you like me to heal your",
-                        "POKEMON back to perfect health?"
+                        "We hope to see you again!",
                     ],
-                    color: Red,
-                    wait: Some(0.0),
                 )
-            ],
-            end_messages: Some([(
-                lines: ["We hope to see you again!"],
-                color: Red,
-            )]),
-            unfreeze: true,
+            ]
         ),
-        DisplayText([(
-            lines: [
-                "Okay, I'll take your POKEMON for a",
-                "few seconds."
-            ],
-            color: Red,
-            wait: Some(2.0),
-        )]),
-        PlayerHealPokemon,
-        Info("Healed player pokemon"),
-        DisplayText([
-            (
-                lines: [
-                    "Thank you for waiting. We've restored", // change to text scrolling (3 lines)
-                    "your POKEMON to full health.",
-                ],
-                color: Red,
-            ),
-            (
-                lines: [
-                    "We hope to see you again!",
-                ],
-                color: Red,
-            )
-        ]),
         PlayerUnfreezeInput,
     ]
 )

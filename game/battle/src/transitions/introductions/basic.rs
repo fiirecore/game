@@ -1,17 +1,14 @@
+use game::text::MessagePage;
 use game::{
     util::{
         Entity,
         Reset,
         Completable,
-        text::{
-            Message,
-            TextColor,
-        }
     },
-    data::{get, player::PlayerSaves},
+    storage::{get, player::PlayerSaves},
     audio::{play_sound, Sound},
     macroquad::prelude::{Vec2, warn, Texture2D, draw_texture_ex, WHITE, DrawTextureParams, Rect},
-    text::process_messages,
+    text::{Message, process_messages},
     gui::text::DynamicText,
     graphics::{byte_texture, draw_bottom},
 };
@@ -50,7 +47,7 @@ impl BasicBattleIntroduction {
             alive: false,
             finished: false,
 
-            text: DynamicText::new(Vec2::new(11.0, 11.0), panel),
+            text: DynamicText::empty(Vec2::new(11.0, 11.0), panel),
 
             player: byte_texture(include_bytes!("../../../assets/player.png")),
 			counter: 0.0,
@@ -60,18 +57,17 @@ impl BasicBattleIntroduction {
     }
 
     pub fn common_setup(&mut self, battle: &Battle) {
-        if let Some(messages) = self.text.messages.as_mut() {
-            messages.push(
-                Message::new(
+        if let Some(message) = self.text.message.as_mut() {
+            message.message_set.push(
+                MessagePage::new(
                     vec![
                         format!("Go! {}!", battle.player.active().name())
                     ],
-                    TextColor::White,
                     Some(0.5),
                 )
             );
             if let Some(saves) = get::<PlayerSaves>() {
-                process_messages(saves.get(), messages);
+                process_messages(saves.get(), message);
             }
             
         }
@@ -118,25 +114,28 @@ impl BattleTransitionGui for BasicBattleIntroduction {
 impl BattleIntroduction for BasicBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle) {
-        self.text.messages = Some(vec![
-            Message::new(
+        self.text.message = Some(
+            Message::single(
                 vec![
                     format!("Wild {} appeared!", battle.opponent.active().pokemon.data.name.to_ascii_uppercase())
-                ], 
-                TextColor::White,
-                None, 
-            ),
-        ]);
+                ],
+                game::text::TextColor::White,
+                None,
+            )
+        );
         self.common_setup(battle);
     }
 
     fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
         if self.text.can_continue() {
-            if let Some(messages) = self.text.messages.as_ref() {
-                if self.text.current_message() >= messages.len() - 2 && !battle_gui.opponent.is_alive() {
+            if let Some(message) = self.text.message.as_ref() {
+                if self.text.current_message() >= message.message_set.len() - 2 && !battle_gui.opponent.is_alive() {
                     battle_gui.opponent.spawn();
                     if let Err(err) = play_sound(Sound::variant("Cry", Some(battle.opponent.active().pokemon.data.id))) {
-                        warn!("Could not play opponent cry with error {}", err);
+                        match err {
+                            game::audio::error::PlayAudioError::Uninitialized => (),
+                            _ => warn!("Could not play opponent pokemon cry with error {}", err),
+                        }
                     }
                 }
             }            
@@ -145,7 +144,10 @@ impl BattleIntroduction for BasicBattleIntroduction {
         if self.counter >= 104.0 && !battle_gui.player.is_alive() {
             battle_gui.player.spawn();
             if let Err(err) = play_sound(Sound::variant("Cry", Some(battle.player.active().pokemon.data.id))) {
-                warn!("Could not play opponent cry with error {}", err);
+                match err {
+                    game::audio::error::PlayAudioError::Uninitialized => (),
+                    _ => warn!("Could not play player pokemon cry with error {}", err),
+                }
             }
         }
 
@@ -169,8 +171,8 @@ impl BattleTransition for BasicBattleIntroduction {
 
     fn update(&mut self, delta: f32) {
         self.text.update(delta);
-        if let Some(messages) = self.text.messages.as_ref() {
-            if self.text.current_message() + 1 == messages.len() {
+        if let Some(message) = self.text.message.as_ref() {
+            if self.text.current_message() + 1 == message.message_set.len() {
                 if self.counter < 104.0 {
                     self.counter += delta * 180.0;                
                 } else if self.text.is_finished() {

@@ -1,9 +1,11 @@
 use game::{
-    util::{Entity, Reset, text::TextColor, smallvec::SmallVec},
+    util::{Entity, Reset},
     pokedex::pokemon::instance::PokemonInstance,
     input::{pressed, Control},
+    text::TextColor,
     macroquad::prelude::{Vec2, Texture2D},
     graphics::{byte_texture, draw, draw_text_left, draw_cursor},
+    deps::smallvec::SmallVec,
 };
 
 pub struct MovePanel {

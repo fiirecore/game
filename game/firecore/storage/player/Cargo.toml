@@ -13,10 +13,9 @@ default = ["firecore-storage"]
 
 firecore-storage = { path = "../", optional = true }
 
-firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", features = ["hash", "tinystr"] }
-# firecore-util = { path = "../firecore-util", default-features = false, features = ["hash"] }
+firecore-util = { path = "../../util" }
+firecore-pokedex = { path = "../../pokedex" }
 
-firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-# firecore-pokedex = { path = "../../firecore-pokedex" }
+firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies", features = ["hash", "tinystr"] }
 
 serde = { version = "1.0", features = ["derive"] }

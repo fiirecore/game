@@ -1,29 +1,28 @@
 (
-    index: 5,
+    id: "janice",
     npc: (
         name: "Janice",
-        position: (
-            coords: (
-                x: 19,
-                y: 9
+        type: "lass",
+        character: (
+            position: (
+                coords: (
+                    x: 19,
+                    y: 9
+                ),
+                direction: Left
             ),
-            direction: Left
         ),
-        properties: (
-            type: "lass",
-            message: Some([
-                (
-                    lines: [
-                        "You shouldn't be staring if you",
-                        "don't want to battle!"
-                    ],
-                    color: Red,
-                )
-            ])
-        ),
+        message: Some([
+            (
+                lines: [
+                    "You shouldn't be staring if you",
+                    "don't want to battle!"
+                ],
+                color: Red,
+            )
+        ]),
         trainer: Some((
-            tracking_length: Some(5),
-            message_color: Red,
+            tracking: Some(5),
             encounter_message: [
                 [
                     "Excuse me?",

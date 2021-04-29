@@ -1,9 +1,9 @@
+use firecore_game::gui::panel::Panel;
 use game::{
-    util::{Entity, text::TextColor},
+    util::Entity,
     input::{pressed, Control},
-    macroquad::prelude::{Vec2, Texture2D},
+    macroquad::prelude::Vec2,
     gui::{party::PartyGui, bag::BagGui},
-    graphics::{byte_texture, draw, draw_text_left, draw_cursor},
     state::GameStateAction,
 };
 
@@ -13,12 +13,18 @@ pub struct StartMenu {
 
     pos: Vec2,
 
-    background: Texture2D,
+    panel: Panel,
 
     buttons: [&'static str; 6],
 
     cursor: usize,
 
+}
+
+pub enum Buttons {
+
+
+    
 }
 
 impl StartMenu {
@@ -31,7 +37,7 @@ impl StartMenu {
 
             pos: Vec2::new(169.0, 1.0),
 
-            background: byte_texture(include_bytes!("../../assets/gui/world/start_menu.png")),
+            panel: Panel::new(),
 
             buttons: [
                 "Save",
@@ -63,7 +69,7 @@ impl StartMenu {
                 0 => {
                     // Save
                     // #[deprecated(note = "change this")]
-                    firecore_game::data::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
+                    firecore_game::storage::DIRTY.store(true, std::sync::atomic::Ordering::Relaxed);
                 },
                 1 => {
                     // Bag
@@ -108,11 +114,7 @@ impl StartMenu {
 
     pub fn render(&self) {
         if self.alive {
-            draw(self.background, self.pos.x, self.pos.y);
-            for (index, text) in self.buttons.iter().enumerate() {
-                draw_text_left(1, text, TextColor::Black, self.pos.x + 15.0, self.pos.y + 7.0 + (index << 4) as f32);
-            }
-            draw_cursor(self.pos.x + 8.0, self.pos.y + 9.0 + (self.cursor << 4) as f32);
+            self.panel.render_text(self.pos.x, self.pos.y, 70.0, &self.buttons, self.cursor);            
         }
     }
 

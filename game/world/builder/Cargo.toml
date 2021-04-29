@@ -12,7 +12,7 @@ edition = "2018"
 
 firecore-world-lib = { path = "../lib" }
 
-firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util" }
+firecore-util = { path = "../../firecore/util" }
 
 ### Serialization
 

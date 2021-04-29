@@ -1,28 +1,26 @@
 (
-    index: 2,
+    id: "liam",
     npc: (
         name: "Liam",
-        position: (
-            coords: (
-                x: 3,
-                y: 8
+        type: "camper",
+        character: (
+            position: (
+                coords: (
+                    x: 3,
+                    y: 8
+                ),
+                direction: Right
             ),
-            direction: Right
         ),
-        properties: (
-            type: "camper",
-            message: Some([(
-                color: Blue,
-                lines: [
-                    "You're pretty hot.",
-                    "...But not as hot as BROCK!"
-                ]
-            )]),
-        ),
+        message: Some([(
+            color: Blue,
+            lines: [
+                "You're pretty hot.",
+                "...But not as hot as BROCK!"
+            ]
+        )]),
         trainer: Some((
-            trainer_type: Camper,
-            tracking_length: Some(3),
-            encounter_music: Some(EncounterBoy),
+            tracking: Some(3),
             encounter_message: [
                 [
                     "Stop right there, kid!"
@@ -58,6 +56,6 @@
                 ]
             ],
             worth: 220,
-        ))
+        )),
     )
 )

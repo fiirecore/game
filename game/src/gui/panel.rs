@@ -5,6 +5,8 @@ use macroquad::prelude::{Texture2D, draw_texture_ex, WHITE, DrawTextureParams};
 
 use crate::graphics::byte_texture;
 
+static mut PANEL: Option<Texture2D> = None;
+
 pub struct Panel {
 
     corner: Texture2D,
@@ -17,7 +19,7 @@ impl Panel {
 
     pub fn new() -> Self {
         Self {
-            corner: byte_texture(include_bytes!("../../assets/gui/panel.png")),
+            corner: unsafe { *PANEL.get_or_insert(byte_texture(include_bytes!("../../assets/gui/panel.png"))) },
         }
     }
 
@@ -74,6 +76,14 @@ impl Panel {
             ..Default::default()
         });
 
+    }
+
+    pub fn render_text(&self, x: f32, y: f32, w: f32, text: &[&str], cursor: usize) {
+        self.render(x, y, w, 22.0 + (text.len() << 4) as f32);
+        for (index, text) in text.iter().enumerate() {
+            crate::graphics::draw_text_left(1, text, crate::text::TextColor::Black, x + 15.0, y + 11.0 + (index << 4) as f32);
+        }
+        crate::graphics::draw_cursor(x + 8.0, y + 13.0 + (cursor << 4) as f32);
     }
 
 }

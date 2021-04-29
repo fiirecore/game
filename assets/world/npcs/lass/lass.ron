@@ -1,6 +1,7 @@
 (
     identifier: "lass",
     sprite: Walk,
+    text_color: Red,
     trainer: Some(
         (
             name: "Lass",

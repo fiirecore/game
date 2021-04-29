@@ -1,8 +1,9 @@
 use game::{
-	util::{Entity, Reset, text::TextColor},
+	util::{Entity, Reset},
 	pokedex::pokemon::instance::PokemonInstance,
 	macroquad::prelude::{Vec2, Texture2D},
 	gui::health::HealthBar,
+	text::TextColor,
 	graphics::{byte_texture, draw, draw_text_left, draw_text_right},
 };
 

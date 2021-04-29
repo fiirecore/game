@@ -302,7 +302,6 @@ dependencies = [
 [[package]]
 name = "dex-builder"
 version = "0.4.0-beta.3"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#ed271e6da58529b02a8fe2f8e839b18fcf67f58b"
 dependencies = [
  "firecore-pokedex",
  "postcard",
@@ -348,7 +347,7 @@ name = "firecore-audio"
 version = "0.4.0-alpha.2.0"
 dependencies = [
  "firecore-audio-lib",
- "firecore-util",
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
  "kira",
  "lewton",
  "parking_lot",
@@ -380,6 +379,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-dependencies"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-dependencies#e3e8fa967bdd90248db18dd9c4222484942793ae"
+dependencies = [
+ "ahash 0.7.2",
+ "smallvec",
+ "tinystr",
+]
+
+[[package]]
+name = "firecore-dependencies"
+version = "0.4.0-beta.1"
+source = "git+https://github.com/DoNotDoughnut/firecore-util#e3e8fa967bdd90248db18dd9c4222484942793ae"
+dependencies = [
+ "ahash 0.7.2",
+]
+
+[[package]]
 name = "firecore-font"
 version = "0.2.0-alpha.1"
 dependencies = [
@@ -391,6 +408,7 @@ name = "firecore-game"
 version = "0.4.0-alpha.1.2"
 dependencies = [
  "firecore-audio",
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
  "firecore-input",
  "firecore-pokedex",
  "firecore-text",
@@ -403,7 +421,7 @@ dependencies = [
 name = "firecore-input"
 version = "0.3.0-beta.4"
 dependencies = [
- "firecore-util",
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
  "macroquad",
  "serde",
 ]
@@ -411,9 +429,8 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.4.0-beta.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#ed271e6da58529b02a8fe2f8e839b18fcf67f58b"
 dependencies = [
- "firecore-util",
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
  "serde",
 ]
 
@@ -421,6 +438,7 @@ dependencies = [
 name = "firecore-saves"
 version = "0.4.0-beta.1"
 dependencies = [
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
  "firecore-pokedex",
  "firecore-storage",
  "firecore-util",
@@ -442,8 +460,8 @@ dependencies = [
 name = "firecore-text"
 version = "0.4.0-beta.1"
 dependencies = [
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
  "firecore-font",
- "firecore-util",
  "macroquad",
  "serde",
 ]
@@ -451,12 +469,9 @@ dependencies = [
 [[package]]
 name = "firecore-util"
 version = "0.4.0-beta.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-util#8793525c6928800efc984a9116b63e646cc6936c"
 dependencies = [
- "ahash 0.7.2",
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
  "serde",
- "smallvec",
- "tinystr",
 ]
 
 [[package]]
@@ -472,6 +487,8 @@ name = "firecore-world-lib"
 version = "0.4.0-alpha.1.1"
 dependencies = [
  "firecore-audio-lib",
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-dependencies)",
+ "firecore-font",
  "firecore-pokedex",
  "firecore-util",
  "indexmap",
@@ -743,10 +760,9 @@ dependencies = [
 [[package]]
 name = "macroquad"
 version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/macroquad#7da189b715f09650159fbb638fd6230c0072dc2b"
+source = "git+https://github.com/DoNotDoughnut/macroquad#5ee72d818807b36a326c5a7c727d8c90f33909b9"
 dependencies = [
- "ahash 0.7.2",
- "firecore-util",
+ "firecore-dependencies 0.4.0-beta.1 (git+https://github.com/DoNotDoughnut/firecore-util)",
  "fontdue",
  "glam",
  "image",
@@ -757,7 +773,7 @@ dependencies = [
 [[package]]
 name = "macroquad_macro"
 version = "0.1.2"
-source = "git+https://github.com/DoNotDoughnut/macroquad#7da189b715f09650159fbb638fd6230c0072dc2b"
+source = "git+https://github.com/DoNotDoughnut/macroquad#5ee72d818807b36a326c5a7c727d8c90f33909b9"
 
 [[package]]
 name = "memchr"
@@ -1056,7 +1072,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.4.0-beta.3"
+version = "0.4.0-beta.4"
 dependencies = [
  "audio-builder",
  "dex-builder",
@@ -1305,9 +1321,9 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "syn"
-version = "1.0.70"
+version = "1.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9505f307c872bab8eb46f77ae357c8eba1fdacead58ee5a850116b1d7f82883"
+checksum = "ad184cc9470f9117b2ac6817bfe297307418819ba40552f9b3846f05c33d5373"
 dependencies = [
  "proc-macro2",
  "quote",

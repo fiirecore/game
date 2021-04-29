@@ -2,7 +2,7 @@ use kira::instance::InstanceSettings;
 use kira::instance::StopInstanceSettings;
 use kira::instance::handle::InstanceHandle;
 use kira::sound::handle::SoundHandle;
-use util::hash::HashMap;
+use deps::hash::HashMap;
 use parking_lot::Mutex;
 use firecore_audio_lib::music::{MusicId, MusicData};
 use parking_lot::const_mutex;

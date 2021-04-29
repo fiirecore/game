@@ -1,17 +1,19 @@
-use firecore_util::{
+use firecore_dependencies::{
     hash::HashMap,
-    text::TextColor,
 };
 
 use macroquad::prelude::{Color, color_u8, Image, Texture2D, draw_texture, WHITE, Rect, FilterMode::Nearest};
 
-use firecore_font::{SerializedFonts, CustomChar};
+use firecore_font::{SerializedFonts, CustomChar, message::TextColor};
+
+pub use firecore_font::FontId;
+pub use firecore_font::message;
 
 pub static mut TEXT_RENDERER: Option<TextRenderer> = None;
 
 pub struct TextRenderer {
 
-    pub fonts: HashMap<u8, Font>,
+    pub fonts: HashMap<FontId, Font>,
     pub button: Texture2D,
     pub cursor: Texture2D,
 
@@ -90,10 +92,10 @@ impl Font {
 
     pub fn render_text_from_right(&self, text: &str, x: f32, y: f32, color: Color) {
         let mut len = 0.0;
-        let x_offset = self.text_pixel_length(text);
+        let x = x - self.text_pixel_length(text);
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                draw_texture(*texture, x - x_offset + len, y, color);
+                draw_texture(*texture, x + len, y, color);
                 texture.width()
             } else {
                 self.width as f32
@@ -125,7 +127,7 @@ impl Font {
 
 }
 
-pub trait IntoMQColor {
+pub trait IntoMQColor: Copy {
 
     fn into_color(self) -> Color;
 

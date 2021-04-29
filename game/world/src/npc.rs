@@ -1,8 +1,11 @@
-use game::util::{
-    TILE_SIZE, 
-    Direction, 
+use game::deps::{
     tinystr::TinyStr16,
     hash::HashMap,
+};
+
+use game::util::{
+    TILE_SIZE, 
+    Direction,
 };
 
 use firecore_world_lib::character::npc::{NPC, npc_type::NPCType};
@@ -28,10 +31,10 @@ pub fn npc_type(id: &TinyStr16) -> Option<&NPCType> {
 }
 
 pub fn render(npc: &NPC, npc_textures: &NpcTextures, screen: &RenderCoords) {
-    let x = ((npc.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x + npc.position.offset.x;
-    let y = ((npc.position.coords.y - 1 + screen.offset.y) << 4) as f32 - screen.focus.y + npc.position.offset.y;
+    let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x + npc.character.position.offset.x;
+    let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32 - screen.focus.y + npc.character.position.offset.y;
     
-    if let Some(texture) = npc_textures.get(&npc.properties.npc_type) {
+    if let Some(texture) = npc_textures.get(&npc.npc_type) {
         draw_texture_ex(*texture, x, y, WHITE, DrawTextureParams {
             source: Some(Rect::new(
                 current_texture_pos(npc),
@@ -39,7 +42,7 @@ pub fn render(npc: &NPC, npc_textures: &NpcTextures, screen: &RenderCoords) {
                 16.0,
                 32.0,
             )),
-            flip_x: npc.position.direction == Direction::Right,
+            flip_x: npc.character.position.direction == Direction::Right,
             ..Default::default()
         })
     } else {
@@ -48,16 +51,16 @@ pub fn render(npc: &NPC, npc_textures: &NpcTextures, screen: &RenderCoords) {
 }
 
 pub fn current_texture_pos(npc: &NPC) -> f32 {
-    if let Some(npc_type) = npc_type(&npc.properties.npc_type) {
+    if let Some(npc_type) = npc_type(&npc.npc_type) {
         let index = (
-            if npc.position.offset.x != 0.0 {
-                npc.position.offset.x
+            if npc.character.position.offset.x != 0.0 {
+                npc.character.position.offset.x
             } else {
-                npc.position.offset.y
+                npc.character.position.offset.y
             }.abs() as usize >> 3
-        ) + npc.properties.character.sprite_index as usize;
+        ) + npc.character.sprite_index as usize;
         
-        (match npc.position.direction {
+        (match npc.character.position.direction {
             Direction::Down => npc_type.sprite.down[index],
             Direction::Up => npc_type.sprite.up[index],
             _ => npc_type.sprite.side[index]
@@ -67,30 +70,3 @@ pub fn current_texture_pos(npc: &NPC) -> f32 {
     }
     
 }
-
-// pub fn current_texture_pos(npc: &NPC) -> f32 {
-//     if let Some(npc_type) = npc_type(&npc.properties.npc_type) {
-//         let index = (
-//             if if npc.position.offset.x != 0.0 {
-//                 npc.position.offset.x
-//             } else {
-//                 npc.position.offset.y
-//             }.abs() < 8.0 && npc.properties.character.moving { 1 } else { 0 }
-//         ) + npc.properties.character.sprite_index as usize;
-//         ((
-//             match npc.position.direction {
-//                 Direction::Down => npc_type.sprite.down.get(index),
-//                 Direction::Up => npc_type.sprite.up.get(index),
-//                 _ => npc_type.sprite.side.get(index)
-//             }.unwrap_or(&3)
-//         ) << 4) as f32     
-//         // (match npc.position.direction {
-//         //     Direction::Down => npc_type.sprite.down[index],
-//         //     Direction::Up => npc_type.sprite.up[index],
-//         //     _ => npc_type.sprite.side[index]
-//         // } << 4) as f32
-//     } else {
-//         0.0
-//     }
-    
-// }

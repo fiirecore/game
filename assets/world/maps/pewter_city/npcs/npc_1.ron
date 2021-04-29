@@ -1,17 +1,17 @@
 (
-    index: 1,
+    id: "1",
     npc: (
         name: "NPC 1",
-        position: (
-            coords: (
-                x: 33,
-                y: 17
+        type: "woman",
+        character: (
+            position: (
+                coords: (
+                    x: 33,
+                    y: 17
+                ),
+                direction: Down
             ),
-            direction: Down
         ),
-        properties: (
-            type: "woman",
-            movement: LookAround,
-        ),
+        movement: LookAround,
     ),
 )

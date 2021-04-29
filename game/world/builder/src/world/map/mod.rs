@@ -1,7 +1,8 @@
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
-use util::hash::HashMap;
 use worldlib::{
-    serialized::Palette,
+    TileId,
+    serialized::{Palette, PaletteId},
     map::{
         WorldMap,
         MapIdentifier,
@@ -17,6 +18,8 @@ use worldlib::{
         }
     }
 };
+
+pub type PaletteSizes = HashMap<PaletteId, TileId>;
 
 use crate::gba_map::{get_gba_map, fix_tiles, fill_palette_map};
 
@@ -46,8 +49,8 @@ pub fn load_maps<P: AsRef<Path>>(maps: P, tile_textures: P) -> (WorldMapManager,
                     if let Some(ext) = file.extension() {
                         if ext == std::ffi::OsString::from("ron") {
                             let (cm, ms) = load_map(&palette_sizes, &worlds, &file);
-                            if let Some((index, chunk)) = cm {
-                                chunk_map.chunks.insert(index, chunk);
+                            if let Some(chunk) = cm {
+                                chunk_map.chunks.insert(chunk.map.id, chunk);
                             } else if let Some((index, map_set)) = ms {
                                 map_set_manager.map_sets.insert(index, map_set);
                             }
@@ -87,7 +90,7 @@ fn load_map(
     root_path: &PathBuf, 
     file: &PathBuf
 ) -> (
-    Option<(MapIdentifier, WorldChunk)>, 
+    Option<WorldChunk>, 
     Option<(MapIdentifier, WorldMapSet)>
 ) 
     {
@@ -127,30 +130,28 @@ fn load_map(
     }
 }
 
-pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> (MapIdentifier, WorldMap) {
+pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, palette_sizes: &HashMap<u8, u16>, config: MapConfig) -> WorldMap {
     let root_path = root_path.as_ref();
     let mut gba_map = get_gba_map(
         std::fs::read(root_path.join(config.file)).unwrap_or_else(|err| panic!("Could not get map file at {:?} with error {}", root_path, err))
     );
     fix_tiles(&mut gba_map, palette_sizes);
 
-    (
-        config.identifier,
-        WorldMap {
-            name: config.name,
-            music: gba_map.music,
-            width: gba_map.width,
-            height: gba_map.height,
-            tiles: gba_map.tiles,
-            movements: gba_map.movements,
-            border: Border {
-                tiles: gba_map.borders.into(),
-                size: (gba_map.borders.len() as f32).sqrt() as u8,
-            },
-            warps: super::warp::load_warp_entries(root_path.join("warps")),
-            wild: super::wild::load_wild_entry(config.wild, root_path.join("wild")),
-            npc_manager: super::npc::load_npc_entries(root_path.join("npcs")),
-            scripts: super::script::load_script_entries(root_path.join("scripts")),
-        }
-    )
+    WorldMap {
+        id: config.identifier,
+        name: config.name,
+        music: gba_map.music,
+        width: gba_map.width,
+        height: gba_map.height,
+        tiles: gba_map.tiles,
+        movements: gba_map.movements,
+        border: Border {
+            tiles: gba_map.borders.into(),
+            size: (gba_map.borders.len() as f32).sqrt() as u8,
+        },
+        warps: super::warp::load_warp_entries(root_path.join("warps")),
+        wild: super::wild::load_wild_entry(config.wild, root_path.join("wild")),
+        npc_manager: super::npc::load_npc_entries(root_path.join("npcs")),
+        scripts: super::script::load_script_entries(root_path.join("scripts")),
+    }
 }

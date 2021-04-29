@@ -12,16 +12,15 @@ pathfind = ["indexmap", "num-traits"]
 
 [dependencies]
 
-firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", default-features = false, features = ["random", "hash", "smallvec"] }
-#firecore-util = { path = "../firecore-util" }
+serde = { version = "1.0", features = ["derive"] }
 
-firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-# firecore-pokedex = { path = "../../../../firecore/firecore-pokedex" }
+firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies", features = ["random", "hash", "smallvec"] }
 
+firecore-util = { path = "../../firecore/util" }
+firecore-pokedex = { path = "../../firecore/pokedex" }
+firecore-font = { path = "../../firecore/text/font" }
 firecore-audio-lib = { path = "../../firecore/audio/lib" }
 
 ### pathfinding temporary crates
 indexmap = { version = "1.6", optional = true }
 num-traits = { version = "0.2", optional = true }
-
-serde = { version = "1.0", features = ["derive"] }

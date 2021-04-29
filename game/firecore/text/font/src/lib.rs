@@ -1,9 +1,13 @@
 use serde::{Deserialize, Serialize};
 
+pub mod message;
+
+pub type FontId = u8;
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FontSheetData {
 
-    pub id: u8,
+    pub id: FontId,
     pub width: u8,
     pub height: u8,
     pub chars: String,

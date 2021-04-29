@@ -1,3 +1,4 @@
+extern crate firecore_dependencies as deps;
 extern crate firecore_util as util;
 
 use map::MapIdentifier;

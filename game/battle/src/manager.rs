@@ -1,7 +1,7 @@
 use game::{
 	util::{Entity, Completable},
-	pokedex::pokemon::party::PokemonParty,
-	data::player::PlayerSave,
+	pokedex::pokemon::saved::SavedPokemonParty,
+	storage::player::PlayerSave,
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
@@ -69,7 +69,7 @@ impl BattleManager {
 		
 	}
 
-	pub fn battle(&mut self, player: &PokemonParty, data: BattleData) -> bool { // add battle type parameter
+	pub fn battle(&mut self, player: &SavedPokemonParty, data: BattleData) -> bool { // add battle type parameter
 
 		self.finished = false;
 

@@ -4,7 +4,7 @@ use kira::manager::AudioManager;
 use kira::sound::SoundSettings;
 use parking_lot::Mutex;
 use parking_lot::const_mutex;
-use util::hash::HashMap;
+use deps::hash::HashMap;
 
 use crate::error::AddAudioError;
 

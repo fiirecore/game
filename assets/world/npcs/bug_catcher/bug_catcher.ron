@@ -1,6 +1,7 @@
 (
     identifier: "bug_catcher",
     sprite: Walk,
+    text_color: Blue,
     trainer: Some(
         (
             name: "Bug Catcher",

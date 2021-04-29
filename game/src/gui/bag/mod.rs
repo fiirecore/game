@@ -1,10 +1,10 @@
 use std::ops::AddAssign;
 use std::ops::SubAssign;
 
-use data::{get, get_mut, player::PlayerSaves};
+use storage::{get, get_mut, player::PlayerSaves};
 use firecore_pokedex::item::ItemRef;
 use firecore_pokedex::itemdex;
-use firecore_util::text::TextColor;
+use crate::text::TextColor;
 use input::{pressed, Control};
 use firecore_pokedex::item::ItemStackInstance;
 use macroquad::prelude::Texture2D;

@@ -1,7 +1,7 @@
 use game::{
-	util::text::TextColor,
 	input::{pressed, Control},
-	data::{get, get_mut, player::PlayerSaves},
+	storage::{get, get_mut, player::PlayerSaves},
+	text::TextColor,
 	graphics::{byte_texture, draw, draw_text_left},
 	macroquad::prelude::{
 		Texture2D,

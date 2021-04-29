@@ -1,20 +1,19 @@
 (
-    index: 7,
+    id: "sally",
     npc: (
         name: "Sally",
-        position: (
-            coords: (
-                x: 30,
-                y: 3
+        type: "lass",
+        character: (
+            position: (
+                coords: (
+                    x: 30,
+                    y: 3
+                ),
+                direction: Left,
             ),
-            direction: Left,
-        ),
-        properties: (
-            type: "lass",
         ),
         trainer: Some((
-            tracking_length: Some(5),
-            message_color: Red,
+            tracking: Some(5),
             encounter_message: [
                 [
                     "That look you gave me.",

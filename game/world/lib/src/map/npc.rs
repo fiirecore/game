@@ -1,9 +1,7 @@
-use firecore_util::Entity;
 use firecore_util::Timer;
 use serde::{Deserialize, Serialize};
-use firecore_util::hash::HashMap;
+use deps::hash::HashMap;
 
-use crate::character::Character;
 use crate::character::movement::MovementType;
 use crate::character::npc::NPC;
 use crate::character::npc::NPCId;
@@ -33,33 +31,17 @@ impl NPCManager {
     }
 
     pub fn get(&self, id: &NPCId) -> Option<&NPC> {
-        if let Some(npc) = self.npcs.get(id) {
-            if npc.is_alive() {
-                Some(npc)
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        self.npcs.get(id)
     }
 
     pub fn get_mut(&mut self, id: &NPCId) -> Option<&mut NPC> {
-        if let Some(npc) = self.npcs.get_mut(id) {
-            if npc.is_alive() {
-                Some(npc)
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        self.npcs.get_mut(id)//.filter(|npc| npc.is_alive())
     }
 
     pub fn do_move(&mut self, delta: f32) {
-        for (index, npc) in self.npcs.iter_mut().filter(|(_, npc)| npc.is_alive() && npc.properties.character.destination.is_some() && npc.properties.movement != MovementType::Still) {
+        for (index, npc) in self.npcs.iter_mut().filter(|(_, npc)| /*npc.is_alive() &&*/ npc.character.destination.is_some() && npc.movement != MovementType::Still) {
             if self.active.map(|active| active.ne(index)).unwrap_or(true) {
-                npc.move_to_destination(delta);
+                npc.character.move_to_destination(delta);
             }            
         }
     }

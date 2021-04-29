@@ -1,30 +1,29 @@
 (
-    index: 6,
+    id: "robin",
     npc: (
         name: "Robin",
-        position: (
-            coords: (
-                x: 40,
-                y: 11
+        type: "lass",
+        character: (
+            position: (
+                coords: (
+                    x: 40,
+                    y: 11
+                ),
+                direction: Down
             ),
-            direction: Down
         ),
-        properties: (
-            type: "lass",
-            movement: WalkUpAndDown(2),
-            message: Some([
-                (
-                    lines: [
-                        "ROUTE 4 is at the foot of",
-                        "MT. MOON."
-                    ],
-                    color: Red,
-                )
-            ])
-        ),
+        movement: WalkUpAndDown(2),
+        message: Some([
+            (
+                lines: [
+                    "ROUTE 4 is at the foot of",
+                    "MT. MOON."
+                ],
+                color: Red,
+            )
+        ]),
         trainer: Some((
-            tracking_length: Some(2),
-            message_color: Red,
+            tracking: Some(2),
             encounter_message: [
                 [
                     "Eek!",

@@ -1,3 +1,5 @@
+extern crate firecore_dependencies as deps;
+
 use serde::{Serialize, Deserialize};
 
 pub mod keyboard;

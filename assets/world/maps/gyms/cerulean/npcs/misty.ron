@@ -1,28 +1,26 @@
 (
-    index: 0,
+    id: "misty",
     npc: (
         name: "Misty",
-        position: (
-            coords: (
-                x: 8,
-                y: 6
+        type: "misty",
+        character: (
+            position: (
+                coords: (
+                    x: 8,
+                    y: 6
+                ),
+                direction: Down
             ),
-            direction: Down
         ),
-        properties: (
-            type: "misty",
-            message: Some([
-                (
-                    color: Red,
-                    lines: [
-                        "Temporary post-battle message"
-                    ]
-                )
-            ]),
-        ),    
+        message: Some([
+            (
+                color: Red,
+                lines: [
+                    "Temporary post-battle message"
+                ]
+            )
+        ]), 
         trainer: Some((
-            trainer_type: GymLeader,
-            encounter_type: Some(Trainer),
             encounter_message: [
                 [
                     "Temporary message"
@@ -44,7 +42,8 @@
                     ),
                 )
             ],
-            disable_others: [
+
+            disable: [
 
             ],
             worth: 1400,

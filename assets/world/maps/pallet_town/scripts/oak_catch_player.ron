@@ -1,5 +1,5 @@
 (
-    identifier: "oak_catch_player",
+    identifier: "oak_catch",
     location: Some((
         min: (
             x: 12,
@@ -13,7 +13,7 @@
     conditions: [
         Scripts([
             (
-                identifier: "oak_catch_player",
+                identifier: "oak_catch",
                 happened: false,
             ),
         ])
@@ -21,31 +21,33 @@
     actions: [
         PlayerFreezeInput,
         NPCAdd(
-            10,
+            "oak",
             (
                 name: "Oak",
-                position: (
-                    coords: (
-                        x: 10,
-                        y: 7
+                type: "prof_oak",
+                character: (
+                    position: (
+                        coords: (
+                            x: 10,
+                            y: 7
+                        ),
+                        direction: Up
                     ),
-                    direction: Up
-                ),
-                properties: (
-                    type: "prof_oak",
                 )
             )
         ),
         PlayMusic("Oak"),
-        DisplayText([(
-            lines: [
-                "OAK: Hey! Wait!",
-                "Don't go out!"
-            ],
-            color: Blue,
-        )]),
+        NPCSay(
+            "oak",
+            [(
+                lines: [
+                    "OAK: Hey! Wait!",
+                    "Don't go out!"
+                ],
+            )]
+        ),
         NPCMove(
-            10,
+            "oak",
             (
                 coords: (
                     x: 10,
@@ -54,7 +56,7 @@
             ),
         ),
         NPCMove(
-            10,
+            "oak",
             (
                 coords: (
                     x: 11,
@@ -63,7 +65,7 @@
             ),
         ),
         NPCMove(
-            10,
+            "oak",
             (
                 coords: (
                     x: 11,
@@ -72,7 +74,7 @@
             ),
         ),
         NPCMove(
-            10,
+            "oak",
             (
                 coords: (
                     x: 12,
@@ -80,32 +82,32 @@
                 ),
             ),
         ),
-        NPCMoveToPlayer(10),
-        DisplayText([
-            (
-                lines: [
-                    "OAK: It's unsafe!",
-                    "Wild POKEMON live in tall grass!"
-                ],
-                color: Blue,
-            ),
-            (
-                lines: [
-                    "You need your own POKEMON for",
-                    "your protection."
-                ],
-                color: Blue,
-            ),
-            (
-                lines: [
-                    "I know!",
-                    "Here, come with me!"
-                ],
-                color: Blue,
-            )
-        ]),
+        NPCMoveToPlayer("oak"),
+        NPCSay(
+            "oak",
+            [
+                (
+                    lines: [
+                        "OAK: It's unsafe!",
+                        "Wild POKEMON live in tall grass!"
+                    ],
+                ),
+                (
+                    lines: [
+                        "You need your own POKEMON for",
+                        "your protection."
+                    ],
+                ),
+                (
+                    lines: [
+                        "I know!",
+                        "Here, come with me!"
+                    ],
+                )
+            ]
+        ),
         NPCLeadPlayer(
-            10,
+            "oak",
             (
                 coords: (
                     x: 12,
@@ -114,7 +116,7 @@
             )
         ),
         NPCLeadPlayer(
-            10,
+            "oak",
             (
                 coords: (
                     x: 11,
@@ -123,7 +125,7 @@
             )
         ),
         NPCLeadPlayer(
-            10,
+            "oak",
             (
                 coords: (
                     x: 11,
@@ -132,7 +134,7 @@
             )
         ),
         NPCLeadPlayer(
-            10,
+            "oak",
             (
                 coords: (
                     x: 16,
@@ -141,7 +143,7 @@
             )
         ),
         NPCLeadPlayer(
-            10,
+            "oak",
             (
                 coords: (
                     x: 16,
@@ -149,7 +151,7 @@
                 ),
             )
         ),
-        NPCRemove(10),
+        NPCRemove("oak"),
         PlayerUnfreezeInput,
         Warp(
             (

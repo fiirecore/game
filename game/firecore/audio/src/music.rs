@@ -5,7 +5,7 @@ use crate::error::AddAudioError;
 use crate::error::PlayAudioError;
 
 #[cfg(feature = "play")]
-pub static MUSIC_ID_MAP: parking_lot::Mutex<Option<util::hash::HashMap<MusicName, MusicId>>> = parking_lot::const_mutex(None);
+pub static MUSIC_ID_MAP: parking_lot::Mutex<Option<deps::hash::HashMap<MusicName, MusicId>>> = parking_lot::const_mutex(None);
 
 pub fn add_track(music_data: SerializedMusicData) -> Result<(), AddAudioError> {
     #[cfg(feature = "play")] {

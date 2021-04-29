@@ -1,12 +1,11 @@
 use std::path::PathBuf;
-use util::hash::HashMap;
 use worldlib::serialized::SerializedNPC;
-use worldlib::map::npc::NPCManager;
+use worldlib::map::npc::{NPCManager, NPCMap};
 
 pub mod npc_type;
 
 pub fn load_npc_entries(npc_path: PathBuf) -> NPCManager {
-    let mut npcs = HashMap::new();
+    let mut npcs = NPCMap::new();
     if let Ok(dir) = std::fs::read_dir(npc_path) {
         for entry in dir {
             if let Ok(entry) = entry {
@@ -15,7 +14,7 @@ pub fn load_npc_entries(npc_path: PathBuf) -> NPCManager {
                 let npc_result: Result<SerializedNPC, ron::Error> = ron::from_str(&data);
                 match npc_result {
                     Ok(npc) => {
-                        npcs.insert(npc.index, npc.npc);
+                        npcs.insert(npc.id, npc.npc);
                     },
                     Err(err) => {
                         panic!("Could not parse NPC at {:?} with error {} at position {}", file, err, err.position);

@@ -1,12 +1,13 @@
 use macroquad::color_u8;
 use macroquad::prelude::Color;
 use macroquad::prelude::draw_line;
-use util::{Reset, text::TextColor};
+use util::Reset;
 use input::{pressed, Control};
-use pokedex::pokemon::party::PokemonParty;
-use data::{get, player::PlayerSaves};
+use pokedex::pokemon::saved::SavedPokemonParty;
+use storage::{get, player::PlayerSaves};
+use crate::text::TextColor;
 use macroquad::prelude::{Texture2D, draw_rectangle, draw_texture_ex, WHITE, DrawTextureParams, Rect};
-use util::smallvec::SmallVec;
+use deps::smallvec::SmallVec;
 
 use crate::graphics::{byte_texture, draw, draw_text_left};
 
@@ -310,7 +311,7 @@ impl PartyGui {
         draw_rectangle(x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER_COLOR);
     }
 
-    pub fn on_finish(&mut self, party: &mut PokemonParty) {
+    pub fn on_finish(&mut self, party: &mut SavedPokemonParty) {
         for swap in &self.swaps {
             party.swap(swap.0, swap.1);
         }

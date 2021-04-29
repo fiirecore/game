@@ -1,5 +1,6 @@
+use firecore_font::message::TextColor;
 use serde::{Deserialize, Serialize};
-use util::tinystr::TinyStr16;
+use deps::tinystr::TinyStr16;
 
 use crate::character::npc::NPC;
 use crate::character::npc::NPCId;
@@ -20,7 +21,7 @@ pub struct SerializedWorld {
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNPC {
 
-    pub index: NPCId,
+    pub id: NPCId,
     pub npc: NPC,
 
 }
@@ -29,6 +30,7 @@ pub struct SerializedNPC {
 pub struct SerializedNPCTypeConfig {
 
     pub identifier: TinyStr16,
+    pub text_color: TextColor,
     pub sprite: SpriteIndexType,
     pub trainer: Option<TrainerType>,
 
@@ -44,10 +46,12 @@ pub struct SerializedNPCType {
 
 }
 
+pub type PaletteId = u8;
+
 #[derive(Deserialize, Serialize)]
 pub struct Palette {
 
-    pub id: u8,
+    pub id: PaletteId,
     pub bottom: Vec<u8>,
 
 }

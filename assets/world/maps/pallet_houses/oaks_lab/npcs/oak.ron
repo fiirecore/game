@@ -1,16 +1,16 @@
 (
-    index: 0,
+    id: "oak",
     npc: (
         name: "Oak",
-        position: (
-            coords: (
-                x: 6,
-                y: 3
+        type: "prof_oak",
+        character: (
+            position: (
+                coords: (
+                    x: 6,
+                    y: 3
+                ),
+                direction: Down
             ),
-            direction: Down
-        ),
-        properties: (
-            type: "prof_oak",
         )
     )
 )

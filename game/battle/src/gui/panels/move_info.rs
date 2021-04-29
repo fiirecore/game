@@ -1,8 +1,8 @@
 use game::{
-    util::text::TextColor,
     pokedex::moves::instance::MoveInstance,
     macroquad::prelude::{Vec2, Texture2D},
-    graphics::{byte_texture, draw, draw_text_left, draw_text_right}
+    text::TextColor,
+    graphics::{byte_texture, draw, draw_text_left, draw_text_right},
 };
 
 pub struct MoveInfoPanel {

@@ -1,5 +1,5 @@
 use game::{
-    util::{Entity, text::TextColor},
+    util::Entity,
     pokedex::pokemon::instance::PokemonInstance,
     input::{self as input, Control},
     macroquad::prelude::Texture2D,
@@ -7,6 +7,7 @@ use game::{
         party::PartyGui,
         bag::BagGui,
     },
+    text::TextColor,
     graphics::{byte_texture, draw, draw_text_left, draw_cursor},
 };
 

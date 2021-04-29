@@ -1,8 +1,7 @@
+use serde::{Deserialize, Serialize};
+use deps::tinystr::TinyStr16;
 use util::{
-    Entity,
     Coordinate,
-    serde::{Deserialize, Serialize},
-    tinystr::TinyStr16,
 };
 use firecore_audio_lib::music::MusicId;
 
@@ -44,6 +43,8 @@ pub trait World {
 
 #[derive(Serialize, Deserialize)]
 pub struct WorldMap {
+
+    pub id: MapIdentifier,
 
     pub name: String,
     pub music: MusicId,
@@ -94,18 +95,11 @@ impl World for WorldMap {
 
     fn walkable(&self, coords: Coordinate) -> MovementId {
         for npc in self.npc_manager.npcs.values() {
-            if npc.is_alive() && npc.position.coords == coords {
+            if /*npc.is_alive() &&*/ npc.character.position.coords == coords {
                 return 1;
             }
         }
-        // for object in self.objects.values() {
-        //     if object.active {
-        //         if object.location == coords {
-        //             return 1;
-        //         }
-        //     }
-        // }
-        tile_walkable(coords, &self.movements, self.width)
+        self.movements[coords.x as usize + coords.y as usize * self.width]
     }
 
     fn check_warp(&self, coords: Coordinate) -> Option<WarpDestination> {
@@ -125,8 +119,4 @@ pub struct Border {
     pub tiles: Vec<TileId>,
     pub size: u8, // length or width (border is a square)
 
-}
-
-pub fn tile_walkable(coords: Coordinate, movements: &Vec<MovementId>, width: MapSize) -> MovementId {
-    movements[coords.x as usize + coords.y as usize * width]
 }

@@ -6,7 +6,7 @@ edition = "2018"
 
 [features]
 default = ["play"]
-play = ["parking_lot", "firecore-util/hash", "kira", "lewton"]
+play = ["parking_lot", "firecore-dependencies/hash", "kira", "lewton"]
 
 [dependencies]
 
@@ -17,7 +17,7 @@ firecore-audio-lib = { path = "./lib" }
 ### Global, mutable variables
 
 parking_lot = { version = "0.11", optional = true }
-firecore-util = { git = "https://github.com/DoNotDoughnut/firecore-util", default-features = false }
+firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies" }
 
 ### Audio libraries
 

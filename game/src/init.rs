@@ -1,4 +1,4 @@
-use data::{store, get, configuration::Configuration, player::PlayerSaves};
+use storage::{store, get, configuration::Configuration, player::PlayerSaves};
 use pokedex::{
     POKEDEX,
     MOVEDEX,
@@ -15,7 +15,7 @@ pub use firecore_text::init as text;
 
 use crate::graphics::byte_texture;
 use crate::textures::{PokemonTextures, POKEMON_TEXTURES, ITEM_TEXTURES};
-use util::hash::HashMap;
+use deps::hash::HashMap;
 
 pub fn seed_randoms(seed: u64) {
     pokedex::pokemon::POKEMON_RANDOM.seed(seed);

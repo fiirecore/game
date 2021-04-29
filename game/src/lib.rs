@@ -1,7 +1,8 @@
 pub extern crate macroquad;
 
+pub extern crate firecore_dependencies as deps;
 pub extern crate firecore_util as util;
-pub extern crate pokemon_firered_clone_storage as data; // rename storage or something
+pub extern crate pokemon_firered_clone_storage as storage; // rename storage or something
 pub extern crate firecore_input as input;
 pub extern crate firecore_pokedex as pokedex;
 pub extern crate firecore_audio as audio;
@@ -39,13 +40,19 @@ pub fn is_debug() -> bool {
 
 pub fn play_music(id: audio::MusicId) {
     if let Err(err) = audio::play_music_id(id) {
-        warn!("Could not play music id {:x} with error {}", id, err);
+        match err {
+            audio::error::PlayAudioError::Uninitialized => (),
+            _ => warn!("Could not play music id {:x} with error {}", id, err),
+        }
     }
 }
 
 pub fn play_music_named(music: &str) {
     if let Err(err) = audio::play_music_named(music) {
-        warn!("Could not play music \"{}\" with error {}", music, err);
+        match err {
+            audio::error::PlayAudioError::Uninitialized => (),
+            _ => warn!("Could not play music \"{}\" with error {}", music, err),
+        }
     }
 }
 

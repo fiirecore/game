@@ -1,6 +1,6 @@
-use firecore_util::Coordinate;
 use serde::{Deserialize, Serialize};
-use firecore_util::smallvec::SmallVec;
+use firecore_util::Coordinate;
+use deps::smallvec::SmallVec;
 
 use crate::MovementId;
 use crate::TileId;

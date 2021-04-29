@@ -1,6 +1,6 @@
 use firecore_input::{pressed, Control};
 use firecore_util::Reset;
-use firecore_util::text::TextColor;
+use crate::text::TextColor;
 use macroquad::prelude::Texture2D;
 
 use crate::graphics::{byte_texture, draw, draw_text_left, draw_cursor};

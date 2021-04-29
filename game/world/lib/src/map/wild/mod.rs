@@ -1,5 +1,5 @@
 use firecore_pokedex::pokemon::instance::PokemonInstance;
-use firecore_util::Random;
+use deps::Random;
 use serde::{Deserialize, Serialize};
 
 use crate::TileId;

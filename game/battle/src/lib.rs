@@ -26,12 +26,12 @@ use game::{
 			instance::MoveInstance,
 		},
 		pokemon::{
-			party::PokemonParty,
+			saved::SavedPokemonParty,
 			texture::PokemonTexture,
 			instance::PokemonInstance,
 		},
 	},
-	data::player::PlayerSave,
+	storage::player::PlayerSave,
 	macroquad::{
 		rand::Random,
 		prelude::{info, Vec2},
@@ -72,7 +72,7 @@ pub struct Battle {
 
 impl Battle {
 	
-	pub fn new(player: &PokemonParty, data: BattleData) -> Option<Self> {		
+	pub fn new(player: &SavedPokemonParty, data: BattleData) -> Option<Self> {		
 		if !(
 			player.is_empty() || 
 			data.party.is_empty() ||
@@ -496,7 +496,7 @@ impl Battle {
 			match winner {
 			    BattleWinner::Player => {
 					if let Some(trainer) = self.trainer {
-						player.worth += trainer.worth as usize;
+						player.worth += trainer.worth as u32;
 					}		
 				}
 			    BattleWinner::Opponent => {

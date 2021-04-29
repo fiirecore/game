@@ -1,9 +1,12 @@
+use std::collections::HashMap;
 use std::ops::AddAssign;
 use std::path::Path;
 use std::path::PathBuf;
-use util::hash::HashMap;
+use worldlib::serialized::PaletteId;
 use worldlib::{MapSize, TileId, MovementId};
 use image::GenericImageView;
+
+use crate::world::map::PaletteSizes;
 
 pub struct GbaMap {
 	
@@ -74,7 +77,7 @@ pub fn get_gba_map(file: Vec<u8>) -> GbaMap  {
 	
 }
 
-pub fn fix_tiles(gba_map: &mut GbaMap, palette_sizes: &HashMap<u8, u16>) {
+pub fn fix_tiles(gba_map: &mut GbaMap, palette_sizes: &PaletteSizes) {
 
 	let offset = get_offset(gba_map, palette_sizes);
 
@@ -114,7 +117,7 @@ pub fn fix_tiles(gba_map: &mut GbaMap, palette_sizes: &HashMap<u8, u16>) {
 
 }
 
-pub fn get_offset(gba_map: &GbaMap, palette_sizes: &HashMap<u8, u16>) -> u16 { // To - do: change to recursive function
+pub fn get_offset(gba_map: &GbaMap, palette_sizes: &PaletteSizes) -> u16 { // To - do: change to recursive function
 	let mut offset = 0;
 	if gba_map.palettes[1] >= palette_sizes.len() as u8 {
 		eprintln!("Not enough palettes to support gba map textures. Need palette #{}", gba_map.palettes[1]);
@@ -126,7 +129,7 @@ pub fn get_offset(gba_map: &GbaMap, palette_sizes: &HashMap<u8, u16>) -> u16 { /
 	return offset;
 }
 
-pub fn fill_palette_map<P: AsRef<Path>>(tile_textures: P) -> (HashMap<u8, u16>, HashMap<u8, Vec<u8>>) {
+pub fn fill_palette_map<P: AsRef<Path>>(tile_textures: P) -> (PaletteSizes, HashMap<PaletteId, Vec<u8>>) {
 	let mut sizes = HashMap::new();
 	let mut palettes = HashMap::new();
 
