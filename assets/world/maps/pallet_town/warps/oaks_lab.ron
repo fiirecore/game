@@ -18,6 +18,10 @@
                 y: 12,
             ),
             direction: Some(Up),
-        )
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
     )
 )

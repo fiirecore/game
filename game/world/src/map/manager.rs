@@ -1,3 +1,4 @@
+use firecore_world_lib::character::MoveType;
 use game::{
     util::{
         Entity, 
@@ -12,7 +13,6 @@ use game::{
     input::{down, pressed, Control},
     macroquad::{
         prelude::{
-            Image,
             KeyCode,
             info,
             is_key_pressed,
@@ -26,10 +26,9 @@ use game::{
         bag::BagGui,
     },
     state::GameStateAction,
-    deps::hash::HashMap,
 };
 
-use firecore_world_lib::{
+use world::{
     serialized::SerializedWorld,
     map::{
         World,
@@ -41,13 +40,14 @@ use firecore_world_lib::{
 use crate::{
     GameWorld, TileTextures, NpcTextures, RenderCoords,
     player::PlayerTexture,
-    warp_transition::WarpTransition,
     gui::{
         text_window::TextWindow,
         start_menu::StartMenu,
     },
     battle::random_wild_battle,
 };
+
+use super::warp::WarpTransition;
 
 const PLAYER_MOVE_TIME: f32 = 0.12;
 
@@ -96,39 +96,8 @@ impl WorldManager {
     }
 
     pub  fn load(&mut self, world: SerializedWorld) {
-
-        info!("Loading maps...");
     
-        info!("Loaded world file.");
-    
-        let images: Vec<(u8, Image)> = world.palettes.into_iter().map(|palette|
-            (palette.id, Image::from_file_with_format(&palette.bottom, None))
-        ).collect();
-        
-        let mut bottom_sheets = HashMap::new();
-        let mut palette_sizes = HashMap::new();
-        for (id, image) in images {
-            palette_sizes.insert(id, (image.width >> 4) * (image.height >> 4));
-            bottom_sheets.insert(id, image);
-        }
-    
-        info!("Finished loading maps!");
-    
-        info!("Loading textures...");
-        for tile_id in world.manager.chunk_map.tiles() {
-            if !(self.tile_textures.textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                self.tile_textures.textures.insert(tile_id, get_texture(&bottom_sheets, &palette_sizes, tile_id));
-            }
-        }
-        for tile_id in world.manager.map_set_manager.tiles() {
-            if !(self.tile_textures.textures.contains_key(&tile_id) ){// && self.top_textures.contains_key(tile_id)) {
-                //self.top_textures.insert(*tile_id, get_texture(&top_sheets, &palette_sizes, *tile_id));
-                self.tile_textures.textures.insert(tile_id, get_texture(&bottom_sheets, &palette_sizes, tile_id));
-            }
-        }
-    
-        info!("Loading NPC textures...");
+        self.tile_textures.setup(world.textures);
     
         let mut npc_types = crate::npc::NPCTypes::with_capacity(world.npc_types.len());
         let mut trainer_sprites = TrainerSprites::new();
@@ -185,14 +154,14 @@ impl WorldManager {
     pub fn update(&mut self, delta: f32, battle_data: &mut Option<BattleData>) {
         self.tile_textures.update(delta);
         
-        if self.noclip_toggle && self.map_manager.player.character.position.offset.is_none() {
+        if self.noclip_toggle && self.map_manager.player.character.position.offset.is_zero() {
             self.noclip_toggle = false;
             self.map_manager.player.character.noclip = !self.map_manager.player.character.noclip;
-            if self.map_manager.player.character.noclip {
-                self.map_manager.player.character.speed = self.map_manager.player.character.base_speed * 4.0;
-            } else {
-                self.map_manager.player.character.speed = self.map_manager.player.character.base_speed;
-            }
+            // if self.map_manager.player.character.noclip {
+            //     self.map_manager.player.character.speed = self.map_manager.player.character.base_speed * 4.0;
+            // } else {
+            //     self.map_manager.player.character.speed = self.map_manager.player.character.base_speed;
+            // }
             info!("No clip toggled!");
         }
 
@@ -204,8 +173,7 @@ impl WorldManager {
 
         if self.warp_transition.is_alive() {
             self.warp_transition.update(delta);
-            if self.warp_transition.switch() && !self.warp_transition.recognize_switch {
-                self.warp_transition.recognize_switch = true;
+            if self.warp_transition.switch() {
                 if let Some((destination, music)) = self.map_manager.warp.clone() {
                     self.player_texture.draw = !destination.transition.move_on_exit;
                     self.map_manager.warp(destination);
@@ -297,24 +265,14 @@ impl WorldManager {
                 self.map_manager.map_set_manager.input(delta, &mut self.map_manager.player);
             }
     
-            if !(!self.map_manager.player.character.position.offset.is_none() || self.map_manager.player.is_frozen() ) {
-                // self.map_manager.player.moving = true;
+            if !(!self.map_manager.player.character.position.offset.is_zero() || self.map_manager.player.is_frozen() ) {
 
                 if down(Control::B) {
-                    if !self.map_manager.player.character.running {
-                        self.map_manager.player.character.running = true;
-                        self.map_manager.player.character.speed = 
-                            ((self.map_manager.player.character.base_speed as u8) << (
-                                if self.map_manager.player.character.noclip {
-                                    2
-                                } else {
-                                    1
-                                }
-                            )) as f32;
+                    if self.map_manager.player.character.move_type == MoveType::Walking {
+                        self.map_manager.player.character.move_type = MoveType::Running;
                     }
-                } else if self.map_manager.player.character.running {
-                    self.map_manager.player.character.running = false;
-                    self.map_manager.player.character.reset_speed();
+                } else if self.map_manager.player.character.move_type == MoveType::Running {
+                    self.map_manager.player.character.move_type = MoveType::Walking;
                 }
 
                 if down(firecore_game::keybind(self.first_direction)) {
@@ -345,9 +303,7 @@ impl WorldManager {
                         self.first_direction = direction;
                     } else {
                         self.player_move_accumulator = 0.0;
-                        self.map_manager.player.character.reset_speed();
                         self.map_manager.player.character.moving = false;
-                        self.map_manager.player.character.running = false;
                     }
                 }
             }
@@ -451,46 +407,6 @@ impl WorldManager {
             }
         }
         
-    }
-    
-}
-
-fn get_texture(sheets: &HashMap<u8, Image>, palette_sizes: &HashMap<u8, u16>, tile_id: u16) -> firecore_game::macroquad::prelude::Texture2D {
-
-    use firecore_game::util::TILE_SIZE;
-        
-    let mut count: u16 = *palette_sizes.get(&0).unwrap();
-    let mut index: u8 = 0;
-
-    while tile_id >= count {
-        index += 1;
-        if index >= (palette_sizes.len() as u8) {
-            firecore_game::macroquad::prelude::warn!("Tile ID {} exceeds palette texture count!", tile_id);
-            break;
-        }
-        count += *palette_sizes.get(&index).unwrap();
-    }
-
-    match sheets.get(&index) {
-        Some(sheet) => {
-            let id = (tile_id - (count - *palette_sizes.get(&index).unwrap())) as usize;
-            let texture = firecore_game::macroquad::prelude::Texture2D::from_image(
-                &sheet.sub_image(
-                    firecore_game::macroquad::prelude::Rect::new(
-                        (id % (sheet.width() / TILE_SIZE as usize)) as f32 * TILE_SIZE, 
-                        (id / (sheet.width() / TILE_SIZE as usize)) as f32 * TILE_SIZE,
-                        TILE_SIZE,
-                        TILE_SIZE,
-                    )
-                )
-            );
-            texture.set_filter(firecore_game::macroquad::prelude::FilterMode::Nearest);
-            texture
-        }
-        None => {
-            firecore_game::macroquad::prelude::debug!("Could not get texture for tile ID {}", &tile_id);
-            firecore_game::graphics::debug_texture()
-        }
     }
     
 }

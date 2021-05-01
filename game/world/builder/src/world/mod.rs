@@ -3,12 +3,15 @@ use util::Coordinate;
 use worldlib::map::{MapIdentifier, chunk::Connections};
 
 pub mod map;
+pub mod textures;
 
 pub mod wild;
 pub mod warp;
 pub mod npc;
 pub mod script;
 
+
+#[serde(deny_unknown_fields)]
 #[derive(Deserialize)]
 pub struct MapConfig {
 
@@ -18,7 +21,6 @@ pub struct MapConfig {
 
     #[serde(default)]
     pub settings: SerializedMapSettings,
-    pub wild: Option<SerializedWildEntry>,
 
 }
 
@@ -47,14 +49,4 @@ pub struct SerializedMapSettings {
 
     pub fly_position: Option<Coordinate>,
 
-}
-
-#[derive(Deserialize, Clone)]
-pub struct SerializedWildEntry {
-
-    #[serde(rename = "type")]
-    pub encounter_type: String,
-    #[serde(default)]
-    pub tiles: Option<Vec<u16>>,
-    
 }

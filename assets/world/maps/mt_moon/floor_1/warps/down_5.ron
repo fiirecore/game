@@ -18,5 +18,9 @@
                 y: 0x1F,
             ),
         ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
     ),
 )

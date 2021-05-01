@@ -17,6 +17,10 @@
                 x: 6,
                 y: 4,
             ),
-        )
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
     ),
 )

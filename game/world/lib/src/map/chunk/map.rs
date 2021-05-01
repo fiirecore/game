@@ -92,7 +92,7 @@ impl WorldChunkMap {
                     tiles.push(*tile);
                 }
             }            
-            for tile in &chunk.map.border.tiles {
+            for tile in &chunk.map.border {
                 if !tiles.contains(tile) {
                     tiles.push(*tile);
                 }

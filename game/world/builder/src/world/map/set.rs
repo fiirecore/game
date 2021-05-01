@@ -2,9 +2,7 @@ use std::path::PathBuf;
 use worldlib::map::{MapIdentifier, set::WorldMapSet, set::Maps};
 use crate::world::{SerializedMapSet, MapConfig};
 
-use super::PaletteSizes;
-
-pub fn load_map_set(root_path: &PathBuf, palette_sizes: &PaletteSizes, serialized_map_set: SerializedMapSet) -> (MapIdentifier, WorldMapSet) {
+pub fn load_map_set(root_path: &PathBuf, serialized_map_set: SerializedMapSet) -> (MapIdentifier, WorldMapSet) {
 
     println!("    Loading map set \"{}\"", serialized_map_set.identifier);
 
@@ -20,7 +18,7 @@ pub fn load_map_set(root_path: &PathBuf, palette_sizes: &PaletteSizes, serialize
                         &std::fs::read_to_string(&file).unwrap_or_else(|err| panic!("Could not read map set configuration at {:?} to string with error {}", file, err))
                     ).unwrap_or_else(|err| panic!("Could not deserialize map set configuration at {:?} with error {}", file, err));
                     println!("        Loaded map set map \"{}\"", config.name);
-                    let map = super::load_map_from_config(&map_path, palette_sizes, config);
+                    let map = super::load_map_from_config(&map_path, config);
                     maps.insert(
                         map.id,
                         map,

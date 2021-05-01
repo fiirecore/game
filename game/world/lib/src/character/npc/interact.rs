@@ -21,7 +21,7 @@ impl NPC {
     pub fn eye_track(&self, coords: &Coordinate) -> bool {
         if let Some(trainer) = self.trainer.as_ref() {
             if let Some(tracker) = trainer.tracking {
-                let tracker = tracker as isize;
+                let tracker = tracker as i32;
                 match self.character.position.direction {
                     firecore_util::Direction::Up => if self.character.position.coords.x == coords.x {
                         if self.character.position.coords.y > coords.y && self.character.position.coords.y - tracker <= coords.y {

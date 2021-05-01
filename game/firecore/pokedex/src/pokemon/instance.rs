@@ -73,6 +73,52 @@ impl PokemonInstance {
 
 	}
 
+	pub fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<StatSet>) -> Self {
+		let pokemon = crate::pokedex().get(&id).unwrap();
+
+        let level = if min == max {
+			max
+		} else {
+			super::POKEMON_RANDOM.gen_range(min, max + 1) as u8
+		};
+
+		let ivs = ivs.unwrap_or(StatSet::random());
+		let evs = StatSet::default();
+
+		let base = get_stats(pokemon, ivs, evs, level);
+
+		Self {
+
+			data: PokemonData {
+				nickname: None,
+				level: level,
+				gender: pokemon.generate_gender(),
+				ivs: ivs,
+				evs: evs,
+				experience: 0,
+				friendship: 70,
+				status: None,
+			},
+
+			persistent: Vec::new(),
+
+			item: None,
+
+			moves: pokemon.moves_from_level(level),
+
+			current_hp: base.hp,
+
+			base,
+			
+			pokemon,
+			
+		}
+	}
+
+	pub fn generate_with_level(id: PokemonId, level: Level, ivs: Option<StatSet>) -> Self {
+		Self::generate(id, level, level, ivs)
+	}
+
 	pub fn to_saved(self) -> SavedPokemon {
 		SavedPokemon {
 		    id: self.pokemon.data.id,
@@ -171,7 +217,7 @@ impl PokemonInstance {
 					}
 				    MoveAction::Status(chance, effect) => {
 						if self.data.status.is_none() {
-							if *chance >= super::POKEMON_RANDOM.gen_range(1..11) as u8 {
+							if *chance >= super::POKEMON_RANDOM.gen_range(1, 11) {
 								self.data.status = Some(*effect);
 							}
 						}
@@ -182,52 +228,6 @@ impl PokemonInstance {
 		}
 	}
 	
-}
-
-impl super::GeneratePokemon for PokemonInstance {
-
-    fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<StatSet>) -> Self {
-
-		let pokemon = crate::pokedex().get(&id).unwrap();
-
-        let level = if min == max {
-			max
-		} else {
-			super::POKEMON_RANDOM.gen_range(min as u32..max as u32 + 1) as u8
-		};
-
-		let ivs = ivs.unwrap_or(StatSet::random());
-		let evs = StatSet::default();
-
-		let base = get_stats(pokemon, ivs, evs, level);
-
-		Self {
-
-			data: PokemonData {
-				nickname: None,
-				level: level,
-				gender: pokemon.generate_gender(),
-				ivs: ivs,
-				evs: evs,
-				experience: 0,
-				friendship: 70,
-				status: None,
-			},
-
-			persistent: Vec::new(),
-
-			item: None,
-
-			moves: pokemon.moves_from_level(level),
-
-			current_hp: base.hp,
-
-			base,
-			
-			pokemon,
-			
-		}
-    }
 }
 
 impl std::fmt::Display for PokemonInstance {

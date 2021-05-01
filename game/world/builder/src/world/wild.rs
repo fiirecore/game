@@ -1,38 +1,8 @@
 use std::path::PathBuf;
-use worldlib::map::wild::{WildEntry, table::WildPokemonTable};
-use crate::world::SerializedWildEntry;
+use worldlib::map::wild::WildEntry;
 
-pub fn load_wild_entry(wild: Option<SerializedWildEntry>, wild_path: PathBuf) -> Option<WildEntry> {
-    wild.map(|serialized_wild_entry| {
-
-        let file = wild_path.join("grass.toml");
-
-        let table = match serialized_wild_entry.encounter_type.as_str() {
-            "original" => {
-                match std::fs::read_to_string(&file) {
-                    Ok(content) => {
-                        match toml::from_str(&content) {
-                            Ok(table) => table,
-                            Err(err) => {
-                                panic!("Could not parse wild pokemon table at {:?} with error {}", &file, err);
-                            }
-                        }
-                    }
-                    Err(err) => {
-                        eprintln!("Could not find wild toml file at {:?} with error {}", file, err);
-                        WildPokemonTable::default()
-                    }
-                }
-            }
-            _ => {
-                WildPokemonTable::default()
-            }
-        };
-
-        WildEntry {
-            tiles: serialized_wild_entry.tiles,
-            table: table,
-        }
-
-    })
+pub fn load_wild_entries(wild_path: PathBuf) -> Option<WildEntry> {
+    let grass = wild_path.join("grass.toml");
+    std::fs::read_to_string(&grass).ok()
+        .map(|data| toml::from_str::<WildEntry>(&data).unwrap_or_else(|err| panic!("Could not parse wild pokemon table at {:?} with error {}", grass, err)))
 }

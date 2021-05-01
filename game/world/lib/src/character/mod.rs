@@ -1,11 +1,10 @@
-use std::collections::VecDeque;
-
-use firecore_util::{Direction, Destination};
 use serde::{Deserialize, Serialize};
-use util::Coordinate;
-use util::Position;
+use firecore_util::{Direction, Coordinate, Position, Destination};
+
+use self::destination::DestinationPath;
 
 pub mod movement;
+pub mod destination;
 pub mod npc;
 pub mod sprite;
 pub mod player;
@@ -16,9 +15,7 @@ pub struct Character {
     pub position: Position,
 
     #[serde(default = "default_speed")]
-    pub base_speed: f32,
-    #[serde(skip, default = "default_speed")]
-    pub speed: f32,
+    speed: f32,
 
     #[serde(skip)]
     pub sprite_index: u8,
@@ -27,7 +24,7 @@ pub struct Character {
     pub moving: bool,
 
     #[serde(skip)]
-    pub running: bool,
+    pub move_type: MoveType,
 
     #[serde(skip)]
     pub frozen: bool,
@@ -45,11 +42,11 @@ impl Character {
     pub const fn new(position: Position) -> Self {
         Self {
             position,
-            base_speed: default_speed(),
+            // base_speed: default_speed(),
             speed: default_speed(),
             sprite_index: 0,
             moving: false,
-            running: false,
+            move_type: default_move_type(),
             frozen: false,
             noclip: false,
             destination: None,
@@ -71,9 +68,8 @@ impl Character {
 
     pub fn stop_move(&mut self) {
         self.moving = false;
-        self.running = false;
         self.position.offset.reset();
-        self.reset_speed();
+        // self.reset_speed();
     }
 
     pub fn freeze(&mut self) {
@@ -96,7 +92,10 @@ impl Character {
     pub fn move_to_destination(&mut self, delta: f32) -> bool {
         if let Some(destination) = self.destination.as_mut() {
             if destination.started {
-                if self.position.offset.update(delta * self.base_speed, &self.position.direction) {
+                if self.position.offset.update(delta * self.speed * match self.move_type {
+                    MoveType::Walking => 1.0,
+                    _ => 2.0,
+                }, &self.position.direction) {
                     self.position.coords += self.position.direction.tile_offset();
                     if let Some(direction) = destination.queued_movements.pop_front() {
                         self.position.direction = direction;
@@ -123,9 +122,20 @@ impl Character {
         false
     }
 
-    pub fn reset_speed(&mut self) {
-        self.speed = self.base_speed;
+    pub fn speed(&self) -> f32 {
+        self.speed * match self.move_type {
+            MoveType::Walking => 1.0,
+            _ => 2.0,
+        } * if self.noclip {
+            3.0
+        } else {
+            1.0
+        }
     }
+
+    // pub fn reset_speed(&mut self) {
+    //     self.speed = self.base_speed;
+    // }
 
     pub fn go_to(&mut self, to: Coordinate) {
         self.move_to(Destination::to(&self.position, to));
@@ -141,11 +151,11 @@ impl Default for Character {
     fn default() -> Self {
         Self {
             position: Position::default(),
-            base_speed: default_speed(),
+            // base_speed: default_speed(),
             speed: default_speed(),
             sprite_index: 0,
             moving: false,
-            running: false,
+            move_type: MoveType::default(),
             frozen: false,
             noclip: false,
             destination: None,
@@ -153,39 +163,25 @@ impl Default for Character {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct DestinationPath {
-    pub started: bool,
-    pub queued_movements: VecDeque<Direction>,
-    pub final_direction: Option<Direction>,
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub enum MoveType {
+
+    Walking,
+    Running,
+    Swimming,
+
 }
 
-impl DestinationPath {
-    pub fn new_path(origin: Coordinate, destination: Destination) -> Self {
-        let xlen = destination.coords.x - origin.x;
-        let xdir = if xlen.is_negative() {
-            Direction::Left
-        } else {
-            Direction::Right
-        };
-        let mut vec = vec![xdir; xlen.abs() as usize];
-
-        let ylen = destination.coords.y - origin.y;
-        let ydir = if ylen.is_negative() {
-            Direction::Up
-        } else {
-            Direction::Down
-        };
-        vec.append(&mut vec![ydir; ylen.abs() as usize]);
-        let vec = VecDeque::from(vec);
-        Self {
-            started: false,
-            queued_movements: vec,
-            final_direction: destination.direction,
-        }
+impl Default for MoveType {
+    fn default() -> Self {
+        default_move_type()
     }
 }
 
 const fn default_speed() -> f32 {
     1.0
+}
+
+const fn default_move_type() -> MoveType {
+    MoveType::Walking
 }

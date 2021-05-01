@@ -97,7 +97,7 @@ impl DynamicText {
 					if let Some(time) = current.wait {
 						if !self.timer.is_alive() {
 							self.timer.spawn();
-							self.timer.set_target(time);
+							self.timer.length = time;
 						}
 						self.timer.update(delta);
 						if self.timer.is_finished() {

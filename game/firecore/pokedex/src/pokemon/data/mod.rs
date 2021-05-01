@@ -46,6 +46,11 @@ pub struct StatSet {
 }
 
 impl StatSet {
+
+	pub const MAX_EV: Stat = 32;
+	pub const MAX_IV: Stat = 252;
+	pub const MAX_IVS_TOTAL: u16 = 512;
+
 	pub const fn uniform(stat: Stat) -> Self {
 		Self {
 			hp: stat,
@@ -59,12 +64,12 @@ impl StatSet {
 
 	pub fn random() -> Self {
 		Self {
-			hp: POKEMON_RANDOM.gen_range(0..32) as u8,
-			atk: POKEMON_RANDOM.gen_range(0..32) as u8,
-			def: POKEMON_RANDOM.gen_range(0..32) as u8,
-			sp_atk: POKEMON_RANDOM.gen_range(0..32) as u8,
-			sp_def: POKEMON_RANDOM.gen_range(0..32) as u8,
-			speed: POKEMON_RANDOM.gen_range(0..32) as u8,
+			hp: POKEMON_RANDOM.gen_range(0, Self::MAX_EV) as u8,
+			atk: POKEMON_RANDOM.gen_range(0, Self::MAX_EV) as u8,
+			def: POKEMON_RANDOM.gen_range(0, Self::MAX_EV) as u8,
+			sp_atk: POKEMON_RANDOM.gen_range(0, Self::MAX_EV) as u8,
+			sp_def: POKEMON_RANDOM.gen_range(0, Self::MAX_EV) as u8,
+			speed: POKEMON_RANDOM.gen_range(0, Self::MAX_EV) as u8,
 		}
 	}
 

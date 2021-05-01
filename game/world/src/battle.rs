@@ -15,7 +15,6 @@ use game::{
                 PokemonInstanceParty
             },
             data::StatSet,
-            GeneratePokemon,
             saved::SavedPokemonParty,
         },
     },
@@ -25,10 +24,7 @@ use game::{
 };
 
 use world::{
-    map::wild::{
-        WildEntry,
-        GenerateWild,
-    },
+    map::wild::WildEntry,
     character::npc::{NPC, NPCId},
 };
 
@@ -43,7 +39,7 @@ pub struct WorldTrainerData {
 pub fn random_wild_battle(battle_data: &mut Option<BattleData>) {
     *battle_data = Some(BattleData {
         party: smallvec![PokemonInstance::generate(
-            world::map::wild::WILD_RANDOM.gen_range(0..pokedex().len() as u32) as PokemonId + 1, 
+            world::map::wild::WILD_RANDOM.gen_range(0, pokedex().len()) as PokemonId + 1, 
             1, 
             100, 
             Some(StatSet::random())
@@ -53,12 +49,10 @@ pub fn random_wild_battle(battle_data: &mut Option<BattleData>) {
 }
 
 pub fn wild_battle(battle_data: &mut Option<BattleData>, wild: &WildEntry) {
-    if wild.table.try_encounter() {
-        *battle_data = Some(BattleData {
-            party: smallvec![wild.table.generate()],
-            trainer: None,
-        });
-    }
+    *battle_data = Some(BattleData {
+        party: smallvec![wild.generate()],
+        trainer: None,
+    });
 }
 
 pub fn trainer_battle(battle_data: &mut Option<BattleData>, map_id: &MapIdentifier, npc_index: NPCId, npc: &NPC) {

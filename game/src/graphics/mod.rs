@@ -1,3 +1,4 @@
+use macroquad::prelude::Image;
 use macroquad::prelude::{Texture2D, FilterMode::Nearest, draw_texture, Color, color_u8, WHITE as MQWHITE};
 
 use firecore_text::{TEXT_RENDERER, IntoMQColor};
@@ -7,7 +8,14 @@ pub const WHITE: Color = color_u8!(248, 248, 248, 255);
 pub const DRAW_COLOR: Color = MQWHITE;
 
 pub fn byte_texture(bytes: &[u8]) -> Texture2D {
-	let texture = Texture2D::from_file_with_format(bytes, None);
+	filter(Texture2D::from_file_with_format(bytes, None))
+}
+
+pub fn image_texture(image: &Image) -> Texture2D {
+	filter(Texture2D::from_image(image))
+}
+
+pub fn filter(texture: Texture2D) -> Texture2D {
 	texture.set_filter(Nearest);
 	texture
 }

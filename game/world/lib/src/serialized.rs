@@ -1,7 +1,9 @@
+use deps::hash::HashMap;
 use firecore_font::message::TextColor;
 use serde::{Deserialize, Serialize};
 use deps::tinystr::TinyStr16;
 
+use crate::{PaletteId, TileId};
 use crate::character::npc::NPC;
 use crate::character::npc::NPCId;
 use crate::character::npc::npc_type::TrainerType;
@@ -14,7 +16,7 @@ pub struct SerializedWorld {
     pub manager: WorldMapManager,
 
     pub npc_types: Vec<SerializedNPCType>,
-    pub palettes: Vec<Palette>,
+    pub textures: SerializedTextures,
 
 }
 
@@ -46,12 +48,14 @@ pub struct SerializedNPCType {
 
 }
 
-pub type PaletteId = u8;
+pub type Palettes = HashMap<PaletteId, Vec<u8>>;
+pub type Animated = HashMap<TileId, Vec<u8>>;
 
 #[derive(Deserialize, Serialize)]
-pub struct Palette {
+pub struct SerializedTextures {
 
-    pub id: PaletteId,
-    pub bottom: Vec<u8>,
+    pub palettes: Palettes,
+
+    pub animated: Animated,
 
 }

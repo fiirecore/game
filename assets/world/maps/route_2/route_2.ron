@@ -3,10 +3,6 @@
         identifier: "route_2",
         name: "Route 2",
         file: "3.20_ROUTE 2.map",
-        wild: Some((
-            type: "original",
-            tiles: Some([0x0D]),
-        )),
     ),
     coords: (
         x: 60,

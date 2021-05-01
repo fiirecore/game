@@ -5,22 +5,18 @@ pub struct Timer {
 
     alive: bool,
     counter: f32,
-    final_time: f32,
+    pub length: f32,
 
 }
 
 impl Timer {
 
-    pub fn new(seconds: f32) -> Self {
+    pub const fn new(length: f32) -> Self {
         Self {
             alive: false,
             counter: 0.0,
-            final_time: seconds,
+            length,
         }
-    }
-
-    pub fn set_target(&mut self, seconds: f32) {
-        self.final_time = seconds;
     }
 
     pub fn update(&mut self, delta: f32) {
@@ -30,16 +26,15 @@ impl Timer {
     }
     
     pub fn is_finished(&self) -> bool {
-        return self.counter >= self.final_time;
+        self.counter >= self.length
     }
 
     pub fn soft_reset(&mut self) {
-        if self.final_time > self.counter {
-            self.counter -= self.final_time;
+        if self.length > self.counter {
+            self.counter -= self.length;
         } else {
             self.hard_reset();
         }
-        
     }
 
     pub fn hard_reset(&mut self) {
@@ -59,7 +54,7 @@ impl Entity for Timer {
     }
     
     fn is_alive(&self) -> bool {
-        return self.alive;
+        self.alive
     }
 
 }

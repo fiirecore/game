@@ -12,7 +12,7 @@ use firecore_pokedex::pokemon::saved::SavedPokemon;
 use firecore_pokedex::item::ItemId;
 
 use crate::character::npc::{NPC, NPCId};
-use crate::map::warp::WarpDestination;
+use crate::map::warp::{WarpId, WarpDestination};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum WorldActionKind {
@@ -67,8 +67,14 @@ pub enum WorldActionKind {
         unfreeze: bool,
     }, // yes or no box, no despawns the script after an optional message, and bool unfreezes player if true,
 
-    Warp(WarpDestination, #[serde(default = "def_true")] bool), // bool: change music
+    Warp(ScriptWarp, #[serde(default = "def_true")] bool), // bool: change music
 
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ScriptWarp {
+    Id(WarpId),
+    Dest(WarpDestination),
 }
 
 const fn def_true() -> bool {

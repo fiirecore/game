@@ -1,5 +1,5 @@
 mod timer;
-mod positions;
+pub mod positions;
 mod bounding_box;
 pub mod battle;
 

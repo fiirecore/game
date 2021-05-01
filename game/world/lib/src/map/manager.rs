@@ -104,7 +104,7 @@ impl WorldMapManager {
         };
 
         if can_move(move_code) || allow || self.player.character.noclip {
-            let mult = self.player.character.speed * 60.0 * delta;
+            let mult = self.player.character.speed() * 60.0 * delta;
             self.player.character.position.offset = direction.pixel_offset().scale(mult);
             self.player.character.moving = true;
         }

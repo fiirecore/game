@@ -54,7 +54,7 @@ impl WorldMapSetManager {
                         tiles.push(*tile);
                     }        
                 }
-                for tile in &map.border.tiles {
+                for tile in &map.border {
                     if !tiles.contains(tile) {
                         tiles.push(*tile);
                     }

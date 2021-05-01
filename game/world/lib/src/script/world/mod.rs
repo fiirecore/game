@@ -7,7 +7,7 @@ mod condition;
 mod actions;
 
 pub use self::condition::Condition;
-pub use self::actions::WorldActionKind;
+pub use self::actions::*;
 
 use super::ScriptId;
 

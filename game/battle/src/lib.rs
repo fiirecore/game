@@ -322,7 +322,7 @@ impl Battle {
 							.filter(|(_, pkmn)| pkmn.pokemon.current_hp != 0)
 							.map(|(index, _)| index)
 							.collect();
-						self.opponent.select_pokemon(available[BATTLE_RANDOM.gen_range(0..available.len() as u32) as usize]);
+						self.opponent.select_pokemon(available[BATTLE_RANDOM.gen_range(0, available.len())]);
 
 						// Update the opponent's pokemon GUI
 
@@ -425,7 +425,7 @@ impl Battle {
 									}
 								}
 							    MoveAction::Status(chance, effect) => {
-									if *chance >= BATTLE_RANDOM.gen_range(1..11) as u8 {
+									if *chance >= BATTLE_RANDOM.gen_range(1, 11) {
 										self.opponent.active_mut().data.status = Some(*effect);
 									}
 								}
@@ -483,7 +483,7 @@ impl Battle {
 
 	// warning: ignores PP
 	pub fn generate_opponent_move(&mut self) {
-		let index = crate::BATTLE_RANDOM.gen_range(0..self.opponent.active().moves.len() as u32) as usize;
+		let index = crate::BATTLE_RANDOM.gen_range(0, self.opponent.active().moves.len());
 		self.opponent.next_move = Some(BattleMoveStatus::new(BattleMoveType::Move(self.opponent.active_mut().moves[index].pokemon_move)));
 		self.post_run = true;
 	}
@@ -527,7 +527,7 @@ impl Battle {
 
 pub fn get_move_damage(pokemon_move: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
 	if pokemon_move.accuracy.map(|accuracy| {
-		let hit: u8 = BATTLE_RANDOM.gen_range(0..100) as u8;
+		let hit: u8 = BATTLE_RANDOM.gen_range(0, 100);
 		hit < accuracy
 	}).unwrap_or(true) {
 		if let Some(power) = pokemon_move.power {
@@ -543,7 +543,7 @@ pub fn get_move_damage(pokemon_move: &PokemonMove, pokemon: &PokemonInstance, re
 			};
 			(
 				(((((2.0 * pokemon.data.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
-			 	* (BATTLE_RANDOM.gen_range(85..101) as f64 / 100.0)
+			 	* (BATTLE_RANDOM.gen_range(85, 101u8) as f64 / 100.0)
 				* (if pokemon_move.pokemon_type == pokemon.pokemon.data.primary_type { 1.5 } else { 1.0 })
 			) as Health
 		} else {

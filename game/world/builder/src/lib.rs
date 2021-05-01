@@ -14,7 +14,7 @@ pub mod gba_map;
 pub fn compile<P: AsRef<Path>>(maps: P, tile_textures: P, npc_types: P, output_file: P) {
 
     println!("Started loading maps and tile textures...");
-    let (manager, palettes) = world::map::load_maps(maps, tile_textures);
+    let (manager, textures) = world::map::load_maps(maps, tile_textures);
     println!("Finished loading maps and tile textures.");
 
     println!("Verifying maps and warps...");
@@ -37,7 +37,7 @@ pub fn compile<P: AsRef<Path>>(maps: P, tile_textures: P, npc_types: P, output_f
     let data = firecore_world_lib::serialized::SerializedWorld {
         manager,
         npc_types,
-        palettes,
+        textures,
     };
 
     println!("Saving data...");
@@ -55,13 +55,13 @@ fn verify_warps(manager: &WorldMapManager) {
                 panic!("Map {} contains a connection to non-existent index {}", chunk.map.name, connection);
             }
         }
-        for warp in chunk.map.warps.iter() {
+        for warp in chunk.map.warps.values() {
             errors += verify_warp(warp, &chunk.map.name, &manager);
         }
     }
     for map_set in manager.map_set_manager.map_sets.values() {
         for map in map_set.maps.values() {
-            for warp in map.warps.iter() {
+            for warp in map.warps.values() {
                 errors += verify_warp(warp, &map.name, &manager);
             }
         }

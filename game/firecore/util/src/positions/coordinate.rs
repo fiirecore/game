@@ -8,7 +8,7 @@ use serde::{Serialize, Deserialize};
 use crate::Direction;
 use crate::Position;
 
-type CoordNum = isize;
+pub type CoordNum = i32;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct Coordinate {

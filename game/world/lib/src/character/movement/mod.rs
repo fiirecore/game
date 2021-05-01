@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use util::positions::coordinate::CoordNum;
 
 #[cfg(feature = "pathfind")]
 pub mod astar;
@@ -8,7 +9,7 @@ pub enum MovementType {
 
     Still,
     LookAround,
-    WalkUpAndDown(isize),
+    WalkUpAndDown(CoordNum),
 
 }
 

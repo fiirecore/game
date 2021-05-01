@@ -2,6 +2,7 @@ use firecore_game::util::{WIDTH, HEIGHT, TILE_SIZE, Direction};
 use firecore_world_lib::character::Character;
 use firecore_game::macroquad::prelude::{Texture2D, draw_texture_ex, WHITE, DrawTextureParams, Rect};
 use firecore_game::graphics::byte_texture;
+use firecore_world_lib::character::MoveType;
 
 const SCREEN_X: f32 = ((WIDTH as isize - TILE_SIZE as isize) >> 1) as f32;
 const SCREEN_Y: f32 = ((HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - TILE_SIZE;
@@ -24,7 +25,10 @@ impl PlayerTexture {
 
 	pub fn render(&self, character: &Character) {
 		if self.draw {
-			if let Some(texture) = if character.running {self.running_texture} else {self.walking_texture} {
+			if let Some(texture) = match character.move_type {
+			    MoveType::Walking => self.walking_texture,
+			    _ => self.running_texture,
+			} {
 				draw_texture_ex(
 					texture, SCREEN_X, SCREEN_Y, WHITE, DrawTextureParams {
 						source: Some(Rect::new(
@@ -45,7 +49,7 @@ impl PlayerTexture {
 
 fn current_texture_pos(character: &Character) -> f32 {
 	(
-		*texture_index(character)
+		*player_texture_index(character)
 			.get(
 				(
 					if if character.position.offset.x != 0.0 {
@@ -61,19 +65,18 @@ fn current_texture_pos(character: &Character) -> f32 {
 	) as f32
 }
 
-pub const fn texture_index(character: &Character) -> [u8; 4] {
-	if character.running {
-		match character.position.direction {
-			Direction::Up => [6, 7, 6, 8],
-			Direction::Down => [3, 4, 3, 5],
-			_ => [9, 10, 9, 11],
-		}
-	} else {
-		match character.position.direction {
+pub const fn player_texture_index(character: &Character) -> [u8; 4] {
+	match character.move_type {
+	    MoveType::Walking => match character.position.direction {
 			Direction::Up => [1, 5, 1, 6],
 			Direction::Down => [0, 3, 0, 4],
 			_ => [2, 7, 2, 8],
-		}
+		},
+	    _ => match character.position.direction {
+			Direction::Up => [6, 7, 6, 8],
+			Direction::Down => [3, 4, 3, 5],
+			_ => [9, 10, 9, 11],
+		},
 	}
 }
 

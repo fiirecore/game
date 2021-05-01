@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
-use deps::tinystr::TinyStr16;
+use deps::{
+    tinystr::TinyStr16,
+    hash::HashMap,
+};
 use util::{
     Coordinate,
 };
@@ -9,12 +12,11 @@ use crate::MapSize;
 use crate::MovementId;
 use crate::TileId;
 
+use crate::character::npc::{NPCId, NPC};
 use crate::script::world::WorldScript;
 
 use wild::WildEntry;
-use warp::{WarpEntry, WarpDestination};
-
-use self::npc::NPCManager;
+use warp::{WarpMap, WarpDestination};
 
 pub mod set;
 pub mod chunk;
@@ -22,14 +24,12 @@ pub mod manager;
 
 pub mod warp;
 pub mod wild;
-pub mod npc;
 // pub mod object;
 
 pub type MapIdentifier = TinyStr16;
+pub type NPCMap = HashMap<NPCId, NPC>;
 
 pub trait World {
-
-    // fn len(&self) -> usize;
 
     fn in_bounds(&self, coords: Coordinate) -> bool;
 
@@ -37,7 +37,7 @@ pub trait World {
 
     fn walkable(&self, coords: Coordinate) -> MovementId; // not an option because can return 1
 
-    fn check_warp(&self, coords: Coordinate) -> Option<warp::WarpDestination>;
+    fn check_warp(&self, coords: Coordinate) -> Option<WarpDestination>;
 
 }
 
@@ -52,37 +52,41 @@ pub struct WorldMap {
     pub width: MapSize,
     pub height: MapSize,
 
+    pub palettes: [u8; 2],
+
     pub tiles: Vec<TileId>,
     pub movements: Vec<MovementId>,
 
-    pub border: Border, // border blocks
+    pub border: [TileId; 4],//Border, // border blocks
 
     // Map objects
 
-    pub warps: Vec<WarpEntry>,
+    pub warps: WarpMap,
 
     pub wild: Option<WildEntry>,
     
-    pub npc_manager: NPCManager,
+    pub npcs: NPCMap,
 
     // pub objects: HashMap<u8, MapObject>,
 
     pub scripts: Vec<WorldScript>,
 
+    #[serde(skip)]
+    pub state: WorldMapState,
+
 }
 
-impl WorldMap {
+#[derive(Default)]
+pub struct WorldMapState {
 
-    pub fn tile_or_panic(&self, x: usize, y: usize) -> TileId {
-        self.tiles[x + y * self.width]
-    }
+    pub npc: Option<NPCId>,
 
 }
 
 impl World for WorldMap {
 
     fn in_bounds(&self, coords: Coordinate) -> bool {
-        return !(coords.x < 0 || coords.x >= self.width as isize || coords.y < 0 || coords.y >= self.height as isize);
+        return !(coords.x.is_negative() || coords.x >= self.width as i32 || coords.y.is_negative() || coords.y >= self.height as i32);
     }
 
     fn tile(&self, coords: Coordinate) -> Option<TileId> {
@@ -94,7 +98,7 @@ impl World for WorldMap {
     }
 
     fn walkable(&self, coords: Coordinate) -> MovementId {
-        for npc in self.npc_manager.npcs.values() {
+        for npc in self.npcs.values() {
             if /*npc.is_alive() &&*/ npc.character.position.coords == coords {
                 return 1;
             }
@@ -103,7 +107,7 @@ impl World for WorldMap {
     }
 
     fn check_warp(&self, coords: Coordinate) -> Option<WarpDestination> {
-        for warp in &self.warps {
+        for warp in self.warps.values() {
             if warp.location.in_bounds(&coords) {
                 return Some(warp.destination.clone());
             }
@@ -113,10 +117,10 @@ impl World for WorldMap {
 
 }
 
-#[derive(Default, Serialize, Deserialize)]
-pub struct Border {
+// #[derive(Default, Serialize, Deserialize)]
+// pub struct Border {
 
-    pub tiles: Vec<TileId>,
-    pub size: u8, // length or width (border is a square)
+//     pub tiles: Vec<TileId>,
+//     pub size: u8, // length or width (border is a square)
 
-}
+// }

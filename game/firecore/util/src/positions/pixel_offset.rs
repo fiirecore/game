@@ -2,10 +2,8 @@ use std::ops::AddAssign;
 
 use serde::{Deserialize, Serialize};
 
-// use crate::Coordinate;
 use crate::Direction;
-
-const MAX: f32 = crate::TILE_SIZE as f32;
+use crate::TILE_SIZE;
 
 #[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
 pub struct PixelOffset {
@@ -15,17 +13,17 @@ pub struct PixelOffset {
 
 impl PixelOffset {
 
-    pub fn is_none(&self) -> bool {
+    pub fn is_zero(&self) -> bool {
         self.x == 0.0 && self.y == 0.0
     }
 
     pub fn update(&mut self, delta: f32, direction: &Direction) -> bool {
         let offsets = direction.pixel_offset();
         self.add_assign(offsets.scale(60.0 * delta));
-        if self.y.abs() >= MAX {
+        if self.y.abs() >= TILE_SIZE {
             self.y = 0.0;
             true
-        } else if self.x.abs() >= MAX {
+        } else if self.x.abs() >= TILE_SIZE {
             self.x = 0.0;
             true
         } else {

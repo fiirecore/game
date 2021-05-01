@@ -6,10 +6,10 @@ use firecore_game::macroquad::prelude::Vec2;
 #[derive(Default, Debug, Clone, Copy)]
 pub struct RenderCoords {
 
-    pub left: isize,
-    pub right: isize,
-    pub top: isize,
-    pub bottom: isize,
+    pub left: i32,
+    pub right: i32,
+    pub top: i32,
+    pub bottom: i32,
 
     pub focus: Vec2,
 
@@ -17,11 +17,11 @@ pub struct RenderCoords {
 
 }
 
-const HALF_WIDTH: isize = (WIDTH as isize + TILE_SIZE as isize) >> 1;
-const HALF_HEIGHT: isize = (HEIGHT as isize + TILE_SIZE as isize) >> 1;
+const HALF_WIDTH: i32 = (WIDTH as i32 + TILE_SIZE as i32) >> 1;
+const HALF_HEIGHT: i32 = (HEIGHT as i32 + TILE_SIZE as i32) >> 1;
 
-const HALF_WIDTH_TILE: isize = HALF_WIDTH >> 4;
-const HALF_HEIGHT_TILE: isize = (HALF_HEIGHT >> 4) + 2;
+const HALF_WIDTH_TILE: i32 = HALF_WIDTH >> 4;
+const HALF_HEIGHT_TILE: i32 = (HALF_HEIGHT >> 4) + 2;
 
 impl RenderCoords {
 

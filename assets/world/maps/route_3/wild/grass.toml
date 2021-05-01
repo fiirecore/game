@@ -1,61 +1,63 @@
-encounter_ratio = 21
+ratio = 21
 
-[[encounter]]
+tiles = [0x0D]
+
+[[pokemon]]
 min_level = 6
 max_level = 6
 pokemon_id = 21
 
-[[encounter]]
+[[pokemon]]
 min_level = 6
 max_level = 6
 pokemon_id = 16
 
-[[encounter]]
+[[pokemon]]
 min_level = 7
 max_level = 7
 pokemon_id = 21
 
-[[encounter]]
+[[pokemon]]
 min_level = 7
 max_level = 7
 pokemon_id = 56
 
-[[encounter]]
+[[pokemon]]
 min_level = 6
 max_level = 6
 pokemon_id = 32
 
-[[encounter]]
+[[pokemon]]
 min_level = 7
 max_level = 7
 pokemon_id = 16
 
-[[encounter]]
+[[pokemon]]
 min_level = 8
 max_level = 8
 pokemon_id = 21
 
-[[encounter]]
+[[pokemon]]
 min_level = 3
 max_level = 3
 pokemon_id = 39
 
-[[encounter]]
+[[pokemon]]
 min_level = 7
 max_level = 7
 pokemon_id = 32
 
-[[encounter]]
+[[pokemon]]
 min_level = 5
 max_level = 5
 pokemon_id = 39
 
-[[encounter]]
+[[pokemon]]
 min_level = 6
 max_level = 6
 pokemon_id = 29
 
-[[encounter]]
+[[pokemon]]
 min_level = 7
 max_level = 7
 pokemon_id = 39

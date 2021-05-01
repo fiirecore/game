@@ -16,21 +16,18 @@ use world::{
 };
 
 use self::gui::text_window::TextWindow;
-use self::tile::TileTextureManager;
 
 pub mod map;
 pub mod npc;
 pub mod gui;
 pub mod player;
-pub mod tile;
 pub mod battle;
-pub mod warp_transition;
 
 mod render_coords;
 
 pub use render_coords::RenderCoords;
 
-pub type TileTextures = TileTextureManager;
+pub type TileTextures = map::texture::TileTextureManager;
 pub type NpcTextures = HashMap<TinyStr16, Texture2D>;
 
 pub trait GameWorld {
