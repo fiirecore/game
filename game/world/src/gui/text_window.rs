@@ -1,9 +1,8 @@
 use firecore_game::util::{Entity, Reset, Completable};
 use firecore_game::macroquad::prelude::{Vec2, Texture2D};
-use firecore_game::storage::player::PlayerSave;
 
 use firecore_game::gui::text::DynamicText;
-use firecore_game::text::{Message, process_messages};
+use firecore_game::text::Message;
 use firecore_game::graphics::{byte_texture, draw};
 
 pub struct TextWindow {
@@ -22,25 +21,23 @@ impl TextWindow {
     }
 
     pub fn set_text(&mut self, message: Message) {
-        self.text.message = Some(message);
+        self.text.message = message;
     }
 
-    pub fn on_start(&mut self, player_save: &PlayerSave) {
-        if let Some(message) = self.text.message.as_mut() {
-            process_messages(player_save, message);
-        }
+    pub fn process_messages(&mut self, save: &firecore_game::storage::player::PlayerSave) {
+        self.text.process_messages(save);
     }
 
     pub fn update(&mut self, delta: f32) {
         if self.alive {
-            self.text.update(delta);
+            self.text.update(delta, #[cfg(debug_assertions)] "update");
         }
     }
 
     pub fn render(&self) {
         if self.alive {
             draw(self.background, self.pos.x, self.pos.y);
-            self.text.render();
+            self.text.render(#[cfg(debug_assertions)] "render");
         }
     }
 
@@ -57,7 +54,8 @@ impl Default for TextWindow {
             alive: false,
             pos,
             background: byte_texture(include_bytes!("../../assets/gui/message.png")),
-            text: DynamicText::empty(Vec2::new(11.0, 5.0), pos),
+            #[deprecated]
+            text: DynamicText::new(Vec2::new(11.0, 5.0), pos, 1, firecore_game::text::TextColor::Black, 5, "wrldwndw"),
         }
     }
 }

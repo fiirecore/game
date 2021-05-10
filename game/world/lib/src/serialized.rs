@@ -1,8 +1,8 @@
 use deps::hash::HashMap;
 use firecore_font::message::TextColor;
 use serde::{Deserialize, Serialize};
-use deps::tinystr::TinyStr16;
 
+use crate::character::npc::npc_type::NPCTypeId;
 use crate::{PaletteId, TileId};
 use crate::character::npc::NPC;
 use crate::character::npc::NPCId;
@@ -31,7 +31,7 @@ pub struct SerializedNPC {
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNPCTypeConfig {
 
-    pub identifier: TinyStr16,
+    pub identifier: NPCTypeId,
     pub text_color: TextColor,
     pub sprite: SpriteIndexType,
     pub trainer: Option<TrainerType>,

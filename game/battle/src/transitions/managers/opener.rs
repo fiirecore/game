@@ -50,14 +50,16 @@ impl BattleOpenerManager {
         self.get().render_below_panel();
     }
 
-    pub fn spawn_type(&mut self, battle_type: BattleType) {
-        self.current_opener = match battle_type {
+    pub fn spawn_type(&mut self, battle: &Battle) {
+        self.current_opener = match battle.battle_type {
             BattleType::Wild => Openers::Wild,
             BattleType::Trainer => Openers::Trainer,
             BattleType::GymLeader => Openers::Trainer,
         };
         self.introduction.spawn_type(&self.current_opener);
         self.spawn();
+        self.on_start();
+        self.introduction.setup_text(battle);
     }
 
     fn get(&self) -> &dyn BattleOpener {

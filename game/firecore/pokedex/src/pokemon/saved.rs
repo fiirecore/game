@@ -1,4 +1,4 @@
-use deps::smallvec::SmallVec;
+use deps::vec::ArrayVec;
 use serde::{Deserialize, Serialize};
 
 use super::Health;
@@ -8,7 +8,7 @@ use super::{Level, PokemonId, Experience, Friendship, data::Gender, data::StatSe
 use crate::item::ItemId;
 use crate::moves::saved::SavedMoveSet;
 
-pub type SavedPokemonParty = SmallVec<[SavedPokemon; 6]>;
+pub type SavedPokemonParty = ArrayVec<[SavedPokemon; 6]>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SavedPokemon {

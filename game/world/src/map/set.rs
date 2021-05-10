@@ -13,7 +13,7 @@ use firecore_game::battle::BattleData;
 
 use firecore_game::macroquad::prelude::warn;
 
-use crate::{GameWorld, TileTextures, NpcTextures, RenderCoords};
+use crate::{GameWorld, WorldTextures, RenderCoords};
 use crate::gui::text_window::TextWindow;
 
 impl GameWorld for WorldMapSet {
@@ -32,15 +32,15 @@ impl GameWorld for WorldMapSet {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
         if let Some(map) = self.map_mut() {
             map.update(delta, player, battle_data, warp, text_window);
         }
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool) {
         if let Some(map) = self.map() {
-            map.render(tile_textures, npc_textures, screen, border);
+            map.render(textures, screen, if border { map.border[0] != 0x8 } else { false });
         }
     }
 
@@ -68,15 +68,15 @@ impl GameWorld for WorldMapSetManager {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<(WarpDestination, bool)>, text_window: &mut TextWindow) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
         if let Some(set) = self.set_mut() {
             set.update(delta, player, battle_data, warp, text_window);
         }
     }
 
-    fn render(&self, tile_textures: &TileTextures, npc_textures: &NpcTextures, screen: RenderCoords, border: bool) {
+    fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool) {
         if let Some(set) = self.set() {
-            set.render(tile_textures, npc_textures, screen, border);
+            set.render(textures, screen, border);
         }
     }
 

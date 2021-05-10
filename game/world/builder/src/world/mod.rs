@@ -11,8 +11,8 @@ pub mod npc;
 pub mod script;
 
 
-#[serde(deny_unknown_fields)]
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MapConfig {
 
     pub identifier: MapIdentifier,
@@ -24,8 +24,8 @@ pub struct MapConfig {
 
 }
 
-#[serde(deny_unknown_fields)]
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SerializedChunkMap {
 
     pub config: MapConfig,
@@ -35,8 +35,8 @@ pub struct SerializedChunkMap {
 
 }
 
-#[serde(deny_unknown_fields)]
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SerializedMapSet {
 
     pub identifier: MapIdentifier,
@@ -45,6 +45,7 @@ pub struct SerializedMapSet {
 }
 
 #[derive(Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SerializedMapSettings {
 
     pub fly_position: Option<Coordinate>,

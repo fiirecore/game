@@ -1,68 +1,46 @@
 use game::{
     pokedex::moves::instance::MoveInstance,
-    macroquad::prelude::{Vec2, Texture2D},
+    macroquad::prelude::Texture2D,
     text::TextColor,
     graphics::{byte_texture, draw, draw_text_left, draw_text_right},
 };
 
-pub struct MoveInfoPanel {
+static mut BACKGROUND: Option<Texture2D> = None;
 
-    pos: Vec2,
-    panel: Vec2,
+pub struct MoveInfoPanel {
 
     background: Texture2D,
     pp: String,
-    remaining_pp: String,
     move_type: String,
 
 }
 
 impl MoveInfoPanel {
 
-    pub fn new(panel: Vec2) -> Self {
+    // const ORIGIN: Vec2 = const_vec2!([160.0, 113.0]);
 
-        let pos = Vec2::new(160.0, 0.0);
+    pub fn new() -> Self {
 
         Self {
 
-            background: byte_texture(include_bytes!("../../../assets/gui/move_info_panel.png")),
-            pp: String::from("PP"),
+            background: unsafe { *BACKGROUND.get_or_insert(byte_texture(include_bytes!("../../../assets/gui/move_info_panel.png"))) },
+            pp: String::from("x/y"),
             move_type: String::from("TYPE/"),
-            remaining_pp: String::from("x/y"),
-            
-            pos,
-            panel,
 
         }
 
     }
 
-    pub fn update_with_move(&mut self, move_instance: &MoveInstance) {
-        self.remaining_pp = format!("{}/{}", move_instance.pp, move_instance.pokemon_move.pp);
-        self.move_type = format!("TYPE/{:?}", move_instance.pokemon_move.pokemon_type);
+    pub fn update_move(&mut self, instance: &MoveInstance) {
+        self.pp = format!("{}/{}", instance.pp, instance.pokemon_move.pp);
+        self.move_type = format!("TYPE/{:?}", instance.pokemon_move.pokemon_type);
     }
 
     pub fn render(&self) {
-        let x = self.pos.x + self.panel.x;
-        let y = self.pos.y + self.panel.y;
-        draw(self.background, x, y);
-        draw_text_left(0, &self.pp, TextColor::Black, x + 8.0, y + 11.0);
-        draw_text_left(0, &self.move_type, TextColor::Black, x + 8.0, y + 27.0);
-        draw_text_right(0, &self.remaining_pp, TextColor::Black, x + 72.0, y + 11.0);
+        draw(self.background, 160.0, 113.0);
+        draw_text_left(0, "PP", TextColor::Black, 168.0, 124.0);
+        draw_text_left(0, &self.move_type, TextColor::Black, 168.0, 140.0);
+        draw_text_right(0, &self.pp, TextColor::Black, 232.0, 124.0);
     }
 
 }
-
-// impl firecore_util::Reset for MoveInfoPanel {
-//     fn reset(&mut self) {
-//         self.has_move = false;
-//     }
-// }
-
-// pub struct MoveInfo {
-
-//     move_type: String,
-//     pp: String,
-//     remaining_pp: String,
-
-// }

@@ -1,12 +1,8 @@
-use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-
 pub mod manager;
 
 pub mod copyright;
 pub mod gamefreak;
 pub mod pokemon;
-
-pub static LOADING_FINISHED: AtomicBool = AtomicBool::new(false);
 
 pub async fn load_coroutine() {
 
@@ -19,7 +15,7 @@ pub async fn load_coroutine() {
 
     while !manager.finished {
 
-        if LOADING_FINISHED.load(Relaxed) {
+        if game::init::LOADING_FINISHED.load(std::sync::atomic::Ordering::Relaxed) {
             if pressed(Control::A) {
                 manager.finished = true;
             }

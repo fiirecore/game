@@ -57,7 +57,8 @@ pub fn play_music(music: MusicId) -> Result<(), PlayAudioError> {
             }
         }
         None => {
-            Err(PlayAudioError::Uninitialized)
+            // Err(PlayAudioError::Uninitialized)
+            Ok(())
         }
     }
        

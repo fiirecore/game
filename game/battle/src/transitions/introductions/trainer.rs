@@ -1,4 +1,3 @@
-use game::text::MessagePage;
 use game::{
     util::{
         Entity,
@@ -7,12 +6,11 @@ use game::{
     },
     macroquad::prelude::{Vec2, Texture2D},
     graphics::{draw_bottom, draw_o_bottom},
-    text::{Message, TextColor},
+    text::MessagePage,
 };
 
 use crate::{
     Battle,
-    gui::BattleGui,
     transitions::{
         BattleTransition,
         BattleTransitionGui,
@@ -37,7 +35,7 @@ impl TrainerBattleIntroduction {
 
     pub fn new(panel: Vec2) -> Self {
         Self {
-            introduction: BasicBattleIntroduction::new(panel),
+            introduction: BasicBattleIntroduction::new(panel, 3),
             texture: None,
             offset: 0.0,
             leaving: false,
@@ -50,59 +48,45 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
     fn setup(&mut self, battle: &Battle) {
 
-        self.introduction.text.message = Some(
-            Message::new(
-                1, 
-                TextColor::White, 
-                if let Some(trainer) = battle.trainer.as_ref() {
+        self.introduction.text.clear();
 
-                    self.texture = Some(trainer.texture);
-        
-                    let name = format!("{} {}", trainer.npc_type, trainer.name);
+        if let Some(trainer) = battle.trainer.as_ref() {
+            self.texture = Some(trainer.texture);
 
-                    vec![
-                        MessagePage::new(
-                            vec![
-                                name.clone(), 
-                                String::from("would like to battle!")
-                            ], 
-                            None
-                        ),
-                        MessagePage::new(
-                            vec![
-                                name + " sent", 
-                                format!("out {}", battle.opponent.active().name())
-                            ],
-                            Some(0.5),
-                        )
-                    ]
+            let name = format!("{} {}", trainer.npc_type, trainer.name);
 
-                } else {
-                    vec![
-                        MessagePage::new(
-                            vec![String::from("No trainer data found!")],
-                            None,
-                        )
-                    ]
-                }
-            )
-        );
+            self.introduction.text.push(MessagePage::new(
+                vec![
+                    name.clone(), 
+                    String::from("would like to battle!")
+                ], 
+                None
+            ));
 
-        self.introduction.common_setup(battle);
+            self.introduction.text.push(MessagePage::new(
+                vec![
+                    name + " sent", 
+                    format!("out {}", battle.opponent.pokemon(Battle::DEFAULT_ACTIVE).unwrap().name())
+                ],
+                Some(0.5),
+            ));
+        } else {
+            self.introduction.text.push(MessagePage::new(
+                vec![String::from("No trainer data found!")],
+                None,
+            ));
+        }
+
+        self.introduction.common_setup(&battle.player.active);
         
     }
 
-    fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
-        self.introduction.update_gui(battle, battle_gui, delta);
+    fn update_gui(&mut self, delta: f32, battle: &mut Battle) {
+        self.introduction.update_gui(delta, battle);
         if self.introduction.text.can_continue() {
-            if let Some(message) = self.introduction.text.message.as_ref() {
-                if self.introduction.text.current_message() == message.message_set.len() - 2 {
-                    self.leaving = true;
-                }
-            } else {
+            if self.introduction.text.current() == self.introduction.text.len() - 2 {
                 self.leaving = true;
-            }
-            
+            }           
         }
     }
 
@@ -110,7 +94,9 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         if self.offset < Self::FINAL_TRAINER_OFFSET {
             draw_o_bottom(self.texture, 144.0 - offset + self.offset, 74.0);
         } else {
-            draw_bottom(battle.opponent.active_texture(), 144.0 - offset, 74.0);
+            if let Some(texture) = battle.opponent.active[Battle::DEFAULT_ACTIVE].renderer.texture {
+                draw_bottom(texture, 144.0 - offset, 74.0);
+            }
         }
         self.introduction.render_player(battle, offset);  
     }

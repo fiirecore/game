@@ -1,5 +1,7 @@
+use deps::hash::HashMap;
 use serde::{Deserialize, Serialize};
 use deps::Random;
+use crate::moves::MoveId;
 use crate::moves::instance::{MoveInstance, MoveInstanceSet};
 use data::breeding::Breeding;
 use data::LearnableMove;
@@ -8,6 +10,14 @@ use data::StatSet;
 use data::training::Training;
 use data::Gender;
 
+pub type Pokedex = HashMap<PokemonId, Pokemon>;
+
+pub static mut POKEDEX: Option<Pokedex> = None;
+
+pub fn pokedex() -> &'static Pokedex {
+	unsafe { POKEDEX.as_ref().expect("Pokedex was not initialized!") }
+}
+
 pub mod data;
 
 pub mod types;
@@ -15,8 +25,6 @@ pub mod status;
 
 pub mod saved;
 pub mod instance;
-
-pub mod texture;
 
 pub static POKEMON_RANDOM: Random = Random::new();
 
@@ -44,31 +52,19 @@ pub struct Pokemon {
 
 impl Pokemon {
 
-	pub fn moves_from_level(&self, level: u8) -> MoveInstanceSet {
-		let mut moves: Vec<MoveInstance> = Vec::new();
-		for learnable_move in &self.moves {
-			if learnable_move.level <= level {
-				if let Some(pokemon_move) =  crate::movedex().get(&learnable_move.move_id) {
-					let mut has = false;
-					for pmove in &moves {
-						if pmove.pokemon_move.id == pokemon_move.id {
-							has = true;
-						}
-					}
-					if !has {
-						moves.push(MoveInstance {
-							pp: pokemon_move.pp,
-							pokemon_move: pokemon_move,
-						});
-					}
-					
-				}
-			}
-		}
+	pub fn generate_moves(&self, level: Level) -> MoveInstanceSet {
+		let mut moves = self.moves.iter().filter(|learnable_move| learnable_move.level <= level).map(|learnable_move| learnable_move.move_id).collect::<Vec<MoveId>>();
+		moves.dedup();
 		moves.reverse();
 		moves.truncate(4);
+		moves.into_iter().map(|id| crate::moves::movedex().get(&id)).flatten().map(|pokemon_move| MoveInstance {
+		    pp: pokemon_move.pp,
+		    pokemon_move,
+		}).collect()
+		// moves.reverse();
+		// moves.truncate(4);
 
-		return moves.into();		
+		// return moves.into();		
 	}
 
     pub fn generate_gender(&self) -> Gender {

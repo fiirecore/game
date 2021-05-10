@@ -8,8 +8,8 @@ use super::NPCId;
 
 type MessageSet = Vec<Vec<String>>;
 
-#[serde(deny_unknown_fields)]
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct Trainer {
 
     #[serde(default = "default_true")]

@@ -1,11 +1,10 @@
-use firecore_world_lib::character::MoveType;
 use game::{
     util::{
         Entity, 
         Completable, 
         Direction, 
     },
-    pokedex::pokedex,
+    pokedex::pokemon::pokedex,
     storage::{
         {get, get_mut},
         player::{PlayerSave, PlayerSaves},
@@ -18,8 +17,6 @@ use game::{
             is_key_pressed,
         }
     },
-    textures::{TrainerSprites, TRAINER_SPRITES},
-    graphics::byte_texture,
     battle::BattleData,
     gui::{
         party::PartyGui,
@@ -34,12 +31,16 @@ use world::{
         World,
         manager::WorldMapManager,
     },
-    character::npc::npc_type::NPCType,
+    character::{
+        MoveType,
+        npc::npc_type::NPCType,
+    },
 };
 
 use crate::{
-    GameWorld, TileTextures, NpcTextures, RenderCoords,
-    player::PlayerTexture,
+    GameWorld, 
+    WorldTextures,
+    RenderCoords,
     gui::{
         text_window::TextWindow,
         start_menu::StartMenu,
@@ -55,9 +56,7 @@ pub struct WorldManager {
 
     pub map_manager: WorldMapManager,
 
-    tile_textures: TileTextures,
-    npc_textures: NpcTextures,
-    pub player_texture: PlayerTexture,
+    textures: WorldTextures,
 
     warp_transition: WarpTransition,
 
@@ -67,7 +66,7 @@ pub struct WorldManager {
     // Other
 
     pub render_coords: RenderCoords,
-    noclip_toggle: bool,
+    // noclip_toggle: bool,
 
     first_direction: Direction,
     player_move_accumulator: f32,
@@ -81,47 +80,40 @@ impl WorldManager {
 
             map_manager: WorldMapManager::default(),
 
-            tile_textures: TileTextures::new(),
-            npc_textures: NpcTextures::new(),
-            player_texture: PlayerTexture::default(),
+            textures: WorldTextures::default(),
 
             warp_transition: WarpTransition::new(),
             start_menu: StartMenu::new(),
             text_window: TextWindow::default(),
             first_direction: Direction::default(),
             render_coords: RenderCoords::default(),
-            noclip_toggle: false,
+            // noclip_toggle: false,
             player_move_accumulator: 0.0,
         }
     }
 
-    pub  fn load(&mut self, world: SerializedWorld) {
-    
-        self.tile_textures.setup(world.textures);
-    
-        let mut npc_types = crate::npc::NPCTypes::with_capacity(world.npc_types.len());
-        let mut trainer_sprites = TrainerSprites::new();
-    
-        for npc_type in world.npc_types {
-            let texture = byte_texture(&npc_type.texture);
-            if let Some(battle_sprite) = npc_type.battle_texture {
-                trainer_sprites.insert(npc_type.config.identifier, byte_texture(&battle_sprite));
-            }
-            npc_types.insert(npc_type.config.identifier, NPCType {
-                sprite: firecore_world_lib::character::sprite::SpriteIndexes::from_index(npc_type.config.sprite),
-                text_color: npc_type.config.text_color,
-                trainer: npc_type.config.trainer,
-            });
-            self.npc_textures.insert(npc_type.config.identifier, texture);
-        }
-    
-        unsafe {crate::npc::NPC_TYPES = Some(npc_types); }
-    
-        unsafe { TRAINER_SPRITES = Some(trainer_sprites); }
+    pub fn load(&mut self, world: SerializedWorld) {
 
-        crate::gui::load();
+        self.textures.setup(world.textures, &world.npc_types);
         
         info!("Finished loading textures!");
+
+        unsafe { crate::npc::NPC_TYPES = 
+            Some(
+                world.npc_types.into_iter().map(|npc_type| {
+                    self.textures.npcs.add_npc_type(&npc_type);
+                    (
+                        npc_type.config.identifier,
+                        NPCType {
+                            sprite: firecore_world_lib::character::sprite::SpriteIndexes::from_index(npc_type.config.sprite),
+                            text_color: npc_type.config.text_color,
+                            trainer: npc_type.config.trainer,
+                        }
+                    )
+                }
+                ).collect()
+            ); 
+        }
 
         self.map_manager = world.manager;
     
@@ -152,18 +144,9 @@ impl WorldManager {
     }
 
     pub fn update(&mut self, delta: f32, battle_data: &mut Option<BattleData>) {
-        self.tile_textures.update(delta);
-        
-        if self.noclip_toggle && self.map_manager.player.character.position.offset.is_zero() {
-            self.noclip_toggle = false;
-            self.map_manager.player.character.noclip = !self.map_manager.player.character.noclip;
-            // if self.map_manager.player.character.noclip {
-            //     self.map_manager.player.character.speed = self.map_manager.player.character.base_speed * 4.0;
-            // } else {
-            //     self.map_manager.player.character.speed = self.map_manager.player.character.base_speed;
-            // }
-            info!("No clip toggled!");
-        }
+
+        self.textures.tiles.update(delta);
+        self.textures.player.update(delta, &mut self.map_manager.player.character);
 
         if self.map_manager.chunk_active {
             self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle_data, &mut self.map_manager.warp, &mut self.text_window);
@@ -174,10 +157,11 @@ impl WorldManager {
         if self.warp_transition.is_alive() {
             self.warp_transition.update(delta);
             if self.warp_transition.switch() {
-                if let Some((destination, music)) = self.map_manager.warp.clone() {
-                    self.player_texture.draw = !destination.transition.move_on_exit;
+                if let Some(destination) = self.map_manager.warp.clone() {
+                    self.textures.player.draw = !destination.transition.move_on_exit;
+                    let change_music = destination.transition.change_music;
                     self.map_manager.warp(destination);
-                    self.map_start(music);
+                    self.map_start(change_music);
                     if self.map_manager.chunk_active {
                         self.map_manager.chunk_map.on_tile(battle_data, &mut self.map_manager.player);
                     } else {
@@ -186,10 +170,10 @@ impl WorldManager {
                 }
             }
             if self.warp_transition.is_finished() {
-                self.player_texture.draw = true;
+                self.textures.player.draw = true;
                 self.warp_transition.despawn();
                 self.map_manager.player.unfreeze();
-                if let Some((destination, _)) = self.map_manager.warp.take() {
+                if let Some(destination) = self.map_manager.warp.take() {
                     if destination.transition.move_on_exit {
                         self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.character.position.direction), delta);
                     }
@@ -221,11 +205,11 @@ impl WorldManager {
 
     pub fn render(&self) {
         if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.render(&self.tile_textures, &self.npc_textures, self.render_coords, true);
+            self.map_manager.chunk_map.render(&self.textures, self.render_coords, true);
         } else {
-            self.map_manager.map_set_manager.render(&self.tile_textures, &self.npc_textures, self.render_coords, true);
+            self.map_manager.map_set_manager.render(&self.textures, self.render_coords, true);
         }
-        self.player_texture.render(&self.map_manager.player.character);
+        self.textures.player.render(&self.map_manager.player.character);
         self.text_window.render();
         self.start_menu.render(); 
         self.warp_transition.render();
@@ -240,7 +224,7 @@ impl WorldManager {
             player_data.location.map = Some(self.map_manager.map_set_manager.current.unwrap_or(player::default_map()));
             player_data.location.index = self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(player::default_index());
 		}
-		player_data.location.position = self.map_manager.player.character.position;
+		player_data.character = self.map_manager.player.character.clone();
     }
 
     pub fn input(&mut self, delta: f32, battle_data: &mut Option<BattleData>, party_gui: &mut PartyGui, bag_gui: &mut BagGui, action: &mut Option<GameStateAction>) {
@@ -277,8 +261,24 @@ impl WorldManager {
 
                 if down(firecore_game::keybind(self.first_direction)) {
                     if self.player_move_accumulator > PLAYER_MOVE_TIME {
-                        if self.map_manager.try_move(self.first_direction, delta) {
-                            self.map_start(true);
+                        if let Some(result) = self.map_manager.try_move(self.first_direction, delta) {
+                            match result {
+                                firecore_world_lib::map::manager::TryMoveResult::MapUpdate => self.map_start(true),
+                                firecore_world_lib::map::manager::TryMoveResult::TrySwim => {
+                                    if let Some(saves) = get::<PlayerSaves>() {
+                                        let surf = firecore_game::deps::tinystr::tinystr8!("surf");
+                                        for id in saves.get().party.iter().map(|pokemon| pokemon.moves.as_ref().map(|moves| game::pokedex::moves::saved::to_instance(moves))).flatten().map(|moves| moves.into_iter().map(|instance| firecore_game::pokedex::moves::get_game_move(&instance.pokemon_move.id).map(|game_move| game_move.field_id).flatten()).flatten()).flatten() {
+                                            if id == surf {
+                                                self.map_manager.player.character.move_type = MoveType::Swimming;
+                                                self.map_manager.try_move(self.first_direction, delta);
+                                                break;
+                                            }
+                                        }
+                                        
+                                    }
+                                    // self.text_window.set_text(firecore_game::text::Message::new(firecore_game::text::TextColor::Black, vec![]));
+                                }
+                            }
                         }
                     } else {
                         self.player_move_accumulator += delta;
@@ -314,19 +314,15 @@ impl WorldManager {
     fn stop_player(&mut self, battle_data: &mut Option<BattleData>) {
         self.map_manager.player.character.stop_move();
 
-        // if self.map_manager.chunk_active {
-        //     self.map_manager.ch
-        // }
-
         if self.map_manager.chunk_active {
             if let Some(destination) = self.map_manager.chunk_map.check_warp(self.map_manager.player.character.position.coords) { // Warping does not trigger tile actions!
-                self.map_manager.warp = Some((destination, true));
+                self.map_manager.warp = Some(destination);
             } else if self.map_manager.chunk_map.in_bounds(self.map_manager.player.character.position.coords) {
                 self.map_manager.chunk_map.on_tile(battle_data, &mut self.map_manager.player);
             }
         } else {
             if let Some(destination) = self.map_manager.map_set_manager.check_warp(self.map_manager.player.character.position.coords) {
-                self.map_manager.warp = Some((destination, true));
+                self.map_manager.warp = Some(destination);
             } else if self.map_manager.map_set_manager.in_bounds(self.map_manager.player.character.position.coords) {
                 self.map_manager.map_set_manager.on_tile(battle_data, &mut self.map_manager.player);
             }
@@ -334,16 +330,15 @@ impl WorldManager {
     }
 
     pub fn load_player(&mut self, data: &PlayerSave) {
-        let location = &data.location;
-        self.map_manager.player.character.position = location.position;
-        self.player_texture.load();
 
-        if let Some(map) = location.map {
+        self.map_manager.player.character = data.character.clone();
+
+        if let Some(map) = data.location.map {
             self.map_manager.chunk_active = false;
-            self.map_manager.update_map_set(map, location.index);
+            self.map_manager.update_map_set(map, data.location.index);
         } else {
             self.map_manager.chunk_active = true;
-            self.map_manager.update_chunk(location.index);
+            self.map_manager.update_chunk(data.location.index);
         }     
     }
 
@@ -354,7 +349,8 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F2) {
-            self.noclip_toggle = true;
+            // self.noclip_toggle = true;
+            self.map_manager.player.character.noclip = !self.map_manager.player.character.noclip;
         }
 
         if is_key_pressed(KeyCode::F3) {
@@ -367,10 +363,12 @@ impl WorldManager {
             } else {
                 self.map_manager.map_set_manager.tile(self.map_manager.player.character.position.coords)
             } {
-                info!("Current Tile ID: {}", tile);
+                info!("Current Tile ID: {:x}", tile);
             } else {
                 info!("Currently out of bounds");
             }
+
+            info!("Player is {:?}", self.map_manager.player.character.move_type);
             
         }
 

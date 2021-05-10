@@ -1,0 +1,20 @@
+[package]
+name = "firecore-dependencies"
+version = "0.4.0-beta.2"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+
+[features]
+default = []
+hash = ["ahash"]
+vec = ["arrayvec"]
+random = []
+
+[dependencies]
+tinystr = { version = "0.4", features = ["serde"], optional = true }
+ahash = { version = "0.7", features = ["serde"], optional = true }
+arrayvec = { version = "0.5", features = ["serde"], optional = true }
+
+[[example]]
+name = "random"
+required-features = ["random"]

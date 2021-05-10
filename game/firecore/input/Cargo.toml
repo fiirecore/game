@@ -10,4 +10,4 @@ macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
 
 serde = { version = "1.0", features = ["derive"] }
 
-firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies", features = ["hash"] }
+firecore-dependencies = { path = "../deps", features = ["hash"] }

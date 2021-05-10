@@ -4,10 +4,12 @@ use crate::pokemon::Pokemon;
 use crate::moves::PokemonMove;
 use crate::item::Item;
 
+use crate::moves::GamePokemonMove;
+
 #[derive(Deserialize, Serialize)]
 pub struct SerializedDex {
 	pub pokemon: Vec<SerializedPokemon>,
-	pub moves: Vec<PokemonMove>,
+	pub moves: Vec<SerializedMove>,
     pub items: Vec<SerializedItem>,
 }
 
@@ -22,18 +24,26 @@ pub struct SerializedPokemon {
 
 }
 
-// #[derive(Deserialize, Serialize)]
-// pub struct SerializedMove {
-//     pub pokemon_move: PokemonMove,
-//     pub action_script: Option<crate::moves::battle_script::BattleActionScript>,
-// }
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct SerializedMove {
 
-// #[derive(Deserialize, Serialize)]
-// pub struct SerializedPokemonMove {
+    #[serde(rename = "move")]
+	pub pokemon_move: PokemonMove,
 
-//     pub pokemon_move: PokemonMove, // add move scripting stuff later
+    #[serde(default)]
+    pub game_move: Option<GamePokemonMove>,
+	
+}
 
-// }
+impl From<PokemonMove> for SerializedMove {
+    fn from(pokemon_move: PokemonMove) -> Self {
+        Self {
+            pokemon_move,
+            game_move: None,
+        }
+    }
+}
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedItem {

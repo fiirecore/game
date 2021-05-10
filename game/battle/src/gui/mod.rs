@@ -1,44 +1,56 @@
 use game::{
 	util::Entity,
 	macroquad::prelude::Vec2,
-	gui::{
-		party::PartyGui,
-		bag::BagGui,
-	},
+	graphics::draw,
 };
 
 use background::BattleBackground;
-use text::BattleText;
 use panels::BattlePanel;
 use bounce::PlayerBounce;
-use pokemon::{
-	PokemonGui,
-	player::PlayerPokemonGui,
-	opponent::OpponentPokemonGui,
-};
-
-use crate::Battle;
 
 use self::panels::level_up::LevelUpMovePanel;
 
 pub mod background;
+pub mod panels;
+pub mod status;
 pub mod text;
-pub mod pokemon;
+
 pub mod bounce;
 pub mod exp_bar;
 
-pub mod panels;
+
+#[derive(Debug, Clone, Copy)]
+pub enum BattleGuiPosition {
+	Top, // index and size
+	Bottom,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct BattleGuiPositionIndex {
+	pub position: BattleGuiPosition,
+	pub index: u8,
+	pub size: u8,
+}
+
+impl BattleGuiPositionIndex {
+
+	pub const fn new(position: BattleGuiPosition, index: u8, size: u8) -> Self {
+		Self {
+		    position,
+		    index,
+		    size,
+		}
+	}
+
+}
 
 pub struct BattleGui {
 
 	pub background: BattleBackground,
-    
+
 	pub panel: BattlePanel,
 
-	pub battle_text: BattleText,
-
-	pub player: PlayerPokemonGui,
-	pub opponent: OpponentPokemonGui,
+	pub text: game::gui::text::DynamicText,
 
 	pub bounce: PlayerBounce,
 
@@ -56,12 +68,9 @@ impl BattleGui {
 
 			background: BattleBackground::new(),
 
-			panel: BattlePanel::new(panel),
+			panel: BattlePanel::new(),
 
-			player: PlayerPokemonGui::new(Vec2::new(127.0, 76.0)),
-			opponent: OpponentPokemonGui::new(Vec2::new(14.0, 18.0)),
-
-			battle_text: BattleText::new(),
+			text: text::new(),
 
 			bounce: PlayerBounce::new(),
 
@@ -71,56 +80,29 @@ impl BattleGui {
 
 	}
 
-	pub fn despawn(&mut self) {
-		self.panel.despawn();
-		self.player.despawn();
-		self.opponent.despawn();
-		self.battle_text.text.despawn();
-    }
+	// #[deprecated]
+	// pub fn update(&mut self) {
+	// 	/*
+	// 	 To - do: input active pokemon instead of status gui, 
+	// 	 if more than 1 active pokemon, gui moves left/right
+	// 	 only 1 pokemon is moving at once
+	// 	 */
+	// 		// self.bounce.update(delta, &mut self.player); 
 
-	pub fn on_battle_start(&mut self, battle: &Battle) {
-		// self.player_pokemon_gui.reset();
-		// self.opponent_pokemon_gui.reset();
-		self.bounce.reset();
-		self.update_gui(battle, true, true);
-	}
+	// 	// self.panel.update();
+	// }
 
-	pub fn update_gui(&mut self, battle: &Battle, pnew: bool, onew: bool) {
-
-		self.panel.update_text(battle.player.active());
-		
-		self.opponent.update_gui(battle.opponent.active(), onew);
-		self.player.update_gui(battle.player.active(), pnew);
-	}
-
-	pub fn update(&mut self, delta: f32) {
-		self.bounce.update(delta, &mut self.player);
-		self.panel.update();
-		self.player.update(delta);
-		self.opponent.update(delta);
-	}
-
-	pub fn input(&mut self, battle: &mut Battle, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
-		self.battle_text.text.input();
-		self.panel.input(battle, &mut self.battle_text, party_gui, bag_gui);
-	}
-
-	pub fn render_background(&self, offset: f32) {
-		self.background.render(offset);
-	}
-
+	#[deprecated]
 	pub fn render_panel(&self) {
+        draw(self.background.panel, 0.0, 113.0);
 		self.panel.render();
 		if self.level_up.is_alive() {
 			self.level_up.render();
-		} else {
-			self.battle_text.text.render();
-		}		
+		}	
 	}
 
-	pub fn render(&self) {
-		self.opponent.render();
-		self.player.render();
-	}
+}
 
+pub fn battle_party_gui(gui: &mut game::gui::party::PartyGui, party: &crate::pokemon::BattleParty, exitable: bool) {
+    gui.spawn(party.collect_cloned().into_iter().map(|instance| game::gui::pokemon::PokemonDisplay::new(instance)).collect(), Some(false), exitable);
 }

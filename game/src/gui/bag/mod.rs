@@ -1,16 +1,20 @@
-use std::ops::AddAssign;
-use std::ops::SubAssign;
+use std::ops::{AddAssign, SubAssign};
+
+use pokedex::{
+    item::{
+        ItemRef,
+        ItemStackInstance,
+        itemdex,
+    },
+    texture::item_texture,
+};
 
 use storage::{get, get_mut, player::PlayerSaves};
-use firecore_pokedex::item::ItemRef;
-use firecore_pokedex::itemdex;
-use crate::text::TextColor;
-use input::{pressed, Control};
-use firecore_pokedex::item::ItemStackInstance;
-use macroquad::prelude::Texture2D;
-use select::BagSelectMenu;
 
-use crate::textures::item_texture;
+use input::{pressed, Control};
+
+use crate::text::TextColor;
+
 use crate::graphics::{
     byte_texture,
     draw,
@@ -20,7 +24,9 @@ use crate::graphics::{
     draw_cursor,
 };
 
-use self::select::BagSelectAction;
+use macroquad::prelude::Texture2D;
+
+use self::select::{BagSelectMenu, BagSelectAction};
 
 use super::party::PartyGui;
 use super::pokemon::PokemonDisplay;
@@ -93,7 +99,7 @@ impl BagGui {
                     BagSelectAction::Give => {
                         self.selected = BagOption::Selected(self.cursor);
                         if let Some(saves) = get::<PlayerSaves>() {
-                            party_gui.spawn(saves.get().party.iter().map(|saved| PokemonDisplay::new_saved(saved)).flatten().collect(), None);
+                            party_gui.spawn(saves.get().party.iter().map(|saved| PokemonDisplay::new_saved(saved)).flatten().collect(), None, true);
                         }
                         self.select.alive = false;
                     }

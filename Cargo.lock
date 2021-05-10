@@ -47,6 +47,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arrayvec"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "atomic"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -303,7 +312,7 @@ dependencies = [
 name = "dex-builder"
 version = "0.4.0-beta.3"
 dependencies = [
- "firecore-pokedex",
+ "firecore-pokedex-game",
  "postcard",
  "ron",
  "serde",
@@ -357,6 +366,7 @@ dependencies = [
 name = "firecore-audio-lib"
 version = "0.1.1"
 dependencies = [
+ "firecore-dependencies",
  "serde",
 ]
 
@@ -381,10 +391,9 @@ dependencies = [
 [[package]]
 name = "firecore-dependencies"
 version = "0.4.0-beta.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-dependencies#e79611a5236f2e67d0ce4ccd1f2bc7f9545f19d1"
 dependencies = [
  "ahash 0.7.2",
- "smallvec",
+ "arrayvec",
  "tinystr",
 ]
 
@@ -402,7 +411,7 @@ dependencies = [
  "firecore-audio",
  "firecore-dependencies",
  "firecore-input",
- "firecore-pokedex",
+ "firecore-pokedex-game",
  "firecore-text",
  "firecore-util",
  "macroquad",
@@ -427,6 +436,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-pokedex-game"
+version = "0.4.0-beta.4"
+dependencies = [
+ "firecore-dependencies",
+ "firecore-pokedex",
+ "macroquad",
+ "serde",
+]
+
+[[package]]
 name = "firecore-saves"
 version = "0.4.0-beta.1"
 dependencies = [
@@ -434,6 +453,7 @@ dependencies = [
  "firecore-pokedex",
  "firecore-storage",
  "firecore-util",
+ "firecore-world-lib",
  "serde",
 ]
 
@@ -724,9 +744,9 @@ dependencies = [
 
 [[package]]
 name = "lock_api"
-version = "0.4.3"
+version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a3c91c24eae6777794bb1997ad98bbb87daf92890acab859f7eaa4320333176"
+checksum = "0382880606dff6d15c9476c416d18690b72742aa7b605bb6dd6ec9030fbf07eb"
 dependencies = [
  "scopeguard",
 ]
@@ -752,9 +772,9 @@ dependencies = [
 [[package]]
 name = "macroquad"
 version = "0.3.1"
-source = "git+https://github.com/DoNotDoughnut/macroquad#859dd9b40e4a7acc20406354c811a78978cf8325"
+source = "git+https://github.com/DoNotDoughnut/macroquad#f237bb7d4732ebbccb89c19c485488ab9231798f"
 dependencies = [
- "firecore-dependencies",
+ "ahash 0.7.2",
  "fontdue",
  "glam",
  "image",
@@ -765,13 +785,13 @@ dependencies = [
 [[package]]
 name = "macroquad_macro"
 version = "0.1.2"
-source = "git+https://github.com/DoNotDoughnut/macroquad#859dd9b40e4a7acc20406354c811a78978cf8325"
+source = "git+https://github.com/DoNotDoughnut/macroquad#f237bb7d4732ebbccb89c19c485488ab9231798f"
 
 [[package]]
 name = "memchr"
-version = "2.3.4"
+version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ee1c47aaa256ecabcaea351eae4a9b01ef39ed810004e298d2511ed284b1525"
+checksum = "b16bd47d9e329435e309c58469fe0791c2d0d1ba96ec0954152a5ae2b04387dc"
 
 [[package]]
 name = "miniquad"
@@ -1064,7 +1084,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.4.0-beta.4"
+version = "0.4.0-beta.5.1"
 dependencies = [
  "audio-builder",
  "dex-builder",
@@ -1132,9 +1152,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85dd92e586f7355c633911e11f77f3d12f04b1b1bd76a198bd34ae3af8341ef2"
+checksum = "742739e41cd49414de871ea5e549afb7e2a3ac77b589bcbebe8c82fab37147fc"
 dependencies = [
  "bitflags",
 ]
@@ -1151,18 +1171,18 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.4.6"
+version = "1.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a26af418b574bd56588335b3a3659a65725d4e636eb1016c2f9e3b38c7cc759"
+checksum = "ce5f1ceb7f74abbce32601642fcf8e8508a8a8991e0621c7d750295b9095702b"
 dependencies = [
  "regex-syntax",
 ]
 
 [[package]]
 name = "regex-syntax"
-version = "0.6.23"
+version = "0.6.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "24d5f089152e60f62d28b835fbff2cd2e8dc0baf1ac13343bef92ab7eed84548"
+checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
 
 [[package]]
 name = "ron"
@@ -1286,9 +1306,6 @@ name = "smallvec"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fe0f37c9e8f3c5a4a66ad655a93c74daac4ad00c441533bf5c6e7990bb42604e"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "spinning_top"
@@ -1313,9 +1330,9 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "syn"
-version = "1.0.71"
+version = "1.0.72"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad184cc9470f9117b2ac6817bfe297307418819ba40552f9b3846f05c33d5373"
+checksum = "a1e8cdbefb79a9a5a65e0db8b47b723ee907b7c7f8496c76a1770b5c310bab82"
 dependencies = [
  "proc-macro2",
  "quote",

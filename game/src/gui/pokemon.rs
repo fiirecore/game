@@ -1,11 +1,16 @@
-use crate::textures::pokemon_texture;
-use macroquad::color_u8;
-use pokedex::pokemon::texture::PokemonTexture::Icon;
-use firecore_pokedex::pokemon::instance::PokemonInstance;
-use firecore_pokedex::pokemon::saved::SavedPokemon;
-use firecore_pokedex::pokemon::types::PokemonType;
-use macroquad::prelude::Color;
-use macroquad::prelude::Texture2D;
+use pokedex::{
+    texture::{
+        pokemon_texture,
+        PokemonTexture::Icon,
+    },
+    pokemon::{
+        types::PokemonType,
+        saved::SavedPokemon,
+        instance::PokemonInstance,
+    },
+};
+
+use macroquad::prelude::{Color, color_u8, Texture2D};
 
 #[derive(Clone)]
 pub struct PokemonDisplay {

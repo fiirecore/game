@@ -7,14 +7,14 @@ use game::{
 		bag::BagGui,
 	},
 	macroquad::prelude::{is_key_pressed, KeyCode},
-	battle::{BattleData, BattleWinner},
+	battle::{BattleData, BattleTeam},
+	graphics::draw,
 };
 
 // use crate::script::action::ActionTextures;
 
 use crate::{
 	Battle,
-	pokemon::BattleParty,
 	gui::BattleGui,
 	transitions::{
 		BattleTransition,
@@ -24,10 +24,11 @@ use crate::{
 		managers::{
 			screen_transition::BattleScreenTransitionManager,
 			opener::BattleOpenerManager,
-			closer::BattleCloserManager,
 		}
 	}
 };
+
+pub use crate::transitions::managers::closer::BattleCloserManager;
 
 // pub type TrainerTextures = HashMap<String, Texture2D>;
 
@@ -79,20 +80,20 @@ impl BattleManager {
 
 		// Despawn anything from previous battle
 
-		self.gui.despawn();
+		// self.gui.despawn();
 
-		// Setup transition and GUI
+		// Setup battle GUI
 
 		if let Some(battle) = self.battle.as_ref() {
 			self.screen_transition.spawn_with_type(battle.battle_type);
-			self.gui.on_battle_start(battle);
+			self.gui.bounce.reset();
 		}
 
 		self.battle.is_some()
 
 	}
 
-	pub fn input(&mut self, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
+	pub fn input(&mut self) {
 
 		if let Some(battle) = self.battle.as_mut() {
 			if !self.screen_transition.is_alive() {	
@@ -101,7 +102,7 @@ impl BattleManager {
 				} else if self.closer.is_alive() {
 					self.closer.input();
 				} else {
-					self.gui.input(battle, party_gui, bag_gui);
+					battle.input(&mut self.gui);
 				}
 			}
 		}
@@ -111,7 +112,7 @@ impl BattleManager {
 				// exit shortcut
 				self.finished = true;
 				if let Some(battle) = self.battle.as_mut() {
-					battle.winner = Some(BattleWinner::Player);
+					battle.winner = Some(BattleTeam::Player);
 				}
 			}
 		}
@@ -122,35 +123,42 @@ impl BattleManager {
 		
 		if let Some(battle) = self.battle.as_mut() {
 
+			// Update the level up move thing
+
+			if self.gui.level_up.is_alive() {
+
+				#[deprecated(note = "move this")]
+				self.gui.level_up.update(delta, battle.player.pokemon_mut(self.gui.level_up.index).unwrap());
+
+				return;
+
+			}
+
 			if self.screen_transition.is_alive() {
 				if self.screen_transition.is_finished() {
 					self.screen_transition.despawn();
-					self.opener.spawn_type(battle.battle_type);
-					self.opener.on_start();
-					self.opener.introduction.setup_text(battle);
+					self.opener.spawn_type(battle);
 				} else {
 					self.screen_transition.update(delta);
 				}
 			} else if self.opener.is_alive() {
 				if self.opener.is_finished() {
 					self.opener.despawn();
-					self.gui.panel.start();
+					self.gui.panel.spawn();
 				} else {
 					self.opener.update(delta);
-					self.opener.introduction.update_gui(battle, &mut self.gui, delta);
-					//self.gui.opener_update(context);
+					self.opener.introduction.update_gui(delta, battle);
 				}
 			} else if self.closer.is_alive() {
 				if self.closer.is_finished() {
-					// self.closer.update_player(player_data);
 					self.closer.despawn();
 					self.finished = true;
 				} else {
 					self.closer.update(delta);
 				}
 			} else /*if !self.current_battle.is_finished()*/ {
+				self.gui.bounce.update(delta);
 				battle.update(delta, &mut self.gui, &mut self.closer, party_gui, bag_gui);
-				self.gui.update(delta);
 			}
 
 		}
@@ -164,37 +172,28 @@ impl BattleManager {
 			if self.screen_transition.is_alive() {
 				self.screen_transition.render();
 			} else if self.opener.is_alive() {
-				self.gui.render_background(self.opener.offset());
+				self.gui.background.render(self.opener.offset());
 				self.opener.render_below_panel(battle);
-				self.gui.render();
-				self.gui.render_panel();
+        		draw(self.gui.background.panel, 0.0, 113.0);
 				self.opener.render();
 			} else if self.closer.is_alive() {
 				if !self.world_active() {
-					self.gui.render_background(0.0);
-					battle.render_pokemon(self.gui.bounce.offset);
-					self.gui.render_panel();
-					self.gui.render();
+					self.gui.background.render(0.0);
+					draw(self.gui.background.panel, 0.0, 113.0);
+					self.gui.panel.render();
 					self.closer.render_battle();
 				}
 				self.closer.render();
 			} else {
-				self.gui.render_background(0.0);
-				battle.render_pokemon(self.gui.bounce.offset);
-				self.gui.render();
-				self.gui.render_panel();
+				battle.render(&self.gui);
 			}
 
 		}
 
 	}
 
-	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(BattleWinner, bool)> {
+	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(BattleTeam, bool)> {
 		self.battle.take().map(|battle| battle.update_data(player_save)).flatten()
-	}
-
-	pub fn player_party(&self) -> Option<&BattleParty> {
-		self.battle.as_ref().map(|battle| &battle.player)
 	}
 
 	pub fn world_active(&self) -> bool {

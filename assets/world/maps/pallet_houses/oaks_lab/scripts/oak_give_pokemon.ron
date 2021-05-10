@@ -46,7 +46,6 @@
         NPCAdd(
             "gary",
             (
-                alive: true,
                 name: "%r",
                 type: "rival",
                 character: (

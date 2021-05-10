@@ -10,7 +10,7 @@ use game::{
         },
         pokemon::instance::PokemonInstance,
     },
-    text::{Message, TextColor},
+    text::{MessagePage, TextColor},
     input::{pressed, Control},
     macroquad::prelude::Vec2,
     gui::text::DynamicText,
@@ -19,6 +19,9 @@ use game::{
 use super::moves::MovePanel;
 
 pub struct LevelUpMovePanel {
+
+    #[deprecated]
+    pub index: usize,
 
     alive: bool,
 
@@ -36,8 +39,9 @@ impl LevelUpMovePanel {
 
     pub fn new(panel: Vec2) -> Self {
         Self {
+            index: 0,
             alive: false,
-            text: DynamicText::empty(Vec2::new(11.0, 11.0), panel),
+            text: DynamicText::new(Vec2::new(11.0, 11.0), panel, 1, TextColor::White, 1, "levelup"),
             move_panel: MovePanel::new(panel),
             name: String::new(),
             moves: Vec::new(),
@@ -45,7 +49,8 @@ impl LevelUpMovePanel {
         }
     }
 
-    pub fn setup(&mut self, instance: &PokemonInstance, moves: Vec<MoveRef>) {
+    pub fn setup(&mut self, index: usize, instance: &PokemonInstance, moves: Vec<MoveRef>) {
+        self.index = index;
         self.moves = moves;
         self.name = instance.name();
         self.move_panel.update_names(instance);
@@ -55,29 +60,28 @@ impl LevelUpMovePanel {
         if !self.moves_active {
             if self.text.is_alive() {
                 self.text.input();
-                self.text.update(delta);
+                self.text.update(delta, #[cfg(debug_assertions)] "update");
                 if self.text.is_finished() {
                     self.moves_active = true;
                     self.text.despawn();
                 }
             } else {
                 self.text.spawn();
-                self.text.message = Some(
-                    Message::single(
+                self.text.push(
+                    MessagePage::new(
                         vec![
                             format!("{} is trying to", self.name),
                             format!("learn {}", self.moves[0].name)
                         ], 
-                        TextColor::White,
                         None,
                     )
-                )
+                );
             }
         } else {
             self.move_panel.input();
             if pressed(Control::A) {
                 let pokemon_move = self.moves.remove(0);
-                self.move_panel.move_names[self.move_panel.cursor] = pokemon_move.name.to_ascii_uppercase();
+                self.move_panel.names[self.move_panel.cursor] = pokemon_move.name.to_ascii_uppercase();
                 pokemon.moves[self.move_panel.cursor] = MoveInstance::new(pokemon_move);
                 self.next();
             }
@@ -91,7 +95,7 @@ impl LevelUpMovePanel {
     pub fn render(&self) {
         if self.alive {
             if !self.moves_active {
-                self.text.render()
+                self.text.render(#[cfg(debug_assertions)] "render")
             } else {
                 self.move_panel.render()
             }

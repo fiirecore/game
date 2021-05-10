@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
-use deps::smallvec::SmallVec;
+use deps::vec::ArrayVec;
 use super::{MoveId, PP};
 
-pub type SavedMoveSet = SmallVec<[SavedMove; 4]>;
+pub type SavedMoveSet = ArrayVec<[SavedMove; 4]>;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct SavedMove {
@@ -11,8 +11,8 @@ pub struct SavedMove {
 }
 
 pub fn to_instance(moves: &SavedMoveSet) -> super::instance::MoveInstanceSet {
-    moves.iter().map(|saved_move| crate::movedex().get(&saved_move.id).map(|pokemon_move| super::instance::MoveInstance {
+    moves.iter().flat_map(|saved_move| super::movedex().get(&saved_move.id).map(|pokemon_move| super::instance::MoveInstance {
         pp: saved_move.pp.unwrap_or(pokemon_move.pp),
         pokemon_move: pokemon_move,
-    })).flatten().collect()
+    })).collect()
 }

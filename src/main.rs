@@ -47,7 +47,7 @@ use game::{
 };
 
 use state::{
-    loading::{LOADING_FINISHED, load_coroutine},
+    loading::load_coroutine,
     manager::StateManager,
 };
 
@@ -140,15 +140,12 @@ pub async fn start() {
     let args = getopts();
 
     #[cfg(feature = "audio")]
-    if !args.contains(&Args::DisableAudio) {
-
+    if !args.contains(&Args::DisableAudio) && !game::is_debug() {
         // Load audio files and setup audio
         match postcard::from_bytes(include_bytes!("../build/data/audio.bin")) {
             Ok(sound) => game::init::audio(sound),
             Err(err) => game::macroquad::prelude::error!("Could not read sound file with error {}", err)
         }
-        
-
     }
 
     {
@@ -179,7 +176,13 @@ pub async fn start() {
     state_manager.load().await;
 
     info!("Finished loading assets!");
-    LOADING_FINISHED.store(true, Relaxed);
+
+    #[cfg(not(feature = "audio"))]
+    game::init::finished_loading();
+    #[cfg(feature = "audio")]
+    if game::is_debug() {
+        game::init::finished_loading()
+    }
 
     // Wait for the loading scenes to finish, then stop the coroutine
 

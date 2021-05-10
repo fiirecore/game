@@ -1,4 +1,3 @@
-use game::text::MessagePage;
 use game::{
     util::{
         Entity,
@@ -6,12 +5,11 @@ use game::{
         Completable,
         WIDTH,
     },
-    storage::{get, player::PlayerSaves},
     macroquad::prelude::{Vec2, Texture2D},
     graphics::draw_o_bottom,
     gui::text::DynamicText,
-    text::{process_messages, Message, TextColor},
-    battle::BattleWinner,
+    text::MessagePage,
+    battle::BattleTeam,
 };
 
 use crate::{
@@ -45,7 +43,7 @@ impl TrainerBattleCloser {
         Self {
             alive: false,
             wild: WildBattleCloser::default(),
-            text: DynamicText::empty(Vec2::new(11.0, 11.0), Vec2::new(0.0, 113.0)),
+            text: DynamicText::new(Vec2::new(11.0, 11.0), Vec2::new(0.0, 113.0), 1, game::text::TextColor::White, 2, "btltinro"),
             trainer: None,
             offset: WIDTH,
         }
@@ -64,40 +62,43 @@ impl BattleCloser for TrainerBattleCloser {
     fn setup(&mut self, battle: &Battle) {
         match battle.winner {
             Some(winner) => match winner {
-                BattleWinner::Player => {
+                BattleTeam::Player => {
                     if let Some(trainer) = &battle.trainer {
                         self.trainer = Some(trainer.texture);
-                        self.text.message = Some(
-                            Message::single(
-                                vec![
-                                    String::from("Player defeated"), 
-                                    format!("{} {}!", trainer.npc_type, trainer.name),
-                                ], 
-                                TextColor::White,
-                                None, 
-                            ),    
-                        );
-                        let message = self.text.message.as_mut().unwrap();
-                        let messages = &mut message.message_set;
+
+                        let mut message_set = Vec::with_capacity(trainer.victory_message.len() + 2);
+
+                        message_set.push(MessagePage::new(
+                            vec![
+                                String::from("Player defeated"), 
+                                format!("{} {}!", trainer.npc_type, trainer.name),
+                            ],
+                            None
+                        ));
+
                         for message in trainer.victory_message.iter() {
-                            messages.push(MessagePage::new(
+                            message_set.push(MessagePage::new(
                                 message.clone(),
                                 None,
                             ));
                         }
-                        messages.push(
-                            MessagePage::new(
-                                vec![
-                                    format!("%p got ${}", trainer.worth),
-                                    String::from("for winning!")
-                                ],
-                                None
-                            )
-                        );
-                        process_messages(get::<PlayerSaves>().unwrap().get(), message);
+
+                        message_set.push(MessagePage::new(
+                            vec![
+                                format!("%p got ${}", trainer.worth),
+                                String::from("for winning!")
+                            ],
+                            None
+                        ));
+                        
+                        self.text.set(message_set);
+                        
+                        if let Some(saves) = game::storage::get::<game::storage::player::PlayerSaves>() {
+                            self.text.process_messages(saves.get());
+                        }
                     }
                 }
-                BattleWinner::Opponent => {
+                BattleTeam::Opponent => {
                     self.wild.spawn();
                 }
             }
@@ -115,7 +116,7 @@ impl BattleCloser for TrainerBattleCloser {
 
     fn render_battle(&self) {
         draw_o_bottom(self.trainer, self.offset, 74.0);
-        self.text.render();
+        self.text.render(#[cfg(debug_assertions)] "render");
     }
 
 }
@@ -131,8 +132,8 @@ impl BattleTransition for TrainerBattleCloser {
         } else if self.text.is_finished() {
             self.wild.spawn();
         } else {
-            self.text.update(delta);
-            if self.text.current_message() == 1 && self.offset > XPOS {
+            self.text.update(delta, #[cfg(debug_assertions)] "update");
+            if self.text.current() == 1 && self.offset > XPOS {
                 self.offset -= 300.0 * delta;
                 if self.offset < XPOS {
                     self.offset = XPOS;

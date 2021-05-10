@@ -1,0 +1,15 @@
+(
+    field_id: Some("surf"),
+
+    // battle_script: Some((
+    //     actions: [
+    //         SpawnTexture,
+    //         // MoveTexture(30.0, 5.0, 1.0),
+    //         Wait(0.5),
+    //         DespawnTexture,
+    //     ],
+    // )),
+
+    // texture: Some("surf.png"),
+
+)

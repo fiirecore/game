@@ -46,3 +46,7 @@ pub struct SerializedFonts {
     pub fonts: Vec<FontSheet>,
 
 }
+
+pub const fn default_font_id() -> FontId {
+    1
+}

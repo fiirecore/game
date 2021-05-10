@@ -1,17 +1,23 @@
-use firecore_pokedex::pokemon::texture::PokemonTexture::Front;
-use crate::text::TextColor;
-use macroquad::color_u8;
-use macroquad::prelude::Color;
-use macroquad::prelude::Texture2D;
-use firecore_input::{pressed, Control};
-use macroquad::prelude::draw_circle;
-use macroquad::prelude::draw_line;
-use macroquad::prelude::draw_rectangle;
+use pokedex::texture::{
+    pokemon_texture,
+    PokemonTexture::Front,
+};
 
+use input::{pressed, Control};
+
+use crate::text::TextColor;
 use crate::graphics::{byte_texture, draw, draw_text_left};
-use crate::gui::pokemon::PokemonDisplay;
-use crate::gui::pokemon::PokemonTypeDisplay;
-use crate::textures::pokemon_texture;
+
+use macroquad::prelude::{
+    Color,
+    color_u8,
+    Texture2D,
+    draw_circle,
+    draw_line,
+    draw_rectangle
+};
+
+use crate::gui::pokemon::{PokemonDisplay, PokemonTypeDisplay};
 
 pub struct SummaryGui {
 

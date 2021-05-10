@@ -1,11 +1,12 @@
-use firecore_font::message::TextColor;
 use serde::{Deserialize, Serialize};
-
+use deps::tinystr::TinyStr16;
+use firecore_font::message::TextColor;
 use firecore_audio_lib::music::MusicName;
 use firecore_util::battle::BattleType;
 
 use crate::character::sprite::SpriteIndexes;
 
+pub type NPCTypeId = TinyStr16;
 #[derive(Debug)]
 pub struct NPCType {
 

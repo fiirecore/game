@@ -17,7 +17,7 @@ firecore-audio-lib = { path = "./lib" }
 ### Global, mutable variables
 
 parking_lot = { version = "0.11", optional = true }
-firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies" }
+firecore-dependencies = { path = "../deps" }
 
 ### Audio libraries
 

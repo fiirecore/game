@@ -107,7 +107,7 @@ impl Reset for TrainerBattleOpener {
 impl Completable for TrainerBattleOpener {
 
     fn is_finished(&self) -> bool {
-        return self.offset <= 0.0;
+        self.offset <= 0.0
     }
 
 }
@@ -115,7 +115,7 @@ impl Completable for TrainerBattleOpener {
 impl BattleOpener for TrainerBattleOpener {
 
     fn offset(&self) -> f32 {
-        return self.offset;
+        self.offset
     }
 
 }

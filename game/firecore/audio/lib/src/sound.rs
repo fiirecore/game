@@ -1,39 +1,27 @@
-// use tinystr::{Error, TinyStr16};
+use firecore_dependencies::tinystr::TinyStr8;
+
+pub type SoundId = TinyStr8;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Deserialize, serde::Serialize)]
 pub struct Sound {
 
-    pub name: String,
+    pub name: SoundId,
     pub variant: Option<u16>,
 
 }
 
 impl Sound {
 
-    pub fn named(name: &str) -> 
-        // Result<Self, Error> 
-        Self
-    {
-        // name.parse().map(|name| Self {
-        //     name,
-        //     variant: None,
-        // })
+    pub fn named(name: TinyStr8) -> Self {
         Self {
-            name: name.to_owned(),
+            name,
             variant: None,
         }
     }
 
-    pub fn variant(name: &str, variant: Option<u16>) -> 
-        // Result<Self, Error> 
-        Self
-    {
-        // name.parse().map(|name| Self {
-        //     name,
-        //     variant,
-        // })
+    pub fn variant(name: TinyStr8, variant: Option<u16>) -> Self {
         Self {
-            name: name.to_owned(),
+            name,
             variant,
         }
     }

@@ -7,7 +7,7 @@ use pokedex::pokemon::saved::SavedPokemonParty;
 use storage::{get, player::PlayerSaves};
 use crate::text::TextColor;
 use macroquad::prelude::{Texture2D, draw_rectangle, draw_texture_ex, WHITE, DrawTextureParams, Rect};
-use deps::smallvec::SmallVec;
+use deps::vec::ArrayVec;
 
 use crate::graphics::{byte_texture, draw, draw_text_left};
 
@@ -31,7 +31,7 @@ pub struct PartyGui {
     ball: Texture2D,
     health: Texture2D,
     
-    pub pokemon: SmallVec<[PokemonDisplay; 6]>,
+    pub pokemon: ArrayVec<[PokemonDisplay; 6]>,
 
     pub selected: Option<usize>,
 
@@ -41,6 +41,8 @@ pub struct PartyGui {
     right_cursor: Option<usize>,
 
     swaps: Vec<(usize, usize)>,
+
+    exitable: bool,
 
 }
 
@@ -70,11 +72,12 @@ impl PartyGui {
             ball: byte_texture(include_bytes!("../../../assets/gui/party/ball.png")),
             health: byte_texture(include_bytes!("../../../assets/gui/party/health.png")),
             accumulator: 0.0,
-            pokemon: SmallVec::new(),
+            pokemon: ArrayVec::new(),
             cursor: 0,
             right_cursor: None,
             selected: None,
             swaps: Vec::new(),
+            exitable: true,
         }
 
     }
@@ -85,15 +88,16 @@ impl PartyGui {
         self.select.is_world = world;
     }
 
-    pub fn spawn(&mut self, party: SmallVec<[PokemonDisplay; 6]>, is_world: Option<bool>) {
+    pub fn spawn(&mut self, party: ArrayVec<[PokemonDisplay; 6]>, is_world: Option<bool>, exitable: bool) {
         self.on_spawn(is_world);
         self.pokemon = party;
+        self.exitable = exitable;
     }
 
     pub fn spawn_world(&mut self) {
         if let Some(saves) = get::<PlayerSaves>() {
             self.on_spawn(Some(true));
-            self.spawn(saves.get().party.iter().map(|saved| PokemonDisplay::new_saved(saved)).flatten().collect(), Some(true));
+            self.spawn(saves.get().party.iter().map(|saved| PokemonDisplay::new_saved(saved)).flatten().collect(), Some(true), true);
         }
     }
 
@@ -147,7 +151,7 @@ impl PartyGui {
                 if pressed(Control::Right) && self.cursor == 0 {
                     self.cursor = self.right_cursor.unwrap_or(1);
                 }
-                if pressed(Control::B) {
+                if (pressed(Control::B) || pressed(Control::Start)) && self.exitable {
                     self.despawn();
                 }
             }           
@@ -307,8 +311,8 @@ impl PartyGui {
         draw(self.health, x, y);
         draw_text_left(0, &pokemon.health.0, TextColor::White, x + 35.0, y + 5.0);
         let x = x + 15.0;
-        draw_rectangle(x, y + 2.0, pokemon.health.1, 1.0, HealthBar::UPPER_COLOR);
-        draw_rectangle(x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER_COLOR);
+        draw_rectangle(x, y + 2.0, pokemon.health.1, 1.0, HealthBar::UPPER);
+        draw_rectangle(x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER);
     }
 
     pub fn on_finish(&mut self, party: &mut SavedPokemonParty) {
@@ -321,6 +325,11 @@ impl PartyGui {
     pub fn despawn(&mut self) {
         self.alive = false;
         self.select.alive = false;
+        if self.select.is_world == Some(false) {
+            if let Some(mut saves) = storage::get_mut::<PlayerSaves>() {
+                self.on_finish(&mut saves.get_mut().party)
+            }
+        }
     }
 
     pub fn is_alive(&self) -> bool {

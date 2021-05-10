@@ -8,6 +8,7 @@ use firecore_pokedex::{
 	item::{ItemId, ItemStack, StackSize},
 	pokemon::saved::SavedPokemonParty,
 };
+use firecore_world_lib::character::Character;
 use serde::{Deserialize, Serialize};
 use firecore_util::{
 	Location, Position, Coordinate, Direction,
@@ -30,6 +31,9 @@ pub struct PlayerSave {
 
 	#[serde(default = "default_location")]
 	pub location: Location,
+
+	#[serde(default = "default_character")]
+	pub character: Character,
 
 	#[serde(default)]
 	pub party: SavedPokemonParty,
@@ -55,7 +59,7 @@ impl PlayerSave {
 	}
 
 	pub fn add_item(&mut self, stack: ItemStack) -> bool {
-		if let Some(item) = firecore_pokedex::itemdex().get(&stack.id) {
+		if let Some(item) = firecore_pokedex::item::itemdex().get(&stack.id) {
 			if let Some(count) = self.items.get_mut(&stack.id) {
 				if *count + stack.count > item.stack_size {
 					false
@@ -92,6 +96,7 @@ impl Default for PlayerSave {
 		Self {
 			name: default_name(),
 			party: SavedPokemonParty::default(),
+			character: default_character(),
 			location: default_location(),
 			items: HashMap::new(),
 		    worth: 0,
@@ -109,17 +114,25 @@ pub fn default_location() -> Location {
 	Location {
 		map: Some(default_map()),
 		index: default_index(),
-		// position: GlobalPosition {
-			position: Position {
-				coords: Coordinate {
-					x: 6,
-					y: 6,
-				},
-				direction: Direction::Down,
-				..Default::default()
-			},
-			// ..Default::default()
-		// }		
+	}
+}
+
+pub fn default_character() -> Character {
+	Character {
+		position: default_position(),
+		..Default::default()
+	}
+}
+
+pub fn default_position() -> Position {
+	Position {
+		coords: Coordinate {
+			x: 6,
+			y: 6,
+		},
+		direction: Direction::Down,
+		// offset: firecore_util::PixelOffset::ZERO,
+		..Default::default()
 	}
 }
 

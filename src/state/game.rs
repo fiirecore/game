@@ -3,8 +3,7 @@ use std::sync::atomic::Ordering::Relaxed;
 use firecore_game::state::GameStateAction;
 use game::{
 	storage::{get, get_mut, DIRTY, save, player::PlayerSaves},
-	input::{pressed, Control},
-	macroquad::prelude::{info, warn, is_key_down, is_key_pressed, KeyCode},
+	macroquad::prelude::{info, warn, is_key_down, KeyCode},
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
@@ -159,18 +158,10 @@ impl State for GameState {
 			self.bag_gui.input(&mut self.party_gui);
 		} else if self.party_gui.is_alive() {
 			self.party_gui.input();
-			if pressed(Control::Start) || is_key_pressed(KeyCode::Escape) {
-				self.party_gui.despawn();
-				if !self.battling {
-					if let Some(mut saves) = get_mut::<PlayerSaves>() {
-						self.party_gui.on_finish(&mut saves.get_mut().party)
-					}
-				}
-			}
 		} else if !self.battling {
 			self.world.input(delta, &mut self.battle_data, &mut self.party_gui, &mut self.bag_gui, &mut self.action);
 		} else {
-			self.battle.input(&mut self.party_gui, &mut self.bag_gui);
+			self.battle.input();
 		}
 	}
 

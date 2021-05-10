@@ -34,7 +34,8 @@ pub fn add_track(music_data: SerializedMusicData) -> Result<(), AddAudioError> {
                                 Ok(())
                             }
                             None => {
-                                Err(AddAudioError::Uninitialized)
+                                Ok(())
+                                // Err(AddAudioError::Uninitialized)
                             }
                         }
                     }
@@ -59,7 +60,7 @@ pub fn add_sound(sound_data: SerializedSoundData) -> Result<(), AddAudioError> {
                                     map.insert(sound_data.sound, sound);
                                     Ok(())
                                 }
-                                None => Err(AddAudioError::Uninitialized)
+                                None => Ok(()), //Err(AddAudioError::Uninitialized),
                             }
                         }
                         Err(err) => Err(AddAudioError::ManagerAddError(err)),

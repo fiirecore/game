@@ -1,33 +1,36 @@
-use deps::smallvec::SmallVec;
+use deps::vec::ArrayVec;
 
-use crate::item::Item;
-use crate::item::ItemRef;
-use crate::item::script::ItemActionKind;
-use crate::item::script::ItemCondition;
-use crate::itemdex;
-use crate::moves::MoveRef;
-use crate::moves::PokemonMove;
-use crate::moves::persistent::PersistentMove;
-use crate::moves::script::MoveAction;
-use crate::{pokemon::{
+use crate::{
+	pokemon::{
 		PokemonId,
 		Level,
 		Pokemon,
 		PokemonRef,
+		types::PokemonType,
 		saved::{
 			SavedPokemon,
 			PokemonData
 		},
 		data::StatSet,
 	},
-	moves::instance::MoveInstanceSet,
-	moves::saved::to_instance,
+	moves::{
+		MoveRef,
+		saved::to_instance,
+		instance::{MoveInstanceSet, MoveInstance},
+		persistent::PersistentMoveInstance,
+	},
+	item::{
+		Item,
+		ItemRef,
+		itemdex,
+		script::{ItemCondition, ItemActionKind},
+	}
 };
 
 use super::Health;
 use super::types::effective::Effective;
 
-pub type PokemonInstanceParty = SmallVec<[PokemonInstance; 6]>;
+pub type PokemonInstanceParty = ArrayVec<[PokemonInstance; 6]>;
 
 #[derive(Clone)]
 pub struct PokemonInstance {
@@ -36,7 +39,7 @@ pub struct PokemonInstance {
 	
 	pub data: PokemonData,
 
-	pub persistent: Vec<PersistentMove>,
+	pub persistent: Option<PersistentMoveInstance>,
 
 	pub item: Option<ItemRef>,
 	pub moves: MoveInstanceSet,
@@ -49,18 +52,18 @@ impl PokemonInstance {
 
 	pub fn new(pokemon: &SavedPokemon) -> Option<Self> {
 
-		crate::pokedex().get(&pokemon.id).map(|pokemon_data| {
+		super::pokedex().get(&pokemon.id).map(|pokemon_data| {
 			let stats = get_stats(pokemon_data, pokemon.data.ivs, pokemon.data.evs, pokemon.data.level);
 
 			Self {
 
 				data: pokemon.data.clone(),
 
-				persistent: Vec::new(),
+				persistent: None,
 
 				item: pokemon.item.as_ref().map(|id| itemdex().get(id).map(|item| item)).flatten(),
 
-				moves: pokemon.moves.as_ref().map(|moves| to_instance(moves)).unwrap_or(pokemon_data.moves_from_level(pokemon.data.level)),
+				moves: pokemon.moves.as_ref().map(|moves| to_instance(moves)).unwrap_or(pokemon_data.generate_moves(pokemon.data.level)),
 	
 				base: stats,
 				
@@ -74,7 +77,7 @@ impl PokemonInstance {
 	}
 
 	pub fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<StatSet>) -> Self {
-		let pokemon = crate::pokedex().get(&id).unwrap();
+		let pokemon = super::pokedex().get(&id).unwrap();
 
         let level = if min == max {
 			max
@@ -100,11 +103,11 @@ impl PokemonInstance {
 				status: None,
 			},
 
-			persistent: Vec::new(),
+			persistent: None,
 
 			item: None,
 
-			moves: pokemon.moves_from_level(level),
+			moves: pokemon.generate_moves(level),
 
 			current_hp: base.hp,
 
@@ -112,6 +115,44 @@ impl PokemonInstance {
 			
 			pokemon,
 			
+		}
+	}
+
+	pub fn add_exp(&mut self, experience: super::Experience) -> Option<(Level, Option<Vec<MoveRef>>)> {
+
+		// add exp to pokemon
+
+		self.data.experience += experience * 5;
+
+		// get the maximum exp a player can have at their level
+
+		let max_exp = self.pokemon.training.growth_rate.max_exp(self.data.level);
+
+		// level the pokemon up if they reach a certain amount of exp (and then subtract the exp by the maximum for the previous level)
+		if self.data.experience > max_exp {
+			self.data.level += 1;
+			self.data.experience -= max_exp;
+
+			// Get the moves the pokemon learns at the level it just gained.
+
+			let mut moves = self.moves_at_level();
+
+			// Add moves if the player's pokemon does not have a full set of moves;
+
+			while self.moves.len() < 4 && !moves.is_empty() {
+				self.moves.push(MoveInstance::new(moves.remove(0)));
+			}
+			
+			Some((
+				self.data.level,
+				if !moves.is_empty() {
+					Some(moves)
+				} else {
+					None
+				}
+			))
+		} else {
+			None
 		}
 	}
 
@@ -142,16 +183,16 @@ impl PokemonInstance {
 		let mut moves = Vec::new();
 		for pokemon_move in &self.pokemon.moves {
 			if pokemon_move.level == self.data.level {
-				moves.push(crate::movedex().get(&pokemon_move.move_id).unwrap())
+				moves.push(crate::moves::movedex().get(&pokemon_move.move_id).unwrap())
 			}
 		}
 		moves
 	}
 
-	pub fn move_effective(&self, pokemon_move: &PokemonMove) -> Effective {
-		let primary = pokemon_move.pokemon_type.effective(self.pokemon.data.primary_type);
+	pub fn effective(&self, pokemon_type: PokemonType) -> Effective {
+		let primary = pokemon_type.effective(self.pokemon.data.primary_type);
 		if let Some(secondary) = self.pokemon.data.secondary_type {
-			primary * pokemon_move.pokemon_type.effective(secondary)
+			primary * pokemon_type.effective(secondary)
 		} else {
 			primary
 		}
@@ -199,30 +240,6 @@ impl PokemonInstance {
 					if self.current_hp > self.base.hp {
 						self.current_hp = self.base.hp;
 					}
-				}
-			}
-		}
-	}
-
-	pub fn run_persistent_moves(&mut self) {
-		for persistent in &mut self.persistent {
-			for action in &persistent.actions {
-				match action {
-				    MoveAction::Damage(damage) => {
-						self.current_hp = self.current_hp.saturating_sub(match *damage {
-						    crate::moves::script::DamageKind::PercentCurrent(percent) => (self.current_hp as f32 * percent) as Health,
-						    crate::moves::script::DamageKind::PercentMax(percent) => (self.base.hp as f32 * percent) as Health,
-						    crate::moves::script::DamageKind::Constant(damage) => damage,
-						});
-					}
-				    MoveAction::Status(chance, effect) => {
-						if self.data.status.is_none() {
-							if *chance >= super::POKEMON_RANDOM.gen_range(1, 11) {
-								self.data.status = Some(*effect);
-							}
-						}
-					}
-				    _ => (),
 				}
 			}
 		}

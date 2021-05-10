@@ -1,8 +1,8 @@
 use std::fs::{read, read_dir};
 use std::path::PathBuf;
 
-use firecore_pokedex::pokemon::Pokemon;
-use firecore_pokedex::serialize::SerializedPokemon;
+use pokedex::pokemon::Pokemon;
+use pokedex::serialize::SerializedPokemon;
 
 pub fn get_pokemon<P: AsRef<std::path::Path>>(pokemon_dir: P, include_audio: bool) -> Vec<SerializedPokemon> {
     let pokemon_dir = pokemon_dir.as_ref();

@@ -18,8 +18,8 @@ pub struct WarpEntry {
 
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WarpDestination {
 
     pub map: Option<MapIdentifier>,
@@ -30,10 +30,14 @@ pub struct WarpDestination {
 
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct WarpTransition {
 
     pub move_on_exit: bool,
     pub warp_on_tile: bool,
+
+    #[serde(default = "crate::default_true")]
+    pub change_music: bool,
 
 }

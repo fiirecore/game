@@ -18,7 +18,7 @@
         Conditional(
             message: (
                 color: Red,
-                message_set: [
+                pages: [
                     (
                         lines: ["Welcome to our POKEMON CENTER!"],
                     ),
@@ -33,7 +33,7 @@
             ),
             end_message: Some((
                 color: Red,
-                message_set: [(
+                pages: [(
                     lines: ["We hope to see you again!"],
                 )],
             )),

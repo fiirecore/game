@@ -7,7 +7,7 @@ pub const WHITE: Color = color_u8!(248, 248, 248, 255);
 
 pub const DRAW_COLOR: Color = MQWHITE;
 
-pub fn byte_texture(bytes: &[u8]) -> Texture2D {
+pub fn byte_texture(bytes: &[u8]) -> Texture2D { // To - do: consider moving this, image_texture, and filter to a different module
 	filter(Texture2D::from_file_with_format(bytes, None))
 }
 
@@ -18,10 +18,6 @@ pub fn image_texture(image: &Image) -> Texture2D {
 pub fn filter(texture: Texture2D) -> Texture2D {
 	texture.set_filter(Nearest);
 	texture
-}
-
-pub fn debug_texture() -> Texture2D {
-	byte_texture(include_bytes!("../../assets/missing_texture.png"))
 }
 
 pub fn draw(texture: Texture2D, x: f32, y: f32) {

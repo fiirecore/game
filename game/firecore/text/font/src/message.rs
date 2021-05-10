@@ -1,17 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use crate::FontId;
-
-pub type MessageSet = Vec<MessagePage>;
+pub type MessagePages = Vec<MessagePage>;
 pub type Lines = Vec<String>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Message {
 
-    #[serde(default = "default_font_id")]
-    pub font: FontId,
-
-    pub message_set: MessageSet,
+    pub pages: MessagePages,
 
     #[serde(default)]
     pub color: TextColor,
@@ -23,13 +18,8 @@ pub struct MessagePage {
 
     pub lines: Lines,  
 
-    #[serde(default)]
     pub wait: Option<f32>,
 
-}
-
-const fn default_font_id() -> FontId {
-    1
 }
 
 #[derive(Debug, Copy, Clone, Hash, Deserialize, Serialize)]
@@ -51,20 +41,19 @@ impl Default for TextColor {
 
 impl Message {
 
-    pub fn empty(font: FontId, color: TextColor) -> Self {
-        Self::new(font, color, MessageSet::default())
+    pub fn empty(color: TextColor, len: usize) -> Self {
+        Self::new(color, MessagePages::with_capacity(len))
     }
 
-    pub fn new(font: FontId, color: TextColor, message_set: MessageSet) -> Self {
+    pub fn new(color: TextColor, pages: MessagePages) -> Self {
         Self {
-            font,
-            message_set,
+            pages,
             color,
         }
     }
 
     pub fn single(lines: Lines, color: TextColor, wait: Option<f32>) -> Self {
-        Self::new(default_font_id(), color, vec![MessagePage::new(lines, wait)])
+        Self::new(color, vec![MessagePage::new(lines, wait)])
     }
 
 }

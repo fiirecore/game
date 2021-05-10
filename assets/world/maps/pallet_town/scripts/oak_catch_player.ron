@@ -153,6 +153,6 @@
         ),
         NPCRemove("oak"),
         PlayerUnfreezeInput,
-        Warp(Id("oaks_lab"), false),
+        Warp(KeepMusic("oaks_lab")),
     ]
 )

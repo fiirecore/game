@@ -1,0 +1,16 @@
+(
+    move: (
+        id: 73,
+        name: "Leech Seed",
+        type: Grass,
+        category: Status,
+        accuracy: Some(90),
+        pp: 10,
+        script: Some((
+            action: Persistent((
+                action: Drain(PercentMax(0.125), 0.0625),
+                on_move: false,
+            ))
+        )),
+    )
+)

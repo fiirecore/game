@@ -1,4 +1,5 @@
 use firecore_util::Location;
+use firecore_util::Position;
 use serde::{Deserialize, Serialize};
 use deps::{
     hash::{HashMap, HashSet},
@@ -16,7 +17,7 @@ pub struct WorldStatus {
     pub map: HashMap<TinyStr16, MapData>,
     pub scripts: HashSet<TinyStr16>,
     pub badges: HashSet<TinyStr16>,
-    pub heal: Location,
+    pub heal: (Location, Position),
 
 }
 
@@ -41,7 +42,7 @@ impl Default for WorldStatus {
             map: HashMap::default(),
             scripts: HashSet::default(),
             badges: HashSet::default(),
-            heal: crate::default_location(),
+            heal: (crate::default_location(), crate::default_position()),
         }
     }
 }

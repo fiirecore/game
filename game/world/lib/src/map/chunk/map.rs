@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use deps::{
     hash::HashMap,
-    smallvec::SmallVec,
+    vec::ArrayVec,
 };
 
 use util::Position;
@@ -10,6 +10,7 @@ use util::{
     Coordinate,
 };
 
+use crate::character::Character;
 use crate::{TileId, MovementId};
 
 use crate::map::{MapIdentifier, World, warp::WarpDestination};
@@ -80,7 +81,7 @@ impl WorldChunkMap {
         self.current.map(move |id| self.chunks.get_mut(&id)).flatten()
     }
 
-    pub fn connections(&self) -> SmallVec<[(&MapIdentifier, &WorldChunk); 6]> {
+    pub fn connections(&self) -> ArrayVec<[(&MapIdentifier, &WorldChunk); 6]> {
         self.chunk().expect("Could not get current chunk").connections.iter().map(|connection| (connection, self.chunks.get(connection).expect("Could not get connected chunks"))).collect()
     }
 
@@ -101,7 +102,7 @@ impl WorldChunkMap {
         return tiles;
     }
 
-    pub fn walk_connections(&mut self, position: &mut Position, coords: Coordinate) -> (MovementId, bool) {
+    pub fn walk_connections(&mut self, character: &mut Character, coords: Coordinate) -> (MovementId, bool) {
         let absolute = self.chunk().unwrap().coords + coords;
         let mut move_code = 1;
         let mut chunk = None;
@@ -113,8 +114,8 @@ impl WorldChunkMap {
             }
         }
         if let Some(chunk) = chunk {
-            if crate::map::manager::can_move(move_code) {
-                self.change_chunk(chunk, position);
+            if crate::map::manager::can_move(character.move_type, move_code) {
+                self.change_chunk(chunk, &mut character.position);
                 return (move_code, true);
             }
         }

@@ -1,25 +1,35 @@
 use serde::{Deserialize, Serialize};
-use self::battle_script::BattleActionScript;
-use self::script::MoveScript;
+use deps::{
+	hash::HashMap,
+	// tinystr::TinyStr16,
+};
 
 use super::pokemon::types::PokemonType;
 
-pub type MoveId = u16;
+pub type Movedex = HashMap<MoveId, PokemonMove>;
+
+pub static mut MOVEDEX: Option<Movedex> = None;
+
+pub fn movedex() -> &'static Movedex {
+	unsafe { MOVEDEX.as_ref().expect("Movedex was not initialized!") }
+}
+
+pub mod saved;
+pub mod instance;
+
+pub mod target;
+pub mod script;
+pub mod persistent;
+
+pub type MoveId = u16; // change to tinystr16
 pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
 
 pub type MoveRef = &'static PokemonMove;
 
-pub mod saved;
-pub mod instance;
-
-pub mod script;
-pub mod persistent;
-
-pub mod battle_script;
-
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct PokemonMove {
 
 	pub id: MoveId,
@@ -33,9 +43,10 @@ pub struct PokemonMove {
 	pub accuracy: Option<Accuracy>,
 	pub pp: PP,
 
-	pub script: Option<MoveScript>,
+	#[serde(default)]
+	pub target: target::MoveTarget,
 
-	pub battle_script: Option<BattleActionScript>,
+	pub script: Option<script::MoveScript>,
 	
 }
 

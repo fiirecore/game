@@ -1,8 +1,9 @@
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use storage::{store, get, configuration::Configuration, player::PlayerSaves};
 use pokedex::{
-    POKEDEX,
-    MOVEDEX,
-    ITEMDEX,
+    pokemon::POKEDEX,
+    moves::{MOVEDEX, GAME_MOVE_DEX},
+    item::ITEMDEX,
     serialize::SerializedDex,
 };
 use audio::{
@@ -10,12 +11,13 @@ use audio::{
     SerializedSoundData,
     Sound
 };
+use crate::graphics::byte_texture;
+use pokedex::texture::{PokemonTextures, POKEMON_TEXTURES, ITEM_TEXTURES};
+use deps::hash::HashMap;
 
 pub use firecore_text::init as text;
 
-use crate::graphics::byte_texture;
-use crate::textures::{PokemonTextures, POKEMON_TEXTURES, ITEM_TEXTURES};
-use deps::hash::HashMap;
+pub static LOADING_FINISHED: AtomicBool = AtomicBool::new(false);
 
 pub fn seed_randoms(seed: u64) {
     pokedex::pokemon::POKEMON_RANDOM.seed(seed);
@@ -41,26 +43,22 @@ pub async fn data() {
 
 pub fn pokedex(dex: SerializedDex) {
 
-	let mut textures = PokemonTextures::default();
+    let pokedex = unsafe {
+        POKEDEX.get_or_insert(HashMap::with_capacity(dex.pokemon.len()))
+    };
 
-	pokedex::new();
-
-	let pokedex = unsafe { POKEDEX.as_mut().unwrap() };
+	let mut pokemon_textures = PokemonTextures::with_capacity(dex.pokemon.len());
 
 	for pokemon in dex.pokemon {
-		
-		textures.front.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.front_png));
-		textures.back.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.back_png));
-		textures.icon.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.icon_png));
 
+        pokemon_textures.insert(&pokemon);
+
+        #[cfg(feature = "audio")]
 		if !pokemon.cry_ogg.is_empty() {
 			if let Err(_) = add_sound(
 				SerializedSoundData {
 					bytes: pokemon.cry_ogg,
-					sound: Sound {
-						name: String::from("Cry"),
-						variant: Some(pokemon.pokemon.data.id),
-					}
+					sound: Sound::variant(crate::CRY_ID, Some(pokemon.pokemon.data.id)),
 				}
 			) {
 				// warn!("Error adding pokemon cry: {}", err);
@@ -69,14 +67,33 @@ pub fn pokedex(dex: SerializedDex) {
 		
 		pokedex.insert(pokemon.pokemon.data.id, pokemon.pokemon);
 	}
+    
+	unsafe { POKEMON_TEXTURES = Some(pokemon_textures); }
 
-	let movedex = unsafe { MOVEDEX.as_mut().unwrap() };
+	let movedex = unsafe {
+        MOVEDEX.get_or_insert(HashMap::with_capacity(dex.moves.len()))
+    };
 
-	for pokemon_move in dex.moves {
-		movedex.insert(pokemon_move.id, pokemon_move);
+    let game_movedex = unsafe {
+        GAME_MOVE_DEX.get_or_insert(HashMap::new())
+    };
+
+	for serialized_move in dex.moves {
+        let pmove = serialized_move.pokemon_move;
+        if let Some(game_move) = serialized_move.game_move {
+            game_movedex.insert(pmove.id, game_move);
+        }
+        // if let Some(script) = pmove.battle_script.as_mut() {
+        //     if !pokemon_move.battle_script_texture.is_empty() {
+        //         script.texture = Some(byte_texture(&pokemon_move.battle_script_texture));
+        //     }
+        // }
+		movedex.insert(pmove.id, pmove);
 	}
 
-    let itemdex = unsafe { ITEMDEX.as_mut().unwrap() };
+    let itemdex = unsafe {
+        ITEMDEX.get_or_insert(HashMap::with_capacity(dex.items.len()))
+    };
 
     let mut item_textures = HashMap::with_capacity(dex.items.len());
 
@@ -86,8 +103,6 @@ pub fn pokedex(dex: SerializedDex) {
     }
 
     unsafe { ITEM_TEXTURES = Some(item_textures); }
-
-	unsafe { POKEMON_TEXTURES = Some(textures); }
 
 }
 
@@ -112,4 +127,8 @@ pub fn audio(audio: audio::SerializedAudio) {
             }
         }
     }    
+}
+
+pub fn finished_loading() {
+    LOADING_FINISHED.store(true, Relaxed);
 }

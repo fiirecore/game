@@ -4,18 +4,17 @@ pub extern crate firecore_dependencies as deps;
 pub extern crate firecore_util as util;
 pub extern crate pokemon_firered_clone_storage as storage; // rename storage or something
 pub extern crate firecore_input as input;
-pub extern crate firecore_pokedex as pokedex;
+pub extern crate firecore_pokedex_game as pokedex;
 pub extern crate firecore_audio as audio;
 
-pub mod npc;
 pub mod battle;
 pub mod gui;
 pub mod text;
 pub mod state;
 pub mod init;
 pub mod graphics;
-pub mod textures;
 
+use deps::tinystr::TinyStr8;
 use macroquad::prelude::warn;
 use util::Direction;
 use input::Control;
@@ -38,21 +37,29 @@ pub fn is_debug() -> bool {
     DEBUG.load(Relaxed)
 }
 
+pub const CRY_ID: TinyStr8 = unsafe { TinyStr8::new_unchecked(7959107) };
+
 pub fn play_music(id: audio::MusicId) {
     if let Err(err) = audio::play_music_id(id) {
-        match err {
-            audio::error::PlayAudioError::Uninitialized => (),
-            _ => warn!("Could not play music id {:x} with error {}", id, err),
-        }
+        // match err {
+            // audio::error::PlayAudioError::Uninitialized => (),
+            warn!("Could not play music id {:x} with error {}", id, err);
+        // }
     }
 }
 
 pub fn play_music_named(music: &str) {
     if let Err(err) = audio::play_music_named(music) {
-        match err {
-            audio::error::PlayAudioError::Uninitialized => (),
-            _ => warn!("Could not play music \"{}\" with error {}", music, err),
-        }
+        // match err {
+            // audio::error::PlayAudioError::Uninitialized => (),
+            warn!("Could not play music named \"{}\" with error {}", music, err);
+        // }
+    }
+}
+
+pub fn play_sound(sound: &audio::Sound) {
+    if let Err(err) = audio::play_sound(&sound) {
+        warn!("Could not play sound {} with error {}", sound, err);
     }
 }
 

@@ -1,18 +1,17 @@
-use firecore_font::message::MessageSet;
 use serde::{Deserialize, Serialize};
+use util::{Direction, Destination};
+use font::message::{Message, MessagePages};
+use audio::{music::MusicName, sound::Sound};
 
-use firecore_util::{Direction, Destination};
-use firecore_font::message::Message;
+use pokedex::{
+    pokemon::saved::SavedPokemon,
+    item::ItemId,
+};
 
-use firecore_audio_lib::music::MusicName;
-use firecore_audio_lib::sound::Sound;
-
-use firecore_pokedex::pokemon::saved::SavedPokemon;
-
-use firecore_pokedex::item::ItemId;
-
-use crate::character::npc::{NPC, NPCId};
-use crate::map::warp::{WarpId, WarpDestination};
+use crate::{
+    character::npc::{NPC, NPCId},
+    map::warp::{WarpId, WarpDestination}
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum WorldActionKind {
@@ -47,7 +46,7 @@ pub enum WorldActionKind {
     NPCMoveToPlayer(NPCId),
 
     NPCInteract(NPCId),
-    NPCSay(NPCId, MessageSet),
+    NPCSay(NPCId, MessagePages),
     NPCBattle(NPCId),
 
 
@@ -59,6 +58,7 @@ pub enum WorldActionKind {
     DisplayText(Message),
     
     Conditional {
+        // #[deprecated]
         message: Message,
 
         #[serde(default)] end_message: Option<Message>,
@@ -67,7 +67,7 @@ pub enum WorldActionKind {
         unfreeze: bool,
     }, // yes or no box, no despawns the script after an optional message, and bool unfreezes player if true,
 
-    Warp(ScriptWarp, #[serde(default = "def_true")] bool), // bool: change music
+    Warp(ScriptWarp), // bool: change music
 
 }
 
@@ -75,6 +75,7 @@ pub enum WorldActionKind {
 pub enum ScriptWarp {
     Id(WarpId),
     Dest(WarpDestination),
+    KeepMusic(WarpId),
 }
 
 const fn def_true() -> bool {

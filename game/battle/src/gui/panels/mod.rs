@@ -1,118 +1,129 @@
 use game::{
     util::Entity,
     pokedex::pokemon::instance::PokemonInstance,
-    macroquad::prelude::{Vec2, Texture2D},
+    input::{pressed, Control},
     gui::{
         party::PartyGui,
         bag::BagGui,
-    },
-    graphics::{byte_texture, draw},
+    }
 };
 
 use crate::{
     Battle,
-    gui::{
-        text::BattleText,
-        panels::{
-            battle::BattleOptions,
-            fight::FightPanel,
-        }
+    gui::panels::{
+        battle::BattleOptions,
+        fight::FightPanel,
     }
 };
 
 pub mod moves;
+pub mod move_info;
+pub mod target;
+
 pub mod battle;
 pub mod fight;
+
 pub mod level_up;
-pub mod move_info;
 
 pub struct BattlePanel {
 
     alive: bool,
-    
-	pos: Vec2,
 
-    background: Texture2D,
+    active: BattlePanels,
 
     battle: BattleOptions,
-    fight: FightPanel,
+    pub fight: FightPanel,
 
+}
+
+enum BattlePanels {
+    Main,
+    Fight,
+}
+
+impl Default for BattlePanels {
+    fn default() -> Self {
+        Self::Main
+    }
 }
 
 impl BattlePanel {
 
-	pub fn new(pos: Vec2) -> Self {
-		Self {
-
+    pub fn new() -> Self {
+        Self {
             alive: false,
-
-            pos,
-
-            background: byte_texture(include_bytes!("../../../assets/gui/panel.png")),
-
+            active: BattlePanels::default(),
             battle: BattleOptions::new(),
-            fight: FightPanel::new(pos),
-            
+            fight: FightPanel::new(),
         }
-	}
-
-    pub fn start(&mut self) {
-        self.spawn();
-        self.battle.spawn();
     }
 
-    pub fn update_text(&mut self, instance: &PokemonInstance) {
+    pub fn update_text(&mut self, instance: &PokemonInstance, targets: &Box<[crate::pokemon::ActivePokemon]>) {
         self.battle.update_text(instance);
-        self.fight.update_gui(instance);
-    }
-    
-    pub fn input(&mut self, battle: &mut Battle, text: &mut BattleText, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
-        if self.battle.is_alive() {
-            self.battle.input(battle, party_gui, bag_gui);
-        } else if self.fight.is_alive() {
-            self.fight.input(battle, text);
-        }
+        self.fight.update_gui(instance, targets);
     }
 
-    pub fn update(&mut self) {
+    pub fn input(&mut self, battle: &Battle, closer: &mut crate::manager::BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) -> bool {
         if self.alive {
-            if self.battle.is_alive() && self.battle.spawn_fight_panel {
-                self.battle.spawn_fight_panel = false;
-                self.battle.despawn();
-                self.fight.spawn();
-            } else if self.fight.is_alive() && self.fight.spawn_battle_panel {
-                self.fight.spawn_battle_panel = false;
-                self.fight.despawn();
-                self.battle.spawn();
+            match self.active {
+                BattlePanels::Main => {
+                    self.battle.input();
+                    if pressed(Control::A) {
+                        match self.battle.cursor {
+                            0 => {
+                                self.active = BattlePanels::Fight;
+                            },
+                            1 => {
+                                bag_gui.spawn(false);
+                            },
+                            2 => {
+                                super::battle_party_gui(party_gui, &battle.player, true);
+                            },
+                            3 => {
+                                if battle.battle_type == game::util::battle::BattleType::Wild {
+                                    closer.spawn_closer(battle);
+                                }
+                            },
+                            _ => {}
+                        }
+                    }
+                    false
+                }
+                BattlePanels::Fight => {    
+                    if pressed(Control::B) {
+                        self.active = BattlePanels::Main;
+                    }
+                    true
+                }
             }
-        }              
-	}
+        } else {
+            false
+        }
+    }
 
 	pub fn render(&self) {
-        draw(self.background, self.pos.x, self.pos.y);
 		if self.alive {
-            self.battle.render();
-            self.fight.render();
+            match self.active {
+                BattlePanels::Main => self.battle.render(),
+                BattlePanels::Fight => self.fight.render(),
+            }
 		}
 	}
 
 }
 
 impl Entity for BattlePanel {
-
-	fn spawn(&mut self) {
+    fn spawn(&mut self) {
         self.alive = true;
-        // self.battle.spawn();
-	}
+        self.active = BattlePanels::default();
+        game::util::Reset::reset(&mut self.fight);
+    }
 
-	fn despawn(&mut self) {
-		self.alive = false;
-        self.battle.despawn();
-        self.fight.despawn();
-	}
+    fn despawn(&mut self) {
+        self.alive = false;
+    }
 
-	fn is_alive(& self) -> bool {
-		self.alive
-	}
-
+    fn is_alive(&self) -> bool {
+        self.alive
+    }
 }

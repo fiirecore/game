@@ -25,7 +25,7 @@ pub fn play_sound(sound: &Sound) -> Result<(), PlayAudioError> {
                 Err(PlayAudioError::Missing)
             }
         },
-        None => Err(PlayAudioError::Uninitialized),
+        None => Ok(()), //Err(PlayAudioError::Uninitialized),
     }
     
 }

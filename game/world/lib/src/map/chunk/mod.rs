@@ -1,6 +1,6 @@
+use deps::vec::ArrayVec;
 use serde::{Deserialize, Serialize};
 use firecore_util::Coordinate;
-use deps::smallvec::SmallVec;
 
 use crate::MovementId;
 use crate::TileId;
@@ -13,7 +13,7 @@ use super::WorldMap;
 
 pub mod map;
 
-pub type Connections = SmallVec<[MapIdentifier; 6]>;
+pub type Connections = ArrayVec<[MapIdentifier; 6]>;
 
 #[derive(Deserialize, Serialize)]
 pub struct WorldChunk {

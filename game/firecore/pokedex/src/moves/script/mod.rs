@@ -10,6 +10,6 @@ pub struct MoveScript {
 
     // pub conditions: Vec<MoveCondition>,
 
-    pub actions: Vec<MoveAction>,
+    pub action: MoveAction,
 
 }

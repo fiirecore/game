@@ -21,8 +21,8 @@ pub enum AddAudioError {
 
 #[derive(Debug)]
 pub enum PlayAudioError {
-    #[cfg(feature = "play")]
-    Uninitialized,
+    // #[cfg(feature = "play")]
+    // Uninitialized,
     #[cfg(feature = "play")]
     Missing,
     #[cfg(feature = "play")]
@@ -63,7 +63,7 @@ impl Display for PlayAudioError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         #[cfg(feature = "play")] {
             match self {
-                &PlayAudioError::Uninitialized => write!(f, "Audio manager is uninitialized!"),
+                // PlayAudioError::Uninitialized => write!(f, "Audio manager is uninitialized!"),
                 PlayAudioError::Missing => write!(f, "Could not find music with specified id!"),
                 PlayAudioError::CurrentLocked => write!(f, "Could not unlock current music mutex!"),
                 #[cfg(all(not(target_arch = "wasm32"), feature = "play"))]

@@ -1,4 +1,3 @@
-use super::pokemon::player::PlayerPokemonGui;
 
 pub struct PlayerBounce {
 
@@ -28,7 +27,7 @@ impl PlayerBounce {
         self.offset = MIN;
     }
 
-    pub fn update(&mut self, delta: f32, player_pokemon_gui: &mut PlayerPokemonGui) {
+    pub fn update(&mut self, delta: f32/*, status: &mut PlayerStatusGui*/) {
 
         if self.invert {
             self.offset += 3.0 * delta;
@@ -43,7 +42,7 @@ impl PlayerBounce {
                 self.invert = true;
             }
         }
-        player_pokemon_gui.vertical_offset(-self.offset);
+        // status.vertical_offset(-self.offset);
     }
 
 }

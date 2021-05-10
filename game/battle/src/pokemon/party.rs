@@ -1,95 +1,201 @@
 use game::{
-    pokedex::pokemon::{
-        instance::{PokemonInstance, PokemonInstanceParty},
-        saved::SavedPokemonParty,
-        texture::PokemonTexture,
+    deps::vec::ArrayVec,
+    pokedex::{
+        pokemon::{
+            instance::{PokemonInstance, PokemonInstanceParty},
+            saved::SavedPokemonParty,
+        },
+        texture::{
+            PokemonTexture,
+        }
     },
-    macroquad::prelude::{Vec2, Texture2D},
-    deps::smallvec::SmallVec,
-    textures::pokemon_texture,
 };
 
+use crate::pokemon::PokemonOption;
 use crate::{
     pokemon::{
-        BattlePokemon,
+        ActivePokemon,
         ActivePokemonRenderer,
-        BattleMoveStatus,
+    },
+    gui::{
+        BattleGuiPosition,
+        BattleGuiPositionIndex,
+        status::PokemonStatusGui,
     },
 };
 
 pub struct BattleParty {
 
-    pub pokemon: SmallVec<[BattlePokemon; 6]>,
-    pub active: usize,
-
-    pub renderer: ActivePokemonRenderer,
-
-    pub next_move: Option<BattleMoveStatus>,
+    pub pokemon: ArrayVec<[Option<PokemonInstance>; 6]>,
+    pub active: Box<[ActivePokemon]>,
 
 }
 
 impl BattleParty {
 
-    pub fn from_saved(party: &SavedPokemonParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn from_saved(party: &SavedPokemonParty, size: usize, side: PokemonTexture, position: BattleGuiPosition) -> Self {
         Self::new(
             party.iter().map(|pokemon| PokemonInstance::new(pokemon)).flatten().collect(),
+            size,
             side, 
-            active_pos,
+            position,
         )
     }
 
-    pub fn new(party: PokemonInstanceParty, side: PokemonTexture, active_pos: Vec2) -> Self {
+    pub fn new(party: PokemonInstanceParty, size: usize, side: PokemonTexture, position: BattleGuiPosition) -> Self {
 
-        let mut active = 0;
+        let mut active = vec![None; size];
+        let mut current = 0;
 
         for (index, pokemon) in party.iter().enumerate() {
 			if pokemon.current_hp != 0 {
-				active = index;
-				break;
+				active[current] = Some(index);
+                current += 1;
+                if current == size {
+                    break;
+                }
 			}
 		}
 
+        let mut pokemon: ArrayVec<[Option<PokemonInstance>; 6]> = party.into_iter().map(|pokemon| Some(pokemon)).collect();
+
+        let size = active.len() as u8;
+
         Self {
-            pokemon: party.into_iter().map(|pokemon| 
-                BattlePokemon {
-                    texture: pokemon_texture(&pokemon.pokemon.data.id, side),
-                    pokemon: pokemon,
+            active: active.into_iter().enumerate().map(|(index, active)| match active.map(|index| pokemon[index].take().map(|pokemon| (index, pokemon))).flatten() {
+                Some((index2, pokemon)) => {
+                    let index = BattleGuiPositionIndex::new(position, index as u8, size);
+                    ActivePokemon {
+                        status: PokemonStatusGui::with(index, &pokemon),
+                        renderer: ActivePokemonRenderer::with(index, &pokemon, side),
+                        pokemon: PokemonOption::Some(index2, pokemon),
+                        queued_move: None,
+                    }
                 }
-            ).collect(),
-            renderer: ActivePokemonRenderer::new(active_pos, side == PokemonTexture::Front),
-            active,
-            next_move: None,
+                None => {
+                    let index = BattleGuiPositionIndex::new(position, index as u8, size);
+                    ActivePokemon {
+                        pokemon: PokemonOption::None,
+                        queued_move: None,
+                        status: PokemonStatusGui::new(index),
+                        renderer: ActivePokemonRenderer::new(index, side),
+                    }
+                }
+            }).collect(),
+            pokemon,
         }
     }
 
-    pub fn select_pokemon(&mut self, selected: usize) {
-		self.active = selected;
-		
-	}
-
     pub fn all_fainted(&self) -> bool {
-        for pokemon in &self.pokemon {
-            if pokemon.pokemon.current_hp != 0 {
+        for pokemon in self.pokemon.iter().flatten() {
+            if pokemon.current_hp != 0 {
                 return false;
+            }
+        }
+        for active in self.active.iter() {
+            if let Some(pokemon) = active.pokemon.as_ref() {
+                if pokemon.current_hp != 0 {
+                    return false;
+                }
             }
         }
         true
     }
 
-    pub fn next_move_queued(&self) -> bool {
-        self.next_move.as_ref().map(|next_move| next_move.queued).unwrap_or_default()
+    pub fn any_inactive(&self) -> bool {
+        for pokemon in self.pokemon.iter().flatten() {
+            if pokemon.current_hp != 0 {
+                return true;
+            }
+        }
+        false
     }
 
-    pub fn active(&self) -> &PokemonInstance {
-        &self.pokemon.get(self.active).expect("Could not get pokemon from battle party!").pokemon
+    pub fn pokemon(&self, active_index: usize) -> Option<&PokemonInstance> {
+        self.active[active_index].pokemon.as_ref()
     }
 
-    pub fn active_mut(&mut self) -> &mut PokemonInstance {
-        &mut self.pokemon.get_mut(self.active).expect("Could not get pokemon from battle party!").pokemon
+    pub fn pokemon_mut(&mut self, active_index: usize) -> Option<&mut PokemonInstance> {
+        self.active[active_index].pokemon.as_mut()
     }
 
-    pub fn active_texture(&self) -> Texture2D {
-        self.pokemon[self.active].texture
+    pub fn pokemon_mut_or_other(&mut self, active_index: usize) -> (&mut PokemonInstance, usize) {
+        let mut index = active_index;
+        for (i, active) in self.active.iter().enumerate() {
+            if active.pokemon.is_some() {
+                index = i;
+            }
+        }
+        if self.pokemon(active_index).is_some() {
+            (self.active[active_index].pokemon.as_mut().unwrap(), active_index)
+        } else {
+            (self.active[index].pokemon.as_mut().unwrap(), index)
+        }
+    }
+
+    pub fn queue_replace(&mut self, active_index: usize, new: usize) {
+        if let Some((index, instance)) = self.active[active_index].pokemon.replace(new) {
+            if self.pokemon[index].is_some() {
+                panic!("Party spot at {} is already occupied!", index);
+            }
+            self.pokemon[index] = Some(instance);
+        }
+    }
+
+    pub fn replace_pokemon(&mut self, active_index: usize, new: usize) {
+        if let PokemonOption::Some(_, instance) = self.active[active_index].pokemon.take() {
+            if self.pokemon[active_index].is_some() {
+                panic!("Party spot at {} is already occupied!", active_index);
+            }
+            self.pokemon[active_index] = Some(instance);
+            self.active[active_index].pokemon = PokemonOption::Some(new, self.pokemon[new].take().unwrap());
+            self.active[active_index].update();
+        }
+    }
+
+    pub fn remove_pokemon(&mut self, active_index: usize) {
+        if let PokemonOption::Some(index, instance) = self.active[active_index].pokemon.take() {
+            if self.pokemon[index].is_some() {
+                panic!("Party spot at {} is already occupied!", index);
+            }
+            self.pokemon[index] = Some(instance);
+            self.active[active_index].update();
+        }
+    }
+
+    pub fn replace(&mut self) {
+        for active in self.active.iter_mut() {
+            if let PokemonOption::ToReplace(new) = &active.pokemon {
+                let new = *new;
+                active.pokemon = PokemonOption::Some(new, self.pokemon[new].take().expect("Could not get inactive pokemon from party!"));
+                active.update();
+            }
+        }
+    }
+
+    pub fn update_status(&mut self, active_index: usize, reset: bool) -> bool { // returns if health has diff
+        self.active[active_index].status.update_gui(self.active[active_index].pokemon.as_ref(), reset)
+    }
+
+    pub fn collect_cloned(&self) -> PokemonInstanceParty {
+        let mut party = self.pokemon.clone();
+        for pokemon in self.active.iter() {
+            if let PokemonOption::Some(index, instance) = pokemon.pokemon.clone() {
+                party[index] = Some(instance);
+            }
+        }
+        party.into_iter().flatten().collect()
+    }
+
+    #[deprecated(note = "uses clone")]
+    pub fn collect_owned(self) -> PokemonInstanceParty {
+        let mut party = self.pokemon;
+        for pokemon in self.active.into_iter() {
+            if let PokemonOption::Some(index, instance) = pokemon.pokemon.clone() {
+                party[index] = Some(instance);
+            }
+        }
+        party.into_iter().flatten().collect()
     }
 
 }

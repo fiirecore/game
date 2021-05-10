@@ -6,8 +6,7 @@ use macroquad::prelude::{Color, color_u8, Image, Texture2D, draw_texture, WHITE,
 
 use firecore_font::{SerializedFonts, CustomChar, message::TextColor};
 
-pub use firecore_font::FontId;
-pub use firecore_font::message;
+pub use firecore_font::{FontId, default_font_id, message};
 
 pub static mut TEXT_RENDERER: Option<TextRenderer> = None;
 

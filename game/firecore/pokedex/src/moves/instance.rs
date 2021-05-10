@@ -1,9 +1,9 @@
-use deps::smallvec::SmallVec;
+use deps::vec::ArrayVec;
 use super::PP;
 
 use super::MoveRef;
 
-pub type MoveInstanceSet = SmallVec<[MoveInstance; 4]>;
+pub type MoveInstanceSet = ArrayVec<[MoveInstance; 4]>;
 
 
 #[derive(Debug, Clone, Copy)]

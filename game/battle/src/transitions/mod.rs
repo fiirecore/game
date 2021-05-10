@@ -1,6 +1,6 @@
 use game::util::{Entity, Completable};
 
-use crate::{Battle, gui::BattleGui};
+use crate::Battle;
 
 pub mod managers;
 
@@ -37,7 +37,7 @@ pub trait BattleIntroduction: BattleTransition + BattleTransitionGui {
 
     fn setup(&mut self, battle: &Battle);
 
-    fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32);
+    fn update_gui(&mut self, delta: f32, battle: &mut Battle);
 
     fn render_offset(&self, battle: &Battle, offset: f32);
 

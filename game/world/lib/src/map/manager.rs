@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use firecore_util::Direction;
 
+use crate::MovementId;
+use crate::character::MoveType;
 // use crate::character::Character;
 use crate::character::player::PlayerCharacter;
 
@@ -12,6 +14,11 @@ use super::World;
 use super::chunk::map::WorldChunkMap;
 use super::set::manager::WorldMapSetManager;
 use super::warp::WarpDestination;
+
+pub enum TryMoveResult {
+    MapUpdate,
+    TrySwim,
+}
 
 #[derive(Default, Deserialize, Serialize)]
 pub struct WorldMapManager {
@@ -26,13 +33,13 @@ pub struct WorldMapManager {
     pub player: PlayerCharacter,
 
     #[serde(skip)]
-    pub warp: Option<(WarpDestination, bool)>,
+    pub warp: Option<WarpDestination>,
 
 }
 
 impl WorldMapManager {
 
-    pub fn try_move(&mut self, direction: Direction, delta: f32) -> bool { // return boolean to update music
+    pub fn try_move(&mut self, direction: Direction, delta: f32) -> Option<TryMoveResult> { // return chunk update
 
         let mut update = false;
 
@@ -51,7 +58,7 @@ impl WorldMapManager {
             if in_bounds {
                 self.chunk_map.walkable(coords)
             } else {
-               let (code, do_update) = self.chunk_map.walk_connections(&mut self.player.character.position, coords);
+               let (code, do_update) = self.chunk_map.walk_connections(&mut self.player.character, coords);
                update = do_update;
                code
             }
@@ -66,8 +73,8 @@ impl WorldMapManager {
         let allow = if self.chunk_active && self.warp.is_none() {
             if let Some(destination) = self.chunk_map.check_warp(coords) {
                 if !destination.transition.warp_on_tile {
-                    self.warp = Some((destination, true));
-                    return true;
+                    self.warp = Some(destination);
+                    return Some(TryMoveResult::MapUpdate);
                 } else {
                     true
                 }
@@ -77,8 +84,8 @@ impl WorldMapManager {
         } else {
             if let Some(destination) = self.map_set_manager.check_warp(coords) {
                 if !destination.transition.warp_on_tile {
-                    self.warp = Some((destination, true));
-                    return true;
+                    self.warp = Some(destination);
+                    return Some(TryMoveResult::MapUpdate);
                 } else {
                     true
                 }
@@ -103,13 +110,23 @@ impl WorldMapManager {
             false
         };
 
-        if can_move(move_code) || allow || self.player.character.noclip {
+        if self.player.character.move_type == MoveType::Swimming && can_walk(move_code) {
+            self.player.character.move_type = MoveType::Walking
+        }
+
+        if can_move(self.player.character.move_type, move_code) || allow || self.player.character.noclip {
             let mult = self.player.character.speed() * 60.0 * delta;
             self.player.character.position.offset = direction.pixel_offset().scale(mult);
             self.player.character.moving = true;
+        } else if can_swim(move_code) && self.player.character.move_type != MoveType::Swimming {
+            return Some(TryMoveResult::TrySwim);
         }
 
-        update
+        if update {
+            Some(TryMoveResult::MapUpdate)
+        } else {
+            None
+        }
     }
 
     pub fn update_chunk(&mut self, index: MapIdentifier) {
@@ -148,9 +165,21 @@ impl WorldMapManager {
 
 }
 
-pub fn can_move(move_code: u8) -> bool {
-    match move_code {
-        0x0C | 0x00 | 0x04 => true,
-        _ => false,
+pub fn can_move(move_type: MoveType, code: MovementId) -> bool {
+    match move_type {
+        MoveType::Swimming => can_swim(code),
+        _ => can_walk(code),
     }
+}
+
+pub fn can_walk(code: MovementId) -> bool {
+    code == 0xC
+    // match move_code {
+    //     0x0C | 0x00 | 0x04 => true,
+    //     _ => false,
+    // }
+}
+
+pub fn can_swim(code: MovementId) -> bool {
+    code == 0x4
 }

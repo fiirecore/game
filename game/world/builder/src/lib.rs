@@ -14,10 +14,11 @@ pub mod gba_map;
 pub fn compile<P: AsRef<Path>>(maps: P, tile_textures: P, npc_types: P, output_file: P) {
 
     println!("Started loading maps and tile textures...");
-    let (manager, textures) = world::map::load_maps(maps, tile_textures);
+    let (manager, mut textures) = world::map::load_maps(maps, tile_textures);
     println!("Finished loading maps and tile textures.");
 
-    println!("Verifying maps and warps...");
+    println!("Verifying palettes, maps, warps...");
+    verify_palettes(&manager, &mut textures);
     verify_warps(&manager);
     verify_connections(&manager.chunk_map);
 
@@ -45,6 +46,38 @@ pub fn compile<P: AsRef<Path>>(maps: P, tile_textures: P, npc_types: P, output_f
     let bytes = file.write(&bytes).unwrap_or_else(|err| panic!("Could not write to output file with error {}", err));
     println!("Wrote {} bytes to world file!", bytes);
 
+}
+
+fn verify_palettes(manager: &WorldMapManager, textures: &mut worldlib::serialized::SerializedTextures) {
+    let keys = textures.palettes.keys().map(|num| *num).collect::<Vec<worldlib::PaletteId>>();
+    let mut palettes = Vec::new();
+    for chunk in manager.chunk_map.chunks.values() {
+        for palette in chunk.map.palettes.iter() {
+            if !palettes.contains(palette) {
+                palettes.push(*palette);
+            }
+        }
+    }
+    for set in manager.map_set_manager.map_sets.values() {
+        for map in set.maps.values() {
+            for palette in map.palettes.iter() {
+                if !palettes.contains(palette) {
+                    palettes.push(*palette);
+                }
+            }
+        }
+    }
+    for palette in &keys {
+        if !palettes.contains(palette) {
+            eprintln!("Palette #{} is not used!", palette);
+            textures.palettes.remove(palette);
+        }
+    }
+    for palette in palettes {
+        if !keys.contains(&palette) {
+            panic!("Palette #{} is missing!", palette);
+        }
+    }
 }
 
 fn verify_warps(manager: &WorldMapManager) {

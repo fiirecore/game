@@ -9,6 +9,8 @@ publish = false
 
 [dependencies]
 
-firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies", features = ["random", "smallvec", "hash", "tinystr"] }
+firecore-dependencies = { path = "../deps", features = ["random", "vec", "hash", "tinystr"] }
 
 serde = { version = "1.0", features = ["derive"] }
+
+# macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }

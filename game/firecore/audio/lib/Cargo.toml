@@ -10,3 +10,4 @@ file = []
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
+firecore-dependencies = { path = "../../deps", features = ["tinystr"] }

@@ -4,11 +4,15 @@ version = "0.4.0-beta.3"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 
+[features]
+default = []
+gen = []
+
 [dependencies]
 
 ### Pokemon specifications
 
-firecore-pokedex = { path = "../" }
+firecore-pokedex-game = { path = "../game" }
 
 ### Serialization
 

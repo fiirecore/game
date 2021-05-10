@@ -1,9 +1,9 @@
 extern crate firecore_game as game;
 
-use game::pokedex::moves::script::DamageKind;
-use game::pokedex::moves::script::MoveAction;
-use game::pokedex::pokemon::Health;
+use std::collections::VecDeque;
+
 use game::{
+	deps::Random,
 	util::{
 		Entity,
 		Completable,
@@ -17,35 +17,50 @@ use game::{
 	battle::{
 		BattleData,
 		TrainerData,
-		BattleWinner,
+		BattleTeam,
 	},
 	pokedex::{
 		moves::{
 			MoveCategory,
-			PokemonMove,
-			instance::MoveInstance,
+			MoveRef,
+			target::MoveTargetInstance,
+			script::{
+				MoveAction,
+				MoveActionType,
+				DamageKind
+			},
 		},
 		pokemon::{
+			Health,
 			saved::SavedPokemonParty,
-			texture::PokemonTexture,
 			instance::PokemonInstance,
 		},
+		texture::PokemonTexture,
 	},
 	storage::player::PlayerSave,
-	macroquad::{
-		rand::Random,
-		prelude::{info, Vec2},
-	}
 };
-use pokemon::BattleMoveStatus;
-use pokemon::BattleMoveType;
+use pokemon::PokemonOption;
 
-use self::gui::BattleGui;
-use self::gui::pokemon::PokemonGui;
-use self::gui::pokemon::party::battle_party_gui;
-use self::pokemon::BattleParty;
-use self::transitions::managers::closer::BattleCloserManager;
+use crate::{
+	state::{
+		BattleState,
+		MoveState,
+	},
+	pokemon::{
+		BattleParty,
+		ActivePokemonIndex,
+		BattleAction,
+		BattleMove,
+	},
+	gui::{
+		BattleGui,
+		BattleGuiPosition,
+		battle_party_gui,
+	},
+	manager::BattleCloserManager,
+};
 
+pub mod state;
 pub mod manager;
 
 pub mod pokemon;
@@ -54,7 +69,6 @@ pub mod transitions;
 
 pub static BATTLE_RANDOM: Random = Random::new();
 
-// #[deprecated(since = "0.4.0", note = "Move to seperate crate")]
 pub struct Battle {
 
 	battle_type: BattleType,
@@ -63,14 +77,19 @@ pub struct Battle {
 	pub player: BattleParty,
 	pub opponent: BattleParty,
 
-	pub winner: Option<BattleWinner>,
-	post_run: bool,
-	try_run: bool,
+	// #[deprecated]
+	pub winner: Option<BattleTeam>,
 
+	state: BattleState,
 	
 }
 
 impl Battle {
+
+	#[deprecated]
+	pub const TEMP_ACTIVE: usize = 0;
+
+	pub const DEFAULT_ACTIVE: usize = 0;
 	
 	pub fn new(player: &SavedPokemonParty, data: BattleData) -> Option<Self> {		
 		if !(
@@ -82,12 +101,11 @@ impl Battle {
 			Some(
 				Self {
 					battle_type: data.get_type(),
-					player: BattleParty::from_saved(player, PokemonTexture::Back, Vec2::new(40.0, 113.0)),
-					opponent: BattleParty::new(data.party, PokemonTexture::Front, Vec2::new(144.0, 74.0)),
+					player: BattleParty::from_saved(player, data.size, PokemonTexture::Back, BattleGuiPosition::Bottom),
+					opponent: BattleParty::new(data.party, data.size, PokemonTexture::Front, BattleGuiPosition::Top),
 					trainer: data.trainer,
+					state: BattleState::default(),
 					winner: None,
-					post_run: false,
-					try_run: false,
 				}
 			)
 		} else {
@@ -95,462 +113,605 @@ impl Battle {
 		}
 	}
 
-	pub fn update(&mut self, delta: f32, battle_gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
-		
-		// Checks if the player wants to run, and ends the battle if able to do so.
+	pub fn start_moves(&mut self) {	
+		self.generate_opponent_moves();
+		self.state = BattleState::Moving(MoveState::Start);
+	}
 
-		if self.try_run {
-			if self.battle_type == BattleType::Wild {
-				closer.spawn_closer(self);
-			}
+	pub fn input(&mut self, gui: &mut BattleGui) {
+		gui.text.input();
+	}
+
+	// some input happens here too!
+	pub fn update(&mut self, delta: f32, gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
+
+		for active in self.player.active.iter_mut() {
+			active.status.update(delta);
+			active.renderer.update_flicker(delta);
 		}
 
-		// Checks if the player is using an item when the Bag GUI is alive and queues it if they do, and then despawns the Bag GUI.
-
-		if bag_gui.is_alive() {
-			if let Some(selected) = bag_gui.take_selected_despawn() {
-
-				self.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::UseItem(selected)));
-				battle_gui.battle_text.run(self);
-
-				battle_gui.update_gui(self, false, false);
-			}
+		for active in self.opponent.active.iter_mut() {
+			active.status.update(delta);
+			active.renderer.update_flicker(delta);
 		}
 
-		// Test if there is a pokemon being selected in the party gui while it is alive
+		match &mut self.state {
 
-		else if party_gui.is_alive() {
-			if let Some(selected) = party_gui.selected.take() {
+			// Select pokemon moves / items / party switches
 
-				party_gui.despawn();
+		    BattleState::Selecting { index, started } => {
 
-				if self.player.active().is_faint() {
+				// Check if there is an active slot at the current index
 
-					// If the player pokemon has fainted, switch to a new one without queuing up a move.
+				if let Some(active) = self.player.active.get(*index) {
 
-					self.player.select_pokemon(selected);
+					// Checks if the active slot has a pokemon
 
-					battle_gui.update_gui(&self, true, false);
+					if active.pokemon.is_some() {
+
+						if !*started {
+
+							// Spawn the battle panel and update its text
+
+							gui.panel.spawn();
+							gui.panel.update_text(self.player.pokemon(*index).unwrap(), &self.opponent.active);
+							*started = true;
+
+						} else if active.queued_move.is_none() {
 	
-					battle_gui.panel.start();
-
-				} else {
-
-					// If the player switches pokemon while the current one has not fainted, queue it as a move so the opponent also moves
-
-					self.player.next_move = Some(BattleMoveStatus::new(BattleMoveType::Switch(selected)));
-					battle_gui.battle_text.run(self);
-
-				}
-				
-			}
-		}
-
-		// Update the level up move thing
-
-		else if battle_gui.level_up.is_alive() {
-
-			battle_gui.level_up.update(delta, self.player.active_mut());
-
-		}
-
-		// Update the battle text
-		
-		else if battle_gui.battle_text.text.is_alive() {
-			if !battle_gui.battle_text.text.is_finished() {
-
-				// Despawn the player button panel
-
-				if battle_gui.panel.is_alive() {
-					battle_gui.panel.despawn();
-				}
-
-				// Perform the player's move
-
-				if battle_gui.battle_text.perform_player(self) {
-
-					self.player_move(battle_gui);
-
-					battle_gui.battle_text.on_move(self.opponent.active(), &mut battle_gui.opponent, false);
-
-					// Handle opponent fainting to player's move
-
-					if self.opponent.active().is_faint() {
-
-						// add exp to player
-
-						let gain = self.exp_gain();
-						self.player.active_mut().data.experience += gain * 5;
-
-						// get the maximum exp a player can have at their level
-
-						let max_exp = {
-							let player = self.player.active();
-							player.pokemon.training.growth_rate.level_exp(player.data.level)
-						};
-
-						// level the player up if they reach a certain amount of exp (and then subtract the exp by the maximum for the previous level)
-
-						let level = if self.player.active().data.experience > max_exp {
-							self.player.pokemon[self.player.active].pokemon.data.level += 1;
-							self.player.pokemon[self.player.active].pokemon.data.experience -= max_exp;
-							let player = self.player.active_mut();
-
-							// Get the moves the pokemon learns at the level it just gained.
-
-							let mut moves = player.moves_at_level();
-
-							// Add moves if the player's pokemon does not have a full set of moves;
-
-							while player.moves.len() < 4 && !moves.is_empty() {
-								info!("{} learned {}!", player.name(), moves[0].name);
-								player.moves.push(MoveInstance::new(moves.remove(0)));
-							}
+							// Checks if a move is queued from an action done in the GUI
+	
+							if bag_gui.is_alive() {
+								if let Some(selected) = bag_gui.take_selected_despawn() {
+									self.player.active[*index].queued_move = Some(BattleMove::UseItem(selected));
+									// battle_gui.update_gui(self, false, false);
+								}
+							} else if party_gui.is_alive() {
+								if let Some(selected) = party_gui.selected.take() {
+									party_gui.despawn();
+									self.player.active[*index].queued_move = Some(BattleMove::Switch(selected));
+								}
+							} else {
+								let index = *index;
+								if gui.panel.input(self, closer, party_gui, bag_gui) {
+									if gui.panel.fight.input(self.player.pokemon(index).unwrap()) {
+										// Despawn the panel, set the text for the battle text, and spawn the battle text.
+	
+										if let Some(pokemon_move) = 
+											self.player.pokemon_mut(index).unwrap().moves.get_mut(gui.panel.fight.moves.cursor).map(|instance| instance.use_move()).flatten() {
+											gui.panel.despawn();
 							
-							// If the player's pokemon has a full move set, spawn the level up move GUI.
-
-							if !moves.is_empty() {
-								battle_gui.level_up.setup(player, moves);
-								// battle_gui.level_up.wants_to_spawn = true;
-								battle_gui.level_up.spawn();
+											self.player.active[index].queued_move = Some(BattleMove::Move(pokemon_move, 
+												match pokemon_move.target {
+													game::pokedex::moves::target::MoveTarget::Player => todo!(),//game::pokedex::moves::target::MoveTargetInstance::Player,
+													game::pokedex::moves::target::MoveTarget::Opponent => game::pokedex::moves::target::MoveTargetInstance::Opponent(gui.panel.fight.targets.cursor),
+												}
+											));
+							
+										}
+									}
+								}
 							}
-
-							Some(player.data.level)
 						} else {
-							None
-						};
-
-						// add the exp gain and level up text to the battle text
-
-						let player = self.player.active();
-						battle_gui.player.update_gui(player, false);
-						battle_gui.battle_text.player_level_up(player.name(), player.data.experience, level);
-
-					}
-
-				} else
-
-				// Perform the opponent's move
-
-				if battle_gui.battle_text.perform_opponent(self) {
-
-					// Calculate move stuff
-
-					self.opponent_move();
-
-					// Update the player's health bar and add faint text if the player has fainted
-
-					battle_gui.battle_text.on_move(self.player.active(), &mut battle_gui.player, true);
-
-				} else
-
-				if battle_gui.battle_text.perform_post(self) {
-
-					self.post_move();
-
-					battle_gui.update_gui(self, false, false);
-
-				}
-
-				// Update the text (so it scrolls)
-
-				battle_gui.battle_text.text.update(delta);
-
-				self.player.renderer.update_other(delta);
-				self.opponent.renderer.update_other(delta);
-
-				// if a pokemon has fainted, remove them from screen gradually using BattlePokemonTextureHandler (bad name)
-
-				if let Some(faint_index) = battle_gui.battle_text.faint.as_ref().map(|text| text.pos) {
-					if battle_gui.battle_text.text.can_continue() && battle_gui.battle_text.text.current_message() == faint_index {
-						if self.player.active().is_faint() {
-
-							if !self.player.renderer.is_finished() {
-								self.player.renderer.update_faint(delta);
-							}
-
-						} else if self.opponent.active().is_faint() {
-
-							if !self.opponent.renderer.is_finished() {
-								self.opponent.renderer.update_faint(delta);
-							}
-
+							*index += 1;
+							*started = false;
 						}
-					}
-				}
-				
-			} else {
-
-				// Handle player fainting
-
-				if self.player.active().is_faint() {
-
-					/*
-					*	If the player's active pokemon has fainted, check if the player has whited out,
-					*	and if so, end the battle, else spawn the party menu to let the player pick another
-					*	pokemon to use in battle.
-					*/  
-
-					if self.player.all_fainted() {
-						battle_gui.panel.despawn();
-						self.winner = Some(BattleWinner::Opponent);
-						closer.spawn_closer(self);
-					} else {
-
-						battle_party_gui(party_gui, &self.player);
-						
-						// Reset the pokemon renderer so it renders pokemon
-
-						self.player.renderer.reset();
-
-					}
-
-				}
-				
-				// Handle opponent fainting
-				
-				else if self.opponent.active().is_faint() {
-
-					// check if all of the opponent's pokemon have fainted, and if so, end the battle, else select a pokemon from the opponent's party
-					
-					if self.opponent.all_fainted() {
-						battle_gui.panel.despawn();
-						self.winner = Some(BattleWinner::Player);
-						closer.spawn_closer(self);
-					} else {
-						let available: Vec<usize> = self.opponent.pokemon.iter().enumerate()
-							.filter(|(_, pkmn)| pkmn.pokemon.current_hp != 0)
-							.map(|(index, _)| index)
-							.collect();
-						self.opponent.select_pokemon(available[BATTLE_RANDOM.gen_range(0, available.len())]);
-
-						// Update the opponent's pokemon GUI
-
-						battle_gui.update_gui(self, false, true);
-
-						// Reset the pokemon renderer so it renders pokemon
 	
-						self.opponent.renderer.reset();
-
-						battle_gui.panel.start();
-						
+					} else {
+						*index += 1;
 					}
-
-					// Once the text is finished, despawn it
-
-					battle_gui.battle_text.text.despawn(); 
-					
-
+				} else {
+					self.start_moves();
 				}
-				
-				// Handle normal move case (no one faints, all moves were completed)
+			},
+		    BattleState::Moving(move_state) => {
 
-				else {
-					// Once the text is finished, despawn it
-					battle_gui.battle_text.text.despawn();
-					// Spawn the player panel
-					battle_gui.panel.start();
-				}				
-			}
-		}
-
-	}
+				match move_state {
+					MoveState::Start => {
 	
-	pub fn render_pokemon(&self, y_offset: f32) {
-		self.player.renderer.render(self.player.active_texture(), y_offset);
-		self.opponent.renderer.render(self.opponent.active_texture(), 0.0);
-	}
-
-	pub fn player_first(&self) -> bool {
-		if let Some(player) = self.player.next_move.as_ref() {
-			match player.action {
-			    BattleMoveType::Move(_) => {
-					self.player.active().base.speed >= self.opponent.active().base.speed
-				}
-			    BattleMoveType::UseItem(_) => {
-					true
-				}
-			    BattleMoveType::Switch(_) => {
-					// if let Some(opponent) = self.opponent.next_move.as_ref() {
-					// 	if let BattleMoveType::Move(pokemon_move) = opponent.action {
-					// 		pokemon_move.use_before_switch
-					// 	} else {
-					// 		true
-					// 	}
-					// } else {
-						true
-					// }
-				}
-			}
-		} else {
-			false
-		}
-	}
-
-	pub fn player_move(&mut self, battle_gui: &mut BattleGui) {
-
-		if let Some(remaining) = self.player.active_mut().data.status.map(|effect | effect.remaining).flatten().as_mut() {
-			*remaining -= 1;
-			if *remaining == 0 {
-				self.player.active_mut().data.status = None;
-			}
-		}
-
-		if let Some(move_type) = self.player.next_move.take() {
-			match move_type.action {
-			    BattleMoveType::Move(pokemon_move) => {
-					if let Some(script) = pokemon_move.battle_script.as_ref() {
-						self.player.renderer.move_actions = Some(script.actions.clone());
-					}
-
-					if let Some(script) = &pokemon_move.script {
-						// script.conditions
-						// let player = self.player.pokemon.get_mut(self.player.active).unwrap();
-						for action in &script.actions {
-							match action {
-							    MoveAction::Damage(damage) => {
-									let opponent = self.opponent.active_mut();
-									let damage = match *damage {
-									    DamageKind::PercentCurrent(percent) => {
-											(opponent.current_hp as f32 * (1.0 - percent)) as Health
-										}
-									    DamageKind::PercentMax(percent) => {
-											(opponent.base.hp as f32 * (1.0 - percent)) as Health
-										}
-									    DamageKind::Constant(damage) => damage,
-									};
-									opponent.current_hp = opponent.current_hp.saturating_sub(damage);
-									if damage != 0 {
-										self.opponent.renderer.flicker();
-									}
-								}
-							    MoveAction::Status(chance, effect) => {
-									if *chance >= BATTLE_RANDOM.gen_range(1, 11) {
-										self.opponent.active_mut().data.status = Some(*effect);
-									}
-								}
-							    MoveAction::Persist(persistent, current_turn) => {
-									let opponent = self.opponent.active_mut();
-									opponent.persistent.push(*persistent.clone());
-									if *current_turn {
-										opponent.run_persistent_moves();
-									}
-								}
-							}
+						// Despawn the player button panel
+						if gui.panel.is_alive() {
+							gui.panel.despawn();
 						}
-					}
+						
+						gui.text.reset();
 
+						// Queue pokemon moves					
+						self.state = BattleState::Moving(MoveState::Pokemon { queue: self.move_queue(), current: None });
+					},
+					MoveState::Pokemon { queue, current } => {
 
-					let damage = get_move_damage(pokemon_move, self.player.active(), self.opponent.active());
-					let opponent = &mut self.opponent.active_mut();
-					opponent.current_hp = opponent.current_hp.saturating_sub(damage);
-					if damage != 0 {
-						self.opponent.renderer.flicker();
-					}
-				}
-			    BattleMoveType::UseItem(item) => {
-					self.player.active_mut().execute_item(item);
-					battle_gui.update_gui(&self, true, false);
-				}
-			    BattleMoveType::Switch(selected) => {
-					self.player.select_pokemon(selected);
-					battle_gui.update_gui(&self, true, false);
-				}
-			}
-		}
+						// Check if there is a current action active
+
+						if let Some((battle_move, pokemon, started)) = current.as_mut() {
+
+							match battle_move {
+							    BattleAction::Pokemon(battle_move) => match battle_move {
+									BattleMove::Move(.., target) => {
+										let (user, other) = match pokemon.team {
+											BattleTeam::Player => (&mut self.player, &mut self.opponent),
+											BattleTeam::Opponent => (&mut self.opponent, &mut self.player),
+										};
+										if !gui.text.is_finished() || gui.text.len() == 0 {
+											if gui.text.can_continue && gui.text.current() == 0 && !*started {
+
+												let (target, index) = match target {
+													MoveTargetInstance::Opponent(index) => (match pokemon.team {
+														BattleTeam::Player => &mut self.opponent,
+														BattleTeam::Opponent => &mut self.player,
+													}, *index)
+												};
+	
+												if target.update_status(index, false) {
+													target.active[index].renderer.flicker();
+												}
+	
+												*started = true;
+											}
+											if gui.text.update(delta, #[cfg(debug_assertions)] "battle move update") { // if err
+												*current = None;
+											}
+										} else {
+											
+											let (other, index) = match target {
+												MoveTargetInstance::Opponent(index) => other.pokemon_mut_or_other(*index),
+											};
+	
+											if other.is_faint() {
+												// get team and index of fainted pokemon
+
+												let team = match target {
+													MoveTargetInstance::Opponent(_) => pokemon.team.other(),
+													// _ => pokemon.team,
+												};
+
+												let target = ActivePokemonIndex { team, active: index };
+
+												if team != BattleTeam::Opponent {
+													let experience = exp_gain(self.battle_type, other);
+													let level = if let Some((level, moves)) = user.pokemon_mut(pokemon.active).unwrap().add_exp(experience) {
+														let instance = user.pokemon(pokemon.active).unwrap();
+														if let Some(moves) = moves {
+															gui.level_up.setup(pokemon.active, instance, moves);
+															// battle_gui.level_up.wants_to_spawn = true;
+															gui.level_up.spawn();
+														}
+														user.update_status(pokemon.active, false);
+														Some(level)
+													} else {
+														None
+													};
+													let instance = user.pokemon(pokemon.active).unwrap();
+													gui::text::player_gain_exp(&mut gui.text, instance.name(), instance.data.experience, level);
+												}
+
+												*current = Some((BattleAction::Faint(false), target, false));
+												return;
+											}
+
+											*current = None;
+										}
+									}
+									BattleMove::UseItem(..) => todo!("handle items"),
+									BattleMove::Switch(new) => {
+										if gui.text.is_finished() {
+											*current = None;
+										} else {
+											gui.text.update(delta, #[cfg(debug_assertions)] "switch update");
+											if gui.text.current() == 1 && !*started {
+												let team = match pokemon.team {
+													BattleTeam::Player => &mut self.player,
+													BattleTeam::Opponent => &mut self.opponent,
+												};
+												team.replace_pokemon(pokemon.active, *new);
 		
-	}
-
-	pub fn opponent_move(&mut self) {
-		if let Some(move_type) = self.opponent.next_move.take() {
-			if let BattleMoveType::Move(pokemon_move) = move_type.action {
-				let damage = get_move_damage(pokemon_move, self.opponent.active(), self.player.active());
-				let player = self.player.active_mut();
-				player.current_hp = player.current_hp.saturating_sub(damage);
-				if damage != 0 {
-					self.player.renderer.flicker();
+												*started = true;
+											}
+										}
+									}
+								}
+							    BattleAction::Faint(waiting) => {
+									if !*waiting {
+										let party = match pokemon.team {
+											BattleTeam::Player => &mut self.player,
+											BattleTeam::Opponent => &mut self.opponent,
+										};
+						
+										if party.active[pokemon.active].pokemon.is_some() {
+											if !*started {
+						
+												// Add text
+							
+												gui.text.clear();
+												gui::text::on_faint(&mut gui.text, party.pokemon(pokemon.active).unwrap().name());
+												gui.text.spawn();
+							
+							
+												*started = true;
+											} else {
+												if !gui.text.is_finished() || !party.active[pokemon.active].renderer.faint_finished() {
+													gui.text.update(delta, #[cfg(debug_assertions)] "faint update");
+													if !party.active[pokemon.active].renderer.faint_finished() {
+														party.active[pokemon.active].renderer.update_faint(delta);
+													};
+												} else {
+													match pokemon.team {
+														BattleTeam::Player => {
+															party.remove_pokemon(pokemon.active);
+															if party.all_fainted() {
+																gui.panel.despawn();
+																self.winner = Some(BattleTeam::Opponent);
+																closer.spawn_closer(self);
+																return;
+															} else if party.any_inactive() {										
+																battle_party_gui(party_gui, party, false);
+															} else {
+																*current = None;
+																return;							
+															}
+														}
+														BattleTeam::Opponent => {
+							
+															if self.opponent.all_fainted() {
+																gui.panel.despawn();
+																self.winner = Some(BattleTeam::Player);
+																closer.spawn_closer(self);
+																// self.move_queue = MoveQueueOption:;
+															} else {
+																let available: Vec<usize> = self.opponent.pokemon.iter()
+																	// .map(|(index, pokemon)| pokemon.as_ref().map(|pokemon| (index, pokemon)))
+																	.flatten()
+																	.enumerate()
+																	.filter(|(_, pokemon)| pokemon.current_hp != 0)
+																	.map(|(index, _)| index)
+																	.collect();
+							
+																self.opponent.remove_pokemon(pokemon.active);
+																if !available.is_empty() {
+																	self.opponent.queue_replace(pokemon.active, available[BATTLE_RANDOM.gen_range(0, available.len())]);
+																}
+																	
+																// Reset the pokemon renderer so it renders pokemon
+										
+																// battle_gui.panel.start();
+									
+																let index = pokemon.active;
+						
+																*current = None;
+																// self.move_queue = MoveQueueOption::Some(next.clone());
+									
+																// Update the opponent's pokemon GUI
+										
+																self.opponent.update_status(index, true);
+						
+																// gui.update_gui(self, false, true);
+															}
+															return;
+														}
+													}
+													gui.text.despawn();
+													*waiting = true;
+													// self.move_queue = MoveQueueOption::FaintWait(*pokemon, next.clone(), None);
+												}
+											}
+										}
+									} else {
+										match pokemon.team {
+											BattleTeam::Player => {
+												if !gui.text.is_alive() {
+													if party_gui.is_alive() {
+														if let Some(selected) = party_gui.selected.take() {
+															party_gui.despawn();
+															self.player.queue_replace(pokemon.active, selected);
+															gui::text::on_go(&mut gui.text, self.player.pokemon[selected].as_ref().unwrap());
+															gui.text.spawn();				
+														}
+													} else {
+														battle_party_gui(party_gui, &self.player, false);
+													}
+												} else {
+													if !gui.text.is_finished() {
+														gui.text.update(delta, #[cfg(debug_assertions)] "faint wait update");
+													} else {
+														// self.move_queue = MoveQueueOption::Some(next.clone());
+														*current = None;
+													}
+												}
+											}
+											BattleTeam::Opponent => unreachable!("Battle does not wait on opponent faint!"),
+										}
+									}
+								}
+							}
+						} else if let Some(pokemon) = queue.pop_front() {
+							let (user, other) = match pokemon.team {
+								BattleTeam::Player => (&mut self.player, &mut self.opponent),
+								BattleTeam::Opponent => (&mut self.opponent, &mut self.player),
+							};
+							if user.pokemon(pokemon.active).is_some() { // maybe need to check if fainted too
+								if let Some(queued_move) = user.active[pokemon.active].queued_move.take() {
+									*current = Some((BattleAction::Pokemon(queued_move), pokemon, false));
+									gui.text.clear();
+									if user.active[pokemon.active].pokemon.is_some() {
+										match queued_move {
+											BattleMove::Move(pokemon_move, target) => {
+												let (user, target) = match target {
+													// MoveTargetInstance::Player => (None, user.active_mut(pokemon.index)),
+													// MoveTargetInstance::Team(index) => (user.active(pokemon.index), user.active_mut(index)),
+													MoveTargetInstance::Opponent(index) => (user.pokemon_mut(pokemon.active).unwrap(), &mut other.active[index]),
+												};
+												if let Some(pokemon) = target.pokemon.as_mut() {
+													do_move(pokemon_move, user, pokemon);
+												}
+												if let Some(pokemon) = target.pokemon.as_ref() {
+													gui::text::on_move(&mut gui.text, pokemon_move, user, pokemon);
+												}
+											}
+											BattleMove::UseItem(item) => {
+												todo!()
+												// if let Some(pokemon) = user.active_mut(pokemon.index) {
+												// 	pokemon.pokemon_mut().execute_item(item);
+												// 	gui.update_gui(self, true, false);
+												// }
+											}
+											BattleMove::Switch(new) => {
+												// if let Some(leaving) = user.pokemon(pokemon.index) {
+													gui::text::on_switch(&mut gui.text, user.pokemon(pokemon.active).unwrap(), user.pokemon[new].as_ref().unwrap());
+												// }
+											}
+										}
+									}
+									gui.text.spawn();
+								}
+							}
+						} else {
+							*move_state = MoveState::Post;
+						}
+					},
+					MoveState::Post => {
+						self.player.replace();
+						self.opponent.replace();
+						// if started { stuff } else start and do calculations and add text
+						self.state = BattleState::default();
+						// Once the text is finished, despawn it
+						gui.text.despawn();
+			 			// Spawn the player panel
+						gui.panel.spawn();
+					},
 				}
 			}
-		}		
+		}
+	}
+	
+	pub fn render(&self, gui: &BattleGui) {
+		gui.background.render(0.0);
+		for active in self.opponent.active.iter() {
+			active.renderer.render(game::macroquad::prelude::Vec2::default());
+			active.status.render();
+		}
+		match &self.state {
+		    BattleState::Selecting { index, .. } => {
+				for (current, active) in self.player.active.iter().enumerate() {
+					if current.eq(index) {
+						active.renderer.render(game::macroquad::prelude::Vec2::new(0.0, gui.bounce.offset));
+						active.status.render_offset(0.0, -gui.bounce.offset);
+					} else {
+						active.renderer.render(game::macroquad::prelude::Vec2::default());
+						active.status.render();
+					}
+				}
+				gui.render_panel();
+			},
+			BattleState::Moving( .. ) => {
+				for active in self.player.active.iter() {
+					active.renderer.render(game::macroquad::prelude::Vec2::default());
+					active.status.render();
+				}
+				gui.render_panel();
+				gui.text.render(#[cfg(debug_assertions)] "moving render");
+			}
+		}
 	}
 
-	pub fn post_move(&mut self) {
-		// flicker here <-- what does this mean?
-		self.player.active_mut().run_persistent_moves();
-		self.opponent.active_mut().run_persistent_moves();
-		self.post_run = false;
+	pub fn move_queue(&self) -> VecDeque<ActivePokemonIndex> {
+		let mut queue = VecDeque::with_capacity(self.player.active.len() + self.opponent.active.len());
+
+		for (index, active) in self.player.active.iter().enumerate() {
+			if let Some(battle_move) = active.queued_move {
+				match battle_move {
+					BattleMove::Move(..) => (),
+					_ => {
+						queue.push_back(ActivePokemonIndex { team: BattleTeam::Player, active: index });
+					}
+				}
+			}
+		}
+
+		for (index, active) in self.opponent.active.iter().enumerate() {
+			if let Some(battle_move) = &active.queued_move {
+				match battle_move {
+					BattleMove::Move(..) => (),
+					_ => {
+						queue.push_back(ActivePokemonIndex { team: BattleTeam::Opponent, active: index });
+					}
+				}
+			}
+		}
+
+		let mut pokemon_map = std::collections::BTreeMap::new();
+
+		for (index, active) in self.player.active.iter().enumerate() {
+			if let Some(battle_move) = &active.queued_move {
+				if let PokemonOption::Some(_, pokemon) = &active.pokemon {
+					if let BattleMove::Move(..) = battle_move {
+						pokemon_map.insert(pokemon.base.speed, ActivePokemonIndex { team: BattleTeam::Player, active: index });
+					}
+				}
+			}
+		}
+
+		for (index, active) in self.opponent.active.iter().enumerate() {
+			if let Some(battle_move) = &active.queued_move {
+				if let PokemonOption::Some(_, pokemon) = &active.pokemon {
+					if let BattleMove::Move(..) = battle_move {
+						pokemon_map.insert(pokemon.base.speed, ActivePokemonIndex { team: BattleTeam::Opponent, active: index });
+					}
+				}
+			}
+		}
+
+		queue.extend(pokemon_map.values().rev());
+
+		queue
+
 	}
 
 	// warning: ignores PP
-	pub fn generate_opponent_move(&mut self) {
-		let index = crate::BATTLE_RANDOM.gen_range(0, self.opponent.active().moves.len());
-		self.opponent.next_move = Some(BattleMoveStatus::new(BattleMoveType::Move(self.opponent.active_mut().moves[index].pokemon_move)));
-		self.post_run = true;
+	pub fn generate_opponent_moves(&mut self) {
+		for active in self.opponent.active.iter_mut() {
+			if let PokemonOption::Some(_, pokemon) = &active.pokemon {
+				let index = crate::BATTLE_RANDOM.gen_range(0, pokemon.moves.len());
+				active.queued_move = Some(
+					BattleMove::Move(
+						pokemon.moves[index].pokemon_move, 
+						MoveTargetInstance::Opponent(
+							crate::BATTLE_RANDOM.gen_range(0, self.player.active.len())
+						)
+					)
+				);
+			}
+		}
 	}
 
-	pub fn update_data(self, player: &mut PlayerSave) -> Option<(BattleWinner, bool)> {
+	pub fn update_data(self, player: &mut PlayerSave) -> Option<(BattleTeam, bool)> {
 
 		let trainer = self.trainer.is_some();
 
 		if let Some(winner) = self.winner {
 			match winner {
-			    BattleWinner::Player => {
+			    BattleTeam::Player => {
 					if let Some(trainer) = self.trainer {
 						player.worth += trainer.worth as u32;
 					}		
 				}
-			    BattleWinner::Opponent => {
+			    BattleTeam::Opponent => {
 				}
 			}
 		}
-		
-		player.party = self.player.pokemon.into_iter().map(|pokemon| {
-			pokemon.pokemon.to_saved()
-		}).collect();
+
+		player.party = self.player.collect_owned().into_iter().map(|instance| instance.to_saved()).collect();
 
 		self.winner.map(|winner| (winner, trainer))
 		
 	}
-
-	pub fn try_run(&mut self) {
-		self.try_run = true;
-	}
-
-	fn exp_gain(&self) -> u32 {
-		((self.opponent.active().pokemon.training.base_exp * self.opponent.active().data.level as u16) as f32 * match self.battle_type {
-			BattleType::Wild => 1.0,
-			_ => 1.5,
-		} / 7.0) as u32
-	}
 	
 }
 
-pub fn get_move_damage(pokemon_move: &PokemonMove, pokemon: &PokemonInstance, recieving_pokemon: &PokemonInstance) -> u16 {
-	if pokemon_move.accuracy.map(|accuracy| {
-		let hit: u8 = BATTLE_RANDOM.gen_range(0, 100);
-		hit < accuracy
-	}).unwrap_or(true) {
-		if let Some(power) = pokemon_move.power {
-			let effective = recieving_pokemon.move_effective(pokemon_move);
-			if effective == game::pokedex::pokemon::types::effective::Effective::Ineffective {
-				return 0;
-			}
-			let effective = effective.multiplier() as f64;
-			let (atk, def) = match pokemon_move.category {
-			    MoveCategory::Physical => (pokemon.base.atk as f64, recieving_pokemon.base.def as f64),
-			    MoveCategory::Special => (pokemon.base.sp_atk as f64, recieving_pokemon.base.sp_def as f64),
-			    MoveCategory::Status => (0.0, 0.0),
+pub fn exp_gain(battle_type: BattleType, target: &PokemonInstance) -> game::pokedex::pokemon::Experience {
+	((target.pokemon.training.base_exp * target.data.level as u16) as f32 * match battle_type {
+		BattleType::Wild => 1.0,
+		_ => 1.5,
+	} / 7.0) as game::pokedex::pokemon::Experience
+}
+
+fn do_move(pokemon_move: MoveRef, user: &mut PokemonInstance, target: &mut PokemonInstance) -> bool {
+	if let Some(script) = &pokemon_move.script {
+		// for action in &script.actions {
+			let actions = match &script.action {
+				MoveAction::Action(action) => Some(*action),
+				MoveAction::Persistent(persistent) => {
+					target.persistent = Some(game::pokedex::moves::persistent::PersistentMoveInstance {
+						pokemon_move,
+						actions: &persistent.action,
+						remaining: persistent.length.map(|(min, max)| BATTLE_RANDOM.gen_range(min, max)),
+						should_do: persistent.on_move,
+					});
+					None
+				}
 			};
-			(
-				(((((2.0 * pokemon.data.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
-			 	* (BATTLE_RANDOM.gen_range(85, 101u8) as f64 / 100.0)
-				* (if pokemon_move.pokemon_type == pokemon.pokemon.data.primary_type { 1.5 } else { 1.0 })
-			) as Health
+			if let Some(action) = actions {
+				move_action(action, user, target)
+			} else {
+				false
+			}
+		// }
+	} else {
+		if pokemon_move.accuracy.map(|accuracy| {
+			let hit: u8 = BATTLE_RANDOM.gen_range(0, 100);
+			hit < accuracy
+		}).unwrap_or(true) {
+			if let Some(power) = pokemon_move.power {
+				return damage_kind(user, target, DamageKind::Move(power, pokemon_move.category, pokemon_move.pokemon_type)) > 0;
+			}
+		}
+		false
+	}
+}
+
+pub fn get_move_damage(power: game::pokedex::moves::Power, category: MoveCategory, pokemon_type: game::pokedex::pokemon::types::PokemonType, user: &PokemonInstance, target: &PokemonInstance) -> Health {
+	let effective = target.effective(pokemon_type);
+	if effective == game::pokedex::pokemon::types::effective::Effective::Ineffective {
+		return 0;
+	}
+	let effective = effective.multiplier() as f64;
+	let (atk, def) = match category {
+		MoveCategory::Physical => (user.base.atk as f64, target.base.def as f64),
+		MoveCategory::Special => (user.base.sp_atk as f64, target.base.sp_def as f64),
+		MoveCategory::Status => (0.0, 0.0),
+	};
+	(
+		(((((2.0 * user.data.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
+		* (BATTLE_RANDOM.gen_range(85, 101u8) as f64 / 100.0)
+		* (if pokemon_type == user.pokemon.data.primary_type { 1.5 } else { 1.0 })
+	) as Health
+}
+
+fn move_action(action: MoveActionType, user: &mut PokemonInstance, target: &mut PokemonInstance) -> bool {
+	match action {
+	    MoveActionType::Damage(damage) => {
+			damage_kind(user, target, damage);
+			true
+		},
+	    MoveActionType::Status(chance, effect) => {
+			chance_status(target, chance, effect)
+		},
+	    MoveActionType::Drain(damage, percent) => {
+			let damage = damage_kind(user, target, damage) as f32;
+			user.current_hp += (damage * percent) as Health;
+			if user.current_hp > user.base.hp {
+				user.current_hp = user.base.hp;
+			}
+			true
+		}
+	}
+}
+
+fn damage_kind(user: &PokemonInstance, target: &mut PokemonInstance, damage: DamageKind) -> Health {
+	let damage = match damage {
+		DamageKind::Move(power, category, pokemon_type) => {
+			get_move_damage(power, category, pokemon_type, user, target)
+		}
+		DamageKind::PercentCurrent(percent) => {
+			(target.current_hp as f32 * percent) as Health
+		}
+		DamageKind::PercentMax(percent) => {
+			(target.base.hp as f32 * percent) as Health
+		}
+		DamageKind::Constant(damage) => damage,
+	};
+	target.current_hp = target.current_hp.saturating_sub(damage);
+	damage
+}
+
+fn chance_status(target: &mut PokemonInstance, chance: u8, effect: game::pokedex::pokemon::status::StatusEffect) -> bool {
+	if target.data.status.is_none() {
+		if chance >= BATTLE_RANDOM.gen_range(1, 11) {
+			target.data.status = Some(effect);
+			true
 		} else {
-			0
+			false
 		}
 	} else {
-		info!("{} missed!", pokemon);
-		0
-	}	
+		false
+	}
 }

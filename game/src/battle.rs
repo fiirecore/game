@@ -1,6 +1,6 @@
 use firecore_util::battle::BattleType;
 
-use firecore_pokedex::pokemon::instance::PokemonInstanceParty;
+use pokedex::pokemon::instance::PokemonInstanceParty;
 
 use macroquad::prelude::Texture2D;
 
@@ -8,6 +8,7 @@ use macroquad::prelude::Texture2D;
 
 pub struct BattleData {
 
+    pub size: usize,
     pub party: PokemonInstanceParty,
     pub trainer: Option<TrainerData>,
 
@@ -23,19 +24,24 @@ pub struct TrainerData {
     pub victory_message: Vec<Vec<String>>,
     pub worth: u16,
 
-    // use this stuff in world crate
-
-    // pub index: NPCId,
-    // pub disable_others: HashSet<NPCId>,
-    // pub map: String,
-
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum BattleWinner {
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum BattleTeam {
 
 	Player,
 	Opponent,
+
+}
+
+impl BattleTeam {
+
+    pub fn other(self) -> Self {
+        match self {
+            BattleTeam::Player => Self::Opponent,
+            BattleTeam::Opponent => Self::Player,
+        }
+    }
 
 }
 
@@ -46,8 +52,3 @@ impl BattleData {
     }
 
 }
-
-// #[deprecated]
-// pub fn to_battle_party(party: &SavedPokemonParty) -> PokemonInstanceParty {
-//     party.iter().map(|pokemon| PokemonInstance::new(pokemon)).flatten().collect()
-// }

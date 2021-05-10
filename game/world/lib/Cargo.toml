@@ -14,7 +14,7 @@ pathfind = ["indexmap", "num-traits"]
 
 serde = { version = "1.0", features = ["derive"] }
 
-firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies", features = ["random", "hash", "smallvec"] }
+firecore-dependencies = { path = "../../firecore/deps", features = ["random", "hash", "vec"] }
 
 firecore-util = { path = "../../firecore/util" }
 firecore-pokedex = { path = "../../firecore/pokedex" }

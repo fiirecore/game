@@ -1,4 +1,4 @@
-use firecore_font::message::MessageSet;
+use firecore_font::message::MessagePages;
 use firecore_util::Coordinate;
 use serde::{Deserialize, Serialize};
 use deps::tinystr::{TinyStr8, TinyStr16};
@@ -16,6 +16,7 @@ pub mod interact;
 pub type NPCId = TinyStr8;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct NPC {
 
     pub name: String,
@@ -30,7 +31,7 @@ pub struct NPC {
     #[serde(skip, default)]
     pub origin: Option<Coordinate>,
 
-    pub message: Option<MessageSet>,
+    pub message: Option<MessagePages>,
 
     pub trainer: Option<Trainer>,
 

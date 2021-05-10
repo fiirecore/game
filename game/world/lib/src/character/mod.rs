@@ -15,7 +15,7 @@ pub struct Character {
     pub position: Position,
 
     #[serde(default = "default_speed")]
-    speed: f32,
+    pub speed: f32,
 
     #[serde(skip)]
     pub sprite_index: u8,
@@ -23,7 +23,7 @@ pub struct Character {
     #[serde(skip)]
     pub moving: bool,
 
-    #[serde(skip)]
+    #[serde(default)]
     pub move_type: MoveType,
 
     #[serde(skip)]
@@ -73,8 +73,10 @@ impl Character {
     }
 
     pub fn freeze(&mut self) {
-        self.frozen = true;
-        self.stop_move();
+        if !self.noclip {
+            self.frozen = true;
+            self.stop_move();
+        }
     }
 
     pub fn unfreeze(&mut self) {
@@ -163,7 +165,7 @@ impl Default for Character {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum MoveType {
 
     Walking,

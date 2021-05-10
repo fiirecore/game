@@ -5,7 +5,6 @@ use game::{
 
 use crate::{
     Battle,
-    gui::BattleGui,
     transitions::{
         BattleIntroduction, BattleTransition,
         introductions::{
@@ -35,7 +34,7 @@ impl BattleIntroductionManager {
             alive: false,
             
             current_introduction: Introductions::default(),
-            basic: BasicBattleIntroduction::new(panel),
+            basic: BasicBattleIntroduction::new(panel, 2),
             trainer: TrainerBattleIntroduction::new(panel),
         }
     }
@@ -54,8 +53,8 @@ impl BattleIntroductionManager {
         self.get().render_offset(battle, offset);
     }
 
-    pub fn update_gui(&mut self, battle: &Battle, battle_gui: &mut BattleGui, delta: f32) {
-        self.get_mut().update_gui(battle, battle_gui, delta);
+    pub fn update_gui(&mut self, delta: f32, battle: &mut Battle) {
+        self.get_mut().update_gui(delta, battle);
     }
 
     pub fn spawn_type(&mut self, opener: &Openers) {

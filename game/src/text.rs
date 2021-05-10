@@ -1,14 +1,23 @@
 pub use firecore_text::message::*;
 use storage::player::PlayerSave;
 
-pub fn process_messages(player_save: &PlayerSave, message: &mut Message) {
-    for message in message.message_set.iter_mut() {
-        for lines in message.lines.iter_mut() {
-            *lines = lines
-                .replace("%r", rival_name())
-                .replace("%p", player_name(player_save))
-            ;
+const PLAYER_ID: &str = "%p";
+const RIVAL_ID: &str = "%r";
+
+pub fn process_messages(pages: &mut MessagePages, save: &PlayerSave) {
+    for page in pages {
+        for lines in page.lines.iter_mut() {
+            process_string(lines, save);
         }
+    }
+}
+
+pub fn process_string(string: &mut String, save: &PlayerSave) {
+    if string.contains(PLAYER_ID) {
+        *string = string.replace("%p", player_name(save));
+    }
+    if string.contains(RIVAL_ID) {
+        *string = string.replace("%r", rival_name());
     }
 }
 
