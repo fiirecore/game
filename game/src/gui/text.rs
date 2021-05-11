@@ -115,7 +115,7 @@ impl DynamicText {
 		}
 	}
 
-	pub fn update(&mut self, delta: f32, #[cfg(debug_assertions)] tag: &str) -> bool {
+	pub fn update(&mut self, delta: f32) {
 		if self.alive {
 			match self.message.pages.get(self.current) {
 				Some(current) => {
@@ -157,18 +157,16 @@ impl DynamicText {
 						self.counter = line_len as f32;
 						self.can_continue = true;
 					}
-					false
+					// false
 				}
-				#[cfg(debug_assertions)]
-				None => {
-					macroquad::prelude::warn!("{}, tag: {}", self.name, tag);
-					true
-				},
-				#[cfg(not(debug_assertions))]
-				None => true,
+				// #[cfg(debug_assertions)]
+				// None => {
+				// 	macroquad::prelude::warn!("{}, tag: {}", self.name, tag);
+				// 	true
+				// },
+				// #[cfg(not(debug_assertions))]
+				None => (),
 			}	
-		} else {
-			false
 		}
 	}
 

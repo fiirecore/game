@@ -36,7 +36,7 @@ impl FightPanel {
 
     }
 
-    pub fn update_gui(&mut self, instance: &PokemonInstance, targets: &Box<[crate::pokemon::ActivePokemon]>) {
+    pub fn setup(&mut self, instance: &PokemonInstance, targets: &Box<[crate::pokemon::ActivePokemon]>) {
         self.moves.update_names(instance);
         self.targets.update_names(targets);
         self.update_move(instance);

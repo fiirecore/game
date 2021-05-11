@@ -3,23 +3,18 @@ use game::{
     pokedex::pokemon::instance::PokemonInstance,
     input::{pressed, Control},
     text::TextColor,
-    macroquad::prelude::{Vec2, Texture2D},
-    graphics::{byte_texture, draw, draw_text_left, draw_cursor},
+    gui::panel::Panel,
+    macroquad::prelude::Vec2,
+    graphics::{draw_text_left, draw_cursor},
     deps::vec::ArrayVec,
 };
-
-static mut BACKGROUND: Option<Texture2D> = None;
-
-pub fn move_panel_texture() -> Texture2D {
-    unsafe { *BACKGROUND.get_or_insert(byte_texture(include_bytes!("../../../assets/gui/move_panel.png"))) }
-}
 
 pub struct MovePanel {
 
     origin: Vec2,
-    background: Texture2D,
+    panel: Panel,
     pub cursor: usize,
-    pub names: ArrayVec<[String; 4]>,
+    pub names: ArrayVec<[(String, TextColor); 4]>,
 
 }
 
@@ -28,7 +23,7 @@ impl MovePanel {
     pub fn new(origin: Vec2) -> Self {
         Self {
             origin,
-            background: move_panel_texture(),
+            panel: Panel::new(),
             cursor: 0,
             names: ArrayVec::new(),
         }
@@ -40,7 +35,12 @@ impl MovePanel {
             if index == 4 {
                 break;
             }
-            self.names.push(move_instance.pokemon_move.name.to_ascii_uppercase());
+            if !self.names.get(index).map(|(name, _)| name.eq_ignore_ascii_case(&move_instance.pokemon_move.name)).unwrap_or_default() {
+                self.names.push((move_instance.pokemon_move.name.to_ascii_uppercase(), if move_instance.pp == 0 { TextColor::Red } else { TextColor::Black }));
+            }
+            if let Some((_, color)) = self.names.get_mut(index) {
+                *color = if move_instance.pp == 0 { TextColor::Red } else { TextColor::Black };
+            }
         }
     }
 
@@ -88,8 +88,8 @@ impl MovePanel {
     }
 
     pub fn render(&self) {
-        draw(self.background, self.origin.x, self.origin.y);
-        for (index, string) in self.names.iter().enumerate() {
+        self.panel.render(self.origin.x, self.origin.y, 160.0, 47.0);
+        for (index, (string, color)) in self.names.iter().enumerate() {
             let x_offset = if index % 2 == 1 {
                 72.0
             } else {
@@ -100,7 +100,7 @@ impl MovePanel {
             } else {
                 0.0
             };
-            draw_text_left(0, string, TextColor::Black, self.origin.x + 16.0 + x_offset, self.origin.y + 8.0 + y_offset);
+            draw_text_left(0, string, *color, self.origin.x + 16.0 + x_offset, self.origin.y + 8.0 + y_offset);
             if index == self.cursor {
                 draw_cursor(self.origin.x + 10.0 + x_offset, self.origin.y + 10.0 + y_offset);
             }

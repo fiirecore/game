@@ -72,7 +72,7 @@ impl PartySelectMenu {
                                 self.alive = false;
                                 None
                             },
-                            _ => None,
+                            _ => unreachable!(),
                         }
                     },
                     false => {
@@ -83,7 +83,7 @@ impl PartySelectMenu {
                                 self.alive = false;
                                 None
                             },
-                            _ => None,
+                            _ => unreachable!(),
                         }
                     }
                 }

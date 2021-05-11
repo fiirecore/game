@@ -70,6 +70,7 @@ impl BattleParty {
                         renderer: ActivePokemonRenderer::with(index, &pokemon, side),
                         pokemon: PokemonOption::Some(index2, pokemon),
                         queued_move: None,
+                        last_move: None,
                     }
                 }
                 None => {
@@ -79,6 +80,7 @@ impl BattleParty {
                         queued_move: None,
                         status: PokemonStatusGui::new(index),
                         renderer: ActivePokemonRenderer::new(index, side),
+                        last_move: None,
                     }
                 }
             }).collect(),
@@ -87,6 +89,8 @@ impl BattleParty {
     }
 
     pub fn all_fainted(&self) -> bool {
+        // self.pokemon.iter().flatten().find(|pokemon| pokemon.current_hp != 0).is_none() ||
+        // self.active.iter().flat_map(|active| active.pokemon.as_ref()).find(|pokemon| pokemon.current_hp != 0).is_none()
         for pokemon in self.pokemon.iter().flatten() {
             if pokemon.current_hp != 0 {
                 return false;
@@ -103,6 +107,7 @@ impl BattleParty {
     }
 
     pub fn any_inactive(&self) -> bool {
+        // self.pokemon.iter().flatten().find(|instance| instance.current_hp != 0).is_some()
         for pokemon in self.pokemon.iter().flatten() {
             if pokemon.current_hp != 0 {
                 return true;
@@ -119,6 +124,7 @@ impl BattleParty {
         self.active[active_index].pokemon.as_mut()
     }
 
+    #[deprecated]
     pub fn pokemon_mut_or_other(&mut self, active_index: usize) -> (&mut PokemonInstance, usize) {
         let mut index = active_index;
         for (i, active) in self.active.iter().enumerate() {

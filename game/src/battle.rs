@@ -6,15 +6,17 @@ use macroquad::prelude::Texture2D;
 
 /***********************/
 
-pub struct BattleData {
+pub type BattleEntryRef<'a> = &'a mut Option<BattleEntry>;
+
+pub struct BattleEntry {
 
     pub size: usize,
     pub party: PokemonInstanceParty,
-    pub trainer: Option<TrainerData>,
+    pub trainer: Option<BattleTrainerEntry>,
 
 }
 
-pub struct TrainerData {
+pub struct BattleTrainerEntry {
 
 
     pub name: String,
@@ -26,7 +28,7 @@ pub struct TrainerData {
 
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BattleTeam {
 
 	Player,
@@ -45,7 +47,7 @@ impl BattleTeam {
 
 }
 
-impl BattleData {
+impl BattleEntry {
 
     pub fn get_type(&self) -> BattleType {
         self.trainer.as_ref().map(|data| data.battle_type).unwrap_or(BattleType::Wild)

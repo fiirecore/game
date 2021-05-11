@@ -192,7 +192,7 @@ impl BattleTransition for BasicBattleIntroduction {
     fn on_start(&mut self) {}
 
     fn update(&mut self, delta: f32) {
-        self.text.update(delta, #[cfg(debug_assertions)] "update");
+        self.text.update(delta);
         if self.text.current() + 1 == self.text.len() {
             if self.counter < 104.0 {
                 self.counter += delta * 180.0;                

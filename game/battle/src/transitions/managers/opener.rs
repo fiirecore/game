@@ -51,7 +51,7 @@ impl BattleOpenerManager {
     }
 
     pub fn spawn_type(&mut self, battle: &Battle) {
-        self.current_opener = match battle.battle_type {
+        self.current_opener = match battle.data.battle_type {
             BattleType::Wild => Openers::Wild,
             BattleType::Trainer => Openers::Trainer,
             BattleType::GymLeader => Openers::Trainer,

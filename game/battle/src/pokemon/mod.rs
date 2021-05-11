@@ -21,6 +21,9 @@ pub struct ActivePokemon {
 
     pub status: PokemonStatusGui,
     pub renderer: ActivePokemonRenderer,
+
+    pub last_move: Option<(usize, usize)>, // previous cursor pos
+
 }
 
 #[derive(Clone)]
@@ -30,7 +33,7 @@ pub enum PokemonOption {
     ToReplace(usize),
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ActivePokemonIndex {
 	pub team: BattleTeam,
 	pub active: usize,

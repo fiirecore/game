@@ -8,7 +8,7 @@ use game::{
 		party::PartyGui,
 		bag::BagGui,
 	},
-	battle::BattleData,
+	battle::BattleEntry,
 };
 
 use world::map::manager::WorldManager;
@@ -27,7 +27,7 @@ pub struct GameState {
 	party_gui: PartyGui,
 	bag_gui: BagGui,
 	
-	battle_data: Option<BattleData>,
+	battle_entry: Option<BattleEntry>,
 
 	battling: bool,
 
@@ -73,7 +73,7 @@ impl State for GameState {
 			party_gui: PartyGui::new(),
 			bag_gui: BagGui::new(),
 
-			battle_data: None,
+			battle_entry: None,
 
 			battling: false,
 		}
@@ -81,7 +81,7 @@ impl State for GameState {
 
 	fn on_start(&mut self) {
 		self.world.load_with_data();
-		self.world.on_start(&mut self.battle_data);
+		self.world.on_start(&mut self.battle_entry);
 	}
 	
 	fn update(&mut self, delta: f32) -> Option<States> {
@@ -102,11 +102,11 @@ impl State for GameState {
 
 		if !self.battling {
 
-			self.world.update(delta, &mut self.battle_data);
+			self.world.update(delta, &mut self.battle_entry);
 
-			if self.battle_data.is_some() {
+			if let Some(entry) = self.battle_entry.take() {
 				if let Some(player_saves) = get::<PlayerSaves>() {
-					if self.battle.battle(&player_saves.get().party, self.battle_data.take().unwrap()) {
+					if self.battle.battle(&player_saves.get().party, entry) {
 						self.battling = true;
 					}
 				}
@@ -159,7 +159,7 @@ impl State for GameState {
 		} else if self.party_gui.is_alive() {
 			self.party_gui.input();
 		} else if !self.battling {
-			self.world.input(delta, &mut self.battle_data, &mut self.party_gui, &mut self.bag_gui, &mut self.action);
+			self.world.input(delta, &mut self.battle_entry, &mut self.party_gui, &mut self.bag_gui, &mut self.action);
 		} else {
 			self.battle.input();
 		}

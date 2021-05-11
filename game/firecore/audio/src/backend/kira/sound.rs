@@ -17,7 +17,7 @@ pub fn play_sound(sound: &Sound) -> Result<(), PlayAudioError> {
                         Ok(())
                     }
                     Err(err) => {
-                        Err(PlayAudioError::PlayError(err))
+                        Err(PlayAudioError::CommandError(err))
                     }
                 }
             }

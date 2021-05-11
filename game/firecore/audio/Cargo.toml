@@ -21,8 +21,8 @@ firecore-dependencies = { path = "../deps" }
 
 ### Audio libraries
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-kira = { version = "0.4", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
+[target.'cfg(not(any(target_arch = "wasm32", target_os = "android")))'.dependencies]
+kira = { version = "0.5", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
 lewton = { version = "0.10.1", optional = true } # Included in kira
 
 ### this library is replaced by audio in macroquad 0.3

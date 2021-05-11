@@ -19,7 +19,7 @@ use game::{
         },
     },
     storage::{get, player::PlayerSaves},
-    battle::{BattleData, TrainerData, BattleTeam},
+    battle::{BattleEntry, BattleEntryRef, BattleTrainerEntry, BattleTeam},
     macroquad::prelude::warn
 };
 
@@ -36,7 +36,7 @@ pub struct WorldTrainerData {
     map: TinyStr16,
 }
 
-pub fn random_wild_battle(battle_data: &mut Option<BattleData>) {
+pub fn random_wild_battle(battle: &mut Option<BattleEntry>) {
     let mut party = PokemonInstanceParty::new();
     let size = 2;
     for _ in 0..size {
@@ -47,35 +47,35 @@ pub fn random_wild_battle(battle_data: &mut Option<BattleData>) {
             Some(StatSet::random())
         ));
     }    
-    *battle_data = Some(BattleData {
+    *battle = Some(BattleEntry {
         party,
         trainer: None,
         size,
     });
 }
 
-pub fn wild_battle(battle_data: &mut Option<BattleData>, wild: &WildEntry) {
+pub fn wild_battle(battle: BattleEntryRef, wild: &WildEntry) {
     let mut party = ArrayVec::new();
     party.push(wild.generate());
-    *battle_data = Some(BattleData {
+    *battle = Some(BattleEntry {
         party,
         trainer: None,
         size: 1,
     });
 }
 
-pub fn trainer_battle(battle_data: &mut Option<BattleData>, map_id: &MapIdentifier, npc_id: &NPCId, npc: &NPC) {
+pub fn trainer_battle(battle: BattleEntryRef, map_id: &MapIdentifier, npc_id: &NPCId, npc: &NPC) {
     if let Some(trainer) = npc.trainer.as_ref() {
         if let Some(saves) = get::<PlayerSaves>() {
             let save = saves.get();
             if let Some(map) = save.world.map.get(map_id) {
                 if !map.battled.contains(npc_id) {
                     let npc_type = crate::npc::npc_type(&npc.npc_type);
-                    *battle_data = Some(
-                        BattleData {
+                    *battle = Some(
+                        BattleEntry {
                             party: to_battle_party(&trainer.party),
                             trainer: Some(
-                                TrainerData {
+                                BattleTrainerEntry {
                                     name: npc.name.clone(),
                                     npc_type: npc_type.map(|npc_type| npc_type.trainer.as_ref().map(|trainer| trainer.name.clone())).flatten().unwrap_or(String::from("Trainer")),
                                     texture: *crate::map::texture::npc::NPCTextureManager::trainer_textures().get(&npc.npc_type).unwrap(),

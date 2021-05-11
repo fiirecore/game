@@ -30,7 +30,7 @@ impl TextWindow {
 
     pub fn update(&mut self, delta: f32) {
         if self.alive {
-            self.text.update(delta, #[cfg(debug_assertions)] "update");
+            self.text.update(delta);
         }
     }
 

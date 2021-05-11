@@ -20,9 +20,6 @@ use super::moves::MovePanel;
 
 pub struct LevelUpMovePanel {
 
-    #[deprecated]
-    pub index: usize,
-
     alive: bool,
 
     text: DynamicText,
@@ -39,7 +36,6 @@ impl LevelUpMovePanel {
 
     pub fn new(panel: Vec2) -> Self {
         Self {
-            index: 0,
             alive: false,
             text: DynamicText::new(Vec2::new(11.0, 11.0), panel, 1, TextColor::White, 1, "levelup"),
             move_panel: MovePanel::new(panel),
@@ -49,8 +45,8 @@ impl LevelUpMovePanel {
         }
     }
 
-    pub fn setup(&mut self, index: usize, instance: &PokemonInstance, moves: Vec<MoveRef>) {
-        self.index = index;
+    pub fn spawn(&mut self, index: usize, instance: &PokemonInstance, moves: Vec<MoveRef>) {
+        self.alive = true;
         self.moves = moves;
         self.name = instance.name();
         self.move_panel.update_names(instance);
@@ -110,19 +106,4 @@ impl LevelUpMovePanel {
         }
     }
 
-}
-
-impl Entity for LevelUpMovePanel {
-    fn spawn(&mut self) {
-        self.alive = true;
-        // self.wants_to_spawn = false;
-    }
-
-    fn despawn(&mut self) {
-        self.alive = false;
-    }
-
-    fn is_alive(&self) -> bool {
-        self.alive
-    }
 }

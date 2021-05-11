@@ -50,7 +50,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
         self.introduction.text.clear();
 
-        if let Some(trainer) = battle.trainer.as_ref() {
+        if let Some(trainer) = battle.data.trainer.as_ref() {
             self.texture = Some(trainer.texture);
 
             let name = format!("{} {}", trainer.npc_type, trainer.name);

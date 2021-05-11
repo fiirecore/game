@@ -60,10 +60,10 @@ impl BattleTransitionGui for TrainerBattleCloser {
 impl BattleCloser for TrainerBattleCloser {
 
     fn setup(&mut self, battle: &Battle) {
-        match battle.winner {
+        match battle.data.winner {
             Some(winner) => match winner {
                 BattleTeam::Player => {
-                    if let Some(trainer) = &battle.trainer {
+                    if let Some(trainer) = &battle.data.trainer {
                         self.trainer = Some(trainer.texture);
 
                         let mut message_set = Vec::with_capacity(trainer.victory_message.len() + 2);
@@ -132,7 +132,7 @@ impl BattleTransition for TrainerBattleCloser {
         } else if self.text.is_finished() {
             self.wild.spawn();
         } else {
-            self.text.update(delta, #[cfg(debug_assertions)] "update");
+            self.text.update(delta);
             if self.text.current() == 1 && self.offset > XPOS {
                 self.offset -= 300.0 * delta;
                 if self.offset < XPOS {

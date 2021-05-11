@@ -7,7 +7,7 @@ use game::{
 		bag::BagGui,
 	},
 	macroquad::prelude::{is_key_pressed, KeyCode},
-	battle::{BattleData, BattleTeam},
+	battle::{BattleEntry, BattleTeam},
 	graphics::draw,
 };
 
@@ -33,6 +33,8 @@ pub use crate::transitions::managers::closer::BattleCloserManager;
 // pub type TrainerTextures = HashMap<String, Texture2D>;
 
 pub struct BattleManager {
+
+	// state: BattleManagerState,
 	
 	battle: Option<Battle>,
 	
@@ -70,13 +72,13 @@ impl BattleManager {
 		
 	}
 
-	pub fn battle(&mut self, player: &SavedPokemonParty, data: BattleData) -> bool { // add battle type parameter
+	pub fn battle(&mut self, player: &SavedPokemonParty, entry: BattleEntry) -> bool { // add battle type parameter
 
 		self.finished = false;
 
 		// Create the battle
 
-		self.battle = Battle::new(&player, data);
+		self.battle = Battle::new(&player, entry);
 
 		// Despawn anything from previous battle
 
@@ -85,7 +87,7 @@ impl BattleManager {
 		// Setup battle GUI
 
 		if let Some(battle) = self.battle.as_ref() {
-			self.screen_transition.spawn_with_type(battle.battle_type);
+			self.screen_transition.spawn_with_type(battle.data.battle_type);
 			self.gui.bounce.reset();
 		}
 
@@ -112,7 +114,7 @@ impl BattleManager {
 				// exit shortcut
 				self.finished = true;
 				if let Some(battle) = self.battle.as_mut() {
-					battle.winner = Some(BattleTeam::Player);
+					battle.data.winner = Some(BattleTeam::Player);
 				}
 			}
 		}
@@ -125,14 +127,14 @@ impl BattleManager {
 
 			// Update the level up move thing
 
-			if self.gui.level_up.is_alive() {
+			// if self.gui.level_up.is_alive() {
 
-				#[deprecated(note = "move this")]
-				self.gui.level_up.update(delta, battle.player.pokemon_mut(self.gui.level_up.index).unwrap());
+			// 	#[deprecated(note = "move this")]
+			// 	self.gui.level_up.update(delta, battle.player.pokemon_mut(self.gui.level_up.index).unwrap());
 
-				return;
+			// 	return;
 
-			}
+			// }
 
 			if self.screen_transition.is_alive() {
 				if self.screen_transition.is_finished() {
@@ -144,7 +146,6 @@ impl BattleManager {
 			} else if self.opener.is_alive() {
 				if self.opener.is_finished() {
 					self.opener.despawn();
-					self.gui.panel.spawn();
 				} else {
 					self.opener.update(delta);
 					self.opener.introduction.update_gui(delta, battle);

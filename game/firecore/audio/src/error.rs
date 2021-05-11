@@ -28,9 +28,7 @@ pub enum PlayAudioError {
     #[cfg(feature = "play")]
     CurrentLocked,
     #[cfg(all(not(target_arch = "wasm32"), feature = "play"))]
-    CurrentError(kira::instance::handle::InstanceHandleError),
-    #[cfg(all(not(target_arch = "wasm32"), feature = "play"))]
-    PlayError(kira::sound::handle::SoundHandleError),
+    CommandError(kira::CommandError),
     #[cfg(all(target_arch = "wasm32", feature = "play"))]
     PlayError(),
 }
@@ -67,9 +65,7 @@ impl Display for PlayAudioError {
                 PlayAudioError::Missing => write!(f, "Could not find music with specified id!"),
                 PlayAudioError::CurrentLocked => write!(f, "Could not unlock current music mutex!"),
                 #[cfg(all(not(target_arch = "wasm32"), feature = "play"))]
-                PlayAudioError::CurrentError(err) => write!(f, "Could not stop audio instance with error {}", err),
-                #[cfg(all(not(target_arch = "wasm32"), feature = "play"))]
-                PlayAudioError::PlayError(err) => write!(f, "Could not play audio with error {}", err),
+                PlayAudioError::CommandError(err) => Display::fmt(err, f),
                 #[cfg(all(target_arch = "wasm32", feature = "play"))]
                 PlayAudioError::PlayError() => write!(f, "Could not play audio with error"),
             }

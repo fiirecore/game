@@ -29,16 +29,6 @@ pub fn on_move(text: &mut DynamicText, pokemon_move: MoveRef, user: &PokemonInst
         )
     );
 
-    let effective = target.effective(pokemon_move.pokemon_type);
-
-    if effective != Effective::Effective && pokemon_move.category != MoveCategory::Status {
-        text.push(
-            MessagePage::new(
-                vec![format!("It was {}{}", effective, if effective == Effective::SuperEffective { "!" } else { "..." })], 
-                Some(0.5)
-            )
-        );
-    }
 }
 
 pub fn on_item(text: &mut DynamicText, user: &PokemonInstance, item: ItemRef) {
@@ -93,7 +83,7 @@ pub fn on_faint(text: &mut DynamicText, name: String) {
     );
 }
 
-pub fn player_gain_exp(text: &mut DynamicText, name: String, exp: u32, level: Option<u8>) {
+pub(crate) fn player_gain_exp(text: &mut DynamicText, name: String, exp: u32, level: Option<u8>) {
     text.push(
         MessagePage::new(
             vec![

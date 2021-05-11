@@ -10,22 +10,46 @@ use game::{
 
 use crate::gui::{BattleGuiPosition, BattleGuiPositionIndex};
 
+#[derive(Debug)]
 pub struct ActivePokemonRenderer {
 
     pub texture: Option<Texture2D>,
     side: PokemonTexture,
 
     pub pos: Vec2,
-    missing: f32,
 
+    pub fainting: Fainting,
     flicker: Flicker,
 
 }
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 struct Flicker {
     remaining: u8,
     accumulator: f32,
+}
+
+#[derive(Debug, Default)]
+pub struct Fainting {
+    pub fainting: bool,
+    missing: f32,
+}
+
+impl Fainting {
+    // const MISSING: f32 = 0.0;
+
+    pub fn update(&mut self, delta: f32) {
+        if self.fainting {
+            self.missing += delta * 128.0;
+            if self.missing > ActivePokemonRenderer::SIZE {
+                self.fainting = false;
+            }
+        }
+    }
+
+    pub fn is_finished(&self) -> bool {
+        self.missing >= ActivePokemonRenderer::SIZE
+    }
 }
 
 impl Flicker {
@@ -35,7 +59,6 @@ impl Flicker {
 
 impl ActivePokemonRenderer {
 
-    const MISSING: f32 = 0.0;
     const SIZE: f32 = 64.0;
 
     pub fn new(index: BattleGuiPositionIndex, side: PokemonTexture) -> Self {
@@ -43,7 +66,7 @@ impl ActivePokemonRenderer {
             texture: None,
             side,
             pos: Self::position(index),
-            missing: Self::MISSING,
+            fainting: Fainting::default(),
             flicker: Flicker::default(),
         }
     }
@@ -67,16 +90,6 @@ impl ActivePokemonRenderer {
         }
     }
 
-    pub fn update_faint(&mut self, delta: f32) {
-        if self.flicker.remaining == 0 {
-            self.missing += delta * 128.0;
-        }
-    }
-
-    pub fn faint_finished(&self) -> bool {
-        self.missing >= Self::SIZE
-    }
-
     pub fn update_flicker(&mut self, delta: f32) {
         if self.flicker.remaining != 0 {
             self.flicker.accumulator += delta;
@@ -88,6 +101,10 @@ impl ActivePokemonRenderer {
                 self.flicker.accumulator = 0.0;
             }
         }
+    }
+
+    pub fn is_flickering(&self) -> bool {
+        self.flicker.remaining != 0
     }
 
     // pub fn update_script(&mut self, delta: f32) {
@@ -157,16 +174,16 @@ impl ActivePokemonRenderer {
 
     pub fn render(&self, offset: Vec2) {
         if let Some(texture) = self.texture {
-            if self.missing < Self::SIZE && self.flicker.accumulator < Flicker::LENGTH / 2.0 {
+            if self.fainting.missing < Self::SIZE && self.flicker.accumulator < Flicker::LENGTH / 2.0 {
                 draw_texture_ex(
                     texture,
                     self.pos.x + offset.x,
-                    self.pos.y - texture.height() + offset.y + self.missing,
+                    self.pos.y - texture.height() + offset.y + self.fainting.missing,
                     WHITE,
                     DrawTextureParams {
-                        source: if self.missing > 0.0 {
+                        source: if self.fainting.missing > 0.0 {
                             Some(
-                                Rect::new(0.0, 0.0, texture.width(), Self::SIZE - self.missing)
+                                Rect::new(0.0, 0.0, texture.width(), Self::SIZE - self.fainting.missing)
                             )
                         } else {
                             None
@@ -182,6 +199,6 @@ impl ActivePokemonRenderer {
 
 impl Reset for ActivePokemonRenderer {
     fn reset(&mut self) {
-        self.missing = Self::MISSING;
+        self.fainting = Fainting::default();
     }
 }

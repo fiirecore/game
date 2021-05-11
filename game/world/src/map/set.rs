@@ -9,7 +9,7 @@ use firecore_world_lib::{
     character::player::PlayerCharacter,
 };
 
-use firecore_game::battle::BattleData;
+use firecore_game::battle::BattleEntryRef;
 
 use firecore_game::macroquad::prelude::warn;
 
@@ -26,15 +26,15 @@ impl GameWorld for WorldMapSet {
         }
     }
 
-    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(map) = self.map_mut() {
-            map.on_tile(battle_data, player);
+            map.on_tile(battle, player);
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
         if let Some(map) = self.map_mut() {
-            map.update(delta, player, battle_data, warp, text_window);
+            map.update(delta, player, battle, warp, text_window);
         }
     }
 
@@ -62,15 +62,15 @@ impl GameWorld for WorldMapSetManager {
         }
     }
 
-    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(set) = self.set_mut() {
-            set.on_tile(battle_data, player);
+            set.on_tile(battle, player);
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
         if let Some(set) = self.set_mut() {
-            set.update(delta, player, battle_data, warp, text_window);
+            set.update(delta, player, battle, warp, text_window);
         }
     }
 

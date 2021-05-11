@@ -1,7 +1,7 @@
 use game::{
     input::{pressed, Control},
-    graphics::{draw, draw_text_left, draw_cursor},
-    macroquad::prelude::Texture2D,
+    gui::panel::Panel,
+    graphics::{draw_text_left, draw_cursor},
 };
 
 use crate::pokemon::ActivePokemon;
@@ -10,7 +10,7 @@ pub struct TargetPanel {
 
     // pub cols: usize,
 
-    background: Texture2D,
+    panel: Panel,
 
     pub names: Vec<Option<String>>,
     pub cursor: usize,
@@ -21,7 +21,7 @@ impl TargetPanel {
 
     pub fn new() -> Self {
         Self {
-            background: super::moves::move_panel_texture(),
+            panel: Panel::new(),
             names: Vec::with_capacity(4),
             cursor: 0,
         }
@@ -50,7 +50,7 @@ impl TargetPanel {
     }
 
     pub fn render(&self) {
-        draw(self.background, 0.0, 113.0);
+        self.panel.render(0.0, 113.0, 160.0, 47.0);
         for (index, name) in self.names.iter().enumerate() {
             let x_offset = if index % 2 == 1 {
                 72.0

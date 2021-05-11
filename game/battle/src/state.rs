@@ -1,30 +1,57 @@
 use std::collections::VecDeque;
 
-use crate::pokemon::{
-    ActivePokemonIndex,
-    BattleAction,
-};
+use crate::pokemon::BattleActionInstance;
 
+pub enum BattleManagerState {
+	Transition,
+	Opener,
+	Battle,
+	Closer,
+}
 
 
 #[derive(Debug)]
 pub enum BattleState {
-	Selecting { index: usize, started: bool },
+	Selecting(usize),
 	// Waiting (for opponent)
 	Moving(MoveState),
 }
 
 impl Default for BattleState {
     fn default() -> Self {
-        Self::Selecting { index: crate::Battle::DEFAULT_ACTIVE, started: false }
+        Self::Selecting(crate::Battle::DEFAULT_ACTIVE)
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum MoveState {
 
 	Start,
-	Pokemon { queue: VecDeque<ActivePokemonIndex>, current: Option<(BattleAction, ActivePokemonIndex, bool)> }, // queue of pokemon
+	SetupPokemon,
+	Pokemon(MoveQueue), // queue of pokemon
+	SetupPost,
 	Post,
+	End,
+
+}
+
+#[derive(Debug)]
+pub struct MoveQueue {
+	pub actions: VecDeque<BattleActionInstance>,
+	pub current: Option<BattleActionInstance>,
+}
+
+impl MoveQueue {
+
+	pub fn new(actions: VecDeque<BattleActionInstance>) -> Self {
+		Self {
+			actions,
+			current: None,
+		}
+	}
+
+	// pub fn interrupt(&mut self, instance: BattleActionInstance) {
+	// 	self.actions.push_front(instance);
+	// }
 
 }

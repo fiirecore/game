@@ -17,7 +17,7 @@ pub fn play_music(music: MusicId) -> Result<(), PlayAudioError> {
         Some(mut current) => {
             if let Some((_, mut instance)) = current.take() {
                 if let Err(err) = instance.stop(StopInstanceSettings::default()) {
-                    return Err(PlayAudioError::CurrentError(err));
+                    return Err(PlayAudioError::CommandError(err));
                 }
             }
         }
@@ -41,7 +41,7 @@ pub fn play_music(music: MusicId) -> Result<(), PlayAudioError> {
                                     Ok(())
                                 }
                                 Err(err) => {
-                                    Err(PlayAudioError::PlayError(err))
+                                    Err(PlayAudioError::CommandError(err))
                                 }
                             }
                         }

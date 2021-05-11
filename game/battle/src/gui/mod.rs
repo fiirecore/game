@@ -8,7 +8,7 @@ use background::BattleBackground;
 use panels::BattlePanel;
 use bounce::PlayerBounce;
 
-use self::panels::level_up::LevelUpMovePanel;
+// use self::panels::level_up::LevelUpMovePanel;
 
 pub mod background;
 pub mod panels;
@@ -54,7 +54,7 @@ pub struct BattleGui {
 
 	pub bounce: PlayerBounce,
 
-	pub level_up: LevelUpMovePanel,
+	// pub level_up: LevelUpMovePanel,
 
 }
 
@@ -74,31 +74,15 @@ impl BattleGui {
 
 			bounce: PlayerBounce::new(),
 
-			level_up: LevelUpMovePanel::new(panel),
+			// level_up: LevelUpMovePanel::new(panel),
 
 		}
 
 	}
 
-	// #[deprecated]
-	// pub fn update(&mut self) {
-	// 	/*
-	// 	 To - do: input active pokemon instead of status gui, 
-	// 	 if more than 1 active pokemon, gui moves left/right
-	// 	 only 1 pokemon is moving at once
-	// 	 */
-	// 		// self.bounce.update(delta, &mut self.player); 
-
-	// 	// self.panel.update();
-	// }
-
-	#[deprecated]
+	#[inline]
 	pub fn render_panel(&self) {
         draw(self.background.panel, 0.0, 113.0);
-		self.panel.render();
-		if self.level_up.is_alive() {
-			self.level_up.render();
-		}	
 	}
 
 }

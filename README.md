@@ -37,6 +37,7 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
 - [X] Battle animations with scripting
 - [ ] All NPCs up to Cerulean are added
 - [X] Player has money
+- [ ] Battle AI
 
 ### v0.5.0
 

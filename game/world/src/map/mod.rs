@@ -10,7 +10,7 @@ use game::{
             PlayerSaves,
         }
     },
-    battle::BattleData,
+    battle::BattleEntryRef,
     play_music_named, play_music, 
     graphics::{draw, draw_cursor},
     macroquad::prelude::{KeyCode, info, warn, is_key_pressed},
@@ -74,7 +74,7 @@ impl GameWorld for WorldMap {
 
     }
 
-    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(tile_id) = self.tile(player.character.position.coords) {
 
             if WILD_ENCOUNTERS.load(Relaxed) {
@@ -83,12 +83,12 @@ impl GameWorld for WorldMap {
                         if let Some(tiles) = wild.tiles.as_ref() {
                             for tile in tiles.iter() {
                                 if tile_id.eq(tile) {
-                                    wild_battle(battle_data, wild);
+                                    wild_battle(battle, wild);
                                     break;
                                 }
                             }
                         } else {
-                            wild_battle(battle_data, wild);
+                            wild_battle(battle, wild);
                         }
                     }          
                 }
@@ -142,7 +142,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
 
         // Move NPCs
 
@@ -401,7 +401,7 @@ impl GameWorld for WorldMap {
                         }
                         WorldActionKind::NPCBattle(id) => {
                             if let Some(npc) = self.npcs.get(id) {
-                                trainer_battle(battle_data, &self.id, id, npc);
+                                trainer_battle(battle, &self.id, id, npc);
                             }
                             pop = true;
                         }
@@ -552,7 +552,7 @@ impl GameWorld for WorldMap {
             if text_window.is_alive() {
                 if text_window.is_finished() {
                     {
-                        trainer_battle(battle_data, &self.id, &self.state.npc.take().unwrap(), npc);
+                        trainer_battle(battle, &self.id, &self.state.npc.take().unwrap(), npc);
                     }
                     text_window.despawn();
                 } else {

@@ -31,7 +31,6 @@ fn many_opponent_texture() -> Texture2D {
 	unsafe { *OPPONENT_MANY.get_or_insert(byte_texture(include_bytes!("../../assets/gui/opponent_many.png"))) }
 }
 
-
 pub struct PokemonStatusGui {
 
 	alive: bool,
@@ -271,6 +270,10 @@ impl PokemonStatusGui {
 				self.health.0.render_position(pos + self.health.1);
 			}
 		}
+	}
+
+	pub fn health_moving(&self) -> bool {
+		self.health.0.is_moving()
 	}
 
 }

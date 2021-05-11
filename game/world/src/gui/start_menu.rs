@@ -92,7 +92,7 @@ impl StartMenu {
                     // Close Menu
                     self.despawn();
                 }
-                _ => (),
+                _ => unreachable!(),
             }
         }
 

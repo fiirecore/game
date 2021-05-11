@@ -1,15 +1,14 @@
 use game::{
     pokedex::pokemon::instance::PokemonInstance,
     input::{self as input, Control},
-    macroquad::prelude::Texture2D,
+    gui::panel::Panel,
     text::TextColor,
-    graphics::{byte_texture, draw, draw_text_left, draw_cursor},
+    graphics::{draw_text_left, draw_cursor},
 };
 
 pub struct BattleOptions {
     
-    // #[deprecated]
-    background: Texture2D,
+    panel: Panel,
 
     buttons: [&'static str; 4],
 
@@ -25,7 +24,7 @@ impl BattleOptions {
 
 		Self {
             
-            background: byte_texture(include_bytes!("../../../assets/gui/button_panel.png")),
+            panel: Panel::new(),
 
             buttons: [
                 "FIGHT",
@@ -41,7 +40,7 @@ impl BattleOptions {
 		}
     }
     
-    pub fn update_text(&mut self, instance: &PokemonInstance) {
+    pub fn setup(&mut self, instance: &PokemonInstance) {
         self.pokemon_do = instance.name() + " do?";
     }
 
@@ -66,7 +65,7 @@ impl BattleOptions {
     }
 
     pub fn render(&self) {
-        draw(self.background, 120.0, 113.0);
+        self.panel.render(120.0, 113.0, 120.0, 47.0);
 
         draw_text_left(1, "What will", TextColor::White, 11.0, 123.0);
         draw_text_left(1, &self.pokemon_do, TextColor::White, 11.0, 139.0);

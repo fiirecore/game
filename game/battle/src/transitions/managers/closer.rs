@@ -41,7 +41,7 @@ impl BattleCloserManager { // return player data
     }
 
     pub fn spawn_closer(&mut self, battle: &Battle) {
-        match battle.battle_type {
+        match battle.data.battle_type {
             BattleType::Wild => self.current = Closers::Wild,
             _ => self.current = Closers::Trainer,
         }

@@ -10,7 +10,7 @@ use firecore_world_lib::{
     character::player::PlayerCharacter,
 };
 
-use firecore_game::battle::BattleData;
+use firecore_game::battle::BattleEntryRef;
 
 use firecore_game::macroquad::prelude::warn;
 
@@ -23,16 +23,16 @@ impl GameWorld for WorldChunk {
         self.map.on_start(music);
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
-        self.map.update(delta, player, battle_data, warp, text_window);
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
+        self.map.update(delta, player, battle, warp, text_window);
     }
 
     fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool) {
         self.map.render(textures, screen.offset(self.coords), border)
     }
 
-    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
-        self.map.on_tile(battle_data, player)
+    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
+        self.map.on_tile(battle, player)
     }
 
     fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
@@ -51,9 +51,9 @@ impl GameWorld for WorldChunkMap {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle_data: &mut Option<BattleData>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
+    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
         if let Some(chunk) = self.chunk_mut() {
-            chunk.update(delta, player, battle_data, warp, text_window);
+            chunk.update(delta, player, battle, warp, text_window);
         }
     }
 
@@ -74,10 +74,10 @@ impl GameWorld for WorldChunkMap {
         }
     }
 
-    fn on_tile(&mut self, battle_data: &mut Option<BattleData>, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(chunk) = self.chunk_mut() {
             if chunk.in_bounds(player.character.position.coords) {
-                chunk.on_tile(battle_data, player);
+                chunk.on_tile(battle, player);
             }
         }
     }

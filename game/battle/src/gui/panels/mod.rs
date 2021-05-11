@@ -23,20 +23,20 @@ pub mod target;
 pub mod battle;
 pub mod fight;
 
-pub mod level_up;
+// pub mod level_up;
 
 pub struct BattlePanel {
 
-    alive: bool,
+    pub alive: bool,
 
-    active: BattlePanels,
+    pub active: BattlePanels,
 
-    battle: BattleOptions,
+    pub battle: BattleOptions,
     pub fight: FightPanel,
 
 }
 
-enum BattlePanels {
+pub enum BattlePanels {
     Main,
     Fight,
 }
@@ -58,46 +58,30 @@ impl BattlePanel {
         }
     }
 
-    pub fn update_text(&mut self, instance: &PokemonInstance, targets: &Box<[crate::pokemon::ActivePokemon]>) {
-        self.battle.update_text(instance);
-        self.fight.update_gui(instance, targets);
+    pub fn setup(&mut self, last_move: &mut Option<(usize, usize)>, instance: &PokemonInstance, targets: &Box<[crate::pokemon::ActivePokemon]>) {
+        self.battle.setup(instance);
+        self.fight.setup(instance, targets);
+        let last_move = last_move.take().unwrap_or_default();
+        self.fight.moves.cursor = last_move.0;
+        self.fight.targets.cursor = last_move.1
     }
 
-    pub fn input(&mut self, battle: &Battle, closer: &mut crate::manager::BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) -> bool {
+    pub fn input(&mut self, pokemon: &PokemonInstance) -> Option<BattlePanels> {
         if self.alive {
             match self.active {
                 BattlePanels::Main => {
                     self.battle.input();
-                    if pressed(Control::A) {
-                        match self.battle.cursor {
-                            0 => {
-                                self.active = BattlePanels::Fight;
-                            },
-                            1 => {
-                                bag_gui.spawn(false);
-                            },
-                            2 => {
-                                super::battle_party_gui(party_gui, &battle.player, true);
-                            },
-                            3 => {
-                                if battle.battle_type == game::util::battle::BattleType::Wild {
-                                    closer.spawn_closer(battle);
-                                }
-                            },
-                            _ => {}
-                        }
-                    }
-                    false
+                    if pressed(Control::A) { Some(BattlePanels::Main) } else { None }
                 }
                 BattlePanels::Fight => {    
                     if pressed(Control::B) {
                         self.active = BattlePanels::Main;
                     }
-                    true
+                    if self.fight.input(pokemon) { Some(BattlePanels::Fight) } else { None }
                 }
             }
         } else {
-            false
+            None
         }
     }
 

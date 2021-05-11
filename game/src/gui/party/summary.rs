@@ -117,7 +117,7 @@ impl SummaryGui {
                 2 => {
                     draw(self.pages[2], 119.0, 17.0);
                 },
-                _ => (),
+                _ => unreachable!(),
             }
         }
     }
