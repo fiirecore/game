@@ -1,17 +1,19 @@
-use game::{
-    pokedex::pokemon::instance::PokemonInstance,
-    battle::BattleTeam,
-};
+use game::battle::BattleTeam;
 
+mod option;
 mod party;
-mod renderer;
 mod moves;
 
+pub mod ai;
+
+pub use option::*;
 pub use party::*;
-pub use renderer::*;
 pub use moves::*;
 
-use crate::gui::status::PokemonStatusGui;
+use crate::ui::pokemon::{
+    PokemonRenderer,
+    status::PokemonStatusGui,
+};
 
 
 pub struct ActivePokemon {
@@ -20,17 +22,10 @@ pub struct ActivePokemon {
     pub queued_move: Option<BattleMove>,
 
     pub status: PokemonStatusGui,
-    pub renderer: ActivePokemonRenderer,
+    pub renderer: PokemonRenderer,
 
     pub last_move: Option<(usize, usize)>, // previous cursor pos
 
-}
-
-#[derive(Clone)]
-pub enum PokemonOption {
-    Some(usize, PokemonInstance),
-    None,
-    ToReplace(usize),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -39,57 +34,18 @@ pub struct ActivePokemonIndex {
 	pub active: usize,
 }
 
-impl PokemonOption {
-    pub fn as_ref(&self) -> Option<&PokemonInstance> {
-        match self {
-            PokemonOption::Some(_, instance) => Some(instance),
-            // PokemonOption::Replace(_, instance, _) => Some(instance),
-            _ => None,
-        }
-    }
-    pub fn as_mut(&mut self) -> Option<&mut PokemonInstance> {
-        match self {
-            PokemonOption::Some(_, instance) => Some(instance),
-            // PokemonOption::Replace(_, instance, _) => Some(instance),
-            _ => None,
-        }
-    }
-
-    pub fn take(&mut self) -> PokemonOption {
-        std::mem::replace(self, Self::None)
-    }
-
-    pub fn replace(&mut self, new: usize) -> Option<(usize, PokemonInstance)> {
-        if match self {
-            PokemonOption::ToReplace(..) => false,
-            _ => true,
-        } {
-            if let PokemonOption::Some(index, instance) = self.take() {
-                *self = PokemonOption::ToReplace(new);
-                return Some((index, instance));
-            } else {
-                *self = PokemonOption::ToReplace(new);
-            }
-        }
-        None
-    }
-
-    pub fn is_some(&self) -> bool {
-        match self {
-            PokemonOption::None => false,
-            _ => true,
-        }
-    }
-
-}
 
 impl ActivePokemon {
 
-    pub fn update(&mut self) {
+    pub fn reset(&mut self) {
         self.queued_move = None;
         let pokemon = self.pokemon.as_ref();
         self.status.update_gui(pokemon, true);
-        self.renderer.update_pokemon(pokemon);
+        self.renderer.new_pokemon(pokemon);
+    }
+
+    pub fn update_status(&mut self, reset: bool) {
+        self.status.update_gui(self.pokemon.as_ref(), reset)
     }
 
 }

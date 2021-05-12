@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::pokemon::Level;
+use crate::pokemon::{Level, Experience};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Training {
@@ -40,11 +40,11 @@ impl Default for GrowthRate {
 
 impl GrowthRate {
 
-	pub fn max_exp(self, level: Level) -> u32 {
-		let level = level as u32;
+	pub fn max_exp(self, level: Level) -> Experience {
+		let level = level as Experience;
 		match self {
-		    GrowthRate::Fast => (0.8 * level.pow(3) as f32) as u32,
-		    GrowthRate::Medium => level.pow(3) as u32,
+		    GrowthRate::Fast => (0.8 * level.pow(3) as f32) as Experience,
+		    GrowthRate::Medium => level.pow(3) as Experience,
 		    GrowthRate::Slow => (1.25 * level.pow(3) as f32) as u32,
 			_ => ((1.2 * level.pow(3) as f32) as isize - 15 * level.pow(2) as isize + 100 * level as isize - 140) as u32, // MediumSlow
 		}

@@ -1,3 +1,5 @@
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
+
 use game::{
     deps::Random,
     util::{Entity, Completable, Direction, Timer},
@@ -33,11 +35,13 @@ use world::{
     script::world::{WorldScript, Condition, WorldActionKind, ScriptWarp},
 };
 
-use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-
-use super::gui::text_window::TextWindow;
-use super::{GameWorld, WorldTextures, RenderCoords};
-use crate::battle::{wild_battle, trainer_battle};
+use crate::{
+    GameWorld,
+    WorldTextures,
+    RenderCoords,
+    gui::TextWindow,
+    battle::{wild_battle, trainer_battle}
+};
 
 pub mod manager;
 pub mod set;
@@ -47,7 +51,7 @@ pub mod texture;
 pub mod warp;
 
 pub static NPC_RANDOM: Random = Random::new();
-pub static mut NPC_TIMER: Timer = Timer::new(0.5);
+pub static mut NPC_TIMER: Timer = Timer::new(true, 0.5);
 pub static WILD_ENCOUNTERS: AtomicBool = AtomicBool::new(true);
 
 const NPC_MOVE_CHANCE: f32 = 1.0 / 12.0;
@@ -563,6 +567,7 @@ impl GameWorld for WorldMap {
                     npc.character.move_to_destination(delta);
                 } else {
                     text_window.spawn();
+                    player.freeze_input();
                     npc.character.destination = None;
     
                     let mut message_ran = false;

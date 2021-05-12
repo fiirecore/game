@@ -1,4 +1,9 @@
-use firecore_world_lib::{
+use game::{
+    battle::BattleEntryRef,
+    macroquad::prelude::warn
+};
+
+use world::{
     map::{
         set::{
             WorldMapSet,
@@ -9,12 +14,12 @@ use firecore_world_lib::{
     character::player::PlayerCharacter,
 };
 
-use firecore_game::battle::BattleEntryRef;
-
-use firecore_game::macroquad::prelude::warn;
-
-use crate::{GameWorld, WorldTextures, RenderCoords};
-use crate::gui::text_window::TextWindow;
+use crate::{
+    GameWorld,
+    WorldTextures,
+    RenderCoords,
+    gui::TextWindow,
+};
 
 impl GameWorld for WorldMapSet {
 

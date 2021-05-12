@@ -33,6 +33,10 @@ pub fn should_quit() -> bool {
 
 pub static DEBUG: AtomicBool = AtomicBool::new(cfg!(debug_assertions));
 
+pub fn set_debug(debug: bool) {
+    DEBUG.store(debug, Relaxed);
+}
+
 pub fn is_debug() -> bool {
     DEBUG.load(Relaxed)
 }

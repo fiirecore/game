@@ -12,8 +12,6 @@ pub trait State {
 
 	fn on_start(&mut self);
 
-	fn input(&mut self, delta: f32);
-
 	fn update(&mut self, delta: f32) -> Option<States>;
 
 	fn render(&self);

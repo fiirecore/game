@@ -20,20 +20,24 @@ pub fn filter(texture: Texture2D) -> Texture2D {
 	texture
 }
 
+#[inline]
 pub fn draw(texture: Texture2D, x: f32, y: f32) {
 	draw_texture(texture, x, y, DRAW_COLOR);
 }
 
+#[inline]
 pub fn draw_bottom(texture: Texture2D, x: f32, y: f32) {
 	draw(texture, x, y - texture.height());
 }
 
+#[inline]
 pub fn draw_o(texture: Option<Texture2D>, x: f32, y: f32) {
 	if let Some(texture) = texture {
 		draw(texture, x, y);
 	}
 }
 
+#[inline]
 pub fn draw_o_bottom(texture: Option<Texture2D>, x: f32, y: f32) {
 	if let Some(texture) = texture {
 		draw_bottom(texture, x, y);

@@ -51,8 +51,6 @@ use state::{
     manager::StateManager,
 };
 
-use std::sync::atomic::Ordering::Relaxed;
-
 pub mod state;
 
 pub const TITLE: &str = "Pokemon FireRed";
@@ -64,8 +62,11 @@ pub const DEFAULT_SCALE: f32 = 3.0;
 
 static mut STATE_MANAGER: Option<StateManager> = None;
 
-#[cfg(target_arch = "wasm32")]
-#[game::macroquad::main(settings)]
+#[cfg(any(target_arch = "wasm32", target_os = "android"))]
+use game::macroquad;
+
+#[cfg(any(target_arch = "wasm32", target_os = "android"))]
+#[macroquad::main(settings)]
 async fn main() {
     start().await;
 }
@@ -81,7 +82,7 @@ fn settings() -> Conf {
 }
 
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", target_os = "android")))]
 fn main() {
 
     Window::from_config(settings(), start());
@@ -151,7 +152,7 @@ pub async fn start() {
     {
 
         if args.contains(&Args::Debug) {
-            game::DEBUG.store(true, Relaxed);
+            game::set_debug(true);
         }
         
         if game::is_debug() {
@@ -222,9 +223,9 @@ pub async fn start() {
                 // Toggle debug on key press
 
                 if is_key_pressed(KeyCode::O) {
-                    let debug = !game::DEBUG.load(Relaxed);
-                    game::DEBUG.store(debug, Relaxed);
-                    info!("Debug: {}", debug)
+                    let debug = !game::is_debug();
+                    game::set_debug(debug);
+                    info!("Debug Mode: {}", debug)
                 }
         
                 // Reload configuration on key press
@@ -238,8 +239,6 @@ pub async fn start() {
                 }
 
             }
-            
-            state_manager.input(get_frame_time());
             
             state_manager.update(get_frame_time());
 

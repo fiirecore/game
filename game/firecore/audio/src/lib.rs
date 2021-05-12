@@ -20,10 +20,10 @@ pub use sound::{add_sound, play_sound};
 #[cfg(feature = "play")]
 pub fn create() -> Result<(), AddAudioError> {
     *music::MUSIC_ID_MAP.lock() = Some(deps::hash::HashMap::new());
-    #[cfg(not(target_arch = "wasm32"))] {
+    #[cfg(not(any(target_arch = "wasm32", target_os = "android")))] {
         backend::kira::context::create().map_err(|err| AddAudioError::SetupError(err))
     }
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", target_os = "android"))]
     Ok(())
 }
 

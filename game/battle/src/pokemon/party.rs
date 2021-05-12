@@ -13,21 +13,23 @@ use game::{
 
 use crate::pokemon::PokemonOption;
 use crate::{
-    pokemon::{
-        ActivePokemon,
-        ActivePokemonRenderer,
-    },
-    gui::{
+    pokemon::ActivePokemon,
+    ui::{
         BattleGuiPosition,
         BattleGuiPositionIndex,
-        status::PokemonStatusGui,
+        pokemon::{
+            PokemonRenderer,
+            status::PokemonStatusGui,            
+        },
     },
 };
+
+pub type ActivePokemonArray = ArrayVec<[ActivePokemon; 3]>;
 
 pub struct BattleParty {
 
     pub pokemon: ArrayVec<[Option<PokemonInstance>; 6]>,
-    pub active: Box<[ActivePokemon]>,
+    pub active: ActivePokemonArray,
 
 }
 
@@ -67,7 +69,7 @@ impl BattleParty {
                     let index = BattleGuiPositionIndex::new(position, index as u8, size);
                     ActivePokemon {
                         status: PokemonStatusGui::with(index, &pokemon),
-                        renderer: ActivePokemonRenderer::with(index, &pokemon, side),
+                        renderer: PokemonRenderer::with(index, &pokemon, side),
                         pokemon: PokemonOption::Some(index2, pokemon),
                         queued_move: None,
                         last_move: None,
@@ -79,7 +81,7 @@ impl BattleParty {
                         pokemon: PokemonOption::None,
                         queued_move: None,
                         status: PokemonStatusGui::new(index),
-                        renderer: ActivePokemonRenderer::new(index, side),
+                        renderer: PokemonRenderer::new(index, side),
                         last_move: None,
                     }
                 }
@@ -155,7 +157,7 @@ impl BattleParty {
             }
             self.pokemon[active_index] = Some(instance);
             self.active[active_index].pokemon = PokemonOption::Some(new, self.pokemon[new].take().unwrap());
-            self.active[active_index].update();
+            self.active[active_index].reset();
         }
     }
 
@@ -165,7 +167,7 @@ impl BattleParty {
                 panic!("Party spot at {} is already occupied!", index);
             }
             self.pokemon[index] = Some(instance);
-            self.active[active_index].update();
+            self.active[active_index].reset();
         }
     }
 
@@ -174,13 +176,9 @@ impl BattleParty {
             if let PokemonOption::ToReplace(new) = &active.pokemon {
                 let new = *new;
                 active.pokemon = PokemonOption::Some(new, self.pokemon[new].take().expect("Could not get inactive pokemon from party!"));
-                active.update();
+                active.reset();
             }
         }
-    }
-
-    pub fn update_status(&mut self, active_index: usize, reset: bool) -> bool { // returns if health has diff
-        self.active[active_index].status.update_gui(self.active[active_index].pokemon.as_ref(), reset)
     }
 
     pub fn collect_cloned(&self) -> PokemonInstanceParty {
@@ -193,11 +191,10 @@ impl BattleParty {
         party.into_iter().flatten().collect()
     }
 
-    #[deprecated(note = "uses clone")]
     pub fn collect_owned(self) -> PokemonInstanceParty {
         let mut party = self.pokemon;
         for pokemon in self.active.into_iter() {
-            if let PokemonOption::Some(index, instance) = pokemon.pokemon.clone() {
+            if let PokemonOption::Some(index, instance) = pokemon.pokemon {
                 party[index] = Some(instance);
             }
         }

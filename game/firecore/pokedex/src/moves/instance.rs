@@ -23,14 +23,17 @@ impl MoveInstance {
         }
     }
 
-    pub fn use_move(&mut self) -> Option<MoveRef> {
+    pub fn get(&self) -> Option<MoveRef> {
+        (self.pp == 0).then(|| self.pokemon_move)
+    }
+
+    pub fn decrement(&mut self) -> Option<MoveRef> {
         if self.pp == 0 {
             None
         } else {
             self.pp -= 1;
             Some(self.pokemon_move)
         }
-        
     }
 
 }

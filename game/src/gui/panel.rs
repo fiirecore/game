@@ -7,39 +7,31 @@ use crate::graphics::byte_texture;
 
 static mut PANEL: Option<Texture2D> = None;
 
-pub struct Panel {
-
-    corner: Texture2D,
-    // bottom_right_color: Texture2D,
-    // size: Vec2,
-
-}
+pub struct Panel(Texture2D);
 
 impl Panel {
 
     pub fn new() -> Self {
-        Self {
-            corner: unsafe { *PANEL.get_or_insert(byte_texture(include_bytes!("../../assets/gui/panel.png"))) },
-        }
+        Self(unsafe { *PANEL.get_or_insert(byte_texture(include_bytes!("../../assets/gui/panel.png"))) })
     }
 
     pub fn render(&self, x: f32, y: f32, w: f32, h: f32) {
 
-        draw_texture_ex(self.corner, x, y, WHITE, DrawTextureParams::default());
+        draw_texture_ex(self.0, x, y, WHITE, DrawTextureParams::default());
         let x1 = x + w - 7.0;
-        draw_texture_ex(self.corner, x1, y, WHITE, DrawTextureParams {
+        draw_texture_ex(self.0, x1, y, WHITE, DrawTextureParams {
             flip_x: true,
             ..Default::default()
         });
 
         let y1 = y + h - 7.0;
 
-        draw_texture_ex(self.corner, x, y1, WHITE, DrawTextureParams {
+        draw_texture_ex(self.0, x, y1, WHITE, DrawTextureParams {
             flip_y: true,
             ..Default::default()
         });
 
-        draw_texture_ex(self.corner, x1, y1, WHITE, DrawTextureParams {
+        draw_texture_ex(self.0, x1, y1, WHITE, DrawTextureParams {
             flip_x: true,
             flip_y: true,
             ..Default::default()
@@ -50,26 +42,26 @@ impl Panel {
 
         draw_rectangle(x + 7.0, y + 7.0, w, h, crate::graphics::WHITE);
 
-        draw_texture_ex(self.corner, x + 7.0, y, WHITE, DrawTextureParams {
+        draw_texture_ex(self.0, x + 7.0, y, WHITE, DrawTextureParams {
             source: Some(Rect::new(6.0, 0.0, 1.0, 7.0)),
             dest_size: Some(Vec2::new(w, 7.0)),
             ..Default::default()
         });
 
-        draw_texture_ex(self.corner, x, y + 7.0, WHITE, DrawTextureParams {
+        draw_texture_ex(self.0, x, y + 7.0, WHITE, DrawTextureParams {
             source: Some(Rect::new(0.0, 6.0, 7.0, 1.0)),
             dest_size: Some(Vec2::new(7.0, h)),
             ..Default::default()
         });
 
-        draw_texture_ex(self.corner, x1, y + 7.0, WHITE, DrawTextureParams {
+        draw_texture_ex(self.0, x1, y + 7.0, WHITE, DrawTextureParams {
             source: Some(Rect::new(0.0, 6.0, 7.0, 1.0)),
             dest_size: Some(Vec2::new(7.0, h)),
             flip_x: true,
             ..Default::default()
         });
 
-        draw_texture_ex(self.corner, x + 7.0, y1, WHITE, DrawTextureParams {
+        draw_texture_ex(self.0, x + 7.0, y1, WHITE, DrawTextureParams {
             source: Some(Rect::new(6.0, 0.0, 1.0, 7.0)),
             dest_size: Some(Vec2::new(w, 7.0)),
             flip_y: true,
@@ -85,5 +77,9 @@ impl Panel {
         }
         crate::graphics::draw_cursor(x + 8.0, y + 13.0 + (cursor << 4) as f32);
     }
+
+    // pub fn render_text_with_columns(&self, x: f32, y: f32, w: f32, h: f32) {
+
+    // }
 
 }

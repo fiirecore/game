@@ -752,7 +752,7 @@ dependencies = [
 [[package]]
 name = "macroquad"
 version = "0.3.3"
-source = "git+https://github.com/DoNotDoughnut/macroquad#751897e223780134c74efbee4ac99fe12ba8695d"
+source = "git+https://github.com/DoNotDoughnut/macroquad#4484fbcaeabe6429547fbdc6d44bfacd82a7925c"
 dependencies = [
  "ahash 0.7.2",
  "fontdue",
@@ -760,13 +760,12 @@ dependencies = [
  "image",
  "macroquad_macro",
  "miniquad",
- "rodio",
 ]
 
 [[package]]
 name = "macroquad_macro"
 version = "0.1.2"
-source = "git+https://github.com/DoNotDoughnut/macroquad#751897e223780134c74efbee4ac99fe12ba8695d"
+source = "git+https://github.com/DoNotDoughnut/macroquad#4484fbcaeabe6429547fbdc6d44bfacd82a7925c"
 
 [[package]]
 name = "memchr"
@@ -1187,16 +1186,6 @@ name = "ringbuf"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "25396a5da385580bae6dcca1969e036162df02abf8efbe99bbb7c9830429a9ad"
-
-[[package]]
-name = "rodio"
-version = "0.13.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b65c2eda643191f6d1bb12ea323a9db8d9ba95374e9be3780b5a9fb5cfb8520f"
-dependencies = [
- "cpal",
- "lewton",
-]
 
 [[package]]
 name = "ron"

@@ -43,6 +43,11 @@ impl MenuState for TitleState {
 	}
 	 
 	fn update(&mut self, delta: f32) {	
+		if pressed(Control::A) {
+			let seed = self.accumulator as u64 % 256;
+			crate::seed_randoms(seed);
+			self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
+		}
 		self.accumulator += delta;
 	}
 	
@@ -55,14 +60,6 @@ impl MenuState for TitleState {
 			draw(self.start, 44.0, 130.0);
 		}
 		draw(self.charizard, 129.0, 49.0);
-	}
-	
-	fn input(&mut self, _delta: f32) {
-		if pressed(Control::A) {
-			let seed = self.accumulator as u64 % 256;
-			crate::seed_randoms(seed);
-			self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
-		}
 	}
 	
 	fn quit(&mut self) {

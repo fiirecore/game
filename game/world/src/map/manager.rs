@@ -42,8 +42,8 @@ use crate::{
     WorldTextures,
     RenderCoords,
     gui::{
-        text_window::TextWindow,
-        start_menu::StartMenu,
+        TextWindow,
+        StartMenu,
     },
     battle::random_wild_battle,
 };
@@ -237,9 +237,7 @@ impl WorldManager {
             self.start_menu.toggle();
         }
 
-        if self.text_window.is_alive() {
-            self.text_window.input();
-        } else if self.start_menu.is_alive() {
+        if self.start_menu.is_alive() {
             self.start_menu.input(action, party_gui, bag_gui);
         } else {
 

@@ -24,53 +24,45 @@ use game::{
 	pokedex::{
 		moves::{
 			MoveCategory,
-			MoveRef,
 			target::MoveTargetInstance,
-			script::{
-				MoveAction,
-				MoveActionType,
-				DamageKind
-			},
 		},
-		pokemon::{
-			Health,
-			saved::SavedPokemonParty,
-			instance::PokemonInstance,
-		},
+		pokemon::saved::SavedPokemonParty,
 		texture::PokemonTexture,
 	},
 	storage::player::PlayerSave,
 };
-use pokemon::ActivePokemon;
-use pokemon::PokemonOption;
-use state::MoveQueue;
 
-use crate::pokemon::BattleActionInstance;
 use crate::{
 	state::{
 		BattleState,
 		MoveState,
+		MoveQueue
 	},
 	pokemon::{
 		BattleParty,
 		ActivePokemonIndex,
+		ActivePokemonArray,
 		BattleAction,
+		BattleActionInstance,
 		BattleMove,
+		ai::BattleAi,
 	},
-	gui::{
+	ui::{
 		BattleGui,
 		BattleGuiPosition,
 		battle_party_gui,
+		transitions::{
+			BattleCloser,
+			managers::closer::BattleCloserManager,
+		}
 	},
-	manager::BattleCloserManager,
 };
 
 pub mod state;
 pub mod manager;
 
 pub mod pokemon;
-pub mod gui;
-pub mod transitions;
+pub mod ui;
 
 pub static BATTLE_RANDOM: Random = Random::new();
 
@@ -78,12 +70,9 @@ pub struct Battle {
 
 	pub data: BattleData,
 	
-	pub player: BattleParty,
-	pub opponent: BattleParty,
-
-	// #[deprecated]
-	
-
+	player: BattleParty,
+	opponent: BattleParty, // to - do: move input handling (ai, on screen, over network)
+	ai: BattleAi,
 	state: BattleState,
 	
 }
@@ -95,11 +84,6 @@ pub struct BattleData {
 }
 
 impl Battle {
-
-	#[deprecated]
-	pub const TEMP_ACTIVE: usize = 0;
-
-	pub const DEFAULT_ACTIVE: usize = 0;
 	
 	pub fn new(player: &SavedPokemonParty, entry: BattleEntry) -> Option<Self> {		
 		if !(
@@ -118,6 +102,7 @@ impl Battle {
 					player: BattleParty::from_saved(player, entry.size, PokemonTexture::Back, BattleGuiPosition::Bottom),
 					opponent: BattleParty::new(entry.party, entry.size, PokemonTexture::Front, BattleGuiPosition::Top),
 					state: BattleState::default(),
+					ai: BattleAi::Random,
 				}
 			)
 		} else {
@@ -126,16 +111,13 @@ impl Battle {
 	}
 
 	pub fn start_moves(&mut self) {	
-		self.generate_opponent_moves();
+		self.ai.moves(&mut self.opponent.active, &self.player.active);
 		self.state = BattleState::Moving(MoveState::Start);
 	}
 
-	pub fn input(&mut self, gui: &mut BattleGui) {
-		gui.text.input();
-	}
-
-	// some input happens here too!
+	// input happens here too!
 	pub fn update(&mut self, delta: f32, gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
+		gui.bounce.update(delta);
 		match &mut self.state {
 
 			// Select pokemon moves / items / party switches
@@ -164,20 +146,20 @@ impl Battle {
 									} else {
 										if let Some(panels) = gui.panel.input(pokemon) {
 											match panels {
-												gui::panels::BattlePanels::Main => {
+												ui::panels::BattlePanels::Main => {
 													match gui.panel.battle.cursor {
-														0 => gui.panel.active = gui::panels::BattlePanels::Fight,
+														0 => gui.panel.active = ui::panels::BattlePanels::Fight,
 														1 => bag_gui.spawn(false),
-														2 => gui::battle_party_gui(party_gui, &self.player, true),
+														2 => ui::battle_party_gui(party_gui, &self.player, true),
 														3 => if self.data.battle_type == game::util::battle::BattleType::Wild {
-															closer.spawn_closer(self);
+															closer.spawn(self, &mut gui.text);
 														},
 														_ => unreachable!(),
 													}
 												}
-												gui::panels::BattlePanels::Fight => {
-													if let Some(pokemon_move) = pokemon.moves.get_mut(gui.panel.fight.moves.cursor).map(|instance| instance.use_move()).flatten() {
-														active.queued_move = Some(BattleMove::Move(pokemon_move, 
+												ui::panels::BattlePanels::Fight => {
+													if let Some(pokemon_move) = pokemon.moves.get(gui.panel.fight.moves.cursor).map(|instance| instance.get()).flatten() {
+														active.queued_move = Some(BattleMove::Move(gui.panel.fight.moves.cursor, 
 															match pokemon_move.target {
 																game::pokedex::moves::target::MoveTarget::Player => todo!(),//game::pokedex::moves::target::MoveTargetInstance::Player,
 																game::pokedex::moves::target::MoveTarget::Opponent => MoveTargetInstance::Opponent(gui.panel.fight.targets.cursor),
@@ -205,7 +187,6 @@ impl Battle {
 				}
 			},
 		    BattleState::Moving(move_state) => {
-
 				match move_state {
 					MoveState::Start => {
 						// Despawn the player button panel
@@ -235,63 +216,49 @@ impl Battle {
 											gui.text.spawn();
 											match &instance.action {
 												BattleAction::Pokemon(battle_move) => match battle_move {
-													BattleMove::Move(pokemon_move, target) => {
+													BattleMove::Move(move_index, target) => {
 														let (user, target, index) = match target {
 															// MoveTargetInstance::Player => (None, user.active_mut(pokemon.index)),
 															// MoveTargetInstance::Team(index) => (user.active(pokemon.index), user.active_mut(index)),
 															MoveTargetInstance::Opponent(index) => (pokemon, &mut other.active[*index], ActivePokemonIndex { team: instance.pokemon.team.other(), active: *index }),
 														};
 														if let Some(pokemon) = target.pokemon.as_mut() {
-															do_move(pokemon_move, user, pokemon);
-															gui::text::on_move(&mut gui.text, pokemon_move, user, pokemon);
-
-															let effective = pokemon.effective(pokemon_move.pokemon_type);
-														
-															if effective != game::pokedex::pokemon::types::effective::Effective::Effective && pokemon_move.category != MoveCategory::Status {
-																queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Effective(effective) })
-															}
+															if let Some((pokemon_move, damaged)) = user.use_move(*move_index, pokemon) {
+																if damaged {
+																	target.renderer.flicker();
+																}
+																ui::text::on_move(&mut gui.text, pokemon_move, user);
+	
+																let effective = pokemon.effective(pokemon_move.pokemon_type);
 															
-															if target.status.update_gui(Some(pokemon), false) {
-																target.renderer.flicker();														
-															}
-															if pokemon.is_faint() {
-																queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Faint });
+																if effective != game::pokedex::pokemon::types::Effective::Effective && pokemon_move.category != MoveCategory::Status {
+																	queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Effective(effective) })
+																}
+																
+																target.status.update_gui(Some(pokemon), false);
+																if pokemon.fainted() {
+																	queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Faint });
+																}
 															}
 														}
 													}
 													BattleMove::UseItem(item) => {
-														todo!()
-														// if let Some(pokemon) = user.active_mut(pokemon.index) {
-														// 	pokemon.pokemon_mut().execute_item(item);
-														// 	gui.update_gui(self, true, false);
-														// }
+														pokemon.execute_item(item);
+														ui::text::on_item(&mut gui.text, pokemon, item);
+														user.active[instance.pokemon.active].update_status(false);
 													}
 													BattleMove::Switch(new) => {
-														// if let Some(leaving) = user.pokemon(pokemon.index) {
-															gui::text::on_switch(&mut gui.text, pokemon, user.pokemon[*new].as_ref().unwrap());
-														// }
+														ui::text::on_switch(&mut gui.text, pokemon, user.pokemon[*new].as_ref().unwrap());
 													}
 												}
 												BattleAction::Effective(effective) => {
-													gui.text.clear();
-													gui.text.push(
-														game::text::MessagePage::new(
-															vec![format!("It was {}{}", effective, if game::pokedex::pokemon::types::effective::Effective::SuperEffective.eq(effective) { "!" } else { "..." })], 
-															Some(0.5)
-														)
-													);
-													gui.text.spawn();
+													ui::text::on_effective(&mut gui.text, effective);
 												}
 											    BattleAction::Faint => {
-													// Add text
-								
-													gui.text.clear();
-													gui::text::on_faint(&mut gui.text, pokemon.name());
-													gui.text.spawn();
-													user.active[instance.pokemon.active].renderer.fainting.fainting = true;
-
+													ui::text::on_faint(&mut gui.text, self.data.battle_type, pokemon);
+													user.active[instance.pokemon.active].renderer.faint();
 												}
-											    BattleAction::LevelUp => todo!(),
+											    // BattleAction::LevelUp => todo!(),
 											    // BattleAction::Wait => todo!(),
 											}
 											queue.current = Some(BattleActionInstance { pokemon: instance.pokemon, action: instance.action });
@@ -321,12 +288,12 @@ impl Battle {
 
 											if !gui.text.is_finished() {
 												gui.text.update(delta);
-											} else if active.renderer.is_flickering() || active.status.health_moving() {
-												active.renderer.update_flicker(delta);
-												active.status.update(delta);
+											} else if active.renderer.flicker.flickering() || active.status.health_moving() {
+												active.renderer.flicker.update(delta);
+												active.status.update_hp(delta);
 											} else {
 
-												println!("To - do: give pokemon exp.");
+												game::macroquad::prelude::info!("To - do: give pokemon exp.");
 		
 												// if other.is_faint() {
 												// 	// get team and index of fainted pokemon
@@ -354,7 +321,15 @@ impl Battle {
 	
 											}											
 										}
-										BattleMove::UseItem(..) => todo!("handle items"),
+										BattleMove::UseItem(..) => {
+											if !gui.text.is_finished() {
+												gui.text.update(delta)
+											} else if user.active[instance.pokemon.active].status.health_moving() {
+												user.active[instance.pokemon.active].status.update_hp(delta);
+											} else {
+												queue.current = None;
+											}
+										},
 										BattleMove::Switch(new) => {
 											if gui.text.is_finished() {
 												queue.current = None;
@@ -380,17 +355,17 @@ impl Battle {
 										BattleTeam::Player => {
 											if !party_gui.is_alive() {
 												if self.player.active[instance.pokemon.active].pokemon.is_some() {
-													if !gui.text.is_finished() || !self.player.active[instance.pokemon.active].renderer.fainting.is_finished() {
+													if !gui.text.is_finished() || !self.player.active[instance.pokemon.active].renderer.faint.fainting() {
 														gui.text.update(delta);
-														if !self.player.active[instance.pokemon.active].renderer.fainting.is_finished() {
-															self.player.active[instance.pokemon.active].renderer.fainting.update(delta);
+														if self.player.active[instance.pokemon.active].renderer.faint.fainting() {
+															self.player.active[instance.pokemon.active].renderer.faint.update(delta);
 														};
 													} else {
 														self.player.remove_pokemon(instance.pokemon.active);
 														if self.player.all_fainted() {
 															gui.panel.despawn();
 															self.data.winner = Some(BattleTeam::Opponent);
-															closer.spawn_closer(self);
+															closer.spawn(self, &mut gui.text);
 															return;
 														} else if self.player.any_inactive() {										
 															battle_party_gui(party_gui, &self.player, false);
@@ -401,36 +376,38 @@ impl Battle {
 													}
 												}
 											} else {
-
+												party_gui.update(delta);
+												party_gui.input();
+												if let Some(selected) = party_gui.selected.take() {
+													self.player.queue_replace(instance.pokemon.active, selected);
+													queue.current = None;
+												}
 											}
 										}
 										BattleTeam::Opponent => {
-											if !gui.text.is_finished() {
+											if self.opponent.active[instance.pokemon.active].renderer.faint.fainting() {
+												self.opponent.active[instance.pokemon.active].renderer.faint.update(delta);
+											} else if !gui.text.is_finished() {
 												gui.text.update(delta);
-											} else if self.opponent.active[instance.pokemon.active].renderer.fainting.fainting {
-												self.opponent.active[instance.pokemon.active].renderer.fainting.update(delta);
 											} else {
 												if self.opponent.all_fainted() {
 													gui.panel.despawn();
 													self.data.winner = Some(BattleTeam::Player);
-													closer.spawn_closer(self);
+													closer.spawn(self, &mut gui.text);
 													// self.move_queue = MoveQueueOption:;
 												} else {
 													let available: Vec<usize> = self.opponent.pokemon.iter()
 														// .map(|(index, pokemon)| pokemon.as_ref().map(|pokemon| (index, pokemon)))
-														.flatten()
 														.enumerate()
-														.filter(|(_, pokemon)| pokemon.current_hp != 0)
+														.filter(|(_, pokemon)| pokemon.as_ref().map(|instance| !instance.fainted()).unwrap_or(false))
 														.map(|(index, _)| index)
 														.collect();
 				
-													self.opponent.remove_pokemon(instance.pokemon.active);
+													// self.opponent.remove_pokemon(instance.pokemon.active);
 	
 													if !available.is_empty() {
 														self.opponent.queue_replace(instance.pokemon.active, available[BATTLE_RANDOM.gen_range(0, available.len())]);
 													}
-	
-													self.opponent.update_status(instance.pokemon.active, true);
 	
 													queue.current = None;
 			
@@ -439,7 +416,7 @@ impl Battle {
 											}
 										}
 									}
-									BattleAction::LevelUp => todo!(),
+									// BattleAction::LevelUp => todo!(),
 								    // BattleAction::Wait => todo!(),
 								}
 							}
@@ -468,17 +445,17 @@ impl Battle {
 		gui.background.render(0.0);
 		for active in self.opponent.active.iter() {
 			active.renderer.render(game::macroquad::prelude::Vec2::default());
-			active.status.render();
+			active.status.render(0.0, 0.0);
 		}
 		match &self.state {
 		    BattleState::Selecting(index) => {
 				for (current, active) in self.player.active.iter().enumerate() {
 					if current.eq(index) {
 						active.renderer.render(game::macroquad::prelude::Vec2::new(0.0, gui.bounce.offset));
-						active.status.render_offset(0.0, -gui.bounce.offset);
+						active.status.render(0.0, -gui.bounce.offset);
 					} else {
 						active.renderer.render(game::macroquad::prelude::Vec2::default());
-						active.status.render();
+						active.status.render(0.0, 0.0);
 					}
 				}
 				gui.render_panel();
@@ -487,15 +464,15 @@ impl Battle {
 			BattleState::Moving( .. ) => {
 				for active in self.player.active.iter() {
 					active.renderer.render(game::macroquad::prelude::Vec2::default());
-					active.status.render();
+					active.status.render(0.0, 0.0);
 				}
 				gui.render_panel();
-				gui.text.render(#[cfg(debug_assertions)] "moving render");
+				gui.text.render();
 			}
 		}
 	}
 
-	pub fn move_queue(player: &mut Box<[ActivePokemon]>, opponent: &mut Box<[ActivePokemon]>) -> VecDeque<BattleActionInstance> {
+	pub fn move_queue(player: &mut ActivePokemonArray, opponent: &mut ActivePokemonArray) -> VecDeque<BattleActionInstance> {
 
 		use std::cmp::Reverse;
 
@@ -505,7 +482,7 @@ impl Battle {
 			Second(Reverse<u8>, Reverse<u16>, ActivePokemonIndex), // priority, speed, pokemon <- fix last, player always goes first
 		}
 
-		fn insert(map: &mut std::collections::BTreeMap<Priority, BattleActionInstance>, team: BattleTeam, active: &mut Box<[ActivePokemon]>) {
+		fn insert(map: &mut std::collections::BTreeMap<Priority, BattleActionInstance>, team: BattleTeam, active: &mut ActivePokemonArray) {
 			for (index, active) in active.iter_mut().enumerate() {
 				if let (Some(pokemon), Some(battle_move)) = (active.pokemon.as_ref(), active.queued_move.take()) {
 					let index = ActivePokemonIndex { team, active: index };
@@ -525,26 +502,8 @@ impl Battle {
 		insert(&mut map, BattleTeam::Player, player);
 		insert(&mut map, BattleTeam::Opponent, opponent);
 
-		map.into_iter().map(|(_, i)| i).collect()
+		map.into_iter().map(|(_, i)| i).collect() // into_values
 
-	}
-
-	// warning: ignores PP
-	#[deprecated(note = "use AIs instead")]
-	pub fn generate_opponent_moves(&mut self) {
-		for active in self.opponent.active.iter_mut() {
-			if let PokemonOption::Some(_, pokemon) = &active.pokemon {
-				let index = crate::BATTLE_RANDOM.gen_range(0, pokemon.moves.len());
-				active.queued_move = Some(
-					BattleMove::Move(
-						pokemon.moves[index].pokemon_move, 
-						MoveTargetInstance::Opponent(
-							crate::BATTLE_RANDOM.gen_range(0, self.player.active.len())
-						)
-					)
-				);
-			}
-		}
 	}
 
 	pub fn update_data(self, player: &mut PlayerSave) -> Option<(BattleTeam, bool)> {
@@ -563,119 +522,10 @@ impl Battle {
 			}
 		}
 
-		player.party = self.player.collect_owned().into_iter().map(|instance| instance.to_saved()).collect();
+		player.party = self.player.collect_owned().into_iter().map(|instance| instance.into_saved()).collect();
 
 		self.data.winner.map(|winner| (winner, trainer))
 		
 	}
 	
-}
-
-pub fn exp_gain(battle_type: BattleType, target: &PokemonInstance) -> game::pokedex::pokemon::Experience {
-	((target.pokemon.training.base_exp * target.data.level as u16) as f32 * match battle_type {
-		BattleType::Wild => 1.0,
-		_ => 1.5,
-	} / 7.0) as game::pokedex::pokemon::Experience
-}
-
-fn do_move(pokemon_move: MoveRef, user: &mut PokemonInstance, target: &mut PokemonInstance) -> bool {
-	if let Some(script) = &pokemon_move.script {
-		// for action in &script.actions {
-			let actions = match &script.action {
-				MoveAction::Action(action) => Some(*action),
-				MoveAction::Persistent(persistent) => {
-					target.persistent = Some(game::pokedex::moves::persistent::PersistentMoveInstance {
-						pokemon_move,
-						actions: &persistent.action,
-						remaining: persistent.length.map(|(min, max)| BATTLE_RANDOM.gen_range(min, max)),
-						should_do: persistent.on_move,
-					});
-					None
-				}
-			};
-			if let Some(action) = actions {
-				move_action(action, user, target)
-			} else {
-				false
-			}
-		// }
-	} else {
-		if pokemon_move.accuracy.map(|accuracy| {
-			let hit: u8 = BATTLE_RANDOM.gen_range(0, 100);
-			hit < accuracy
-		}).unwrap_or(true) {
-			if let Some(power) = pokemon_move.power {
-				return damage_kind(user, target, DamageKind::Move(power, pokemon_move.category, pokemon_move.pokemon_type)) > 0;
-			}
-		}
-		false
-	}
-}
-
-pub fn get_move_damage(power: game::pokedex::moves::Power, category: MoveCategory, pokemon_type: game::pokedex::pokemon::types::PokemonType, user: &PokemonInstance, target: &PokemonInstance) -> Health {
-	let effective = target.effective(pokemon_type);
-	if effective == game::pokedex::pokemon::types::effective::Effective::Ineffective {
-		return 0;
-	}
-	let effective = effective.multiplier() as f64;
-	let (atk, def) = match category {
-		MoveCategory::Physical => (user.base.atk as f64, target.base.def as f64),
-		MoveCategory::Special => (user.base.sp_atk as f64, target.base.sp_def as f64),
-		MoveCategory::Status => (0.0, 0.0),
-	};
-	(
-		(((((2.0 * user.data.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
-		* (BATTLE_RANDOM.gen_range(85, 101u8) as f64 / 100.0)
-		* (if pokemon_type == user.pokemon.data.primary_type { 1.5 } else { 1.0 })
-	) as Health
-}
-
-fn move_action(action: MoveActionType, user: &mut PokemonInstance, target: &mut PokemonInstance) -> bool {
-	match action {
-	    MoveActionType::Damage(damage) => {
-			damage_kind(user, target, damage);
-			true
-		},
-	    MoveActionType::Status(chance, effect) => {
-			chance_status(target, chance, effect)
-		},
-	    MoveActionType::Drain(damage, percent) => {
-			let damage = damage_kind(user, target, damage) as f32;
-			user.current_hp += (damage * percent) as Health;
-			if user.current_hp > user.base.hp {
-				user.current_hp = user.base.hp;
-			}
-			true
-		}
-	}
-}
-
-fn damage_kind(user: &PokemonInstance, target: &mut PokemonInstance, damage: DamageKind) -> Health {
-	let damage = match damage {
-		DamageKind::Move(power, category, pokemon_type) => {
-			get_move_damage(power, category, pokemon_type, user, target)
-		}
-		DamageKind::PercentCurrent(percent) => {
-			(target.current_hp as f32 * percent) as Health
-		}
-		DamageKind::PercentMax(percent) => {
-			(target.base.hp as f32 * percent) as Health
-		}
-		DamageKind::Constant(damage) => damage,
-	};
-	target.current_hp = target.current_hp.saturating_sub(damage);
-	damage
-}
-
-fn chance_status(target: &mut PokemonInstance, chance: u8, effect: game::pokedex::pokemon::status::StatusEffect) -> bool {
-	if target.data.status.is_none() {
-		if chance >= BATTLE_RANDOM.gen_range(1, 11) {
-			target.data.status = Some(effect);
-			true
-		} else {
-			false
-		}
-	} else {
-		false
-	}
 }

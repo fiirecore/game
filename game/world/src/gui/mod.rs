@@ -1,2 +1,4 @@
-pub mod start_menu;
-pub mod text_window;
+mod start;
+pub use start::StartMenu;
+mod text;
+pub use text::TextWindow;

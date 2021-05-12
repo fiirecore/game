@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-pub mod effective;
+mod effective;
+pub use effective::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum PokemonType {

@@ -1,23 +1,36 @@
+use std::borrow::Cow;
+
 use deps::vec::ArrayVec;
 
 use crate::{
 	pokemon::{
 		PokemonId,
-		Level,
 		Pokemon,
 		PokemonRef,
-		types::PokemonType,
+		Level,
+		Health,
+		Experience,
+		types::{PokemonType, Effective},
+		status::StatusEffect,
 		saved::{
 			SavedPokemon,
 			PokemonData
 		},
 		data::StatSet,
+		POKEMON_RANDOM,
 	},
 	moves::{
 		MoveRef,
+		MoveCategory,
+		Power,
 		saved::to_instance,
 		instance::{MoveInstanceSet, MoveInstance},
 		persistent::PersistentMoveInstance,
+		script::{
+			MoveAction,
+			MoveActionType,
+			DamageKind,
+		},
 	},
 	item::{
 		Item,
@@ -26,9 +39,6 @@ use crate::{
 		script::{ItemCondition, ItemActionKind},
 	}
 };
-
-use super::Health;
-use super::types::effective::Effective;
 
 pub type PokemonInstanceParty = ArrayVec<[PokemonInstance; 6]>;
 
@@ -160,7 +170,7 @@ impl PokemonInstance {
 		Self::generate(id, level, level, ivs)
 	}
 
-	pub fn to_saved(self) -> SavedPokemon {
+	pub fn into_saved(self) -> SavedPokemon {
 		SavedPokemon {
 		    id: self.pokemon.data.id,
 			data: self.data,
@@ -171,12 +181,15 @@ impl PokemonInstance {
 		}
 	}
 
-	pub fn is_faint(&self) -> bool {
-		return self.current_hp == 0;
+	pub fn fainted(&self) -> bool {
+		self.current_hp == 0
 	}
 
-	pub fn name(&self) -> String {
-		self.data.nickname.as_ref().map(|name| name.clone()).unwrap_or(self.pokemon.data.name.to_ascii_uppercase())
+	pub fn name(&self) -> Cow<'_, str> {
+		match self.data.nickname.as_ref() {
+		    Some(name) => Cow::Borrowed(name),
+		    None => Cow::Owned(self.pokemon.data.name.to_ascii_uppercase()),
+		}
 	}
 
 	pub fn moves_at_level(&self) -> Vec<MoveRef> {
@@ -196,6 +209,119 @@ impl PokemonInstance {
 		} else {
 			primary
 		}
+	}
+
+	pub fn use_move(&mut self, index: usize, target: &mut Self) -> Option<(MoveRef, bool)> {
+		if let Some(pokemon_move) = self.moves[index].decrement() {
+			Some((pokemon_move, if let Some(script) = &pokemon_move.script {
+				let actions = match &script.action {
+					MoveAction::Action(action) => Some(*action),
+					MoveAction::Persistent(persistent) => {
+						target.persistent = Some(PersistentMoveInstance {
+							pokemon_move,
+							actions: &persistent.action,
+							remaining: persistent.length.map(|(min, max)| POKEMON_RANDOM.gen_range(min, max)),
+							should_do: persistent.on_move,
+						});
+						None
+					}
+				};
+				if let Some(action) = actions {
+					self.move_action(action, target)
+				} else {
+					false
+				}
+			} else {
+				if pokemon_move.accuracy.map(|accuracy| {
+					let hit: u8 = POKEMON_RANDOM.gen_range(0, 100);
+					hit < accuracy
+				}).unwrap_or(true) {
+					if let Some(power) = pokemon_move.power {
+						self.damage_kind(DamageKind::Move(power, pokemon_move.category, pokemon_move.pokemon_type), target) > 0
+					} else {
+						false
+					}
+				} else {
+					false
+				}
+			}))
+		} else {
+			None
+		}
+	}
+
+	pub fn get_damage(&self, power: Power, category: MoveCategory, pokemon_type: PokemonType, target: &PokemonInstance) -> Health {
+		let effective = target.effective(pokemon_type);
+		if effective == Effective::Ineffective {
+			return 0;
+		}
+		let effective = effective.multiplier() as f64;
+		let (atk, def) = match category {
+			MoveCategory::Physical => (self.base.atk as f64, target.base.def as f64),
+			MoveCategory::Special => (self.base.sp_atk as f64, target.base.sp_def as f64),
+			MoveCategory::Status => (0.0, 0.0),
+		};
+		(
+			(((((2.0 * self.data.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
+			* (POKEMON_RANDOM.gen_range(85, 101u8) as f64 / 100.0)
+			* (if pokemon_type == self.pokemon.data.primary_type { 1.5 } else { 1.0 })
+		) as Health
+	}
+
+	
+
+	pub fn move_action(&mut self, action: MoveActionType, target: &mut PokemonInstance) -> bool {
+		match action {
+			MoveActionType::Damage(damage) => {
+				self.damage_kind(damage, target);
+				true
+			},
+			MoveActionType::Status(chance, effect) => {
+				target.chance_status(chance, effect)
+			},
+			MoveActionType::Drain(damage, percent) => {
+				let damage = self.damage_kind(damage, target) as f32;
+				self.current_hp += (damage * percent) as Health;
+				if self.current_hp > self.base.hp {
+					self.current_hp = self.base.hp;
+				}
+				true
+			}
+		}
+	}
+
+	pub fn damage_kind(&self, damage: DamageKind, target: &mut PokemonInstance) -> Health {
+		let damage = match damage {
+			DamageKind::Move(power, category, pokemon_type) => {
+				self.get_damage(power, category, pokemon_type, target)
+			}
+			DamageKind::PercentCurrent(percent) => {
+				(target.current_hp as f32 * percent) as Health
+			}
+			DamageKind::PercentMax(percent) => {
+				(target.base.hp as f32 * percent) as Health
+			}
+			DamageKind::Constant(damage) => damage,
+		};
+		target.current_hp = target.current_hp.saturating_sub(damage);
+		damage
+	}
+
+	fn chance_status(&mut self, chance: u8, effect: StatusEffect) -> bool {
+		if self.data.status.is_none() {
+			if chance >= POKEMON_RANDOM.gen_range(1, 11) {
+				self.data.status = Some(effect);
+				true
+			} else {
+				false
+			}
+		} else {
+			false
+		}
+	}
+
+	pub fn raw_exp_from(&self) -> Experience {
+		((self.pokemon.training.base_exp * self.data.level as u16) / 7) as Experience
 	}
 
 	pub fn use_held_item(&mut self) -> bool {
@@ -247,7 +373,13 @@ impl PokemonInstance {
 	
 }
 
-impl std::fmt::Display for PokemonInstance {
+impl core::fmt::Debug for PokemonInstance {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        core::fmt::Display::fmt(&self, f)
+    }
+}
+
+impl core::fmt::Display for PokemonInstance {
 
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		write!(f, "Lv. {} {}", self.data.level, self.name())

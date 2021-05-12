@@ -2,11 +2,19 @@ use std::collections::VecDeque;
 
 use crate::pokemon::BattleActionInstance;
 
-pub enum BattleManagerState {
+#[derive(Debug)]
+pub(crate) enum BattleManagerState {
 	Transition,
 	Opener,
+	Introduction,
 	Battle,
 	Closer,
+}
+
+impl Default for BattleManagerState {
+    fn default() -> Self {
+        Self::Transition
+    }
 }
 
 
@@ -19,7 +27,7 @@ pub enum BattleState {
 
 impl Default for BattleState {
     fn default() -> Self {
-        Self::Selecting(crate::Battle::DEFAULT_ACTIVE)
+        Self::Selecting(0)
     }
 }
 

@@ -70,7 +70,7 @@ impl PartyGui {
             summary: SummaryGui::new(),
             background: byte_texture(include_bytes!("../../../assets/gui/party/background.png")),
             ball: byte_texture(include_bytes!("../../../assets/gui/party/ball.png")),
-            health: byte_texture(include_bytes!("../../../assets/gui/party/health.png")),
+            health: HealthBar::texture(),
             accumulator: 0.0,
             pokemon: ArrayVec::new(),
             cursor: 0,

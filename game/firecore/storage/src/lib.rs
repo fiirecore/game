@@ -65,12 +65,7 @@ pub async fn load<D: PersistantData + Sized>() -> Result<D, DataError> {
         }      
     }?;
     #[cfg(target_arch = "wasm32")]
-    let string = {
-        match path.split('.').next() {
-            Some(fname) => Ok(miniquad_cookie::get_cookie(fname)),
-            None => Err(DataError::NoFileName),
-        }
-    }?;
+    let string = miniquad_cookie::get_cookie(filename);
     let data: D = ron::from_str(&string).map_err(|error| DataError::Deserialize(filename, error))?;
     Ok(data)
 }

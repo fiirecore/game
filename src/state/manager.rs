@@ -1,5 +1,3 @@
-use game::storage::{get_mut, player::PlayerSaves};
-
 use super::{
 	State,
 	States,
@@ -32,7 +30,7 @@ impl StateManager {
 
     pub fn on_start(&mut self) {
 		#[cfg(debug_assertions)] {
-			let mut saves = get_mut::<PlayerSaves>().expect("Could not get player saves");
+			let mut saves = game::storage::get_mut::<game::storage::player::PlayerSaves>().expect("Could not get player saves");
 			if saves.saves.is_empty() {
 				self.current = States::Menu;
 			} else {
@@ -40,10 +38,6 @@ impl StateManager {
 			}			
 		}
 		self.get_mut().on_start();
-    }
-
-    pub fn input(&mut self, delta: f32) {
-        self.get_mut().input(delta);
     }
 
     pub fn update(&mut self, delta: f32) {
@@ -60,9 +54,7 @@ impl StateManager {
 
     pub fn quit(&mut self) {
         self.get_mut().quit();
-    }
-
-	
+    }	
 
 	fn get(&self) -> &dyn State {
 		match self.current {

@@ -11,9 +11,9 @@ pub struct Timer {
 
 impl Timer {
 
-    pub const fn new(length: f32) -> Self {
+    pub const fn new(alive: bool, length: f32) -> Self {
         Self {
-            alive: false,
+            alive,
             counter: 0.0,
             length,
         }

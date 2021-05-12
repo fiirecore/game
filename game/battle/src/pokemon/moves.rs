@@ -1,7 +1,6 @@
 use game::pokedex::item::ItemRef;
-use game::pokedex::moves::MoveRef;
 use game::pokedex::moves::target::MoveTargetInstance;
-use game::pokedex::pokemon::types::effective::Effective;
+use game::pokedex::pokemon::types::Effective;
 
 use super::ActivePokemonIndex;
 
@@ -10,7 +9,7 @@ pub enum BattleMove {
 
     Switch(usize),
     UseItem(ItemRef),
-    Move(MoveRef, MoveTargetInstance),
+    Move(usize, MoveTargetInstance),
 
 }
 
@@ -25,6 +24,7 @@ pub enum BattleAction {
     Pokemon(BattleMove),
     Effective(Effective),
     Faint,
-    LevelUp,
+    // GainExp,
+    // LevelUp,
     // Wait,
 }

@@ -99,6 +99,14 @@ impl State for GameState {
 				self.data_dirty(&mut saves);
 			}	
 		}
+		
+		if self.bag_gui.is_alive() {
+			self.bag_gui.input(&mut self.party_gui);
+		} else if self.party_gui.is_alive() {
+			self.party_gui.input();
+		} else if !self.battling {
+			self.world.input(delta, &mut self.battle_entry, &mut self.party_gui, &mut self.bag_gui, &mut self.action);
+		}
 
 		if !self.battling {
 
@@ -113,10 +121,8 @@ impl State for GameState {
 			}
 
 		} else {
-
 			self.battle.update(delta, &mut self.party_gui, &mut self.bag_gui);
-			
-			if self.battle.is_finished() {
+			if self.battle.finished {
 				if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
 					let save = player_saves.get_mut();
 					if let Some((winner, trainer)) = self.battle.update_data(save) {
@@ -126,7 +132,6 @@ impl State for GameState {
 				self.battling = false;
 				self.world.map_start(true);
 			}
-
 		}
 
 		self.bag_gui.update(&mut self.party_gui);
@@ -150,18 +155,6 @@ impl State for GameState {
 				self.world.render();
 			}
 			self.battle.render();
-		}
-	}
-	
-	fn input(&mut self, delta: f32) {
-		if self.bag_gui.is_alive() {
-			self.bag_gui.input(&mut self.party_gui);
-		} else if self.party_gui.is_alive() {
-			self.party_gui.input();
-		} else if !self.battling {
-			self.world.input(delta, &mut self.battle_entry, &mut self.party_gui, &mut self.bag_gui, &mut self.action);
-		} else {
-			self.battle.input();
 		}
 	}
 

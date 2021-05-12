@@ -1,7 +1,4 @@
-use game::storage::{get_mut, player::PlayerSaves};
-
-use crate::state::State;
-use crate::state::States;
+use crate::state::{State, States};
 
 use super::{
 	MenuState,
@@ -55,7 +52,7 @@ impl State for MenuStateManager {
 
     fn on_start(&mut self) {
 		#[cfg(debug_assertions)] {
-			let mut saves = get_mut::<PlayerSaves>().expect("Could not get player saves");
+			let mut saves = game::storage::get_mut::<game::storage::player::PlayerSaves>().expect("Could not get player saves");
 			if saves.saves.is_empty() {
 				self.current = MenuStates::Title;
 			} else {
@@ -63,10 +60,6 @@ impl State for MenuStateManager {
 			}			
 		}
 		self.get_mut().on_start();
-    }
-
-    fn input(&mut self, delta: f32) {
-        self.get_mut().input(delta);
     }
 
     fn update(&mut self, delta: f32) -> Option<States> {

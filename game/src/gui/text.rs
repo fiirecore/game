@@ -13,12 +13,8 @@ use crate::graphics::{draw_text_left, draw_button};
 pub struct DynamicText {
 
 	alive: bool,
-
-	#[cfg(debug_assertions)]
-	name: deps::tinystr::TinyStr8,
     
-	pos: Vec2,
-	panel: Vec2,
+	origin: Vec2,
 	
 	pub font: FontId,
 	pub message: Message,
@@ -37,15 +33,11 @@ pub struct DynamicText {
 
 impl DynamicText {
 
-	pub fn new(pos: Vec2, panel: Vec2, font: FontId, color: TextColor, len: usize, #[cfg(debug_assertions)] name: &str) -> Self {
+	pub fn new(origin: Vec2, font: FontId, color: TextColor, len: usize) -> Self {
 		Self {
 			alive: false,
 
-			#[cfg(debug_assertions)]
-			name: name.parse().unwrap(),
-
-			pos,
-			panel,
+			origin,
 
 			font,
 			message: Message::empty(color, len),
@@ -56,7 +48,7 @@ impl DynamicText {
 
 			can_continue: false,
 			finish_click: false,
-			timer: Timer::new(1.0),
+			timer: Timer::new(false, 1.0),
 			
 			button: Default::default(),
 		}
@@ -102,102 +94,82 @@ impl DynamicText {
 		self.timer.hard_reset();
 	}
 
-	pub fn input(&mut self) {
-		if self.can_continue {
-			if pressed(Control::A) && self.message.pages[self.current].wait.is_none() {
-				if self.current + 1 >= self.len() {
-					self.finish_click = true;
-				} else {
-					self.current += 1;
-					self.reset_page();
-				}	
-			}
-		}
-	}
-
 	pub fn update(&mut self, delta: f32) {
 		if self.alive {
-			match self.message.pages.get(self.current) {
-				Some(current) => {
-					let line_len = current.lines[self.current_line].len() << 2;
-					if self.can_continue {
-						
-						if let Some(time) = current.wait {
-							if !self.timer.is_alive() {
-								self.timer.spawn();
-								self.timer.length = time;
-							}
-							self.timer.update(delta);
-							if self.timer.is_finished() {
-								if self.current + 1 != self.len() {
-									self.current += 1;
-									self.reset_page();
-									self.timer.soft_reset();
-									self.timer.despawn();
-								}
-							}
-						}
-						if self.button.1 {
-							self.button.0 += delta * 7.5;
-							if self.button.0 > 3.0 {
-								self.button.1 = false;
-							}
+			if let Some(current) = self.message.pages.get(self.current) {
+				let line_len = current.lines[self.current_line].len() << 2;
+				if self.can_continue {
+
+					if pressed(Control::A) && current.wait.is_none() {
+						if self.current + 1 >= self.len() {
+							self.finish_click = true;
 						} else {
-							self.button.0 -= delta * 7.5;
-							if self.button.0 < -3.0 {
-								self.button.1 = true;
+							self.current += 1;
+							self.reset_page();
+						}
+						return;
+					}
+					
+					if let Some(time) = current.wait {
+						if !self.timer.is_alive() {
+							self.timer.spawn();
+							self.timer.length = time;
+						}
+						self.timer.update(delta);
+						if self.timer.is_finished() {
+							if self.current + 1 != self.len() {
+								self.current += 1;
+								self.reset_page();
+								self.timer.soft_reset();
+								self.timer.despawn();
 							}
 						}
-					} else if self.counter <= line_len as f32 {
-						self.counter += delta * 60.0
-					} else if self.current_line < current.lines.len() - 1 {
-						self.current_line += 1;
-						self.counter = 0.0;
-					} else {
-						self.counter = line_len as f32;
-						self.can_continue = true;
 					}
-					// false
+					if self.button.1 {
+						self.button.0 += delta * 7.5;
+						if self.button.0 > 3.0 {
+							self.button.1 = false;
+						}
+					} else {
+						self.button.0 -= delta * 7.5;
+						if self.button.0 < -3.0 {
+							self.button.1 = true;
+						}
+					}
+				} else if self.counter <= line_len as f32 {
+					self.counter += delta * 60.0
+				} else if self.current_line < current.lines.len() - 1 {
+					self.current_line += 1;
+					self.counter = 0.0;
+				} else {
+					self.counter = line_len as f32;
+					self.can_continue = true;
 				}
-				// #[cfg(debug_assertions)]
-				// None => {
-				// 	macroquad::prelude::warn!("{}, tag: {}", self.name, tag);
-				// 	true
-				// },
-				// #[cfg(not(debug_assertions))]
-				None => (),
 			}	
 		}
 	}
 
-	pub fn render(&self, #[cfg(debug_assertions)] tag: &str) {
+	pub fn render(&self) {
 		if self.alive {
-			match self.message.pages.get(self.current).map(|page| page.lines.get(self.current_line)).flatten() {
-				Some(current_line) => {
-					let string = if current_line.len() > (self.counter as usize) >> 2 {
-						&current_line[..(self.counter as usize) >> 2]
-					} else {
-						current_line
-					};
-	
-					let current = &self.message.pages[self.current];
-	
-					draw_text_left(self.font, string, self.message.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (self.current_line << 4) as f32);
-	
-					for index in 0..self.current_line {
-						draw_text_left(self.font, &current.lines[index], self.message.color, self.panel.x + self.pos.x, self.panel.y + self.pos.y + (index << 4) as f32);
-					}
-	
-					if self.can_continue && current.wait.is_none() {
-						draw_button(current_line, self.font, self.panel.x + self.pos.x, self.panel.y + self.pos.y + 3.0 + self.button.0 + (self.current_line << 4) as f32);
-					}
+			if let Some(current_line) = self.message.pages.get(self.current).map(|page| page.lines.get(self.current_line)).flatten() {
+				let string = if current_line.len() > (self.counter as usize) >> 2 {
+					&current_line[..(self.counter as usize) >> 2]
+				} else {
+					current_line
+				};
+
+				let current = &self.message.pages[self.current];
+
+				let y = (self.current_line << 4) as f32;
+				draw_text_left(self.font, string, self.message.color, self.origin.x, self.origin.y + y);
+
+				for index in 0..self.current_line {
+					draw_text_left(self.font, &current.lines[index], self.message.color, self.origin.x, self.origin.y + (index << 4) as f32);
 				}
-				#[cfg(debug_assertions)]
-				None => {
-					macroquad::prelude::warn!("Could not get current message for text {} with tag {}", self.name, tag);
+
+				if self.can_continue && current.wait.is_none() {
+					draw_button(current_line, self.font, self.origin.x, self.origin.y + 2.0 + self.button.0 + y);
 				}
-				#[cfg(not(debug_assertions))]
-				None => (),
 			}
 		}
 	}
@@ -215,12 +187,12 @@ impl Reset for DynamicText {
 
 impl Completable for DynamicText {
     fn is_finished(&self) -> bool {
-			self.current + 1 == self.len() && if self.message.pages.get(self.current).map(|page| page.wait.is_none()).unwrap_or_default() {
-				self.finish_click
-			} else {
-				self.timer.is_finished()
-			} &&
-			self.can_continue
+		self.current + 1 == self.len() && if self.message.pages.get(self.current).map(|page| page.wait.is_none()).unwrap_or_default() {
+			self.finish_click
+		} else {
+			self.timer.is_finished()
+		} &&
+		self.can_continue
     }
 }
 

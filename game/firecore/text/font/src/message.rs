@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 pub type MessagePages = Vec<MessagePage>;
-pub type Lines = Vec<String>;
+pub type Lines = Vec<String>; // maybe use cow<'_ str>
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Message {

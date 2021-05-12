@@ -9,7 +9,7 @@ use world::{
 };
 
 use map::texture::WorldTextures;
-use self::gui::text_window::TextWindow;
+use self::gui::TextWindow;
 
 pub mod map;
 pub mod npc;
