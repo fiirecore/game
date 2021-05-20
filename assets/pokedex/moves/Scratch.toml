@@ -1,4 +1,4 @@
-id = 10
+id = "scratch"
 name = "Scratch"
 type = "Normal"
 category = "Physical"

@@ -1,15 +1,13 @@
 [data]
 id = 5
-name = 'Charmeleon'
-primary_type = 'Fire'
-species = 'Flame'
+name = "Charmeleon"
+primary_type = "Fire"
+species = "Flame"
 height = 11
 weight = 190
-
 [training]
 base_exp = 142
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 58
 atk = 64
@@ -17,50 +15,48 @@ def = 58
 sp_atk = 80
 sp_def = 65
 speed = 80
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 7
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 34
 
 [[moves]]
-move_id = 82
+move = "dragon-rage"
 level = 48
 
 [[moves]]
-move_id = 83
+move = "fire-spin"
 level = 55
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 20
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 41
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 27
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 13

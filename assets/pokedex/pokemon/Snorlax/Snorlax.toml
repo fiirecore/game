@@ -1,15 +1,13 @@
 [data]
 id = 143
-name = 'Snorlax'
-primary_type = 'Normal'
-species = 'Sleeping'
+name = "Snorlax"
+primary_type = "Normal"
+species = "Sleeping"
 height = 21
 weight = 4600
-
 [training]
 base_exp = 189
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 160
 atk = 110
@@ -17,62 +15,60 @@ def = 65
 sp_atk = 65
 sp_def = 110
 speed = 30
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 17
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 33
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 53
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 9
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 5
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 25
 
 [[moves]]
-move_id = 173
+move = "snore"
 level = 29
 
 [[moves]]
-move_id = 187
+move = "belly-drum"
 level = 13
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 49
 
 [[moves]]
-move_id = 214
+move = "sleep-talk"
 level = 37
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 21
 
 [[moves]]
-move_id = 335
+move = "block"
 level = 41
 
 [[moves]]
-move_id = 343
+move = "covet"
 level = 45

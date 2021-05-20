@@ -1,16 +1,14 @@
 [data]
 id = 346
-name = 'Cradily'
-primary_type = 'Rock'
-secondary_type = 'Grass'
-species = 'Barnacle'
+name = "Cradily"
+primary_type = "Rock"
+secondary_type = "Grass"
+species = "Barnacle"
 height = 15
 weight = 604
-
 [training]
 base_exp = 173
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 86
 atk = 81
@@ -18,58 +16,56 @@ def = 97
 sp_atk = 81
 sp_def = 107
 speed = 43
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 51
+move = "acid"
 level = 1
 
 [[moves]]
-move_id = 51
+move = "acid"
 level = 15
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 29
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 1
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 8
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 36
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 48
 
 [[moves]]
-move_id = 254
+move = "stockpile"
 level = 60
 
 [[moves]]
-move_id = 255
+move = "spit-up"
 level = 60
 
 [[moves]]
-move_id = 256
+move = "swallow"
 level = 60
 
 [[moves]]
-move_id = 275
+move = "ingrain"
 level = 1
 
 [[moves]]
-move_id = 275
+move = "ingrain"
 level = 22
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 1

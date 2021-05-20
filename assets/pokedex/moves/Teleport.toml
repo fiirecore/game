@@ -1,4 +1,4 @@
-id = 100
+id = "teleport"
 name = "Teleport"
 type = "Psychic"
 category = "Status"

@@ -1,16 +1,14 @@
 [data]
 id = 44
-name = 'Gloom'
-primary_type = 'Grass'
-secondary_type = 'Poison'
-species = 'Weed'
+name = "Gloom"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Weed"
 height = 8
 weight = 86
-
 [training]
 base_exp = 138
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 60
 atk = 65
@@ -18,46 +16,44 @@ def = 70
 sp_atk = 85
 sp_def = 75
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 51
+move = "acid"
 level = 24
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 1
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 1
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 14
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 16
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 18
 
 [[moves]]
-move_id = 80
+move = "petal-dance"
 level = 44
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 1
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 7
 
 [[moves]]
-move_id = 236
+move = "moonlight"
 level = 35

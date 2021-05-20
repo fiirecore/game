@@ -1,16 +1,14 @@
 [data]
 id = 333
-name = 'Swablu'
-primary_type = 'Normal'
-secondary_type = 'Flying'
-species = 'Cotton'
+name = "Swablu"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Cotton"
 height = 4
 weight = 12
-
 [training]
 base_exp = 62
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 45
 atk = 40
@@ -18,50 +16,48 @@ def = 60
 sp_atk = 40
 sp_def = 75
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 18
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 31
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 47
+move = "sing"
 level = 11
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 28
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 1
 
 [[moves]]
-move_id = 119
+move = "mirror-move"
 level = 38
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 48
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 21
 
 [[moves]]
-move_id = 287
+move = "refresh"
 level = 41
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 8

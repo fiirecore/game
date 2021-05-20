@@ -1,16 +1,14 @@
 [data]
 id = 278
-name = 'Wingull'
-primary_type = 'Water'
-secondary_type = 'Flying'
-species = 'Seagull'
+name = "Wingull"
+primary_type = "Water"
+secondary_type = "Flying"
+species = "Seagull"
 height = 6
 weight = 95
-
 [training]
 base_exp = 54
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 40
 atk = 30
@@ -18,38 +16,36 @@ def = 30
 sp_atk = 55
 sp_def = 30
 speed = 85
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 13
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 7
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 21
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 55
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 31
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 43

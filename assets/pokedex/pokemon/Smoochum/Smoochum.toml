@@ -1,16 +1,14 @@
 [data]
 id = 238
-name = 'Smoochum'
-primary_type = 'Ice'
-secondary_type = 'Psychic'
-species = 'Kiss'
+name = "Smoochum"
+primary_type = "Ice"
+secondary_type = "Psychic"
+species = "Kiss"
 height = 4
 weight = 60
-
 [training]
 base_exp = 61
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 45
 atk = 30
@@ -18,50 +16,48 @@ def = 15
 sp_atk = 85
 sp_def = 65
 speed = 65
-
 [breeding]
 gender = 8
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 47
+move = "sing"
 level = 25
 
 [[moves]]
-move_id = 59
+move = "blizzard"
 level = 57
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 21
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 45
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 1
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 13
 
 [[moves]]
-move_id = 186
+move = "sweet-kiss"
 level = 9
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 49
 
 [[moves]]
-move_id = 212
+move = "mean-look"
 level = 33
 
 [[moves]]
-move_id = 313
+move = "fake-tears"
 level = 37

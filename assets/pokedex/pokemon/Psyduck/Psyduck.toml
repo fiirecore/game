@@ -1,15 +1,13 @@
 [data]
 id = 54
-name = 'Psyduck'
-primary_type = 'Water'
-species = 'Duck'
+name = "Psyduck"
+primary_type = "Water"
+species = "Duck"
 height = 8
 weight = 196
-
 [training]
 base_exp = 64
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 50
 atk = 52
@@ -17,42 +15,40 @@ def = 48
 sp_atk = 65
 sp_def = 50
 speed = 55
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 5
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 10
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 50
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 16
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 23
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 40
 
 [[moves]]
-move_id = 244
+move = "psych-up"
 level = 31
 
 [[moves]]
-move_id = 346
+move = "water-sport"
 level = 1

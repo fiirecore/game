@@ -1,16 +1,14 @@
 [data]
 id = 144
-name = 'Articuno'
-primary_type = 'Ice'
-secondary_type = 'Flying'
-species = 'Freeze'
+name = "Articuno"
+primary_type = "Ice"
+secondary_type = "Flying"
+species = "Freeze"
 height = 17
 weight = 554
-
 [training]
 base_exp = 261
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 90
 atk = 85
@@ -18,41 +16,40 @@ def = 100
 sp_atk = 95
 sp_def = 125
 speed = 85
-
 [breeding]
 
 [[moves]]
-move_id = 16
+move = "gust"
 level = 1
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 13
 
 [[moves]]
-move_id = 58
+move = "ice-beam"
 level = 49
 
 [[moves]]
-move_id = 59
+move = "blizzard"
 level = 73
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 25
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 61
 
 [[moves]]
-move_id = 170
+move = "mind-reader"
 level = 37
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 1
 
 [[moves]]
-move_id = 329
+move = "sheer-cold"
 level = 85

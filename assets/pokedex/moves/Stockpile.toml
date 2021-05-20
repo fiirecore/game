@@ -1,4 +1,4 @@
-id = 254
+id = "stockpile"
 name = "Stockpile"
 type = "Normal"
 category = "Status"

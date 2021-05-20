@@ -1,15 +1,13 @@
 [data]
 id = 64
-name = 'Kadabra'
-primary_type = 'Psychic'
-species = 'Psi'
+name = "Kadabra"
+primary_type = "Psychic"
+species = "Psi"
 height = 13
 weight = 565
-
 [training]
 base_exp = 140
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 40
 atk = 35
@@ -17,54 +15,52 @@ def = 30
 sp_atk = 120
 sp_def = 70
 speed = 105
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 50
+move = "disable"
 level = 18
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 21
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 16
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 36
 
 [[moves]]
-move_id = 100
+move = "teleport"
 level = 1
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 25
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 23
 
 [[moves]]
-move_id = 134
+move = "kinesis"
 level = 1
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 30
 
 [[moves]]
-move_id = 271
+move = "trick"
 level = 43
 
 [[moves]]
-move_id = 272
+move = "role-play"
 level = 33

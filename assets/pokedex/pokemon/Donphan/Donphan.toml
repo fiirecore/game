@@ -1,15 +1,13 @@
 [data]
 id = 232
-name = 'Donphan'
-primary_type = 'Ground'
-species = 'Armor'
+name = "Donphan"
+primary_type = "Ground"
+species = "Armor"
 height = 11
 weight = 1200
-
 [training]
 base_exp = 175
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 90
 atk = 120
@@ -17,42 +15,40 @@ def = 120
 sp_atk = 60
 sp_def = 60
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 30
+move = "horn-attack"
 level = 1
 
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 25
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 49
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 9
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 17
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 33
 
 [[moves]]
-move_id = 229
+move = "rapid-spin"
 level = 41
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 1

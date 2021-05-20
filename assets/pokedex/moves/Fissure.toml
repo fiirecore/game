@@ -1,4 +1,4 @@
-id = 90
+id = "fissure"
 name = "Fissure"
 type = "Ground"
 category = "Physical"

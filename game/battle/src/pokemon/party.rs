@@ -125,21 +125,6 @@ impl BattleParty {
         self.active[active_index].pokemon.as_mut()
     }
 
-    #[deprecated]
-    pub fn pokemon_mut_or_other(&mut self, active_index: usize) -> (&mut PokemonInstance, usize) {
-        let mut index = active_index;
-        for (i, active) in self.active.iter().enumerate() {
-            if active.pokemon.is_active() {
-                index = i;
-            }
-        }
-        if self.pokemon(active_index).is_some() {
-            (self.active[active_index].pokemon.as_mut().unwrap(), active_index)
-        } else {
-            (self.active[index].pokemon.as_mut().unwrap(), index)
-        }
-    }
-
     pub fn queue_replace(&mut self, active_index: usize, new: usize) {
         if let Some((index, instance)) = self.active[active_index].pokemon.replace(new) {
             if self.pokemon[index].is_some() {

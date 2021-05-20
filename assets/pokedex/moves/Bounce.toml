@@ -1,4 +1,4 @@
-id = 340
+id = "bounce"
 name = "Bounce"
 type = "Flying"
 category = "Physical"

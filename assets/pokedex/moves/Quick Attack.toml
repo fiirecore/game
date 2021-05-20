@@ -1,4 +1,4 @@
-id = 98
+id = "quick-attack"
 name = "Quick Attack"
 type = "Normal"
 category = "Physical"

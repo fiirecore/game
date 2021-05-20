@@ -1,16 +1,14 @@
 [data]
 id = 40
-name = 'Wigglytuff'
-primary_type = 'Normal'
-secondary_type = 'Fairy'
-species = 'Balloon'
+name = "Wigglytuff"
+primary_type = "Normal"
+secondary_type = "Fairy"
+species = "Balloon"
 height = 10
 weight = 120
-
 [training]
 base_exp = 196
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 140
 atk = 70
@@ -18,22 +16,20 @@ def = 45
 sp_atk = 85
 sp_def = 50
 speed = 45
-
 [breeding]
 gender = 6
-
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 1
 
 [[moves]]
-move_id = 47
+move = "sing"
 level = 1
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 1
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 1

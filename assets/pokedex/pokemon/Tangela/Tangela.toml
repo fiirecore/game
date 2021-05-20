@@ -1,15 +1,13 @@
 [data]
 id = 114
-name = 'Tangela'
-primary_type = 'Grass'
-species = 'Vine'
+name = "Tangela"
+primary_type = "Grass"
+species = "Vine"
 height = 10
 weight = 350
-
 [training]
 base_exp = 87
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 65
 atk = 55
@@ -17,54 +15,52 @@ def = 115
 sp_atk = 100
 sp_def = 40
 speed = 60
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 20
+move = "bind"
 level = 28
 
 [[moves]]
-move_id = 21
+move = "slam"
 level = 40
 
 [[moves]]
-move_id = 22
+move = "vine-whip"
 level = 22
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 10
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 31
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 13
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 19
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 37
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 4
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 1
 
 [[moves]]
-move_id = 275
+move = "ingrain"
 level = 1
 
 [[moves]]
-move_id = 321
+move = "tickle"
 level = 46

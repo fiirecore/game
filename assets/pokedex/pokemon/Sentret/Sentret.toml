@@ -1,15 +1,13 @@
 [data]
 id = 161
-name = 'Sentret'
-primary_type = 'Normal'
-species = 'Scout'
+name = "Sentret"
+primary_type = "Normal"
+species = "Scout"
 height = 8
 weight = 60
-
 [training]
 base_exp = 43
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 35
 atk = 46
@@ -17,42 +15,40 @@ def = 34
 sp_atk = 35
 sp_def = 45
 speed = 20
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 21
+move = "slam"
 level = 24
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 7
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 4
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 49
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 12
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 40
 
 [[moves]]
-move_id = 266
+move = "follow-me"
 level = 31
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 17

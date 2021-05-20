@@ -1,15 +1,13 @@
 [data]
 id = 255
-name = 'Torchic'
-primary_type = 'Fire'
-species = 'Chick'
+name = "Torchic"
+primary_type = "Fire"
+species = "Chick"
 height = 4
 weight = 25
-
 [training]
 base_exp = 62
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 45
 atk = 60
@@ -17,50 +15,48 @@ def = 40
 sp_atk = 70
 sp_def = 50
 speed = 45
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 19
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 10
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 43
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 16
 
 [[moves]]
-move_id = 83
+move = "fire-spin"
 level = 25
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 28
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 7
 
 [[moves]]
-move_id = 119
+move = "mirror-move"
 level = 37
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 34

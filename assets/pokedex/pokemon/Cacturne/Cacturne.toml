@@ -1,16 +1,14 @@
 [data]
 id = 332
-name = 'Cacturne'
-primary_type = 'Grass'
-secondary_type = 'Dark'
-species = 'Scarecrow'
+name = "Cacturne"
+primary_type = "Grass"
+secondary_type = "Dark"
+species = "Scarecrow"
 height = 13
 weight = 774
-
 [training]
 base_exp = 166
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 70
 atk = 115
@@ -18,74 +16,72 @@ def = 60
 sp_atk = 115
 sp_def = 60
 speed = 55
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 17
 
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 1
 
 [[moves]]
-move_id = 42
+move = "pin-missile"
 level = 21
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 1
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 5
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 13
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 1
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 9
 
 [[moves]]
-move_id = 178
+move = "cotton-spore"
 level = 47
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 29
 
 [[moves]]
-move_id = 191
+move = "spikes"
 level = 35
 
 [[moves]]
-move_id = 194
+move = "destiny-bond"
 level = 59
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 53
 
 [[moves]]
-move_id = 275
+move = "ingrain"
 level = 25
 
 [[moves]]
-move_id = 279
+move = "revenge"
 level = 1
 
 [[moves]]
-move_id = 302
+move = "needle-arm"
 level = 41

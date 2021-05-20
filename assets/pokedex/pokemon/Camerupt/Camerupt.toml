@@ -1,16 +1,14 @@
 [data]
 id = 323
-name = 'Camerupt'
-primary_type = 'Fire'
-secondary_type = 'Ground'
-species = 'Eruption'
+name = "Camerupt"
+primary_type = "Fire"
+secondary_type = "Ground"
+species = "Eruption"
 height = 19
 weight = 2200
-
 [training]
 base_exp = 161
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 70
 atk = 100
@@ -18,58 +16,56 @@ def = 70
 sp_atk = 105
 sp_def = 75
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 29
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 11
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 37
 
 [[moves]]
-move_id = 90
+move = "fissure"
 level = 55
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 25
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 31
 
 [[moves]]
-move_id = 157
+move = "rock-slide"
 level = 33
 
 [[moves]]
-move_id = 222
+move = "magnitude"
 level = 1
 
 [[moves]]
-move_id = 222
+move = "magnitude"
 level = 19
 
 [[moves]]
-move_id = 284
+move = "eruption"
 level = 45

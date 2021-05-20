@@ -1,15 +1,13 @@
 [data]
 id = 105
-name = 'Marowak'
-primary_type = 'Ground'
-species = 'Bone'
+name = "Marowak"
+primary_type = "Ground"
+species = "Bone"
 height = 10
 weight = 450
-
 [training]
 base_exp = 149
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 60
 atk = 80
@@ -17,66 +15,64 @@ def = 110
 sp_atk = 50
 sp_def = 80
 speed = 45
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 1
 
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 13
 
 [[moves]]
-move_id = 37
+move = "thrash"
 level = 46
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 61
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 5
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 17
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 32
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 21
 
 [[moves]]
-move_id = 125
+move = "bone-club"
 level = 1
 
 [[moves]]
-move_id = 125
+move = "bone-club"
 level = 9
 
 [[moves]]
-move_id = 155
+move = "bonemerang"
 level = 25
 
 [[moves]]
-move_id = 198
+move = "bone-rush"
 level = 53
 
 [[moves]]
-move_id = 206
+move = "false-swipe"
 level = 39

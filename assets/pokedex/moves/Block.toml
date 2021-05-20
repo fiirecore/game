@@ -1,4 +1,4 @@
-id = 335
+id = "block"
 name = "Block"
 type = "Normal"
 category = "Status"

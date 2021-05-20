@@ -159,7 +159,7 @@ impl WorldMapManager {
         if self.chunk_active {
             self.chunk_active = false;
         }
-        self.update_map_set(destination.map.unwrap(), destination.index);
+        self.update_map_set(destination.map.expect("Could not get map bank!"), destination.index);
         self.player.character.position.from_destination(destination.position);
     }
 

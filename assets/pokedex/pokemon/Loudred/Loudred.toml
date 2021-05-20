@@ -1,15 +1,13 @@
 [data]
 id = 294
-name = 'Loudred'
-primary_type = 'Normal'
-species = 'Big'
+name = "Loudred"
+primary_type = "Normal"
+species = "Big"
 height = 10
 weight = 405
-
 [training]
 base_exp = 126
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 84
 atk = 71
@@ -17,62 +15,60 @@ def = 43
 sp_atk = 71
 sp_def = 43
 speed = 48
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 23
+move = "stomp"
 level = 29
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 43
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 23
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 37
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 51
 
 [[moves]]
-move_id = 214
+move = "sleep-talk"
 level = 51
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 1
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 5
 
 [[moves]]
-move_id = 304
+move = "hyper-voice"
 level = 57
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 1
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 11
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 1
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 15

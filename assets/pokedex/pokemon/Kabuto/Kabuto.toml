@@ -1,16 +1,14 @@
 [data]
 id = 140
-name = 'Kabuto'
-primary_type = 'Rock'
-secondary_type = 'Water'
-species = 'Shellfish'
+name = "Kabuto"
+primary_type = "Rock"
+secondary_type = "Water"
+species = "Shellfish"
 height = 5
 weight = 115
-
 [training]
 base_exp = 71
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 30
 atk = 80
@@ -18,46 +16,44 @@ def = 90
 sp_atk = 55
 sp_def = 45
 speed = 55
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 31
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 19
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 13
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 49
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 1
 
 [[moves]]
-move_id = 203
+move = "endure"
 level = 37
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 55
 
 [[moves]]
-move_id = 319
+move = "metal-sound"
 level = 43
 
 [[moves]]
-move_id = 341
+move = "mud-shot"
 level = 25

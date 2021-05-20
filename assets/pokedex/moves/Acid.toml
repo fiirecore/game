@@ -1,4 +1,4 @@
-id = 51
+id = "acid"
 name = "Acid"
 type = "Poison"
 category = "Special"

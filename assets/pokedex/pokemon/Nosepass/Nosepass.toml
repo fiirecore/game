@@ -1,15 +1,13 @@
 [data]
 id = 299
-name = 'Nosepass'
-primary_type = 'Rock'
-species = 'Compass'
+name = "Nosepass"
+primary_type = "Rock"
+species = "Compass"
 height = 10
 weight = 970
-
 [training]
 base_exp = 75
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 30
 atk = 45
@@ -17,46 +15,44 @@ def = 135
 sp_atk = 45
 sp_def = 90
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 22
 
 [[moves]]
-move_id = 88
+move = "rock-throw"
 level = 13
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 7
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 37
 
 [[moves]]
-move_id = 157
+move = "rock-slide"
 level = 28
 
 [[moves]]
-move_id = 192
+move = "zap-cannon"
 level = 43
 
 [[moves]]
-move_id = 199
+move = "lock-on"
 level = 46
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 31
 
 [[moves]]
-move_id = 335
+move = "block"
 level = 16

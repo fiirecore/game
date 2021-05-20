@@ -1,16 +1,14 @@
 [data]
 id = 249
-name = 'Lugia'
-primary_type = 'Psychic'
-secondary_type = 'Flying'
-species = 'Diving'
+name = "Lugia"
+primary_type = "Psychic"
+secondary_type = "Flying"
+species = "Diving"
 height = 52
 weight = 2160
-
 [training]
 base_exp = 306
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 106
 atk = 90
@@ -18,45 +16,44 @@ def = 130
 sp_atk = 90
 sp_def = 154
 speed = 110
-
 [breeding]
 
 [[moves]]
-move_id = 16
+move = "gust"
 level = 22
 
 [[moves]]
-move_id = 18
+move = "whirlwind"
 level = 1
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 44
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 33
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 66
 
 [[moves]]
-move_id = 177
+move = "aeroblast"
 level = 77
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 11
 
 [[moves]]
-move_id = 240
+move = "rain-dance"
 level = 55
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 88
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 99

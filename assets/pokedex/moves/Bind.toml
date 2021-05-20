@@ -1,4 +1,4 @@
-id = 20
+id = "bind"
 name = "Bind"
 type = "Normal"
 category = "Physical"

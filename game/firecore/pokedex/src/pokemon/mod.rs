@@ -82,6 +82,10 @@ impl Pokemon {
             None => Gender::None,
         }
     }
+
+	pub fn exp_from(&self, level: Level) -> Experience {
+		((self.training.base_exp * level as u16) / 7) as Experience
+	}
 	
 }
 

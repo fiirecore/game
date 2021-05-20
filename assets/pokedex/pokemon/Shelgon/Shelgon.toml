@@ -1,15 +1,13 @@
 [data]
 id = 372
-name = 'Shelgon'
-primary_type = 'Dragon'
-species = 'Endurance'
+name = "Shelgon"
+primary_type = "Dragon"
+species = "Endurance"
 height = 11
 weight = 1105
-
 [training]
 base_exp = 147
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 65
 atk = 95
@@ -17,66 +15,64 @@ def = 100
 sp_atk = 60
 sp_def = 50
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 1
 
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 17
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 78
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 9
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 5
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 25
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 1
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 21
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 30
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 47
 
 [[moves]]
-move_id = 225
+move = "dragon-breath"
 level = 38
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 56
 
 [[moves]]
-move_id = 337
+move = "dragon-claw"
 level = 69

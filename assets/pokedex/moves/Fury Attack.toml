@@ -1,4 +1,4 @@
-id = 31
+id = "fury-attack"
 name = "Fury Attack"
 type = "Normal"
 category = "Physical"

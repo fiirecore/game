@@ -1,16 +1,14 @@
 [data]
 id = 164
-name = 'Noctowl'
-primary_type = 'Normal'
-secondary_type = 'Flying'
-species = 'Owl'
+name = "Noctowl"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Owl"
 height = 16
 weight = 408
-
 [training]
 base_exp = 158
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 100
 atk = 50
@@ -18,50 +16,48 @@ def = 50
 sp_atk = 86
 sp_def = 96
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 33
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 1
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 11
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 41
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 16
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 25
 
 [[moves]]
-move_id = 138
+move = "dream-eater"
 level = 57
 
 [[moves]]
-move_id = 193
+move = "foresight"
 level = 1
 
 [[moves]]
-move_id = 193
+move = "foresight"
 level = 6

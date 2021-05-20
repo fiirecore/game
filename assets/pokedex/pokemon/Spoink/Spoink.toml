@@ -1,15 +1,13 @@
 [data]
 id = 325
-name = 'Spoink'
-primary_type = 'Psychic'
-species = 'Bounce'
+name = "Spoink"
+primary_type = "Psychic"
+species = "Bounce"
 height = 7
 weight = 306
-
 [training]
 base_exp = 66
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 60
 atk = 25
@@ -17,50 +15,48 @@ def = 35
 sp_atk = 70
 sp_def = 80
 speed = 60
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 16
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 34
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 25
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 7
 
 [[moves]]
-move_id = 150
+move = "splash"
 level = 1
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 37
 
 [[moves]]
-move_id = 173
+move = "snore"
 level = 37
 
 [[moves]]
-move_id = 244
+move = "psych-up"
 level = 19
 
 [[moves]]
-move_id = 277
+move = "magic-coat"
 level = 28
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 10
 
 [[moves]]
-move_id = 340
+move = "bounce"
 level = 43

@@ -1,15 +1,13 @@
 [data]
 id = 328
-name = 'Trapinch'
-primary_type = 'Ground'
-species = 'Ant'
+name = "Trapinch"
+primary_type = "Ground"
+species = "Ant"
 height = 7
 weight = 150
-
 [training]
 base_exp = 58
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 45
 atk = 100
@@ -17,38 +15,36 @@ def = 45
 sp_atk = 45
 sp_def = 45
 speed = 10
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 9
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 57
 
 [[moves]]
-move_id = 91
+move = "dig"
 level = 41
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 17
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 49
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 33
 
 [[moves]]
-move_id = 328
+move = "sand-tomb"
 level = 25

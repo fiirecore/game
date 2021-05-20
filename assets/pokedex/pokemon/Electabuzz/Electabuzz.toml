@@ -1,15 +1,13 @@
 [data]
 id = 125
-name = 'Electabuzz'
-primary_type = 'Electric'
-species = 'Electric'
+name = "Electabuzz"
+primary_type = "Electric"
+species = "Electric"
 height = 11
 weight = 300
-
 [training]
 base_exp = 172
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 65
 atk = 83
@@ -17,42 +15,40 @@ def = 57
 sp_atk = 95
 sp_def = 85
 speed = 105
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 9
+move = "thunder-punch"
 level = 1
 
 [[moves]]
-move_id = 9
+move = "thunder-punch"
 level = 9
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 85
+move = "thunderbolt"
 level = 47
 
 [[moves]]
-move_id = 87
+move = "thunder"
 level = 58
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 1
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 36
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 17
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 25

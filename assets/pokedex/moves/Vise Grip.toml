@@ -1,5 +1,5 @@
-id = 11
-name = "Vice Grip"
+id = "vise-grip"
+name = "Vise Grip"
 type = "Normal"
 category = "Physical"
 power = 55

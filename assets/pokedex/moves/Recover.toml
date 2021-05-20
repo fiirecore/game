@@ -1,4 +1,4 @@
-id = 105
+id = "recover"
 name = "Recover"
 type = "Normal"
 category = "Status"

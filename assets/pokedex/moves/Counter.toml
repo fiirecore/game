@@ -1,4 +1,4 @@
-id = 68
+id = "counter"
 name = "Counter"
 type = "Fighting"
 category = "Physical"

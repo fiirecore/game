@@ -1,4 +1,4 @@
-id = 19
+id = "fly"
 name = "Fly"
 type = "Flying"
 category = "Physical"

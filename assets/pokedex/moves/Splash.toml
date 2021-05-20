@@ -1,4 +1,4 @@
-id = 150
+id = "splash"
 name = "Splash"
 type = "Normal"
 category = "Status"

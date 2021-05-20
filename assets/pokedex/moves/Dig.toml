@@ -1,4 +1,4 @@
-id = 91
+id = "dig"
 name = "Dig"
 type = "Ground"
 category = "Physical"

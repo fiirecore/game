@@ -1,16 +1,14 @@
 [data]
 id = 315
-name = 'Roselia'
-primary_type = 'Grass'
-secondary_type = 'Poison'
-species = 'Thorn'
+name = "Roselia"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Thorn"
 height = 3
 weight = 20
-
 [training]
 base_exp = 140
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 50
 atk = 60
@@ -18,66 +16,64 @@ def = 45
 sp_atk = 100
 sp_def = 80
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 9
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 1
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 17
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 21
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 5
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 13
 
 [[moves]]
-move_id = 80
+move = "petal-dance"
 level = 49
 
 [[moves]]
-move_id = 92
+move = "toxic"
 level = 45
 
 [[moves]]
-move_id = 202
+move = "giga-drain"
 level = 33
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 37
 
 [[moves]]
-move_id = 235
+move = "synthesis"
 level = 57
 
 [[moves]]
-move_id = 275
+move = "ingrain"
 level = 41
 
 [[moves]]
-move_id = 312
+move = "aromatherapy"
 level = 53
 
 [[moves]]
-move_id = 320
+move = "grass-whistle"
 level = 29
 
 [[moves]]
-move_id = 345
+move = "magical-leaf"
 level = 25

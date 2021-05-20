@@ -1,15 +1,13 @@
 [data]
 id = 119
-name = 'Seaking'
-primary_type = 'Water'
-species = 'Goldfish'
+name = "Seaking"
+primary_type = "Water"
+species = "Goldfish"
 height = 13
 weight = 390
-
 [training]
 base_exp = 158
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 80
 atk = 92
@@ -17,54 +15,52 @@ def = 65
 sp_atk = 65
 sp_def = 80
 speed = 68
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 30
+move = "horn-attack"
 level = 15
 
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 29
 
 [[moves]]
-move_id = 32
+move = "horn-drill"
 level = 49
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 10
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 1
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 61
 
 [[moves]]
-move_id = 127
+move = "waterfall"
 level = 41
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 24
 
 [[moves]]
-move_id = 224
+move = "megahorn"
 level = 69
 
 [[moves]]
-move_id = 346
+move = "water-sport"
 level = 1

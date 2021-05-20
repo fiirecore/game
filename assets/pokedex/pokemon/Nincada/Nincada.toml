@@ -1,16 +1,14 @@
 [data]
 id = 290
-name = 'Nincada'
-primary_type = 'Bug'
-secondary_type = 'Ground'
-species = 'Trainee'
+name = "Nincada"
+primary_type = "Bug"
+secondary_type = "Ground"
+species = "Trainee"
 height = 5
 weight = 55
-
 [training]
 base_exp = 53
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 31
 atk = 45
@@ -18,46 +16,44 @@ def = 90
 sp_atk = 30
 sp_def = 30
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 9
 
 [[moves]]
-move_id = 91
+move = "dig"
 level = 45
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 1
 
 [[moves]]
-move_id = 141
+move = "leech-life"
 level = 5
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 14
 
 [[moves]]
-move_id = 170
+move = "mind-reader"
 level = 19
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 31
 
 [[moves]]
-move_id = 206
+move = "false-swipe"
 level = 25
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 38

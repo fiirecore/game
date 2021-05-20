@@ -1,4 +1,4 @@
-id = 34
+id = "body-slam"
 name = "Body Slam"
 type = "Normal"
 category = "Physical"

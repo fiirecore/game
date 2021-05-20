@@ -1,4 +1,4 @@
-id = 26
+id = "jump-kick"
 name = "Jump Kick"
 type = "Fighting"
 category = "Physical"

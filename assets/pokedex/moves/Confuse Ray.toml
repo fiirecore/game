@@ -1,4 +1,4 @@
-id = 109
+id = "confuse-ray"
 name = "Confuse Ray"
 type = "Ghost"
 category = "Status"

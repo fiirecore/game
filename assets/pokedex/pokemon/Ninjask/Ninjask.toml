@@ -1,16 +1,14 @@
 [data]
 id = 291
-name = 'Ninjask'
-primary_type = 'Bug'
-secondary_type = 'Flying'
-species = 'Ninja'
+name = "Ninjask"
+primary_type = "Bug"
+secondary_type = "Flying"
+species = "Ninja"
 height = 8
 weight = 120
-
 [training]
 base_exp = 160
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 61
 atk = 90
@@ -18,66 +16,64 @@ def = 45
 sp_atk = 50
 sp_def = 50
 speed = 160
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 14
+move = "swords-dance"
 level = 25
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 9
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 38
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 20
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 20
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 1
 
 [[moves]]
-move_id = 141
+move = "leech-life"
 level = 1
 
 [[moves]]
-move_id = 141
+move = "leech-life"
 level = 5
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 14
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 31
 
 [[moves]]
-move_id = 170
+move = "mind-reader"
 level = 19
 
 [[moves]]
-move_id = 210
+move = "fury-cutter"
 level = 20
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 45

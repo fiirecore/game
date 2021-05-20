@@ -184,10 +184,6 @@ impl PokemonInstance {
 			primary
 		}
 	}
-
-	pub fn raw_exp_from(&self) -> Experience {
-		((self.pokemon.value().training.base_exp * self.data.level as u16) / 7) as Experience
-	}
 	
 }
 

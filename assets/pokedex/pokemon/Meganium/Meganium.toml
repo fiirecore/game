@@ -1,15 +1,13 @@
 [data]
 id = 154
-name = 'Meganium'
-primary_type = 'Grass'
-species = 'Herb'
+name = "Meganium"
+primary_type = "Grass"
+species = "Herb"
 height = 18
 weight = 1005
-
 [training]
 base_exp = 236
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 80
 atk = 82
@@ -17,54 +15,52 @@ def = 100
 sp_atk = 83
 sp_def = 100
 speed = 80
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 31
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 75
+move = "razor-leaf"
 level = 1
 
 [[moves]]
-move_id = 75
+move = "razor-leaf"
 level = 8
 
 [[moves]]
-move_id = 76
+move = "solar-beam"
 level = 61
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 15
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 41
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 1
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 12
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 51
 
 [[moves]]
-move_id = 235
+move = "synthesis"
 level = 23

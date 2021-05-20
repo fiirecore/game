@@ -1,15 +1,13 @@
 [data]
 id = 129
-name = 'Magikarp'
-primary_type = 'Water'
-species = 'Fish'
+name = "Magikarp"
+primary_type = "Water"
+species = "Fish"
 height = 9
 weight = 100
-
 [training]
 base_exp = 40
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 20
 atk = 10
@@ -17,18 +15,16 @@ def = 55
 sp_atk = 15
 sp_def = 20
 speed = 80
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 15
 
 [[moves]]
-move_id = 150
+move = "splash"
 level = 1
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 30

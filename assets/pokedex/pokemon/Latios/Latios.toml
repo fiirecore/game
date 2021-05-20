@@ -1,16 +1,14 @@
 [data]
 id = 381
-name = 'Latios'
-primary_type = 'Dragon'
-secondary_type = 'Psychic'
-species = 'Eon'
+name = "Latios"
+primary_type = "Dragon"
+secondary_type = "Psychic"
+species = "Eon"
 height = 20
 weight = 600
-
 [training]
 base_exp = 270
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 90
@@ -18,50 +16,48 @@ def = 80
 sp_atk = 130
 sp_def = 110
 speed = 110
-
 [breeding]
 gender = 0
-
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 40
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 45
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 1
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 25
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 15
 
 [[moves]]
-move_id = 225
+move = "dragon-breath"
 level = 20
 
 [[moves]]
-move_id = 262
+move = "memento"
 level = 5
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 10
 
 [[moves]]
-move_id = 287
+move = "refresh"
 level = 30
 
 [[moves]]
-move_id = 295
+move = "luster-purge"
 level = 35
 
 [[moves]]
-move_id = 349
+move = "dragon-dance"
 level = 50

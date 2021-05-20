@@ -1,4 +1,4 @@
-id = 287
+id = "refresh"
 name = "Refresh"
 type = "Normal"
 category = "Status"

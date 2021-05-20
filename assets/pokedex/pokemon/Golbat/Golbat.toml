@@ -1,16 +1,14 @@
 [data]
 id = 42
-name = 'Golbat'
-primary_type = 'Poison'
-secondary_type = 'Flying'
-species = 'Bat'
+name = "Golbat"
+primary_type = "Poison"
+secondary_type = "Flying"
+species = "Bat"
 height = 16
 weight = 550
-
 [training]
 base_exp = 159
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 75
 atk = 80
@@ -18,58 +16,56 @@ def = 70
 sp_atk = 65
 sp_def = 75
 speed = 90
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 21
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 16
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 11
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 1
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 28
 
 [[moves]]
-move_id = 114
+move = "haze"
 level = 56
 
 [[moves]]
-move_id = 141
+move = "leech-life"
 level = 1
 
 [[moves]]
-move_id = 212
+move = "mean-look"
 level = 42
 
 [[moves]]
-move_id = 305
+move = "poison-fang"
 level = 49
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 1
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 6
 
 [[moves]]
-move_id = 314
+move = "air-cutter"
 level = 35

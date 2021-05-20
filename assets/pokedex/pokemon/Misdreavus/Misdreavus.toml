@@ -1,15 +1,13 @@
 [data]
 id = 200
-name = 'Misdreavus'
-primary_type = 'Ghost'
-species = 'Screech'
+name = "Misdreavus"
+primary_type = "Ghost"
+species = "Screech"
 height = 7
 weight = 10
-
 [training]
 base_exp = 87
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 60
 atk = 60
@@ -17,46 +15,44 @@ def = 60
 sp_atk = 85
 sp_def = 85
 speed = 85
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 30
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 17
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 1
 
 [[moves]]
-move_id = 180
+move = "spite"
 level = 6
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 45
 
 [[moves]]
-move_id = 212
+move = "mean-look"
 level = 23
 
 [[moves]]
-move_id = 220
+move = "pain-split"
 level = 37
 
 [[moves]]
-move_id = 288
+move = "grudge"
 level = 53
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 11

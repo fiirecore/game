@@ -1,4 +1,4 @@
-id = 106
+id = "harden"
 name = "Harden"
 type = "Normal"
 category = "Status"

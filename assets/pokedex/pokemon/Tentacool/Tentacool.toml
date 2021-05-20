@@ -1,16 +1,14 @@
 [data]
 id = 72
-name = 'Tentacool'
-primary_type = 'Water'
-secondary_type = 'Poison'
-species = 'Jellyfish'
+name = "Tentacool"
+primary_type = "Water"
+secondary_type = "Poison"
+species = "Jellyfish"
 height = 9
 weight = 455
-
 [training]
 base_exp = 67
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 40
 atk = 40
@@ -18,42 +16,40 @@ def = 35
 sp_atk = 50
 sp_def = 100
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 30
 
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 6
 
 [[moves]]
-move_id = 51
+move = "acid"
 level = 19
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 49
 
 [[moves]]
-move_id = 61
+move = "bubble-beam"
 level = 25
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 43
 
 [[moves]]
-move_id = 112
+move = "barrier"
 level = 36
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 12

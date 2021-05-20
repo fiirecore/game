@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use deps::{
 	hash::HashMap,
-	// tinystr::TinyStr16,
+	tinystr::TinyStr16,
 };
 use crate::{Ref, Identifiable};
 
@@ -22,7 +22,7 @@ pub mod target;
 pub mod script;
 pub mod persistent;
 
-pub type MoveId = u16; // change to tinystr16
+pub type MoveId = TinyStr16;
 pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
@@ -44,7 +44,7 @@ pub struct Move {
 	pub accuracy: Option<Accuracy>,
 	pub pp: PP,
 
-	#[serde(default)]
+	#[serde(default = "target::move_target_opponent")]
 	pub target: target::MoveTarget,
 
 	pub script: Option<script::MoveScript>,

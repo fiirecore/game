@@ -18,7 +18,7 @@ pub struct BattleTrainerEntry {
     pub name: String,
     pub transition: TinyStr8,
     pub texture: Texture2D,
-    pub is_gym_leader: bool,
+    pub gym_badge: Option<deps::tinystr::TinyStr16>,
     pub victory_message: Vec<Vec<String>>,
     pub worth: u16,
 }

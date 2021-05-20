@@ -1,16 +1,14 @@
 [data]
 id = 228
-name = 'Houndour'
-primary_type = 'Dark'
-secondary_type = 'Fire'
-species = 'Dark'
+name = "Houndour"
+primary_type = "Dark"
+secondary_type = "Fire"
+species = "Dark"
 height = 6
 weight = 108
-
 [training]
 base_exp = 66
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 45
 atk = 60
@@ -18,46 +16,44 @@ def = 30
 sp_atk = 80
 sp_def = 50
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 25
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 19
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 43
 
 [[moves]]
-move_id = 123
+move = "smog"
 level = 13
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 37
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 49
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 31
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 7

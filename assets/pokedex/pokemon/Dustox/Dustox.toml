@@ -1,19 +1,14 @@
 [data]
 id = 269
-name = 'Dustox'
-primary_type = 'Bug'
-secondary_type = 'Poison'
-species = 'Poison'
+name = "Dustox"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Poison"
 height = 12
 weight = 316
-
 [training]
 base_exp = 173
-growth_rate = 'medium'
-
-[breeding]
-gender = 4
-
+growth_rate = "medium"
 [base]
 hp = 60
 atk = 50
@@ -21,43 +16,44 @@ def = 70
 sp_atk = 50
 sp_def = 90
 speed = 65
-
+[breeding]
+gender = 4
 [[moves]]
-move_id = 16
+move = "gust"
 level = 13
 
 [[moves]]
-move_id = 18
+move = "whirlwind"
 level = 27
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 24
 
 [[moves]]
-move_id = 92
+move = "toxic"
 level = 38
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 10
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 31
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 17
 
 [[moves]]
-move_id = 236
+move = "moonlight"
 level = 20
 
 [[moves]]
-move_id = 318
+move = "silver-wind"
 level = 34

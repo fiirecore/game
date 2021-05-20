@@ -1,16 +1,14 @@
 [data]
 id = 365
-name = 'Walrein'
-primary_type = 'Ice'
-secondary_type = 'Water'
-species = 'Ice'
+name = "Walrein"
+primary_type = "Ice"
+secondary_type = "Water"
+species = "Ice"
 height = 14
 weight = 1506
-
 [training]
 base_exp = 239
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 110
 atk = 80
@@ -18,58 +16,56 @@ def = 90
 sp_atk = 95
 sp_def = 90
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 19
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 59
+move = "blizzard"
 level = 50
 
 [[moves]]
-move_id = 62
+move = "aurora-beam"
 level = 25
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 1
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 39
 
 [[moves]]
-move_id = 173
+move = "snore"
 level = 39
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 1
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 7
 
 [[moves]]
-move_id = 258
+move = "hail"
 level = 31
 
 [[moves]]
-move_id = 301
+move = "ice-ball"
 level = 13
 
 [[moves]]
-move_id = 329
+move = "sheer-cold"
 level = 61

@@ -1,15 +1,13 @@
 [data]
 id = 336
-name = 'Seviper'
-primary_type = 'Poison'
-species = 'Fang'
+name = "Seviper"
+primary_type = "Poison"
+species = "Fang"
 height = 27
 weight = 525
-
 [training]
 base_exp = 160
-growth_rate = 'fast-then-very-slow'
-
+growth_rate = "fast-then-very-slow"
 [base]
 hp = 73
 atk = 100
@@ -17,46 +15,44 @@ def = 60
 sp_atk = 100
 sp_def = 60
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 10
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 19
 
 [[moves]]
-move_id = 114
+move = "haze"
 level = 43
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 7
 
 [[moves]]
-move_id = 137
+move = "glare"
 level = 25
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 37
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 28
 
 [[moves]]
-move_id = 305
+move = "poison-fang"
 level = 34
 
 [[moves]]
-move_id = 342
+move = "poison-tail"
 level = 16

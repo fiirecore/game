@@ -1,15 +1,13 @@
 [data]
 id = 359
-name = 'Absol'
-primary_type = 'Dark'
-species = 'Disaster'
+name = "Absol"
+primary_type = "Dark"
+species = "Disaster"
 height = 12
 weight = 470
-
 [training]
 base_exp = 163
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 65
 atk = 130
@@ -17,50 +15,48 @@ def = 60
 sp_atk = 75
 sp_def = 60
 speed = 75
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 13
+move = "razor-wind"
 level = 17
 
 [[moves]]
-move_id = 14
+move = "swords-dance"
 level = 26
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 5
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 21
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 13
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 31
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 36
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 46
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 41
 
 [[moves]]
-move_id = 269
+move = "taunt"
 level = 9

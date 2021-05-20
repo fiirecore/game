@@ -1,4 +1,4 @@
-id = 321
+id = "tickle"
 name = "Tickle"
 type = "Normal"
 category = "Status"

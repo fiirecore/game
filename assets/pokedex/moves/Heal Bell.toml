@@ -1,4 +1,4 @@
-id = 215
+id = "heal-bell"
 name = "Heal Bell"
 type = "Normal"
 category = "Status"

@@ -1,15 +1,13 @@
 [data]
 id = 51
-name = 'Dugtrio'
-primary_type = 'Ground'
-species = 'Mole'
+name = "Dugtrio"
+primary_type = "Ground"
+species = "Mole"
 height = 7
 weight = 333
-
 [training]
 base_exp = 149
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 35
 atk = 100
@@ -17,58 +15,56 @@ def = 50
 sp_atk = 50
 sp_def = 70
 speed = 120
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 5
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 51
 
 [[moves]]
-move_id = 90
+move = "fissure"
 level = 64
 
 [[moves]]
-move_id = 91
+move = "dig"
 level = 17
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 21
 
 [[moves]]
-move_id = 161
+move = "tri-attack"
 level = 1
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 38
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 25
 
 [[moves]]
-move_id = 222
+move = "magnitude"
 level = 9
 
 [[moves]]
-move_id = 328
+move = "sand-tomb"
 level = 26

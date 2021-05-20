@@ -1,16 +1,14 @@
 [data]
 id = 319
-name = 'Sharpedo'
-primary_type = 'Water'
-secondary_type = 'Dark'
-species = 'Brutal'
+name = "Sharpedo"
+primary_type = "Water"
+secondary_type = "Dark"
+species = "Brutal"
 height = 18
 weight = 888
-
 [training]
 base_exp = 161
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 70
 atk = 120
@@ -18,62 +16,60 @@ def = 40
 sp_atk = 95
 sp_def = 40
 speed = 95
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 53
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 1
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 7
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 28
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 1
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 13
 
 [[moves]]
-move_id = 130
+move = "skull-bash"
 level = 48
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 33
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 16
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 43
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 22
 
 [[moves]]
-move_id = 269
+move = "taunt"
 level = 38

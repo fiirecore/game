@@ -1,16 +1,14 @@
 [data]
 id = 348
-name = 'Armaldo'
-primary_type = 'Rock'
-secondary_type = 'Bug'
-species = 'Plate'
+name = "Armaldo"
+primary_type = "Rock"
+secondary_type = "Bug"
+species = "Plate"
 height = 15
 weight = 682
-
 [training]
 base_exp = 173
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 75
 atk = 125
@@ -18,58 +16,56 @@ def = 100
 sp_atk = 70
 sp_def = 80
 speed = 45
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 19
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 1
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 7
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 55
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 31
 
 [[moves]]
-move_id = 210
+move = "fury-cutter"
 level = 46
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 25
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 37
 
 [[moves]]
-move_id = 300
+move = "mud-sport"
 level = 1
 
 [[moves]]
-move_id = 300
+move = "mud-sport"
 level = 13
 
 [[moves]]
-move_id = 350
+move = "rock-blast"
 level = 64

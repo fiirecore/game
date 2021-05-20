@@ -1,4 +1,4 @@
-id = 88
+id = "rock-throw"
 name = "Rock Throw"
 type = "Rock"
 category = "Physical"

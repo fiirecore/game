@@ -1,16 +1,14 @@
 [data]
 id = 3
-name = 'Venusaur'
-primary_type = 'Grass'
-secondary_type = 'Poison'
-species = 'Seed'
+name = "Venusaur"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Seed"
 height = 20
 weight = 1000
-
 [training]
 base_exp = 236
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 80
 atk = 82
@@ -18,62 +16,60 @@ def = 83
 sp_atk = 100
 sp_def = 100
 speed = 80
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 22
+move = "vine-whip"
 level = 1
 
 [[moves]]
-move_id = 22
+move = "vine-whip"
 level = 10
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 4
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 1
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 7
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 41
 
 [[moves]]
-move_id = 75
+move = "razor-leaf"
 level = 22
 
 [[moves]]
-move_id = 76
+move = "solar-beam"
 level = 65
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 15
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 15
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 29
 
 [[moves]]
-move_id = 235
+move = "synthesis"
 level = 53

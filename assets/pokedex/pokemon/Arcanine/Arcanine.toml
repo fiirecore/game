@@ -1,15 +1,13 @@
 [data]
 id = 59
-name = 'Arcanine'
-primary_type = 'Fire'
-species = 'Legendary'
+name = "Arcanine"
+primary_type = "Fire"
+species = "Legendary"
 height = 19
 weight = 1550
-
 [training]
 base_exp = 194
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 90
 atk = 110
@@ -17,26 +15,24 @@ def = 80
 sp_atk = 100
 sp_def = 80
 speed = 95
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 245
+move = "extreme-speed"
 level = 49
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 1

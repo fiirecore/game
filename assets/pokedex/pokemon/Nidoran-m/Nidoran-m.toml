@@ -1,15 +1,13 @@
 [data]
 id = 32
-name = 'Nidoran-m'
-primary_type = 'Poison'
-species = 'Poison'
+name = "Nidoran-m"
+primary_type = "Poison"
+species = "Poison"
 height = 5
 weight = 90
-
 [training]
 base_exp = 55
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 46
 atk = 57
@@ -17,46 +15,44 @@ def = 40
 sp_atk = 40
 sp_def = 40
 speed = 50
-
 [breeding]
 gender = 0
-
 [[moves]]
-move_id = 24
+move = "double-kick"
 level = 12
 
 [[moves]]
-move_id = 30
+move = "horn-attack"
 level = 20
 
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 30
 
 [[moves]]
-move_id = 32
+move = "horn-drill"
 level = 47
 
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 17
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 1
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 8
 
 [[moves]]
-move_id = 260
+move = "flatter"
 level = 38
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 23

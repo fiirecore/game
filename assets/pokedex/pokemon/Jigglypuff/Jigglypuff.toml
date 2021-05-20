@@ -1,16 +1,14 @@
 [data]
 id = 39
-name = 'Jigglypuff'
-primary_type = 'Normal'
-secondary_type = 'Fairy'
-species = 'Balloon'
+name = "Jigglypuff"
+primary_type = "Normal"
+secondary_type = "Fairy"
+species = "Balloon"
 height = 5
 weight = 55
-
 [training]
 base_exp = 95
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 115
 atk = 45
@@ -18,50 +16,48 @@ def = 20
 sp_atk = 45
 sp_def = 25
 speed = 20
-
 [breeding]
 gender = 6
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 9
 
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 24
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 34
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 49
 
 [[moves]]
-move_id = 47
+move = "sing"
 level = 1
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 14
 
 [[moves]]
-move_id = 102
+move = "mimic"
 level = 39
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 4
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 29
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 19
 
 [[moves]]
-move_id = 304
+move = "hyper-voice"
 level = 44

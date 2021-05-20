@@ -1,4 +1,4 @@
-id = 121
+id = "egg-bomb"
 name = "Egg Bomb"
 type = "Normal"
 category = "Physical"

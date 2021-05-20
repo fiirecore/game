@@ -1,16 +1,14 @@
 [data]
 id = 305
-name = 'Lairon'
-primary_type = 'Steel'
-secondary_type = 'Rock'
-species = 'Iron'
+name = "Lairon"
+primary_type = "Steel"
+secondary_type = "Rock"
+species = "Iron"
 height = 9
 weight = 1200
-
 [training]
 base_exp = 151
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 60
 atk = 90
@@ -18,66 +16,64 @@ def = 140
 sp_atk = 50
 sp_def = 50
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 1
 
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 10
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 25
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 53
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 21
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 1
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 4
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 37
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 1
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 7
 
 [[moves]]
-move_id = 231
+move = "iron-tail"
 level = 29
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 13
 
 [[moves]]
-move_id = 319
+move = "metal-sound"
 level = 45
 
 [[moves]]
-move_id = 334
+move = "iron-defense"
 level = 17

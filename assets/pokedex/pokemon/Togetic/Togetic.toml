@@ -1,16 +1,14 @@
 [data]
 id = 176
-name = 'Togetic'
-primary_type = 'Fairy'
-secondary_type = 'Flying'
-species = 'Happiness'
+name = "Togetic"
+primary_type = "Fairy"
+secondary_type = "Flying"
+species = "Happiness"
 height = 6
 weight = 32
-
 [training]
 base_exp = 142
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 55
 atk = 40
@@ -18,66 +16,64 @@ def = 85
 sp_atk = 80
 sp_def = 105
 speed = 40
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 37
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 118
+move = "metronome"
 level = 1
 
 [[moves]]
-move_id = 118
+move = "metronome"
 level = 4
 
 [[moves]]
-move_id = 186
+move = "sweet-kiss"
 level = 1
 
 [[moves]]
-move_id = 186
+move = "sweet-kiss"
 level = 9
 
 [[moves]]
-move_id = 204
+move = "charm"
 level = 1
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 33
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 41
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 17
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 21
 
 [[moves]]
-move_id = 266
+move = "follow-me"
 level = 25
 
 [[moves]]
-move_id = 273
+move = "wish"
 level = 29
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 13
 
 [[moves]]
-move_id = 345
+move = "magical-leaf"
 level = 1

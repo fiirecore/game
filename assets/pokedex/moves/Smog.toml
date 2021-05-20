@@ -1,4 +1,4 @@
-id = 123
+id = "smog"
 name = "Smog"
 type = "Poison"
 category = "Special"

@@ -1,15 +1,13 @@
 [data]
 id = 58
-name = 'Growlithe'
-primary_type = 'Fire'
-species = 'Puppy'
+name = "Growlithe"
+primary_type = "Fire"
+species = "Puppy"
 height = 7
 weight = 190
-
 [training]
 base_exp = 70
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 55
 atk = 70
@@ -17,46 +15,44 @@ def = 45
 sp_atk = 70
 sp_def = 50
 speed = 60
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 25
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 13
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 7
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 49
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 43
 
 [[moves]]
-move_id = 172
+move = "flame-wheel"
 level = 31
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 37
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 19

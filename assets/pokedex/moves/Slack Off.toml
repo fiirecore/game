@@ -1,4 +1,4 @@
-id = 303
+id = "slack-off"
 name = "Slack Off"
 type = "Normal"
 category = "Status"

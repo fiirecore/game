@@ -1,15 +1,13 @@
 [data]
 id = 358
-name = 'Chimecho'
-primary_type = 'Psychic'
-species = 'Wind'
+name = "Chimecho"
+primary_type = "Psychic"
+species = "Wind"
 height = 6
 weight = 10
-
 [training]
 base_exp = 159
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 75
 atk = 50
@@ -17,54 +15,52 @@ def = 80
 sp_atk = 95
 sp_def = 90
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 17
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 33
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 6
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 14
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 46
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 30
 
 [[moves]]
-move_id = 215
+move = "heal-bell"
 level = 38
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 41
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 22
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 25
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 9

@@ -1,15 +1,13 @@
 [data]
 id = 202
-name = 'Wobbuffet'
-primary_type = 'Psychic'
-species = 'Patient'
+name = "Wobbuffet"
+primary_type = "Psychic"
+species = "Patient"
 height = 13
 weight = 285
-
 [training]
 base_exp = 142
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 190
 atk = 33
@@ -17,22 +15,20 @@ def = 58
 sp_atk = 33
 sp_def = 58
 speed = 33
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 68
+move = "counter"
 level = 1
 
 [[moves]]
-move_id = 194
+move = "destiny-bond"
 level = 1
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 1
 
 [[moves]]
-move_id = 243
+move = "mirror-coat"
 level = 1

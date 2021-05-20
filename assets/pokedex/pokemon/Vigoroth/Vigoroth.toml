@@ -1,15 +1,13 @@
 [data]
 id = 288
-name = 'Vigoroth'
-primary_type = 'Normal'
-species = 'Wild'
+name = "Vigoroth"
+primary_type = "Normal"
+species = "Wild"
 height = 14
 weight = 465
-
 [training]
 base_exp = 154
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 80
@@ -17,54 +15,52 @@ def = 80
 sp_atk = 55
 sp_def = 55
 speed = 90
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 68
+move = "counter"
 level = 37
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 1
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 19
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 31
 
 [[moves]]
-move_id = 179
+move = "reversal"
 level = 49
 
 [[moves]]
-move_id = 203
+move = "endure"
 level = 25
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 1
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 7
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 1
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 13
 
 [[moves]]
-move_id = 264
+move = "focus-punch"
 level = 43

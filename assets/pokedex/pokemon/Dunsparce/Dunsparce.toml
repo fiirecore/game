@@ -1,15 +1,13 @@
 [data]
 id = 206
-name = 'Dunsparce'
-primary_type = 'Normal'
-species = 'Land'
+name = "Dunsparce"
+primary_type = "Normal"
+species = "Land"
 height = 15
 weight = 140
-
 [training]
 base_exp = 145
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 100
 atk = 70
@@ -17,50 +15,48 @@ def = 70
 sp_atk = 65
 sp_def = 65
 speed = 45
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 41
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 1
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 34
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 4
 
 [[moves]]
-move_id = 137
+move = "glare"
 level = 14
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 44
 
 [[moves]]
-move_id = 180
+move = "spite"
 level = 24
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 21
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 31
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 11
 
 [[moves]]
-move_id = 283
+move = "endeavor"
 level = 51

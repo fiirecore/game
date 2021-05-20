@@ -1,15 +1,13 @@
 [data]
 id = 382
-name = 'Kyogre'
-primary_type = 'Water'
-species = 'Sea'
+name = "Kyogre"
+primary_type = "Water"
+species = "Sea"
 height = 45
 weight = 3520
-
 [training]
 base_exp = 302
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 100
 atk = 100
@@ -17,49 +15,48 @@ def = 90
 sp_atk = 150
 sp_def = 140
 speed = 90
-
 [breeding]
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 20
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 65
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 45
 
 [[moves]]
-move_id = 58
+move = "ice-beam"
 level = 35
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 50
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 5
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 15
 
 [[moves]]
-move_id = 323
+move = "water-spout"
 level = 75
 
 [[moves]]
-move_id = 329
+move = "sheer-cold"
 level = 60
 
 [[moves]]
-move_id = 347
+move = "calm-mind"
 level = 30
 
 [[moves]]
-move_id = 352
+move = "water-pulse"
 level = 1

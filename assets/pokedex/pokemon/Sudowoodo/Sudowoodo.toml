@@ -1,15 +1,13 @@
 [data]
 id = 185
-name = 'Sudowoodo'
-primary_type = 'Rock'
-species = 'Imitation'
+name = "Sudowoodo"
+primary_type = "Rock"
+species = "Imitation"
 height = 12
 weight = 380
-
 [training]
 base_exp = 144
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 70
 atk = 100
@@ -17,42 +15,40 @@ def = 115
 sp_atk = 30
 sp_def = 65
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 21
+move = "slam"
 level = 49
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 57
 
 [[moves]]
-move_id = 67
+move = "low-kick"
 level = 17
 
 [[moves]]
-move_id = 88
+move = "rock-throw"
 level = 1
 
 [[moves]]
-move_id = 102
+move = "mimic"
 level = 1
 
 [[moves]]
-move_id = 157
+move = "rock-slide"
 level = 25
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 9
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 41
 
 [[moves]]
-move_id = 335
+move = "block"
 level = 33

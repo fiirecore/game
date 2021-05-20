@@ -1,16 +1,14 @@
 [data]
 id = 189
-name = 'Jumpluff'
-primary_type = 'Grass'
-secondary_type = 'Flying'
-species = 'Cottonweed'
+name = "Jumpluff"
+primary_type = "Grass"
+secondary_type = "Flying"
+species = "Cottonweed"
 height = 8
 weight = 30
-
 [training]
 base_exp = 207
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 75
 atk = 55
@@ -18,58 +16,56 @@ def = 70
 sp_atk = 55
 sp_def = 95
 speed = 110
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 10
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 5
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 44
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 22
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 13
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 15
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 17
 
 [[moves]]
-move_id = 150
+move = "splash"
 level = 1
 
 [[moves]]
-move_id = 178
+move = "cotton-spore"
 level = 33
 
 [[moves]]
-move_id = 235
+move = "synthesis"
 level = 1
 
 [[moves]]
-move_id = 235
+move = "synthesis"
 level = 5

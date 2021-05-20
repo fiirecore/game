@@ -1,16 +1,14 @@
 [data]
 id = 102
-name = 'Exeggcute'
-primary_type = 'Grass'
-secondary_type = 'Psychic'
-species = 'Egg'
+name = "Exeggcute"
+primary_type = "Grass"
+secondary_type = "Psychic"
+species = "Egg"
 height = 4
 weight = 25
-
 [training]
 base_exp = 65
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 60
 atk = 40
@@ -18,46 +16,44 @@ def = 80
 sp_atk = 60
 sp_def = 45
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 13
 
 [[moves]]
-move_id = 76
+move = "solar-beam"
 level = 43
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 31
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 25
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 37
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 19
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 1
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 7
 
 [[moves]]
-move_id = 140
+move = "barrage"
 level = 1
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 1

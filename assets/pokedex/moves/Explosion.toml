@@ -1,4 +1,4 @@
-id = 153
+id = "explosion"
 name = "Explosion"
 type = "Normal"
 category = "Physical"

@@ -1,4 +1,4 @@
-id = 226
+id = "baton-pass"
 name = "Baton Pass"
 type = "Normal"
 category = "Status"

@@ -1,15 +1,13 @@
 [data]
 id = 182
-name = 'Bellossom'
-primary_type = 'Grass'
-species = 'Flower'
+name = "Bellossom"
+primary_type = "Grass"
+species = "Flower"
 height = 4
 weight = 58
-
 [training]
 base_exp = 221
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 75
 atk = 80
@@ -17,30 +15,28 @@ def = 95
 sp_atk = 90
 sp_def = 100
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 1
 
 [[moves]]
-move_id = 76
+move = "solar-beam"
 level = 55
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 1
 
 [[moves]]
-move_id = 80
+move = "petal-dance"
 level = 44
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 1
 
 [[moves]]
-move_id = 345
+move = "magical-leaf"
 level = 1

@@ -1,16 +1,14 @@
 [data]
 id = 92
-name = 'Gastly'
-primary_type = 'Ghost'
-secondary_type = 'Poison'
-species = 'Gas'
+name = "Gastly"
+primary_type = "Ghost"
+secondary_type = "Poison"
+species = "Gas"
 height = 13
 weight = 1
-
 [training]
 base_exp = 62
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 30
 atk = 35
@@ -18,50 +16,48 @@ def = 30
 sp_atk = 100
 sp_def = 35
 speed = 80
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 1
 
 [[moves]]
-move_id = 101
+move = "night-shade"
 level = 16
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 21
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 1
 
 [[moves]]
-move_id = 138
+move = "dream-eater"
 level = 28
 
 [[moves]]
-move_id = 171
+move = "nightmare"
 level = 41
 
 [[moves]]
-move_id = 174
+move = "curse"
 level = 13
 
 [[moves]]
-move_id = 180
+move = "spite"
 level = 8
 
 [[moves]]
-move_id = 194
+move = "destiny-bond"
 level = 33
 
 [[moves]]
-move_id = 212
+move = "mean-look"
 level = 48
 
 [[moves]]
-move_id = 247
+move = "shadow-ball"
 level = 36

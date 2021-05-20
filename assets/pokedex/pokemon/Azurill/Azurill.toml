@@ -1,16 +1,14 @@
 [data]
 id = 298
-name = 'Azurill'
-primary_type = 'Normal'
-secondary_type = 'Fairy'
-species = 'Polka'
+name = "Azurill"
+primary_type = "Normal"
+secondary_type = "Fairy"
+species = "Polka"
 height = 2
 weight = 20
-
 [training]
 base_exp = 38
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 50
 atk = 20
@@ -18,30 +16,28 @@ def = 40
 sp_atk = 20
 sp_def = 40
 speed = 20
-
 [breeding]
 gender = 6
-
 [[moves]]
-move_id = 21
+move = "slam"
 level = 15
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 6
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 21
 
 [[moves]]
-move_id = 145
+move = "bubble"
 level = 10
 
 [[moves]]
-move_id = 150
+move = "splash"
 level = 1
 
 [[moves]]
-move_id = 204
+move = "charm"
 level = 3

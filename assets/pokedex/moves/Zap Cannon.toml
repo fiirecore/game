@@ -1,4 +1,4 @@
-id = 192
+id = "zap-cannon"
 name = "Zap Cannon"
 type = "Electric"
 category = "Special"

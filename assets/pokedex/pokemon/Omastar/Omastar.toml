@@ -1,16 +1,14 @@
 [data]
 id = 139
-name = 'Omastar'
-primary_type = 'Rock'
-secondary_type = 'Water'
-species = 'Spiral'
+name = "Omastar"
+primary_type = "Rock"
+secondary_type = "Water"
+species = "Spiral"
 height = 10
 weight = 350
-
 [training]
 base_exp = 173
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 70
 atk = 60
@@ -18,58 +16,56 @@ def = 125
 sp_atk = 115
 sp_def = 70
 speed = 55
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 43
+move = "leer"
 level = 31
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 13
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 19
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 65
 
 [[moves]]
-move_id = 110
+move = "withdraw"
 level = 1
 
 [[moves]]
-move_id = 131
+move = "spike-cannon"
 level = 40
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 1
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 37
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 55
 
 [[moves]]
-move_id = 321
+move = "tickle"
 level = 46
 
 [[moves]]
-move_id = 341
+move = "mud-shot"
 level = 25

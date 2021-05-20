@@ -1,4 +1,4 @@
-id = 112
+id = "barrier"
 name = "Barrier"
 type = "Psychic"
 category = "Status"

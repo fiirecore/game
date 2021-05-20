@@ -1,16 +1,14 @@
 [data]
 id = 146
-name = 'Moltres'
-primary_type = 'Fire'
-secondary_type = 'Flying'
-species = 'Flame'
+name = "Moltres"
+primary_type = "Fire"
+secondary_type = "Flying"
+species = "Flame"
 height = 20
 weight = 600
-
 [training]
 base_exp = 261
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 90
 atk = 100
@@ -18,41 +16,40 @@ def = 90
 sp_atk = 125
 sp_def = 85
 speed = 90
-
 [breeding]
 
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 49
 
 [[moves]]
-move_id = 83
+move = "fire-spin"
 level = 13
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 25
 
 [[moves]]
-move_id = 143
+move = "sky-attack"
 level = 85
 
 [[moves]]
-move_id = 203
+move = "endure"
 level = 37
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 61
 
 [[moves]]
-move_id = 257
+move = "heat-wave"
 level = 73

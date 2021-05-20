@@ -12,15 +12,17 @@ pub enum MoveTarget {
 	// Random(Box<Self>),
 }
 
-impl Default for MoveTarget {
-    fn default() -> Self {
-		Self::Opponent
-    }
+pub const fn move_target_player() -> MoveTarget {
+	MoveTarget::Player
+}
+
+pub const fn move_target_opponent() -> MoveTarget {
+	MoveTarget::Opponent
 }
 
 #[derive(Debug, Clone, Copy)]
 pub enum MoveTargetInstance {
-	// Player,
+	User,
 	// Team(usize),
 	Opponent(usize),
 }

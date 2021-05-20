@@ -1,4 +1,4 @@
-id = 256
+id = "swallow"
 name = "Swallow"
 type = "Normal"
 category = "Status"

@@ -1,16 +1,14 @@
 [data]
 id = 279
-name = 'Pelipper'
-primary_type = 'Water'
-secondary_type = 'Flying'
-species = 'Water'
+name = "Pelipper"
+primary_type = "Water"
+secondary_type = "Flying"
+species = "Water"
 height = 12
 weight = 280
-
 [training]
 base_exp = 154
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 60
 atk = 50
@@ -18,58 +16,56 @@ def = 100
 sp_atk = 95
 sp_def = 70
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 1
 
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 13
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 7
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 21
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 3
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 61
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 25
 
 [[moves]]
-move_id = 254
+move = "stockpile"
 level = 33
 
 [[moves]]
-move_id = 255
+move = "spit-up"
 level = 47
 
 [[moves]]
-move_id = 256
+move = "swallow"
 level = 33
 
 [[moves]]
-move_id = 346
+move = "water-sport"
 level = 1

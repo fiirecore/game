@@ -1,16 +1,14 @@
 [data]
 id = 376
-name = 'Metagross'
-primary_type = 'Steel'
-secondary_type = 'Psychic'
-species = 'Iron'
+name = "Metagross"
+primary_type = "Steel"
+secondary_type = "Psychic"
+species = "Iron"
 height = 16
 weight = 5500
-
 [training]
 base_exp = 270
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 135
@@ -18,57 +16,56 @@ def = 130
 sp_atk = 95
 sp_def = 90
 speed = 70
-
 [breeding]
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 1
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 77
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 20
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 38
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 66
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 1
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 26
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 32
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 1
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 20
 
 [[moves]]
-move_id = 309
+move = "meteor-mash"
 level = 55
 
 [[moves]]
-move_id = 334
+move = "iron-defense"
 level = 44

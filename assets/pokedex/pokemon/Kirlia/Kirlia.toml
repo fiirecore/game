@@ -1,16 +1,14 @@
 [data]
 id = 281
-name = 'Kirlia'
-primary_type = 'Psychic'
-secondary_type = 'Fairy'
-species = 'Emotion'
+name = "Kirlia"
+primary_type = "Psychic"
+secondary_type = "Fairy"
+species = "Emotion"
 height = 8
 weight = 202
-
 [training]
 base_exp = 97
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 38
 atk = 35
@@ -18,62 +16,60 @@ def = 35
 sp_atk = 65
 sp_def = 55
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 6
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 26
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 47
 
 [[moves]]
-move_id = 100
+move = "teleport"
 level = 1
 
 [[moves]]
-move_id = 100
+move = "teleport"
 level = 16
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 1
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 11
 
 [[moves]]
-move_id = 138
+move = "dream-eater"
 level = 54
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 40
 
 [[moves]]
-move_id = 286
+move = "imprison"
 level = 33
 
 [[moves]]
-move_id = 345
+move = "magical-leaf"
 level = 1
 
 [[moves]]
-move_id = 347
+move = "calm-mind"
 level = 21

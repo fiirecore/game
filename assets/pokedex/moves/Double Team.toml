@@ -1,4 +1,4 @@
-id = 104
+id = "double-team"
 name = "Double Team"
 type = "Normal"
 category = "Status"

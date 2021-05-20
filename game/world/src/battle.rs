@@ -74,7 +74,7 @@ pub fn trainer_battle(battle: BattleEntryRef, npc: &NPC, map_id: &MapIdentifier,
                                     name: npc.name.clone(),
                                     transition: trainer.battle_transition,
                                     texture: crate::map::texture::npc::NPCTextureManager::trainer_texture(&npc.npc_type),
-                                    is_gym_leader: trainer_type.gym_leader,
+                                    gym_badge: trainer_type.badge,
                                     victory_message: trainer.victory_message.clone(),
                                     worth: trainer.worth,
                                 }

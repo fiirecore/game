@@ -1,16 +1,14 @@
 [data]
 id = 73
-name = 'Tentacruel'
-primary_type = 'Water'
-secondary_type = 'Poison'
-species = 'Jellyfish'
+name = "Tentacruel"
+primary_type = "Water"
+secondary_type = "Poison"
+species = "Jellyfish"
 height = 16
 weight = 550
-
 [training]
 base_exp = 180
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 70
@@ -18,50 +16,48 @@ def = 65
 sp_atk = 80
 sp_def = 120
 speed = 100
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 30
 
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 6
 
 [[moves]]
-move_id = 51
+move = "acid"
 level = 19
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 55
 
 [[moves]]
-move_id = 61
+move = "bubble-beam"
 level = 25
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 47
 
 [[moves]]
-move_id = 112
+move = "barrier"
 level = 38
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 1
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 12

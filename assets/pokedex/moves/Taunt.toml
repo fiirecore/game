@@ -1,4 +1,4 @@
-id = 269
+id = "taunt"
 name = "Taunt"
 type = "Dark"
 category = "Status"

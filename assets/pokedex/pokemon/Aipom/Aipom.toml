@@ -1,15 +1,13 @@
 [data]
 id = 190
-name = 'Aipom'
-primary_type = 'Normal'
-species = 'Long'
+name = "Aipom"
+primary_type = "Normal"
+species = "Long"
 height = 8
 weight = 115
-
 [training]
 base_exp = 72
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 55
 atk = 70
@@ -17,46 +15,44 @@ def = 55
 sp_atk = 40
 sp_def = 55
 speed = 85
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 6
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 50
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 43
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 38
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 31
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 18
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 13
 
 [[moves]]
-move_id = 321
+move = "tickle"
 level = 25

@@ -1,4 +1,4 @@
-id = 45
+id = "growl"
 name = "Growl"
 type = "Normal"
 category = "Status"

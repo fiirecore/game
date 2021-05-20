@@ -1,15 +1,13 @@
 [data]
 id = 383
-name = 'Groudon'
-primary_type = 'Ground'
-species = 'Continent'
+name = "Groudon"
+primary_type = "Ground"
+species = "Continent"
 height = 35
 weight = 9500
-
 [training]
 base_exp = 302
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 100
 atk = 150
@@ -17,49 +15,48 @@ def = 140
 sp_atk = 100
 sp_def = 90
 speed = 90
-
 [breeding]
 
 [[moves]]
-move_id = 76
+move = "solar-beam"
 level = 65
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 35
 
 [[moves]]
-move_id = 90
+move = "fissure"
 level = 60
 
 [[moves]]
-move_id = 126
+move = "fire-blast"
 level = 45
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 50
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 20
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 5
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 15
 
 [[moves]]
-move_id = 284
+move = "eruption"
 level = 75
 
 [[moves]]
-move_id = 339
+move = "bulk-up"
 level = 30
 
 [[moves]]
-move_id = 341
+move = "mud-shot"
 level = 1

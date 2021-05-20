@@ -1,16 +1,14 @@
 [data]
 id = 214
-name = 'Heracross'
-primary_type = 'Bug'
-secondary_type = 'Fighting'
-species = 'Single'
+name = "Heracross"
+primary_type = "Bug"
+secondary_type = "Fighting"
+species = "Single"
 height = 15
 weight = 540
-
 [training]
 base_exp = 175
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 125
@@ -18,46 +16,44 @@ def = 75
 sp_atk = 40
 sp_def = 95
 speed = 85
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 30
+move = "horn-attack"
 level = 6
 
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 17
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 37
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 68
+move = "counter"
 level = 30
 
 [[moves]]
-move_id = 179
+move = "reversal"
 level = 45
 
 [[moves]]
-move_id = 203
+move = "endure"
 level = 11
 
 [[moves]]
-move_id = 224
+move = "megahorn"
 level = 53
 
 [[moves]]
-move_id = 280
+move = "brick-break"
 level = 23

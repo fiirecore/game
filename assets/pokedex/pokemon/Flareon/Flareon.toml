@@ -1,15 +1,13 @@
 [data]
 id = 136
-name = 'Flareon'
-primary_type = 'Fire'
-species = 'Flame'
+name = "Flareon"
+primary_type = "Fire"
+species = "Flame"
 height = 9
 weight = 250
-
 [training]
 base_exp = 184
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 65
 atk = 130
@@ -17,50 +15,48 @@ def = 60
 sp_atk = 95
 sp_def = 110
 speed = 65
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 8
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 47
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 30
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 16
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 52
 
 [[moves]]
-move_id = 83
+move = "fire-spin"
 level = 36
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 23
 
 [[moves]]
-move_id = 123
+move = "smog"
 level = 42
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 1

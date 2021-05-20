@@ -1,4 +1,4 @@
-id = 280
+id = "brick-break"
 name = "Brick Break"
 type = "Fighting"
 category = "Physical"

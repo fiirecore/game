@@ -1,16 +1,14 @@
 [data]
 id = 12
-name = 'Butterfree'
-primary_type = 'Bug'
-secondary_type = 'Flying'
-species = 'Butterfly'
+name = "Butterfree"
+primary_type = "Bug"
+secondary_type = "Flying"
+species = "Butterfly"
 height = 11
 weight = 320
-
 [training]
 base_exp = 178
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 60
 atk = 45
@@ -18,50 +16,48 @@ def = 50
 sp_atk = 90
 sp_def = 80
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 16
+move = "gust"
 level = 28
 
 [[moves]]
-move_id = 18
+move = "whirlwind"
 level = 23
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 18
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 34
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 13
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 14
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 15
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 10
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 40
 
 [[moves]]
-move_id = 318
+move = "silver-wind"
 level = 47

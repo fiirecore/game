@@ -1,15 +1,13 @@
 [data]
 id = 235
-name = 'Smeargle'
-primary_type = 'Normal'
-species = 'Painter'
+name = "Smeargle"
+primary_type = "Normal"
+species = "Painter"
 height = 12
 weight = 580
-
 [training]
 base_exp = 88
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 55
 atk = 20
@@ -17,46 +15,44 @@ def = 35
 sp_atk = 20
 sp_def = 45
 speed = 75
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 1
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 11
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 21
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 31
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 41
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 51
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 61
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 71
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 81
 
 [[moves]]
-move_id = 166
+move = "sketch"
 level = 91

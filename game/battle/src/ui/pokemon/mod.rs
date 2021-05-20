@@ -35,6 +35,7 @@ pub struct Spawner {
 #[derive(PartialEq)]
 enum SpawnerState {
     None,
+    Start,
     Throwing,
     Spawning,
 }
@@ -54,14 +55,21 @@ static mut POKEBALL: Option<Texture2D> = None;
 impl Spawner {
 
     const LEN: f32 = 20.0;
-    const ORIGIN: f32 = Self::LEN / 3.0;
+    const ORIGIN: f32 = 0.0;
+    const OFFSET: f32 = -5.0;
+    const PARABOLA_ORIGIN: f32 = (Self::LEN / 3.0);
 
     fn f(x: f32) -> f32 {
-        0.5 * (x - Self::ORIGIN).powi(2) - 50.0
+        0.5 * (x - Self::PARABOLA_ORIGIN).powi(2) - 50.0
     }
 
     pub fn update(&mut self, delta: f32) {
         match self.spawning {
+            SpawnerState::Start => {
+                self.x = Self::ORIGIN;
+                self.spawning = SpawnerState::Throwing;
+                self.update(delta);
+            }
             SpawnerState::Throwing => {
                 self.x += delta * 20.0;
                 if self.x > Self::LEN {
@@ -84,7 +92,7 @@ impl Spawner {
             SpawnerState::Throwing => 
             draw_texture_ex(
                 self.texture,
-                origin.x + self.x,
+                origin.x + self.x + Self::OFFSET,
                 origin.y + Self::f(self.x),
                 DRAW_COLOR,
                 DrawTextureParams {
@@ -109,7 +117,7 @@ impl Spawner {
                     DrawTextureParams::default()
                 )
             },
-            SpawnerState::None => (),
+            SpawnerState::None | SpawnerState::Start => (),
         }
     }
 
@@ -206,7 +214,7 @@ impl PokemonRenderer {
     }
 
     pub fn spawn(&mut self) {
-        self.spawner.spawning = SpawnerState::Throwing;
+        self.spawner.spawning = SpawnerState::Start;
         self.spawner.x = 0.0;
     }
 
@@ -257,6 +265,5 @@ impl Reset for PokemonRenderer {
         self.faint = Faint::default();
         self.flicker = Flicker::default();
         self.spawner.spawning = SpawnerState::None;
-        self.spawner.x = 0.0;
     }
 }

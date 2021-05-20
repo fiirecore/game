@@ -1,4 +1,4 @@
-id = 223
+id = "dynamic-punch"
 name = "Dynamic Punch"
 type = "Fighting"
 category = "Physical"

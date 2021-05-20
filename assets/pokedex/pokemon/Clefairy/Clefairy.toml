@@ -1,15 +1,13 @@
 [data]
 id = 35
-name = 'Clefairy'
-primary_type = 'Fairy'
-species = 'Fairy'
+name = "Clefairy"
+primary_type = "Fairy"
+species = "Fairy"
 height = 6
 weight = 75
-
 [training]
 base_exp = 113
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 70
 atk = 45
@@ -17,58 +15,56 @@ def = 48
 sp_atk = 60
 sp_def = 65
 speed = 35
-
 [breeding]
 gender = 6
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 13
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 47
+move = "sing"
 level = 9
 
 [[moves]]
-move_id = 107
+move = "minimize"
 level = 21
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 25
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 41
 
 [[moves]]
-move_id = 118
+move = "metronome"
 level = 29
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 5
 
 [[moves]]
-move_id = 236
+move = "moonlight"
 level = 37
 
 [[moves]]
-move_id = 266
+move = "follow-me"
 level = 17
 
 [[moves]]
-move_id = 309
+move = "meteor-mash"
 level = 45
 
 [[moves]]
-move_id = 322
+move = "cosmic-power"
 level = 33

@@ -1,15 +1,13 @@
 [data]
 id = 27
-name = 'Sandshrew'
-primary_type = 'Ground'
-species = 'Mouse'
+name = "Sandshrew"
+primary_type = "Ground"
+species = "Mouse"
 height = 6
 weight = 120
-
 [training]
 base_exp = 60
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 50
 atk = 75
@@ -17,42 +15,40 @@ def = 85
 sp_atk = 20
 sp_def = 30
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 11
 
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 17
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 6
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 30
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 37
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 23
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 53
 
 [[moves]]
-move_id = 328
+move = "sand-tomb"
 level = 45

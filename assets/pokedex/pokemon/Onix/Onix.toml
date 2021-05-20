@@ -1,16 +1,14 @@
 [data]
 id = 95
-name = 'Onix'
-primary_type = 'Rock'
-secondary_type = 'Ground'
-species = 'Rock'
+name = "Onix"
+primary_type = "Rock"
+secondary_type = "Ground"
+species = "Rock"
 height = 88
 weight = 2100
-
 [training]
 base_exp = 77
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 35
 atk = 45
@@ -18,54 +16,52 @@ def = 160
 sp_atk = 30
 sp_def = 45
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 20
+move = "bind"
 level = 8
 
 [[moves]]
-move_id = 21
+move = "slam"
 level = 41
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 56
 
 [[moves]]
-move_id = 88
+move = "rock-throw"
 level = 12
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 23
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 1
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 19
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 34
 
 [[moves]]
-move_id = 225
+move = "dragon-breath"
 level = 30
 
 [[moves]]
-move_id = 231
+move = "iron-tail"
 level = 45
 
 [[moves]]
-move_id = 328
+move = "sand-tomb"
 level = 52

@@ -1,15 +1,13 @@
 [data]
 id = 368
-name = 'Gorebyss'
-primary_type = 'Water'
-species = 'South'
+name = "Gorebyss"
+primary_type = "Water"
+species = "South"
 height = 18
 weight = 226
-
 [training]
 base_exp = 170
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 55
 atk = 84
@@ -17,38 +15,36 @@ def = 105
 sp_atk = 114
 sp_def = 75
 speed = 52
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 50
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 8
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 36
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 15
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 29
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 43
 
 [[moves]]
-move_id = 250
+move = "whirlpool"
 level = 1
 
 [[moves]]
-move_id = 352
+move = "water-pulse"
 level = 22

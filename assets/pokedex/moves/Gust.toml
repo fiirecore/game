@@ -1,4 +1,4 @@
-id = 16
+id = "gust"
 name = "Gust"
 type = "Flying"
 category = "Special"

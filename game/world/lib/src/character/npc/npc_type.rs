@@ -6,6 +6,7 @@ use firecore_audio_lib::music::MusicName;
 use crate::character::sprite::SpriteIndexes;
 
 pub type NPCTypeId = TinyStr16;
+pub type BadgeId = TinyStr16;
 
 #[derive(Debug)]
 pub struct NPCType {
@@ -22,7 +23,7 @@ pub struct TrainerType {
 
     pub name: String,
     #[serde(default)]
-    pub gym_leader: bool,
+    pub badge: Option<BadgeId>,
     pub music: Option<MusicName>,
 
 }

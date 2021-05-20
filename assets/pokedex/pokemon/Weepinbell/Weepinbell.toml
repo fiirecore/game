@@ -1,16 +1,14 @@
 [data]
 id = 70
-name = 'Weepinbell'
-primary_type = 'Grass'
-secondary_type = 'Poison'
-species = 'Flycatcher'
+name = "Weepinbell"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Flycatcher"
 height = 10
 weight = 64
-
 [training]
 base_exp = 137
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 65
 atk = 90
@@ -18,54 +16,52 @@ def = 50
 sp_atk = 85
 sp_def = 45
 speed = 55
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 21
+move = "slam"
 level = 54
 
 [[moves]]
-move_id = 22
+move = "vine-whip"
 level = 1
 
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 1
 
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 11
 
 [[moves]]
-move_id = 51
+move = "acid"
 level = 24
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 1
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 6
 
 [[moves]]
-move_id = 75
+move = "razor-leaf"
 level = 42
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 17
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 19
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 15
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 33

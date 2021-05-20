@@ -1,15 +1,13 @@
 [data]
 id = 331
-name = 'Cacnea'
-primary_type = 'Grass'
-species = 'Cactus'
+name = "Cacnea"
+primary_type = "Grass"
+species = "Cactus"
 height = 4
 weight = 513
-
 [training]
 base_exp = 67
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 50
 atk = 85
@@ -17,62 +15,60 @@ def = 40
 sp_atk = 85
 sp_def = 40
 speed = 35
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 17
 
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 1
 
 [[moves]]
-move_id = 42
+move = "pin-missile"
 level = 21
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 5
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 13
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 9
 
 [[moves]]
-move_id = 178
+move = "cotton-spore"
 level = 41
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 29
 
 [[moves]]
-move_id = 191
+move = "spikes"
 level = 33
 
 [[moves]]
-move_id = 194
+move = "destiny-bond"
 level = 49
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 45
 
 [[moves]]
-move_id = 275
+move = "ingrain"
 level = 25
 
 [[moves]]
-move_id = 302
+move = "needle-arm"
 level = 37

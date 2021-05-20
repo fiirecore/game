@@ -1,4 +1,4 @@
-id = 30
+id = "horn-attack"
 name = "Horn Attack"
 type = "Normal"
 category = "Physical"

@@ -1,4 +1,4 @@
-id = 341
+id = "mud-shot"
 name = "Mud Shot"
 type = "Ground"
 category = "Special"

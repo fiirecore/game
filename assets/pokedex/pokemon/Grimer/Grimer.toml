@@ -1,15 +1,13 @@
 [data]
 id = 88
-name = 'Grimer'
-primary_type = 'Poison'
-species = 'Sludge'
+name = "Grimer"
+primary_type = "Poison"
+species = "Sludge"
 height = 9
 weight = 300
-
 [training]
 base_exp = 65
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 80
 atk = 80
@@ -17,46 +15,44 @@ def = 50
 sp_atk = 40
 sp_def = 50
 speed = 25
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 8
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 26
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 4
 
 [[moves]]
-move_id = 107
+move = "minimize"
 level = 19
 
 [[moves]]
-move_id = 124
+move = "sludge"
 level = 13
 
 [[moves]]
-move_id = 139
+move = "poison-gas"
 level = 1
 
 [[moves]]
-move_id = 151
+move = "acid-armor"
 level = 34
 
 [[moves]]
-move_id = 188
+move = "sludge-bomb"
 level = 43
 
 [[moves]]
-move_id = 262
+move = "memento"
 level = 53

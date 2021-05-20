@@ -1,4 +1,4 @@
-id = 107
+id = "minimize"
 name = "Minimize"
 type = "Normal"
 category = "Status"

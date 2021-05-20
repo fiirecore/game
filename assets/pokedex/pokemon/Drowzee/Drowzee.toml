@@ -1,15 +1,13 @@
 [data]
 id = 96
-name = 'Drowzee'
-primary_type = 'Psychic'
-species = 'Hypnosis'
+name = "Drowzee"
+primary_type = "Psychic"
+species = "Hypnosis"
 height = 10
 weight = 324
-
 [training]
 base_exp = 66
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 60
 atk = 48
@@ -17,50 +15,48 @@ def = 45
 sp_atk = 43
 sp_def = 90
 speed = 42
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 17
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 7
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 11
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 31
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 1
 
 [[moves]]
-move_id = 96
+move = "meditate"
 level = 27
 
 [[moves]]
-move_id = 139
+move = "poison-gas"
 level = 21
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 41
 
 [[moves]]
-move_id = 244
+move = "psych-up"
 level = 37
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 47

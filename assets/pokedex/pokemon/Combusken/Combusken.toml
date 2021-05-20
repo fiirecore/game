@@ -1,16 +1,14 @@
 [data]
 id = 256
-name = 'Combusken'
-primary_type = 'Fire'
-secondary_type = 'Fighting'
-species = 'Young'
+name = "Combusken"
+primary_type = "Fire"
+secondary_type = "Fighting"
+species = "Young"
 height = 9
 weight = 195
-
 [training]
 base_exp = 142
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 60
 atk = 85
@@ -18,62 +16,60 @@ def = 60
 sp_atk = 85
 sp_def = 60
 speed = 55
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 24
+move = "double-kick"
 level = 16
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 21
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 13
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 17
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 32
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 1
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 7
 
 [[moves]]
-move_id = 119
+move = "mirror-move"
 level = 43
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 39
 
 [[moves]]
-move_id = 327
+move = "sky-uppercut"
 level = 50
 
 [[moves]]
-move_id = 339
+move = "bulk-up"
 level = 28

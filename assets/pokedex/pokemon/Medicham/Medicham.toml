@@ -1,16 +1,14 @@
 [data]
 id = 308
-name = 'Medicham'
-primary_type = 'Fighting'
-secondary_type = 'Psychic'
-species = 'Meditate'
+name = "Medicham"
+primary_type = "Fighting"
+secondary_type = "Psychic"
+species = "Meditate"
 height = 13
 weight = 315
-
 [training]
 base_exp = 144
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 60
 atk = 60
@@ -18,78 +16,76 @@ def = 75
 sp_atk = 60
 sp_def = 75
 speed = 80
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 7
+move = "fire-punch"
 level = 1
 
 [[moves]]
-move_id = 8
+move = "ice-punch"
 level = 1
 
 [[moves]]
-move_id = 9
+move = "thunder-punch"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 9
 
 [[moves]]
-move_id = 96
+move = "meditate"
 level = 1
 
 [[moves]]
-move_id = 96
+move = "meditate"
 level = 4
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 56
 
 [[moves]]
-move_id = 117
+move = "bide"
 level = 1
 
 [[moves]]
-move_id = 136
+move = "high-jump-kick"
 level = 33
 
 [[moves]]
-move_id = 170
+move = "mind-reader"
 level = 25
 
 [[moves]]
-move_id = 179
+move = "reversal"
 level = 47
 
 [[moves]]
-move_id = 197
+move = "detect"
 level = 1
 
 [[moves]]
-move_id = 197
+move = "detect"
 level = 12
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 20
 
 [[moves]]
-move_id = 237
+move = "hidden-power"
 level = 17
 
 [[moves]]
-move_id = 244
+move = "psych-up"
 level = 36
 
 [[moves]]
-move_id = 347
+move = "calm-mind"
 level = 28

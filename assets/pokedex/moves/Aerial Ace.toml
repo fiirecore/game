@@ -1,0 +1,6 @@
+id = "aerial-ace"
+name = "Aerial Ace"
+type = "Flying"
+category = "Physical"
+power = 60
+pp = 20

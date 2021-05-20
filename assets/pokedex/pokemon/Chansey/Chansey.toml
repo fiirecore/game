@@ -1,15 +1,13 @@
 [data]
 id = 113
-name = 'Chansey'
-primary_type = 'Normal'
-species = 'Egg'
+name = "Chansey"
+primary_type = "Normal"
+species = "Egg"
 height = 11
 weight = 346
-
 [training]
 base_exp = 395
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 250
 atk = 5
@@ -17,54 +15,52 @@ def = 5
 sp_atk = 35
 sp_def = 105
 speed = 50
-
 [breeding]
 gender = 8
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 17
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 57
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 5
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 47
+move = "sing"
 level = 29
 
 [[moves]]
-move_id = 107
+move = "minimize"
 level = 23
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 41
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 49
 
 [[moves]]
-move_id = 121
+move = "egg-bomb"
 level = 35
 
 [[moves]]
-move_id = 135
+move = "soft-boiled"
 level = 13
 
 [[moves]]
-move_id = 287
+move = "refresh"
 level = 9

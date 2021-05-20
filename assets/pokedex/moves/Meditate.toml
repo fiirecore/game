@@ -1,4 +1,4 @@
-id = 96
+id = "meditate"
 name = "Meditate"
 type = "Psychic"
 category = "Status"

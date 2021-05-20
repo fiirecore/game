@@ -1,15 +1,13 @@
 [data]
 id = 100
-name = 'Voltorb'
-primary_type = 'Electric'
-species = 'Ball'
+name = "Voltorb"
+primary_type = "Electric"
+species = "Ball"
 height = 5
 weight = 104
-
 [training]
 base_exp = 66
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 40
 atk = 30
@@ -17,49 +15,48 @@ def = 50
 sp_atk = 55
 sp_def = 55
 speed = 100
-
 [breeding]
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 49
+move = "sonic-boom"
 level = 15
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 8
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 37
 
 [[moves]]
-move_id = 120
+move = "self-destruct"
 level = 27
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 42
 
 [[moves]]
-move_id = 153
+move = "explosion"
 level = 46
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 32
 
 [[moves]]
-move_id = 209
+move = "spark"
 level = 21
 
 [[moves]]
-move_id = 243
+move = "mirror-coat"
 level = 49
 
 [[moves]]
-move_id = 268
+move = "charge"
 level = 1

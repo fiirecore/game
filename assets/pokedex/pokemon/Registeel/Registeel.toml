@@ -1,15 +1,13 @@
 [data]
 id = 379
-name = 'Registeel'
-primary_type = 'Steel'
-species = 'Iron'
+name = "Registeel"
+primary_type = "Steel"
+species = "Iron"
 height = 19
 weight = 2050
-
 [training]
 base_exp = 261
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 75
@@ -17,45 +15,44 @@ def = 150
 sp_atk = 75
 sp_def = 150
 speed = 50
-
 [breeding]
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 65
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 41
 
 [[moves]]
-move_id = 153
+move = "explosion"
 level = 1
 
 [[moves]]
-move_id = 174
+move = "curse"
 level = 17
 
 [[moves]]
-move_id = 192
+move = "zap-cannon"
 level = 49
 
 [[moves]]
-move_id = 199
+move = "lock-on"
 level = 57
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 9
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 33
 
 [[moves]]
-move_id = 276
+move = "superpower"
 level = 25
 
 [[moves]]
-move_id = 334
+move = "iron-defense"
 level = 41

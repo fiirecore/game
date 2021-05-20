@@ -1,16 +1,14 @@
 [data]
 id = 62
-name = 'Poliwrath'
-primary_type = 'Water'
-secondary_type = 'Fighting'
-species = 'Tadpole'
+name = "Poliwrath"
+primary_type = "Water"
+secondary_type = "Fighting"
+species = "Tadpole"
 height = 13
 weight = 540
-
 [training]
 base_exp = 230
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 90
 atk = 95
@@ -18,30 +16,28 @@ def = 95
 sp_atk = 70
 sp_def = 90
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 66
+move = "submission"
 level = 1
 
 [[moves]]
-move_id = 66
+move = "submission"
 level = 35
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 1
 
 [[moves]]
-move_id = 170
+move = "mind-reader"
 level = 51

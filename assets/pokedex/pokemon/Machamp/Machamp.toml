@@ -1,15 +1,13 @@
 [data]
 id = 68
-name = 'Machamp'
-primary_type = 'Fighting'
-species = 'Superpower'
+name = "Machamp"
+primary_type = "Fighting"
+species = "Superpower"
 height = 16
 weight = 1300
-
 [training]
 base_exp = 227
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 90
 atk = 130
@@ -17,58 +15,56 @@ def = 80
 sp_atk = 65
 sp_def = 85
 speed = 55
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 2
+move = "karate-chop"
 level = 13
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 66
+move = "submission"
 level = 41
 
 [[moves]]
-move_id = 67
+move = "low-kick"
 level = 1
 
 [[moves]]
-move_id = 69
+move = "seismic-toss"
 level = 19
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 1
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 7
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 51
 
 [[moves]]
-move_id = 193
+move = "foresight"
 level = 22
 
 [[moves]]
-move_id = 223
+move = "dynamic-punch"
 level = 59
 
 [[moves]]
-move_id = 233
+move = "vital-throw"
 level = 33
 
 [[moves]]
-move_id = 238
+move = "cross-chop"
 level = 46
 
 [[moves]]
-move_id = 279
+move = "revenge"
 level = 25

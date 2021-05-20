@@ -1,16 +1,14 @@
 [data]
 id = 167
-name = 'Spinarak'
-primary_type = 'Bug'
-secondary_type = 'Poison'
-species = 'String'
+name = "Spinarak"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "String"
 height = 5
 weight = 85
-
 [training]
 base_exp = 50
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 40
 atk = 60
@@ -18,46 +16,44 @@ def = 40
 sp_atk = 40
 sp_def = 40
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 1
 
 [[moves]]
-move_id = 81
+move = "string-shot"
 level = 1
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 53
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 45
 
 [[moves]]
-move_id = 101
+move = "night-shade"
 level = 17
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 11
 
 [[moves]]
-move_id = 141
+move = "leech-life"
 level = 23
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 30
 
 [[moves]]
-move_id = 169
+move = "spider-web"
 level = 37
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 6

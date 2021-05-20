@@ -1,15 +1,13 @@
 [data]
 id = 326
-name = 'Grumpig'
-primary_type = 'Psychic'
-species = 'Manipulate'
+name = "Grumpig"
+primary_type = "Psychic"
+species = "Manipulate"
 height = 9
 weight = 715
-
 [training]
 base_exp = 165
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 80
 atk = 45
@@ -17,62 +15,60 @@ def = 65
 sp_atk = 90
 sp_def = 110
 speed = 80
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 1
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 16
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 37
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 25
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 1
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 7
 
 [[moves]]
-move_id = 150
+move = "splash"
 level = 1
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 43
 
 [[moves]]
-move_id = 173
+move = "snore"
 level = 43
 
 [[moves]]
-move_id = 244
+move = "psych-up"
 level = 19
 
 [[moves]]
-move_id = 277
+move = "magic-coat"
 level = 28
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 1
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 10
 
 [[moves]]
-move_id = 340
+move = "bounce"
 level = 55

@@ -1,16 +1,14 @@
 [data]
 id = 343
-name = 'Baltoy'
-primary_type = 'Ground'
-secondary_type = 'Psychic'
-species = 'Clay'
+name = "Baltoy"
+primary_type = "Ground"
+secondary_type = "Psychic"
+species = "Clay"
 height = 5
 weight = 215
-
 [training]
 base_exp = 60
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 40
 atk = 40
@@ -18,49 +16,48 @@ def = 55
 sp_atk = 40
 sp_def = 70
 speed = 55
-
 [breeding]
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 11
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 3
 
 [[moves]]
-move_id = 120
+move = "self-destruct"
 level = 19
 
 [[moves]]
-move_id = 153
+move = "explosion"
 level = 45
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 7
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 31
 
 [[moves]]
-move_id = 229
+move = "rapid-spin"
 level = 5
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 25
 
 [[moves]]
-move_id = 317
+move = "rock-tomb"
 level = 15
 
 [[moves]]
-move_id = 322
+move = "cosmic-power"
 level = 37

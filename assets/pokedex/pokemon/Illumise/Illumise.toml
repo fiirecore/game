@@ -1,15 +1,13 @@
 [data]
 id = 314
-name = 'Illumise'
-primary_type = 'Bug'
-species = 'Firefly'
+name = "Illumise"
+primary_type = "Bug"
+species = "Firefly"
 height = 6
 weight = 177
-
 [training]
 base_exp = 151
-growth_rate = 'fast-then-very-slow'
-
+growth_rate = "fast-then-very-slow"
 [base]
 hp = 65
 atk = 47
@@ -17,46 +15,44 @@ def = 75
 sp_atk = 73
 sp_def = 85
 speed = 85
-
 [breeding]
 gender = 8
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 17
 
 [[moves]]
-move_id = 204
+move = "charm"
 level = 9
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 25
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 5
 
 [[moves]]
-move_id = 236
+move = "moonlight"
 level = 13
 
 [[moves]]
-move_id = 260
+move = "flatter"
 level = 29
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 33
 
 [[moves]]
-move_id = 273
+move = "wish"
 level = 21
 
 [[moves]]
-move_id = 343
+move = "covet"
 level = 37

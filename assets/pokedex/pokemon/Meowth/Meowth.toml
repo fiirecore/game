@@ -1,15 +1,13 @@
 [data]
 id = 52
-name = 'Meowth'
-primary_type = 'Normal'
-species = 'Scratch'
+name = "Meowth"
+primary_type = "Normal"
+species = "Scratch"
 height = 4
 weight = 42
-
 [training]
 base_exp = 58
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 40
 atk = 45
@@ -17,46 +15,44 @@ def = 35
 sp_atk = 40
 sp_def = 40
 speed = 90
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 6
+move = "pay-day"
 level = 18
 
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 10
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 31
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 36
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 40
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 25
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 45
 
 [[moves]]
-move_id = 252
+move = "fake-out"
 level = 43

@@ -1,6 +1,6 @@
 (
     move: (
-        id: 73,
+        id: "leech-seed",
         name: "Leech Seed",
         type: Grass,
         category: Status,

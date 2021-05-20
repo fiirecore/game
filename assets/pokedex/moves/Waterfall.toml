@@ -1,4 +1,4 @@
-id = 127
+id = "waterfall"
 name = "Waterfall"
 type = "Water"
 category = "Physical"

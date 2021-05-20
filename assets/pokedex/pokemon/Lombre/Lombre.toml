@@ -1,16 +1,14 @@
 [data]
 id = 271
-name = 'Lombre'
-primary_type = 'Water'
-secondary_type = 'Grass'
-species = 'Jolly'
+name = "Lombre"
+primary_type = "Water"
+secondary_type = "Grass"
+species = "Jolly"
 height = 12
 weight = 325
-
 [training]
 base_exp = 119
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 60
 atk = 50
@@ -18,46 +16,44 @@ def = 50
 sp_atk = 60
 sp_def = 70
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 45
+move = "growl"
 level = 3
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 49
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 7
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 25
 
 [[moves]]
-move_id = 168
+move = "thief"
 level = 37
 
 [[moves]]
-move_id = 252
+move = "fake-out"
 level = 19
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 43
 
 [[moves]]
-move_id = 267
+move = "nature-power"
 level = 13
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 1
 
 [[moves]]
-move_id = 346
+move = "water-sport"
 level = 31

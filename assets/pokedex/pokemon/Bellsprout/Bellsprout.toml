@@ -1,16 +1,14 @@
 [data]
 id = 69
-name = 'Bellsprout'
-primary_type = 'Grass'
-secondary_type = 'Poison'
-species = 'Flower'
+name = "Bellsprout"
+primary_type = "Grass"
+secondary_type = "Poison"
+species = "Flower"
 height = 7
 weight = 40
-
 [training]
 base_exp = 60
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 50
 atk = 75
@@ -18,46 +16,44 @@ def = 35
 sp_atk = 70
 sp_def = 30
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 21
+move = "slam"
 level = 45
 
 [[moves]]
-move_id = 22
+move = "vine-whip"
 level = 1
 
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 11
 
 [[moves]]
-move_id = 51
+move = "acid"
 level = 23
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 6
 
 [[moves]]
-move_id = 75
+move = "razor-leaf"
 level = 37
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 17
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 19
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 15
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 30

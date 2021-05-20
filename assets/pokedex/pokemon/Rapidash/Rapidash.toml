@@ -1,15 +1,13 @@
 [data]
 id = 78
-name = 'Rapidash'
-primary_type = 'Fire'
-species = 'Fire'
+name = "Rapidash"
+primary_type = "Fire"
+species = "Fire"
 height = 17
 weight = 950
-
 [training]
 base_exp = 175
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 65
 atk = 100
@@ -17,62 +15,60 @@ def = 70
 sp_atk = 80
 sp_def = 80
 speed = 105
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 23
+move = "stomp"
 level = 19
 
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 40
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 31
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 9
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 5
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 14
 
 [[moves]]
-move_id = 83
+move = "fire-spin"
 level = 25
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 38
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 1
 
 [[moves]]
-move_id = 126
+move = "fire-blast"
 level = 63
 
 [[moves]]
-move_id = 340
+move = "bounce"
 level = 50

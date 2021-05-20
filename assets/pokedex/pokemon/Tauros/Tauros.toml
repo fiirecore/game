@@ -1,15 +1,13 @@
 [data]
 id = 128
-name = 'Tauros'
-primary_type = 'Normal'
-species = 'Wild'
+name = "Tauros"
+primary_type = "Normal"
+species = "Wild"
 height = 14
 weight = 884
-
 [training]
 base_exp = 172
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 75
 atk = 100
@@ -17,46 +15,44 @@ def = 95
 sp_atk = 40
 sp_def = 70
 speed = 110
-
 [breeding]
 gender = 0
-
 [[moves]]
-move_id = 30
+move = "horn-attack"
 level = 8
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 53
 
 [[moves]]
-move_id = 37
+move = "thrash"
 level = 43
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 4
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 34
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 13
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 26
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 19

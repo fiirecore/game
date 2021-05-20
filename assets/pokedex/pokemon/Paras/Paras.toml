@@ -1,16 +1,14 @@
 [data]
 id = 46
-name = 'Paras'
-primary_type = 'Bug'
-secondary_type = 'Grass'
-species = 'Mushroom'
+name = "Paras"
+primary_type = "Bug"
+secondary_type = "Grass"
+species = "Mushroom"
 height = 3
 weight = 54
-
 [training]
 base_exp = 57
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 35
 atk = 70
@@ -18,42 +16,40 @@ def = 55
 sp_atk = 45
 sp_def = 55
 speed = 25
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 37
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 13
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 7
 
 [[moves]]
-move_id = 141
+move = "leech-life"
 level = 19
 
 [[moves]]
-move_id = 147
+move = "spore"
 level = 25
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 31
 
 [[moves]]
-move_id = 202
+move = "giga-drain"
 level = 43
 
 [[moves]]
-move_id = 312
+move = "aromatherapy"
 level = 49

@@ -1,16 +1,14 @@
 [data]
 id = 247
-name = 'Pupitar'
-primary_type = 'Rock'
-secondary_type = 'Ground'
-species = 'Hard'
+name = "Pupitar"
+primary_type = "Rock"
+secondary_type = "Ground"
+species = "Hard"
 height = 12
 weight = 1520
-
 [training]
 base_exp = 144
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 70
 atk = 84
@@ -18,54 +16,52 @@ def = 70
 sp_atk = 65
 sp_def = 70
 speed = 51
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 37
+move = "thrash"
 level = 29
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 65
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 56
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 1
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 15
 
 [[moves]]
-move_id = 157
+move = "rock-slide"
 level = 22
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 38
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 1
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 8
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 47

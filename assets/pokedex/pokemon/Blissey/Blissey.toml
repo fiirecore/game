@@ -1,15 +1,13 @@
 [data]
 id = 242
-name = 'Blissey'
-primary_type = 'Normal'
-species = 'Happiness'
+name = "Blissey"
+primary_type = "Normal"
+species = "Happiness"
 height = 15
 weight = 468
-
 [training]
 base_exp = 608
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 255
 atk = 10
@@ -17,54 +15,52 @@ def = 10
 sp_atk = 75
 sp_def = 135
 speed = 55
-
 [breeding]
 gender = 8
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 13
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 47
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 4
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 47
+move = "sing"
 level = 23
 
 [[moves]]
-move_id = 107
+move = "minimize"
 level = 18
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 33
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 40
 
 [[moves]]
-move_id = 121
+move = "egg-bomb"
 level = 28
 
 [[moves]]
-move_id = 135
+move = "soft-boiled"
 level = 10
 
 [[moves]]
-move_id = 287
+move = "refresh"
 level = 7

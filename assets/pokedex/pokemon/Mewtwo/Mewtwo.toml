@@ -1,15 +1,13 @@
 [data]
 id = 150
-name = 'Mewtwo'
-primary_type = 'Psychic'
-species = 'Genetic'
+name = "Mewtwo"
+primary_type = "Psychic"
+species = "Genetic"
 height = 20
 weight = 1220
-
 [training]
 base_exp = 306
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 106
 atk = 110
@@ -17,49 +15,48 @@ def = 90
 sp_atk = 154
 sp_def = 90
 speed = 130
-
 [breeding]
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 1
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 22
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 66
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 44
 
 [[moves]]
-move_id = 112
+move = "barrier"
 level = 11
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 33
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 99
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 55
 
 [[moves]]
-move_id = 244
+move = "psych-up"
 level = 77
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 88

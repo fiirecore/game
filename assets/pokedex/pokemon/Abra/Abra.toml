@@ -1,15 +1,13 @@
 [data]
 id = 63
-name = 'Abra'
-primary_type = 'Psychic'
-species = 'Psi'
+name = "Abra"
+primary_type = "Psychic"
+species = "Psi"
 height = 9
 weight = 195
-
 [training]
 base_exp = 62
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 25
 atk = 20
@@ -17,10 +15,8 @@ def = 15
 sp_atk = 105
 sp_def = 55
 speed = 90
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 100
+move = "teleport"
 level = 1

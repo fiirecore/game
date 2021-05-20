@@ -1,16 +1,14 @@
 [data]
 id = 229
-name = 'Houndoom'
-primary_type = 'Dark'
-secondary_type = 'Fire'
-species = 'Dark'
+name = "Houndoom"
+primary_type = "Dark"
+secondary_type = "Fire"
+species = "Dark"
 height = 14
 weight = 350
-
 [training]
 base_exp = 175
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 75
 atk = 90
@@ -18,50 +16,48 @@ def = 50
 sp_atk = 110
 sp_def = 80
 speed = 95
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 27
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 19
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 51
 
 [[moves]]
-move_id = 123
+move = "smog"
 level = 13
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 43
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 59
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 35
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 1
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 7

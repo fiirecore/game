@@ -1,16 +1,14 @@
 [data]
 id = 138
-name = 'Omanyte'
-primary_type = 'Rock'
-secondary_type = 'Water'
-species = 'Spiral'
+name = "Omanyte"
+primary_type = "Rock"
+secondary_type = "Water"
+species = "Spiral"
 height = 4
 weight = 75
-
 [training]
 base_exp = 71
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 35
 atk = 40
@@ -18,46 +16,44 @@ def = 100
 sp_atk = 90
 sp_def = 55
 speed = 35
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 43
+move = "leer"
 level = 31
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 13
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 19
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 55
 
 [[moves]]
-move_id = 110
+move = "withdraw"
 level = 1
 
 [[moves]]
-move_id = 132
+move = "constrict"
 level = 1
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 37
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 49
 
 [[moves]]
-move_id = 321
+move = "tickle"
 level = 43
 
 [[moves]]
-move_id = 341
+move = "mud-shot"
 level = 25

@@ -1,15 +1,13 @@
 [data]
 id = 4
-name = 'Charmander'
-primary_type = 'Fire'
-species = 'Lizard'
+name = "Charmander"
+primary_type = "Fire"
+species = "Lizard"
 height = 6
 weight = 85
-
 [training]
 base_exp = 62
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 39
 atk = 52
@@ -17,46 +15,44 @@ def = 43
 sp_atk = 60
 sp_def = 50
 speed = 65
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 7
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 31
 
 [[moves]]
-move_id = 82
+move = "dragon-rage"
 level = 43
 
 [[moves]]
-move_id = 83
+move = "fire-spin"
 level = 49
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 19
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 37
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 25
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 13

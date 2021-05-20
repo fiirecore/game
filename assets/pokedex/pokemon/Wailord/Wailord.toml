@@ -1,15 +1,13 @@
 [data]
 id = 321
-name = 'Wailord'
-primary_type = 'Water'
-species = 'Float'
+name = "Wailord"
+primary_type = "Water"
+species = "Float"
 height = 145
 weight = 3980
-
 [training]
 base_exp = 175
-growth_rate = 'fast-then-very-slow'
-
+growth_rate = "fast-then-very-slow"
 [base]
 hp = 170
 atk = 90
@@ -17,66 +15,64 @@ def = 45
 sp_atk = 90
 sp_def = 45
 speed = 60
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 5
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 32
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 10
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 59
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 52
 
 [[moves]]
-move_id = 150
+move = "splash"
 level = 1
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 37
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 1
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 14
 
 [[moves]]
-move_id = 250
+move = "whirlpool"
 level = 19
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 23
 
 [[moves]]
-move_id = 323
+move = "water-spout"
 level = 44
 
 [[moves]]
-move_id = 352
+move = "water-pulse"
 level = 28

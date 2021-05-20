@@ -1,15 +1,13 @@
 [data]
 id = 266
-name = 'Silcoon'
-primary_type = 'Bug'
-species = 'Cocoon'
+name = "Silcoon"
+primary_type = "Bug"
+species = "Cocoon"
 height = 6
 weight = 100
-
 [training]
 base_exp = 72
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 50
 atk = 35
@@ -17,14 +15,12 @@ def = 55
 sp_atk = 25
 sp_def = 25
 speed = 15
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 106
+move = "harden"
 level = 1
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 7

@@ -1,16 +1,14 @@
 [data]
 id = 187
-name = 'Hoppip'
-primary_type = 'Grass'
-secondary_type = 'Flying'
-species = 'Cottonweed'
+name = "Hoppip"
+primary_type = "Grass"
+secondary_type = "Flying"
+species = "Cottonweed"
 height = 4
 weight = 5
-
 [training]
 base_exp = 50
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 35
 atk = 35
@@ -18,46 +16,44 @@ def = 40
 sp_atk = 35
 sp_def = 55
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 10
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 5
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 30
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 20
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 13
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 15
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 17
 
 [[moves]]
-move_id = 150
+move = "splash"
 level = 1
 
 [[moves]]
-move_id = 178
+move = "cotton-spore"
 level = 25
 
 [[moves]]
-move_id = 235
+move = "synthesis"
 level = 5

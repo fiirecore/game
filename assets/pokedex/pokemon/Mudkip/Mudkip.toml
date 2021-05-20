@@ -1,15 +1,13 @@
 [data]
 id = 258
-name = 'Mudkip'
-primary_type = 'Water'
-species = 'Mud'
+name = "Mudkip"
+primary_type = "Water"
+species = "Mud"
 height = 4
 weight = 76
-
 [training]
 base_exp = 62
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 50
 atk = 70
@@ -17,54 +15,52 @@ def = 50
 sp_atk = 50
 sp_def = 50
 speed = 40
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 28
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 10
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 42
 
 [[moves]]
-move_id = 117
+move = "bide"
 level = 15
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 37
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 6
 
 [[moves]]
-move_id = 193
+move = "foresight"
 level = 19
 
 [[moves]]
-move_id = 250
+move = "whirlpool"
 level = 33
 
 [[moves]]
-move_id = 283
+move = "endeavor"
 level = 46
 
 [[moves]]
-move_id = 300
+move = "mud-sport"
 level = 24

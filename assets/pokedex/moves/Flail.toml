@@ -1,4 +1,4 @@
-id = 175
+id = "flail"
 name = "Flail"
 type = "Normal"
 category = "Physical"

@@ -1,15 +1,13 @@
 [data]
 id = 118
-name = 'Goldeen'
-primary_type = 'Water'
-species = 'Goldfish'
+name = "Goldeen"
+primary_type = "Water"
+species = "Goldfish"
 height = 6
 weight = 150
-
 [training]
 base_exp = 64
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 45
 atk = 67
@@ -17,50 +15,48 @@ def = 60
 sp_atk = 35
 sp_def = 50
 speed = 63
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 30
+move = "horn-attack"
 level = 15
 
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 29
 
 [[moves]]
-move_id = 32
+move = "horn-drill"
 level = 43
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 10
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 1
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 52
 
 [[moves]]
-move_id = 127
+move = "waterfall"
 level = 38
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 24
 
 [[moves]]
-move_id = 224
+move = "megahorn"
 level = 57
 
 [[moves]]
-move_id = 346
+move = "water-sport"
 level = 1

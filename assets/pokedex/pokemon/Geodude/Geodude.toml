@@ -1,16 +1,14 @@
 [data]
 id = 74
-name = 'Geodude'
-primary_type = 'Rock'
-secondary_type = 'Ground'
-species = 'Rock'
+name = "Geodude"
+primary_type = "Rock"
+secondary_type = "Ground"
+species = "Rock"
 height = 4
 weight = 200
-
 [training]
 base_exp = 60
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 40
 atk = 80
@@ -18,50 +16,48 @@ def = 100
 sp_atk = 30
 sp_def = 30
 speed = 20
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 46
 
 [[moves]]
-move_id = 88
+move = "rock-throw"
 level = 11
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 36
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 1
 
 [[moves]]
-move_id = 120
+move = "self-destruct"
 level = 21
 
 [[moves]]
-move_id = 153
+move = "explosion"
 level = 41
 
 [[moves]]
-move_id = 205
+move = "rollout"
 level = 26
 
 [[moves]]
-move_id = 222
+move = "magnitude"
 level = 16
 
 [[moves]]
-move_id = 300
+move = "mud-sport"
 level = 6
 
 [[moves]]
-move_id = 350
+move = "rock-blast"
 level = 31

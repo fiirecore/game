@@ -1,15 +1,13 @@
 [data]
 id = 60
-name = 'Poliwag'
-primary_type = 'Water'
-species = 'Tadpole'
+name = "Poliwag"
+primary_type = "Water"
+species = "Tadpole"
 height = 6
 weight = 124
-
 [training]
 base_exp = 60
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 40
 atk = 50
@@ -17,38 +15,36 @@ def = 40
 sp_atk = 40
 sp_def = 40
 speed = 90
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 19
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 31
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 13
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 43
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 7
 
 [[moves]]
-move_id = 145
+move = "bubble"
 level = 1
 
 [[moves]]
-move_id = 187
+move = "belly-drum"
 level = 37
 
 [[moves]]
-move_id = 240
+move = "rain-dance"
 level = 25

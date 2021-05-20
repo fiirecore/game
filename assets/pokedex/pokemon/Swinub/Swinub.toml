@@ -1,16 +1,14 @@
 [data]
 id = 220
-name = 'Swinub'
-primary_type = 'Ice'
-secondary_type = 'Ground'
-species = 'Pig'
+name = "Swinub"
+primary_type = "Ice"
+secondary_type = "Ground"
+species = "Pig"
 height = 4
 weight = 65
-
 [training]
 base_exp = 50
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 50
 atk = 50
@@ -18,38 +16,36 @@ def = 40
 sp_atk = 30
 sp_def = 30
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 28
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 37
 
 [[moves]]
-move_id = 59
+move = "blizzard"
 level = 46
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 55
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 10
 
 [[moves]]
-move_id = 203
+move = "endure"
 level = 19
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 1

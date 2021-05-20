@@ -1,16 +1,14 @@
 [data]
 id = 49
-name = 'Venomoth'
-primary_type = 'Bug'
-secondary_type = 'Poison'
-species = 'Poison'
+name = "Venomoth"
+primary_type = "Bug"
+secondary_type = "Poison"
+species = "Poison"
 height = 15
 weight = 125
-
 [training]
 base_exp = 158
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 70
 atk = 65
@@ -18,62 +16,60 @@ def = 60
 sp_atk = 90
 sp_def = 75
 speed = 90
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 16
+move = "gust"
 level = 31
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 9
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 1
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 36
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 20
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 28
 
 [[moves]]
-move_id = 79
+move = "sleep-powder"
 level = 42
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 17
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 52
 
 [[moves]]
-move_id = 141
+move = "leech-life"
 level = 25
 
 [[moves]]
-move_id = 193
+move = "foresight"
 level = 1
 
 [[moves]]
-move_id = 318
+move = "silver-wind"
 level = 1

@@ -1,15 +1,13 @@
 [data]
 id = 137
-name = 'Porygon'
-primary_type = 'Normal'
-species = 'Virtual'
+name = "Porygon"
+primary_type = "Normal"
+species = "Virtual"
 height = 8
 weight = 365
-
 [training]
 base_exp = 79
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 65
 atk = 60
@@ -17,49 +15,48 @@ def = 70
 sp_atk = 85
 sp_def = 75
 speed = 40
-
 [breeding]
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 12
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 9
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 20
 
 [[moves]]
-move_id = 159
+move = "sharpen"
 level = 24
 
 [[moves]]
-move_id = 160
+move = "conversion"
 level = 1
 
 [[moves]]
-move_id = 161
+move = "tri-attack"
 level = 36
 
 [[moves]]
-move_id = 176
+move = "conversion-2"
 level = 1
 
 [[moves]]
-move_id = 192
+move = "zap-cannon"
 level = 48
 
 [[moves]]
-move_id = 199
+move = "lock-on"
 level = 32
 
 [[moves]]
-move_id = 278
+move = "recycle"
 level = 44

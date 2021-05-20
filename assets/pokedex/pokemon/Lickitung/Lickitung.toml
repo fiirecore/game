@@ -1,15 +1,13 @@
 [data]
 id = 108
-name = 'Lickitung'
-primary_type = 'Normal'
-species = 'Licking'
+name = "Lickitung"
+primary_type = "Normal"
+species = "Licking"
 height = 12
 weight = 655
-
 [training]
 base_exp = 77
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 90
 atk = 55
@@ -17,46 +15,44 @@ def = 75
 sp_atk = 60
 sp_def = 75
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 21
+move = "slam"
 level = 40
 
 [[moves]]
-move_id = 23
+move = "stomp"
 level = 23
 
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 29
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 7
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 34
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 45
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 12
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 1
 
 [[moves]]
-move_id = 282
+move = "knock-off"
 level = 18
 
 [[moves]]
-move_id = 287
+move = "refresh"
 level = 51

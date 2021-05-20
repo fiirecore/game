@@ -1,4 +1,4 @@
-id = 139
+id = "poison-gas"
 name = "Poison Gas"
 type = "Poison"
 category = "Status"

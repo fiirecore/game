@@ -1,4 +1,4 @@
-id = 81
+id = "string-shot"
 name = "String Shot"
 type = "Bug"
 category = "Status"

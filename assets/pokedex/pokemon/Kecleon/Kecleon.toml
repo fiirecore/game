@@ -1,15 +1,13 @@
 [data]
 id = 352
-name = 'Kecleon'
-primary_type = 'Normal'
-species = 'Color'
+name = "Kecleon"
+primary_type = "Normal"
+species = "Color"
 height = 10
 weight = 220
-
 [training]
 base_exp = 154
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 60
 atk = 90
@@ -17,58 +15,56 @@ def = 70
 sp_atk = 60
 sp_def = 120
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 20
+move = "bind"
 level = 4
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 17
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 24
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 1
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 12
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 31
 
 [[moves]]
-move_id = 164
+move = "substitute"
 level = 40
 
 [[moves]]
-move_id = 168
+move = "thief"
 level = 1
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 7
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 49
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 1

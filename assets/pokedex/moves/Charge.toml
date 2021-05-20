@@ -1,4 +1,4 @@
-id = 268
+id = "charge"
 name = "Charge"
 type = "Electric"
 category = "Status"

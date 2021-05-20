@@ -1,4 +1,4 @@
-id = 42
+id = "pin-missile"
 name = "Pin Missile"
 type = "Bug"
 category = "Physical"

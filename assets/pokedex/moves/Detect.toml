@@ -1,4 +1,4 @@
-id = 197
+id = "detect"
 name = "Detect"
 type = "Fighting"
 category = "Status"

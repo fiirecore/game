@@ -1,16 +1,14 @@
 [data]
 id = 363
-name = 'Spheal'
-primary_type = 'Ice'
-secondary_type = 'Water'
-species = 'Clap'
+name = "Spheal"
+primary_type = "Ice"
+secondary_type = "Water"
+species = "Clap"
 height = 8
 weight = 395
-
 [training]
 base_exp = 58
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 70
 atk = 40
@@ -18,58 +16,56 @@ def = 50
 sp_atk = 55
 sp_def = 50
 speed = 25
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 19
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 59
+move = "blizzard"
 level = 43
 
 [[moves]]
-move_id = 62
+move = "aurora-beam"
 level = 25
 
 [[moves]]
-move_id = 111
+move = "defense-curl"
 level = 1
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 37
 
 [[moves]]
-move_id = 173
+move = "snore"
 level = 37
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 1
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 7
 
 [[moves]]
-move_id = 258
+move = "hail"
 level = 31
 
 [[moves]]
-move_id = 301
+move = "ice-ball"
 level = 13
 
 [[moves]]
-move_id = 329
+move = "sheer-cold"
 level = 49

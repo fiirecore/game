@@ -1,16 +1,14 @@
 [data]
 id = 280
-name = 'Ralts'
-primary_type = 'Psychic'
-secondary_type = 'Fairy'
-species = 'Feeling'
+name = "Ralts"
+primary_type = "Psychic"
+secondary_type = "Fairy"
+species = "Feeling"
 height = 4
 weight = 66
-
 [training]
 base_exp = 40
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 28
 atk = 25
@@ -18,46 +16,44 @@ def = 25
 sp_atk = 45
 sp_def = 35
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 6
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 26
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 41
 
 [[moves]]
-move_id = 100
+move = "teleport"
 level = 16
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 11
 
 [[moves]]
-move_id = 138
+move = "dream-eater"
 level = 46
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 36
 
 [[moves]]
-move_id = 286
+move = "imprison"
 level = 31
 
 [[moves]]
-move_id = 347
+move = "calm-mind"
 level = 21

@@ -1,16 +1,14 @@
 [data]
 id = 302
-name = 'Sableye'
-primary_type = 'Dark'
-secondary_type = 'Ghost'
-species = 'Darkness'
+name = "Sableye"
+primary_type = "Dark"
+secondary_type = "Ghost"
+species = "Darkness"
 height = 5
 weight = 110
-
 [training]
 base_exp = 133
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 50
 atk = 75
@@ -18,58 +16,56 @@ def = 75
 sp_atk = 65
 sp_def = 65
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 101
+move = "night-shade"
 level = 9
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 37
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 17
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 29
 
 [[moves]]
-move_id = 193
+move = "foresight"
 level = 5
 
 [[moves]]
-move_id = 197
+move = "detect"
 level = 25
 
 [[moves]]
-move_id = 212
+move = "mean-look"
 level = 45
 
 [[moves]]
-move_id = 247
+move = "shadow-ball"
 level = 41
 
 [[moves]]
-move_id = 252
+move = "fake-out"
 level = 21
 
 [[moves]]
-move_id = 282
+move = "knock-off"
 level = 33
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 13

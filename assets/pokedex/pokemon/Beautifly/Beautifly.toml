@@ -1,16 +1,14 @@
 [data]
 id = 267
-name = 'Beautifly'
-primary_type = 'Bug'
-secondary_type = 'Flying'
-species = 'Butterfly'
+name = "Beautifly"
+primary_type = "Bug"
+secondary_type = "Flying"
+species = "Butterfly"
 height = 10
 weight = 284
-
 [training]
 base_exp = 178
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 60
 atk = 70
@@ -18,46 +16,44 @@ def = 50
 sp_atk = 100
 sp_def = 50
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 16
+move = "gust"
 level = 13
 
 [[moves]]
-move_id = 18
+move = "whirlwind"
 level = 27
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 1
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 10
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 24
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 17
 
 [[moves]]
-move_id = 202
+move = "giga-drain"
 level = 38
 
 [[moves]]
-move_id = 213
+move = "attract"
 level = 31
 
 [[moves]]
-move_id = 234
+move = "morning-sun"
 level = 20
 
 [[moves]]
-move_id = 318
+move = "silver-wind"
 level = 34

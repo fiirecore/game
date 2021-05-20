@@ -1,15 +1,13 @@
 [data]
 id = 181
-name = 'Ampharos'
-primary_type = 'Electric'
-species = 'Light'
+name = "Ampharos"
+primary_type = "Electric"
+species = "Light"
 height = 14
 weight = 615
-
 [training]
 base_exp = 230
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 90
 atk = 75
@@ -17,46 +15,44 @@ def = 85
 sp_atk = 115
 sp_def = 90
 speed = 55
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 9
+move = "thunder-punch"
 level = 30
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 84
+move = "thunder-shock"
 level = 1
 
 [[moves]]
-move_id = 84
+move = "thunder-shock"
 level = 9
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 1
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 18
 
 [[moves]]
-move_id = 87
+move = "thunder"
 level = 57
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 42
 
 [[moves]]
-move_id = 178
+move = "cotton-spore"
 level = 27

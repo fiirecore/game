@@ -1,16 +1,14 @@
 [data]
 id = 17
-name = 'Pidgeotto'
-primary_type = 'Normal'
-secondary_type = 'Flying'
-species = 'Bird'
+name = "Pidgeotto"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Bird"
 height = 11
 weight = 300
-
 [training]
 base_exp = 122
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 63
 atk = 60
@@ -18,50 +16,48 @@ def = 55
 sp_atk = 50
 sp_def = 50
 speed = 71
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 16
+move = "gust"
 level = 1
 
 [[moves]]
-move_id = 16
+move = "gust"
 level = 9
 
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 27
 
 [[moves]]
-move_id = 18
+move = "whirlwind"
 level = 20
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 1
 
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 5
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 43
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 13
 
 [[moves]]
-move_id = 119
+move = "mirror-move"
 level = 52
 
 [[moves]]
-move_id = 297
+move = "feather-dance"
 level = 34

@@ -1,15 +1,13 @@
 [data]
 id = 263
-name = 'Zigzagoon'
-primary_type = 'Normal'
-species = 'Tiny'
+name = "Zigzagoon"
+primary_type = "Normal"
+species = "Tiny"
 height = 4
 weight = 175
-
 [training]
 base_exp = 56
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 38
 atk = 30
@@ -17,54 +15,52 @@ def = 41
 sp_atk = 30
 sp_def = 41
 speed = 60
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 28
+move = "sand-attack"
 level = 13
 
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 9
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 5
 
 [[moves]]
-move_id = 42
+move = "pin-missile"
 level = 25
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 37
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 33
 
 [[moves]]
-move_id = 187
+move = "belly-drum"
 level = 41
 
 [[moves]]
-move_id = 300
+move = "mud-sport"
 level = 21
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 17
 
 [[moves]]
-move_id = 343
+move = "covet"
 level = 29

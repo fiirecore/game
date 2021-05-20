@@ -1,15 +1,13 @@
 [data]
 id = 223
-name = 'Remoraid'
-primary_type = 'Water'
-species = 'Jet'
+name = "Remoraid"
+primary_type = "Water"
+species = "Jet"
 height = 6
 weight = 120
-
 [training]
 base_exp = 60
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 35
 atk = 65
@@ -17,38 +15,36 @@ def = 35
 sp_atk = 65
 sp_def = 35
 speed = 65
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 58
+move = "ice-beam"
 level = 44
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 22
 
 [[moves]]
-move_id = 61
+move = "bubble-beam"
 level = 22
 
 [[moves]]
-move_id = 62
+move = "aurora-beam"
 level = 22
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 55
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 33
 
 [[moves]]
-move_id = 199
+move = "lock-on"
 level = 11

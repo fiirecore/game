@@ -1,4 +1,4 @@
-id = 274
+id = "assist"
 name = "Assist"
 type = "Normal"
 category = "Status"

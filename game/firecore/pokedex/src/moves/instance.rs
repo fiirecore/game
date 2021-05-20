@@ -73,6 +73,7 @@ pub type MoveInstanceSet = ArrayVec<[MoveInstance; 4]>;
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct MoveInstance {
     
+    #[serde(rename = "move")]
     pub move_ref: MoveRef,
     pub pp: PP,
     

@@ -1,4 +1,4 @@
-id = 311
+id = "weather-ball"
 name = "Weather Ball"
 type = "Normal"
 category = "Special"

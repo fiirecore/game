@@ -1,15 +1,13 @@
 [data]
 id = 310
-name = 'Manectric'
-primary_type = 'Electric'
-species = 'Discharge'
+name = "Manectric"
+primary_type = "Electric"
+species = "Discharge"
 height = 15
 weight = 402
-
 [training]
 base_exp = 166
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 70
 atk = 75
@@ -17,62 +15,60 @@ def = 60
 sp_atk = 105
 sp_def = 60
 speed = 105
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 9
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 39
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 31
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 1
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 4
 
 [[moves]]
-move_id = 87
+move = "thunder"
 level = 45
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 17
 
 [[moves]]
-move_id = 209
+move = "spark"
 level = 20
 
 [[moves]]
-move_id = 268
+move = "charge"
 level = 53
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 25
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 1
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 12

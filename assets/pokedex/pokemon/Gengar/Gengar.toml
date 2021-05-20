@@ -1,16 +1,14 @@
 [data]
 id = 94
-name = 'Gengar'
-primary_type = 'Ghost'
-secondary_type = 'Poison'
-species = 'Shadow'
+name = "Gengar"
+primary_type = "Ghost"
+secondary_type = "Poison"
+species = "Shadow"
 height = 15
 weight = 405
-
 [training]
 base_exp = 225
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 60
 atk = 65
@@ -18,58 +16,56 @@ def = 60
 sp_atk = 130
 sp_def = 75
 speed = 110
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 1
 
 [[moves]]
-move_id = 101
+move = "night-shade"
 level = 16
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 21
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 1
 
 [[moves]]
-move_id = 138
+move = "dream-eater"
 level = 31
 
 [[moves]]
-move_id = 171
+move = "nightmare"
 level = 53
 
 [[moves]]
-move_id = 174
+move = "curse"
 level = 13
 
 [[moves]]
-move_id = 180
+move = "spite"
 level = 1
 
 [[moves]]
-move_id = 180
+move = "spite"
 level = 8
 
 [[moves]]
-move_id = 194
+move = "destiny-bond"
 level = 39
 
 [[moves]]
-move_id = 212
+move = "mean-look"
 level = 64
 
 [[moves]]
-move_id = 247
+move = "shadow-ball"
 level = 45
 
 [[moves]]
-move_id = 325
+move = "shadow-punch"
 level = 25

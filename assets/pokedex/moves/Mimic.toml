@@ -1,4 +1,4 @@
-id = 102
+id = "mimic"
 name = "Mimic"
 type = "Normal"
 category = "Status"

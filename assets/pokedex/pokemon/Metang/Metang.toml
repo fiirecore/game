@@ -1,16 +1,14 @@
 [data]
 id = 375
-name = 'Metang'
-primary_type = 'Steel'
-secondary_type = 'Psychic'
-species = 'Iron'
+name = "Metang"
+primary_type = "Steel"
+secondary_type = "Psychic"
+species = "Iron"
 height = 12
 weight = 2025
-
 [training]
 base_exp = 147
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 60
 atk = 75
@@ -18,45 +16,44 @@ def = 100
 sp_atk = 55
 sp_def = 80
 speed = 50
-
 [breeding]
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 1
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 62
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 20
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 38
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 56
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 26
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 32
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 20
 
 [[moves]]
-move_id = 309
+move = "meteor-mash"
 level = 50
 
 [[moves]]
-move_id = 334
+move = "iron-defense"
 level = 44

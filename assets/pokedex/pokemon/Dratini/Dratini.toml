@@ -1,15 +1,13 @@
 [data]
 id = 147
-name = 'Dratini'
-primary_type = 'Dragon'
-species = 'Dragon'
+name = "Dratini"
+primary_type = "Dragon"
+species = "Dragon"
 height = 18
 weight = 33
-
 [training]
 base_exp = 60
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 41
 atk = 64
@@ -17,46 +15,44 @@ def = 45
 sp_atk = 50
 sp_def = 50
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 21
+move = "slam"
 level = 29
 
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 57
 
 [[moves]]
-move_id = 82
+move = "dragon-rage"
 level = 22
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 8
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 36
 
 [[moves]]
-move_id = 200
+move = "outrage"
 level = 50
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 43
 
 [[moves]]
-move_id = 239
+move = "twister"
 level = 15

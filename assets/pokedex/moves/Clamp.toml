@@ -1,4 +1,4 @@
-id = 128
+id = "clamp"
 name = "Clamp"
 type = "Water"
 category = "Physical"

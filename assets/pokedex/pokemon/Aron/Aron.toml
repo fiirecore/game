@@ -1,16 +1,14 @@
 [data]
 id = 304
-name = 'Aron'
-primary_type = 'Steel'
-secondary_type = 'Rock'
-species = 'Iron'
+name = "Aron"
+primary_type = "Steel"
+secondary_type = "Rock"
+species = "Iron"
 height = 4
 weight = 600
-
 [training]
 base_exp = 66
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 50
 atk = 70
@@ -18,54 +16,52 @@ def = 100
 sp_atk = 40
 sp_def = 40
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 10
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 25
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 44
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 21
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 4
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 34
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 7
 
 [[moves]]
-move_id = 231
+move = "iron-tail"
 level = 29
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 13
 
 [[moves]]
-move_id = 319
+move = "metal-sound"
 level = 39
 
 [[moves]]
-move_id = 334
+move = "iron-defense"
 level = 17

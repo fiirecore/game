@@ -1,4 +1,4 @@
-id = 50
+id = "disable"
 name = "Disable"
 type = "Normal"
 category = "Status"

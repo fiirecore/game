@@ -1,16 +1,14 @@
 [data]
 id = 87
-name = 'Dewgong'
-primary_type = 'Water'
-secondary_type = 'Ice'
-species = 'Sea'
+name = "Dewgong"
+primary_type = "Water"
+secondary_type = "Ice"
+species = "Sea"
 height = 17
 weight = 1200
-
 [training]
 base_exp = 166
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 90
 atk = 70
@@ -18,58 +16,56 @@ def = 80
 sp_atk = 70
 sp_def = 95
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 42
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 9
 
 [[moves]]
-move_id = 58
+move = "ice-beam"
 level = 51
 
 [[moves]]
-move_id = 62
+move = "aurora-beam"
 level = 1
 
 [[moves]]
-move_id = 62
+move = "aurora-beam"
 level = 21
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 29
 
 [[moves]]
-move_id = 196
+move = "icy-wind"
 level = 1
 
 [[moves]]
-move_id = 196
+move = "icy-wind"
 level = 17
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 64
 
 [[moves]]
-move_id = 324
+move = "signal-beam"
 level = 1
 
 [[moves]]
-move_id = 329
+move = "sheer-cold"
 level = 34

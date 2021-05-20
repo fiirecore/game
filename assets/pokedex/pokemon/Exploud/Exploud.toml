@@ -1,15 +1,13 @@
 [data]
 id = 295
-name = 'Exploud'
-primary_type = 'Normal'
-species = 'Loud'
+name = "Exploud"
+primary_type = "Normal"
+species = "Loud"
 height = 15
 weight = 840
-
 [training]
 base_exp = 221
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 104
 atk = 91
@@ -17,66 +15,64 @@ def = 63
 sp_atk = 91
 sp_def = 73
 speed = 68
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 23
+move = "stomp"
 level = 29
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 45
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 23
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 40
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 37
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 55
 
 [[moves]]
-move_id = 214
+move = "sleep-talk"
 level = 55
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 1
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 5
 
 [[moves]]
-move_id = 304
+move = "hyper-voice"
 level = 63
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 1
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 11
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 1
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 15

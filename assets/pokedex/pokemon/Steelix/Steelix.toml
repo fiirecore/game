@@ -1,16 +1,14 @@
 [data]
 id = 208
-name = 'Steelix'
-primary_type = 'Steel'
-secondary_type = 'Ground'
-species = 'Iron'
+name = "Steelix"
+primary_type = "Steel"
+secondary_type = "Ground"
+species = "Iron"
 height = 92
 weight = 4000
-
 [training]
 base_exp = 179
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 75
 atk = 85
@@ -18,54 +16,52 @@ def = 200
 sp_atk = 55
 sp_def = 65
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 20
+move = "bind"
 level = 8
 
 [[moves]]
-move_id = 21
+move = "slam"
 level = 41
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 56
 
 [[moves]]
-move_id = 88
+move = "rock-throw"
 level = 12
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 23
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 1
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 19
 
 [[moves]]
-move_id = 201
+move = "sandstorm"
 level = 34
 
 [[moves]]
-move_id = 225
+move = "dragon-breath"
 level = 30
 
 [[moves]]
-move_id = 231
+move = "iron-tail"
 level = 45
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 52

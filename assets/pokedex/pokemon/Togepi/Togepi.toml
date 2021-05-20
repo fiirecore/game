@@ -1,15 +1,13 @@
 [data]
 id = 175
-name = 'Togepi'
-primary_type = 'Fairy'
-species = 'Spike'
+name = "Togepi"
+primary_type = "Fairy"
+species = "Spike"
 height = 3
 weight = 15
-
 [training]
 base_exp = 49
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 35
 atk = 20
@@ -17,54 +15,52 @@ def = 65
 sp_atk = 40
 sp_def = 65
 speed = 20
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 37
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 118
+move = "metronome"
 level = 4
 
 [[moves]]
-move_id = 186
+move = "sweet-kiss"
 level = 9
 
 [[moves]]
-move_id = 204
+move = "charm"
 level = 1
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 33
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 41
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 17
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 21
 
 [[moves]]
-move_id = 266
+move = "follow-me"
 level = 25
 
 [[moves]]
-move_id = 273
+move = "wish"
 level = 29
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 13

@@ -1,16 +1,14 @@
 [data]
 id = 199
-name = 'Slowking'
-primary_type = 'Water'
-secondary_type = 'Psychic'
-species = 'Royal'
+name = "Slowking"
+primary_type = "Water"
+secondary_type = "Psychic"
+species = "Royal"
 height = 20
 weight = 795
-
 [training]
 base_exp = 172
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 95
 atk = 75
@@ -18,50 +16,48 @@ def = 80
 sp_atk = 100
 sp_def = 110
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 29
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 6
 
 [[moves]]
-move_id = 50
+move = "disable"
 level = 24
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 13
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 17
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 40
 
 [[moves]]
-move_id = 174
+move = "curse"
 level = 1
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 36
 
 [[moves]]
-move_id = 244
+move = "psych-up"
 level = 47
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 1

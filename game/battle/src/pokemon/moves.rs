@@ -10,7 +10,7 @@ use super::ActivePokemonIndex;
 pub enum BattleMove {
 
     Switch(usize),
-    UseItem(ItemRef, Option<MoveTargetInstance>),
+    UseItem(ItemRef, MoveTargetInstance),
     Move(usize, MoveTargetInstance),
 
 }
@@ -24,9 +24,9 @@ pub struct BattleActionInstance {
 #[derive(Debug)]
 pub enum BattleAction {
     Pokemon(BattleMove),
-    Faint(Option<ActivePokemonIndex>), // target
+    Faint(Option<ActivePokemonIndex>), // user that made target faint
     Catch(ActivePokemonIndex),
     GainExp(Level, Experience),
     LevelUp(Level, Option<Vec<MoveRef>>),
-    // Wait,
+    // Wait(f32),
 }

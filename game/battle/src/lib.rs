@@ -117,7 +117,7 @@ impl Battle {
 			Some(
 				Self {
 					data: BattleData {
-						battle_type: entry.trainer.as_ref().map(|trainer| if trainer.is_gym_leader { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild),
+						battle_type: entry.trainer.as_ref().map(|trainer| if trainer.gym_badge.is_some() { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild),
 						trainer: entry.trainer,
 						winner: None,
 					},
@@ -169,9 +169,9 @@ impl Battle {
 									if bag.alive {
 										bag.input();
 										if let Some(item) = bag.take_selected_despawn() {
-											let target = match item.value().use_type {
-												ItemUseType::Pokeball => Some(MoveTargetInstance::Opponent(BATTLE_RANDOM.gen_range(0, self.opponent.active.len()))),
-												_ => None,
+											let target = match item.value().target {
+												MoveTarget::Player => MoveTargetInstance::User,
+												MoveTarget::Opponent => MoveTargetInstance::Opponent(BATTLE_RANDOM.gen_range(0, self.opponent.active.len())),
 											};
 											active.queued_move = Some(BattleMove::UseItem(item, target));
 										}
@@ -258,48 +258,57 @@ impl Battle {
 											gui.text.spawn();
 											match &instance.action {
 												BattleAction::Pokemon(battle_move) => match battle_move {
-													BattleMove::Move(move_index, target) => {
+													BattleMove::Move(move_index, target_instance) => {
 
-														let (user_pkmn, target, active, index) = match target {
-															MoveTargetInstance::Opponent(index) => (pokemon, &mut other.active, *index, ActivePokemonIndex { team: instance.pokemon.team.other(), active: *index }),
-														};
-
-														let target = match target[active].pokemon.is_active() {
-															true => &mut target[active],
-															false => {
-																let mut indexes = Vec::with_capacity(target.len() - 1);
-																for target in target.iter_mut().enumerate() {
-																	if target.1.pokemon.is_active() {
-																		indexes.push(target.0)
+														if let (Some(target), index) = match target_instance {
+															MoveTargetInstance::Opponent(index) => (
+																if other.active[*index].pokemon.is_active() {
+																	Some(&mut other.active[*index])
+																} else if other.all_fainted() {
+																	None
+																} else {
+																	let mut indexes = Vec::with_capacity(other.active.len() - 1);
+																	for target in other.active.iter_mut().enumerate() {
+																		if target.1.pokemon.is_active() {
+																			indexes.push(target.0)
+																		}
 																	}
+																	Some(&mut other.active[indexes[BATTLE_RANDOM.gen_range(0, indexes.len())]])
+																}, 
+																ActivePokemonIndex { team: instance.pokemon.team.other(), active: *index }
+															),
+															MoveTargetInstance::User => todo!(),//({}, instance.pokemon),
+														} {
+
+															// let target_pokemon = target.map(|a| a.pokemon.as_mut()).flatten().unwrap_or(pokemon);
+
+															let target_pokemon = target.pokemon.as_mut().unwrap();
+															if let Some(result) = pokemon.use_move(*move_index, target_pokemon) {
+																if result.result == MoveResults::Damage {
+																	target.renderer.flicker();
 																}
-																&mut target[indexes[BATTLE_RANDOM.gen_range(0, indexes.len())]]
-															}
-														};
+																let pokemon_move = result.move_ref;
+																ui::text::on_move(&mut gui.text, pokemon_move, pokemon);
 
-														let pokemon = target.pokemon.as_mut().unwrap();
-														if let Some(result) = user_pkmn.use_move(*move_index, pokemon) {
-															if result.result == MoveResults::Damage {
-																target.renderer.flicker();
-															}
-															let pokemon_move = result.move_ref;
-															ui::text::on_move(&mut gui.text, pokemon_move, user_pkmn);
+																let effective = target_pokemon.effective(pokemon_move.pokemon_type);
+																
+																if effective != game::pokedex::pokemon::types::Effective::Effective && pokemon_move.category != MoveCategory::Status {
+																	ui::text::on_effective(&mut gui.text, &effective);
+																	// queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Effective(effective) })
+																}
 
-															let effective = pokemon.effective(pokemon_move.pokemon_type);
-															
-															if effective != game::pokedex::pokemon::types::Effective::Effective && pokemon_move.category != MoveCategory::Status {
-																ui::text::on_effective(&mut gui.text, &effective);
-																// queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Effective(effective) })
+																if target_pokemon.fainted() {
+																	queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Faint(Some(instance.pokemon)) });
+																}
+																
+																target.status.update_gui(Some((target_pokemon.data.level, target_pokemon)), false);
+															} else {
+																ui::text::on_fail(&mut gui.text, format!("{} could not move!", pokemon));
 															}
-
-															if pokemon.fainted() {
-																queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Faint(Some(instance.pokemon)) });
-															}
-															
-															target.status.update_gui(Some((pokemon.data.level, pokemon)), false);
 														} else {
-															ui::text::on_fail(&mut gui.text, format!("{} could not move!", pokemon));
+															return;
 														}
+
 													}
 													BattleMove::UseItem(item, target) => {
 														let item = item.value();
@@ -311,20 +320,19 @@ impl Battle {
 															ItemUseType::Pokeball => {
 																match self.data.battle_type {
 																	BattleType::Wild => {
-																		if let Some(target) = *target {
-																			match target {
-																				MoveTargetInstance::Opponent(index) => queue.actions.push_front(
-																					BattleActionInstance {
-																						pokemon: instance.pokemon,
-																						action: BattleAction::Catch(
-																							ActivePokemonIndex { team: BattleTeam::Opponent, active: index }
-																						),
-																					}
-																				),
-																			}
-																			return; // To - do: remove returns
-																			// ui::text::on_catch(&mut gui.text, target);
+																		match target {
+																			MoveTargetInstance::User => unreachable!(),
+																			MoveTargetInstance::Opponent(index) => queue.actions.push_front(
+																				BattleActionInstance {
+																					pokemon: instance.pokemon,
+																					action: BattleAction::Catch(
+																						ActivePokemonIndex { team: BattleTeam::Opponent, active: *index }
+																					),
+																				}
+																			),
 																		}
+																		return; // To - do: remove returns
+																			// ui::text::on_catch(&mut gui.text, target);
 																	},
 																	_ => game::macroquad::prelude::info!("Cannot use pokeballs in trainer battles!"),
 																}
@@ -347,14 +355,15 @@ impl Battle {
 
 													if let Some(assailant) = assailant {
 														if assailant.team == BattleTeam::Player {
-															let experience = (
-																user.active[instance.pokemon.active].pokemon.as_ref().unwrap().raw_exp_from() as f32 * 
+															let experience = {
+																let instance = user.active[instance.pokemon.active].pokemon.as_ref().unwrap();
+																instance.pokemon.value().exp_from(instance.data.level) as f32 * 
 																match self.data.battle_type {
 																	BattleType::Wild => 1.0,
 																	_ => 1.5,
 																} *
 																7.0
-															) as game::pokedex::pokemon::Experience;
+															} as game::pokedex::pokemon::Experience;
 															let (assailant_party, index) = (&mut match assailant.team {
 																BattleTeam::Player => &mut self.player,
 																BattleTeam::Opponent => &mut self.opponent,
@@ -411,6 +420,7 @@ impl Battle {
 										BattleMove::Move(.., move_target) => {
 
 											let target = match move_target {
+												MoveTargetInstance::User => &mut user.active[instance.pokemon.active],
 												MoveTargetInstance::Opponent(index) => &mut other.active[*index],
 											};
 
@@ -645,10 +655,12 @@ impl Battle {
 			    BattleTeam::Player => {
 					if let Some(trainer) = self.data.trainer {
 						player.worth += trainer.worth as u32;
+						if let Some(badge) = trainer.gym_badge {
+							player.world.badges.insert(badge);
+						}
 					}		
 				}
-			    BattleTeam::Opponent => {
-				}
+			    BattleTeam::Opponent => (),
 			}
 		}
 

@@ -1,16 +1,14 @@
 [data]
 id = 84
-name = 'Doduo'
-primary_type = 'Normal'
-secondary_type = 'Flying'
-species = 'Twin'
+name = "Doduo"
+primary_type = "Normal"
+secondary_type = "Flying"
+species = "Twin"
 height = 14
 weight = 392
-
 [training]
 base_exp = 62
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 35
 atk = 85
@@ -18,42 +16,40 @@ def = 45
 sp_atk = 35
 sp_def = 35
 speed = 75
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 13
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 1
 
 [[moves]]
-move_id = 65
+move = "drill-peck"
 level = 37
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 45
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 25
 
 [[moves]]
-move_id = 161
+move = "tri-attack"
 level = 21
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 9
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 33

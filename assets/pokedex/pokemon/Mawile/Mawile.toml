@@ -1,16 +1,14 @@
 [data]
 id = 303
-name = 'Mawile'
-primary_type = 'Steel'
-secondary_type = 'Fairy'
-species = 'Deceiver'
+name = "Mawile"
+primary_type = "Steel"
+secondary_type = "Fairy"
+species = "Deceiver"
 height = 6
 weight = 115
-
 [training]
 base_exp = 133
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 50
 atk = 85
@@ -18,54 +16,52 @@ def = 85
 sp_atk = 55
 sp_def = 55
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 11
+move = "vise-grip"
 level = 21
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 11
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 26
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 31
 
 [[moves]]
-move_id = 230
+move = "sweet-scent"
 level = 16
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 36
 
 [[moves]]
-move_id = 254
+move = "stockpile"
 level = 46
 
 [[moves]]
-move_id = 255
+move = "spit-up"
 level = 46
 
 [[moves]]
-move_id = 256
+move = "swallow"
 level = 46
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 1
 
 [[moves]]
-move_id = 313
+move = "fake-tears"
 level = 6
 
 [[moves]]
-move_id = 334
+move = "iron-defense"
 level = 41

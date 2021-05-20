@@ -3,6 +3,7 @@ use deps::{
     hash::HashMap,
     tinystr::TinyStr16,
 };
+use crate::moves::target::{MoveTarget, move_target_player};
 use crate::{Ref, Identifiable};
 
 pub type Itemdex = HashMap<ItemId, Item>;
@@ -33,6 +34,9 @@ pub struct Item {
 
     #[serde(default, rename = "use")]
     pub use_type: ItemUseType,
+
+    #[serde(default = "move_target_player")]
+    pub target: MoveTarget,
 
 }
 

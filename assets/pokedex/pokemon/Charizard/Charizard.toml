@@ -1,16 +1,14 @@
 [data]
 id = 6
-name = 'Charizard'
-primary_type = 'Fire'
-secondary_type = 'Flying'
-species = 'Flame'
+name = "Charizard"
+primary_type = "Fire"
+secondary_type = "Flying"
+species = "Flame"
 height = 17
 weight = 905
-
 [training]
 base_exp = 240
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 78
 atk = 84
@@ -18,62 +16,60 @@ def = 78
 sp_atk = 109
 sp_def = 85
 speed = 100
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 36
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 7
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 34
 
 [[moves]]
-move_id = 82
+move = "dragon-rage"
 level = 54
 
 [[moves]]
-move_id = 83
+move = "fire-spin"
 level = 64
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 20
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 44
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 27
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 1
 
 [[moves]]
-move_id = 232
+move = "metal-claw"
 level = 13
 
 [[moves]]
-move_id = 257
+move = "heat-wave"
 level = 1

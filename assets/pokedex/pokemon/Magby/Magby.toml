@@ -1,15 +1,13 @@
 [data]
 id = 240
-name = 'Magby'
-primary_type = 'Fire'
-species = 'Live'
+name = "Magby"
+primary_type = "Fire"
+species = "Live"
 height = 7
 weight = 214
-
 [training]
 base_exp = 73
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 45
 atk = 75
@@ -17,42 +15,40 @@ def = 37
 sp_atk = 70
 sp_def = 55
 speed = 83
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 7
+move = "fire-punch"
 level = 19
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 7
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 37
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 25
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 43
 
 [[moves]]
-move_id = 123
+move = "smog"
 level = 13
 
 [[moves]]
-move_id = 126
+move = "fire-blast"
 level = 49
 
 [[moves]]
-move_id = 241
+move = "sunny-day"
 level = 31

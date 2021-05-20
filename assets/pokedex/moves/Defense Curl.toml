@@ -1,4 +1,4 @@
-id = 111
+id = "defense-curl"
 name = "Defense Curl"
 type = "Normal"
 category = "Status"

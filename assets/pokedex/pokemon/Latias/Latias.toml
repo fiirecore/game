@@ -1,16 +1,14 @@
 [data]
 id = 380
-name = 'Latias'
-primary_type = 'Dragon'
-secondary_type = 'Psychic'
-species = 'Eon'
+name = "Latias"
+primary_type = "Dragon"
+secondary_type = "Psychic"
+species = "Eon"
 height = 14
 weight = 400
-
 [training]
 base_exp = 270
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 80
@@ -18,50 +16,48 @@ def = 90
 sp_atk = 110
 sp_def = 130
 speed = 110
-
 [breeding]
 gender = 8
-
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 40
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 45
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 1
 
 [[moves]]
-move_id = 204
+move = "charm"
 level = 50
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 15
 
 [[moves]]
-move_id = 225
+move = "dragon-breath"
 level = 20
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 10
 
 [[moves]]
-move_id = 273
+move = "wish"
 level = 5
 
 [[moves]]
-move_id = 287
+move = "refresh"
 level = 30
 
 [[moves]]
-move_id = 296
+move = "mist-ball"
 level = 35
 
 [[moves]]
-move_id = 346
+move = "water-sport"
 level = 25

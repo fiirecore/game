@@ -1,15 +1,13 @@
 [data]
 id = 317
-name = 'Swalot'
-primary_type = 'Poison'
-species = 'Poison'
+name = "Swalot"
+primary_type = "Poison"
+species = "Poison"
 height = 17
 weight = 800
-
 [training]
 base_exp = 163
-growth_rate = 'fast-then-very-slow'
-
+growth_rate = "fast-then-very-slow"
 [base]
 hp = 100
 atk = 73
@@ -17,66 +15,64 @@ def = 83
 sp_atk = 73
 sp_def = 83
 speed = 55
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 26
 
 [[moves]]
-move_id = 92
+move = "toxic"
 level = 31
 
 [[moves]]
-move_id = 124
+move = "sludge"
 level = 1
 
 [[moves]]
-move_id = 124
+move = "sludge"
 level = 14
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 17
 
 [[moves]]
-move_id = 139
+move = "poison-gas"
 level = 1
 
 [[moves]]
-move_id = 139
+move = "poison-gas"
 level = 9
 
 [[moves]]
-move_id = 188
+move = "sludge-bomb"
 level = 48
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 23
 
 [[moves]]
-move_id = 254
+move = "stockpile"
 level = 40
 
 [[moves]]
-move_id = 255
+move = "spit-up"
 level = 40
 
 [[moves]]
-move_id = 256
+move = "swallow"
 level = 40
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 1
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 6

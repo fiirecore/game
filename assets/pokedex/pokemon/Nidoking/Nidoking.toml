@@ -1,16 +1,14 @@
 [data]
 id = 34
-name = 'Nidoking'
-primary_type = 'Poison'
-secondary_type = 'Ground'
-species = 'Drill'
+name = "Nidoking"
+primary_type = "Poison"
+secondary_type = "Ground"
+species = "Drill"
 height = 14
 weight = 620
-
 [training]
 base_exp = 227
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 81
 atk = 102
@@ -18,30 +16,28 @@ def = 77
 sp_atk = 85
 sp_def = 75
 speed = 85
-
 [breeding]
 gender = 0
-
 [[moves]]
-move_id = 24
+move = "double-kick"
 level = 1
 
 [[moves]]
-move_id = 37
+move = "thrash"
 level = 22
 
 [[moves]]
-move_id = 40
+move = "poison-sting"
 level = 1
 
 [[moves]]
-move_id = 64
+move = "peck"
 level = 1
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 1
 
 [[moves]]
-move_id = 224
+move = "megahorn"
 level = 43

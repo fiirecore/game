@@ -1,15 +1,13 @@
 [data]
 id = 192
-name = 'Sunflora'
-primary_type = 'Grass'
-species = 'Sun'
+name = "Sunflora"
+primary_type = "Grass"
+species = "Sun"
 height = 8
 weight = 85
-
 [training]
 base_exp = 149
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 75
 atk = 75
@@ -17,42 +15,40 @@ def = 55
 sp_atk = 105
 sp_def = 85
 speed = 30
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 1
 
 [[moves]]
-move_id = 74
+move = "growth"
 level = 6
 
 [[moves]]
-move_id = 75
+move = "razor-leaf"
 level = 13
 
 [[moves]]
-move_id = 76
+move = "solar-beam"
 level = 42
 
 [[moves]]
-move_id = 80
+move = "petal-dance"
 level = 37
 
 [[moves]]
-move_id = 241
+move = "sunny-day"
 level = 30
 
 [[moves]]
-move_id = 275
+move = "ingrain"
 level = 18
 
 [[moves]]
-move_id = 331
+move = "bullet-seed"
 level = 25

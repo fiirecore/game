@@ -1,15 +1,13 @@
 [data]
 id = 8
-name = 'Wartortle'
-primary_type = 'Water'
-species = 'Turtle'
+name = "Wartortle"
+primary_type = "Water"
+species = "Turtle"
 height = 10
 weight = 225
-
 [training]
 base_exp = 142
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 59
 atk = 63
@@ -17,58 +15,56 @@ def = 80
 sp_atk = 65
 sp_def = 80
 speed = 58
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 4
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 19
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 13
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 53
 
 [[moves]]
-move_id = 110
+move = "withdraw"
 level = 10
 
 [[moves]]
-move_id = 130
+move = "skull-bash"
 level = 45
 
 [[moves]]
-move_id = 145
+move = "bubble"
 level = 1
 
 [[moves]]
-move_id = 145
+move = "bubble"
 level = 7
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 31
 
 [[moves]]
-move_id = 229
+move = "rapid-spin"
 level = 25
 
 [[moves]]
-move_id = 240
+move = "rain-dance"
 level = 37

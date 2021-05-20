@@ -1,4 +1,4 @@
-id = 118
+id = "metronome"
 name = "Metronome"
 type = "Normal"
 category = "Status"

@@ -1,15 +1,13 @@
 [data]
 id = 127
-name = 'Pinsir'
-primary_type = 'Bug'
-species = 'Stag'
+name = "Pinsir"
+primary_type = "Bug"
+species = "Stag"
 height = 15
 weight = 550
-
 [training]
 base_exp = 175
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 65
 atk = 125
@@ -17,46 +15,44 @@ def = 100
 sp_atk = 55
 sp_def = 70
 speed = 85
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 11
+move = "vise-grip"
 level = 1
 
 [[moves]]
-move_id = 12
+move = "guillotine"
 level = 37
 
 [[moves]]
-move_id = 14
+move = "swords-dance"
 level = 49
 
 [[moves]]
-move_id = 20
+move = "bind"
 level = 7
 
 [[moves]]
-move_id = 66
+move = "submission"
 level = 43
 
 [[moves]]
-move_id = 69
+move = "seismic-toss"
 level = 13
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 19
 
 [[moves]]
-move_id = 116
+move = "focus-energy"
 level = 1
 
 [[moves]]
-move_id = 279
+move = "revenge"
 level = 25
 
 [[moves]]
-move_id = 280
+move = "brick-break"
 level = 31

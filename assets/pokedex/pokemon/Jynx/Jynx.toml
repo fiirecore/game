@@ -1,16 +1,14 @@
 [data]
 id = 124
-name = 'Jynx'
-primary_type = 'Ice'
-secondary_type = 'Psychic'
-species = 'Human'
+name = "Jynx"
+primary_type = "Ice"
+secondary_type = "Psychic"
+species = "Human"
 height = 14
 weight = 406
-
 [training]
 base_exp = 159
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 65
 atk = 50
@@ -18,58 +16,56 @@ def = 35
 sp_atk = 115
 sp_def = 95
 speed = 95
-
 [breeding]
 gender = 8
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 21
 
 [[moves]]
-move_id = 8
+move = "ice-punch"
 level = 25
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 51
 
 [[moves]]
-move_id = 59
+move = "blizzard"
 level = 67
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 1
 
 [[moves]]
-move_id = 142
+move = "lovely-kiss"
 level = 1
 
 [[moves]]
-move_id = 142
+move = "lovely-kiss"
 level = 9
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 1
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 13
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 57
 
 [[moves]]
-move_id = 212
+move = "mean-look"
 level = 35
 
 [[moves]]
-move_id = 313
+move = "fake-tears"
 level = 41

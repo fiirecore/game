@@ -2,7 +2,7 @@ use std::fs::read_dir;
 use std::path::Path;
 
 fn main() {
-    build_icon_directory("icon/pokemon", "output/icon");
+    build_icon_directory("../Tools/Original Game Sources/Pokemon FireRed/graphics/pokemon", "../Subprojects/PokedexGenJava/pokedex/textures/icon");
 }
 
 fn build_icon_directory(pret_input: &str, output_dir: &str) {

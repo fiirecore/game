@@ -1,15 +1,13 @@
 [data]
 id = 156
-name = 'Quilava'
-primary_type = 'Fire'
-species = 'Volcano'
+name = "Quilava"
+primary_type = "Fire"
+species = "Volcano"
 height = 9
 weight = 190
-
 [training]
 base_exp = 142
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 58
 atk = 64
@@ -17,42 +15,40 @@ def = 58
 sp_atk = 80
 sp_def = 65
 speed = 80
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 12
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 54
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 21
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 1
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 6
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 42
 
 [[moves]]
-move_id = 172
+move = "flame-wheel"
 level = 31

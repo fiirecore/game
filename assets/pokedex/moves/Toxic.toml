@@ -1,4 +1,4 @@
-id = 92
+id = "toxic"
 name = "Toxic"
 type = "Poison"
 category = "Status"

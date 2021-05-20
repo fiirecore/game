@@ -1,16 +1,14 @@
 [data]
 id = 130
-name = 'Gyarados'
-primary_type = 'Water'
-secondary_type = 'Flying'
-species = 'Atrocious'
+name = "Gyarados"
+primary_type = "Water"
+secondary_type = "Flying"
+species = "Atrocious"
 height = 65
 weight = 2350
-
 [training]
 base_exp = 189
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 95
 atk = 125
@@ -18,42 +16,40 @@ def = 79
 sp_atk = 60
 sp_def = 100
 speed = 81
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 37
+move = "thrash"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 30
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 20
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 40
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 55
 
 [[moves]]
-move_id = 82
+move = "dragon-rage"
 level = 25
 
 [[moves]]
-move_id = 239
+move = "twister"
 level = 35
 
 [[moves]]
-move_id = 240
+move = "rain-dance"
 level = 45
 
 [[moves]]
-move_id = 349
+move = "dragon-dance"
 level = 50

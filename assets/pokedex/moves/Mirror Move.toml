@@ -1,4 +1,4 @@
-id = 119
+id = "mirror-move"
 name = "Mirror Move"
 type = "Flying"
 category = "Status"

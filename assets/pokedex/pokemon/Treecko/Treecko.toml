@@ -1,15 +1,13 @@
 [data]
 id = 252
-name = 'Treecko'
-primary_type = 'Grass'
-species = 'Wood'
+name = "Treecko"
+primary_type = "Grass"
+species = "Wood"
 height = 5
 weight = 50
-
 [training]
 base_exp = 62
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 40
 atk = 45
@@ -17,50 +15,48 @@ def = 35
 sp_atk = 65
 sp_def = 55
 speed = 70
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 21
+move = "slam"
 level = 36
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 6
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 26
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 31
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 11
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 21
 
 [[moves]]
-move_id = 197
+move = "detect"
 level = 41
 
 [[moves]]
-move_id = 202
+move = "giga-drain"
 level = 46
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 16

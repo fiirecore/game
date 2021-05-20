@@ -1,16 +1,14 @@
 [data]
 id = 337
-name = 'Lunatone'
-primary_type = 'Rock'
-secondary_type = 'Psychic'
-species = 'Meteorite'
+name = "Lunatone"
+primary_type = "Rock"
+secondary_type = "Psychic"
+species = "Meteorite"
 height = 10
 weight = 1680
-
 [training]
 base_exp = 161
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 90
 atk = 55
@@ -18,45 +16,44 @@ def = 65
 sp_atk = 95
 sp_def = 85
 speed = 70
-
 [breeding]
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 88
+move = "rock-throw"
 level = 13
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 7
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 37
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 19
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 1
 
 [[moves]]
-move_id = 149
+move = "psywave"
 level = 25
 
 [[moves]]
-move_id = 153
+move = "explosion"
 level = 49
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 43
 
 [[moves]]
-move_id = 322
+move = "cosmic-power"
 level = 31

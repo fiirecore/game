@@ -1,15 +1,13 @@
 [data]
 id = 109
-name = 'Koffing'
-primary_type = 'Poison'
-species = 'Poison'
+name = "Koffing"
+primary_type = "Poison"
+species = "Poison"
 height = 6
 weight = 10
-
 [training]
 base_exp = 68
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 40
 atk = 65
@@ -17,46 +15,44 @@ def = 95
 sp_atk = 60
 sp_def = 45
 speed = 35
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 25
 
 [[moves]]
-move_id = 114
+move = "haze"
 level = 33
 
 [[moves]]
-move_id = 120
+move = "self-destruct"
 level = 17
 
 [[moves]]
-move_id = 123
+move = "smog"
 level = 9
 
 [[moves]]
-move_id = 124
+move = "sludge"
 level = 21
 
 [[moves]]
-move_id = 139
+move = "poison-gas"
 level = 1
 
 [[moves]]
-move_id = 153
+move = "explosion"
 level = 41
 
 [[moves]]
-move_id = 194
+move = "destiny-bond"
 level = 45
 
 [[moves]]
-move_id = 262
+move = "memento"
 level = 49

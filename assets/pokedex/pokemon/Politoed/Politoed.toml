@@ -1,15 +1,13 @@
 [data]
 id = 186
-name = 'Politoed'
-primary_type = 'Water'
-species = 'Frog'
+name = "Politoed"
+primary_type = "Water"
+species = "Frog"
 height = 11
 weight = 339
-
 [training]
 base_exp = 225
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 90
 atk = 75
@@ -17,30 +15,28 @@ def = 75
 sp_atk = 90
 sp_def = 100
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 1
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 1
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 35
 
 [[moves]]
-move_id = 207
+move = "swagger"
 level = 51

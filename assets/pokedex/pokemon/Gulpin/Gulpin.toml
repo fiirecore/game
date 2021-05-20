@@ -1,15 +1,13 @@
 [data]
 id = 316
-name = 'Gulpin'
-primary_type = 'Poison'
-species = 'Stomach'
+name = "Gulpin"
+primary_type = "Poison"
+species = "Stomach"
 height = 4
 weight = 103
-
 [training]
 base_exp = 60
-growth_rate = 'fast-then-very-slow'
-
+growth_rate = "fast-then-very-slow"
 [base]
 hp = 70
 atk = 43
@@ -17,50 +15,48 @@ def = 53
 sp_atk = 43
 sp_def = 53
 speed = 40
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 92
+move = "toxic"
 level = 28
 
 [[moves]]
-move_id = 124
+move = "sludge"
 level = 14
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 17
 
 [[moves]]
-move_id = 139
+move = "poison-gas"
 level = 9
 
 [[moves]]
-move_id = 188
+move = "sludge-bomb"
 level = 39
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 23
 
 [[moves]]
-move_id = 254
+move = "stockpile"
 level = 34
 
 [[moves]]
-move_id = 255
+move = "spit-up"
 level = 34
 
 [[moves]]
-move_id = 256
+move = "swallow"
 level = 34
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 6

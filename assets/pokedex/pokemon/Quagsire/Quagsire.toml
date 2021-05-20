@@ -1,16 +1,14 @@
 [data]
 id = 195
-name = 'Quagsire'
-primary_type = 'Water'
-secondary_type = 'Ground'
-species = 'Water'
+name = "Quagsire"
+primary_type = "Water"
+secondary_type = "Ground"
+species = "Water"
 height = 14
 weight = 750
-
 [training]
 base_exp = 151
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 95
 atk = 85
@@ -18,46 +16,44 @@ def = 85
 sp_atk = 65
 sp_def = 65
 speed = 35
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 21
+move = "slam"
 level = 11
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 1
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 61
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 42
 
 [[moves]]
-move_id = 114
+move = "haze"
 level = 61
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 23
 
 [[moves]]
-move_id = 240
+move = "rain-dance"
 level = 49
 
 [[moves]]
-move_id = 281
+move = "yawn"
 level = 35
 
 [[moves]]
-move_id = 341
+move = "mud-shot"
 level = 16

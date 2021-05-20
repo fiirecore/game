@@ -1,15 +1,13 @@
 [data]
 id = 378
-name = 'Regice'
-primary_type = 'Ice'
-species = 'Iceberg'
+name = "Regice"
+primary_type = "Ice"
+species = "Iceberg"
 height = 18
 weight = 1750
-
 [training]
 base_exp = 261
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 80
 atk = 50
@@ -17,41 +15,40 @@ def = 100
 sp_atk = 100
 sp_def = 200
 speed = 50
-
 [breeding]
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 65
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 41
 
 [[moves]]
-move_id = 153
+move = "explosion"
 level = 1
 
 [[moves]]
-move_id = 174
+move = "curse"
 level = 17
 
 [[moves]]
-move_id = 192
+move = "zap-cannon"
 level = 49
 
 [[moves]]
-move_id = 196
+move = "icy-wind"
 level = 9
 
 [[moves]]
-move_id = 199
+move = "lock-on"
 level = 57
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 33
 
 [[moves]]
-move_id = 276
+move = "superpower"
 level = 25

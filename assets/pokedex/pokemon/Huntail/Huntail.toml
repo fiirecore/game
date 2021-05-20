@@ -1,15 +1,13 @@
 [data]
 id = 367
-name = 'Huntail'
-primary_type = 'Water'
-species = 'Deep'
+name = "Huntail"
+primary_type = "Water"
+species = "Deep"
 height = 17
 weight = 270
-
 [training]
 base_exp = 170
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 55
 atk = 104
@@ -17,38 +15,36 @@ def = 105
 sp_atk = 94
 sp_def = 75
 speed = 52
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 44
+move = "bite"
 level = 8
 
 [[moves]]
-move_id = 56
+move = "hydro-pump"
 level = 50
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 15
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 29
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 43
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 36
 
 [[moves]]
-move_id = 250
+move = "whirlpool"
 level = 1
 
 [[moves]]
-move_id = 352
+move = "water-pulse"
 level = 22

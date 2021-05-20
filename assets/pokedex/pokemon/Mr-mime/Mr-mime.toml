@@ -1,16 +1,14 @@
 [data]
 id = 122
-name = 'Mr-mime'
-primary_type = 'Psychic'
-secondary_type = 'Fairy'
-species = 'Barrier'
+name = "Mr-mime"
+primary_type = "Psychic"
+secondary_type = "Fairy"
+species = "Barrier"
 height = 13
 weight = 545
-
 [training]
 base_exp = 161
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 40
 atk = 45
@@ -18,70 +16,68 @@ def = 65
 sp_atk = 100
 sp_def = 120
 speed = 90
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 3
+move = "double-slap"
 level = 15
 
 [[moves]]
-move_id = 60
+move = "psybeam"
 level = 29
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 5
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 43
 
 [[moves]]
-move_id = 96
+move = "meditate"
 level = 12
 
 [[moves]]
-move_id = 112
+move = "barrier"
 level = 1
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 19
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 19
 
 [[moves]]
-move_id = 164
+move = "substitute"
 level = 8
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 50
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 47
 
 [[moves]]
-move_id = 227
+move = "encore"
 level = 26
 
 [[moves]]
-move_id = 271
+move = "trick"
 level = 36
 
 [[moves]]
-move_id = 272
+move = "role-play"
 level = 40
 
 [[moves]]
-move_id = 278
+move = "recycle"
 level = 33
 
 [[moves]]
-move_id = 345
+move = "magical-leaf"
 level = 22

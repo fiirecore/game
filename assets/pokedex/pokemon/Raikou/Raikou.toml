@@ -1,15 +1,13 @@
 [data]
 id = 243
-name = 'Raikou'
-primary_type = 'Electric'
-species = 'Thunder'
+name = "Raikou"
+primary_type = "Electric"
+species = "Thunder"
 height = 19
 weight = 1780
-
 [training]
 base_exp = 261
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 90
 atk = 85
@@ -17,45 +15,44 @@ def = 75
 sp_atk = 115
 sp_def = 100
 speed = 115
-
 [breeding]
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 1
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 21
 
 [[moves]]
-move_id = 84
+move = "thunder-shock"
 level = 11
 
 [[moves]]
-move_id = 87
+move = "thunder"
 level = 71
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 31
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 51
 
 [[moves]]
-move_id = 209
+move = "spark"
 level = 41
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 61
 
 [[moves]]
-move_id = 347
+move = "calm-mind"
 level = 81

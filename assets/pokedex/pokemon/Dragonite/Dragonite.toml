@@ -1,16 +1,14 @@
 [data]
 id = 149
-name = 'Dragonite'
-primary_type = 'Dragon'
-secondary_type = 'Flying'
-species = 'Dragon'
+name = "Dragonite"
+primary_type = "Dragon"
+secondary_type = "Flying"
+species = "Dragon"
 height = 22
 weight = 2100
-
 [training]
 base_exp = 270
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 91
 atk = 134
@@ -18,58 +16,56 @@ def = 95
 sp_atk = 100
 sp_def = 100
 speed = 80
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 17
+move = "wing-attack"
 level = 55
 
 [[moves]]
-move_id = 21
+move = "slam"
 level = 29
 
 [[moves]]
-move_id = 35
+move = "wrap"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 63
+move = "hyper-beam"
 level = 75
 
 [[moves]]
-move_id = 82
+move = "dragon-rage"
 level = 22
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 1
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 8
 
 [[moves]]
-move_id = 97
+move = "agility"
 level = 38
 
 [[moves]]
-move_id = 200
+move = "outrage"
 level = 61
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 47
 
 [[moves]]
-move_id = 239
+move = "twister"
 level = 1
 
 [[moves]]
-move_id = 239
+move = "twister"
 level = 15

@@ -1,4 +1,4 @@
-id = 17
+id = "wing-attack"
 name = "Wing Attack"
 type = "Flying"
 category = "Physical"

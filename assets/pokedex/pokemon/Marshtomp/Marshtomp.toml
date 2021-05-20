@@ -1,16 +1,14 @@
 [data]
 id = 259
-name = 'Marshtomp'
-primary_type = 'Water'
-secondary_type = 'Ground'
-species = 'Mud'
+name = "Marshtomp"
+primary_type = "Water"
+secondary_type = "Ground"
+species = "Mud"
 height = 7
 weight = 280
-
 [training]
 base_exp = 142
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 70
 atk = 85
@@ -18,66 +16,64 @@ def = 70
 sp_atk = 60
 sp_def = 70
 speed = 50
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 31
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 1
 
 [[moves]]
-move_id = 55
+move = "water-gun"
 level = 10
 
 [[moves]]
-move_id = 89
+move = "earthquake"
 level = 46
 
 [[moves]]
-move_id = 117
+move = "bide"
 level = 15
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 42
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 1
 
 [[moves]]
-move_id = 189
+move = "mud-slap"
 level = 6
 
 [[moves]]
-move_id = 193
+move = "foresight"
 level = 20
 
 [[moves]]
-move_id = 283
+move = "endeavor"
 level = 53
 
 [[moves]]
-move_id = 300
+move = "mud-sport"
 level = 25
 
 [[moves]]
-move_id = 330
+move = "muddy-water"
 level = 37
 
 [[moves]]
-move_id = 341
+move = "mud-shot"
 level = 16

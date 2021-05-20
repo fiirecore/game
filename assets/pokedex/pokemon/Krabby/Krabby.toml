@@ -1,15 +1,13 @@
 [data]
 id = 98
-name = 'Krabby'
-primary_type = 'Water'
-species = 'River'
+name = "Krabby"
+primary_type = "Water"
+species = "River"
 height = 4
 weight = 65
-
 [training]
 base_exp = 65
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 30
 atk = 105
@@ -17,46 +15,44 @@ def = 90
 sp_atk = 25
 sp_def = 25
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 11
+move = "vise-grip"
 level = 12
 
 [[moves]]
-move_id = 12
+move = "guillotine"
 level = 34
 
 [[moves]]
-move_id = 23
+move = "stomp"
 level = 27
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 5
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 16
 
 [[moves]]
-move_id = 145
+move = "bubble"
 level = 1
 
 [[moves]]
-move_id = 152
+move = "crabhammer"
 level = 45
 
 [[moves]]
-move_id = 175
+move = "flail"
 level = 49
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 38
 
 [[moves]]
-move_id = 341
+move = "mud-shot"
 level = 23

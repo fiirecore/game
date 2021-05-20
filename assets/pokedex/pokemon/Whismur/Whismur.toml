@@ -1,15 +1,13 @@
 [data]
 id = 293
-name = 'Whismur'
-primary_type = 'Normal'
-species = 'Whisper'
+name = "Whismur"
+primary_type = "Normal"
+species = "Whisper"
 height = 6
 weight = 163
-
 [training]
 base_exp = 48
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 64
 atk = 51
@@ -17,50 +15,48 @@ def = 23
 sp_atk = 51
 sp_def = 23
 speed = 28
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 1
+move = "pound"
 level = 1
 
 [[moves]]
-move_id = 23
+move = "stomp"
 level = 25
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 35
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 21
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 31
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 41
 
 [[moves]]
-move_id = 214
+move = "sleep-talk"
 level = 41
 
 [[moves]]
-move_id = 253
+move = "uproar"
 level = 5
 
 [[moves]]
-move_id = 304
+move = "hyper-voice"
 level = 45
 
 [[moves]]
-move_id = 310
+move = "astonish"
 level = 11
 
 [[moves]]
-move_id = 336
+move = "howl"
 level = 15

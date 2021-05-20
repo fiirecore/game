@@ -1,15 +1,13 @@
 [data]
 id = 152
-name = 'Chikorita'
-primary_type = 'Grass'
-species = 'Leaf'
+name = "Chikorita"
+primary_type = "Grass"
+species = "Leaf"
 height = 9
 weight = 64
-
 [training]
 base_exp = 64
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 45
 atk = 49
@@ -17,46 +15,44 @@ def = 65
 sp_atk = 49
 sp_def = 65
 speed = 45
-
 [breeding]
 gender = 1
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 34
+move = "body-slam"
 level = 29
 
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 75
+move = "razor-leaf"
 level = 8
 
 [[moves]]
-move_id = 76
+move = "solar-beam"
 level = 50
 
 [[moves]]
-move_id = 77
+move = "poison-powder"
 level = 15
 
 [[moves]]
-move_id = 113
+move = "light-screen"
 level = 36
 
 [[moves]]
-move_id = 115
+move = "reflect"
 level = 12
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 43
 
 [[moves]]
-move_id = 235
+move = "synthesis"
 level = 22

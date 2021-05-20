@@ -1,16 +1,14 @@
 [data]
 id = 81
-name = 'Magnemite'
-primary_type = 'Electric'
-secondary_type = 'Steel'
-species = 'Magnet'
+name = "Magnemite"
+primary_type = "Electric"
+secondary_type = "Steel"
+species = "Magnet"
 height = 3
 weight = 60
-
 [training]
 base_exp = 65
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 25
 atk = 35
@@ -18,49 +16,48 @@ def = 70
 sp_atk = 95
 sp_def = 55
 speed = 45
-
 [breeding]
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 48
+move = "supersonic"
 level = 11
 
 [[moves]]
-move_id = 49
+move = "sonic-boom"
 level = 16
 
 [[moves]]
-move_id = 84
+move = "thunder-shock"
 level = 6
 
 [[moves]]
-move_id = 86
+move = "thunder-wave"
 level = 21
 
 [[moves]]
-move_id = 103
+move = "screech"
 level = 44
 
 [[moves]]
-move_id = 129
+move = "swift"
 level = 38
 
 [[moves]]
-move_id = 192
+move = "zap-cannon"
 level = 50
 
 [[moves]]
-move_id = 199
+move = "lock-on"
 level = 32
 
 [[moves]]
-move_id = 209
+move = "spark"
 level = 26
 
 [[moves]]
-move_id = 319
+move = "metal-sound"
 level = 1

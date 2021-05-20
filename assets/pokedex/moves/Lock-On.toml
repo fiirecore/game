@@ -1,4 +1,4 @@
-id = 199
+id = "lock-on"
 name = "Lock-On"
 type = "Normal"
 category = "Status"

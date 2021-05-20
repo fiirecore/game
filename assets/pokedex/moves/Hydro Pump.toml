@@ -1,4 +1,4 @@
-id = 56
+id = "hydro-pump"
 name = "Hydro Pump"
 type = "Water"
 category = "Special"

@@ -1,15 +1,13 @@
 [data]
 id = 126
-name = 'Magmar'
-primary_type = 'Fire'
-species = 'Spitfire'
+name = "Magmar"
+primary_type = "Fire"
+species = "Spitfire"
 height = 13
 weight = 445
-
 [training]
 base_exp = 173
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 65
 atk = 95
@@ -17,54 +15,52 @@ def = 57
 sp_atk = 100
 sp_def = 85
 speed = 93
-
 [breeding]
 gender = 2
-
 [[moves]]
-move_id = 7
+move = "fire-punch"
 level = 1
 
 [[moves]]
-move_id = 7
+move = "fire-punch"
 level = 19
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 7
 
 [[moves]]
-move_id = 52
+move = "ember"
 level = 1
 
 [[moves]]
-move_id = 53
+move = "flamethrower"
 level = 41
 
 [[moves]]
-move_id = 108
+move = "smokescreen"
 level = 25
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 49
 
 [[moves]]
-move_id = 123
+move = "smog"
 level = 1
 
 [[moves]]
-move_id = 123
+move = "smog"
 level = 13
 
 [[moves]]
-move_id = 126
+move = "fire-blast"
 level = 57
 
 [[moves]]
-move_id = 241
+move = "sunny-day"
 level = 33

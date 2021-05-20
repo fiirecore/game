@@ -39,6 +39,11 @@ impl BasicBattleIntroduction {
 
     const OFFSETS: (f32, f32) = (-PokemonStatusGui::BATTLE_OFFSET, PokemonStatusGui::BATTLE_OFFSET);
 
+    const PLAYER_T1: f32 = 42.0;
+    const PLAYER_T2: f32 = Self::PLAYER_T1 + 18.0;
+    const PLAYER_T3: f32 = Self::PLAYER_T2 + 18.0;
+    const PLAYER_DESPAWN: f32 = 104.0;
+
     #[deprecated(note = "bad code, return vec of string (lines)")]
     pub(crate) fn concatenate(active: &ActivePokemonArray) -> String {
         let mut string = String::new();
@@ -70,16 +75,16 @@ impl BasicBattleIntroduction {
     }
 
     pub(crate) fn render_player(&self, battle: &Battle) {
-        if self.counter < 104.0 {
+        if self.counter < Self::PLAYER_DESPAWN {
             draw_texture_ex(self.player, 41.0 + - self.counter, 49.0, WHITE, DrawTextureParams {
                 source: Some(
                     Rect::new(
                         0.0, 
-                        if self.counter >= 78.0 {
+                        if self.counter >= Self::PLAYER_T3 { // 78.0
                             256.0
-                        } else if self.counter >= 60.0 {
+                        } else if self.counter >= Self::PLAYER_T2 { // 60.0
                             192.0
-                        } else if self.counter >= 42.0 {
+                        } else if self.counter >= Self::PLAYER_T1 { // 42.0
                             128.0
                         } else if self.counter > 0.0 {
                             64.0
@@ -128,7 +133,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
         text.update(delta);
 
         if text.current() + 1 == text.len() {
-            if self.counter < 104.0 {
+            if self.counter < Self::PLAYER_DESPAWN {
                 self.counter += delta * 180.0;                
             }
         }
@@ -161,7 +166,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
                     self.offsets.1 = 0.0;
                 }
             }
-        } else if self.counter >= 78.0 {//104.0 {
+        } else if self.counter >= Self::PLAYER_T2 {
             for active in battle.player.active.iter_mut() {
                 active.renderer.spawn();
                 active.status.spawn();
@@ -188,6 +193,6 @@ impl Reset for BasicBattleIntroduction {
 }
 impl Completable for BasicBattleIntroduction {
     fn is_finished(&self) -> bool {
-        self.counter >= 104.0 && self.offsets.1 == 0.0
+        self.counter >= Self::PLAYER_DESPAWN && self.offsets.1 == 0.0
     }
 }

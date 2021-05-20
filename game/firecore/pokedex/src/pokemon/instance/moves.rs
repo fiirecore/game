@@ -26,29 +26,6 @@ use crate::{
 
 impl PokemonInstance {
 
-	// pub fn use_held_item(&mut self) -> bool {
-	// 	if let Some(item) = self.item {
-	// 		if let Some(conditions) = item.script.conditions.as_ref() {
-	// 			for condition in conditions {
-	// 				match condition {
-	// 				    ItemCondition::BelowHealthPercent(percent) => {
-	// 						if (self.current_hp as f32 / self.base.hp as f32) >= *percent {
-	// 							return false;
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 			self.execute_item(item);
-	// 			self.item = None;
-	// 			true
-	// 		} else {
-	// 			false
-	// 		}
-	// 	} else {
-	// 		false
-	// 	}
-	// }
-
     pub fn use_move(&mut self, move_index: usize, target: &mut Self) -> Option<MoveResult> {
 		if let Some(pokemon_move) = self.moves[move_index].decrement() {
 			let pokemon_move = pokemon_move.value();
@@ -81,6 +58,112 @@ impl PokemonInstance {
 						match pokemon_move.power {
 							Some(power) => {
 								self.damage_kind(DamageKind::Move(power, pokemon_move.category, pokemon_move.pokemon_type), target);
+								MoveResults::Damage
+							},
+							None => MoveResults::None,
+						}
+					}
+				}
+			} else {
+				MoveResults::Miss
+			};
+			Some(MoveResult { move_ref: pokemon_move, result })
+		} else {
+			None
+		}
+	}
+
+	pub fn use_move_on_self(&mut self, move_index: usize) -> Option<MoveResult> { // scuffed
+		if let Some(pokemon_move) = self.moves[move_index].decrement() {
+			let pokemon_move = pokemon_move.value();
+			let result = if pokemon_move.accuracy.map(|accuracy| {
+				let hit: u8 = POKEMON_RANDOM.gen_range(0, 100);
+				hit < accuracy
+			}).unwrap_or(true) {
+				match &pokemon_move.script {
+					Some(script) => {
+						let actions = match &script.action {
+							MoveAction::Action(action) => Some(*action),
+							MoveAction::Persistent(_) => {
+								todo!("persistent moves");
+								// target.persistent = Some(PersistentMoveInstance {
+								// 	pokemon_move,
+								// 	actions: &persistent.action,
+								// 	remaining: persistent.length.map(|(min, max)| POKEMON_RANDOM.gen_range(min, max)),
+								// 	should_do: persistent.on_move,
+								// });
+								// None
+							}
+						};
+						if let Some(action) = actions {
+							match action {
+								MoveActionType::Damage(damage) => {
+									{
+										let damage = match damage {
+											DamageKind::Move(power, category, pokemon_type) => {
+												self.get_damage(power, category, pokemon_type, self)
+											}
+											DamageKind::PercentCurrent(percent) => {
+												(self.current_hp as f32 * percent) as Health
+											}
+											DamageKind::PercentMax(percent) => {
+												(self.base.hp as f32 * percent) as Health
+											}
+											DamageKind::Constant(damage) => damage,
+										};
+										self.current_hp = self.current_hp.saturating_sub(damage);
+									}
+									MoveResults::Damage
+								},
+								MoveActionType::Status(chance, effect) => {
+									self.chance_status(chance, effect)
+								},
+								MoveActionType::Drain(damage, percent) => {
+									let damage = {
+											let damage = match damage {
+											DamageKind::Move(power, category, pokemon_type) => {
+												self.get_damage(power, category, pokemon_type, self)
+											}
+											DamageKind::PercentCurrent(percent) => {
+												(self.current_hp as f32 * percent) as Health
+											}
+											DamageKind::PercentMax(percent) => {
+												(self.base.hp as f32 * percent) as Health
+											}
+											DamageKind::Constant(damage) => damage,
+										};
+										self.current_hp = self.current_hp.saturating_sub(damage);
+										damage
+									} as f32;
+									self.current_hp += (damage * percent) as Health;
+									if self.current_hp > self.base.hp {
+										self.current_hp = self.base.hp;
+									}
+									MoveResults::Damage
+								}
+							}
+						} else {
+							MoveResults::None
+						}
+					}
+					None => {
+						match pokemon_move.power {
+							Some(power) => {
+								{
+									let damage = match DamageKind::Move(power, pokemon_move.category, pokemon_move.pokemon_type) {
+										DamageKind::Move(power, category, pokemon_type) => {
+											self.get_damage(power, category, pokemon_type, self)
+										}
+										DamageKind::PercentCurrent(percent) => {
+											(self.current_hp as f32 * percent) as Health
+										}
+										DamageKind::PercentMax(percent) => {
+											(self.base.hp as f32 * percent) as Health
+										}
+										DamageKind::Constant(damage) => damage,
+									};
+									self.current_hp = self.current_hp.saturating_sub(damage);
+								}
 								MoveResults::Damage
 							},
 							None => MoveResults::None,

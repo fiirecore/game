@@ -1,4 +1,4 @@
-id = 89
+id = "earthquake"
 name = "Earthquake"
 type = "Ground"
 category = "Physical"

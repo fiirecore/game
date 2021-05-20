@@ -3,13 +3,17 @@ use std::path::Path;
 
 fn main() {
 
-    let pokemon_dir = "pokedex/entries";
-    let textures_dir = "pokedex/textures";
+    let pokedex_dir = Path::new("../Subprojects/PokedexGenJava/pokedex");
 
-    let base = Path::new(textures_dir);
+    println!("{:?}", pokedex_dir.canonicalize());
+
+    let pokemon_dir = pokedex_dir.join("entries");
+    let textures_dir = pokedex_dir.join("textures");
+
+    let base = textures_dir;
     let icon = base.join("icon");
     let base = base.join("normal");
-    let new = Path::new("pokedex/pokemon");
+    let new = Path::new("assets/pokedex/pokemon");
 
     for entry in std::fs::read_dir(pokemon_dir).unwrap() {
         let entry = entry.unwrap();

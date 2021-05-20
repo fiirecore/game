@@ -1,15 +1,13 @@
 [data]
 id = 313
-name = 'Volbeat'
-primary_type = 'Bug'
-species = 'Firefly'
+name = "Volbeat"
+primary_type = "Bug"
+species = "Firefly"
 height = 7
 weight = 177
-
 [training]
 base_exp = 151
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 65
 atk = 73
@@ -17,46 +15,44 @@ def = 75
 sp_atk = 47
 sp_def = 85
 speed = 85
-
 [breeding]
 gender = 0
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 38
+move = "double-edge"
 level = 37
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 17
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 9
 
 [[moves]]
-move_id = 109
+move = "confuse-ray"
 level = 5
 
 [[moves]]
-move_id = 182
+move = "protect"
 level = 29
 
 [[moves]]
-move_id = 236
+move = "moonlight"
 level = 13
 
 [[moves]]
-move_id = 270
+move = "helping-hand"
 level = 33
 
 [[moves]]
-move_id = 294
+move = "tail-glow"
 level = 21
 
 [[moves]]
-move_id = 324
+move = "signal-beam"
 level = 25

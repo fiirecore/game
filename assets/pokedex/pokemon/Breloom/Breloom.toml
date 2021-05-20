@@ -1,16 +1,14 @@
 [data]
 id = 286
-name = 'Breloom'
-primary_type = 'Grass'
-secondary_type = 'Fighting'
-species = 'Mushroom'
+name = "Breloom"
+primary_type = "Grass"
+secondary_type = "Fighting"
+species = "Mushroom"
 height = 12
 weight = 392
-
 [training]
 base_exp = 161
-growth_rate = 'fast-then-very-slow'
-
+growth_rate = "fast-then-very-slow"
 [base]
 hp = 60
 atk = 130
@@ -18,62 +16,60 @@ def = 80
 sp_atk = 60
 sp_def = 60
 speed = 70
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 29
+move = "headbutt"
 level = 22
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 4
 
 [[moves]]
-move_id = 68
+move = "counter"
 level = 28
 
 [[moves]]
-move_id = 71
+move = "absorb"
 level = 1
 
 [[moves]]
-move_id = 72
+move = "mega-drain"
 level = 16
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 1
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 10
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 1
 
 [[moves]]
-move_id = 78
+move = "stun-spore"
 level = 7
 
 [[moves]]
-move_id = 170
+move = "mind-reader"
 level = 45
 
 [[moves]]
-move_id = 183
+move = "mach-punch"
 level = 23
 
 [[moves]]
-move_id = 223
+move = "dynamic-punch"
 level = 54
 
 [[moves]]
-move_id = 327
+move = "sky-uppercut"
 level = 36

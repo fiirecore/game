@@ -1,15 +1,13 @@
 [data]
 id = 209
-name = 'Snubbull'
-primary_type = 'Fairy'
-species = 'Fairy'
+name = "Snubbull"
+primary_type = "Fairy"
+species = "Fairy"
 height = 6
 weight = 78
-
 [training]
 base_exp = 60
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 60
 atk = 80
@@ -17,46 +15,44 @@ def = 50
 sp_atk = 40
 sp_def = 40
 speed = 30
-
 [breeding]
 gender = 6
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 43
 
 [[moves]]
-move_id = 39
+move = "tail-whip"
 level = 4
 
 [[moves]]
-move_id = 44
+move = "bite"
 level = 13
 
 [[moves]]
-move_id = 46
+move = "roar"
 level = 26
 
 [[moves]]
-move_id = 99
+move = "rage"
 level = 34
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 19
 
 [[moves]]
-move_id = 184
+move = "scary-face"
 level = 1
 
 [[moves]]
-move_id = 204
+move = "charm"
 level = 8
 
 [[moves]]
-move_id = 242
+move = "crunch"
 level = 53

@@ -1,4 +1,4 @@
-id = 12
+id = "guillotine"
 name = "Guillotine"
 type = "Normal"
 category = "Physical"

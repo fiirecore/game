@@ -1,15 +1,13 @@
 [data]
 id = 217
-name = 'Ursaring'
-primary_type = 'Normal'
-species = 'Hibernator'
+name = "Ursaring"
+primary_type = "Normal"
+species = "Hibernator"
 height = 18
 weight = 1258
-
 [training]
 base_exp = 175
-growth_rate = 'medium'
-
+growth_rate = "medium"
 [base]
 hp = 90
 atk = 130
@@ -17,54 +15,52 @@ def = 75
 sp_atk = 75
 sp_def = 75
 speed = 55
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 37
+move = "thrash"
 level = 49
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 1
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 1
 
 [[moves]]
-move_id = 122
+move = "lick"
 level = 7
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 1
 
 [[moves]]
-move_id = 154
+move = "fury-swipes"
 level = 13
 
 [[moves]]
-move_id = 156
+move = "rest"
 level = 31
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 37
 
 [[moves]]
-move_id = 173
+move = "snore"
 level = 43
 
 [[moves]]
-move_id = 185
+move = "feint-attack"
 level = 25
 
 [[moves]]
-move_id = 313
+move = "fake-tears"
 level = 19

@@ -1,4 +1,4 @@
-id = 23
+id = "stomp"
 name = "Stomp"
 type = "Normal"
 category = "Physical"

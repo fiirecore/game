@@ -1,4 +1,4 @@
-id = 222
+id = "magnitude"
 name = "Magnitude"
 type = "Ground"
 category = "Physical"

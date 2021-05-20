@@ -1,16 +1,14 @@
 [data]
 id = 221
-name = 'Piloswine'
-primary_type = 'Ice'
-secondary_type = 'Ground'
-species = 'Swine'
+name = "Piloswine"
+primary_type = "Ice"
+secondary_type = "Ground"
+species = "Swine"
 height = 11
 weight = 558
-
 [training]
 base_exp = 158
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 100
 atk = 100
@@ -18,50 +16,48 @@ def = 80
 sp_atk = 60
 sp_def = 60
 speed = 50
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 30
+move = "horn-attack"
 level = 1
 
 [[moves]]
-move_id = 31
+move = "fury-attack"
 level = 33
 
 [[moves]]
-move_id = 36
+move = "take-down"
 level = 28
 
 [[moves]]
-move_id = 54
+move = "mist"
 level = 42
 
 [[moves]]
-move_id = 59
+move = "blizzard"
 level = 56
 
 [[moves]]
-move_id = 133
+move = "amnesia"
 level = 70
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 1
 
 [[moves]]
-move_id = 181
+move = "powder-snow"
 level = 10
 
 [[moves]]
-move_id = 203
+move = "endure"
 level = 1
 
 [[moves]]
-move_id = 203
+move = "endure"
 level = 19
 
 [[moves]]
-move_id = 316
+move = "odor-sleuth"
 level = 1

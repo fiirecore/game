@@ -1,16 +1,14 @@
 [data]
 id = 251
-name = 'Celebi'
-primary_type = 'Psychic'
-secondary_type = 'Grass'
-species = 'Time'
+name = "Celebi"
+primary_type = "Psychic"
+secondary_type = "Grass"
+species = "Time"
 height = 6
 weight = 50
-
 [training]
 base_exp = 270
-growth_rate = 'medium-slow'
-
+growth_rate = "medium-slow"
 [base]
 hp = 100
 atk = 100
@@ -18,41 +16,40 @@ def = 100
 sp_atk = 100
 sp_def = 100
 speed = 100
-
 [breeding]
 
 [[moves]]
-move_id = 73
+move = "leech-seed"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 1
 
 [[moves]]
-move_id = 195
+move = "perish-song"
 level = 50
 
 [[moves]]
-move_id = 215
+move = "heal-bell"
 level = 1
 
 [[moves]]
-move_id = 219
+move = "safeguard"
 level = 10
 
 [[moves]]
-move_id = 226
+move = "baton-pass"
 level = 40
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 20
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 30

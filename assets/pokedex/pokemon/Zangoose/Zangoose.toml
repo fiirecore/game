@@ -1,15 +1,13 @@
 [data]
 id = 335
-name = 'Zangoose'
-primary_type = 'Normal'
-species = 'Cat'
+name = "Zangoose"
+primary_type = "Normal"
+species = "Cat"
 height = 13
 weight = 403
-
 [training]
 base_exp = 160
-growth_rate = 'slow-then-very-fast'
-
+growth_rate = "slow-then-very-fast"
 [base]
 hp = 73
 atk = 115
@@ -17,50 +15,48 @@ def = 60
 sp_atk = 60
 sp_def = 60
 speed = 90
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 10
+move = "scratch"
 level = 1
 
 [[moves]]
-move_id = 14
+move = "swords-dance"
 level = 10
 
 [[moves]]
-move_id = 43
+move = "leer"
 level = 4
 
 [[moves]]
-move_id = 98
+move = "quick-attack"
 level = 7
 
 [[moves]]
-move_id = 163
+move = "slash"
 level = 19
 
 [[moves]]
-move_id = 197
+move = "detect"
 level = 46
 
 [[moves]]
-move_id = 206
+move = "false-swipe"
 level = 55
 
 [[moves]]
-move_id = 210
+move = "fury-cutter"
 level = 13
 
 [[moves]]
-move_id = 228
+move = "pursuit"
 level = 25
 
 [[moves]]
-move_id = 269
+move = "taunt"
 level = 37
 
 [[moves]]
-move_id = 306
+move = "crush-claw"
 level = 31

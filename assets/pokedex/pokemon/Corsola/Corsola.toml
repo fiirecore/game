@@ -1,16 +1,14 @@
 [data]
 id = 222
-name = 'Corsola'
-primary_type = 'Water'
-secondary_type = 'Rock'
-species = 'Coral'
+name = "Corsola"
+primary_type = "Water"
+secondary_type = "Rock"
+species = "Coral"
 height = 6
 weight = 50
-
 [training]
 base_exp = 144
-growth_rate = 'fast'
-
+growth_rate = "fast"
 [base]
 hp = 65
 atk = 55
@@ -18,46 +16,44 @@ def = 95
 sp_atk = 65
 sp_def = 95
 speed = 35
-
 [breeding]
 gender = 6
-
 [[moves]]
-move_id = 33
+move = "tackle"
 level = 1
 
 [[moves]]
-move_id = 61
+move = "bubble-beam"
 level = 23
 
 [[moves]]
-move_id = 105
+move = "recover"
 level = 17
 
 [[moves]]
-move_id = 106
+move = "harden"
 level = 6
 
 [[moves]]
-move_id = 131
+move = "spike-cannon"
 level = 28
 
 [[moves]]
-move_id = 145
+move = "bubble"
 level = 12
 
 [[moves]]
-move_id = 243
+move = "mirror-coat"
 level = 39
 
 [[moves]]
-move_id = 246
+move = "ancient-power"
 level = 45
 
 [[moves]]
-move_id = 287
+move = "refresh"
 level = 17
 
 [[moves]]
-move_id = 350
+move = "rock-blast"
 level = 34

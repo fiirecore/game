@@ -1,4 +1,4 @@
-id = 350
+id = "rock-blast"
 name = "Rock Blast"
 type = "Rock"
 category = "Physical"

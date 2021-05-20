@@ -1,16 +1,14 @@
 [data]
 id = 282
-name = 'Gardevoir'
-primary_type = 'Psychic'
-secondary_type = 'Fairy'
-species = 'Embrace'
+name = "Gardevoir"
+primary_type = "Psychic"
+secondary_type = "Fairy"
+species = "Embrace"
 height = 16
 weight = 484
-
 [training]
 base_exp = 233
-growth_rate = 'slow'
-
+growth_rate = "slow"
 [base]
 hp = 68
 atk = 65
@@ -18,58 +16,56 @@ def = 65
 sp_atk = 125
 sp_def = 115
 speed = 80
-
 [breeding]
 gender = 4
-
 [[moves]]
-move_id = 45
+move = "growl"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 1
 
 [[moves]]
-move_id = 93
+move = "confusion"
 level = 6
 
 [[moves]]
-move_id = 94
+move = "psychic"
 level = 26
 
 [[moves]]
-move_id = 95
+move = "hypnosis"
 level = 51
 
 [[moves]]
-move_id = 100
+move = "teleport"
 level = 1
 
 [[moves]]
-move_id = 100
+move = "teleport"
 level = 16
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 1
 
 [[moves]]
-move_id = 104
+move = "double-team"
 level = 11
 
 [[moves]]
-move_id = 138
+move = "dream-eater"
 level = 60
 
 [[moves]]
-move_id = 248
+move = "future-sight"
 level = 42
 
 [[moves]]
-move_id = 286
+move = "imprison"
 level = 33
 
 [[moves]]
-move_id = 347
+move = "calm-mind"
 level = 21
