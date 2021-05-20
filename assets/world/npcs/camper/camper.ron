@@ -6,7 +6,6 @@
         (
             name: "Camper",
             music: Some("EncounterBoy"),
-            type: Trainer,
         )
     )
 )

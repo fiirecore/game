@@ -6,10 +6,10 @@
         "It heals one POKEMON from a",
         "poisoning."
     ],
-    script: (
+    use: Script((
         consume: true,
         actions: [
             CurePokemon(Some(Poison)),
         ],
-    ),
+    )),
 )

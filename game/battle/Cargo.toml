@@ -16,7 +16,7 @@ firecore-game = { path = "../", default-features = false }
 serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
-postcard = { version = "0.6", default-features = false, features = ["alloc"] }
+firecore-dependencies = { path = "../firecore/deps", features = ["serialization"] }
 
 [[example]]
 name = "run"

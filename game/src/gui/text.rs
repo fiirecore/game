@@ -24,7 +24,7 @@ pub struct DynamicText {
 	counter: f32,
 	
 	pub can_continue: bool,
-	finish_click: bool,
+	end: bool,
 	timer: Timer,
 
 	button: (f32, bool),
@@ -47,7 +47,7 @@ impl DynamicText {
 			counter: 0.0,
 
 			can_continue: false,
-			finish_click: false,
+			end: false,
 			timer: Timer::new(false, 1.0),
 			
 			button: Default::default(),
@@ -69,6 +69,10 @@ impl DynamicText {
 
 	pub fn clear(&mut self) {
 		self.message.pages.clear();
+	}
+
+	pub fn color(&mut self, color: TextColor) {
+		self.message.color = color;
 	}
 
 	pub fn len(&self) -> usize {
@@ -99,45 +103,52 @@ impl DynamicText {
 			if let Some(current) = self.message.pages.get(self.current) {
 				let line_len = current.lines[self.current_line].len() << 2;
 				if self.can_continue {
+					match current.wait {
+						Some(wait) => {
+							if !self.timer.is_alive() {
+								self.timer.hard_reset();
+								self.timer.spawn();
+								self.timer.length = wait;
+							} else {
+								self.timer.update(delta);
+								if self.timer.is_finished() {
+									self.timer.despawn();
+									if self.current + 1 >= self.len() {
+										self.end = true;
+									} else {
+										self.current += 1;
+										self.reset_page();
+									}
+								}
+							}
+						}
+						None => {
+						
+							if self.button.1 {
+								self.button.0 += delta * 7.5;
+								if self.button.0 > 3.0 {
+									self.button.1 = false;
+								}
+							} else {
+								self.button.0 -= delta * 7.5;
+								if self.button.0 < -3.0 {
+									self.button.1 = true;
+								}
+							}
 
-					if pressed(Control::A) && current.wait.is_none() {
-						if self.current + 1 >= self.len() {
-							self.finish_click = true;
-						} else {
-							self.current += 1;
-							self.reset_page();
-						}
-						return;
-					}
-					
-					if let Some(time) = current.wait {
-						if !self.timer.is_alive() {
-							self.timer.spawn();
-							self.timer.length = time;
-						}
-						self.timer.update(delta);
-						if self.timer.is_finished() {
-							if self.current + 1 != self.len() {
-								self.current += 1;
-								self.reset_page();
-								self.timer.soft_reset();
-								self.timer.despawn();
+							if pressed(Control::A) {
+								if self.current + 1 >= self.len() {
+									self.end = true;
+								} else {
+									self.current += 1;
+									self.reset_page();
+								}
 							}
 						}
 					}
-					if self.button.1 {
-						self.button.0 += delta * 7.5;
-						if self.button.0 > 3.0 {
-							self.button.1 = false;
-						}
-					} else {
-						self.button.0 -= delta * 7.5;
-						if self.button.0 < -3.0 {
-							self.button.1 = true;
-						}
-					}
+
 				} else if self.counter <= line_len as f32 {
-					self.counter += delta * 60.0
+					self.counter += delta * 120.0
 				} else if self.current_line < current.lines.len() - 1 {
 					self.current_line += 1;
 					self.counter = 0.0;
@@ -180,19 +191,17 @@ impl Reset for DynamicText {
     fn reset(&mut self) {
         self.current = 0;
 		self.button = Default::default();
-		self.finish_click = false;
+		self.end = false;
 		self.reset_page();
     }
 }
 
 impl Completable for DynamicText {
     fn is_finished(&self) -> bool {
-		self.current + 1 == self.len() && if self.message.pages.get(self.current).map(|page| page.wait.is_none()).unwrap_or_default() {
-			self.finish_click
-		} else {
-			self.timer.is_finished()
-		} &&
-		self.can_continue
+		(self.current + 1 >= self.len() && 
+		self.end &&
+		self.can_continue) ||
+		self.len() == 0
     }
 }
 

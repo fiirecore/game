@@ -1,7 +1,9 @@
-use deps::hash::HashSet;
-use firecore_pokedex::pokemon::saved::SavedPokemonParty;
 use serde::{Deserialize, Serialize};
-use firecore_util::battle::BattleScreenTransitions;
+use deps::{
+    hash::HashSet,
+    tinystr::TinyStr8,
+};
+use firecore_pokedex::pokemon::party::PersistentParty;
 
 use crate::default_true;
 use super::NPCId;
@@ -17,10 +19,10 @@ pub struct Trainer {
     pub tracking: Option<u8>,
     pub encounter_message: MessageSet,
 
-    #[serde(default)]
-    pub battle_transition: BattleScreenTransitions,
+    #[serde(default = "default_battle_transition")]
+    pub battle_transition: TinyStr8,
 
-    pub party: SavedPokemonParty,
+    pub party: PersistentParty,
 
     #[serde(default)]
     pub victory_message: MessageSet,
@@ -28,4 +30,8 @@ pub struct Trainer {
     pub disable: HashSet<NPCId>,
     pub worth: u16,
 
+}
+
+fn default_battle_transition() -> TinyStr8 {
+    "default".parse().unwrap()
 }

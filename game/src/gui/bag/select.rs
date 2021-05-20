@@ -22,8 +22,8 @@ pub struct BagSelectMenu {
 
 pub enum BagSelectAction {
     Use,
-    Give,
-    Toss,
+    // Give,
+    // Toss,
 }
 
 impl BagSelectMenu {
@@ -65,19 +65,25 @@ impl BagSelectMenu {
             self.cursor += 1;
         }
         if pressed(Control::A) {
-            if self.cursor == if self.is_world { Self::WORLD_LEN } else { Self::BATTLE_LEN } {
-                self.alive = false;
-                None
-            } else if self.is_world {
+            if self.is_world {
                 match self.cursor {
                     0 => Some(BagSelectAction::Use),
-                    1 => Some(BagSelectAction::Give),
-                    _ => None,
+                    Self::WORLD_LEN => {
+                        self.alive = false;
+                        None
+                    },
+                    // 1 => Some(BagSelectAction::Give),
+                    1 | 2 => todo!("giving/tossing items"),
+                    _ => unreachable!(),
                 }
             } else {
                 match self.cursor {
                     0 => Some(BagSelectAction::Use),
-                    _ => None,
+                    Self::BATTLE_LEN => {
+                        self.alive = false;
+                        None
+                    }
+                    _ => unreachable!(),
                 }
             }            
         } else {

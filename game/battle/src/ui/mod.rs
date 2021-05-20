@@ -78,8 +78,12 @@ impl BattleGui {
         game::graphics::draw(self.background.panel, 0.0, 113.0);
 	}
 
+	pub fn reset(&mut self) {
+		self.bounce.reset();
+	}
+
 }
 
 pub fn battle_party_gui(gui: &mut game::gui::party::PartyGui, party: &crate::pokemon::BattleParty, exitable: bool) {
-    gui.spawn(party.collect_cloned().into_iter().map(|instance| game::gui::pokemon::PokemonDisplay::new(instance)).collect(), Some(false), exitable);
+    gui.spawn(party.collect_cloned().into_iter().map(|instance| game::gui::pokemon::PokemonDisplay::new(std::borrow::Cow::Owned(instance))).collect(), Some(false), exitable);
 }

@@ -1,7 +1,6 @@
 mod timer;
 pub mod positions;
-mod bounding_box;
-pub mod battle;
+mod bbox;
 
 pub use {
     timer::Timer,
@@ -13,7 +12,7 @@ pub use {
         location::Location,
         destination::Destination,
     },
-    bounding_box::BoundingBox
+    bbox::BoundingBox
 };
 
 pub const WIDTH: f32 = 240.0;

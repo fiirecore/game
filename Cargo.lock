@@ -69,7 +69,7 @@ name = "audio-builder"
 version = "0.4.0-alpha.1"
 dependencies = [
  "firecore-audio-lib",
- "postcard",
+ "firecore-dependencies",
  "ron",
  "serde",
 ]
@@ -91,6 +91,15 @@ name = "basedrop"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e80d37a08696e321155da2faed6008661811fac02bf977afbc2fbefaffcb730"
+
+[[package]]
+name = "bincode"
+version = "1.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "bindgen"
@@ -318,8 +327,8 @@ dependencies = [
 name = "dex-builder"
 version = "0.4.0-beta.3"
 dependencies = [
+ "firecore-dependencies",
  "firecore-pokedex-game",
- "postcard",
  "ron",
  "serde",
  "toml",
@@ -380,8 +389,8 @@ dependencies = [
 name = "firecore-battle"
 version = "0.4.0-alpha.1"
 dependencies = [
+ "firecore-dependencies",
  "firecore-game",
- "postcard",
  "serde",
 ]
 
@@ -400,6 +409,7 @@ version = "0.4.0-beta.2"
 dependencies = [
  "ahash 0.7.2",
  "arrayvec",
+ "bincode",
  "tinystr",
 ]
 
@@ -509,8 +519,6 @@ dependencies = [
  "firecore-font",
  "firecore-pokedex",
  "firecore-util",
- "indexmap",
- "num-traits",
  "serde",
 ]
 
@@ -524,8 +532,8 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 name = "font-builder"
 version = "0.4.0-beta.1"
 dependencies = [
+ "firecore-dependencies",
  "firecore-font",
- "postcard",
  "ron",
  "serde",
 ]
@@ -1035,7 +1043,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.4.0-beta.5.1"
+version = "0.4.0-beta.5.2"
 dependencies = [
  "audio-builder",
  "dex-builder",
@@ -1045,7 +1053,6 @@ dependencies = [
  "firecore-world",
  "font-builder",
  "getopts",
- "postcard",
  "world-builder",
 ]
 
@@ -1057,22 +1064,6 @@ dependencies = [
  "firecore-saves",
  "firecore-storage",
 ]
-
-[[package]]
-name = "postcard"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "66acf3cf8ab62785852a0f67ae3bfcd38324da6561e52e7f4a049ca555c6d55e"
-dependencies = [
- "postcard-cobs",
- "serde",
-]
-
-[[package]]
-name = "postcard-cobs"
-version = "0.1.5-pre"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c68cb38ed13fd7bc9dd5db8f165b7c8d9c1a315104083a2b10f11354c2af97f"
 
 [[package]]
 name = "ppv-lite86"
@@ -1581,10 +1572,11 @@ dependencies = [
 name = "world-builder"
 version = "0.4.0-beta.1"
 dependencies = [
+ "firecore-dependencies",
+ "firecore-pokedex-game",
  "firecore-util",
  "firecore-world-lib",
  "image",
- "postcard",
  "ron",
  "serde",
  "toml",

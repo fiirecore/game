@@ -4,7 +4,7 @@ use font::message::{Message, MessagePages};
 use audio::{music::MusicName, sound::Sound};
 
 use pokedex::{
-    pokemon::saved::SavedPokemon,
+    pokemon::instance::PokemonInstance,
     item::ItemId,
 };
 
@@ -28,7 +28,7 @@ pub enum WorldActionKind {
     PlayerLook(Direction),
     PlayerMove(Destination),
 
-    PlayerGivePokemon(SavedPokemon),
+    PlayerGivePokemon(PokemonInstance),
     PlayerHealPokemon,
 
     PlayerGiveItem(ItemId),

@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.4.0-beta.5.1"
+version = "0.4.0-beta.5.2"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -26,13 +26,9 @@ audio = ["firecore-game/audio", "audio-builder"]
 
 [dependencies]
 
-firecore-game = { path = "./game/", default-features = false }
+firecore-game = { path = "./game/", default-features = false, features = ["serialization"] }
 firecore-world = { path = "./game/world", default-features = false }
 firecore-battle = { path = "./game/battle", default-features = false }
-
-### Deserialization
-
-postcard = { version = "0.6", default-features = false }
 
 ### Other
 

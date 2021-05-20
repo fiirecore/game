@@ -1,9 +1,9 @@
 use std::path::{Path, PathBuf};
 use worldlib::{
     map::{
-        WorldMap,
-        WorldMapState,
         MapIdentifier,
+        WorldMap,
+        // WorldMapState,
         // Border,
         manager::WorldMapManager,
         chunk::{
@@ -147,6 +147,6 @@ pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig) -> 
         wild: super::wild::load_wild_entries(root_path.join("wild")),
         npcs: super::npc::load_npc_entries(root_path.join("npcs")),
         scripts: super::script::load_script_entries(root_path.join("scripts")),
-        state: WorldMapState::default(),
+        // state: WorldMapState::default(),
     }
 }

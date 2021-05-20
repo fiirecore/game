@@ -21,7 +21,10 @@ use game::{
 
 use world::{
     serialized::SerializedNPCType,
-    character::npc::NPC,
+    character::npc::{
+        NPC,
+        npc_type::NPCTypeId,
+    },
 };
 
 use crate::npc::npc_type;
@@ -41,8 +44,8 @@ pub struct NPCTextureManager {
 
 impl NPCTextureManager {
 
-    pub fn trainer_textures() -> &'static TrainerTextures {
-        unsafe { TRAINER_TEXTURES.as_ref().expect("Could not get trainer textures! (Not initialized)") }
+    pub fn trainer_texture(npc_type: &NPCTypeId) -> Texture2D {
+        unsafe { *TRAINER_TEXTURES.as_ref().expect("Could not get trainer textures! (Not initialized)").get(npc_type).unwrap_or_else(|| panic!("Could not get trainer texture for NPC Type {}", npc_type)) }
     }
 
     pub fn with_capacity(&mut self, capacity: usize) {
@@ -82,22 +85,20 @@ impl NPCTextureManager {
 }
 
 pub fn current_texture_pos(npc: &NPC) -> f32 {
-    if let Some(npc_type) = npc_type(&npc.npc_type) {
-        let index = (
-            if npc.character.position.offset.x != 0.0 {
-                npc.character.position.offset.x
-            } else {
-                npc.character.position.offset.y
-            }.abs() as usize >> 3
-        ) + npc.character.sprite_index as usize;
-        
-        (match npc.character.position.direction {
-            Direction::Down => npc_type.sprite.down[index],
-            Direction::Up => npc_type.sprite.up[index],
-            _ => npc_type.sprite.side[index]
-        } << 4) as f32
-    } else {
-        0.0
-    }
+    let index = (
+        if npc.character.position.offset.x != 0.0 {
+            npc.character.position.offset.x
+        } else {
+            npc.character.position.offset.y
+        }.abs() as usize >> 3
+    ) + npc.character.sprite_index as usize;
+
+    let npc_type = npc_type(&npc.npc_type);
+    
+    (match npc.character.position.direction {
+        Direction::Down => npc_type.sprite.down[index],
+        Direction::Up => npc_type.sprite.up[index],
+        _ => npc_type.sprite.side[index]
+    } << 4) as f32
     
 }

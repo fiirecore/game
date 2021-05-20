@@ -1,26 +1,26 @@
+use game::pokedex::pokemon::Level;
 use game::{
-    util::battle::BattleType,
-    text::TextColor,
+    text::{MessagePage, TextColor},
+    gui::DynamicText,
+    macroquad::prelude::Vec2,
     pokedex::{
         pokemon::{
             instance::PokemonInstance,
             types::Effective,
         },
-        moves::{
-            MoveRef,
-        },
-        item::ItemRef,
+        moves::Move,
+        item::Item,
     },
-    text::MessagePage,
-    gui::DynamicText,
-    macroquad::prelude::Vec2,
+    battle::BattleTeam,
 };
+
+use crate::BattleType;
 
 pub fn new() -> DynamicText {
     DynamicText::new(super::PANEL_ORIGIN + Vec2::new(11.0, 11.0), 1, TextColor::White, 6)
 }
 
-pub(crate) fn on_move(text: &mut DynamicText, pokemon_move: MoveRef, user: &PokemonInstance) {
+pub(crate) fn on_move(text: &mut DynamicText, pokemon_move: &Move, user: &PokemonInstance) {
     text.push(
         MessagePage::new(
             vec![format!("{} used {}!", user.name(), pokemon_move.name)],
@@ -33,12 +33,12 @@ pub(crate) fn on_effective(text: &mut DynamicText, effective: &Effective) {
     text.push(
         MessagePage::new(
             vec![format!("It was {}{}", effective, if Effective::SuperEffective.eq(effective) { "!" } else { "..." })], 
-            Some(0.5)
+            Some(0.5),
         )
     );
 }
 
-pub(crate) fn on_item(text: &mut DynamicText, pokemon: &PokemonInstance, item: ItemRef) {
+pub(crate) fn on_item(text: &mut DynamicText, pokemon: &PokemonInstance, item: &Item) {
     text.push(
         MessagePage::new(
             vec![format!("A {} was used on {}", item.name, pokemon.name())], 
@@ -68,35 +68,59 @@ pub(crate) fn on_go(text: &mut DynamicText, coming: &PokemonInstance) {
 
 // #[deprecated(note = "todo")]
 pub(crate) fn add_persistent_move(text: &mut DynamicText, persistent: &game::pokedex::moves::persistent::PersistentMoveInstance, target: &PokemonInstance) {
-    match persistent.actions {
+    text.push(MessagePage::new(match persistent.actions {
         game::pokedex::moves::script::MoveActionType::Damage(..) => {
-            text.push(MessagePage::new(vec![format!("{} was hurt by {}!", target.name(), persistent.pokemon_move.name)], None));
+            vec![format!("{} was hurt by {}!", target.name(), persistent.pokemon_move.value().name)]
         }
         game::pokedex::moves::script::MoveActionType::Status(.., effect) => {
-            text.push(MessagePage::new(vec![format!("{} was afflicted by {:?}!", target.name(), effect)], None));
+            vec![format!("{} was afflicted by {:?}!", target.name(), effect)]
         }
         game::pokedex::moves::script::MoveActionType::Drain(..) => {
-            text.push(MessagePage::new(vec![format!("{} was drained by {}!", target.name(), persistent.pokemon_move.name)], None));
+            vec![format!("{} was drained by {}!", target.name(), persistent.pokemon_move.value().name)]
         }
-    }
+    }, None));
 }
 
-pub(crate) fn on_faint(text: &mut DynamicText, battle_type: BattleType, pokemon: &PokemonInstance) {
+pub(crate) fn on_faint(text: &mut DynamicText, battle_type: BattleType, team: BattleTeam, pokemon: &PokemonInstance) {
     text.push(
         MessagePage::new(
             vec![
-                format!("{} {}",
-                    match battle_type {
-                        BattleType::Wild => "Wild",
-                        _ => "Foe",
-                    },
-                    pokemon.name()
-                ),
+                match team {
+                    BattleTeam::Player => pokemon.name().to_string(),
+                    BattleTeam::Opponent => format!("{} {}",
+                        match battle_type {
+                            BattleType::Wild => "Wild",
+                            _ => "Foe",
+                        },
+                        pokemon.name(),
+                    ),
+                },
                 String::from("fainted!"),
             ],            
             Some(1.0), 
         )            
     );
+}
+
+pub(crate) fn on_catch(text: &mut DynamicText, target: &PokemonInstance) {
+    text.push(
+        MessagePage::new(
+            vec![
+                format!("{} used", game::storage::data().name),
+                String::from("Pokeball!")
+            ], 
+            Some(2.0)
+        )
+    );
+    text.push(
+        MessagePage::new(
+            vec![
+                String::from("Gotcha!"),
+                format!("{} was caught!", target.name())
+            ], 
+            None
+        )
+    )
 }
 
 pub(crate) fn on_gain_exp(text: &mut DynamicText, pokemon: &PokemonInstance, exp: u32) {
@@ -106,18 +130,27 @@ pub(crate) fn on_gain_exp(text: &mut DynamicText, pokemon: &PokemonInstance, exp
                 format!("{} gained", pokemon.name()),
                 format!("{} EXP. points!", exp),
             ],
-            None,
+            Some(1.0),
         )
     );   
 }
 
-pub(crate) fn on_level_up(text: &mut DynamicText, pokemon: &PokemonInstance) {
+pub(crate) fn on_level_up(text: &mut DynamicText, pokemon: &PokemonInstance, level: Level) {
     text.push(
         MessagePage::new(
             vec![
                 format!("{} grew to", pokemon.name()),
-                format!("LV. {}!", pokemon.data.level),
+                format!("LV. {}!", level),
             ],
+            Some(0.5),
+        )
+    );  
+}
+
+pub(crate) fn on_fail(text: &mut DynamicText, message: String) {
+    text.push(
+        MessagePage::new(
+            vec![message],
             Some(0.5),
         )
     );  

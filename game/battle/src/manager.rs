@@ -1,30 +1,28 @@
 use game::{
-	util::Completable,
-	pokedex::pokemon::saved::SavedPokemonParty,
-	storage::player::PlayerSave,
+	// pokedex::pokemon::p,
+	storage::{data_mut, player::PlayerSave},
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
 	},
+	pokedex::pokemon::instance::BorrowedPokemon,
 	macroquad::prelude::{is_key_pressed, KeyCode},
 	battle::{BattleEntry, BattleTeam},
 };
 
 use crate::{
 	Battle,
-	state::BattleManagerState,
+	state::{
+		BattleManagerState,
+		TransitionState,
+	},
 	ui::{
 		BattleGui,
-		transitions::{
-			BattleTransition,
-			BattleOpener,
-			BattleCloser,
-			managers::{
-				transition::BattleScreenTransitionManager,
-				opener::BattleOpenerManager,
-				introduction::BattleIntroductionManager,
-				closer::BattleCloserManager,
-			}
+		transitions::managers::{
+			transition::BattleScreenTransitionManager,
+			opener::BattleOpenerManager,
+			introduction::BattleIntroductionManager,
+			closer::BattleCloserManager,
 		}
 	},
 };
@@ -35,7 +33,7 @@ pub struct BattleManager {
 	
 	battle: Option<Battle>,
 	
-	screen_transition: BattleScreenTransitionManager,
+	transition: BattleScreenTransitionManager,
 	opener: BattleOpenerManager,
 	introduction: BattleIntroductionManager,
 	closer: BattleCloserManager,
@@ -56,7 +54,7 @@ impl BattleManager {
 
 			battle: None,
 
-			screen_transition: BattleScreenTransitionManager::default(),
+			transition: BattleScreenTransitionManager::default(),
 			opener: BattleOpenerManager::default(),
 			introduction: BattleIntroductionManager::default(),
 			closer: BattleCloserManager::default(),
@@ -69,92 +67,99 @@ impl BattleManager {
 		
 	}
 
-	pub fn battle(&mut self, player: &SavedPokemonParty, entry: BattleEntry) -> bool { // add battle type parameter
-
+	pub fn battle(&mut self, entry: BattleEntry) -> bool { // add battle type parameter
 		self.finished = false;
-		self.state = BattleManagerState::Transition;
-
-		self.battle = Battle::new(&player, entry);
-
-		// Setup battle GUI
-
-		if let Some(battle) = self.battle.as_ref() {
-			self.screen_transition.spawn(battle.data.battle_type);
-			self.gui.bounce.reset();
-		}
-
+		self.state = BattleManagerState::default();
+		self.battle = Battle::new(
+			data_mut().party.iter_mut().map(|instance| 
+				Some(BorrowedPokemon::Borrowed(instance))
+			).collect(), 
+			entry
+		);
 		self.battle.is_some()
-
 	}
 
-	pub fn update(&mut self, delta: f32, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
+	pub fn update(&mut self, delta: f32, party_gui: &mut PartyGui, bag: &mut BagGui) {
 		if game::is_debug() {
 			if is_key_pressed(KeyCode::F1) { // exit shortcut
 				self.finished = true;
+				match self.state {
+				    BattleManagerState::Begin => (),
+				    BattleManagerState::Transition => self.transition.state = TransitionState::Begin,
+				    BattleManagerState::Opener => self.opener.state = TransitionState::Begin,
+				    BattleManagerState::Introduction => self.introduction.state = TransitionState::Begin,
+				    BattleManagerState::Battle => {
+						if let Some(battle) = self.battle.as_mut() {
+							battle.state = crate::state::BattleState::End;
+							battle.update(delta, &mut self.gui, party_gui, bag);
+						}
+					},
+				    BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
+				}
 				if let Some(battle) = self.battle.as_mut() {
 					battle.data.winner = Some(BattleTeam::Player);
 				}
+				return;
 			}
 		}
 		if let Some(battle) = self.battle.as_mut() {
 			match self.state {
-				BattleManagerState::Transition => {
-					if self.screen_transition.is_alive() {
-						if self.screen_transition.is_finished() {
-							self.screen_transition.despawn();
-							self.opener.spawn(battle);
-							self.state = BattleManagerState::Opener;
-						} else {
-							self.screen_transition.update(delta);
-						}
-					} else {
-						self.screen_transition.spawn(battle.data.battle_type);
-						self.update(delta, party_gui, bag_gui);
-					}
-				}
-				BattleManagerState::Opener => {
-					if self.opener.is_alive() {
-						if self.opener.is_finished() {
-							self.introduction.spawn(self.opener.despawn(), battle, &mut self.gui.text);
-							self.state = BattleManagerState::Introduction;
-						} else {
-							self.opener.update(delta);
-						}
-					} else {
-						self.opener.spawn(battle);
-						self.update(delta, party_gui, bag_gui);
-					}
-				}
-				BattleManagerState::Introduction => {
-					if self.introduction.is_alive() {
-						if self.introduction.is_finished() && self.gui.text.is_finished() {
-							self.introduction.despawn();
-							self.state = BattleManagerState::Battle;
-						} else {
-							self.introduction.update(delta, battle, &mut self.gui.text);
-						}
-					} else {
-						self.introduction.spawn(&self.opener.current, battle, &mut self.gui.text);
-						self.update(delta, party_gui, bag_gui);
-					}
-				}
-				BattleManagerState::Battle => {
-					battle.update(delta, &mut self.gui, &mut self.closer, party_gui, bag_gui);
-					if self.closer.is_alive() {
-						self.state = BattleManagerState::Closer;
-					}
+				BattleManagerState::Begin => {
+					self.gui.reset();
+					self.state = BattleManagerState::Transition;
+					self.transition.state = TransitionState::Begin;
+					self.update(delta, party_gui, bag);
 				},
-				BattleManagerState::Closer => {
-					if self.closer.is_alive() {
-						if self.closer.is_finished() {
-							self.closer.despawn();
-							self.finished = true;
-						} else {
-							self.closer.update(delta, &mut self.gui.text);
-						}
-					} else {
-						self.closer.spawn(battle, &mut self.gui.text);
-						self.update(delta, party_gui, bag_gui);
+				BattleManagerState::Transition => match self.transition.state {
+					TransitionState::Begin => {
+						self.transition.begin(battle.data.battle_type, &battle.data.trainer);
+						self.update(delta, party_gui, bag);
+					},
+					TransitionState::Run => self.transition.update(delta),
+					TransitionState::End => {
+						self.transition.end();
+						self.state = BattleManagerState::Opener;
+						self.update(delta, party_gui, bag);
+					}
+				}
+				BattleManagerState::Opener => match self.opener.state {
+					TransitionState::Begin => {
+						self.opener.begin(battle);
+						self.update(delta, party_gui, bag);
+					}
+					TransitionState::Run => self.opener.update(delta),
+					TransitionState::End => {
+						self.opener.end();
+						self.state = BattleManagerState::Introduction;
+						self.update(delta, party_gui, bag);
+					}
+				}
+				BattleManagerState::Introduction => match self.introduction.state {
+					TransitionState::Begin => {
+						self.introduction.begin(battle, &mut self.gui.text);
+						self.update(delta, party_gui, bag);
+					}
+					TransitionState::Run => self.introduction.update(delta, battle, &mut self.gui.text),
+					TransitionState::End => {
+						self.introduction.end();
+						self.state = BattleManagerState::Battle;
+						self.update(delta, party_gui, bag);
+					}
+				}
+				BattleManagerState::Battle => match battle.state {
+					crate::state::BattleState::End => self.state = BattleManagerState::Closer,
+					_ => battle.update(delta, &mut self.gui, party_gui, bag),
+				},
+				BattleManagerState::Closer => match self.closer.state {
+					TransitionState::Begin => {
+						self.closer.begin(battle, &mut self.gui.text);
+						self.update(delta, party_gui, bag);
+					}
+					TransitionState::Run => self.closer.update(delta, &mut self.gui.text),
+					TransitionState::End => {
+						self.closer.end();
+						self.state = BattleManagerState::default();
+						self.finished = true;
 					}
 				}
 			}
@@ -164,7 +169,8 @@ impl BattleManager {
     pub fn render(&self) {
 		if let Some(battle) = self.battle.as_ref() {
 			match self.state {
-			    BattleManagerState::Transition => self.screen_transition.render(),
+				BattleManagerState::Begin => (),
+			    BattleManagerState::Transition => self.transition.render(),
 			    BattleManagerState::Opener => {
 					self.gui.background.render(self.opener.offset());
 					self.opener.render_below_panel(battle);
@@ -179,14 +185,19 @@ impl BattleManager {
 				}
 			    BattleManagerState::Battle => battle.render(&self.gui),
 			    BattleManagerState::Closer => {
-					if !self.world_active() {
-						self.gui.background.render(0.0);
-						self.gui.render_panel();
-						self.gui.panel.render();
-						self.closer.render_battle();
-						self.gui.text.render();
+					if self.closer.state != TransitionState::End {
+						if !self.world_active() {
+							self.gui.background.render(0.0);
+							self.gui.render_panel();
+							self.gui.panel.render();
+							for active in battle.player.active.iter() {
+								active.renderer.render(game::macroquad::prelude::Vec2::ZERO, game::graphics::WHITE);
+							}
+							self.closer.render_battle();
+							self.gui.text.render();
+						}
+						self.closer.render();
 					}
-					self.closer.render();
 				}
 			}
 		}
@@ -197,7 +208,7 @@ impl BattleManager {
 	}
 
 	pub fn world_active(&self) -> bool {
-		self.screen_transition.is_alive() || self.closer.world_active()		
+		self.state == BattleManagerState::Transition || self.closer.world_active()		
 	}
 	
 }

@@ -1,41 +1,62 @@
-use game::util::{
-    Reset,
-    Completable,
-    battle::BattleType,
-};
-
 use crate::{
     Battle,
+    BattleType,
+    state::TransitionState,
     ui::transitions::{
         BattleOpener, 
         openers::{
             Openers,
-            trainer::TrainerBattleOpener,
-            wild::WildBattleOpener,
+            WildBattleOpener,
+            TrainerBattleOpener,
         },
     }
 };
 
 #[derive(Default)]
 pub struct BattleOpenerManager {
+    pub state: TransitionState,
+    current: Openers,
 
-    alive: bool,
-
-    pub(crate) current: Openers,
     wild: WildBattleOpener,
     trainer: TrainerBattleOpener,
 }
 
 impl BattleOpenerManager {
-    
-    pub fn despawn(&mut self) -> &Openers {
-        self.alive = false;
-        self.reset();
-        &self.current
+
+    pub fn begin(&mut self, battle: &Battle) {
+        self.state = TransitionState::Run;
+        self.current = match battle.data.battle_type {
+            BattleType::Wild => Openers::Wild,
+            BattleType::Trainer => Openers::Trainer,
+            BattleType::GymLeader => Openers::Trainer,
+        };
+        let current = self.get_mut();
+        current.reset();
+        current.spawn(battle);
     }
     
-    pub fn is_alive(&self) -> bool {
-        self.alive
+    pub fn end(&mut self) {
+        self.state = TransitionState::Begin;
+    }
+
+    pub fn update(&mut self, delta: f32) {
+        let current = self.get_mut();
+        current.update(delta);
+        if current.is_finished() {
+            self.state = TransitionState::End;
+        }
+    }
+
+    pub fn render_below_panel(&self, battle: &Battle) {
+        self.get().render_below_panel(battle);
+    }
+
+    pub fn render(&self) {
+        self.get().render();
+    }
+
+    pub fn offset(&self) -> f32 {
+        self.get().offset()
     }
 
     fn get(&self) -> &dyn BattleOpener {
@@ -52,45 +73,4 @@ impl BattleOpenerManager {
         }
     }
 
-}
-
-impl BattleOpener for BattleOpenerManager {
-
-    fn spawn(&mut self, battle: &Battle) {
-        self.current = match battle.data.battle_type {
-            BattleType::Wild => Openers::Wild,
-            BattleType::Trainer => Openers::Trainer,
-            BattleType::GymLeader => Openers::Trainer,
-        };
-        self.alive = true;
-        self.reset();
-        self.get_mut().spawn(battle);
-    }
-
-    fn update(&mut self, delta: f32) {
-        self.get_mut().update(delta);
-    }
-
-    fn offset(&self) -> f32 {
-        self.get().offset()
-    }
-
-    fn render_below_panel(&self, battle: &Battle) {
-        self.get().render_below_panel(battle);
-    }
-
-    fn render(&self) {
-        self.get().render();
-    }
-}
-
-impl Reset for BattleOpenerManager {
-    fn reset(&mut self) {
-        self.get_mut().reset();
-    }
-}
-impl Completable for BattleOpenerManager {
-    fn is_finished(&self) -> bool {
-        self.get().is_finished()
-    }
 }

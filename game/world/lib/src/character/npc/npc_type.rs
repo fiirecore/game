@@ -2,11 +2,11 @@ use serde::{Deserialize, Serialize};
 use deps::tinystr::TinyStr16;
 use firecore_font::message::TextColor;
 use firecore_audio_lib::music::MusicName;
-use firecore_util::battle::BattleType;
 
 use crate::character::sprite::SpriteIndexes;
 
 pub type NPCTypeId = TinyStr16;
+
 #[derive(Debug)]
 pub struct NPCType {
 
@@ -17,11 +17,12 @@ pub struct NPCType {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct TrainerType {
 
     pub name: String,
-    #[serde(rename = "type")]
-    pub battle_type: BattleType,
+    #[serde(default)]
+    pub gym_leader: bool,
     pub music: Option<MusicName>,
 
 }

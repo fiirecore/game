@@ -2,8 +2,9 @@ use std::collections::VecDeque;
 
 use crate::pokemon::BattleActionInstance;
 
-#[derive(Debug)]
-pub(crate) enum BattleManagerState {
+#[derive(Debug, PartialEq)]
+pub enum BattleManagerState {
+	Begin,
 	Transition,
 	Opener,
 	Introduction,
@@ -13,21 +14,39 @@ pub(crate) enum BattleManagerState {
 
 impl Default for BattleManagerState {
     fn default() -> Self {
-        Self::Transition
+        Self::Begin
     }
 }
 
+#[derive(PartialEq)]
+pub enum TransitionState {
+	Begin, // runs on spawn methods
+	Run,
+	End, // spawns next state and goes back to beginning
+}
+
+impl Default for TransitionState {
+    fn default() -> Self {
+        Self::Begin
+    }
+}
 
 #[derive(Debug)]
 pub enum BattleState {
+	Begin,
 	Selecting(usize),
 	// Waiting (for opponent)
 	Moving(MoveState),
+	End,
+}
+
+impl BattleState {
+	pub const SELECTING: Self = Self::Selecting(0);
 }
 
 impl Default for BattleState {
     fn default() -> Self {
-        Self::Selecting(0)
+        Self::Begin
     }
 }
 
@@ -50,16 +69,10 @@ pub struct MoveQueue {
 }
 
 impl MoveQueue {
-
 	pub fn new(actions: VecDeque<BattleActionInstance>) -> Self {
 		Self {
 			actions,
 			current: None,
 		}
 	}
-
-	// pub fn interrupt(&mut self, instance: BattleActionInstance) {
-	// 	self.actions.push_front(instance);
-	// }
-
 }

@@ -5,8 +5,8 @@ use firecore_dependencies::{
 	hash::HashMap,
 };
 use firecore_pokedex::{
-	item::{ItemId, ItemStack, StackSize},
-	pokemon::saved::SavedPokemonParty,
+	item::{ItemId, ItemStack},
+	pokemon::party::PersistentParty,
 };
 use firecore_world_lib::character::Character;
 use serde::{Deserialize, Serialize};
@@ -36,10 +36,11 @@ pub struct PlayerSave {
 	pub character: Character,
 
 	#[serde(default)]
-	pub party: SavedPokemonParty,
+	pub party: PersistentParty,
 
+    // #[deprecated(note = "To - do: Item bag module")]
 	#[serde(default)]
-	pub items: HashMap<ItemId, StackSize>,
+	pub items: HashMap<ItemId, ItemStack>, // ItemId is redundant
 
 	#[serde(default)]
 	pub worth: u32,
@@ -58,32 +59,17 @@ impl PlayerSave {
 		}
 	}
 
-	pub fn add_item(&mut self, stack: ItemStack) -> bool {
-		if let Some(item) = firecore_pokedex::item::itemdex().get(&stack.id) {
-			if let Some(count) = self.items.get_mut(&stack.id) {
-				if *count + stack.count > item.stack_size {
-					false
-				} else {
-					*count += stack.count;
-					true
-				}
-			} else {
-				self.items.insert(stack.id, stack.count);
-				true
-			}
+	pub fn add_item(&mut self, stack: ItemStack) -> Option<ItemStack> {
+		if let Some(owned) = self.items.get_mut(stack.item.id()) {
+			owned.add(stack)
 		} else {
-			false
+			self.items.insert(*stack.item.id(), stack)
 		}
 	}
 
 	pub fn use_item(&mut self, id: &ItemId) -> bool {
-		if let Some(count) = self.items.get_mut(id) {
-			if *count > 0 {
-				*count -= 1;
-				true
-			} else {
-				false
-			}
+		if let Some(stack) = self.items.get_mut(id) {
+			stack.decrement()
 		} else {
 			false
 		}
@@ -95,7 +81,7 @@ impl Default for PlayerSave {
     fn default() -> Self {
 		Self {
 			name: default_name(),
-			party: SavedPokemonParty::default(),
+			party: Default::default(),
 			character: default_character(),
 			location: default_location(),
 			items: HashMap::new(),

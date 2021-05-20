@@ -1,8 +1,8 @@
 use std::ops::Deref;
 
 use firecore_storage::{
-    {store, get},
-    macroquad::{self, prelude::info}
+    {load, get},
+    macroquad::{self, prelude::{info, collections::storage::store}}
 };
 
 use firecore_configuration::Configuration;
@@ -12,7 +12,7 @@ async fn main() {
 
     info!("Attempting to load configuration!");
 
-    store::<Configuration>().await;
+    store(load::<Configuration>().await);
 
     info!("Loaded configuration!");
 

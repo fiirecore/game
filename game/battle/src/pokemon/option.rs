@@ -1,23 +1,26 @@
-use game::pokedex::pokemon::instance::PokemonInstance;
+use game::pokedex::pokemon::instance::{
+    PokemonInstance,
+    BorrowedPokemon,
+};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum PokemonOption {
-    Some(usize, PokemonInstance),
+    Some(usize, BorrowedPokemon),
     None,
-    ToReplace(usize),
+    ToReplace(usize), // new pokemon
 }
 
 impl PokemonOption {
     pub fn as_ref(&self) -> Option<&PokemonInstance> {
         match self {
-            PokemonOption::Some(_, instance) => Some(instance),
+            PokemonOption::Some(_, instance) => Some(instance.value()),
             // PokemonOption::Replace(_, instance, _) => Some(instance),
             _ => None,
         }
     }
     pub fn as_mut(&mut self) -> Option<&mut PokemonInstance> {
         match self {
-            PokemonOption::Some(_, instance) => Some(instance),
+            PokemonOption::Some(_, instance) => Some(instance.value_mut()),
             // PokemonOption::Replace(_, instance, _) => Some(instance),
             _ => None,
         }
@@ -27,7 +30,7 @@ impl PokemonOption {
         std::mem::replace(self, Self::None)
     }
 
-    pub fn replace(&mut self, new: usize) -> Option<(usize, PokemonInstance)> {
+    pub fn replace(&mut self, new: usize) -> Option<(usize, BorrowedPokemon)> {
         if match self {
             PokemonOption::ToReplace(..) => false,
             _ => true,
@@ -42,10 +45,10 @@ impl PokemonOption {
         None
     }
 
-    pub fn is_some(&self) -> bool {
+    pub fn is_active(&self) -> bool {
         match self {
-            PokemonOption::None => false,
-            _ => true,
+            PokemonOption::Some(..) => true,
+            PokemonOption::None | PokemonOption::ToReplace(..) => false,
         }
     }
 

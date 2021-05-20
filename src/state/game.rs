@@ -2,7 +2,7 @@ use std::sync::atomic::Ordering::Relaxed;
 
 use firecore_game::state::GameStateAction;
 use game::{
-	storage::{get, get_mut, DIRTY, save, player::PlayerSaves},
+	storage::{DIRTY, PLAYER_SAVES, save, data_mut, player::PlayerSaves},
 	macroquad::prelude::{info, warn, is_key_down, KeyCode},
 	gui::{
 		party::PartyGui,
@@ -20,41 +20,48 @@ use super::States;
 pub struct GameState {
 
 	action: Option<GameStateAction>,
+
+	state: GameStates,
 	
 	world: WorldManager,
 	battle: BattleManager,
 
-	party_gui: PartyGui,
-	bag_gui: BagGui,
+	party: PartyGui,
+	bag: BagGui,
 	
 	battle_entry: Option<BattleEntry>,
 
-	battling: bool,
+}
 
+pub enum GameStates {
+	World,
+	Battle,
+}
+
+impl Default for GameStates {
+    fn default() -> Self {
+        Self::World
+    }
 }
 
 impl GameState {
 
 	pub async fn load(&mut self) {
-		match postcard::from_bytes(include_bytes!("../../build/data/world.bin")) {
-			Ok(world) => {
-				self.world.load(world);
-			}
-			Err(err) => {
-				panic!("Could not load world file with error {}", err);
-			}
+		match game::deps::ser::deserialize(include_bytes!("../../build/data/world.bin")) {
+			Ok(world) => self.world.load(world),
+			Err(err) => panic!("Could not load world file with error {}", err),
 		}
 	}
 
-	pub fn data_dirty(&mut self, player_data: &mut PlayerSaves) {
-		self.save_data(player_data);
+	pub fn data_dirty(&mut self, saves: &mut PlayerSaves) {
+		self.save_data(saves);
 		DIRTY.store(false, Relaxed);
 	}
 
-    pub fn save_data(&mut self, player_data: &mut PlayerSaves) {
-        self.world.save_data(player_data.get_mut());
+    pub fn save_data(&mut self, saves: &mut PlayerSaves) {
+        self.world.save_data(saves.get_mut());
 		info!("Saving player data!");
-		if let Err(err) = save(player_data) {
+		if let Err(err) = save(saves) {
 			warn!("Could not save player data with error: {}", err);
 		}
     }
@@ -68,14 +75,14 @@ impl State for GameState {
 
 			action: None,
 
+			state: GameStates::default(),
+			
 			world: WorldManager::new(),
 			battle: BattleManager::new(),
-			party_gui: PartyGui::new(),
-			bag_gui: BagGui::new(),
+			party: PartyGui::new(),
+			bag: BagGui::new(),
 
 			battle_entry: None,
-
-			battling: false,
 		}
 	}
 
@@ -95,47 +102,31 @@ impl State for GameState {
 		};
 
 		if DIRTY.load(Relaxed) {
-			if let Some(mut saves) = get_mut::<PlayerSaves>() {
+			if let Some(mut saves) = unsafe{PLAYER_SAVES.as_mut()} {
 				self.data_dirty(&mut saves);
 			}	
 		}
-		
-		if self.bag_gui.is_alive() {
-			self.bag_gui.input(&mut self.party_gui);
-		} else if self.party_gui.is_alive() {
-			self.party_gui.input();
-		} else if !self.battling {
-			self.world.input(delta, &mut self.battle_entry, &mut self.party_gui, &mut self.bag_gui, &mut self.action);
-		}
-
-		if !self.battling {
-
-			self.world.update(delta, &mut self.battle_entry);
-
-			if let Some(entry) = self.battle_entry.take() {
-				if let Some(player_saves) = get::<PlayerSaves>() {
-					if self.battle.battle(&player_saves.get().party, entry) {
-						self.battling = true;
+		match self.state {
+			GameStates::World => {
+				self.world.update(delta, &mut self.battle_entry, &mut self.party, &mut self.bag, &mut self.action);
+				if let Some(entry) = self.battle_entry.take() {
+					if self.battle.battle(entry) {
+						self.state = GameStates::Battle;
 					}
 				}
 			}
-
-		} else {
-			self.battle.update(delta, &mut self.party_gui, &mut self.bag_gui);
-			if self.battle.finished {
-				if let Some(mut player_saves) = get_mut::<PlayerSaves>() {
-					let save = player_saves.get_mut();
+			GameStates::Battle => {
+				self.battle.update(delta, &mut self.party, &mut self.bag);
+				if self.battle.finished {
+					let save = data_mut();
 					if let Some((winner, trainer)) = self.battle.update_data(save) {
 						world::battle::update_world(&mut self.world, save, winner, trainer);
-					}
-				}				
-				self.battling = false;
-				self.world.map_start(true);
+					}			
+					self.state = GameStates::World;
+					self.world.map_start(true);
+				}
 			}
 		}
-
-		self.bag_gui.update(&mut self.party_gui);
-		self.party_gui.update(delta);
 
 		self.action.take().map(|action| match action {
 			GameStateAction::ExitToMenu => States::Menu,
@@ -144,23 +135,26 @@ impl State for GameState {
 	}
 	
 	fn render(&self) {
-		if self.party_gui.is_alive() {
-			self.party_gui.render();
-		} else if self.bag_gui.is_alive() {
-			self.bag_gui.render();
-		} else if !self.battling {
-			self.world.render();
+		if self.party.alive {
+			self.party.render();
+		} else if self.bag.alive {
+			self.bag.render();
 		} else {
-			if self.battle.world_active() {
-				self.world.render();
+			match self.state {
+				GameStates::World => self.world.render(),
+				GameStates::Battle => {
+					if self.battle.world_active() {
+						self.world.render();
+					}
+					self.battle.render();
+				}
 			}
-			self.battle.render();
 		}
 	}
 
 	fn quit(&mut self) {
-		if let Some(mut player_data) = get_mut::<PlayerSaves>() {
-			self.save_data(&mut player_data);
+		if let Some(mut saves) = unsafe{PLAYER_SAVES.as_mut()} {
+			self.save_data(&mut saves);
 		}
 	}
 

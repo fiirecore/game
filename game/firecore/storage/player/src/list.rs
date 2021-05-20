@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use super::PlayerSave;
 
+// #[deprecated(note = "to-do: own version of storage::get for this")]
 #[derive(Default, Debug, Deserialize, Serialize)]
 pub struct PlayerSaves {
 

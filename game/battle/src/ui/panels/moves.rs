@@ -30,7 +30,7 @@ impl MovePanel {
 
     pub fn update_names(&mut self, instance: &PokemonInstance) {
         self.names = instance.moves.iter().map(|instance| {
-            (instance.pokemon_move, if instance.pp == 0 { TextColor::Red } else { TextColor::Black })
+            (instance.move_ref, if instance.pp == 0 { TextColor::Red } else { TextColor::Black })
         }).collect();
     }
 
@@ -90,7 +90,7 @@ impl MovePanel {
             } else {
                 0.0
             };
-            draw_text_left(0, &pokemon_move.name, *color, 16.0 + x_offset, 121.0 + y_offset);
+            draw_text_left(0, &pokemon_move.value().name, *color, 16.0 + x_offset, 121.0 + y_offset);
             if index == self.cursor {
                 draw_cursor(10.0 + x_offset, 123.0 + y_offset);
             }

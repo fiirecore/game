@@ -37,7 +37,7 @@ impl HealthBar {
 	}
 
 	pub fn width(current: Health, max: Health) -> f32 {
-		current as f32 * Self::WIDTH / max as f32
+		(current as f32 * Self::WIDTH / max as f32).clamp(0.0, Self::WIDTH)
 	}
 	
 	pub fn resize(&mut self, current: Health, max: Health, reset: bool) {

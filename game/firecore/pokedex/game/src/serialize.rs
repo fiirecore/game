@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::pokemon::Pokemon;
-use crate::moves::PokemonMove;
+use crate::moves::Move;
 use crate::item::Item;
 
 use crate::moves::GamePokemonMove;
@@ -29,15 +29,15 @@ pub struct SerializedPokemon {
 pub struct SerializedMove {
 
     #[serde(rename = "move")]
-	pub pokemon_move: PokemonMove,
+	pub pokemon_move: Move,
 
     #[serde(default)]
     pub game_move: Option<GamePokemonMove>,
 	
 }
 
-impl From<PokemonMove> for SerializedMove {
-    fn from(pokemon_move: PokemonMove) -> Self {
+impl From<Move> for SerializedMove {
+    fn from(pokemon_move: Move) -> Self {
         Self {
             pokemon_move,
             game_move: None,

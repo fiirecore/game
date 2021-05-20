@@ -22,5 +22,5 @@ pub struct PersistentMoveInstance {
     pub pokemon_move: MoveRef,
     pub actions: MoveActionRef,
     pub remaining: Option<u8>,
-    pub should_do: bool,
+    pub should_do: bool, // what does this bool mean?
 }

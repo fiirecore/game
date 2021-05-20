@@ -49,12 +49,6 @@ impl GameWorld for WorldMapSet {
         }
     }
 
-    fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
-        if let Some(map) = self.map_mut() {
-            map.input(delta, player);
-        }
-    }
-
 }
 
 impl GameWorld for WorldMapSetManager {
@@ -82,12 +76,6 @@ impl GameWorld for WorldMapSetManager {
     fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool) {
         if let Some(set) = self.set() {
             set.render(textures, screen, border);
-        }
-    }
-
-    fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
-        if let Some(set) = self.set_mut() {
-            set.input(delta, player);
         }
     }
 

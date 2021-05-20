@@ -6,7 +6,6 @@
         (
             name: "Lass",
             music: Some("EncounterGirl"),
-            type: Trainer,
         )
     )
 )

@@ -12,7 +12,7 @@ pub mod items;
 // #[cfg(feature = "gen")]
 pub mod gen;
 
-pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir: P, output_file: P, include_audio: bool) {
+pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir: P, output_file: P, include_audio: bool) -> SerializedDex {
     let output_file = output_file.as_ref();
 
     // #[cfg(feature = "gen")]
@@ -25,17 +25,21 @@ pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir:
     println!("Loading items...");
     let items = items::get_items(item_dir);
     
+    let dex = SerializedDex {
+        pokemon,
+        moves,
+        items,
+    };
+
     println!("Saving to file...");
     let size = File::create(output_file)
         .unwrap_or_else(|err| panic!("Could not create output file at {:?} with error {}", output_file, err))
             .write(
-            &postcard::to_allocvec(
-                    &SerializedDex {
-                        pokemon,
-                        moves,
-                        items,
-                    }
+            &firecore_dependencies::ser::serialize(
+                    &dex
                 ).unwrap_or_else(|err| panic!("Could not serialize data with error {}", err))
     ).unwrap_or_else(|err| panic!("Could not write to output file with error {}", err));
     println!("Saved {} bytes to output file!", size);
+
+    dex
 }

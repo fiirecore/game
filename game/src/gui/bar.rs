@@ -37,6 +37,11 @@ impl ProgressBar {
 		self.width = new;
     }
 
+	pub fn resize_with_gap(&mut self, width: f32, gap: f32) {
+		self.width = width;
+		self.gap = gap;
+	}
+
     pub fn moving(&self) -> bool {
         self.gap != 0.0
     }

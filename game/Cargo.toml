@@ -9,6 +9,7 @@ publish = false
 
 [features]
 default = ["audio"]
+serialization = ["firecore-dependencies/serialization"]
 audio = ["firecore-audio/play"]
 ui = ["macroquad/ui"]
 

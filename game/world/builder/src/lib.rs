@@ -4,6 +4,7 @@ extern crate firecore_util as util;
 use std::io::Write;
 use std::path::Path;
 
+use firecore_pokedex_game::serialize::SerializedDex;
 use worldlib::map::chunk::map::WorldChunkMap;
 use worldlib::map::manager::WorldMapManager;
 use worldlib::map::warp::WarpEntry;
@@ -11,7 +12,11 @@ use worldlib::map::warp::WarpEntry;
 pub mod world;
 pub mod gba_map;
 
-pub fn compile<P: AsRef<Path>>(maps: P, tile_textures: P, npc_types: P, output_file: P) {
+mod dex;
+
+pub fn compile<P: AsRef<Path>>(dex: SerializedDex, maps: P, tile_textures: P, npc_types: P, output_file: P) {
+
+    dex::setup(dex);
 
     println!("Started loading maps and tile textures...");
     let (manager, mut textures) = world::map::load_maps(maps, tile_textures);
@@ -42,7 +47,7 @@ pub fn compile<P: AsRef<Path>>(maps: P, tile_textures: P, npc_types: P, output_f
     };
 
     println!("Saving data...");
-    let bytes = postcard::to_allocvec(&data).unwrap_or_else(|err| panic!("Could not serialize output file with error {}", err));
+    let bytes = firecore_dependencies::ser::serialize(&data).unwrap_or_else(|err| panic!("Could not serialize output file with error {}", err));
     let bytes = file.write(&bytes).unwrap_or_else(|err| panic!("Could not write to output file with error {}", err));
     println!("Wrote {} bytes to world file!", bytes);
 

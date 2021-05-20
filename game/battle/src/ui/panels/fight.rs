@@ -68,7 +68,7 @@ impl FightPanel {
                 self.update_move(pokemon);
             }
             if pressed(Control::A) {
-                if self.targets.names.len() == 1 {
+                if self.targets.names.len() <= 1 {
                     self.targets.cursor = 0;
                     true
                 } else {

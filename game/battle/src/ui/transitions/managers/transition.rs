@@ -1,28 +1,26 @@
 use game::{
-    util::{
-        Reset,
-        Completable,
-        battle::{
-            BattleType,
-            BattleScreenTransitions,
-        },
-    },
     play_music_named,
+    battle::BattleTrainerEntry,
 };
 
-use crate::ui::transitions::{
-    BattleTransition,
-    transitions::{
-        flash::FlashBattleTransition,
-        trainer::TrainerBattleTransition,
+use crate::{
+    BattleType,
+    state::TransitionState,
+    ui::transitions::{
+        BattleTransition,
+        transitions::{
+            BattleTransitions,
+            FlashBattleTransition,
+            TrainerBattleTransition,
+        },
     },
 };
 
 #[derive(Default)]
 pub struct BattleScreenTransitionManager {
 
-    alive: bool,
-    current: BattleScreenTransitions,
+    pub state: TransitionState,
+    current: BattleTransitions,
 
     flash: FlashBattleTransition,
     trainer: TrainerBattleTransition,
@@ -31,21 +29,34 @@ pub struct BattleScreenTransitionManager {
 
 impl BattleScreenTransitionManager {
 
-    pub fn spawn(&mut self, battle_type: BattleType) {
-        self.alive = true;
-        self.set_type(battle_type);
-        self.reset();
+    pub fn begin(&mut self, battle_type: BattleType, trainer: &Option<BattleTrainerEntry>) {
+        self.play_music(battle_type);
+        match trainer {
+            Some(trainer) => self.current = BattleTransitions::from(trainer.transition),
+            None => self.current = BattleTransitions::default(),
+        }
+        self.get_mut().reset();
+        self.state = TransitionState::Run;
     }
 
-    pub fn despawn(&mut self) {
-        self.alive = false;
-        self.reset();
+    pub fn end(&mut self) {
+        self.state = TransitionState::Begin;
     }
-    pub fn is_alive(&self) -> bool {
-        self.alive
+    
+    pub fn update(&mut self, delta: f32) {
+        let current = self.get_mut();
+        current.update(delta);
+        if current.is_finished() {
+            self.state = TransitionState::End;
+        }
     }
 
-    fn set_type(&mut self, battle_type: BattleType) {
+    pub fn render(&self) {
+        self.get().render();
+    }
+
+
+    fn play_music(&mut self, battle_type: BattleType) {
         match battle_type {
             BattleType::Wild => play_music_named("BattleWild"),
             BattleType::Trainer => play_music_named("BattleTrainer"),
@@ -55,43 +66,16 @@ impl BattleScreenTransitionManager {
 
     fn get(&self) -> &dyn BattleTransition {
         match self.current {
-            BattleScreenTransitions::Flash => &self.flash,
-            BattleScreenTransitions::Trainer => &self.trainer,
+            BattleTransitions::Flash => &self.flash,
+            BattleTransitions::Trainer => &self.trainer,
         }
     }
 
     fn get_mut(&mut self) -> &mut dyn BattleTransition {
         match self.current {
-            BattleScreenTransitions::Flash => &mut self.flash,
-            BattleScreenTransitions::Trainer => &mut self.trainer,
+            BattleTransitions::Flash => &mut self.flash,
+            BattleTransitions::Trainer => &mut self.trainer,
         }
     }
 
-}
-
-impl BattleTransition for BattleScreenTransitionManager {
-
-    fn update(&mut self, delta: f32) {
-        self.get_mut().update(delta);       
-    }
-
-    fn render(&self) {
-        self.get().render();
-    }
-
-    // fn render_below_player(&self) {
-    //     self.get().render_below_player();
-    // }
-}
-
-impl Reset for BattleScreenTransitionManager {
-    fn reset(&mut self) {
-        self.get_mut().reset();
-    }
-}
-
-impl Completable for BattleScreenTransitionManager {
-    fn is_finished(&self) -> bool {
-        self.get().is_finished()
-    }
 }

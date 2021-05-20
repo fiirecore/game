@@ -5,10 +5,12 @@ use game::{
 };
 
 use crate::ui::transitions::BattleOpener;
-use super::introductions::Introductions;
 
-pub mod trainer;
-pub mod wild;
+mod trainer;
+mod wild;
+
+pub use trainer::TrainerBattleOpener;
+pub use wild::WildBattleOpener;
 
 pub enum Openers {
     Wild,
@@ -19,17 +21,6 @@ impl Default for Openers {
     fn default() -> Self {
         Self::Wild
     }
-}
-
-impl Openers {
-
-    pub fn intro(&self) -> Introductions {
-        match self {
-            Openers::Wild => Introductions::Basic,
-            Openers::Trainer => Introductions::Trainer,
-        }
-    }
-
 }
 
 static mut PLAYER: Option<Texture2D> = None;

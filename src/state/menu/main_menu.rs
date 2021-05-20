@@ -1,6 +1,6 @@
 use game::{
 	input::{pressed, Control},
-	storage::{get, get_mut, player::PlayerSaves},
+	storage::{PLAYER_SAVES, player::PlayerSaves},
 	text::TextColor,
 	gui::Panel,
 	graphics::draw_text_left,
@@ -56,7 +56,7 @@ impl MenuState for MainMenuState {
 	fn on_start(&mut self) {
 		self.cursor = 0;
 		self.delete = false;
-		if let Some(saves) = get::<PlayerSaves>() {
+		if let Some(saves) = unsafe{PLAYER_SAVES.as_mut()} {
 			self.update_saves(&saves);
 		}
 	}
@@ -69,7 +69,7 @@ impl MenuState for MainMenuState {
 			} else if self.cursor == self.saves.len() + 1 {
 				self.delete = !self.delete;
 			} else {
-				if let Some(mut saves) = get_mut::<PlayerSaves>() {
+				if let Some(saves) = unsafe{PLAYER_SAVES.as_mut()} {
 					if self.delete {
 						if saves.delete(self.cursor) {
 							self.cursor -= 1;

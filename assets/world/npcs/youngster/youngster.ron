@@ -5,7 +5,6 @@
     trainer: Some(
         (
             name: "Youngster",
-            type: Trainer,
             music: Some("EncounterBoy"),
         )
     )

@@ -49,37 +49,31 @@ impl BattleCloser for TrainerBattleCloser {
                         self.trainer = Some(trainer.texture);
 
                         text.reset();
+                        text.clear();
 
-                        let mut message_set = Vec::with_capacity(trainer.victory_message.len() + 2);
-
-                        message_set.push(MessagePage::new(
+                        text.push(MessagePage::new(
                             vec![
                                 String::from("Player defeated"), 
-                                format!("{} {}!", trainer.npc_type, trainer.name),
+                                format!("{} {}!", trainer.prefix, trainer.name),
                             ],
                             None,
                         ));
 
                         for message in trainer.victory_message.iter() {
-                            message_set.push(MessagePage::new(
+                            text.push(MessagePage::new(
                                 message.clone(),
                                 None,
                             ));
                         }
 
-                        message_set.push(MessagePage::new(
+                        text.push(MessagePage::new(
                             vec![
-                                format!("%p got ${}", trainer.worth),
+                                format!("{} got ${}", game::storage::data().name, trainer.worth),
                                 String::from("for winning!")
                             ],
                             None
                         ));
-                        
-                        text.set(message_set);
-                        
-                        if let Some(saves) = game::storage::get::<game::storage::player::PlayerSaves>() {
-                            text.process_messages(saves.get());
-                        }
+
                     }
                 }
                 BattleTeam::Opponent => {

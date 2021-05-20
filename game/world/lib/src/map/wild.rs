@@ -1,5 +1,4 @@
-use firecore_pokedex::pokemon::{PokemonId, Level};
-use firecore_pokedex::pokemon::instance::PokemonInstance;
+use firecore_pokedex::pokemon::{PokemonId, Level, instance::PokemonInstance};
 use serde::{Deserialize, Serialize};
 use deps::Random;
 

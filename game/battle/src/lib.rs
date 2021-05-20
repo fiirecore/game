@@ -3,6 +3,7 @@
 extern crate firecore_game as game;
 
 use std::collections::VecDeque;
+use serde::{Deserialize, Serialize};
 
 use game::{
 	deps::Random,
@@ -10,7 +11,6 @@ use game::{
 		Entity,
 		Completable,
 		Reset,
-		battle::BattleType,
 	},
 	gui::{
 		party::PartyGui,
@@ -24,12 +24,23 @@ use game::{
 	pokedex::{
 		moves::{
 			MoveCategory,
-			target::MoveTargetInstance,
+			target::{
+				MoveTarget,
+				MoveTargetInstance,
+			},
 		},
-		pokemon::saved::SavedPokemonParty,
+		pokemon::{
+			instance::{
+				BorrowedPokemon,
+				MoveResults,
+			},
+			party::MoveableParty,
+		},
 		texture::PokemonTexture,
+		item::ItemUseType,
 	},
 	storage::player::PlayerSave,
+	macroquad::prelude::warn,
 };
 
 use crate::{
@@ -51,10 +62,6 @@ use crate::{
 		BattleGui,
 		BattleGuiPosition,
 		battle_party_gui,
-		transitions::{
-			BattleCloser,
-			managers::closer::BattleCloserManager,
-		}
 	},
 };
 
@@ -73,7 +80,7 @@ pub struct Battle {
 	player: BattleParty,
 	opponent: BattleParty, // to - do: move input handling (ai, on screen, over network)
 	ai: BattleAi,
-	state: BattleState,
+	pub state: BattleState,
 	
 }
 
@@ -83,24 +90,39 @@ pub struct BattleData {
 	pub winner: Option<BattleTeam>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+pub enum BattleType { // move somewhere else
+
+    Wild,
+    Trainer,
+    GymLeader,
+
+}
+
+impl Default for BattleType {
+    fn default() -> Self {
+        Self::Wild
+    }
+}
+
 impl Battle {
 	
-	pub fn new(player: &SavedPokemonParty, entry: BattleEntry) -> Option<Self> {		
+	pub fn new(player: MoveableParty, entry: BattleEntry) -> Option<Self> {		
 		if !(
 			player.is_empty() || 
 			entry.party.is_empty() ||
 			// Checks if player has any pokemon in party that aren't fainted (temporary)
-			player.iter().filter(|pokemon| pokemon.current_hp.map(|hp| hp != 0).unwrap_or(true)).next().is_none()
+			player.iter().flatten().filter(|pokemon| pokemon.value().current_hp != 0).next().is_none()
 		) {
 			Some(
 				Self {
 					data: BattleData {
-						battle_type: entry.get_type(),
+						battle_type: entry.trainer.as_ref().map(|trainer| if trainer.is_gym_leader { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild),
 						trainer: entry.trainer,
 						winner: None,
 					},
-					player: BattleParty::from_saved(player, entry.size, PokemonTexture::Back, BattleGuiPosition::Bottom),
-					opponent: BattleParty::new(entry.party, entry.size, PokemonTexture::Front, BattleGuiPosition::Top),
+					player: BattleParty::new(player, entry.size, PokemonTexture::Back, BattleGuiPosition::Bottom),
+					opponent: BattleParty::new(entry.party.into_iter().map(|instance| Some(BorrowedPokemon::Owned(instance))).collect(), entry.size, PokemonTexture::Front, BattleGuiPosition::Top),
 					state: BattleState::default(),
 					ai: BattleAi::Random,
 				}
@@ -116,9 +138,19 @@ impl Battle {
 	}
 
 	// input happens here too!
-	pub fn update(&mut self, delta: f32, gui: &mut BattleGui, closer: &mut BattleCloserManager, party_gui: &mut PartyGui, bag_gui: &mut BagGui) {
+	pub fn update(&mut self, delta: f32, gui: &mut BattleGui, party_gui: &mut PartyGui, bag: &mut BagGui) {
+
 		gui.bounce.update(delta);
+
 		match &mut self.state {
+
+			BattleState::Begin => {
+				if let Some(pokemon) = self.player.active[0].pokemon.as_ref() {
+					gui.panel.run(&mut None, pokemon, &self.opponent.active);
+				}
+				self.state = BattleState::SELECTING;
+				self.update(delta, gui, party_gui, bag);
+			}
 
 			// Select pokemon moves / items / party switches
 
@@ -134,11 +166,18 @@ impl Battle {
 
 									// Checks if a move is queued from an action done in the GUI
 	
-									if bag_gui.is_alive() {
-										if let Some(selected) = bag_gui.take_selected_despawn() {
-											active.queued_move = Some(BattleMove::UseItem(selected));
+									if bag.alive {
+										bag.input();
+										if let Some(item) = bag.take_selected_despawn() {
+											let target = match item.value().use_type {
+												ItemUseType::Pokeball => Some(MoveTargetInstance::Opponent(BATTLE_RANDOM.gen_range(0, self.opponent.active.len()))),
+												_ => None,
+											};
+											active.queued_move = Some(BattleMove::UseItem(item, target));
 										}
-									} else if party_gui.is_alive() {
+									} else if party_gui.alive {
+										party_gui.input();
+										party_gui.update(delta);
 										if let Some(selected) = party_gui.selected.take() {
 											party_gui.despawn();
 											active.queued_move = Some(BattleMove::Switch(selected));
@@ -149,23 +188,27 @@ impl Battle {
 												ui::panels::BattlePanels::Main => {
 													match gui.panel.battle.cursor {
 														0 => gui.panel.active = ui::panels::BattlePanels::Fight,
-														1 => bag_gui.spawn(false),
+														1 => bag.spawn(false),
 														2 => ui::battle_party_gui(party_gui, &self.player, true),
-														3 => if self.data.battle_type == game::util::battle::BattleType::Wild {
-															closer.spawn(self, &mut gui.text);
+														3 => if self.data.battle_type == BattleType::Wild {
+															// closer.spawn(self, &mut gui.text);
+															self.state = BattleState::End; // To - do: "Got away safely!" - run text and conditions
 														},
 														_ => unreachable!(),
 													}
 												}
-												ui::panels::BattlePanels::Fight => {
-													if let Some(pokemon_move) = pokemon.moves.get(gui.panel.fight.moves.cursor).map(|instance| instance.get()).flatten() {
-														active.queued_move = Some(BattleMove::Move(gui.panel.fight.moves.cursor, 
-															match pokemon_move.target {
-																game::pokedex::moves::target::MoveTarget::Player => todo!(),//game::pokedex::moves::target::MoveTargetInstance::Player,
-																game::pokedex::moves::target::MoveTarget::Opponent => MoveTargetInstance::Opponent(gui.panel.fight.targets.cursor),
+												ui::panels::BattlePanels::Fight => match pokemon.moves.get(gui.panel.fight.moves.cursor) {
+												    Some(instance) => match instance.get() {
+												        Some(move_ref) => active.queued_move = Some(BattleMove::Move(
+															gui.panel.fight.moves.cursor,
+															match move_ref.value().target {
+															    MoveTarget::Player => todo!("moves that target self"),
+															    MoveTarget::Opponent => MoveTargetInstance::Opponent(gui.panel.fight.targets.cursor),
 															}
-														));
-													}
+														)),
+												        None => warn!("Pokemon is out of Power Points for this move!")
+												    }
+												    None => warn!("Could not get move at cursor!"),
 												}
 											}
 										}
@@ -177,8 +220,7 @@ impl Battle {
 								}
 							}
 							false => {
-								gui.panel.spawn();
-								gui.panel.setup(&mut active.last_move, pokemon, &self.opponent.active);
+								gui.panel.run(&mut active.last_move, pokemon, &self.opponent.active);
 							}
 						},
 						None => *index += 1,
@@ -217,51 +259,137 @@ impl Battle {
 											match &instance.action {
 												BattleAction::Pokemon(battle_move) => match battle_move {
 													BattleMove::Move(move_index, target) => {
-														let (user, target, index) = match target {
-															// MoveTargetInstance::Player => (None, user.active_mut(pokemon.index)),
-															// MoveTargetInstance::Team(index) => (user.active(pokemon.index), user.active_mut(index)),
-															MoveTargetInstance::Opponent(index) => (pokemon, &mut other.active[*index], ActivePokemonIndex { team: instance.pokemon.team.other(), active: *index }),
+
+														let (user_pkmn, target, active, index) = match target {
+															MoveTargetInstance::Opponent(index) => (pokemon, &mut other.active, *index, ActivePokemonIndex { team: instance.pokemon.team.other(), active: *index }),
 														};
-														if let Some(pokemon) = target.pokemon.as_mut() {
-															if let Some((pokemon_move, damaged)) = user.use_move(*move_index, pokemon) {
-																if damaged {
-																	target.renderer.flicker();
+
+														let target = match target[active].pokemon.is_active() {
+															true => &mut target[active],
+															false => {
+																let mut indexes = Vec::with_capacity(target.len() - 1);
+																for target in target.iter_mut().enumerate() {
+																	if target.1.pokemon.is_active() {
+																		indexes.push(target.0)
+																	}
 																}
-																ui::text::on_move(&mut gui.text, pokemon_move, user);
-	
-																let effective = pokemon.effective(pokemon_move.pokemon_type);
+																&mut target[indexes[BATTLE_RANDOM.gen_range(0, indexes.len())]]
+															}
+														};
+
+														let pokemon = target.pokemon.as_mut().unwrap();
+														if let Some(result) = user_pkmn.use_move(*move_index, pokemon) {
+															if result.result == MoveResults::Damage {
+																target.renderer.flicker();
+															}
+															let pokemon_move = result.move_ref;
+															ui::text::on_move(&mut gui.text, pokemon_move, user_pkmn);
+
+															let effective = pokemon.effective(pokemon_move.pokemon_type);
 															
-																if effective != game::pokedex::pokemon::types::Effective::Effective && pokemon_move.category != MoveCategory::Status {
-																	queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Effective(effective) })
+															if effective != game::pokedex::pokemon::types::Effective::Effective && pokemon_move.category != MoveCategory::Status {
+																ui::text::on_effective(&mut gui.text, &effective);
+																// queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Effective(effective) })
+															}
+
+															if pokemon.fainted() {
+																queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Faint(Some(instance.pokemon)) });
+															}
+															
+															target.status.update_gui(Some((pokemon.data.level, pokemon)), false);
+														} else {
+															ui::text::on_fail(&mut gui.text, format!("{} could not move!", pokemon));
+														}
+													}
+													BattleMove::UseItem(item, target) => {
+														let item = item.value();
+														if match &item.use_type {
+															ItemUseType::Script(script) => {
+																pokemon.execute_item_script(script);
+																true
+															},
+															ItemUseType::Pokeball => {
+																match self.data.battle_type {
+																	BattleType::Wild => {
+																		if let Some(target) = *target {
+																			match target {
+																				MoveTargetInstance::Opponent(index) => queue.actions.push_front(
+																					BattleActionInstance {
+																						pokemon: instance.pokemon,
+																						action: BattleAction::Catch(
+																							ActivePokemonIndex { team: BattleTeam::Opponent, active: index }
+																						),
+																					}
+																				),
+																			}
+																			return; // To - do: remove returns
+																			// ui::text::on_catch(&mut gui.text, target);
+																		}
+																	},
+																	_ => game::macroquad::prelude::info!("Cannot use pokeballs in trainer battles!"),
 																}
-																
-																target.status.update_gui(Some(pokemon), false);
-																if pokemon.fainted() {
-																	queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Faint });
+																false
+															},
+															ItemUseType::None => true,
+														} {
+															let level = pokemon.data.level;
+															ui::text::on_item(&mut gui.text, pokemon, item);
+															user.active[instance.pokemon.active].update_status(level, false);
+														}
+													}
+													BattleMove::Switch(new) => {
+														ui::text::on_switch(&mut gui.text, pokemon, user.pokemon[*new].as_ref().unwrap().value());
+													}
+												}
+											    BattleAction::Faint(assailant) => {
+													ui::text::on_faint(&mut gui.text, self.data.battle_type, instance.pokemon.team, pokemon);
+													user.active[instance.pokemon.active].renderer.faint();
+
+													if let Some(assailant) = assailant {
+														if assailant.team == BattleTeam::Player {
+															let experience = (
+																user.active[instance.pokemon.active].pokemon.as_ref().unwrap().raw_exp_from() as f32 * 
+																match self.data.battle_type {
+																	BattleType::Wild => 1.0,
+																	_ => 1.5,
+																} *
+																7.0
+															) as game::pokedex::pokemon::Experience;
+															let (assailant_party, index) = (&mut match assailant.team {
+																BattleTeam::Player => &mut self.player,
+																BattleTeam::Opponent => &mut self.opponent,
+															}, assailant.active);
+															if let Some(assailant_pokemon) = assailant_party.active[index].pokemon.as_mut() {
+																let level = assailant_pokemon.data.level;
+																if let Some((level, moves)) = assailant_pokemon.add_exp(experience) {
+																	queue.actions.push_front(BattleActionInstance { pokemon: *assailant, action: BattleAction::LevelUp(level, moves) });
 																}
+																queue.actions.push_front(BattleActionInstance { pokemon: *assailant, action: BattleAction::GainExp(level, experience) });
 															}
 														}
 													}
-													BattleMove::UseItem(item) => {
-														pokemon.execute_item(item);
-														ui::text::on_item(&mut gui.text, pokemon, item);
-														user.active[instance.pokemon.active].update_status(false);
+												},
+												BattleAction::GainExp(level, experience) => { // To - do: experience spreading
+													ui::text::on_gain_exp(&mut gui.text, pokemon, *experience);
+													user.active[instance.pokemon.active].update_status(*level, false);
+												}
+												BattleAction::LevelUp(level, moves) => {
+													ui::text::on_level_up(&mut gui.text, pokemon, *level);
+													if let Some(_) = moves {
+														ui::text::on_fail(&mut gui.text, format!("To - do: handle moves on level up"));
 													}
-													BattleMove::Switch(new) => {
-														ui::text::on_switch(&mut gui.text, pokemon, user.pokemon[*new].as_ref().unwrap());
+												}
+												BattleAction::Catch(index) => {
+													if let Some(target) = match index.team {
+														BattleTeam::Player => &user.active[index.active],
+														BattleTeam::Opponent => &other.active[index.active],
+													}.pokemon.as_ref() {
+														ui::text::on_catch(&mut gui.text, target);
 													}
 												}
-												BattleAction::Effective(effective) => {
-													ui::text::on_effective(&mut gui.text, effective);
-												}
-											    BattleAction::Faint => {
-													ui::text::on_faint(&mut gui.text, self.data.battle_type, pokemon);
-													user.active[instance.pokemon.active].renderer.faint();
-												}
-											    // BattleAction::LevelUp => todo!(),
-											    // BattleAction::Wait => todo!(),
 											}
 											queue.current = Some(BattleActionInstance { pokemon: instance.pokemon, action: instance.action });
+											self.update(delta, gui, party_gui, bag);
 										}
 									},
 									None => {
@@ -280,43 +408,19 @@ impl Battle {
 
 									BattleAction::Pokemon(battle_move) => match battle_move {
 
-										BattleMove::Move(.., target) => {
+										BattleMove::Move(.., move_target) => {
 
-											let active = match target {
+											let target = match move_target {
 												MoveTargetInstance::Opponent(index) => &mut other.active[*index],
 											};
 
-											if !gui.text.is_finished() {
+											if target.renderer.flicker.flickering() || target.status.health_moving() || !gui.text.is_finished() {
 												gui.text.update(delta);
-											} else if active.renderer.flicker.flickering() || active.status.health_moving() {
-												active.renderer.flicker.update(delta);
-												active.status.update_hp(delta);
+												if gui.text.current > 0 || gui.text.can_continue {
+													target.renderer.flicker.update(delta);
+													target.status.update_hp(delta);
+												}
 											} else {
-
-												game::macroquad::prelude::info!("To - do: give pokemon exp.");
-		
-												// if other.is_faint() {
-												// 	// get team and index of fainted pokemon
-	
-												// 	if team != BattleTeam::Opponent {
-												// 		let experience = exp_gain(self.data.battle_type, other);
-												// 		let level = if let Some((level, moves)) = user.pokemon_mut(active).unwrap().add_exp(experience) {
-												// 			let pokemon = user.pokemon(active).unwrap();
-												// 			if let Some(moves) = moves {
-												// 				todo!()
-												// 				// gui.level_up.spawn(instance.pokemon.active, pokemon, moves);
-												// 			}
-												// 			user.update_status(active, false);
-												// 			Some(level)
-												// 		} else {
-												// 			None
-												// 		};
-												// 		let pokemon = user.pokemon(active).unwrap();
-												// 		gui::text::player_gain_exp(&mut gui.text, pokemon.name(), pokemon.data.experience, level);
-												// 	}
-	
-												// }
-
 												queue.current = None;
 	
 											}											
@@ -338,86 +442,98 @@ impl Battle {
 												gui.text.update(delta);
 
 												if gui.text.current() == 1 && user.pokemon[*new].is_some() {
-													user.replace_pokemon(instance.pokemon.active, *new);
+													user.replace(instance.pokemon.active, *new);
 												}
 
 											}
 										}
 									}
-									BattleAction::Effective(..) => {
-										if !gui.text.is_finished() {
+									// BattleAction::Effective(..) => text_update(delta, gui, queue),
+									BattleAction::Faint(..) => {
+										// let party = match target.team {
+										// 	BattleTeam::Player => &mut self.player,
+										// 	BattleTeam::Opponent => &mut self.opponent,
+										// };
+										if user.active[instance.pokemon.active].renderer.faint.fainting() {
+											user.active[instance.pokemon.active].renderer.faint.update(delta);
+										} else if !gui.text.is_finished() {
 											gui.text.update(delta);
 										} else {
-											queue.current = None;
-										}
-									}
-									BattleAction::Faint => match instance.pokemon.team {
-										BattleTeam::Player => {
-											if !party_gui.is_alive() {
-												if self.player.active[instance.pokemon.active].pokemon.is_some() {
-													if !gui.text.is_finished() || !self.player.active[instance.pokemon.active].renderer.faint.fainting() {
-														gui.text.update(delta);
-														if self.player.active[instance.pokemon.active].renderer.faint.fainting() {
-															self.player.active[instance.pokemon.active].renderer.faint.update(delta);
-														};
-													} else {
-														self.player.remove_pokemon(instance.pokemon.active);
-														if self.player.all_fainted() {
-															gui.panel.despawn();
-															self.data.winner = Some(BattleTeam::Opponent);
-															closer.spawn(self, &mut gui.text);
-															return;
-														} else if self.player.any_inactive() {										
-															battle_party_gui(party_gui, &self.player, false);
-														} else {
-															queue.current = None;
-															return;							
-														}
+											match instance.pokemon.team {
+												BattleTeam::Player => {
+													match party_gui.alive {
+														true => {
+															party_gui.input();
+															party_gui.update(delta);
+															if let Some(selected) = party_gui.selected.take() {
+																if self.player.pokemon[selected].as_ref().map(|instance| instance.value().current_hp != 0).unwrap_or_default() {
+																	self.player.queue_replace(instance.pokemon.active, selected);
+																	party_gui.despawn();
+																	queue.current = None;
+																}
+															}
+														},
+														false => match self.player.active[instance.pokemon.active].pokemon.is_active() {
+															true => if self.player.any_inactive() {
+																battle_party_gui(party_gui, &self.player, false);
+															} else {
+																self.player.remove_pokemon(instance.pokemon.active);
+																queue.current = None;
+															},
+															false => queue.current = None,
+														} 
 													}
 												}
-											} else {
-												party_gui.update(delta);
-												party_gui.input();
-												if let Some(selected) = party_gui.selected.take() {
-													self.player.queue_replace(instance.pokemon.active, selected);
-													queue.current = None;
-												}
-											}
-										}
-										BattleTeam::Opponent => {
-											if self.opponent.active[instance.pokemon.active].renderer.faint.fainting() {
-												self.opponent.active[instance.pokemon.active].renderer.faint.update(delta);
-											} else if !gui.text.is_finished() {
-												gui.text.update(delta);
-											} else {
-												if self.opponent.all_fainted() {
-													gui.panel.despawn();
-													self.data.winner = Some(BattleTeam::Player);
-													closer.spawn(self, &mut gui.text);
-													// self.move_queue = MoveQueueOption:;
-												} else {
+												BattleTeam::Opponent => {
 													let available: Vec<usize> = self.opponent.pokemon.iter()
-														// .map(|(index, pokemon)| pokemon.as_ref().map(|pokemon| (index, pokemon)))
 														.enumerate()
-														.filter(|(_, pokemon)| pokemon.as_ref().map(|instance| !instance.fainted()).unwrap_or(false))
+														.filter(|(_, pokemon)| pokemon.as_ref().map(|instance| !instance.value().fainted()).unwrap_or(false))
 														.map(|(index, _)| index)
 														.collect();
-				
-													// self.opponent.remove_pokemon(instance.pokemon.active);
 	
 													if !available.is_empty() {
 														self.opponent.queue_replace(instance.pokemon.active, available[BATTLE_RANDOM.gen_range(0, available.len())]);
+													} else {
+														self.opponent.remove_pokemon(instance.pokemon.active);
 													}
 	
 													queue.current = None;
-			
-													// gui.update_gui(self, false, true);
 												}
 											}
 										}
 									}
-									// BattleAction::LevelUp => todo!(),
-								    // BattleAction::Wait => todo!(),
+									BattleAction::GainExp(..) => {
+										let user = &mut user.active[instance.pokemon.active];
+										if !gui.text.is_finished() || user.status.exp_moving() {
+											gui.text.update(delta);
+											if gui.text.current > 0 || gui.text.can_continue {
+												user.status.update_exp(delta, user.pokemon.as_ref().unwrap());
+											}
+										} else {
+											queue.current = None;
+										}
+									},
+									BattleAction::LevelUp(..) => text_update(delta, gui, queue),
+            						BattleAction::Catch(target) => {
+										if !gui.text.is_finished() {
+											gui.text.update(delta);
+										} else {
+											let active = &mut match target.team {
+												BattleTeam::Player => &mut self.player,
+												BattleTeam::Opponent => &mut self.opponent
+											}.active[target.active];
+											match active.pokemon.take() {
+												pokemon::PokemonOption::Some(_, pokemon) => {
+													active.update();
+													if let Err(_) = game::storage::data_mut().party.try_push(pokemon.owned()) {
+														warn!("Player party is full!");
+													}
+												},
+												_ => (),
+											}
+											queue.current = None;
+										}
+									}
 								}
 							}
 						}
@@ -429,32 +545,46 @@ impl Battle {
 						*move_state = MoveState::End;
 					}
 					MoveState::End => {
-						self.player.replace();
-						self.opponent.replace();
+						self.player.run_replace();
+						self.opponent.run_replace();
 						// if started { stuff } else start and do calculations and add text
-						self.state = BattleState::default();
+						self.state = if self.opponent.all_fainted() {
+							self.data.winner = Some(BattleTeam::Player);
+							BattleState::End
+						} else if self.player.all_fainted() {
+							self.data.winner = Some(BattleTeam::Opponent);
+							BattleState::End
+						} else {
+							BattleState::SELECTING
+						};
 						// Once the text is finished, despawn it
 						gui.text.despawn();
 					},
 				}
-			}
+			},
+    		BattleState::End => {
+				bag.despawn();
+				party_gui.despawn();
+				gui.panel.despawn();
+			},
 		}
 	}
 	
 	pub fn render(&self, gui: &BattleGui) {
 		gui.background.render(0.0);
 		for active in self.opponent.active.iter() {
-			active.renderer.render(game::macroquad::prelude::Vec2::default());
+			active.renderer.render(game::macroquad::prelude::Vec2::ZERO, game::graphics::WHITE);
 			active.status.render(0.0, 0.0);
 		}
 		match &self.state {
+			BattleState::Begin | BattleState::End => (),
 		    BattleState::Selecting(index) => {
 				for (current, active) in self.player.active.iter().enumerate() {
 					if current.eq(index) {
-						active.renderer.render(game::macroquad::prelude::Vec2::new(0.0, gui.bounce.offset));
+						active.renderer.render(game::macroquad::prelude::Vec2::new(0.0, gui.bounce.offset), game::graphics::WHITE);
 						active.status.render(0.0, -gui.bounce.offset);
 					} else {
-						active.renderer.render(game::macroquad::prelude::Vec2::default());
+						active.renderer.render(game::macroquad::prelude::Vec2::ZERO, game::graphics::WHITE);
 						active.status.render(0.0, 0.0);
 					}
 				}
@@ -463,7 +593,7 @@ impl Battle {
 			},
 			BattleState::Moving( .. ) => {
 				for active in self.player.active.iter() {
-					active.renderer.render(game::macroquad::prelude::Vec2::default());
+					active.renderer.render(game::macroquad::prelude::Vec2::ZERO, game::graphics::WHITE);
 					active.status.render(0.0, 0.0);
 				}
 				gui.render_panel();
@@ -522,10 +652,16 @@ impl Battle {
 			}
 		}
 
-		player.party = self.player.collect_owned().into_iter().map(|instance| instance.into_saved()).collect();
-
 		self.data.winner.map(|winner| (winner, trainer))
 		
 	}
 	
+}
+
+fn text_update(delta: f32, gui: &mut BattleGui, queue: &mut MoveQueue) {
+	if !gui.text.is_finished() {
+		gui.text.update(delta);
+	} else {
+		queue.current = None;
+	}
 }

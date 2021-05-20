@@ -26,3 +26,19 @@ pub mod hash {
         AHasher as Hasher,
     };
 }
+
+#[cfg(feature = "serialization")]
+extern crate bincode;
+
+#[cfg(feature = "serialization")]
+pub mod ser {
+    pub use {
+        // postcard::to_allocvec as serialize,
+        // postcard::from_bytes as deserialize,
+        // postcard::Error,
+        bincode::serialize,
+        bincode::deserialize,
+        bincode::Error,
+        bincode::ErrorKind,
+    };
+}

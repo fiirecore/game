@@ -3,25 +3,22 @@ use deps::{
     hash::HashMap,
     tinystr::TinyStr16,
 };
-use script::ItemScript;
+use crate::{Ref, Identifiable};
 
 pub type Itemdex = HashMap<ItemId, Item>;
 
 pub static mut ITEMDEX: Option<Itemdex> = None;
 
-pub fn itemdex() -> &'static Itemdex {
-	unsafe { ITEMDEX.as_ref().expect("Itemdex was not initialized!") }
-}
-
 mod stack;
 pub use stack::*;
+
+mod uses;
+pub use uses::*;
 
 pub mod script;
 
 pub type ItemId = TinyStr16;
 pub type StackSize = u16;
-
-pub type ItemRef = &'static Item;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Item {
@@ -34,10 +31,27 @@ pub struct Item {
     #[serde(default = "default_stack_size")]
     pub stack_size: StackSize,
 
-    pub script: ItemScript,
+    #[serde(default, rename = "use")]
+    pub use_type: ItemUseType,
+
+}
+
+pub type ItemRef = Ref<Item>;
+
+impl Identifiable for Item {
+    type Id = ItemId;
+
+    fn id(&self) -> &Self::Id {
+        &self.id
+    }
+
+    fn try_get(id: &Self::Id) -> Option<&'static Self> {
+        unsafe { ITEMDEX.as_ref().expect("Itemdex was not initialized!").get(id) }
+    }
 
 }
 
 pub const fn default_stack_size() -> StackSize {
     999
 }
+

@@ -3,8 +3,7 @@ use macroquad::prelude::Color;
 use macroquad::prelude::draw_line;
 use util::Reset;
 use input::{pressed, Control};
-use pokedex::pokemon::saved::SavedPokemonParty;
-use storage::{get, player::PlayerSaves};
+use storage::{data, data_mut};
 use crate::text::TextColor;
 use macroquad::prelude::{Texture2D, draw_rectangle, draw_texture_ex, WHITE, DrawTextureParams, Rect};
 use deps::vec::ArrayVec;
@@ -40,8 +39,6 @@ pub struct PartyGui {
     cursor: usize,
     right_cursor: Option<usize>,
 
-    swaps: Vec<(usize, usize)>,
-
     exitable: bool,
 
 }
@@ -76,7 +73,6 @@ impl PartyGui {
             cursor: 0,
             right_cursor: None,
             selected: None,
-            swaps: Vec::new(),
             exitable: true,
         }
 
@@ -95,10 +91,9 @@ impl PartyGui {
     }
 
     pub fn spawn_world(&mut self) {
-        if let Some(saves) = get::<PlayerSaves>() {
-            self.on_spawn(Some(true));
-            self.spawn(saves.get().party.iter().map(|saved| PokemonDisplay::new_saved(saved)).flatten().collect(), Some(true), true);
-        }
+        self.on_spawn(Some(true));
+        self.exitable = true;
+        self.spawn(data().party.iter().map(|instance| PokemonDisplay::new(std::borrow::Cow::Borrowed(instance))).collect(), Some(true), true);
     }
 
     pub fn input(&mut self) {
@@ -123,9 +118,8 @@ impl PartyGui {
                 if let Some(selected) = self.selected.take() {
                     if let Some(is_world) = self.select.is_world {
                         if is_world {
-                            let swap = (self.cursor, selected);
-                            self.pokemon.swap(swap.0, swap.1);
-                            self.swaps.push(swap);
+                            self.pokemon.swap(self.cursor, selected);
+                            data_mut().party.swap(self.cursor, selected);
                         }
                     }
                 } else {
@@ -315,25 +309,9 @@ impl PartyGui {
         draw_rectangle(x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER);
     }
 
-    pub fn on_finish(&mut self, party: &mut SavedPokemonParty) {
-        for swap in &self.swaps {
-            party.swap(swap.0, swap.1);
-        }
-        self.swaps.clear();
-    }
-
     pub fn despawn(&mut self) {
         self.alive = false;
         self.select.alive = false;
-        if self.select.is_world == Some(false) {
-            if let Some(mut saves) = storage::get_mut::<PlayerSaves>() {
-                self.on_finish(&mut saves.get_mut().party)
-            }
-        }
-    }
-
-    pub fn is_alive(&self) -> bool {
-        self.alive
     }
 
 }
@@ -344,6 +322,5 @@ impl Reset for PartyGui {
         self.right_cursor = None;
         self.accumulator = 0.0;
         self.pokemon.clear();
-        self.swaps.clear();
     }
 }

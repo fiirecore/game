@@ -20,7 +20,7 @@
         )]),
         trainer: Some((
             tracking: Some(2),
-            battle_transition: Trainer,
+            battle_transition: "Trainer",
             encounter_message: [
                 [
                     "Are you a TRAINER?",

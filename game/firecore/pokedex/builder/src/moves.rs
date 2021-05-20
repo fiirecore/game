@@ -1,7 +1,7 @@
 use std::fs::{read_dir, read_to_string};
 use std::path::PathBuf;
 
-use pokedex::moves::{PokemonMove, GamePokemonMove};
+use pokedex::moves::{Move, GamePokemonMove};
 use pokedex::serialize::SerializedMove;
 
 pub fn get_moves<P: AsRef<std::path::Path>>(move_dir: P) -> Vec<SerializedMove> {
@@ -38,7 +38,7 @@ fn from_dir(dir: PathBuf) -> SerializedMove {
     }
 }
 
-fn from_file(path: PathBuf) -> PokemonMove {
+fn from_file(path: PathBuf) -> Move {
     toml::from_str(
         &read_to_string(&path)
             .unwrap_or_else(|err| panic!("Could not read move file at {:?} to string with error {}", path, err))

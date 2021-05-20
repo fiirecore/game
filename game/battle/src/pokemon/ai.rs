@@ -19,7 +19,7 @@ impl BattleAi {
                     if let PokemonOption::Some(_, pokemon) = &active.pokemon {
 
                         // crashes when moves run out
-                        let moves: Vec<usize> = pokemon.moves.iter().enumerate().filter(|(_, instance)| instance.pp != 0).map(|(index, _)| index).collect();
+                        let moves: Vec<usize> = pokemon.value().moves.iter().enumerate().filter(|(_, instance)| instance.pp != 0).map(|(index, _)| index).collect();
                         
                         active.queued_move = Some(
                             BattleMove::Move(

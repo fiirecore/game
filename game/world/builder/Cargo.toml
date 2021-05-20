@@ -11,20 +11,16 @@ edition = "2018"
 ### Map specifications
 
 firecore-world-lib = { path = "../lib" }
-
+firecore-pokedex-game = { path = "../../firecore/pokedex/game" }
 firecore-util = { path = "../../firecore/util" }
+firecore-dependencies = { path = "../../firecore/deps", features = ["serialization"] }
 
 ### Serialization
 
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.5"
 ron = "0.6"
-postcard = { version = "0.6", default-features = false, features = ["alloc"] }
 
 ### Other
 
 image = { version = "0.23.12", default-features = false, features = ["png", "tga"] }
-
-[[example]]
-name = "pathfind"
-required-features = ["firecore-world-lib/pathfind"]

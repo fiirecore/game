@@ -3,18 +3,19 @@ use deps::{
 	hash::HashMap,
 	// tinystr::TinyStr16,
 };
+use crate::{Ref, Identifiable};
 
 use super::pokemon::types::PokemonType;
 
-pub type Movedex = HashMap<MoveId, PokemonMove>;
+pub type Movedex = HashMap<MoveId, Move>;
 
 pub static mut MOVEDEX: Option<Movedex> = None;
 
+#[deprecated(note = "use move::get")]
 pub fn movedex() -> &'static Movedex {
 	unsafe { MOVEDEX.as_ref().expect("Movedex was not initialized!") }
 }
 
-pub mod saved;
 pub mod instance;
 
 pub mod target;
@@ -26,11 +27,11 @@ pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
 
-pub type MoveRef = &'static PokemonMove;
+pub type MoveRef = Ref<Move>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct PokemonMove {
+pub struct Move {
 
 	pub id: MoveId,
 
@@ -50,6 +51,19 @@ pub struct PokemonMove {
 	
 }
 
+impl Identifiable for Move {
+    type Id = MoveId;
+
+    fn id(&self) -> &Self::Id {
+        &self.id
+    }
+
+	fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized {
+		unsafe { MOVEDEX.as_ref().map(|map| map.get(id)).flatten() }
+	}
+
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum MoveCategory {
 	Physical,
@@ -57,7 +71,7 @@ pub enum MoveCategory {
 	Status,	
 }
 
-impl std::fmt::Display for PokemonMove {
+impl core::fmt::Display for Move {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.name)
     }

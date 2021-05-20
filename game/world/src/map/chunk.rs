@@ -40,10 +40,6 @@ impl GameWorld for WorldChunk {
         self.map.on_tile(battle, player)
     }
 
-    fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
-        self.map.input(delta, player)
-    }
-
 }
 
 impl GameWorld for WorldChunkMap {
@@ -71,12 +67,6 @@ impl GameWorld for WorldChunkMap {
                 }
             }
         }        
-    }
-
-    fn input(&mut self, delta: f32, player: &mut PlayerCharacter) {
-        if let Some(chunk) = self.chunk_mut() {
-            chunk.input(delta, player);
-        }
     }
 
     fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {

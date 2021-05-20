@@ -1,5 +1,5 @@
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-use storage::{store, get, configuration::Configuration, player::PlayerSaves};
+use storage::{load, store, get, configuration::Configuration};
 use pokedex::{
     pokemon::POKEDEX,
     moves::{MOVEDEX, GAME_MOVE_DEX},
@@ -23,9 +23,9 @@ pub fn seed_randoms(seed: u64) {
     pokedex::pokemon::POKEMON_RANDOM.seed(seed);
 }
 
-pub async fn data() {
-    store::<Configuration>().await;
-    store::<PlayerSaves>().await;
+pub async fn configuration() {
+    store(load::<Configuration>().await);
+    // store::<PlayerSaves>().await;
 
     {
 

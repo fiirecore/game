@@ -109,6 +109,7 @@ impl Character {
                     self.update_sprite();
                 }
             } else if let Some(direction) = destination.queued_movements.pop_front() {
+                self.speed = default_speed();
                 destination.started = true;
                 self.moving = true;
                 self.position.direction = direction;
@@ -119,6 +120,7 @@ impl Character {
                 }
                 self.moving = false;
                 self.destination = None;
+                return true;
             }
         }
         false

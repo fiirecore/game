@@ -30,7 +30,7 @@ impl StateManager {
 
     pub fn on_start(&mut self) {
 		#[cfg(debug_assertions)] {
-			let mut saves = game::storage::get_mut::<game::storage::player::PlayerSaves>().expect("Could not get player saves");
+			let saves = unsafe{game::storage::PLAYER_SAVES.as_mut()}.expect("Could not get player saves");
 			if saves.saves.is_empty() {
 				self.current = States::Menu;
 			} else {

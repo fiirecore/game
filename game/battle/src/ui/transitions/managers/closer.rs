@@ -1,44 +1,63 @@
-use game::{
-    util::{
-        Reset, 
-        Completable,
-        battle::BattleType,
-    },
-    gui::DynamicText,
-};
+use game::gui::DynamicText;
 
 use crate::{
     Battle,
+    BattleType,
+    state::TransitionState,
     ui::transitions::{
         BattleCloser,
         closers::{
             Closers,
-            wild::WildBattleCloser,
-            trainer::TrainerBattleCloser,
+            WildBattleCloser,
+            TrainerBattleCloser,
         }
     }
 };
 
 #[derive(Default)]
 pub struct BattleCloserManager {
-    
-    alive: bool,
-
+    pub state: TransitionState,
     current: Closers,
 
     wild: WildBattleCloser,
     trainer: TrainerBattleCloser,
-
 }
 
-impl BattleCloserManager { // return player data
+impl BattleCloserManager {
 
-    pub fn despawn(&mut self) {
-        self.alive = false;
+    pub fn begin(&mut self, battle: &Battle, text: &mut DynamicText) {
+        self.state = TransitionState::Run;
+        match battle.data.battle_type {
+            BattleType::Wild => self.current = Closers::Wild,
+            _ => self.current = Closers::Trainer,
+        }
+        let current = self.get_mut();
+        current.reset();
+        current.spawn(battle, text);
     }
 
-    pub fn is_alive(&self) -> bool {
-        self.alive
+    pub fn end(&mut self) {
+        self.state = TransitionState::Begin;
+    }
+
+    pub fn update(&mut self, delta: f32, text: &mut DynamicText) {
+        let current = self.get_mut();
+        current.update(delta, text);
+        if current.is_finished() {
+            self.state = TransitionState::End;
+        }
+    }
+
+    pub fn render(&self) {
+        self.get().render();
+    }
+
+    pub fn render_battle(&self) {
+        self.get().render_battle();
+    }
+
+    pub fn world_active(&self) -> bool {
+        self.state == TransitionState::Run && self.get().world_active()
     }
 
     fn get(&self) -> &dyn BattleCloser {
@@ -55,45 +74,4 @@ impl BattleCloserManager { // return player data
         }
     }
 
-}
-
-impl BattleCloser for BattleCloserManager {
-
-    fn spawn(&mut self, battle: &Battle, text: &mut DynamicText) {
-        match battle.data.battle_type {
-            BattleType::Wild => self.current = Closers::Wild,
-            _ => self.current = Closers::Trainer,
-        }
-        self.alive = true;
-        self.reset();
-        self.get_mut().spawn(battle, text);
-    }
-
-    fn update(&mut self, delta: f32, text: &mut DynamicText) {
-        self.get_mut().update(delta, text);
-    }
-
-    fn render(&self) {
-        self.get().render();
-    }
-
-    fn render_battle(&self) {
-        self.get().render_battle();
-    }
-
-    fn world_active(&self) -> bool {
-        self.alive && self.get().world_active()
-    }
-}
-
-impl Reset for BattleCloserManager {
-    fn reset(&mut self) {
-        self.get_mut().reset();
-    } 
-}
-
-impl Completable for BattleCloserManager {
-    fn is_finished(&self) -> bool {
-        self.get().is_finished()
-    }
 }

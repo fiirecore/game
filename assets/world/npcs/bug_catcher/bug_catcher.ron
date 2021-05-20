@@ -6,7 +6,6 @@
         (
             name: "Bug Catcher",
             music: Some("EncounterBoy"),
-            type: Trainer,
         )
     )
 )

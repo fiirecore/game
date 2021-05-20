@@ -23,7 +23,6 @@ pub struct BasicBattleIntroduction {
 	counter: f32,
     offsets: (f32, f32),
 
-
 }
 
 impl Default for BasicBattleIntroduction {
@@ -32,7 +31,6 @@ impl Default for BasicBattleIntroduction {
             player: super::super::openers::player_texture(),
             counter: 0.0,
             offsets: Self::OFFSETS, // opponent, player
-            
         }
     }
 }
@@ -96,14 +94,14 @@ impl BasicBattleIntroduction {
             });
         } else {
             for active in battle.player.active.iter() {
-                active.renderer.render(Vec2::default());
+                active.renderer.render(Vec2::ZERO, WHITE);
             }
         }
     }
 
     pub(crate) fn render_opponent(&self, battle: &Battle) {
         for active in battle.opponent.active.iter() {
-            active.renderer.render(Vec2::default());
+            active.renderer.render(Vec2::ZERO, WHITE);
             active.status.render(self.offsets.0, 0.0);
         }
     }
@@ -146,24 +144,29 @@ impl BattleIntroduction for BasicBattleIntroduction {
             for active in battle.opponent.active.iter_mut() {
                 active.status.spawn();
                 if let Some(instance) = active.pokemon.as_ref() {
-                    play_sound(&Sound::variant(CRY_ID, Some(instance.pokemon.data.id)));
+                    play_sound(&Sound::variant(CRY_ID, Some(instance.pokemon.value().data.id)));
                 }
             }
             
         }
 
-        if battle.player.active[0].status.is_alive() {
+        if battle.player.active[0].renderer.spawner.spawning() {
+            for active in battle.player.active.iter_mut() {
+                active.renderer.spawner.update(delta);
+            }
+        } else if battle.player.active[0].status.is_alive() {
             if self.offsets.1 != 0.0 {
                 self.offsets.1 -= delta * 240.0;
                 if self.offsets.1 < 0.0 {
                     self.offsets.1 = 0.0;
                 }
             }
-        } else if self.counter >= 104.0 {
+        } else if self.counter >= 78.0 {//104.0 {
             for active in battle.player.active.iter_mut() {
+                active.renderer.spawn();
                 active.status.spawn();
                 if let Some(instance) = active.pokemon.as_ref() {
-                    play_sound(&Sound::variant(CRY_ID, Some(instance.pokemon.data.id)));
+                    play_sound(&Sound::variant(CRY_ID, Some(instance.pokemon.value().data.id)));
                 }
             }
         }

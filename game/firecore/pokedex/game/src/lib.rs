@@ -7,6 +7,9 @@ pub mod texture;
 pub mod serialize;
 
 pub use pokedex::{
+    Ref,
+    Identifiable,
+    BorrowableMut,
     pokemon,
     item,
 };

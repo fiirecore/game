@@ -109,7 +109,7 @@ impl SummaryGui {
                             crate::graphics::draw_text_center(0, &display.name, TextColor::White, x + 16.0, 52.0)
                         }
 
-                        draw_text_left(1, &pokemon.item, TextColor::Black, 168.0, 96.0);
+                        // draw_text_left(1, &pokemon.item, TextColor::Black, 168.0, 96.0);
                 }
                 1 => {
                     draw(self.pages[1], 0.0, 17.0);
@@ -160,28 +160,29 @@ pub struct SummaryPokemon {
     pokemon: (String, &'static String), // id and name
     front: (Texture2D, f32), // texture and pos
     types: Vec<PokemonTypeDisplay>,
-    item: String,
+    // item: String,
 }
 
 impl SummaryPokemon {
 
-    pub fn new(pokemon: PokemonDisplay) -> Self {
-        let mut types = Vec::with_capacity(if pokemon.instance.pokemon.data.secondary_type.is_some() { 2 } else { 1 });
+    pub fn new(display: PokemonDisplay) -> Self {
+        let pokemon = display.instance.pokemon.value();
+        let mut types = Vec::with_capacity(if pokemon.data.secondary_type.is_some() { 2 } else { 1 });
 
-        types.push(PokemonTypeDisplay::new(pokemon.instance.pokemon.data.primary_type));
+        types.push(PokemonTypeDisplay::new(pokemon.data.primary_type));
 
-        if let Some(secondary) = pokemon.instance.pokemon.data.secondary_type {
+        if let Some(secondary) = pokemon.data.secondary_type {
             types.push(PokemonTypeDisplay::new(secondary));
         }
 
-        let texture = pokemon_texture(&pokemon.instance.pokemon.data.id, Front);
+        let texture = pokemon_texture(&pokemon.data.id, Front);
 
         Self {
-            pokemon: (pokemon.instance.pokemon.data.id.to_string(), &pokemon.instance.pokemon.data.name),
+            pokemon: (pokemon.data.id.to_string(), &pokemon.data.name),
             front: (texture, 34.0 + (64.0 - texture.height()) / 2.0),
             types,
-            item: pokemon.instance.item.map(|item| item.name.to_ascii_uppercase()).unwrap_or("NONE".to_owned()),
-            display: pokemon,
+            // item: pokemon.instance.item.map(|item| item.name.to_ascii_uppercase()).unwrap_or("NONE".to_owned()),
+            display,
 
         }
     }

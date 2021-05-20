@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use pokedex::{
     texture::{
         pokemon_texture,
@@ -5,7 +7,6 @@ use pokedex::{
     },
     pokemon::{
         types::PokemonType,
-        saved::SavedPokemon,
         instance::PokemonInstance,
     },
 };
@@ -15,7 +16,7 @@ use macroquad::prelude::{Color, color_u8, Texture2D};
 #[derive(Clone)]
 pub struct PokemonDisplay {
 
-    pub instance: PokemonInstance,
+    pub instance: Cow<'static, PokemonInstance>,
     pub icon: Texture2D,
     pub name: String,
     pub level: String,
@@ -75,18 +76,12 @@ pub struct PokemonTypeDisplay {
 impl PokemonDisplay {
     pub const ICON_TICK: f32 = 0.15;
 
-    pub fn new_saved(saved: &SavedPokemon) -> Option<Self> {
-        PokemonInstance::new(saved).map(|instance| {
-            Self::new(instance)
-        })
-    }
-
-    pub fn new(instance: PokemonInstance) -> Self {
+    pub fn new(instance: Cow<'static, PokemonInstance>) -> Self {
         Self {
             name: instance.name().to_string(),
             level: format!("Lv{}", instance.data.level),
             health: (format!("{}/{}", instance.current_hp, instance.base.hp), super::health::HealthBar::width(instance.current_hp, instance.base.hp)),
-            icon: pokemon_texture(&instance.pokemon.data.id, Icon),
+            icon: pokemon_texture(&instance.pokemon.value().data.id, Icon),
             instance,
         }
     }

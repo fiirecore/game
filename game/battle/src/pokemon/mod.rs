@@ -34,18 +34,34 @@ pub struct ActivePokemonIndex {
 	pub active: usize,
 }
 
-
 impl ActivePokemon {
 
     pub fn reset(&mut self) {
         self.queued_move = None;
+        self.update();
+    }
+
+    pub fn update(&mut self) {
         let pokemon = self.pokemon.as_ref();
-        self.status.update_gui(pokemon, true);
+        self.status.update_gui(pokemon.map(|i| (i.data.level, i)), true);
         self.renderer.new_pokemon(pokemon);
     }
-
-    pub fn update_status(&mut self, reset: bool) {
-        self.status.update_gui(self.pokemon.as_ref(), reset)
+    
+    pub fn update_status(&mut self, level: game::pokedex::pokemon::Level, reset: bool) {
+        self.status.update_gui(self.pokemon.as_ref().map(|i| (level, i)), reset)
     }
 
+}
+
+impl core::fmt::Debug for ActivePokemon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // f.debug_struct("ActivePokemon")
+        core::fmt::Debug::fmt(&self.pokemon, f)
+    }
+}
+
+impl core::fmt::Display for ActivePokemonIndex {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?} #{}", self.team, self.active)
+    }
 }

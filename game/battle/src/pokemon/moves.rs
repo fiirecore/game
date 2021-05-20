@@ -1,6 +1,8 @@
 use game::pokedex::item::ItemRef;
+use game::pokedex::moves::MoveRef;
 use game::pokedex::moves::target::MoveTargetInstance;
-use game::pokedex::pokemon::types::Effective;
+use game::pokedex::pokemon::Experience;
+use game::pokedex::pokemon::Level;
 
 use super::ActivePokemonIndex;
 
@@ -8,23 +10,23 @@ use super::ActivePokemonIndex;
 pub enum BattleMove {
 
     Switch(usize),
-    UseItem(ItemRef),
+    UseItem(ItemRef, Option<MoveTargetInstance>),
     Move(usize, MoveTargetInstance),
 
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug)]
 pub struct BattleActionInstance {
     pub pokemon: ActivePokemonIndex,
     pub action: BattleAction,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug)]
 pub enum BattleAction {
     Pokemon(BattleMove),
-    Effective(Effective),
-    Faint,
-    // GainExp,
-    // LevelUp,
+    Faint(Option<ActivePokemonIndex>), // target
+    Catch(ActivePokemonIndex),
+    GainExp(Level, Experience),
+    LevelUp(Level, Option<Vec<MoveRef>>),
     // Wait,
 }

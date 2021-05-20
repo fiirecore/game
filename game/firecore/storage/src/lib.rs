@@ -4,11 +4,10 @@ use std::sync::atomic::AtomicBool;
 use error::DataError;
 use macroquad::prelude::{
     warn, info,
-    collections::storage::store as mqstore
 };
 use serde::{Serialize, de::DeserializeOwned};
 
-pub use macroquad::prelude::collections::storage::{try_get as get, try_get_mut as get_mut};
+pub use macroquad::prelude::collections::storage::{try_get as get, try_get_mut as get_mut, store};
 
 pub mod error;
 pub mod reload;
@@ -34,24 +33,21 @@ pub trait Reloadable: PersistantData {
 
 }
 
-pub async fn store<D: PersistantData + Sized + 'static>() {
-    match load::<D>().await {
-        Ok(data) => mqstore(data),
-        Err(err) => {
-            let name = std::any::type_name::<D>();
-            let name = name.split("::").last().unwrap_or(name);
-            warn!("Could not load {} with error {}", name, err);
-            info!("Saving a new {} file!", name);
-            let data = D::default();
-            if let Err(err) = save(&data) {
-                warn!("Could not save new {} with error {}", name, err);
-            }
-            mqstore(data);
+pub async fn load<D: PersistantData + Sized + 'static>() -> D {
+    try_load::<D>().await.unwrap_or_else(|err| {
+        let name = std::any::type_name::<D>();
+        let name = name.split("::").last().unwrap_or(name);
+        warn!("Could not load {} with error {}", name, err);
+        info!("Saving a new {} file!", name);
+        let data = D::default();
+        if let Err(err) = save(&data) {
+            warn!("Could not save new {} with error {}", name, err);
         }
-    }
+        data
+    })
 }
 
-pub async fn load<D: PersistantData + Sized>() -> Result<D, DataError> {
+pub async fn try_load<D: PersistantData + Sized>() -> Result<D, DataError> {
     let filename = D::file_name();
     #[cfg(not(target_arch = "wasm32"))]
     let string = {
@@ -110,7 +106,7 @@ pub fn save<D: PersistantData>(data: &D) -> Result<(), DataError> {
 }
 
 pub async fn reload<D: Reloadable + Sized>(data: &mut D) -> Result<(), DataError> {
-    *data = load::<D>().await?;
+    *data = try_load::<D>().await?;
     data.on_reload();
     Ok(())
 }

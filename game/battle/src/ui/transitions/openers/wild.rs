@@ -59,6 +59,9 @@ impl BattleOpener for WildBattleOpener {
     }
 
     fn render_below_panel(&self, battle: &Battle) {
+        for active in battle.opponent.active.iter() {
+            active.renderer.render(Vec2::new(-self.opener.offset, 0.0), game::macroquad::prelude::LIGHTGRAY);
+        }
         self.opener.render_below_panel(battle);
         if self.offset.y > 0.0 {
             let y = 114.0 - self.offset.y;
@@ -77,9 +80,6 @@ impl BattleOpener for WildBattleOpener {
                 self.offset.x + Self::GRASS_WIDTH,
                 y,
             );
-        }
-        for active in battle.opponent.active.iter() {
-            active.renderer.render(Vec2::new(-self.opener.offset, 0.0));
         }
     }
 

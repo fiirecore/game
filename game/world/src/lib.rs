@@ -30,8 +30,6 @@ pub trait GameWorld {
 
     fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool);
 
-    fn input(&mut self, delta: f32, player: &mut PlayerCharacter);
-
 }
 
 pub fn seed_randoms(seed: u64) {

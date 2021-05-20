@@ -1,13 +1,13 @@
 use game::{
-    util::{Entity, Reset, Completable},
+    util::Entity,
     gui::DynamicText,
 };
 
 use crate::{
     Battle,
+    state::TransitionState,
     ui::transitions::{
         BattleIntroduction,
-        openers::Openers,
         introductions::{
             Introductions,
             basic::BasicBattleIntroduction, 
@@ -19,7 +19,7 @@ use crate::{
 #[derive(Default)]
 pub struct BattleIntroductionManager {
 
-    alive: bool,
+    pub state: TransitionState,
     
     current: Introductions,
     basic: BasicBattleIntroduction,
@@ -29,33 +29,32 @@ pub struct BattleIntroductionManager {
 
 impl BattleIntroductionManager {
 
-    //
+    pub fn begin(&mut self, battle: &Battle, text: &mut DynamicText) {
+        self.state = TransitionState::Run;
+        match battle.data.battle_type {
+            crate::BattleType::Wild => self.current = Introductions::Basic,
+            _ => self.current = Introductions::Trainer,
+        }
+        let current = self.get_mut();
+        current.reset();
+        current.spawn(battle, text);
+        text.spawn();
+    }
+
+    pub fn end(&mut self) {
+        self.state = TransitionState::Begin;
+    }
 
     pub fn update(&mut self, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
-        self.get_mut().update(delta, battle, text)
+        let current = self.get_mut();
+        current.update(delta, battle, text);
+        if current.is_finished() {
+            self.state = TransitionState::End;
+        }
     }
 
     pub fn render(&self, battle: &Battle) {
         self.get().render(battle);
-    }
-
-    //
-
-    pub fn spawn(&mut self, opener: &Openers, battle: &Battle, text: &mut DynamicText) {
-        self.current = opener.intro();
-        self.alive = true;
-        self.reset();
-        self.get_mut().spawn(battle, text);
-        text.spawn();
-    }
-
-    pub fn despawn(&mut self) {
-        self.alive = false;
-        self.reset();
-    }
-
-    pub fn is_alive(&self) -> bool {
-        self.alive
     }
 
     fn get(&self) -> &dyn BattleIntroduction {
@@ -72,16 +71,4 @@ impl BattleIntroductionManager {
         }
     }
 
-}
-
-impl Reset for BattleIntroductionManager {
-    fn reset(&mut self) {
-        self.get_mut().reset();
-    }
-}
-
-impl Completable for BattleIntroductionManager {
-    fn is_finished(&self) -> bool {
-        self.get().is_finished()
-    }
 }

@@ -6,10 +6,6 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[features]
-default = []
-pathfind = ["indexmap", "num-traits"]
-
 [dependencies]
 
 serde = { version = "1.0", features = ["derive"] }
@@ -20,7 +16,3 @@ firecore-util = { path = "../../firecore/util" }
 firecore-pokedex = { path = "../../firecore/pokedex" }
 firecore-font = { path = "../../firecore/text/font" }
 firecore-audio-lib = { path = "../../firecore/audio/lib" }
-
-### pathfinding temporary crates
-indexmap = { version = "1.6", optional = true }
-num-traits = { version = "0.2", optional = true }

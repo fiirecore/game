@@ -40,7 +40,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         if let Some(trainer) = battle.data.trainer.as_ref() {
             self.texture = Some(trainer.texture);
 
-            let name = format!("{} {}", trainer.npc_type, trainer.name);
+            let name = format!("{} {}", trainer.prefix, trainer.name);
 
             text.push(MessagePage::new(
                 vec![
@@ -63,6 +63,8 @@ impl BattleIntroduction for TrainerBattleIntroduction {
                 None,
             ));
         }
+
+        text.process_messages(game::storage::data());
 
         self.introduction.common_setup(text, &battle.player.active);
         

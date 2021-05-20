@@ -34,7 +34,7 @@ pub fn compile<P: AsRef<Path>>(font_folder: P, output_file: P) {
     }
     
     println!("Serializing fonts...");
-    let bytes = postcard::to_allocvec(&SerializedFonts { fonts })
+    let bytes = firecore_dependencies::ser::serialize(&SerializedFonts { fonts })
         .unwrap_or_else(|err| panic!("Could not serialize fonts with error {}", err));
 
     println!("Creating and writing to file...");

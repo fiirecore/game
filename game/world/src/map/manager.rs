@@ -4,10 +4,8 @@ use game::{
         Completable, 
         Direction, 
     },
-    pokedex::pokemon::pokedex,
     storage::{
-        {get, get_mut},
-        player::{PlayerSave, PlayerSaves},
+        data, data_mut, player::PlayerSave,
     },
     input::{down, pressed, Control},
     macroquad::{
@@ -120,10 +118,7 @@ impl WorldManager {
     }
 
     pub fn load_with_data(&mut self) {
-        if let Some(saves) = get::<PlayerSaves>() {
-            let save = saves.get();
-            self.load_player(save);
-        }
+        self.load_player(data());
     }
 
     pub fn on_start(&mut self, battle: BattleEntryRef) {
@@ -143,110 +138,20 @@ impl WorldManager {
         }
     }
 
-    pub fn update(&mut self, delta: f32, battle: BattleEntryRef) {
-
-        self.textures.tiles.update(delta);
-        self.textures.player.update(delta, &mut self.map_manager.player.character);
-
-        if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle, &mut self.map_manager.warp, &mut self.text_window);
-        } else {
-            self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, battle, &mut self.map_manager.warp, &mut self.text_window);
-        }
-
-        if self.warp_transition.is_alive() {
-            self.warp_transition.update(delta);
-            if self.warp_transition.switch() {
-                if let Some(destination) = self.map_manager.warp.clone() {
-                    self.textures.player.draw = !destination.transition.move_on_exit;
-                    let change_music = destination.transition.change_music;
-                    self.map_manager.warp(destination);
-                    self.map_start(change_music);
-                    if self.map_manager.chunk_active {
-                        self.map_manager.chunk_map.on_tile(battle, &mut self.map_manager.player);
-                    } else {
-                        self.map_manager.map_set_manager.on_tile(battle, &mut self.map_manager.player);
-                    }
-                }
-            }
-            if self.warp_transition.is_finished() {
-                self.textures.player.draw = true;
-                self.warp_transition.despawn();
-                self.map_manager.player.unfreeze();
-                if let Some(destination) = self.map_manager.warp.take() {
-                    if destination.transition.move_on_exit {
-                        self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.character.position.direction), delta);
-                    }
-                }
-                
-            }
-        } else {
-            if self.map_manager.warp.is_some() {
-                self.warp_transition.spawn();
-                self.map_manager.player.freeze_input();
-            }
-        }
-
-        if !self.map_manager.player.is_frozen() {
-            if self.map_manager.player.do_move(delta) {
-                self.stop_player(battle);
-            }
-        }
-
-        let offset = if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.chunk().map(|chunk| chunk.coords)
-        } else {
-            None
-        }.unwrap_or(firecore_game::util::Coordinate { x: 0, y: 0 });
-
-        self.render_coords = RenderCoords::new(offset, &self.map_manager.player.character);
-        
-    }
-
-    pub fn render(&self) {
-        if self.map_manager.chunk_active {
-            self.map_manager.chunk_map.render(&self.textures, self.render_coords, true);
-        } else {
-            self.map_manager.map_set_manager.render(&self.textures, self.render_coords, true);
-        }
-        self.textures.player.render(&self.map_manager.player.character);
-        self.text_window.render();
-        self.start_menu.render(); 
-        self.warp_transition.render();
-    }
-
-    pub fn save_data(&self, player_data: &mut PlayerSave) {
-        use firecore_game::storage::player;
-        if self.map_manager.chunk_active {
-            player_data.location.map = None;
-            player_data.location.index = self.map_manager.chunk_map.current.unwrap_or(player::default_index());
-        } else {
-            player_data.location.map = Some(self.map_manager.map_set_manager.current.unwrap_or(player::default_map()));
-            player_data.location.index = self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(player::default_index());
-		}
-		player_data.character = self.map_manager.player.character.clone();
-    }
-
-    pub fn input(&mut self, delta: f32, battle: BattleEntryRef, party_gui: &mut PartyGui, bag_gui: &mut BagGui, action: &mut Option<GameStateAction>) {
-
-        if firecore_game::is_debug() {
-            self.debug_input(battle)
-        }
-
-        if pressed(Control::Start) {
-            self.start_menu.toggle();
-        }
+    pub fn update(&mut self, delta: f32, battle: BattleEntryRef, party: &mut PartyGui, bag: &mut BagGui, action: &mut Option<GameStateAction>) {
 
         if self.start_menu.is_alive() {
-            self.start_menu.input(action, party_gui, bag_gui);
+            self.start_menu.update(delta, party, bag, action);
         } else {
 
-            if self.map_manager.chunk_active {
-                self.map_manager.chunk_map.input(delta, &mut self.map_manager.player);
-            } else {
-                self.map_manager.map_set_manager.input(delta, &mut self.map_manager.player);
+            if pressed(Control::Start) {
+                self.start_menu.spawn();
             }
-    
+
+            if firecore_game::is_debug() {
+                self.debug_input(battle)
+            }
+
             if !(!self.map_manager.player.character.position.offset.is_zero() || self.map_manager.player.is_frozen() ) {
 
                 if down(Control::B) {
@@ -263,16 +168,13 @@ impl WorldManager {
                             match result {
                                 firecore_world_lib::map::manager::TryMoveResult::MapUpdate => self.map_start(true),
                                 firecore_world_lib::map::manager::TryMoveResult::TrySwim => {
-                                    if let Some(saves) = get::<PlayerSaves>() {
-                                        let surf = firecore_game::deps::tinystr::tinystr8!("surf");
-                                        for id in saves.get().party.iter().map(|pokemon| pokemon.moves.as_ref().map(|moves| game::pokedex::moves::saved::to_instance(moves))).flatten().map(|moves| moves.into_iter().map(|instance| firecore_game::pokedex::moves::get_game_move(&instance.pokemon_move.id).map(|game_move| game_move.field_id).flatten()).flatten()).flatten() {
-                                            if id == surf {
-                                                self.map_manager.player.character.move_type = MoveType::Swimming;
-                                                self.map_manager.try_move(self.first_direction, delta);
-                                                break;
-                                            }
+                                    let surf = firecore_game::deps::tinystr::tinystr8!("surf");
+                                    for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| firecore_game::pokedex::moves::get_game_move(&instance.move_ref.value().id).map(|game_move| game_move.field_id).flatten())).flatten() {
+                                        if id == surf {
+                                            self.map_manager.player.character.move_type = MoveType::Swimming;
+                                            self.map_manager.try_move(self.first_direction, delta);
+                                            break;
                                         }
-                                        
                                     }
                                     // self.text_window.set_text(firecore_game::text::Message::new(firecore_game::text::TextColor::Black, vec![]));
                                 }
@@ -305,8 +207,90 @@ impl WorldManager {
                     }
                 }
             }
+
+            // Update
+
+            self.textures.tiles.update(delta);
+            self.textures.player.update(delta, &mut self.map_manager.player.character);
+    
+            if self.map_manager.chunk_active {
+                self.map_manager.chunk_map.update(delta, &mut self.map_manager.player, battle, &mut self.map_manager.warp, &mut self.text_window);
+            } else {
+                self.map_manager.map_set_manager.update(delta, &mut self.map_manager.player, battle, &mut self.map_manager.warp, &mut self.text_window);
+            }
+    
+            if self.warp_transition.is_alive() {
+                self.warp_transition.update(delta);
+                if self.warp_transition.switch() {
+                    if let Some(destination) = self.map_manager.warp.clone() {
+                        self.textures.player.draw = !destination.transition.move_on_exit;
+                        let change_music = destination.transition.change_music;
+                        self.map_manager.warp(destination);
+                        self.map_start(change_music);
+                        if self.map_manager.chunk_active {
+                            self.map_manager.chunk_map.on_tile(battle, &mut self.map_manager.player);
+                        } else {
+                            self.map_manager.map_set_manager.on_tile(battle, &mut self.map_manager.player);
+                        }
+                    }
+                }
+                if self.warp_transition.is_finished() {
+                    self.textures.player.draw = true;
+                    self.warp_transition.despawn();
+                    self.map_manager.player.unfreeze();
+                    if let Some(destination) = self.map_manager.warp.take() {
+                        if destination.transition.move_on_exit {
+                            self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.character.position.direction), delta);
+                        }
+                    }
+                    
+                }
+            } else {
+                if self.map_manager.warp.is_some() {
+                    self.warp_transition.spawn();
+                    self.map_manager.player.freeze_input();
+                }
+            }
+    
+            if !self.map_manager.player.is_frozen() {
+                if self.map_manager.player.do_move(delta) {
+                    self.stop_player(battle);
+                }
+            }
+    
+            let offset = if self.map_manager.chunk_active {
+                self.map_manager.chunk_map.chunk().map(|chunk| chunk.coords)
+            } else {
+                None
+            }.unwrap_or(firecore_game::util::Coordinate { x: 0, y: 0 });
+    
+            self.render_coords = RenderCoords::new(offset, &self.map_manager.player.character);
+
         }
         
+    }
+
+    pub fn render(&self) {
+        if self.map_manager.chunk_active {
+            self.map_manager.chunk_map.render(&self.textures, self.render_coords, true);
+        } else {
+            self.map_manager.map_set_manager.render(&self.textures, self.render_coords, true);
+        }
+        self.textures.player.render(&self.map_manager.player.character);
+        self.text_window.render();
+        self.start_menu.render(); 
+        self.warp_transition.render();
+    }
+
+    pub fn save_data(&self, save: &mut PlayerSave) {
+        use firecore_game::storage::player;
+        save.location.map = (!self.map_manager.chunk_active).then(|| self.map_manager.map_set_manager.current.unwrap_or(player::default_map()));
+        save.location.index = if self.map_manager.chunk_active {
+            self.map_manager.chunk_map.current.unwrap_or(player::default_index())
+        } else {
+            self.map_manager.map_set_manager.set().map(|map| map.current).flatten().unwrap_or(player::default_index())
+		};
+		save.character = self.map_manager.player.character.clone();
     }
 
     fn stop_player(&mut self, battle: BattleEntryRef) {
@@ -371,36 +355,57 @@ impl WorldManager {
         }
 
         if is_key_pressed(KeyCode::F4) {
-            if let Some(saves) = get::<PlayerSaves>() {
-                for (slot, instance) in saves.get().party.iter().enumerate() {
-                    if let Some(pokemon) = pokedex().get(&instance.id) {
-                        info!("Party Slot {}: Lv{} {}", slot, instance.data.level, pokemon.data.name);
-                    }
-                }
+            for (slot, instance) in data().party.iter().enumerate() {
+                info!("Party Slot {}: Lv{} {}", slot, instance.data.level, instance.name());
             }
         }
 
         if is_key_pressed(KeyCode::F5) {
-            if let Some(mut saves) = get_mut::<PlayerSaves>() {
-
-                if let Some(map) = if self.map_manager.chunk_active {
-                    self.map_manager.chunk_map.chunk().map(|chunk| &chunk.map)
-                } else {
-                    self.map_manager.map_set_manager.set().map(|map| map.map()).flatten()
-                } {
-
-                    info!("Resetting battled trainers in this map! ({})", map.name);
-                    saves.get_mut().world.get_map(&map.id).battled.clear();
-
-                }               
+            if let Some(map) = if self.map_manager.chunk_active {
+                self.map_manager.chunk_map.chunk().map(|chunk| &chunk.map)
+            } else {
+                self.map_manager.map_set_manager.set().map(|map| map.map()).flatten()
+            } {
+                info!("Resetting battled trainers in this map! ({})", map.name);
+                data_mut().world.get_map(&map.id).battled.clear();
             }
         }
 
         if is_key_pressed(KeyCode::F6) {
-            if let Some(mut saves) = get_mut::<PlayerSaves>() {
-                info!("Clearing used scripts in player data!");
-                saves.get_mut().world.scripts.clear();
-            }
+            info!("Clearing used scripts in player data!");
+            data_mut().world.scripts.clear();
+        }
+
+        if is_key_pressed(KeyCode::F7) {
+            self.map_manager.player.character.freeze();
+            self.map_manager.player.character.unfreeze();
+            self.map_manager.player.character.noclip = true;
+            info!("Unfroze player!");
+        }
+
+        // F8 in use
+        
+        if is_key_pressed(KeyCode::F9) {
+            use std::sync::atomic::Ordering::Relaxed;
+            let wild = !super::WILD_ENCOUNTERS.load(Relaxed);
+            super::WILD_ENCOUNTERS.store(wild, Relaxed);
+            info!("Wild Encounters: {}", wild);
+        }
+
+        if is_key_pressed(KeyCode::H) {
+            data_mut().party.iter_mut().for_each(|pokemon| {
+                pokemon.current_hp = pokemon.base.hp;
+                for pmove in &mut pokemon.moves {
+                    pmove.pp = pmove.move_ref.value().pp;
+                }
+            });
+        }
+
+        if is_key_pressed(KeyCode::B) {
+            data_mut().add_item(firecore_game::pokedex::item::ItemStack {
+                item: <firecore_game::pokedex::item::Item as firecore_game::pokedex::Identifiable>::get(&"pokeball".parse::<firecore_game::pokedex::item::ItemId>().unwrap()),
+                count: 50,
+            });
         }
         
     }

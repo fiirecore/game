@@ -101,13 +101,13 @@ pub async fn start() {
     set_camera(&game_camera());
     
 
-    // Loads configuration and player saves, sets up controls
+    // Loads configuration, sets up controls
 
-    game::init::data().await;
+    game::init::configuration().await;
 
     // Loads fonts
 
-    match postcard::from_bytes(include_bytes!("../build/data/fonts.bin")) {
+    match game::deps::ser::deserialize(include_bytes!("../build/data/fonts.bin")) {
         Ok(font_sheets) => game::init::text(font_sheets),
         Err(err) => {
             warn!("Could not load font sheets with error {}", err);
@@ -143,7 +143,7 @@ pub async fn start() {
     #[cfg(feature = "audio")]
     if !args.contains(&Args::DisableAudio) && !game::is_debug() {
         // Load audio files and setup audio
-        match postcard::from_bytes(include_bytes!("../build/data/audio.bin")) {
+        match game::deps::ser::deserialize(include_bytes!("../build/data/audio.bin")) {
             Ok(sound) => game::init::audio(sound),
             Err(err) => game::macroquad::prelude::error!("Could not read sound file with error {}", err)
         }
@@ -163,10 +163,14 @@ pub async fn start() {
 
     // Load pokedex and movedex;
 
-    match postcard::from_bytes(include_bytes!("../build/data/dex.bin")) {
+    match game::deps::ser::deserialize(include_bytes!("../build/data/dex.bin")) {
         Ok(dex) => game::init::pokedex(dex),
         Err(err) => panic!("Could not load pokedex with error {}", err),
     };
+
+    // loads player saves
+    
+    game::storage::init().await;
 
     // Load scenes
    

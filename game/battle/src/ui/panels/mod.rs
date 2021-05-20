@@ -51,12 +51,13 @@ impl BattlePanel {
         }
     }
 
-    pub fn setup(&mut self, last_move: &mut Option<(usize, usize)>, instance: &PokemonInstance, targets: &crate::pokemon::ActivePokemonArray) {
+    pub fn run(&mut self, last_move: &mut Option<(usize, usize)>, instance: &PokemonInstance, targets: &crate::pokemon::ActivePokemonArray) {
         self.battle.setup(instance);
         self.fight.setup(instance, targets);
         let last_move = last_move.take().unwrap_or_default();
         self.fight.moves.cursor = last_move.0;
-        self.fight.targets.cursor = last_move.1
+        self.fight.targets.cursor = last_move.1;
+        self.spawn();
     }
 
     pub fn input(&mut self, pokemon: &PokemonInstance) -> Option<BattlePanels> {

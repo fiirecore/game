@@ -11,6 +11,9 @@ pub struct DestinationPath {
 
 impl DestinationPath {
     pub fn new_path(origin: Coordinate, destination: Destination) -> Self {
+        // if origin == destination.coords {
+        //     return None;
+        // }
         let xlen = destination.coords.x - origin.x;
         let xdir = if xlen.is_negative() {
             Direction::Left

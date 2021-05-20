@@ -1,5 +1,5 @@
 use game::{
-	storage::{get_mut, player::PlayerSaves},
+	storage::PLAYER_SAVES,
 	macroquad::miniquad::date,
 };
 
@@ -18,7 +18,7 @@ impl MenuState for CharacterCreationState {
 	}
 	
 	fn on_start(&mut self) {
-		get_mut::<PlayerSaves>().expect("Could not get player saves!").select_new(&format!("Player{}", date::now() as u64 % 1000000));
+		unsafe{PLAYER_SAVES.as_mut()}.expect("Could not get player saves!").select_new(&format!("Player{}", date::now() as u64 % 1000000));
 		self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
 	}
 	
