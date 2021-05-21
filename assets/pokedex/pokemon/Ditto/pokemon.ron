@@ -1,0 +1,32 @@
+(
+    data: (
+        id: 132,
+        name: "Ditto",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Transform",
+        height: 3,
+        weight: 40,
+    ),
+    base: (
+        hp: 48,
+        atk: 48,
+        def: 48,
+        sp_atk: 48,
+        sp_def: 48,
+        speed: 48,
+    ),
+    training: (
+        base_exp: 101,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "transform",
+            level: 1,
+        ),
+    ],
+)

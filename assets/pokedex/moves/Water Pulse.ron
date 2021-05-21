@@ -1,0 +1,11 @@
+(
+    id: "water-pulse",
+    name: "Water Pulse",
+    category: Special,
+    type: Water,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "uproar"
-name = "Uproar"
-type = "Normal"
-category = "Special"
-power = 90
-accuracy = 100
-pp = 10

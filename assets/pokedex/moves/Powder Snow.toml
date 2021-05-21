@@ -1,7 +1,0 @@
-id = "powder-snow"
-name = "Powder Snow"
-type = "Ice"
-category = "Special"
-power = 40
-accuracy = 100
-pp = 25

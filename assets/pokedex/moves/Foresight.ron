@@ -1,0 +1,11 @@
+(
+    id: "foresight",
+    name: "Foresight",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 40,
+    target: Opponent,
+    script: None,
+)

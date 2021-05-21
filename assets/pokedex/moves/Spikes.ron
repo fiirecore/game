@@ -1,0 +1,11 @@
+(
+    id: "spikes",
+    name: "Spikes",
+    category: Status,
+    type: Ground,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

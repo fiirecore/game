@@ -1,0 +1,11 @@
+(
+    id: "wild-charge",
+    name: "Wild Charge",
+    category: Physical,
+    type: Electric,
+    power: Some(90),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

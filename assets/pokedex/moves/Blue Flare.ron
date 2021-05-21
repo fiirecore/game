@@ -1,0 +1,11 @@
+(
+    id: "blue-flare",
+    name: "Blue Flare",
+    category: Special,
+    type: Fire,
+    power: Some(130),
+    accuracy: Some(85),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

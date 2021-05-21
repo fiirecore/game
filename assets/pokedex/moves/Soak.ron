@@ -1,0 +1,11 @@
+(
+    id: "soak",
+    name: "Soak",
+    category: Status,
+    type: Water,
+    power: None,
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

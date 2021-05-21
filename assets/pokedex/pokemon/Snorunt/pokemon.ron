@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 361,
+        name: "Snorunt",
+        primary_type: Ice,
+        secondary_type: None,
+        species: "Snow",
+        height: 7,
+        weight: 168,
+    ),
+    base: (
+        hp: 50,
+        atk: 50,
+        def: 50,
+        sp_atk: 50,
+        sp_def: 50,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 60,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "headbutt",
+            level: 19,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 10,
+        ),
+        (
+            move: "ice-beam",
+            level: 34,
+        ),
+        (
+            move: "blizzard",
+            level: 43,
+        ),
+        (
+            move: "double-team",
+            level: 7,
+        ),
+        (
+            move: "powder-snow",
+            level: 1,
+        ),
+        (
+            move: "protect",
+            level: 25,
+        ),
+        (
+            move: "icy-wind",
+            level: 16,
+        ),
+        (
+            move: "crunch",
+            level: 28,
+        ),
+        (
+            move: "hail",
+            level: 37,
+        ),
+    ],
+)

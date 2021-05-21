@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 274,
+        name: "Nuzleaf",
+        primary_type: Grass,
+        secondary_type: Some(Dark),
+        species: "Wily",
+        height: 10,
+        weight: 280,
+    ),
+    base: (
+        hp: 70,
+        atk: 70,
+        def: 40,
+        sp_atk: 60,
+        sp_def: 40,
+        speed: 60,
+    ),
+    training: (
+        base_exp: 119,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "pound",
+            level: 1,
+        ),
+        (
+            move: "razor-wind",
+            level: 37,
+        ),
+        (
+            move: "growth",
+            level: 7,
+        ),
+        (
+            move: "harden",
+            level: 3,
+        ),
+        (
+            move: "feint-attack",
+            level: 31,
+        ),
+        (
+            move: "swagger",
+            level: 43,
+        ),
+        (
+            move: "fake-out",
+            level: 19,
+        ),
+        (
+            move: "torment",
+            level: 25,
+        ),
+        (
+            move: "nature-power",
+            level: 13,
+        ),
+        (
+            move: "extrasensory",
+            level: 49,
+        ),
+    ],
+)

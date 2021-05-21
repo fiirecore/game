@@ -1,0 +1,11 @@
+(
+    id: "muddy-water",
+    name: "Muddy Water",
+    category: Special,
+    type: Water,
+    power: Some(90),
+    accuracy: Some(85),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

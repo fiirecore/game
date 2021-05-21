@@ -1,0 +1,11 @@
+(
+    id: "focus-punch",
+    name: "Focus Punch",
+    category: Physical,
+    type: Fighting,
+    power: Some(150),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

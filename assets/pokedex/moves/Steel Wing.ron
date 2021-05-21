@@ -1,0 +1,11 @@
+(
+    id: "steel-wing",
+    name: "Steel Wing",
+    category: Physical,
+    type: Steel,
+    power: Some(70),
+    accuracy: Some(90),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "ice-fang",
+    name: "Ice Fang",
+    category: Physical,
+    type: Ice,
+    power: Some(65),
+    accuracy: Some(95),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

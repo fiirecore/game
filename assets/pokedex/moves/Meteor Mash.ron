@@ -1,0 +1,11 @@
+(
+    id: "meteor-mash",
+    name: "Meteor Mash",
+    category: Physical,
+    type: Steel,
+    power: Some(90),
+    accuracy: Some(90),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

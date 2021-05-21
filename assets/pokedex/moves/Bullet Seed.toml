@@ -1,7 +1,0 @@
-id = "bullet-seed"
-name = "Bullet Seed"
-type = "Grass"
-category = "Physical"
-power = 25
-accuracy = 100
-pp = 30

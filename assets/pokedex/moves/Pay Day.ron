@@ -1,0 +1,11 @@
+(
+    id: "pay-day",
+    name: "Pay Day",
+    category: Physical,
+    type: Normal,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

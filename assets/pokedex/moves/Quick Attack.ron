@@ -1,0 +1,11 @@
+(
+    id: "quick-attack",
+    name: "Quick Attack",
+    category: Physical,
+    type: Normal,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

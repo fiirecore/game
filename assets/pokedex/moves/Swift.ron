@@ -1,0 +1,11 @@
+(
+    id: "swift",
+    name: "Swift",
+    category: Special,
+    type: Normal,
+    power: Some(60),
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

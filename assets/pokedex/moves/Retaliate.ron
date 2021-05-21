@@ -1,0 +1,11 @@
+(
+    id: "retaliate",
+    name: "Retaliate",
+    category: Physical,
+    type: Normal,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

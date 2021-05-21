@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 24,
+        name: "Arbok",
+        primary_type: Poison,
+        secondary_type: None,
+        species: "Cobra",
+        height: 35,
+        weight: 650,
+    ),
+    base: (
+        hp: 60,
+        atk: 95,
+        def: 69,
+        sp_atk: 65,
+        sp_def: 79,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 157,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "wrap",
+            level: 1,
+        ),
+        (
+            move: "poison-sting",
+            level: 1,
+        ),
+        (
+            move: "poison-sting",
+            level: 8,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 13,
+        ),
+        (
+            move: "acid",
+            level: 38,
+        ),
+        (
+            move: "screech",
+            level: 28,
+        ),
+        (
+            move: "haze",
+            level: 56,
+        ),
+        (
+            move: "glare",
+            level: 20,
+        ),
+        (
+            move: "stockpile",
+            level: 46,
+        ),
+        (
+            move: "spit-up",
+            level: 46,
+        ),
+        (
+            move: "swallow",
+            level: 46,
+        ),
+    ],
+)

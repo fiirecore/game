@@ -1,0 +1,11 @@
+(
+    id: "lava-plume",
+    name: "Lava Plume",
+    category: Special,
+    type: Fire,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

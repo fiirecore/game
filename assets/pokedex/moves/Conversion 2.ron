@@ -1,0 +1,11 @@
+(
+    id: "conversion-2",
+    name: "Conversion 2",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

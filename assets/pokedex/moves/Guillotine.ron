@@ -1,0 +1,11 @@
+(
+    id: "guillotine",
+    name: "Guillotine",
+    category: Physical,
+    type: Normal,
+    power: None,
+    accuracy: Some(30),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

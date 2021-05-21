@@ -1,0 +1,11 @@
+(
+    id: "dragon-claw",
+    name: "Dragon Claw",
+    category: Physical,
+    type: Dragon,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

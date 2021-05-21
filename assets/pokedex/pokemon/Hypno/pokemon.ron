@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 97,
+        name: "Hypno",
+        primary_type: Psychic,
+        secondary_type: None,
+        species: "Hypnosis",
+        height: 16,
+        weight: 756,
+    ),
+    base: (
+        hp: 85,
+        atk: 73,
+        def: 70,
+        sp_atk: 73,
+        sp_def: 115,
+        speed: 67,
+    ),
+    training: (
+        base_exp: 169,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "pound",
+            level: 1,
+        ),
+        (
+            move: "headbutt",
+            level: 17,
+        ),
+        (
+            move: "disable",
+            level: 1,
+        ),
+        (
+            move: "disable",
+            level: 7,
+        ),
+        (
+            move: "confusion",
+            level: 1,
+        ),
+        (
+            move: "confusion",
+            level: 11,
+        ),
+        (
+            move: "psychic",
+            level: 35,
+        ),
+        (
+            move: "hypnosis",
+            level: 1,
+        ),
+        (
+            move: "meditate",
+            level: 29,
+        ),
+        (
+            move: "poison-gas",
+            level: 21,
+        ),
+        (
+            move: "nightmare",
+            level: 1,
+        ),
+        (
+            move: "swagger",
+            level: 49,
+        ),
+        (
+            move: "psych-up",
+            level: 43,
+        ),
+        (
+            move: "future-sight",
+            level: 57,
+        ),
+    ],
+)

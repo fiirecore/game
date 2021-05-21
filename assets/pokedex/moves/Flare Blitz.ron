@@ -1,0 +1,11 @@
+(
+    id: "flare-blitz",
+    name: "Flare Blitz",
+    category: Physical,
+    type: Fire,
+    power: Some(120),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

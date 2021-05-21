@@ -1,0 +1,11 @@
+(
+    id: "rock-tomb",
+    name: "Rock Tomb",
+    category: Physical,
+    type: Rock,
+    power: Some(60),
+    accuracy: Some(95),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

@@ -1,6 +1,0 @@
-id = "disable"
-name = "Disable"
-type = "Normal"
-category = "Status"
-accuracy = 100
-pp = 20

@@ -191,7 +191,7 @@ impl PokemonInstance {
 			MoveCategory::Status => (0.0, 0.0),
 		};
 		(
-			(((((2.0 * self.data.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
+			(((((2.0 * self.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
 			* (POKEMON_RANDOM.gen_range(85, 101u8) as f64 / 100.0)
 			* (if pokemon_type == self.pokemon.value().data.primary_type { 1.5 } else { 1.0 })
 		) as Health
@@ -235,9 +235,9 @@ impl PokemonInstance {
 	}
 
 	fn chance_status(&mut self, chance: u8, effect: StatusEffect) -> MoveResults {
-		if self.data.status.is_none() {
+		if self.status.is_none() {
 			if chance >= POKEMON_RANDOM.gen_range(1, 11) {
-				self.data.status = Some(effect);
+				self.status = Some(effect);
 				MoveResults::Status(effect.status)
 			} else {
 				MoveResults::None

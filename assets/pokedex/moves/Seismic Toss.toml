@@ -1,6 +1,0 @@
-id = "seismic-toss"
-name = "Seismic Toss"
-type = "Fighting"
-category = "Physical"
-accuracy = 100
-pp = 20

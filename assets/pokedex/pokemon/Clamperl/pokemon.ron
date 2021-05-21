@@ -1,0 +1,44 @@
+(
+    data: (
+        id: 366,
+        name: "Clamperl",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Bivalve",
+        height: 4,
+        weight: 525,
+    ),
+    base: (
+        hp: 35,
+        atk: 64,
+        def: 85,
+        sp_atk: 74,
+        sp_def: 55,
+        speed: 32,
+    ),
+    training: (
+        base_exp: 69,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "water-gun",
+            level: 1,
+        ),
+        (
+            move: "clamp",
+            level: 1,
+        ),
+        (
+            move: "whirlpool",
+            level: 1,
+        ),
+        (
+            move: "iron-defense",
+            level: 1,
+        ),
+    ],
+)

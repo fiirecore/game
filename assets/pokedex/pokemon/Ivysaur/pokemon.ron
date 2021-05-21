@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 2,
+        name: "Ivysaur",
+        primary_type: Grass,
+        secondary_type: Some(Poison),
+        species: "Seed",
+        height: 10,
+        weight: 130,
+    ),
+    base: (
+        hp: 60,
+        atk: 62,
+        def: 63,
+        sp_atk: 80,
+        sp_def: 80,
+        speed: 60,
+    ),
+    training: (
+        base_exp: 142,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "vine-whip",
+            level: 10,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 4,
+        ),
+        (
+            move: "leech-seed",
+            level: 1,
+        ),
+        (
+            move: "leech-seed",
+            level: 7,
+        ),
+        (
+            move: "growth",
+            level: 38,
+        ),
+        (
+            move: "razor-leaf",
+            level: 22,
+        ),
+        (
+            move: "solar-beam",
+            level: 56,
+        ),
+        (
+            move: "poison-powder",
+            level: 15,
+        ),
+        (
+            move: "sleep-powder",
+            level: 15,
+        ),
+        (
+            move: "sweet-scent",
+            level: 29,
+        ),
+        (
+            move: "synthesis",
+            level: 47,
+        ),
+    ],
+)

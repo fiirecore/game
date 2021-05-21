@@ -1,6 +1,0 @@
-id = "sleep-powder"
-name = "Sleep Powder"
-type = "Grass"
-category = "Status"
-accuracy = 75
-pp = 15

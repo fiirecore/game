@@ -1,0 +1,11 @@
+(
+    id: "cross-poison",
+    name: "Cross Poison",
+    category: Physical,
+    type: Poison,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

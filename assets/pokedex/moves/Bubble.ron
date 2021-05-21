@@ -1,0 +1,11 @@
+(
+    id: "bubble",
+    name: "Bubble",
+    category: Special,
+    type: Water,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

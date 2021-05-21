@@ -1,0 +1,11 @@
+(
+    id: "pound",
+    name: "Pound",
+    category: Physical,
+    type: Normal,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 35,
+    target: Opponent,
+    script: None,
+)

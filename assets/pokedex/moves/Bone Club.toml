@@ -1,7 +1,0 @@
-id = "bone-club"
-name = "Bone Club"
-type = "Ground"
-category = "Physical"
-power = 65
-accuracy = 85
-pp = 20

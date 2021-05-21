@@ -1,0 +1,11 @@
+(
+    id: "punishment",
+    name: "Punishment",
+    category: Physical,
+    type: Dark,
+    power: None,
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

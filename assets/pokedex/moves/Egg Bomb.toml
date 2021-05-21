@@ -1,7 +1,0 @@
-id = "egg-bomb"
-name = "Egg Bomb"
-type = "Normal"
-category = "Physical"
-power = 100
-accuracy = 75
-pp = 10

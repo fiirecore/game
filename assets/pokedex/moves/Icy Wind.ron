@@ -1,0 +1,11 @@
+(
+    id: "icy-wind",
+    name: "Icy Wind",
+    category: Special,
+    type: Ice,
+    power: Some(55),
+    accuracy: Some(95),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

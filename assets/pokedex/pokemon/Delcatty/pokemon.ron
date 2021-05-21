@@ -1,0 +1,44 @@
+(
+    data: (
+        id: 301,
+        name: "Delcatty",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Prim",
+        height: 11,
+        weight: 326,
+    ),
+    base: (
+        hp: 70,
+        atk: 65,
+        def: 65,
+        sp_atk: 55,
+        sp_def: 55,
+        speed: 90,
+    ),
+    training: (
+        base_exp: 140,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(6),
+    ),
+    moves: [
+        (
+            move: "double-slap",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "sing",
+            level: 1,
+        ),
+        (
+            move: "attract",
+            level: 1,
+        ),
+    ],
+)

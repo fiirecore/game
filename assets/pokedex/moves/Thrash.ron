@@ -1,0 +1,11 @@
+(
+    id: "thrash",
+    name: "Thrash",
+    category: Physical,
+    type: Normal,
+    power: Some(120),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

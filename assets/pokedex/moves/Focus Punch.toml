@@ -1,7 +1,0 @@
-id = "focus-punch"
-name = "Focus Punch"
-type = "Fighting"
-category = "Physical"
-power = 150
-accuracy = 100
-pp = 20

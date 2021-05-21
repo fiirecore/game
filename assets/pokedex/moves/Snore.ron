@@ -1,0 +1,11 @@
+(
+    id: "snore",
+    name: "Snore",
+    category: Special,
+    type: Normal,
+    power: Some(50),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 212,
+        name: "Scizor",
+        primary_type: Bug,
+        secondary_type: Some(Steel),
+        species: "Pincer",
+        height: 18,
+        weight: 1180,
+    ),
+    base: (
+        hp: 70,
+        atk: 130,
+        def: 100,
+        sp_atk: 55,
+        sp_def: 80,
+        speed: 65,
+    ),
+    training: (
+        base_exp: 175,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "swords-dance",
+            level: 36,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "agility",
+            level: 21,
+        ),
+        (
+            move: "quick-attack",
+            level: 1,
+        ),
+        (
+            move: "focus-energy",
+            level: 6,
+        ),
+        (
+            move: "slash",
+            level: 31,
+        ),
+        (
+            move: "false-swipe",
+            level: 16,
+        ),
+        (
+            move: "fury-cutter",
+            level: 46,
+        ),
+        (
+            move: "pursuit",
+            level: 11,
+        ),
+        (
+            move: "metal-claw",
+            level: 26,
+        ),
+        (
+            move: "iron-defense",
+            level: 41,
+        ),
+    ],
+)

@@ -1,7 +1,0 @@
-id = "mist-ball"
-name = "Mist Ball"
-type = "Psychic"
-category = "Special"
-power = 70
-accuracy = 100
-pp = 5

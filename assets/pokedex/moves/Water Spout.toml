@@ -1,7 +1,0 @@
-id = "water-spout"
-name = "Water Spout"
-type = "Water"
-category = "Special"
-power = 150
-accuracy = 100
-pp = 5

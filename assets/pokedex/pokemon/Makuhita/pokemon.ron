@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 296,
+        name: "Makuhita",
+        primary_type: Fighting,
+        secondary_type: None,
+        species: "Guts",
+        height: 10,
+        weight: 864,
+    ),
+    base: (
+        hp: 72,
+        atk: 60,
+        def: 30,
+        sp_atk: 20,
+        sp_def: 30,
+        speed: 25,
+    ),
+    training: (
+        base_exp: 47,
+        growth_rate: FastThenVerySlow,
+    ),
+    breeding: (
+        gender: Some(2),
+    ),
+    moves: [
+        (
+            move: "whirlwind",
+            level: 22,
+        ),
+        (
+            move: "sand-attack",
+            level: 4,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "seismic-toss",
+            level: 46,
+        ),
+        (
+            move: "focus-energy",
+            level: 1,
+        ),
+        (
+            move: "reversal",
+            level: 49,
+        ),
+        (
+            move: "belly-drum",
+            level: 37,
+        ),
+        (
+            move: "endure",
+            level: 40,
+        ),
+        (
+            move: "vital-throw",
+            level: 13,
+        ),
+        (
+            move: "fake-out",
+            level: 19,
+        ),
+        (
+            move: "smelling-salts",
+            level: 31,
+        ),
+        (
+            move: "knock-off",
+            level: 28,
+        ),
+        (
+            move: "arm-thrust",
+            level: 10,
+        ),
+    ],
+)

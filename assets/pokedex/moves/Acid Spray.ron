@@ -1,0 +1,11 @@
+(
+    id: "acid-spray",
+    name: "Acid Spray",
+    category: Special,
+    type: Poison,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

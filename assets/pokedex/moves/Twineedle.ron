@@ -1,0 +1,11 @@
+(
+    id: "twineedle",
+    name: "Twineedle",
+    category: Physical,
+    type: Bug,
+    power: Some(25),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

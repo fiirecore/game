@@ -1,7 +1,0 @@
-id = "muddy-water"
-name = "Muddy Water"
-type = "Water"
-category = "Special"
-power = 90
-accuracy = 85
-pp = 10

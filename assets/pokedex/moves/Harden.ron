@@ -1,0 +1,11 @@
+(
+    id: "harden",
+    name: "Harden",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

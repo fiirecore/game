@@ -59,7 +59,7 @@ pub struct BaseStatSet {
 
 impl BaseStatSet {
 
-	pub fn get(pokemon: &Pokemon, ivs: StatSet, evs: StatSet, level: Level) -> Self {
+	pub fn get(pokemon: &Pokemon, ivs: &StatSet, evs: &StatSet, level: Level) -> Self {
 		Self {
 			hp: calculate_hp(pokemon.base.hp, ivs.hp, evs.hp, level),
 			atk: calculate_stat(pokemon.base.atk, ivs.atk, evs.atk, level),

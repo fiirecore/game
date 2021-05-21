@@ -1,7 +1,0 @@
-id = "hidden-power"
-name = "Hidden Power"
-type = "Normal"
-category = "Special"
-power = 60
-accuracy = 100
-pp = 15

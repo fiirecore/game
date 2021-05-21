@@ -1,7 +1,0 @@
-id = "hyper-beam"
-name = "Hyper Beam"
-type = "Normal"
-category = "Special"
-power = 150
-accuracy = 90
-pp = 5

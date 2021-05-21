@@ -1,0 +1,11 @@
+(
+    id: "spit-up",
+    name: "Spit Up",
+    category: Special,
+    type: Normal,
+    power: None,
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

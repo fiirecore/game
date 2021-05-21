@@ -130,7 +130,7 @@ impl BattleParty {
             if self.pokemon[index].is_some() {
                 panic!("Party spot at {} is already occupied!", index);
             }
-            let level = instance.value().data.level;
+            let level = instance.value().level;
             self.pokemon[index] = Some(instance);
             self.active[active_index].update_status(level, true);
         }

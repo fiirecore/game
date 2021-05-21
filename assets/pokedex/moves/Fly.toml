@@ -1,7 +1,0 @@
-id = "fly"
-name = "Fly"
-type = "Flying"
-category = "Physical"
-power = 90
-accuracy = 95
-pp = 15

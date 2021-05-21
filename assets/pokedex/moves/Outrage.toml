@@ -1,7 +1,0 @@
-id = "outrage"
-name = "Outrage"
-type = "Dragon"
-category = "Physical"
-power = 120
-accuracy = 100
-pp = 10

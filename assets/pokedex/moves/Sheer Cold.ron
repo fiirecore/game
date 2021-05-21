@@ -1,0 +1,11 @@
+(
+    id: "sheer-cold",
+    name: "Sheer Cold",
+    category: Special,
+    type: Ice,
+    power: None,
+    accuracy: Some(30),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

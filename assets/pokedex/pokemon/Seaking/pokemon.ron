@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 119,
+        name: "Seaking",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Goldfish",
+        height: 13,
+        weight: 390,
+    ),
+    base: (
+        hp: 80,
+        atk: 92,
+        def: 65,
+        sp_atk: 65,
+        sp_def: 80,
+        speed: 68,
+    ),
+    training: (
+        base_exp: 158,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "horn-attack",
+            level: 15,
+        ),
+        (
+            move: "fury-attack",
+            level: 29,
+        ),
+        (
+            move: "horn-drill",
+            level: 49,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "supersonic",
+            level: 1,
+        ),
+        (
+            move: "supersonic",
+            level: 10,
+        ),
+        (
+            move: "peck",
+            level: 1,
+        ),
+        (
+            move: "agility",
+            level: 61,
+        ),
+        (
+            move: "waterfall",
+            level: 41,
+        ),
+        (
+            move: "flail",
+            level: 24,
+        ),
+        (
+            move: "megahorn",
+            level: 69,
+        ),
+        (
+            move: "water-sport",
+            level: 1,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "shock-wave",
+    name: "Shock Wave",
+    category: Special,
+    type: Electric,
+    power: Some(60),
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "skull-bash"
-name = "Skull Bash"
-type = "Normal"
-category = "Physical"
-power = 130
-accuracy = 100
-pp = 10

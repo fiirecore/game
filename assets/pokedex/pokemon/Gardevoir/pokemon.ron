@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 282,
+        name: "Gardevoir",
+        primary_type: Psychic,
+        secondary_type: Some(Fairy),
+        species: "Embrace",
+        height: 16,
+        weight: 484,
+    ),
+    base: (
+        hp: 68,
+        atk: 65,
+        def: 65,
+        sp_atk: 125,
+        sp_def: 115,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 233,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "confusion",
+            level: 1,
+        ),
+        (
+            move: "confusion",
+            level: 6,
+        ),
+        (
+            move: "psychic",
+            level: 26,
+        ),
+        (
+            move: "hypnosis",
+            level: 51,
+        ),
+        (
+            move: "teleport",
+            level: 1,
+        ),
+        (
+            move: "teleport",
+            level: 16,
+        ),
+        (
+            move: "double-team",
+            level: 1,
+        ),
+        (
+            move: "double-team",
+            level: 11,
+        ),
+        (
+            move: "dream-eater",
+            level: 60,
+        ),
+        (
+            move: "future-sight",
+            level: 42,
+        ),
+        (
+            move: "imprison",
+            level: 33,
+        ),
+        (
+            move: "calm-mind",
+            level: 21,
+        ),
+    ],
+)

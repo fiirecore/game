@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 188,
+        name: "Skiploom",
+        primary_type: Grass,
+        secondary_type: Some(Flying),
+        species: "Cottonweed",
+        height: 6,
+        weight: 10,
+    ),
+    base: (
+        hp: 55,
+        atk: 45,
+        def: 50,
+        sp_atk: 45,
+        sp_def: 65,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 119,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "tackle",
+            level: 10,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "tail-whip",
+            level: 5,
+        ),
+        (
+            move: "mega-drain",
+            level: 36,
+        ),
+        (
+            move: "leech-seed",
+            level: 22,
+        ),
+        (
+            move: "poison-powder",
+            level: 13,
+        ),
+        (
+            move: "stun-spore",
+            level: 15,
+        ),
+        (
+            move: "sleep-powder",
+            level: 17,
+        ),
+        (
+            move: "splash",
+            level: 1,
+        ),
+        (
+            move: "cotton-spore",
+            level: 29,
+        ),
+        (
+            move: "synthesis",
+            level: 1,
+        ),
+        (
+            move: "synthesis",
+            level: 5,
+        ),
+    ],
+)

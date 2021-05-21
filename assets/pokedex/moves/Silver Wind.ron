@@ -1,0 +1,11 @@
+(
+    id: "silver-wind",
+    name: "Silver Wind",
+    category: Special,
+    type: Bug,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

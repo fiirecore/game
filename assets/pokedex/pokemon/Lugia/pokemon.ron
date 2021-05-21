@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 249,
+        name: "Lugia",
+        primary_type: Psychic,
+        secondary_type: Some(Flying),
+        species: "Diving",
+        height: 52,
+        weight: 2160,
+    ),
+    base: (
+        hp: 106,
+        atk: 90,
+        def: 130,
+        sp_atk: 90,
+        sp_def: 154,
+        speed: 110,
+    ),
+    training: (
+        base_exp: 306,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "gust",
+            level: 22,
+        ),
+        (
+            move: "whirlwind",
+            level: 1,
+        ),
+        (
+            move: "hydro-pump",
+            level: 44,
+        ),
+        (
+            move: "recover",
+            level: 33,
+        ),
+        (
+            move: "swift",
+            level: 66,
+        ),
+        (
+            move: "aeroblast",
+            level: 77,
+        ),
+        (
+            move: "safeguard",
+            level: 11,
+        ),
+        (
+            move: "rain-dance",
+            level: 55,
+        ),
+        (
+            move: "ancient-power",
+            level: 88,
+        ),
+        (
+            move: "future-sight",
+            level: 99,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "psywave",
+    name: "Psywave",
+    category: Special,
+    type: Psychic,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

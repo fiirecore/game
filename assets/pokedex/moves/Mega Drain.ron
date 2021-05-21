@@ -1,0 +1,11 @@
+(
+    id: "mega-drain",
+    name: "Mega Drain",
+    category: Special,
+    type: Grass,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

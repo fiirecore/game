@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 316,
+        name: "Gulpin",
+        primary_type: Poison,
+        secondary_type: None,
+        species: "Stomach",
+        height: 4,
+        weight: 103,
+    ),
+    base: (
+        hp: 70,
+        atk: 43,
+        def: 53,
+        sp_atk: 43,
+        sp_def: 53,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 60,
+        growth_rate: FastThenVerySlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "pound",
+            level: 1,
+        ),
+        (
+            move: "toxic",
+            level: 28,
+        ),
+        (
+            move: "sludge",
+            level: 14,
+        ),
+        (
+            move: "amnesia",
+            level: 17,
+        ),
+        (
+            move: "poison-gas",
+            level: 9,
+        ),
+        (
+            move: "sludge-bomb",
+            level: 39,
+        ),
+        (
+            move: "encore",
+            level: 23,
+        ),
+        (
+            move: "stockpile",
+            level: 34,
+        ),
+        (
+            move: "spit-up",
+            level: 34,
+        ),
+        (
+            move: "swallow",
+            level: 34,
+        ),
+        (
+            move: "yawn",
+            level: 6,
+        ),
+    ],
+)

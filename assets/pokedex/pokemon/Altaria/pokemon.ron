@@ -1,0 +1,88 @@
+(
+    data: (
+        id: 334,
+        name: "Altaria",
+        primary_type: Dragon,
+        secondary_type: Some(Flying),
+        species: "Humming",
+        height: 11,
+        weight: 206,
+    ),
+    base: (
+        hp: 75,
+        atk: 70,
+        def: 90,
+        sp_atk: 70,
+        sp_def: 105,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 172,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "fury-attack",
+            level: 18,
+        ),
+        (
+            move: "take-down",
+            level: 31,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "sing",
+            level: 1,
+        ),
+        (
+            move: "sing",
+            level: 11,
+        ),
+        (
+            move: "mist",
+            level: 28,
+        ),
+        (
+            move: "peck",
+            level: 1,
+        ),
+        (
+            move: "sky-attack",
+            level: 59,
+        ),
+        (
+            move: "perish-song",
+            level: 54,
+        ),
+        (
+            move: "safeguard",
+            level: 21,
+        ),
+        (
+            move: "dragon-breath",
+            level: 35,
+        ),
+        (
+            move: "refresh",
+            level: 45,
+        ),
+        (
+            move: "astonish",
+            level: 1,
+        ),
+        (
+            move: "astonish",
+            level: 8,
+        ),
+        (
+            move: "dragon-dance",
+            level: 40,
+        ),
+    ],
+)

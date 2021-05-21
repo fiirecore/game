@@ -1,0 +1,11 @@
+(
+    id: "after-you",
+    name: "After You",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

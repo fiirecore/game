@@ -1,0 +1,11 @@
+(
+    id: "u-turn",
+    name: "U-turn",
+    category: Physical,
+    type: Bug,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

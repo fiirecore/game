@@ -1,7 +1,0 @@
-id = "double-edge"
-name = "Double-Edge"
-type = "Normal"
-category = "Physical"
-power = 120
-accuracy = 100
-pp = 15

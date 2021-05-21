@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 219,
+        name: "Magcargo",
+        primary_type: Fire,
+        secondary_type: Some(Rock),
+        species: "Lava",
+        height: 8,
+        weight: 550,
+    ),
+    base: (
+        hp: 60,
+        atk: 50,
+        def: 120,
+        sp_atk: 90,
+        sp_def: 80,
+        speed: 30,
+    ),
+    training: (
+        base_exp: 151,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "body-slam",
+            level: 60,
+        ),
+        (
+            move: "ember",
+            level: 1,
+        ),
+        (
+            move: "ember",
+            level: 8,
+        ),
+        (
+            move: "flamethrower",
+            level: 36,
+        ),
+        (
+            move: "rock-throw",
+            level: 1,
+        ),
+        (
+            move: "rock-throw",
+            level: 15,
+        ),
+        (
+            move: "harden",
+            level: 22,
+        ),
+        (
+            move: "smog",
+            level: 1,
+        ),
+        (
+            move: "amnesia",
+            level: 29,
+        ),
+        (
+            move: "rock-slide",
+            level: 48,
+        ),
+        (
+            move: "yawn",
+            level: 1,
+        ),
+    ],
+)

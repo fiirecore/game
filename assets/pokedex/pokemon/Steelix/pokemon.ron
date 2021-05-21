@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 208,
+        name: "Steelix",
+        primary_type: Steel,
+        secondary_type: Some(Ground),
+        species: "Iron",
+        height: 92,
+        weight: 4000,
+    ),
+    base: (
+        hp: 75,
+        atk: 85,
+        def: 200,
+        sp_atk: 55,
+        sp_def: 65,
+        speed: 30,
+    ),
+    training: (
+        base_exp: 179,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "bind",
+            level: 8,
+        ),
+        (
+            move: "slam",
+            level: 41,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "double-edge",
+            level: 56,
+        ),
+        (
+            move: "rock-throw",
+            level: 12,
+        ),
+        (
+            move: "rage",
+            level: 23,
+        ),
+        (
+            move: "screech",
+            level: 1,
+        ),
+        (
+            move: "harden",
+            level: 19,
+        ),
+        (
+            move: "sandstorm",
+            level: 34,
+        ),
+        (
+            move: "dragon-breath",
+            level: 30,
+        ),
+        (
+            move: "iron-tail",
+            level: 45,
+        ),
+        (
+            move: "crunch",
+            level: 52,
+        ),
+    ],
+)

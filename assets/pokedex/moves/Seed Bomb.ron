@@ -1,0 +1,11 @@
+(
+    id: "seed-bomb",
+    name: "Seed Bomb",
+    category: Physical,
+    type: Grass,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

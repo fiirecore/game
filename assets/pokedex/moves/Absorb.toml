@@ -1,7 +1,0 @@
-id = "absorb"
-name = "Absorb"
-type = "Grass"
-category = "Special"
-power = 20
-accuracy = 100
-pp = 25

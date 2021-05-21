@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 53,
+        name: "Persian",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Classy",
+        height: 10,
+        weight: 320,
+    ),
+    base: (
+        hp: 65,
+        atk: 70,
+        def: 60,
+        sp_atk: 65,
+        sp_def: 65,
+        speed: 115,
+    ),
+    training: (
+        base_exp: 154,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "pay-day",
+            level: 18,
+        ),
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 10,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "screech",
+            level: 34,
+        ),
+        (
+            move: "fury-swipes",
+            level: 42,
+        ),
+        (
+            move: "slash",
+            level: 49,
+        ),
+        (
+            move: "feint-attack",
+            level: 25,
+        ),
+        (
+            move: "swagger",
+            level: 61,
+        ),
+        (
+            move: "fake-out",
+            level: 55,
+        ),
+    ],
+)

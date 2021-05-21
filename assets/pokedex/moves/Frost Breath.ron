@@ -1,0 +1,11 @@
+(
+    id: "frost-breath",
+    name: "Frost Breath",
+    category: Special,
+    type: Ice,
+    power: Some(60),
+    accuracy: Some(90),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

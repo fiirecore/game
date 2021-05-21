@@ -1,0 +1,11 @@
+(
+    id: "tail-whip",
+    name: "Tail Whip",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(100),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

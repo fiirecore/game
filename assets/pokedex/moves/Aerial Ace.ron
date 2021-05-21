@@ -1,0 +1,11 @@
+(
+    id: "aerial-ace",
+    name: "Aerial Ace",
+    category: Physical,
+    type: Flying,
+    power: Some(60),
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

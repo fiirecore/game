@@ -1,0 +1,11 @@
+(
+    id: "sludge",
+    name: "Sludge",
+    category: Special,
+    type: Poison,
+    power: Some(65),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

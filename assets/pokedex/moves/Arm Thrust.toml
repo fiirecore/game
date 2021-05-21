@@ -1,7 +1,0 @@
-id = "arm-thrust"
-name = "Arm Thrust"
-type = "Fighting"
-category = "Physical"
-power = 15
-accuracy = 100
-pp = 20

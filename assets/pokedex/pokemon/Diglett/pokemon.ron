@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 50,
+        name: "Diglett",
+        primary_type: Ground,
+        secondary_type: None,
+        species: "Mole",
+        height: 2,
+        weight: 8,
+    ),
+    base: (
+        hp: 10,
+        atk: 55,
+        def: 25,
+        sp_atk: 35,
+        sp_def: 45,
+        speed: 95,
+    ),
+    training: (
+        base_exp: 53,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "sand-attack",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 5,
+        ),
+        (
+            move: "earthquake",
+            level: 41,
+        ),
+        (
+            move: "fissure",
+            level: 49,
+        ),
+        (
+            move: "dig",
+            level: 17,
+        ),
+        (
+            move: "fury-swipes",
+            level: 21,
+        ),
+        (
+            move: "slash",
+            level: 33,
+        ),
+        (
+            move: "mud-slap",
+            level: 25,
+        ),
+        (
+            move: "magnitude",
+            level: 9,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "soft-boiled",
+    name: "Soft-Boiled",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

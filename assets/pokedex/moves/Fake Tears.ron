@@ -1,0 +1,11 @@
+(
+    id: "fake-tears",
+    name: "Fake Tears",
+    category: Status,
+    type: Dark,
+    power: None,
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

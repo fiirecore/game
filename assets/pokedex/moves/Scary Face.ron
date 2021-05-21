@@ -1,0 +1,11 @@
+(
+    id: "scary-face",
+    name: "Scary Face",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

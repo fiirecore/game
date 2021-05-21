@@ -1,7 +1,0 @@
-id = "luster-purge"
-name = "Luster Purge"
-type = "Psychic"
-category = "Special"
-power = 70
-accuracy = 100
-pp = 5

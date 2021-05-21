@@ -1,0 +1,88 @@
+(
+    data: (
+        id: 259,
+        name: "Marshtomp",
+        primary_type: Water,
+        secondary_type: Some(Ground),
+        species: "Mud",
+        height: 7,
+        weight: 280,
+    ),
+    base: (
+        hp: 70,
+        atk: 85,
+        def: 70,
+        sp_atk: 60,
+        sp_def: 70,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 142,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 31,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "water-gun",
+            level: 1,
+        ),
+        (
+            move: "water-gun",
+            level: 10,
+        ),
+        (
+            move: "earthquake",
+            level: 46,
+        ),
+        (
+            move: "bide",
+            level: 15,
+        ),
+        (
+            move: "protect",
+            level: 42,
+        ),
+        (
+            move: "mud-slap",
+            level: 1,
+        ),
+        (
+            move: "mud-slap",
+            level: 6,
+        ),
+        (
+            move: "foresight",
+            level: 20,
+        ),
+        (
+            move: "endeavor",
+            level: 53,
+        ),
+        (
+            move: "mud-sport",
+            level: 25,
+        ),
+        (
+            move: "muddy-water",
+            level: 37,
+        ),
+        (
+            move: "mud-shot",
+            level: 16,
+        ),
+    ],
+)

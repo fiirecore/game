@@ -1,0 +1,11 @@
+(
+    id: "mud-bomb",
+    name: "Mud Bomb",
+    category: Special,
+    type: Ground,
+    power: Some(65),
+    accuracy: Some(85),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

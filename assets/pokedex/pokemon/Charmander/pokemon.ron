@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 4,
+        name: "Charmander",
+        primary_type: Fire,
+        secondary_type: None,
+        species: "Lizard",
+        height: 6,
+        weight: 85,
+    ),
+    base: (
+        hp: 39,
+        atk: 52,
+        def: 43,
+        sp_atk: 60,
+        sp_def: 50,
+        speed: 65,
+    ),
+    training: (
+        base_exp: 62,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "ember",
+            level: 7,
+        ),
+        (
+            move: "flamethrower",
+            level: 31,
+        ),
+        (
+            move: "dragon-rage",
+            level: 43,
+        ),
+        (
+            move: "fire-spin",
+            level: 49,
+        ),
+        (
+            move: "smokescreen",
+            level: 19,
+        ),
+        (
+            move: "slash",
+            level: 37,
+        ),
+        (
+            move: "scary-face",
+            level: 25,
+        ),
+        (
+            move: "metal-claw",
+            level: 13,
+        ),
+    ],
+)

@@ -1,7 +1,0 @@
-id = "thrash"
-name = "Thrash"
-type = "Normal"
-category = "Physical"
-power = 120
-accuracy = 100
-pp = 10

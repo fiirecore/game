@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 261,
+        name: "Poochyena",
+        primary_type: Dark,
+        secondary_type: None,
+        species: "Bite",
+        height: 5,
+        weight: 136,
+    ),
+    base: (
+        hp: 35,
+        atk: 55,
+        def: 35,
+        sp_atk: 30,
+        sp_def: 30,
+        speed: 35,
+    ),
+    training: (
+        base_exp: 56,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "sand-attack",
+            level: 9,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 33,
+        ),
+        (
+            move: "bite",
+            level: 13,
+        ),
+        (
+            move: "roar",
+            level: 21,
+        ),
+        (
+            move: "thief",
+            level: 45,
+        ),
+        (
+            move: "scary-face",
+            level: 29,
+        ),
+        (
+            move: "swagger",
+            level: 25,
+        ),
+        (
+            move: "crunch",
+            level: 41,
+        ),
+        (
+            move: "taunt",
+            level: 37,
+        ),
+        (
+            move: "odor-sleuth",
+            level: 17,
+        ),
+        (
+            move: "howl",
+            level: 5,
+        ),
+    ],
+)

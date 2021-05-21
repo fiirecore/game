@@ -1,7 +1,0 @@
-id = "fake-out"
-name = "Fake Out"
-type = "Normal"
-category = "Physical"
-power = 40
-accuracy = 100
-pp = 10

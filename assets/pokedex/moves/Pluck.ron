@@ -1,0 +1,11 @@
+(
+    id: "pluck",
+    name: "Pluck",
+    category: Physical,
+    type: Flying,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

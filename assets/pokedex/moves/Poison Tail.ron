@@ -1,0 +1,11 @@
+(
+    id: "poison-tail",
+    name: "Poison Tail",
+    category: Physical,
+    type: Poison,
+    power: Some(50),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "haze",
+    name: "Haze",
+    category: Status,
+    type: Ice,
+    power: None,
+    accuracy: None,
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

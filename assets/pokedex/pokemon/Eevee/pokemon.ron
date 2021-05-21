@@ -1,0 +1,64 @@
+(
+    data: (
+        id: 133,
+        name: "Eevee",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Evolution",
+        height: 3,
+        weight: 65,
+    ),
+    base: (
+        hp: 55,
+        atk: 55,
+        def: 50,
+        sp_atk: 45,
+        sp_def: 65,
+        speed: 55,
+    ),
+    training: (
+        base_exp: 65,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "sand-attack",
+            level: 8,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 42,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 30,
+        ),
+        (
+            move: "growl",
+            level: 16,
+        ),
+        (
+            move: "quick-attack",
+            level: 23,
+        ),
+        (
+            move: "baton-pass",
+            level: 36,
+        ),
+        (
+            move: "helping-hand",
+            level: 1,
+        ),
+    ],
+)

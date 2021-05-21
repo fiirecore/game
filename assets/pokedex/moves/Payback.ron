@@ -1,0 +1,11 @@
+(
+    id: "payback",
+    name: "Payback",
+    category: Physical,
+    type: Dark,
+    power: Some(50),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

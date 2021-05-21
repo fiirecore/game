@@ -1,7 +1,0 @@
-id = "leech-life"
-name = "Leech Life"
-type = "Bug"
-category = "Physical"
-power = 80
-accuracy = 100
-pp = 10

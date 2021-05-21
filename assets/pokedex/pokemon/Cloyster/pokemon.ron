@@ -1,0 +1,52 @@
+(
+    data: (
+        id: 91,
+        name: "Cloyster",
+        primary_type: Water,
+        secondary_type: Some(Ice),
+        species: "Bivalve",
+        height: 15,
+        weight: 1325,
+    ),
+    base: (
+        hp: 50,
+        atk: 95,
+        def: 180,
+        sp_atk: 85,
+        sp_def: 45,
+        speed: 70,
+    ),
+    training: (
+        base_exp: 184,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "supersonic",
+            level: 1,
+        ),
+        (
+            move: "aurora-beam",
+            level: 1,
+        ),
+        (
+            move: "withdraw",
+            level: 1,
+        ),
+        (
+            move: "spike-cannon",
+            level: 43,
+        ),
+        (
+            move: "protect",
+            level: 1,
+        ),
+        (
+            move: "spikes",
+            level: 36,
+        ),
+    ],
+)

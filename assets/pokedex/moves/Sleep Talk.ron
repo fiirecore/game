@@ -1,0 +1,11 @@
+(
+    id: "sleep-talk",
+    name: "Sleep Talk",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

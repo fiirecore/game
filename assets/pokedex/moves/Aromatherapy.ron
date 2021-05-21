@@ -1,0 +1,11 @@
+(
+    id: "aromatherapy",
+    name: "Aromatherapy",
+    category: Status,
+    type: Grass,
+    power: None,
+    accuracy: None,
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "spore",
+    name: "Spore",
+    category: Status,
+    type: Grass,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

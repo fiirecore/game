@@ -1,0 +1,11 @@
+(
+    id: "trick",
+    name: "Trick",
+    category: Status,
+    type: Psychic,
+    power: None,
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

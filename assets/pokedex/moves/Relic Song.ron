@@ -1,0 +1,11 @@
+(
+    id: "relic-song",
+    name: "Relic Song",
+    category: Special,
+    type: Normal,
+    power: Some(75),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

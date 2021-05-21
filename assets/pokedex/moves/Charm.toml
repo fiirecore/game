@@ -1,6 +1,0 @@
-id = "charm"
-name = "Charm"
-type = "Fairy"
-category = "Status"
-accuracy = 100
-pp = 20

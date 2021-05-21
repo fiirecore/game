@@ -1,0 +1,11 @@
+(
+    id: "string-shot",
+    name: "String Shot",
+    category: Status,
+    type: Bug,
+    power: None,
+    accuracy: Some(95),
+    pp: 40,
+    target: Opponent,
+    script: None,
+)

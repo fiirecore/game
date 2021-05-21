@@ -1,0 +1,11 @@
+(
+    id: "twister",
+    name: "Twister",
+    category: Special,
+    type: Dragon,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

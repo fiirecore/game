@@ -1,6 +1,0 @@
-id = "grass-whistle"
-name = "Grass Whistle"
-type = "Grass"
-category = "Status"
-accuracy = 55
-pp = 15

@@ -1,0 +1,11 @@
+(
+    id: "power-trick",
+    name: "Power Trick",
+    category: Status,
+    type: Psychic,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

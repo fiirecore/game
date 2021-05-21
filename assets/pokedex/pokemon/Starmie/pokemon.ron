@@ -1,0 +1,48 @@
+(
+    data: (
+        id: 121,
+        name: "Starmie",
+        primary_type: Water,
+        secondary_type: Some(Psychic),
+        species: "Mysterious",
+        height: 11,
+        weight: 800,
+    ),
+    base: (
+        hp: 60,
+        atk: 75,
+        def: 85,
+        sp_atk: 100,
+        sp_def: 85,
+        speed: 115,
+    ),
+    training: (
+        base_exp: 182,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "water-gun",
+            level: 1,
+        ),
+        (
+            move: "recover",
+            level: 1,
+        ),
+        (
+            move: "confuse-ray",
+            level: 33,
+        ),
+        (
+            move: "swift",
+            level: 1,
+        ),
+        (
+            move: "rapid-spin",
+            level: 1,
+        ),
+    ],
+)

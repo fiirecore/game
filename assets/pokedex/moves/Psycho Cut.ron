@@ -1,0 +1,11 @@
+(
+    id: "psycho-cut",
+    name: "Psycho Cut",
+    category: Physical,
+    type: Psychic,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

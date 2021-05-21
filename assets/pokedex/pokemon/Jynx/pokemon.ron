@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 124,
+        name: "Jynx",
+        primary_type: Ice,
+        secondary_type: Some(Psychic),
+        species: "Human",
+        height: 14,
+        weight: 406,
+    ),
+    base: (
+        hp: 65,
+        atk: 50,
+        def: 35,
+        sp_atk: 115,
+        sp_def: 95,
+        speed: 95,
+    ),
+    training: (
+        base_exp: 159,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(8),
+    ),
+    moves: [
+        (
+            move: "pound",
+            level: 1,
+        ),
+        (
+            move: "double-slap",
+            level: 21,
+        ),
+        (
+            move: "ice-punch",
+            level: 25,
+        ),
+        (
+            move: "body-slam",
+            level: 51,
+        ),
+        (
+            move: "blizzard",
+            level: 67,
+        ),
+        (
+            move: "lick",
+            level: 1,
+        ),
+        (
+            move: "lovely-kiss",
+            level: 1,
+        ),
+        (
+            move: "lovely-kiss",
+            level: 9,
+        ),
+        (
+            move: "powder-snow",
+            level: 1,
+        ),
+        (
+            move: "powder-snow",
+            level: 13,
+        ),
+        (
+            move: "perish-song",
+            level: 57,
+        ),
+        (
+            move: "mean-look",
+            level: 35,
+        ),
+        (
+            move: "fake-tears",
+            level: 41,
+        ),
+    ],
+)

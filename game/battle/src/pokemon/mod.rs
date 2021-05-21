@@ -43,7 +43,7 @@ impl ActivePokemon {
 
     pub fn update(&mut self) {
         let pokemon = self.pokemon.as_ref();
-        self.status.update_gui(pokemon.map(|i| (i.data.level, i)), true);
+        self.status.update_gui(pokemon.map(|i| (i.level, i)), true);
         self.renderer.new_pokemon(pokemon);
     }
     

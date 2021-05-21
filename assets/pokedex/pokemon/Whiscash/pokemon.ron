@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 340,
+        name: "Whiscash",
+        primary_type: Water,
+        secondary_type: Some(Ground),
+        species: "Whiskers",
+        height: 9,
+        weight: 236,
+    ),
+    base: (
+        hp: 110,
+        atk: 78,
+        def: 73,
+        sp_atk: 76,
+        sp_def: 71,
+        speed: 60,
+    ),
+    training: (
+        base_exp: 164,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "water-gun",
+            level: 11,
+        ),
+        (
+            move: "earthquake",
+            level: 36,
+        ),
+        (
+            move: "fissure",
+            level: 56,
+        ),
+        (
+            move: "amnesia",
+            level: 21,
+        ),
+        (
+            move: "rest",
+            level: 26,
+        ),
+        (
+            move: "snore",
+            level: 26,
+        ),
+        (
+            move: "mud-slap",
+            level: 1,
+        ),
+        (
+            move: "magnitude",
+            level: 16,
+        ),
+        (
+            move: "future-sight",
+            level: 46,
+        ),
+        (
+            move: "mud-sport",
+            level: 1,
+        ),
+        (
+            move: "mud-sport",
+            level: 6,
+        ),
+        (
+            move: "tickle",
+            level: 1,
+        ),
+        (
+            move: "water-sport",
+            level: 1,
+        ),
+        (
+            move: "water-sport",
+            level: 6,
+        ),
+    ],
+)

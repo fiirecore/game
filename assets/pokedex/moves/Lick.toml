@@ -1,7 +1,0 @@
-id = "lick"
-name = "Lick"
-type = "Ghost"
-category = "Physical"
-power = 30
-accuracy = 100
-pp = 30

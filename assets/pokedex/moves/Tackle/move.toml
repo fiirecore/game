@@ -1,7 +1,0 @@
-id = "tackle"
-name = "Tackle"
-type = "Normal"
-category = "Physical"
-power = 40
-accuracy = 100
-pp = 35

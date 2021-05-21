@@ -1,0 +1,60 @@
+(
+    data: (
+        id: 178,
+        name: "Xatu",
+        primary_type: Psychic,
+        secondary_type: Some(Flying),
+        species: "Mystic",
+        height: 15,
+        weight: 150,
+    ),
+    base: (
+        hp: 65,
+        atk: 75,
+        def: 70,
+        sp_atk: 95,
+        sp_def: 70,
+        speed: 95,
+    ),
+    training: (
+        base_exp: 165,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "peck",
+            level: 1,
+        ),
+        (
+            move: "psychic",
+            level: 65,
+        ),
+        (
+            move: "teleport",
+            level: 20,
+        ),
+        (
+            move: "night-shade",
+            level: 10,
+        ),
+        (
+            move: "confuse-ray",
+            level: 50,
+        ),
+        (
+            move: "future-sight",
+            level: 35,
+        ),
+        (
+            move: "wish",
+            level: 35,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "night-daze",
+    name: "Night Daze",
+    category: Special,
+    type: Dark,
+    power: Some(85),
+    accuracy: Some(95),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "spike-cannon"
-name = "Spike Cannon"
-type = "Normal"
-category = "Physical"
-power = 20
-accuracy = 100
-pp = 15

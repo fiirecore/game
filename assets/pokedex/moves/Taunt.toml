@@ -1,6 +1,0 @@
-id = "taunt"
-name = "Taunt"
-type = "Dark"
-category = "Status"
-accuracy = 100
-pp = 20

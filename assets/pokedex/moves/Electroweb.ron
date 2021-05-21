@@ -1,0 +1,11 @@
+(
+    id: "electroweb",
+    name: "Electroweb",
+    category: Special,
+    type: Electric,
+    power: Some(55),
+    accuracy: Some(95),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

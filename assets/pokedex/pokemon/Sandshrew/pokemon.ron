@@ -1,0 +1,64 @@
+(
+    data: (
+        id: 27,
+        name: "Sandshrew",
+        primary_type: Ground,
+        secondary_type: None,
+        species: "Mouse",
+        height: 6,
+        weight: 120,
+    ),
+    base: (
+        hp: 50,
+        atk: 75,
+        def: 85,
+        sp_atk: 20,
+        sp_def: 30,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 60,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "sand-attack",
+            level: 11,
+        ),
+        (
+            move: "poison-sting",
+            level: 17,
+        ),
+        (
+            move: "defense-curl",
+            level: 6,
+        ),
+        (
+            move: "swift",
+            level: 30,
+        ),
+        (
+            move: "fury-swipes",
+            level: 37,
+        ),
+        (
+            move: "slash",
+            level: 23,
+        ),
+        (
+            move: "sandstorm",
+            level: 53,
+        ),
+        (
+            move: "sand-tomb",
+            level: 45,
+        ),
+    ],
+)

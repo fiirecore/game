@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 187,
+        name: "Hoppip",
+        primary_type: Grass,
+        secondary_type: Some(Flying),
+        species: "Cottonweed",
+        height: 4,
+        weight: 5,
+    ),
+    base: (
+        hp: 35,
+        atk: 35,
+        def: 40,
+        sp_atk: 35,
+        sp_def: 55,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 50,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 10,
+        ),
+        (
+            move: "tail-whip",
+            level: 5,
+        ),
+        (
+            move: "mega-drain",
+            level: 30,
+        ),
+        (
+            move: "leech-seed",
+            level: 20,
+        ),
+        (
+            move: "poison-powder",
+            level: 13,
+        ),
+        (
+            move: "stun-spore",
+            level: 15,
+        ),
+        (
+            move: "sleep-powder",
+            level: 17,
+        ),
+        (
+            move: "splash",
+            level: 1,
+        ),
+        (
+            move: "cotton-spore",
+            level: 25,
+        ),
+        (
+            move: "synthesis",
+            level: 5,
+        ),
+    ],
+)

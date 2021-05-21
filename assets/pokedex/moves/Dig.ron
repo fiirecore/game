@@ -1,0 +1,11 @@
+(
+    id: "dig",
+    name: "Dig",
+    category: Physical,
+    type: Ground,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

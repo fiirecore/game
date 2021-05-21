@@ -1,7 +1,0 @@
-id = "flame-wheel"
-name = "Flame Wheel"
-type = "Fire"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 25

@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 210,
+        name: "Granbull",
+        primary_type: Fairy,
+        secondary_type: None,
+        species: "Fairy",
+        height: 14,
+        weight: 487,
+    ),
+    base: (
+        hp: 90,
+        atk: 120,
+        def: 75,
+        sp_atk: 60,
+        sp_def: 60,
+        speed: 45,
+    ),
+    training: (
+        base_exp: 158,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(6),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 49,
+        ),
+        (
+            move: "tail-whip",
+            level: 4,
+        ),
+        (
+            move: "bite",
+            level: 13,
+        ),
+        (
+            move: "roar",
+            level: 28,
+        ),
+        (
+            move: "rage",
+            level: 38,
+        ),
+        (
+            move: "lick",
+            level: 19,
+        ),
+        (
+            move: "scary-face",
+            level: 1,
+        ),
+        (
+            move: "charm",
+            level: 8,
+        ),
+        (
+            move: "crunch",
+            level: 61,
+        ),
+    ],
+)

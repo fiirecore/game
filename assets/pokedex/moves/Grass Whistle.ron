@@ -1,0 +1,11 @@
+(
+    id: "grass-whistle",
+    name: "Grass Whistle",
+    category: Status,
+    type: Grass,
+    power: None,
+    accuracy: Some(55),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

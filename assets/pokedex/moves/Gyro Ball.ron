@@ -1,0 +1,11 @@
+(
+    id: "gyro-ball",
+    name: "Gyro Ball",
+    category: Physical,
+    type: Steel,
+    power: None,
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

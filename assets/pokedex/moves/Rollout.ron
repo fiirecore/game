@@ -1,0 +1,11 @@
+(
+    id: "rollout",
+    name: "Rollout",
+    category: Physical,
+    type: Rock,
+    power: Some(30),
+    accuracy: Some(90),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

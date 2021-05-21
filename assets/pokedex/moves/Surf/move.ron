@@ -1,5 +1,16 @@
 (
-    field_id: Some("surf"),
+    move: (
+        id: "surf",
+        name: "Surf",
+        type: Water,
+        category: Special,
+        power: Some(90),
+        accuracy: Some(100),
+        pp: 15,
+    ),
+    game_move: Some((
+        field_id: Some("surf"),
+    )),
 
     // battle_script: Some((
     //     actions: [

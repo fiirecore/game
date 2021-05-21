@@ -1,0 +1,11 @@
+(
+    id: "bonemerang",
+    name: "Bonemerang",
+    category: Physical,
+    type: Ground,
+    power: Some(50),
+    accuracy: Some(90),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

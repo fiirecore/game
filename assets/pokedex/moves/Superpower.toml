@@ -1,7 +1,0 @@
-id = "superpower"
-name = "Superpower"
-type = "Fighting"
-category = "Physical"
-power = 120
-accuracy = 100
-pp = 5

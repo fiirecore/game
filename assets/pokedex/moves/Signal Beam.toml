@@ -1,7 +1,0 @@
-id = "signal-beam"
-name = "Signal Beam"
-type = "Bug"
-category = "Special"
-power = 75
-accuracy = 100
-pp = 15

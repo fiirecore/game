@@ -1,7 +1,0 @@
-id = "covet"
-name = "Covet"
-type = "Normal"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 25

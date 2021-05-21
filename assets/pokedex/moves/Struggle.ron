@@ -1,0 +1,11 @@
+(
+    id: "struggle",
+    name: "Struggle",
+    category: Physical,
+    type: Normal,
+    power: Some(50),
+    accuracy: None,
+    pp: 1,
+    target: Opponent,
+    script: None,
+)

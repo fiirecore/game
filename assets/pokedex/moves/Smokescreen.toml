@@ -1,6 +1,0 @@
-id = "smokescreen"
-name = "Smokescreen"
-type = "Normal"
-category = "Status"
-accuracy = 100
-pp = 20

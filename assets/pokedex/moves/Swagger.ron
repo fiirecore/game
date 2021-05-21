@@ -1,0 +1,11 @@
+(
+    id: "swagger",
+    name: "Swagger",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(85),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

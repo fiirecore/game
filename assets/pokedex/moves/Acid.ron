@@ -1,0 +1,11 @@
+(
+    id: "acid",
+    name: "Acid",
+    category: Special,
+    type: Poison,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

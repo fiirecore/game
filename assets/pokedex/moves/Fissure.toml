@@ -1,6 +1,0 @@
-id = "fissure"
-name = "Fissure"
-type = "Ground"
-category = "Physical"
-accuracy = 30
-pp = 5

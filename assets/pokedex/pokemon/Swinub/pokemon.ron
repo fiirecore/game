@@ -1,0 +1,60 @@
+(
+    data: (
+        id: 220,
+        name: "Swinub",
+        primary_type: Ice,
+        secondary_type: Some(Ground),
+        species: "Pig",
+        height: 4,
+        weight: 65,
+    ),
+    base: (
+        hp: 50,
+        atk: 50,
+        def: 40,
+        sp_atk: 30,
+        sp_def: 30,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 50,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 28,
+        ),
+        (
+            move: "mist",
+            level: 37,
+        ),
+        (
+            move: "blizzard",
+            level: 46,
+        ),
+        (
+            move: "amnesia",
+            level: 55,
+        ),
+        (
+            move: "powder-snow",
+            level: 10,
+        ),
+        (
+            move: "endure",
+            level: 19,
+        ),
+        (
+            move: "odor-sleuth",
+            level: 1,
+        ),
+    ],
+)

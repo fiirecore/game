@@ -1,0 +1,11 @@
+(
+    id: "synchronoise",
+    name: "Synchronoise",
+    category: Special,
+    type: Psychic,
+    power: Some(120),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

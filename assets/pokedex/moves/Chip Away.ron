@@ -1,0 +1,11 @@
+(
+    id: "chip-away",
+    name: "Chip Away",
+    category: Physical,
+    type: Normal,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

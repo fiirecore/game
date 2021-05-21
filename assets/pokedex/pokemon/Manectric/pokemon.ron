@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 310,
+        name: "Manectric",
+        primary_type: Electric,
+        secondary_type: None,
+        species: "Discharge",
+        height: 15,
+        weight: 402,
+    ),
+    base: (
+        hp: 70,
+        atk: 75,
+        def: 60,
+        sp_atk: 105,
+        sp_def: 60,
+        speed: 105,
+    ),
+    training: (
+        base_exp: 166,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 9,
+        ),
+        (
+            move: "bite",
+            level: 39,
+        ),
+        (
+            move: "roar",
+            level: 31,
+        ),
+        (
+            move: "thunder-wave",
+            level: 1,
+        ),
+        (
+            move: "thunder-wave",
+            level: 4,
+        ),
+        (
+            move: "thunder",
+            level: 45,
+        ),
+        (
+            move: "quick-attack",
+            level: 17,
+        ),
+        (
+            move: "spark",
+            level: 20,
+        ),
+        (
+            move: "charge",
+            level: 53,
+        ),
+        (
+            move: "odor-sleuth",
+            level: 25,
+        ),
+        (
+            move: "howl",
+            level: 1,
+        ),
+        (
+            move: "howl",
+            level: 12,
+        ),
+    ],
+)

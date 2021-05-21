@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 22,
+        name: "Fearow",
+        primary_type: Normal,
+        secondary_type: Some(Flying),
+        species: "Beak",
+        height: 12,
+        weight: 380,
+    ),
+    base: (
+        hp: 65,
+        atk: 90,
+        def: 65,
+        sp_atk: 61,
+        sp_def: 61,
+        speed: 100,
+    ),
+    training: (
+        base_exp: 155,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "fury-attack",
+            level: 1,
+        ),
+        (
+            move: "fury-attack",
+            level: 13,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 7,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "peck",
+            level: 1,
+        ),
+        (
+            move: "drill-peck",
+            level: 40,
+        ),
+        (
+            move: "agility",
+            level: 47,
+        ),
+        (
+            move: "mirror-move",
+            level: 32,
+        ),
+        (
+            move: "pursuit",
+            level: 26,
+        ),
+    ],
+)

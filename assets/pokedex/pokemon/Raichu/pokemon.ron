@@ -1,0 +1,44 @@
+(
+    data: (
+        id: 26,
+        name: "Raichu",
+        primary_type: Electric,
+        secondary_type: None,
+        species: "Mouse",
+        height: 8,
+        weight: 300,
+    ),
+    base: (
+        hp: 60,
+        atk: 90,
+        def: 55,
+        sp_atk: 90,
+        sp_def: 80,
+        speed: 110,
+    ),
+    training: (
+        base_exp: 218,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "thunder-shock",
+            level: 1,
+        ),
+        (
+            move: "thunderbolt",
+            level: 1,
+        ),
+        (
+            move: "quick-attack",
+            level: 1,
+        ),
+    ],
+)

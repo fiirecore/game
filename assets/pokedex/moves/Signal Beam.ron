@@ -1,0 +1,11 @@
+(
+    id: "signal-beam",
+    name: "Signal Beam",
+    category: Special,
+    type: Bug,
+    power: Some(75),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

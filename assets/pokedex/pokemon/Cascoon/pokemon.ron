@@ -1,0 +1,36 @@
+(
+    data: (
+        id: 268,
+        name: "Cascoon",
+        primary_type: Bug,
+        secondary_type: None,
+        species: "Cocoon",
+        height: 7,
+        weight: 115,
+    ),
+    base: (
+        hp: 50,
+        atk: 35,
+        def: 55,
+        sp_atk: 25,
+        sp_def: 25,
+        speed: 15,
+    ),
+    training: (
+        base_exp: 72,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "harden",
+            level: 1,
+        ),
+        (
+            move: "harden",
+            level: 7,
+        ),
+    ],
+)

@@ -1,7 +1,0 @@
-id = "sludge-bomb"
-name = "Sludge Bomb"
-type = "Poison"
-category = "Special"
-power = 90
-accuracy = 100
-pp = 10

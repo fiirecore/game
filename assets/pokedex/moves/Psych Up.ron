@@ -1,0 +1,11 @@
+(
+    id: "psych-up",
+    name: "Psych Up",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

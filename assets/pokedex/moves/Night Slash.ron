@@ -1,0 +1,11 @@
+(
+    id: "night-slash",
+    name: "Night Slash",
+    category: Physical,
+    type: Dark,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

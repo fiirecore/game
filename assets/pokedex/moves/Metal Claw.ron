@@ -1,0 +1,11 @@
+(
+    id: "metal-claw",
+    name: "Metal Claw",
+    category: Physical,
+    type: Steel,
+    power: Some(50),
+    accuracy: Some(95),
+    pp: 35,
+    target: Opponent,
+    script: None,
+)

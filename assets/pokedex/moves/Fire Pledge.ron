@@ -1,0 +1,11 @@
+(
+    id: "fire-pledge",
+    name: "Fire Pledge",
+    category: Special,
+    type: Fire,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

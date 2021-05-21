@@ -1,7 +1,0 @@
-id = "ancient-power"
-name = "Ancient Power"
-type = "Rock"
-category = "Special"
-power = 60
-accuracy = 100
-pp = 5

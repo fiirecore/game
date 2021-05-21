@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 337,
+        name: "Lunatone",
+        primary_type: Rock,
+        secondary_type: Some(Psychic),
+        species: "Meteorite",
+        height: 10,
+        weight: 1680,
+    ),
+    base: (
+        hp: 90,
+        atk: 55,
+        def: 65,
+        sp_atk: 95,
+        sp_def: 85,
+        speed: 70,
+    ),
+    training: (
+        base_exp: 161,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "rock-throw",
+            level: 13,
+        ),
+        (
+            move: "confusion",
+            level: 7,
+        ),
+        (
+            move: "psychic",
+            level: 37,
+        ),
+        (
+            move: "hypnosis",
+            level: 19,
+        ),
+        (
+            move: "harden",
+            level: 1,
+        ),
+        (
+            move: "psywave",
+            level: 25,
+        ),
+        (
+            move: "explosion",
+            level: 49,
+        ),
+        (
+            move: "future-sight",
+            level: 43,
+        ),
+        (
+            move: "cosmic-power",
+            level: 31,
+        ),
+    ],
+)

@@ -1,0 +1,48 @@
+(
+    data: (
+        id: 38,
+        name: "Ninetales",
+        primary_type: Fire,
+        secondary_type: None,
+        species: "Fox",
+        height: 11,
+        weight: 199,
+    ),
+    base: (
+        hp: 73,
+        atk: 76,
+        def: 75,
+        sp_atk: 81,
+        sp_def: 100,
+        speed: 100,
+    ),
+    training: (
+        base_exp: 177,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(6),
+    ),
+    moves: [
+        (
+            move: "ember",
+            level: 1,
+        ),
+        (
+            move: "fire-spin",
+            level: 45,
+        ),
+        (
+            move: "quick-attack",
+            level: 1,
+        ),
+        (
+            move: "confuse-ray",
+            level: 1,
+        ),
+        (
+            move: "safeguard",
+            level: 1,
+        ),
+    ],
+)

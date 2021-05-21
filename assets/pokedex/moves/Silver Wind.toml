@@ -1,7 +1,0 @@
-id = "silver-wind"
-name = "Silver Wind"
-type = "Bug"
-category = "Special"
-power = 60
-accuracy = 100
-pp = 5

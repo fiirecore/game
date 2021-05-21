@@ -1,0 +1,11 @@
+(
+    id: "frenzy-plant",
+    name: "Frenzy Plant",
+    category: Special,
+    type: Grass,
+    power: Some(150),
+    accuracy: Some(90),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "bulldoze",
+    name: "Bulldoze",
+    category: Physical,
+    type: Ground,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "rage",
+    name: "Rage",
+    category: Physical,
+    type: Normal,
+    power: Some(20),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

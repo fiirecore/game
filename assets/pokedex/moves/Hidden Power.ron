@@ -1,0 +1,11 @@
+(
+    id: "hidden-power",
+    name: "Hidden Power",
+    category: Special,
+    type: Normal,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "razor-leaf"
-name = "Razor Leaf"
-type = "Grass"
-category = "Physical"
-power = 55
-accuracy = 95
-pp = 25

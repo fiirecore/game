@@ -1,6 +1,0 @@
-id = "sing"
-name = "Sing"
-type = "Normal"
-category = "Status"
-accuracy = 55
-pp = 15

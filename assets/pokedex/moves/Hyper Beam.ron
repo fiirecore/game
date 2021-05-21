@@ -1,0 +1,11 @@
+(
+    id: "hyper-beam",
+    name: "Hyper Beam",
+    category: Special,
+    type: Normal,
+    power: Some(150),
+    accuracy: Some(90),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

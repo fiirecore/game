@@ -1,7 +1,0 @@
-id = "fire-spin"
-name = "Fire Spin"
-type = "Fire"
-category = "Special"
-power = 35
-accuracy = 85
-pp = 15

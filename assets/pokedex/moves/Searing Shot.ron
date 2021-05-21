@@ -1,0 +1,11 @@
+(
+    id: "searing-shot",
+    name: "Searing Shot",
+    category: Special,
+    type: Fire,
+    power: Some(100),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

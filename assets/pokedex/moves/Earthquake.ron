@@ -1,0 +1,11 @@
+(
+    id: "earthquake",
+    name: "Earthquake",
+    category: Physical,
+    type: Ground,
+    power: Some(100),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

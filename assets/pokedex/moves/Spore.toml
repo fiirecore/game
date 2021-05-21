@@ -1,6 +1,0 @@
-id = "spore"
-name = "Spore"
-type = "Grass"
-category = "Status"
-accuracy = 100
-pp = 15

@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 141,
+        name: "Kabutops",
+        primary_type: Rock,
+        secondary_type: Some(Water),
+        species: "Shellfish",
+        height: 13,
+        weight: 405,
+    ),
+    base: (
+        hp: 60,
+        atk: 115,
+        def: 105,
+        sp_atk: 65,
+        sp_def: 70,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 173,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "sand-attack",
+            level: 31,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 19,
+        ),
+        (
+            move: "absorb",
+            level: 1,
+        ),
+        (
+            move: "absorb",
+            level: 13,
+        ),
+        (
+            move: "mega-drain",
+            level: 55,
+        ),
+        (
+            move: "harden",
+            level: 1,
+        ),
+        (
+            move: "slash",
+            level: 40,
+        ),
+        (
+            move: "endure",
+            level: 37,
+        ),
+        (
+            move: "fury-cutter",
+            level: 1,
+        ),
+        (
+            move: "ancient-power",
+            level: 65,
+        ),
+        (
+            move: "metal-sound",
+            level: 46,
+        ),
+        (
+            move: "mud-shot",
+            level: 25,
+        ),
+    ],
+)

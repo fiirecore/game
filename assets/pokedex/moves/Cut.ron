@@ -1,0 +1,11 @@
+(
+    id: "cut",
+    name: "Cut",
+    category: Physical,
+    type: Normal,
+    power: Some(50),
+    accuracy: Some(95),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

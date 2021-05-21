@@ -1,7 +1,0 @@
-id = "sky-attack"
-name = "Sky Attack"
-type = "Flying"
-category = "Physical"
-power = 140
-accuracy = 90
-pp = 5

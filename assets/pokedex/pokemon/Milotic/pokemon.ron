@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 350,
+        name: "Milotic",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Tender",
+        height: 62,
+        weight: 1620,
+    ),
+    base: (
+        hp: 95,
+        atk: 60,
+        def: 79,
+        sp_atk: 100,
+        sp_def: 125,
+        speed: 81,
+    ),
+    training: (
+        base_exp: 189,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "wrap",
+            level: 5,
+        ),
+        (
+            move: "water-gun",
+            level: 1,
+        ),
+        (
+            move: "hydro-pump",
+            level: 40,
+        ),
+        (
+            move: "recover",
+            level: 30,
+        ),
+        (
+            move: "attract",
+            level: 45,
+        ),
+        (
+            move: "safeguard",
+            level: 50,
+        ),
+        (
+            move: "twister",
+            level: 25,
+        ),
+        (
+            move: "rain-dance",
+            level: 35,
+        ),
+        (
+            move: "refresh",
+            level: 15,
+        ),
+        (
+            move: "water-sport",
+            level: 10,
+        ),
+        (
+            move: "water-pulse",
+            level: 20,
+        ),
+    ],
+)

@@ -1,7 +1,0 @@
-id = "mega-drain"
-name = "Mega Drain"
-type = "Grass"
-category = "Special"
-power = 40
-accuracy = 100
-pp = 15

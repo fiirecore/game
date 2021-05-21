@@ -1,7 +1,0 @@
-id = "fury-swipes"
-name = "Fury Swipes"
-type = "Normal"
-category = "Physical"
-power = 18
-accuracy = 80
-pp = 15

@@ -1,0 +1,11 @@
+(
+    id: "hex",
+    name: "Hex",
+    category: Special,
+    type: Ghost,
+    power: Some(65),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

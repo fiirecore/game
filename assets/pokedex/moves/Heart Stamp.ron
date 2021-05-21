@@ -1,0 +1,11 @@
+(
+    id: "heart-stamp",
+    name: "Heart Stamp",
+    category: Physical,
+    type: Psychic,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

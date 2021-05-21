@@ -1,0 +1,60 @@
+(
+    data: (
+        id: 198,
+        name: "Murkrow",
+        primary_type: Dark,
+        secondary_type: Some(Flying),
+        species: "Darkness",
+        height: 5,
+        weight: 21,
+    ),
+    base: (
+        hp: 60,
+        atk: 85,
+        def: 42,
+        sp_atk: 85,
+        sp_def: 42,
+        speed: 91,
+    ),
+    training: (
+        base_exp: 81,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "peck",
+            level: 1,
+        ),
+        (
+            move: "night-shade",
+            level: 27,
+        ),
+        (
+            move: "haze",
+            level: 22,
+        ),
+        (
+            move: "feint-attack",
+            level: 35,
+        ),
+        (
+            move: "mean-look",
+            level: 48,
+        ),
+        (
+            move: "pursuit",
+            level: 14,
+        ),
+        (
+            move: "taunt",
+            level: 40,
+        ),
+        (
+            move: "astonish",
+            level: 9,
+        ),
+    ],
+)

@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 222,
+        name: "Corsola",
+        primary_type: Water,
+        secondary_type: Some(Rock),
+        species: "Coral",
+        height: 6,
+        weight: 50,
+    ),
+    base: (
+        hp: 65,
+        atk: 55,
+        def: 95,
+        sp_atk: 65,
+        sp_def: 95,
+        speed: 35,
+    ),
+    training: (
+        base_exp: 144,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(6),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "bubble-beam",
+            level: 23,
+        ),
+        (
+            move: "recover",
+            level: 17,
+        ),
+        (
+            move: "harden",
+            level: 6,
+        ),
+        (
+            move: "spike-cannon",
+            level: 28,
+        ),
+        (
+            move: "bubble",
+            level: 12,
+        ),
+        (
+            move: "mirror-coat",
+            level: 39,
+        ),
+        (
+            move: "ancient-power",
+            level: 45,
+        ),
+        (
+            move: "refresh",
+            level: 17,
+        ),
+        (
+            move: "rock-blast",
+            level: 34,
+        ),
+    ],
+)

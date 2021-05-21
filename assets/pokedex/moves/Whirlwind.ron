@@ -1,0 +1,11 @@
+(
+    id: "whirlwind",
+    name: "Whirlwind",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

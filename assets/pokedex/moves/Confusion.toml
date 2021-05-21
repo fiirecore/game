@@ -1,7 +1,0 @@
-id = "confusion"
-name = "Confusion"
-type = "Psychic"
-category = "Special"
-power = 50
-accuracy = 100
-pp = 25

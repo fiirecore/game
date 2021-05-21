@@ -1,0 +1,11 @@
+(
+    id: "ice-burn",
+    name: "Ice Burn",
+    category: Special,
+    type: Ice,
+    power: Some(140),
+    accuracy: Some(90),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

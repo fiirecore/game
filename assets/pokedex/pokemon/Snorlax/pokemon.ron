@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 143,
+        name: "Snorlax",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Sleeping",
+        height: 21,
+        weight: 4600,
+    ),
+    base: (
+        hp: 160,
+        atk: 110,
+        def: 65,
+        sp_atk: 65,
+        sp_def: 110,
+        speed: 30,
+    ),
+    training: (
+        base_exp: 189,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "headbutt",
+            level: 17,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "body-slam",
+            level: 33,
+        ),
+        (
+            move: "hyper-beam",
+            level: 53,
+        ),
+        (
+            move: "defense-curl",
+            level: 9,
+        ),
+        (
+            move: "amnesia",
+            level: 5,
+        ),
+        (
+            move: "rest",
+            level: 25,
+        ),
+        (
+            move: "snore",
+            level: 29,
+        ),
+        (
+            move: "belly-drum",
+            level: 13,
+        ),
+        (
+            move: "rollout",
+            level: 49,
+        ),
+        (
+            move: "sleep-talk",
+            level: 37,
+        ),
+        (
+            move: "yawn",
+            level: 21,
+        ),
+        (
+            move: "block",
+            level: 41,
+        ),
+        (
+            move: "covet",
+            level: 45,
+        ),
+    ],
+)

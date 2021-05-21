@@ -1,7 +1,0 @@
-id = "earthquake"
-name = "Earthquake"
-type = "Ground"
-category = "Physical"
-power = 100
-accuracy = 100
-pp = 10

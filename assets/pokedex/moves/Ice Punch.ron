@@ -1,0 +1,11 @@
+(
+    id: "ice-punch",
+    name: "Ice Punch",
+    category: Physical,
+    type: Ice,
+    power: Some(75),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

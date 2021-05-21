@@ -1,7 +1,0 @@
-id = "explosion"
-name = "Explosion"
-type = "Normal"
-category = "Physical"
-power = 250
-accuracy = 100
-pp = 5

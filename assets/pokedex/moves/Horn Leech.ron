@@ -1,0 +1,11 @@
+(
+    id: "horn-leech",
+    name: "Horn Leech",
+    category: Physical,
+    type: Grass,
+    power: Some(75),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

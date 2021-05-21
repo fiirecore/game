@@ -1,0 +1,11 @@
+(
+    id: "freeze-shock",
+    name: "Freeze Shock",
+    category: Physical,
+    type: Ice,
+    power: Some(140),
+    accuracy: Some(90),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

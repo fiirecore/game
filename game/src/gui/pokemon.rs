@@ -79,7 +79,7 @@ impl PokemonDisplay {
     pub fn new(instance: Cow<'static, PokemonInstance>) -> Self {
         Self {
             name: instance.name().to_string(),
-            level: format!("Lv{}", instance.data.level),
+            level: format!("Lv{}", instance.level),
             health: (format!("{}/{}", instance.current_hp, instance.base.hp), super::health::HealthBar::width(instance.current_hp, instance.base.hp)),
             icon: pokemon_texture(&instance.pokemon.value().data.id, Icon),
             instance,

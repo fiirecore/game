@@ -1,7 +1,0 @@
-id = "pursuit"
-name = "Pursuit"
-type = "Dark"
-category = "Physical"
-power = 40
-accuracy = 100
-pp = 20

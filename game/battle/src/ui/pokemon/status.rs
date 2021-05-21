@@ -91,12 +91,12 @@ impl PokemonStatusGui {
 			origin,
 			background,
 			name: Some(pokemon.name().to_string()),
-			level: Some(Self::level(pokemon.data.level)),
+			level: Some(Self::level(pokemon.level)),
 			data_pos,
 			health: (HealthBar::with_size(HealthBar::width(pokemon.current_hp, pokemon.base.hp)), hb),
 			health_text: exp.is_some().then(|| format!("{}/{}", pokemon.current_hp, pokemon.base.hp)),
 			exp: exp.map(|mut exp| {
-				exp.update_exp(pokemon.data.level, pokemon, true);
+				exp.update_exp(pokemon.level, pokemon, true);
 				exp
 			}),			
 		}
@@ -197,7 +197,7 @@ impl PokemonStatusGui {
 				if let Some(level) = self.level.as_mut() {
 					level.1 += 1;
 					level.0 = Self::level_fmt(level.1);
-					let base = game::pokedex::pokemon::stat::calculate_hp(pokemon.pokemon.value().base.hp, pokemon.data.ivs.hp, pokemon.data.evs.hp, level.1);
+					let base = game::pokedex::pokemon::stat::calculate_hp(pokemon.pokemon.value().base.hp, pokemon.ivs.hp, pokemon.evs.hp, level.1);
 					self.health_text = Some(format!("{}/{}", pokemon.current_hp, base));
 					self.health.0.resize(pokemon.current_hp, base, false);
 				}
@@ -216,17 +216,17 @@ impl PokemonStatusGui {
 
 	pub fn update_gui(&mut self, pokemon: Option<(Level, &PokemonInstance)>, reset: bool) {
 		self.name = pokemon.map(|(previous, pokemon)| {
-			if pokemon.data.level == previous {
+			if pokemon.level == previous {
 				self.health.0.resize(pokemon.current_hp, pokemon.base.hp, reset);
 			} 
 			if let Some(exp) = self.exp.as_mut() {
 				exp.update_exp(previous, pokemon, reset);
-				if pokemon.data.level == previous {
+				if pokemon.level == previous {
 					self.health_text = Some(format!("{}/{}", pokemon.current_hp, pokemon.base.hp));
 				}
 			}
 			if reset {
-				self.level = Some(Self::level(pokemon.data.level));
+				self.level = Some(Self::level(pokemon.level));
 			}
 			pokemon.name().to_string()
 		});

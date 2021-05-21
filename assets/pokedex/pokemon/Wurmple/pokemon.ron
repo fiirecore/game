@@ -1,0 +1,40 @@
+(
+    data: (
+        id: 265,
+        name: "Wurmple",
+        primary_type: Bug,
+        secondary_type: None,
+        species: "Worm",
+        height: 3,
+        weight: 36,
+    ),
+    base: (
+        hp: 45,
+        atk: 45,
+        def: 35,
+        sp_atk: 20,
+        sp_def: 30,
+        speed: 20,
+    ),
+    training: (
+        base_exp: 56,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "poison-sting",
+            level: 5,
+        ),
+        (
+            move: "string-shot",
+            level: 1,
+        ),
+    ],
+)

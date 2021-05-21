@@ -76,17 +76,13 @@
             party: [
                 (
                     id: 74,
-                    data: (
-                        level: 10,
-                        gender: Male,
-                    ),
+                    level: 10,
+                    gender: Male,
                 ),
                 (
                     id: 95,
-                    data: (
-                        level: 10,
-                        gender: Male,
-                    ),
+                    level: 10,
+                    gender: Male,
                 )
             ],
 

@@ -1,0 +1,11 @@
+(
+    id: "blaze-kick",
+    name: "Blaze Kick",
+    category: Physical,
+    type: Fire,
+    power: Some(85),
+    accuracy: Some(90),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

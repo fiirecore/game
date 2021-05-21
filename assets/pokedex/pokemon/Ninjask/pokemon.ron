@@ -1,0 +1,88 @@
+(
+    data: (
+        id: 291,
+        name: "Ninjask",
+        primary_type: Bug,
+        secondary_type: Some(Flying),
+        species: "Ninja",
+        height: 8,
+        weight: 120,
+    ),
+    base: (
+        hp: 61,
+        atk: 90,
+        def: 45,
+        sp_atk: 50,
+        sp_def: 50,
+        speed: 160,
+    ),
+    training: (
+        base_exp: 160,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "swords-dance",
+            level: 25,
+        ),
+        (
+            move: "sand-attack",
+            level: 1,
+        ),
+        (
+            move: "sand-attack",
+            level: 9,
+        ),
+        (
+            move: "agility",
+            level: 38,
+        ),
+        (
+            move: "screech",
+            level: 20,
+        ),
+        (
+            move: "double-team",
+            level: 20,
+        ),
+        (
+            move: "harden",
+            level: 1,
+        ),
+        (
+            move: "leech-life",
+            level: 1,
+        ),
+        (
+            move: "leech-life",
+            level: 5,
+        ),
+        (
+            move: "fury-swipes",
+            level: 14,
+        ),
+        (
+            move: "slash",
+            level: 31,
+        ),
+        (
+            move: "mind-reader",
+            level: 19,
+        ),
+        (
+            move: "fury-cutter",
+            level: 20,
+        ),
+        (
+            move: "baton-pass",
+            level: 45,
+        ),
+    ],
+)

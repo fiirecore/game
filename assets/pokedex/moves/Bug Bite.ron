@@ -1,0 +1,11 @@
+(
+    id: "bug-bite",
+    name: "Bug Bite",
+    category: Physical,
+    type: Bug,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

@@ -1,6 +1,0 @@
-id = "hypnosis"
-name = "Hypnosis"
-type = "Psychic"
-category = "Status"
-accuracy = 60
-pp = 20

@@ -1,7 +1,0 @@
-id = "gust"
-name = "Gust"
-type = "Flying"
-category = "Special"
-power = 40
-accuracy = 100
-pp = 35

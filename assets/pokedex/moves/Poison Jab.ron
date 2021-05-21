@@ -1,0 +1,11 @@
+(
+    id: "poison-jab",
+    name: "Poison Jab",
+    category: Physical,
+    type: Poison,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "slam"
-name = "Slam"
-type = "Normal"
-category = "Physical"
-power = 80
-accuracy = 75
-pp = 20

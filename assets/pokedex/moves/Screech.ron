@@ -1,0 +1,11 @@
+(
+    id: "screech",
+    name: "Screech",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(85),
+    pp: 40,
+    target: Opponent,
+    script: None,
+)

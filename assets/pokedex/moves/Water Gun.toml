@@ -1,7 +1,0 @@
-id = "water-gun"
-name = "Water Gun"
-type = "Water"
-category = "Special"
-power = 40
-accuracy = 100
-pp = 25

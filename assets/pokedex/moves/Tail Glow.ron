@@ -1,0 +1,11 @@
+(
+    id: "tail-glow",
+    name: "Tail Glow",
+    category: Status,
+    type: Bug,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

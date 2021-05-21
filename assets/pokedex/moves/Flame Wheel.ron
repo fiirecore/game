@@ -1,0 +1,11 @@
+(
+    id: "flame-wheel",
+    name: "Flame Wheel",
+    category: Physical,
+    type: Fire,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

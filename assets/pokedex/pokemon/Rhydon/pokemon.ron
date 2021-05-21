@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 112,
+        name: "Rhydon",
+        primary_type: Ground,
+        secondary_type: Some(Rock),
+        species: "Drill",
+        height: 19,
+        weight: 1200,
+    ),
+    base: (
+        hp: 105,
+        atk: 130,
+        def: 120,
+        sp_atk: 45,
+        sp_def: 45,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 170,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "stomp",
+            level: 1,
+        ),
+        (
+            move: "stomp",
+            level: 10,
+        ),
+        (
+            move: "horn-attack",
+            level: 1,
+        ),
+        (
+            move: "fury-attack",
+            level: 1,
+        ),
+        (
+            move: "fury-attack",
+            level: 15,
+        ),
+        (
+            move: "horn-drill",
+            level: 38,
+        ),
+        (
+            move: "take-down",
+            level: 46,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "earthquake",
+            level: 58,
+        ),
+        (
+            move: "scary-face",
+            level: 24,
+        ),
+        (
+            move: "megahorn",
+            level: 66,
+        ),
+        (
+            move: "rock-blast",
+            level: 29,
+        ),
+    ],
+)

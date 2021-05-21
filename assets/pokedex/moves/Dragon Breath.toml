@@ -1,7 +1,0 @@
-id = "dragon-breath"
-name = "Dragon Breath"
-type = "Dragon"
-category = "Special"
-power = 60
-accuracy = 100
-pp = 20

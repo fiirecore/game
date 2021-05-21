@@ -1,7 +1,0 @@
-id = "brick-break"
-name = "Brick Break"
-type = "Fighting"
-category = "Physical"
-power = 75
-accuracy = 100
-pp = 15

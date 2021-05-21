@@ -1,0 +1,11 @@
+(
+    id: "counter",
+    name: "Counter",
+    category: Physical,
+    type: Fighting,
+    power: None,
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

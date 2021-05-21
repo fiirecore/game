@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 281,
+        name: "Kirlia",
+        primary_type: Psychic,
+        secondary_type: Some(Fairy),
+        species: "Emotion",
+        height: 8,
+        weight: 202,
+    ),
+    base: (
+        hp: 38,
+        atk: 35,
+        def: 35,
+        sp_atk: 65,
+        sp_def: 55,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 97,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "confusion",
+            level: 1,
+        ),
+        (
+            move: "confusion",
+            level: 6,
+        ),
+        (
+            move: "psychic",
+            level: 26,
+        ),
+        (
+            move: "hypnosis",
+            level: 47,
+        ),
+        (
+            move: "teleport",
+            level: 1,
+        ),
+        (
+            move: "teleport",
+            level: 16,
+        ),
+        (
+            move: "double-team",
+            level: 1,
+        ),
+        (
+            move: "double-team",
+            level: 11,
+        ),
+        (
+            move: "dream-eater",
+            level: 54,
+        ),
+        (
+            move: "future-sight",
+            level: 40,
+        ),
+        (
+            move: "imprison",
+            level: 33,
+        ),
+        (
+            move: "magical-leaf",
+            level: 1,
+        ),
+        (
+            move: "calm-mind",
+            level: 21,
+        ),
+    ],
+)

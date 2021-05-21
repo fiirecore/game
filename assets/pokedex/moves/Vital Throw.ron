@@ -1,0 +1,11 @@
+(
+    id: "vital-throw",
+    name: "Vital Throw",
+    category: Physical,
+    type: Fighting,
+    power: Some(70),
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

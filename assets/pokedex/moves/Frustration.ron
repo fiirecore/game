@@ -1,0 +1,11 @@
+(
+    id: "frustration",
+    name: "Frustration",
+    category: Physical,
+    type: Normal,
+    power: None,
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

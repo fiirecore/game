@@ -1,0 +1,11 @@
+(
+    id: "perish-song",
+    name: "Perish Song",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

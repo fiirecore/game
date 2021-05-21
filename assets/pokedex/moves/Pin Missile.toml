@@ -1,7 +1,0 @@
-id = "pin-missile"
-name = "Pin Missile"
-type = "Bug"
-category = "Physical"
-power = 25
-accuracy = 95
-pp = 20

@@ -1,0 +1,11 @@
+(
+    id: "absorb",
+    name: "Absorb",
+    category: Special,
+    type: Grass,
+    power: Some(20),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

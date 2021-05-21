@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 35,
+        name: "Clefairy",
+        primary_type: Fairy,
+        secondary_type: None,
+        species: "Fairy",
+        height: 6,
+        weight: 75,
+    ),
+    base: (
+        hp: 70,
+        atk: 45,
+        def: 48,
+        sp_atk: 60,
+        sp_def: 65,
+        speed: 35,
+    ),
+    training: (
+        base_exp: 113,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(6),
+    ),
+    moves: [
+        (
+            move: "pound",
+            level: 1,
+        ),
+        (
+            move: "double-slap",
+            level: 13,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "sing",
+            level: 9,
+        ),
+        (
+            move: "minimize",
+            level: 21,
+        ),
+        (
+            move: "defense-curl",
+            level: 25,
+        ),
+        (
+            move: "light-screen",
+            level: 41,
+        ),
+        (
+            move: "metronome",
+            level: 29,
+        ),
+        (
+            move: "encore",
+            level: 5,
+        ),
+        (
+            move: "moonlight",
+            level: 37,
+        ),
+        (
+            move: "follow-me",
+            level: 17,
+        ),
+        (
+            move: "meteor-mash",
+            level: 45,
+        ),
+        (
+            move: "cosmic-power",
+            level: 33,
+        ),
+    ],
+)

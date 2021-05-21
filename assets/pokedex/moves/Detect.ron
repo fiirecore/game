@@ -1,0 +1,11 @@
+(
+    id: "detect",
+    name: "Detect",
+    category: Status,
+    type: Fighting,
+    power: None,
+    accuracy: None,
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

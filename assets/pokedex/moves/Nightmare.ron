@@ -1,0 +1,11 @@
+(
+    id: "nightmare",
+    name: "Nightmare",
+    category: Status,
+    type: Ghost,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

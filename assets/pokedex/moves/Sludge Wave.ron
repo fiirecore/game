@@ -1,0 +1,11 @@
+(
+    id: "sludge-wave",
+    name: "Sludge Wave",
+    category: Special,
+    type: Poison,
+    power: Some(95),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

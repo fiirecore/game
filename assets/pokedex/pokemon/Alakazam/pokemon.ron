@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 65,
+        name: "Alakazam",
+        primary_type: Psychic,
+        secondary_type: None,
+        species: "Psi",
+        height: 15,
+        weight: 480,
+    ),
+    base: (
+        hp: 55,
+        atk: 50,
+        def: 45,
+        sp_atk: 135,
+        sp_def: 95,
+        speed: 120,
+    ),
+    training: (
+        base_exp: 225,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(2),
+    ),
+    moves: [
+        (
+            move: "disable",
+            level: 18,
+        ),
+        (
+            move: "psybeam",
+            level: 21,
+        ),
+        (
+            move: "confusion",
+            level: 1,
+        ),
+        (
+            move: "confusion",
+            level: 16,
+        ),
+        (
+            move: "psychic",
+            level: 36,
+        ),
+        (
+            move: "teleport",
+            level: 1,
+        ),
+        (
+            move: "recover",
+            level: 25,
+        ),
+        (
+            move: "reflect",
+            level: 23,
+        ),
+        (
+            move: "kinesis",
+            level: 1,
+        ),
+        (
+            move: "future-sight",
+            level: 30,
+        ),
+        (
+            move: "trick",
+            level: 43,
+        ),
+        (
+            move: "calm-mind",
+            level: 33,
+        ),
+    ],
+)

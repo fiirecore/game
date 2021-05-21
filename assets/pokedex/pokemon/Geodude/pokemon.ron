@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 74,
+        name: "Geodude",
+        primary_type: Rock,
+        secondary_type: Some(Ground),
+        species: "Rock",
+        height: 4,
+        weight: 200,
+    ),
+    base: (
+        hp: 40,
+        atk: 80,
+        def: 100,
+        sp_atk: 30,
+        sp_def: 30,
+        speed: 20,
+    ),
+    training: (
+        base_exp: 60,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "double-edge",
+            level: 46,
+        ),
+        (
+            move: "rock-throw",
+            level: 11,
+        ),
+        (
+            move: "earthquake",
+            level: 36,
+        ),
+        (
+            move: "defense-curl",
+            level: 1,
+        ),
+        (
+            move: "self-destruct",
+            level: 21,
+        ),
+        (
+            move: "explosion",
+            level: 41,
+        ),
+        (
+            move: "rollout",
+            level: 26,
+        ),
+        (
+            move: "magnitude",
+            level: 16,
+        ),
+        (
+            move: "mud-sport",
+            level: 6,
+        ),
+        (
+            move: "rock-blast",
+            level: 31,
+        ),
+    ],
+)

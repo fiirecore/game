@@ -1,0 +1,11 @@
+(
+    id: "sky-attack",
+    name: "Sky Attack",
+    category: Physical,
+    type: Flying,
+    power: Some(140),
+    accuracy: Some(90),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

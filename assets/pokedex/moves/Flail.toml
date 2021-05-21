@@ -1,6 +1,0 @@
-id = "flail"
-name = "Flail"
-type = "Normal"
-category = "Physical"
-accuracy = 100
-pp = 15

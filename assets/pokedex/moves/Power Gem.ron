@@ -1,0 +1,11 @@
+(
+    id: "power-gem",
+    name: "Power Gem",
+    category: Special,
+    type: Rock,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

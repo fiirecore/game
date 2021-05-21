@@ -1,0 +1,11 @@
+(
+    id: "feint",
+    name: "Feint",
+    category: Physical,
+    type: Normal,
+    power: Some(30),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

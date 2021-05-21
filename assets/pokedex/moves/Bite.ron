@@ -1,0 +1,11 @@
+(
+    id: "bite",
+    name: "Bite",
+    category: Physical,
+    type: Dark,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

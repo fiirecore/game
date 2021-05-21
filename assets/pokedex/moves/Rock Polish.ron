@@ -1,0 +1,11 @@
+(
+    id: "rock-polish",
+    name: "Rock Polish",
+    category: Status,
+    type: Rock,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

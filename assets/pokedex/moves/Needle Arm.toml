@@ -1,7 +1,0 @@
-id = "needle-arm"
-name = "Needle Arm"
-type = "Grass"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 15

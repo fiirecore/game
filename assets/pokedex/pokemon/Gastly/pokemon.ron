@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 92,
+        name: "Gastly",
+        primary_type: Ghost,
+        secondary_type: Some(Poison),
+        species: "Gas",
+        height: 13,
+        weight: 1,
+    ),
+    base: (
+        hp: 30,
+        atk: 35,
+        def: 30,
+        sp_atk: 100,
+        sp_def: 35,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 62,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "hypnosis",
+            level: 1,
+        ),
+        (
+            move: "night-shade",
+            level: 16,
+        ),
+        (
+            move: "confuse-ray",
+            level: 21,
+        ),
+        (
+            move: "lick",
+            level: 1,
+        ),
+        (
+            move: "dream-eater",
+            level: 28,
+        ),
+        (
+            move: "nightmare",
+            level: 41,
+        ),
+        (
+            move: "curse",
+            level: 13,
+        ),
+        (
+            move: "spite",
+            level: 8,
+        ),
+        (
+            move: "destiny-bond",
+            level: 33,
+        ),
+        (
+            move: "mean-look",
+            level: 48,
+        ),
+        (
+            move: "shadow-ball",
+            level: 36,
+        ),
+    ],
+)

@@ -1,7 +1,0 @@
-id = "bubble-beam"
-name = "Bubble Beam"
-type = "Water"
-category = "Special"
-power = 65
-accuracy = 100
-pp = 20

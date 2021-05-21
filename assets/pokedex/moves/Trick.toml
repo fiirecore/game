@@ -1,6 +1,0 @@
-id = "trick"
-name = "Trick"
-type = "Psychic"
-category = "Status"
-accuracy = 100
-pp = 10

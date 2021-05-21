@@ -1,0 +1,36 @@
+(
+    data: (
+        id: 13,
+        name: "Weedle",
+        primary_type: Bug,
+        secondary_type: Some(Poison),
+        species: "Hairy",
+        height: 3,
+        weight: 32,
+    ),
+    base: (
+        hp: 40,
+        atk: 35,
+        def: 30,
+        sp_atk: 20,
+        sp_def: 20,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 39,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "poison-sting",
+            level: 1,
+        ),
+        (
+            move: "string-shot",
+            level: 1,
+        ),
+    ],
+)

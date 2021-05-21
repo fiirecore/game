@@ -1,0 +1,11 @@
+(
+    id: "dynamic-punch",
+    name: "Dynamic Punch",
+    category: Physical,
+    type: Fighting,
+    power: Some(100),
+    accuracy: Some(50),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

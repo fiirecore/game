@@ -1,0 +1,11 @@
+(
+    id: "feather-dance",
+    name: "Feather Dance",
+    category: Status,
+    type: Flying,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

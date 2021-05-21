@@ -1,0 +1,11 @@
+(
+    id: "rock-slide",
+    name: "Rock Slide",
+    category: Physical,
+    type: Rock,
+    power: Some(75),
+    accuracy: Some(90),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

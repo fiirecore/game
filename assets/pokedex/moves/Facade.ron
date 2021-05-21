@@ -1,0 +1,11 @@
+(
+    id: "facade",
+    name: "Facade",
+    category: Physical,
+    type: Normal,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

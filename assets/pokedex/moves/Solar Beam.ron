@@ -1,0 +1,11 @@
+(
+    id: "solar-beam",
+    name: "Solar Beam",
+    category: Special,
+    type: Grass,
+    power: Some(120),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

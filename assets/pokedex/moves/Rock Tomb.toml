@@ -1,7 +1,0 @@
-id = "rock-tomb"
-name = "Rock Tomb"
-type = "Rock"
-category = "Physical"
-power = 60
-accuracy = 95
-pp = 15

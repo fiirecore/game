@@ -1,7 +1,0 @@
-id = "mud-slap"
-name = "Mud-Slap"
-type = "Ground"
-category = "Special"
-power = 20
-accuracy = 100
-pp = 10

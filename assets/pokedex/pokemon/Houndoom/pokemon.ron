@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 229,
+        name: "Houndoom",
+        primary_type: Dark,
+        secondary_type: Some(Fire),
+        species: "Dark",
+        height: 14,
+        weight: 350,
+    ),
+    base: (
+        hp: 75,
+        atk: 90,
+        def: 50,
+        sp_atk: 110,
+        sp_def: 80,
+        speed: 95,
+    ),
+    training: (
+        base_exp: 175,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 27,
+        ),
+        (
+            move: "roar",
+            level: 19,
+        ),
+        (
+            move: "ember",
+            level: 1,
+        ),
+        (
+            move: "flamethrower",
+            level: 51,
+        ),
+        (
+            move: "smog",
+            level: 13,
+        ),
+        (
+            move: "feint-attack",
+            level: 43,
+        ),
+        (
+            move: "crunch",
+            level: 59,
+        ),
+        (
+            move: "odor-sleuth",
+            level: 35,
+        ),
+        (
+            move: "howl",
+            level: 1,
+        ),
+        (
+            move: "howl",
+            level: 7,
+        ),
+    ],
+)

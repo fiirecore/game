@@ -1,7 +1,0 @@
-id = "rock-slide"
-name = "Rock Slide"
-type = "Rock"
-category = "Physical"
-power = 75
-accuracy = 90
-pp = 10

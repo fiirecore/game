@@ -1,0 +1,11 @@
+(
+    id: "incinerate",
+    name: "Incinerate",
+    category: Special,
+    type: Fire,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

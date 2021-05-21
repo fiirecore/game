@@ -1,0 +1,11 @@
+(
+    id: "wring-out",
+    name: "Wring Out",
+    category: Special,
+    type: Normal,
+    power: None,
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

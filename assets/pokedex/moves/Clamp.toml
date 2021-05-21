@@ -1,7 +1,0 @@
-id = "clamp"
-name = "Clamp"
-type = "Water"
-category = "Physical"
-power = 35
-accuracy = 85
-pp = 15

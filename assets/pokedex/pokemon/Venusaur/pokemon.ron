@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 3,
+        name: "Venusaur",
+        primary_type: Grass,
+        secondary_type: Some(Poison),
+        species: "Seed",
+        height: 20,
+        weight: 1000,
+    ),
+    base: (
+        hp: 80,
+        atk: 82,
+        def: 83,
+        sp_atk: 100,
+        sp_def: 100,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 236,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "vine-whip",
+            level: 1,
+        ),
+        (
+            move: "vine-whip",
+            level: 10,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 4,
+        ),
+        (
+            move: "leech-seed",
+            level: 1,
+        ),
+        (
+            move: "leech-seed",
+            level: 7,
+        ),
+        (
+            move: "growth",
+            level: 41,
+        ),
+        (
+            move: "razor-leaf",
+            level: 22,
+        ),
+        (
+            move: "solar-beam",
+            level: 65,
+        ),
+        (
+            move: "poison-powder",
+            level: 15,
+        ),
+        (
+            move: "sleep-powder",
+            level: 15,
+        ),
+        (
+            move: "sweet-scent",
+            level: 29,
+        ),
+        (
+            move: "synthesis",
+            level: 53,
+        ),
+    ],
+)

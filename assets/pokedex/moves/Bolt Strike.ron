@@ -1,0 +1,11 @@
+(
+    id: "bolt-strike",
+    name: "Bolt Strike",
+    category: Physical,
+    type: Electric,
+    power: Some(130),
+    accuracy: Some(85),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

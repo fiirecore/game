@@ -189,6 +189,10 @@ pub async fn start() {
         game::init::finished_loading()
     }
 
+    if args.contains(&Args::Seed) {
+        seed_randoms(game::macroquad::miniquad::date::now() as u64);
+    }
+
     // Wait for the loading scenes to finish, then stop the coroutine
 
     #[cfg(not(target_arch = "wasm32"))] {
@@ -282,6 +286,8 @@ pub enum Args {
 
     DisableAudio,
     Debug,
+    #[cfg(debug_assertions)]
+    Seed,
 
 }
 
@@ -294,6 +300,8 @@ pub fn getopts() -> Vec<Args> {
 
         opts.optflag("a", "disable-audio", "Disable audio");
         opts.optflag("d", "debug", "Add debug keybinds and other stuff");
+        #[cfg(debug_assertions)]
+        opts.optflag("s", "seed", "Seed randoms with current time. (Debug build only)");
 
         if args.len() > 0 {
             match opts.parse(&args[1..]) {
@@ -303,6 +311,10 @@ pub fn getopts() -> Vec<Args> {
                     }
                     if m.opt_present("d") {
                         list.push(Args::Debug);
+                    }
+                    #[cfg(debug_assertions)]
+                    if m.opt_present("s") {
+                        list.push(Args::Seed)
                     }
                 }
                 Err(f) => {

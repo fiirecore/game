@@ -1,0 +1,11 @@
+(
+    id: "charge",
+    name: "Charge",
+    category: Status,
+    type: Electric,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

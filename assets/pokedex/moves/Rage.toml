@@ -1,7 +1,0 @@
-id = "rage"
-name = "Rage"
-type = "Normal"
-category = "Physical"
-power = 20
-accuracy = 100
-pp = 20

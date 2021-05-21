@@ -1,0 +1,11 @@
+(
+    id: "ingrain",
+    name: "Ingrain",
+    category: Status,
+    type: Grass,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

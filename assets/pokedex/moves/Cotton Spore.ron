@@ -1,0 +1,11 @@
+(
+    id: "cotton-spore",
+    name: "Cotton Spore",
+    category: Status,
+    type: Grass,
+    power: None,
+    accuracy: Some(100),
+    pp: 40,
+    target: Opponent,
+    script: None,
+)

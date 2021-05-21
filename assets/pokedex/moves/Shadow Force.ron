@@ -1,0 +1,11 @@
+(
+    id: "shadow-force",
+    name: "Shadow Force",
+    category: Physical,
+    type: Ghost,
+    power: Some(120),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

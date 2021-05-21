@@ -1,0 +1,11 @@
+(
+    id: "bide",
+    name: "Bide",
+    category: Physical,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

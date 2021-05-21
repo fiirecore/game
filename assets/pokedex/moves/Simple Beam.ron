@@ -1,0 +1,11 @@
+(
+    id: "simple-beam",
+    name: "Simple Beam",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

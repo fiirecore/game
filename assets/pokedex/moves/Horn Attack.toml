@@ -1,7 +1,0 @@
-id = "horn-attack"
-name = "Horn Attack"
-type = "Normal"
-category = "Physical"
-power = 65
-accuracy = 100
-pp = 25

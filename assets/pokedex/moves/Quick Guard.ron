@@ -1,0 +1,11 @@
+(
+    id: "quick-guard",
+    name: "Quick Guard",
+    category: Status,
+    type: Fighting,
+    power: None,
+    accuracy: None,
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

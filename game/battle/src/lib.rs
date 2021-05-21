@@ -301,7 +301,7 @@ impl Battle {
 																	queue.actions.push_front(BattleActionInstance { pokemon: index, action: BattleAction::Faint(Some(instance.pokemon)) });
 																}
 																
-																target.status.update_gui(Some((target_pokemon.data.level, target_pokemon)), false);
+																target.status.update_gui(Some((target_pokemon.level, target_pokemon)), false);
 															} else {
 																ui::text::on_fail(&mut gui.text, format!("{} could not move!", pokemon));
 															}
@@ -340,7 +340,7 @@ impl Battle {
 															},
 															ItemUseType::None => true,
 														} {
-															let level = pokemon.data.level;
+															let level = pokemon.level;
 															ui::text::on_item(&mut gui.text, pokemon, item);
 															user.active[instance.pokemon.active].update_status(level, false);
 														}
@@ -357,7 +357,7 @@ impl Battle {
 														if assailant.team == BattleTeam::Player {
 															let experience = {
 																let instance = user.active[instance.pokemon.active].pokemon.as_ref().unwrap();
-																instance.pokemon.value().exp_from(instance.data.level) as f32 * 
+																instance.pokemon.value().exp_from(instance.level) as f32 * 
 																match self.data.battle_type {
 																	BattleType::Wild => 1.0,
 																	_ => 1.5,
@@ -369,7 +369,7 @@ impl Battle {
 																BattleTeam::Opponent => &mut self.opponent,
 															}, assailant.active);
 															if let Some(assailant_pokemon) = assailant_party.active[index].pokemon.as_mut() {
-																let level = assailant_pokemon.data.level;
+																let level = assailant_pokemon.level;
 																if let Some((level, moves)) = assailant_pokemon.add_exp(experience) {
 																	queue.actions.push_front(BattleActionInstance { pokemon: *assailant, action: BattleAction::LevelUp(level, moves) });
 																}

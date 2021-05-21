@@ -1,0 +1,11 @@
+(
+    id: "stealth-rock",
+    name: "Stealth Rock",
+    category: Status,
+    type: Rock,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

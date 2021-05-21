@@ -1,6 +1,0 @@
-id = "low-kick"
-name = "Low Kick"
-type = "Fighting"
-category = "Physical"
-accuracy = 100
-pp = 20

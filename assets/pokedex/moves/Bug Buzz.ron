@@ -1,0 +1,11 @@
+(
+    id: "bug-buzz",
+    name: "Bug Buzz",
+    category: Special,
+    type: Bug,
+    power: Some(90),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

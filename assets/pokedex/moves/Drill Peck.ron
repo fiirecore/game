@@ -1,0 +1,11 @@
+(
+    id: "drill-peck",
+    name: "Drill Peck",
+    category: Physical,
+    type: Flying,
+    power: Some(80),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

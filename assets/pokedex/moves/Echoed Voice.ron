@@ -1,0 +1,11 @@
+(
+    id: "echoed-voice",
+    name: "Echoed Voice",
+    category: Special,
+    type: Normal,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

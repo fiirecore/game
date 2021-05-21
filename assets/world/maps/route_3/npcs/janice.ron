@@ -32,17 +32,13 @@
             party: [
                 (
                     id: 16,
-                    data: (
-                        level: 9,
-                        gender: Female,
-                    ),
+                    level: 9,
+                    gender: Female,
                 ),
                 (
                     id: 16,
-                    data: (
-                        level: 9,
-                        gender: Female,
-                    ),
+                    level: 9,
+                    gender: Female,
                 )
             ],
             worth: 0

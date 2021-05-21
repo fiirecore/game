@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 101,
+        name: "Electrode",
+        primary_type: Electric,
+        secondary_type: None,
+        species: "Ball",
+        height: 12,
+        weight: 666,
+    ),
+    base: (
+        hp: 60,
+        atk: 50,
+        def: 70,
+        sp_atk: 80,
+        sp_def: 80,
+        speed: 150,
+    ),
+    training: (
+        base_exp: 172,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "sonic-boom",
+            level: 1,
+        ),
+        (
+            move: "sonic-boom",
+            level: 15,
+        ),
+        (
+            move: "screech",
+            level: 1,
+        ),
+        (
+            move: "screech",
+            level: 8,
+        ),
+        (
+            move: "light-screen",
+            level: 41,
+        ),
+        (
+            move: "self-destruct",
+            level: 27,
+        ),
+        (
+            move: "swift",
+            level: 48,
+        ),
+        (
+            move: "explosion",
+            level: 54,
+        ),
+        (
+            move: "rollout",
+            level: 34,
+        ),
+        (
+            move: "spark",
+            level: 21,
+        ),
+        (
+            move: "mirror-coat",
+            level: 59,
+        ),
+        (
+            move: "charge",
+            level: 1,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "explosion",
+    name: "Explosion",
+    category: Physical,
+    type: Normal,
+    power: Some(250),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

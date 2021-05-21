@@ -1,0 +1,11 @@
+(
+    id: "magical-leaf",
+    name: "Magical Leaf",
+    category: Special,
+    type: Grass,
+    power: Some(60),
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

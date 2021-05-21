@@ -1,0 +1,11 @@
+(
+    id: "acrobatics",
+    name: "Acrobatics",
+    category: Physical,
+    type: Flying,
+    power: Some(55),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

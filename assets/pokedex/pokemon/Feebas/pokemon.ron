@@ -1,0 +1,40 @@
+(
+    data: (
+        id: 349,
+        name: "Feebas",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Fish",
+        height: 6,
+        weight: 74,
+    ),
+    base: (
+        hp: 20,
+        atk: 15,
+        def: 20,
+        sp_atk: 10,
+        sp_def: 55,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 40,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 15,
+        ),
+        (
+            move: "splash",
+            level: 1,
+        ),
+        (
+            move: "flail",
+            level: 30,
+        ),
+    ],
+)

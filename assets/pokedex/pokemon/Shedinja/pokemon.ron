@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 292,
+        name: "Shedinja",
+        primary_type: Bug,
+        secondary_type: Some(Ghost),
+        species: "Shed",
+        height: 8,
+        weight: 12,
+    ),
+    base: (
+        hp: 1,
+        atk: 90,
+        def: 45,
+        sp_atk: 30,
+        sp_def: 30,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 83,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "sand-attack",
+            level: 9,
+        ),
+        (
+            move: "harden",
+            level: 1,
+        ),
+        (
+            move: "confuse-ray",
+            level: 31,
+        ),
+        (
+            move: "leech-life",
+            level: 5,
+        ),
+        (
+            move: "fury-swipes",
+            level: 14,
+        ),
+        (
+            move: "mind-reader",
+            level: 19,
+        ),
+        (
+            move: "spite",
+            level: 25,
+        ),
+        (
+            move: "shadow-ball",
+            level: 38,
+        ),
+        (
+            move: "grudge",
+            level: 45,
+        ),
+    ],
+)

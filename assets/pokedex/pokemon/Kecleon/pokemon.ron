@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 352,
+        name: "Kecleon",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Color",
+        height: 10,
+        weight: 220,
+    ),
+    base: (
+        hp: 60,
+        atk: 90,
+        def: 70,
+        sp_atk: 60,
+        sp_def: 120,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 154,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "bind",
+            level: 4,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "psybeam",
+            level: 17,
+        ),
+        (
+            move: "screech",
+            level: 24,
+        ),
+        (
+            move: "lick",
+            level: 1,
+        ),
+        (
+            move: "fury-swipes",
+            level: 12,
+        ),
+        (
+            move: "slash",
+            level: 31,
+        ),
+        (
+            move: "substitute",
+            level: 40,
+        ),
+        (
+            move: "thief",
+            level: 1,
+        ),
+        (
+            move: "feint-attack",
+            level: 7,
+        ),
+        (
+            move: "ancient-power",
+            level: 49,
+        ),
+        (
+            move: "astonish",
+            level: 1,
+        ),
+    ],
+)

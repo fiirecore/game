@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 331,
+        name: "Cacnea",
+        primary_type: Grass,
+        secondary_type: None,
+        species: "Cactus",
+        height: 4,
+        weight: 513,
+    ),
+    base: (
+        hp: 50,
+        atk: 85,
+        def: 40,
+        sp_atk: 85,
+        sp_def: 40,
+        speed: 35,
+    ),
+    training: (
+        base_exp: 67,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "sand-attack",
+            level: 17,
+        ),
+        (
+            move: "poison-sting",
+            level: 1,
+        ),
+        (
+            move: "pin-missile",
+            level: 21,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "absorb",
+            level: 5,
+        ),
+        (
+            move: "leech-seed",
+            level: 13,
+        ),
+        (
+            move: "growth",
+            level: 9,
+        ),
+        (
+            move: "cotton-spore",
+            level: 41,
+        ),
+        (
+            move: "feint-attack",
+            level: 29,
+        ),
+        (
+            move: "spikes",
+            level: 33,
+        ),
+        (
+            move: "destiny-bond",
+            level: 49,
+        ),
+        (
+            move: "sandstorm",
+            level: 45,
+        ),
+        (
+            move: "ingrain",
+            level: 25,
+        ),
+        (
+            move: "needle-arm",
+            level: 37,
+        ),
+    ],
+)

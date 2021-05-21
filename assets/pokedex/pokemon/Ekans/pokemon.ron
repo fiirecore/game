@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 23,
+        name: "Ekans",
+        primary_type: Poison,
+        secondary_type: None,
+        species: "Snake",
+        height: 20,
+        weight: 69,
+    ),
+    base: (
+        hp: 35,
+        atk: 60,
+        def: 44,
+        sp_atk: 40,
+        sp_def: 54,
+        speed: 55,
+    ),
+    training: (
+        base_exp: 58,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "wrap",
+            level: 1,
+        ),
+        (
+            move: "poison-sting",
+            level: 8,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 13,
+        ),
+        (
+            move: "acid",
+            level: 32,
+        ),
+        (
+            move: "screech",
+            level: 25,
+        ),
+        (
+            move: "haze",
+            level: 44,
+        ),
+        (
+            move: "glare",
+            level: 20,
+        ),
+        (
+            move: "stockpile",
+            level: 37,
+        ),
+        (
+            move: "spit-up",
+            level: 37,
+        ),
+        (
+            move: "swallow",
+            level: 37,
+        ),
+    ],
+)

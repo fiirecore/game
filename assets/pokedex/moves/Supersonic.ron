@@ -1,0 +1,11 @@
+(
+    id: "supersonic",
+    name: "Supersonic",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(55),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

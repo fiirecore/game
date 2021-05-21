@@ -1,0 +1,11 @@
+(
+    id: "mega-punch",
+    name: "Mega Punch",
+    category: Physical,
+    type: Normal,
+    power: Some(80),
+    accuracy: Some(85),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

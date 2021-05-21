@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 286,
+        name: "Breloom",
+        primary_type: Grass,
+        secondary_type: Some(Fighting),
+        species: "Mushroom",
+        height: 12,
+        weight: 392,
+    ),
+    base: (
+        hp: 60,
+        atk: 130,
+        def: 80,
+        sp_atk: 60,
+        sp_def: 60,
+        speed: 70,
+    ),
+    training: (
+        base_exp: 161,
+        growth_rate: FastThenVerySlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "headbutt",
+            level: 22,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "tackle",
+            level: 4,
+        ),
+        (
+            move: "counter",
+            level: 28,
+        ),
+        (
+            move: "absorb",
+            level: 1,
+        ),
+        (
+            move: "mega-drain",
+            level: 16,
+        ),
+        (
+            move: "leech-seed",
+            level: 1,
+        ),
+        (
+            move: "leech-seed",
+            level: 10,
+        ),
+        (
+            move: "stun-spore",
+            level: 1,
+        ),
+        (
+            move: "stun-spore",
+            level: 7,
+        ),
+        (
+            move: "mind-reader",
+            level: 45,
+        ),
+        (
+            move: "mach-punch",
+            level: 23,
+        ),
+        (
+            move: "dynamic-punch",
+            level: 54,
+        ),
+        (
+            move: "sky-uppercut",
+            level: 36,
+        ),
+    ],
+)

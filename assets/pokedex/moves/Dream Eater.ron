@@ -1,0 +1,11 @@
+(
+    id: "dream-eater",
+    name: "Dream Eater",
+    category: Special,
+    type: Psychic,
+    power: Some(100),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

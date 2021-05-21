@@ -1,0 +1,64 @@
+(
+    data: (
+        id: 240,
+        name: "Magby",
+        primary_type: Fire,
+        secondary_type: None,
+        species: "Live",
+        height: 7,
+        weight: 214,
+    ),
+    base: (
+        hp: 45,
+        atk: 75,
+        def: 37,
+        sp_atk: 70,
+        sp_def: 55,
+        speed: 83,
+    ),
+    training: (
+        base_exp: 73,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(2),
+    ),
+    moves: [
+        (
+            move: "fire-punch",
+            level: 19,
+        ),
+        (
+            move: "leer",
+            level: 7,
+        ),
+        (
+            move: "ember",
+            level: 1,
+        ),
+        (
+            move: "flamethrower",
+            level: 37,
+        ),
+        (
+            move: "smokescreen",
+            level: 25,
+        ),
+        (
+            move: "confuse-ray",
+            level: 43,
+        ),
+        (
+            move: "smog",
+            level: 13,
+        ),
+        (
+            move: "fire-blast",
+            level: 49,
+        ),
+        (
+            move: "sunny-day",
+            level: 31,
+        ),
+    ],
+)

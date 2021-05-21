@@ -1,0 +1,11 @@
+(
+    id: "sucker-punch",
+    name: "Sucker Punch",
+    category: Physical,
+    type: Dark,
+    power: Some(70),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

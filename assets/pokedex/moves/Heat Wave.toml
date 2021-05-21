@@ -1,7 +1,0 @@
-id = "heat-wave"
-name = "Heat Wave"
-type = "Fire"
-category = "Special"
-power = 95
-accuracy = 90
-pp = 10

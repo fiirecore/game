@@ -1,0 +1,11 @@
+(
+    id: "embargo",
+    name: "Embargo",
+    category: Status,
+    type: Dark,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

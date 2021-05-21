@@ -1,0 +1,11 @@
+(
+    id: "fissure",
+    name: "Fissure",
+    category: Physical,
+    type: Ground,
+    power: None,
+    accuracy: Some(30),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

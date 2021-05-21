@@ -1,0 +1,11 @@
+(
+    id: "v-create",
+    name: "V-create",
+    category: Physical,
+    type: Fire,
+    power: Some(180),
+    accuracy: Some(95),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "sacred-fire",
+    name: "Sacred Fire",
+    category: Physical,
+    type: Fire,
+    power: Some(100),
+    accuracy: Some(95),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

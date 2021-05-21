@@ -1,0 +1,11 @@
+(
+    id: "magnet-bomb",
+    name: "Magnet Bomb",
+    category: Physical,
+    type: Steel,
+    power: Some(60),
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

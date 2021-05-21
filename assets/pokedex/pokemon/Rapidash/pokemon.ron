@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 78,
+        name: "Rapidash",
+        primary_type: Fire,
+        secondary_type: None,
+        species: "Fire",
+        height: 17,
+        weight: 950,
+    ),
+    base: (
+        hp: 65,
+        atk: 100,
+        def: 70,
+        sp_atk: 80,
+        sp_def: 80,
+        speed: 105,
+    ),
+    training: (
+        base_exp: 175,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "stomp",
+            level: 19,
+        ),
+        (
+            move: "fury-attack",
+            level: 40,
+        ),
+        (
+            move: "take-down",
+            level: 31,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "tail-whip",
+            level: 9,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 5,
+        ),
+        (
+            move: "ember",
+            level: 1,
+        ),
+        (
+            move: "ember",
+            level: 14,
+        ),
+        (
+            move: "fire-spin",
+            level: 25,
+        ),
+        (
+            move: "agility",
+            level: 38,
+        ),
+        (
+            move: "quick-attack",
+            level: 1,
+        ),
+        (
+            move: "fire-blast",
+            level: 63,
+        ),
+        (
+            move: "bounce",
+            level: 50,
+        ),
+    ],
+)

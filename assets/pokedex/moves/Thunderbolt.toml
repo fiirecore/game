@@ -1,7 +1,0 @@
-id = "thunderbolt"
-name = "Thunderbolt"
-type = "Electric"
-category = "Special"
-power = 90
-accuracy = 100
-pp = 15

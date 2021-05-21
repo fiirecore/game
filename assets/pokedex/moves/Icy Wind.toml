@@ -1,7 +1,0 @@
-id = "icy-wind"
-name = "Icy Wind"
-type = "Ice"
-category = "Special"
-power = 55
-accuracy = 95
-pp = 15

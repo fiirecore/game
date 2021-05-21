@@ -1,0 +1,88 @@
+(
+    data: (
+        id: 317,
+        name: "Swalot",
+        primary_type: Poison,
+        secondary_type: None,
+        species: "Poison",
+        height: 17,
+        weight: 800,
+    ),
+    base: (
+        hp: 100,
+        atk: 73,
+        def: 83,
+        sp_atk: 73,
+        sp_def: 83,
+        speed: 55,
+    ),
+    training: (
+        base_exp: 163,
+        growth_rate: FastThenVerySlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "pound",
+            level: 1,
+        ),
+        (
+            move: "body-slam",
+            level: 26,
+        ),
+        (
+            move: "toxic",
+            level: 31,
+        ),
+        (
+            move: "sludge",
+            level: 1,
+        ),
+        (
+            move: "sludge",
+            level: 14,
+        ),
+        (
+            move: "amnesia",
+            level: 17,
+        ),
+        (
+            move: "poison-gas",
+            level: 1,
+        ),
+        (
+            move: "poison-gas",
+            level: 9,
+        ),
+        (
+            move: "sludge-bomb",
+            level: 48,
+        ),
+        (
+            move: "encore",
+            level: 23,
+        ),
+        (
+            move: "stockpile",
+            level: 40,
+        ),
+        (
+            move: "spit-up",
+            level: 40,
+        ),
+        (
+            move: "swallow",
+            level: 40,
+        ),
+        (
+            move: "yawn",
+            level: 1,
+        ),
+        (
+            move: "yawn",
+            level: 6,
+        ),
+    ],
+)

@@ -1,7 +1,0 @@
-id = "revenge"
-name = "Revenge"
-type = "Fighting"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 10

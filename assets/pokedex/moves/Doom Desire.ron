@@ -1,0 +1,11 @@
+(
+    id: "doom-desire",
+    name: "Doom Desire",
+    category: Special,
+    type: Steel,
+    power: Some(140),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

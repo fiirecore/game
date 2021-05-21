@@ -1,0 +1,11 @@
+(
+    id: "focus-blast",
+    name: "Focus Blast",
+    category: Special,
+    type: Fighting,
+    power: Some(120),
+    accuracy: Some(70),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

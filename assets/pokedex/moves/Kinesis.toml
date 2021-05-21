@@ -1,6 +1,0 @@
-id = "kinesis"
-name = "Kinesis"
-type = "Psychic"
-category = "Status"
-accuracy = 80
-pp = 15

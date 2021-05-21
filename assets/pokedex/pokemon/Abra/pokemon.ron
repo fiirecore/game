@@ -1,0 +1,32 @@
+(
+    data: (
+        id: 63,
+        name: "Abra",
+        primary_type: Psychic,
+        secondary_type: None,
+        species: "Psi",
+        height: 9,
+        weight: 195,
+    ),
+    base: (
+        hp: 25,
+        atk: 20,
+        def: 15,
+        sp_atk: 105,
+        sp_def: 55,
+        speed: 90,
+    ),
+    training: (
+        base_exp: 62,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(2),
+    ),
+    moves: [
+        (
+            move: "teleport",
+            level: 1,
+        ),
+    ],
+)

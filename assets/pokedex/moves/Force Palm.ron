@@ -1,0 +1,11 @@
+(
+    id: "force-palm",
+    name: "Force Palm",
+    category: Physical,
+    type: Fighting,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "draco-meteor",
+    name: "Draco Meteor",
+    category: Special,
+    type: Dragon,
+    power: Some(130),
+    accuracy: Some(90),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

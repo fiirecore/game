@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 355,
+        name: "Duskull",
+        primary_type: Ghost,
+        secondary_type: None,
+        species: "Requiem",
+        height: 8,
+        weight: 150,
+    ),
+    base: (
+        hp: 20,
+        atk: 40,
+        def: 90,
+        sp_atk: 30,
+        sp_def: 90,
+        speed: 25,
+    ),
+    training: (
+        base_exp: 59,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "disable",
+            level: 5,
+        ),
+        (
+            move: "night-shade",
+            level: 1,
+        ),
+        (
+            move: "confuse-ray",
+            level: 23,
+        ),
+        (
+            move: "curse",
+            level: 34,
+        ),
+        (
+            move: "foresight",
+            level: 12,
+        ),
+        (
+            move: "mean-look",
+            level: 45,
+        ),
+        (
+            move: "pursuit",
+            level: 27,
+        ),
+        (
+            move: "future-sight",
+            level: 49,
+        ),
+        (
+            move: "will-o-wisp",
+            level: 38,
+        ),
+        (
+            move: "astonish",
+            level: 16,
+        ),
+    ],
+)

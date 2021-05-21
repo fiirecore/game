@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 81,
+        name: "Magnemite",
+        primary_type: Electric,
+        secondary_type: Some(Steel),
+        species: "Magnet",
+        height: 3,
+        weight: 60,
+    ),
+    base: (
+        hp: 25,
+        atk: 35,
+        def: 70,
+        sp_atk: 95,
+        sp_def: 55,
+        speed: 45,
+    ),
+    training: (
+        base_exp: 65,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "supersonic",
+            level: 11,
+        ),
+        (
+            move: "sonic-boom",
+            level: 16,
+        ),
+        (
+            move: "thunder-shock",
+            level: 6,
+        ),
+        (
+            move: "thunder-wave",
+            level: 21,
+        ),
+        (
+            move: "screech",
+            level: 44,
+        ),
+        (
+            move: "swift",
+            level: 38,
+        ),
+        (
+            move: "zap-cannon",
+            level: 50,
+        ),
+        (
+            move: "lock-on",
+            level: 32,
+        ),
+        (
+            move: "spark",
+            level: 26,
+        ),
+        (
+            move: "metal-sound",
+            level: 1,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "moonlight",
+    name: "Moonlight",
+    category: Status,
+    type: Fairy,
+    power: None,
+    accuracy: None,
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

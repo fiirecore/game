@@ -1,0 +1,11 @@
+(
+    id: "spike-cannon",
+    name: "Spike Cannon",
+    category: Physical,
+    type: Normal,
+    power: Some(20),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

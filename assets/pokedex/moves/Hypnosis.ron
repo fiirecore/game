@@ -1,0 +1,11 @@
+(
+    id: "hypnosis",
+    name: "Hypnosis",
+    category: Status,
+    type: Psychic,
+    power: None,
+    accuracy: Some(60),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

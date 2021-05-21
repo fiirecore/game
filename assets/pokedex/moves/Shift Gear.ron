@@ -1,0 +1,11 @@
+(
+    id: "shift-gear",
+    name: "Shift Gear",
+    category: Status,
+    type: Steel,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

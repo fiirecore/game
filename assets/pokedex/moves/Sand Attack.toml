@@ -1,6 +1,0 @@
-id = "sand-attack"
-name = "Sand Attack"
-type = "Ground"
-category = "Status"
-accuracy = 100
-pp = 15

@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use serde::{Serialize, Deserialize};
+use serde::Serialize;
 
 use crate::{
 	Identifiable,
@@ -10,7 +10,9 @@ use crate::{
 		PokemonRef,
 		Level,
 		Health,
+		Gender,
 		Experience,
+		Friendship,
 		types::{PokemonType, Effective},
 		status::StatusEffect,
 		stat::{StatSet, BaseStatSet},
@@ -34,21 +36,45 @@ mod result;
 
 pub use result::*;
 
+// pub mod instance_template;
+
+pub type Nickname = Option<String>;
+
 #[derive(Clone, Serialize)]
 pub struct PokemonInstance {
 	
 	#[serde(rename = "id")]
 	pub pokemon: PokemonRef, 
 	
-	pub data: PokemonData,
+	#[serde(default)]
+    pub nickname: Nickname,
+    pub level: Level,
+    pub gender: Gender,
+    
+    #[serde(default = "default_iv")]
+	pub ivs: StatSet,
+    #[serde(default)]
+    pub evs: StatSet,
+
+    #[serde(default)]
+	pub experience: Experience,
+
+    #[serde(default = "default_friendship")]
+    pub friendship: Friendship,
 
 	// pub persistent: Option<PersistentMoveInstance>, // to - do
 
+	pub moves: MoveInstanceSet,
+
+	#[serde(default)]
+    pub status: Option<StatusEffect>,
+
 	#[serde(default)]
 	pub item: Option<ItemRef>, // to - do
-	pub moves: MoveInstanceSet,
+
 	#[serde(skip)]
 	pub base: BaseStatSet,
+
 	pub current_hp: Health,
 	
 }
@@ -69,26 +95,27 @@ impl PokemonInstance {
 		let ivs = ivs.unwrap_or(StatSet::random());
 		let evs = StatSet::default();
 
-		let base = BaseStatSet::get(pokemon, ivs, evs, level);
+		let base = BaseStatSet::get(pokemon, &ivs, &evs, level);
 
 		Self {
 
-			data: PokemonData {
-				nickname: None,
-				level: level,
-				gender: pokemon.generate_gender(),
-				ivs: ivs,
-				evs: evs,
-				experience: 0,
-				friendship: 70,
-				status: None,
-			},
+			nickname: None,
+			level: level,
+			gender: pokemon.generate_gender(),
+
+			ivs: ivs,
+			evs: evs,
+
+			experience: 0,
+			friendship: 70,
 
 			// persistent: None,
 
+			moves: pokemon.generate_moves(level),
+
 			item: None,
 
-			moves: pokemon.generate_moves(level),
+			status: None,
 
 			current_hp: base.hp,
 
@@ -103,16 +130,16 @@ impl PokemonInstance {
 
 		// add exp to pokemon
 
-		self.data.experience += experience * 5;
+		self.experience += experience * 5;
 
 		// level the pokemon up if they reach a certain amount of exp (and then subtract the exp by the maximum for the previous level)
 
 		let mut moves = Vec::new();
-		let prev = self.data.level;
+		let prev = self.level;
 
-		while self.data.experience > self.pokemon.value().training.growth_rate.max_exp(self.data.level) {
-			self.data.experience -= self.pokemon.value().training.growth_rate.max_exp(self.data.level);
-			self.data.level += 1;
+		while self.experience > self.pokemon.value().training.growth_rate.max_exp(self.level) {
+			self.experience -= self.pokemon.value().training.growth_rate.max_exp(self.level);
+			self.level += 1;
 
 			self.on_level_up();
 
@@ -133,9 +160,9 @@ impl PokemonInstance {
 			}
 		}
 			
-		if prev != self.data.level {
+		if prev != self.level {
 			Some((
-				self.data.level,
+				self.level,
 				if !moves.is_empty() {
 					Some(moves)
 				} else {
@@ -148,7 +175,7 @@ impl PokemonInstance {
 	}
 
 	pub fn on_level_up(&mut self) {
-		self.base = BaseStatSet::get(self.pokemon.value(), self.data.ivs, self.data.evs, self.data.level);
+		self.base = BaseStatSet::get(self.pokemon.value(), &self.ivs, &self.evs, self.level);
 	}
 
 	pub fn generate_with_level(id: PokemonId, level: Level, ivs: Option<StatSet>) -> Self {
@@ -160,7 +187,7 @@ impl PokemonInstance {
 	}
 
 	pub fn name(&self) -> Cow<'_, str> {
-		match self.data.nickname.as_ref() {
+		match self.nickname.as_ref() {
 		    Some(name) => Cow::Borrowed(name),
 		    None => Cow::Owned(self.pokemon.value().data.name.to_ascii_uppercase()),
 		}
@@ -169,7 +196,7 @@ impl PokemonInstance {
 	pub fn moves_at_level(&self) -> Vec<MoveRef> {
 		let mut moves = Vec::new();
 		for pokemon_move in &self.pokemon.value().moves {
-			if pokemon_move.level == self.data.level {
+			if pokemon_move.level == self.level {
 				moves.push(<crate::moves::Move as crate::Identifiable>::get(&pokemon_move.move_id))
 			}
 		}
@@ -195,39 +222,8 @@ impl core::fmt::Debug for PokemonInstance {
 
 impl core::fmt::Display for PokemonInstance {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "Lv. {} {}", self.data.level, self.name())
+		write!(f, "Lv. {} {}", self.level, self.name())
 	}
-}
-
-use super::{Friendship, data::Gender};
-
-#[derive(Debug, Clone, Serialize, Deserialize)] // to - do: move
-pub struct PokemonData {
-
-    pub nickname: Option<String>,
-    pub level: Level,
-    pub gender: Gender,
-
-    // #[serde(default)]
-    // pub ability: Option<Ability>,
-    pub status: Option<StatusEffect>,
-    
-    #[serde(default = "default_iv")]
-	pub ivs: StatSet,
-    #[serde(default)]
-    pub evs: StatSet,
-
-    #[serde(default)]
-	pub experience: Experience,
-
-    #[serde(default = "default_friendship")]
-    pub friendship: Friendship,
-
-    // #[serde(default)]
-    // pub item: Option<Item>, // item: struct with name, texture, description, and singular script-like enum which activates function of item
-
-    // #[serde(default)]
-
 }
 
 // #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -237,11 +233,3 @@ pub struct PokemonData {
 //     pub original_location: (String, Level),
 
 // }
-
-pub const fn default_iv() -> StatSet {
-    StatSet::uniform(15)
-}
-
-pub const fn default_friendship() -> Friendship {
-    70
-}

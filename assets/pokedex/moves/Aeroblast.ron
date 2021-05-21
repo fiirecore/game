@@ -1,0 +1,11 @@
+(
+    id: "aeroblast",
+    name: "Aeroblast",
+    category: Special,
+    type: Flying,
+    power: Some(100),
+    accuracy: Some(95),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

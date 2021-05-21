@@ -1,0 +1,11 @@
+(
+    id: "lucky-chant",
+    name: "Lucky Chant",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

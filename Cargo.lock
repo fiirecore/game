@@ -337,7 +337,6 @@ dependencies = [
  "firecore-pokedex-game",
  "ron",
  "serde",
- "toml",
 ]
 
 [[package]]

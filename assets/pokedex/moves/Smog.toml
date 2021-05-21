@@ -1,7 +1,0 @@
-id = "smog"
-name = "Smog"
-type = "Poison"
-category = "Special"
-power = 30
-accuracy = 70
-pp = 20

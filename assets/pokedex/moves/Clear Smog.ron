@@ -1,0 +1,11 @@
+(
+    id: "clear-smog",
+    name: "Clear Smog",
+    category: Special,
+    type: Poison,
+    power: Some(50),
+    accuracy: None,
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

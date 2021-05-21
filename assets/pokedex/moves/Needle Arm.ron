@@ -1,0 +1,11 @@
+(
+    id: "needle-arm",
+    name: "Needle Arm",
+    category: Physical,
+    type: Grass,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

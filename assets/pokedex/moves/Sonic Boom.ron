@@ -1,0 +1,11 @@
+(
+    id: "sonic-boom",
+    name: "Sonic Boom",
+    category: Special,
+    type: Normal,
+    power: None,
+    accuracy: Some(90),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

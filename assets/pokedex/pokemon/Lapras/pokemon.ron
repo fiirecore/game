@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 131,
+        name: "Lapras",
+        primary_type: Water,
+        secondary_type: Some(Ice),
+        species: "Transport",
+        height: 25,
+        weight: 2200,
+    ),
+    base: (
+        hp: 130,
+        atk: 85,
+        def: 80,
+        sp_atk: 85,
+        sp_def: 95,
+        speed: 60,
+    ),
+    training: (
+        base_exp: 187,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "body-slam",
+            level: 13,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "sing",
+            level: 1,
+        ),
+        (
+            move: "mist",
+            level: 7,
+        ),
+        (
+            move: "water-gun",
+            level: 1,
+        ),
+        (
+            move: "hydro-pump",
+            level: 49,
+        ),
+        (
+            move: "ice-beam",
+            level: 31,
+        ),
+        (
+            move: "confuse-ray",
+            level: 19,
+        ),
+        (
+            move: "perish-song",
+            level: 25,
+        ),
+        (
+            move: "safeguard",
+            level: 43,
+        ),
+        (
+            move: "rain-dance",
+            level: 37,
+        ),
+        (
+            move: "sheer-cold",
+            level: 55,
+        ),
+    ],
+)

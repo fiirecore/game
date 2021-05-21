@@ -1,0 +1,11 @@
+(
+    id: "super-fang",
+    name: "Super Fang",
+    category: Physical,
+    type: Normal,
+    power: None,
+    accuracy: Some(90),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

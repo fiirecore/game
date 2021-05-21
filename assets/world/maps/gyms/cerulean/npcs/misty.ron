@@ -29,17 +29,13 @@
             party: [
                 (
                     id: 120,
-                    data: (
-                        level: 18,
-                        gender: None,
-                    ),                
+                    level: 18,
+                    gender: None,               
                 ),
                 (
                     id: 121,
-                    data: (
-                        level: 21,
-                        gender: None,
-                    ),
+                    level: 21,
+                    gender: None,
                 )
             ],
 

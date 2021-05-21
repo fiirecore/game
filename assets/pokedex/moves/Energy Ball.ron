@@ -1,0 +1,11 @@
+(
+    id: "energy-ball",
+    name: "Energy Ball",
+    category: Special,
+    type: Grass,
+    power: Some(90),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

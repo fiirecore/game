@@ -1,0 +1,11 @@
+(
+    id: "whirlpool",
+    name: "Whirlpool",
+    category: Special,
+    type: Water,
+    power: Some(35),
+    accuracy: Some(85),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

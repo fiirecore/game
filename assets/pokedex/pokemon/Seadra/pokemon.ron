@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 117,
+        name: "Seadra",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Dragon",
+        height: 12,
+        weight: 250,
+    ),
+    base: (
+        hp: 55,
+        atk: 65,
+        def: 95,
+        sp_atk: 95,
+        sp_def: 45,
+        speed: 85,
+    ),
+    training: (
+        base_exp: 154,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 15,
+        ),
+        (
+            move: "water-gun",
+            level: 1,
+        ),
+        (
+            move: "water-gun",
+            level: 22,
+        ),
+        (
+            move: "hydro-pump",
+            level: 51,
+        ),
+        (
+            move: "agility",
+            level: 40,
+        ),
+        (
+            move: "smokescreen",
+            level: 1,
+        ),
+        (
+            move: "smokescreen",
+            level: 8,
+        ),
+        (
+            move: "bubble",
+            level: 1,
+        ),
+        (
+            move: "twister",
+            level: 29,
+        ),
+        (
+            move: "dragon-dance",
+            level: 62,
+        ),
+    ],
+)

@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 358,
+        name: "Chimecho",
+        primary_type: Psychic,
+        secondary_type: None,
+        species: "Wind",
+        height: 6,
+        weight: 10,
+    ),
+    base: (
+        hp: 75,
+        atk: 50,
+        def: 80,
+        sp_atk: 95,
+        sp_def: 90,
+        speed: 65,
+    ),
+    training: (
+        base_exp: 159,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "wrap",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 17,
+        ),
+        (
+            move: "double-edge",
+            level: 33,
+        ),
+        (
+            move: "growl",
+            level: 6,
+        ),
+        (
+            move: "confusion",
+            level: 14,
+        ),
+        (
+            move: "psychic",
+            level: 46,
+        ),
+        (
+            move: "psywave",
+            level: 30,
+        ),
+        (
+            move: "heal-bell",
+            level: 38,
+        ),
+        (
+            move: "safeguard",
+            level: 41,
+        ),
+        (
+            move: "uproar",
+            level: 22,
+        ),
+        (
+            move: "yawn",
+            level: 25,
+        ),
+        (
+            move: "astonish",
+            level: 9,
+        ),
+    ],
+)

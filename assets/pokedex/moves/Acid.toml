@@ -1,7 +1,0 @@
-id = "acid"
-name = "Acid"
-type = "Poison"
-category = "Special"
-power = 40
-accuracy = 100
-pp = 30

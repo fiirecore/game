@@ -1,0 +1,11 @@
+(
+    id: "knock-off",
+    name: "Knock Off",
+    category: Physical,
+    type: Dark,
+    power: Some(65),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

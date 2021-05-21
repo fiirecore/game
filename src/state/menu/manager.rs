@@ -51,14 +51,6 @@ impl State for MenuStateManager {
 	}
 
     fn on_start(&mut self) {
-		#[cfg(debug_assertions)] {
-			let saves = unsafe{game::storage::PLAYER_SAVES.as_mut()}.expect("Could not get player saves");
-			if saves.saves.is_empty() {
-				self.current = MenuStates::Title;
-			} else {
-				saves.select(0);
-			}			
-		}
 		self.get_mut().on_start();
     }
 

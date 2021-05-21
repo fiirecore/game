@@ -1,7 +1,0 @@
-id = "water-pulse"
-name = "Water Pulse"
-type = "Water"
-category = "Special"
-power = 60
-accuracy = 100
-pp = 20

@@ -1,7 +1,0 @@
-id = "mud-shot"
-name = "Mud Shot"
-type = "Ground"
-category = "Special"
-power = 55
-accuracy = 95
-pp = 15

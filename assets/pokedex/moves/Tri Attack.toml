@@ -1,7 +1,0 @@
-id = "tri-attack"
-name = "Tri Attack"
-type = "Normal"
-category = "Special"
-power = 80
-accuracy = 100
-pp = 10

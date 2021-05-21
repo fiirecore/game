@@ -1,0 +1,11 @@
+(
+    id: "flame-charge",
+    name: "Flame Charge",
+    category: Physical,
+    type: Fire,
+    power: Some(50),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 108,
+        name: "Lickitung",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Licking",
+        height: 12,
+        weight: 655,
+    ),
+    base: (
+        hp: 90,
+        atk: 55,
+        def: 75,
+        sp_atk: 60,
+        sp_def: 75,
+        speed: 30,
+    ),
+    training: (
+        base_exp: 77,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "slam",
+            level: 40,
+        ),
+        (
+            move: "stomp",
+            level: 23,
+        ),
+        (
+            move: "wrap",
+            level: 29,
+        ),
+        (
+            move: "supersonic",
+            level: 7,
+        ),
+        (
+            move: "disable",
+            level: 34,
+        ),
+        (
+            move: "screech",
+            level: 45,
+        ),
+        (
+            move: "defense-curl",
+            level: 12,
+        ),
+        (
+            move: "lick",
+            level: 1,
+        ),
+        (
+            move: "knock-off",
+            level: 18,
+        ),
+        (
+            move: "refresh",
+            level: 51,
+        ),
+    ],
+)

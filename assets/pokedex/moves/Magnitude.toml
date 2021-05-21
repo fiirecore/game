@@ -1,6 +1,0 @@
-id = "magnitude"
-name = "Magnitude"
-type = "Ground"
-category = "Physical"
-accuracy = 100
-pp = 30

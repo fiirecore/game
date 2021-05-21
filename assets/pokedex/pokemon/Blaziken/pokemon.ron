@@ -1,0 +1,92 @@
+(
+    data: (
+        id: 257,
+        name: "Blaziken",
+        primary_type: Fire,
+        secondary_type: Some(Fighting),
+        species: "Blaze",
+        height: 19,
+        weight: 520,
+    ),
+    base: (
+        hp: 80,
+        atk: 120,
+        def: 70,
+        sp_atk: 110,
+        sp_def: 70,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 239,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "fire-punch",
+            level: 1,
+        ),
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "double-kick",
+            level: 16,
+        ),
+        (
+            move: "sand-attack",
+            level: 21,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "ember",
+            level: 1,
+        ),
+        (
+            move: "ember",
+            level: 13,
+        ),
+        (
+            move: "peck",
+            level: 17,
+        ),
+        (
+            move: "quick-attack",
+            level: 32,
+        ),
+        (
+            move: "focus-energy",
+            level: 1,
+        ),
+        (
+            move: "focus-energy",
+            level: 7,
+        ),
+        (
+            move: "mirror-move",
+            level: 49,
+        ),
+        (
+            move: "slash",
+            level: 42,
+        ),
+        (
+            move: "blaze-kick",
+            level: 36,
+        ),
+        (
+            move: "sky-uppercut",
+            level: 59,
+        ),
+        (
+            move: "bulk-up",
+            level: 28,
+        ),
+    ],
+)

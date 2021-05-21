@@ -1,0 +1,11 @@
+(
+    id: "fire-spin",
+    name: "Fire Spin",
+    category: Special,
+    type: Fire,
+    power: Some(35),
+    accuracy: Some(85),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

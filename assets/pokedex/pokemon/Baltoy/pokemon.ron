@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 343,
+        name: "Baltoy",
+        primary_type: Ground,
+        secondary_type: Some(Psychic),
+        species: "Clay",
+        height: 5,
+        weight: 215,
+    ),
+    base: (
+        hp: 40,
+        atk: 40,
+        def: 55,
+        sp_atk: 40,
+        sp_def: 70,
+        speed: 55,
+    ),
+    training: (
+        base_exp: 60,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "psybeam",
+            level: 11,
+        ),
+        (
+            move: "confusion",
+            level: 1,
+        ),
+        (
+            move: "harden",
+            level: 3,
+        ),
+        (
+            move: "self-destruct",
+            level: 19,
+        ),
+        (
+            move: "explosion",
+            level: 45,
+        ),
+        (
+            move: "mud-slap",
+            level: 7,
+        ),
+        (
+            move: "sandstorm",
+            level: 31,
+        ),
+        (
+            move: "rapid-spin",
+            level: 5,
+        ),
+        (
+            move: "ancient-power",
+            level: 25,
+        ),
+        (
+            move: "rock-tomb",
+            level: 15,
+        ),
+        (
+            move: "cosmic-power",
+            level: 37,
+        ),
+    ],
+)

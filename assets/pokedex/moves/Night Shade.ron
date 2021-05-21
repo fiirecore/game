@@ -1,0 +1,11 @@
+(
+    id: "night-shade",
+    name: "Night Shade",
+    category: Special,
+    type: Ghost,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

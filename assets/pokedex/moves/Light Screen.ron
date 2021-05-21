@@ -1,0 +1,11 @@
+(
+    id: "light-screen",
+    name: "Light Screen",
+    category: Status,
+    type: Psychic,
+    power: None,
+    accuracy: None,
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

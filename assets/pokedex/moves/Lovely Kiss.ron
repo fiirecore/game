@@ -1,0 +1,11 @@
+(
+    id: "lovely-kiss",
+    name: "Lovely Kiss",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(75),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

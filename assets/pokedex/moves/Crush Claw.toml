@@ -1,7 +1,0 @@
-id = "crush-claw"
-name = "Crush Claw"
-type = "Normal"
-category = "Physical"
-power = 75
-accuracy = 95
-pp = 10

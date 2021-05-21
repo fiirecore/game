@@ -1,7 +1,0 @@
-id = "stomp"
-name = "Stomp"
-type = "Normal"
-category = "Physical"
-power = 65
-accuracy = 100
-pp = 20

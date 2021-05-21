@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 73,
+        name: "Tentacruel",
+        primary_type: Water,
+        secondary_type: Some(Poison),
+        species: "Jellyfish",
+        height: 16,
+        weight: 550,
+    ),
+    base: (
+        hp: 80,
+        atk: 70,
+        def: 65,
+        sp_atk: 80,
+        sp_def: 120,
+        speed: 100,
+    ),
+    training: (
+        base_exp: 180,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "wrap",
+            level: 30,
+        ),
+        (
+            move: "poison-sting",
+            level: 1,
+        ),
+        (
+            move: "supersonic",
+            level: 1,
+        ),
+        (
+            move: "supersonic",
+            level: 6,
+        ),
+        (
+            move: "acid",
+            level: 19,
+        ),
+        (
+            move: "hydro-pump",
+            level: 55,
+        ),
+        (
+            move: "bubble-beam",
+            level: 25,
+        ),
+        (
+            move: "screech",
+            level: 47,
+        ),
+        (
+            move: "barrier",
+            level: 38,
+        ),
+        (
+            move: "constrict",
+            level: 1,
+        ),
+        (
+            move: "constrict",
+            level: 12,
+        ),
+    ],
+)

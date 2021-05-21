@@ -1,7 +1,0 @@
-id = "high-jump-kick"
-name = "High Jump Kick"
-type = "Fighting"
-category = "Physical"
-power = 130
-accuracy = 90
-pp = 10

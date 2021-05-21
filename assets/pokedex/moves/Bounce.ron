@@ -1,0 +1,11 @@
+(
+    id: "bounce",
+    name: "Bounce",
+    category: Physical,
+    type: Flying,
+    power: Some(85),
+    accuracy: Some(85),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

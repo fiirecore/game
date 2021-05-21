@@ -1,0 +1,11 @@
+(
+    id: "fly",
+    name: "Fly",
+    category: Physical,
+    type: Flying,
+    power: Some(90),
+    accuracy: Some(95),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

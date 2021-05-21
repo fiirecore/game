@@ -1,0 +1,11 @@
+(
+    id: "judgment",
+    name: "Judgment",
+    category: Special,
+    type: Normal,
+    power: Some(100),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

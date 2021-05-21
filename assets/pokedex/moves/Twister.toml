@@ -1,7 +1,0 @@
-id = "twister"
-name = "Twister"
-type = "Dragon"
-category = "Special"
-power = 40
-accuracy = 100
-pp = 20

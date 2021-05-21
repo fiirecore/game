@@ -1,7 +1,0 @@
-id = "eruption"
-name = "Eruption"
-type = "Fire"
-category = "Special"
-power = 150
-accuracy = 100
-pp = 5

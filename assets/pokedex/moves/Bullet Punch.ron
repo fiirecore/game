@@ -1,0 +1,11 @@
+(
+    id: "bullet-punch",
+    name: "Bullet Punch",
+    category: Physical,
+    type: Steel,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

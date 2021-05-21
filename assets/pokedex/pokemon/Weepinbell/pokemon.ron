@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 70,
+        name: "Weepinbell",
+        primary_type: Grass,
+        secondary_type: Some(Poison),
+        species: "Flycatcher",
+        height: 10,
+        weight: 64,
+    ),
+    base: (
+        hp: 65,
+        atk: 90,
+        def: 50,
+        sp_atk: 85,
+        sp_def: 45,
+        speed: 55,
+    ),
+    training: (
+        base_exp: 137,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "slam",
+            level: 54,
+        ),
+        (
+            move: "vine-whip",
+            level: 1,
+        ),
+        (
+            move: "wrap",
+            level: 1,
+        ),
+        (
+            move: "wrap",
+            level: 11,
+        ),
+        (
+            move: "acid",
+            level: 24,
+        ),
+        (
+            move: "growth",
+            level: 1,
+        ),
+        (
+            move: "growth",
+            level: 6,
+        ),
+        (
+            move: "razor-leaf",
+            level: 42,
+        ),
+        (
+            move: "poison-powder",
+            level: 17,
+        ),
+        (
+            move: "stun-spore",
+            level: 19,
+        ),
+        (
+            move: "sleep-powder",
+            level: 15,
+        ),
+        (
+            move: "sweet-scent",
+            level: 33,
+        ),
+    ],
+)

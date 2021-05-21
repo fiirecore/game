@@ -1,0 +1,11 @@
+(
+    id: "attack-order",
+    name: "Attack Order",
+    category: Physical,
+    type: Bug,
+    power: Some(90),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

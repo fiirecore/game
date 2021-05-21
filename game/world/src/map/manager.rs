@@ -356,7 +356,7 @@ impl WorldManager {
 
         if is_key_pressed(KeyCode::F4) {
             for (slot, instance) in data().party.iter().enumerate() {
-                info!("Party Slot {}: Lv{} {}", slot, instance.data.level, instance.name());
+                info!("Party Slot {}: Lv{} {}", slot, instance.level, instance.name());
             }
         }
 

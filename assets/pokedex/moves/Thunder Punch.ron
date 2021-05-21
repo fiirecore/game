@@ -1,0 +1,11 @@
+(
+    id: "thunder-punch",
+    name: "Thunder Punch",
+    category: Physical,
+    type: Electric,
+    power: Some(75),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "snore"
-name = "Snore"
-type = "Normal"
-category = "Special"
-power = 50
-accuracy = 100
-pp = 15

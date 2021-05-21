@@ -1,7 +1,0 @@
-id = "extrasensory"
-name = "Extrasensory"
-type = "Psychic"
-category = "Special"
-power = 80
-accuracy = 100
-pp = 20

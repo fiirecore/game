@@ -1,6 +1,0 @@
-id = "screech"
-name = "Screech"
-type = "Normal"
-category = "Status"
-accuracy = 85
-pp = 40

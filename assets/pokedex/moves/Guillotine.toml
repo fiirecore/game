@@ -1,6 +1,0 @@
-id = "guillotine"
-name = "Guillotine"
-type = "Normal"
-category = "Physical"
-accuracy = 30
-pp = 5

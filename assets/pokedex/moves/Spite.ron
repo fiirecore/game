@@ -1,0 +1,11 @@
+(
+    id: "spite",
+    name: "Spite",
+    category: Status,
+    type: Ghost,
+    power: None,
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

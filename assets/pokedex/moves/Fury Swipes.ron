@@ -1,0 +1,11 @@
+(
+    id: "fury-swipes",
+    name: "Fury Swipes",
+    category: Physical,
+    type: Normal,
+    power: Some(18),
+    accuracy: Some(80),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

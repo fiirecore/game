@@ -1,0 +1,88 @@
+(
+    data: (
+        id: 105,
+        name: "Marowak",
+        primary_type: Ground,
+        secondary_type: None,
+        species: "Bone",
+        height: 10,
+        weight: 450,
+    ),
+    base: (
+        hp: 60,
+        atk: 80,
+        def: 110,
+        sp_atk: 50,
+        sp_def: 80,
+        speed: 45,
+    ),
+    training: (
+        base_exp: 149,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "headbutt",
+            level: 1,
+        ),
+        (
+            move: "headbutt",
+            level: 13,
+        ),
+        (
+            move: "thrash",
+            level: 46,
+        ),
+        (
+            move: "double-edge",
+            level: 61,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "tail-whip",
+            level: 5,
+        ),
+        (
+            move: "leer",
+            level: 17,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "rage",
+            level: 32,
+        ),
+        (
+            move: "focus-energy",
+            level: 21,
+        ),
+        (
+            move: "bone-club",
+            level: 1,
+        ),
+        (
+            move: "bone-club",
+            level: 9,
+        ),
+        (
+            move: "bonemerang",
+            level: 25,
+        ),
+        (
+            move: "bone-rush",
+            level: 53,
+        ),
+        (
+            move: "false-swipe",
+            level: 39,
+        ),
+    ],
+)

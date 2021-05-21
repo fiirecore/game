@@ -1,0 +1,11 @@
+(
+    id: "thunder-wave",
+    name: "Thunder Wave",
+    category: Status,
+    type: Electric,
+    power: None,
+    accuracy: Some(90),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

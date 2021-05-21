@@ -1,0 +1,11 @@
+(
+    id: "mirror-move",
+    name: "Mirror Move",
+    category: Status,
+    type: Flying,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "solar-beam"
-name = "Solar Beam"
-type = "Grass"
-category = "Special"
-power = 120
-accuracy = 100
-pp = 10

@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 77,
+        name: "Ponyta",
+        primary_type: Fire,
+        secondary_type: None,
+        species: "Fire",
+        height: 10,
+        weight: 300,
+    ),
+    base: (
+        hp: 50,
+        atk: 85,
+        def: 55,
+        sp_atk: 65,
+        sp_def: 65,
+        speed: 90,
+    ),
+    training: (
+        base_exp: 82,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "stomp",
+            level: 19,
+        ),
+        (
+            move: "take-down",
+            level: 31,
+        ),
+        (
+            move: "tail-whip",
+            level: 9,
+        ),
+        (
+            move: "growl",
+            level: 5,
+        ),
+        (
+            move: "ember",
+            level: 14,
+        ),
+        (
+            move: "fire-spin",
+            level: 25,
+        ),
+        (
+            move: "agility",
+            level: 38,
+        ),
+        (
+            move: "quick-attack",
+            level: 1,
+        ),
+        (
+            move: "fire-blast",
+            level: 53,
+        ),
+        (
+            move: "bounce",
+            level: 45,
+        ),
+    ],
+)

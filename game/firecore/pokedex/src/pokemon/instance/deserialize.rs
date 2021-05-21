@@ -1,12 +1,21 @@
 use crate::item::ItemRef;
-// use crate::item::ItemRef;
 use crate::moves::instance::MoveInstanceSet;
-use crate::pokemon::stat::BaseStatSet;
-use crate::pokemon::instance::PokemonData;
-use crate::pokemon::Health;
-use crate::pokemon::PokemonRef;
+use crate::pokemon::{
+    PokemonRef,
+    Health,
+    Level,
+    Experience,
+    Friendship,
+    data::Gender,
+    instance::Nickname,
+    stat::{StatSet, BaseStatSet},
+    status::StatusEffect,
+    default_iv,
+    default_friendship,
+};
 
 use super::PokemonInstance;
+
 
 impl<'de> serde::Deserialize<'de> for PokemonInstance {
     fn deserialize<__D>(__deserializer: __D) -> serde::__private::Result<Self, __D::Error>
@@ -19,7 +28,14 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
             __field1,
             __field2,
             __field3,
+            __field4,
             __field5,
+            __field6,
+            __field7,
+            __field8,
+            __field9,
+            __field10,
+            __field12,
             __ignore,
         }
         struct __FieldVisitor;
@@ -43,7 +59,14 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     1u64 => serde::__private::Ok(__Field::__field1),
                     2u64 => serde::__private::Ok(__Field::__field2),
                     3u64 => serde::__private::Ok(__Field::__field3),
-                    4u64 => serde::__private::Ok(__Field::__field5),
+                    4u64 => serde::__private::Ok(__Field::__field4),
+                    5u64 => serde::__private::Ok(__Field::__field5),
+                    6u64 => serde::__private::Ok(__Field::__field6),
+                    7u64 => serde::__private::Ok(__Field::__field7),
+                    8u64 => serde::__private::Ok(__Field::__field8),
+                    9u64 => serde::__private::Ok(__Field::__field9),
+                    10u64 => serde::__private::Ok(__Field::__field10),
+                    11u64 => serde::__private::Ok(__Field::__field12),
                     _ => serde::__private::Ok(__Field::__ignore),
                 }
             }
@@ -56,10 +79,17 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
             {
                 match __value {
                     "id" => serde::__private::Ok(__Field::__field0),
-                    "data" => serde::__private::Ok(__Field::__field1),
-                    "item" => serde::__private::Ok(__Field::__field2),
-                    "moves" => serde::__private::Ok(__Field::__field3),
-                    "current_hp" => serde::__private::Ok(__Field::__field5),
+                    "nickname" => serde::__private::Ok(__Field::__field1),
+                    "level" => serde::__private::Ok(__Field::__field2),
+                    "gender" => serde::__private::Ok(__Field::__field3),
+                    "ivs" => serde::__private::Ok(__Field::__field4),
+                    "evs" => serde::__private::Ok(__Field::__field5),
+                    "experience" => serde::__private::Ok(__Field::__field6),
+                    "friendship" => serde::__private::Ok(__Field::__field7),
+                    "moves" => serde::__private::Ok(__Field::__field8),
+                    "status" => serde::__private::Ok(__Field::__field9),
+                    "item" => serde::__private::Ok(__Field::__field10),
+                    "current_hp" => serde::__private::Ok(__Field::__field12),
                     _ => serde::__private::Ok(__Field::__ignore),
                 }
             }
@@ -72,10 +102,17 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
             {
                 match __value {
                     b"id" => serde::__private::Ok(__Field::__field0),
-                    b"data" => serde::__private::Ok(__Field::__field1),
-                    b"item" => serde::__private::Ok(__Field::__field2),
-                    b"moves" => serde::__private::Ok(__Field::__field3),
-                    b"current_hp" => serde::__private::Ok(__Field::__field5),
+                    b"nickname" => serde::__private::Ok(__Field::__field1),
+                    b"level" => serde::__private::Ok(__Field::__field2),
+                    b"gender" => serde::__private::Ok(__Field::__field3),
+                    b"ivs" => serde::__private::Ok(__Field::__field4),
+                    b"evs" => serde::__private::Ok(__Field::__field5),
+                    b"experience" => serde::__private::Ok(__Field::__field6),
+                    b"friendship" => serde::__private::Ok(__Field::__field7),
+                    b"moves" => serde::__private::Ok(__Field::__field8),
+                    b"status" => serde::__private::Ok(__Field::__field9),
+                    b"item" => serde::__private::Ok(__Field::__field10),
+                    b"current_hp" => serde::__private::Ok(__Field::__field12),
                     _ => serde::__private::Ok(__Field::__ignore),
                 }
             }
@@ -126,11 +163,49 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     serde::__private::None => {
                         return serde::__private::Err(serde::de::Error::invalid_length(
                             0usize,
-                            &"struct PokemonInstance with 5 elements",
+                            &"struct PokemonInstance with 12 elements",
                         ));
                     }
                 };
-                let __field1 = match match serde::de::SeqAccess::next_element::<PokemonData>(
+                let __field1 =
+                    match match serde::de::SeqAccess::next_element::<Nickname>(&mut __seq)
+                    {
+                        serde::__private::Ok(__val) => __val,
+                        serde::__private::Err(__err) => {
+                            return serde::__private::Err(__err);
+                        }
+                    } {
+                        serde::__private::Some(__value) => __value,
+                        serde::__private::None => serde::__private::Default::default(),
+                    };
+                let __field2 =
+                    match match serde::de::SeqAccess::next_element::<Level>(&mut __seq) {
+                        serde::__private::Ok(__val) => __val,
+                        serde::__private::Err(__err) => {
+                            return serde::__private::Err(__err);
+                        }
+                    } {
+                        serde::__private::Some(__value) => __value,
+                        serde::__private::None => {
+                            return serde::__private::Err(
+                                serde::de::Error::invalid_length(
+                                    2usize,
+                                    &"struct PokemonInstance with 12 elements",
+                                ),
+                            );
+                        }
+                    };
+                let __field3 =
+                    match match serde::de::SeqAccess::next_element::<Gender>(&mut __seq) {
+                        serde::__private::Ok(__val) => __val,
+                        serde::__private::Err(__err) => {
+                            return serde::__private::Err(__err);
+                        }
+                    } {
+                        serde::__private::Some(__value) => __value,
+                        serde::__private::None => default_gender(__field0),
+                    };
+                let __field4 = match match serde::de::SeqAccess::next_element::<StatSet>(
                     &mut __seq,
                 ) {
                     serde::__private::Ok(__val) => __val,
@@ -139,14 +214,66 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     }
                 } {
                     serde::__private::Some(__value) => __value,
-                    serde::__private::None => {
-                        return serde::__private::Err(serde::de::Error::invalid_length(
-                            1usize,
-                            &"struct PokemonInstance with 5 elements",
-                        ));
-                    }
+                    serde::__private::None => default_iv(),
                 };
-                let __field2 = match match serde::de::SeqAccess::next_element::<
+                let __field5 = match match serde::de::SeqAccess::next_element::<StatSet>(
+                    &mut __seq,
+                ) {
+                    serde::__private::Ok(__val) => __val,
+                    serde::__private::Err(__err) => {
+                        return serde::__private::Err(__err);
+                    }
+                } {
+                    serde::__private::Some(__value) => __value,
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+                let __field6 = match match serde::de::SeqAccess::next_element::<Experience>(
+                    &mut __seq,
+                ) {
+                    serde::__private::Ok(__val) => __val,
+                    serde::__private::Err(__err) => {
+                        return serde::__private::Err(__err);
+                    }
+                } {
+                    serde::__private::Some(__value) => __value,
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+                let __field7 = match match serde::de::SeqAccess::next_element::<Friendship>(
+                    &mut __seq,
+                ) {
+                    serde::__private::Ok(__val) => __val,
+                    serde::__private::Err(__err) => {
+                        return serde::__private::Err(__err);
+                    }
+                } {
+                    serde::__private::Some(__value) => __value,
+                    serde::__private::None => default_friendship(),
+                };
+                let __field8 = match match serde::de::SeqAccess::next_element::<
+                    MoveInstanceSet,
+                >(&mut __seq)
+                {
+                    serde::__private::Ok(__val) => __val,
+                    serde::__private::Err(__err) => {
+                        return serde::__private::Err(__err);
+                    }
+                } {
+                    serde::__private::Some(__value) => __value,
+                    serde::__private::None => default_moves(__field0, __field2),
+                };
+                let __field9 = match match serde::de::SeqAccess::next_element::<
+                    Option<StatusEffect>,
+                >(&mut __seq)
+                {
+                    serde::__private::Ok(__val) => __val,
+                    serde::__private::Err(__err) => {
+                        return serde::__private::Err(__err);
+                    }
+                } {
+                    serde::__private::Some(__value) => __value,
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+                let __field10 = match match serde::de::SeqAccess::next_element::<
                     Option<ItemRef>,
                 >(&mut __seq)
                 {
@@ -158,20 +285,8 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     serde::__private::Some(__value) => __value,
                     serde::__private::None => serde::__private::Default::default(),
                 };
-                let __field3 = match match serde::de::SeqAccess::next_element::<
-                    MoveInstanceSet,
-                >(&mut __seq)
-                {
-                    serde::__private::Ok(__val) => __val,
-                    serde::__private::Err(__err) => {
-                        return serde::__private::Err(__err);
-                    }
-                } {
-                    serde::__private::Some(__value) => __value,
-                    serde::__private::None => moveinstancedefaultgen(__field0, &__field1),
-                };
-                let __field4 = basestatsetdefaultgen(__field0, &__field1);
-                let __field5 =
+                let __field11 = default_base(__field0, &__field4, &__field5, __field2);
+                let __field12 =
                     match match serde::de::SeqAccess::next_element::<Health>(&mut __seq) {
                         serde::__private::Ok(__val) => __val,
                         serde::__private::Err(__err) => {
@@ -179,15 +294,22 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                         }
                     } {
                         serde::__private::Some(__value) => __value,
-                        serde::__private::None => current_hpdefaultgen(&__field4),
+                        serde::__private::None => default_current_hp(&__field11),
                     };
                 serde::__private::Ok(PokemonInstance {
                     pokemon: __field0,
-                    data: __field1,
-                    item: __field2,
-                    moves: __field3,
-                    base: __field4,
-                    current_hp: __field5,
+                    nickname: __field1,
+                    level: __field2,
+                    gender: __field3,
+                    ivs: __field4,
+                    evs: __field5,
+                    experience: __field6,
+                    friendship: __field7,
+                    moves: __field8,
+                    status: __field9,
+                    item: __field10,
+                    base: __field11,
+                    current_hp: __field12,
                 })
             }
             #[inline]
@@ -200,13 +322,27 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
             {
                 let mut __field0: serde::__private::Option<PokemonRef> =
                     serde::__private::None;
-                let mut __field1: serde::__private::Option<PokemonData> =
+                let mut __field1: serde::__private::Option<Nickname> =
                     serde::__private::None;
-                let mut __field2: serde::__private::Option<Option<ItemRef>> =
+                let mut __field2: serde::__private::Option<Level> =
                     serde::__private::None;
-                let mut __field3: serde::__private::Option<MoveInstanceSet> =
+                let mut __field3: serde::__private::Option<Gender> =
                     serde::__private::None;
-                let mut __field5: serde::__private::Option<Health> =
+                let mut __field4: serde::__private::Option<StatSet> =
+                    serde::__private::None;
+                let mut __field5: serde::__private::Option<StatSet> =
+                    serde::__private::None;
+                let mut __field6: serde::__private::Option<Experience> =
+                    serde::__private::None;
+                let mut __field7: serde::__private::Option<Friendship> =
+                    serde::__private::None;
+                let mut __field8: serde::__private::Option<MoveInstanceSet> =
+                    serde::__private::None;
+                let mut __field9: serde::__private::Option<Option<StatusEffect>> =
+                    serde::__private::None;
+                let mut __field10: serde::__private::Option<Option<ItemRef>> =
+                    serde::__private::None;
+                let mut __field12: serde::__private::Option<Health> =
                     serde::__private::None;
                 while let serde::__private::Some(__key) =
                     match serde::de::MapAccess::next_key::<__Field>(&mut __map) {
@@ -240,12 +376,12 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                             if serde::__private::Option::is_some(&__field1) {
                                 return serde::__private::Err(
                                     <__A::Error as serde::de::Error>::duplicate_field(
-                                        "data",
+                                        "nickname",
                                     ),
                                 );
                             }
                             __field1 = serde::__private::Some(
-                                match serde::de::MapAccess::next_value::<PokemonData>(
+                                match serde::de::MapAccess::next_value::<Nickname>(
                                     &mut __map,
                                 ) {
                                     serde::__private::Ok(__val) => __val,
@@ -259,14 +395,13 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                             if serde::__private::Option::is_some(&__field2) {
                                 return serde::__private::Err(
                                     <__A::Error as serde::de::Error>::duplicate_field(
-                                        "item",
+                                        "level",
                                     ),
                                 );
                             }
                             __field2 = serde::__private::Some(
-                                match serde::de::MapAccess::next_value::<Option<ItemRef>>(
-                                    &mut __map,
-                                ) {
+                                match serde::de::MapAccess::next_value::<Level>(&mut __map)
+                                {
                                     serde::__private::Ok(__val) => __val,
                                     serde::__private::Err(__err) => {
                                         return serde::__private::Err(__err);
@@ -278,12 +413,31 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                             if serde::__private::Option::is_some(&__field3) {
                                 return serde::__private::Err(
                                     <__A::Error as serde::de::Error>::duplicate_field(
-                                        "moves",
+                                        "gender",
                                     ),
                                 );
                             }
                             __field3 = serde::__private::Some(
-                                match serde::de::MapAccess::next_value::<MoveInstanceSet>(
+                                match serde::de::MapAccess::next_value::<Gender>(
+                                    &mut __map,
+                                ) {
+                                    serde::__private::Ok(__val) => __val,
+                                    serde::__private::Err(__err) => {
+                                        return serde::__private::Err(__err);
+                                    }
+                                },
+                            );
+                        }
+                        __Field::__field4 => {
+                            if serde::__private::Option::is_some(&__field4) {
+                                return serde::__private::Err(
+                                    <__A::Error as serde::de::Error>::duplicate_field(
+                                        "ivs",
+                                    ),
+                                );
+                            }
+                            __field4 = serde::__private::Some(
+                                match serde::de::MapAccess::next_value::<StatSet>(
                                     &mut __map,
                                 ) {
                                     serde::__private::Ok(__val) => __val,
@@ -297,11 +451,126 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                             if serde::__private::Option::is_some(&__field5) {
                                 return serde::__private::Err(
                                     <__A::Error as serde::de::Error>::duplicate_field(
-                                        "current_hp",
+                                        "evs",
                                     ),
                                 );
                             }
                             __field5 = serde::__private::Some(
+                                match serde::de::MapAccess::next_value::<StatSet>(
+                                    &mut __map,
+                                ) {
+                                    serde::__private::Ok(__val) => __val,
+                                    serde::__private::Err(__err) => {
+                                        return serde::__private::Err(__err);
+                                    }
+                                },
+                            );
+                        }
+                        __Field::__field6 => {
+                            if serde::__private::Option::is_some(&__field6) {
+                                return serde::__private::Err(
+                                    <__A::Error as serde::de::Error>::duplicate_field(
+                                        "experience",
+                                    ),
+                                );
+                            }
+                            __field6 = serde::__private::Some(
+                                match serde::de::MapAccess::next_value::<Experience>(
+                                    &mut __map,
+                                ) {
+                                    serde::__private::Ok(__val) => __val,
+                                    serde::__private::Err(__err) => {
+                                        return serde::__private::Err(__err);
+                                    }
+                                },
+                            );
+                        }
+                        __Field::__field7 => {
+                            if serde::__private::Option::is_some(&__field7) {
+                                return serde::__private::Err(
+                                    <__A::Error as serde::de::Error>::duplicate_field(
+                                        "friendship",
+                                    ),
+                                );
+                            }
+                            __field7 = serde::__private::Some(
+                                match serde::de::MapAccess::next_value::<Friendship>(
+                                    &mut __map,
+                                ) {
+                                    serde::__private::Ok(__val) => __val,
+                                    serde::__private::Err(__err) => {
+                                        return serde::__private::Err(__err);
+                                    }
+                                },
+                            );
+                        }
+                        __Field::__field8 => {
+                            if serde::__private::Option::is_some(&__field8) {
+                                return serde::__private::Err(
+                                    <__A::Error as serde::de::Error>::duplicate_field(
+                                        "moves",
+                                    ),
+                                );
+                            }
+                            __field8 = serde::__private::Some(
+                                match serde::de::MapAccess::next_value::<MoveInstanceSet>(
+                                    &mut __map,
+                                ) {
+                                    serde::__private::Ok(__val) => __val,
+                                    serde::__private::Err(__err) => {
+                                        return serde::__private::Err(__err);
+                                    }
+                                },
+                            );
+                        }
+                        __Field::__field9 => {
+                            if serde::__private::Option::is_some(&__field9) {
+                                return serde::__private::Err(
+                                    <__A::Error as serde::de::Error>::duplicate_field(
+                                        "status",
+                                    ),
+                                );
+                            }
+                            __field9 = serde::__private::Some(
+                                match serde::de::MapAccess::next_value::<
+                                    Option<StatusEffect>,
+                                >(&mut __map)
+                                {
+                                    serde::__private::Ok(__val) => __val,
+                                    serde::__private::Err(__err) => {
+                                        return serde::__private::Err(__err);
+                                    }
+                                },
+                            );
+                        }
+                        __Field::__field10 => {
+                            if serde::__private::Option::is_some(&__field10) {
+                                return serde::__private::Err(
+                                    <__A::Error as serde::de::Error>::duplicate_field(
+                                        "item",
+                                    ),
+                                );
+                            }
+                            __field10 = serde::__private::Some(
+                                match serde::de::MapAccess::next_value::<Option<ItemRef>>(
+                                    &mut __map,
+                                ) {
+                                    serde::__private::Ok(__val) => __val,
+                                    serde::__private::Err(__err) => {
+                                        return serde::__private::Err(__err);
+                                    }
+                                },
+                            );
+                        }
+                        __Field::__field12 => {
+                            if serde::__private::Option::is_some(&__field12) {
+                                return serde::__private::Err(
+                                    <__A::Error as serde::de::Error>::duplicate_field(
+                                        "current_hp",
+                                    ),
+                                );
+                            }
+                            __field12 = serde::__private::Some(
                                 match serde::de::MapAccess::next_value::<Health>(
                                     &mut __map,
                                 ) {
@@ -338,8 +607,12 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                 };
                 let __field1 = match __field1 {
                     serde::__private::Some(__field1) => __field1,
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+                let __field2 = match __field2 {
+                    serde::__private::Some(__field2) => __field2,
                     serde::__private::None => {
-                        match serde::__private::de::missing_field("data") {
+                        match serde::__private::de::missing_field("level") {
                             serde::__private::Ok(__val) => __val,
                             serde::__private::Err(__err) => {
                                 return serde::__private::Err(__err);
@@ -347,33 +620,76 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                         }
                     }
                 };
-                let __field2 = match __field2 {
-                    serde::__private::Some(__field2) => __field2,
-                    serde::__private::None => serde::__private::Default::default(),
-                };
                 let __field3 = match __field3 {
                     serde::__private::Some(__field3) => __field3,
-                    serde::__private::None => moveinstancedefaultgen(__field0, &__field1),
+                    serde::__private::None => default_gender(__field0),
                 };
-
-                let base = basestatsetdefaultgen(__field0, &__field1);
-
+                let __field4 = match __field4 {
+                    serde::__private::Some(__field4) => __field4,
+                    serde::__private::None => default_iv(),
+                };
                 let __field5 = match __field5 {
                     serde::__private::Some(__field5) => __field5,
-                    serde::__private::None => current_hpdefaultgen(&base),
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+                let __field6 = match __field6 {
+                    serde::__private::Some(__field6) => __field6,
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+                let __field7 = match __field7 {
+                    serde::__private::Some(__field7) => __field7,
+                    serde::__private::None => default_friendship(),
+                };
+                let __field8 = match __field8 {
+                    serde::__private::Some(__field8) => __field8,
+                    serde::__private::None => default_moves(__field0, __field2),
+                };
+                let __field9 = match __field9 {
+                    serde::__private::Some(__field9) => __field9,
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+                let __field10 = match __field10 {
+                    serde::__private::Some(__field10) => __field10,
+                    serde::__private::None => serde::__private::Default::default(),
+                };
+
+                let base = default_base(__field0, &__field4, &__field5, __field2);
+
+                let __field12 = match __field12 {
+                    serde::__private::Some(__field12) => __field12,
+                    serde::__private::None => default_current_hp(&base),
                 };
                 serde::__private::Ok(PokemonInstance {
                     pokemon: __field0,
-                    data: __field1,
-                    item: __field2,
-                    moves: __field3,
+                    nickname: __field1,
+                    level: __field2,
+                    gender: __field3,
+                    ivs: __field4,
+                    evs: __field5,
+                    experience: __field6,
+                    friendship: __field7,
+                    moves: __field8,
+                    status: __field9,
+                    item: __field10,
                     base,
-                    current_hp: __field5,
+                    current_hp: __field12,
                 })
             }
         }
-        const FIELDS: &'static [&'static str] =
-            &["id", "data", "item", "moves", "current_hp"];
+        const FIELDS: &'static [&'static str] = &[
+            "id",
+            "nickname",
+            "level",
+            "gender",
+            "ivs",
+            "evs",
+            "experience",
+            "friendship",
+            "moves",
+            "status",
+            "item",
+            "current_hp",
+        ];
         serde::Deserializer::deserialize_struct(
             __deserializer,
             "PokemonInstance",
@@ -386,21 +702,23 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
     }
 }
 
+
 #[inline]
-fn moveinstancedefaultgen(pokemon: PokemonRef, data: &PokemonData) -> MoveInstanceSet {
-    pokemon.value().generate_moves(data.level)
-    // match pokemon {
-    //     crate::Ref::Init(pokemon) => pokemon.generate_moves(data.level),
-    //     crate::Ref::Uninit(id) => //MoveInstanceSet::Uninit(id),
-    // }
+fn default_gender(pokemon: PokemonRef) -> Gender {
+    pokemon.value().generate_gender()
 }
 
 #[inline]
-fn basestatsetdefaultgen(pokemon: PokemonRef, data: &PokemonData) -> BaseStatSet {
-    BaseStatSet::get(pokemon.value(), data.ivs, data.evs, data.level)
+fn default_moves(pokemon: PokemonRef, level: Level) -> MoveInstanceSet {
+    pokemon.value().generate_moves(level)
 }
 
 #[inline]
-fn current_hpdefaultgen(base: &BaseStatSet) -> Health {
+fn default_base(pokemon: PokemonRef, ivs: &StatSet, evs: &StatSet, level: Level) -> BaseStatSet {
+    BaseStatSet::get(pokemon.value(), ivs, evs, level)
+}
+
+#[inline]
+fn default_current_hp(base: &BaseStatSet) -> Health {
     base.hp
 }

@@ -1,6 +1,0 @@
-id = "nightmare"
-name = "Nightmare"
-type = "Ghost"
-category = "Status"
-accuracy = 100
-pp = 15

@@ -1,0 +1,64 @@
+(
+    data: (
+        id: 90,
+        name: "Shellder",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Bivalve",
+        height: 3,
+        weight: 40,
+    ),
+    base: (
+        hp: 30,
+        atk: 65,
+        def: 100,
+        sp_atk: 45,
+        sp_def: 25,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 61,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 36,
+        ),
+        (
+            move: "supersonic",
+            level: 15,
+        ),
+        (
+            move: "ice-beam",
+            level: 50,
+        ),
+        (
+            move: "aurora-beam",
+            level: 22,
+        ),
+        (
+            move: "withdraw",
+            level: 1,
+        ),
+        (
+            move: "clamp",
+            level: 43,
+        ),
+        (
+            move: "protect",
+            level: 29,
+        ),
+        (
+            move: "icicle-spear",
+            level: 8,
+        ),
+    ],
+)

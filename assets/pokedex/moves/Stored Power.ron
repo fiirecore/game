@@ -1,0 +1,11 @@
+(
+    id: "stored-power",
+    name: "Stored Power",
+    category: Special,
+    type: Psychic,
+    power: Some(20),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

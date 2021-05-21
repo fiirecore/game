@@ -1,0 +1,11 @@
+(
+    id: "quiver-dance",
+    name: "Quiver Dance",
+    category: Status,
+    type: Bug,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

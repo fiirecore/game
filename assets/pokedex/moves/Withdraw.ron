@@ -1,0 +1,11 @@
+(
+    id: "withdraw",
+    name: "Withdraw",
+    category: Status,
+    type: Water,
+    power: None,
+    accuracy: None,
+    pp: 40,
+    target: Opponent,
+    script: None,
+)

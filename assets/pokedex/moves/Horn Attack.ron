@@ -1,0 +1,11 @@
+(
+    id: "horn-attack",
+    name: "Horn Attack",
+    category: Physical,
+    type: Normal,
+    power: Some(65),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

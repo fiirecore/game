@@ -1,6 +1,0 @@
-id = "growl"
-name = "Growl"
-type = "Normal"
-category = "Status"
-accuracy = 100
-pp = 40

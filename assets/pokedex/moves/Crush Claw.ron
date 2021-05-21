@@ -1,0 +1,11 @@
+(
+    id: "crush-claw",
+    name: "Crush Claw",
+    category: Physical,
+    type: Normal,
+    power: Some(75),
+    accuracy: Some(95),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "dark-void",
+    name: "Dark Void",
+    category: Status,
+    type: Dark,
+    power: None,
+    accuracy: Some(50),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

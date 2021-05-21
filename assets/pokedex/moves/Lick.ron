@@ -1,0 +1,11 @@
+(
+    id: "lick",
+    name: "Lick",
+    category: Physical,
+    type: Ghost,
+    power: Some(30),
+    accuracy: Some(100),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 319,
+        name: "Sharpedo",
+        primary_type: Water,
+        secondary_type: Some(Dark),
+        species: "Brutal",
+        height: 18,
+        weight: 888,
+    ),
+    base: (
+        hp: 70,
+        atk: 120,
+        def: 40,
+        sp_atk: 95,
+        sp_def: 40,
+        speed: 95,
+    ),
+    training: (
+        base_exp: 161,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 1,
+        ),
+        (
+            move: "agility",
+            level: 53,
+        ),
+        (
+            move: "rage",
+            level: 1,
+        ),
+        (
+            move: "rage",
+            level: 7,
+        ),
+        (
+            move: "screech",
+            level: 28,
+        ),
+        (
+            move: "focus-energy",
+            level: 1,
+        ),
+        (
+            move: "focus-energy",
+            level: 13,
+        ),
+        (
+            move: "skull-bash",
+            level: 48,
+        ),
+        (
+            move: "slash",
+            level: 33,
+        ),
+        (
+            move: "scary-face",
+            level: 16,
+        ),
+        (
+            move: "swagger",
+            level: 43,
+        ),
+        (
+            move: "crunch",
+            level: 22,
+        ),
+        (
+            move: "taunt",
+            level: 38,
+        ),
+    ],
+)

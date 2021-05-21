@@ -1,7 +1,0 @@
-id = "double-kick"
-name = "Double Kick"
-type = "Fighting"
-category = "Physical"
-power = 30
-accuracy = 100
-pp = 30

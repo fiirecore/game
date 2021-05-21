@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 128,
+        name: "Tauros",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Wild",
+        height: 14,
+        weight: 884,
+    ),
+    base: (
+        hp: 75,
+        atk: 100,
+        def: 95,
+        sp_atk: 40,
+        sp_def: 70,
+        speed: 110,
+    ),
+    training: (
+        base_exp: 172,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(0),
+    ),
+    moves: [
+        (
+            move: "horn-attack",
+            level: 8,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 53,
+        ),
+        (
+            move: "thrash",
+            level: 43,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "rage",
+            level: 4,
+        ),
+        (
+            move: "rest",
+            level: 34,
+        ),
+        (
+            move: "scary-face",
+            level: 13,
+        ),
+        (
+            move: "swagger",
+            level: 26,
+        ),
+        (
+            move: "pursuit",
+            level: 19,
+        ),
+    ],
+)

@@ -64,10 +64,8 @@
                         party: [
                             (
                                 id: 7,
-                                data: (
-                                    level: 5,
-                                    gender: Male,
-                                ),
+                                level: 5,
+                                gender: Male,
                             ),
                         ],
                         worth: 80,
@@ -95,28 +93,22 @@
         PlayerGivePokemon(
             (
                 id: 1,
-                data: (
-                    level: 5,
-                    gender: Male,
-                ),
+                level: 5,
+                gender: Male,
             )
         ),
         PlayerGivePokemon(
             (
                 id: 4,
-                data: (
-                    level: 5,
-                    gender: Male,
-                ),
+                level: 5,
+                gender: Male,
             )
         ),
         PlayerGivePokemon(
             (
                 id: 7,
-                data: (
-                    level: 5,
-                    gender: Female,
-                ),
+                level: 5,
+                gender: Female,
             )
         ),
         PlayMapMusic,

@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 290,
+        name: "Nincada",
+        primary_type: Bug,
+        secondary_type: Some(Ground),
+        species: "Trainee",
+        height: 5,
+        weight: 55,
+    ),
+    base: (
+        hp: 31,
+        atk: 45,
+        def: 90,
+        sp_atk: 30,
+        sp_def: 30,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 53,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "sand-attack",
+            level: 9,
+        ),
+        (
+            move: "dig",
+            level: 45,
+        ),
+        (
+            move: "harden",
+            level: 1,
+        ),
+        (
+            move: "leech-life",
+            level: 5,
+        ),
+        (
+            move: "fury-swipes",
+            level: 14,
+        ),
+        (
+            move: "mind-reader",
+            level: 19,
+        ),
+        (
+            move: "mud-slap",
+            level: 31,
+        ),
+        (
+            move: "false-swipe",
+            level: 25,
+        ),
+        (
+            move: "metal-claw",
+            level: 38,
+        ),
+    ],
+)

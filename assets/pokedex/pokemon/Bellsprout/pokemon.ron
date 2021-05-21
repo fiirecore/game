@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 69,
+        name: "Bellsprout",
+        primary_type: Grass,
+        secondary_type: Some(Poison),
+        species: "Flower",
+        height: 7,
+        weight: 40,
+    ),
+    base: (
+        hp: 50,
+        atk: 75,
+        def: 35,
+        sp_atk: 70,
+        sp_def: 30,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 60,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "slam",
+            level: 45,
+        ),
+        (
+            move: "vine-whip",
+            level: 1,
+        ),
+        (
+            move: "wrap",
+            level: 11,
+        ),
+        (
+            move: "acid",
+            level: 23,
+        ),
+        (
+            move: "growth",
+            level: 6,
+        ),
+        (
+            move: "razor-leaf",
+            level: 37,
+        ),
+        (
+            move: "poison-powder",
+            level: 17,
+        ),
+        (
+            move: "stun-spore",
+            level: 19,
+        ),
+        (
+            move: "sleep-powder",
+            level: 15,
+        ),
+        (
+            move: "sweet-scent",
+            level: 30,
+        ),
+    ],
+)

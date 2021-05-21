@@ -1,0 +1,11 @@
+(
+    id: "smog",
+    name: "Smog",
+    category: Special,
+    type: Poison,
+    power: Some(30),
+    accuracy: Some(70),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

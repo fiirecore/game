@@ -1,0 +1,11 @@
+(
+    id: "stone-edge",
+    name: "Stone Edge",
+    category: Physical,
+    type: Rock,
+    power: Some(100),
+    accuracy: Some(80),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

@@ -1,7 +1,0 @@
-id = "extreme-speed"
-name = "Extreme Speed"
-type = "Normal"
-category = "Physical"
-power = 80
-accuracy = 100
-pp = 5

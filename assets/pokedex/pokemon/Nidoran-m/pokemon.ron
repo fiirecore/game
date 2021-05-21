@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 32,
+        name: "Nidoran-m",
+        primary_type: Poison,
+        secondary_type: None,
+        species: "Poison",
+        height: 5,
+        weight: 90,
+    ),
+    base: (
+        hp: 46,
+        atk: 57,
+        def: 40,
+        sp_atk: 40,
+        sp_def: 40,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 55,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(0),
+    ),
+    moves: [
+        (
+            move: "double-kick",
+            level: 12,
+        ),
+        (
+            move: "horn-attack",
+            level: 20,
+        ),
+        (
+            move: "fury-attack",
+            level: 30,
+        ),
+        (
+            move: "horn-drill",
+            level: 47,
+        ),
+        (
+            move: "poison-sting",
+            level: 17,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "peck",
+            level: 1,
+        ),
+        (
+            move: "focus-energy",
+            level: 8,
+        ),
+        (
+            move: "flatter",
+            level: 38,
+        ),
+        (
+            move: "helping-hand",
+            level: 23,
+        ),
+    ],
+)

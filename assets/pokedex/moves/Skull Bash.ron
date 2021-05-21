@@ -1,0 +1,11 @@
+(
+    id: "skull-bash",
+    name: "Skull Bash",
+    category: Physical,
+    type: Normal,
+    power: Some(130),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

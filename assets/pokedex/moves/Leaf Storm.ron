@@ -1,0 +1,11 @@
+(
+    id: "leaf-storm",
+    name: "Leaf Storm",
+    category: Special,
+    type: Grass,
+    power: Some(130),
+    accuracy: Some(90),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

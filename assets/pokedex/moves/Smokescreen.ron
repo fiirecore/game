@@ -1,0 +1,11 @@
+(
+    id: "smokescreen",
+    name: "Smokescreen",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

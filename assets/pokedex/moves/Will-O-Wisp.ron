@@ -1,0 +1,11 @@
+(
+    id: "will-o-wisp",
+    name: "Will-O-Wisp",
+    category: Status,
+    type: Fire,
+    power: None,
+    accuracy: Some(85),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

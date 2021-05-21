@@ -23,37 +23,38 @@ pub fn get_moves<P: AsRef<std::path::Path>>(move_dir: P) -> Vec<SerializedMove> 
 }
 
 fn from_dir(dir: PathBuf) -> SerializedMove {
-    let toml_path = dir.join("move.toml");
-    let ron_path = dir.join("move.ron");
-    if !toml_path.exists() {
-        ron::from_str(
-            &read_to_string(&ron_path)
-                .unwrap_or_else(|err| panic!("Could not read move file at {:?} to string with error {}", ron_path, err))
-        ).unwrap_or_else(|err| panic!("Could not parse move file at {:?} with error {}", ron_path, err))
-    } else {
-        SerializedMove {
-            pokemon_move: from_file(toml_path),
-            game_move: game_move(ron_path),
-        }
-    }
+    let file = dir.join("move.ron");
+    
+    ron::from_str(
+        &read_to_string(&file)
+            .unwrap_or_else(|err| panic!("Could not read move file at {:?} to string with error {}", file, err))
+    ).unwrap_or_else(|err| panic!("Could not parse move file at {:?} with error {}", file, err))
+
+    // if !path.exists() {
+    // } else {
+    //     SerializedMove {
+    //         pokemon_move: from_file(path),
+    //         game_move: game_move(ron_path),
+    //     }
+    // }
 }
 
 fn from_file(path: PathBuf) -> Move {
-    toml::from_str(
+    ron::from_str(
         &read_to_string(&path)
             .unwrap_or_else(|err| panic!("Could not read move file at {:?} to string with error {}", path, err))
     ).unwrap_or_else(|err| panic!("Could not parse move file at {:?} with error {}", path, err))
 }
 
-fn game_move(path: PathBuf) -> Option<GamePokemonMove> {
-    if path.exists() {
-        Some(
-            ron::from_str(
-                &read_to_string(&path)
-                    .unwrap_or_else(|err| panic!("Could not read game move file at {:?} to string with error {}", path, err))
-            ).unwrap_or_else(|err| panic!("Could not parse game move file at {:?} with error {}", path, err))
-        )
-    } else {
-        None
-    }
-}
+// fn game_move(path: PathBuf) -> Option<GamePokemonMove> {
+//     if path.exists() {
+//         Some(
+//             ron::from_str(
+//                 &read_to_string(&path)
+//                     .unwrap_or_else(|err| panic!("Could not read game move file at {:?} to string with error {}", path, err))
+//             ).unwrap_or_else(|err| panic!("Could not parse game move file at {:?} with error {}", path, err))
+//         )
+//     } else {
+//         None
+//     }
+// }

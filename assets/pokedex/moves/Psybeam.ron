@@ -1,0 +1,11 @@
+(
+    id: "psybeam",
+    name: "Psybeam",
+    category: Special,
+    type: Psychic,
+    power: Some(65),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

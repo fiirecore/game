@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 25,
+        name: "Pikachu",
+        primary_type: Electric,
+        secondary_type: None,
+        species: "Mouse",
+        height: 4,
+        weight: 60,
+    ),
+    base: (
+        hp: 35,
+        atk: 55,
+        def: 40,
+        sp_atk: 50,
+        sp_def: 50,
+        speed: 90,
+    ),
+    training: (
+        base_exp: 112,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "slam",
+            level: 20,
+        ),
+        (
+            move: "tail-whip",
+            level: 6,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "thunder-shock",
+            level: 1,
+        ),
+        (
+            move: "thunderbolt",
+            level: 26,
+        ),
+        (
+            move: "thunder-wave",
+            level: 8,
+        ),
+        (
+            move: "thunder",
+            level: 41,
+        ),
+        (
+            move: "agility",
+            level: 33,
+        ),
+        (
+            move: "quick-attack",
+            level: 11,
+        ),
+        (
+            move: "double-team",
+            level: 15,
+        ),
+        (
+            move: "light-screen",
+            level: 50,
+        ),
+    ],
+)

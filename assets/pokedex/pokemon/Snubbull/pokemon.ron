@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 209,
+        name: "Snubbull",
+        primary_type: Fairy,
+        secondary_type: None,
+        species: "Fairy",
+        height: 6,
+        weight: 78,
+    ),
+    base: (
+        hp: 60,
+        atk: 80,
+        def: 50,
+        sp_atk: 40,
+        sp_def: 40,
+        speed: 30,
+    ),
+    training: (
+        base_exp: 60,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(6),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 43,
+        ),
+        (
+            move: "tail-whip",
+            level: 4,
+        ),
+        (
+            move: "bite",
+            level: 13,
+        ),
+        (
+            move: "roar",
+            level: 26,
+        ),
+        (
+            move: "rage",
+            level: 34,
+        ),
+        (
+            move: "lick",
+            level: 19,
+        ),
+        (
+            move: "scary-face",
+            level: 1,
+        ),
+        (
+            move: "charm",
+            level: 8,
+        ),
+        (
+            move: "crunch",
+            level: 53,
+        ),
+    ],
+)

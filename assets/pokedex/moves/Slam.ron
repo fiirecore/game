@@ -1,0 +1,11 @@
+(
+    id: "slam",
+    name: "Slam",
+    category: Physical,
+    type: Normal,
+    power: Some(80),
+    accuracy: Some(75),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

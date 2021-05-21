@@ -1,0 +1,11 @@
+(
+    id: "fire-fang",
+    name: "Fire Fang",
+    category: Physical,
+    type: Fire,
+    power: Some(65),
+    accuracy: Some(95),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

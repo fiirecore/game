@@ -1,0 +1,11 @@
+(
+    id: "cross-chop",
+    name: "Cross Chop",
+    category: Physical,
+    type: Fighting,
+    power: Some(100),
+    accuracy: Some(80),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

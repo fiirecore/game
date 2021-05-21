@@ -1,0 +1,11 @@
+(
+    id: "rock-climb",
+    name: "Rock Climb",
+    category: Physical,
+    type: Normal,
+    power: Some(90),
+    accuracy: Some(85),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

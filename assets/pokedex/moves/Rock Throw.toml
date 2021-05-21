@@ -1,7 +1,0 @@
-id = "rock-throw"
-name = "Rock Throw"
-type = "Rock"
-category = "Physical"
-power = 50
-accuracy = 90
-pp = 15

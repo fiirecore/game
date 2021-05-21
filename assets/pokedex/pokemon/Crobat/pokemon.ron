@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 169,
+        name: "Crobat",
+        primary_type: Poison,
+        secondary_type: Some(Flying),
+        species: "Bat",
+        height: 18,
+        weight: 750,
+    ),
+    base: (
+        hp: 85,
+        atk: 90,
+        def: 80,
+        sp_atk: 70,
+        sp_def: 80,
+        speed: 130,
+    ),
+    training: (
+        base_exp: 241,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "wing-attack",
+            level: 21,
+        ),
+        (
+            move: "bite",
+            level: 16,
+        ),
+        (
+            move: "supersonic",
+            level: 1,
+        ),
+        (
+            move: "supersonic",
+            level: 11,
+        ),
+        (
+            move: "screech",
+            level: 1,
+        ),
+        (
+            move: "confuse-ray",
+            level: 28,
+        ),
+        (
+            move: "haze",
+            level: 56,
+        ),
+        (
+            move: "leech-life",
+            level: 1,
+        ),
+        (
+            move: "mean-look",
+            level: 42,
+        ),
+        (
+            move: "poison-fang",
+            level: 49,
+        ),
+        (
+            move: "astonish",
+            level: 1,
+        ),
+        (
+            move: "astonish",
+            level: 6,
+        ),
+        (
+            move: "air-cutter",
+            level: 35,
+        ),
+    ],
+)

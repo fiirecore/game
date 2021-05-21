@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 356,
+        name: "Dusclops",
+        primary_type: Ghost,
+        secondary_type: None,
+        species: "Beckon",
+        height: 16,
+        weight: 306,
+    ),
+    base: (
+        hp: 40,
+        atk: 70,
+        def: 130,
+        sp_atk: 60,
+        sp_def: 130,
+        speed: 25,
+    ),
+    training: (
+        base_exp: 159,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "bind",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "disable",
+            level: 1,
+        ),
+        (
+            move: "disable",
+            level: 5,
+        ),
+        (
+            move: "night-shade",
+            level: 1,
+        ),
+        (
+            move: "confuse-ray",
+            level: 23,
+        ),
+        (
+            move: "curse",
+            level: 34,
+        ),
+        (
+            move: "foresight",
+            level: 12,
+        ),
+        (
+            move: "mean-look",
+            level: 51,
+        ),
+        (
+            move: "pursuit",
+            level: 27,
+        ),
+        (
+            move: "future-sight",
+            level: 58,
+        ),
+        (
+            move: "will-o-wisp",
+            level: 41,
+        ),
+        (
+            move: "astonish",
+            level: 16,
+        ),
+        (
+            move: "shadow-punch",
+            level: 37,
+        ),
+    ],
+)

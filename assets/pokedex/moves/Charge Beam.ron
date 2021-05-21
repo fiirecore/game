@@ -1,0 +1,11 @@
+(
+    id: "charge-beam",
+    name: "Charge Beam",
+    category: Special,
+    type: Electric,
+    power: Some(50),
+    accuracy: Some(90),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

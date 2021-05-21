@@ -18,5 +18,4 @@ firecore-dependencies = { path = "../../deps", features = ["serialization"] }
 ### Serialization
 
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.5"
 ron = "0.6"

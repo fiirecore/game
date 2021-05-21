@@ -1,0 +1,11 @@
+(
+    id: "astonish",
+    name: "Astonish",
+    category: Physical,
+    type: Ghost,
+    power: Some(30),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

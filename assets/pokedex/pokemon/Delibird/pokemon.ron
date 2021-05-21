@@ -1,0 +1,32 @@
+(
+    data: (
+        id: 225,
+        name: "Delibird",
+        primary_type: Ice,
+        secondary_type: Some(Flying),
+        species: "Delivery",
+        height: 9,
+        weight: 160,
+    ),
+    base: (
+        hp: 45,
+        atk: 55,
+        def: 45,
+        sp_atk: 65,
+        sp_def: 45,
+        speed: 75,
+    ),
+    training: (
+        base_exp: 116,
+        growth_rate: Fast,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "present",
+            level: 1,
+        ),
+    ],
+)

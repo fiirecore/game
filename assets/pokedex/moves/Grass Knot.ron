@@ -1,0 +1,11 @@
+(
+    id: "grass-knot",
+    name: "Grass Knot",
+    category: Special,
+    type: Grass,
+    power: None,
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

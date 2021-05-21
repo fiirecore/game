@@ -1,0 +1,11 @@
+(
+    id: "spider-web",
+    name: "Spider Web",
+    category: Status,
+    type: Bug,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

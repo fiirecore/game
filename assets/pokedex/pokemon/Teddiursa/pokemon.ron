@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 216,
+        name: "Teddiursa",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Little",
+        height: 6,
+        weight: 88,
+    ),
+    base: (
+        hp: 60,
+        atk: 80,
+        def: 50,
+        sp_atk: 50,
+        sp_def: 50,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 66,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "thrash",
+            level: 49,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "lick",
+            level: 7,
+        ),
+        (
+            move: "fury-swipes",
+            level: 13,
+        ),
+        (
+            move: "rest",
+            level: 31,
+        ),
+        (
+            move: "slash",
+            level: 37,
+        ),
+        (
+            move: "snore",
+            level: 43,
+        ),
+        (
+            move: "feint-attack",
+            level: 25,
+        ),
+        (
+            move: "fake-tears",
+            level: 19,
+        ),
+    ],
+)

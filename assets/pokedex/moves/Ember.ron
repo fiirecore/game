@@ -1,0 +1,11 @@
+(
+    id: "ember",
+    name: "Ember",
+    category: Special,
+    type: Fire,
+    power: Some(40),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

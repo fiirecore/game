@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 324,
+        name: "Torkoal",
+        primary_type: Fire,
+        secondary_type: None,
+        species: "Coal",
+        height: 5,
+        weight: 804,
+    ),
+    base: (
+        hp: 70,
+        atk: 85,
+        def: 140,
+        sp_atk: 85,
+        sp_def: 70,
+        speed: 20,
+    ),
+    training: (
+        base_exp: 165,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "body-slam",
+            level: 20,
+        ),
+        (
+            move: "ember",
+            level: 1,
+        ),
+        (
+            move: "flamethrower",
+            level: 30,
+        ),
+        (
+            move: "fire-spin",
+            level: 17,
+        ),
+        (
+            move: "smokescreen",
+            level: 14,
+        ),
+        (
+            move: "smog",
+            level: 4,
+        ),
+        (
+            move: "amnesia",
+            level: 40,
+        ),
+        (
+            move: "curse",
+            level: 7,
+        ),
+        (
+            move: "flail",
+            level: 43,
+        ),
+        (
+            move: "protect",
+            level: 27,
+        ),
+        (
+            move: "heat-wave",
+            level: 46,
+        ),
+        (
+            move: "iron-defense",
+            level: 33,
+        ),
+    ],
+)

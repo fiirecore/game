@@ -1,7 +1,0 @@
-id = "fire-blast"
-name = "Fire Blast"
-type = "Fire"
-category = "Special"
-power = 110
-accuracy = 85
-pp = 5

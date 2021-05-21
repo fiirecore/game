@@ -1,0 +1,11 @@
+(
+    id: "seed-flare",
+    name: "Seed Flare",
+    category: Special,
+    type: Grass,
+    power: Some(120),
+    accuracy: Some(85),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

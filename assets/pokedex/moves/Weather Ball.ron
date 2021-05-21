@@ -1,0 +1,11 @@
+(
+    id: "weather-ball",
+    name: "Weather Ball",
+    category: Special,
+    type: Normal,
+    power: Some(50),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "dragon-pulse",
+    name: "Dragon Pulse",
+    category: Special,
+    type: Dragon,
+    power: Some(85),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

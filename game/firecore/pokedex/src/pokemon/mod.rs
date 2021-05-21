@@ -103,3 +103,11 @@ impl Identifiable for Pokemon {
 }
 
 pub type PokemonRef = crate::Ref<Pokemon>;
+
+pub const fn default_iv() -> StatSet {
+    StatSet::uniform(15)
+}
+
+pub const fn default_friendship() -> Friendship {
+    70
+}

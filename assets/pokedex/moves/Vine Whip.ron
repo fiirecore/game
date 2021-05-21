@@ -1,0 +1,11 @@
+(
+    id: "vine-whip",
+    name: "Vine Whip",
+    category: Physical,
+    type: Grass,
+    power: Some(45),
+    accuracy: Some(100),
+    pp: 25,
+    target: Opponent,
+    script: None,
+)

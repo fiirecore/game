@@ -1,6 +1,0 @@
-id = "tail-whip"
-name = "Tail Whip"
-type = "Normal"
-category = "Status"
-accuracy = 100
-pp = 30

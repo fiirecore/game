@@ -1,0 +1,60 @@
+(
+    data: (
+        id: 86,
+        name: "Seel",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Sea",
+        height: 11,
+        weight: 900,
+    ),
+    base: (
+        hp: 65,
+        atk: 45,
+        def: 55,
+        sp_atk: 45,
+        sp_def: 70,
+        speed: 45,
+    ),
+    training: (
+        base_exp: 65,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "headbutt",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 37,
+        ),
+        (
+            move: "growl",
+            level: 9,
+        ),
+        (
+            move: "ice-beam",
+            level: 41,
+        ),
+        (
+            move: "aurora-beam",
+            level: 21,
+        ),
+        (
+            move: "rest",
+            level: 29,
+        ),
+        (
+            move: "icy-wind",
+            level: 17,
+        ),
+        (
+            move: "safeguard",
+            level: 49,
+        ),
+    ],
+)

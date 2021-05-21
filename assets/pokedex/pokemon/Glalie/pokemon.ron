@@ -1,0 +1,84 @@
+(
+    data: (
+        id: 362,
+        name: "Glalie",
+        primary_type: Ice,
+        secondary_type: None,
+        species: "Face",
+        height: 15,
+        weight: 2565,
+    ),
+    base: (
+        hp: 80,
+        atk: 80,
+        def: 80,
+        sp_atk: 80,
+        sp_def: 80,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 168,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "headbutt",
+            level: 19,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 1,
+        ),
+        (
+            move: "bite",
+            level: 10,
+        ),
+        (
+            move: "ice-beam",
+            level: 34,
+        ),
+        (
+            move: "blizzard",
+            level: 53,
+        ),
+        (
+            move: "double-team",
+            level: 1,
+        ),
+        (
+            move: "double-team",
+            level: 7,
+        ),
+        (
+            move: "powder-snow",
+            level: 1,
+        ),
+        (
+            move: "protect",
+            level: 25,
+        ),
+        (
+            move: "icy-wind",
+            level: 16,
+        ),
+        (
+            move: "crunch",
+            level: 28,
+        ),
+        (
+            move: "hail",
+            level: 42,
+        ),
+        (
+            move: "sheer-cold",
+            level: 61,
+        ),
+    ],
+)

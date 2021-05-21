@@ -1,0 +1,11 @@
+(
+    id: "wrap",
+    name: "Wrap",
+    category: Physical,
+    type: Normal,
+    power: Some(15),
+    accuracy: Some(90),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

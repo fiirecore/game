@@ -1,0 +1,11 @@
+(
+    id: "bullet-seed",
+    name: "Bullet Seed",
+    category: Physical,
+    type: Grass,
+    power: Some(25),
+    accuracy: Some(100),
+    pp: 30,
+    target: Opponent,
+    script: None,
+)

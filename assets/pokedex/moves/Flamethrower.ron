@@ -1,0 +1,11 @@
+(
+    id: "flamethrower",
+    name: "Flamethrower",
+    category: Special,
+    type: Fire,
+    power: Some(90),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

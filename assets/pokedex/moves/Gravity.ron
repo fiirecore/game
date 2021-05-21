@@ -1,0 +1,11 @@
+(
+    id: "gravity",
+    name: "Gravity",
+    category: Status,
+    type: Psychic,
+    power: None,
+    accuracy: None,
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

@@ -1,0 +1,11 @@
+(
+    id: "camouflage",
+    name: "Camouflage",
+    category: Status,
+    type: Normal,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

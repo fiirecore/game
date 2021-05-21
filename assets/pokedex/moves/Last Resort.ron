@@ -1,0 +1,11 @@
+(
+    id: "last-resort",
+    name: "Last Resort",
+    category: Physical,
+    type: Normal,
+    power: Some(140),
+    accuracy: Some(100),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

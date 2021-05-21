@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 214,
+        name: "Heracross",
+        primary_type: Bug,
+        secondary_type: Some(Fighting),
+        species: "Single",
+        height: 15,
+        weight: 540,
+    ),
+    base: (
+        hp: 80,
+        atk: 125,
+        def: 75,
+        sp_atk: 40,
+        sp_def: 95,
+        speed: 85,
+    ),
+    training: (
+        base_exp: 175,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "horn-attack",
+            level: 6,
+        ),
+        (
+            move: "fury-attack",
+            level: 17,
+        ),
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 37,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "counter",
+            level: 30,
+        ),
+        (
+            move: "reversal",
+            level: 45,
+        ),
+        (
+            move: "endure",
+            level: 11,
+        ),
+        (
+            move: "megahorn",
+            level: 53,
+        ),
+        (
+            move: "brick-break",
+            level: 23,
+        ),
+    ],
+)

@@ -1,7 +1,0 @@
-id = "dragon-claw"
-name = "Dragon Claw"
-type = "Dragon"
-category = "Physical"
-power = 80
-accuracy = 100
-pp = 15

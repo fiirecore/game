@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 382,
+        name: "Kyogre",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Sea",
+        height: 45,
+        weight: 3520,
+    ),
+    base: (
+        hp: 100,
+        atk: 100,
+        def: 90,
+        sp_atk: 150,
+        sp_def: 140,
+        speed: 90,
+    ),
+    training: (
+        base_exp: 302,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "body-slam",
+            level: 20,
+        ),
+        (
+            move: "double-edge",
+            level: 65,
+        ),
+        (
+            move: "hydro-pump",
+            level: 45,
+        ),
+        (
+            move: "ice-beam",
+            level: 35,
+        ),
+        (
+            move: "rest",
+            level: 50,
+        ),
+        (
+            move: "scary-face",
+            level: 5,
+        ),
+        (
+            move: "ancient-power",
+            level: 15,
+        ),
+        (
+            move: "water-spout",
+            level: 75,
+        ),
+        (
+            move: "sheer-cold",
+            level: 60,
+        ),
+        (
+            move: "calm-mind",
+            level: 30,
+        ),
+        (
+            move: "water-pulse",
+            level: 1,
+        ),
+    ],
+)

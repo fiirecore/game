@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 137,
+        name: "Porygon",
+        primary_type: Normal,
+        secondary_type: None,
+        species: "Virtual",
+        height: 8,
+        weight: 365,
+    ),
+    base: (
+        hp: 65,
+        atk: 60,
+        def: 70,
+        sp_atk: 85,
+        sp_def: 75,
+        speed: 40,
+    ),
+    training: (
+        base_exp: 79,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "psybeam",
+            level: 12,
+        ),
+        (
+            move: "agility",
+            level: 9,
+        ),
+        (
+            move: "recover",
+            level: 20,
+        ),
+        (
+            move: "sharpen",
+            level: 24,
+        ),
+        (
+            move: "conversion",
+            level: 1,
+        ),
+        (
+            move: "tri-attack",
+            level: 36,
+        ),
+        (
+            move: "conversion-2",
+            level: 1,
+        ),
+        (
+            move: "zap-cannon",
+            level: 48,
+        ),
+        (
+            move: "lock-on",
+            level: 32,
+        ),
+        (
+            move: "recycle",
+            level: 44,
+        ),
+    ],
+)

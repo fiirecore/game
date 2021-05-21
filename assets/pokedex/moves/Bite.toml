@@ -1,7 +1,0 @@
-id = "bite"
-name = "Bite"
-type = "Dark"
-category = "Physical"
-power = 60
-accuracy = 100
-pp = 25

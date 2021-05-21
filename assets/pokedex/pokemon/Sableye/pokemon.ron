@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 302,
+        name: "Sableye",
+        primary_type: Dark,
+        secondary_type: Some(Ghost),
+        species: "Darkness",
+        height: 5,
+        weight: 110,
+    ),
+    base: (
+        hp: 50,
+        atk: 75,
+        def: 75,
+        sp_atk: 65,
+        sp_def: 65,
+        speed: 50,
+    ),
+    training: (
+        base_exp: 133,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "scratch",
+            level: 1,
+        ),
+        (
+            move: "leer",
+            level: 1,
+        ),
+        (
+            move: "night-shade",
+            level: 9,
+        ),
+        (
+            move: "confuse-ray",
+            level: 37,
+        ),
+        (
+            move: "fury-swipes",
+            level: 17,
+        ),
+        (
+            move: "feint-attack",
+            level: 29,
+        ),
+        (
+            move: "foresight",
+            level: 5,
+        ),
+        (
+            move: "detect",
+            level: 25,
+        ),
+        (
+            move: "mean-look",
+            level: 45,
+        ),
+        (
+            move: "shadow-ball",
+            level: 41,
+        ),
+        (
+            move: "fake-out",
+            level: 21,
+        ),
+        (
+            move: "knock-off",
+            level: 33,
+        ),
+        (
+            move: "astonish",
+            level: 13,
+        ),
+    ],
+)

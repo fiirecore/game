@@ -1,6 +1,0 @@
-id = "shadow-punch"
-name = "Shadow Punch"
-type = "Ghost"
-category = "Physical"
-power = 60
-pp = 20

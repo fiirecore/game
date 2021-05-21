@@ -1,0 +1,48 @@
+(
+    data: (
+        id: 103,
+        name: "Exeggutor",
+        primary_type: Grass,
+        secondary_type: Some(Psychic),
+        species: "Coconut",
+        height: 20,
+        weight: 1200,
+    ),
+    base: (
+        hp: 95,
+        atk: 95,
+        def: 85,
+        sp_atk: 125,
+        sp_def: 75,
+        speed: 55,
+    ),
+    training: (
+        base_exp: 186,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "stomp",
+            level: 19,
+        ),
+        (
+            move: "confusion",
+            level: 1,
+        ),
+        (
+            move: "hypnosis",
+            level: 1,
+        ),
+        (
+            move: "egg-bomb",
+            level: 31,
+        ),
+        (
+            move: "barrage",
+            level: 1,
+        ),
+    ],
+)

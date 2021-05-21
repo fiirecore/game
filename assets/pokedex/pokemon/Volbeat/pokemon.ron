@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 313,
+        name: "Volbeat",
+        primary_type: Bug,
+        secondary_type: None,
+        species: "Firefly",
+        height: 7,
+        weight: 177,
+    ),
+    base: (
+        hp: 65,
+        atk: 73,
+        def: 75,
+        sp_atk: 47,
+        sp_def: 85,
+        speed: 85,
+    ),
+    training: (
+        base_exp: 151,
+        growth_rate: SlowThenVeryFast,
+    ),
+    breeding: (
+        gender: Some(0),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "double-edge",
+            level: 37,
+        ),
+        (
+            move: "quick-attack",
+            level: 17,
+        ),
+        (
+            move: "double-team",
+            level: 9,
+        ),
+        (
+            move: "confuse-ray",
+            level: 5,
+        ),
+        (
+            move: "protect",
+            level: 29,
+        ),
+        (
+            move: "moonlight",
+            level: 13,
+        ),
+        (
+            move: "helping-hand",
+            level: 33,
+        ),
+        (
+            move: "tail-glow",
+            level: 21,
+        ),
+        (
+            move: "signal-beam",
+            level: 25,
+        ),
+    ],
+)

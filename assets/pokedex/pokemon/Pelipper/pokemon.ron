@@ -1,0 +1,80 @@
+(
+    data: (
+        id: 279,
+        name: "Pelipper",
+        primary_type: Water,
+        secondary_type: Some(Flying),
+        species: "Water",
+        height: 12,
+        weight: 280,
+    ),
+    base: (
+        hp: 60,
+        atk: 50,
+        def: 100,
+        sp_atk: 95,
+        sp_def: 70,
+        speed: 65,
+    ),
+    training: (
+        base_exp: 154,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "wing-attack",
+            level: 1,
+        ),
+        (
+            move: "wing-attack",
+            level: 13,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "supersonic",
+            level: 7,
+        ),
+        (
+            move: "mist",
+            level: 21,
+        ),
+        (
+            move: "water-gun",
+            level: 1,
+        ),
+        (
+            move: "water-gun",
+            level: 3,
+        ),
+        (
+            move: "hydro-pump",
+            level: 61,
+        ),
+        (
+            move: "protect",
+            level: 25,
+        ),
+        (
+            move: "stockpile",
+            level: 33,
+        ),
+        (
+            move: "spit-up",
+            level: 47,
+        ),
+        (
+            move: "swallow",
+            level: 33,
+        ),
+        (
+            move: "water-sport",
+            level: 1,
+        ),
+    ],
+)

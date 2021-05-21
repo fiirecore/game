@@ -1,7 +1,0 @@
-id = "bonemerang"
-name = "Bonemerang"
-type = "Ground"
-category = "Physical"
-power = 50
-accuracy = 90
-pp = 10

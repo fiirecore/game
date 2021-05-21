@@ -1,7 +1,0 @@
-id = "quick-attack"
-name = "Quick Attack"
-type = "Normal"
-category = "Physical"
-power = 40
-accuracy = 100
-pp = 30

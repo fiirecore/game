@@ -1,0 +1,11 @@
+(
+    id: "arm-thrust",
+    name: "Arm Thrust",
+    category: Physical,
+    type: Fighting,
+    power: Some(15),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

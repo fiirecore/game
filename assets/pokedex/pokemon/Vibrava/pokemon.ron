@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 329,
+        name: "Vibrava",
+        primary_type: Ground,
+        secondary_type: Some(Dragon),
+        species: "Vibration",
+        height: 11,
+        weight: 153,
+    ),
+    base: (
+        hp: 50,
+        atk: 70,
+        def: 50,
+        sp_atk: 50,
+        sp_def: 50,
+        speed: 70,
+    ),
+    training: (
+        base_exp: 119,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "sand-attack",
+            level: 1,
+        ),
+        (
+            move: "sand-attack",
+            level: 9,
+        ),
+        (
+            move: "bite",
+            level: 1,
+        ),
+        (
+            move: "hyper-beam",
+            level: 57,
+        ),
+        (
+            move: "screech",
+            level: 41,
+        ),
+        (
+            move: "feint-attack",
+            level: 1,
+        ),
+        (
+            move: "feint-attack",
+            level: 17,
+        ),
+        (
+            move: "sandstorm",
+            level: 49,
+        ),
+        (
+            move: "dragon-breath",
+            level: 35,
+        ),
+        (
+            move: "crunch",
+            level: 33,
+        ),
+        (
+            move: "sand-tomb",
+            level: 1,
+        ),
+        (
+            move: "sand-tomb",
+            level: 25,
+        ),
+    ],
+)

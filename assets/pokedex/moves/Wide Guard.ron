@@ -1,0 +1,11 @@
+(
+    id: "wide-guard",
+    name: "Wide Guard",
+    category: Status,
+    type: Rock,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

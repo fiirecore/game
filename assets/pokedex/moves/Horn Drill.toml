@@ -1,6 +1,0 @@
-id = "horn-drill"
-name = "Horn Drill"
-type = "Normal"
-category = "Physical"
-accuracy = 30
-pp = 5

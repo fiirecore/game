@@ -1,0 +1,11 @@
+(
+    id: "head-smash",
+    name: "Head Smash",
+    category: Physical,
+    type: Rock,
+    power: Some(150),
+    accuracy: Some(80),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

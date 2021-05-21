@@ -1,0 +1,11 @@
+(
+    id: "mega-kick",
+    name: "Mega Kick",
+    category: Physical,
+    type: Normal,
+    power: Some(120),
+    accuracy: Some(75),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

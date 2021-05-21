@@ -1,6 +1,0 @@
-id = "toxic"
-name = "Toxic"
-type = "Poison"
-category = "Status"
-accuracy = 90
-pp = 10

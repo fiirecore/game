@@ -1,7 +1,0 @@
-id = "psychic"
-name = "Psychic"
-type = "Psychic"
-category = "Special"
-power = 90
-accuracy = 100
-pp = 10

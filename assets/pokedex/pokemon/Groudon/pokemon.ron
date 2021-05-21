@@ -1,0 +1,72 @@
+(
+    data: (
+        id: 383,
+        name: "Groudon",
+        primary_type: Ground,
+        secondary_type: None,
+        species: "Continent",
+        height: 35,
+        weight: 9500,
+    ),
+    base: (
+        hp: 100,
+        atk: 150,
+        def: 140,
+        sp_atk: 100,
+        sp_def: 90,
+        speed: 90,
+    ),
+    training: (
+        base_exp: 302,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: None,
+    ),
+    moves: [
+        (
+            move: "solar-beam",
+            level: 65,
+        ),
+        (
+            move: "earthquake",
+            level: 35,
+        ),
+        (
+            move: "fissure",
+            level: 60,
+        ),
+        (
+            move: "fire-blast",
+            level: 45,
+        ),
+        (
+            move: "rest",
+            level: 50,
+        ),
+        (
+            move: "slash",
+            level: 20,
+        ),
+        (
+            move: "scary-face",
+            level: 5,
+        ),
+        (
+            move: "ancient-power",
+            level: 15,
+        ),
+        (
+            move: "eruption",
+            level: 75,
+        ),
+        (
+            move: "bulk-up",
+            level: 30,
+        ),
+        (
+            move: "mud-shot",
+            level: 1,
+        ),
+    ],
+)

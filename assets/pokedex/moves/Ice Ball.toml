@@ -1,7 +1,0 @@
-id = "ice-ball"
-name = "Ice Ball"
-type = "Ice"
-category = "Physical"
-power = 30
-accuracy = 90
-pp = 20

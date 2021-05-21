@@ -1,0 +1,60 @@
+(
+    data: (
+        id: 116,
+        name: "Horsea",
+        primary_type: Water,
+        secondary_type: None,
+        species: "Dragon",
+        height: 4,
+        weight: 80,
+    ),
+    base: (
+        hp: 30,
+        atk: 40,
+        def: 70,
+        sp_atk: 70,
+        sp_def: 25,
+        speed: 60,
+    ),
+    training: (
+        base_exp: 59,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "leer",
+            level: 15,
+        ),
+        (
+            move: "water-gun",
+            level: 22,
+        ),
+        (
+            move: "hydro-pump",
+            level: 43,
+        ),
+        (
+            move: "agility",
+            level: 36,
+        ),
+        (
+            move: "smokescreen",
+            level: 8,
+        ),
+        (
+            move: "bubble",
+            level: 1,
+        ),
+        (
+            move: "twister",
+            level: 29,
+        ),
+        (
+            move: "dragon-dance",
+            level: 50,
+        ),
+    ],
+)

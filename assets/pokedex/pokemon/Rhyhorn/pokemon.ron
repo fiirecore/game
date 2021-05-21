@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 111,
+        name: "Rhyhorn",
+        primary_type: Ground,
+        secondary_type: Some(Rock),
+        species: "Spikes",
+        height: 10,
+        weight: 1150,
+    ),
+    base: (
+        hp: 80,
+        atk: 85,
+        def: 95,
+        sp_atk: 30,
+        sp_def: 30,
+        speed: 25,
+    ),
+    training: (
+        base_exp: 69,
+        growth_rate: Slow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "stomp",
+            level: 10,
+        ),
+        (
+            move: "horn-attack",
+            level: 1,
+        ),
+        (
+            move: "fury-attack",
+            level: 15,
+        ),
+        (
+            move: "horn-drill",
+            level: 38,
+        ),
+        (
+            move: "take-down",
+            level: 43,
+        ),
+        (
+            move: "tail-whip",
+            level: 1,
+        ),
+        (
+            move: "earthquake",
+            level: 52,
+        ),
+        (
+            move: "scary-face",
+            level: 24,
+        ),
+        (
+            move: "megahorn",
+            level: 57,
+        ),
+        (
+            move: "rock-blast",
+            level: 29,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "avalanche",
+    name: "Avalanche",
+    category: Physical,
+    type: Ice,
+    power: Some(60),
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

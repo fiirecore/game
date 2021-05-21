@@ -1,0 +1,11 @@
+(
+    id: "chatter",
+    name: "Chatter",
+    category: Special,
+    type: Flying,
+    power: Some(65),
+    accuracy: Some(100),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

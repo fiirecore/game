@@ -1,0 +1,64 @@
+(
+    data: (
+        id: 204,
+        name: "Pineco",
+        primary_type: Bug,
+        secondary_type: None,
+        species: "Bagworm",
+        height: 6,
+        weight: 72,
+    ),
+    base: (
+        hp: 50,
+        atk: 65,
+        def: 90,
+        sp_atk: 35,
+        sp_def: 35,
+        speed: 15,
+    ),
+    training: (
+        base_exp: 58,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "take-down",
+            level: 15,
+        ),
+        (
+            move: "double-edge",
+            level: 50,
+        ),
+        (
+            move: "bide",
+            level: 29,
+        ),
+        (
+            move: "self-destruct",
+            level: 8,
+        ),
+        (
+            move: "explosion",
+            level: 36,
+        ),
+        (
+            move: "protect",
+            level: 1,
+        ),
+        (
+            move: "spikes",
+            level: 43,
+        ),
+        (
+            move: "rapid-spin",
+            level: 22,
+        ),
+    ],
+)

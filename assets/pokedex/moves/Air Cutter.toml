@@ -1,7 +1,0 @@
-id = "air-cutter"
-name = "Air Cutter"
-type = "Flying"
-category = "Special"
-power = 60
-accuracy = 95
-pp = 25

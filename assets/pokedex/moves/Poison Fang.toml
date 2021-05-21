@@ -1,7 +1,0 @@
-id = "poison-fang"
-name = "Poison Fang"
-type = "Poison"
-category = "Physical"
-power = 50
-accuracy = 100
-pp = 15

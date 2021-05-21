@@ -39,13 +39,13 @@ impl PokemonInstance {
         for action in &script.actions {
             match action {
                 ItemActionKind::CurePokemon(status) => {
-                    if let Some(effect) = self.data.status {
+                    if let Some(effect) = self.status {
                         if let Some(status) = status {
                             if effect.status.eq(status) {
-                                self.data.status = None;
+                                self.status = None;
                             }
                         } else {
-                            self.data.status = None;
+                            self.status = None;
                         }
                     }
                 }

@@ -1,0 +1,11 @@
+(
+    id: "razor-shell",
+    name: "Razor Shell",
+    category: Physical,
+    type: Water,
+    power: Some(75),
+    accuracy: Some(95),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

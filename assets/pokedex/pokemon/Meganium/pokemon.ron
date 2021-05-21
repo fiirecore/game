@@ -1,0 +1,76 @@
+(
+    data: (
+        id: 154,
+        name: "Meganium",
+        primary_type: Grass,
+        secondary_type: None,
+        species: "Herb",
+        height: 18,
+        weight: 1005,
+    ),
+    base: (
+        hp: 80,
+        atk: 82,
+        def: 100,
+        sp_atk: 83,
+        sp_def: 100,
+        speed: 80,
+    ),
+    training: (
+        base_exp: 236,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(1),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "body-slam",
+            level: 31,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "razor-leaf",
+            level: 1,
+        ),
+        (
+            move: "razor-leaf",
+            level: 8,
+        ),
+        (
+            move: "solar-beam",
+            level: 61,
+        ),
+        (
+            move: "poison-powder",
+            level: 15,
+        ),
+        (
+            move: "light-screen",
+            level: 41,
+        ),
+        (
+            move: "reflect",
+            level: 1,
+        ),
+        (
+            move: "reflect",
+            level: 12,
+        ),
+        (
+            move: "safeguard",
+            level: 51,
+        ),
+        (
+            move: "synthesis",
+            level: 23,
+        ),
+    ],
+)

@@ -1,0 +1,88 @@
+(
+    data: (
+        id: 315,
+        name: "Roselia",
+        primary_type: Grass,
+        secondary_type: Some(Poison),
+        species: "Thorn",
+        height: 3,
+        weight: 20,
+    ),
+    base: (
+        hp: 50,
+        atk: 60,
+        def: 45,
+        sp_atk: 100,
+        sp_def: 80,
+        speed: 65,
+    ),
+    training: (
+        base_exp: 140,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "poison-sting",
+            level: 9,
+        ),
+        (
+            move: "absorb",
+            level: 1,
+        ),
+        (
+            move: "mega-drain",
+            level: 17,
+        ),
+        (
+            move: "leech-seed",
+            level: 21,
+        ),
+        (
+            move: "growth",
+            level: 5,
+        ),
+        (
+            move: "stun-spore",
+            level: 13,
+        ),
+        (
+            move: "petal-dance",
+            level: 49,
+        ),
+        (
+            move: "toxic",
+            level: 45,
+        ),
+        (
+            move: "giga-drain",
+            level: 33,
+        ),
+        (
+            move: "sweet-scent",
+            level: 37,
+        ),
+        (
+            move: "synthesis",
+            level: 57,
+        ),
+        (
+            move: "ingrain",
+            level: 41,
+        ),
+        (
+            move: "aromatherapy",
+            level: 53,
+        ),
+        (
+            move: "grass-whistle",
+            level: 29,
+        ),
+        (
+            move: "magical-leaf",
+            level: 25,
+        ),
+    ],
+)

@@ -1,0 +1,11 @@
+(
+    id: "worry-seed",
+    name: "Worry Seed",
+    category: Status,
+    type: Grass,
+    power: None,
+    accuracy: Some(100),
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

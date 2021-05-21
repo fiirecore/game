@@ -1,0 +1,56 @@
+(
+    data: (
+        id: 179,
+        name: "Mareep",
+        primary_type: Electric,
+        secondary_type: None,
+        species: "Wool",
+        height: 6,
+        weight: 78,
+    ),
+    base: (
+        hp: 55,
+        atk: 40,
+        def: 40,
+        sp_atk: 65,
+        sp_def: 45,
+        speed: 35,
+    ),
+    training: (
+        base_exp: 56,
+        growth_rate: MediumSlow,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "tackle",
+            level: 1,
+        ),
+        (
+            move: "growl",
+            level: 1,
+        ),
+        (
+            move: "thunder-shock",
+            level: 9,
+        ),
+        (
+            move: "thunder-wave",
+            level: 16,
+        ),
+        (
+            move: "thunder",
+            level: 37,
+        ),
+        (
+            move: "light-screen",
+            level: 30,
+        ),
+        (
+            move: "cotton-spore",
+            level: 23,
+        ),
+    ],
+)

@@ -43,17 +43,13 @@
             party: [
                 (
                     id: 19,
-                    data: (
-                        level: 11,
-                        gender: Male,
-                    ),
+                    level: 11,
+                    gender: Male,
                 ),
                 (
                     id: 23,
-                    data: (
-                        level: 11,
-                        gender: Male,
-                    ),
+                    level: 11,
+                    gender: Male,
                 )
             ],
             victory_message: [

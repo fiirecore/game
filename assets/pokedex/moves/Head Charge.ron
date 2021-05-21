@@ -1,0 +1,11 @@
+(
+    id: "head-charge",
+    name: "Head Charge",
+    category: Physical,
+    type: Normal,
+    power: Some(120),
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)

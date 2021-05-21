@@ -1,7 +1,0 @@
-id = "rock-blast"
-name = "Rock Blast"
-type = "Rock"
-category = "Physical"
-power = 25
-accuracy = 90
-pp = 10

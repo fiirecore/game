@@ -1,0 +1,11 @@
+(
+    id: "ice-ball",
+    name: "Ice Ball",
+    category: Physical,
+    type: Ice,
+    power: Some(30),
+    accuracy: Some(90),
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

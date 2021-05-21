@@ -1,7 +1,0 @@
-id = "hyper-fang"
-name = "Hyper Fang"
-type = "Normal"
-category = "Physical"
-power = 80
-accuracy = 90
-pp = 15

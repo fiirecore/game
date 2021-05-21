@@ -1,7 +1,0 @@
-id = "rapid-spin"
-name = "Rapid Spin"
-type = "Normal"
-category = "Physical"
-power = 50
-accuracy = 100
-pp = 40

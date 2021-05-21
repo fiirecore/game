@@ -1,0 +1,11 @@
+(
+    id: "rest",
+    name: "Rest",
+    category: Status,
+    type: Psychic,
+    power: None,
+    accuracy: None,
+    pp: 10,
+    target: Opponent,
+    script: None,
+)

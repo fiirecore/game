@@ -1,0 +1,11 @@
+(
+    id: "hydro-pump",
+    name: "Hydro Pump",
+    category: Special,
+    type: Water,
+    power: Some(110),
+    accuracy: Some(80),
+    pp: 5,
+    target: Opponent,
+    script: None,
+)

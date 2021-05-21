@@ -1,7 +1,0 @@
-id = "hyper-voice"
-name = "Hyper Voice"
-type = "Normal"
-category = "Special"
-power = 90
-accuracy = 100
-pp = 10

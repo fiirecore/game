@@ -1,0 +1,11 @@
+(
+    id: "acid-armor",
+    name: "Acid Armor",
+    category: Status,
+    type: Poison,
+    power: None,
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

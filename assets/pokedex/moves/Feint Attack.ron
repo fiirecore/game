@@ -1,0 +1,11 @@
+(
+    id: "feint-attack",
+    name: "Feint Attack",
+    category: Physical,
+    type: Dark,
+    power: Some(60),
+    accuracy: None,
+    pp: 20,
+    target: Opponent,
+    script: None,
+)

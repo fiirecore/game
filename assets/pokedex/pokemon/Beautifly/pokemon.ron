@@ -1,0 +1,68 @@
+(
+    data: (
+        id: 267,
+        name: "Beautifly",
+        primary_type: Bug,
+        secondary_type: Some(Flying),
+        species: "Butterfly",
+        height: 10,
+        weight: 284,
+    ),
+    base: (
+        hp: 60,
+        atk: 70,
+        def: 50,
+        sp_atk: 100,
+        sp_def: 50,
+        speed: 65,
+    ),
+    training: (
+        base_exp: 178,
+        growth_rate: Medium,
+    ),
+    breeding: (
+        gender: Some(4),
+    ),
+    moves: [
+        (
+            move: "gust",
+            level: 13,
+        ),
+        (
+            move: "whirlwind",
+            level: 27,
+        ),
+        (
+            move: "absorb",
+            level: 1,
+        ),
+        (
+            move: "absorb",
+            level: 10,
+        ),
+        (
+            move: "mega-drain",
+            level: 24,
+        ),
+        (
+            move: "stun-spore",
+            level: 17,
+        ),
+        (
+            move: "giga-drain",
+            level: 38,
+        ),
+        (
+            move: "attract",
+            level: 31,
+        ),
+        (
+            move: "morning-sun",
+            level: 20,
+        ),
+        (
+            move: "silver-wind",
+            level: 34,
+        ),
+    ],
+)

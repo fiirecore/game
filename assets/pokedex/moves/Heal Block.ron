@@ -1,0 +1,11 @@
+(
+    id: "heal-block",
+    name: "Heal Block",
+    category: Status,
+    type: Psychic,
+    power: None,
+    accuracy: Some(100),
+    pp: 15,
+    target: Opponent,
+    script: None,
+)
