@@ -3,9 +3,8 @@
     name: "Body Slam",
     category: Physical,
     type: Normal,
-    power: Some(85),
     accuracy: Some(100),
     pp: 15,
+    use_type: Damage(Power(85)),
     target: Opponent,
-    script: None,
 )

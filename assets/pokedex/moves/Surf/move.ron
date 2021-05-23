@@ -4,9 +4,10 @@
         name: "Surf",
         type: Water,
         category: Special,
-        power: Some(90),
         accuracy: Some(100),
         pp: 15,
+		use_type: Damage(Power(90)),
+		target: AllButUser,
     ),
     game_move: Some((
         field_id: Some("surf"),

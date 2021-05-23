@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 259,
-        name: "Marshtomp",
-        primary_type: Water,
-        secondary_type: Some(Ground),
-        species: "Mud",
-        height: 7,
-        weight: 280,
-    ),
+    id: 259,
+    name: "Marshtomp",
+    primary_type: Water,
+    secondary_type: Some(Ground),
     base: (
         hp: 70,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 70,
         speed: 50,
+    ),
+    data: (
+        species: "Mud",
+        height: 7,
+        weight: 280,
     ),
     training: (
         base_exp: 142,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 378,
-        name: "Regice",
-        primary_type: Ice,
-        secondary_type: None,
-        species: "Iceberg",
-        height: 18,
-        weight: 1750,
-    ),
+    id: 378,
+    name: "Regice",
+    primary_type: Ice,
+    secondary_type: None,
     base: (
         hp: 80,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 200,
         speed: 50,
+    ),
+    data: (
+        species: "Iceberg",
+        height: 18,
+        weight: 1750,
     ),
     training: (
         base_exp: 261,

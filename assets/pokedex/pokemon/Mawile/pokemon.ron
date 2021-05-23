@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 303,
-        name: "Mawile",
-        primary_type: Steel,
-        secondary_type: Some(Fairy),
-        species: "Deceiver",
-        height: 6,
-        weight: 115,
-    ),
+    id: 303,
+    name: "Mawile",
+    primary_type: Steel,
+    secondary_type: Some(Fairy),
     base: (
         hp: 50,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 55,
         speed: 50,
+    ),
+    data: (
+        species: "Deceiver",
+        height: 6,
+        weight: 115,
     ),
     training: (
         base_exp: 133,

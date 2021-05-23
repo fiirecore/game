@@ -3,9 +3,8 @@
     name: "Spider Web",
     category: Status,
     type: Bug,
-    power: None,
     accuracy: None,
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

@@ -3,9 +3,8 @@
     name: "Power Whip",
     category: Physical,
     type: Grass,
-    power: Some(120),
     accuracy: Some(85),
     pp: 10,
+    use_type: Damage(Power(120)),
     target: Opponent,
-    script: None,
 )

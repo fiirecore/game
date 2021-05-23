@@ -3,9 +3,8 @@
     name: "Triple Kick",
     category: Physical,
     type: Fighting,
-    power: Some(10),
     accuracy: Some(90),
     pp: 10,
+    use_type: Damage(Power(10)),
     target: Opponent,
-    script: None,
 )

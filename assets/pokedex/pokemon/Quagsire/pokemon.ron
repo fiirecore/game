@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 195,
-        name: "Quagsire",
-        primary_type: Water,
-        secondary_type: Some(Ground),
-        species: "Water",
-        height: 14,
-        weight: 750,
-    ),
+    id: 195,
+    name: "Quagsire",
+    primary_type: Water,
+    secondary_type: Some(Ground),
     base: (
         hp: 95,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 65,
         speed: 35,
+    ),
+    data: (
+        species: "Water",
+        height: 14,
+        weight: 750,
     ),
     training: (
         base_exp: 151,

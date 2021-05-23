@@ -1,0 +1,12 @@
+(    
+    move: (
+		id: "juicer",
+		name: "The Juicer",
+		category: Special,
+		type: Dragon,
+		accuracy: None,
+		pp: 255,
+		use_type: Damage(Power(255)),
+		target: Opponents,
+    ),
+)

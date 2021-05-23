@@ -166,19 +166,19 @@ pub struct SummaryPokemon {
 impl SummaryPokemon {
 
     pub fn new(display: PokemonDisplay) -> Self {
-        let pokemon = display.instance.pokemon.value();
-        let mut types = Vec::with_capacity(if pokemon.data.secondary_type.is_some() { 2 } else { 1 });
+        let pokemon = display.instance.pokemon.unwrap();
+        let mut types = Vec::with_capacity(if pokemon.secondary_type.is_some() { 2 } else { 1 });
 
-        types.push(PokemonTypeDisplay::new(pokemon.data.primary_type));
+        types.push(PokemonTypeDisplay::new(pokemon.primary_type));
 
-        if let Some(secondary) = pokemon.data.secondary_type {
+        if let Some(secondary) = pokemon.secondary_type {
             types.push(PokemonTypeDisplay::new(secondary));
         }
 
-        let texture = pokemon_texture(&pokemon.data.id, Front);
+        let texture = pokemon_texture(&pokemon.id, Front);
 
         Self {
-            pokemon: (pokemon.data.id.to_string(), &pokemon.data.name),
+            pokemon: (pokemon.id.to_string(), &pokemon.name),
             front: (texture, 34.0 + (64.0 - texture.height()) / 2.0),
             types,
             // item: pokemon.instance.item.map(|item| item.name.to_ascii_uppercase()).unwrap_or("NONE".to_owned()),

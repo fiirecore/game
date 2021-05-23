@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 119,
-        name: "Seaking",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Goldfish",
-        height: 13,
-        weight: 390,
-    ),
+    id: 119,
+    name: "Seaking",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 80,
         atk: 92,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 80,
         speed: 68,
+    ),
+    data: (
+        species: "Goldfish",
+        height: 13,
+        weight: 390,
     ),
     training: (
         base_exp: 158,

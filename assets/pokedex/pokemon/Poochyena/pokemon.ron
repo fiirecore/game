@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 261,
-        name: "Poochyena",
-        primary_type: Dark,
-        secondary_type: None,
-        species: "Bite",
-        height: 5,
-        weight: 136,
-    ),
+    id: 261,
+    name: "Poochyena",
+    primary_type: Dark,
+    secondary_type: None,
     base: (
         hp: 35,
         atk: 55,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 30,
         speed: 35,
+    ),
+    data: (
+        species: "Bite",
+        height: 5,
+        weight: 136,
     ),
     training: (
         base_exp: 56,

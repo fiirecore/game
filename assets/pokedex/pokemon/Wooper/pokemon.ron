@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 194,
-        name: "Wooper",
-        primary_type: Water,
-        secondary_type: Some(Ground),
-        species: "Water",
-        height: 4,
-        weight: 85,
-    ),
+    id: 194,
+    name: "Wooper",
+    primary_type: Water,
+    secondary_type: Some(Ground),
     base: (
         hp: 55,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 25,
         sp_def: 25,
         speed: 15,
+    ),
+    data: (
+        species: "Water",
+        height: 4,
+        weight: 85,
     ),
     training: (
         base_exp: 42,

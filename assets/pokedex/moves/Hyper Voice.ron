@@ -3,9 +3,8 @@
     name: "Hyper Voice",
     category: Special,
     type: Normal,
-    power: Some(90),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(90)),
     target: Opponent,
-    script: None,
 )

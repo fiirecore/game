@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 48,
-        name: "Venonat",
-        primary_type: Bug,
-        secondary_type: Some(Poison),
-        species: "Insect",
-        height: 10,
-        weight: 300,
-    ),
+    id: 48,
+    name: "Venonat",
+    primary_type: Bug,
+    secondary_type: Some(Poison),
     base: (
         hp: 60,
         atk: 55,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 55,
         speed: 45,
+    ),
+    data: (
+        species: "Insect",
+        height: 10,
+        weight: 300,
     ),
     training: (
         base_exp: 61,

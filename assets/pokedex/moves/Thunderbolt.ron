@@ -3,9 +3,8 @@
     name: "Thunderbolt",
     category: Special,
     type: Electric,
-    power: Some(90),
     accuracy: Some(100),
     pp: 15,
+    use_type: Damage(Power(90)),
     target: Opponent,
-    script: None,
 )

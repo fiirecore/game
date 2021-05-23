@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 240,
-        name: "Magby",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Live",
-        height: 7,
-        weight: 214,
-    ),
+    id: 240,
+    name: "Magby",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 45,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 55,
         speed: 83,
+    ),
+    data: (
+        species: "Live",
+        height: 7,
+        weight: 214,
     ),
     training: (
         base_exp: 73,

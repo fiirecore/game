@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 186,
-        name: "Politoed",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Frog",
-        height: 11,
-        weight: 339,
-    ),
+    id: 186,
+    name: "Politoed",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 90,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 100,
         speed: 70,
+    ),
+    data: (
+        species: "Frog",
+        height: 11,
+        weight: 339,
     ),
     training: (
         base_exp: 225,

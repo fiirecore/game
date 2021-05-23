@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 358,
-        name: "Chimecho",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Wind",
-        height: 6,
-        weight: 10,
-    ),
+    id: 358,
+    name: "Chimecho",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 75,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 90,
         speed: 65,
+    ),
+    data: (
+        species: "Wind",
+        height: 6,
+        weight: 10,
     ),
     training: (
         base_exp: 159,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 359,
-        name: "Absol",
-        primary_type: Dark,
-        secondary_type: None,
-        species: "Disaster",
-        height: 12,
-        weight: 470,
-    ),
+    id: 359,
+    name: "Absol",
+    primary_type: Dark,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 130,
@@ -15,6 +10,11 @@
         sp_atk: 75,
         sp_def: 60,
         speed: 75,
+    ),
+    data: (
+        species: "Disaster",
+        height: 12,
+        weight: 470,
     ),
     training: (
         base_exp: 163,

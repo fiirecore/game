@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 90,
-        name: "Shellder",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Bivalve",
-        height: 3,
-        weight: 40,
-    ),
+    id: 90,
+    name: "Shellder",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 30,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 25,
         speed: 40,
+    ),
+    data: (
+        species: "Bivalve",
+        height: 3,
+        weight: 40,
     ),
     training: (
         base_exp: 61,

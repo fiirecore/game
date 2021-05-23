@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 342,
-        name: "Crawdaunt",
-        primary_type: Water,
-        secondary_type: Some(Dark),
-        species: "Rogue",
-        height: 11,
-        weight: 328,
-    ),
+    id: 342,
+    name: "Crawdaunt",
+    primary_type: Water,
+    secondary_type: Some(Dark),
     base: (
         hp: 63,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 55,
         speed: 55,
+    ),
+    data: (
+        species: "Rogue",
+        height: 11,
+        weight: 328,
     ),
     training: (
         base_exp: 164,

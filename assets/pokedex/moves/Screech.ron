@@ -3,9 +3,8 @@
     name: "Screech",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: Some(85),
     pp: 40,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

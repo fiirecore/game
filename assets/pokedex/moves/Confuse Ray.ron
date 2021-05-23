@@ -3,9 +3,8 @@
     name: "Confuse Ray",
     category: Status,
     type: Ghost,
-    power: None,
     accuracy: Some(100),
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

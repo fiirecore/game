@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 59,
-        name: "Arcanine",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Legendary",
-        height: 19,
-        weight: 1550,
-    ),
+    id: 59,
+    name: "Arcanine",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 90,
         atk: 110,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 80,
         speed: 95,
+    ),
+    data: (
+        species: "Legendary",
+        height: 19,
+        weight: 1550,
     ),
     training: (
         base_exp: 194,

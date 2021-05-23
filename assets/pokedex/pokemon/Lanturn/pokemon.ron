@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 171,
-        name: "Lanturn",
-        primary_type: Water,
-        secondary_type: Some(Electric),
-        species: "Light",
-        height: 12,
-        weight: 225,
-    ),
+    id: 171,
+    name: "Lanturn",
+    primary_type: Water,
+    secondary_type: Some(Electric),
     base: (
         hp: 125,
         atk: 58,
@@ -15,6 +10,11 @@
         sp_atk: 76,
         sp_def: 76,
         speed: 67,
+    ),
+    data: (
+        species: "Light",
+        height: 12,
+        weight: 225,
     ),
     training: (
         base_exp: 161,

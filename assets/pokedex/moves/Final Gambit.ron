@@ -3,9 +3,8 @@
     name: "Final Gambit",
     category: Special,
     type: Fighting,
-    power: None,
     accuracy: Some(100),
     pp: 5,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

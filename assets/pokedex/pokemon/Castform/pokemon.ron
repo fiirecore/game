@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 351,
-        name: "Castform",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Weather",
-        height: 3,
-        weight: 8,
-    ),
+    id: 351,
+    name: "Castform",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 70,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 70,
         speed: 70,
+    ),
+    data: (
+        species: "Weather",
+        height: 3,
+        weight: 8,
     ),
     training: (
         base_exp: 147,

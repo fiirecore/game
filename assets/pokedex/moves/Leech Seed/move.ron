@@ -1,16 +1,18 @@
 (
     move: (
-        id: "leech-seed",
-        name: "Leech Seed",
-        type: Grass,
-        category: Status,
-        accuracy: Some(90),
-        pp: 10,
-        script: Some((
-            action: Persistent((
-                action: Drain(PercentMax(0.125), 0.0625),
-                on_move: false,
-            ))
-        )),
+		id: "leech-seed",
+		name: "Leech Seed",
+		category: Status,
+		type: Grass,
+		accuracy: Some(90),
+		pp: 10,
+		use_type: Todo,
+		target: Opponent,
+        //script: Some((
+        //  action: Persistent((
+        //      action: Drain(PercentMax(0.125), 0.0625),
+        //      on_move: false,
+        //  ))
+        //)),
     )
 )

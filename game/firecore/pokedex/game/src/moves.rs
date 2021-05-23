@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use deps::{
+    str::TinyStr8,
     hash::HashMap,
-    tinystr::TinyStr8,
 };
 
 pub use pokedex::moves::*;
@@ -9,6 +9,7 @@ pub use pokedex::moves::*;
 pub mod battle_script;
 
 pub type FieldMoveId = TinyStr8;
+
 
 pub type GameMoveDex = HashMap<MoveId, GamePokemonMove>;
 pub static mut GAME_MOVE_DEX: Option<GameMoveDex> = None;
@@ -19,9 +20,10 @@ pub fn get_game_move(id: &MoveId) -> Option<GameMoveRef> {
 
 pub type GameMoveRef = &'static GamePokemonMove;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GamePokemonMove {
 
     pub field_id: Option<FieldMoveId>,    
+    // pub plugin: Option<String>,
 
 }

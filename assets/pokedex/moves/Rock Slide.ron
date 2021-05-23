@@ -3,9 +3,8 @@
     name: "Rock Slide",
     category: Physical,
     type: Rock,
-    power: Some(75),
     accuracy: Some(90),
     pp: 10,
+    use_type: Damage(Power(75)),
     target: Opponent,
-    script: None,
 )

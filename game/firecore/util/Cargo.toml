@@ -1,9 +1,9 @@
 [package]
 name = "firecore-util"
-version = "0.4.0-beta.1"
+version = "0.4.0-2021-05-22"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-firecore-dependencies = { path = "../deps", features = ["tinystr"] }
+firecore-dependencies = { path = "../deps", features = ["str"] }

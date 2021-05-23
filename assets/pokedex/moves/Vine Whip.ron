@@ -3,9 +3,8 @@
     name: "Vine Whip",
     category: Physical,
     type: Grass,
-    power: Some(45),
     accuracy: Some(100),
     pp: 25,
+    use_type: Damage(Power(45)),
     target: Opponent,
-    script: None,
 )

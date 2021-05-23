@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 243,
-        name: "Raikou",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Thunder",
-        height: 19,
-        weight: 1780,
-    ),
+    id: 243,
+    name: "Raikou",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 90,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 115,
         sp_def: 100,
         speed: 115,
+    ),
+    data: (
+        species: "Thunder",
+        height: 19,
+        weight: 1780,
     ),
     training: (
         base_exp: 261,

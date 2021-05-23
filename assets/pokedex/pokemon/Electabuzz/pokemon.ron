@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 125,
-        name: "Electabuzz",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Electric",
-        height: 11,
-        weight: 300,
-    ),
+    id: 125,
+    name: "Electabuzz",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 83,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 85,
         speed: 105,
+    ),
+    data: (
+        species: "Electric",
+        height: 11,
+        weight: 300,
     ),
     training: (
         base_exp: 172,

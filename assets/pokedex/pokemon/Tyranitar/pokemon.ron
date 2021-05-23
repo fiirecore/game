@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 248,
-        name: "Tyranitar",
-        primary_type: Rock,
-        secondary_type: Some(Dark),
-        species: "Armor",
-        height: 20,
-        weight: 2020,
-    ),
+    id: 248,
+    name: "Tyranitar",
+    primary_type: Rock,
+    secondary_type: Some(Dark),
     base: (
         hp: 100,
         atk: 134,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 100,
         speed: 61,
+    ),
+    data: (
+        species: "Armor",
+        height: 20,
+        weight: 2020,
     ),
     training: (
         base_exp: 270,

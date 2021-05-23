@@ -3,9 +3,8 @@
     name: "Tail Slap",
     category: Physical,
     type: Normal,
-    power: Some(25),
     accuracy: Some(85),
     pp: 10,
+    use_type: Damage(Power(25)),
     target: Opponent,
-    script: None,
 )

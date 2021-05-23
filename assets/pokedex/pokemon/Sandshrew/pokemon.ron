@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 27,
-        name: "Sandshrew",
-        primary_type: Ground,
-        secondary_type: None,
-        species: "Mouse",
-        height: 6,
-        weight: 120,
-    ),
+    id: 27,
+    name: "Sandshrew",
+    primary_type: Ground,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 20,
         sp_def: 30,
         speed: 40,
+    ),
+    data: (
+        species: "Mouse",
+        height: 6,
+        weight: 120,
     ),
     training: (
         base_exp: 60,

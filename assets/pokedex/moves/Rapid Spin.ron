@@ -3,9 +3,8 @@
     name: "Rapid Spin",
     category: Physical,
     type: Normal,
-    power: Some(50),
     accuracy: Some(100),
     pp: 40,
+    use_type: Damage(Power(50)),
     target: Opponent,
-    script: None,
 )

@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::pokemon::{PokemonId, Level, types::PokemonType};
-
+use crate::pokemon::Level;
 use crate::moves::MoveId;
-
 
 pub mod training;
 pub mod breeding;
@@ -18,10 +16,6 @@ pub enum Gender {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PokedexData {
-	pub id: PokemonId, // To - do: move
-	pub name: String, // To - do: move
-	pub primary_type: PokemonType,
-	pub secondary_type: Option<PokemonType>,
 	pub species: String,
 	pub height: u8,
 	pub weight: u16,

@@ -3,9 +3,8 @@
     name: "Karate Chop",
     category: Physical,
     type: Fighting,
-    power: Some(50),
     accuracy: Some(100),
     pp: 25,
+    use_type: Damage(Power(50)),
     target: Opponent,
-    script: None,
 )

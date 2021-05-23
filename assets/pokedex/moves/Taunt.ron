@@ -3,9 +3,8 @@
     name: "Taunt",
     category: Status,
     type: Dark,
-    power: None,
     accuracy: Some(100),
     pp: 20,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

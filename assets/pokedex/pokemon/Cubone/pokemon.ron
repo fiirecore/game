@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 104,
-        name: "Cubone",
-        primary_type: Ground,
-        secondary_type: None,
-        species: "Lonely",
-        height: 4,
-        weight: 65,
-    ),
+    id: 104,
+    name: "Cubone",
+    primary_type: Ground,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 50,
         speed: 35,
+    ),
+    data: (
+        species: "Lonely",
+        height: 4,
+        weight: 65,
     ),
     training: (
         base_exp: 64,

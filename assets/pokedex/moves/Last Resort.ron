@@ -3,9 +3,8 @@
     name: "Last Resort",
     category: Physical,
     type: Normal,
-    power: Some(140),
     accuracy: Some(100),
     pp: 5,
+    use_type: Damage(Power(140)),
     target: Opponent,
-    script: None,
 )

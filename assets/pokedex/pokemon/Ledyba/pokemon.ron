@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 165,
-        name: "Ledyba",
-        primary_type: Bug,
-        secondary_type: Some(Flying),
-        species: "Five",
-        height: 10,
-        weight: 108,
-    ),
+    id: 165,
+    name: "Ledyba",
+    primary_type: Bug,
+    secondary_type: Some(Flying),
     base: (
         hp: 40,
         atk: 20,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 80,
         speed: 55,
+    ),
+    data: (
+        species: "Five",
+        height: 10,
+        weight: 108,
     ),
     training: (
         base_exp: 53,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 205,
-        name: "Forretress",
-        primary_type: Bug,
-        secondary_type: Some(Steel),
-        species: "Bagworm",
-        height: 12,
-        weight: 1258,
-    ),
+    id: 205,
+    name: "Forretress",
+    primary_type: Bug,
+    secondary_type: Some(Steel),
     base: (
         hp: 75,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 60,
         speed: 40,
+    ),
+    data: (
+        species: "Bagworm",
+        height: 12,
+        weight: 1258,
     ),
     training: (
         base_exp: 163,

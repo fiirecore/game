@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 64,
-        name: "Kadabra",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Psi",
-        height: 13,
-        weight: 565,
-    ),
+    id: 64,
+    name: "Kadabra",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 35,
@@ -15,6 +10,11 @@
         sp_atk: 120,
         sp_def: 70,
         speed: 105,
+    ),
+    data: (
+        species: "Psi",
+        height: 13,
+        weight: 565,
     ),
     training: (
         base_exp: 140,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 279,
-        name: "Pelipper",
-        primary_type: Water,
-        secondary_type: Some(Flying),
-        species: "Water",
-        height: 12,
-        weight: 280,
-    ),
+    id: 279,
+    name: "Pelipper",
+    primary_type: Water,
+    secondary_type: Some(Flying),
     base: (
         hp: 60,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 70,
         speed: 65,
+    ),
+    data: (
+        species: "Water",
+        height: 12,
+        weight: 280,
     ),
     training: (
         base_exp: 154,

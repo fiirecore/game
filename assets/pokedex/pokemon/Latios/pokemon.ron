@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 381,
-        name: "Latios",
-        primary_type: Dragon,
-        secondary_type: Some(Psychic),
-        species: "Eon",
-        height: 20,
-        weight: 600,
-    ),
+    id: 381,
+    name: "Latios",
+    primary_type: Dragon,
+    secondary_type: Some(Psychic),
     base: (
         hp: 80,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 130,
         sp_def: 110,
         speed: 110,
+    ),
+    data: (
+        species: "Eon",
+        height: 20,
+        weight: 600,
     ),
     training: (
         base_exp: 270,

@@ -21,6 +21,10 @@ pub static LOADING_FINISHED: AtomicBool = AtomicBool::new(false);
 
 pub fn seed_randoms(seed: u64) {
     pokedex::pokemon::POKEMON_RANDOM.seed(seed);
+    #[cfg(feature = "world")]
+    crate::world::seed_randoms(seed);
+    #[cfg(feature = "battle")]
+	crate::battle::BATTLE_RANDOM.seed(seed);
 }
 
 pub async fn configuration() {
@@ -58,14 +62,14 @@ pub fn pokedex(dex: SerializedDex) {
 			if let Err(_) = add_sound(
 				SerializedSoundData {
 					bytes: pokemon.cry_ogg,
-					sound: Sound::variant(crate::CRY_ID, Some(pokemon.pokemon.data.id)),
+					sound: Sound::variant(crate::CRY_ID, Some(pokemon.pokemon.id)),
 				}
 			) {
 				// warn!("Error adding pokemon cry: {}", err);
 			}
 		}
 		
-		pokedex.insert(pokemon.pokemon.data.id, pokemon.pokemon);
+		pokedex.insert(pokemon.pokemon.id, pokemon.pokemon);
 	}
     
 	unsafe { POKEMON_TEXTURES = Some(pokemon_textures); }

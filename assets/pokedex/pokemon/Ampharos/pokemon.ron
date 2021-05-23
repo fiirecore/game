@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 181,
-        name: "Ampharos",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Light",
-        height: 14,
-        weight: 615,
-    ),
+    id: 181,
+    name: "Ampharos",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 90,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 115,
         sp_def: 90,
         speed: 55,
+    ),
+    data: (
+        species: "Light",
+        height: 14,
+        weight: 615,
     ),
     training: (
         base_exp: 230,

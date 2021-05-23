@@ -3,9 +3,8 @@
     name: "Horn Drill",
     category: Physical,
     type: Normal,
-    power: None,
     accuracy: Some(30),
     pp: 5,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

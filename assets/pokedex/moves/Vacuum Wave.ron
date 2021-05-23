@@ -3,9 +3,8 @@
     name: "Vacuum Wave",
     category: Special,
     type: Fighting,
-    power: Some(40),
     accuracy: Some(100),
     pp: 30,
+    use_type: Damage(Power(40)),
     target: Opponent,
-    script: None,
 )

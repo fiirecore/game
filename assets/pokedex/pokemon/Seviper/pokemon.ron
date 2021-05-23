@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 336,
-        name: "Seviper",
-        primary_type: Poison,
-        secondary_type: None,
-        species: "Fang",
-        height: 27,
-        weight: 525,
-    ),
+    id: 336,
+    name: "Seviper",
+    primary_type: Poison,
+    secondary_type: None,
     base: (
         hp: 73,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 60,
         speed: 65,
+    ),
+    data: (
+        species: "Fang",
+        height: 27,
+        weight: 525,
     ),
     training: (
         base_exp: 160,

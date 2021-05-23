@@ -3,9 +3,8 @@
     name: "Bone Rush",
     category: Physical,
     type: Ground,
-    power: Some(25),
     accuracy: Some(90),
     pp: 10,
+    use_type: Damage(Power(25)),
     target: Opponent,
-    script: None,
 )

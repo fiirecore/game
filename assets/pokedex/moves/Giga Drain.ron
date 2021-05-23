@@ -3,9 +3,8 @@
     name: "Giga Drain",
     category: Special,
     type: Grass,
-    power: Some(75),
     accuracy: Some(100),
     pp: 10,
+    use_type: Drain(Power(75), 0.5),
     target: Opponent,
-    script: None,
 )

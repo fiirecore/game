@@ -3,9 +3,8 @@
     name: "Heat Wave",
     category: Special,
     type: Fire,
-    power: Some(95),
     accuracy: Some(90),
     pp: 10,
+    use_type: Damage(Power(95)),
     target: Opponent,
-    script: None,
 )

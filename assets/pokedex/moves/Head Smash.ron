@@ -3,9 +3,8 @@
     name: "Head Smash",
     category: Physical,
     type: Rock,
-    power: Some(150),
     accuracy: Some(80),
     pp: 5,
+    use_type: Damage(Power(150)),
     target: Opponent,
-    script: None,
 )

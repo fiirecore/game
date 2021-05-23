@@ -3,9 +3,8 @@
     name: "Hurricane",
     category: Special,
     type: Flying,
-    power: Some(110),
     accuracy: Some(70),
     pp: 10,
+    use_type: Damage(Power(110)),
     target: Opponent,
-    script: None,
 )

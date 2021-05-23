@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 185,
-        name: "Sudowoodo",
-        primary_type: Rock,
-        secondary_type: None,
-        species: "Imitation",
-        height: 12,
-        weight: 380,
-    ),
+    id: 185,
+    name: "Sudowoodo",
+    primary_type: Rock,
+    secondary_type: None,
     base: (
         hp: 70,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 65,
         speed: 30,
+    ),
+    data: (
+        species: "Imitation",
+        height: 12,
+        weight: 380,
     ),
     training: (
         base_exp: 144,

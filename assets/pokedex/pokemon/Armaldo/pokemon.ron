@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 348,
-        name: "Armaldo",
-        primary_type: Rock,
-        secondary_type: Some(Bug),
-        species: "Plate",
-        height: 15,
-        weight: 682,
-    ),
+    id: 348,
+    name: "Armaldo",
+    primary_type: Rock,
+    secondary_type: Some(Bug),
     base: (
         hp: 75,
         atk: 125,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 80,
         speed: 45,
+    ),
+    data: (
+        species: "Plate",
+        height: 15,
+        weight: 682,
     ),
     training: (
         base_exp: 173,

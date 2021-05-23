@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 75,
-        name: "Graveler",
-        primary_type: Rock,
-        secondary_type: Some(Ground),
-        species: "Rock",
-        height: 10,
-        weight: 1050,
-    ),
+    id: 75,
+    name: "Graveler",
+    primary_type: Rock,
+    secondary_type: Some(Ground),
     base: (
         hp: 55,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 45,
         speed: 35,
+    ),
+    data: (
+        species: "Rock",
+        height: 10,
+        weight: 1050,
     ),
     training: (
         base_exp: 137,

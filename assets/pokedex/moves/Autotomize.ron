@@ -3,9 +3,8 @@
     name: "Autotomize",
     category: Status,
     type: Steel,
-    power: None,
     accuracy: None,
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

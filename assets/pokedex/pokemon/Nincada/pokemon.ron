@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 290,
-        name: "Nincada",
-        primary_type: Bug,
-        secondary_type: Some(Ground),
-        species: "Trainee",
-        height: 5,
-        weight: 55,
-    ),
+    id: 290,
+    name: "Nincada",
+    primary_type: Bug,
+    secondary_type: Some(Ground),
     base: (
         hp: 31,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 30,
         speed: 40,
+    ),
+    data: (
+        species: "Trainee",
+        height: 5,
+        weight: 55,
     ),
     training: (
         base_exp: 53,

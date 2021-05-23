@@ -36,6 +36,12 @@ pub struct SerializedMove {
 	
 }
 
+// #[derive(Default, Debug, Clone, Deserialize, Serialize)]
+// pub struct SerializedGamePokemonMove {
+//     pub field_id: Option<crate::moves::FieldMoveId>,
+//     pub plugin: Option<Vec<u8>>,
+// }
+
 impl From<Move> for SerializedMove {
     fn from(pokemon_move: Move) -> Self {
         Self {

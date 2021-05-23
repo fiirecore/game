@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 67,
-        name: "Machoke",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Superpower",
-        height: 15,
-        weight: 705,
-    ),
+    id: 67,
+    name: "Machoke",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 80,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 60,
         speed: 45,
+    ),
+    data: (
+        species: "Superpower",
+        height: 15,
+        weight: 705,
     ),
     training: (
         base_exp: 142,

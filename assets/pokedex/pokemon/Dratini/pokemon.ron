@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 147,
-        name: "Dratini",
-        primary_type: Dragon,
-        secondary_type: None,
-        species: "Dragon",
-        height: 18,
-        weight: 33,
-    ),
+    id: 147,
+    name: "Dratini",
+    primary_type: Dragon,
+    secondary_type: None,
     base: (
         hp: 41,
         atk: 64,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 50,
         speed: 50,
+    ),
+    data: (
+        species: "Dragon",
+        height: 18,
+        weight: 33,
     ),
     training: (
         base_exp: 60,

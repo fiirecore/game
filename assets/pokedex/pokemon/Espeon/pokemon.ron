@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 196,
-        name: "Espeon",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Sun",
-        height: 9,
-        weight: 265,
-    ),
+    id: 196,
+    name: "Espeon",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 130,
         sp_def: 95,
         speed: 110,
+    ),
+    data: (
+        species: "Sun",
+        height: 9,
+        weight: 265,
     ),
     training: (
         base_exp: 184,

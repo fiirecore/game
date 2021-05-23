@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 51,
-        name: "Dugtrio",
-        primary_type: Ground,
-        secondary_type: None,
-        species: "Mole",
-        height: 7,
-        weight: 333,
-    ),
+    id: 51,
+    name: "Dugtrio",
+    primary_type: Ground,
+    secondary_type: None,
     base: (
         hp: 35,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 70,
         speed: 120,
+    ),
+    data: (
+        species: "Mole",
+        height: 7,
+        weight: 333,
     ),
     training: (
         base_exp: 149,

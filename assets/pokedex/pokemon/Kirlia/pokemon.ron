@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 281,
-        name: "Kirlia",
-        primary_type: Psychic,
-        secondary_type: Some(Fairy),
-        species: "Emotion",
-        height: 8,
-        weight: 202,
-    ),
+    id: 281,
+    name: "Kirlia",
+    primary_type: Psychic,
+    secondary_type: Some(Fairy),
     base: (
         hp: 38,
         atk: 35,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 55,
         speed: 50,
+    ),
+    data: (
+        species: "Emotion",
+        height: 8,
+        weight: 202,
     ),
     training: (
         base_exp: 97,

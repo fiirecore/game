@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 38,
-        name: "Ninetales",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Fox",
-        height: 11,
-        weight: 199,
-    ),
+    id: 38,
+    name: "Ninetales",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 73,
         atk: 76,
@@ -15,6 +10,11 @@
         sp_atk: 81,
         sp_def: 100,
         speed: 100,
+    ),
+    data: (
+        species: "Fox",
+        height: 11,
+        weight: 199,
     ),
     training: (
         base_exp: 177,

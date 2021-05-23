@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 233,
-        name: "Porygon2",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Virtual",
-        height: 6,
-        weight: 325,
-    ),
+    id: 233,
+    name: "Porygon2",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 85,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 105,
         sp_def: 95,
         speed: 60,
+    ),
+    data: (
+        species: "Virtual",
+        height: 6,
+        weight: 325,
     ),
     training: (
         base_exp: 180,

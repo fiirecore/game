@@ -1,6 +1,6 @@
 pub extern crate macroquad;
 
-use std::sync::atomic::AtomicBool;
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use error::DataError;
 use macroquad::prelude::{
     warn, info,
@@ -18,8 +18,8 @@ const DIR1: &str = "rhysholloway"; // To - do: Custom specifiers for directories
 const DIR2: &str = "pokemon-firered-clone";
 const EXTENSION: &str = "ron";
 
-// To - do: move this to firecore-game crate
-pub static DIRTY: AtomicBool = AtomicBool::new(false); // if true, save player data
+// #[cfg(not(target_arch = "wasm32"))]
+pub static SAVE_IN_LOCAL_DIRECTORY: AtomicBool = AtomicBool::new(false);
 
 pub trait PersistantData: Serialize + DeserializeOwned + Default {
 
@@ -113,33 +113,34 @@ pub async fn reload<D: Reloadable + Sized>(data: &mut D) -> Result<(), DataError
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn directory() -> Result<std::path::PathBuf, DataError> {
-
-    match dirs_next::data_dir() {
-        Some(data_dir) => {
-            let dir = data_dir.join(DIR1).join(DIR2);
-            if let Ok(metadata) = std::fs::metadata(&dir) {
-                if !metadata.permissions().readonly() {
-                    Ok(dir)
+    match SAVE_IN_LOCAL_DIRECTORY.load(Relaxed) {
+        true => std::env::current_dir().map_err(|err| DataError::IOError(err)),
+        false => match dirs_next::data_dir() {
+            Some(data_dir) => {
+                let dir = data_dir.join(DIR1).join(DIR2);
+                if let Ok(metadata) = std::fs::metadata(&dir) {
+                    if !metadata.permissions().readonly() {
+                        Ok(dir)
+                    } else {
+                        Err(DataError::ReadOnly)
+                    }
                 } else {
-                    Err(DataError::ReadOnly)
-                }
-            } else {
-                if !dir.exists() {
-                    if let Ok(()) = std::fs::create_dir_all(&dir) {
-                        directory()
+                    if !dir.exists() {
+                        if let Ok(()) = std::fs::create_dir_all(&dir) {
+                            directory()
+                        } else {
+                            Ok(dir)
+                        }
                     } else {
                         Ok(dir)
                     }
-                } else {
-                    Ok(dir)
                 }
             }
-        }
-        None => {
-            std::env::current_dir().map_err(|err| DataError::IOError(err))
+            None => {
+                std::env::current_dir().map_err(|err| DataError::IOError(err))
+            }
         }
     }
-    
 }
 
 pub(crate) fn file_name(filename: &str) -> String {

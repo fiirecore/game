@@ -3,9 +3,8 @@
     name: "Eruption",
     category: Special,
     type: Fire,
-    power: Some(150),
     accuracy: Some(100),
     pp: 5,
+    use_type: Damage(Power(150)),
     target: Opponent,
-    script: None,
 )

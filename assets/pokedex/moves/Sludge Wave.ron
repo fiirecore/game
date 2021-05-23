@@ -3,9 +3,8 @@
     name: "Sludge Wave",
     category: Special,
     type: Poison,
-    power: Some(95),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(95)),
     target: Opponent,
-    script: None,
 )

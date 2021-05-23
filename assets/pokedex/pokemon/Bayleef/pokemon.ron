@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 153,
-        name: "Bayleef",
-        primary_type: Grass,
-        secondary_type: None,
-        species: "Leaf",
-        height: 12,
-        weight: 158,
-    ),
+    id: 153,
+    name: "Bayleef",
+    primary_type: Grass,
+    secondary_type: None,
     base: (
         hp: 60,
         atk: 62,
@@ -15,6 +10,11 @@
         sp_atk: 63,
         sp_def: 80,
         speed: 60,
+    ),
+    data: (
+        species: "Leaf",
+        height: 12,
+        weight: 158,
     ),
     training: (
         base_exp: 142,

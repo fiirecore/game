@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 254,
-        name: "Sceptile",
-        primary_type: Grass,
-        secondary_type: None,
-        species: "Forest",
-        height: 17,
-        weight: 522,
-    ),
+    id: 254,
+    name: "Sceptile",
+    primary_type: Grass,
+    secondary_type: None,
     base: (
         hp: 70,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 105,
         sp_def: 85,
         speed: 120,
+    ),
+    data: (
+        species: "Forest",
+        height: 17,
+        weight: 522,
     ),
     training: (
         base_exp: 239,

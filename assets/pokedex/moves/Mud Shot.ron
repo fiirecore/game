@@ -3,9 +3,8 @@
     name: "Mud Shot",
     category: Special,
     type: Ground,
-    power: Some(55),
     accuracy: Some(95),
     pp: 15,
+    use_type: Damage(Power(55)),
     target: Opponent,
-    script: None,
 )

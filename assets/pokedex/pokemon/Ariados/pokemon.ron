@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 168,
-        name: "Ariados",
-        primary_type: Bug,
-        secondary_type: Some(Poison),
-        species: "Long",
-        height: 11,
-        weight: 335,
-    ),
+    id: 168,
+    name: "Ariados",
+    primary_type: Bug,
+    secondary_type: Some(Poison),
     base: (
         hp: 70,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 70,
         speed: 40,
+    ),
+    data: (
+        species: "Long",
+        height: 11,
+        weight: 335,
     ),
     training: (
         base_exp: 140,

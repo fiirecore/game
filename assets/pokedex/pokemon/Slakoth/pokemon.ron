@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 287,
-        name: "Slakoth",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Slacker",
-        height: 8,
-        weight: 240,
-    ),
+    id: 287,
+    name: "Slakoth",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 60,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 35,
         sp_def: 35,
         speed: 30,
+    ),
+    data: (
+        species: "Slacker",
+        height: 8,
+        weight: 240,
     ),
     training: (
         base_exp: 56,

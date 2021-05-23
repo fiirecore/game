@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 122,
-        name: "Mr-mime",
-        primary_type: Psychic,
-        secondary_type: Some(Fairy),
-        species: "Barrier",
-        height: 13,
-        weight: 545,
-    ),
+    id: 122,
+    name: "Mr-mime",
+    primary_type: Psychic,
+    secondary_type: Some(Fairy),
     base: (
         hp: 40,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 120,
         speed: 90,
+    ),
+    data: (
+        species: "Barrier",
+        height: 13,
+        weight: 545,
     ),
     training: (
         base_exp: 161,

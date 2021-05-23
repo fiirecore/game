@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 131,
-        name: "Lapras",
-        primary_type: Water,
-        secondary_type: Some(Ice),
-        species: "Transport",
-        height: 25,
-        weight: 2200,
-    ),
+    id: 131,
+    name: "Lapras",
+    primary_type: Water,
+    secondary_type: Some(Ice),
     base: (
         hp: 130,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 95,
         speed: 60,
+    ),
+    data: (
+        species: "Transport",
+        height: 25,
+        weight: 2200,
     ),
     training: (
         base_exp: 187,

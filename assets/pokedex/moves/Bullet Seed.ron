@@ -3,9 +3,8 @@
     name: "Bullet Seed",
     category: Physical,
     type: Grass,
-    power: Some(25),
     accuracy: Some(100),
     pp: 30,
+    use_type: Damage(Power(25)),
     target: Opponent,
-    script: None,
 )

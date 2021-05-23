@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 251,
-        name: "Celebi",
-        primary_type: Psychic,
-        secondary_type: Some(Grass),
-        species: "Time",
-        height: 6,
-        weight: 50,
-    ),
+    id: 251,
+    name: "Celebi",
+    primary_type: Psychic,
+    secondary_type: Some(Grass),
     base: (
         hp: 100,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 100,
         speed: 100,
+    ),
+    data: (
+        species: "Time",
+        height: 6,
+        weight: 50,
     ),
     training: (
         base_exp: 270,

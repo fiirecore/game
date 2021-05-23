@@ -3,9 +3,8 @@
     name: "Sing",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: Some(55),
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

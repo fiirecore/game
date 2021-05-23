@@ -3,9 +3,8 @@
     name: "Revenge",
     category: Physical,
     type: Fighting,
-    power: Some(60),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(60)),
     target: Opponent,
-    script: None,
 )

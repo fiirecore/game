@@ -1,4 +1,4 @@
-use deps::tinystr::TinyStr16;
+use deps::str::TinyStr16;
 
 pub mod world;
 

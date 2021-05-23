@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 211,
-        name: "Qwilfish",
-        primary_type: Water,
-        secondary_type: Some(Poison),
-        species: "Balloon",
-        height: 5,
-        weight: 39,
-    ),
+    id: 211,
+    name: "Qwilfish",
+    primary_type: Water,
+    secondary_type: Some(Poison),
     base: (
         hp: 65,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 55,
         speed: 85,
+    ),
+    data: (
+        species: "Balloon",
+        height: 5,
+        weight: 39,
     ),
     training: (
         base_exp: 88,

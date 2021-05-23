@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use deps::{
+    str::TinyStr8,
     hash::HashSet,
-    tinystr::TinyStr8,
 };
 
 #[derive(Debug, Default, Deserialize, Serialize)]

@@ -3,9 +3,8 @@
     name: "Headbutt",
     category: Physical,
     type: Normal,
-    power: Some(70),
     accuracy: Some(100),
     pp: 15,
+    use_type: Damage(Power(70)),
     target: Opponent,
-    script: None,
 )

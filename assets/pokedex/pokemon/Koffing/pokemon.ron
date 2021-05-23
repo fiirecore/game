@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 109,
-        name: "Koffing",
-        primary_type: Poison,
-        secondary_type: None,
-        species: "Poison",
-        height: 6,
-        weight: 10,
-    ),
+    id: 109,
+    name: "Koffing",
+    primary_type: Poison,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 45,
         speed: 35,
+    ),
+    data: (
+        species: "Poison",
+        height: 6,
+        weight: 10,
     ),
     training: (
         base_exp: 68,

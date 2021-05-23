@@ -3,9 +3,8 @@
     name: "Electro Ball",
     category: Special,
     type: Electric,
-    power: None,
     accuracy: Some(100),
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

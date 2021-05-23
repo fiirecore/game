@@ -3,9 +3,8 @@
     name: "Constrict",
     category: Physical,
     type: Normal,
-    power: Some(10),
     accuracy: Some(100),
     pp: 35,
+    use_type: Damage(Power(10)),
     target: Opponent,
-    script: None,
 )

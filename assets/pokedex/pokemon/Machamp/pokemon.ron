@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 68,
-        name: "Machamp",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Superpower",
-        height: 16,
-        weight: 1300,
-    ),
+    id: 68,
+    name: "Machamp",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 90,
         atk: 130,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 85,
         speed: 55,
+    ),
+    data: (
+        species: "Superpower",
+        height: 16,
+        weight: 1300,
     ),
     training: (
         base_exp: 227,

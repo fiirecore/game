@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 334,
-        name: "Altaria",
-        primary_type: Dragon,
-        secondary_type: Some(Flying),
-        species: "Humming",
-        height: 11,
-        weight: 206,
-    ),
+    id: 334,
+    name: "Altaria",
+    primary_type: Dragon,
+    secondary_type: Some(Flying),
     base: (
         hp: 75,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 105,
         speed: 80,
+    ),
+    data: (
+        species: "Humming",
+        height: 11,
+        weight: 206,
     ),
     training: (
         base_exp: 172,

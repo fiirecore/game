@@ -3,9 +3,8 @@
     name: "Fissure",
     category: Physical,
     type: Ground,
-    power: None,
     accuracy: Some(30),
     pp: 5,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

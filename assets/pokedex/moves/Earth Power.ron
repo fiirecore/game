@@ -3,9 +3,8 @@
     name: "Earth Power",
     category: Special,
     type: Ground,
-    power: Some(90),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(90)),
     target: Opponent,
-    script: None,
 )

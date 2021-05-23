@@ -3,9 +3,8 @@
     name: "Thrash",
     category: Physical,
     type: Normal,
-    power: Some(120),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(120)),
     target: Opponent,
-    script: None,
 )

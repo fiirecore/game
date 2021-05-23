@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 111,
-        name: "Rhyhorn",
-        primary_type: Ground,
-        secondary_type: Some(Rock),
-        species: "Spikes",
-        height: 10,
-        weight: 1150,
-    ),
+    id: 111,
+    name: "Rhyhorn",
+    primary_type: Ground,
+    secondary_type: Some(Rock),
     base: (
         hp: 80,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 30,
         speed: 25,
+    ),
+    data: (
+        species: "Spikes",
+        height: 10,
+        weight: 1150,
     ),
     training: (
         base_exp: 69,

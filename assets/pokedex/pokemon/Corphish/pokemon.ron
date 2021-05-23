@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 341,
-        name: "Corphish",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Ruffian",
-        height: 6,
-        weight: 115,
-    ),
+    id: 341,
+    name: "Corphish",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 43,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 35,
         speed: 35,
+    ),
+    data: (
+        species: "Ruffian",
+        height: 6,
+        weight: 115,
     ),
     training: (
         base_exp: 62,

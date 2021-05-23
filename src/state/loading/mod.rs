@@ -21,7 +21,7 @@ pub async fn load_coroutine() {
             }
         }
 
-        manager.update(get_frame_time());
+        manager.update(get_frame_time().min(0.5));
         clear_background(BLACK);
         manager.render();
         next_frame().await;

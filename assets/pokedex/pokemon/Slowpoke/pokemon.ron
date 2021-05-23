@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 79,
-        name: "Slowpoke",
-        primary_type: Water,
-        secondary_type: Some(Psychic),
-        species: "Dopey",
-        height: 12,
-        weight: 360,
-    ),
+    id: 79,
+    name: "Slowpoke",
+    primary_type: Water,
+    secondary_type: Some(Psychic),
     base: (
         hp: 90,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 40,
         speed: 15,
+    ),
+    data: (
+        species: "Dopey",
+        height: 12,
+        weight: 360,
     ),
     training: (
         base_exp: 63,

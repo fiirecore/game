@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 197,
-        name: "Umbreon",
-        primary_type: Dark,
-        secondary_type: None,
-        species: "Moonlight",
-        height: 10,
-        weight: 270,
-    ),
+    id: 197,
+    name: "Umbreon",
+    primary_type: Dark,
+    secondary_type: None,
     base: (
         hp: 95,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 130,
         speed: 65,
+    ),
+    data: (
+        species: "Moonlight",
+        height: 10,
+        weight: 270,
     ),
     training: (
         base_exp: 184,

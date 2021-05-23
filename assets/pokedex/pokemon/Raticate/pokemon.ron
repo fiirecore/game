@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 20,
-        name: "Raticate",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Mouse",
-        height: 7,
-        weight: 185,
-    ),
+    id: 20,
+    name: "Raticate",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 55,
         atk: 81,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 70,
         speed: 97,
+    ),
+    data: (
+        species: "Mouse",
+        height: 7,
+        weight: 185,
     ),
     training: (
         base_exp: 145,

@@ -3,9 +3,8 @@
     name: "Scald",
     category: Special,
     type: Water,
-    power: Some(80),
     accuracy: Some(100),
     pp: 15,
+    use_type: Damage(Power(80)),
     target: Opponent,
-    script: None,
 )

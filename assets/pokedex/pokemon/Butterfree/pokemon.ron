@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 12,
-        name: "Butterfree",
-        primary_type: Bug,
-        secondary_type: Some(Flying),
-        species: "Butterfly",
-        height: 11,
-        weight: 320,
-    ),
+    id: 12,
+    name: "Butterfree",
+    primary_type: Bug,
+    secondary_type: Some(Flying),
     base: (
         hp: 60,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 80,
         speed: 70,
+    ),
+    data: (
+        species: "Butterfly",
+        height: 11,
+        weight: 320,
     ),
     training: (
         base_exp: 178,

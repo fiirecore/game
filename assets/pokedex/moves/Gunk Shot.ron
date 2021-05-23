@@ -3,9 +3,8 @@
     name: "Gunk Shot",
     category: Physical,
     type: Poison,
-    power: Some(120),
     accuracy: Some(80),
     pp: 5,
+    use_type: Damage(Power(120)),
     target: Opponent,
-    script: None,
 )

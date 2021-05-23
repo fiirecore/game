@@ -3,9 +3,8 @@
     name: "Roost",
     category: Status,
     type: Flying,
-    power: None,
     accuracy: None,
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 184,
-        name: "Azumarill",
-        primary_type: Water,
-        secondary_type: Some(Fairy),
-        species: "Aqua",
-        height: 8,
-        weight: 285,
-    ),
+    id: 184,
+    name: "Azumarill",
+    primary_type: Water,
+    secondary_type: Some(Fairy),
     base: (
         hp: 100,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 80,
         speed: 50,
+    ),
+    data: (
+        species: "Aqua",
+        height: 8,
+        weight: 285,
     ),
     training: (
         base_exp: 189,

@@ -3,9 +3,8 @@
     name: "Covet",
     category: Physical,
     type: Normal,
-    power: Some(60),
     accuracy: Some(100),
     pp: 25,
+    use_type: Damage(Power(60)),
     target: Opponent,
-    script: None,
 )

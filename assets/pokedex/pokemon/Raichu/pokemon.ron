@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 26,
-        name: "Raichu",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Mouse",
-        height: 8,
-        weight: 300,
-    ),
+    id: 26,
+    name: "Raichu",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 60,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 80,
         speed: 110,
+    ),
+    data: (
+        species: "Mouse",
+        height: 8,
+        weight: 300,
     ),
     training: (
         base_exp: 218,

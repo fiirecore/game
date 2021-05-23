@@ -1,12 +1,13 @@
 (    
     move: (
-        id: "tackle",
-        name: "Tackle",
-        type: Normal,
-        category: Physical,
-        power: Some(40),
-        accuracy: Some(100),
-        pp: 35
+		id: "tackle",
+		name: "Tackle",
+		category: Physical,
+		type: Normal,
+		accuracy: Some(100),
+		pp: 35,
+		use_type: Damage(Power(40)),
+		target: Opponent,
     ),
     // battle_script: Some((
     //     actions: [

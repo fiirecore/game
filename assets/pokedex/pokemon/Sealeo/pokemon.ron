@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 364,
-        name: "Sealeo",
-        primary_type: Ice,
-        secondary_type: Some(Water),
-        species: "Ball",
-        height: 11,
-        weight: 876,
-    ),
+    id: 364,
+    name: "Sealeo",
+    primary_type: Ice,
+    secondary_type: Some(Water),
     base: (
         hp: 90,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 75,
         sp_def: 70,
         speed: 45,
+    ),
+    data: (
+        species: "Ball",
+        height: 11,
+        weight: 876,
     ),
     training: (
         base_exp: 144,

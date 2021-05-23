@@ -3,9 +3,8 @@
     name: "Synthesis",
     category: Status,
     type: Grass,
-    power: None,
     accuracy: None,
     pp: 5,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

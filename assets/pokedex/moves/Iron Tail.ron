@@ -3,9 +3,8 @@
     name: "Iron Tail",
     category: Physical,
     type: Steel,
-    power: Some(100),
     accuracy: Some(75),
     pp: 15,
+    use_type: Damage(Power(100)),
     target: Opponent,
-    script: None,
 )

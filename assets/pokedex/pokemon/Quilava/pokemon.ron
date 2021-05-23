@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 156,
-        name: "Quilava",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Volcano",
-        height: 9,
-        weight: 190,
-    ),
+    id: 156,
+    name: "Quilava",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 58,
         atk: 64,
@@ -15,6 +10,11 @@
         sp_atk: 80,
         sp_def: 65,
         speed: 80,
+    ),
+    data: (
+        species: "Volcano",
+        height: 9,
+        weight: 190,
     ),
     training: (
         base_exp: 142,

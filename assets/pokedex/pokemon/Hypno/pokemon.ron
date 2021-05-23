@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 97,
-        name: "Hypno",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Hypnosis",
-        height: 16,
-        weight: 756,
-    ),
+    id: 97,
+    name: "Hypno",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 85,
         atk: 73,
@@ -15,6 +10,11 @@
         sp_atk: 73,
         sp_def: 115,
         speed: 67,
+    ),
+    data: (
+        species: "Hypnosis",
+        height: 16,
+        weight: 756,
     ),
     training: (
         base_exp: 169,

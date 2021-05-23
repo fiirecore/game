@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 17,
-        name: "Pidgeotto",
-        primary_type: Normal,
-        secondary_type: Some(Flying),
-        species: "Bird",
-        height: 11,
-        weight: 300,
-    ),
+    id: 17,
+    name: "Pidgeotto",
+    primary_type: Normal,
+    secondary_type: Some(Flying),
     base: (
         hp: 63,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 50,
         speed: 71,
+    ),
+    data: (
+        species: "Bird",
+        height: 11,
+        weight: 300,
     ),
     training: (
         base_exp: 122,

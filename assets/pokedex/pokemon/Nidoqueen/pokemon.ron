@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 31,
-        name: "Nidoqueen",
-        primary_type: Poison,
-        secondary_type: Some(Ground),
-        species: "Drill",
-        height: 13,
-        weight: 600,
-    ),
+    id: 31,
+    name: "Nidoqueen",
+    primary_type: Poison,
+    secondary_type: Some(Ground),
     base: (
         hp: 90,
         atk: 92,
@@ -15,6 +10,11 @@
         sp_atk: 75,
         sp_def: 85,
         speed: 76,
+    ),
+    data: (
+        species: "Drill",
+        height: 13,
+        weight: 600,
     ),
     training: (
         base_exp: 227,

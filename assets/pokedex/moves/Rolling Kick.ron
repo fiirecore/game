@@ -3,9 +3,8 @@
     name: "Rolling Kick",
     category: Physical,
     type: Fighting,
-    power: Some(60),
     accuracy: Some(85),
     pp: 15,
+    use_type: Damage(Power(60)),
     target: Opponent,
-    script: None,
 )

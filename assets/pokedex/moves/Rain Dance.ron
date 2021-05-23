@@ -3,9 +3,8 @@
     name: "Rain Dance",
     category: Status,
     type: Water,
-    power: None,
     accuracy: None,
     pp: 5,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

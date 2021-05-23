@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 257,
-        name: "Blaziken",
-        primary_type: Fire,
-        secondary_type: Some(Fighting),
-        species: "Blaze",
-        height: 19,
-        weight: 520,
-    ),
+    id: 257,
+    name: "Blaziken",
+    primary_type: Fire,
+    secondary_type: Some(Fighting),
     base: (
         hp: 80,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 110,
         sp_def: 70,
         speed: 80,
+    ),
+    data: (
+        species: "Blaze",
+        height: 19,
+        weight: 520,
     ),
     training: (
         base_exp: 239,

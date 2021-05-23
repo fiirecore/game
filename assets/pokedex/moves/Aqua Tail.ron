@@ -3,9 +3,8 @@
     name: "Aqua Tail",
     category: Physical,
     type: Water,
-    power: Some(90),
     accuracy: Some(90),
     pp: 10,
+    use_type: Damage(Power(90)),
     target: Opponent,
-    script: None,
 )

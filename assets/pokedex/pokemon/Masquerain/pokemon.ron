@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 284,
-        name: "Masquerain",
-        primary_type: Bug,
-        secondary_type: Some(Flying),
-        species: "Eyeball",
-        height: 8,
-        weight: 36,
-    ),
+    id: 284,
+    name: "Masquerain",
+    primary_type: Bug,
+    secondary_type: Some(Flying),
     base: (
         hp: 70,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 82,
         speed: 80,
+    ),
+    data: (
+        species: "Eyeball",
+        height: 8,
+        weight: 36,
     ),
     training: (
         base_exp: 159,

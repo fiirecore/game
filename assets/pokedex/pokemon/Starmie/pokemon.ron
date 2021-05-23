@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 121,
-        name: "Starmie",
-        primary_type: Water,
-        secondary_type: Some(Psychic),
-        species: "Mysterious",
-        height: 11,
-        weight: 800,
-    ),
+    id: 121,
+    name: "Starmie",
+    primary_type: Water,
+    secondary_type: Some(Psychic),
     base: (
         hp: 60,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 85,
         speed: 115,
+    ),
+    data: (
+        species: "Mysterious",
+        height: 11,
+        weight: 800,
     ),
     training: (
         base_exp: 182,

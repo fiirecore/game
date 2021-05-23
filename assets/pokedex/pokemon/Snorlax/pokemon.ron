@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 143,
-        name: "Snorlax",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Sleeping",
-        height: 21,
-        weight: 4600,
-    ),
+    id: 143,
+    name: "Snorlax",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 160,
         atk: 110,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 110,
         speed: 30,
+    ),
+    data: (
+        species: "Sleeping",
+        height: 21,
+        weight: 4600,
     ),
     training: (
         base_exp: 189,

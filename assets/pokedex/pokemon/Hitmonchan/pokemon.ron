@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 107,
-        name: "Hitmonchan",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Punching",
-        height: 14,
-        weight: 502,
-    ),
+    id: 107,
+    name: "Hitmonchan",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 105,
@@ -15,6 +10,11 @@
         sp_atk: 35,
         sp_def: 110,
         speed: 76,
+    ),
+    data: (
+        species: "Punching",
+        height: 14,
+        weight: 502,
     ),
     training: (
         base_exp: 159,

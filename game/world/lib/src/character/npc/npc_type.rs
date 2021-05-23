@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use deps::tinystr::TinyStr16;
+use deps::str::TinyStr16;
 use firecore_font::message::TextColor;
 use firecore_audio_lib::music::MusicName;
 

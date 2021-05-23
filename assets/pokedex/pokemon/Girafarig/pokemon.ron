@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 203,
-        name: "Girafarig",
-        primary_type: Normal,
-        secondary_type: Some(Psychic),
-        species: "Long",
-        height: 15,
-        weight: 415,
-    ),
+    id: 203,
+    name: "Girafarig",
+    primary_type: Normal,
+    secondary_type: Some(Psychic),
     base: (
         hp: 70,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 65,
         speed: 85,
+    ),
+    data: (
+        species: "Long",
+        height: 15,
+        weight: 415,
     ),
     training: (
         base_exp: 159,

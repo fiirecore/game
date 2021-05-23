@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 9,
-        name: "Blastoise",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Shellfish",
-        height: 16,
-        weight: 855,
-    ),
+    id: 9,
+    name: "Blastoise",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 79,
         atk: 83,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 105,
         speed: 78,
+    ),
+    data: (
+        species: "Shellfish",
+        height: 16,
+        weight: 855,
     ),
     training: (
         base_exp: 239,

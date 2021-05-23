@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 99,
-        name: "Kingler",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Pincer",
-        height: 13,
-        weight: 600,
-    ),
+    id: 99,
+    name: "Kingler",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 55,
         atk: 130,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 50,
         speed: 75,
+    ),
+    data: (
+        species: "Pincer",
+        height: 13,
+        weight: 600,
     ),
     training: (
         base_exp: 166,

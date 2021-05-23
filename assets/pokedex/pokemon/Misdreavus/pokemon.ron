@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 200,
-        name: "Misdreavus",
-        primary_type: Ghost,
-        secondary_type: None,
-        species: "Screech",
-        height: 7,
-        weight: 10,
-    ),
+    id: 200,
+    name: "Misdreavus",
+    primary_type: Ghost,
+    secondary_type: None,
     base: (
         hp: 60,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 85,
         speed: 85,
+    ),
+    data: (
+        species: "Screech",
+        height: 7,
+        weight: 10,
     ),
     training: (
         base_exp: 87,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 320,
-        name: "Wailmer",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Ball",
-        height: 20,
-        weight: 1300,
-    ),
+    id: 320,
+    name: "Wailmer",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 130,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 35,
         speed: 60,
+    ),
+    data: (
+        species: "Ball",
+        height: 20,
+        weight: 1300,
     ),
     training: (
         base_exp: 80,

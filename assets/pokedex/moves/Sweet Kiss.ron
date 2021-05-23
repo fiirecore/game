@@ -3,9 +3,8 @@
     name: "Sweet Kiss",
     category: Status,
     type: Fairy,
-    power: None,
     accuracy: Some(75),
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

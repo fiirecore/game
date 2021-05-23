@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 144,
-        name: "Articuno",
-        primary_type: Ice,
-        secondary_type: Some(Flying),
-        species: "Freeze",
-        height: 17,
-        weight: 554,
-    ),
+    id: 144,
+    name: "Articuno",
+    primary_type: Ice,
+    secondary_type: Some(Flying),
     base: (
         hp: 90,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 125,
         speed: 85,
+    ),
+    data: (
+        species: "Freeze",
+        height: 17,
+        weight: 554,
     ),
     training: (
         base_exp: 261,

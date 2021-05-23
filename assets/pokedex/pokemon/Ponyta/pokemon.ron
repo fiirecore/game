@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 77,
-        name: "Ponyta",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Fire",
-        height: 10,
-        weight: 300,
-    ),
+    id: 77,
+    name: "Ponyta",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 65,
         speed: 90,
+    ),
+    data: (
+        species: "Fire",
+        height: 10,
+        weight: 300,
     ),
     training: (
         base_exp: 82,

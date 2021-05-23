@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 223,
-        name: "Remoraid",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Jet",
-        height: 6,
-        weight: 120,
-    ),
+    id: 223,
+    name: "Remoraid",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 35,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 35,
         speed: 65,
+    ),
+    data: (
+        species: "Jet",
+        height: 6,
+        weight: 120,
     ),
     training: (
         base_exp: 60,

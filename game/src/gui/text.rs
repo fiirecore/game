@@ -105,13 +105,13 @@ impl DynamicText {
 				if self.can_continue {
 					match current.wait {
 						Some(wait) => {
-							if !self.timer.is_alive() {
+							if !self.timer.alive() {
 								self.timer.hard_reset();
 								self.timer.spawn();
 								self.timer.length = wait;
 							} else {
 								self.timer.update(delta);
-								if self.timer.is_finished() {
+								if self.timer.finished() {
 									self.timer.despawn();
 									if self.current + 1 >= self.len() {
 										self.end = true;
@@ -197,7 +197,7 @@ impl Reset for DynamicText {
 }
 
 impl Completable for DynamicText {
-    fn is_finished(&self) -> bool {
+    fn finished(&self) -> bool {
 		(self.current + 1 >= self.len() && 
 		self.end &&
 		self.can_continue) ||
@@ -219,7 +219,7 @@ impl Entity for DynamicText {
 		self.clear();
 	}
 	
-	fn is_alive(& self) -> bool {
+	fn alive(& self) -> bool {
 		self.alive
 	}
 

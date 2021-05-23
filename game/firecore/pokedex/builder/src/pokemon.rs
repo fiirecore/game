@@ -19,13 +19,13 @@ pub fn get_pokemon<P: AsRef<std::path::Path>>(pokemon_dir: P, include_audio: boo
                     ).unwrap_or_else(|err| panic!("Could not parse pokemon file at {:?} with error {}", file, err));
 
                     let front_png = read(dir.join("normal_front.png"))
-                        .unwrap_or_else(|err| panic!("Could not read front texture file for pokemon {} with error {}", pokemon_entry.data.name, err));
+                        .unwrap_or_else(|err| panic!("Could not read front texture file for pokemon {} with error {}", pokemon_entry.name, err));
 
                     let back_png =  read(dir.join("normal_back.png"))
-                        .unwrap_or_else(|err| panic!("Could not read back texture file for pokemon {} with error {}", pokemon_entry.data.name, err));
+                        .unwrap_or_else(|err| panic!("Could not read back texture file for pokemon {} with error {}", pokemon_entry.name, err));
 
                     let icon_png = read(dir.join("icon.png"))
-                        .unwrap_or_else(|err| panic!("Could not read icon file for pokemon {} with error {}", pokemon_entry.data.name, err));
+                        .unwrap_or_else(|err| panic!("Could not read icon file for pokemon {} with error {}", pokemon_entry.name, err));
 
                     let cry_ogg = {
                         if include_audio {

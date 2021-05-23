@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 86,
-        name: "Seel",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Sea",
-        height: 11,
-        weight: 900,
-    ),
+    id: 86,
+    name: "Seel",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 70,
         speed: 45,
+    ),
+    data: (
+        species: "Sea",
+        height: 11,
+        weight: 900,
     ),
     training: (
         base_exp: 65,

@@ -1,6 +1,6 @@
 [package]
 name = "firecore-game"
-version = "0.4.0-alpha.1.2"
+version = "0.4.0-2021-05-22"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 publish = false
@@ -8,20 +8,25 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["audio"]
+default = ["audio", "battle", "world"]
 serialization = ["firecore-dependencies/serialization"]
 audio = ["firecore-audio/play"]
 ui = ["macroquad/ui"]
+world = ["firecore-world-lib", "serde"]
+battle = ["serde"]
 
 [dependencies]
 
 macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
 
-firecore-dependencies = { path = "firecore/deps", features = ["hash", "vec", "tinystr"] }
+firecore-dependencies = { path = "firecore/deps", features = ["hash", "vec", "str"] }
 
 firecore-util = { path = "firecore/util" }
 firecore-pokedex-game = { path = "firecore/pokedex/game" }
 firecore-input = { path = "firecore/input" }
 pokemon-firered-clone-storage = { path = "firecore/storage/game" }
-firecore-audio = { path = "firecore/audio" }
+firecore-audio = { path = "firecore/audio", default-features = false }
 firecore-text = { path = "firecore/text" }
+
+firecore-world-lib = { path = "world/lib", optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }

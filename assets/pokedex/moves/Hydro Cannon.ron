@@ -3,9 +3,8 @@
     name: "Hydro Cannon",
     category: Special,
     type: Water,
-    power: Some(150),
     accuracy: Some(90),
     pp: 5,
+    use_type: Damage(Power(150)),
     target: Opponent,
-    script: None,
 )

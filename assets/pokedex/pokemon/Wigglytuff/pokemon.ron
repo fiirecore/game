@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 40,
-        name: "Wigglytuff",
-        primary_type: Normal,
-        secondary_type: Some(Fairy),
-        species: "Balloon",
-        height: 10,
-        weight: 120,
-    ),
+    id: 40,
+    name: "Wigglytuff",
+    primary_type: Normal,
+    secondary_type: Some(Fairy),
     base: (
         hp: 140,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 50,
         speed: 45,
+    ),
+    data: (
+        species: "Balloon",
+        height: 10,
+        weight: 120,
     ),
     training: (
         base_exp: 196,

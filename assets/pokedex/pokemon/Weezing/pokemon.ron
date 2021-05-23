@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 110,
-        name: "Weezing",
-        primary_type: Poison,
-        secondary_type: None,
-        species: "Poison",
-        height: 12,
-        weight: 95,
-    ),
+    id: 110,
+    name: "Weezing",
+    primary_type: Poison,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 70,
         speed: 60,
+    ),
+    data: (
+        species: "Poison",
+        height: 12,
+        weight: 95,
     ),
     training: (
         base_exp: 172,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 103,
-        name: "Exeggutor",
-        primary_type: Grass,
-        secondary_type: Some(Psychic),
-        species: "Coconut",
-        height: 20,
-        weight: 1200,
-    ),
+    id: 103,
+    name: "Exeggutor",
+    primary_type: Grass,
+    secondary_type: Some(Psychic),
     base: (
         hp: 95,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 125,
         sp_def: 75,
         speed: 55,
+    ),
+    data: (
+        species: "Coconut",
+        height: 20,
+        weight: 1200,
     ),
     training: (
         base_exp: 186,

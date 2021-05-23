@@ -3,9 +3,8 @@
     name: "Will-O-Wisp",
     category: Status,
     type: Fire,
-    power: None,
     accuracy: Some(85),
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

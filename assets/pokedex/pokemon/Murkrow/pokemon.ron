@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 198,
-        name: "Murkrow",
-        primary_type: Dark,
-        secondary_type: Some(Flying),
-        species: "Darkness",
-        height: 5,
-        weight: 21,
-    ),
+    id: 198,
+    name: "Murkrow",
+    primary_type: Dark,
+    secondary_type: Some(Flying),
     base: (
         hp: 60,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 42,
         speed: 91,
+    ),
+    data: (
+        species: "Darkness",
+        height: 5,
+        weight: 21,
     ),
     training: (
         base_exp: 81,

@@ -3,9 +3,8 @@
     name: "Hydro Pump",
     category: Special,
     type: Water,
-    power: Some(110),
     accuracy: Some(80),
     pp: 5,
+    use_type: Damage(Power(110)),
     target: Opponent,
-    script: None,
 )

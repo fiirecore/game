@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 299,
-        name: "Nosepass",
-        primary_type: Rock,
-        secondary_type: None,
-        species: "Compass",
-        height: 10,
-        weight: 970,
-    ),
+    id: 299,
+    name: "Nosepass",
+    primary_type: Rock,
+    secondary_type: None,
     base: (
         hp: 30,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 90,
         speed: 30,
+    ),
+    data: (
+        species: "Compass",
+        height: 10,
+        weight: 970,
     ),
     training: (
         base_exp: 75,

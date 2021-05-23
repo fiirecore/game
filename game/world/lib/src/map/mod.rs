@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use deps::{
-    tinystr::TinyStr16,
+    str::TinyStr16,
     hash::HashMap,
 };
 use util::{

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 366,
-        name: "Clamperl",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Bivalve",
-        height: 4,
-        weight: 525,
-    ),
+    id: 366,
+    name: "Clamperl",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 35,
         atk: 64,
@@ -15,6 +10,11 @@
         sp_atk: 74,
         sp_def: 55,
         speed: 32,
+    ),
+    data: (
+        species: "Bivalve",
+        height: 4,
+        weight: 525,
     ),
     training: (
         base_exp: 69,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 339,
-        name: "Barboach",
-        primary_type: Water,
-        secondary_type: Some(Ground),
-        species: "Whiskers",
-        height: 4,
-        weight: 19,
-    ),
+    id: 339,
+    name: "Barboach",
+    primary_type: Water,
+    secondary_type: Some(Ground),
     base: (
         hp: 50,
         atk: 48,
@@ -15,6 +10,11 @@
         sp_atk: 46,
         sp_def: 41,
         speed: 60,
+    ),
+    data: (
+        species: "Whiskers",
+        height: 4,
+        weight: 19,
     ),
     training: (
         base_exp: 58,

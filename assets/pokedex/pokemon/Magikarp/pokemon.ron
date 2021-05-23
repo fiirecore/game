@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 129,
-        name: "Magikarp",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Fish",
-        height: 9,
-        weight: 100,
-    ),
+    id: 129,
+    name: "Magikarp",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 20,
         atk: 10,
@@ -15,6 +10,11 @@
         sp_atk: 15,
         sp_def: 20,
         speed: 80,
+    ),
+    data: (
+        species: "Fish",
+        height: 9,
+        weight: 100,
     ),
     training: (
         base_exp: 40,

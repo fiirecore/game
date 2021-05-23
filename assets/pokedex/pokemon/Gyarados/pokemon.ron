@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 130,
-        name: "Gyarados",
-        primary_type: Water,
-        secondary_type: Some(Flying),
-        species: "Atrocious",
-        height: 65,
-        weight: 2350,
-    ),
+    id: 130,
+    name: "Gyarados",
+    primary_type: Water,
+    secondary_type: Some(Flying),
     base: (
         hp: 95,
         atk: 125,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 100,
         speed: 81,
+    ),
+    data: (
+        species: "Atrocious",
+        height: 65,
+        weight: 2350,
     ),
     training: (
         base_exp: 189,

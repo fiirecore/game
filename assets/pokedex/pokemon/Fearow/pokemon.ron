@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 22,
-        name: "Fearow",
-        primary_type: Normal,
-        secondary_type: Some(Flying),
-        species: "Beak",
-        height: 12,
-        weight: 380,
-    ),
+    id: 22,
+    name: "Fearow",
+    primary_type: Normal,
+    secondary_type: Some(Flying),
     base: (
         hp: 65,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 61,
         sp_def: 61,
         speed: 100,
+    ),
+    data: (
+        species: "Beak",
+        height: 12,
+        weight: 380,
     ),
     training: (
         base_exp: 155,

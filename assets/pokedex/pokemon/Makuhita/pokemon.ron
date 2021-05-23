@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 296,
-        name: "Makuhita",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Guts",
-        height: 10,
-        weight: 864,
-    ),
+    id: 296,
+    name: "Makuhita",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 72,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 20,
         sp_def: 30,
         speed: 25,
+    ),
+    data: (
+        species: "Guts",
+        height: 10,
+        weight: 864,
     ),
     training: (
         base_exp: 47,

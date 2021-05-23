@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 273,
-        name: "Seedot",
-        primary_type: Grass,
-        secondary_type: None,
-        species: "Acorn",
-        height: 5,
-        weight: 40,
-    ),
+    id: 273,
+    name: "Seedot",
+    primary_type: Grass,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 40,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 30,
         speed: 30,
+    ),
+    data: (
+        species: "Acorn",
+        height: 5,
+        weight: 40,
     ),
     training: (
         base_exp: 44,

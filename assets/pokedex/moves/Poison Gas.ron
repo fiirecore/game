@@ -3,9 +3,8 @@
     name: "Poison Gas",
     category: Status,
     type: Poison,
-    power: None,
     accuracy: Some(90),
     pp: 40,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 15,
-        name: "Beedrill",
-        primary_type: Bug,
-        secondary_type: Some(Poison),
-        species: "Poison",
-        height: 10,
-        weight: 295,
-    ),
+    id: 15,
+    name: "Beedrill",
+    primary_type: Bug,
+    secondary_type: Some(Poison),
     base: (
         hp: 65,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 80,
         speed: 75,
+    ),
+    data: (
+        species: "Poison",
+        height: 10,
+        weight: 295,
     ),
     training: (
         base_exp: 178,

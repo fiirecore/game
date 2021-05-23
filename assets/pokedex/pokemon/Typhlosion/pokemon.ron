@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 157,
-        name: "Typhlosion",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Volcano",
-        height: 17,
-        weight: 795,
-    ),
+    id: 157,
+    name: "Typhlosion",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 78,
         atk: 84,
@@ -15,6 +10,11 @@
         sp_atk: 109,
         sp_def: 85,
         speed: 100,
+    ),
+    data: (
+        species: "Volcano",
+        height: 17,
+        weight: 795,
     ),
     training: (
         base_exp: 240,

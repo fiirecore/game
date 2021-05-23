@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 164,
-        name: "Noctowl",
-        primary_type: Normal,
-        secondary_type: Some(Flying),
-        species: "Owl",
-        height: 16,
-        weight: 408,
-    ),
+    id: 164,
+    name: "Noctowl",
+    primary_type: Normal,
+    secondary_type: Some(Flying),
     base: (
         hp: 100,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 86,
         sp_def: 96,
         speed: 70,
+    ),
+    data: (
+        species: "Owl",
+        height: 16,
+        weight: 408,
     ),
     training: (
         base_exp: 158,

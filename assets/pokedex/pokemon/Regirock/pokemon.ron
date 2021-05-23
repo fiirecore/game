@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 377,
-        name: "Regirock",
-        primary_type: Rock,
-        secondary_type: None,
-        species: "Rock",
-        height: 17,
-        weight: 2300,
-    ),
+    id: 377,
+    name: "Regirock",
+    primary_type: Rock,
+    secondary_type: None,
     base: (
         hp: 80,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 100,
         speed: 50,
+    ),
+    data: (
+        species: "Rock",
+        height: 17,
+        weight: 2300,
     ),
     training: (
         base_exp: 261,

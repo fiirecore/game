@@ -1,7 +1,7 @@
 use firecore_font::message::MessagePages;
 use firecore_util::Coordinate;
 use serde::{Deserialize, Serialize};
-use deps::tinystr::{TinyStr8, TinyStr16};
+use deps::str::{TinyStr8, TinyStr16};
 
 use super::Character;
 use super::movement::MovementType;

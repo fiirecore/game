@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 372,
-        name: "Shelgon",
-        primary_type: Dragon,
-        secondary_type: None,
-        species: "Endurance",
-        height: 11,
-        weight: 1105,
-    ),
+    id: 372,
+    name: "Shelgon",
+    primary_type: Dragon,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 50,
         speed: 50,
+    ),
+    data: (
+        species: "Endurance",
+        height: 11,
+        weight: 1105,
     ),
     training: (
         base_exp: 147,

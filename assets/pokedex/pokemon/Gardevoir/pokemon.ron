@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 282,
-        name: "Gardevoir",
-        primary_type: Psychic,
-        secondary_type: Some(Fairy),
-        species: "Embrace",
-        height: 16,
-        weight: 484,
-    ),
+    id: 282,
+    name: "Gardevoir",
+    primary_type: Psychic,
+    secondary_type: Some(Fairy),
     base: (
         hp: 68,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 125,
         sp_def: 115,
         speed: 80,
+    ),
+    data: (
+        species: "Embrace",
+        height: 16,
+        weight: 484,
     ),
     training: (
         base_exp: 233,

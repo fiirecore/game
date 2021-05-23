@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 202,
-        name: "Wobbuffet",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Patient",
-        height: 13,
-        weight: 285,
-    ),
+    id: 202,
+    name: "Wobbuffet",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 190,
         atk: 33,
@@ -15,6 +10,11 @@
         sp_atk: 33,
         sp_def: 58,
         speed: 33,
+    ),
+    data: (
+        species: "Patient",
+        height: 13,
+        weight: 285,
     ),
     training: (
         base_exp: 142,

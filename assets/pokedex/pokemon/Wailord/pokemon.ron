@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 321,
-        name: "Wailord",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Float",
-        height: 145,
-        weight: 3980,
-    ),
+    id: 321,
+    name: "Wailord",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 170,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 45,
         speed: 60,
+    ),
+    data: (
+        species: "Float",
+        height: 145,
+        weight: 3980,
     ),
     training: (
         base_exp: 175,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 25,
-        name: "Pikachu",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Mouse",
-        height: 4,
-        weight: 60,
-    ),
+    id: 25,
+    name: "Pikachu",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 35,
         atk: 55,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 50,
         speed: 90,
+    ),
+    data: (
+        species: "Mouse",
+        height: 4,
+        weight: 60,
     ),
     training: (
         base_exp: 112,

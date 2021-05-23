@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 133,
-        name: "Eevee",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Evolution",
-        height: 3,
-        weight: 65,
-    ),
+    id: 133,
+    name: "Eevee",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 55,
         atk: 55,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 65,
         speed: 55,
+    ),
+    data: (
+        species: "Evolution",
+        height: 3,
+        weight: 65,
     ),
     training: (
         base_exp: 65,

@@ -3,9 +3,8 @@
     name: "Shadow Force",
     category: Physical,
     type: Ghost,
-    power: Some(120),
     accuracy: Some(100),
     pp: 5,
+    use_type: Damage(Power(120)),
     target: Opponent,
-    script: None,
 )

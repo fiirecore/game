@@ -9,7 +9,7 @@ publish = false
 [dependencies]
 
 firecore-pokedex = { path = "../" }
-firecore-dependencies = { path = "../../deps", features = ["random", "vec", "hash", "tinystr"] }
+firecore-dependencies = { path = "../../deps", features = ["random", "vec", "hash", "tinystr", "script"] }
 
 macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
 

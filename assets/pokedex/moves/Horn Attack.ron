@@ -3,9 +3,8 @@
     name: "Horn Attack",
     category: Physical,
     type: Normal,
-    power: Some(65),
     accuracy: Some(100),
     pp: 25,
+    use_type: Damage(Power(65)),
     target: Opponent,
-    script: None,
 )

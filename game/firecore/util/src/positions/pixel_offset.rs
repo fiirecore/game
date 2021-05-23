@@ -13,7 +13,7 @@ pub struct PixelOffset {
 
 impl PixelOffset {
 
-    // pub const ZERO: Self = Self { x: 0.0, y: 0.0 };
+    pub const ZERO: Self = Self { x: 0.0, y: 0.0 };
 
     pub fn is_zero(&self) -> bool {
         self.x == 0.0 && self.y == 0.0

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 100,
-        name: "Voltorb",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Ball",
-        height: 5,
-        weight: 104,
-    ),
+    id: 100,
+    name: "Voltorb",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 30,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 55,
         speed: 100,
+    ),
+    data: (
+        species: "Ball",
+        height: 5,
+        weight: 104,
     ),
     training: (
         base_exp: 66,

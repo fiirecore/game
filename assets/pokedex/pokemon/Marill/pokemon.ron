@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 183,
-        name: "Marill",
-        primary_type: Water,
-        secondary_type: Some(Fairy),
-        species: "Aqua",
-        height: 4,
-        weight: 85,
-    ),
+    id: 183,
+    name: "Marill",
+    primary_type: Water,
+    secondary_type: Some(Fairy),
     base: (
         hp: 70,
         atk: 20,
@@ -15,6 +10,11 @@
         sp_atk: 20,
         sp_def: 50,
         speed: 40,
+    ),
+    data: (
+        species: "Aqua",
+        height: 4,
+        weight: 85,
     ),
     training: (
         base_exp: 88,

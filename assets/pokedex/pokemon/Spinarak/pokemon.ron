@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 167,
-        name: "Spinarak",
-        primary_type: Bug,
-        secondary_type: Some(Poison),
-        species: "String",
-        height: 5,
-        weight: 85,
-    ),
+    id: 167,
+    name: "Spinarak",
+    primary_type: Bug,
+    secondary_type: Some(Poison),
     base: (
         hp: 40,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 40,
         speed: 30,
+    ),
+    data: (
+        species: "String",
+        height: 5,
+        weight: 85,
     ),
     training: (
         base_exp: 50,

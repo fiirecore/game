@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 382,
-        name: "Kyogre",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Sea",
-        height: 45,
-        weight: 3520,
-    ),
+    id: 382,
+    name: "Kyogre",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 100,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 150,
         sp_def: 140,
         speed: 90,
+    ),
+    data: (
+        species: "Sea",
+        height: 45,
+        weight: 3520,
     ),
     training: (
         base_exp: 302,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 34,
-        name: "Nidoking",
-        primary_type: Poison,
-        secondary_type: Some(Ground),
-        species: "Drill",
-        height: 14,
-        weight: 620,
-    ),
+    id: 34,
+    name: "Nidoking",
+    primary_type: Poison,
+    secondary_type: Some(Ground),
     base: (
         hp: 81,
         atk: 102,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 75,
         speed: 85,
+    ),
+    data: (
+        species: "Drill",
+        height: 14,
+        weight: 620,
     ),
     training: (
         base_exp: 227,

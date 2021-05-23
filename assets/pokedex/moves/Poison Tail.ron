@@ -3,9 +3,8 @@
     name: "Poison Tail",
     category: Physical,
     type: Poison,
-    power: Some(50),
     accuracy: Some(100),
     pp: 25,
+    use_type: Damage(Power(50)),
     target: Opponent,
-    script: None,
 )

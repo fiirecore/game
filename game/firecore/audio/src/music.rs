@@ -13,7 +13,7 @@ pub fn add_track(music_data: SerializedMusicData) -> Result<(), AddAudioError> {
             Some(map) => {
                 map.insert(music_data.music.name.clone(), music_data.music.track);
                 #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))]
-                crate::backend::kira::context::add_track(music_data)?;
+                crate::backend::context::add_track(music_data)?;
                 Ok(())
             }
             None => {
@@ -28,19 +28,19 @@ pub fn add_track(music_data: SerializedMusicData) -> Result<(), AddAudioError> {
 
 pub fn get_music_id(name: &str) -> Option<Option<MusicId>> {
     #[cfg(feature = "play")] {
-        match MUSIC_ID_MAP.lock().as_ref() {
-            Some(map) => Some(map.get(name).map(|id| *id)),
+        Some(match MUSIC_ID_MAP.lock().as_ref() {
+            Some(map) => map.get(name).map(|id| *id),
             None => None,
-        }
+        })
     }
     #[cfg(not(feature = "play"))] {
-        Ok(None)
+        None
     }
 }
 
 pub fn play_music_id(id: MusicId) -> Result<(), PlayAudioError> {
     #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))] {
-        crate::backend::kira::music::play_music(id)
+        crate::backend::music::play_music(id)
     }
     #[cfg(any(target_arch = "wasm32", target_os = "android", not(feature = "play")))]
     Ok(())
@@ -65,10 +65,7 @@ pub fn play_music_named(name: &str) -> Result<(), PlayAudioError> {
 }
 
 pub fn get_current_music() -> Option<MusicId> {
-    #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))] {
-        crate::backend::kira::music::get_current_music()
-    }
-    #[cfg(any(target_arch = "wasm32", target_os = "android", not(feature = "play")))] {
-        None
+    #[cfg(feature = "play")] {
+        crate::backend::music::get_current_music()
     }
 }

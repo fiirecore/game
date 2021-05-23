@@ -1,6 +1,6 @@
 [package]
 name = "firecore-audio"
-version = "0.4.0-alpha.2.0"
+version = "0.4.0-2021-05-23"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 
@@ -17,9 +17,15 @@ firecore-audio-lib = { path = "./lib" }
 ### Global, mutable variables
 
 parking_lot = { version = "0.11", optional = true }
-firecore-dependencies = { path = "../deps" }
+firecore-dependencies = { path = "../deps", optional = true }
 
 ### Audio libraries
+
+# [target.'cfg(not(any(target_arch = "wasm32", target_os = "android")))'.dependencies.sdl2]
+# path = "../rust-sdl2-master"
+# default-features = false
+# features = ["mixer"]
+# optional = true
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "android")))'.dependencies]
 kira = { version = "0.5", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support

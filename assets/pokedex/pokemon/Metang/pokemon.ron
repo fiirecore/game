@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 375,
-        name: "Metang",
-        primary_type: Steel,
-        secondary_type: Some(Psychic),
-        species: "Iron",
-        height: 12,
-        weight: 2025,
-    ),
+    id: 375,
+    name: "Metang",
+    primary_type: Steel,
+    secondary_type: Some(Psychic),
     base: (
         hp: 60,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 80,
         speed: 50,
+    ),
+    data: (
+        species: "Iron",
+        height: 12,
+        weight: 2025,
     ),
     training: (
         base_exp: 147,

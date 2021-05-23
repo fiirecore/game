@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 301,
-        name: "Delcatty",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Prim",
-        height: 11,
-        weight: 326,
-    ),
+    id: 301,
+    name: "Delcatty",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 70,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 55,
         speed: 90,
+    ),
+    data: (
+        species: "Prim",
+        height: 11,
+        weight: 326,
     ),
     training: (
         base_exp: 140,

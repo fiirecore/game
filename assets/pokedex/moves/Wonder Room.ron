@@ -3,9 +3,8 @@
     name: "Wonder Room",
     category: Status,
     type: Psychic,
-    power: None,
     accuracy: None,
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

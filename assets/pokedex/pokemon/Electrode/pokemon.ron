@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 101,
-        name: "Electrode",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Ball",
-        height: 12,
-        weight: 666,
-    ),
+    id: 101,
+    name: "Electrode",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 60,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 80,
         sp_def: 80,
         speed: 150,
+    ),
+    data: (
+        species: "Ball",
+        height: 12,
+        weight: 666,
     ),
     training: (
         base_exp: 172,

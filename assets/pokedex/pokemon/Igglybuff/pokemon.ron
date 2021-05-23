@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 174,
-        name: "Igglybuff",
-        primary_type: Normal,
-        secondary_type: Some(Fairy),
-        species: "Balloon",
-        height: 3,
-        weight: 10,
-    ),
+    id: 174,
+    name: "Igglybuff",
+    primary_type: Normal,
+    secondary_type: Some(Fairy),
     base: (
         hp: 90,
         atk: 30,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 20,
         speed: 15,
+    ),
+    data: (
+        species: "Balloon",
+        height: 3,
+        weight: 10,
     ),
     training: (
         base_exp: 42,

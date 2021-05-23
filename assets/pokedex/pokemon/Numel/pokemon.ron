@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 322,
-        name: "Numel",
-        primary_type: Fire,
-        secondary_type: Some(Ground),
-        species: "Numb",
-        height: 7,
-        weight: 240,
-    ),
+    id: 322,
+    name: "Numel",
+    primary_type: Fire,
+    secondary_type: Some(Ground),
     base: (
         hp: 60,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 45,
         speed: 35,
+    ),
+    data: (
+        species: "Numb",
+        height: 7,
+        weight: 240,
     ),
     training: (
         base_exp: 61,

@@ -3,9 +3,8 @@
     name: "Nasty Plot",
     category: Status,
     type: Dark,
-    power: None,
     accuracy: None,
     pp: 20,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

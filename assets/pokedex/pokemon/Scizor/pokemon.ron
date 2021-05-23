@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 212,
-        name: "Scizor",
-        primary_type: Bug,
-        secondary_type: Some(Steel),
-        species: "Pincer",
-        height: 18,
-        weight: 1180,
-    ),
+    id: 212,
+    name: "Scizor",
+    primary_type: Bug,
+    secondary_type: Some(Steel),
     base: (
         hp: 70,
         atk: 130,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 80,
         speed: 65,
+    ),
+    data: (
+        species: "Pincer",
+        height: 18,
+        weight: 1180,
     ),
     training: (
         base_exp: 175,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 42,
-        name: "Golbat",
-        primary_type: Poison,
-        secondary_type: Some(Flying),
-        species: "Bat",
-        height: 16,
-        weight: 550,
-    ),
+    id: 42,
+    name: "Golbat",
+    primary_type: Poison,
+    secondary_type: Some(Flying),
     base: (
         hp: 75,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 75,
         speed: 90,
+    ),
+    data: (
+        species: "Bat",
+        height: 16,
+        weight: 550,
     ),
     training: (
         base_exp: 159,

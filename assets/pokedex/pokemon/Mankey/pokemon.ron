@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 56,
-        name: "Mankey",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Pig",
-        height: 5,
-        weight: 280,
-    ),
+    id: 56,
+    name: "Mankey",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 35,
         sp_def: 45,
         speed: 70,
+    ),
+    data: (
+        species: "Pig",
+        height: 5,
+        weight: 280,
     ),
     training: (
         base_exp: 61,

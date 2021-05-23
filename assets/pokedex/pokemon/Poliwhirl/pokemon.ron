@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 61,
-        name: "Poliwhirl",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Tadpole",
-        height: 10,
-        weight: 200,
-    ),
+    id: 61,
+    name: "Poliwhirl",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 50,
         speed: 90,
+    ),
+    data: (
+        species: "Tadpole",
+        height: 10,
+        weight: 200,
     ),
     training: (
         base_exp: 135,

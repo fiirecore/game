@@ -1,0 +1,14 @@
+(
+    move: (
+        id: "foul-play",
+        name: "Foul Play",
+        category: Physical,
+        type: Dark,
+        accuracy: Some(100),
+        pp: 15,
+        use_type: Damage(Power(95)),
+        target: Opponent,
+    ),
+    game_move: Some((
+    ))
+)

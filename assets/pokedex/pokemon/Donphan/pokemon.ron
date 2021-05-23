@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 232,
-        name: "Donphan",
-        primary_type: Ground,
-        secondary_type: None,
-        species: "Armor",
-        height: 11,
-        weight: 1200,
-    ),
+    id: 232,
+    name: "Donphan",
+    primary_type: Ground,
+    secondary_type: None,
     base: (
         hp: 90,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 60,
         speed: 50,
+    ),
+    data: (
+        species: "Armor",
+        height: 11,
+        weight: 1200,
     ),
     training: (
         base_exp: 175,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 4,
-        name: "Charmander",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Lizard",
-        height: 6,
-        weight: 85,
-    ),
+    id: 4,
+    name: "Charmander",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 39,
         atk: 52,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 50,
         speed: 65,
+    ),
+    data: (
+        species: "Lizard",
+        height: 6,
+        weight: 85,
     ),
     training: (
         base_exp: 62,

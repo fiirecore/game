@@ -1,7 +1,7 @@
 use std::fs::{read_dir, read_to_string};
 use std::path::PathBuf;
 
-use pokedex::moves::{Move, GamePokemonMove};
+use pokedex::moves::Move;
 use pokedex::serialize::SerializedMove;
 
 pub fn get_moves<P: AsRef<std::path::Path>>(move_dir: P) -> Vec<SerializedMove> {
@@ -25,10 +25,22 @@ pub fn get_moves<P: AsRef<std::path::Path>>(move_dir: P) -> Vec<SerializedMove> 
 fn from_dir(dir: PathBuf) -> SerializedMove {
     let file = dir.join("move.ron");
     
-    ron::from_str(
+    ron::from_str::<SerializedMove>(
         &read_to_string(&file)
             .unwrap_or_else(|err| panic!("Could not read move file at {:?} to string with error {}", file, err))
     ).unwrap_or_else(|err| panic!("Could not parse move file at {:?} with error {}", file, err))
+
+    // let wasm = dir.join("plugin.wasm");
+
+    // if wasm.exists() {
+    //     let game_move = ser.game_move.get_or_insert(Default::default());
+    //     match read(wasm) {
+    //         Ok(bytes) => game_move.plugin = Some(bytes),
+    //         Err(err) => panic!("Could not read wasm plugin for move {} with error {}", ser.pokemon_move.name, err),
+    //     }
+    // }
+
+    // ser
 
     // if !path.exists() {
     // } else {

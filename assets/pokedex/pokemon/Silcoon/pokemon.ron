@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 266,
-        name: "Silcoon",
-        primary_type: Bug,
-        secondary_type: None,
-        species: "Cocoon",
-        height: 6,
-        weight: 100,
-    ),
+    id: 266,
+    name: "Silcoon",
+    primary_type: Bug,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 35,
@@ -15,6 +10,11 @@
         sp_atk: 25,
         sp_def: 25,
         speed: 15,
+    ),
+    data: (
+        species: "Cocoon",
+        height: 6,
+        weight: 100,
     ),
     training: (
         base_exp: 72,

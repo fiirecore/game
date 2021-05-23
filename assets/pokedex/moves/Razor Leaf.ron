@@ -3,9 +3,8 @@
     name: "Razor Leaf",
     category: Physical,
     type: Grass,
-    power: Some(55),
     accuracy: Some(95),
     pp: 25,
+    use_type: Damage(Power(55)),
     target: Opponent,
-    script: None,
 )

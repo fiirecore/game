@@ -3,9 +3,8 @@
     name: "Focus Blast",
     category: Special,
     type: Fighting,
-    power: Some(120),
     accuracy: Some(70),
     pp: 5,
+    use_type: Damage(Power(120)),
     target: Opponent,
-    script: None,
 )

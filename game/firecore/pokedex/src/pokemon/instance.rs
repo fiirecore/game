@@ -1,9 +1,13 @@
 use std::borrow::Cow;
 use serde::Serialize;
 
-use crate::{
+use deps::{
 	Identifiable,
+	StaticRef,
 	BorrowableMut,
+};
+
+use crate::{
 	pokemon::{
 		Pokemon,
 		PokemonId,
@@ -18,12 +22,13 @@ use crate::{
 		stat::{StatSet, BaseStatSet},
 	},
 	moves::{
+		Move,
 		MoveRef,
 		instance::{
 			MoveInstance,
 			MoveInstanceSet,
 		},
-		// persistent::PersistentMoveInstance,
+		persistent::PersistentMoveInstance,
 	},
 	item::ItemRef,
 };
@@ -62,15 +67,16 @@ pub struct PokemonInstance {
     #[serde(default = "default_friendship")]
     pub friendship: Friendship,
 
-	// pub persistent: Option<PersistentMoveInstance>, // to - do
-
 	pub moves: MoveInstanceSet,
 
 	#[serde(default)]
     pub status: Option<StatusEffect>,
 
 	#[serde(default)]
-	pub item: Option<ItemRef>, // to - do
+	pub item: Option<ItemRef>,
+
+	#[serde(skip)]
+	pub persistent: Option<PersistentMoveInstance>, // to - do
 
 	#[serde(skip)]
 	pub base: BaseStatSet,
@@ -84,7 +90,7 @@ pub type BorrowedPokemon = BorrowableMut<'static, PokemonInstance>;
 impl PokemonInstance {
 
 	pub fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<StatSet>) -> Self {
-		let pokemon = Pokemon::get(&id).value();
+		let pokemon = Pokemon::get(&id).unwrap();
 
         let level = if min == max {
 			max
@@ -109,7 +115,7 @@ impl PokemonInstance {
 			experience: 0,
 			friendship: 70,
 
-			// persistent: None,
+			persistent: None,
 
 			moves: pokemon.generate_moves(level),
 
@@ -121,7 +127,7 @@ impl PokemonInstance {
 
 			base,
 			
-			pokemon: crate::Ref::Init(pokemon),
+			pokemon: StaticRef::Init(pokemon),
 			
 		}
 	}
@@ -137,8 +143,10 @@ impl PokemonInstance {
 		let mut moves = Vec::new();
 		let prev = self.level;
 
-		while self.experience > self.pokemon.value().training.growth_rate.max_exp(self.level) {
-			self.experience -= self.pokemon.value().training.growth_rate.max_exp(self.level);
+		let gr = self.pokemon.unwrap().training.growth_rate;
+
+		while self.experience > gr.max_exp(self.level) {
+			self.experience -= gr.max_exp(self.level);
 			self.level += 1;
 
 			self.on_level_up();
@@ -175,7 +183,7 @@ impl PokemonInstance {
 	}
 
 	pub fn on_level_up(&mut self) {
-		self.base = BaseStatSet::get(self.pokemon.value(), &self.ivs, &self.evs, self.level);
+		self.base = BaseStatSet::get(self.pokemon.unwrap(), &self.ivs, &self.evs, self.level);
 	}
 
 	pub fn generate_with_level(id: PokemonId, level: Level, ivs: Option<StatSet>) -> Self {
@@ -189,23 +197,24 @@ impl PokemonInstance {
 	pub fn name(&self) -> Cow<'_, str> {
 		match self.nickname.as_ref() {
 		    Some(name) => Cow::Borrowed(name),
-		    None => Cow::Owned(self.pokemon.value().data.name.to_ascii_uppercase()),
+		    None => Cow::Owned(self.pokemon.unwrap().name.to_ascii_uppercase()),
 		}
 	}
 
 	pub fn moves_at_level(&self) -> Vec<MoveRef> {
 		let mut moves = Vec::new();
-		for pokemon_move in &self.pokemon.value().moves {
+		for pokemon_move in &self.pokemon.unwrap().moves {
 			if pokemon_move.level == self.level {
-				moves.push(<crate::moves::Move as crate::Identifiable>::get(&pokemon_move.move_id))
+				moves.push(Move::get(&pokemon_move.move_id))
 			}
 		}
 		moves
 	}
 
 	pub fn effective(&self, pokemon_type: PokemonType) -> Effective {
-		let primary = pokemon_type.effective(self.pokemon.value().data.primary_type);
-		if let Some(secondary) = self.pokemon.value().data.secondary_type {
+		let pokemon = self.pokemon.unwrap();
+		let primary = pokemon_type.effective(pokemon.primary_type);
+		if let Some(secondary) = pokemon.secondary_type {
 			primary * pokemon_type.effective(secondary)
 		} else {
 			primary

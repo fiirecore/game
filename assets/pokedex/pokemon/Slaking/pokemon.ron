@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 289,
-        name: "Slaking",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Lazy",
-        height: 20,
-        weight: 1305,
-    ),
+    id: 289,
+    name: "Slaking",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 150,
         atk: 160,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 65,
         speed: 100,
+    ),
+    data: (
+        species: "Lazy",
+        height: 20,
+        weight: 1305,
     ),
     training: (
         base_exp: 252,

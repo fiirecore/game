@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 41,
-        name: "Zubat",
-        primary_type: Poison,
-        secondary_type: Some(Flying),
-        species: "Bat",
-        height: 8,
-        weight: 75,
-    ),
+    id: 41,
+    name: "Zubat",
+    primary_type: Poison,
+    secondary_type: Some(Flying),
     base: (
         hp: 40,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 40,
         speed: 55,
+    ),
+    data: (
+        species: "Bat",
+        height: 8,
+        weight: 75,
     ),
     training: (
         base_exp: 49,

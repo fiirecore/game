@@ -3,3 +3,5 @@
 /.vscode
 
 /build/data/*.bin
+
+saves.ron

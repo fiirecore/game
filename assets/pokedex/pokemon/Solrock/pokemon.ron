@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 338,
-        name: "Solrock",
-        primary_type: Rock,
-        secondary_type: Some(Psychic),
-        species: "Meteorite",
-        height: 12,
-        weight: 1540,
-    ),
+    id: 338,
+    name: "Solrock",
+    primary_type: Rock,
+    secondary_type: Some(Psychic),
     base: (
         hp: 90,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 65,
         speed: 70,
+    ),
+    data: (
+        species: "Meteorite",
+        height: 12,
+        weight: 1540,
     ),
     training: (
         base_exp: 161,

@@ -3,9 +3,8 @@
     name: "Grudge",
     category: Status,
     type: Ghost,
-    power: None,
     accuracy: None,
     pp: 5,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

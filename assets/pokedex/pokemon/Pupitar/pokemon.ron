@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 247,
-        name: "Pupitar",
-        primary_type: Rock,
-        secondary_type: Some(Ground),
-        species: "Hard",
-        height: 12,
-        weight: 1520,
-    ),
+    id: 247,
+    name: "Pupitar",
+    primary_type: Rock,
+    secondary_type: Some(Ground),
     base: (
         hp: 70,
         atk: 84,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 70,
         speed: 51,
+    ),
+    data: (
+        species: "Hard",
+        height: 12,
+        weight: 1520,
     ),
     training: (
         base_exp: 144,

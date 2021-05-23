@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 218,
-        name: "Slugma",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Lava",
-        height: 7,
-        weight: 350,
-    ),
+    id: 218,
+    name: "Slugma",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 40,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 40,
         speed: 20,
+    ),
+    data: (
+        species: "Lava",
+        height: 7,
+        weight: 350,
     ),
     training: (
         base_exp: 50,

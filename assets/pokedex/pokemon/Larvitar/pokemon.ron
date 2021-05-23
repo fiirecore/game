@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 246,
-        name: "Larvitar",
-        primary_type: Rock,
-        secondary_type: Some(Ground),
-        species: "Rock",
-        height: 6,
-        weight: 720,
-    ),
+    id: 246,
+    name: "Larvitar",
+    primary_type: Rock,
+    secondary_type: Some(Ground),
     base: (
         hp: 50,
         atk: 64,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 50,
         speed: 41,
+    ),
+    data: (
+        species: "Rock",
+        height: 6,
+        weight: 720,
     ),
     training: (
         base_exp: 60,

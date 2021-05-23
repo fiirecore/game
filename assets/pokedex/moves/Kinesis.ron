@@ -3,9 +3,8 @@
     name: "Kinesis",
     category: Status,
     type: Psychic,
-    power: None,
     accuracy: Some(80),
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

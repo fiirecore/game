@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 253,
-        name: "Grovyle",
-        primary_type: Grass,
-        secondary_type: None,
-        species: "Wood",
-        height: 9,
-        weight: 216,
-    ),
+    id: 253,
+    name: "Grovyle",
+    primary_type: Grass,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 65,
         speed: 95,
+    ),
+    data: (
+        species: "Wood",
+        height: 9,
+        weight: 216,
     ),
     training: (
         base_exp: 142,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 229,
-        name: "Houndoom",
-        primary_type: Dark,
-        secondary_type: Some(Fire),
-        species: "Dark",
-        height: 14,
-        weight: 350,
-    ),
+    id: 229,
+    name: "Houndoom",
+    primary_type: Dark,
+    secondary_type: Some(Fire),
     base: (
         hp: 75,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 110,
         sp_def: 80,
         speed: 95,
+    ),
+    data: (
+        species: "Dark",
+        height: 14,
+        weight: 350,
     ),
     training: (
         base_exp: 175,

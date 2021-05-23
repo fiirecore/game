@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 60,
-        name: "Poliwag",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Tadpole",
-        height: 6,
-        weight: 124,
-    ),
+    id: 60,
+    name: "Poliwag",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 40,
         speed: 90,
+    ),
+    data: (
+        species: "Tadpole",
+        height: 6,
+        weight: 124,
     ),
     training: (
         base_exp: 60,

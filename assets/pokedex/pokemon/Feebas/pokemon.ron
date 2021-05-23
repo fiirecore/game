@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 349,
-        name: "Feebas",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Fish",
-        height: 6,
-        weight: 74,
-    ),
+    id: 349,
+    name: "Feebas",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 20,
         atk: 15,
@@ -15,6 +10,11 @@
         sp_atk: 10,
         sp_def: 55,
         speed: 80,
+    ),
+    data: (
+        species: "Fish",
+        height: 6,
+        weight: 74,
     ),
     training: (
         base_exp: 40,

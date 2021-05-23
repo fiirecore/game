@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 177,
-        name: "Natu",
-        primary_type: Psychic,
-        secondary_type: Some(Flying),
-        species: "Tiny",
-        height: 2,
-        weight: 20,
-    ),
+    id: 177,
+    name: "Natu",
+    primary_type: Psychic,
+    secondary_type: Some(Flying),
     base: (
         hp: 40,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 45,
         speed: 70,
+    ),
+    data: (
+        species: "Tiny",
+        height: 2,
+        weight: 20,
     ),
     training: (
         base_exp: 64,

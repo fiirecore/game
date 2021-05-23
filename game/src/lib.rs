@@ -7,14 +7,23 @@ pub extern crate firecore_input as input;
 pub extern crate firecore_pokedex_game as pokedex;
 pub extern crate firecore_audio as audio;
 
-pub mod battle;
+pub mod battle_glue;
 pub mod gui;
 pub mod text;
 pub mod state;
 pub mod init;
 pub mod graphics;
 
-use deps::tinystr::TinyStr8;
+#[cfg(feature = "battle")]
+pub mod battle;
+
+#[cfg(feature = "world")]
+extern crate firecore_world_lib as worldlib;
+
+#[cfg(feature = "world")]
+pub mod world;
+
+use deps::str::TinyStr8;
 use macroquad::prelude::warn;
 use util::Direction;
 use input::Control;

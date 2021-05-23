@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 213,
-        name: "Shuckle",
-        primary_type: Bug,
-        secondary_type: Some(Rock),
-        species: "Mold",
-        height: 6,
-        weight: 205,
-    ),
+    id: 213,
+    name: "Shuckle",
+    primary_type: Bug,
+    secondary_type: Some(Rock),
     base: (
         hp: 20,
         atk: 10,
@@ -15,6 +10,11 @@
         sp_atk: 10,
         sp_def: 230,
         speed: 5,
+    ),
+    data: (
+        species: "Mold",
+        height: 6,
+        weight: 205,
     ),
     training: (
         base_exp: 177,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 329,
-        name: "Vibrava",
-        primary_type: Ground,
-        secondary_type: Some(Dragon),
-        species: "Vibration",
-        height: 11,
-        weight: 153,
-    ),
+    id: 329,
+    name: "Vibrava",
+    primary_type: Ground,
+    secondary_type: Some(Dragon),
     base: (
         hp: 50,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 50,
         speed: 70,
+    ),
+    data: (
+        species: "Vibration",
+        height: 11,
+        weight: 153,
     ),
     training: (
         base_exp: 119,

@@ -3,9 +3,8 @@
     name: "Wing Attack",
     category: Physical,
     type: Flying,
-    power: Some(60),
     accuracy: Some(100),
     pp: 35,
+    use_type: Damage(Power(60)),
     target: Opponent,
-    script: None,
 )

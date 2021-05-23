@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 277,
-        name: "Swellow",
-        primary_type: Normal,
-        secondary_type: Some(Flying),
-        species: "Swallow",
-        height: 7,
-        weight: 198,
-    ),
+    id: 277,
+    name: "Swellow",
+    primary_type: Normal,
+    secondary_type: Some(Flying),
     base: (
         hp: 60,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 75,
         sp_def: 50,
         speed: 125,
+    ),
+    data: (
+        species: "Swallow",
+        height: 7,
+        weight: 198,
     ),
     training: (
         base_exp: 159,

@@ -3,9 +3,8 @@
     name: "Psycho Cut",
     category: Physical,
     type: Psychic,
-    power: Some(70),
     accuracy: Some(100),
     pp: 20,
+    use_type: Damage(Power(70)),
     target: Opponent,
-    script: None,
 )

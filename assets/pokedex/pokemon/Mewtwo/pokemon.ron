@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 150,
-        name: "Mewtwo",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Genetic",
-        height: 20,
-        weight: 1220,
-    ),
+    id: 150,
+    name: "Mewtwo",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 106,
         atk: 110,
@@ -15,6 +10,11 @@
         sp_atk: 154,
         sp_def: 90,
         speed: 130,
+    ),
+    data: (
+        species: "Genetic",
+        height: 20,
+        weight: 1220,
     ),
     training: (
         base_exp: 306,

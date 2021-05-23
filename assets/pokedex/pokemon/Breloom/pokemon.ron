@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 286,
-        name: "Breloom",
-        primary_type: Grass,
-        secondary_type: Some(Fighting),
-        species: "Mushroom",
-        height: 12,
-        weight: 392,
-    ),
+    id: 286,
+    name: "Breloom",
+    primary_type: Grass,
+    secondary_type: Some(Fighting),
     base: (
         hp: 60,
         atk: 130,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 60,
         speed: 70,
+    ),
+    data: (
+        species: "Mushroom",
+        height: 12,
+        weight: 392,
     ),
     training: (
         base_exp: 161,

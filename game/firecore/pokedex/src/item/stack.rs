@@ -1,5 +1,9 @@
 use serde::{Deserialize, Serialize};
-use super::{ItemId, StackSize, ItemRef};
+use deps::{
+    StaticRef,
+    Identifiable,
+};
+use super::{ItemId, Item, ItemRef, StackSize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ItemStack {
@@ -10,15 +14,22 @@ pub struct ItemStack {
 #[derive(Debug)]
 pub struct ItemStackInstance<'a> {
     pub stack: &'a mut ItemStack,
-    pub count_string: String,
+    pub count_string: String, // To - do: research into not creating string for count
 }
 
 impl ItemStack {
 
+    pub fn new(item: &ItemId, count: StackSize) -> Self {
+        Self {
+            item: Item::get(item),
+            count,
+        }
+    }
+
     pub fn add(&mut self, stack: ItemStack) -> Option<ItemStack> {
         self.count += stack.count;
         match &self.item {
-            crate::Ref::Init(item) => {
+            StaticRef::Init(item) => {
                 if self.count > item.stack_size {
                     let count = self.count - item.stack_size;
                     self.count = item.stack_size;
@@ -32,7 +43,7 @@ impl ItemStack {
                     None
                 }
             }
-            crate::Ref::Uninit(_) => None,
+            StaticRef::Uninit(_) => None,
         }
     }
 
@@ -45,12 +56,6 @@ impl ItemStack {
         }
     }
 
-    pub fn single(item: &ItemId) -> Self {
-        Self {
-            item: <super::Item as crate::Identifiable>::get(item),
-            count: 1,
-        }
-    }
 }
 
 impl<'a> ItemStackInstance<'a> {

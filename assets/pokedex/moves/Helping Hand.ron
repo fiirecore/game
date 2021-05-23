@@ -3,9 +3,8 @@
     name: "Helping Hand",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: None,
     pp: 20,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

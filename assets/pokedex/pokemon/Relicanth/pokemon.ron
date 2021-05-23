@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 369,
-        name: "Relicanth",
-        primary_type: Water,
-        secondary_type: Some(Rock),
-        species: "Longevity",
-        height: 10,
-        weight: 234,
-    ),
+    id: 369,
+    name: "Relicanth",
+    primary_type: Water,
+    secondary_type: Some(Rock),
     base: (
         hp: 100,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 65,
         speed: 55,
+    ),
+    data: (
+        species: "Longevity",
+        height: 10,
+        weight: 234,
     ),
     training: (
         base_exp: 170,

@@ -3,9 +3,8 @@
     name: "Inferno",
     category: Special,
     type: Fire,
-    power: Some(100),
     accuracy: Some(50),
     pp: 5,
+    use_type: Damage(Power(100)),
     target: Opponent,
-    script: None,
 )

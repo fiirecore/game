@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 95,
-        name: "Onix",
-        primary_type: Rock,
-        secondary_type: Some(Ground),
-        species: "Rock",
-        height: 88,
-        weight: 2100,
-    ),
+    id: 95,
+    name: "Onix",
+    primary_type: Rock,
+    secondary_type: Some(Ground),
     base: (
         hp: 35,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 45,
         speed: 70,
+    ),
+    data: (
+        species: "Rock",
+        height: 88,
+        weight: 2100,
     ),
     training: (
         base_exp: 77,

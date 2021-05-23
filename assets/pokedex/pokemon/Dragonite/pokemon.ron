@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 149,
-        name: "Dragonite",
-        primary_type: Dragon,
-        secondary_type: Some(Flying),
-        species: "Dragon",
-        height: 22,
-        weight: 2100,
-    ),
+    id: 149,
+    name: "Dragonite",
+    primary_type: Dragon,
+    secondary_type: Some(Flying),
     base: (
         hp: 91,
         atk: 134,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 100,
         speed: 80,
+    ),
+    data: (
+        species: "Dragon",
+        height: 22,
+        weight: 2100,
     ),
     training: (
         base_exp: 270,

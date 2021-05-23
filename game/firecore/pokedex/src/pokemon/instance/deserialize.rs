@@ -307,6 +307,7 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     friendship: __field7,
                     moves: __field8,
                     status: __field9,
+                    persistent: None,
                     item: __field10,
                     base: __field11,
                     current_hp: __field12,
@@ -670,6 +671,7 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     friendship: __field7,
                     moves: __field8,
                     status: __field9,
+                    persistent: None,
                     item: __field10,
                     base,
                     current_hp: __field12,
@@ -705,17 +707,17 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
 
 #[inline]
 fn default_gender(pokemon: PokemonRef) -> Gender {
-    pokemon.value().generate_gender()
+    pokemon.unwrap().generate_gender()
 }
 
 #[inline]
 fn default_moves(pokemon: PokemonRef, level: Level) -> MoveInstanceSet {
-    pokemon.value().generate_moves(level)
+    pokemon.unwrap().generate_moves(level)
 }
 
 #[inline]
 fn default_base(pokemon: PokemonRef, ivs: &StatSet, evs: &StatSet, level: Level) -> BaseStatSet {
-    BaseStatSet::get(pokemon.value(), ivs, evs, level)
+    BaseStatSet::get(pokemon.unwrap(), ivs, evs, level)
 }
 
 #[inline]

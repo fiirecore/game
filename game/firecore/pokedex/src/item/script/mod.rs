@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::pokemon::status::PokemonStatus;
+use crate::pokemon::status::Status;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ItemScript {
@@ -27,7 +27,7 @@ pub enum ItemCondition {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum ItemActionKind {
 
-    CurePokemon(Option<PokemonStatus>),
+    CurePokemon(Option<Status>),
     HealPokemon(u16),
 
 }

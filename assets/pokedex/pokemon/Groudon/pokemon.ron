@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 383,
-        name: "Groudon",
-        primary_type: Ground,
-        secondary_type: None,
-        species: "Continent",
-        height: 35,
-        weight: 9500,
-    ),
+    id: 383,
+    name: "Groudon",
+    primary_type: Ground,
+    secondary_type: None,
     base: (
         hp: 100,
         atk: 150,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 90,
         speed: 90,
+    ),
+    data: (
+        species: "Continent",
+        height: 35,
+        weight: 9500,
     ),
     training: (
         base_exp: 302,

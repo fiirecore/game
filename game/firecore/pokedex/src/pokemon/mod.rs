@@ -2,9 +2,10 @@ use serde::{Deserialize, Serialize};
 use deps::{
 	Random,
 	hash::HashMap,
+	Identifiable,
+	StaticRef,
 };
 use crate::{
-	Identifiable,
 	moves::{
 		MoveId,
 		Move,
@@ -18,6 +19,7 @@ use crate::{
 			training::Training,
 			Gender,
 		},
+		types::PokemonType,
 		stat::StatSet,
 	}
 };
@@ -50,8 +52,15 @@ pub static POKEMON_RANDOM: Random = Random::new();
 #[derive(Serialize, Deserialize)]
 pub struct Pokemon {
 
-	pub data: PokedexData,
+	pub id: PokemonId,
+	pub name: String,
+
+	pub primary_type: PokemonType,
+	pub secondary_type: Option<PokemonType>,
+	
 	pub base: StatSet,
+
+	pub data: PokedexData,
 
 	pub training: Training,
 	pub breeding: Breeding,
@@ -93,7 +102,7 @@ impl Identifiable for Pokemon {
     type Id = PokemonId;
 
     fn id(&self) -> &Self::Id {
-        &self.data.id
+        &self.id
     }
 
 	fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized {
@@ -102,7 +111,7 @@ impl Identifiable for Pokemon {
 
 }
 
-pub type PokemonRef = crate::Ref<Pokemon>;
+pub type PokemonRef = StaticRef<Pokemon>;
 
 pub const fn default_iv() -> StatSet {
     StatSet::uniform(15)

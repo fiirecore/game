@@ -3,9 +3,8 @@
     name: "Natural Gift",
     category: Physical,
     type: Normal,
-    power: None,
     accuracy: Some(100),
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

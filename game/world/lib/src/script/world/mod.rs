@@ -59,7 +59,7 @@ impl Entity for WorldScript {
         self.alive = false;
     }
 
-    fn is_alive(&self) -> bool {
+    fn alive(&self) -> bool {
         self.alive
     }
 }

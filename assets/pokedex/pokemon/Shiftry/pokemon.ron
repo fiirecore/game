@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 275,
-        name: "Shiftry",
-        primary_type: Grass,
-        secondary_type: Some(Dark),
-        species: "Wicked",
-        height: 13,
-        weight: 596,
-    ),
+    id: 275,
+    name: "Shiftry",
+    primary_type: Grass,
+    secondary_type: Some(Dark),
     base: (
         hp: 90,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 60,
         speed: 80,
+    ),
+    data: (
+        species: "Wicked",
+        height: 13,
+        weight: 596,
     ),
     training: (
         base_exp: 216,

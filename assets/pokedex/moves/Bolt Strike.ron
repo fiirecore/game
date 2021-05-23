@@ -3,9 +3,8 @@
     name: "Bolt Strike",
     category: Physical,
     type: Electric,
-    power: Some(130),
     accuracy: Some(85),
     pp: 5,
+    use_type: Damage(Power(130)),
     target: Opponent,
-    script: None,
 )

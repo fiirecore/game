@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 47,
-        name: "Parasect",
-        primary_type: Bug,
-        secondary_type: Some(Grass),
-        species: "Mushroom",
-        height: 10,
-        weight: 295,
-    ),
+    id: 47,
+    name: "Parasect",
+    primary_type: Bug,
+    secondary_type: Some(Grass),
     base: (
         hp: 60,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 80,
         speed: 30,
+    ),
+    data: (
+        species: "Mushroom",
+        height: 10,
+        weight: 295,
     ),
     training: (
         base_exp: 142,

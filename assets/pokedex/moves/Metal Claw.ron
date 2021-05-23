@@ -3,9 +3,8 @@
     name: "Metal Claw",
     category: Physical,
     type: Steel,
-    power: Some(50),
     accuracy: Some(95),
     pp: 35,
+    use_type: Damage(Power(50)),
     target: Opponent,
-    script: None,
 )

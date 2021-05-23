@@ -3,9 +3,8 @@
     name: "Focus Punch",
     category: Physical,
     type: Fighting,
-    power: Some(150),
     accuracy: Some(100),
     pp: 20,
+    use_type: Damage(Power(150)),
     target: Opponent,
-    script: None,
 )

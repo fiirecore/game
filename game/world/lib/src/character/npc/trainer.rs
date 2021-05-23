@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use deps::{
     hash::HashSet,
-    tinystr::TinyStr8,
+    str::TinyStr8,
 };
 use firecore_pokedex::pokemon::party::PersistentParty;
 

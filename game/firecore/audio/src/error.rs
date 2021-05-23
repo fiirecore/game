@@ -7,16 +7,23 @@ pub enum AddAudioError {
     Uninitialized,
     #[cfg(feature = "play")]
     NoManager,
-
-    #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))]
+    
+    #[cfg(feature = "sdl2")]
+    SdlError(String),
+    #[cfg(feature = "kira")]
     SetupError(kira::manager::error::SetupError),
 
-    #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))]
+    #[cfg(feature = "kira")]
     DecodeError(kira::sound::error::SoundFromFileError),
-    // #[cfg(target_arch = "wasm32")]
-    // DecodeError(Box<dyn core::fmt::Debug>),
-    #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))]
+    #[cfg(feature = "kira")]
     ManagerAddError(kira::manager::error::AddSoundError),
+}
+
+#[cfg(feature = "sdl2")]
+impl From<String> for AddAudioError {
+    fn from(error: String) -> Self {
+        Self::SdlError(error)
+    }
 }
 
 #[derive(Debug)]
@@ -27,10 +34,12 @@ pub enum PlayAudioError {
     Missing,
     #[cfg(feature = "play")]
     CurrentLocked,
-    #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))]
+    #[cfg(feature = "kira")]
     CommandError(kira::CommandError),
-    #[cfg(all(any(target_arch = "wasm32", target_os = "android"), feature = "play"))]
-    PlayError(),
+    #[cfg(feature = "sdl2")]
+    SdlError(String),
+    // #[cfg(all(any(target_arch = "wasm32", target_os = "android"), feature = "play"))]
+    // PlayError(),
 }
 
 impl Error for AddAudioError {}
@@ -41,11 +50,13 @@ impl Display for AddAudioError {
             match self {
                 Self::Uninitialized => write!(f, "Audio manager is uninitialized!"),
                 Self::NoManager => write!(f, "Audio manager could not be found. (You probably forgot to initialize it)"),
-                #[cfg(not(any(target_arch = "wasm32", target_os = "android")))]
+                #[cfg(feature = "sdl2")]
+                Self::SdlError(err) => write!(f, "{}", err),
+                #[cfg(feature = "kira")]
                 Self::SetupError(err) => Display::fmt(err, f),
-                #[cfg(not(any(target_arch = "wasm32", target_os = "android")))]
+                #[cfg(feature = "kira")]
                 Self::DecodeError(err) => Display::fmt(err, f),
-                #[cfg(not(any(target_arch = "wasm32", target_os = "android")))]
+                #[cfg(feature = "kira")]
                 Self::ManagerAddError(err) => Display::fmt(err, f),
             }
         }
@@ -64,14 +75,21 @@ impl Display for PlayAudioError {
                 // PlayAudioError::Uninitialized => write!(f, "Audio manager is uninitialized!"),
                 PlayAudioError::Missing => write!(f, "Could not find music with specified id!"),
                 PlayAudioError::CurrentLocked => write!(f, "Could not unlock current music mutex!"),
-                #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))]
+                #[cfg(feature = "sdl2")]
+                Self::SdlError(err) => write!(f, "{}", err),
+                #[cfg(feature = "kira")]
                 PlayAudioError::CommandError(err) => Display::fmt(err, f),
-                #[cfg(all(any(target_arch = "wasm32", target_os = "android"), feature = "play"))]
-                PlayAudioError::PlayError() => write!(f, "Could not play audio with error"),
             }
         }
         #[cfg(not(feature = "play"))] {
             write!(f, "Audio is disabled by feature.")
         }
+    }
+}
+
+#[cfg(feature = "sdl2")]
+impl From<String> for PlayAudioError {
+    fn from(error: String) -> Self {
+        Self::SdlError(error)
     }
 }

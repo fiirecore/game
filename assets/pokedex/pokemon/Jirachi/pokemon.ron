@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 385,
-        name: "Jirachi",
-        primary_type: Steel,
-        secondary_type: Some(Psychic),
-        species: "Wish",
-        height: 3,
-        weight: 11,
-    ),
+    id: 385,
+    name: "Jirachi",
+    primary_type: Steel,
+    secondary_type: Some(Psychic),
     base: (
         hp: 100,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 100,
         speed: 100,
+    ),
+    data: (
+        species: "Wish",
+        height: 3,
+        weight: 11,
     ),
     training: (
         base_exp: 270,

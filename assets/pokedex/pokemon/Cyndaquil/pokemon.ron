@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 155,
-        name: "Cyndaquil",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Fire",
-        height: 5,
-        weight: 79,
-    ),
+    id: 155,
+    name: "Cyndaquil",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 39,
         atk: 52,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 50,
         speed: 65,
+    ),
+    data: (
+        species: "Fire",
+        height: 5,
+        weight: 79,
     ),
     training: (
         base_exp: 62,

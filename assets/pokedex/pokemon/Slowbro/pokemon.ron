@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 80,
-        name: "Slowbro",
-        primary_type: Water,
-        secondary_type: Some(Psychic),
-        species: "Hermit",
-        height: 16,
-        weight: 785,
-    ),
+    id: 80,
+    name: "Slowbro",
+    primary_type: Water,
+    secondary_type: Some(Psychic),
     base: (
         hp: 95,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 80,
         speed: 30,
+    ),
+    data: (
+        species: "Hermit",
+        height: 16,
+        weight: 785,
     ),
     training: (
         base_exp: 172,

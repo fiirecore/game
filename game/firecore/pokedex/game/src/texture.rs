@@ -59,9 +59,9 @@ impl PokemonTextures {
     }
 
     pub fn insert(&mut self, pokemon: &SerializedPokemon) {
-        self.front.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.front_png));
-		self.back.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.back_png));
-		self.icon.insert(pokemon.pokemon.data.id, byte_texture(&pokemon.icon_png));
+        self.front.insert(pokemon.pokemon.id, byte_texture(&pokemon.front_png));
+		self.back.insert(pokemon.pokemon.id, byte_texture(&pokemon.back_png));
+		self.icon.insert(pokemon.pokemon.id, byte_texture(&pokemon.icon_png));
     }
 
     pub fn get(&self, id: &PokemonId, side: PokemonTexture) -> Texture2D {

@@ -1,6 +1,4 @@
 extern crate firecore_game as game;
-extern crate firecore_world as world;
-extern crate firecore_battle as battle;
 
 use game::{
     macroquad::{
@@ -100,10 +98,13 @@ pub async fn start() {
 
     set_camera(&game_camera());
     
-
     // Loads configuration, sets up controls
 
     game::init::configuration().await;
+
+    //debug stuff
+    #[cfg(debug_assertions)]
+    game::storage::SAVE_IN_LOCAL_DIRECTORY.store(true, std::sync::atomic::Ordering::Relaxed);
 
     // Loads fonts
 
@@ -189,8 +190,9 @@ pub async fn start() {
         game::init::finished_loading()
     }
 
+    #[cfg(debug_assertions)]
     if args.contains(&Args::Seed) {
-        seed_randoms(game::macroquad::miniquad::date::now() as u64);
+        game::init::seed_randoms(game::macroquad::miniquad::date::now() as u64);
     }
 
     // Wait for the loading scenes to finish, then stop the coroutine
@@ -248,7 +250,7 @@ pub async fn start() {
 
             }
             
-            state_manager.update(get_frame_time());
+            state_manager.update(get_frame_time().min(0.5));
 
         }
     
@@ -336,12 +338,6 @@ pub fn loading_screen(texture: Texture2D) {
     draw_text_left(0,crate::VERSION, TextColor::White, 1.0, 1.0);
     draw_text_left(1, "The game may stay on this screen", TextColor::White, 5.0, 50.0);
     draw_text_left(1, "for up to two minutes.", TextColor::White, 5.0, 65.0);
-}
-
-pub fn seed_randoms(seed: u64) {
-    game::init::seed_randoms(seed);
-    world::seed_randoms(seed);
-	battle::BATTLE_RANDOM.seed(seed);
 }
 
 pub const CAMERA_SIZE: Rect = Rect { x: 0.0, y: 0.0, w: game::util::WIDTH, h: game::util::HEIGHT };

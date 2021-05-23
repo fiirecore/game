@@ -1,6 +1,6 @@
 [package]
 name = "firecore-pokedex"
-version = "0.4.0-beta.4"
+version = "0.4.0-2021-05-22"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone Pokedex dependency"
@@ -9,7 +9,7 @@ publish = false
 
 [dependencies]
 
-firecore-dependencies = { path = "../deps", features = ["random", "vec", "hash", "tinystr"] }
+firecore-dependencies = { path = "../deps", features = ["random", "borrow", "str", "vec", "hash"] }
 
 serde = { version = "1.0", features = ["derive"] }
 

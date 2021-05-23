@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 227,
-        name: "Skarmory",
-        primary_type: Steel,
-        secondary_type: Some(Flying),
-        species: "Armor",
-        height: 17,
-        weight: 505,
-    ),
+    id: 227,
+    name: "Skarmory",
+    primary_type: Steel,
+    secondary_type: Some(Flying),
     base: (
         hp: 65,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 70,
         speed: 70,
+    ),
+    data: (
+        species: "Armor",
+        height: 17,
+        weight: 505,
     ),
     training: (
         base_exp: 163,

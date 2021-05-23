@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 365,
-        name: "Walrein",
-        primary_type: Ice,
-        secondary_type: Some(Water),
-        species: "Ice",
-        height: 14,
-        weight: 1506,
-    ),
+    id: 365,
+    name: "Walrein",
+    primary_type: Ice,
+    secondary_type: Some(Water),
     base: (
         hp: 110,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 90,
         speed: 65,
+    ),
+    data: (
+        species: "Ice",
+        height: 14,
+        weight: 1506,
     ),
     training: (
         base_exp: 239,

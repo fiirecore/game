@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 162,
-        name: "Furret",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Long",
-        height: 18,
-        weight: 325,
-    ),
+    id: 162,
+    name: "Furret",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 85,
         atk: 76,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 55,
         speed: 90,
+    ),
+    data: (
+        species: "Long",
+        height: 18,
+        weight: 325,
     ),
     training: (
         base_exp: 145,

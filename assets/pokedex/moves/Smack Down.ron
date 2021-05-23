@@ -3,9 +3,8 @@
     name: "Smack Down",
     category: Physical,
     type: Rock,
-    power: Some(50),
     accuracy: Some(100),
     pp: 15,
+    use_type: Damage(Power(50)),
     target: Opponent,
-    script: None,
 )

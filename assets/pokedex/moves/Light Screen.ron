@@ -3,9 +3,8 @@
     name: "Light Screen",
     category: Status,
     type: Psychic,
-    power: None,
     accuracy: None,
     pp: 30,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 124,
-        name: "Jynx",
-        primary_type: Ice,
-        secondary_type: Some(Psychic),
-        species: "Human",
-        height: 14,
-        weight: 406,
-    ),
+    id: 124,
+    name: "Jynx",
+    primary_type: Ice,
+    secondary_type: Some(Psychic),
     base: (
         hp: 65,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 115,
         sp_def: 95,
         speed: 95,
+    ),
+    data: (
+        species: "Human",
+        height: 14,
+        weight: 406,
     ),
     training: (
         base_exp: 159,

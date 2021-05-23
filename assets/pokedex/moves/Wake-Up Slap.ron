@@ -3,9 +3,8 @@
     name: "Wake-Up Slap",
     category: Physical,
     type: Fighting,
-    power: Some(70),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(70)),
     target: Opponent,
-    script: None,
 )

@@ -3,9 +3,8 @@
     name: "Stun Spore",
     category: Status,
     type: Grass,
-    power: None,
     accuracy: Some(75),
     pp: 30,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

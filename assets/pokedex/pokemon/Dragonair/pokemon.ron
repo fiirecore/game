@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 148,
-        name: "Dragonair",
-        primary_type: Dragon,
-        secondary_type: None,
-        species: "Dragon",
-        height: 40,
-        weight: 165,
-    ),
+    id: 148,
+    name: "Dragonair",
+    primary_type: Dragon,
+    secondary_type: None,
     base: (
         hp: 61,
         atk: 84,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 70,
         speed: 70,
+    ),
+    data: (
+        species: "Dragon",
+        height: 40,
+        weight: 165,
     ),
     training: (
         base_exp: 147,

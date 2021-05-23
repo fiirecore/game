@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 346,
-        name: "Cradily",
-        primary_type: Rock,
-        secondary_type: Some(Grass),
-        species: "Barnacle",
-        height: 15,
-        weight: 604,
-    ),
+    id: 346,
+    name: "Cradily",
+    primary_type: Rock,
+    secondary_type: Some(Grass),
     base: (
         hp: 86,
         atk: 81,
@@ -15,6 +10,11 @@
         sp_atk: 81,
         sp_def: 107,
         speed: 43,
+    ),
+    data: (
+        species: "Barnacle",
+        height: 15,
+        weight: 604,
     ),
     training: (
         base_exp: 173,

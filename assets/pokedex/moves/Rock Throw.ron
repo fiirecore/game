@@ -3,9 +3,8 @@
     name: "Rock Throw",
     category: Physical,
     type: Rock,
-    power: Some(50),
     accuracy: Some(90),
     pp: 15,
+    use_type: Damage(Power(50)),
     target: Opponent,
-    script: None,
 )

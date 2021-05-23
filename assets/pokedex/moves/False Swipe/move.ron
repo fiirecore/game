@@ -1,0 +1,20 @@
+(
+    move: (
+        id: "false-swipe",
+        name: "False Swipe",
+        category: Physical,
+        type: Normal,
+        accuracy: Some(100),
+        pp: 40,
+        use_type: Script(
+            "
+            let damage = user.damage(target, 40, move.category, move.type);
+            if damage > target.current_hp {
+                damage = target.current_hp - 1;
+            }
+            [MoveResult::Damage(damage)]
+            "
+        ),
+        target: Opponent,
+    )
+)

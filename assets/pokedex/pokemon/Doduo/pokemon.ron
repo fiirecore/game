@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 84,
-        name: "Doduo",
-        primary_type: Normal,
-        secondary_type: Some(Flying),
-        species: "Twin",
-        height: 14,
-        weight: 392,
-    ),
+    id: 84,
+    name: "Doduo",
+    primary_type: Normal,
+    secondary_type: Some(Flying),
     base: (
         hp: 35,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 35,
         sp_def: 35,
         speed: 75,
+    ),
+    data: (
+        species: "Twin",
+        height: 14,
+        weight: 392,
     ),
     training: (
         base_exp: 62,

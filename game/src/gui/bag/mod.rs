@@ -12,6 +12,8 @@ use input::{pressed, Control};
 
 use crate::text::TextColor;
 
+use crate::gui::Panel;
+
 use crate::graphics::{
     byte_texture,
     draw,
@@ -23,22 +25,38 @@ use crate::graphics::{
 
 use macroquad::prelude::Texture2D;
 
-use self::select::{BagSelectMenu, BagSelectAction};
+static mut BAG_BACKGROUND: Option<Texture2D> = None;
 
-pub mod select;
+fn bag_background() -> Texture2D {
+    unsafe { *BAG_BACKGROUND.get_or_insert(byte_texture(include_bytes!("../../../assets/gui/bag/items.png"))) }
+}
+
+// const WORLD_OPTIONS: &[&'static str] = &[
+//     "Use",
+//     "Give",
+//     "Toss",
+// ];
+
+type TextOption = &'static [&'static str];
+
+const BATTLE_OPTIONS: TextOption = &[
+    "Use",
+];
 
 pub struct BagGui {
 
     pub alive: bool,
-
     background: Texture2D,
-    select: BagSelectMenu,
+    cursor: usize,
+
+    selecting: bool,
+    select: Panel,
+    select_cursor: usize,
+    select_text: Option<TextOption>,
 
     items: Vec<ItemStackInstance<'static>>,
 
     selected: Option<usize>,
-
-    cursor: usize,
 
 }
 
@@ -47,128 +65,95 @@ impl BagGui {
     pub fn new() -> Self {
         Self {
             alive: false,
-            background: byte_texture(include_bytes!("../../../assets/gui/bag/items.png")),
-            select: BagSelectMenu::new(),
+            background: bag_background(),
+            cursor: 0,
+            selecting: false,
+            select: Panel::new(),
+            select_cursor: 0,
+            select_text: None,
             items: Vec::new(),
             selected: None,
-            cursor: 0,
         }
     }
 
     pub fn input(&mut self) {
-        // if party_gui.is_alive() {
-        //     party_gui.input();
-        // } else 
-        if self.select.alive {
-            if let Some(action) = self.select.input() {
-                match action {
-                    BagSelectAction::Use => {
-                        self.selected = Some(self.cursor);
-                        self.select.alive = false;
-                    },
-                    // BagSelectAction::Give => todo!(),//{
-                    //     // self.selected = BagOption::Selected(self.cursor);
-                    //     // party_gui.spawn(data().party.iter().map(|instance| PokemonDisplay::new(std::borrow::Cow::Borrowed(instance))).collect(), None, true);
-                    //     // self.select.alive = false;
-                    // // }
-                    // BagSelectAction::Toss => todo!(),
+        match self.selecting {
+            true => {
+                match self.select_text {
+                    Some(text) => {
+                        if pressed(Control::B) {
+                            self.selecting = false;
+                        }
+                        if pressed(Control::Up) && self.cursor > 0 {
+                            self.select_cursor -= 1;
+                        }
+                        if pressed(Control::Down) && self.cursor < text.len() {
+                            self.select_cursor += 1;
+                        }
+                        if pressed(Control::A) {
+                            match self.cursor {
+                                0 => {   
+                                    self.selected = Some(self.cursor);
+                                },
+                                1 => (), // cancel
+                                _ => unreachable!("Selected an option that is not use/cancel"),
+                            }
+                            self.selecting = false;          
+                        }
+                        
+                    }
+                    None => self.selecting = false,
                 }
-            }
-        } else {
-            if pressed(Control::B) {
-                self.despawn();
-            }
-            if pressed(Control::A) {
-                if self.cursor < self.items.len() {
-                    self.select.spawn();
-                } else {
+            },
+            false => {
+                if pressed(Control::B) {
                     self.despawn();
                 }
-            }
-            if pressed(Control::Up) && self.cursor > 0 {
-                self.cursor -= 1;
-            }
-            if pressed(Control::Down) && self.cursor < self.items.len() {
-                self.cursor += 1;
+                if pressed(Control::A) {
+                    if self.cursor < self.items.len() {
+                        self.spawn_select();
+                    } else {
+                        self.despawn();
+                    }
+                }
+                if pressed(Control::Up) && self.cursor > 0 {
+                    self.cursor -= 1;
+                }
+                if pressed(Control::Down) && self.cursor < self.items.len() {
+                    self.cursor += 1;
+                }
             }
         }
         
     }
 
-    // pub fn update(&mut self, party_gui: &mut PartyGui) {
-        // if self.alive {
-        //     if party_gui.is_alive() {
-        //         if let Some(pokemon) = party_gui.selected.take() {
-        //             let save = data_mut();
-        //             if let Some(pokemon) = save.party.get_mut(pokemon) {
-        //                 if let BagOption::Selected(selected) = self.selected {
-        //                     todo!()
-        //                     // let mut push_item = None;
-        //                     // if let Some(instance) = self.items.get_mut(selected) {
-        //                     //     if let Some(count) = save.items.get_mut(&instance.stack.item.id) {
-        //                     //         count.sub_assign(1);
-        //                     //         instance.stack.count -= 1;
-        //                     //     }
-        //                     //     if let Some(item) = pokemon.item.replace(instance.stack.item) {
-        //                     //         if let Some(count) = save.items.get_mut(&item.id) {
-        //                     //             count.add_assign(1);
-        //                     //         } else {
-        //                     //             save.items.insert(item.id, 1);
-        //                     //         }
-        //                     //         push_item = Some(item);
-        //                     //     }
-        //                     //     if instance.stack.count == 0 {
-        //                     //         if self.cursor > 0 {
-        //                     //             self.cursor -= 1;
-        //                     //         }
-        //                     //         self.items.remove(selected);
-        //                     //     } else {
-        //                     //         instance.count_string = instance.stack.count.to_string();
-        //                     //     }
-
-        //                     // }
-        //                     // if let Some(push_item) = push_item {
-        //                     //     if let Some(index) = self.items.iter().position(|instance| instance.stack.item.id == push_item.id) {
-        //                     //         if let Some(item) = self.items.get_mut(index) {
-        //                     //             item.stack.count += 1;
-        //                     //             item.count_string = item.stack.count.to_string();
-        //                     //         }
-        //                     //     } else {  
-        //                     //         self.items.push(ItemStackInstance {
-        //                     //             stack: ItemStack {
-        //                     //                 item: push_item,
-        //                     //                 count: 1,
-        //                     //             },
-        //                     //             count_string: 1.to_string(),
-        //                     //         });
-        //                     //     }
-        //                     // }
-        //                 }
-        //                 party_gui.despawn();
-        //             }
-        //         }
-        //     }
-        // }
-    // }
-
     pub fn render(&self) {
         draw(self.background, 0.0, 0.0);
         for (index, item) in self.items.iter().enumerate() {
             let y = 11.0 + (index << 4) as f32;
-            draw_text_left(1, &item.stack.item.value().name, TextColor::Black, 98.0, y);
+            draw_text_left(1, &item.stack.item.unwrap().name, TextColor::Black, 98.0, y);
             draw_text_left(1, "x", TextColor::Black, 200.0, y);
             draw_text_right(1, &item.count_string, TextColor::Black, 221.0, y);
         }
         draw_text_left(1, "Cancel", TextColor::Black, 98.0, 11.0 + (self.items.len() << 4) as f32);
         if let Some(item) = self.items.get(self.cursor) {
-            let item = item.stack.item.value();
+            let item = item.stack.item.unwrap();
             draw_o(item_texture(&item.id), 8.0, 125.0);
             for (index, line) in item.description.iter().enumerate() {
                 draw_text_left(1, line, TextColor::White, 41.0, 117.0 + (index * 14) as f32);
             }
         }
         draw_cursor(91.0, 13.0 + (self.cursor << 4) as f32);
-        self.select.render();
+        if self.selecting {
+            if let Some(text) = self.select_text {
+                self.select.render_text(146.0, util::HEIGHT, 94.0, text, self.select_cursor, true, true)
+            }
+        }
+    }
+
+    fn spawn_select(&mut self) {
+        self.selecting = true;
+        self.select_cursor = 0;
     }
 
     pub fn take_selected_despawn(&mut self) -> Option<ItemRef> {
@@ -179,10 +164,10 @@ impl BagGui {
         }).flatten()
     }
 
-    pub fn spawn(&mut self, is_world: bool) {
+    pub fn spawn(&mut self) {
         self.alive = true;
-        self.select.is_world = is_world;
-        self.items = data_mut().items.values_mut().map(|stack| ItemStackInstance {
+        self.select_text = Some(BATTLE_OPTIONS);
+        self.items = data_mut().bag.items.values_mut().map(|stack| ItemStackInstance {
             count_string: stack.count.to_string(),
             stack,
         }).collect();

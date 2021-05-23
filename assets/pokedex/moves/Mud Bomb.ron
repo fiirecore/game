@@ -3,9 +3,8 @@
     name: "Mud Bomb",
     category: Special,
     type: Ground,
-    power: Some(65),
     accuracy: Some(85),
     pp: 10,
+    use_type: Damage(Power(65)),
     target: Opponent,
-    script: None,
 )

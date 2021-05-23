@@ -3,9 +3,8 @@
     name: "Poison Jab",
     category: Physical,
     type: Poison,
-    power: Some(80),
     accuracy: Some(100),
     pp: 20,
+    use_type: Damage(Power(80)),
     target: Opponent,
-    script: None,
 )

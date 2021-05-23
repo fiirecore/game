@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 331,
-        name: "Cacnea",
-        primary_type: Grass,
-        secondary_type: None,
-        species: "Cactus",
-        height: 4,
-        weight: 513,
-    ),
+    id: 331,
+    name: "Cacnea",
+    primary_type: Grass,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 40,
         speed: 35,
+    ),
+    data: (
+        species: "Cactus",
+        height: 4,
+        weight: 513,
     ),
     training: (
         base_exp: 67,

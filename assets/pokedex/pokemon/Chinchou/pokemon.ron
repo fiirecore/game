@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 170,
-        name: "Chinchou",
-        primary_type: Water,
-        secondary_type: Some(Electric),
-        species: "Angler",
-        height: 5,
-        weight: 120,
-    ),
+    id: 170,
+    name: "Chinchou",
+    primary_type: Water,
+    secondary_type: Some(Electric),
     base: (
         hp: 75,
         atk: 38,
@@ -15,6 +10,11 @@
         sp_atk: 56,
         sp_def: 56,
         speed: 67,
+    ),
+    data: (
+        species: "Angler",
+        height: 5,
+        weight: 120,
     ),
     training: (
         base_exp: 66,

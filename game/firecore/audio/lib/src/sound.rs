@@ -1,4 +1,4 @@
-use firecore_dependencies::tinystr::TinyStr8;
+use deps::str::TinyStr8;
 
 pub type SoundId = TinyStr8;
 
@@ -30,6 +30,9 @@ impl Sound {
 
 impl core::fmt::Display for Sound {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {}", self.name, self.variant.map(|var| String::from("#") + &var.to_string()).unwrap_or(String::new()))
+        match &self.variant {
+            Some(variant) => write!(f, "{} #{}", self.name, variant),
+            None => core::fmt::Display::fmt(&self.name, f)
+        }
     }
 }

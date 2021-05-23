@@ -2,8 +2,8 @@ use firecore_util::Location;
 use firecore_util::Position;
 use serde::{Deserialize, Serialize};
 use deps::{
+    str::{TinyStr8, TinyStr16},
     hash::{HashMap, HashSet},
-    tinystr::{TinyStr8, TinyStr16},
 };
 
 use self::map::MapData;
@@ -13,10 +13,13 @@ pub mod map;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct WorldStatus {
 
-    // battled trainers, map stops, etc.
-    pub map: HashMap<TinyStr16, MapData>,
+    #[serde(default)]
+    pub map: HashMap<TinyStr16, MapData>, // battled trainers, map stops, etc.
+    #[serde(default)]
     pub scripts: HashSet<TinyStr16>,
+    #[serde(default)]
     pub badges: HashSet<TinyStr16>,
+    #[serde(default = "default_heal_loc")]
     pub heal: (Location, Position),
 
 }
@@ -42,7 +45,11 @@ impl Default for WorldStatus {
             map: HashMap::default(),
             scripts: HashSet::default(),
             badges: HashSet::default(),
-            heal: (crate::default_location(), crate::default_position()),
+            heal: default_heal_loc(),
         }
     }
+}
+
+const fn default_heal_loc() -> (Location, Position) {
+    (crate::default_location(), crate::default_position())
 }

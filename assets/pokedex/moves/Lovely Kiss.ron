@@ -3,9 +3,8 @@
     name: "Lovely Kiss",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: Some(75),
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

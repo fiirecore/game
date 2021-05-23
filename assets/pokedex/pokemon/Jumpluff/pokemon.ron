@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 189,
-        name: "Jumpluff",
-        primary_type: Grass,
-        secondary_type: Some(Flying),
-        species: "Cottonweed",
-        height: 8,
-        weight: 30,
-    ),
+    id: 189,
+    name: "Jumpluff",
+    primary_type: Grass,
+    secondary_type: Some(Flying),
     base: (
         hp: 75,
         atk: 55,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 95,
         speed: 110,
+    ),
+    data: (
+        species: "Cottonweed",
+        height: 8,
+        weight: 30,
     ),
     training: (
         base_exp: 207,

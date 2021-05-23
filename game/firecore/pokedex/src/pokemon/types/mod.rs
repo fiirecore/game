@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 mod effective;
 pub use effective::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)] // To - do: move module
 pub enum PokemonType {
 	
 	Normal,

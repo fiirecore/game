@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 328,
-        name: "Trapinch",
-        primary_type: Ground,
-        secondary_type: None,
-        species: "Ant",
-        height: 7,
-        weight: 150,
-    ),
+    id: 328,
+    name: "Trapinch",
+    primary_type: Ground,
+    secondary_type: None,
     base: (
         hp: 45,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 45,
         speed: 10,
+    ),
+    data: (
+        species: "Ant",
+        height: 7,
+        weight: 150,
     ),
     training: (
         base_exp: 58,

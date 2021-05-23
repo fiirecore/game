@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 337,
-        name: "Lunatone",
-        primary_type: Rock,
-        secondary_type: Some(Psychic),
-        species: "Meteorite",
-        height: 10,
-        weight: 1680,
-    ),
+    id: 337,
+    name: "Lunatone",
+    primary_type: Rock,
+    secondary_type: Some(Psychic),
     base: (
         hp: 90,
         atk: 55,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 85,
         speed: 70,
+    ),
+    data: (
+        species: "Meteorite",
+        height: 10,
+        weight: 1680,
     ),
     training: (
         base_exp: 161,

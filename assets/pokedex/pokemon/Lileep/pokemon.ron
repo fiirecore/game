@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 345,
-        name: "Lileep",
-        primary_type: Rock,
-        secondary_type: Some(Grass),
-        species: "Sea",
-        height: 10,
-        weight: 238,
-    ),
+    id: 345,
+    name: "Lileep",
+    primary_type: Rock,
+    secondary_type: Some(Grass),
     base: (
         hp: 66,
         atk: 41,
@@ -15,6 +10,11 @@
         sp_atk: 61,
         sp_def: 87,
         speed: 23,
+    ),
+    data: (
+        species: "Sea",
+        height: 10,
+        weight: 238,
     ),
     training: (
         base_exp: 71,

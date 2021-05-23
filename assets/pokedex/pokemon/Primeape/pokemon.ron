@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 57,
-        name: "Primeape",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Pig",
-        height: 10,
-        weight: 320,
-    ),
+    id: 57,
+    name: "Primeape",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 105,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 70,
         speed: 95,
+    ),
+    data: (
+        species: "Pig",
+        height: 10,
+        weight: 320,
     ),
     training: (
         base_exp: 159,

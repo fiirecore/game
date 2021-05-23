@@ -1,5 +1,5 @@
 use deps::hash::HashMap;
-use deps::tinystr::TinyStr16;
+use deps::str::TinyStr16;
 use firecore_util::BoundingBox;
 use firecore_util::Destination;
 use serde::{Serialize, Deserialize};

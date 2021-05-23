@@ -3,9 +3,8 @@
     name: "Present",
     category: Physical,
     type: Normal,
-    power: None,
     accuracy: Some(90),
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

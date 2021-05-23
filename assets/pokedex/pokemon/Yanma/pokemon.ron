@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 193,
-        name: "Yanma",
-        primary_type: Bug,
-        secondary_type: Some(Flying),
-        species: "Clear",
-        height: 12,
-        weight: 380,
-    ),
+    id: 193,
+    name: "Yanma",
+    primary_type: Bug,
+    secondary_type: Some(Flying),
     base: (
         hp: 65,
         atk: 65,
@@ -15,6 +10,11 @@
         sp_atk: 75,
         sp_def: 45,
         speed: 95,
+    ),
+    data: (
+        species: "Clear",
+        height: 12,
+        weight: 380,
     ),
     training: (
         base_exp: 78,

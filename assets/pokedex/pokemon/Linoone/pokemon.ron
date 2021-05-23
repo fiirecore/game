@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 264,
-        name: "Linoone",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Rushing",
-        height: 5,
-        weight: 325,
-    ),
+    id: 264,
+    name: "Linoone",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 78,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 61,
         speed: 100,
+    ),
+    data: (
+        species: "Rushing",
+        height: 5,
+        weight: 325,
     ),
     training: (
         base_exp: 147,

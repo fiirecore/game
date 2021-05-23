@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 370,
-        name: "Luvdisc",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Rendezvous",
-        height: 6,
-        weight: 87,
-    ),
+    id: 370,
+    name: "Luvdisc",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 43,
         atk: 30,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 65,
         speed: 97,
+    ),
+    data: (
+        species: "Rendezvous",
+        height: 6,
+        weight: 87,
     ),
     training: (
         base_exp: 116,

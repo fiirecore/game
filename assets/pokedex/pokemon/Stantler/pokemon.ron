@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 234,
-        name: "Stantler",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Big",
-        height: 14,
-        weight: 712,
-    ),
+    id: 234,
+    name: "Stantler",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 73,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 65,
         speed: 85,
+    ),
+    data: (
+        species: "Big",
+        height: 14,
+        weight: 712,
     ),
     training: (
         base_exp: 163,

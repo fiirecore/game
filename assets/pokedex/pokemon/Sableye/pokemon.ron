@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 302,
-        name: "Sableye",
-        primary_type: Dark,
-        secondary_type: Some(Ghost),
-        species: "Darkness",
-        height: 5,
-        weight: 110,
-    ),
+    id: 302,
+    name: "Sableye",
+    primary_type: Dark,
+    secondary_type: Some(Ghost),
     base: (
         hp: 50,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 65,
         speed: 50,
+    ),
+    data: (
+        species: "Darkness",
+        height: 5,
+        weight: 110,
     ),
     training: (
         base_exp: 133,

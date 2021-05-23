@@ -5,5 +5,5 @@
         "Catches a Pokemon"
     ],
     use: Pokeball,
-    target: Opponent,
+    // target: Opponent,
 )

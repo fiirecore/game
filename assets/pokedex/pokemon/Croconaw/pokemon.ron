@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 159,
-        name: "Croconaw",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Big",
-        height: 11,
-        weight: 250,
-    ),
+    id: 159,
+    name: "Croconaw",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 59,
         sp_def: 63,
         speed: 58,
+    ),
+    data: (
+        species: "Big",
+        height: 11,
+        weight: 250,
     ),
     training: (
         base_exp: 142,

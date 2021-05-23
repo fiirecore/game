@@ -3,9 +3,8 @@
     name: "Sketch",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: None,
     pp: 1,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

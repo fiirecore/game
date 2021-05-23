@@ -3,9 +3,8 @@
     name: "Mud Sport",
     category: Status,
     type: Ground,
-    power: None,
     accuracy: None,
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

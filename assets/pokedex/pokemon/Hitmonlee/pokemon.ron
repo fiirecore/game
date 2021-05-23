@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 106,
-        name: "Hitmonlee",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Kicking",
-        height: 15,
-        weight: 498,
-    ),
+    id: 106,
+    name: "Hitmonlee",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 50,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 35,
         sp_def: 110,
         speed: 87,
+    ),
+    data: (
+        species: "Kicking",
+        height: 15,
+        weight: 498,
     ),
     training: (
         base_exp: 159,

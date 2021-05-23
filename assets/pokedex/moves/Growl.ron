@@ -3,9 +3,8 @@
     name: "Growl",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: Some(100),
     pp: 40,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

@@ -10,10 +10,10 @@ use crate::error::AddAudioError;
 
 pub static AUDIO_CONTEXT: Mutex<Option<AudioManager>> = const_mutex(None);
 
-pub fn create() -> Result<(), kira::manager::error::SetupError> {
+pub fn create() -> Result<(), AddAudioError> {
     *AUDIO_CONTEXT.lock() = match AudioManager::new(kira::manager::AudioManagerSettings::default()) {
         Ok(am) => Some(am),
-        Err(err) => return Err(err),
+        Err(err) => return Err(AddAudioError::SetupError(err)),
     };
 
     *super::music::MUSIC_MAP.lock() = Some(HashMap::new());

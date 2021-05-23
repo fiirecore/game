@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 280,
-        name: "Ralts",
-        primary_type: Psychic,
-        secondary_type: Some(Fairy),
-        species: "Feeling",
-        height: 4,
-        weight: 66,
-    ),
+    id: 280,
+    name: "Ralts",
+    primary_type: Psychic,
+    secondary_type: Some(Fairy),
     base: (
         hp: 28,
         atk: 25,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 35,
         speed: 40,
+    ),
+    data: (
+        species: "Feeling",
+        height: 4,
+        weight: 66,
     ),
     training: (
         base_exp: 40,

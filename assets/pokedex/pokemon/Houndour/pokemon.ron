@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 228,
-        name: "Houndour",
-        primary_type: Dark,
-        secondary_type: Some(Fire),
-        species: "Dark",
-        height: 6,
-        weight: 108,
-    ),
+    id: 228,
+    name: "Houndour",
+    primary_type: Dark,
+    secondary_type: Some(Fire),
     base: (
         hp: 45,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 80,
         sp_def: 50,
         speed: 65,
+    ),
+    data: (
+        species: "Dark",
+        height: 6,
+        weight: 108,
     ),
     training: (
         base_exp: 66,

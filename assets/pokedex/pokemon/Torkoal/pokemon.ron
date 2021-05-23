@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 324,
-        name: "Torkoal",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Coal",
-        height: 5,
-        weight: 804,
-    ),
+    id: 324,
+    name: "Torkoal",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 70,
         atk: 85,
@@ -15,6 +10,11 @@
         sp_atk: 85,
         sp_def: 70,
         speed: 20,
+    ),
+    data: (
+        species: "Coal",
+        height: 5,
+        weight: 804,
     ),
     training: (
         base_exp: 165,

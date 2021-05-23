@@ -3,9 +3,8 @@
     name: "Poison Powder",
     category: Status,
     type: Poison,
-    power: None,
     accuracy: Some(75),
     pp: 35,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

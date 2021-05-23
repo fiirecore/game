@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 78,
-        name: "Rapidash",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Fire",
-        height: 17,
-        weight: 950,
-    ),
+    id: 78,
+    name: "Rapidash",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 80,
         sp_def: 80,
         speed: 105,
+    ),
+    data: (
+        species: "Fire",
+        height: 17,
+        weight: 950,
     ),
     training: (
         base_exp: 175,

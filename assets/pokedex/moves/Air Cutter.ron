@@ -3,9 +3,8 @@
     name: "Air Cutter",
     category: Special,
     type: Flying,
-    power: Some(60),
     accuracy: Some(95),
     pp: 25,
+    use_type: Damage(Power(60)),
     target: Opponent,
-    script: None,
 )

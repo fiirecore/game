@@ -3,9 +3,8 @@
     name: "Metal Sound",
     category: Status,
     type: Steel,
-    power: None,
     accuracy: Some(85),
     pp: 40,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

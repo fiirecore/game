@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 92,
-        name: "Gastly",
-        primary_type: Ghost,
-        secondary_type: Some(Poison),
-        species: "Gas",
-        height: 13,
-        weight: 1,
-    ),
+    id: 92,
+    name: "Gastly",
+    primary_type: Ghost,
+    secondary_type: Some(Poison),
     base: (
         hp: 30,
         atk: 35,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 35,
         speed: 80,
+    ),
+    data: (
+        species: "Gas",
+        height: 13,
+        weight: 1,
     ),
     training: (
         base_exp: 62,

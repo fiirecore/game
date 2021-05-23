@@ -3,9 +3,8 @@
     name: "Drain Punch",
     category: Physical,
     type: Fighting,
-    power: Some(75),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(75)),
     target: Opponent,
-    script: None,
 )

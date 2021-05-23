@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 371,
-        name: "Bagon",
-        primary_type: Dragon,
-        secondary_type: None,
-        species: "Rock",
-        height: 6,
-        weight: 421,
-    ),
+    id: 371,
+    name: "Bagon",
+    primary_type: Dragon,
+    secondary_type: None,
     base: (
         hp: 45,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 30,
         speed: 50,
+    ),
+    data: (
+        species: "Rock",
+        height: 6,
+        weight: 421,
     ),
     training: (
         base_exp: 60,

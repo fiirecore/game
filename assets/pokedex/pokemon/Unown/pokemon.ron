@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 201,
-        name: "Unown",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Symbol",
-        height: 5,
-        weight: 50,
-    ),
+    id: 201,
+    name: "Unown",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 48,
         atk: 72,
@@ -15,6 +10,11 @@
         sp_atk: 72,
         sp_def: 48,
         speed: 48,
+    ),
+    data: (
+        species: "Symbol",
+        height: 5,
+        weight: 50,
     ),
     training: (
         base_exp: 118,

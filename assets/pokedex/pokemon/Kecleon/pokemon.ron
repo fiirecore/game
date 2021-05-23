@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 352,
-        name: "Kecleon",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Color",
-        height: 10,
-        weight: 220,
-    ),
+    id: 352,
+    name: "Kecleon",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 60,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 120,
         speed: 40,
+    ),
+    data: (
+        species: "Color",
+        height: 10,
+        weight: 220,
     ),
     training: (
         base_exp: 154,

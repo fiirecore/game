@@ -4,7 +4,7 @@ use super::script::ItemScript;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub enum ItemUseType {
-    Script(/*MoveTarget,*/ ItemScript),
+    Script(ItemScript),
     Pokeball,
     None
 }

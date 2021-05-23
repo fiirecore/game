@@ -3,9 +3,8 @@
     name: "Water Sport",
     category: Status,
     type: Water,
-    power: None,
     accuracy: None,
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

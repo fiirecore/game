@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 298,
-        name: "Azurill",
-        primary_type: Normal,
-        secondary_type: Some(Fairy),
-        species: "Polka",
-        height: 2,
-        weight: 20,
-    ),
+    id: 298,
+    name: "Azurill",
+    primary_type: Normal,
+    secondary_type: Some(Fairy),
     base: (
         hp: 50,
         atk: 20,
@@ -15,6 +10,11 @@
         sp_atk: 20,
         sp_def: 40,
         speed: 20,
+    ),
+    data: (
+        species: "Polka",
+        height: 2,
+        weight: 20,
     ),
     training: (
         base_exp: 38,

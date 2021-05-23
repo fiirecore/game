@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 357,
-        name: "Tropius",
-        primary_type: Grass,
-        secondary_type: Some(Flying),
-        species: "Fruit",
-        height: 20,
-        weight: 1000,
-    ),
+    id: 357,
+    name: "Tropius",
+    primary_type: Grass,
+    secondary_type: Some(Flying),
     base: (
         hp: 99,
         atk: 68,
@@ -15,6 +10,11 @@
         sp_atk: 72,
         sp_def: 87,
         speed: 51,
+    ),
+    data: (
+        species: "Fruit",
+        height: 20,
+        weight: 1000,
     ),
     training: (
         base_exp: 161,

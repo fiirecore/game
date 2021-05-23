@@ -3,9 +3,8 @@
     name: "Comet Punch",
     category: Physical,
     type: Normal,
-    power: Some(18),
     accuracy: Some(85),
     pp: 15,
+    use_type: Damage(Power(18)),
     target: Opponent,
-    script: None,
 )

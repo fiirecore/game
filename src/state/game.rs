@@ -2,17 +2,17 @@ use std::sync::atomic::Ordering::Relaxed;
 
 use firecore_game::state::GameStateAction;
 use game::{
-	storage::{DIRTY, PLAYER_SAVES, save, data_mut, player::PlayerSaves},
+	storage::{PLAYER_SAVES, save, data_mut, player::{SHOULD_SAVE, PlayerSaves}},
 	macroquad::prelude::{info, warn, is_key_down, KeyCode},
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
 	},
-	battle::BattleEntry,
+	battle_glue::BattleEntry,
 };
 
-use world::map::manager::WorldManager;
-use battle::manager::BattleManager;
+use game::world::map::manager::WorldManager;
+use game::battle::manager::BattleManager;
 
 use super::State;
 use super::States;
@@ -55,7 +55,7 @@ impl GameState {
 
 	pub fn data_dirty(&mut self, saves: &mut PlayerSaves) {
 		self.save_data(saves);
-		DIRTY.store(false, Relaxed);
+		SHOULD_SAVE.store(false, Relaxed);
 	}
 
     pub fn save_data(&mut self, saves: &mut PlayerSaves) {
@@ -101,7 +101,7 @@ impl State for GameState {
 			1.0
 		};
 
-		if DIRTY.load(Relaxed) {
+		if SHOULD_SAVE.load(Relaxed) {
 			if let Some(mut saves) = unsafe{PLAYER_SAVES.as_mut()} {
 				self.data_dirty(&mut saves);
 			}	
@@ -120,7 +120,7 @@ impl State for GameState {
 				if self.battle.finished {
 					let save = data_mut();
 					if let Some((winner, trainer)) = self.battle.update_data(save) {
-						world::battle::update_world(&mut self.world, save, winner, trainer);
+						game::world::battle::update_world(&mut self.world, save, winner, trainer);
 					}			
 					self.state = GameStates::World;
 					self.world.map_start(true);

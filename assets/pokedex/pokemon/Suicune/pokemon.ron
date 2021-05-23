@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 245,
-        name: "Suicune",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Aurora",
-        height: 20,
-        weight: 1870,
-    ),
+    id: 245,
+    name: "Suicune",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 100,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 115,
         speed: 85,
+    ),
+    data: (
+        species: "Aurora",
+        height: 20,
+        weight: 1870,
     ),
     training: (
         base_exp: 261,

@@ -3,9 +3,8 @@
     name: "Double Hit",
     category: Physical,
     type: Normal,
-    power: Some(35),
     accuracy: Some(90),
     pp: 10,
+    use_type: Damage(Power(35)),
     target: Opponent,
-    script: None,
 )

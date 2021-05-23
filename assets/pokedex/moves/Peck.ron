@@ -3,9 +3,8 @@
     name: "Peck",
     category: Physical,
     type: Flying,
-    power: Some(35),
     accuracy: Some(100),
     pp: 35,
+    use_type: Damage(Power(35)),
     target: Opponent,
-    script: None,
 )

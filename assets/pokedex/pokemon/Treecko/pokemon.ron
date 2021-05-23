@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 252,
-        name: "Treecko",
-        primary_type: Grass,
-        secondary_type: None,
-        species: "Wood",
-        height: 5,
-        weight: 50,
-    ),
+    id: 252,
+    name: "Treecko",
+    primary_type: Grass,
+    secondary_type: None,
     base: (
         hp: 40,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 55,
         speed: 70,
+    ),
+    data: (
+        species: "Wood",
+        height: 5,
+        weight: 50,
     ),
     training: (
         base_exp: 62,

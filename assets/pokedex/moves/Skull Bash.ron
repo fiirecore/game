@@ -3,9 +3,8 @@
     name: "Skull Bash",
     category: Physical,
     type: Normal,
-    power: Some(130),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(130)),
     target: Opponent,
-    script: None,
 )

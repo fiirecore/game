@@ -1,17 +1,15 @@
 use serde::{Deserialize, Serialize};
-use super::MoveRef;
-use super::script::MoveActionType;
+use super::Move;
+use super::result::MoveUseType;
 
-pub type MoveActionRef = &'static MoveActionType;
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PersistentMove {
 
-    pub length: Option<(u8, u8)>,
+    pub length: Option<(u8, u8)>, // min,max
 
-    pub action: MoveActionType,
+    pub action: MoveUseType,
 
-    pub on_move: bool,
+    pub same_move: bool,
     
     // pub secondary: Option<MoveActionType>,
 
@@ -19,8 +17,8 @@ pub struct PersistentMove {
 
 #[derive(Debug, Clone)]
 pub struct PersistentMoveInstance {
-    pub pokemon_move: MoveRef,
-    pub actions: MoveActionRef,
+    pub pokemon_move: &'static Move,
+    pub actions: MoveUseType,
     pub remaining: Option<u8>,
-    pub should_do: bool, // what does this bool mean?
+    pub same_move: bool, // what does this bool mean?
 }

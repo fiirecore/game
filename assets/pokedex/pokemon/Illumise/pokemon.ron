@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 314,
-        name: "Illumise",
-        primary_type: Bug,
-        secondary_type: None,
-        species: "Firefly",
-        height: 6,
-        weight: 177,
-    ),
+    id: 314,
+    name: "Illumise",
+    primary_type: Bug,
+    secondary_type: None,
     base: (
         hp: 65,
         atk: 47,
@@ -15,6 +10,11 @@
         sp_atk: 73,
         sp_def: 85,
         speed: 85,
+    ),
+    data: (
+        species: "Firefly",
+        height: 6,
+        weight: 177,
     ),
     training: (
         base_exp: 151,

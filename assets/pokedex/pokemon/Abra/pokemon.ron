@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 63,
-        name: "Abra",
-        primary_type: Psychic,
-        secondary_type: None,
-        species: "Psi",
-        height: 9,
-        weight: 195,
-    ),
+    id: 63,
+    name: "Abra",
+    primary_type: Psychic,
+    secondary_type: None,
     base: (
         hp: 25,
         atk: 20,
@@ -15,6 +10,11 @@
         sp_atk: 105,
         sp_def: 55,
         speed: 90,
+    ),
+    data: (
+        species: "Psi",
+        height: 9,
+        weight: 195,
     ),
     training: (
         base_exp: 62,

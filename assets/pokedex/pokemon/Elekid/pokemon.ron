@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 239,
-        name: "Elekid",
-        primary_type: Electric,
-        secondary_type: None,
-        species: "Electric",
-        height: 6,
-        weight: 235,
-    ),
+    id: 239,
+    name: "Elekid",
+    primary_type: Electric,
+    secondary_type: None,
     base: (
         hp: 45,
         atk: 63,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 55,
         speed: 95,
+    ),
+    data: (
+        species: "Electric",
+        height: 6,
+        weight: 235,
     ),
     training: (
         base_exp: 72,

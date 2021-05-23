@@ -1,6 +1,6 @@
 fn main() {
 
-    // println!("cargo:rerun-if-changed=assets");
+    println!("cargo:rerun-if-changed=assets");
 
     font_builder::compile("assets/fonts", "build/data/fonts.bin");
     #[cfg(feature = "audio")]

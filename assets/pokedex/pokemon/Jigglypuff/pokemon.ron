@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 39,
-        name: "Jigglypuff",
-        primary_type: Normal,
-        secondary_type: Some(Fairy),
-        species: "Balloon",
-        height: 5,
-        weight: 55,
-    ),
+    id: 39,
+    name: "Jigglypuff",
+    primary_type: Normal,
+    secondary_type: Some(Fairy),
     base: (
         hp: 115,
         atk: 45,
@@ -15,6 +10,11 @@
         sp_atk: 45,
         sp_def: 25,
         speed: 20,
+    ),
+    data: (
+        species: "Balloon",
+        height: 5,
+        weight: 55,
     ),
     training: (
         base_exp: 95,

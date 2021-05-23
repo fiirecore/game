@@ -3,9 +3,8 @@
     name: "Clear Smog",
     category: Special,
     type: Poison,
-    power: Some(50),
     accuracy: None,
     pp: 15,
+    use_type: Damage(Power(50)),
     target: Opponent,
-    script: None,
 )

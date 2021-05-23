@@ -3,9 +3,8 @@
     name: "Thunder Wave",
     category: Status,
     type: Electric,
-    power: None,
     accuracy: Some(90),
     pp: 20,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

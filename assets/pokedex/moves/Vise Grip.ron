@@ -3,9 +3,8 @@
     name: "Vise Grip",
     category: Physical,
     type: Normal,
-    power: Some(55),
     accuracy: Some(100),
     pp: 30,
+    use_type: Damage(Power(55)),
     target: Opponent,
-    script: None,
 )

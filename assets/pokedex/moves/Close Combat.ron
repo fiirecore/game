@@ -3,9 +3,8 @@
     name: "Close Combat",
     category: Physical,
     type: Fighting,
-    power: Some(120),
     accuracy: Some(100),
     pp: 5,
+    use_type: Damage(Power(120)),
     target: Opponent,
-    script: None,
 )

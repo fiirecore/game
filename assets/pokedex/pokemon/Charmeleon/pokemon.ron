@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 5,
-        name: "Charmeleon",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Flame",
-        height: 11,
-        weight: 190,
-    ),
+    id: 5,
+    name: "Charmeleon",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 58,
         atk: 64,
@@ -15,6 +10,11 @@
         sp_atk: 80,
         sp_def: 65,
         speed: 80,
+    ),
+    data: (
+        species: "Flame",
+        height: 11,
+        weight: 190,
     ),
     training: (
         base_exp: 142,

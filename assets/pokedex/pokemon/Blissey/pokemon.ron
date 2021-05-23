@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 242,
-        name: "Blissey",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Happiness",
-        height: 15,
-        weight: 468,
-    ),
+    id: 242,
+    name: "Blissey",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 255,
         atk: 10,
@@ -15,6 +10,11 @@
         sp_atk: 75,
         sp_def: 135,
         speed: 55,
+    ),
+    data: (
+        species: "Happiness",
+        height: 15,
+        weight: 468,
     ),
     training: (
         base_exp: 608,

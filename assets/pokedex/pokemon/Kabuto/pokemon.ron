@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 140,
-        name: "Kabuto",
-        primary_type: Rock,
-        secondary_type: Some(Water),
-        species: "Shellfish",
-        height: 5,
-        weight: 115,
-    ),
+    id: 140,
+    name: "Kabuto",
+    primary_type: Rock,
+    secondary_type: Some(Water),
     base: (
         hp: 30,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 45,
         speed: 55,
+    ),
+    data: (
+        species: "Shellfish",
+        height: 5,
+        weight: 115,
     ),
     training: (
         base_exp: 71,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 210,
-        name: "Granbull",
-        primary_type: Fairy,
-        secondary_type: None,
-        species: "Fairy",
-        height: 14,
-        weight: 487,
-    ),
+    id: 210,
+    name: "Granbull",
+    primary_type: Fairy,
+    secondary_type: None,
     base: (
         hp: 90,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 60,
         speed: 45,
+    ),
+    data: (
+        species: "Fairy",
+        height: 14,
+        weight: 487,
     ),
     training: (
         base_exp: 158,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 21,
-        name: "Spearow",
-        primary_type: Normal,
-        secondary_type: Some(Flying),
-        species: "Tiny",
-        height: 3,
-        weight: 20,
-    ),
+    id: 21,
+    name: "Spearow",
+    primary_type: Normal,
+    secondary_type: Some(Flying),
     base: (
         hp: 40,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 31,
         sp_def: 31,
         speed: 70,
+    ),
+    data: (
+        species: "Tiny",
+        height: 3,
+        weight: 20,
     ),
     training: (
         base_exp: 52,

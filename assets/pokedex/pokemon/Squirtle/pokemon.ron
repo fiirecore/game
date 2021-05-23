@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 7,
-        name: "Squirtle",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Tiny",
-        height: 5,
-        weight: 90,
-    ),
+    id: 7,
+    name: "Squirtle",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 44,
         atk: 48,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 64,
         speed: 43,
+    ),
+    data: (
+        species: "Tiny",
+        height: 5,
+        weight: 90,
     ),
     training: (
         base_exp: 63,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 267,
-        name: "Beautifly",
-        primary_type: Bug,
-        secondary_type: Some(Flying),
-        species: "Butterfly",
-        height: 10,
-        weight: 284,
-    ),
+    id: 267,
+    name: "Beautifly",
+    primary_type: Bug,
+    secondary_type: Some(Flying),
     base: (
         hp: 60,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 100,
         sp_def: 50,
         speed: 65,
+    ),
+    data: (
+        species: "Butterfly",
+        height: 10,
+        weight: 284,
     ),
     training: (
         base_exp: 178,

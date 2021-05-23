@@ -3,9 +3,8 @@
     name: "Psystrike",
     category: Special,
     type: Psychic,
-    power: Some(100),
     accuracy: Some(100),
     pp: 10,
+    use_type: Damage(Power(100)),
     target: Opponent,
-    script: None,
 )

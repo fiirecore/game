@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 145,
-        name: "Zapdos",
-        primary_type: Electric,
-        secondary_type: Some(Flying),
-        species: "Electric",
-        height: 16,
-        weight: 526,
-    ),
+    id: 145,
+    name: "Zapdos",
+    primary_type: Electric,
+    secondary_type: Some(Flying),
     base: (
         hp: 90,
         atk: 90,
@@ -15,6 +10,11 @@
         sp_atk: 125,
         sp_def: 90,
         speed: 100,
+    ),
+    data: (
+        species: "Electric",
+        height: 16,
+        weight: 526,
     ),
     training: (
         base_exp: 261,

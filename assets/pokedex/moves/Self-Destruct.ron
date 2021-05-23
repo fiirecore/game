@@ -3,9 +3,8 @@
     name: "Self-Destruct",
     category: Physical,
     type: Normal,
-    power: Some(200),
     accuracy: Some(100),
     pp: 5,
+    use_type: Damage(Power(200)),
     target: Opponent,
-    script: None,
 )

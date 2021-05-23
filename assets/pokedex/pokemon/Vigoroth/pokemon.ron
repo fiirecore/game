@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 288,
-        name: "Vigoroth",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Wild",
-        height: 14,
-        weight: 465,
-    ),
+    id: 288,
+    name: "Vigoroth",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 80,
         atk: 80,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 55,
         speed: 90,
+    ),
+    data: (
+        species: "Wild",
+        height: 14,
+        weight: 465,
     ),
     training: (
         base_exp: 154,

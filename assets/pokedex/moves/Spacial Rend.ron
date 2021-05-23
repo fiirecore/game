@@ -3,9 +3,8 @@
     name: "Spacial Rend",
     category: Special,
     type: Dragon,
-    power: Some(100),
     accuracy: Some(95),
     pp: 5,
+    use_type: Damage(Power(100)),
     target: Opponent,
-    script: None,
 )

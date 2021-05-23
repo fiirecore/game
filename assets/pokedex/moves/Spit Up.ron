@@ -3,9 +3,8 @@
     name: "Spit Up",
     category: Special,
     type: Normal,
-    power: None,
     accuracy: Some(100),
     pp: 10,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

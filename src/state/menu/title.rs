@@ -45,7 +45,7 @@ impl MenuState for TitleState {
 	fn update(&mut self, delta: f32) {	
 		if pressed(Control::A) {
 			let seed = self.accumulator as u64 % 256;
-			crate::seed_randoms(seed);
+			game::init::seed_randoms(seed);
 			self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
 		}
 		self.accumulator += delta;

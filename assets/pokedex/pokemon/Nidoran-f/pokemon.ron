@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 29,
-        name: "Nidoran-f",
-        primary_type: Poison,
-        secondary_type: None,
-        species: "Poison",
-        height: 4,
-        weight: 70,
-    ),
+    id: 29,
+    name: "Nidoran-f",
+    primary_type: Poison,
+    secondary_type: None,
     base: (
         hp: 55,
         atk: 47,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 40,
         speed: 41,
+    ),
+    data: (
+        species: "Poison",
+        height: 4,
+        weight: 70,
     ),
     training: (
         base_exp: 55,

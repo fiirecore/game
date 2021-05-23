@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 307,
-        name: "Meditite",
-        primary_type: Fighting,
-        secondary_type: Some(Psychic),
-        species: "Meditate",
-        height: 6,
-        weight: 112,
-    ),
+    id: 307,
+    name: "Meditite",
+    primary_type: Fighting,
+    secondary_type: Some(Psychic),
     base: (
         hp: 30,
         atk: 40,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 55,
         speed: 60,
+    ),
+    data: (
+        species: "Meditate",
+        height: 6,
+        weight: 112,
     ),
     training: (
         base_exp: 56,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 76,
-        name: "Golem",
-        primary_type: Rock,
-        secondary_type: Some(Ground),
-        species: "Megaton",
-        height: 14,
-        weight: 3000,
-    ),
+    id: 76,
+    name: "Golem",
+    primary_type: Rock,
+    secondary_type: Some(Ground),
     base: (
         hp: 80,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 55,
         sp_def: 65,
         speed: 45,
+    ),
+    data: (
+        species: "Megaton",
+        height: 14,
+        weight: 3000,
     ),
     training: (
         base_exp: 223,

@@ -3,9 +3,8 @@
     name: "Absorb",
     category: Special,
     type: Grass,
-    power: Some(20),
     accuracy: Some(100),
     pp: 25,
+    use_type: Damage(Power(20)),
     target: Opponent,
-    script: None,
 )

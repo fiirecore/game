@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 use deps::{
 	hash::HashMap,
-	tinystr::TinyStr16,
+	str::TinyStr16,
+	StaticRef,
+	Identifiable,
 };
-use crate::{Ref, Identifiable};
 
 use super::pokemon::types::PokemonType;
 
@@ -11,14 +12,11 @@ pub type Movedex = HashMap<MoveId, Move>;
 
 pub static mut MOVEDEX: Option<Movedex> = None;
 
-#[deprecated(note = "use move::get")]
-pub fn movedex() -> &'static Movedex {
-	unsafe { MOVEDEX.as_ref().expect("Movedex was not initialized!") }
-}
-
 pub mod instance;
 
+pub mod result;
 pub mod target;
+
 pub mod script;
 pub mod persistent;
 
@@ -27,7 +25,7 @@ pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
 
-pub type MoveRef = Ref<Move>;
+pub type MoveRef = StaticRef<Move>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -40,14 +38,12 @@ pub struct Move {
 	#[serde(rename = "type")]
 	pub pokemon_type: PokemonType,
 
-	pub power: Option<Power>,
 	pub accuracy: Option<Accuracy>,
 	pub pp: PP,
 
+	pub use_type: result::MoveUseType,
 	#[serde(default = "target::move_target_opponent")]
 	pub target: target::MoveTarget,
-
-	pub script: Option<script::MoveScript>,
 	
 }
 

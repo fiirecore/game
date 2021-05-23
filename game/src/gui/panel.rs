@@ -3,7 +3,8 @@ use macroquad::prelude::Vec2;
 use macroquad::prelude::draw_rectangle;
 use macroquad::prelude::{Texture2D, draw_texture_ex, WHITE, DrawTextureParams};
 
-use crate::graphics::byte_texture;
+use crate::text::TextColor;
+use crate::graphics::{byte_texture, draw_text_left, draw_cursor};
 
 static mut PANEL: Option<Texture2D> = None;
 
@@ -70,12 +71,23 @@ impl Panel {
 
     }
 
-    pub fn render_text(&self, x: f32, y: f32, w: f32, text: &[&str], cursor: usize) {
-        self.render(x, y, w, 22.0 + (text.len() << 4) as f32);
+    pub fn render_text(&self, x: f32, y: f32, w: f32, text: &[&str], cursor: usize, from_bottom: bool, add_cancel: bool) {
+        let h = 22.0 + ((text.len() + if add_cancel { 1 } else { 0 }) << 4) as f32;
+        let y = if from_bottom {
+            y - h
+        } else {
+            y
+        };
+        self.render(x, y, w, h);
+        let tx = x + 15.0;
+        let ty = y + 11.0;
         for (index, text) in text.iter().enumerate() {
-            crate::graphics::draw_text_left(1, text, crate::text::TextColor::Black, x + 15.0, y + 11.0 + (index << 4) as f32);
+            draw_text_left(1, text, TextColor::Black, tx, ty + (index << 4) as f32);
         }
-        crate::graphics::draw_cursor(x + 8.0, y + 13.0 + (cursor << 4) as f32);
+        if add_cancel {
+            draw_text_left(1, "Cancel", TextColor::Black, tx, ty + (text.len() << 4) as f32);
+        }
+        draw_cursor(x + 8.0, y + 13.0 + (cursor << 4) as f32);
     }
 
     // pub fn render_text_with_columns(&self, x: f32, y: f32, w: f32, h: f32) {

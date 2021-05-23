@@ -3,9 +3,8 @@
     name: "V-create",
     category: Physical,
     type: Fire,
-    power: Some(180),
     accuracy: Some(95),
     pp: 5,
+    use_type: Damage(Power(180)),
     target: Opponent,
-    script: None,
 )

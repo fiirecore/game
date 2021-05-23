@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 220,
-        name: "Swinub",
-        primary_type: Ice,
-        secondary_type: Some(Ground),
-        species: "Pig",
-        height: 4,
-        weight: 65,
-    ),
+    id: 220,
+    name: "Swinub",
+    primary_type: Ice,
+    secondary_type: Some(Ground),
     base: (
         hp: 50,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 30,
         sp_def: 30,
         speed: 50,
+    ),
+    data: (
+        species: "Pig",
+        height: 4,
+        weight: 65,
     ),
     training: (
         base_exp: 50,

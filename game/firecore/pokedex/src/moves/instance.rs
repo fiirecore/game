@@ -83,7 +83,7 @@ impl MoveInstance {
 
     pub fn new(move_ref: MoveRef) -> Self {
         Self {
-            pp: move_ref.value().pp,
+            pp: move_ref.unwrap().pp,
             move_ref,
         }
     }

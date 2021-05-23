@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 344,
-        name: "Claydol",
-        primary_type: Ground,
-        secondary_type: Some(Psychic),
-        species: "Clay",
-        height: 15,
-        weight: 1080,
-    ),
+    id: 344,
+    name: "Claydol",
+    primary_type: Ground,
+    secondary_type: Some(Psychic),
     base: (
         hp: 60,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 120,
         speed: 75,
+    ),
+    data: (
+        species: "Clay",
+        height: 15,
+        weight: 1080,
     ),
     training: (
         base_exp: 175,

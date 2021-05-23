@@ -3,9 +3,8 @@
     name: "Roar of Time",
     category: Special,
     type: Dragon,
-    power: Some(150),
     accuracy: Some(90),
     pp: 5,
+    use_type: Damage(Power(150)),
     target: Opponent,
-    script: None,
 )

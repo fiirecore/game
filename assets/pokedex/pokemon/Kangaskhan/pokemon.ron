@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 115,
-        name: "Kangaskhan",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Parent",
-        height: 22,
-        weight: 800,
-    ),
+    id: 115,
+    name: "Kangaskhan",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 105,
         atk: 95,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 80,
         speed: 90,
+    ),
+    data: (
+        species: "Parent",
+        height: 22,
+        weight: 800,
     ),
     training: (
         base_exp: 172,

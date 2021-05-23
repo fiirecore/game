@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use firecore_dependencies::tinystr::TinyStr16;
+use deps::str::TinyStr16;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Location {

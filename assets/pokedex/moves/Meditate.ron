@@ -3,9 +3,8 @@
     name: "Meditate",
     category: Status,
     type: Psychic,
-    power: None,
     accuracy: None,
     pp: 40,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

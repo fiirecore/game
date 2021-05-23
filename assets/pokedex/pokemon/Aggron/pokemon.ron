@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 306,
-        name: "Aggron",
-        primary_type: Steel,
-        secondary_type: Some(Rock),
-        species: "Iron",
-        height: 21,
-        weight: 3600,
-    ),
+    id: 306,
+    name: "Aggron",
+    primary_type: Steel,
+    secondary_type: Some(Rock),
     base: (
         hp: 70,
         atk: 110,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 60,
         speed: 50,
+    ),
+    data: (
+        species: "Iron",
+        height: 21,
+        weight: 3600,
     ),
     training: (
         base_exp: 239,

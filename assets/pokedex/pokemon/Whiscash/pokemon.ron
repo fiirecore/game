@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 340,
-        name: "Whiscash",
-        primary_type: Water,
-        secondary_type: Some(Ground),
-        species: "Whiskers",
-        height: 9,
-        weight: 236,
-    ),
+    id: 340,
+    name: "Whiscash",
+    primary_type: Water,
+    secondary_type: Some(Ground),
     base: (
         hp: 110,
         atk: 78,
@@ -15,6 +10,11 @@
         sp_atk: 76,
         sp_def: 71,
         speed: 60,
+    ),
+    data: (
+        species: "Whiskers",
+        height: 9,
+        weight: 236,
     ),
     training: (
         base_exp: 164,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 214,
-        name: "Heracross",
-        primary_type: Bug,
-        secondary_type: Some(Fighting),
-        species: "Single",
-        height: 15,
-        weight: 540,
-    ),
+    id: 214,
+    name: "Heracross",
+    primary_type: Bug,
+    secondary_type: Some(Fighting),
     base: (
         hp: 80,
         atk: 125,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 95,
         speed: 85,
+    ),
+    data: (
+        species: "Single",
+        height: 15,
+        weight: 540,
     ),
     training: (
         base_exp: 175,

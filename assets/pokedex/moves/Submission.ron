@@ -3,9 +3,8 @@
     name: "Submission",
     category: Physical,
     type: Fighting,
-    power: Some(80),
     accuracy: Some(80),
     pp: 20,
+    use_type: Damage(Power(80)),
     target: Opponent,
-    script: None,
 )

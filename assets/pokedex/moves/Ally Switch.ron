@@ -3,9 +3,8 @@
     name: "Ally Switch",
     category: Status,
     type: Psychic,
-    power: None,
     accuracy: None,
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 221,
-        name: "Piloswine",
-        primary_type: Ice,
-        secondary_type: Some(Ground),
-        species: "Swine",
-        height: 11,
-        weight: 558,
-    ),
+    id: 221,
+    name: "Piloswine",
+    primary_type: Ice,
+    secondary_type: Some(Ground),
     base: (
         hp: 100,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 60,
         speed: 50,
+    ),
+    data: (
+        species: "Swine",
+        height: 11,
+        weight: 558,
     ),
     training: (
         base_exp: 158,

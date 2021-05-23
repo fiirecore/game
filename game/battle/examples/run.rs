@@ -2,7 +2,7 @@ extern crate firecore_game as game;
 
 use std::collections::BTreeMap;
 
-use game::{
+use crate::{
     util::{
         WIDTH,
         HEIGHT,
@@ -214,15 +214,15 @@ async fn main() {
         trainer: None,
     });
 
-    while !manager.is_finished() {
+    while !manager.finished() {
 
         clear_background(BLACK);
 
         let delta = if is_key_down(KeyCode::Space) { get_frame_time() * 8.0 } else { get_frame_time() };        
 
-        if party_gui.is_alive() {
+        if party_gui.alive() {
             party_gui.input();
-        } else if bag_gui.is_alive() {
+        } else if bag_gui.alive() {
             bag_gui.input(&mut party_gui);
         } else {
             manager.input(&mut party_gui, &mut bag_gui);

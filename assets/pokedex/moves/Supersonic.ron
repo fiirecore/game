@@ -3,9 +3,8 @@
     name: "Supersonic",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: Some(55),
     pp: 20,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 206,
-        name: "Dunsparce",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Land",
-        height: 15,
-        weight: 140,
-    ),
+    id: 206,
+    name: "Dunsparce",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 100,
         atk: 70,
@@ -15,6 +10,11 @@
         sp_atk: 65,
         sp_def: 65,
         speed: 45,
+    ),
+    data: (
+        species: "Land",
+        height: 15,
+        weight: 140,
     ),
     training: (
         base_exp: 145,

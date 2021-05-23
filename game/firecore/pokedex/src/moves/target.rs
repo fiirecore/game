@@ -1,28 +1,50 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
-pub enum MoveTarget {
-	// All,
-	// AllButSelf,
-	// OnlySelf,
-	// Players,
-	// Opponents,
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Deserialize, Serialize)]
+pub enum Team {
 	Player,
 	Opponent,
-	// Random(Box<Self>),
+}
+
+impl Team {
+
+    pub const fn other(&self) -> Self {
+        match self {
+            Self::Player => Self::Opponent,
+            Self::Opponent => Self::Player,
+        }
+    }
+
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+pub enum MoveTarget {
+
+	User,
+	// Team,
+	Opponent,
+	Opponents,
+	AllButUser,
+	// All,
+	// Singular(Team),
+	// Team(Team),
+	// TeamButSelf,
+	// ReachAll(u8),
 }
 
 pub const fn move_target_player() -> MoveTarget {
-	MoveTarget::Player
+	MoveTarget::User
 }
 
 pub const fn move_target_opponent() -> MoveTarget {
 	MoveTarget::Opponent
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum MoveTargetInstance {
-	User,
-	// Team(usize),
 	Opponent(usize),
+	Team(usize),
+	User,
+	AllButUser,
+	Opponents,
 }

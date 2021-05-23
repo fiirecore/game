@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 376,
-        name: "Metagross",
-        primary_type: Steel,
-        secondary_type: Some(Psychic),
-        species: "Iron",
-        height: 16,
-        weight: 5500,
-    ),
+    id: 376,
+    name: "Metagross",
+    primary_type: Steel,
+    secondary_type: Some(Psychic),
     base: (
         hp: 80,
         atk: 135,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 90,
         speed: 70,
+    ),
+    data: (
+        species: "Iron",
+        height: 16,
+        weight: 5500,
     ),
     training: (
         base_exp: 270,

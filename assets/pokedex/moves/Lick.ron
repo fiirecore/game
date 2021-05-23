@@ -3,9 +3,8 @@
     name: "Lick",
     category: Physical,
     type: Ghost,
-    power: Some(30),
     accuracy: Some(100),
     pp: 30,
+    use_type: Damage(Power(30)),
     target: Opponent,
-    script: None,
 )

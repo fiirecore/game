@@ -3,9 +3,8 @@
     name: "String Shot",
     category: Status,
     type: Bug,
-    power: None,
     accuracy: Some(95),
     pp: 40,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

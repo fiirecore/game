@@ -3,9 +3,8 @@
     name: "Defog",
     category: Status,
     type: Flying,
-    power: None,
     accuracy: None,
     pp: 15,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

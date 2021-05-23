@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 116,
-        name: "Horsea",
-        primary_type: Water,
-        secondary_type: None,
-        species: "Dragon",
-        height: 4,
-        weight: 80,
-    ),
+    id: 116,
+    name: "Horsea",
+    primary_type: Water,
+    secondary_type: None,
     base: (
         hp: 30,
         atk: 40,
@@ -15,6 +10,11 @@
         sp_atk: 70,
         sp_def: 25,
         speed: 60,
+    ),
+    data: (
+        species: "Dragon",
+        height: 4,
+        weight: 80,
     ),
     training: (
         base_exp: 59,

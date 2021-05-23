@@ -20,12 +20,12 @@ impl Timer {
     }
 
     pub fn update(&mut self, delta: f32) {
-        if self.is_alive() {
+        if self.alive {
             self.counter += delta;
         }        
     }
     
-    pub fn is_finished(&self) -> bool {
+    pub fn finished(&self) -> bool {
         self.counter >= self.length
     }
 
@@ -53,7 +53,7 @@ impl Entity for Timer {
         self.alive = false;
     }
     
-    fn is_alive(&self) -> bool {
+    fn alive(&self) -> bool {
         self.alive
     }
 

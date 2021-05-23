@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 330,
-        name: "Flygon",
-        primary_type: Ground,
-        secondary_type: Some(Dragon),
-        species: "Mystic",
-        height: 20,
-        weight: 820,
-    ),
+    id: 330,
+    name: "Flygon",
+    primary_type: Ground,
+    secondary_type: Some(Dragon),
     base: (
         hp: 80,
         atk: 100,
@@ -15,6 +10,11 @@
         sp_atk: 80,
         sp_def: 80,
         speed: 100,
+    ),
+    data: (
+        species: "Mystic",
+        height: 20,
+        weight: 820,
     ),
     training: (
         base_exp: 234,

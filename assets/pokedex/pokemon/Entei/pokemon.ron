@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 244,
-        name: "Entei",
-        primary_type: Fire,
-        secondary_type: None,
-        species: "Volcano",
-        height: 21,
-        weight: 1980,
-    ),
+    id: 244,
+    name: "Entei",
+    primary_type: Fire,
+    secondary_type: None,
     base: (
         hp: 115,
         atk: 115,
@@ -15,6 +10,11 @@
         sp_atk: 90,
         sp_def: 75,
         speed: 100,
+    ),
+    data: (
+        species: "Volcano",
+        height: 21,
+        weight: 1980,
     ),
     training: (
         base_exp: 261,

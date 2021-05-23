@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 269,
-        name: "Dustox",
-        primary_type: Bug,
-        secondary_type: Some(Poison),
-        species: "Poison",
-        height: 12,
-        weight: 316,
-    ),
+    id: 269,
+    name: "Dustox",
+    primary_type: Bug,
+    secondary_type: Some(Poison),
     base: (
         hp: 60,
         atk: 50,
@@ -15,6 +10,11 @@
         sp_atk: 50,
         sp_def: 90,
         speed: 65,
+    ),
+    data: (
+        species: "Poison",
+        height: 12,
+        weight: 316,
     ),
     training: (
         base_exp: 173,

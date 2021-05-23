@@ -3,9 +3,8 @@
     name: "Lock-On",
     category: Status,
     type: Normal,
-    power: None,
     accuracy: None,
     pp: 5,
+    use_type: Todo,
     target: Opponent,
-    script: None,
 )

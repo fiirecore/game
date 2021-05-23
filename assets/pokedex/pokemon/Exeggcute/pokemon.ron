@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 102,
-        name: "Exeggcute",
-        primary_type: Grass,
-        secondary_type: Some(Psychic),
-        species: "Egg",
-        height: 4,
-        weight: 25,
-    ),
+    id: 102,
+    name: "Exeggcute",
+    primary_type: Grass,
+    secondary_type: Some(Psychic),
     base: (
         hp: 60,
         atk: 40,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 45,
         speed: 40,
+    ),
+    data: (
+        species: "Egg",
+        height: 4,
+        weight: 25,
     ),
     training: (
         base_exp: 65,

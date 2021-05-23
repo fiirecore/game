@@ -1,3 +1,5 @@
+extern crate firecore_dependencies as deps;
+
 mod timer;
 pub mod positions;
 mod bbox;
@@ -25,7 +27,7 @@ pub trait Entity {
 	
 	fn despawn(&mut self);
 	
-	fn is_alive(&self) -> bool;
+	fn alive(&self) -> bool;
 	
 }
 
@@ -37,6 +39,6 @@ pub trait Reset {
 
 pub trait Completable: Reset {
 
-    fn is_finished(&self) -> bool;
+    fn finished(&self) -> bool;
 
 }

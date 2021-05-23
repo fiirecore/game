@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 319,
-        name: "Sharpedo",
-        primary_type: Water,
-        secondary_type: Some(Dark),
-        species: "Brutal",
-        height: 18,
-        weight: 888,
-    ),
+    id: 319,
+    name: "Sharpedo",
+    primary_type: Water,
+    secondary_type: Some(Dark),
     base: (
         hp: 70,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 40,
         speed: 95,
+    ),
+    data: (
+        species: "Brutal",
+        height: 18,
+        weight: 888,
     ),
     training: (
         base_exp: 161,

@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 297,
-        name: "Hariyama",
-        primary_type: Fighting,
-        secondary_type: None,
-        species: "Arm",
-        height: 23,
-        weight: 2538,
-    ),
+    id: 297,
+    name: "Hariyama",
+    primary_type: Fighting,
+    secondary_type: None,
     base: (
         hp: 144,
         atk: 120,
@@ -15,6 +10,11 @@
         sp_atk: 40,
         sp_def: 60,
         speed: 50,
+    ),
+    data: (
+        species: "Arm",
+        height: 23,
+        weight: 2538,
     ),
     training: (
         base_exp: 166,

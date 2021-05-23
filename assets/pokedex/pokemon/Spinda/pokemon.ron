@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 327,
-        name: "Spinda",
-        primary_type: Normal,
-        secondary_type: None,
-        species: "Spot",
-        height: 11,
-        weight: 50,
-    ),
+    id: 327,
+    name: "Spinda",
+    primary_type: Normal,
+    secondary_type: None,
     base: (
         hp: 60,
         atk: 60,
@@ -15,6 +10,11 @@
         sp_atk: 60,
         sp_def: 60,
         speed: 60,
+    ),
+    data: (
+        species: "Spot",
+        height: 11,
+        weight: 50,
     ),
     training: (
         base_exp: 126,

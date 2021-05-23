@@ -1,13 +1,8 @@
 (
-    data: (
-        id: 178,
-        name: "Xatu",
-        primary_type: Psychic,
-        secondary_type: Some(Flying),
-        species: "Mystic",
-        height: 15,
-        weight: 150,
-    ),
+    id: 178,
+    name: "Xatu",
+    primary_type: Psychic,
+    secondary_type: Some(Flying),
     base: (
         hp: 65,
         atk: 75,
@@ -15,6 +10,11 @@
         sp_atk: 95,
         sp_def: 70,
         speed: 95,
+    ),
+    data: (
+        species: "Mystic",
+        height: 15,
+        weight: 150,
     ),
     training: (
         base_exp: 165,
