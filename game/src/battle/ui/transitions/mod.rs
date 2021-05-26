@@ -1,6 +1,7 @@
 use crate::{
     util::Completable,
     gui::DynamicText,
+    tetra::Context,
 };
 
 use crate::battle::Battle;
@@ -15,9 +16,9 @@ pub mod closers;
 
 pub(crate) trait BattleTransition: Completable {
 
-    fn update(&mut self, delta: f32);
+    fn update(&mut self, ctx: &mut Context, delta: f32);
 
-    fn render(&self);
+    fn draw(&self, ctx: &mut Context);
 
     // fn render_below_player(&self);
 
@@ -29,9 +30,9 @@ pub(crate) trait BattleOpener: Completable  {
     
     fn update(&mut self, delta: f32);
 
-    fn render_below_panel(&self, battle: &Battle);
+    fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle);
 
-    fn render(&self);
+    fn draw(&self, ctx: &mut Context);
 
     fn offset(&self) -> f32;
 
@@ -41,9 +42,9 @@ pub(crate) trait BattleIntroduction: Completable {
 
     fn spawn(&mut self, battle: &Battle, text: &mut DynamicText);
 
-    fn update(&mut self, delta: f32, battle: &mut Battle, text: &mut DynamicText);
+    fn update(&mut self, ctx: &mut Context, delta: f32, battle: &mut Battle, text: &mut DynamicText);
 
-    fn render(&self, battle: &Battle);
+    fn draw(&self, ctx: &mut Context, battle: &Battle);
 
 }
 
@@ -51,11 +52,11 @@ pub(crate) trait BattleCloser: Completable {
 
     fn spawn(&mut self, battle: &Battle, text: &mut DynamicText);
     
-    fn update(&mut self, delta: f32, text: &mut DynamicText);
+    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut DynamicText);
 
-    fn render(&self);
+    fn draw(&self, ctx: &mut Context);
 
-    fn render_battle(&self);
+    fn draw_battle(&self, ctx: &mut Context);
 
     fn world_active(&self) -> bool;
 

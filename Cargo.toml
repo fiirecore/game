@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.4.0-2021-05-22"
+version = "0.4.0-2021-05-25"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -20,55 +20,49 @@ panic = "abort"
 codegen-units = 1
 lto = true
 panic = "abort"
-opt-level = "z"     # Optimize for size
+opt-level = 3     # z = Optimize for size
 
 [features]
 default = ["audio"]
 audio = ["firecore-game/audio", "audio-builder"]
+static-link = ["firecore-game/static-link"]
 
 [dependencies]
 
-firecore-game = { path = "./game/", default-features = false, features = ["serialization", "world", "battle"] }
+firecore-game = { path = "game/", default-features = false, features = ["ser", "world", "battle"] }
 
 ### Other
 
-getopts = "0.2"
+simple_logger = "1.11"
+
+pico-args = "0.4"
 
 ### Build dependencies
 
 [build-dependencies]
 
-font-builder = { path = "game/firecore/text/builder" }
-
-world-builder = { path = "game/world/builder" }
-
 dex-builder = { path = "game/firecore/pokedex/builder" }
-
+world-builder = { path = "game/world/builder" }
+font-builder = { path = "game/firecore/text/builder" }
 audio-builder = { path = "game/firecore/audio/builder", optional = true }
-
 embed-resource = "1.6"
 
 [workspace]
 members = [
     "game",
-    # "game/world",
     "game/world/lib",
     "game/world/builder",
-    # "game/battle",
     "game/firecore/deps",
     "game/firecore/util",
     "game/firecore/pokedex",
     "game/firecore/pokedex/game",
     "game/firecore/pokedex/builder",
-    "game/firecore/input",
     "game/firecore/text",
     "game/firecore/text/font",
     "game/firecore/text/builder",
     "game/firecore/storage",
-    "game/firecore/storage/configuration",
     "game/firecore/storage/player",
     "game/firecore/storage/game",
-    "game/firecore/audio",
     "game/firecore/audio/lib",
     "game/firecore/audio/builder",
 ]

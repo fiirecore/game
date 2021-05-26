@@ -13,7 +13,7 @@ gen = []
 ### Pokemon specifications
 
 firecore-pokedex-game = { path = "../game" }
-firecore-dependencies = { path = "../../deps", features = ["serialization"] }
+firecore-dependencies = { path = "../../deps", features = ["ser"] }
 
 ### Serialization
 

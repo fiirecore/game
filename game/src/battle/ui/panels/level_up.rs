@@ -56,7 +56,7 @@ impl LevelUpMovePanel {
         if !self.moves_active {
             if self.text.alive() {
                 self.text.input();
-                self.text.update(delta, #[cfg(debug_assertions)] "update");
+                self.text.update(delta);
                 if self.text.finished() {
                     self.moves_active = true;
                     self.text.despawn();
@@ -91,7 +91,7 @@ impl LevelUpMovePanel {
     pub fn render(&self) {
         if self.alive {
             if !self.moves_active {
-                self.text.render(#[cfg(debug_assertions)] "render")
+                self.text.render()
             } else {
                 self.move_panel.render()
             }

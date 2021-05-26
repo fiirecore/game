@@ -1,8 +1,18 @@
+use firecore_dependencies::tetra::graphics::DrawParams;
+use firecore_dependencies::tetra::math::Vec2;
 use firecore_dependencies::{
     hash::HashMap,
+    tetra::{
+        Result,
+        Context,
+        graphics::{
+            Texture,
+            ImageData,
+            Rectangle,
+            Color,
+        },
+    },
 };
-
-use macroquad::prelude::{Color, color_u8, Image, Texture2D, draw_texture, WHITE, Rect, FilterMode::Nearest};
 
 use firecore_font::{SerializedFonts, CustomChar, message::TextColor};
 
@@ -13,55 +23,47 @@ pub static mut TEXT_RENDERER: Option<TextRenderer> = None;
 pub struct TextRenderer {
 
     pub fonts: HashMap<FontId, Font>,
-    pub button: Texture2D,
-    pub cursor: Texture2D,
+    pub button: Texture,
+    pub cursor: Texture,
 
 }
 
 impl TextRenderer {
 
-    pub fn new() -> TextRenderer {
-        TextRenderer {
+    pub fn new(ctx: &mut Context) -> Result<TextRenderer> {
+        Ok(TextRenderer {
             fonts: HashMap::new(),
-            button: {
-                let texture = Texture2D::from_file_with_format(include_bytes!("../assets/button.png"), None);
-                texture.set_filter(Nearest);
-                texture
-            },
-            cursor: {
-                let texture = Texture2D::from_file_with_format(include_bytes!("../assets/cursor.png"), None);
-                texture.set_filter(Nearest);
-                texture
-            },
+            button: Texture::from_file_data(ctx, include_bytes!("../assets/button.png"))?,
+            cursor: Texture::from_file_data(ctx, include_bytes!("../assets/cursor.png"))?,
+        })
+    }
+
+    pub fn draw_text_left(&self, ctx: &mut Context, font: &FontId, text: &str, color: Color, x: f32, y: f32) {
+        if let Some(font) = self.fonts.get(font) {
+            font.draw_text_left(ctx, text, x, y, color);
         }
     }
 
-    pub fn render_text_from_left(&self, font_id: u8, text: &str, color: Color, x: f32, y: f32) {
-        if let Some(font) = self.fonts.get(&font_id) {
-            font.render_text_from_left(text, x, y, color);
+    pub fn draw_text_right(&self, ctx: &mut Context, font: &FontId, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
+        if let Some(font) = self.fonts.get(font) {
+            font.draw_text_right(ctx, text, x, y, color);
         }
     }
 
-    pub fn render_text_from_right(&self, font_id: u8, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
-        if let Some(font) = self.fonts.get(&font_id) {
-            font.render_text_from_right(text, x, y, color);
+    pub fn draw_text_center(&self, ctx: &mut Context, font: &FontId, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
+        if let Some(font) = self.fonts.get(font) {
+            font.draw_text_center(ctx, text, x, y, color);
         }
     }
 
-    pub fn render_text_from_center(&self, font_id: u8, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
-        if let Some(font) = self.fonts.get(&font_id) {
-            font.render_text_from_center(text, x, y, color);
+    pub fn draw_button(&self, ctx: &mut Context, font: &FontId, text: &str, x: f32, y: f32) {
+        if let Some(font) = self.fonts.get(font) {
+            self.button.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x + font.text_pixel_length(text) as f32, y + 2.0)));
         }
     }
 
-    pub fn render_button(&self, text: &str, font_id: u8, x: f32, y: f32) {
-        if let Some(font) = self.fonts.get(&font_id) {
-            draw_texture(self.button, x + font.text_pixel_length(text) as f32, y + 2.0, WHITE);
-        }
-    }
-
-    pub fn render_cursor(&self, x: f32, y: f32) {
-        draw_texture(self.cursor, x, y, WHITE);
+    pub fn draw_cursor(&self, ctx: &mut Context, x: f32, y: f32) {
+        self.cursor.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x, y)));
     }
 
 }
@@ -71,46 +73,46 @@ pub struct Font {
     pub width: u8,
     pub height: u8,
 
-    pub chars: HashMap<char, Texture2D>,
+    pub chars: HashMap<char, Texture>,
 
 }
 
 impl Font {
 
-    pub fn render_text_from_left(&self, text: &str, x: f32, y: f32, color: Color) {
-        let mut len: u32 = 0;
+    pub fn draw_text_left(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: Color) {
+        let mut len = 0;
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                draw_texture(*texture, x + len as f32, y, color);
-                texture.width() as u32
+                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x + len as f32, y)).color(color));
+                texture.width()
             } else {
-                self.width as u32
+                self.width as _
             };       
         }
     }
 
-    pub fn render_text_from_right(&self, text: &str, x: f32, y: f32, color: Color) {
-        let mut len = 0.0;
+    pub fn draw_text_right(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: Color) {
+        let mut len = 0;
         let x = x - self.text_pixel_length(text);
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                draw_texture(*texture, x + len, y, color);
+                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x + len as f32, y)).color(color));
                 texture.width()
             } else {
-                self.width as f32
+                self.width as _
             };
         }
     }
 
-    pub fn render_text_from_center(&self, text: &str, x: f32, y: f32, color: Color) {
-        let mut len = 0.0;
+    pub fn draw_text_center(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: Color) {
+        let mut len = 0;
         let x_offset = self.text_pixel_length(text) / 2.0;
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                draw_texture(*texture, x - x_offset + len, y, color);
+                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x - x_offset + len as f32, y)).color(color));
                 texture.width()
             } else {
-                self.width as f32
+                self.width as _
             };
         }
     }
@@ -118,7 +120,7 @@ impl Font {
     pub fn text_pixel_length(&self, text: &str) -> f32 {
         text.chars().map(|character| {
             match self.chars.get(&character) {
-                Some(texture) => texture.width(),
+                Some(texture) => texture.width() as f32,
                 None => self.width as f32,
             }
         }).sum()
@@ -136,20 +138,22 @@ impl IntoMQColor for TextColor {
     fn into_color(self) -> Color {
         match self {
             TextColor::White => WHITE_COLOR,
-            TextColor::Gray => macroquad::prelude::GRAY,
+            TextColor::Gray => GRAY,
             TextColor::Black => BLACK_COLOR,
-            TextColor::Red => macroquad::prelude::RED,
+            TextColor::Red => RED,
             TextColor::Blue => BLUE_COLOR,
         }
     }
 }
 
-const WHITE_COLOR: Color = color_u8!(240, 240, 240, 255);
-const BLACK_COLOR: Color = color_u8!(20, 20, 20, 255);
-const BLUE_COLOR: Color = color_u8!(48, 80, 200, 255);
+const GRAY: Color = Color::rgb(0.51, 0.51, 0.51);
+const RED: Color = Color::rgb(0.90, 0.16, 0.22);
+const WHITE_COLOR: Color = Color::rgb(240.0 / 255.0, 240.0 / 255.0, 240.0 / 255.0);
+const BLACK_COLOR: Color = Color::rgb(20.0 / 255.0, 20.0 / 255.0, 20.0 / 255.0);
+const BLUE_COLOR: Color = Color::rgb(48.0 / 255.0, 80.0 / 255.0, 200.0 / 255.0);
 
-pub fn init(font_sheets: SerializedFonts) {
-	let mut text_renderer = TextRenderer::new();
+pub fn init(ctx: &mut Context, font_sheets: SerializedFonts) -> Result {
+	let mut text_renderer = TextRenderer::new(ctx)?;
 
     for font_sheet in font_sheets.fonts {
         text_renderer.fonts.insert(
@@ -158,57 +162,52 @@ pub fn init(font_sheets: SerializedFonts) {
                 width: font_sheet.data.width,
                 height: font_sheet.data.height,
                 chars: iterate_fontsheet(
+                    ctx,
                     font_sheet.data.chars, 
                     font_sheet.data.width, 
                     font_sheet.data.height, 
                     font_sheet.data.custom, 
-                    Image::from_file_with_format(&font_sheet.image, None)
-                ),
+                    ImageData::from_file_data(&font_sheet.image)?
+                )?,
             }
         );
     }
 
 	unsafe { TEXT_RENDERER = Some(text_renderer); }
+
+    Ok(())
 }
 
-fn iterate_fontsheet(chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChar>, sheet: Image) -> HashMap<char, Texture2D> {
+fn iterate_fontsheet(ctx: &mut Context, chars: String, font_width: u8, font_height: u8, custom: Vec<CustomChar>, sheet: ImageData) -> Result<HashMap<char, Texture>> {
 
     let mut customchars: HashMap<char, (u8, Option<u8>)> = custom.into_iter().map(|cchar| (cchar.id, (cchar.width, cchar.height))).collect();
 
     let chars: Vec<char> = chars.chars().collect();
-    let sheet_width = sheet.width() as f32;
-    let sheet_height = sheet.height() as f32;// - font_height as u32;
+    let sheet_width = sheet.width() as _;
+    let sheet_height = sheet.height() as _;// - font_height as u32;
 
     let mut charmap = HashMap::with_capacity(chars.len());
 
     let mut counter: usize = 0;
-    let mut x: f32 = 0.0;
-    let mut y: f32 = 0.0;
+    let mut x = 0;
+    let mut y = 0;
 
     'yloop: while y < sheet_height {
         while x < sheet_width {
-            if let Some(cchar) = customchars.remove(&chars[counter]) {
-                charmap.insert(chars[counter], {
-                    let texture = Texture2D::from_image(&sheet.sub_image(Rect::new(x, y, cchar.0 as f32, cchar.1.unwrap_or(font_height) as f32)));
-                    texture.set_filter(Nearest);
-	                texture
-                });
+            charmap.insert(chars[counter], if let Some(cchar) = customchars.remove(&chars[counter]) {
+                Texture::from_image_data(ctx, &sheet.region(Rectangle::new(x, y, cchar.0 as _, cchar.1.unwrap_or(font_height) as _)))
             } else {
-                charmap.insert(chars[counter], {
-                    let texture = Texture2D::from_image(&sheet.sub_image(Rect::new(x, y, font_width as f32, font_height as f32)));
-                    texture.set_filter(Nearest);
-	                texture
-                });
-            }
-            x += font_width as f32;
+                Texture::from_image_data(ctx, &sheet.region(Rectangle::new(x, y, font_width as _, font_height as _)))
+            }?);
+            x += font_width as i32;
             counter+=1;
             if counter >= chars.len() {
                 break 'yloop;
             }
         }
-        x = 0.0;
-        y += font_height as f32;
+        x = 0;
+        y += font_height as i32;
     }
 
-    charmap
+    Ok(charmap)
 }

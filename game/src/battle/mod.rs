@@ -40,7 +40,8 @@ use crate::{
 		item::ItemUseType,
 	},
 	storage::player::PlayerSave,
-	macroquad::prelude::{Vec2, WHITE, info, warn},
+	tetra::Context,
+	log::{info, warn},
 };
 
 use crate::battle::{
@@ -69,6 +70,8 @@ pub mod state;
 pub mod manager;
 
 pub mod pokemon;
+pub mod player;
+
 pub mod ui;
 
 pub static BATTLE_RANDOM: Random = Random::new();
@@ -107,7 +110,7 @@ impl Default for BattleType {
 
 impl Battle {
 	
-	pub fn new(player: MoveableParty, entry: BattleEntry) -> Option<Self> {		
+	pub fn new(ctx: &mut Context, player: MoveableParty, entry: BattleEntry) -> Option<Self> {		
 		if !(
 			player.is_empty() || 
 			entry.party.is_empty() ||
@@ -121,8 +124,8 @@ impl Battle {
 						trainer: entry.trainer,
 						winner: None,
 					},
-					player: BattleParty::new(player, entry.size, PokemonTexture::Back, BattleGuiPosition::Bottom),
-					opponent: BattleParty::new(entry.party.into_iter().map(|instance| Some(BorrowedPokemon::Owned(instance))).collect(), entry.size, PokemonTexture::Front, BattleGuiPosition::Top),
+					player: BattleParty::new(ctx, player, entry.size, PokemonTexture::Back, BattleGuiPosition::Bottom),
+					opponent: BattleParty::new(ctx, entry.party.into_iter().map(|instance| Some(BorrowedPokemon::Owned(instance))).collect(), entry.size, PokemonTexture::Front, BattleGuiPosition::Top),
 					state: BattleState::default(),
 					ai: BattleAi::Random,
 				}
@@ -138,7 +141,7 @@ impl Battle {
 	}
 
 	// input happens here too!
-	pub fn update(&mut self, delta: f32, engine: &mut Engine, gui: &mut BattleGui, party_gui: &mut PartyGui, bag: &mut BagGui) {
+	pub fn update(&mut self, ctx: &Context, delta: f32, engine: &mut Engine, gui: &mut BattleGui, party_gui: &mut PartyGui, bag: &mut BagGui) {
 
 		gui.bounce.update(delta);
 
@@ -149,7 +152,7 @@ impl Battle {
 					gui.panel.run(&mut None, pokemon, &self.opponent.active);
 				}
 				self.state = BattleState::SELECTING_START;
-				self.update(delta, engine, gui, party_gui, bag);
+				self.update(ctx, delta, engine, gui, party_gui, bag);
 			}
 
 			// Select pokemon moves / items / party switches
@@ -167,7 +170,7 @@ impl Battle {
 									// Checks if a move is queued from an action done in the GUI
 	
 									if bag.alive {
-										bag.input();
+										bag.input(ctx);
 										if let Some(item) = bag.take_selected_despawn() {
 											let target = match &item.unwrap().use_type {
 												ItemUseType::Pokeball => ActivePokemonIndex { team: Team::Opponent, active: BATTLE_RANDOM.gen_range(0, self.opponent.active.len()) },
@@ -178,14 +181,14 @@ impl Battle {
 											active.queued_move = Some(BattleMove::UseItem(item, target));
 										}
 									} else if party_gui.alive {
-										party_gui.input();
+										party_gui.input(ctx);
 										party_gui.update(delta);
 										if let Some(selected) = party_gui.selected.take() {
 											party_gui.despawn();
 											active.queued_move = Some(BattleMove::Switch(selected));
 										}
 									} else {
-										if let Some(panels) = gui.panel.input(pokemon) {
+										if let Some(panels) = gui.panel.input(ctx, pokemon) {
 											match panels {
 												ui::panels::BattlePanels::Main => {
 													match gui.panel.battle.cursor {
@@ -491,7 +494,7 @@ impl Battle {
 												}
 											}
 											queue.current = Some(BattleActionInstance { pokemon: instance.pokemon, action: instance.action });
-											self.update(delta, engine, gui, party_gui, bag);
+											self.update(ctx, delta, engine, gui, party_gui, bag);
 										}
 									},
 									None => {
@@ -557,7 +560,7 @@ impl Battle {
 											};
 
 											if !gui.text.finished() {
-												gui.text.update(delta);
+												gui.text.update(ctx, delta);
 											} else if targets.is_empty() {
 												queue.current = None;
 											}
@@ -571,7 +574,7 @@ impl Battle {
 										}
 										BattleMove::UseItem(..) => {
 											if !gui.text.finished() {
-												gui.text.update(delta)
+												gui.text.update(ctx, delta)
 											} else if user.active[instance.pokemon.active].status.health_moving() {
 												user.active[instance.pokemon.active].status.update_hp(delta);
 											} else {
@@ -583,7 +586,7 @@ impl Battle {
 												queue.current = None;
 											} else {
 
-												gui.text.update(delta);
+												gui.text.update(ctx, delta);
 
 												if gui.text.current() == 1 && user.pokemon[*new].is_some() {
 													user.replace(instance.pokemon.active, *new);
@@ -601,13 +604,13 @@ impl Battle {
 										if user.active[instance.pokemon.active].renderer.faint.fainting() {
 											user.active[instance.pokemon.active].renderer.faint.update(delta);
 										} else if !gui.text.finished() {
-											gui.text.update(delta);
+											gui.text.update(ctx, delta);
 										} else {
 											match instance.pokemon.team {
 												Team::Player => {
 													match party_gui.alive {
 														true => {
-															party_gui.input();
+															party_gui.input(ctx);
 															party_gui.update(delta);
 															if let Some(selected) = party_gui.selected.take() {
 																if self.player.pokemon[selected].as_ref().map(|instance| instance.value().current_hp != 0).unwrap_or_default() {
@@ -649,7 +652,7 @@ impl Battle {
 									BattleAction::GainExp(..) => {
 										let user = &mut user.active[instance.pokemon.active];
 										if !gui.text.finished() || user.status.exp_moving() {
-											gui.text.update(delta);
+											gui.text.update(ctx, delta);
 											if gui.text.current > 0 || gui.text.can_continue {
 												user.status.update_exp(delta, user.pokemon.as_ref().unwrap());
 											}
@@ -657,10 +660,10 @@ impl Battle {
 											queue.current = None;
 										}
 									},
-									BattleAction::LevelUp(..) => text_update(delta, gui, queue),
+									BattleAction::LevelUp(..) => text_update(ctx, delta, gui, queue),
             						BattleAction::Catch(target) => {
 										if !gui.text.finished() {
-											gui.text.update(delta);
+											gui.text.update(ctx, delta);
 										} else {
 											let active = &mut match target.team {
 												Team::Player => &mut self.player,
@@ -714,34 +717,35 @@ impl Battle {
 		}
 	}
 	
-	pub fn render(&self, gui: &BattleGui) {
-		gui.background.render(0.0);
+	pub fn render(&self, ctx: &mut Context, gui: &BattleGui) {
+		use crate::{graphics::ZERO, tetra::{math::Vec2, graphics::Color}};
+		gui.background.draw(ctx, 0.0);
 		for active in self.opponent.active.iter() {
-			active.renderer.render(Vec2::ZERO, WHITE);
-			active.status.render(0.0, 0.0);
+			active.renderer.draw(ctx, ZERO, Color::WHITE);
+			active.status.draw(ctx, 0.0, 0.0);
 		}
 		match &self.state {
 			BattleState::Begin | BattleState::End => (),
 		    BattleState::Selecting(index) => {
 				for (current, active) in self.player.active.iter().enumerate() {
 					if current.eq(index) {
-						active.renderer.render(Vec2::new(0.0, gui.bounce.offset), WHITE);
-						active.status.render(0.0, -gui.bounce.offset);
+						active.renderer.draw(ctx, Vec2::new(0.0, gui.bounce.offset), Color::WHITE);
+						active.status.draw(ctx, 0.0, -gui.bounce.offset);
 					} else {
-						active.renderer.render(Vec2::ZERO, WHITE);
-						active.status.render(0.0, 0.0);
+						active.renderer.draw(ctx, ZERO, Color::WHITE);
+						active.status.draw(ctx, 0.0, 0.0);
 					}
 				}
-				gui.render_panel();
-				gui.panel.render();
+				gui.draw_panel(ctx);
+				gui.panel.draw(ctx);
 			},
 			BattleState::Moving( .. ) => {
 				for active in self.player.active.iter() {
-					active.renderer.render(Vec2::ZERO, WHITE);
-					active.status.render(0.0, 0.0);
+					active.renderer.draw(ctx, ZERO, Color::WHITE);
+					active.status.draw(ctx, 0.0, 0.0);
 				}
-				gui.render_panel();
-				gui.text.render();
+				gui.draw_panel(ctx);
+				gui.text.draw(ctx);
 			}
 		}
 	}
@@ -804,9 +808,9 @@ impl Battle {
 	
 }
 
-fn text_update(delta: f32, gui: &mut BattleGui, queue: &mut MoveQueue) {
+fn text_update(ctx: &Context, delta: f32, gui: &mut BattleGui, queue: &mut MoveQueue) {
 	if !gui.text.finished() {
-		gui.text.update(delta);
+		gui.text.update(ctx, delta);
 	} else {
 		queue.current = None;
 	}

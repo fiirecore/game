@@ -8,7 +8,7 @@ use pokedex::{
 
 use storage::data_mut;
 
-use input::{pressed, Control};
+use crate::input::{pressed, Control};
 
 use crate::text::TextColor;
 
@@ -16,19 +16,18 @@ use crate::gui::Panel;
 
 use crate::graphics::{
     byte_texture,
-    draw,
     draw_o,
     draw_text_left,
     draw_text_right,
     draw_cursor,
 };
 
-use macroquad::prelude::Texture2D;
+use deps::tetra::{Context, graphics::Texture};
 
-static mut BAG_BACKGROUND: Option<Texture2D> = None;
+static mut BAG_BACKGROUND: Option<Texture> = None;
 
-fn bag_background() -> Texture2D {
-    unsafe { *BAG_BACKGROUND.get_or_insert(byte_texture(include_bytes!("../../../assets/gui/bag/items.png"))) }
+fn bag_background(ctx: &mut Context) -> &Texture {
+    unsafe { BAG_BACKGROUND.get_or_insert(byte_texture(ctx, include_bytes!("../../../assets/gui/bag/items.png"))) }
 }
 
 // const WORLD_OPTIONS: &[&'static str] = &[
@@ -46,7 +45,7 @@ const BATTLE_OPTIONS: TextOption = &[
 pub struct BagGui {
 
     pub alive: bool,
-    background: Texture2D,
+    background: Texture,
     cursor: usize,
 
     selecting: bool,
@@ -62,13 +61,13 @@ pub struct BagGui {
 
 impl BagGui {
 
-    pub fn new() -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         Self {
             alive: false,
-            background: bag_background(),
+            background: bag_background(ctx).clone(),
             cursor: 0,
             selecting: false,
-            select: Panel::new(),
+            select: Panel::new(ctx),
             select_cursor: 0,
             select_text: None,
             items: Vec::new(),
@@ -76,21 +75,21 @@ impl BagGui {
         }
     }
 
-    pub fn input(&mut self) {
+    pub fn input(&mut self, ctx: &Context) {
         match self.selecting {
             true => {
                 match self.select_text {
                     Some(text) => {
-                        if pressed(Control::B) {
+                        if pressed(ctx, Control::B) {
                             self.selecting = false;
                         }
-                        if pressed(Control::Up) && self.cursor > 0 {
+                        if pressed(ctx, Control::Up) && self.cursor > 0 {
                             self.select_cursor -= 1;
                         }
-                        if pressed(Control::Down) && self.cursor < text.len() {
+                        if pressed(ctx, Control::Down) && self.cursor < text.len() {
                             self.select_cursor += 1;
                         }
-                        if pressed(Control::A) {
+                        if pressed(ctx, Control::A) {
                             match self.cursor {
                                 0 => {   
                                     self.selected = Some(self.cursor);
@@ -106,20 +105,20 @@ impl BagGui {
                 }
             },
             false => {
-                if pressed(Control::B) {
+                if pressed(ctx, Control::B) {
                     self.despawn();
                 }
-                if pressed(Control::A) {
+                if pressed(ctx, Control::A) {
                     if self.cursor < self.items.len() {
                         self.spawn_select();
                     } else {
                         self.despawn();
                     }
                 }
-                if pressed(Control::Up) && self.cursor > 0 {
+                if pressed(ctx, Control::Up) && self.cursor > 0 {
                     self.cursor -= 1;
                 }
-                if pressed(Control::Down) && self.cursor < self.items.len() {
+                if pressed(ctx, Control::Down) && self.cursor < self.items.len() {
                     self.cursor += 1;
                 }
             }
@@ -127,26 +126,26 @@ impl BagGui {
         
     }
 
-    pub fn render(&self) {
-        draw(self.background, 0.0, 0.0);
+    pub fn draw(&self, ctx: &mut Context) {
+        self.background.draw(ctx, crate::graphics::position(0.0, 0.0));
         for (index, item) in self.items.iter().enumerate() {
             let y = 11.0 + (index << 4) as f32;
-            draw_text_left(1, &item.stack.item.unwrap().name, TextColor::Black, 98.0, y);
-            draw_text_left(1, "x", TextColor::Black, 200.0, y);
-            draw_text_right(1, &item.count_string, TextColor::Black, 221.0, y);
+            draw_text_left(ctx, &1, &item.stack.item.unwrap().name, TextColor::Black, 98.0, y);
+            draw_text_left(ctx, &1, "x", TextColor::Black, 200.0, y);
+            draw_text_right(ctx, &1, &item.count_string, TextColor::Black, 221.0, y);
         }
-        draw_text_left(1, "Cancel", TextColor::Black, 98.0, 11.0 + (self.items.len() << 4) as f32);
+        draw_text_left(ctx, &1, "Cancel", TextColor::Black, 98.0, 11.0 + (self.items.len() << 4) as f32);
         if let Some(item) = self.items.get(self.cursor) {
             let item = item.stack.item.unwrap();
-            draw_o(item_texture(&item.id), 8.0, 125.0);
+            draw_o(ctx, item_texture(&item.id), 8.0, 125.0);
             for (index, line) in item.description.iter().enumerate() {
-                draw_text_left(1, line, TextColor::White, 41.0, 117.0 + (index * 14) as f32);
+                draw_text_left(ctx, &1, line, TextColor::White, 41.0, 117.0 + (index * 14) as f32);
             }
         }
-        draw_cursor(91.0, 13.0 + (self.cursor << 4) as f32);
+        draw_cursor(ctx, 91.0, 13.0 + (self.cursor << 4) as f32);
         if self.selecting {
             if let Some(text) = self.select_text {
-                self.select.render_text(146.0, util::HEIGHT, 94.0, text, self.select_cursor, true, true)
+                self.select.draw_text(ctx, 146.0, util::HEIGHT, 94.0, text, self.select_cursor, true, true)
             }
         }
     }

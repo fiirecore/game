@@ -7,10 +7,11 @@ use parking_lot::Mutex;
 use firecore_audio_lib::music::{MusicId, MusicData};
 use parking_lot::const_mutex;
 
+use crate::error::Lockable;
 use crate::error::PlayAudioError;
 
-pub static MUSIC_MAP: Mutex<Option<HashMap<MusicId, (MusicData, SoundHandle)>>> = const_mutex(None);
-pub static CURRENT_MUSIC: Mutex<Option<(MusicId, InstanceHandle)>> = const_mutex(None);
+pub(crate) static MUSIC_MAP: Mutex<Option<HashMap<MusicId, (MusicData, SoundHandle)>>> = const_mutex(None);
+pub(crate) static CURRENT_MUSIC: Mutex<Option<(MusicId, InstanceHandle)>> = const_mutex(None);
 
 pub fn play_music(music: MusicId) -> Result<(), PlayAudioError> {
     match CURRENT_MUSIC.try_lock() {
@@ -22,7 +23,7 @@ pub fn play_music(music: MusicId) -> Result<(), PlayAudioError> {
             }
         }
         None => {
-            return Err(PlayAudioError::CurrentLocked);
+            return Err(PlayAudioError::LockError(Lockable::CurrentMusic));
         }
     }
     match MUSIC_MAP.lock().as_mut() {
@@ -46,7 +47,7 @@ pub fn play_music(music: MusicId) -> Result<(), PlayAudioError> {
                             }
                         }
                         None => {
-                            Err(PlayAudioError::CurrentLocked)
+                            Err(PlayAudioError::LockError(Lockable::CurrentMusic))
                         }
                     }
                     

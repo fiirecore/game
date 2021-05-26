@@ -9,8 +9,11 @@ use crate::{
     storage::data,
     gui::DynamicText,
     text::MessagePage,
-    macroquad::prelude::Texture2D,
     graphics::draw_o_bottom,
+    tetra::{
+        Context,
+        graphics::Texture,
+    }
 };
 
 use crate::battle::{
@@ -22,7 +25,7 @@ use super::wild::WildBattleCloser;
 
 pub struct TrainerBattleCloser {
     wild: WildBattleCloser,
-    trainer: Option<Texture2D>,
+    trainer: Option<Texture>,
     offset: f32,
 }
 
@@ -47,7 +50,7 @@ impl BattleCloser for TrainerBattleCloser {
             Some(winner) => match winner {
                 Team::Player => {
                     if let Some(trainer) = &battle.data.trainer {
-                        self.trainer = Some(trainer.texture);
+                        self.trainer = Some(trainer.texture.clone());
 
                         text.reset();
                         text.clear();
@@ -87,9 +90,9 @@ impl BattleCloser for TrainerBattleCloser {
         }
     }
 
-    fn update(&mut self, delta: f32, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut DynamicText) {
         if text.alive() {
-            text.update(delta);
+            text.update(ctx, delta);
             if text.current() == 1 && self.offset > Self::XPOS {
                 self.offset -= 300.0 * delta;
                 if self.offset < Self::XPOS {
@@ -100,7 +103,7 @@ impl BattleCloser for TrainerBattleCloser {
                 text.despawn();
             }
         } else {
-            self.wild.update(delta, text);
+            self.wild.update(ctx, delta, text);
         }
     }
 
@@ -108,12 +111,12 @@ impl BattleCloser for TrainerBattleCloser {
         self.wild.world_active()
     }
 
-    fn render(&self) {       
-        self.wild.render();
+    fn draw(&self, ctx: &mut Context) {       
+        self.wild.draw(ctx);
     }
 
-    fn render_battle(&self) {
-        draw_o_bottom(self.trainer, self.offset, 74.0);
+    fn draw_battle(&self, ctx: &mut Context) {
+        draw_o_bottom(ctx, self.trainer.as_ref(), self.offset, 74.0);
     }
 
 }

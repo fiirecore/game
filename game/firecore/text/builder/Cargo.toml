@@ -11,7 +11,7 @@ edition = "2018"
 ### Font specifications
 
 firecore-font = { path = "../font" }
-firecore-dependencies = { path = "../../deps", features = ["serialization"] }
+firecore-dependencies = { path = "../../deps", features = ["ser"] }
 
 ### Serialization
 

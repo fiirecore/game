@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 firecore-audio-lib = { path = "../lib", features = ["file"] }
-firecore-dependencies = { path = "../../deps", features = ["serialization"] }
+firecore-dependencies = { path = "../../deps", features = ["ser"] }
 
 serde = { version = "1.0", features = ["derive"] }
 ron = "0.6"

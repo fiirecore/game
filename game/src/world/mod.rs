@@ -2,9 +2,13 @@
 
 use crate::battle_glue::BattleEntry;
 
+use deps::tetra::Context;
 use worldlib::{
     character::player::PlayerCharacter,
-    map::warp::WarpDestination,
+    map::{
+        World,
+        warp::WarpDestination,
+    },
 };
 
 use map::texture::WorldTextures;
@@ -19,15 +23,15 @@ mod render_coords;
 
 pub use render_coords::RenderCoords;
 
-pub trait GameWorld {
+pub trait GameWorld: World {
 
-    fn on_start(&mut self, music: bool);
+    fn on_start(&mut self, ctx: &mut Context, music: bool);
 
-    fn on_tile(&mut self, battle: &mut Option<BattleEntry>, player: &mut PlayerCharacter);
+    fn on_tile(&mut self, ctx: &mut Context, battle: &mut Option<BattleEntry>, player: &mut PlayerCharacter);
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: &mut Option<BattleEntry>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow);
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: &mut Option<BattleEntry>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow);
 
-    fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool);
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool);
 
 }
 

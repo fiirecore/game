@@ -14,7 +14,7 @@ use crate::{
     },
     storage::{data, player::PlayerSave},
     battle_glue::{BattleEntry, BattleEntryRef, BattleTrainerEntry},
-    macroquad::prelude::warn
+    log::warn,
 };
 
 use worldlib::{
@@ -85,7 +85,7 @@ pub fn trainer_battle(battle: BattleEntryRef, npc: &NPC, map_id: &MapIdentifier,
                                     prefix: trainer_type.name.clone(),
                                     name: npc.name.clone(),
                                     transition: trainer.battle_transition,
-                                    texture: NPCTextureManager::trainer_texture(&npc.npc_type),
+                                    texture: NPCTextureManager::trainer_texture(&npc.npc_type).clone(),
                                     gym_badge: trainer_type.badge,
                                     victory_message: trainer.victory_message.clone(),
                                     worth: trainer.worth,

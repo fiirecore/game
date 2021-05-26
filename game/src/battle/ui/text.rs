@@ -1,7 +1,7 @@
 use crate::{
     text::{MessagePage, TextColor},
     gui::DynamicText,
-    macroquad::prelude::Vec2,
+    tetra::math::Vec2,
     storage::data,
     pokedex::{
         pokemon::{
@@ -20,7 +20,7 @@ use crate::{
 use crate::battle::BattleType;
 
 pub fn new() -> DynamicText {
-    DynamicText::new(super::PANEL_ORIGIN + Vec2::new(11.0, 11.0), 1, TextColor::White, 6)
+    DynamicText::new(super::PANEL_ORIGIN.position + Vec2::new(11.0, 11.0), 1, TextColor::White, 6)
 }
 
 pub(crate) fn on_move(text: &mut DynamicText, pokemon_move: &Move, user: &PokemonInstance) {

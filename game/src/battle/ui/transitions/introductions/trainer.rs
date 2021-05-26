@@ -7,7 +7,10 @@ use crate::{
     text::MessagePage,
     gui::DynamicText,
     graphics::draw_o_bottom,
-    macroquad::prelude::Texture2D,
+    tetra::{
+        Context,
+        graphics::Texture,
+    }
 };
 
 use crate::battle::{
@@ -18,19 +21,29 @@ use crate::battle::{
     }
 };
 
-#[derive(Default)]
 pub struct TrainerBattleIntroduction {
 
     introduction: BasicBattleIntroduction,
 
-    texture: Option<Texture2D>,
+    texture: Option<Texture>,
     offset: f32,
     leaving: bool,
 
 }
 
 impl TrainerBattleIntroduction {
+
     const FINAL_TRAINER_OFFSET: f32 = 126.0;
+
+    pub fn new(ctx: &mut Context) -> Self {
+        Self {
+            introduction: BasicBattleIntroduction::new(ctx),
+            texture: None,
+            offset: 0.0,
+            leaving: false,
+        }
+    }
+
 }
 
 impl BattleIntroduction for TrainerBattleIntroduction {
@@ -39,7 +52,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         text.clear();
 
         if let Some(trainer) = battle.data.trainer.as_ref() {
-            self.texture = Some(trainer.texture);
+            self.texture = Some(trainer.texture.clone());
 
             let name = format!("{} {}", trainer.prefix, trainer.name);
 
@@ -71,8 +84,8 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         
     }
 
-    fn update(&mut self, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
-        self.introduction.update(delta, battle, text);
+    fn update(&mut self, ctx: &mut Context, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
+        self.introduction.update(ctx, delta, battle, text);
         if text.can_continue() {
             if text.current() == text.len() - 2 {
                 self.leaving = true;
@@ -83,13 +96,13 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         }
     }
 
-    fn render(&self, battle: &Battle) {
+    fn draw(&self, ctx: &mut Context, battle: &Battle) {
         if self.offset < Self::FINAL_TRAINER_OFFSET {
-            draw_o_bottom(self.texture, 144.0 + self.offset, 74.0);
+            draw_o_bottom(ctx, self.texture.as_ref(), 144.0 + self.offset, 74.0);
         } else {
-            self.introduction.render_opponent(battle);
+            self.introduction.draw_opponent(ctx, battle);
         }
-        self.introduction.render_player(battle);  
+        self.introduction.draw_player(ctx, battle);  
     }
 }
 

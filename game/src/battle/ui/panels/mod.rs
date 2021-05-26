@@ -2,6 +2,7 @@ use crate::{
     util::{Entity, Reset},
     pokedex::pokemon::instance::PokemonInstance,
     input::{pressed, Control},
+    tetra::Context,
 };
 
 use crate::battle::{
@@ -45,12 +46,12 @@ impl Default for BattlePanels {
 
 impl BattlePanel {
 
-    pub fn new() -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         Self {
             alive: false,
             active: BattlePanels::default(),
-            battle: BattleOptions::new(),
-            fight: FightPanel::new(),
+            battle: BattleOptions::new(ctx),
+            fight: FightPanel::new(ctx),
         }
     }
 
@@ -63,18 +64,18 @@ impl BattlePanel {
         self.spawn();
     }
 
-    pub fn input(&mut self, pokemon: &PokemonInstance) -> Option<BattlePanels> {
+    pub fn input(&mut self, ctx: &Context, pokemon: &PokemonInstance) -> Option<BattlePanels> {
         if self.alive {
             match self.active {
                 BattlePanels::Main => {
-                    self.battle.input();
-                    if pressed(Control::A) { Some(BattlePanels::Main) } else { None }
+                    self.battle.input(ctx);
+                    if pressed(ctx, Control::A) { Some(BattlePanels::Main) } else { None }
                 }
                 BattlePanels::Fight => {    
-                    if pressed(Control::B) {
+                    if pressed(ctx, Control::B) {
                         self.active = BattlePanels::Main;
                     }
-                    if self.fight.input(pokemon) { Some(BattlePanels::Fight) } else { None }
+                    if self.fight.input(ctx, pokemon) { Some(BattlePanels::Fight) } else { None }
                 }
             }
         } else {
@@ -82,11 +83,11 @@ impl BattlePanel {
         }
     }
 
-	pub fn render(&self) {
+	pub fn draw(&self, ctx: &mut Context) {
 		if self.alive {
             match self.active {
-                BattlePanels::Main => self.battle.render(),
-                BattlePanels::Fight => self.fight.render(),
+                BattlePanels::Main => self.battle.draw(ctx),
+                BattlePanels::Fight => self.fight.draw(ctx),
             }
 		}
 	}

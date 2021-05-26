@@ -3,6 +3,12 @@ mod random;
 #[cfg(feature = "random")]
 pub use random::Random;
 
+#[cfg(feature = "log")]
+pub extern crate log;
+
+#[cfg(feature = "engine")]
+pub extern crate tetra;
+
 #[cfg(feature = "borrow")]
 mod borrow;
 
@@ -21,6 +27,7 @@ pub mod vec {
     // pub use arrayvec:: as arrayvec; // (macro)
 }
 
+#[deprecated(note = "use hashbrown")]
 #[cfg(feature = "hash")]
 pub mod hash {
 
@@ -33,10 +40,10 @@ pub mod hash {
     };
 }
 
-#[cfg(feature = "serialization")]
+#[cfg(feature = "ser")]
 extern crate bincode;
 
-#[cfg(feature = "serialization")]
+#[cfg(feature = "ser")]
 pub mod ser {
     pub use {
         // postcard::to_allocvec as serialize,

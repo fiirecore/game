@@ -1,8 +1,10 @@
 use crate::{
     util::{Reset, Completable, WIDTH, HEIGHT},
-    macroquad::{
-        camera::{set_camera, Camera2D},
-        prelude::{Color, Rect, draw_rectangle},
+    graphics::draw_rectangle,
+    tetra::{
+        Context,
+        graphics::{Camera, get_transform_matrix, set_transform_matrix, reset_transform_matrix},
+        graphics::Color,
     },
 };
 
@@ -16,10 +18,12 @@ pub struct FlashBattleTransition {
     fade: f32,
     zoom: bool,
     zoom_offset: f32,
+    // camera: Camera,
 }
 
 impl FlashBattleTransition {
-    const DEFAULT_COLOR: Color = Color::new(1.0, 1.0, 1.0, 0.0);
+    const ZOOM_OFFSET: f32 = 1.0;
+    const DEFAULT_COLOR: Color = Color::rgba(1.0, 1.0, 1.0, 0.0);
     const FINAL_INDEX: u8 = 4;
 }
 
@@ -31,14 +35,15 @@ impl Default for FlashBattleTransition {
             index: 0,
             fade: 1.0 / 8.0,
             zoom: false,
-            zoom_offset: 0.0,
+            zoom_offset: Self::ZOOM_OFFSET,
+            // camera: Camera::new(WIDTH, HEIGHT),
         }
     }
 }
 
 impl BattleTransition for FlashBattleTransition {
 
-    fn update(&mut self, delta: f32) {
+    fn update(&mut self, ctx: &mut Context, delta: f32) {
         if self.waning {
             self.screen.a -= self.fade * 60.0 * delta;
         } else {
@@ -51,6 +56,7 @@ impl BattleTransition for FlashBattleTransition {
             self.waning = true;
         }
         if self.index == Self::FINAL_INDEX && self.screen.a <= 0.0 {
+            self.screen.a = -2.0;
             self.screen.r = 0.0;
             self.screen.g = 0.0;
             self.screen.b = 0.0;
@@ -58,16 +64,26 @@ impl BattleTransition for FlashBattleTransition {
             self.zoom = true;
         }
         if self.zoom {
-            self.zoom_offset += 600.0 * delta;
-            set_camera(&Camera2D::from_display_rect(Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, WIDTH - self.zoom_offset, HEIGHT - self.zoom_offset)))
+
+            use deps::tetra::math::{Vec2, Vec3};
+
+            self.zoom_offset += 6.0 * delta;
+
+            let mut mat = get_transform_matrix(ctx);
+
+            mat.scale_3d(Vec3::new(self.zoom_offset, self.zoom_offset, 1.0));
+            mat.translate_2d(Vec2::new(-(self.zoom_offset - 1.0) * (WIDTH / 2.0), -(self.zoom_offset - 1.0) * (HEIGHT / 2.0)));
+            
+            set_transform_matrix(ctx, mat);
         }
         if self.finished() {
-            set_camera(&Camera2D::from_display_rect(Rect::new(0.0, 0.0, WIDTH, HEIGHT)));
+            reset_transform_matrix(ctx);
         }
     }
 
-    fn render(&self) {
+    fn draw(&self, ctx: &mut Context) {
         draw_rectangle(
+            ctx,
             0.0,
             0.0,
             WIDTH,
@@ -85,7 +101,7 @@ impl Reset for FlashBattleTransition {
         self.index = 0;
         self.fade = 1.0 / 8.0;
         self.zoom = false;
-        self.zoom_offset = 0.0;
+        self.zoom_offset = Self::ZOOM_OFFSET;
     }
 }
 

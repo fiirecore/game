@@ -2,6 +2,7 @@ use crate::{
     util::Reset,
     pokedex::pokemon::instance::PokemonInstance,
     input::{pressed, Control},
+    tetra::Context,
 };
 
 use crate::battle::{
@@ -26,15 +27,15 @@ pub struct FightPanel {
 
 impl FightPanel {
 
-    pub fn new() -> FightPanel {
+    pub fn new(ctx: &mut Context) -> FightPanel {
 
         FightPanel {
 
             target_active: false,
 
-            moves: MovePanel::new(),
-            targets: TargetPanel::new(),
-            info: MoveInfoPanel::new(),
+            moves: MovePanel::new(ctx),
+            targets: TargetPanel::new(ctx),
+            info: MoveInfoPanel::new(ctx),
 
         }
 
@@ -52,27 +53,27 @@ impl FightPanel {
         }
     }
 
-    pub fn render(&self) {
+    pub fn draw(&self, ctx: &mut Context) {
         if !self.target_active {
-            self.moves.render();
-            self.info.render();  
+            self.moves.draw(ctx);
+            self.info.draw(ctx);  
         } else {
-            self.targets.render();
+            self.targets.draw(ctx);
         }
     }
 
-    pub fn input(&mut self, pokemon: &PokemonInstance) -> bool {
+    pub fn input(&mut self, ctx: &Context, pokemon: &PokemonInstance) -> bool {
         if self.target_active {
-            self.targets.input();
-            if pressed(Control::B) {
+            self.targets.input(ctx);
+            if pressed(ctx, Control::B) {
                 self.target_active = false;
             }
-            pressed(Control::A)
+            pressed(ctx, Control::A)
         } else {
-            if self.moves.input() {
+            if self.moves.input(ctx) {
                 self.update_move(pokemon);
             }
-            if pressed(Control::A) {
+            if pressed(ctx, Control::A) {
                 if self.targets.names.len() <= 1 {
                     self.targets.cursor = 0;
                     true

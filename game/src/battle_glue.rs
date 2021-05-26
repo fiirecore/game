@@ -1,7 +1,7 @@
 use deps::str::TinyStr8;
 use pokedex::pokemon::party::PersistentParty;
 
-use macroquad::prelude::Texture2D;
+use deps::tetra::graphics::Texture;
 
 /***********************/
 
@@ -17,7 +17,7 @@ pub struct BattleTrainerEntry {
     pub prefix: String,
     pub name: String,
     pub transition: TinyStr8,
-    pub texture: Texture2D,
+    pub texture: Texture,
     pub gym_badge: Option<deps::str::TinyStr16>,
     pub victory_message: Vec<Vec<String>>,
     pub worth: u16,

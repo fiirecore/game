@@ -1,7 +1,14 @@
 use crate::{
     util::{Reset, Completable, Timer, WIDTH},
-    graphics::byte_texture,
-    macroquad::prelude::{Texture2D, draw_texture_ex, WHITE, DrawTextureParams, Rect, draw_rectangle, BLACK},
+    graphics::{byte_texture, position, draw_rectangle},
+    tetra::{
+        Context,
+        graphics::{
+            Texture,
+            Rectangle,
+            Color,
+        },
+    },
 };
 
 use crate::battle::{
@@ -26,10 +33,10 @@ impl Default for Openers {
     }
 }
 
-static mut PLAYER: Option<Texture2D> = None;
+static mut PLAYER: Option<Texture> = None;
 
-pub fn player_texture() -> Texture2D {
-    unsafe { *PLAYER.get_or_insert(byte_texture(include_bytes!("../../../../../assets/battle/player.png"))) }
+pub fn player_texture(ctx: &mut Context) -> &Texture {
+    unsafe { PLAYER.get_or_insert(byte_texture(ctx, include_bytes!("../../../../../assets/battle/player.png"))) }
 }
 
 pub struct DefaultBattleOpener {
@@ -41,28 +48,27 @@ pub struct DefaultBattleOpener {
     rect_size: f32,
     shrink_by: f32,
 
-    player: Texture2D,
+    player: Texture,
 
 }
 
-
 impl DefaultBattleOpener {
+
     const RECT_SIZE: f32 = 80.0;
     const SHRINK_BY_DEF: f32 = 1.0;
     const SHRINK_BY_FAST: f32 = 4.0;
     const OFFSET: f32 = 153.0 * 2.0;
-}
 
-impl Default for DefaultBattleOpener {
-    fn default() -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         Self {
             start_timer: Timer::new(true, 0.5),
             rect_size: Self::RECT_SIZE,
             shrink_by: Self::SHRINK_BY_DEF,
             offset: Self::OFFSET,
-            player: player_texture(),
+            player: player_texture(ctx).clone(),
         }
     }
+
 }
 
 impl BattleOpener for DefaultBattleOpener {
@@ -96,34 +102,35 @@ impl BattleOpener for DefaultBattleOpener {
         }
     }
 
-    fn render_below_panel(&self, _battle: &Battle) {
-        draw_texture_ex(self.player, 41.0 + self.offset, 49.0, WHITE, DrawTextureParams {
-            source: Some(
-                Rect::new(
-                    0.0,
-                    0.0, 
-                    64.0, 
-                    64.0
-                )
+    fn draw_below_panel(&self, ctx: &mut Context, _battle: &Battle) {
+        self.player.draw_region(
+            ctx,
+            Rectangle::new(
+                0.0,
+                0.0, 
+                64.0, 
+                64.0
             ),
-            ..Default::default()
-        });
+            position(41.0 + self.offset, 49.0),
+        )
     }
 
-    fn render(&self) {
+    fn draw(&self, ctx: &mut Context) {
         draw_rectangle(
+            ctx,
             0.0,
             0.0,
             WIDTH,
             self.rect_size,
-            BLACK,
+            Color::BLACK,
         );
         draw_rectangle(
+            ctx,
             0.0,
             160.0 - self.rect_size,
             WIDTH,
             self.rect_size,
-            BLACK,
+            Color::BLACK,
         );
     }
 

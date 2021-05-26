@@ -4,7 +4,7 @@ use crate::{
     deps::Random,
     util::{Entity, Completable, Direction, Timer},
     pokedex::item::ItemStack,
-    input::{pressed, Control},
+    input::{pressed, Control, debug_pressed, DebugBind},
     text::MessagePage,
     storage::{
         data, data_mut,
@@ -12,8 +12,9 @@ use crate::{
     },
     battle_glue::BattleEntryRef,
     play_music_named, play_music, play_sound,
-    graphics::{draw, draw_cursor},
-    macroquad::prelude::{KeyCode, info, warn, is_key_pressed},
+    graphics::{position, draw_cursor},
+    tetra::Context,
+    log::{info, warn},
     audio,
     is_debug,
 };
@@ -60,7 +61,7 @@ const NPC_MOVE_CHANCE: f32 = 1.0 / 12.0;
 
 impl GameWorld for WorldMap {
 
-    fn on_start(&mut self, music: bool) {
+    fn on_start(&mut self, ctx: &mut Context, music: bool) {
 
         // if let Some(saves) = get::<PlayerSaves>() {
         //     if let Some(data) = saves.get().world.map.get(&self.name) {
@@ -74,13 +75,13 @@ impl GameWorld for WorldMap {
 
         if music {
             if audio::get_current_music().map(|current| current != self.music).unwrap_or(true) {
-                play_music(self.music);
+                play_music(ctx, self.music);
             }
         }
 
     }
 
-    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, ctx: &mut Context, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(tile_id) = self.tile(player.character.position.coords) {
 
             if WILD_ENCOUNTERS.load(Relaxed) {
@@ -143,13 +144,13 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, window: &mut TextWindow) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, window: &mut TextWindow) {
 
         if is_debug() {
-            debug_input(self);
+            debug_input(ctx, self);
         }
 
-        if pressed(Control::A) && self.npcs.active.is_none() {
+        if pressed(ctx, Control::A) && self.npcs.active.is_none() {
             for (id, npc_opt) in self.npcs.list.iter_mut() {
                 if let Some(npc) = npc_opt {
                     if npc.message.is_some() || npc.trainer.is_some() {
@@ -222,15 +223,15 @@ impl GameWorld for WorldMap {
                 Some(action) => {
                     match action {
                         WorldActionKind::PlayMusic(music) => {
-                            play_music_named(&music);
+                            play_music_named(ctx, &music);
                             pop = true;
                         },
                         WorldActionKind::PlayMapMusic => {
-                            play_music(self.music);
+                            play_music(ctx, self.music);
                             pop = true;
                         },
                         WorldActionKind::PlaySound(sound) => {
-                            play_sound(sound);
+                            play_sound(ctx, sound);
                             pop = true;
                         }
                         WorldActionKind::PlayerFreezeInput => {
@@ -388,7 +389,7 @@ impl GameWorld for WorldMap {
                             if let Some(npc) = self.npcs.get_mut(id) {
                                 if window.text.alive() {
                                     if !window.text.finished() {
-                                        window.text.update(delta);
+                                        window.text.update(ctx, delta);
                                     } else {
                                         window.text.despawn();
                                         pop = true;
@@ -434,7 +435,7 @@ impl GameWorld for WorldMap {
                         WorldActionKind::DisplayText(message) => {
                             if window.text.alive() {
                                 if !window.text.finished() {
-                                    window.text.update(delta);
+                                    window.text.update(ctx, delta);
                                 } else {
                                     window.text.despawn();
                                     pop = true;
@@ -461,7 +462,7 @@ impl GameWorld for WorldMap {
                                     if window.text.finished() {
                                         script.option = 2;
                                     } else {
-                                        window.text.update(delta);
+                                        window.text.update(ctx, delta);
                                     }
                                 } else {
                                     window.text.clear();
@@ -481,7 +482,7 @@ impl GameWorld for WorldMap {
                                         script.option = 0;
                                         despawn_script(script);
                                     } else {
-                                        window.text.update(delta);
+                                        window.text.update(ctx, delta);
                                     }
 
                                 } else {
@@ -492,7 +493,7 @@ impl GameWorld for WorldMap {
                                     despawn_script(script);
                                 }
                             } else {
-                                if pressed(Control::A) {
+                                if pressed(ctx, Control::A) {
                                     if script.option == 2 {
                                         script.option = 0;
                                         window.text.despawn();
@@ -507,7 +508,7 @@ impl GameWorld for WorldMap {
                                         }
 
                                     }
-                                } else if pressed(Control::B) {
+                                } else if pressed(ctx, Control::B) {
 
                                     script.option = 1;
                                     if let Some(end_message) = end_message {
@@ -517,10 +518,10 @@ impl GameWorld for WorldMap {
                                     }
 
                                 }
-                                if pressed(Control::Up) && script.option == 3 {
+                                if pressed(ctx, Control::Up) && script.option == 3 {
                                     script.option = 2;
                                 }
-                                if pressed(Control::Down) && script.option == 2 {
+                                if pressed(ctx, Control::Down) && script.option == 2 {
                                     script.option = 3;
                                 }
                             }
@@ -566,7 +567,7 @@ impl GameWorld for WorldMap {
                     self.npcs.list.insert(id, Some(npc));
                     player.unfreeze();
                 } else {
-                    window.text.update(delta);
+                    window.text.update(ctx, delta);
                 }
             } else {
                 if npc.character.destination.is_some() {
@@ -610,11 +611,11 @@ impl GameWorld for WorldMap {
                                         if let Some(playing_music) = audio::get_current_music() {
                                             if let Some(music) = audio::get_music_id(encounter_music).flatten() {
                                                 if playing_music != music {
-                                                play_music(music)
+                                                play_music(ctx, music)
                                                 }
                                             }
                                         } else {
-                                            play_music_named(encounter_music)
+                                            play_music_named(ctx, encounter_music)
                                         }
                                     }
                                 }
@@ -640,10 +641,10 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool) {
-        let primary = *textures.tiles.palettes.get(&self.palettes[0]).expect("Could not get primary palette for map!");
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool) {
+        let primary = textures.tiles.palettes.get(&self.palettes[0]).expect("Could not get primary palette for map!");
         let length = primary.height() as TileId;
-        let secondary = *textures.tiles.palettes.get(&self.palettes[1]).expect("Could not get secondary palette for map!");
+        let secondary = textures.tiles.palettes.get(&self.palettes[1]).expect("Could not get secondary palette for map!");
 
         for yy in screen.top..screen.bottom {
             let y = yy - screen.offset.y;
@@ -657,7 +658,7 @@ impl GameWorld for WorldMap {
                 if !(x < 0 || y < 0 || y >= self.height as _ || x >= self.width as _) {
                     let tile = self.tiles[x as usize + row as usize];
                     let (texture, tile) = if length > tile { (primary, tile) } else { (secondary, tile - length) };
-                    textures.tiles.render_tile(texture, tile, render_x, render_y);
+                    textures.tiles.draw_tile(ctx, texture, tile, render_x, render_y);
                 } else if border {
                     let tile = self.border[if x % 2 == 0 { //  x % 2 + if y % 2 == 0 { 0 } else { 2 }
                         if y % 2 == 0 { 0 } else { 2 }
@@ -665,15 +666,15 @@ impl GameWorld for WorldMap {
                         if y % 2 == 0 { 1 } else { 3 }
                     }];
                     let (texture, tile) = if length > tile { (primary, tile) } else { (secondary, tile - length) };
-                    textures.tiles.render_tile(texture, tile, render_x, render_y);
+                    textures.tiles.draw_tile(ctx, texture, tile, render_x, render_y);
                 }
             }
         }
         for npc in self.npcs.list.values().flatten() {
-            textures.npcs.render(npc, &screen);
+            textures.npcs.draw(ctx, npc, &screen);
         }
         if let Some((_, npc)) = self.npcs.active.as_ref() {
-            textures.npcs.render(npc, &screen);
+            textures.npcs.draw(ctx, npc, &screen);
         }
         for script in self.scripts.iter() {
             if script.alive() {
@@ -681,8 +682,8 @@ impl GameWorld for WorldMap {
                     match action {
                         WorldActionKind::Conditional{ .. } => {
                                 if script.option > 1 {
-                                    draw(textures.gui.get(&texture::gui::GuiTexture::Condition), 162.0, 66.0);
-                                    draw_cursor(170.0, 77.0 + (script.option - 2) as f32 * 16.0);
+                                    textures.gui.get(&texture::gui::GuiTexture::Condition).draw(ctx, position(162.0, 66.0));
+                                    draw_cursor(ctx, 170.0, 77.0 + (script.option - 2) as f32 * 16.0);
                                 }
                         }
                         _ => (),
@@ -693,8 +694,8 @@ impl GameWorld for WorldMap {
     }
 }
 
-fn debug_input(map: &mut WorldMap) {
-    if is_key_pressed(KeyCode::F8) {
+fn debug_input(ctx: &Context, map: &mut WorldMap) {
+    if debug_pressed(ctx, DebugBind::F8) {
         for (index, npc) in map.npcs.list.iter().flat_map(|(id, npc)| npc.as_ref().map(|npc| (id, npc))) {
             info!("NPC {} (id: {}), is at {}, {}; looking {:?}", &npc.name, index, /*if npc.alive() {""} else {" (despawned)"},*/ &npc.character.position.coords.x, &npc.character.position.coords.y, &npc.character.position.direction);
         }

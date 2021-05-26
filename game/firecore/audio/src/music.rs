@@ -12,9 +12,7 @@ pub fn add_track(music_data: SerializedMusicData) -> Result<(), AddAudioError> {
         match MUSIC_ID_MAP.lock().as_mut() {
             Some(map) => {
                 map.insert(music_data.music.name.clone(), music_data.music.track);
-                #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))]
-                crate::backend::context::add_track(music_data)?;
-                Ok(())
+                crate::backend::context::add_track(music_data)
             }
             None => {
                 Err(AddAudioError::Uninitialized)
@@ -39,11 +37,7 @@ pub fn get_music_id(name: &str) -> Option<Option<MusicId>> {
 }
 
 pub fn play_music_id(id: MusicId) -> Result<(), PlayAudioError> {
-    #[cfg(all(not(any(target_arch = "wasm32", target_os = "android")), feature = "play"))] {
-        crate::backend::music::play_music(id)
-    }
-    #[cfg(any(target_arch = "wasm32", target_os = "android", not(feature = "play")))]
-    Ok(())
+    crate::backend::music::play_music(id)
 }
 
 pub fn play_music_named(name: &str) -> Result<(), PlayAudioError> {
@@ -65,7 +59,5 @@ pub fn play_music_named(name: &str) -> Result<(), PlayAudioError> {
 }
 
 pub fn get_current_music() -> Option<MusicId> {
-    #[cfg(feature = "play")] {
-        crate::backend::music::get_current_music()
-    }
+    crate::backend::music::get_current_music()
 }

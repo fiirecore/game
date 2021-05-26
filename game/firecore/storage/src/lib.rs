@@ -1,13 +1,10 @@
-pub extern crate macroquad;
-
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use error::DataError;
-use macroquad::prelude::{
-    warn, info,
-};
 use serde::{Serialize, de::DeserializeOwned};
 
-pub use macroquad::prelude::collections::storage::{try_get as get, try_get_mut as get_mut, store};
+// pub use macroquad::prelude::collections::storage::{try_get as get, try_get_mut as get_mut, store};
+use firecore_dependencies::log::{info, warn};
+use std::fs::read_to_string;
 
 pub mod error;
 pub mod reload;
@@ -33,8 +30,8 @@ pub trait Reloadable: PersistantData {
 
 }
 
-pub async fn load<D: PersistantData + Sized + 'static>() -> D {
-    try_load::<D>().await.unwrap_or_else(|err| {
+pub fn load<D: PersistantData + Sized + 'static>() -> D {
+    try_load::<D>().unwrap_or_else(|err| {
         let name = std::any::type_name::<D>();
         let name = name.split("::").last().unwrap_or(name);
         warn!("Could not load {} with error {}", name, err);
@@ -47,71 +44,52 @@ pub async fn load<D: PersistantData + Sized + 'static>() -> D {
     })
 }
 
-pub async fn try_load<D: PersistantData + Sized>() -> Result<D, DataError> {
+pub fn try_load<D: PersistantData + Sized>() -> Result<D, DataError> {
     let filename = D::file_name();
-    #[cfg(not(target_arch = "wasm32"))]
     let string = {
         match crate::directory() {
             Ok(dir) => Ok(
-                macroquad::prelude::load_string(
+                read_to_string(
                     &*dir.join(file_name(filename)).to_string_lossy()
-                ).await?
+                )?
             ),
             Err(err) => Err(err),
         }      
     }?;
-    #[cfg(target_arch = "wasm32")]
-    let string = miniquad_cookie::get_cookie(filename);
     let data: D = ron::from_str(&string).map_err(|error| DataError::Deserialize(filename, error))?;
     Ok(data)
 }
 
 pub fn save<D: PersistantData>(data: &D) -> Result<(), DataError> {
     let filename = D::file_name();
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-        if let Ok(dir) = crate::directory() {
+    if let Ok(dir) = crate::directory() {
 
-            let path = dir.join(file_name(filename));
+        let path = dir.join(file_name(filename));
 
-            if let Some(parent) = path.parent() {
-                if !parent.exists() {
-                    std::fs::create_dir_all(&parent)?;
-                }
+        if let Some(parent) = path.parent() {
+            if !parent.exists() {
+                std::fs::create_dir_all(&parent)?;
             }
-
-            let mut file = std::fs::File::create(&path)?;
-
-            let string = ron::ser::to_string_pretty(data, ron::ser::PrettyConfig::default())?;
-
-            std::io::Write::write_all(&mut file, string.as_bytes())?;
-
-            Ok(())
-        } else {
-            Err(DataError::NoDirectory)
         }
 
-    }
+        let mut file = std::fs::File::create(&path)?;
 
-    #[cfg(target_arch = "wasm32")]
-    {
-        match ron::to_string(&data) {
-            Ok(string) => {
-                miniquad_cookie::set_cookie(filename, &string);
-                Ok(())
-            },
-            Err(err) => Err(DataError::Serialize(err)),
-        }
+        let string = ron::ser::to_string_pretty(data, ron::ser::PrettyConfig::default())?;
+
+        std::io::Write::write_all(&mut file, string.as_bytes())?;
+
+        Ok(())
+    } else {
+        Err(DataError::NoDirectory)
     }
 }
 
-pub async fn reload<D: Reloadable + Sized>(data: &mut D) -> Result<(), DataError> {
-    *data = try_load::<D>().await?;
+pub fn reload<D: Reloadable + Sized>(data: &mut D) -> Result<(), DataError> {
+    *data = try_load::<D>()?;
     data.on_reload();
     Ok(())
 }
 
-#[cfg(not(target_arch = "wasm32"))]
 pub fn directory() -> Result<std::path::PathBuf, DataError> {
     match SAVE_IN_LOCAL_DIRECTORY.load(Relaxed) {
         true => std::env::current_dir().map_err(|err| DataError::IOError(err)),

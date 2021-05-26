@@ -4,8 +4,16 @@ use crate::{
         pokemon::instance::PokemonInstance,
         texture::{PokemonTexture, pokemon_texture},
     },
-    macroquad::prelude::{Texture2D, Vec2, draw_texture_ex, Color, DrawTextureParams, Rect},
-    graphics::{byte_texture, DRAW_COLOR},
+    graphics::{byte_texture, position},
+    tetra::{
+        Context,
+        math::Vec2,
+        graphics::{
+            Color,
+            Texture,
+            Rectangle,
+        }
+    },
 };
 
 use crate::battle::ui::{BattleGuiPosition, BattleGuiPositionIndex};
@@ -15,10 +23,10 @@ pub mod bounce;
 
 pub struct PokemonRenderer {
 
-    pub texture: Option<Texture2D>,
+    pub texture: Option<Texture>,
     side: PokemonTexture,
 
-    pub pos: Vec2,
+    pub pos: Vec2<f32>,
 
     pub spawner: Spawner,
     pub faint: Faint,
@@ -28,7 +36,7 @@ pub struct PokemonRenderer {
 
 pub struct Spawner {
     spawning: SpawnerState,
-    texture: Texture2D,
+    texture: Texture,
     x: f32,
 }
 
@@ -40,17 +48,7 @@ enum SpawnerState {
     Spawning,
 }
 
-impl Default for Spawner {
-    fn default() -> Self {
-        Self {
-            spawning: SpawnerState::None,
-            x: 0.0,
-            texture: unsafe { *POKEBALL.get_or_insert(byte_texture(include_bytes!("../../../../assets/battle/thrown_pokeball.png"))) }
-        }
-    }
-}
-
-static mut POKEBALL: Option<Texture2D> = None;
+static mut POKEBALL: Option<Texture> = None;
 
 impl Spawner {
 
@@ -58,6 +56,14 @@ impl Spawner {
     const ORIGIN: f32 = 0.0;
     const OFFSET: f32 = -5.0;
     const PARABOLA_ORIGIN: f32 = (Self::LEN / 3.0);
+
+    pub fn new(ctx: &mut Context) -> Self {
+        Self {
+            spawning: SpawnerState::None,
+            x: 0.0,
+            texture: unsafe { POKEBALL.get_or_insert(byte_texture(ctx, include_bytes!("../../../../assets/battle/thrown_pokeball.png"))).clone() }
+        }
+    }
 
     fn f(x: f32) -> f32 {
         0.5 * (x - Self::PARABOLA_ORIGIN).powi(2) - 50.0
@@ -87,35 +93,21 @@ impl Spawner {
         }
     }
 
-    fn render(&self, origin: Vec2, texture: Texture2D) {
+    fn draw(&self, ctx: &mut Context, origin: Vec2<f32>, texture: &Texture) {
         match self.spawning {
-            SpawnerState::Throwing => 
-            draw_texture_ex(
-                self.texture,
-                origin.x + self.x + Self::OFFSET,
-                origin.y + Self::f(self.x),
-                DRAW_COLOR,
-                DrawTextureParams {
-                    source: Some(Rect { x: 0.0, y: 0.0, w: 12.0, h: 12.0 }),
-                    rotation: self.x,
-                    ..Default::default()
-                }
+            SpawnerState::Throwing => self.texture.draw(
+                ctx, 
+                position(origin.x + self.x + Self::OFFSET, origin.y + Self::f(self.x)).origin(Vec2::new(6.0, 6.0)).rotation(self.x)
             ),
             SpawnerState::Spawning => {
-                let scale = self.x * texture.height();
+                let h = texture.height() as f32;
+                let scale = self.x * h;
                 let mut y = origin.y - scale * 1.5;
-                let max = origin.y - texture.height();
+                let max = origin.y - h;
                 if y < max {
                     y = max;
                 }
-                draw_texture_ex(
-                    texture, 
-                    origin.x, 
-                    y,
-                    DRAW_COLOR,
-                    // Color { r: self.x, g: self.x, b: self.x, a: 1.0 }, 
-                    DrawTextureParams::default()
-                )
+                texture.draw(ctx, position(origin.x, y)); // change color of texture when spawning here
             },
             SpawnerState::None | SpawnerState::Start => (),
         }
@@ -183,33 +175,34 @@ impl Faint {
 
 impl PokemonRenderer {
 
-    pub fn new(index: BattleGuiPositionIndex, side: PokemonTexture) -> Self {
+    pub fn new(ctx: &mut Context, index: BattleGuiPositionIndex, side: PokemonTexture) -> Self {
         Self {
             texture: None,
             side,
             pos: Self::position(index),
-            spawner: Spawner::default(),
+            spawner: Spawner::new(ctx),
             faint: Faint::default(),
             flicker: Flicker::default(),
         }
     }
 
-    pub fn with(index: BattleGuiPositionIndex, pokemon: &PokemonInstance, side: PokemonTexture) -> Self {
+    pub fn with(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: &PokemonInstance, side: PokemonTexture) -> Self {
         Self {
-            texture: Some(pokemon_texture(&pokemon.pokemon.id(), side)),
-            ..Self::new(index, side)
+            texture: Some(pokemon_texture(&pokemon.pokemon.id(), side).clone()),
+            ..Self::new(ctx, index, side)
         }
     }
 
-    fn position(index: BattleGuiPositionIndex) -> Vec2 {
+    fn position(index: BattleGuiPositionIndex) -> Vec2<f32> {
+        let offset = (index.size - 1) as f32 * 32.0 - index.index as f32 * 64.0;
         match index.position {
-            BattleGuiPosition::Top => Vec2::new(144.0 - (index.size - 1) as f32 * 32.0 + index.index as f32 * 64.0, 74.0),
-            BattleGuiPosition::Bottom => Vec2::new(40.0 - (index.size - 1) as f32 * 32.0 + index.index as f32 * 64.0, 113.0),
+            BattleGuiPosition::Top => Vec2::new(144.0 - offset, 74.0),
+            BattleGuiPosition::Bottom => Vec2::new(40.0 - offset, 113.0),
         }
     }
 
     pub fn new_pokemon(&mut self, pokemon: Option<&PokemonInstance>) {
-        self.texture = pokemon.map(|pokemon| pokemon_texture(pokemon.pokemon.id(), self.side));
+        self.texture = pokemon.map(|pokemon| pokemon_texture(pokemon.pokemon.id(), self.side)).cloned();
         self.reset();
     }
 
@@ -221,7 +214,7 @@ impl PokemonRenderer {
     pub fn faint(&mut self) {
         if let Some(texture) =self.texture.as_ref() {
             self.faint.fainting = true;
-            self.faint.remaining = texture.height();
+            self.faint.remaining = texture.height() as f32;
         }
     }
 
@@ -230,29 +223,22 @@ impl PokemonRenderer {
         self.flicker.accumulator = 0.0;
     }
 
-    pub fn render(&self, offset: Vec2, color: Color) {
-        if let Some(texture) = self.texture {
+    pub fn draw(&self, ctx: &mut Context, offset: Vec2<f32>, color: Color) {
+        if let Some(texture) = &self.texture {
             let pos = self.pos + offset;
             if self.spawner.spawning() {
-                self.spawner.render(pos, texture);
+                self.spawner.draw(ctx, pos, texture);
             } else if self.flicker.accumulator < Flicker::HALF {
                 if self.faint.fainting {
                     if self.faint.remaining > 0.0 {
-                        draw_texture_ex(
-                            texture,
-                            pos.x,
-                            pos.y - self.faint.remaining,
-                            color,
-                            DrawTextureParams {
-                                source: Some(
-                                    Rect::new(0.0, 0.0, texture.width(), self.faint.remaining)
-                                ),
-                                ..Default::default()
-                            }
+                        texture.draw_region(
+                            ctx,
+                            Rectangle::new(0.0, 0.0, texture.width() as f32, self.faint.remaining),
+                            position(pos.x, pos.y - self.faint.remaining).color(color),
                         );
                     }
                 } else {
-                    draw_texture_ex(texture, pos.x, pos.y - texture.height(), color, DrawTextureParams::default());
+                    texture.draw(ctx, position(pos.x, pos.y - texture.height() as f32).color(color));
                 }
             }
         }

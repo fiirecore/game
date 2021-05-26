@@ -1,7 +1,11 @@
 use crate::{
     util::{Reset, Completable},
-    macroquad::prelude::{Vec2, Texture2D, LIGHTGRAY},
-    graphics::{byte_texture, draw},
+    graphics::{byte_texture, position},
+    tetra::{
+        Context,
+        math::Vec2,
+        graphics::Texture,
+    }
 };
 
 use crate::battle::{
@@ -16,21 +20,18 @@ pub struct WildBattleOpener {
 
     opener: DefaultBattleOpener,
     
-    grass: Texture2D,
-    offset: Vec2,
+    grass: Texture,
+    offset: Vec2<f32>,
 
 }
 
 impl WildBattleOpener {
     const GRASS_WIDTH: f32 = 128.0;
     const GRASS_HEIGHT: f32 = 47.0;
-}
-
-impl Default for WildBattleOpener {
-    fn default() -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         Self {
-            opener: DefaultBattleOpener::default(),
-            grass: byte_texture(include_bytes!("../../../../../assets/battle/grass.png")),
+            opener: DefaultBattleOpener::new(ctx),
+            grass: byte_texture(ctx, include_bytes!("../../../../../assets/battle/grass.png")),
             offset: Vec2::new(Self::GRASS_WIDTH, Self::GRASS_HEIGHT),
         }
     }
@@ -58,33 +59,21 @@ impl BattleOpener for WildBattleOpener {
         self.opener.offset()
     }
 
-    fn render_below_panel(&self, battle: &Battle) {
+    fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle) {
         for active in battle.opponent.active.iter() {
-            active.renderer.render(Vec2::new(-self.opener.offset, 0.0), LIGHTGRAY);
+            active.renderer.draw(ctx, Vec2::new(-self.opener.offset, 0.0), crate::graphics::LIGHTGRAY);
         }
-        self.opener.render_below_panel(battle);
+        self.opener.draw_below_panel(ctx, battle);
         if self.offset.y > 0.0 {
             let y = 114.0 - self.offset.y;
-            draw(
-                self.grass,
-                self.offset.x - Self::GRASS_WIDTH,
-                y,
-            );
-            draw(
-                self.grass,
-                self.offset.x,
-                y,
-            );
-            draw(
-                self.grass,
-                self.offset.x + Self::GRASS_WIDTH,
-                y,
-            );
+            self.grass.draw(ctx, position(self.offset.x - Self::GRASS_WIDTH, y));
+            self.grass.draw(ctx, position(self.offset.x, y));
+            self.grass.draw(ctx, position(self.offset.x + Self::GRASS_WIDTH, y));
         }
     }
 
-    fn render(&self) {
-        self.opener.render();
+    fn draw(&self, ctx: &mut Context) {
+        self.opener.draw(ctx);
     }
 }
 

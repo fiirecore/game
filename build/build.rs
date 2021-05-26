@@ -9,5 +9,5 @@ fn main() {
     world_builder::compile(dex, "assets/world/maps", "assets/world/textures", "assets/world/npcs", "build/data/world.bin");
 
     embed_resource::compile("build/resources.rc");
-    
+
 }

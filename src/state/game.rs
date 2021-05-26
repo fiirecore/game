@@ -1,25 +1,32 @@
 use std::sync::atomic::Ordering::Relaxed;
 
-use firecore_game::state::GameStateAction;
 use game::{
 	storage::{PLAYER_SAVES, save, data_mut, player::{SHOULD_SAVE, PlayerSaves}},
-	macroquad::prelude::{info, warn, is_key_down, KeyCode},
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
 	},
+	state::GameStateAction,
 	battle_glue::BattleEntry,
+	tetra::{
+		State, Context, Result,
+		time::get_delta_time,
+		input::{Key, is_key_down},
+	},
+	log::{info, warn},
 };
 
 use game::world::map::manager::WorldManager;
 use game::battle::manager::BattleManager;
 
-use super::State;
-use super::States;
+use crate::state::{MainState, MainStates};
 
-pub struct GameState {
+pub struct GameStateManager {
 
 	action: Option<GameStateAction>,
+
+	#[deprecated]
+	next: Option<MainStates>,
 
 	state: GameStates,
 	
@@ -44,11 +51,28 @@ impl Default for GameStates {
     }
 }
 
-impl GameState {
+impl GameStateManager {
 
-	pub async fn load(&mut self) {
+	pub fn new(ctx: &mut Context) -> Self {
+		Self {
+
+			action: None,
+
+			state: GameStates::default(),
+			next: None,
+			
+			world: WorldManager::new(ctx),
+			battle: BattleManager::new(ctx),
+			party: PartyGui::new(ctx),
+			bag: BagGui::new(ctx),
+
+			battle_entry: None,
+		}
+	}
+
+	pub fn load(&mut self, ctx: &mut Context) {
 		match game::deps::ser::deserialize(include_bytes!("../../build/data/world.bin")) {
-			Ok(world) => self.world.load(world),
+			Ok(world) => self.world.load(ctx, world),
 			Err(err) => panic!("Could not load world file with error {}", err),
 		}
 	}
@@ -68,34 +92,26 @@ impl GameState {
 	
 }
 
-impl State for GameState {
+impl State for GameStateManager {
 
-	fn new() -> Self {
-		Self {
-
-			action: None,
-
-			state: GameStates::default(),
-			
-			world: WorldManager::new(),
-			battle: BattleManager::new(),
-			party: PartyGui::new(),
-			bag: BagGui::new(),
-
-			battle_entry: None,
-		}
-	}
-
-	fn on_start(&mut self) {
+	fn begin(&mut self, ctx: &mut Context) -> Result {
 		self.world.load_with_data();
-		self.world.on_start(&mut self.battle_entry);
+		self.world.on_start(ctx, &mut self.battle_entry);
+		Ok(())
 	}
-	
-	fn update(&mut self, delta: f32) -> Option<States> {
 
-		// Speed game up if spacebar is held down
+	fn end(&mut self, _: &mut Context) -> Result {
+		if let Some(mut saves) = unsafe{PLAYER_SAVES.as_mut()} {
+			self.save_data(&mut saves);
+		}
+		Ok(())
+	}
 
-		let delta = delta *  if is_key_down(KeyCode::Space) {
+    fn update(&mut self, ctx: &mut Context) -> Result {
+		
+        // Speed game up if spacebar is held down
+
+		let delta = get_delta_time(ctx).as_secs_f32() * if is_key_down(ctx, Key::Space) {
 			4.0
 		} else {
 			1.0
@@ -108,54 +124,54 @@ impl State for GameState {
 		}
 		match self.state {
 			GameStates::World => {
-				self.world.update(delta, &mut self.battle_entry, &mut self.party, &mut self.bag, &mut self.action);
+				self.world.update(ctx, delta, &mut self.battle_entry, &mut self.party, &mut self.bag, &mut self.action);
 				if let Some(entry) = self.battle_entry.take() {
-					if self.battle.battle(entry) {
+					if self.battle.battle(ctx, entry) {
 						self.state = GameStates::Battle;
 					}
 				}
 			}
 			GameStates::Battle => {
-				self.battle.update(delta, &mut self.party, &mut self.bag);
+				self.battle.update(ctx, delta, &mut self.party, &mut self.bag);
 				if self.battle.finished {
 					let save = data_mut();
 					if let Some((winner, trainer)) = self.battle.update_data(save) {
 						game::world::battle::update_world(&mut self.world, save, winner, trainer);
 					}			
 					self.state = GameStates::World;
-					self.world.map_start(true);
+					self.world.map_start(ctx, true);
 				}
 			}
 		}
 
 		self.action.take().map(|action| match action {
-			GameStateAction::ExitToMenu => States::Menu,
-		})
+			GameStateAction::ExitToMenu => self.next = Some(MainStates::Menu),
+		});
+        Ok(())
+    }
 
-	}
-	
-	fn render(&self) {
-		if self.party.alive {
-			self.party.render();
+    fn draw(&mut self, ctx: &mut Context) -> Result {
+        if self.party.alive {
+			self.party.draw(ctx);
 		} else if self.bag.alive {
-			self.bag.render();
+			self.bag.draw(ctx);
 		} else {
 			match self.state {
-				GameStates::World => self.world.render(),
+				GameStates::World => self.world.draw(ctx),
 				GameStates::Battle => {
 					if self.battle.world_active() {
-						self.world.render();
+						self.world.draw(ctx);
 					}
-					self.battle.render();
+					self.battle.draw(ctx);
 				}
 			}
 		}
-	}
+        Ok(())
+    }
+}
 
-	fn quit(&mut self) {
-		if let Some(mut saves) = unsafe{PLAYER_SAVES.as_mut()} {
-			self.save_data(&mut saves);
-		}
+impl MainState for GameStateManager {
+	fn next(&mut self) -> &mut Option<MainStates> {
+        &mut self.next
 	}
-
 }

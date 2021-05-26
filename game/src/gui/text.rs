@@ -3,9 +3,9 @@ use firecore_text::{
 	message::{Message, MessagePages, MessagePage, TextColor},
 };
 use util::{Entity, Timer, Reset, Completable};
-use input::{pressed, Control};
+use crate::input::{pressed, Control};
 
-use macroquad::prelude::Vec2;
+use crate::tetra::{Context, math::Vec2};
 
 use crate::graphics::{draw_text_left, draw_button};
 
@@ -14,7 +14,7 @@ pub struct DynamicText {
 
 	alive: bool,
     
-	origin: Vec2,
+	origin: Vec2<f32>,
 	
 	pub font: FontId,
 	pub message: Message,
@@ -33,7 +33,7 @@ pub struct DynamicText {
 
 impl DynamicText {
 
-	pub fn new(origin: Vec2, font: FontId, color: TextColor, len: usize) -> Self {
+	pub fn new(origin: Vec2<f32>, font: FontId, color: TextColor, len: usize) -> Self {
 		Self {
 			alive: false,
 
@@ -98,7 +98,7 @@ impl DynamicText {
 		self.timer.hard_reset();
 	}
 
-	pub fn update(&mut self, delta: f32) {
+	pub fn update(&mut self, ctx: &Context, delta: f32) {
 		if self.alive {
 			if let Some(current) = self.message.pages.get(self.current) {
 				let line_len = current.lines[self.current_line].len() << 2;
@@ -136,7 +136,7 @@ impl DynamicText {
 								}
 							}
 
-							if pressed(Control::A) {
+							if pressed(ctx, Control::A) {
 								if self.current + 1 >= self.len() {
 									self.end = true;
 								} else {
@@ -148,7 +148,7 @@ impl DynamicText {
 					}
 
 				} else if self.counter <= line_len as f32 {
-					self.counter += delta * 120.0
+					self.counter += delta * 120.0;
 				} else if self.current_line < current.lines.len() - 1 {
 					self.current_line += 1;
 					self.counter = 0.0;
@@ -160,7 +160,7 @@ impl DynamicText {
 		}
 	}
 
-	pub fn render(&self) {
+	pub fn draw(&self, ctx: &mut Context) {
 		if self.alive {
 			if let Some(current_line) = self.message.pages.get(self.current).map(|page| page.lines.get(self.current_line)).flatten() {
 				let string = if current_line.len() > (self.counter as usize) >> 2 {
@@ -172,14 +172,14 @@ impl DynamicText {
 				let current = &self.message.pages[self.current];
 
 				let y = (self.current_line << 4) as f32;
-				draw_text_left(self.font, string, self.message.color, self.origin.x, self.origin.y + y);
+				draw_text_left(ctx, &self.font, string, self.message.color, self.origin.x, self.origin.y + y);
 
 				for index in 0..self.current_line {
-					draw_text_left(self.font, &current.lines[index], self.message.color, self.origin.x, self.origin.y + (index << 4) as f32);
+					draw_text_left(ctx, &self.font, &current.lines[index], self.message.color, self.origin.x, self.origin.y + (index << 4) as f32);
 				}
 
 				if self.can_continue && current.wait.is_none() {
-					draw_button(current_line, self.font, self.origin.x, self.origin.y + 2.0 + self.button.0 + y);
+					draw_button(ctx, &self.font, current_line, self.origin.x, self.origin.y + 2.0 + self.button.0 + y);
 				}
 			}
 		}

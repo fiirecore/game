@@ -1,6 +1,7 @@
 use crate::{
     util::{WIDTH, HEIGHT, Entity, Reset, Completable},
-    macroquad::prelude::{Color, BLACK, draw_rectangle}
+    graphics::draw_rectangle,
+    tetra::{Context, graphics::Color},
 };
 
 pub struct WarpTransition {
@@ -19,7 +20,7 @@ impl WarpTransition {
     pub const fn new() -> Self {
         Self {
             alive: false,
-            color: BLACK,
+            color: Color::BLACK,
             rect_width: Self::RECT_WIDTH,
             switch: (false, false),
         }
@@ -41,12 +42,12 @@ impl WarpTransition {
         }
     }
 
-    pub fn render(&self) {
+    pub fn draw(&self, ctx: &mut Context) {
         if self.alive {
-            draw_rectangle(0.0, 0.0, WIDTH, HEIGHT, self.color);
+            draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.color);
             if self.switch.0 {
-                draw_rectangle(0.0, 0.0, self.rect_width, HEIGHT, BLACK);
-                draw_rectangle(WIDTH - self.rect_width, 0.0, self.rect_width, HEIGHT, BLACK);
+                draw_rectangle(ctx, 0.0, 0.0, self.rect_width, HEIGHT, Color::BLACK);
+                draw_rectangle(ctx, WIDTH - self.rect_width, 0.0, self.rect_width, HEIGHT, Color::BLACK);
             }
         }        
     }

@@ -1,26 +1,27 @@
-pub mod manager;
+use crate::game::tetra::{State, Context};
 
-pub mod loading;
+mod manager;
+pub use manager::*;
+
 pub mod menu;
 pub mod game;
 
-// put state trait here that other state traits derive
+// pub mod loading;
 
-pub trait State {
-
-	fn new() -> Self where Self: Sized;
-
-	fn on_start(&mut self);
-
-	fn update(&mut self, delta: f32) -> Option<States>;
-
-	fn render(&self);
-
-	fn quit(&mut self);
-
+#[deprecated]
+pub trait NewState {
+    fn new(ctx: &mut Context) -> Self where Self: Sized;
 }
 
-pub enum States {
+pub trait MainState: State {
+    
+    // #[deprecated(note = "fix so usable with other enums")]
+    fn next(&mut self) -> &mut Option<MainStates>;
+    
+}
+
+// #[derive(Clone, Copy)]
+pub enum MainStates {
 
 	// Loading,
 	Menu,
@@ -28,7 +29,7 @@ pub enum States {
 
 }
 
-impl Default for States {
+impl Default for MainStates {
     fn default() -> Self {
         #[cfg(not(debug_assertions))] {
             Self::Menu

@@ -21,17 +21,10 @@ firecore-dependencies = { path = "../deps", optional = true }
 
 ### Audio libraries
 
-# [target.'cfg(not(any(target_arch = "wasm32", target_os = "android")))'.dependencies.sdl2]
-# path = "../rust-sdl2-master"
-# default-features = false
-# features = ["mixer"]
-# optional = true
-
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "android")))'.dependencies]
+# soloud = { version = "0.4", optional = true }
 kira = { version = "0.5", default-features = false, features = ["ogg"], optional = true } # To - do: Figure out how to play audio without taking up lots of memory and storage space, add agb support/midi support
 lewton = { version = "0.10.1", optional = true } # Included in kira
-
-### this library is replaced by audio in macroquad 0.3
 
 # [target.'cfg(target_arch="wasm32")'.dependencies]
 # quad-snd = { git = "https://github.com/not-fl3/quad-snd", optional = true } # WebAudio

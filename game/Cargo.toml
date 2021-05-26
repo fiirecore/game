@@ -1,32 +1,34 @@
 [package]
 name = "firecore-game"
-version = "0.4.0-2021-05-22"
+version = "0.4.0-2021-05-25"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 publish = false
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [features]
-default = ["audio", "battle", "world"]
-serialization = ["firecore-dependencies/serialization"]
-audio = ["firecore-audio/play"]
-ui = ["macroquad/ui"]
-world = ["firecore-world-lib", "serde"]
-battle = ["serde"]
+default = ["audio", "static-link", "world", "battle"]
+ser = ["firecore-dependencies/ser"]
+audio = ["firecore-dependencies/audio", "parking_lot"]
+# ui = ["macroquad/ui"]
+world = ["firecore-world-lib"]
+battle = []
+static-link = ["firecore-dependencies/static-link", "bundled"]
+bundled = ["firecore-dependencies/bundled"]
 
 [dependencies]
 
-macroquad = { git = "https://github.com/DoNotDoughnut/macroquad" }
-
-firecore-dependencies = { path = "firecore/deps", features = ["hash", "vec", "str"] }
+firecore-dependencies = { path = "firecore/deps", features = ["hash", "vec", "str", "engine", "log"] }
 
 firecore-util = { path = "firecore/util" }
 firecore-pokedex-game = { path = "firecore/pokedex/game" }
-firecore-input = { path = "firecore/input" }
 pokemon-firered-clone-storage = { path = "firecore/storage/game" }
-firecore-audio = { path = "firecore/audio", default-features = false }
+firecore-audio-lib = { path = "firecore/audio/lib" }
 firecore-text = { path = "firecore/text" }
 
 firecore-world-lib = { path = "world/lib", optional = true }
-serde = { version = "1.0", features = ["derive"], optional = true }
+
+serde = { version = "1.0", features = ["derive"] }
+enum-map = { version = "1.1", features = ["serde"] }
+# atomic = "0.5"
+
+parking_lot = { version = "0.11", optional = true }

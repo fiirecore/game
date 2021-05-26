@@ -1,7 +1,10 @@
 use crate::{
     util::{Reset, Completable},
     graphics::draw_o_bottom,
-    macroquad::prelude::Texture2D,
+    tetra::{
+        Context,
+        graphics::Texture,
+    }
 };
 
 use crate::battle::{
@@ -11,17 +14,25 @@ use crate::battle::{
 
 use super::DefaultBattleOpener;
 
-#[derive(Default)]
 pub struct TrainerBattleOpener {
     opener: DefaultBattleOpener,
-    trainer: Option<Texture2D>,
+    trainer: Option<Texture>,
+}
+
+impl TrainerBattleOpener {
+    pub fn new(ctx: &mut Context) -> Self {
+        Self {
+            opener: DefaultBattleOpener::new(ctx),
+            trainer: None,
+        }
+    }
 }
 
 impl BattleOpener for TrainerBattleOpener {
 
     fn spawn(&mut self, battle: &Battle) {
         if let Some(trainer) = battle.data.trainer.as_ref() {
-            self.trainer = Some(trainer.texture);
+            self.trainer = Some(trainer.texture.clone());
         }
     }
 
@@ -29,13 +40,13 @@ impl BattleOpener for TrainerBattleOpener {
         self.opener.update(delta);
     }
 
-    fn render_below_panel(&self, battle: &Battle) {
-        draw_o_bottom(self.trainer, 144.0 - self.opener.offset, 74.0);
-        self.opener.render_below_panel(battle);
+    fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle) {
+        draw_o_bottom(ctx, self.trainer.as_ref(), 144.0 - self.opener.offset, 74.0);
+        self.opener.draw_below_panel(ctx, battle);
     }
 
-    fn render(&self) {
-        self.opener.render();
+    fn draw(&self, ctx: &mut Context) {
+        self.opener.draw(ctx);
     }
 
     fn offset(&self) -> f32 {

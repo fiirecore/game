@@ -4,6 +4,9 @@ pub mod message;
 
 pub type FontId = u8;
 
+pub const FONT_0: &FontId = &0;
+pub const FONT_1: &FontId = &1;
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FontSheetData {
 

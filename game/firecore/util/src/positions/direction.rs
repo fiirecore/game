@@ -31,13 +31,16 @@ impl Direction {
 		}
 	}
 
-	pub const fn value(&self) -> u8 {
+	pub const fn horizontal(&self) -> bool {
 		match self {
-			Direction::Down => 0,
-			Direction::Up => 1,
-			Direction::Left => 2,
-			Direction::Right => 3,
+			Self::Left | Self::Right => true,
+			_ => false,
 		}
+	}
+
+	#[inline]
+	pub const fn vertical(&self) -> bool {
+		!self.horizontal()
 	}
 
 	// Input

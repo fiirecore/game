@@ -9,7 +9,7 @@ pub enum DataError {
     Deserialize(&'static str, ron::Error),
 
     IOError(std::io::Error),
-    FileError(macroquad::file::FileError),
+    // FileError(macroquad::file::FileError),
 
 }
 
@@ -36,8 +36,8 @@ impl From<ron::Error> for DataError {
     }
 }
 
-impl From<macroquad::file::FileError> for DataError {
-    fn from(error: macroquad::file::FileError) -> Self {
-        Self::FileError(error)
-    }
-}
+// impl From<macroquad::file::FileError> for DataError {
+//     fn from(error: macroquad::file::FileError) -> Self {
+//         Self::FileError(error)
+//     }
+// }

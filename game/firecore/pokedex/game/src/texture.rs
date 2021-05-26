@@ -6,7 +6,7 @@ use pokedex::{
     item::ItemId,
 };
 
-use macroquad::prelude::Texture2D;
+use deps::tetra::{Context, Result, graphics::Texture};
 
 use crate::serialize::SerializedPokemon;
 
@@ -31,20 +31,20 @@ pub enum PokemonTexture {
 //     }
 // }
 
-pub fn pokemon_texture(id: &PokemonId, side: PokemonTexture) -> Texture2D {
-	unsafe{POKEMON_TEXTURES.as_ref()}.expect("Could not get pokemon textures!").get(&id, side)
+pub fn pokemon_texture(id: &PokemonId, side: PokemonTexture) -> &Texture {
+	unsafe{POKEMON_TEXTURES.as_ref()}.expect("Could not get pokemon textures!").get(id, side)
 }
 
-pub fn item_texture(id: &ItemId) -> Option<Texture2D> {
-    unsafe{ITEM_TEXTURES.as_ref()}.expect("Could not get item textures!").get(id).map(|texture| *texture)
+pub fn item_texture(id: &ItemId) -> Option<&Texture> {
+    unsafe{ITEM_TEXTURES.as_ref()}.expect("Could not get item textures!").get(id)
 }
 
 
 pub struct PokemonTextures {
 
-    pub front: HashMap<PokemonId, Texture2D>,
-    pub back: HashMap<PokemonId, Texture2D>,
-    pub icon: HashMap<PokemonId, Texture2D>,
+    pub front: HashMap<PokemonId, Texture>,
+    pub back: HashMap<PokemonId, Texture>,
+    pub icon: HashMap<PokemonId, Texture>,
 
 }
 
@@ -58,27 +58,21 @@ impl PokemonTextures {
         }
     }
 
-    pub fn insert(&mut self, pokemon: &SerializedPokemon) {
-        self.front.insert(pokemon.pokemon.id, byte_texture(&pokemon.front_png));
-		self.back.insert(pokemon.pokemon.id, byte_texture(&pokemon.back_png));
-		self.icon.insert(pokemon.pokemon.id, byte_texture(&pokemon.icon_png));
+    pub fn insert(&mut self, ctx: &mut Context, pokemon: &SerializedPokemon) -> Result {
+        self.front.insert(pokemon.pokemon.id, Texture::from_file_data(ctx, &pokemon.front_png)?);
+		self.back.insert(pokemon.pokemon.id, Texture::from_file_data(ctx, &pokemon.back_png)?);
+		self.icon.insert(pokemon.pokemon.id, Texture::from_file_data(ctx, &pokemon.icon_png)?);
+        Ok(())
     }
 
-    pub fn get(&self, id: &PokemonId, side: PokemonTexture) -> Texture2D {
+    pub fn get(&self, id: &PokemonId, side: PokemonTexture) -> &Texture {
         match side {
             PokemonTexture::Front => self.front.get(id),
             PokemonTexture::Back => self.back.get(id),
             PokemonTexture::Icon => self.icon.get(id),
-        }.map(|texture| *texture).unwrap_or_else(|| panic!("Could not get texture for pokemon with ID {}", id))
+        }.unwrap_or_else(|| panic!("Could not get texture for pokemon with ID {}", id))
     }
 
 }
 
-pub type ItemTextures = HashMap<ItemId, Texture2D>;
-
-#[inline]
-fn byte_texture(bytes: &[u8]) -> Texture2D {
-    let texture = Texture2D::from_file_with_format(bytes, None);
-    texture.set_filter(macroquad::prelude::FilterMode::Nearest);
-    texture
-}
+pub type ItemTextures = HashMap<ItemId, Texture>;

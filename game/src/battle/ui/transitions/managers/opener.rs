@@ -1,3 +1,5 @@
+use crate::tetra::Context;
+
 use crate::battle::{
     Battle,
     BattleType,
@@ -12,7 +14,6 @@ use crate::battle::{
     }
 };
 
-#[derive(Default)]
 pub struct BattleOpenerManager {
     pub state: TransitionState,
     current: Openers,
@@ -22,6 +23,16 @@ pub struct BattleOpenerManager {
 }
 
 impl BattleOpenerManager {
+
+    pub fn new(ctx: &mut Context) -> Self {
+        Self {
+            state: TransitionState::default(),
+            current: Openers::default(),
+
+            wild: WildBattleOpener::new(ctx),
+            trainer: TrainerBattleOpener::new(ctx),
+        }
+    }
 
     pub fn begin(&mut self, battle: &Battle) {
         self.state = TransitionState::Run;
@@ -47,12 +58,12 @@ impl BattleOpenerManager {
         }
     }
 
-    pub fn render_below_panel(&self, battle: &Battle) {
-        self.get().render_below_panel(battle);
+    pub fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle) {
+        self.get().draw_below_panel(ctx, battle);
     }
 
-    pub fn render(&self) {
-        self.get().render();
+    pub fn draw(&self, ctx: &mut Context) {
+        self.get().draw(ctx);
     }
 
     pub fn offset(&self) -> f32 {

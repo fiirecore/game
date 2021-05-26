@@ -11,13 +11,13 @@ use pokedex::{
     },
 };
 
-use macroquad::prelude::{Color, color_u8, Texture2D};
+use crate::tetra::graphics::{Color, Texture};
 
 #[derive(Clone)]
 pub struct PokemonDisplay {
 
     pub instance: Cow<'static, PokemonInstance>,
-    pub icon: Texture2D,
+    pub icon: Texture,
     pub name: String,
     pub level: String,
     pub health: (String, f32),
@@ -33,15 +33,15 @@ pub struct PokemonSummaryDisplay {
 
 
 
-const PLACEHOLDER: Color = color_u8!(30, 30, 30, 255);
+const PLACEHOLDER: Color = Color::rgb(30.0 / 255.0, 30.0 / 255.0, 30.0 / 255.0);
 
-const NORMAL: Color = color_u8!(168, 168, 120, 255);
-const WATER: Color = color_u8!(104, 144, 240, 255);
-const GRASS: Color = color_u8!(120, 200, 80, 255);
-const FIGHTING: Color = color_u8!(232, 48, 0, 255);
-const POISON_UPPER: Color = color_u8!(248, 88, 136, 255);
-const POISON_LOWER: Color = color_u8!(160, 64, 160, 255);
-const FLYING_UPPER: Color = color_u8!(152, 216, 216, 255);
+const NORMAL: Color = Color::rgb(168.0 / 255.0, 168.0 / 255.0, 120.0 / 255.0);
+const WATER: Color = Color::rgb(104.0 / 255.0, 144.0 / 255.0, 240.0 / 255.0);
+const GRASS: Color = Color::rgb(120.0 / 255.0, 200.0 / 255.0, 80.0 / 255.0);
+const FIGHTING: Color = Color::rgb(232.0 / 255.0, 48.0 / 255.0, 0.0);
+const POISON_UPPER: Color = Color::rgb(248.0 / 255.0, 88.0 / 255.0, 136.0 / 255.0);
+const POISON_LOWER: Color = Color::rgb(160.0 / 255.0, 64.0 / 255.0, 160.0 / 255.0);
+const FLYING_UPPER: Color = Color::rgb(152.0 / 255.0, 216.0 / 255.0, 216.0 / 255.0);
 
 pub fn pokemon_type_color(pokemon_type: PokemonType) -> (Color, Color) {
 	match pokemon_type {
@@ -81,7 +81,7 @@ impl PokemonDisplay {
             name: instance.name().to_string(),
             level: format!("Lv{}", instance.level),
             health: (format!("{}/{}", instance.current_hp, instance.base.hp), super::health::HealthBar::width(instance.current_hp, instance.base.hp)),
-            icon: pokemon_texture(instance.pokemon.id(), Icon),
+            icon: pokemon_texture(instance.pokemon.id(), Icon).clone(),
             instance,
         }
     }

@@ -5,10 +5,16 @@ use crate::{
 		instance::PokemonInstance,
 		stat::BaseStatSet,
 	},
-	macroquad::prelude::{Vec2, const_vec2, Texture2D},
 	gui::health::HealthBar,
 	text::TextColor,
-	graphics::{byte_texture, draw, draw_text_left, draw_text_right},
+	graphics::{byte_texture, position, draw_text_left, draw_text_right},
+	tetra::{
+		Context,
+		math::Vec2,
+		graphics::{
+			Texture,
+		},
+	}
 };
 
 use crate::battle::ui::{
@@ -17,35 +23,35 @@ use crate::battle::ui::{
 	exp_bar::ExperienceBar,
 };
 
-static mut PLAYER: Option<Texture2D> = None;
+static mut PLAYER: Option<Texture> = None;
 
-fn player_texture() -> Texture2D {
-	unsafe { *PLAYER.get_or_insert(byte_texture(include_bytes!("../../../../assets/battle/gui/player.png"))) }
+fn player_texture(ctx: &mut Context) -> &'static Texture {
+	unsafe { PLAYER.get_or_insert(byte_texture(ctx, include_bytes!("../../../../assets/battle/gui/player.png"))) }
 }
 
-static mut OPPONENT_PADDING: Option<Texture2D> = None;
+static mut OPPONENT_PADDING: Option<Texture> = None;
 
-fn opponent_padding() -> Texture2D {
-	unsafe { *OPPONENT_PADDING.get_or_insert(byte_texture(include_bytes!("../../../../assets/battle/gui/opponent_padding.png"))) }
+fn opponent_padding(ctx: &mut Context) -> &'static Texture {
+	unsafe { OPPONENT_PADDING.get_or_insert(byte_texture(ctx, include_bytes!("../../../../assets/battle/gui/opponent_padding.png"))) }
 }
 
-static mut OPPONENT: Option<Texture2D> = None;
+static mut OPPONENT: Option<Texture> = None;
 
-fn opponent_texture() -> Texture2D {
-	unsafe { *OPPONENT.get_or_insert(byte_texture(include_bytes!("../../../../assets/battle/gui/opponent.png"))) }
+fn opponent_texture(ctx: &mut Context) -> &'static Texture {
+	unsafe { OPPONENT.get_or_insert(byte_texture(ctx, include_bytes!("../../../../assets/battle/gui/opponent.png"))) }
 }
 
 pub struct PokemonStatusGui {
 
 	alive: bool,
 
-	origin: Vec2,
+	origin: Vec2<f32>,
 
-	background: (Option<Texture2D>, Texture2D),
+	background: (Option<Texture>, Texture),
 	name: Option<String>,
 	level: Option<(String, Level)>,
 	data_pos: PokemonStatusPos,
-	health: (HealthBar, Vec2),
+	health: (HealthBar, Vec2<f32>),
 	health_text: Option<String>,
 	exp: Option<ExperienceBar>,
 
@@ -62,9 +68,9 @@ impl PokemonStatusGui {
 
 	const HEALTH_Y: f32 = 15.0;
 
-	pub fn new(index: BattleGuiPositionIndex) -> Self {
+	pub fn new(ctx: &mut Context, index: BattleGuiPositionIndex) -> Self {
 
-		let ((background, origin, exp), data_pos, hb) = Self::attributes(index);
+		let ((background, origin, exp), data_pos, hb) = Self::attributes(ctx, index);
 
 		Self {
 
@@ -76,7 +82,7 @@ impl PokemonStatusGui {
 			name: None,
 			level: None,
 			data_pos,
-			health: (HealthBar::new(), hb),
+			health: (HealthBar::new(ctx), hb),
 			health_text: None,
 			exp,
 
@@ -84,9 +90,9 @@ impl PokemonStatusGui {
 
 	}
 
-	pub fn with(index: BattleGuiPositionIndex, pokemon: &PokemonInstance) -> Self {
+	pub fn with(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: &PokemonInstance) -> Self {
 
-		let ((background, origin, exp), data_pos, hb) = Self::attributes(index);
+		let ((background, origin, exp), data_pos, hb) = Self::attributes(ctx, index);
 		Self {
 			alive: false,
 			origin,
@@ -94,7 +100,7 @@ impl PokemonStatusGui {
 			name: Some(pokemon.name().to_string()),
 			level: Some(Self::level(pokemon.level)),
 			data_pos,
-			health: (HealthBar::with_size(HealthBar::width(pokemon.current_hp, pokemon.base.hp)), hb),
+			health: (HealthBar::with_size(ctx, HealthBar::width(pokemon.current_hp, pokemon.base.hp)), hb),
 			health_text: exp.is_some().then(|| format!("{}/{}", pokemon.current_hp, pokemon.base.hp)),
 			exp: exp.map(|mut exp| {
 				exp.update_exp(pokemon.level, pokemon, true);
@@ -103,29 +109,29 @@ impl PokemonStatusGui {
 		}
 	}
 
-	const TOP_SINGLE: Vec2 = const_vec2!([14.0, 18.0]);
+	const TOP_SINGLE: Vec2<f32> = Vec2::new(14.0, 18.0);
 
-	const BOTTOM_SINGLE: Vec2 = const_vec2!([127.0, 75.0]);
-	const BOTTOM_MANY_WITH_BOTTOM_RIGHT: Vec2 = const_vec2!([240.0, 113.0]);
+	const BOTTOM_SINGLE: Vec2<f32> = Vec2::new(127.0, 75.0);
+	const BOTTOM_MANY_WITH_BOTTOM_RIGHT: Vec2<f32> = Vec2::new(240.0, 113.0);
 
 	// const OPPONENT_HEIGHT: f32 = 29.0;
-	const OPPONENT_HEALTH_OFFSET: Vec2 = const_vec2!([24.0, Self::HEALTH_Y]);
+	const OPPONENT_HEALTH_OFFSET: Vec2<f32> = Vec2::new(24.0, Self::HEALTH_Y);
 
 	const OPPONENT_POSES: PokemonStatusPos = PokemonStatusPos {
 		name: 8.0,
 		level: 86.0,
 	};
 
-	const EXP_OFFSET: Vec2 = const_vec2!([32.0, 33.0]);
+	const EXP_OFFSET: Vec2<f32> = Vec2::new(32.0, 33.0);
 
 
-	fn attributes(index: BattleGuiPositionIndex) -> (((Option<Texture2D>, Texture2D), Vec2, Option<ExperienceBar>), PokemonStatusPos, Vec2) {
+	fn attributes(ctx: &mut Context, index: BattleGuiPositionIndex) -> (((Option<Texture>, Texture), Vec2<f32>, Option<ExperienceBar>), PokemonStatusPos, Vec2<f32>) {
 		match index.position {
 			BattleGuiPosition::Top => {
 				if index.size == 1 {
 					(
 						(
-							(Some(opponent_padding()), opponent_texture()), // Background
+							(Some(opponent_padding(ctx).clone()), opponent_texture(ctx).clone()), // Background
 							Self::TOP_SINGLE, // Panel
 							None
 						),
@@ -133,9 +139,9 @@ impl PokemonStatusGui {
 						Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
 					)
 				} else {
-					let texture = opponent_texture();
-					let mut pos = Vec2::ZERO;
-					pos.y += index.index as f32 * texture.height();
+					let texture = opponent_texture(ctx).clone();
+					let mut pos = Vec2::zero();
+					pos.y += index.index as f32 * texture.height() as f32;
 					(
 						(
 							(None, texture), // Background
@@ -151,7 +157,7 @@ impl PokemonStatusGui {
 				if index.size == 1 {
 					(
 						(
-							(None, player_texture()),
+							(None, player_texture(ctx).clone()),
 							Self::BOTTOM_SINGLE,
 							Some(ExperienceBar::new(/*Self::BOTTOM_SINGLE + Self::EXP_OFFSET*/)),
 						),
@@ -159,13 +165,13 @@ impl PokemonStatusGui {
 							name: 17.0,
 							level: 95.0,
 						},
-						const_vec2!([33.0, Self::HEALTH_Y])
+						Vec2::new(33.0, Self::HEALTH_Y)
 					)
 				} else {
-					let texture = opponent_texture();
+					let texture = opponent_texture(ctx).clone();
 					let mut pos = Self::BOTTOM_MANY_WITH_BOTTOM_RIGHT;
-					pos.x -= texture.width();
-					pos.y -= (index.index + 1) as f32 * (texture.height() + 1.0);
+					pos.x -= texture.width() as f32;
+					pos.y -= (index.index + 1) as f32 * (texture.height() as f32 + 1.0);
 					(
 						(
 							(None, texture),
@@ -233,7 +239,7 @@ impl PokemonStatusGui {
 		});
 	}
 
-	pub fn render(&self, offset: f32, bounce: f32) {
+	pub fn draw(&self, ctx: &mut Context, offset: f32, bounce: f32) {
 		if self.alive {
 			if let Some(name) = &self.name {
 				let pos = Vec2::new(
@@ -249,28 +255,28 @@ impl PokemonStatusGui {
 					}
 				);
 
-				if let Some(padding) = self.background.0 {
-					draw(padding, pos.x + 8.0, pos.y + 21.0);
+				if let Some(padding) = &self.background.0 {
+					padding.draw(ctx, position(pos.x + 8.0, pos.y + 21.0));
 				}
-				draw(self.background.1, pos.x, pos.y);
+				self.background.1.draw(ctx, position(pos.x, pos.y));
 
 				let x2 = pos.x + self.data_pos.level;
 				let y = pos.y + 2.0;
 
 				if let Some(health_text) = self.health_text.as_ref() {
-					draw_text_right(0, health_text, TextColor::Black, x2, y + 18.0);
+					draw_text_right(ctx, &0, health_text, TextColor::Black, x2, y + 18.0);
 				}
 
-				draw_text_left(0, name, TextColor::Black, pos.x + self.data_pos.name, y);
+				draw_text_left(ctx, &0, name, TextColor::Black, pos.x + self.data_pos.name, y);
 				if let Some((level, _)) = &self.level {
-					draw_text_right(0, level, TextColor::Black, x2, y);
+					draw_text_right(ctx, &0, level, TextColor::Black, x2, y);
 				}
 
 				if let Some(exp) = self.exp.as_ref() {
-					exp.render(pos + Self::EXP_OFFSET);
+					exp.draw(ctx, pos + Self::EXP_OFFSET);
 				}
 				
-				self.health.0.render(pos + self.health.1);
+				self.health.0.draw(ctx, pos + self.health.1);
 			}
 		}
 	}

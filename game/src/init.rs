@@ -1,17 +1,21 @@
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-use storage::{load, store, get, configuration::Configuration};
+use crate::tetra::{
+    Context, 
+    Result,
+};
+use storage::load;
 use pokedex::{
     pokemon::POKEDEX,
     moves::{MOVEDEX, GAME_MOVE_DEX},
     item::ITEMDEX,
     serialize::SerializedDex,
 };
-use audio::{
+use crate::audio::{
     add_sound,
     SerializedSoundData,
-    Sound
+    Sound,
 };
-use crate::graphics::byte_texture;
+use crate::config::{Configuration, CONFIGURATION};
 use pokedex::texture::{PokemonTextures, POKEMON_TEXTURES, ITEM_TEXTURES};
 use deps::hash::HashMap;
 
@@ -27,25 +31,28 @@ pub fn seed_randoms(seed: u64) {
 	crate::battle::BATTLE_RANDOM.seed(seed);
 }
 
-pub async fn configuration() {
-    store(load::<Configuration>().await);
+pub fn configuration() -> Result {
+    let config = load::<Configuration>();
     // store::<PlayerSaves>().await;
 
     {
 
-        let config = get::<Configuration>().expect("Could not get configuration!");
+        crate::input::keyboard::load(config.controls.clone());
+        crate::input::controller::load(crate::input::controller::default_button_map());
 
-        input::keyboard::load(config.controls.clone());
-
-        if config.touchscreen {
-            input::touchscreen::touchscreen(true);
-        }
+        // if config.touchscreen {
+        //     crate::input::touchscreen::touchscreen(true);
+        // }
 
     }
 
+    unsafe { CONFIGURATION = Some(config) };
+
+    Ok(())
+
 }
 
-pub fn pokedex(dex: SerializedDex) {
+pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 
     let pokedex = unsafe {
         POKEDEX.get_or_insert(HashMap::with_capacity(dex.pokemon.len()))
@@ -55,7 +62,7 @@ pub fn pokedex(dex: SerializedDex) {
 
 	for pokemon in dex.pokemon {
 
-        pokemon_textures.insert(&pokemon);
+        pokemon_textures.insert(ctx, &pokemon)?;
 
         #[cfg(feature = "audio")]
 		if !pokemon.cry_ogg.is_empty() {
@@ -102,34 +109,28 @@ pub fn pokedex(dex: SerializedDex) {
     let mut item_textures = HashMap::with_capacity(dex.items.len());
 
     for item in dex.items {
-        item_textures.insert(item.item.id, byte_texture(&item.texture));
+        item_textures.insert(item.item.id, crate::graphics::byte_texture(ctx, &item.texture));
         itemdex.insert(item.item.id, item.item);
     }
 
     unsafe { ITEM_TEXTURES = Some(item_textures); }
 
+    Ok(())
+
 }
 
 #[cfg(feature = "audio")]
-pub fn audio(audio: audio::SerializedAudio) {
-    use macroquad::prelude::error;
+pub fn audio(audio: crate::audio::SerializedAudio) {
+    use crate::log::error;    
 
-    if let Err(err) = audio::create() {
+    if let Err(err) = crate::audio::create() {
         error!("{}", err);
     } else {
-        #[cfg(not(target = "wasm32"))] {
-            std::thread::spawn( || {
-                if let Err(err) = audio::load(audio) {
-                    error!("Could not load audio files with error {}", err);
-                }
-            });
-        }
-    
-        #[cfg(target = "wasm32")] {
-            if let Err(err) = audio::load(audio) {
+        std::thread::spawn( || {
+            if let Err(err) = crate::audio::load(audio) {
                 error!("Could not load audio files with error {}", err);
             }
-        }
+        });
     }    
 }
 

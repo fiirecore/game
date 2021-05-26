@@ -1,23 +1,16 @@
-pub mod manager;
+use game::tetra::State;
+
+mod manager;
+pub use manager::*;
 
 // pub mod first_scene;
 pub mod title;
 pub mod character;
 pub mod main_menu;
 
-pub trait MenuState {
-
-	fn new() -> Self where Self: Sized;
-
-	fn on_start(&mut self);
+pub trait MenuState: State {
 	
-	fn update(&mut self, delta: f32);
-	
-	fn render(&self);
-	
-	fn quit(&mut self);
-	
-	fn action(&mut self) -> &mut Option<MenuStateAction>;
+	fn next(&mut self) -> &mut Option<MenuStateAction>;
 	
 }
 

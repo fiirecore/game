@@ -13,7 +13,7 @@ edition = "2018"
 firecore-world-lib = { path = "../lib" }
 firecore-pokedex-game = { path = "../../firecore/pokedex/game" }
 firecore-util = { path = "../../firecore/util" }
-firecore-dependencies = { path = "../../firecore/deps", features = ["serialization"] }
+firecore-dependencies = { path = "../../firecore/deps", features = ["ser"] }
 
 ### Serialization
 

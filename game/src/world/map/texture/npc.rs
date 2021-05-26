@@ -7,15 +7,14 @@ use crate::{
         TILE_SIZE, 
         Direction,
     },
-    graphics::byte_texture,
-    macroquad::prelude::{
-        Texture2D,
-        draw_texture_ex,
-        WHITE,
-        DrawTextureParams,
-        Rect,
-        draw_rectangle,
-        RED,
+    graphics::{byte_texture, position, RED, draw_rectangle},
+    tetra::{
+        Context,
+        math::Vec2,
+        graphics::{
+            Texture,
+            Rectangle,
+        }
     },
 };
 
@@ -32,7 +31,7 @@ use crate::world::{
     RenderCoords,
 };
 
-pub type NpcTextures = HashMap<TinyStr16, Texture2D>;
+pub type NpcTextures = HashMap<TinyStr16, Texture>;
 pub type TrainerTextures = NpcTextures;
 
 static mut TRAINER_TEXTURES: Option<TrainerTextures> = None;
@@ -47,8 +46,8 @@ pub struct NPCTextureManager {
 
 impl NPCTextureManager {
 
-    pub fn trainer_texture(npc_type: &NPCTypeId) -> Texture2D {
-        unsafe { *TRAINER_TEXTURES.as_ref().expect("Could not get trainer textures! (Not initialized)").get(npc_type).unwrap_or_else(|| panic!("Could not get trainer texture for NPC Type {}", npc_type)) }
+    pub fn trainer_texture(npc_type: &NPCTypeId) -> &'static Texture {
+        unsafe { TRAINER_TEXTURES.as_ref().expect("Could not get trainer textures! (Not initialized)").get(npc_type).unwrap_or_else(|| panic!("Could not get trainer texture for NPC Type {}", npc_type)) }
     }
 
     pub fn with_capacity(&mut self, capacity: usize) {
@@ -56,32 +55,37 @@ impl NPCTextureManager {
         unsafe { TRAINER_TEXTURES = Some(HashMap::with_capacity(capacity)); }
     }
 
-    pub fn add_npc_type(&mut self, npc_type: &SerializedNPCType) {
-        self.npcs.insert(npc_type.config.identifier, byte_texture(&npc_type.texture));
+    pub fn add_npc_type(&mut self, ctx: &mut Context, npc_type: &SerializedNPCType) {
+        self.npcs.insert(npc_type.config.identifier, byte_texture(ctx, &npc_type.texture));
         if let Some(texture) = &npc_type.battle_texture {
             unsafe {
-                TRAINER_TEXTURES.as_mut().unwrap().insert(npc_type.config.identifier, byte_texture(texture));
+                TRAINER_TEXTURES.as_mut().unwrap().insert(npc_type.config.identifier, byte_texture(ctx, texture));
             }
         }
     }
 
-    pub fn render(&self, npc: &NPC, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut Context, npc: &NPC, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x + npc.character.position.offset.x;
         let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32 - screen.focus.y + npc.character.position.offset.y;
         
         if let Some(texture) = self.npcs.get(&npc.npc_type) {
-            draw_texture_ex(*texture, x, y, WHITE, DrawTextureParams {
-                source: Some(Rect::new(
+            let params = if npc.character.position.direction == Direction::Right {
+                position(x + 32.0, y).scale(Vec2::new(-1.0, 1.0))
+            } else {
+                position(x, y)
+            };
+            texture.draw_region(
+                ctx,
+                Rectangle::new(
                     current_texture_pos(npc),
                     0.0,
                     16.0,
                     32.0,
-                )),
-                flip_x: npc.character.position.direction == Direction::Right,
-                ..Default::default()
-            })
+                ),
+                params
+            );
         } else {
-            draw_rectangle(x, y + TILE_SIZE, TILE_SIZE, TILE_SIZE * 2.0, RED);
+            draw_rectangle(ctx, x, y + TILE_SIZE, TILE_SIZE, TILE_SIZE * 2.0, RED);
         }
     }
 

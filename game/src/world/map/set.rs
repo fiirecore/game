@@ -1,6 +1,7 @@
 use crate::{
     battle_glue::BattleEntryRef,
-    macroquad::prelude::warn
+    tetra::Context,
+    log::warn,
 };
 
 use worldlib::{
@@ -23,29 +24,29 @@ use crate::world::{
 
 impl GameWorld for WorldMapSet {
 
-    fn on_start(&mut self, music: bool) {
+    fn on_start(&mut self, ctx: &mut Context, music: bool) {
         if let Some(map) = self.map_mut() {
-            map.on_start(music);
+            map.on_start(ctx, music);
         } else {
             warn!("Could not get current map at {:?}!", self.current);
         }
     }
 
-    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, ctx: &mut Context, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(map) = self.map_mut() {
-            map.on_tile(battle, player);
+            map.on_tile(ctx, battle, player);
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
         if let Some(map) = self.map_mut() {
-            map.update(delta, player, battle, warp, text_window);
+            map.update(ctx, delta, player, battle, warp, text_window);
         }
     }
 
-    fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool) {
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool) {
         if let Some(map) = self.map() {
-            map.render(textures, screen, if border { map.border[0] != 0x8 } else { false });
+            map.draw(ctx, textures, screen, if border { map.border[0] != 0x8 } else { false });
         }
     }
 
@@ -53,29 +54,29 @@ impl GameWorld for WorldMapSet {
 
 impl GameWorld for WorldMapSetManager {
 
-    fn on_start(&mut self, music: bool) {
+    fn on_start(&mut self, ctx: &mut Context, music: bool) {
         if let Some(set) = self.set_mut() {
-            set.on_start(music);
+            set.on_start(ctx, music);
         } else {
             warn!("Could not get current map set {:?}!", self.current);
         }
     }
 
-    fn on_tile(&mut self, battle: BattleEntryRef, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, ctx: &mut Context, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(set) = self.set_mut() {
-            set.on_tile(battle, player);
+            set.on_tile(ctx, battle, player);
         }
     }
 
-    fn update(&mut self, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow) {
         if let Some(set) = self.set_mut() {
-            set.update(delta, player, battle, warp, text_window);
+            set.update(ctx, delta, player, battle, warp, text_window);
         }
     }
 
-    fn render(&self, textures: &WorldTextures, screen: RenderCoords, border: bool) {
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool) {
         if let Some(set) = self.set() {
-            set.render(textures, screen, border);
+            set.draw(ctx, textures, screen, border);
         }
     }
 

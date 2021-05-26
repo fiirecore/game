@@ -20,11 +20,7 @@ pub use sound::{add_sound, play_sound};
 #[cfg(feature = "play")]
 pub fn create() -> Result<(), AddAudioError> {
     *music::MUSIC_ID_MAP.lock() = Some(deps::hash::HashMap::new());
-    #[cfg(not(any(target_arch = "wasm32", target_os = "android")))] {
-        backend::context::create()
-    }
-    #[cfg(any(target_arch = "wasm32", target_os = "android"))]
-    Ok(())
+    backend::context::create()
 }
 
 #[cfg(feature = "play")]

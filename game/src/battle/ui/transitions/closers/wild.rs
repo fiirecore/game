@@ -1,7 +1,11 @@
 use crate::{
     util::{Reset, Completable, WIDTH, HEIGHT},
     gui::DynamicText,
-    macroquad::prelude::{Color, BLACK, draw_rectangle},
+    graphics::draw_rectangle,
+    tetra::{
+        Context,
+        graphics::Color,
+    },
 };
 
 use crate::battle::{
@@ -17,7 +21,7 @@ pub struct WildBattleCloser {
 impl Default for WildBattleCloser {
     fn default() -> Self {
         Self {
-            color: BLACK,
+            color: Color::BLACK,
             world: false,
         }
     }
@@ -27,7 +31,7 @@ impl BattleCloser for WildBattleCloser {
 
     fn spawn(&mut self, _battle: &Battle, _text: &mut DynamicText) {}
 
-    fn update(&mut self, delta: f32, _text: &mut DynamicText) {
+    fn update(&mut self, _ctx: &mut Context, delta: f32, _text: &mut DynamicText) {
         if self.world {
             self.color.a -= 4.5 * delta;
         } else {
@@ -42,11 +46,11 @@ impl BattleCloser for WildBattleCloser {
         self.world
     }
 
-    fn render(&self) {
-        draw_rectangle(0.0, 0.0, WIDTH, HEIGHT, self.color);
+    fn draw(&self, ctx: &mut Context) {
+        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.color);
     }
 
-    fn render_battle(&self) {}
+    fn draw_battle(&self, _ctx: &mut Context) {}
 
 }
 

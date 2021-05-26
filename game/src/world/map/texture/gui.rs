@@ -1,6 +1,9 @@
 use crate::{
     deps::hash::HashMap,
-    macroquad::prelude::Texture2D,
+    tetra::{
+        Context,
+        graphics::Texture,
+    },
     graphics::byte_texture,
 };
 
@@ -10,21 +13,21 @@ pub enum GuiTexture {
 }
 
 pub struct GuiTextures {
-    textures: HashMap<GuiTexture, Texture2D>,
+    textures: HashMap<GuiTexture, Texture>,
 }
 
 impl GuiTextures {
 
-    pub fn get(&self, texture: &GuiTexture) -> Texture2D {
-        *self.textures.get(texture).unwrap_or_else(|| panic!("Could not get texture for GUI texture {:?}", texture))
+    pub fn get(&self, texture: &GuiTexture) -> &Texture {
+        self.textures.get(texture).unwrap_or_else(|| panic!("Could not get texture for GUI texture {:?}", texture))
     }
 
 }
 
-impl Default for GuiTextures {
-    fn default() -> Self {
+impl GuiTextures {
+    pub fn new(ctx: &mut Context) -> Self {
         let mut map = HashMap::with_capacity(1);
-        map.insert(GuiTexture::Condition, byte_texture(include_bytes!("../../../../assets/world/gui/world/condition.png")));
+        map.insert(GuiTexture::Condition, byte_texture(ctx, include_bytes!("../../../../assets/world/gui/world/condition.png")));
         Self {
             textures: map,
         }

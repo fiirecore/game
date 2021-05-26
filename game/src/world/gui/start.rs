@@ -3,14 +3,14 @@ use crate::{
     input::{pressed, Control},
     storage::player::SHOULD_SAVE,
     gui::{Panel, party::PartyGui, bag::BagGui},
-    macroquad::prelude::Vec2,
+    tetra::{Context, math::Vec2},
     state::GameStateAction,
     quit,
 };
 
 pub struct StartMenu {
     alive: bool,
-    pos: Vec2,
+    pos: Vec2<f32>,
     panel: Panel,
     buttons: [&'static str; 6],
     cursor: usize,
@@ -18,11 +18,11 @@ pub struct StartMenu {
 
 impl StartMenu {
 
-    pub fn new() -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         Self {
             alive: false,
             pos: Vec2::new(169.0, 1.0),
-            panel: Panel::new(),
+            panel: Panel::new(ctx),
             buttons: [
                 "Save",
                 "Bag",
@@ -35,20 +35,20 @@ impl StartMenu {
         }
     }
 
-    pub fn update(&mut self, delta: f32, party_gui: &mut PartyGui, bag_gui: &mut BagGui, action: &mut Option<GameStateAction>) {
+    pub fn update(&mut self, ctx: &Context, delta: f32, party_gui: &mut PartyGui, bag_gui: &mut BagGui, action: &mut Option<GameStateAction>) {
         if bag_gui.alive {
-            bag_gui.input();
+            bag_gui.input(ctx);
             // bag_gui.up
         } else if party_gui.alive {
-            party_gui.input();
+            party_gui.input(ctx);
             party_gui.update(delta);
         } else {
             
-            if pressed(Control::B) || pressed(Control::Start) {
+            if pressed(ctx, Control::B) || pressed(ctx, Control::Start) {
                 self.despawn();
             }
     
-            if pressed(Control::A) {
+            if pressed(ctx, Control::A) {
                 match self.cursor {
                     0 => {
                         // Save
@@ -80,14 +80,14 @@ impl StartMenu {
                 }
             }
     
-            if pressed(Control::Up) {
+            if pressed(ctx, Control::Up) {
                 if self.cursor > 0 {
                     self.cursor -= 1;
                 } else {
                     self.cursor = self.buttons.len() - 1;
                 }    
             }
-            if pressed(Control::Down) {
+            if pressed(ctx, Control::Down) {
                 if self.cursor < self.buttons.len() - 1 {
                     self.cursor += 1;
                 } else {
@@ -97,9 +97,9 @@ impl StartMenu {
         }
     }
 
-    pub fn render(&self) {
+    pub fn draw(&self, ctx: &mut Context) {
         if self.alive {
-            self.panel.render_text(self.pos.x, self.pos.y, 70.0, &self.buttons, self.cursor, false, false);            
+            self.panel.draw_text(ctx, self.pos.x, self.pos.y, 70.0, &self.buttons, self.cursor, false, false);            
         }
     }
 

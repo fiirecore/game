@@ -1,34 +1,34 @@
+use std::time::SystemTime;
+
 use game::{
 	storage::PLAYER_SAVES,
-	macroquad::miniquad::date,
+	tetra::{State, Context, Result},
 };
 
-use super::{MenuState, MenuStateAction, MenuStates};
+use crate::state::menu::{MenuState, MenuStateAction, MenuStates};
 
 pub struct CharacterCreationState {
 	action: Option<MenuStateAction>,
 }
 
-impl MenuState for CharacterCreationState {
-
-	fn new() -> Self {
+impl CharacterCreationState {
+	pub fn new(_ctx: &mut Context) -> Self {
 		Self {
 			action: None,
 		}
 	}
-	
-	fn on_start(&mut self) {
-		unsafe{PLAYER_SAVES.as_mut()}.expect("Could not get player saves!").select_new(&format!("Player{}", date::now() as u64 % 1000000));
+}
+
+impl State for CharacterCreationState {
+	fn begin(&mut self, _ctx: &mut Context) -> Result {
+		unsafe{PLAYER_SAVES.as_mut()}.expect("Could not get player saves!").select_new(&format!("Player{}", SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).map(|dur| dur.as_secs()).unwrap_or_default() % 1000000));
 		self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
+		Ok(())
 	}
-	
-	fn update(&mut self, _delta: f32) {}
+}
 
-	fn render(&self) {}
-
-	fn quit(&mut self) {}
-
-	fn action(&mut self) -> &mut Option<MenuStateAction> {
-		&mut self.action
-	}
+impl MenuState for CharacterCreationState {
+    fn next(&mut self) -> &mut Option<MenuStateAction> {
+        &mut self.action
+    }
 }

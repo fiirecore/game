@@ -12,6 +12,7 @@ use crate::{
             PokemonTexture,
         }
     },
+    tetra::Context,
 };
 
 use crate::battle::{
@@ -19,6 +20,7 @@ use crate::battle::{
         ActivePokemon,
         PokemonOption,
     },
+    player::BattlePlayer,
     ui::{
         BattleGuiPosition,
         BattleGuiPositionIndex,
@@ -37,12 +39,13 @@ pub struct BattleParty {
     // pub name:
     pub pokemon: MoveableParty, // To - do: option<pokemonInstance> enum + unknown enum value
     pub active: ActivePokemonArray,
+    // pub player: Box<dyn BattlePlayer>,
 
 }
 
 impl BattleParty {
 
-    pub fn new(mut party: MoveableParty, size: usize, side: PokemonTexture, position: BattleGuiPosition) -> Self {
+    pub fn new(ctx: &mut Context, mut party: MoveableParty,/*player: Box<dyn BattlePlayer>,*/ size: usize, side: PokemonTexture, position: BattleGuiPosition) -> Self {
 
         let mut active = vec![None; size];
         let mut current = 0;
@@ -67,8 +70,8 @@ impl BattleParty {
                     let instance = pokemon.value();
                     let index = BattleGuiPositionIndex::new(position, index as u8, size);
                     ActivePokemon {
-                        status: PokemonStatusGui::with(index, instance),
-                        renderer: PokemonRenderer::with(index, instance, side),
+                        status: PokemonStatusGui::with(ctx, index, instance),
+                        renderer: PokemonRenderer::with(ctx, index, instance, side),
                         pokemon: PokemonOption::Some(index2, pokemon),
                         queued_move: None,
                         last_move: None,
@@ -79,13 +82,14 @@ impl BattleParty {
                     ActivePokemon {
                         pokemon: PokemonOption::None,
                         queued_move: None,
-                        status: PokemonStatusGui::new(index),
-                        renderer: PokemonRenderer::new(index, side),
+                        status: PokemonStatusGui::new(ctx, index),
+                        renderer: PokemonRenderer::new(ctx, index, side),
                         last_move: None,
                     }
                 }
             }).collect(),
             pokemon: party,
+            // player,
         }
     }
 

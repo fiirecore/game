@@ -8,7 +8,7 @@ use deps::hash::HashMap;
 
 use crate::error::AddAudioError;
 
-pub static AUDIO_CONTEXT: Mutex<Option<AudioManager>> = const_mutex(None);
+pub(crate) static AUDIO_CONTEXT: Mutex<Option<AudioManager>> = const_mutex(None);
 
 pub fn create() -> Result<(), AddAudioError> {
     *AUDIO_CONTEXT.lock() = match AudioManager::new(kira::manager::AudioManagerSettings::default()) {
@@ -42,7 +42,7 @@ pub fn add_track(music_data: SerializedMusicData) -> Result<(), AddAudioError> {
                     Err(err) => Err(AddAudioError::ManagerAddError(err)),
                 }
             }
-            None => Err(AddAudioError::NoManager),
+            None => Err(AddAudioError::Uninitialized),
         }
         Err(err) => Err(AddAudioError::DecodeError(err)),
     }
@@ -66,7 +66,7 @@ pub fn add_sound(sound_data: SerializedSoundData) -> Result<(), AddAudioError> {
                         Err(err) => Err(AddAudioError::ManagerAddError(err)),
                     }
                 }
-                None => Err(AddAudioError::NoManager),
+                None => Err(AddAudioError::Uninitialized),
             }
         }
         Err(err) => Err(AddAudioError::DecodeError(err)),

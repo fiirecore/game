@@ -1,3 +1,4 @@
+use deps::tetra::Context;
 use worldlib::serialized::{SerializedTextures, SerializedNPCType};
 
 pub mod tile;
@@ -5,7 +6,6 @@ pub mod npc;
 pub mod player;
 pub mod gui;
 
-#[derive(Default)]
 pub struct WorldTextures {
 
     pub tiles: tile::TileTextureManager,
@@ -17,10 +17,18 @@ pub struct WorldTextures {
 
 impl WorldTextures {
 
-    pub fn setup(&mut self, textures: SerializedTextures, npc_types: &Vec<SerializedNPCType>) {
-        self.tiles.setup(textures);
+    pub fn new(ctx: &mut Context) -> Self {
+        Self {
+            tiles: tile::TileTextureManager::new(),
+            npcs: npc::NPCTextureManager::default(),
+            player: player::PlayerTexture::new(ctx),
+            gui: gui::GuiTextures::new(ctx),
+        }
+    }
+
+    pub fn setup(&mut self, ctx: &mut Context, textures: SerializedTextures, npc_types: &Vec<SerializedNPCType>) {
+        self.tiles.setup(ctx, textures);
         self.npcs.with_capacity(npc_types.len());
-        self.player.load();
     }
 
 }

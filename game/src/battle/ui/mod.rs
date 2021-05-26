@@ -7,8 +7,11 @@ use crate::{
 		party::PartyGui,
 		pokemon::PokemonDisplay,
 	},
-	graphics::draw,
-	macroquad::prelude::{Vec2, const_vec2},
+	graphics::position,
+	tetra::{
+		Context,
+		graphics::DrawParams
+	},
 };
 
 use super::pokemon::BattleParty;
@@ -22,7 +25,7 @@ pub mod exp_bar;
 
 pub mod transitions;
 
-pub const PANEL_ORIGIN: Vec2 = const_vec2!([0.0, 113.0]);
+pub(crate) const PANEL_ORIGIN: DrawParams = position(0.0f32, 113.0);
 
 #[derive(Debug, Clone, Copy)]
 pub enum BattleGuiPosition {
@@ -65,13 +68,13 @@ pub struct BattleGui {
 
 impl BattleGui {
 
-	pub fn new() -> Self {
+	pub fn new(ctx: &mut Context) -> Self {
 
 		Self {
 
-			background: BattleBackground::new(),
+			background: BattleBackground::new(ctx),
 
-			panel: BattlePanel::new(),
+			panel: BattlePanel::new(ctx),
 
 			text: text::new(),
 
@@ -84,8 +87,8 @@ impl BattleGui {
 	}
 
 	#[inline]
-	pub fn render_panel(&self) {
-        draw(self.background.panel, 0.0, 113.0);
+	pub fn draw_panel(&self, ctx: &mut Context) {
+        self.background.panel.draw(ctx, PANEL_ORIGIN)
 	}
 
 	pub fn reset(&mut self) {

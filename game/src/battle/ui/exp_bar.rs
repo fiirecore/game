@@ -4,8 +4,13 @@ use crate::{
         Experience,
         instance::PokemonInstance,
     },
-    macroquad::prelude::{Vec2, Color, color_u8, draw_rectangle},
     gui::ProgressBar,
+    graphics::draw_rectangle,
+    tetra::{
+        Context,
+        math::Vec2,
+        graphics::Color,
+    },
 };
 
 pub struct ExperienceBar {
@@ -16,7 +21,7 @@ pub struct ExperienceBar {
 impl ExperienceBar {
 
     pub const WIDTH: f32 = 64.0;
-    pub const COLOR: Color = color_u8!(64, 200, 248, 255); // To - do: correct texture for exp bar
+    pub const COLOR: Color = Color::rgb(64.0 / 255.0, 200.0 / 255.0, 248.0 / 255.0); // To - do: correct texture for exp bar
     const DEF_REM: (Level, f32) = (0, 0.0);
 
     pub const fn new() -> Self {
@@ -64,8 +69,8 @@ impl ExperienceBar {
         }
     }
 
-    pub fn render(&self, origin: Vec2) {
-        draw_rectangle(origin.x, origin.y, self.bar.width().abs() % Self::WIDTH, 2.0, Self::COLOR);
+    pub fn draw(&self, ctx: &mut Context, origin: Vec2<f32>) {
+        draw_rectangle(ctx, origin.x, origin.y, self.bar.width().abs() % Self::WIDTH, 2.0, Self::COLOR);
     }
 
     pub fn moving(&self) -> bool {

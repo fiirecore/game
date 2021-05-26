@@ -1,6 +1,6 @@
 use crate::{
     util::{WIDTH, HEIGHT, TILE_SIZE, Coordinate, positions::coordinate::CoordNum},
-    macroquad::prelude::Vec2,
+    tetra::math::Vec2,
 };
 
 use firecore_world_lib::character::Character;
@@ -13,7 +13,7 @@ pub struct RenderCoords {
     pub top: CoordNum,
     pub bottom: CoordNum,
 
-    pub focus: Vec2,
+    pub focus: Vec2<f32>,
 
     pub offset: Coordinate,
 
@@ -38,7 +38,9 @@ impl RenderCoords {
             top: coords.y - HALF_HEIGHT_TILE,
             bottom: coords.y + HALF_HEIGHT_TILE,
 
-            focus: Vec2::new((coords.x + 1 << 4) as f32 + character.position.offset.x - HALF_WIDTH as f32, (coords.y + 1 << 4) as f32 + character.position.offset.y - HALF_HEIGHT as f32),
+            #[deprecated(note = "rounding may fix problem of black spaces between tiles while moving")]
+            focus: Vec2::new((coords.x + 1 << 4) as f32 + character.position.offset.x - HALF_WIDTH as f32, (coords.y + 1 << 4) as f32 + character.position.offset.y - HALF_HEIGHT as f32)
+            .round(),
 
             ..Default::default()
         }

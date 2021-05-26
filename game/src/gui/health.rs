@@ -1,13 +1,22 @@
 use pokedex::pokemon::Health;
-use macroquad::prelude::{Color, color_u8, Vec2, Texture2D, draw_rectangle};
-use crate::graphics::{byte_texture, draw};
+use crate::tetra::{
+	Context,
+	math::Vec2,
+	graphics::{
+		Color,
+		Texture,
+		DrawParams,		
+	},
+};
+
+use crate::graphics::draw_rectangle;
 
 use super::bar::ProgressBar;
 
-static mut TEXTURE: Option<Texture2D> = None;
+static mut TEXTURE: Option<Texture> = None;
 
 pub struct HealthBar {
-	background: Texture2D,
+	background: Texture,
 	bar: ProgressBar,
 }
 
@@ -15,25 +24,25 @@ impl HealthBar {
 
 	pub const WIDTH: f32 = 48.0;
 
-	pub const UPPER: Color = color_u8!(88, 208, 128, 255);
-	pub const LOWER: Color = color_u8!(112, 248, 168, 255);
+	pub const UPPER: Color = Color::rgb(88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0);
+	pub const LOWER: Color = Color::rgb(112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0);
 	
-	pub fn new() -> Self {
+	pub fn new(ctx: &mut Context) -> Self {
 		Self {
-			background: Self::texture(),
+			background: Self::texture(ctx).clone(),
 			bar: ProgressBar::new(Self::WIDTH),
 		}
 	}
 
-	pub fn with_size(width: f32) -> Self {
+	pub fn with_size(ctx: &mut Context, width: f32) -> Self {
 		Self {
-			background: Self::texture(),
+			background: Self::texture(ctx).clone(),
 			bar: ProgressBar::new(width),
 		}
 	}
 
-	pub fn texture() -> Texture2D {
-		unsafe { *TEXTURE.get_or_insert(byte_texture(include_bytes!("../../assets/gui/health.png"))) }
+	pub fn texture(ctx: &mut Context) -> &Texture {
+		unsafe { TEXTURE.get_or_insert(crate::graphics::byte_texture(ctx, include_bytes!("../../assets/gui/health.png"))) }
 	}
 
 	pub fn width(current: Health, max: Health) -> f32 {
@@ -52,12 +61,12 @@ impl HealthBar {
 		self.bar.update(delta)
 	}
 
-	pub fn render(&self, origin: Vec2) {
-		draw(self.background, origin.x, origin.y);
+	pub fn draw(&self, ctx: &mut Context, origin: Vec2<f32>) {
+		self.background.draw(ctx, DrawParams::position(DrawParams::default(), origin));
 		let x = origin.x + 15.0;
 		let w = self.bar.width();
-		draw_rectangle(x, origin.y + 2.0, w, 1.0, Self::UPPER);
-		draw_rectangle(x, origin.y + 3.0, w, 2.0, Self::LOWER);
+		draw_rectangle(ctx, x, origin.y + 2.0, w, 1.0, Self::UPPER);
+		draw_rectangle(ctx, x, origin.y + 3.0, w, 2.0, Self::LOWER);
 	}
 
 }

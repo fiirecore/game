@@ -8,6 +8,9 @@ use crate::{
     text::TextColor,
     gui::Panel,
     graphics::{draw_text_left, draw_cursor},
+    tetra::{
+        Context,
+    },
     deps::vec::ArrayVec,
 };
 
@@ -22,9 +25,9 @@ pub struct MovePanel {
 
 impl MovePanel {
 
-    pub fn new() -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         Self {
-            panel: Panel::new(),
+            panel: Panel::new(ctx),
             cursor: 0,
             names: ArrayVec::new(),
         }
@@ -36,30 +39,30 @@ impl MovePanel {
         }).collect();
     }
 
-    pub fn input(&mut self) -> bool {
+    pub fn input(&mut self, ctx: &Context) -> bool {
         if {
-            if pressed(Control::Up) {
+            if pressed(ctx, Control::Up) {
                 if self.cursor >= 2 {
                     self.cursor -= 2;
                     true
                 } else {
                     false
                 }
-            } else if pressed(Control::Down) {
+            } else if pressed(ctx, Control::Down) {
                 if self.cursor <= 2 {
                     self.cursor += 2;
                     true
                 } else {
                     false
                 }
-            } else if pressed(Control::Left) {
+            } else if pressed(ctx, Control::Left) {
                 if self.cursor > 0 {
                     self.cursor -= 1;
                     true
                 } else {
                     false
                 }
-            } else if pressed(Control::Right) {
+            } else if pressed(ctx, Control::Right) {
                 if self.cursor < 3 {
                     self.cursor += 1;
                     true
@@ -79,8 +82,8 @@ impl MovePanel {
         }
     }
 
-    pub fn render(&self) {
-        self.panel.render(0.0, 113.0, 160.0, 47.0);
+    pub fn draw(&self, ctx: &mut Context) {
+        self.panel.draw(ctx, 0.0, 113.0, 160.0, 47.0);
         for (index, (pokemon_move, color)) in self.names.iter().enumerate() {
             let x_offset = if index % 2 == 1 {
                 72.0
@@ -92,9 +95,9 @@ impl MovePanel {
             } else {
                 0.0
             };
-            draw_text_left(0, &pokemon_move.unwrap().name, *color, 16.0 + x_offset, 121.0 + y_offset);
+            draw_text_left(ctx, &0, &pokemon_move.unwrap().name, *color, 16.0 + x_offset, 121.0 + y_offset);
             if index == self.cursor {
-                draw_cursor(10.0 + x_offset, 123.0 + y_offset);
+                draw_cursor(ctx, 10.0 + x_offset, 123.0 + y_offset);
             }
         }
     }

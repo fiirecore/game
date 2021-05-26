@@ -5,3 +5,5 @@
 /build/data/*.bin
 
 saves.ron
+
+SDL2*

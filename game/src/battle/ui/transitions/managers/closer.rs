@@ -1,4 +1,7 @@
-use crate::gui::DynamicText;
+use crate::{
+    gui::DynamicText,
+    tetra::Context,
+};
 
 use crate::battle::{
     Battle,
@@ -40,20 +43,20 @@ impl BattleCloserManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, delta: f32, text: &mut DynamicText) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut DynamicText) {
         let current = self.get_mut();
-        current.update(delta, text);
+        current.update(ctx, delta, text);
         if current.finished() {
             self.state = TransitionState::End;
         }
     }
 
-    pub fn render(&self) {
-        self.get().render();
+    pub fn draw(&self, ctx: &mut Context) {
+        self.get().draw(ctx);
     }
 
-    pub fn render_battle(&self) {
-        self.get().render_battle();
+    pub fn draw_battle(&self, ctx: &mut Context) {
+        self.get().draw_battle(ctx);
     }
 
     pub fn world_active(&self) -> bool {

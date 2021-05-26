@@ -2,10 +2,14 @@ use crate::{
     util::{Entity, Reset, Completable},
     play_sound,
     audio::Sound,
-    macroquad::prelude::{Vec2, Texture2D, draw_texture_ex, WHITE, DrawTextureParams, Rect},
     text::MessagePage,
     gui::DynamicText,
     CRY_ID,
+    graphics::{position, ZERO},
+    tetra::{
+        Context,
+        graphics::{Texture, Rectangle, Color},
+    },
 };
 
 use crate::battle::{
@@ -19,22 +23,11 @@ use crate::battle::{
 
 pub struct BasicBattleIntroduction {
  
-    player: Texture2D,
+    player: Texture,
 	counter: f32,
     offsets: (f32, f32),
 
 }
-
-impl Default for BasicBattleIntroduction {
-    fn default() -> Self {
-        Self {
-            player: super::super::openers::player_texture(),
-            counter: 0.0,
-            offsets: Self::OFFSETS, // opponent, player
-        }
-    }
-}
-
 impl BasicBattleIntroduction {
 
     const OFFSETS: (f32, f32) = (-PokemonStatusGui::BATTLE_OFFSET, PokemonStatusGui::BATTLE_OFFSET);
@@ -43,6 +36,14 @@ impl BasicBattleIntroduction {
     const PLAYER_T2: f32 = Self::PLAYER_T1 + 18.0;
     const PLAYER_T3: f32 = Self::PLAYER_T2 + 18.0;
     const PLAYER_DESPAWN: f32 = 104.0;
+
+    pub fn new(ctx: &mut Context) -> Self {
+        Self {
+            player: super::super::openers::player_texture(ctx).clone(),
+            counter: 0.0,
+            offsets: Self::OFFSETS, // opponent, player
+        }
+    }
 
     #[deprecated(note = "bad code, return vec of string (lines)")]
     pub(crate) fn concatenate(active: &ActivePokemonArray) -> String {
@@ -74,40 +75,39 @@ impl BasicBattleIntroduction {
         );
     }
 
-    pub(crate) fn render_player(&self, battle: &Battle) {
+    pub(crate) fn draw_player(&self, ctx: &mut Context, battle: &Battle) {
         if self.counter < Self::PLAYER_DESPAWN {
-            draw_texture_ex(self.player, 41.0 + - self.counter, 49.0, WHITE, DrawTextureParams {
-                source: Some(
-                    Rect::new(
-                        0.0, 
-                        if self.counter >= Self::PLAYER_T3 { // 78.0
-                            256.0
-                        } else if self.counter >= Self::PLAYER_T2 { // 60.0
-                            192.0
-                        } else if self.counter >= Self::PLAYER_T1 { // 42.0
-                            128.0
-                        } else if self.counter > 0.0 {
-                            64.0
-                        } else {
-                            0.0
-                        }, 
-                        64.0, 
+            self.player.draw_region(
+                ctx, 
+                Rectangle::new(
+                    0.0, 
+                    if self.counter >= Self::PLAYER_T3 { // 78.0
+                        256.0
+                    } else if self.counter >= Self::PLAYER_T2 { // 60.0
+                        192.0
+                    } else if self.counter >= Self::PLAYER_T1 { // 42.0
+                        128.0
+                    } else if self.counter > 0.0 {
                         64.0
-                    )
+                    } else {
+                        0.0
+                    }, 
+                    64.0, 
+                    64.0
                 ),
-                ..Default::default()
-            });
+                position(41.0 + - self.counter, 49.0),
+            )
         } else {
             for active in battle.player.active.iter() {
-                active.renderer.render(Vec2::ZERO, WHITE);
+                active.renderer.draw(ctx, ZERO, Color::WHITE);
             }
         }
     }
 
-    pub(crate) fn render_opponent(&self, battle: &Battle) {
+    pub(crate) fn draw_opponent(&self, ctx: &mut Context, battle: &Battle) {
         for active in battle.opponent.active.iter() {
-            active.renderer.render(Vec2::ZERO, WHITE);
-            active.status.render(self.offsets.0, 0.0);
+            active.renderer.draw(ctx, ZERO, Color::WHITE);
+            active.status.draw(ctx, self.offsets.0, 0.0);
         }
     }
 
@@ -128,9 +128,9 @@ impl BattleIntroduction for BasicBattleIntroduction {
         self.common_setup(text, &battle.player.active);
     }
 
-    fn update(&mut self, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
 
-        text.update(delta);
+        text.update(ctx, delta);
 
         if text.current() + 1 == text.len() {
             if self.counter < Self::PLAYER_DESPAWN {
@@ -149,7 +149,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
             for active in battle.opponent.active.iter_mut() {
                 active.status.spawn();
                 if let Some(instance) = active.pokemon.as_ref() {
-                    play_sound(&Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
+                    play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
                 }
             }
             
@@ -171,16 +171,16 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 active.renderer.spawn();
                 active.status.spawn();
                 if let Some(instance) = active.pokemon.as_ref() {
-                    play_sound(&Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
+                    play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
                 }
             }
         }
         
     }
 
-    fn render(&self, battle: &Battle) {
-        self.render_opponent(battle);
-        self.render_player(battle);
+    fn draw(&self, ctx: &mut Context, battle: &Battle) {
+        self.draw_opponent(ctx, battle);
+        self.draw_player(ctx, battle);
     }
 
 }
