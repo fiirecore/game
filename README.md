@@ -29,25 +29,27 @@ Building requires "libx11-dev" "libxi-dev" and "libgl1-mesa-dev" on Linux
 ### v0.4.0
 
 - [X] Independent world random, battle random, and wild random
-- [ ] Finished Party GUI
-- [ ] Fixed all warp transitions
+- [X] Finished Party GUI
 - [X] Move battle code to separate crates
 - [X] Move world rendering code to seperate crate
 - [X] Battle move scripting
 - [X] Battle animations with scripting
-- [ ] All NPCs up to Cerulean are added
 - [X] Player has money
-- [ ] Battle AI
+- [X] Move scripting
 
 ### v0.5.0
 
-- [ ] Touchscreen support
 - [X] Basic player bag
-- [ ] Pokemarts
-- [ ] All scripts up to Cerulean are added
+- [ ] Working Pokemarts
+- [ ] Battle AI
 - [ ] Proper texture animation support
     - [ ] Animated water
 
-### Other planned ideas
+### Other Goals
+
+- [ ] Fixed all warp transitions
+- [ ] All NPCs up to Cerulean are added
+- [ ] All scripts up to Cerulean are added
+### Other Planned Ideas
 
  - [ ] Game server

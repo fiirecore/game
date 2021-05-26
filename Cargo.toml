@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.4.0-2021-05-25"
+version = "0.4.0"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -45,7 +45,7 @@ dex-builder = { path = "game/firecore/pokedex/builder" }
 world-builder = { path = "game/world/builder" }
 font-builder = { path = "game/firecore/text/builder" }
 audio-builder = { path = "game/firecore/audio/builder", optional = true }
-embed-resource = "1.6"
+winres = "0.1"
 
 [workspace]
 members = [

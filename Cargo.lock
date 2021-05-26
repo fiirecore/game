@@ -74,7 +74,7 @@ dependencies = [
 
 [[package]]
 name = "audio-builder"
-version = "0.4.0-alpha.1"
+version = "0.4.0"
 dependencies = [
  "firecore-audio-lib",
  "firecore-dependencies",
@@ -286,7 +286,7 @@ dependencies = [
 
 [[package]]
 name = "dex-builder"
-version = "0.4.0-beta.3"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex-game",
@@ -313,17 +313,6 @@ dependencies = [
  "libc",
  "redox_users",
  "winapi",
-]
-
-[[package]]
-name = "embed-resource"
-version = "1.6.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0ea6debf1262982d24274dc85f3374b42534df140897c25cea86b81e017d470"
-dependencies = [
- "cc",
- "vswhom",
- "winreg",
 ]
 
 [[package]]
@@ -387,7 +376,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-dependencies"
-version = "0.4.0-beta.2"
+version = "0.4.0"
 dependencies = [
  "ahash",
  "arrayvec",
@@ -408,7 +397,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-game"
-version = "0.4.0-2021-05-25"
+version = "0.4.0"
 dependencies = [
  "enum-map",
  "firecore-audio-lib",
@@ -424,7 +413,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex"
-version = "0.4.0-2021-05-22"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "serde",
@@ -432,7 +421,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex-game"
-version = "0.4.0-beta.4"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -441,7 +430,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-saves"
-version = "0.4.0-beta.1"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -453,7 +442,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-storage"
-version = "0.4.0-2021-05-24"
+version = "0.4.0"
 dependencies = [
  "dirs-next",
  "firecore-dependencies",
@@ -463,7 +452,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-text"
-version = "0.4.0-beta.1"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "firecore-font",
@@ -472,7 +461,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-util"
-version = "0.4.0-2021-05-22"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "serde",
@@ -480,7 +469,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-world-lib"
-version = "0.4.0-alpha.1.1"
+version = "0.4.0"
 dependencies = [
  "firecore-audio-lib",
  "firecore-dependencies",
@@ -504,7 +493,7 @@ dependencies = [
 
 [[package]]
 name = "font-builder"
-version = "0.4.0-beta.1"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "firecore-font",
@@ -828,21 +817,21 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.4.0-2021-05-25"
+version = "0.4.0"
 dependencies = [
  "audio-builder",
  "dex-builder",
- "embed-resource",
  "firecore-game",
  "font-builder",
  "pico-args",
  "simple_logger",
+ "winres",
  "world-builder",
 ]
 
 [[package]]
 name = "pokemon-firered-clone-storage"
-version = "0.4.0-beta.1"
+version = "0.4.0"
 dependencies = [
  "firecore-saves",
  "firecore-storage",
@@ -1256,26 +1245,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fecdca9a5291cc2b8dcf7dc02453fee791a280f3743cb0905f8822ae463b3fe"
 
 [[package]]
-name = "vswhom"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be979b7f07507105799e854203b470ff7c78a1639e330a58f183b5fea574608b"
-dependencies = [
- "libc",
- "vswhom-sys",
-]
-
-[[package]]
-name = "vswhom-sys"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc2f5402d3d0e79a069714f7b48e3ecc60be7775a2c049cb839457457a239532"
-dependencies = [
- "cc",
- "libc",
-]
-
-[[package]]
 name = "wasi"
 version = "0.10.2+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1368,17 +1337,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
-name = "winreg"
-version = "0.8.0"
+name = "winres"
+version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d107f8c6e916235c4c01cabb3e8acf7bea8ef6a63ca2e7fa0527c049badfc48c"
+checksum = "ff4fb510bbfe5b8992ff15f77a2e6fe6cf062878f0eda00c0f44963a807ca5dc"
 dependencies = [
- "winapi",
+ "toml",
 ]
 
 [[package]]
 name = "world-builder"
-version = "0.4.0-beta.1"
+version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex-game",

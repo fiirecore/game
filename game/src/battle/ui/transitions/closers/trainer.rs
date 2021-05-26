@@ -78,6 +78,8 @@ impl BattleCloser for TrainerBattleCloser {
                             None
                         ));
 
+                        text.spawn();
+
                     }
                 }
                 Team::Opponent => {

@@ -1,6 +1,6 @@
 [package]
 name = "firecore-storage"
-version = "0.4.0-2021-05-24"
+version = "0.4.0"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 readme = "README.md"
