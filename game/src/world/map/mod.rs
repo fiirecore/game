@@ -89,7 +89,7 @@ impl GameWorld for WorldMap {
                     if wild.should_generate() {
                         if let Some(tiles) = wild.tiles.as_ref() {
                             for tile in tiles.iter() {
-                                if tile_id.eq(tile) {
+                                if &tile_id == tile {
                                     wild_battle(battle, wild);
                                     break;
                                 }
@@ -268,10 +268,7 @@ impl GameWorld for WorldMap {
                         }
                         WorldActionKind::PlayerHealPokemon => {
                             for pokemon in data_mut().party.iter_mut() {
-                                pokemon.current_hp = pokemon.base.hp;
-                                for pmove in pokemon.moves.as_mut() {
-                                    pmove.pp = pmove.move_ref.unwrap().pp;
-                                }
+                                pokemon.heal();
                             }
                             pop = true;
                         }

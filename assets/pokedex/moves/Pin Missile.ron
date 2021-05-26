@@ -5,6 +5,6 @@
     type: Bug,
     accuracy: Some(95),
     pp: 20,
-    use_type: Damage(Power(25)),
+    usage: Damage(Power(25)),
     target: Opponent,
 )

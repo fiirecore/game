@@ -67,7 +67,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             text.push(MessagePage::new(
                 vec![
                     name + " sent", 
-                    format!("out {}", BasicBattleIntroduction::concatenate(&battle.opponent.active))
+                    format!("out {}", BasicBattleIntroduction::concatenate(&battle.opponent.party.active))
                 ],
                 Some(0.5),
             ));
@@ -80,7 +80,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
         text.process_messages(data());
 
-        self.introduction.common_setup(text, &battle.player.active);
+        self.introduction.common_setup(text, &battle.player.party.active);
         
     }
 

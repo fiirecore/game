@@ -5,6 +5,6 @@
     type: Dragon,
     accuracy: Some(90),
     pp: 15,
-    use_type: Damage(Power(40)),
+    usage: Damage(Power(40)),
     target: Opponent,
 )

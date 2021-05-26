@@ -5,6 +5,6 @@
     type: Ice,
     accuracy: Some(90),
     pp: 5,
-    use_type: Damage(Power(140)),
+    usage: Damage(Power(140)),
     target: Opponent,
 )

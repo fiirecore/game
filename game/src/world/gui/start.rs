@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::{
     util::Entity,
     input::{pressed, Control},
@@ -14,11 +16,13 @@ pub struct StartMenu {
     panel: Panel,
     buttons: [&'static str; 6],
     cursor: usize,
+    party: Rc<PartyGui>,
+    bag: Rc<BagGui>,
 }
 
 impl StartMenu {
 
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
         Self {
             alive: false,
             pos: Vec2::new(169.0, 1.0),
@@ -32,16 +36,18 @@ impl StartMenu {
                 "Cancel",
             ],
             cursor: 0,
+            party,
+            bag,
         }
     }
 
-    pub fn update(&mut self, ctx: &Context, delta: f32, party_gui: &mut PartyGui, bag_gui: &mut BagGui, action: &mut Option<GameStateAction>) {
-        if bag_gui.alive {
-            bag_gui.input(ctx);
+    pub fn update(&mut self, ctx: &Context, delta: f32, action: &mut Option<GameStateAction>) {
+        if self.bag.alive() {
+            self.bag.input(ctx);
             // bag_gui.up
-        } else if party_gui.alive {
-            party_gui.input(ctx);
-            party_gui.update(delta);
+        } else if self.party.alive() {
+            self.party.input(ctx);
+            self.party.update(delta);
         } else {
             
             if pressed(ctx, Control::B) || pressed(ctx, Control::Start) {
@@ -57,11 +63,11 @@ impl StartMenu {
                     },
                     1 => {
                         // Bag
-                        bag_gui.spawn();
+                        self.bag.spawn();
                     },
                     2 => {
                         // Pokemon
-                        party_gui.spawn_world();
+                        self.party.spawn_world();
                     },
                     3 => {
                         // Exit to Main Menu

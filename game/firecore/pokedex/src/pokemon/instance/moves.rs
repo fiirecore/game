@@ -3,34 +3,31 @@ use std::collections::BTreeMap;
 use deps::rhai::{Engine, Scope};
 
 use crate::{
+	RANDOM,
+	types::{
+		PokemonType,
+		Effective,
+	},
     pokemon::{
-        instance::{
-			PokemonInstance,
-			MoveResult,
-			TurnResult,
-			// HitResult,
-		},
+        instance::PokemonInstance,
         Health,
-        POKEMON_RANDOM,
-        types::{
-            PokemonType,
-            Effective,
-        },
+		stat::BaseStat,
         status::StatusEffect,
     },
     moves::{
 		Move,
         MoveCategory,
         Power,
-		result::{
+		usage::{
 			MoveUseType,
+			MoveResult,
 			DamageKind,
+			TurnResult,
+			PokemonTarget,
 		},
 		target::MoveTargetInstance,
     },
 };
-
-use super::PokemonTarget;
 
 impl PokemonInstance {
 
@@ -50,14 +47,20 @@ impl PokemonInstance {
     pub fn use_move_on_target(&self, engine: &mut Engine, results: &mut BTreeMap<MoveTargetInstance, Option<MoveResult>>, pokemon_move: &'static Move, target: PokemonTarget) {
 
 		let hit = pokemon_move.accuracy.map(|accuracy| {
-			let hit: u8 = POKEMON_RANDOM.gen_range(0, 100);
+			let hit: u8 = RANDOM.gen_range(0, 100);
 			hit < accuracy
 		}).unwrap_or(true);
 
 		if hit {
-			match &pokemon_move.use_type {
+			match &pokemon_move.usage {
 				MoveUseType::Damage(kind) => {
-					results.insert(target.instance, Some(MoveResult::Damage(self.damage_kind(*kind, pokemon_move.category, pokemon_move.pokemon_type, &target.pokemon))));
+					let (damage, effective) = self.damage_kind(
+						*kind, 
+						pokemon_move.category, 
+						pokemon_move.pokemon_type, 
+						&target.pokemon
+					);
+					results.insert(target.instance, Some(MoveResult::Damage(damage, effective)));
 				}
 				MoveUseType::Status(chance, effect) => {
 					if let Some(effect) = target.pokemon.can_afflict(*chance, effect) {
@@ -65,9 +68,14 @@ impl PokemonInstance {
 					}
 				}
 				MoveUseType::Drain(kind, percent) => {
-					let damage = self.damage_kind(*kind, pokemon_move.category, pokemon_move.pokemon_type, &target.pokemon);
+					let (damage, effective) = self.damage_kind(*kind, pokemon_move.category, pokemon_move.pokemon_type, &target.pokemon);
 					let heal = (damage as f32 * percent) as Health;
-					results.insert(target.instance, Some(MoveResult::Drain(damage, heal)));
+					results.insert(target.instance, Some(MoveResult::Drain(damage, heal, effective)));
+				}
+				MoveUseType::StatStage(stat, stage) => {
+					if target.pokemon.base.can_change_stage(*stat, *stage) {
+						results.insert(target.instance, Some(MoveResult::StatStage(*stat, *stage)));
+					}
 				}
 				// MoveUseType::Linger(..) => {
 				// 	results.insert(target.instance, Some(MoveResult::Todo));
@@ -102,24 +110,33 @@ impl PokemonInstance {
 		}
 	}
 
-	pub fn damage_kind(&self, kind: DamageKind, category: MoveCategory, pokemon_type: PokemonType, target: &PokemonInstance) -> Health {
+	pub fn damage_kind(&self, kind: DamageKind, category: MoveCategory, pokemon_type: PokemonType, target: &PokemonInstance) -> (Health, Effective) {
 		match kind {
 			DamageKind::Power(power) => {
 				self.get_damage(target, power, category, pokemon_type)
 			}
 			DamageKind::PercentCurrent(percent) => {
-				(target.current_hp as f32 * percent) as Health
+				(
+					(target.hp() as f32 * percent) as Health,
+					Effective::Ineffective
+				)
 			}
 			DamageKind::PercentMax(percent) => {
-				(target.base.hp as f32 * percent) as Health
+				(
+					(target.max_hp() as f32 * percent) as Health,
+					Effective::Ineffective
+				)
 			}
-			DamageKind::Constant(damage) => damage,
+			DamageKind::Constant(damage) => (
+				damage,
+				Effective::Ineffective
+			),
 		}
 	}
 
 	pub fn can_afflict<'a>(&self, chance: u8, effect: &'a StatusEffect) -> Option<&'a StatusEffect> {
 		if self.status.is_none() {
-			if chance >= POKEMON_RANDOM.gen_range(1, 11) {
+			if chance >= RANDOM.gen_range(1, 11) {
 				Some(effect)
 			} else {
 				None
@@ -129,22 +146,22 @@ impl PokemonInstance {
 		}
 	}
 
-	pub fn get_damage(&self, target: &PokemonInstance, power: Power, category: MoveCategory, pokemon_type: PokemonType) -> Health {
-		let effective = target.effective(pokemon_type);
+	pub fn get_damage(&self, target: &PokemonInstance, power: Power, category: MoveCategory, use_type: PokemonType) -> (Health, Effective) {
+		let effective = target.effective(use_type, category);
+		let (atk, def) = category.stats();
+		let (atk, def) = (self.base.get(atk), target.base.get(def));
+		self.get_damage_stat(effective, power, atk, def, self.pokemon.unwrap().primary_type == use_type)
+	}
+
+	pub fn get_damage_stat(&self, effective: Effective, power: Power, attack: BaseStat, defense: BaseStat, same_type_as_user: bool) -> (Health, Effective) {
 		if effective == Effective::Ineffective {
-			return 0;
+			return (0, effective);
 		}
-		let effective = effective.multiplier() as f64;
-		let (atk, def) = match category {
-			MoveCategory::Physical => (self.base.atk as f64, target.base.def as f64),
-			MoveCategory::Special => (self.base.sp_atk as f64, target.base.sp_def as f64),
-			MoveCategory::Status => (0.0, 0.0),
-		};
-		(
-			(((((2.0 * self.level as f64 / 5.0 + 2.0).floor() * atk * power as f64 / def).floor() / 50.0).floor() * effective) + 2.0)
-			* (POKEMON_RANDOM.gen_range(85, 101u8) as f64 / 100.0)
-			* (if pokemon_type == self.pokemon.unwrap().primary_type { 1.5 } else { 1.0 })
-		) as Health
+		((
+			(((((2.0 * self.level as f64 / 5.0 + 2.0).floor() * attack as f64 * power as f64 / defense as f64).floor() / 50.0).floor() * effective.multiplier() as f64) + 2.0)
+			* (RANDOM.gen_range(85, 101u8) as f64 / 100.0)
+			* (if same_type_as_user { 1.5 } else { 1.0 })
+		) as Health, effective)
 	}
 
 }

@@ -29,7 +29,7 @@ pub fn compile<P: AsRef<std::path::Path>>(music_folder: P, output_file: P) {
 
     for curr_music in music.iter().map(|data| &data.music) {
         for music in music.iter().map(|data| &data.music).filter(|music| music.name.ne(&curr_music.name)) {
-            if music.track.eq(&curr_music.track) {
+            if music.track == curr_music.track {
                 panic!("Music {} and {} have equal track IDs! Aborting!", music.name, curr_music.name);
             }
         }

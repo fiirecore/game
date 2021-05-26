@@ -6,13 +6,15 @@
         type: Normal,
         accuracy: Some(100),
         pp: 40,
-        use_type: Script(
+        usage: Script(
             "
-            let damage = user.damage(target, 40, move.category, move.type);
-            if damage > target.current_hp {
-                damage = target.current_hp - 1;
+            let effective = target.effective(move.type, move.category);
+            let defense = target.defense(move.category);
+            let result = user.damage(move.type, 40, defense, effective);
+            if result.damage > target.current_hp {
+                result.damage = target.current_hp - 1;
             }
-            [MoveResult::Damage(damage)]
+            [MoveResult::Damage(result)]
             "
         ),
         target: Opponent,

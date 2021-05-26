@@ -1,16 +1,10 @@
 use serde::{Deserialize, Serialize};
 use deps::{
-	Random,
-	hash::HashMap,
 	Identifiable,
 	StaticRef,
 };
 use crate::{
-	moves::{
-		MoveId,
-		Move,
-		instance::{MoveInstance, MoveInstanceSet}
-	},
+	types::PokemonType,
 	pokemon::{
 		data::{
 			breeding::Breeding,
@@ -19,19 +13,16 @@ use crate::{
 			training::Training,
 			Gender,
 		},
-		types::PokemonType,
-		stat::StatSet,
-	}
+		stat::Stats,
+	},
+	moves::{
+		MoveId,
+		Move,
+		instance::{MoveInstance, MoveInstanceSet}
+	},
 };
 
-pub type Pokedex = HashMap<PokemonId, Pokemon>;
-
-pub static mut POKEDEX: Option<Pokedex> = None;
-
-pub fn pokedex_len() -> PokemonId {
-	unsafe { POKEDEX.as_ref().map(|dex| dex.len()).unwrap_or_default() as PokemonId }
-}
-
+pub mod dex;
 pub mod data;
 pub mod stat;
 pub mod types;
@@ -45,8 +36,6 @@ pub type Experience = u32;
 pub type Friendship = u8;
 pub type Health = stat::BaseStat;
 
-pub static POKEMON_RANDOM: Random = Random::new();
-
 // pub type PokemonRef = &'static Pokemon;
 
 #[derive(Serialize, Deserialize)]
@@ -58,7 +47,7 @@ pub struct Pokemon {
 	pub primary_type: PokemonType,
 	pub secondary_type: Option<PokemonType>,
 	
-	pub base: StatSet,
+	pub base: Stats,
 
 	pub data: PokedexData,
 
@@ -83,7 +72,7 @@ impl Pokemon {
 
     pub fn generate_gender(&self) -> Gender {
         match self.breeding.gender {
-            Some(percentage) => if POKEMON_RANDOM.gen_range(0, 8) > percentage {
+            Some(percentage) => if crate::RANDOM.gen_range(0, 8) > percentage {
                 Gender::Male
             } else {
                 Gender::Female
@@ -106,15 +95,15 @@ impl Identifiable for Pokemon {
     }
 
 	fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized {
-		unsafe { POKEDEX.as_ref().map(|map| map.get(id)).flatten() }
+		unsafe { dex::POKEDEX.as_ref().map(|map| map.get(id)).flatten() }
 	}
 
 }
 
 pub type PokemonRef = StaticRef<Pokemon>;
 
-pub const fn default_iv() -> StatSet {
-    StatSet::uniform(15)
+pub fn default_iv() -> Stats {
+    Stats::uniform(15)
 }
 
 pub const fn default_friendship() -> Friendship {

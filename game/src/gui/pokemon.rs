@@ -1,12 +1,12 @@
 use std::borrow::Cow;
 
 use pokedex::{
+    types::PokemonType,
     texture::{
         pokemon_texture,
         PokemonTexture::Icon,
     },
     pokemon::{
-        types::PokemonType,
         instance::PokemonInstance,
     },
 };
@@ -80,7 +80,7 @@ impl PokemonDisplay {
         Self {
             name: instance.name().to_string(),
             level: format!("Lv{}", instance.level),
-            health: (format!("{}/{}", instance.current_hp, instance.base.hp), super::health::HealthBar::width(instance.current_hp, instance.base.hp)),
+            health: (format!("{}/{}", instance.hp(), instance.max_hp()), super::health::HealthBar::width(instance.hp(), instance.max_hp())),
             icon: pokemon_texture(instance.pokemon.id(), Icon).clone(),
             instance,
         }

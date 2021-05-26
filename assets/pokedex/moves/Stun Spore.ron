@@ -5,6 +5,6 @@
     type: Grass,
     accuracy: Some(75),
     pp: 30,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

@@ -5,6 +5,6 @@
     type: Normal,
     accuracy: Some(85),
     pp: 40,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

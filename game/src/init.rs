@@ -5,9 +5,7 @@ use crate::tetra::{
 };
 use storage::load;
 use pokedex::{
-    pokemon::POKEDEX,
-    moves::{MOVEDEX, GAME_MOVE_DEX},
-    item::ITEMDEX,
+    battle,
     serialize::SerializedDex,
 };
 use crate::audio::{
@@ -24,7 +22,7 @@ pub use firecore_text::init as text;
 pub static LOADING_FINISHED: AtomicBool = AtomicBool::new(false);
 
 pub fn seed_randoms(seed: u64) {
-    pokedex::pokemon::POKEMON_RANDOM.seed(seed);
+    pokedex::seed_random(seed);
     #[cfg(feature = "world")]
     crate::world::seed_randoms(seed);
     #[cfg(feature = "battle")]
@@ -54,9 +52,7 @@ pub fn configuration() -> Result {
 
 pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 
-    let pokedex = unsafe {
-        POKEDEX.get_or_insert(HashMap::with_capacity(dex.pokemon.len()))
-    };
+    let mut pokedex = HashMap::with_capacity(dex.pokemon.len());
 
 	let mut pokemon_textures = PokemonTextures::with_capacity(dex.pokemon.len());
 
@@ -78,21 +74,19 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 		
 		pokedex.insert(pokemon.pokemon.id, pokemon.pokemon);
 	}
+
+    pokedex::pokemon::dex::set(pokedex);
     
 	unsafe { POKEMON_TEXTURES = Some(pokemon_textures); }
 
-	let movedex = unsafe {
-        MOVEDEX.get_or_insert(HashMap::with_capacity(dex.moves.len()))
-    };
+	let mut movedex = HashMap::with_capacity(dex.moves.len());
 
-    let game_movedex = unsafe {
-        GAME_MOVE_DEX.get_or_insert(HashMap::new())
-    };
+    let mut battle_movedex = HashMap::new();
 
 	for serialized_move in dex.moves {
         let pmove = serialized_move.pokemon_move;
-        if let Some(game_move) = serialized_move.game_move {
-            game_movedex.insert(pmove.id, game_move);
+        if let Some(battle_move) = serialized_move.battle_move {
+            battle_movedex.insert(pmove.id, battle_move);
         }
         // if let Some(script) = pmove.battle_script.as_mut() {
         //     if !pokemon_move.battle_script_texture.is_empty() {
@@ -102,9 +96,10 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 		movedex.insert(pmove.id, pmove);
 	}
 
-    let itemdex = unsafe {
-        ITEMDEX.get_or_insert(HashMap::with_capacity(dex.items.len()))
-    };
+    pokedex::moves::dex::set(movedex);
+    battle::dex::set(battle_movedex);
+
+    let mut itemdex = HashMap::with_capacity(dex.items.len());
 
     let mut item_textures = HashMap::with_capacity(dex.items.len());
 
@@ -112,6 +107,8 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
         item_textures.insert(item.item.id, crate::graphics::byte_texture(ctx, &item.texture));
         itemdex.insert(item.item.id, item.item);
     }
+
+    pokedex::item::dex::set(itemdex);
 
     unsafe { ITEM_TEXTURES = Some(item_textures); }
 

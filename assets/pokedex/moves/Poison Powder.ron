@@ -5,6 +5,6 @@
     type: Poison,
     accuracy: Some(75),
     pp: 35,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

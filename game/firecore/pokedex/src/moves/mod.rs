@@ -1,23 +1,22 @@
 use serde::{Deserialize, Serialize};
 use deps::{
-	hash::HashMap,
-	str::TinyStr16,
+	str::{TinyStr4, TinyStr16},
 	StaticRef,
 	Identifiable,
 };
 
-use super::pokemon::types::PokemonType;
+use crate::types::PokemonType;
 
-pub type Movedex = HashMap<MoveId, Move>;
+pub mod dex;
 
-pub static mut MOVEDEX: Option<Movedex> = None;
+mod category;
+pub use category::*;
 
 pub mod instance;
 
-pub mod result;
+pub mod usage;
 pub mod target;
 
-pub mod script;
 pub mod persistent;
 
 pub type MoveId = TinyStr16;
@@ -25,7 +24,7 @@ pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
 
-pub type MoveRef = StaticRef<Move>;
+pub type FieldMoveId = TinyStr4;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -41,11 +40,16 @@ pub struct Move {
 	pub accuracy: Option<Accuracy>,
 	pub pp: PP,
 
-	pub use_type: result::MoveUseType,
+	pub usage: usage::MoveUseType,
+
 	#[serde(default = "target::move_target_opponent")]
 	pub target: target::MoveTarget,
+
+	pub field_id: Option<FieldMoveId>,
 	
 }
+
+pub type MoveRef = StaticRef<Move>;
 
 impl Identifiable for Move {
     type Id = MoveId;
@@ -55,16 +59,9 @@ impl Identifiable for Move {
     }
 
 	fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized {
-		unsafe { MOVEDEX.as_ref().map(|map| map.get(id)).flatten() }
+		unsafe { dex::MOVEDEX.as_ref().map(|map| map.get(id)).flatten() }
 	}
 
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
-pub enum MoveCategory {
-	Physical,
-	Special,
-	Status,	
 }
 
 impl core::fmt::Display for Move {

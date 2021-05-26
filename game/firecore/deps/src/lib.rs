@@ -33,6 +33,7 @@ pub mod hash {
 
     extern crate ahash;
 
+    #[deprecated(note = "use hashbrown")]
 	pub use ahash::{
         AHashMap as HashMap,
         AHashSet as HashSet,

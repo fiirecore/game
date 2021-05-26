@@ -1,4 +1,4 @@
-use std::sync::atomic::Ordering::Relaxed;
+use std::{rc::Rc, sync::atomic::Ordering::Relaxed};
 
 use game::{
 	storage::{PLAYER_SAVES, save, data_mut, player::{SHOULD_SAVE, PlayerSaves}},
@@ -32,9 +32,6 @@ pub struct GameStateManager {
 	
 	world: WorldManager,
 	battle: BattleManager,
-
-	party: PartyGui,
-	bag: BagGui,
 	
 	battle_entry: Option<BattleEntry>,
 
@@ -54,6 +51,11 @@ impl Default for GameStates {
 impl GameStateManager {
 
 	pub fn new(ctx: &mut Context) -> Self {
+
+		let party = Rc::new(PartyGui::new(ctx));
+		let bag = Rc::new(BagGui::new(ctx));
+
+
 		Self {
 
 			action: None,
@@ -61,10 +63,8 @@ impl GameStateManager {
 			state: GameStates::default(),
 			next: None,
 			
-			world: WorldManager::new(ctx),
-			battle: BattleManager::new(ctx),
-			party: PartyGui::new(ctx),
-			bag: BagGui::new(ctx),
+			world: WorldManager::new(ctx, party.clone(), bag.clone()),
+			battle: BattleManager::new(ctx, party, bag),
 
 			battle_entry: None,
 		}
@@ -124,7 +124,7 @@ impl State for GameStateManager {
 		}
 		match self.state {
 			GameStates::World => {
-				self.world.update(ctx, delta, &mut self.battle_entry, &mut self.party, &mut self.bag, &mut self.action);
+				self.world.update(ctx, delta, &mut self.battle_entry, &mut self.action);
 				if let Some(entry) = self.battle_entry.take() {
 					if self.battle.battle(ctx, entry) {
 						self.state = GameStates::Battle;
@@ -132,7 +132,7 @@ impl State for GameStateManager {
 				}
 			}
 			GameStates::Battle => {
-				self.battle.update(ctx, delta, &mut self.party, &mut self.bag);
+				self.battle.update(ctx, delta);
 				if self.battle.finished {
 					let save = data_mut();
 					if let Some((winner, trainer)) = self.battle.update_data(save) {
@@ -151,19 +151,13 @@ impl State for GameStateManager {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> Result {
-        if self.party.alive {
-			self.party.draw(ctx);
-		} else if self.bag.alive {
-			self.bag.draw(ctx);
-		} else {
-			match self.state {
-				GameStates::World => self.world.draw(ctx),
-				GameStates::Battle => {
-					if self.battle.world_active() {
-						self.world.draw(ctx);
-					}
-					self.battle.draw(ctx);
+		match self.state {
+			GameStates::World => self.world.draw(ctx),
+			GameStates::Battle => {
+				if self.battle.world_active() {
+					self.world.draw(ctx);
 				}
+				self.battle.draw(ctx);
 			}
 		}
         Ok(())

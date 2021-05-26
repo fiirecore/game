@@ -5,6 +5,6 @@
     type: Fighting,
     accuracy: None,
     pp: 20,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

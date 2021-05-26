@@ -5,6 +5,6 @@
     type: Flying,
     accuracy: Some(95),
     pp: 5,
-    use_type: Damage(Power(100)),
+    usage: Damage(Power(100)),
     target: Opponent,
 )

@@ -5,6 +5,6 @@
     type: Ground,
     accuracy: Some(85),
     pp: 15,
-    use_type: Damage(Power(35)),
+    usage: Damage(Power(35)),
     target: Opponent,
 )

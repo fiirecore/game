@@ -5,6 +5,6 @@
     type: Fighting,
     accuracy: Some(100),
     pp: 30,
-    use_type: Damage(Power(40)),
+    usage: Damage(Power(40)),
     target: Opponent,
 )

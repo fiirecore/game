@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.4.0"
+version = "0.5.0-2021-05-26"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"

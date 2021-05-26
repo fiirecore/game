@@ -98,14 +98,14 @@ impl BasicBattleIntroduction {
                 position(41.0 + - self.counter, 49.0),
             )
         } else {
-            for active in battle.player.active.iter() {
+            for active in battle.player.party.active.iter() {
                 active.renderer.draw(ctx, ZERO, Color::WHITE);
             }
         }
     }
 
     pub(crate) fn draw_opponent(&self, ctx: &mut Context, battle: &Battle) {
-        for active in battle.opponent.active.iter() {
+        for active in battle.opponent.party.active.iter() {
             active.renderer.draw(ctx, ZERO, Color::WHITE);
             active.status.draw(ctx, self.offsets.0, 0.0);
         }
@@ -120,12 +120,12 @@ impl BattleIntroduction for BasicBattleIntroduction {
         text.push(
             MessagePage::new(
                 vec![
-                    format!("Wild {} appeared!", Self::concatenate(&battle.opponent.active))
+                    format!("Wild {} appeared!", Self::concatenate(&battle.opponent.party.active))
                 ],
                 None,
             )
         );
-        self.common_setup(text, &battle.player.active);
+        self.common_setup(text, &battle.player.party.active);
     }
 
     fn update(&mut self, ctx: &mut Context, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
@@ -138,7 +138,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
             }
         }
 
-        if battle.opponent.active[0].status.alive() {
+        if battle.opponent.party.active[0].status.alive() {
             if self.offsets.0 != 0.0 {
                 self.offsets.0 += delta * 240.0;
                 if self.offsets.0 > 0.0 {
@@ -146,7 +146,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 }
             }
         } else if text.can_continue() && text.current() >= text.len() - 2 {
-            for active in battle.opponent.active.iter_mut() {
+            for active in battle.opponent.party.active.iter_mut() {
                 active.status.spawn();
                 if let Some(instance) = active.pokemon.as_ref() {
                     play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
@@ -155,11 +155,11 @@ impl BattleIntroduction for BasicBattleIntroduction {
             
         }
 
-        if battle.player.active[0].renderer.spawner.spawning() {
-            for active in battle.player.active.iter_mut() {
+        if battle.player.party.active[0].renderer.spawner.spawning() {
+            for active in battle.player.party.active.iter_mut() {
                 active.renderer.spawner.update(delta);
             }
-        } else if battle.player.active[0].status.alive() {
+        } else if battle.player.party.active[0].status.alive() {
             if self.offsets.1 != 0.0 {
                 self.offsets.1 -= delta * 240.0;
                 if self.offsets.1 < 0.0 {
@@ -167,7 +167,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 }
             }
         } else if self.counter >= Self::PLAYER_T2 {
-            for active in battle.player.active.iter_mut() {
+            for active in battle.player.party.active.iter_mut() {
                 active.renderer.spawn();
                 active.status.spawn();
                 if let Some(instance) = active.pokemon.as_ref() {

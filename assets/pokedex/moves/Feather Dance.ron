@@ -5,6 +5,6 @@
     type: Flying,
     accuracy: Some(100),
     pp: 15,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

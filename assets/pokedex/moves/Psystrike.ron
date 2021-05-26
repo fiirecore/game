@@ -5,6 +5,6 @@
     type: Psychic,
     accuracy: Some(100),
     pp: 10,
-    use_type: Damage(Power(100)),
+    usage: Damage(Power(100)),
     target: Opponent,
 )

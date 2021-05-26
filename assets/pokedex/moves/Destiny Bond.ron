@@ -5,6 +5,6 @@
     type: Ghost,
     accuracy: None,
     pp: 5,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

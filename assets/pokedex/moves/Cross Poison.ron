@@ -5,6 +5,6 @@
     type: Poison,
     accuracy: Some(100),
     pp: 20,
-    use_type: Damage(Power(70)),
+    usage: Damage(Power(70)),
     target: Opponent,
 )

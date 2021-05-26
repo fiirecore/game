@@ -35,7 +35,7 @@ impl MovePanel {
 
     pub fn update_names(&mut self, instance: &PokemonInstance) {
         self.names = instance.moves.iter().map(|instance| {
-            (instance.move_ref, if instance.pp == 0 { TextColor::Red } else { TextColor::Black })
+            (instance.move_ref, if instance.empty() { TextColor::Red } else { TextColor::Black })
         }).collect();
     }
 

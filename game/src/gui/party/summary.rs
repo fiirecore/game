@@ -1,3 +1,6 @@
+use std::{cell::RefCell, sync::atomic::{AtomicBool, AtomicU8, AtomicUsize, Ordering::Relaxed}};
+
+use atomic::Atomic;
 use pokedex::texture::{
     pokemon_texture,
     PokemonTexture::Front,
@@ -21,16 +24,24 @@ use crate::gui::pokemon::{PokemonDisplay, PokemonTypeDisplay};
 
 pub struct SummaryGui {
 
-    pub alive: bool,
+    pub alive: AtomicBool,
 
-    page: usize,
+    page: AtomicUsize,
     headers: [&'static str; Self::PAGES],
     pages: [Texture; Self::PAGES],
     pokemon_background: Texture,
-    offset: (u8, bool, f32),
 
-    pokemon: Option<SummaryPokemon>,
+    offset: Offset,
 
+    pokemon: RefCell<Option<SummaryPokemon>>,
+
+}
+
+#[derive(Default)]
+struct Offset {
+    int: AtomicU8,
+    boolean: AtomicBool,
+    float: Atomic<f32>,
 }
 
 impl SummaryGui {
@@ -44,7 +55,7 @@ impl SummaryGui {
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            alive: false,
+            alive: AtomicBool::new(false),
             headers: [
                 "POKEMON INFO",
                 "POKEMON SKILLS",
@@ -57,17 +68,18 @@ impl SummaryGui {
             ],
             offset: Default::default(),
             pokemon_background: byte_texture(ctx, include_bytes!("../../../assets/gui/party/summary/pokemon.png")),
-            page: 0,
-            pokemon: None,
+            page: AtomicUsize::new(0),
+            pokemon: RefCell::new(None),
         }
     }
 
-    pub fn input(&mut self, ctx: &Context) {
-        if pressed(ctx, Control::Left) && self.page > 0 {
-            self.page -= 1;
+    pub fn input(&self, ctx: &Context) {
+        let page = self.page.load(Relaxed);
+        if pressed(ctx, Control::Left) && page > 0 {
+            self.page.store(page - 1, Relaxed);
         }
-        if pressed(ctx, Control::Right) && self.page < Self::PAGES - 1 {
-            self.page += 1;
+        if pressed(ctx, Control::Right) && page < Self::PAGES - 1 {
+            self.page.store(page + 1, Relaxed);
         }
         if pressed(ctx, Control::B) {
             self.despawn();
@@ -75,29 +87,30 @@ impl SummaryGui {
     }
 
     pub fn draw(&self, ctx: &mut Context) {
-        let w = 114.0 + (self.page << 4) as f32;
+        let current_page = self.page.load(Relaxed);
+        let w = 114.0 + (current_page << 4) as f32;
         let rw = firecore_util::WIDTH - w;
         draw_rectangle(ctx, 0.0, 1.0, w, 15.0, Self::HEADER_LEFT);
         draw_rectangle(ctx, w, 1.0, rw, 16.0, Self::HEADER_RIGHT);
         draw_line(ctx, 0.0, 16.5, w, 16.5, 1.0, Self::HEADER_LEFT_DARK);
-        draw_text_left(ctx, &1, self.headers[self.page], TextColor::White, 5.0, 1.0);
+        draw_text_left(ctx, &1, self.headers[current_page], TextColor::White, 5.0, 1.0);
         for page in 0..Self::PAGES {
-            let color = if self.page < page {
+            let color = if current_page < page {
                 Self::HEADER_RIGHT_DARK
-            } else if self.page == page {
+            } else if current_page == page {
                 crate::gui::panel::WHITE
             } else {
                 Self::HEADER_LEFT_DARK
             };
             draw_circle(ctx, 106.0 + (page << 4) as f32, 9.0, 6.0, color);
         }
-        if let Some(pokemon) = self.pokemon.as_ref() {
+        if let Some(pokemon) = self.pokemon.borrow().as_ref() {
             self.pokemon_background.draw(ctx, position(0.0, 17.0));
-            pokemon.front.0.draw(ctx, position(28.0, pokemon.front.1 + self.offset.2));
+            pokemon.front.0.draw(ctx, position(28.0, pokemon.front.1 + self.offset.float.load(Relaxed)));
             draw_text_left(ctx, &1, &pokemon.display.level, TextColor::White, 5.0, 19.0);
             draw_text_left(ctx, &1, pokemon.pokemon.1, TextColor::White, 41.0, 19.0);
             const TOP: DrawParams = position(0.0, 17.0);
-            match self.page {
+            match self.page.load(Relaxed) {
                 0 => {
                     self.pages[0].draw(ctx, TOP);
                     draw_text_left(ctx, &1, &pokemon.pokemon.0, TextColor::Black, 168.0, 21.0);
@@ -123,35 +136,43 @@ impl SummaryGui {
         }
     }
 
-    pub fn update(&mut self, delta: f32) {
-        if self.offset.0 < 2 {
-            match self.offset.1 {
+    pub fn update(&self, delta: f32) {
+        let int = self.offset.int.load(Relaxed);
+        if int < 2 {
+            let float = self.offset.float.load(Relaxed);
+            match self.offset.boolean.load(Relaxed) {
                 false => {
-                    self.offset.2 -= delta * 120.0;
-                    if self.offset.2 < -10.0 {
-                        self.offset.1 = true;
+                    self.offset.float.store(float - delta * 120.0, Relaxed);
+                    if float < -10.0 {
+                        self.offset.boolean.store(true, Relaxed);
                     }
                 }
                 true => {
-                    self.offset.2 += delta * 120.0;
-                    if self.offset.2 > 0.0 {
-                        self.offset.0 += 1;
-                        self.offset.1 = false;
+                    self.offset.float.store(float + delta * 120.0, Relaxed);
+                    if float > 0.0 {
+                        self.offset.int.store(int + 1, Relaxed);
+                        self.offset.boolean.store(false, Relaxed);
                     }
                 }
             }
         }
     }
 
-    pub fn spawn(&mut self, pokemon: PokemonDisplay) {
-        self.alive = true;
-        self.offset = Default::default();
-        self.pokemon = Some(SummaryPokemon::new(pokemon));
+    pub fn spawn(&self, pokemon: PokemonDisplay) {
+        self.alive.store(true, Relaxed);
+        self.offset.int.store(Default::default(), Relaxed);
+        self.offset.boolean.store(Default::default(), Relaxed);
+        self.offset.float.store(Default::default(), Relaxed);
+        *self.pokemon.borrow_mut() = Some(SummaryPokemon::new(pokemon));
     }
 
-    pub fn despawn(&mut self) {
-        self.alive = false;
-        self.pokemon = None;
+    pub fn despawn(&self) {
+        self.alive.store(false, Relaxed);
+        *self.pokemon.borrow_mut() = None;
+    }
+
+    pub fn alive(&self) -> bool {
+        self.alive.load(Relaxed)
     }
 
 }

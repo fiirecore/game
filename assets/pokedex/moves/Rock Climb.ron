@@ -5,6 +5,6 @@
     type: Normal,
     accuracy: Some(85),
     pp: 20,
-    use_type: Damage(Power(90)),
+    usage: Damage(Power(90)),
     target: Opponent,
 )

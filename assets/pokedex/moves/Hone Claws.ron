@@ -5,6 +5,6 @@
     type: Dark,
     accuracy: None,
     pp: 15,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

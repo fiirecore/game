@@ -8,6 +8,7 @@ use deps::{
 };
 
 use crate::{
+	types::{PokemonType, Effective},
 	pokemon::{
 		Pokemon,
 		PokemonId,
@@ -17,13 +18,13 @@ use crate::{
 		Gender,
 		Experience,
 		Friendship,
-		types::{PokemonType, Effective},
 		status::StatusEffect,
-		stat::{StatSet, BaseStatSet},
+		stat::{Stats, BaseStats},
 	},
 	moves::{
 		Move,
 		MoveRef,
+		MoveCategory,
 		instance::{
 			MoveInstance,
 			MoveInstanceSet,
@@ -37,9 +38,6 @@ mod deserialize;
 
 mod moves;
 mod item;
-mod result;
-
-pub use result::*;
 
 // pub mod instance_template;
 
@@ -57,9 +55,9 @@ pub struct PokemonInstance {
     pub gender: Gender,
     
     #[serde(default = "default_iv")]
-	pub ivs: StatSet,
+	pub ivs: Stats,
     #[serde(default)]
-    pub evs: StatSet,
+    pub evs: Stats,
 
     #[serde(default)]
 	pub experience: Experience,
@@ -79,7 +77,7 @@ pub struct PokemonInstance {
 	pub persistent: Option<PersistentMoveInstance>, // to - do
 
 	#[serde(skip)]
-	pub base: BaseStatSet,
+	pub base: BaseStats,
 
 	pub current_hp: Health,
 	
@@ -89,19 +87,19 @@ pub type BorrowedPokemon = BorrowableMut<'static, PokemonInstance>;
 
 impl PokemonInstance {
 
-	pub fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<StatSet>) -> Self {
+	pub fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<Stats>) -> Self {
 		let pokemon = Pokemon::get(&id).unwrap();
 
         let level = if min == max {
 			max
 		} else {
-			super::POKEMON_RANDOM.gen_range(min, max + 1) as u8
+			crate::RANDOM.gen_range(min, max + 1)
 		};
 
-		let ivs = ivs.unwrap_or(StatSet::random());
-		let evs = StatSet::default();
+		let ivs = ivs.unwrap_or(Stats::random());
+		let evs = Stats::default();
 
-		let base = BaseStatSet::get(pokemon, &ivs, &evs, level);
+		let base = BaseStats::new(pokemon, &ivs, &evs, level);
 
 		Self {
 
@@ -123,7 +121,7 @@ impl PokemonInstance {
 
 			status: None,
 
-			current_hp: base.hp,
+			current_hp: base.hp(),
 
 			base,
 			
@@ -147,9 +145,8 @@ impl PokemonInstance {
 
 		while self.experience > gr.max_exp(self.level) {
 			self.experience -= gr.max_exp(self.level);
-			self.level += 1;
 
-			self.on_level_up();
+			self.level_up();
 
 			// Get the moves the pokemon learns at the level it just gained.
 
@@ -182,11 +179,12 @@ impl PokemonInstance {
 		}
 	}
 
-	pub fn on_level_up(&mut self) {
-		self.base = BaseStatSet::get(self.pokemon.unwrap(), &self.ivs, &self.evs, self.level);
+	pub fn level_up(&mut self) {
+		self.level += 1;
+		self.base = BaseStats::new(self.pokemon.unwrap(), &self.ivs, &self.evs, self.level);
 	}
 
-	pub fn generate_with_level(id: PokemonId, level: Level, ivs: Option<StatSet>) -> Self {
+	pub fn generate_with_level(id: PokemonId, level: Level, ivs: Option<Stats>) -> Self {
 		Self::generate(id, level, level, ivs)
 	}
 
@@ -201,6 +199,29 @@ impl PokemonInstance {
 		}
 	}
 
+	pub fn hp(&self) -> Health {
+		self.current_hp
+	}
+
+	pub fn max_hp(&self) -> Health {
+		self.base.hp()
+	}
+
+	pub fn heal(&mut self) {
+		self.heal_hp();
+		self.heal_pp();
+	}
+
+	pub fn heal_hp(&mut self) {
+		self.current_hp = self.max_hp();
+	}
+
+	pub fn heal_pp(&mut self) {
+		for pmove in self.moves.iter_mut() {
+			pmove.restore();
+		}
+	}
+
 	pub fn moves_at_level(&self) -> Vec<MoveRef> {
 		let mut moves = Vec::new();
 		for pokemon_move in &self.pokemon.unwrap().moves {
@@ -211,11 +232,11 @@ impl PokemonInstance {
 		moves
 	}
 
-	pub fn effective(&self, pokemon_type: PokemonType) -> Effective {
+	pub fn effective(&self, pokemon_type: PokemonType, category: MoveCategory) -> Effective {
 		let pokemon = self.pokemon.unwrap();
-		let primary = pokemon_type.effective(pokemon.primary_type);
+		let primary = pokemon_type.effective(pokemon.primary_type, category);
 		if let Some(secondary) = pokemon.secondary_type {
-			primary * pokemon_type.effective(secondary)
+			primary * pokemon_type.effective(secondary, category)
 		} else {
 			primary
 		}

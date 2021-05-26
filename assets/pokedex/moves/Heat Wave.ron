@@ -5,6 +5,6 @@
     type: Fire,
     accuracy: Some(90),
     pp: 10,
-    use_type: Damage(Power(95)),
+    usage: Damage(Power(95)),
     target: Opponent,
 )

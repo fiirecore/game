@@ -6,7 +6,7 @@
 		type: Dragon,
 		accuracy: None,
 		pp: 255,
-		use_type: Damage(Power(255)),
+		usage: Damage(Power(255)),
 		target: Opponents,
     ),
 )

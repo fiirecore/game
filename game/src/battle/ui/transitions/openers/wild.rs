@@ -60,7 +60,7 @@ impl BattleOpener for WildBattleOpener {
     }
 
     fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle) {
-        for active in battle.opponent.active.iter() {
+        for active in battle.opponent.party.active.iter() {
             active.renderer.draw(ctx, Vec2::new(-self.opener.offset, 0.0), crate::graphics::LIGHTGRAY);
         }
         self.opener.draw_below_panel(ctx, battle);

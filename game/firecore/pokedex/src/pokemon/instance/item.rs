@@ -41,7 +41,7 @@ impl PokemonInstance {
                 ItemActionKind::CurePokemon(status) => {
                     if let Some(effect) = self.status {
                         if let Some(status) = status {
-                            if effect.status.eq(status) {
+                            if &effect.status == status {
                                 self.status = None;
                             }
                         } else {
@@ -50,10 +50,7 @@ impl PokemonInstance {
                     }
                 }
                 ItemActionKind::HealPokemon(hp) => {
-                    self.current_hp += *hp;
-                    if self.current_hp > self.base.hp {
-                        self.current_hp = self.base.hp;
-                    }
+                    self.current_hp += (*hp).min(self.base.hp());
                 }
             }
         }

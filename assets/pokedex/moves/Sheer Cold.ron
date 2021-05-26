@@ -5,6 +5,6 @@
     type: Ice,
     accuracy: Some(30),
     pp: 5,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

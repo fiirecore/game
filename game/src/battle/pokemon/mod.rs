@@ -7,8 +7,6 @@ mod option;
 mod party;
 mod moves;
 
-pub mod ai;
-
 pub use option::*;
 pub use party::*;
 pub use moves::*;

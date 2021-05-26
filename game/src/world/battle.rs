@@ -6,7 +6,7 @@ use crate::{
     pokedex::{
         moves::target::Team,
         pokemon::{
-            pokedex_len,
+            dex::pokedex_len,
             instance::PokemonInstance,
             party::PersistentParty,
             stat::StatSet,

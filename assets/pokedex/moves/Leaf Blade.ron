@@ -5,6 +5,6 @@
     type: Grass,
     accuracy: Some(100),
     pp: 15,
-    use_type: Damage(Power(90)),
+    usage: Damage(Power(90)),
     target: Opponent,
 )

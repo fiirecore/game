@@ -1,5 +1,7 @@
 use std::collections::VecDeque;
 
+use pokedex::moves::target::Team;
+
 use crate::battle::pokemon::BattleActionInstance;
 
 #[derive(Debug, PartialEq)]
@@ -34,14 +36,14 @@ impl Default for TransitionState {
 #[derive(Debug)]
 pub enum BattleState {
 	Begin,
-	Selecting(usize),
+	Selecting(Team, usize),
 	// Waiting (for opponent)
 	Moving(MoveState),
 	End,
 }
 
 impl BattleState {
-	pub const SELECTING_START: Self = Self::Selecting(0);
+	pub const SELECTING_START: Self = Self::Selecting(Team::Player, 0);
 }
 
 impl Default for BattleState {

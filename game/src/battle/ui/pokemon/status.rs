@@ -3,7 +3,7 @@ use crate::{
 	pokedex::pokemon::{
 		Level,
 		instance::PokemonInstance,
-		stat::BaseStatSet,
+		stat::StatSet,
 	},
 	gui::health::HealthBar,
 	text::TextColor,
@@ -100,8 +100,8 @@ impl PokemonStatusGui {
 			name: Some(pokemon.name().to_string()),
 			level: Some(Self::level(pokemon.level)),
 			data_pos,
-			health: (HealthBar::with_size(ctx, HealthBar::width(pokemon.current_hp, pokemon.base.hp)), hb),
-			health_text: exp.is_some().then(|| format!("{}/{}", pokemon.current_hp, pokemon.base.hp)),
+			health: (HealthBar::with_size(ctx, HealthBar::width(pokemon.hp(), pokemon.max_hp())), hb),
+			health_text: exp.is_some().then(|| format!("{}/{}", pokemon.hp(), pokemon.max_hp())),
 			exp: exp.map(|mut exp| {
 				exp.update_exp(pokemon.level, pokemon, true);
 				exp
@@ -204,9 +204,9 @@ impl PokemonStatusGui {
 				if let Some(level) = self.level.as_mut() {
 					level.1 += 1;
 					level.0 = Self::level_fmt(level.1);
-					let base = BaseStatSet::hp(pokemon.pokemon.unwrap().base.hp, pokemon.ivs.hp, pokemon.evs.hp, level.1);
-					self.health_text = Some(format!("{}/{}", pokemon.current_hp, base));
-					self.health.0.resize(pokemon.current_hp, base, false);
+					let base = StatSet::hp(pokemon.pokemon.unwrap().base.hp, pokemon.ivs.hp, pokemon.evs.hp, level.1);
+					self.health_text = Some(format!("{}/{}", pokemon.hp(), base));
+					self.health.0.resize(pokemon.hp(), base, false);
 				}
 			}
 			self.health.0.update(delta);
@@ -224,12 +224,12 @@ impl PokemonStatusGui {
 	pub fn update_gui(&mut self, pokemon: Option<(Level, &PokemonInstance)>, reset: bool) {
 		self.name = pokemon.map(|(previous, pokemon)| {
 			if pokemon.level == previous {
-				self.health.0.resize(pokemon.current_hp, pokemon.base.hp, reset);
+				self.health.0.resize(pokemon.hp(), pokemon.max_hp(), reset);
 			} 
 			if let Some(exp) = self.exp.as_mut() {
 				exp.update_exp(previous, pokemon, reset);
 				if pokemon.level == previous {
-					self.health_text = Some(format!("{}/{}", pokemon.current_hp, pokemon.base.hp));
+					self.health_text = Some(format!("{}/{}", pokemon.hp(), pokemon.max_hp()));
 				}
 			}
 			if reset {

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use super::Move;
-use super::result::MoveUseType;
+use super::usage::MoveUseType;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PersistentMove {

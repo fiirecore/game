@@ -20,7 +20,6 @@ use crate::battle::{
         ActivePokemon,
         PokemonOption,
     },
-    player::BattlePlayer,
     ui::{
         BattleGuiPosition,
         BattleGuiPositionIndex,
@@ -39,7 +38,6 @@ pub struct BattleParty {
     // pub name:
     pub pokemon: MoveableParty, // To - do: option<pokemonInstance> enum + unknown enum value
     pub active: ActivePokemonArray,
-    // pub player: Box<dyn BattlePlayer>,
 
 }
 
@@ -51,7 +49,7 @@ impl BattleParty {
         let mut current = 0;
 
         for (index, pokemon) in party.iter().flatten().enumerate() {
-			if pokemon.value().current_hp != 0 {
+			if !pokemon.value().fainted() {
 				active[current] = Some(index);
                 current += 1;
                 if current == size {
@@ -94,16 +92,14 @@ impl BattleParty {
     }
 
     pub fn all_fainted(&self) -> bool {
-        // self.pokemon.iter().flatten().find(|pokemon| pokemon.current_hp != 0).is_none() ||
-        // self.active.iter().flat_map(|active| active.pokemon.as_ref()).find(|pokemon| pokemon.current_hp != 0).is_none()
         for pokemon in self.pokemon.iter().flatten() {
-            if pokemon.value().current_hp != 0 {
+            if !pokemon.value().fainted() {
                 return false;
             }
         }
         for active in self.active.iter() {
             if let Some(pokemon) = active.pokemon.as_ref() {
-                if pokemon.current_hp != 0 {
+                if !pokemon.fainted() {
                     return false;
                 }
             }
@@ -112,9 +108,8 @@ impl BattleParty {
     }
 
     pub fn any_inactive(&self) -> bool {
-        // self.pokemon.iter().flatten().find(|instance| instance.current_hp != 0).is_some()
         for pokemon in self.pokemon.iter().flatten() {
-            if pokemon.value().current_hp != 0 {
+            if !pokemon.value().fainted() {
                 return true;
             }
         }

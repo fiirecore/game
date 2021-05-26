@@ -8,7 +8,7 @@ use crate::pokemon::{
     Friendship,
     data::Gender,
     instance::Nickname,
-    stat::{StatSet, BaseStatSet},
+    stat::{Stats, BaseStats},
     status::StatusEffect,
     default_iv,
     default_friendship,
@@ -205,7 +205,7 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                         serde::__private::Some(__value) => __value,
                         serde::__private::None => default_gender(__field0),
                     };
-                let __field4 = match match serde::de::SeqAccess::next_element::<StatSet>(
+                let __field4 = match match serde::de::SeqAccess::next_element::<Stats>(
                     &mut __seq,
                 ) {
                     serde::__private::Ok(__val) => __val,
@@ -216,7 +216,7 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     serde::__private::Some(__value) => __value,
                     serde::__private::None => default_iv(),
                 };
-                let __field5 = match match serde::de::SeqAccess::next_element::<StatSet>(
+                let __field5 = match match serde::de::SeqAccess::next_element::<Stats>(
                     &mut __seq,
                 ) {
                     serde::__private::Ok(__val) => __val,
@@ -329,9 +329,9 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                     serde::__private::None;
                 let mut __field3: serde::__private::Option<Gender> =
                     serde::__private::None;
-                let mut __field4: serde::__private::Option<StatSet> =
+                let mut __field4: serde::__private::Option<Stats> =
                     serde::__private::None;
-                let mut __field5: serde::__private::Option<StatSet> =
+                let mut __field5: serde::__private::Option<Stats> =
                     serde::__private::None;
                 let mut __field6: serde::__private::Option<Experience> =
                     serde::__private::None;
@@ -438,7 +438,7 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                                 );
                             }
                             __field4 = serde::__private::Some(
-                                match serde::de::MapAccess::next_value::<StatSet>(
+                                match serde::de::MapAccess::next_value::<Stats>(
                                     &mut __map,
                                 ) {
                                     serde::__private::Ok(__val) => __val,
@@ -457,7 +457,7 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                                 );
                             }
                             __field5 = serde::__private::Some(
-                                match serde::de::MapAccess::next_value::<StatSet>(
+                                match serde::de::MapAccess::next_value::<Stats>(
                                     &mut __map,
                                 ) {
                                     serde::__private::Ok(__val) => __val,
@@ -716,11 +716,11 @@ fn default_moves(pokemon: PokemonRef, level: Level) -> MoveInstanceSet {
 }
 
 #[inline]
-fn default_base(pokemon: PokemonRef, ivs: &StatSet, evs: &StatSet, level: Level) -> BaseStatSet {
-    BaseStatSet::get(pokemon.unwrap(), ivs, evs, level)
+fn default_base(pokemon: PokemonRef, ivs: &Stats, evs: &Stats, level: Level) -> BaseStats {
+    BaseStats::new(pokemon.unwrap(), ivs, evs, level)
 }
 
 #[inline]
-fn default_current_hp(base: &BaseStatSet) -> Health {
-    base.hp
+fn default_current_hp(base: &BaseStats) -> Health {
+    base.hp()
 }

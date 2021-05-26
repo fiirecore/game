@@ -5,6 +5,6 @@
     type: Steel,
     accuracy: Some(90),
     pp: 25,
-    use_type: Damage(Power(70)),
+    usage: Damage(Power(70)),
     target: Opponent,
 )

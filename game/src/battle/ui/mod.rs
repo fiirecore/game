@@ -1,5 +1,4 @@
 use background::BattleBackground;
-use panels::BattlePanel;
 use pokemon::bounce::PlayerBounce;
 use crate::{
 	gui::{
@@ -56,8 +55,6 @@ pub struct BattleGui {
 
 	pub background: BattleBackground,
 
-	pub panel: BattlePanel,
-
 	pub text: DynamicText,
 
 	pub bounce: PlayerBounce,
@@ -74,7 +71,7 @@ impl BattleGui {
 
 			background: BattleBackground::new(ctx),
 
-			panel: BattlePanel::new(ctx),
+			// panel: BattlePanel::new(ctx),
 
 			text: text::new(),
 
@@ -97,6 +94,6 @@ impl BattleGui {
 
 }
 
-pub fn battle_party_gui(gui: &mut PartyGui, party: &BattleParty, exitable: bool) {
+pub fn battle_party_gui(gui: &PartyGui, party: &BattleParty, exitable: bool) {
     gui.spawn(party.collect_cloned().into_iter().map(|instance| PokemonDisplay::new(std::borrow::Cow::Owned(instance))).collect(), Some(false), exitable);
 }

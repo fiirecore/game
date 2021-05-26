@@ -5,6 +5,6 @@
     type: Water,
     accuracy: Some(90),
     pp: 5,
-    use_type: Damage(Power(150)),
+    usage: Damage(Power(150)),
     target: Opponent,
 )

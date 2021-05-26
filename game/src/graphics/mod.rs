@@ -63,7 +63,6 @@ pub fn draw_o_bottom(ctx: &mut Context, texture: Option<&Texture>, x: f32, y: f3
 
 static mut WHITE_TEXTURE: Option<Texture> = None;
 
-#[deprecated]
 fn new_white_texture(ctx: &mut Context) {
 	if unsafe { WHITE_TEXTURE.is_none() } {
 		unsafe { WHITE_TEXTURE = Some(byte_texture(ctx, include_bytes!("../../assets/white.png"))) }		

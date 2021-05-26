@@ -1,9 +1,9 @@
-// use std::sync::atomic::{
-//     AtomicBool, AtomicUsize,
-//     Ordering::Relaxed,
-// };
+use std::{cell::RefCell, sync::atomic::{
+    AtomicBool, AtomicUsize,
+    Ordering::Relaxed,
+}};
 
-use util::Reset;
+use atomic::Atomic;
 use crate::input::{pressed, Control};
 use storage::{data, data_mut};
 use crate::text::TextColor;
@@ -29,9 +29,9 @@ use super::pokemon::PokemonDisplay;
 pub mod select;
 pub mod summary;
 
-pub struct PartyGui { // To - do: maybe only &self functions so can be stored in Rc<>
+pub struct PartyGui {
 
-    pub alive: bool,
+    alive: AtomicBool,
     
     select: PartySelectMenu,
     summary: SummaryGui,
@@ -40,16 +40,16 @@ pub struct PartyGui { // To - do: maybe only &self functions so can be stored in
     ball: Texture,
     health: Texture,
     
-    pub pokemon: ArrayVec<[PokemonDisplay; 6]>,
+    pokemon: RefCell<ArrayVec<[PokemonDisplay; 6]>>,
 
-    pub selected: Option<usize>,
+    selected: Atomic<Option<usize>>,
 
-    accumulator: f32,
+    accumulator: Atomic<f32>,
 
-    cursor: usize,
-    right_cursor: Option<usize>,
+    cursor: AtomicUsize,
+    right_cursor: Atomic<Option<usize>>,
 
-    exitable: bool,
+    exitable: AtomicBool,
 
 }
 
@@ -72,104 +72,105 @@ impl PartyGui {
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            alive: false,
+            alive: AtomicBool::new(false),
             select: PartySelectMenu::new(ctx),
             summary: SummaryGui::new(ctx),
             background: byte_texture(ctx, include_bytes!("../../../assets/gui/party/background.png")),
             ball: byte_texture(ctx, include_bytes!("../../../assets/gui/party/ball.png")),
             health: HealthBar::texture(ctx).clone(),
-            accumulator: 0.0,
-            pokemon: ArrayVec::new(),
-            cursor: 0,
-            right_cursor: None,
-            selected: None,
-            exitable: true,
+            accumulator: Atomic::new(0.0),
+            pokemon: RefCell::new(ArrayVec::new()),
+            cursor: AtomicUsize::new(0),
+            right_cursor: Atomic::new(None),
+            selected: Atomic::new(None),
+            exitable: AtomicBool::new(true),
         }
 
     }
 
-    pub fn on_spawn(&mut self, world: Option<bool>) {
-        self.alive = true;
+    pub fn on_spawn(&self, world: Option<bool>) {
+        self.alive.store(true, Relaxed);
         self.reset();        
-        self.select.is_world = world;
+        self.select.is_world.store(world, Relaxed);
     }
 
-    pub fn spawn(&mut self, party: ArrayVec<[PokemonDisplay; 6]>, is_world: Option<bool>, exitable: bool) {
+    pub fn spawn(&self, party: ArrayVec<[PokemonDisplay; 6]>, is_world: Option<bool>, exitable: bool) {
         self.on_spawn(is_world);
-        self.pokemon = party;
-        self.exitable = exitable;
+        *self.pokemon.borrow_mut() = party;
+        self.exitable.store(exitable, Relaxed);
     }
 
-    pub fn spawn_world(&mut self) {
+    pub fn spawn_world(&self) {
         self.on_spawn(Some(true));
-        self.exitable = true;
+        self.exitable.store(true, Relaxed);
         self.spawn(data().party.iter().map(|instance| PokemonDisplay::new(std::borrow::Cow::Borrowed(instance))).collect(), Some(true), true);
     }
 
-    pub fn input(&mut self, ctx: &Context) {
-        if self.summary.alive {
+    pub fn input(&self, ctx: &Context) {
+        if self.summary.alive() {
             self.summary.input(ctx);
-        } else if self.select.alive {
+        } else if self.select.alive.load(Relaxed) {
             if let Some(action) = self.select.input(ctx) {
+                let cursor = self.cursor.load(Relaxed);
                 match action {
                     select::PartySelectAction::Select => {
-                        self.selected = Some(self.cursor);
-                        self.select.alive = false;
+                        self.selected.store(Some(cursor), Relaxed);
+                        self.select.alive.store(false, Relaxed);
                     }
                     select::PartySelectAction::Summary => {
-                        self.summary.spawn(self.pokemon[self.cursor].clone());
-                        self.select.alive = false;
+                        self.summary.spawn(self.pokemon.borrow()[cursor].clone());
+                        self.select.alive.store(false, Relaxed);
                     }
                 }
             }            
         } else {
 
             if pressed(ctx, Control::A) {
-                if let Some(selected) = self.selected.take() {
-                    if let Some(is_world) = self.select.is_world {
+                let is_world = self.select.is_world.load(Relaxed);
+                if let Some(selected) = self.take_selected() {
+                    if let Some(is_world) = is_world {
                         if is_world {
-                            self.pokemon.swap(self.cursor, selected);
-                            data_mut().party.swap(self.cursor, selected);
+                            self.pokemon.borrow_mut().swap(self.cursor.load(Relaxed), selected);
+                            data_mut().party.swap(self.cursor.load(Relaxed), selected);
                         }
                     }
                 } else {
-                    if self.select.is_world.is_some() {
+                    if is_world.is_some() {
                         self.select.toggle();
                     } else {
-                        self.selected = Some(self.cursor);
+                        self.selected.store(Some(self.cursor.load(Relaxed)), Relaxed);
                     }
                 }
             } else {
-                if pressed(ctx, Control::Up) && self.cursor > 1 {
-                    self.cursor -= 1;
+                let cursor = self.cursor.load(Relaxed);
+                if pressed(ctx, Control::Up) && cursor > 1 {
+                    self.cursor.store(cursor - 1, Relaxed);
                 }
                 if pressed(ctx, Control::Down) {
-                    if self.cursor < self.pokemon.len() - 1 {
-                        self.cursor += 1;
-                    }            
+                    if cursor < self.pokemon.borrow().len() - 1 {
+                        self.cursor.store(cursor + 1, Relaxed);  
+                    }        
                 }
-                if pressed(ctx, Control::Left) && self.cursor != 0 {
-                    self.right_cursor = Some(self.cursor);
-                    self.cursor = 0;
+                if pressed(ctx, Control::Left) && cursor != 0 {
+                    self.right_cursor.store(Some(cursor), Relaxed);
+                    self.cursor.store(0, Relaxed);
                 }
-                if pressed(ctx, Control::Right) && self.cursor == 0 {
-                    self.cursor = self.right_cursor.unwrap_or(1);
+                if pressed(ctx, Control::Right) && cursor == 0 {
+                    self.cursor.store(self.right_cursor.load(Relaxed).unwrap_or(1), Relaxed);
                 }
-                if (pressed(ctx, Control::B) || pressed(ctx, Control::Start)) && self.exitable {
+                if (pressed(ctx, Control::B) || pressed(ctx, Control::Start)) && self.exitable.load(Relaxed) {
                     self.despawn();
                 }
             }           
         }
     }
 
-    pub fn update(&mut self, delta: f32) {
-        if self.alive {
-            self.accumulator += delta;
-            if self.accumulator > PokemonDisplay::ICON_TICK * 2.0 {
-                self.accumulator = 0.0;
-            }
-            if let Some(is_world) = self.select.is_world {
-                if is_world && self.summary.alive {
+    pub fn update(&self, delta: f32) {
+        if self.alive.load(Relaxed) {
+            let acc = self.accumulator.load(Relaxed) + delta;
+            self.accumulator.store(if acc > PokemonDisplay::ICON_TICK * 2.0 { 0.0 } else { acc }, Relaxed);
+            if let Some(is_world) = self.select.is_world.load(Relaxed) {
+                if is_world && self.summary.alive() {
                     self.summary.update(delta);
                 }
             }
@@ -177,28 +178,28 @@ impl PartyGui {
     }
 
     pub fn draw(&self, ctx: &mut Context) {
-        if self.summary.alive {
+        if self.summary.alive() {
             self.summary.draw(ctx);
         } else {
             self.background.draw(ctx, position(0.0, 0.0));
-            self.pokemon.iter().enumerate().for_each(|(index, pokemon)| {
+            self.pokemon.borrow().iter().enumerate().for_each(|(index, pokemon)| {
                 if index == 0 {
                     self.draw_primary(ctx, pokemon);                    
                 } else {
-                    self.draw_cell(ctx, index, pokemon, self.cursor == index);
+                    self.draw_cell(ctx, index, pokemon, self.cursor.load(Relaxed) == index);
                 }
             });
-            if self.select.is_world.is_some() {
+            if self.select.is_world.load(Relaxed).is_some() {
                 self.select.draw(ctx);
             }
         }
     }
 
     fn draw_primary(&self, ctx: &mut Context, pokemon: &PokemonDisplay) {
-        let selected = self.cursor == 0;
+        let selected = self.cursor.load(Relaxed) == 0;
         let mut skip = false;
-        if self.select.is_world.is_some() {
-            if let Some(selected_index) = self.selected {
+        if self.select.is_world.load(Relaxed).is_some() {
+            if let Some(selected_index) = self.selected.load(Relaxed) {
                 let selected_index = selected_index == 0;
                 if selected_index || selected {
                     
@@ -243,8 +244,8 @@ impl PartyGui {
     fn draw_cell(&self, ctx: &mut Context, index: usize, pokemon: &PokemonDisplay, selected: bool) {
         let offset = -14.0 + (24.0 * index as f32);
         let mut skip = false;
-        if self.select.is_world.is_some() {
-            if let Some(selected_index) = self.selected {
+        if self.select.is_world.load(Relaxed).is_some() {
+            if let Some(selected_index) = self.selected.load(Relaxed) {
                 let selected_index = selected_index == index;
                 if selected_index || selected {
                     self.draw_cell_color(ctx, offset, Self::SELECT_LIGHT, Self::SELECT_DARK, Some( if selected { Self::HOVER_BORDER } else { Self::SELECT_BORDER }));
@@ -296,7 +297,7 @@ impl PartyGui {
     }
 
     fn draw_pokemon(&self, ctx: &mut Context, icon: &Texture, x: f32, y: f32, selected: bool) {
-        let second = self.accumulator > PokemonDisplay::ICON_TICK;
+        let second = self.accumulator.load(Relaxed) > PokemonDisplay::ICON_TICK;
         icon.draw_region(
             ctx,
             Rectangle::new(
@@ -317,18 +318,30 @@ impl PartyGui {
         draw_rectangle(ctx, x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER);
     }
 
-    pub fn despawn(&mut self) {
-        self.alive = false;
-        self.select.alive = false;
+    pub fn take_selected(&self) -> Option<usize> {
+        let selected = self.selected.load(Relaxed);
+        if selected.is_some() {
+            self.selected.store(None, Relaxed);
+            selected
+        } else {
+            None
+        }
     }
 
-}
-
-impl Reset for PartyGui {
-    fn reset(&mut self) {
-        self.cursor = 0;
-        self.right_cursor = None;
-        self.accumulator = 0.0;
-        self.pokemon.clear();
+    pub fn despawn(&self) {
+        self.alive.store(false, Relaxed);
+        self.select.alive.store(false, Relaxed);
     }
+
+    pub fn alive(&self) -> bool {
+        self.alive.load(Relaxed)
+    }
+    
+    pub fn reset(&self) {
+        self.cursor.store(0, Relaxed);
+        self.right_cursor.store(None, Relaxed);
+        self.accumulator.store(0.0, Relaxed);
+        self.pokemon.borrow_mut().clear();
+    }
+
 }

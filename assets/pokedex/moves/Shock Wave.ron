@@ -5,6 +5,6 @@
     type: Electric,
     accuracy: None,
     pp: 20,
-    use_type: Damage(Power(60)),
+    usage: Damage(Power(60)),
     target: Opponent,
 )

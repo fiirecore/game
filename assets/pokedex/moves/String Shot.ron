@@ -5,6 +5,6 @@
     type: Bug,
     accuracy: Some(95),
     pp: 40,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

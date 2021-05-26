@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use crate::{
 	// pokedex::pokemon::p,
 	deps::rhai::Engine,
@@ -38,6 +40,8 @@ use crate::battle::{
 	},
 };
 
+use super::{player::gui::BattlePlayerGui, ui::panels::BattlePanel};
+
 pub struct BattleManager {
 
 	state: BattleManagerState,
@@ -52,13 +56,15 @@ pub struct BattleManager {
 	engine: Engine,
 	gui: BattleGui,
 
+	player: BattlePlayerGui,
+
 	pub finished: bool,
 	
 }
 
 impl BattleManager {
 	
-	pub fn new(ctx: &mut Context) -> BattleManager {
+	pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> BattleManager {
 		
 		BattleManager {
 
@@ -71,8 +77,14 @@ impl BattleManager {
 			introduction: BattleIntroductionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
-			engine: crate::pokedex::moves::script::engine(),
+			engine: crate::pokedex::moves::usage::script::engine(),
 			gui: BattleGui::new(ctx),
+
+			player: BattlePlayerGui {
+				party,
+				bag,
+				panel: Rc::new(RefCell::new(BattlePanel::new(ctx))),
+			},
 
 			finished: false,
 
@@ -85,6 +97,7 @@ impl BattleManager {
 		self.state = BattleManagerState::default();
 		self.battle = Battle::new(
 			ctx,
+			Box::new(self.player.clone()),
 			data_mut().party.iter_mut().map(|instance| 
 				Some(BorrowedPokemon::Borrowed(instance))
 			).collect(), 
@@ -93,7 +106,7 @@ impl BattleManager {
 		self.battle.is_some()
 	}
 
-	pub fn update(&mut self, ctx: &mut Context, delta: f32, party_gui: &mut PartyGui, bag: &mut BagGui) {
+	pub fn update(&mut self, ctx: &mut Context, delta: f32) {
 		if is_debug() {
 			if debug_pressed(ctx, DebugBind::F1) { // exit shortcut
 				self.finished = true;
@@ -105,7 +118,7 @@ impl BattleManager {
 				    BattleManagerState::Battle => {
 						if let Some(battle) = self.battle.as_mut() {
 							battle.state = BattleState::End;
-							battle.update(ctx, delta, &mut self.engine, &mut self.gui, party_gui, bag);
+							battle.update(ctx, delta, &mut self.engine, &mut self.gui);
 						}
 					},
 				    BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
@@ -122,52 +135,52 @@ impl BattleManager {
 					self.gui.reset();
 					self.state = BattleManagerState::Transition;
 					self.transition.state = TransitionState::Begin;
-					self.update(ctx, delta, party_gui, bag);
+					self.update(ctx, delta);
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
 						self.transition.begin(ctx, battle.data.battle_type, &battle.data.trainer);
-						self.update(ctx, delta, party_gui, bag);
+						self.update(ctx, delta);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
 					TransitionState::End => {
 						self.transition.end();
 						self.state = BattleManagerState::Opener;
-						self.update(ctx, delta, party_gui, bag);
+						self.update(ctx, delta);
 					}
 				}
 				BattleManagerState::Opener => match self.opener.state {
 					TransitionState::Begin => {
 						self.opener.begin(battle);
-						self.update(ctx, delta, party_gui, bag);
+						self.update(ctx, delta);
 					}
 					TransitionState::Run => self.opener.update(delta),
 					TransitionState::End => {
 						self.opener.end();
 						self.state = BattleManagerState::Introduction;
-						self.update(ctx, delta, party_gui, bag);
+						self.update(ctx, delta);
 					}
 				}
 				BattleManagerState::Introduction => match self.introduction.state {
 					TransitionState::Begin => {
 						self.introduction.begin(battle, &mut self.gui.text);
-						self.update(ctx, delta, party_gui, bag);
+						self.update(ctx, delta);
 					}
 					TransitionState::Run => self.introduction.update(ctx, delta, battle, &mut self.gui.text),
 					TransitionState::End => {
 						self.introduction.end();
 						self.state = BattleManagerState::Battle;
-						self.update(ctx, delta, party_gui, bag);
+						self.update(ctx, delta);
 					}
 				}
 				BattleManagerState::Battle => match battle.state {
 					BattleState::End => self.state = BattleManagerState::Closer,
-					_ => battle.update(ctx, delta, &mut self.engine, &mut self.gui, party_gui, bag),
+					_ => battle.update(ctx, delta, &mut self.engine, &mut self.gui),
 				},
 				BattleManagerState::Closer => match self.closer.state {
 					TransitionState::Begin => {
 						self.closer.begin(battle, &mut self.gui.text);
-						self.update(ctx, delta, party_gui, bag);
+						self.update(ctx, delta);
 					}
 					TransitionState::Run => self.closer.update(ctx, delta, &mut self.gui.text),
 					TransitionState::End => {
@@ -203,8 +216,8 @@ impl BattleManager {
 						if !self.world_active() {
 							self.gui.background.draw(ctx, 0.0);
 							self.gui.draw_panel(ctx);
-							self.gui.panel.draw(ctx);
-							for active in battle.player.active.iter() {
+							battle.player.player.draw(ctx);
+							for active in battle.player.party.active.iter() {
 								active.renderer.draw(ctx, ZERO, Color::WHITE);
 							}
 							self.closer.draw_battle(ctx);

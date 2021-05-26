@@ -6,12 +6,12 @@
         category: Special,
         accuracy: Some(100),
         pp: 15,
-		use_type: Damage(Power(90)),
+		usage: Damage(Power(90)),
 		target: AllButUser,
-    ),
-    game_move: Some((
         field_id: Some("surf"),
-    )),
+    ),
+    // game_move: Some((
+    // )),
 
     // battle_script: Some((
     //     actions: [

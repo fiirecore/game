@@ -1,15 +1,12 @@
 use serde::{Deserialize, Serialize};
 
 use deps::{
-    hash::HashMap,
     str::TinyStr16,
     StaticRef,
     Identifiable,
 };
 
-pub type Itemdex = HashMap<ItemId, Item>;
-
-pub static mut ITEMDEX: Option<Itemdex> = None;
+pub mod dex;
 
 mod stack;
 pub use stack::*;
@@ -37,13 +34,14 @@ pub struct Item {
     pub stack_size: StackSize,
 
     #[serde(default, rename = "use")]
-    pub use_type: ItemUseType,
+    pub usage: ItemUseType,
 
 }
 
 pub type ItemRef = StaticRef<Item>;
 
 impl Identifiable for Item {
+
     type Id = ItemId;
 
     fn id(&self) -> &Self::Id {
@@ -51,7 +49,7 @@ impl Identifiable for Item {
     }
 
     fn try_get(id: &Self::Id) -> Option<&'static Self> {
-        unsafe { ITEMDEX.as_ref().expect("Itemdex was not initialized!").get(id) }
+        unsafe { dex::ITEMDEX.as_ref().expect("Itemdex was not initialized!").get(id) }
     }
 
 }

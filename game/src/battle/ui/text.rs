@@ -4,10 +4,11 @@ use crate::{
     tetra::math::Vec2,
     storage::data,
     pokedex::{
+        types::Effective,
         pokemon::{
             Level,
             instance::PokemonInstance,
-            types::Effective,
+            stat::{StatType, Stage},
         },
         moves::{
             Move,
@@ -35,10 +36,22 @@ pub(crate) fn on_move(text: &mut DynamicText, pokemon_move: &Move, user: &Pokemo
 pub(crate) fn on_effective(text: &mut DynamicText, effective: &Effective) {
     text.push(
         MessagePage::new(
-            vec![format!("It was {}{}", effective, if Effective::SuperEffective.eq(effective) { "!" } else { "..." })], 
+            vec![format!("It was {}{}", effective, if &Effective::SuperEffective == effective { "!" } else { "..." })], 
             Some(0.5),
         )
     );
+}
+
+pub(crate) fn on_stat_stage(text: &mut DynamicText, pokemon: &PokemonInstance, stat: StatType, stage: Stage) {
+    text.push(
+        MessagePage::new(
+            vec![
+                format!("{}'s {:?} was", pokemon.name(), stat),
+                format!("{} by {}!", if stage.is_positive() { "raised" } else { "lowered" }, stage.abs())
+                ],
+            Some(0.5)
+        )
+    )
 }
 
 pub(crate) fn on_miss(text: &mut DynamicText, pokemon: &PokemonInstance) {

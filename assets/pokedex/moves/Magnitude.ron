@@ -5,6 +5,6 @@
     type: Ground,
     accuracy: Some(100),
     pp: 30,
-    use_type: Todo,
+    usage: Todo,
     target: Opponent,
 )

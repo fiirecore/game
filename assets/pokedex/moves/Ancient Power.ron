@@ -5,6 +5,6 @@
     type: Rock,
     accuracy: Some(100),
     pp: 5,
-    use_type: Damage(Power(60)),
+    usage: Damage(Power(60)),
     target: Opponent,
 )

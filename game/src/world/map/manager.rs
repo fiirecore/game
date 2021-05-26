@@ -1,5 +1,6 @@
+use std::rc::Rc;
+
 use crate::{
-    deps::str::tinystr8,
     util::{
         Entity, 
         Completable, 
@@ -14,7 +15,7 @@ use crate::{
         debug_pressed, DebugBind,
     },
     pokedex::{
-        moves::get_game_move,
+        moves::FieldMoveId,
         item::{ItemStack, ItemId},
     },
     tetra::Context,
@@ -78,7 +79,7 @@ pub struct WorldManager {
 
 impl WorldManager {
 
-    pub fn new(ctx: &mut Context) -> Self {        
+    pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {        
         Self {
 
             map_manager: WorldMapManager::default(),
@@ -86,7 +87,7 @@ impl WorldManager {
             textures: WorldTextures::new(ctx),
 
             warp_transition: WarpTransition::new(),
-            start_menu: StartMenu::new(ctx),
+            start_menu: StartMenu::new(ctx, party, bag),
             text_window: TextWindow::new(ctx),
             first_direction: Direction::default(),
             render_coords: RenderCoords::default(),
@@ -143,10 +144,10 @@ impl WorldManager {
         }
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, battle: BattleEntryRef, party: &mut PartyGui, bag: &mut BagGui, action: &mut Option<GameStateAction>) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, battle: BattleEntryRef, action: &mut Option<GameStateAction>) {
 
         if self.start_menu.alive() {
-            self.start_menu.update(ctx, delta, party, bag, action);
+            self.start_menu.update(ctx, delta, action);
         } else {
 
             if pressed(ctx, Control::Start) {
@@ -167,15 +168,16 @@ impl WorldManager {
                     self.map_manager.player.character.move_type = MoveType::Walking;
                 }
 
+                const SURF: FieldMoveId = unsafe { FieldMoveId::new_unchecked(1718777203) };
+
                 if down(ctx, crate::keybind(self.first_direction)) {
                     if self.player_move_accumulator > PLAYER_MOVE_TIME {
                         if let Some(result) = self.map_manager.try_move(self.first_direction, delta) {
                             match result {
                                 TryMoveResult::MapUpdate => self.map_start(ctx, true),
                                 TryMoveResult::TrySwim => {
-                                    let surf = tinystr8!("surf");
-                                    for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| get_game_move(&instance.move_ref.unwrap().id).map(|game_move| game_move.field_id).flatten())).flatten() {
-                                        if id == surf {
+                                    for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| &instance.move_ref.unwrap().field_id)).flatten() {
+                                        if id == &SURF {
                                             self.map_manager.player.character.move_type = MoveType::Swimming;
                                             self.map_manager.try_move(self.first_direction, delta);
                                             break;
@@ -191,15 +193,16 @@ impl WorldManager {
                 } else {
                     let mut movdir: Option<Direction> = None;
                     for direction in &Direction::DIRECTIONS {
-                        if down(ctx, keybind(*direction)) {
+                        let direction = *direction;
+                        if down(ctx, keybind(direction)) {
                             movdir = if let Some(dir) = movdir {
-                                if dir.inverse().eq(direction) {
+                                if dir.inverse() == direction {
                                     None
                                 } else {
-                                    Some(*direction)
+                                    Some(direction)
                                 }
                             } else {
-                                Some(*direction)
+                                Some(direction)
                             };
                         }                        
                     }
@@ -413,10 +416,7 @@ impl WorldManager {
 
         if debug_pressed(ctx, DebugBind::H) {
             data_mut().party.iter_mut().for_each(|pokemon| {
-                pokemon.current_hp = pokemon.base.hp;
-                for pmove in &mut pokemon.moves {
-                    pmove.pp = pmove.move_ref.unwrap().pp;
-                }
+                pokemon.heal();
             });
         }
 
