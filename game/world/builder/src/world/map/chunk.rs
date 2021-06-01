@@ -1,14 +1,10 @@
 use std::path::PathBuf;
-use worldlib::map::chunk::WorldChunk;
-use crate::world::SerializedChunkMap;
+use worldlib::map::WorldMap;
+use crate::world::MapConfig;
 
-pub fn new_chunk_map(root_path: &PathBuf, serialized_chunk: SerializedChunkMap) -> WorldChunk {
-    println!("    Loading chunk map {}", serialized_chunk.config.name);
+pub fn new_chunk_map(root_path: &PathBuf, config: MapConfig) -> WorldMap {
+    println!("    Loading chunk map {}", config.name);
 
-    WorldChunk {
-        map: super::load_map_from_config(root_path, serialized_chunk.config),
-        coords: serialized_chunk.coords,
-        connections: serialized_chunk.connections,
-    }
+    super::load_map_from_config(root_path, config)
     
 }

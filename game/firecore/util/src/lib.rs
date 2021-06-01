@@ -8,10 +8,10 @@ pub use {
     timer::Timer,
     positions::{
         direction::Direction,
-        coordinate::Coordinate,
+        coordinate::*,
         pixel_offset::PixelOffset,
         position::Position,
-        location::Location,
+        location::*,
         destination::Destination,
     },
     bbox::BoundingBox

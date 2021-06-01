@@ -1,15 +1,16 @@
 (
-    config: (
-        identifier: "pewter",
-        name: "Pewter City",
-        file: "3.2_PEWTER CITY.map",
-    ),
-    coords: (
-        x: 48,
-        y: 60,
-    ),
-    connections: [
-        "route_2",
-        "route_3",
-    ],
+    identifier: "pewter",
+    name: "Pewter City",
+    file: "3.2_PEWTER CITY.map",
+
+    chunk: Some((
+        coords: (
+            x: 48,
+            y: 60,
+        ),
+        connections: [
+            "route_2",
+            "route_3",
+        ],
+    )),
 )

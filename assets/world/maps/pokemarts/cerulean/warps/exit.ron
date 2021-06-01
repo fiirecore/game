@@ -10,7 +10,9 @@
         )
     ),
     destination: (
-        index: "cerulean",
+        location: (
+            index: "cerulean",
+        ),
         position: (
             coords: (
                 x: 0x1D,

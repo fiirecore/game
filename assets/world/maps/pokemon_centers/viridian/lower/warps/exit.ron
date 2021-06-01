@@ -10,7 +10,9 @@
         ),
     ),
     destination: (
-        index: "viridian",
+        location: (
+            index: "viridian",
+        ),
         position: (
             coords: (
                 x: 0x1A,

@@ -1,15 +1,16 @@
 (
-    config: (
-        identifier: "route_8",
-        name: "Route 8",
-        file: "3.26_ROUTE 8.map",
-    ),
-    coords: (
-        x: 312,
-        y: 130,
-    ),
-    connections: [
-        "lavender",
-        "saffron",
-    ],
+    identifier: "route_8",
+    name: "Route 8",
+    file: "3.26_ROUTE 8.map",
+
+    chunk: Some((
+        coords: (
+            x: 312,
+            y: 130,
+        ),
+        connections: [
+            "lavender",
+            "saffron",
+        ],
+    )),
 )

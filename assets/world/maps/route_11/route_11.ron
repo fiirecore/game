@@ -1,15 +1,16 @@
 (
-    config: (
-        identifier: "route_11",
-        name: "Route 11",
-        file: "3.29_ROUTE 11.map",
-    ),
-    coords: (
-        x: 312,
-        y: 210,
-    ),
-    connections: [
-        "vermilion",
-        "route_12",
-    ],
+    identifier: "route_11",
+    name: "Route 11",
+    file: "3.29_ROUTE 11.map",
+
+    chunk: Some((
+        coords: (
+            x: 312,
+            y: 210,
+        ),
+        connections: [
+            "vermilion",
+            "route_12",
+        ],
+    )),
 )

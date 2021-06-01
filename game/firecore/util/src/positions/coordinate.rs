@@ -20,6 +20,8 @@ pub struct Coordinate {
 
 impl Coordinate {
 
+    pub const ZERO: Coordinate = Coordinate { x: 0, y: 0 };
+
     pub fn new(x: CoordNum, y: CoordNum) -> Self {
         Self {
             x,

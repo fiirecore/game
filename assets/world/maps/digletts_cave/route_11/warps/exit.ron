@@ -10,7 +10,9 @@
         ),
     ),
     destination: (
-        index: "route_11",
+        location: (
+            index: "route_11",
+        ),
         position: (
             coords: (
                 x: 6,

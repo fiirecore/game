@@ -1,15 +1,17 @@
 (
-    config: (
-        identifier: "celadon",
-        name: "Celadon City",
-        file: "3.6_CELADON CITY.map",
-    ),
-    coords: (
-        x: 180,
-        y: 120,
-    ),
-    connections: [
-        "route_7", 
-        "route_16"
-    ],
+    identifier: "celadon",
+    name: "Celadon City",
+    file: "3.6_CELADON CITY.map",
+
+    chunk: Some((
+        coords: (
+            x: 180,
+            y: 120,
+        ),
+        connections: [
+            "route_7", 
+            "route_16",
+        ],
+    )),
+
 )

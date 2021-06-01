@@ -45,6 +45,6 @@ pub enum MoveTargetInstance {
 	Opponent(usize),
 	Team(usize),
 	User,
-	AllButUser,
+	AllButUser, // to - do: remove in favor of vec<opponent, team or user>
 	Opponents,
 }

@@ -10,8 +10,10 @@
         ),
     ),
     destination: (
-        map: Some("pokemon_centers"),
-        index: "route_4",
+        location: (
+            map: Some("pokemon_centers"),
+            index: "route_4",
+        ),
         position: (
             coords: (
                 x: 7,

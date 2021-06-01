@@ -10,8 +10,10 @@
         ),
     ),
     destination: (
-        map: Some("digletts_cave"),
-        index: "route_11",
+        location: (
+            map: Some("digletts_cave"),
+            index: "route_11",
+        ),
         position: (
             coords: (
                 x: 6,

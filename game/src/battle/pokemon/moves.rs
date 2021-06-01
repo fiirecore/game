@@ -9,12 +9,12 @@ use crate::pokedex::{
 
 use super::ActivePokemonIndex;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub enum BattleMove {
 
     Switch(usize),
     UseItem(ItemRef, ActivePokemonIndex),
-    Move(usize, MoveTargetInstance),
+    Move(usize, MoveTargetInstance), // to - do: vec<targets>
 
 }
 

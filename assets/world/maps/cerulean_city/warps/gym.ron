@@ -10,8 +10,10 @@
         ),
     ),
     destination: (
-        map: Some("gyms"),
-        index: "cerulean",
+        location: (
+            map: Some("gyms"),
+            index: "cerulean",
+        ),
         position: (
             coords: (
                 x: 8,

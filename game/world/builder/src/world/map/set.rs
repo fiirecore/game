@@ -1,12 +1,13 @@
 use std::path::PathBuf;
-use worldlib::map::{MapIdentifier, set::WorldMapSet, set::Maps};
+use util::Location;
+use worldlib::map::WorldMap;
 use crate::world::{SerializedMapSet, MapConfig};
 
-pub fn load_map_set(root_path: &PathBuf, serialized_map_set: SerializedMapSet) -> (MapIdentifier, WorldMapSet) {
+pub fn load_map_set(root_path: &PathBuf, serialized_map_set: SerializedMapSet) -> Vec<(Location, WorldMap)> {
 
     println!("    Loading map set \"{}\"", serialized_map_set.identifier);
 
-    let mut maps = Maps::new();
+    let mut maps = Vec::with_capacity(serialized_map_set.dirs.len());
 
     for dir_string in serialized_map_set.dirs {
         let map_path = root_path.join(dir_string);
@@ -19,21 +20,17 @@ pub fn load_map_set(root_path: &PathBuf, serialized_map_set: SerializedMapSet) -
                     ).unwrap_or_else(|err| panic!("Could not deserialize map set configuration at {:?} with error {}", file, err));
                     println!("        Loaded map set map \"{}\"", config.name);
                     let map = super::load_map_from_config(&map_path, config);
-                    maps.insert(
-                        map.id,
-                        map,
+                    maps.push(
+                        (
+                            Location::new(Some(serialized_map_set.identifier), map.id),
+                            map
+                        )
                     );
                 }
             }
-        }
-
-        
-        
+        }        
     }
 
-    (
-        serialized_map_set.identifier,
-        WorldMapSet::new(maps)
-    )
+    maps
 
 }

@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 use crate::{
     deps::Random,
-    util::{Entity, Completable, Direction, Timer},
+    util::{Entity, Completable, Direction, Timer, LocationId},
     pokedex::item::ItemStack,
     input::{pressed, Control, debug_pressed, DebugBind},
     text::MessagePage,
@@ -27,7 +27,6 @@ use worldlib::{
         player::PlayerCharacter,
     },
     map::{
-        MapIdentifier,
         World,
         WorldMap,
         warp::WarpDestination,
@@ -47,8 +46,6 @@ use crate::world::{
 };
 
 pub mod manager;
-pub mod set;
-pub mod chunk;
 
 pub mod texture;
 pub mod warp;
@@ -81,7 +78,7 @@ impl GameWorld for WorldMap {
 
     }
 
-    fn on_tile(&mut self, ctx: &mut Context, battle: BattleEntryRef, player: &mut PlayerCharacter) {
+    fn on_tile(&mut self, _ctx: &mut Context, battle: BattleEntryRef, player: &mut PlayerCharacter) {
         if let Some(tile_id) = self.tile(player.character.position.coords) {
 
             if WILD_ENCOUNTERS.load(Relaxed) {
@@ -554,7 +551,7 @@ impl GameWorld for WorldMap {
 
         // Npc window manager code
 
-        #[deprecated(note = "rewrite active NPC code")]
+        // #[deprecated(note = "rewrite active NPC code")]
         if let Some((id, npc)) = self.npcs.active.as_mut() {
             if window.text.alive() {
                 if window.text.finished() {
@@ -704,7 +701,7 @@ pub fn despawn_script(script: &mut WorldScript) {
     script.despawn();
 }
 
-fn find_battle(save: &mut PlayerSave, map: &MapIdentifier, id: NPCId, npc: &mut Option<NPC>, active: &mut ActiveNPC, player: &mut PlayerCharacter) -> bool {
+fn find_battle(save: &mut PlayerSave, map: &LocationId, id: NPCId, npc: &mut Option<NPC>, active: &mut ActiveNPC, player: &mut PlayerCharacter) -> bool {
     if !save.world.has_battled(map, &id) {
         if npc.as_mut().map(|npc| npc.find_character(&mut player.character)).unwrap_or_default() {
             *active = Some((id, npc.take().unwrap()));

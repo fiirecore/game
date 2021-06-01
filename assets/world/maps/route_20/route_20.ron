@@ -1,9 +1,9 @@
 (
-        config: (
-            identifier: "route_20",
-            name: "Route 20",
-            file: "3.38_ROUTE 20.map",
-        ),
+    identifier: "route_20",
+    name: "Route 20",
+    file: "3.38_ROUTE 20.map",
+
+    chunk: Some((
         coords: (
             x: 84,
             y: 380,
@@ -12,4 +12,5 @@
             "cinnabar",
             "route_19",
         ],
+    )),
 )

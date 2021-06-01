@@ -19,7 +19,7 @@ pub struct FightPanel {
     target_active: bool,
 
     pub moves: MovePanel,
-    #[deprecated(note = "fix")]
+    // #[deprecated(note = "fix")]
     pub targets: TargetPanel,
     info: MoveInfoPanel,
 

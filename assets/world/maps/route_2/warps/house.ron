@@ -10,8 +10,10 @@
         )
     ),
     destination: (
-        map: Some("route_2_houses"),
-        index: "house",
+        location: (
+            map: Some("route_2_houses"),
+            index: "house",
+        ),
         position: (
             coords: (
                 x: 4,

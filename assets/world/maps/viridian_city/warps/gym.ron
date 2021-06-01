@@ -10,8 +10,10 @@
         )
     ),
     destination: (
-        map: Some("viridian_houses"),
-        index: "north",
+        location: (
+            map: Some("viridian_houses"),
+            index: "north",
+        ),
         position: (
             coords: (
                 x: 4,

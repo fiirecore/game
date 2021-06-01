@@ -10,8 +10,10 @@
         ),
     ),
     destination: (
-        map: Some("mt_moon"),
-        index: "floor_1",
+        location: (
+            map: Some("mt_moon"),
+            index: "floor_1",
+        ),
         position: (
             coords: (
                 x: 0x19,

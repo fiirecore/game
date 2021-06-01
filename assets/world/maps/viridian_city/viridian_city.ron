@@ -1,16 +1,17 @@
 (
-    config: (
-        identifier: "viridian",
-        name: "Viridian City",
-        file: "3.1_VIRIDIAN CITY.map",
-    ),
-    coords: (
-        x: 48,
-        y: 180,
-    ),
-    connections: [
-        "route_1",
-        "route_2",
-        "route_22",
-    ],
+    identifier: "viridian",
+    name: "Viridian City",
+    file: "3.1_VIRIDIAN CITY.map",
+
+    chunk: Some((
+        coords: (
+            x: 48,
+            y: 180,
+        ),
+        connections: [
+            "route_1",
+            "route_2",
+            "route_22",
+        ],
+    )),
 )

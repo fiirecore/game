@@ -1,18 +1,13 @@
-use std::u8;
-
 use serde::{Deserialize, Serialize};
+use deps::hash::HashMap;
+use util::{Direction, Coordinate, Location};
 
-use firecore_util::Direction;
-
-use crate::MovementId;
+use crate::{MovementId, TileId};
 use crate::character::MoveType;
 // use crate::character::Character;
 use crate::character::player::PlayerCharacter;
 
-use super::MapIdentifier;
-use super::World;
-use super::chunk::map::WorldChunkMap;
-use super::set::manager::WorldMapSetManager;
+use super::{World, WorldMap};
 use super::warp::WarpDestination;
 
 pub enum TryMoveResult {
@@ -20,14 +15,15 @@ pub enum TryMoveResult {
     TrySwim,
 }
 
+pub type Maps = HashMap<Location, WorldMap>;
+
 #[derive(Default, Deserialize, Serialize)]
 pub struct WorldMapManager {
 
-    pub chunk_map: WorldChunkMap,
-    pub map_set_manager: WorldMapSetManager,
+    pub maps: Maps,
 
     #[serde(skip)]
-    pub chunk_active: bool,
+    pub current: Option<Location>,
 
     #[serde(skip)]
     pub player: PlayerCharacter,
@@ -37,78 +33,68 @@ pub struct WorldMapManager {
 
 }
 
+impl World for WorldMapManager {
+    fn in_bounds(&self, coords: Coordinate) -> bool {
+        self.get().map(|map| map.in_bounds(coords)).unwrap_or_default()
+    }
+
+    fn tile(&self, coords: Coordinate) -> Option<TileId> {
+        self.get().map(|map| map.tile(coords)).flatten()
+    }
+
+    fn movement(&self, coords: Coordinate) -> Option<MovementId> {
+        self.get().map(|map| map.movement(coords)).flatten()
+    }
+
+    fn warp_at(&self, coords: Coordinate) -> Option<&WarpDestination> {
+        self.get().map(|map| map.warp_at(coords)).flatten()
+    }
+}
+
 impl WorldMapManager {
+
+    pub fn get(&self) -> Option<&WorldMap> {
+        self.current.as_ref().map(|id| self.maps.get(id)).flatten()
+    }
 
     pub fn try_move(&mut self, direction: Direction, delta: f32) -> Option<TryMoveResult> { // return chunk update
 
-        let mut update = false;
+        // let mut update = false;
 
         self.player.character.on_try_move(direction);
 
         let offset = direction.tile_offset();
         let coords = self.player.character.position.coords + offset;
 
-        let in_bounds = if self.chunk_active {
-            self.chunk_map.in_bounds(coords)
-        } else {
-            self.map_set_manager.in_bounds(coords)
+        let move_code = self.movement(coords).unwrap_or_else(|| self.walk_connections(coords).unwrap_or(1));
+
+        let warp = match self.warp.is_none() {
+            true => {
+                if let Some(destination) = self.warp_at(coords) {
+                    if !destination.transition.warp_on_tile {
+                        self.warp = Some(*destination);
+                        return Some(TryMoveResult::MapUpdate);
+                    } else {
+                        true
+                    }
+                } else {
+                    false
+                }
+            },
+            false => false,
         };
 
-        let move_code = if self.chunk_active {
-            if in_bounds {
-                self.chunk_map.walkable(coords)
-            } else {
-               let (code, do_update) = self.chunk_map.walk_connections(&mut self.player.character, coords);
-               update = do_update;
-               code
-            }
-        } else {
-            if in_bounds {
-                self.map_set_manager.walkable(coords)
-            } else {
-                1
-            }
-        };
-
-        let allow = if self.chunk_active && self.warp.is_none() {
-            if let Some(destination) = self.chunk_map.check_warp(coords) {
-                if !destination.transition.warp_on_tile {
-                    self.warp = Some(destination);
-                    return Some(TryMoveResult::MapUpdate);
-                } else {
-                    true
-                }
-            } else {
-                false
-            }
-        } else {
-            if let Some(destination) = self.map_set_manager.check_warp(coords) {
-                if !destination.transition.warp_on_tile {
-                    self.warp = Some(destination);
-                    return Some(TryMoveResult::MapUpdate);
-                } else {
-                    true
-                }
-            } else {
-                false
-            }
-        } || if let Some(tile_id) = if self.chunk_active {
-            self.chunk_map.tile(coords)
-        } else {
-            self.map_set_manager.tile(coords)
-        } {
-            match direction {
-                Direction::Up => false,
-                Direction::Down => match tile_id  {
-                    135 | 176 | 177 | 143 | 151 | 184 | 185 | 192 | 193 | 217 | 1234 => true,
-                    _ => false,
-                },
-                Direction::Left => tile_id == 133,
-                Direction::Right => tile_id == 134,
-            }
-        } else {
-            false
-        };
+        let walk = self.tile(coords).map(|tile_id| match direction {
+            Direction::Up => false,
+            Direction::Down => match tile_id  {
+                135 | 176 | 177 | 143 | 151 | 184 | 185 | 192 | 193 | 217 | 1234 => true,
+                _ => false,
+            },
+            Direction::Left => tile_id == 133,
+            Direction::Right => tile_id == 134,
+        }).unwrap_or_default();
+        
+        let allow = warp || walk;
 
         if self.player.character.move_type == MoveType::Swimming && can_walk(move_code) {
             self.player.character.move_type = MoveType::Walking
@@ -121,46 +107,66 @@ impl WorldMapManager {
         } else if can_swim(move_code) && self.player.character.move_type != MoveType::Swimming {
             return Some(TryMoveResult::TrySwim);
         }
+        None
+    }
 
-        if update {
-            Some(TryMoveResult::MapUpdate)
+    pub fn walk_connections(&mut self, coords: Coordinate) -> Option<MovementId> {
+        if let Some(current) = self.get() {
+            if let Some(chunk) = &current.chunk {
+                let current_coords = chunk.coords;
+                let absolute = current_coords + coords;
+                for connection in chunk.connections.iter() {
+                    if let Some(current) = self.maps.get(&Location::new(None, *connection)) {
+                        if let Some(chunk) = &current.chunk {
+                            if let Some(movement) = current.movement(absolute - chunk.coords) {
+                                let c = current_coords - chunk.coords;
+                                self.current = Some(Location::new(None, *connection));
+                                self.player.character.position.coords += c;
+                                return Some(movement);
+                            }
+                        }
+                    }
+                }
+                None
+                // if let Some((connection_id, connection, move_id)) = chunk.connections.iter().map(|id| self.maps.get(&Location::new(None, *id)).map(|map| map.movement(absolute).map(|move_id| (id, map, move_id)))).flatten().flatten().find(|(_, _, id)| crate::map::manager::can_move(self.player.character.move_type, *id)) {
+                //     let c = current_coords - connection.chunk.as_ref().unwrap().coords;
+                //     self.current = Some(Location::new(None, *connection_id));
+                //     self.player.character.position.coords += c;
+                //     Some(move_id)
+                // } else {
+                //     None
+                // }
+            } else {
+                None
+            }
         } else {
             None
         }
-    }
-
-    pub fn update_chunk(&mut self, index: MapIdentifier) {
-        self.chunk_map.update_chunk(index);
-    }
-
-    pub fn update_map_set(&mut self, bank: MapIdentifier, index: MapIdentifier) {
-        self.map_set_manager.set_bank(bank);
-        self.map_set_manager.set_index(index);
+        // self.get().map(|map| map.chunk.as_ref().map(|chunk| {
+        //     for connection_id in &chunk.connections {
+        //         if let Some(connection) = self.maps.get(connection_id) {
+        //             let connection_coords = absolute - current_coords;
+        //             move_code = connection.movement(connection_coords);
+        //             if let Some(move_code) = move_code {
+        //                 if crate::map::manager::can_move(self.player.character.move_type, move_code) {
+        //                 }
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     move_code
+        // })).flatten().flatten()
+        
     }
 
     pub fn warp(&mut self, destination: WarpDestination) {
-        if destination.map.is_none() {
-            self.warp_to_chunk_map(destination);
-        } else {
-            self.warp_to_map_set(destination);
+        match self.maps.contains_key(&destination.location) {
+            true => {
+                self.player.character.position.from_destination(destination.position);
+                self.current = Some(destination.location);
+            }
+            false => todo!(),
         }
-    }
-
-    pub fn warp_to_chunk_map(&mut self, destination: WarpDestination) {
-        if !self.chunk_active {
-            self.chunk_active = true;
-        }
-        if self.chunk_map.update_chunk(destination.index).is_some() {
-            self.player.character.position.from_destination(destination.position);
-        }
-    }
-
-    pub fn warp_to_map_set(&mut self, destination: WarpDestination) {
-        if self.chunk_active {
-            self.chunk_active = false;
-        }
-        self.update_map_set(destination.map.expect("Could not get map bank!"), destination.index);
-        self.player.character.position.from_destination(destination.position);
     }
 
 }

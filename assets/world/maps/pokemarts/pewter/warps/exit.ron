@@ -10,7 +10,9 @@
         )
     ),
     destination: (
-        index: "pewter",
+        location: (
+            index: "pewter",
+        ),
         position: (
             coords: (
                 x: 0x1C,

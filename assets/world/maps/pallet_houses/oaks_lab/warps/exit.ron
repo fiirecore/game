@@ -10,7 +10,9 @@
         )
     ),
     destination: (
-        index: "pallet",
+        location: (
+            index: "pallet",
+        ),
         position: (
             coords: (
                 x: 16,

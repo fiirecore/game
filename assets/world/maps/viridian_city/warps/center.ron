@@ -10,8 +10,10 @@
         ),
     ),
     destination: (
-        map: Some("pokemon_centers"),
-        index: "viridian",
+        location: (
+            map: Some("pokemon_centers"),
+            index: "viridian",
+        ),
         position: (
             coords: (
                 x: 7,

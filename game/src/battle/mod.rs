@@ -158,7 +158,7 @@ impl Battle {
 				Team::Player => if self.player.player.moves(ctx, delta, &self.data, active, &mut self.player.party, &self.opponent.party.active) {
 					*team = Team::Opponent;
 				}
-				Team::Opponent => if self.opponent.player.moves(ctx, delta, &self.data, active, &mut self.player.party, &self.opponent.party.active) {
+				Team::Opponent => if self.opponent.player.moves(ctx, delta, &self.data, active, &mut self.opponent.party, &self.player.party.active) {
 					self.state = BattleState::Moving(MoveState::Start)
 				}
 			},

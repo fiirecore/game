@@ -10,8 +10,10 @@
         )
     ),
     destination: (
-        map: Some("pallet_houses"),
-        index: "oaks_lab",
+        location: (
+            map: Some("pallet_houses"),
+            index: "oaks_lab",
+        ),
         position: (
             coords: (
                 x: 6,

@@ -10,8 +10,10 @@
         )
     ),
     destination: (
-        map: Some("pewter_houses"),
-        index: "museum_upper",
+        location: (
+            map: Some("pewter_houses"),
+            index: "museum_upper",
+        ),
         position: (
             coords: (
                 x: 0x0A,

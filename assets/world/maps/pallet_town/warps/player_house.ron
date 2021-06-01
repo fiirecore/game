@@ -10,8 +10,10 @@
         )
     ),
     destination: (
-        map: Some("pallet_houses"),
-        index: "player_house",
+        location: (
+            map: Some("pallet_houses"),
+            index: "player_house",
+        ),
         position: (
             coords: (
                 x: 4,

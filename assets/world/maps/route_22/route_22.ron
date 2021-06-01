@@ -1,12 +1,13 @@
 (
-    config: (
-        identifier: "route_22",
-        name: "Route 22",
-        file: "3.41_ROUTE 22.map",
-    ),
-    coords: (
-        x: 0,
-        y: 190,
-    ),
-    connections: ["viridian"],
+    identifier: "route_22",
+    name: "Route 22",
+    file: "3.41_ROUTE 22.map",
+
+    chunk: Some((
+        coords: (
+            x: 0,
+            y: 190,
+        ),
+        connections: ["viridian"],
+    )),
 )

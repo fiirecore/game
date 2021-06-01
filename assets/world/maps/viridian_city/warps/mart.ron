@@ -10,8 +10,10 @@
         )
     ),
     destination: (
-        map: Some("pokemarts"),
-        index: "viridian",
+        location: (
+            map: Some("pokemarts"),
+            index: "viridian",
+        ),
         position: (
             coords: (
                 x: 4,

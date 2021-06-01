@@ -3,13 +3,13 @@ use deps::str::TinyStr16;
 use firecore_util::BoundingBox;
 use firecore_util::Destination;
 use serde::{Serialize, Deserialize};
-
-use super::MapIdentifier;
+use util::Location;
 
 pub type WarpId = TinyStr16;
 pub type WarpMap = HashMap<WarpId, WarpEntry>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct WarpEntry {
     
     pub location: BoundingBox,
@@ -22,8 +22,7 @@ pub struct WarpEntry {
 #[serde(deny_unknown_fields)]
 pub struct WarpDestination {
 
-    pub map: Option<MapIdentifier>,
-    pub index: MapIdentifier,
+    pub location: Location,
 
     pub position: Destination,
     pub transition: WarpTransition,

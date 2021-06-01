@@ -3,6 +3,7 @@ use crate::{
         str::TinyStr16,
         hash::HashSet,
     },
+    util::LocationId,
     pokedex::{
         moves::target::Team,
         pokemon::{
@@ -14,14 +15,10 @@ use crate::{
     },
     storage::{data, player::PlayerSave},
     battle_glue::{BattleEntry, BattleEntryRef, BattleTrainerEntry},
-    log::warn,
 };
 
 use worldlib::{
-    map::{
-        MapIdentifier,
-        wild::{WildEntry, WILD_RANDOM},
-    },
+    map::wild::{WildEntry, WILD_RANDOM},
     character::npc::{NPC, NPCId},
 };
 
@@ -70,7 +67,7 @@ pub fn wild_battle(battle: BattleEntryRef, wild: &WildEntry) {
     });
 }
 
-pub fn trainer_battle(battle: BattleEntryRef, npc: &NPC, map_id: &MapIdentifier, npc_id: &NPCId) {
+pub fn trainer_battle(battle: BattleEntryRef, npc: &NPC, map_id: &LocationId, npc_id: &NPCId) {
     if let Some(trainer) = npc.trainer.as_ref() {
         let save = data();
         if let Some(map) = save.world.map.get(map_id) {
@@ -124,18 +121,7 @@ pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, w
             Team::Opponent => {
                 player.location = player.world.heal.0;
                 world_manager.map_manager.player.character.position = player.world.heal.1;
-                world_manager.map_manager.chunk_active = if let Some(map) = player.location.map {
-                    world_manager.map_manager.map_set_manager.current = Some(map);
-                    if let Some(set) = world_manager.map_manager.map_set_manager.set_mut() {
-                        set.current = Some(player.location.index);
-                    } else {
-                        warn!("Could not warp to map index {} under {}", player.location.index, map);
-                    }
-                    false
-                } else {
-                    world_manager.map_manager.chunk_map.current = Some(player.location.index);
-                    true
-                }
+                world_manager.map_manager.current = Some(player.location);
             }
         }
     }    

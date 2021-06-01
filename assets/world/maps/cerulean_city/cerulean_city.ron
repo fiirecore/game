@@ -1,17 +1,18 @@
 (
-    config: (
-        identifier: "cerulean",
-        name: "Cerulean City",
-        file: "3.3_CERULEAN CITY.map",
-    ),
-    coords: (
-        x: 264,
-        y: 40,
-    ),
-    connections: [
-        "route_4",
-        "route_5",
-        "route_9",
-        "route_24",
-    ]
+    identifier: "cerulean",
+    name: "Cerulean City",
+    file: "3.3_CERULEAN CITY.map",
+
+    chunk: Some((
+        coords: (
+            x: 264,
+            y: 40,
+        ),
+        connections: [
+            "route_4",
+            "route_5",
+            "route_9",
+            "route_24",
+        ],
+    )),
 )

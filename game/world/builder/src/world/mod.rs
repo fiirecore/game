@@ -1,6 +1,6 @@
 use serde::Deserialize;
-use util::Coordinate;
-use worldlib::map::{MapIdentifier, chunk::Connections};
+use util::{Coordinate, LocationId};
+use worldlib::map::WorldChunk;
 
 pub mod map;
 pub mod textures;
@@ -15,9 +15,13 @@ pub mod script;
 #[serde(deny_unknown_fields)]
 pub struct MapConfig {
 
-    pub identifier: MapIdentifier,
+    #[deprecated(note = "use full location")]
+    pub identifier: LocationId,
     pub name: String,
     pub file: String,
+
+    #[serde(default)]
+    pub chunk: Option<WorldChunk>,
 
     #[serde(default)]
     pub settings: SerializedMapSettings,
@@ -26,20 +30,10 @@ pub struct MapConfig {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct SerializedChunkMap {
-
-    pub config: MapConfig,
-
-    pub coords: Coordinate,
-    pub connections: Connections,
-
-}
-
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
 pub struct SerializedMapSet {
 
-    pub identifier: MapIdentifier,
+    #[deprecated(note = "remove")]
+    pub identifier: LocationId,
     pub dirs: Vec<String>,
 
 }

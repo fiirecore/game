@@ -1,15 +1,16 @@
 (
-    config: (
-        identifier: "route_1",
-        name: "Route 1",
-        file: "3.19_ROUTE 1.map",
-    ),
-    coords: (
-        x: 60,
-        y: 220,
-    ),
-    connections: [
-        "pallet",
-        "viridian"
-    ],
+    identifier: "route_1",
+    name: "Route 1",
+    file: "3.19_ROUTE 1.map",
+
+    chunk: Some((
+        coords: (
+            x: 60,
+            y: 220,
+        ),
+        connections: [
+            "pallet",
+            "viridian"
+        ],
+    )),
 )
