@@ -15,6 +15,8 @@ pub mod manager;
 pub mod warp;
 pub mod wild;
 
+// pub mod mart;
+
 mod chunk;
 pub use chunk::*;
 
@@ -74,6 +76,8 @@ pub struct WorldMap {
     // pub objects: HashMap<u8, MapObject>,
 
     pub scripts: Vec<WorldScript>,
+
+    // pub mart: Option<mart::Pokemart>,
 
     // #[serde(skip)]
     // pub state: WorldMapState,

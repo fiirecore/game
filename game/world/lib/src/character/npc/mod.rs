@@ -1,4 +1,3 @@
-use firecore_font::message::MessagePages;
 use firecore_util::Coordinate;
 use serde::{Deserialize, Serialize};
 use deps::str::{TinyStr8, TinyStr16};
@@ -7,11 +6,12 @@ use super::Character;
 use super::movement::MovementType;
 use self::trainer::Trainer;
 
+mod interact;
+pub use interact::*;
+
 pub mod npc_type;
 
 pub mod trainer;
-
-pub mod interact;
 
 pub type NPCId = TinyStr8;
 
@@ -31,8 +31,25 @@ pub struct NPC {
     #[serde(skip, default)]
     pub origin: Option<Coordinate>,
 
-    pub message: Option<MessagePages>,
+    #[serde(default)]
+    pub interact: NPCInteract,
 
     pub trainer: Option<Trainer>,
+
+}
+
+impl NPC {
+
+    pub fn default_npc() -> Self {
+        Self {
+            name: "Default".to_string(),
+            npc_type: "default".parse().unwrap(),
+            character: Default::default(),
+            movement: Default::default(),
+            origin: None,
+            interact: Default::default(),
+            trainer: None,
+        }
+    }
 
 }

@@ -13,7 +13,7 @@
             ),
         ),
         movement: LookAround,
-        message: Some([
+        interact: Message([
             (
                 color: Blue,
                 lines: [

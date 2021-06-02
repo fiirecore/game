@@ -12,7 +12,7 @@
                 direction: Down
             ),
         ),
-        message: Some([
+        interact: Message([
             (
                 lines: [
                     "Are you using a POKEMON CENTER's",

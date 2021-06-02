@@ -1,10 +1,32 @@
-use firecore_util::Coordinate;
-use firecore_util::Direction;
-use firecore_util::Position;
+use serde::{Deserialize, Serialize};
+use util::{Direction, Coordinate, Position};
+use firecore_font::message::MessagePages;
 
-use crate::character::Character;
+use crate::{character::Character, script::world::WorldScript};
 
 use super::NPC;
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum NPCInteract {
+    Message(MessagePages),
+    Script(WorldScript),
+    Nothing,
+}
+
+impl Default for NPCInteract {
+    fn default() -> Self {
+        Self::Nothing
+    }
+}
+
+impl NPCInteract {
+    pub fn is_some(&self) -> bool {
+        match self {
+            Self::Nothing => false,
+            _ => true,
+        }
+    }
+}
 
 impl NPC {
 

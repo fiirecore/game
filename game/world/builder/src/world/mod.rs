@@ -4,11 +4,13 @@ use worldlib::map::WorldChunk;
 
 pub mod map;
 pub mod textures;
+// pub mod constants;
 
 pub mod wild;
 pub mod warp;
 pub mod npc;
 pub mod script;
+// pub mod mart;
 
 
 #[derive(Deserialize)]
@@ -25,6 +27,9 @@ pub struct MapConfig {
 
     #[serde(default)]
     pub settings: SerializedMapSettings,
+
+    #[serde(default)]
+    pub pokemon_center: bool,
 
 }
 

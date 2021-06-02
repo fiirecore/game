@@ -95,7 +95,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &NPC,
 }
 
 pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, winner: Team, trainer: bool) {
-    if let Some(world) = world_manager.map_manager.battling.take() {
+    if let Some(world) = world_manager.map_manager.data.battling.take() {
         match winner {
             Team::Player => {
                 if trainer {
@@ -106,8 +106,8 @@ pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, w
             }
             Team::Opponent => {
                 player.location = player.world.heal.0;
-                world_manager.map_manager.player.character.position = player.world.heal.1;
-                world_manager.map_manager.current = Some(player.location);
+                world_manager.map_manager.data.player.character.position = player.world.heal.1;
+                world_manager.map_manager.data.current = Some(player.location);
             }
         }
     }    

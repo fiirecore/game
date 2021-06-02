@@ -85,7 +85,7 @@ fn on_start(wm: &mut WorldMapManager, ctx: &mut Context, music: bool) {
 
 fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, battle: &mut Option<crate::battle_glue::BattleEntry>, text_window: &mut TextWindow) {
 
-    if let Some(door) = &mut wm.door {
+    if let Some(door) = &mut wm.data.door {
         match door.open {
             true => {
                 if door.accumulator < Door::DOOR_MAX {
@@ -99,18 +99,18 @@ fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, battle: &mut 
                 if door.accumulator > 0.0 {
                     door.accumulator -= delta * 6.0;
                     if door.accumulator <= 0.0 {
-                        wm.door = None;
+                        wm.data.door = None;
                     }
                 }
             }
         }
     }
 
-    if let Some(map) = match wm.current.as_ref() {
+    if let Some(map) = match wm.data.current.as_ref() {
         Some(cur) => wm.maps.get_mut(cur),
         None => None,
     } {
-        map.update(ctx, delta, &mut wm.player, battle, &mut wm.battling, &mut wm.warp, text_window);
+        map.update(ctx, delta, &mut wm.data, battle, text_window);
     }
 }
 
@@ -118,20 +118,20 @@ fn draw(wm: &WorldMapManager, ctx: &mut Context, textures: &WorldTextures, scree
     if let Some(map) = wm.get() {
         match &map.chunk {
             Some(chunk) => {
-                map.draw(ctx, textures, &wm.door, &screen.offset(chunk.coords), border);
+                map.draw(ctx, textures, &wm.data.door, &screen.offset(chunk.coords), border);
                 for map in chunk.connections.iter().flat_map(|id| wm.maps.get(id)) {
                     if let Some(chunk) = &map.chunk {
                         map.draw(ctx, textures, &None, &screen.offset(chunk.coords), false);
                     }
                 }
             },
-            None => map.draw(ctx, textures, &wm.door, screen, border),
+            None => map.draw(ctx, textures, &wm.data.door, screen, border),
         }
     }
 }
 
 fn get_mut(wm: &mut WorldMapManager) -> Option<&mut firecore_world_lib::map::WorldMap> {
-    match wm.current.as_ref() {
+    match wm.data.current.as_ref() {
         Some(cur) => wm.maps.get_mut(cur),
         None => None,
     }
@@ -142,7 +142,10 @@ impl WorldManager {
     pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {        
         Self {
 
-            map_manager: WorldMapManager::default(),
+            map_manager: WorldMapManager {
+                maps: Default::default(),
+                data: Default::default(),
+            },
 
             textures: WorldTextures::new(ctx),
 
@@ -189,7 +192,7 @@ impl WorldManager {
 
     pub fn on_start(&mut self, ctx: &mut Context, battle: BattleEntryRef) {
         self.map_start(ctx, true);
-        on_tile(&mut self.map_manager, ctx, &mut self.textures, battle);
+        on_tile(&mut self.map_manager, &mut self.textures, battle);
     }
 
     pub fn map_start(&mut self, ctx: &mut Context, music: bool) {
@@ -210,14 +213,14 @@ impl WorldManager {
                 self.debug_input(ctx, battle)
             }
 
-            if !(!self.map_manager.player.character.position.offset.is_zero() || self.map_manager.player.is_frozen() ) {
+            if !(!self.map_manager.data.player.character.position.offset.is_zero() || self.map_manager.data.player.is_frozen() ) {
 
                 if down(ctx, Control::B) {
-                    if self.map_manager.player.character.move_type == MoveType::Walking {
-                        self.map_manager.player.character.move_type = MoveType::Running;
+                    if self.map_manager.data.player.character.move_type == MoveType::Walking {
+                        self.map_manager.data.player.character.move_type = MoveType::Running;
                     }
-                } else if self.map_manager.player.character.move_type == MoveType::Running {
-                    self.map_manager.player.character.move_type = MoveType::Walking;
+                } else if self.map_manager.data.player.character.move_type == MoveType::Running {
+                    self.map_manager.data.player.character.move_type = MoveType::Walking;
                 }
 
                 const SURF: FieldMoveId = unsafe { FieldMoveId::new_unchecked(1718777203) };
@@ -230,7 +233,7 @@ impl WorldManager {
                                 TryMoveResult::TrySwim => {
                                     for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| &instance.move_ref.unwrap().field_id)).flatten() {
                                         if id == &SURF {
-                                            self.map_manager.player.character.move_type = MoveType::Swimming;
+                                            self.map_manager.data.player.character.move_type = MoveType::Swimming;
                                             self.map_manager.try_move(self.first_direction, delta);
                                             break;
                                         }
@@ -259,11 +262,11 @@ impl WorldManager {
                         }                        
                     }
                     if let Some(direction) = movdir {
-                        self.map_manager.player.character.position.direction = direction;
+                        self.map_manager.data.player.character.position.direction = direction;
                         self.first_direction = direction;
                     } else {
                         self.player_move_accumulator = 0.0;
-                        self.map_manager.player.character.moving = false;
+                        self.map_manager.data.player.character.moving = false;
                     }
                 }
             }
@@ -271,48 +274,48 @@ impl WorldManager {
             // Update
 
             self.textures.tiles.update(delta);
-            self.textures.player.update(delta, &mut self.map_manager.player.character);
+            self.textures.player.update(delta, &mut self.map_manager.data.player.character);
     
            update(&mut self.map_manager, ctx, delta, battle, &mut self.text_window);
     
             if self.warp_transition.alive() {
                 self.warp_transition.update(delta);
                 if self.warp_transition.switch() {
-                    if let Some(destination) = self.map_manager.warp.clone() {
+                    if let Some(destination) = self.map_manager.data.warp.clone() {
                         self.textures.player.draw = !destination.transition.move_on_exit;
                         let change_music = destination.transition.change_music;
                         self.map_manager.warp(destination);
                         self.map_start(ctx, change_music);
-                        on_tile(&mut self.map_manager, ctx, &mut self.textures, battle);
+                        on_tile(&mut self.map_manager, &mut self.textures, battle);
                     }
                 }
                 if self.warp_transition.finished() {
                     self.textures.player.draw = true;
                     self.warp_transition.despawn();
-                    self.map_manager.player.unfreeze();
-                    if let Some(destination) = self.map_manager.warp.take() {
+                    self.map_manager.data.player.unfreeze();
+                    if let Some(destination) = self.map_manager.data.warp.take() {
                         if destination.transition.move_on_exit {
-                            self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.player.character.position.direction), delta);
+                            self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.data.player.character.position.direction), delta);
                         }
                     }
                     
                 }
             } else {
-                if let Some(warp) = &self.map_manager.warp {
-                    if if let Some(door) = &self.map_manager.door {
+                if let Some(warp) = &self.map_manager.data.warp {
+                    if if let Some(door) = &self.map_manager.data.door {
                         door.accumulator == 0.0 && !door.open
                     } else {
                         true
                     } || !warp.transition.warp_on_tile {
                         self.warp_transition.spawn();                   
-                        self.map_manager.player.freeze_input();
+                        self.map_manager.data.player.freeze_input();
                     }
                 }
             }
     
-            if !self.map_manager.player.is_frozen() {
+            if !self.map_manager.data.player.is_frozen() {
                 if self.map_manager.do_move(delta) {
-                    self.stop_player(ctx, battle);
+                    self.stop_player(battle);
                 }
             }
 
@@ -321,7 +324,7 @@ impl WorldManager {
                 None => Coordinate::ZERO,
             };
     
-            self.render_coords = RenderCoords::new(offset, &self.map_manager.player.character);
+            self.render_coords = RenderCoords::new(offset, &self.map_manager.data.player.character);
 
         }
         
@@ -329,7 +332,7 @@ impl WorldManager {
 
     pub fn draw(&self, ctx: &mut Context) {
         draw(&self.map_manager, ctx, &self.textures, &self.render_coords, true);
-        self.textures.player.draw(ctx, &self.map_manager.player.character);
+        self.textures.player.draw(ctx, &self.map_manager.data.player.character);
 
         let offset = match self.map_manager.get().map(|map| map.chunk.as_ref()).flatten() {
             Some(chunk) => chunk.coords,
@@ -347,22 +350,22 @@ impl WorldManager {
 
     pub fn save_data(&self, save: &mut PlayerSave) {
         use crate::storage::player;
-        save.location = self.map_manager.current.unwrap_or(player::default_location());
-		save.character = self.map_manager.player.character.clone();
+        save.location = self.map_manager.data.current.unwrap_or(player::default_location());
+		save.character = self.map_manager.data.player.character.clone();
     }
 
-    fn stop_player(&mut self, ctx: &mut Context, battle: BattleEntryRef) {
+    fn stop_player(&mut self, battle: BattleEntryRef) {
 
-        self.map_manager.player.character.stop_move();
+        self.map_manager.data.player.character.stop_move();
 
-        if let Some(destination) = self.map_manager.warp_at(self.map_manager.player.character.position.coords) { // Warping does not trigger tile actions!
-            self.map_manager.warp = Some(*destination);
-        } else if self.map_manager.in_bounds(self.map_manager.player.character.position.coords) {
-            on_tile(&mut self.map_manager, ctx, &mut self.textures, battle);
+        if let Some(destination) = self.map_manager.warp_at(self.map_manager.data.player.character.position.coords) { // Warping does not trigger tile actions!
+            self.map_manager.data.warp = Some(*destination);
+        } else if self.map_manager.in_bounds(self.map_manager.data.player.character.position.coords) {
+            on_tile(&mut self.map_manager, &mut self.textures, battle);
         }
 
-        if let Some(door) = &mut self.map_manager.door {
-            if self.map_manager.warp.is_some() {
+        if let Some(door) = &mut self.map_manager.data.door {
+            if self.map_manager.data.warp.is_some() {
                 self.textures.player.draw = false;
             }
             door.open = false;
@@ -372,9 +375,9 @@ impl WorldManager {
 
     pub fn load_player(&mut self, data: &PlayerSave) {
 
-        self.map_manager.player.character = data.character.clone();
+        self.map_manager.data.player.character = data.character.clone();
 
-        self.map_manager.current = Some(data.location);
+        self.map_manager.data.current = Some(data.location);
 
         // if let Some(map) = data.location.map {
         //     self.map_manager.chunk_active = false;
@@ -393,21 +396,21 @@ impl WorldManager {
 
         if debug_pressed(ctx, DebugBind::F2) {
             // self.noclip_toggle = true;
-            self.map_manager.player.character.noclip = !self.map_manager.player.character.noclip;
+            self.map_manager.data.player.character.noclip = !self.map_manager.data.player.character.noclip;
         }
 
         if debug_pressed(ctx, DebugBind::F3) {
 
-            info!("Local Coordinates: {}", self.map_manager.player.character.position.coords);
+            info!("Local Coordinates: {}", self.map_manager.data.player.character.position.coords);
             // info!("Global Coordinates: ({}, {})", self.map_manager.player.position.get_x(), self.map_manager.player.position.get_y());
 
-            if let Some(tile) = self.map_manager.tile(self.map_manager.player.character.position.coords) {
+            if let Some(tile) = self.map_manager.tile(self.map_manager.data.player.character.position.coords) {
                 info!("Current Tile ID: {:x}", tile);
             } else {
                 info!("Currently out of bounds");
             }
 
-            info!("Player is {:?}", self.map_manager.player.character.move_type);
+            info!("Player is {:?}", self.map_manager.data.player.character.move_type);
             
         }
 
@@ -430,9 +433,9 @@ impl WorldManager {
         }
 
         if debug_pressed(ctx, DebugBind::F7) {
-            self.map_manager.player.character.freeze();
-            self.map_manager.player.character.unfreeze();
-            self.map_manager.player.character.noclip = true;
+            self.map_manager.data.player.character.freeze();
+            self.map_manager.data.player.character.unfreeze();
+            self.map_manager.data.player.character.noclip = true;
             info!("Unfroze player!");
         }
 
@@ -459,15 +462,15 @@ impl WorldManager {
     
 }
 
-fn on_tile(wm: &mut WorldMapManager, ctx: &mut Context, textures: &mut WorldTextures, battle: BattleEntryRef) {
-    textures.player.bush.in_bush = wm.tile(wm.player.character.position.coords) == Some(0x0D);
+fn on_tile(wm: &mut WorldMapManager, textures: &mut WorldTextures, battle: BattleEntryRef) {
+    textures.player.bush.in_bush = wm.tile(wm.data.player.character.position.coords) == Some(0x0D);
     if textures.player.bush.in_bush {
-        textures.player.bush.add(wm.player.character.position.coords);
+        textures.player.bush.add(wm.data.player.character.position.coords);
     }
-    if let Some(map) = match wm.current.as_ref() {
+    if let Some(map) = match wm.data.current.as_ref() {
         Some(cur) => wm.maps.get_mut(cur),
         None => None,
     } {
-        map.on_tile(ctx, battle, &mut wm.player)
+        map.on_tile(&mut wm.data, battle)
     }
 }

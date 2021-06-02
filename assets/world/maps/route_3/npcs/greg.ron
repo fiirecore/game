@@ -12,7 +12,7 @@
                 direction: Down
             ),
         ),
-        message: Some([(
+        interact: Message([(
             lines: [
                 "If a POKEMON BOX on the PC gets",
                 "full, just switch to another BOX."

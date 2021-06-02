@@ -2,24 +2,28 @@ use std::path::{Path, PathBuf};
 use util::{Location, LocationId};
 use worldlib::{
     map::{
-        manager::{Maps, WorldMapManager},
+        manager::{Maps, WorldMapManager, WorldMapManagerData},
         WorldMap,
     },
     serialized::SerializedTextures,
 };
 
 use crate::gba_map::get_gba_map;
-use crate::world::textures::get_textures;
+use crate::world::{
+    // constants::get_constants, 
+    textures::get_textures
+};
 
 use super::MapConfig;
 
 pub mod list;
 
-pub fn load_maps<P: AsRef<Path>>(maps: P, textures: P) -> (WorldMapManager, SerializedTextures) {
-    let maps_path = maps.as_ref();
-    let textures_path = textures.as_ref();
+pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
+    let maps_path = root_path.join("maps");
+    let textures_path = root_path.join("textures");
 
-    let mut maps = Maps::default();
+    // let constants = get_constants(root_path);
+
     let textures = get_textures(textures_path);
     println!(
         "Loaded {} palettes and {} animated textures",
@@ -27,14 +31,11 @@ pub fn load_maps<P: AsRef<Path>>(maps: P, textures: P) -> (WorldMapManager, Seri
         textures.animated.len()
     );
 
+    let mut maps = Maps::default();
+
     println!("Loading maps...");
 
-    for worlds in std::fs::read_dir(maps_path).unwrap_or_else(|err| {
-        panic!(
-            "Could not read directory at {:?} with error {}",
-            maps_path, err
-        )
-    }) {
+    for worlds in std::fs::read_dir(&maps_path).unwrap_or_else(|err| panic!("Could not read directory at {:?} with error {}", maps_path, err)) {
         let worlds = worlds
             .unwrap_or_else(|err| {
                 panic!(
@@ -61,7 +62,7 @@ pub fn load_maps<P: AsRef<Path>>(maps: P, textures: P) -> (WorldMapManager, Seri
 
     let manager = WorldMapManager {
         maps,
-        ..Default::default()
+        data: WorldMapManagerData::default()
     };
 
     (manager, textures)
@@ -127,6 +128,8 @@ pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map
         wild: super::wild::load_wild_entries(root_path.join("wild")),
         npcs: super::npc::load_npc_entries(root_path.join("npcs")),
         scripts: super::script::load_script_entries(root_path.join("scripts")),
+
+        // mart: None,//super::mart::load_mart(root_path.join("mart.ron")),
 
     }
 }

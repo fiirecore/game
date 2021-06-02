@@ -11,7 +11,7 @@ pub use self::actions::*;
 
 use super::ScriptId;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldScript {
     
     pub identifier: ScriptId,
@@ -21,13 +21,13 @@ pub struct WorldScript {
     pub conditions: Vec<Condition>,
 
     #[serde(rename = "actions")]
-    original_actions: VecDeque<WorldActionKind>,
+    pub(crate) original_actions: VecDeque<WorldActionKind>,
 
     #[serde(skip)]
     pub actions: VecDeque<WorldActionKind>, // clones actions to this so scripts can be reused as the main actions field does not use up its values
 
     #[serde(skip)]
-    alive: bool, // script is running or not
+    pub(crate) alive: bool, // script is running or not
 
     #[serde(skip)]
     pub option: u8, // variable to be used by script for persistant data in update loop (used in ConditionOrBreak)
@@ -38,6 +38,19 @@ pub struct WorldScript {
 }
 
 impl WorldScript {
+
+    pub fn default() -> Self {
+        Self {
+            identifier: "temp".parse().unwrap(),
+            location: None,
+            conditions: Vec::new(),
+            original_actions: VecDeque::new(),
+            actions: VecDeque::new(),
+            alive: false,
+            option: 0,
+            timer: Timer::default()
+        }
+    }
 
     fn on_spawn(&mut self) {
         self.actions = self.original_actions.clone();

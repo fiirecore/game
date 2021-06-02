@@ -12,7 +12,7 @@
                 direction: Left
             ),
         ),
-        message: Some([
+        interact: Message([
             (
                 lines: [
                     "You shouldn't be staring if you",

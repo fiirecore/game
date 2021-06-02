@@ -12,7 +12,7 @@
                 direction: Right
             ),
         ),
-        message: Some([(
+        interact: Message([(
             color: Blue,
             lines: [
                 "You're pretty hot.",

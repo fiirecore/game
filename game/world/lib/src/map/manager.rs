@@ -16,6 +16,8 @@ use crate::{
     }
 };
 
+// pub mod constants;
+
 pub enum TryMoveResult {
     MapUpdate,
     TrySwim,
@@ -23,10 +25,18 @@ pub enum TryMoveResult {
 
 pub type Maps = HashMap<Location, WorldMap>;
 
-#[derive(Default, Deserialize, Serialize)]
+#[derive(Deserialize, Serialize)]
 pub struct WorldMapManager {
 
     pub maps: Maps,
+    pub data: WorldMapManagerData,
+
+}
+
+#[derive(Default, Deserialize, Serialize)]
+pub struct WorldMapManagerData {
+
+    // pub constants: constants::WorldMapManagerConstants,
 
     #[serde(skip)]
     pub current: Option<Location>,
@@ -84,32 +94,32 @@ impl World for WorldMapManager {
 impl WorldMapManager {
 
     pub fn get(&self) -> Option<&WorldMap> {
-        self.current.as_ref().map(|id| self.maps.get(id)).flatten()
+        self.data.current.as_ref().map(|id| self.maps.get(id)).flatten()
     }
 
     pub fn try_move(&mut self, direction: Direction, delta: f32) -> Option<TryMoveResult> { // return chunk update
 
         // let mut update = false;
 
-        self.player.character.on_try_move(direction);
+        self.data.player.character.on_try_move(direction);
 
         let offset = direction.tile_offset();
-        let coords = self.player.character.position.coords + offset;
+        let coords = self.data.player.character.position.coords + offset;
 
         let move_code = self.movement(coords).unwrap_or_else(|| self.walk_connections(coords).unwrap_or(1));
 
-        let warp = match self.warp.is_none() {
+        let warp = match self.data.warp.is_none() {
             true => {
                 if let Some(destination) = self.warp_at(coords) {
                     if !destination.transition.warp_on_tile {
-                        self.warp = Some(*destination);
+                        self.data.warp = Some(*destination);
                         return Some(TryMoveResult::MapUpdate);
                     } else {
 
                         // open door on warp
 
                         let map = self.get().unwrap();
-                        self.door = Some(
+                        self.data.door = Some(
                             Door {
                                 position: coords.x as usize + coords.y as usize * map.width,
                                 tile: map.tile(coords).unwrap(),
@@ -117,7 +127,7 @@ impl WorldMapManager {
                                 open: true,
                             }
                         );
-                        self.player.character.update_sprite();
+                        self.data.player.character.update_sprite();
 
                         // door open end
 
@@ -142,15 +152,15 @@ impl WorldMapManager {
         
         let allow = warp || walk;
 
-        if self.player.character.move_type == MoveType::Swimming && can_walk(move_code) {
-            self.player.character.move_type = MoveType::Walking
+        if self.data.player.character.move_type == MoveType::Swimming && can_walk(move_code) {
+            self.data.player.character.move_type = MoveType::Walking
         }
 
-        if can_move(self.player.character.move_type, move_code) || allow || self.player.character.noclip {
-            let mult = self.player.character.speed() * 60.0 * delta;
-            self.player.character.position.offset = direction.pixel_offset().scale(mult);
-            self.player.character.moving = true;
-        } else if can_swim(move_code) && self.player.character.move_type != MoveType::Swimming {
+        if can_move(self.data.player.character.move_type, move_code) || allow || self.data.player.character.noclip {
+            let mult = self.data.player.character.speed() * 60.0 * delta;
+            self.data.player.character.position.offset = direction.pixel_offset().scale(mult);
+            self.data.player.character.moving = true;
+        } else if can_swim(move_code) && self.data.player.character.move_type != MoveType::Swimming {
             return Some(TryMoveResult::TrySwim);
         }
         None
@@ -166,8 +176,8 @@ impl WorldMapManager {
                         if let Some(chunk) = &current.chunk {
                             if let Some(movement) = current.movement(absolute - chunk.coords) {
                                 let c = current_coords - chunk.coords;
-                                self.current = Some(*connection);
-                                self.player.character.position.coords += c;
+                                self.data.current = Some(*connection);
+                                self.data.player.character.position.coords += c;
                                 return Some(movement);
                             }
                         }
@@ -209,7 +219,7 @@ impl WorldMapManager {
         match self.maps.get(&destination.location) {
             Some(map) => {
                 
-                self.door = Some(
+                self.data.door = Some(
                     Door {
                         position: destination.position.coords.x as usize + destination.position.coords.y as usize * map.width,
                         tile: map.tile(destination.position.coords).unwrap(),
@@ -218,18 +228,18 @@ impl WorldMapManager {
                     }
                 );
 
-                self.player.character.position.from_destination(destination.position);
-                self.current = Some(destination.location);
+                self.data.player.character.position.from_destination(destination.position);
+                self.data.current = Some(destination.location);
             }
             None => todo!(),
         }
     }
 
     pub fn do_move(&mut self, delta: f32) -> bool {
-        if if let Some(door) = &self.door {
+        if if let Some(door) = &self.data.door {
             !door.open || door.accumulator == Door::DOOR_MAX
         } else { true } {
-            self.player.do_move(delta)
+            self.data.player.do_move(delta)
         } else {
             false
         }

@@ -13,12 +13,12 @@ pub mod gba_map;
 
 mod dex;
 
-pub fn compile<P: AsRef<Path>>(dex: SerializedDex, maps: P, tile_textures: P, npc_types: P, output_file: P) {
+pub fn compile<P: AsRef<Path>>(dex: SerializedDex, root_path: P, output_file: P) {
 
     dex::setup(dex);
 
     println!("Started loading maps and tile textures...");
-    let (manager, mut textures) = world::map::load_maps(maps, tile_textures);
+    let (manager, mut textures) = world::map::load_maps(root_path.as_ref());
     println!("Finished loading maps and tile textures.");
 
     println!("Verifying palettes, maps, warps...");
@@ -27,7 +27,7 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, maps: P, tile_textures: P, np
     verify_connections(&manager);
 
     println!("Loading NPC types...");
-    let npc_types = world::npc::npc_type::load_npc_types(npc_types);
+    let npc_types = world::npc::npc_type::load_npc_types(root_path.as_ref());
 
     let output_file = output_file.as_ref();
 

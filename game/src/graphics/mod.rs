@@ -111,7 +111,7 @@ pub fn draw_line_ex(ctx: &mut Context, x: f32, y: f32, len: f32, horizontal: boo
 
 #[allow(unused_variables)]
 pub fn draw_circle(ctx: &mut Context, x: f32, y: f32, r: f32, color: Color) {
-	todo!("draw circle")
+	// todo!("draw circle")
 }
 
 // #[deprecated]

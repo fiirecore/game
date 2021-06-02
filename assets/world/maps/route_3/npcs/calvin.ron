@@ -12,7 +12,7 @@
                 direction: Left
             ),
         ),
-        message: Some([
+        interact: Message([
             (
                 lines: [
                     "I always wear shorts, even in",

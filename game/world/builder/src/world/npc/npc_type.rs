@@ -4,11 +4,11 @@ use std::fs::read_dir;
 
 use worldlib::serialized::{SerializedNPCType, SerializedNPCTypeConfig};
 
-pub fn load_npc_types<P: AsRef<Path>>(npc_types: P) -> Vec<SerializedNPCType> {
-    let npc_types = npc_types.as_ref();
+pub fn load_npc_types(root_path: &Path) -> Vec<SerializedNPCType> {
+    let npc_types = root_path.join("npcs");
     let mut types = Vec::new();
 
-    for entry in read_dir(npc_types)
+    for entry in read_dir(&npc_types)
     .unwrap_or_else(|err| panic!("Could not get warp file at {:?} with error {}", npc_types, err))
         .map(|entry| entry.unwrap_or_else(|err| panic!("Could not directory entry at {:?} with error {}", npc_types, err))) {
         let path = entry.path();

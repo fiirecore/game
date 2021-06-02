@@ -13,7 +13,7 @@
             ),
         ),
         movement: WalkUpAndDown(2),
-        message: Some([
+        interact: Message([
             (
                 lines: [
                     "ROUTE 4 is at the foot of",

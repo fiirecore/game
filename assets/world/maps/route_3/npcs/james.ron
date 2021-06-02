@@ -12,7 +12,7 @@
                 direction: Right,
             ),
         ),
-        message: Some([
+        interact: Message([
             (
                 lines: [
                     "Trained POKEMON are stronger than",

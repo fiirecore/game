@@ -12,7 +12,7 @@
                 direction: Right
             ),
         ),
-        message: Some([
+        interact: Message([
             (
                 lines: [
                     "There are other kinds of POKEMON", 

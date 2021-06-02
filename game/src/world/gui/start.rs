@@ -105,7 +105,13 @@ impl StartMenu {
 
     pub fn draw(&self, ctx: &mut Context) {
         if self.alive {
-            self.panel.draw_text(ctx, self.pos.x, self.pos.y, 70.0, &self.buttons, self.cursor, false, false);            
+            if self.bag.alive() {
+                self.bag.draw(ctx);
+            } else if self.party.alive() {
+                self.party.draw(ctx);
+            } else {
+                self.panel.draw_text(ctx, self.pos.x, self.pos.y, 70.0, &self.buttons, self.cursor, false, false);    
+            }        
         }
     }
 
