@@ -13,7 +13,7 @@ use crate::{
 	},
 };
 
-use super::pokemon::BattleParty;
+use super::pokemon::{BattleParty, BattlePartyPlayerView};
 // use self::panels::level_up::LevelUpMovePanel;
 
 pub mod background;
@@ -92,6 +92,10 @@ impl BattleGui {
 		self.bounce.reset();
 	}
 
+}
+
+pub fn battle_party_player_view_gui(gui: &PartyGui, party: &BattlePartyPlayerView, exitable: bool) {
+	gui.spawn(party.collect_cloned().into_iter().map(|instance| PokemonDisplay::new(std::borrow::Cow::Owned(instance))).collect(), Some(false), exitable);
 }
 
 pub fn battle_party_gui(gui: &PartyGui, party: &BattleParty, exitable: bool) {

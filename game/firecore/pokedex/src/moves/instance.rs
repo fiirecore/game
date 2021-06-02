@@ -22,7 +22,7 @@ impl MoveInstance {
 
     pub fn new(move_ref: MoveRef) -> Self {
         Self {
-            pp: move_ref.unwrap().pp,
+            pp: move_ref.value().pp,
             move_ref,
         }
     }
@@ -45,7 +45,7 @@ impl MoveInstance {
     }
 
     pub fn restore(&mut self) {
-        self.pp = self.move_ref.unwrap().pp;
+        self.pp = self.move_ref.value().pp;
     }
 
 }

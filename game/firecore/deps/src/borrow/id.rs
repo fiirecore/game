@@ -27,7 +27,7 @@ pub trait Identifiable {
 impl<V: 'static + Identifiable> StaticRef<V> {
 
     // To - do: rename to get or value
-    pub fn unwrap(self) -> &'static V {
+    pub fn value(self) -> &'static V {
         match self {
             StaticRef::Init(value) => value,
             StaticRef::Uninit(id) => match V::get(&id) {

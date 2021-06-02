@@ -27,7 +27,7 @@ impl MoveInfoPanel {
     }
 
     pub fn update_move(&mut self, instance: &MoveInstance) {
-        let move_ref = instance.move_ref.unwrap();
+        let move_ref = instance.move_ref.value();
         self.pp = format!("{}/{}", instance.pp, move_ref.pp);
         self.move_type = format!("TYPE/{:?}", move_ref.pokemon_type);
     }

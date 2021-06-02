@@ -3,7 +3,7 @@ use deps::{
     hash::HashSet,
     str::TinyStr8,
 };
-use firecore_pokedex::pokemon::party::PersistentParty;
+use firecore_pokedex::pokemon::party::PokemonParty;
 
 use crate::default_true;
 use super::NPCId;
@@ -22,7 +22,7 @@ pub struct Trainer {
     #[serde(default = "default_battle_transition")]
     pub battle_transition: TinyStr8,
 
-    pub party: PersistentParty,
+    pub party: PokemonParty,
 
     #[serde(default)]
     pub victory_message: MessageSet,

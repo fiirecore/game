@@ -37,7 +37,7 @@ impl DamageResult {
 
 impl PokemonInstance {
     fn get_damage_rhai(user: &mut Self, use_type: PokemonType, power: INT, target_def: INT, effective: Effective) -> DamageResult {
-        let (damage, effective) = user.get_damage_stat(effective, power as Power, user.base.get(StatType::Attack), target_def as BaseStat, user.pokemon.unwrap().primary_type == use_type);
+        let (damage, effective) = user.get_damage_stat(effective, power as Power, user.base.get(StatType::Attack), target_def as BaseStat, user.pokemon.value().primary_type == use_type);
         DamageResult { damage: damage as INT, effective }
     }
     fn effective_rhai(&mut self, pokemon_type: PokemonType, category: MoveCategory) -> Effective {
@@ -51,7 +51,7 @@ impl PokemonInstance {
         self.current_hp as INT
     }
     fn primary_type(&mut self) -> PokemonType {
-        self.pokemon.unwrap().primary_type
+        self.pokemon.value().primary_type
     }
     // fn get_ref(&mut self) -> &Self {
     //     self

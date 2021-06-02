@@ -5,7 +5,7 @@ use crate::{
         pokemon::{
             dex::pokedex_len,
             instance::PokemonInstance,
-            party::PersistentParty,
+            party::PokemonParty,
             stat::StatSet,
         },
     },
@@ -30,7 +30,7 @@ use crate::world::{
 };
 
 pub fn random_wild_battle(battle: &mut Option<BattleEntry>) {
-    let mut party = PersistentParty::new();
+    let mut party = PokemonParty::new();
     let size = 2;
     for _ in 0..size {
         party.push(PokemonInstance::generate(
@@ -48,7 +48,7 @@ pub fn random_wild_battle(battle: &mut Option<BattleEntry>) {
 }
 
 pub fn wild_battle(battle: BattleEntryRef, wild: &WildEntry) {
-    let mut party = PersistentParty::new();
+    let mut party = PokemonParty::new();
     party.push(wild.generate());
     *battle = Some(BattleEntry {
         party,

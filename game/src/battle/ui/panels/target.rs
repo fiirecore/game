@@ -1,10 +1,4 @@
-use crate::{
-    input::{pressed, Control},
-    gui::Panel,
-    text::TextColor,
-    graphics::{draw_text_left, draw_cursor},
-    tetra::Context,
-};
+use crate::{battle::pokemon::BattlePartyView, graphics::{draw_text_left, draw_cursor}, gui::Panel, input::{pressed, Control}, tetra::Context, text::TextColor};
 
 use crate::battle::pokemon::ActivePokemonArray;
 
@@ -29,10 +23,10 @@ impl TargetPanel {
         }
     }
 
-    pub fn update_names(&mut self, targets: &ActivePokemonArray) {
+    pub fn update_names(&mut self, targets: &BattlePartyView) {
         self.names.clear();
-        for active in targets.iter() {
-            self.names.push(active.pokemon.as_ref().map(|instance| instance.name().to_string()));
+        for pokemon in targets.active.iter() {
+            self.names.push(pokemon.as_ref().map(|pokemon| pokemon.value().name.clone()));
         }
     }
 

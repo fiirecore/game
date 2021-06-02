@@ -36,14 +36,15 @@ impl Default for TransitionState {
 #[derive(Debug)]
 pub enum BattleState {
 	Begin,
-	Selecting(Team, usize),
+	Selecting(bool, bool, bool), // started, player done, opponent done
 	// Waiting (for opponent)
 	Moving(MoveState),
 	End,
 }
 
 impl BattleState {
-	pub const SELECTING_START: Self = Self::Selecting(Team::Player, 0);
+	pub const SELECTING_START: Self = Self::Selecting(false, false, false);
+	pub const MOVE_START: Self = Self::Moving(MoveState::Start);
 }
 
 impl Default for BattleState {

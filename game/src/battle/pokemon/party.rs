@@ -5,7 +5,7 @@ use crate::{
             instance::PokemonInstance,
             party::{
                 MoveableParty,
-                PersistentParty,
+                PokemonParty,
             },
         },
         texture::{
@@ -32,6 +32,7 @@ use crate::battle::{
 
 // #[deprecated(note = "use enum instead")]
 pub type ActivePokemonArray = ArrayVec<[ActivePokemon; 3]>;
+
 
 pub struct BattleParty {
 
@@ -166,7 +167,7 @@ impl BattleParty {
         }
     }
 
-    pub fn collect_cloned(&self) -> PersistentParty {
+    pub fn collect_cloned(&self) -> PokemonParty {
         let mut party = self.pokemon.clone();
         for pokemon in self.active.iter() {
             if let PokemonOption::Some(index, instance) = pokemon.pokemon.clone() {
@@ -186,4 +187,43 @@ impl BattleParty {
         party
     }
 
+    pub fn as_player_view(&self) -> BattlePartyPlayerView {
+        BattlePartyPlayerView {
+            pokemon: self.pokemon.clone(),
+            active: self.active.iter().map(|active| active.pokemon.clone()).collect(),
+        }
+    }
+
+    pub fn as_view(&self) -> BattlePartyView {
+        BattlePartyView {
+            active: self.active.iter().map(|active| match &active.pokemon {
+                PokemonOption::Some(_, instance) => Some(instance.value().pokemon),
+                _ => None,
+            }).collect()
+        }
+    }
+
+}
+
+#[derive(Default, Clone)]
+pub struct BattlePartyPlayerView {
+    pub pokemon: MoveableParty,
+    pub active: ArrayVec<[PokemonOption; 3]>,
+}
+
+#[derive(Default, Clone)]
+pub struct BattlePartyView {
+    pub active: ArrayVec<[Option<pokedex::pokemon::PokemonRef>; 3]>,
+}
+
+impl BattlePartyPlayerView {
+    pub fn collect_cloned(&self) -> PokemonParty {
+        let mut party = self.pokemon.clone();
+        for pokemon in self.active.iter() {
+            if let PokemonOption::Some(index, instance) = pokemon.clone() {
+                party[index] = Some(instance);
+            }
+        }
+        party.into_iter().flatten().map(|cow| cow.owned()).collect()
+    }
 }

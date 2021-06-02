@@ -16,7 +16,6 @@ use crate::battle::ui::pokemon::{
     status::PokemonStatusGui,
 };
 
-
 pub struct ActivePokemon {
 
     pub pokemon: PokemonOption,

@@ -204,7 +204,7 @@ impl PokemonStatusGui {
 				if let Some(level) = self.level.as_mut() {
 					level.1 += 1;
 					level.0 = Self::level_fmt(level.1);
-					let base = StatSet::hp(pokemon.pokemon.unwrap().base.hp, pokemon.ivs.hp, pokemon.evs.hp, level.1);
+					let base = StatSet::hp(pokemon.pokemon.value().base.hp, pokemon.ivs.hp, pokemon.evs.hp, level.1);
 					self.health_text = Some(format!("{}/{}", pokemon.hp(), base));
 					self.health.0.resize(pokemon.hp(), base, false);
 				}

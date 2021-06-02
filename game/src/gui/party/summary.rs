@@ -188,7 +188,7 @@ pub struct SummaryPokemon {
 impl SummaryPokemon {
 
     pub fn new(display: PokemonDisplay) -> Self {
-        let pokemon = display.instance.pokemon.unwrap();
+        let pokemon = display.instance.pokemon.value();
         let mut types = Vec::with_capacity(if pokemon.secondary_type.is_some() { 2 } else { 1 });
 
         types.push(PokemonTypeDisplay::new(pokemon.primary_type));

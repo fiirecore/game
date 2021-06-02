@@ -88,7 +88,7 @@ pub type BorrowedPokemon = BorrowableMut<'static, PokemonInstance>;
 impl PokemonInstance {
 
 	pub fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<Stats>) -> Self {
-		let pokemon = Pokemon::get(&id).unwrap();
+		let pokemon = Pokemon::get(&id).value();
 
         let level = if min == max {
 			max
@@ -141,7 +141,7 @@ impl PokemonInstance {
 		let mut moves = Vec::new();
 		let prev = self.level;
 
-		let gr = self.pokemon.unwrap().training.growth_rate;
+		let gr = self.pokemon.value().training.growth_rate;
 
 		while self.experience > gr.max_exp(self.level) {
 			self.experience -= gr.max_exp(self.level);
@@ -181,7 +181,7 @@ impl PokemonInstance {
 
 	pub fn level_up(&mut self) {
 		self.level += 1;
-		self.base = BaseStats::new(self.pokemon.unwrap(), &self.ivs, &self.evs, self.level);
+		self.base = BaseStats::new(self.pokemon.value(), &self.ivs, &self.evs, self.level);
 	}
 
 	pub fn generate_with_level(id: PokemonId, level: Level, ivs: Option<Stats>) -> Self {
@@ -195,7 +195,7 @@ impl PokemonInstance {
 	pub fn name(&self) -> Cow<'_, str> {
 		match self.nickname.as_ref() {
 		    Some(name) => Cow::Borrowed(name),
-		    None => Cow::Owned(self.pokemon.unwrap().name.to_ascii_uppercase()),
+		    None => Cow::Owned(self.pokemon.value().name.to_ascii_uppercase()),
 		}
 	}
 
@@ -224,7 +224,7 @@ impl PokemonInstance {
 
 	pub fn moves_at_level(&self) -> Vec<MoveRef> {
 		let mut moves = Vec::new();
-		for pokemon_move in &self.pokemon.unwrap().moves {
+		for pokemon_move in &self.pokemon.value().moves {
 			if pokemon_move.level == self.level {
 				moves.push(Move::get(&pokemon_move.move_id))
 			}
@@ -233,7 +233,7 @@ impl PokemonInstance {
 	}
 
 	pub fn effective(&self, pokemon_type: PokemonType, category: MoveCategory) -> Effective {
-		let pokemon = self.pokemon.unwrap();
+		let pokemon = self.pokemon.value();
 		let primary = pokemon_type.effective(pokemon.primary_type, category);
 		if let Some(secondary) = pokemon.secondary_type {
 			primary * pokemon_type.effective(secondary, category)

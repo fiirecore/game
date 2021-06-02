@@ -33,7 +33,7 @@ impl PokemonInstance {
 
 	// To - do: multiple targets, uses PP on use
 	pub fn use_own_move(&self, engine: &mut Engine, move_index: usize, targets: Vec<PokemonTarget>) -> TurnResult {
-		let pokemon_move = &self.moves[move_index].move_ref.unwrap();
+		let pokemon_move = &self.moves[move_index].move_ref.value();
 		let mut results = BTreeMap::new();
 
 		for target in targets {
@@ -150,7 +150,7 @@ impl PokemonInstance {
 		let effective = target.effective(use_type, category);
 		let (atk, def) = category.stats();
 		let (atk, def) = (self.base.get(atk), target.base.get(def));
-		self.get_damage_stat(effective, power, atk, def, self.pokemon.unwrap().primary_type == use_type)
+		self.get_damage_stat(effective, power, atk, def, self.pokemon.value().primary_type == use_type)
 	}
 
 	pub fn get_damage_stat(&self, effective: Effective, power: Power, attack: BaseStat, defense: BaseStat, same_type_as_user: bool) -> (Health, Effective) {

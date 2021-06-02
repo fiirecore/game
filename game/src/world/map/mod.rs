@@ -266,7 +266,7 @@ impl GameWorld for WorldMap {
                         }
                         WorldActionKind::PlayerGivePokemon(instance) => {
                             if let Err(err) = data_mut().party.try_push(instance.clone()) {
-                                warn!("Could not add {} to player's party with error {}", instance.pokemon.unwrap().name, err);
+                                warn!("Could not add {} to player's party with error {}", instance.pokemon.value().name, err);
                             }
                             pop = true;
                         }

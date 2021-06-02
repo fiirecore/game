@@ -1,9 +1,4 @@
-use crate::{
-    util::Reset,
-    pokedex::pokemon::instance::PokemonInstance,
-    input::{pressed, Control},
-    tetra::Context,
-};
+use crate::{battle::pokemon::BattlePartyView, input::{pressed, Control}, pokedex::pokemon::instance::PokemonInstance, tetra::Context, util::Reset};
 
 use crate::battle::{
     pokemon::ActivePokemonArray,
@@ -41,10 +36,13 @@ impl FightPanel {
 
     }
 
-    pub fn setup(&mut self, instance: &PokemonInstance, targets: &ActivePokemonArray) {
+    pub fn user(&mut self, instance: &PokemonInstance) {
         self.moves.update_names(instance);
-        self.targets.update_names(targets);
         self.update_move(instance);
+    }
+
+    pub fn target(&mut self, targets: &BattlePartyView) {
+        self.targets.update_names(targets);
     }
 
     pub fn update_move(&mut self, pokemon: &PokemonInstance) {

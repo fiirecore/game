@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::rc::Rc;
 
 use crate::{
 	// pokedex::pokemon::p,
@@ -38,9 +38,12 @@ use crate::battle::{
 			closer::BattleCloserManager,
 		}
 	},
+	client::{
+		BattleClient,
+		gui::BattlePlayerGui,
+		ai::BattlePlayerAi
+	},
 };
-
-use super::{player::gui::BattlePlayerGui, ui::panels::BattlePanel};
 
 pub struct BattleManager {
 
@@ -57,6 +60,7 @@ pub struct BattleManager {
 	gui: BattleGui,
 
 	player: BattlePlayerGui,
+	ai: BattlePlayerAi,
 
 	pub finished: bool,
 	
@@ -80,11 +84,8 @@ impl BattleManager {
 			engine: crate::pokedex::moves::usage::script::engine(),
 			gui: BattleGui::new(ctx),
 
-			player: BattlePlayerGui {
-				party,
-				bag,
-				panel: Rc::new(RefCell::new(BattlePanel::new(ctx))),
-			},
+			player: BattlePlayerGui::new(ctx, party, bag),
+			ai: BattlePlayerAi::default(),
 
 			finished: false,
 
@@ -97,7 +98,6 @@ impl BattleManager {
 		self.state = BattleManagerState::default();
 		self.battle = Battle::new(
 			ctx,
-			Box::new(self.player.clone()),
 			data_mut().party.iter_mut().map(|instance| 
 				Some(BorrowedPokemon::Borrowed(instance))
 			).collect(), 
@@ -118,7 +118,7 @@ impl BattleManager {
 				    BattleManagerState::Battle => {
 						if let Some(battle) = self.battle.as_mut() {
 							battle.state = BattleState::End;
-							battle.update(ctx, delta, &mut self.engine, &mut self.gui);
+							battle.update(ctx, delta, &mut self.engine, &mut self.gui, &mut self.player, &mut self.ai);
 						}
 					},
 				    BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
@@ -175,7 +175,10 @@ impl BattleManager {
 				}
 				BattleManagerState::Battle => match battle.state {
 					BattleState::End => self.state = BattleManagerState::Closer,
-					_ => battle.update(ctx, delta, &mut self.engine, &mut self.gui),
+					_ => {
+						self.player.update(ctx, delta);
+						battle.update(ctx, delta, &mut self.engine, &mut self.gui, &mut self.player, &mut self.ai);
+					}
 				},
 				BattleManagerState::Closer => match self.closer.state {
 					TransitionState::Begin => {
@@ -210,14 +213,14 @@ impl BattleManager {
 					self.gui.draw_panel(ctx);
 					self.gui.text.draw(ctx);
 				}
-			    BattleManagerState::Battle => battle.render(ctx, &self.gui),
+			    BattleManagerState::Battle => battle.render(ctx, &self.gui, &self.player),
 			    BattleManagerState::Closer => {
 					if self.closer.state != TransitionState::End {
 						if !self.world_active() {
 							self.gui.background.draw(ctx, 0.0);
 							self.gui.draw_panel(ctx);
-							battle.player.player.draw(ctx);
-							for active in battle.player.party.active.iter() {
+							self.player.draw(ctx);
+							for active in battle.player.active.iter() {
 								active.renderer.draw(ctx, ZERO, Color::WHITE);
 							}
 							self.closer.draw_battle(ctx);

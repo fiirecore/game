@@ -1,5 +1,5 @@
 use deps::str::TinyStr8;
-use pokedex::pokemon::party::PersistentParty;
+use pokedex::pokemon::party::PokemonParty;
 
 use deps::tetra::graphics::Texture;
 
@@ -9,7 +9,7 @@ pub type BattleEntryRef<'a> = &'a mut Option<BattleEntry>;
 
 pub struct BattleEntry {
     pub size: usize,
-    pub party: PersistentParty,
+    pub party: PokemonParty,
     pub trainer: Option<BattleTrainerEntry>,
 }
 

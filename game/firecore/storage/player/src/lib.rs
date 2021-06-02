@@ -4,7 +4,7 @@ use std::sync::atomic::AtomicBool;
 use deps::str::TinyStr16;
 use firecore_pokedex::{
 	item::bag::Bag,
-	pokemon::party::PersistentParty,
+	pokemon::party::PokemonParty,
 };
 use firecore_world_lib::character::Character;
 use serde::{Deserialize, Serialize};
@@ -37,7 +37,7 @@ pub struct PlayerSave {
 	pub character: Character,
 
 	#[serde(default)]
-	pub party: PersistentParty,
+	pub party: PokemonParty,
 
     // #[deprecated(note = "To - do: Item bag module")]
 	#[serde(default)]
