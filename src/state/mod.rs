@@ -16,7 +16,7 @@ pub trait NewState {
 pub trait MainState: State {
     
     // #[deprecated(note = "fix so usable with other enums")]
-    fn next(&mut self) -> &mut Option<MainStates>;
+    fn next(&mut self) -> Option<MainStates>;
     
 }
 

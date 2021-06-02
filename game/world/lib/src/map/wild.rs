@@ -2,7 +2,7 @@ use firecore_pokedex::pokemon::{PokemonId, Level, instance::PokemonInstance};
 use serde::{Deserialize, Serialize};
 use deps::Random;
 
-use crate::TileId;
+use crate::map::TileId;
 
 pub static WILD_RANDOM: Random = Random::new();
 

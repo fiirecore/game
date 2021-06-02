@@ -53,7 +53,7 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, maps: P, tile_textures: P, np
 }
 
 fn verify_palettes(manager: &WorldMapManager, textures: &mut worldlib::serialized::SerializedTextures) {
-    let keys = textures.palettes.keys().map(|num| *num).collect::<Vec<worldlib::PaletteId>>();
+    let keys = textures.palettes.keys().map(|num| *num).collect::<Vec<worldlib::map::PaletteId>>();
     let mut palettes = Vec::new();
     for map in manager.maps.values() {
         for palette in map.palettes.iter() {
@@ -101,7 +101,7 @@ fn verify_connections(manager: &WorldMapManager) {
     for map in manager.maps.values() {
         if let Some(chunk) = &map.chunk {
             for connection in &chunk.connections {
-                if !manager.maps.contains_key(&util::Location::new(None, *connection)) {
+                if !manager.maps.contains_key(connection) {
                     eprintln!("Could not get connection \"{}\" for chunk {}", connection, map.name);
                     errors += 1;
                 }

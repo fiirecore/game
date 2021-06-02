@@ -86,7 +86,7 @@ impl State for MenuStateManager {
 }
 
 impl MainState for MenuStateManager {
-    fn next(&mut self) -> &mut Option<MainStates> {
-        &mut self.next
+    fn next(&mut self) -> Option<MainStates> {
+        self.next.take()
     }
 }

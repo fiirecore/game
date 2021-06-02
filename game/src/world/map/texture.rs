@@ -19,7 +19,7 @@ impl WorldTextures {
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            tiles: tile::TileTextureManager::new(),
+            tiles: tile::TileTextureManager::default(),
             npcs: npc::NPCTextureManager::default(),
             player: player::PlayerTexture::new(ctx),
             gui: gui::GuiTextures::new(ctx),

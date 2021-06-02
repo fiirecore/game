@@ -1,14 +1,20 @@
 use serde::{Deserialize, Serialize};
-use deps::hash::HashMap;
+use deps::hash::{HashMap, HashSet};
 use util::{Direction, Coordinate, Location};
-
-use crate::{MovementId, TileId};
-use crate::character::MoveType;
-// use crate::character::Character;
-use crate::character::player::PlayerCharacter;
-
-use super::{World, WorldMap};
-use super::warp::WarpDestination;
+use crate::{
+    character::{
+        MoveType,
+        player::PlayerCharacter,
+        npc::NPCId,
+    },
+    map::{
+        TileId,
+        MovementId,
+        World,
+        WorldMap,
+        WarpDestination,
+    }
+};
 
 pub enum TryMoveResult {
     MapUpdate,
@@ -31,6 +37,30 @@ pub struct WorldMapManager {
     #[serde(skip)]
     pub warp: Option<WarpDestination>,
 
+    #[serde(skip)]
+    pub battling: Option<TrainerEntry>,
+
+    #[serde(skip)]
+    pub door: Option<Door>,
+}
+
+pub struct TrainerEntry {
+    pub map: Location,
+    pub id: NPCId,
+    pub disable_others: HashSet<NPCId>,
+}
+
+pub type TrainerEntryRef<'a> = &'a mut Option<TrainerEntry>;
+
+pub struct Door {
+    pub position: usize,
+    pub tile: TileId,
+    pub accumulator: f32,
+    pub open: bool,
+}
+
+impl Door {
+    pub const DOOR_MAX: f32 = 3.99;
 }
 
 impl World for WorldMapManager {
@@ -75,6 +105,22 @@ impl WorldMapManager {
                         self.warp = Some(*destination);
                         return Some(TryMoveResult::MapUpdate);
                     } else {
+
+                        // open door on warp
+
+                        let map = self.get().unwrap();
+                        self.door = Some(
+                            Door {
+                                position: coords.x as usize + coords.y as usize * map.width,
+                                tile: map.tile(coords).unwrap(),
+                                accumulator: 0.0,
+                                open: true,
+                            }
+                        );
+                        self.player.character.update_sprite();
+
+                        // door open end
+
                         true
                     }
                 } else {
@@ -116,11 +162,11 @@ impl WorldMapManager {
                 let current_coords = chunk.coords;
                 let absolute = current_coords + coords;
                 for connection in chunk.connections.iter() {
-                    if let Some(current) = self.maps.get(&Location::new(None, *connection)) {
+                    if let Some(current) = self.maps.get(connection) {
                         if let Some(chunk) = &current.chunk {
                             if let Some(movement) = current.movement(absolute - chunk.coords) {
                                 let c = current_coords - chunk.coords;
-                                self.current = Some(Location::new(None, *connection));
+                                self.current = Some(*connection);
                                 self.player.character.position.coords += c;
                                 return Some(movement);
                             }
@@ -160,12 +206,32 @@ impl WorldMapManager {
     }
 
     pub fn warp(&mut self, destination: WarpDestination) {
-        match self.maps.contains_key(&destination.location) {
-            true => {
+        match self.maps.get(&destination.location) {
+            Some(map) => {
+                
+                self.door = Some(
+                    Door {
+                        position: destination.position.coords.x as usize + destination.position.coords.y as usize * map.width,
+                        tile: map.tile(destination.position.coords).unwrap(),
+                        accumulator: 0.0,
+                        open: true,
+                    }
+                );
+
                 self.player.character.position.from_destination(destination.position);
                 self.current = Some(destination.location);
             }
-            false => todo!(),
+            None => todo!(),
+        }
+    }
+
+    pub fn do_move(&mut self, delta: f32) -> bool {
+        if if let Some(door) = &self.door {
+            !door.open || door.accumulator == Door::DOOR_MAX
+        } else { true } {
+            self.player.do_move(delta)
+        } else {
+            false
         }
     }
 

@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 use crate::{
     deps::Random,
-    util::{Entity, Completable, Direction, Timer, LocationId},
+    util::{Entity, Completable, Direction, Timer, Location},
     pokedex::item::ItemStack,
     input::{pressed, Control, debug_pressed, DebugBind},
     text::MessagePage,
@@ -20,17 +20,17 @@ use crate::{
 };
 
 use worldlib::{
-    TileId,
     character::{
         movement::MovementType,
         npc::{NPC, NPCId},
         player::PlayerCharacter,
     },
     map::{
+        TileId,
         World,
         WorldMap,
         warp::WarpDestination,
-        manager::can_move,
+        manager::{can_move, TrainerEntryRef},
         ActiveNPC,
     },
     script::world::{WorldScript, Condition, WorldActionKind, ScriptWarp},
@@ -141,7 +141,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, warp: &mut Option<WarpDestination>, window: &mut TextWindow) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, trainer: TrainerEntryRef, warp: &mut Option<WarpDestination>, window: &mut TextWindow) {
 
         if is_debug() {
             debug_input(ctx, self);
@@ -401,7 +401,7 @@ impl GameWorld for WorldMap {
                         }
                         WorldActionKind::NPCBattle(id) => {
                             if let Some(npc) = self.npcs.get(id) {
-                                trainer_battle(battle, npc, &self.id, id);
+                                trainer_battle(battle, trainer, npc, &self.id, id);
                             }
                             pop = true;
                         }
@@ -555,7 +555,7 @@ impl GameWorld for WorldMap {
         if let Some((id, npc)) = self.npcs.active.as_mut() {
             if window.text.alive() {
                 if window.text.finished() {
-                    trainer_battle(battle, npc, &self.id, id);
+                    trainer_battle(battle, trainer, npc, &self.id, id);
                     window.text.despawn();
                     let (id, npc) = self.npcs.active.take().unwrap();
                     self.npcs.list.insert(id, Some(npc));
@@ -635,7 +635,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool) {
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<worldlib::map::manager::Door>, screen: &RenderCoords, border: bool) {
         let primary = textures.tiles.palettes.get(&self.palettes[0]).expect("Could not get primary palette for map!");
         let length = primary.height() as TileId;
         let secondary = textures.tiles.palettes.get(&self.palettes[1]).expect("Could not get secondary palette for map!");
@@ -650,9 +650,15 @@ impl GameWorld for WorldMap {
                 let render_x = (xx << 4) as f32 - screen.focus.x;
 
                 if !(x < 0 || y < 0 || y >= self.height as _ || x >= self.width as _) {
-                    let tile = self.tiles[x as usize + row as usize];
+                    let index = x as usize + row as usize;
+                    let tile = self.tiles[index];
                     let (texture, tile) = if length > tile { (primary, tile) } else { (secondary, tile - length) };
                     textures.tiles.draw_tile(ctx, texture, tile, render_x, render_y);
+                    if let Some(door) = door {
+                        if door.position == index {
+                            textures.tiles.draw_door(ctx, door, render_x, render_y);
+                        }
+                    }
                 } else if border {
                     let tile = self.border[if x % 2 == 0 { //  x % 2 + if y % 2 == 0 { 0 } else { 2 }
                         if y % 2 == 0 { 0 } else { 2 }
@@ -701,7 +707,7 @@ pub fn despawn_script(script: &mut WorldScript) {
     script.despawn();
 }
 
-fn find_battle(save: &mut PlayerSave, map: &LocationId, id: NPCId, npc: &mut Option<NPC>, active: &mut ActiveNPC, player: &mut PlayerCharacter) -> bool {
+fn find_battle(save: &mut PlayerSave, map: &Location, id: NPCId, npc: &mut Option<NPC>, active: &mut ActiveNPC, player: &mut PlayerCharacter) -> bool {
     if !save.world.has_battled(map, &id) {
         if npc.as_mut().map(|npc| npc.find_character(&mut player.character)).unwrap_or_default() {
             *active = Some((id, npc.take().unwrap()));

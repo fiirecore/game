@@ -3,7 +3,11 @@ use firecore_font::message::TextColor;
 use serde::{Deserialize, Serialize};
 
 use crate::character::npc::npc_type::NPCTypeId;
-use crate::{PaletteId, TileId};
+use crate::map::{
+    TileId,
+    PaletteId, 
+    // TileLocation,
+};
 use crate::character::npc::NPC;
 use crate::character::npc::NPCId;
 use crate::character::npc::npc_type::TrainerType;
@@ -51,6 +55,8 @@ pub struct SerializedNPCType {
 pub type Palettes = HashMap<PaletteId, Vec<u8>>;
 pub type Animated = HashMap<TileId, Vec<u8>>;
 
+pub type Doors = HashMap<Vec<TileId>, Vec<u8>>;
+
 #[derive(Deserialize, Serialize)]
 pub struct SerializedTextures {
 
@@ -58,4 +64,12 @@ pub struct SerializedTextures {
 
     pub animated: Animated,
 
+    pub doors: Doors,
+
+}
+
+#[derive(Deserialize)]
+pub struct SerializedDoor {
+    pub tiles: Vec<TileId>,
+    pub file: String,
 }

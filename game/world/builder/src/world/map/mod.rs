@@ -1,5 +1,5 @@
 use std::path::{Path, PathBuf};
-use util::Location;
+use util::{Location, LocationId};
 use worldlib::{
     map::{
         manager::{Maps, WorldMapManager},
@@ -13,8 +13,7 @@ use crate::world::textures::get_textures;
 
 use super::MapConfig;
 
-pub mod chunk;
-pub mod set;
+pub mod list;
 
 pub fn load_maps<P: AsRef<Path>>(maps: P, textures: P) -> (WorldMapManager, SerializedTextures) {
     let maps_path = maps.as_ref();
@@ -50,7 +49,7 @@ pub fn load_maps<P: AsRef<Path>>(maps: P, textures: P) -> (WorldMapManager, Seri
                     let file = entry.path();
                     if let Some(ext) = file.extension() {
                         if ext == std::ffi::OsString::from("ron") {
-                            maps.extend(load_map(&worlds, &file));
+                            maps.extend(load_map(&worlds, &file).into_iter().map(|map| (map.id, map)));
                         }
                     }
                 }
@@ -68,7 +67,7 @@ pub fn load_maps<P: AsRef<Path>>(maps: P, textures: P) -> (WorldMapManager, Seri
     (manager, textures)
 }
 
-fn load_map(root_path: &PathBuf, file: &PathBuf) -> Vec<(Location, WorldMap)> {
+fn load_map(root_path: &PathBuf, file: &PathBuf) -> Vec<WorldMap> {
     println!("Loading map under: {:?}", root_path);
 
     let data = std::fs::read_to_string(file).unwrap_or_else(|err| {
@@ -79,17 +78,14 @@ fn load_map(root_path: &PathBuf, file: &PathBuf) -> Vec<(Location, WorldMap)> {
     });
 
     match ron::from_str(&data) {
-        Ok(serialized_chunk) => {
-            let chunk = chunk::new_chunk_map(root_path, serialized_chunk);
-            vec![(Location::new(None, chunk.id), chunk)]
-        }
+        Ok(config) => vec![load_map_from_config(root_path, config, None)],
         Err(chunk_err) => match ron::from_str(&data) {
-            Ok(serialized_map_set) => set::load_map_set(root_path, serialized_map_set),
+            Ok(list) => list::load_map_list(root_path, list),
             Err(set_err) => {
                 panic!(
-                    "Map config at {:?} does not contain either a jigsaw map or a warp map. 
-                        Chunk map error: {}, 
-                        Map set error: {}\n",
+                    "Map config at {:?} does not contain either a MapConfig or a map list. 
+                        MapConfig error: {}, 
+                        Map list error: {}\n",
                     &root_path, chunk_err, set_err
                 );
             }
@@ -97,7 +93,8 @@ fn load_map(root_path: &PathBuf, file: &PathBuf) -> Vec<(Location, WorldMap)> {
     }
 }
 
-pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig) -> WorldMap {
+pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map: Option<LocationId>) -> WorldMap {
+    println!("    Loading map named {}", config.name);
     let root_path = root_path.as_ref();
     let gba_map = get_gba_map(
         std::fs::read(root_path.join(config.file)).unwrap_or_else(|err| {
@@ -109,7 +106,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig) -> 
     );
 
     WorldMap {
-        id: config.identifier,
+        id: Location::new(map, config.identifier),
 
         name: config.name,
         music: gba_map.music,
@@ -121,16 +118,15 @@ pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig) -> 
 
         tiles: gba_map.tiles,
         movements: gba_map.movements,
-        // border: Border {
+
         border: gba_map.borders,
 
-        chunk: config.chunk,
-        // size: (gba_map.borders.len() as f32).sqrt() as u8,
-        // },
+        chunk: config.chunk.map(|chunk| chunk.into()),
+
         warps: super::warp::load_warp_entries(root_path.join("warps")),
         wild: super::wild::load_wild_entries(root_path.join("wild")),
         npcs: super::npc::load_npc_entries(root_path.join("npcs")),
         scripts: super::script::load_script_entries(root_path.join("scripts")),
-        // state: WorldMapState::default(),
+
     }
 }

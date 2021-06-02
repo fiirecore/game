@@ -1,19 +1,10 @@
 use serde::{Deserialize, Serialize};
-use deps::{
-    hash::HashMap,
-    vec::ArrayVec,
-};
 use util::{
     Coordinate,
-    LocationId,
+    Location,
 };
 use firecore_audio_lib::music::MusicId;
 
-use crate::MapSize;
-use crate::MovementId;
-use crate::TileId;
-
-use crate::character::npc::{NPCId, NPC};
 use crate::script::world::WorldScript;
 
 use wild::WildEntry;
@@ -23,7 +14,22 @@ pub mod manager;
 
 pub mod warp;
 pub mod wild;
+
+mod chunk;
+pub use chunk::*;
+
+mod npc;
+pub use npc::*;
+
 // pub mod object;
+
+pub type TileId = u16;
+pub type MovementId = u8;
+pub type MapSize = usize;
+
+pub type PaletteId = u8;
+
+// pub type TileLocation = (PaletteId, TileId);
 
 pub trait World {
 
@@ -40,7 +46,7 @@ pub trait World {
 #[derive(Serialize, Deserialize)]
 pub struct WorldMap {
 
-    pub id: LocationId,
+    pub id: Location,
 
     pub name: String,
     pub music: MusicId,
@@ -48,7 +54,7 @@ pub struct WorldMap {
     pub width: MapSize,
     pub height: MapSize,
 
-    pub palettes: [u8; 2],
+    pub palettes: [PaletteId; 2],
 
     pub tiles: Vec<TileId>,
     pub movements: Vec<MovementId>,
@@ -72,44 +78,6 @@ pub struct WorldMap {
     // #[serde(skip)]
     // pub state: WorldMapState,
 
-}
-
-pub type Connections = ArrayVec<[LocationId; 6]>;
-
-#[derive(Serialize, Deserialize)]
-pub struct WorldChunk {
-
-    pub connections: Connections,
-
-    pub coords: Coordinate,
-
-}
-
-pub type NPCMap = HashMap<NPCId, Option<NPC>>;
-pub type ActiveNPC = Option<(NPCId, NPC)>;
-
-#[derive(Default, Serialize, Deserialize)]
-pub struct NPCManager {
-    pub list: NPCMap,
-    pub active: ActiveNPC,
-}
-
-impl NPCManager {
-    pub fn get(&self, id: &NPCId) -> Option<&NPC> {
-        self.list.get(id).map(|npc| npc.as_ref()).unwrap_or(self.active.as_ref().filter(|(active, _)| active == id).map(|(_, npc)| npc))
-    }
-    pub fn get_mut(&mut self, id: &NPCId) -> Option<&mut NPC> {
-        self.list.get_mut(id).map(|npc| npc.as_mut()).unwrap_or(self.active.as_mut().filter(|(active, _)| active == id).map(|(_, npc)| npc))
-    }
-}
-
-impl Into<NPCManager> for NPCMap {
-    fn into(self) -> NPCManager {
-        NPCManager {
-            list: self,
-            active: Default::default(),
-        }
-    }
 }
 
 impl World for WorldMap {

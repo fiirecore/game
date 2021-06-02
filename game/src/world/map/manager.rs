@@ -33,7 +33,7 @@ use worldlib::{
     serialized::SerializedWorld,
     map::{
         World,
-        manager::{WorldMapManager, TryMoveResult},
+        manager::{WorldMapManager, TryMoveResult, Door},
     },
     character::{
         MoveType,
@@ -84,11 +84,33 @@ fn on_start(wm: &mut WorldMapManager, ctx: &mut Context, music: bool) {
 }
 
 fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, battle: &mut Option<crate::battle_glue::BattleEntry>, text_window: &mut TextWindow) {
+
+    if let Some(door) = &mut wm.door {
+        match door.open {
+            true => {
+                if door.accumulator < Door::DOOR_MAX {
+                    door.accumulator += delta * 6.0;
+                    if door.accumulator >= Door::DOOR_MAX {
+                        door.accumulator = Door::DOOR_MAX;
+                    }
+                }
+            }
+            false => {
+                if door.accumulator > 0.0 {
+                    door.accumulator -= delta * 6.0;
+                    if door.accumulator <= 0.0 {
+                        wm.door = None;
+                    }
+                }
+            }
+        }
+    }
+
     if let Some(map) = match wm.current.as_ref() {
         Some(cur) => wm.maps.get_mut(cur),
         None => None,
     } {
-        map.update(ctx, delta, &mut wm.player, battle, &mut wm.warp, text_window);
+        map.update(ctx, delta, &mut wm.player, battle, &mut wm.battling, &mut wm.warp, text_window);
     }
 }
 
@@ -96,14 +118,14 @@ fn draw(wm: &WorldMapManager, ctx: &mut Context, textures: &WorldTextures, scree
     if let Some(map) = wm.get() {
         match &map.chunk {
             Some(chunk) => {
-                map.draw(ctx, textures, &screen.offset(chunk.coords), border);
-                for map in chunk.connections.iter().flat_map(|id| wm.maps.get(&util::Location { map: None, index: *id })) {
+                map.draw(ctx, textures, &wm.door, &screen.offset(chunk.coords), border);
+                for map in chunk.connections.iter().flat_map(|id| wm.maps.get(id)) {
                     if let Some(chunk) = &map.chunk {
-                        map.draw(ctx, textures, &screen.offset(chunk.coords), false);
+                        map.draw(ctx, textures, &None, &screen.offset(chunk.coords), false);
                     }
                 }
             },
-            None => map.draw(ctx, textures, screen, border),
+            None => map.draw(ctx, textures, &wm.door, screen, border),
         }
     }
 }
@@ -276,14 +298,20 @@ impl WorldManager {
                     
                 }
             } else {
-                if self.map_manager.warp.is_some() {
-                    self.warp_transition.spawn();
-                    self.map_manager.player.freeze_input();
+                if let Some(warp) = &self.map_manager.warp {
+                    if if let Some(door) = &self.map_manager.door {
+                        door.accumulator == 0.0 && !door.open
+                    } else {
+                        true
+                    } || !warp.transition.warp_on_tile {
+                        self.warp_transition.spawn();                   
+                        self.map_manager.player.freeze_input();
+                    }
                 }
             }
     
             if !self.map_manager.player.is_frozen() {
-                if self.map_manager.player.do_move(delta) {
+                if self.map_manager.do_move(delta) {
                     self.stop_player(ctx, battle);
                 }
             }
@@ -324,12 +352,20 @@ impl WorldManager {
     }
 
     fn stop_player(&mut self, ctx: &mut Context, battle: BattleEntryRef) {
+
         self.map_manager.player.character.stop_move();
 
         if let Some(destination) = self.map_manager.warp_at(self.map_manager.player.character.position.coords) { // Warping does not trigger tile actions!
             self.map_manager.warp = Some(*destination);
         } else if self.map_manager.in_bounds(self.map_manager.player.character.position.coords) {
             on_tile(&mut self.map_manager, ctx, &mut self.textures, battle);
+        }
+
+        if let Some(door) = &mut self.map_manager.door {
+            if self.map_manager.warp.is_some() {
+                self.textures.player.draw = false;
+            }
+            door.open = false;
         }
 
     }

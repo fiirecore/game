@@ -1,4 +1,4 @@
-use worldlib::{MapSize, TileId, MovementId};
+use worldlib::map::{MapSize, TileId, MovementId};
 
 pub struct GbaMap {
 	

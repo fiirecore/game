@@ -1,6 +1,6 @@
 // extern crate firecore_game as game;
 
-use crate::battle_glue::BattleEntry;
+use crate::battle_glue::BattleEntryRef;
 
 use deps::tetra::Context;
 use worldlib::{
@@ -8,6 +8,7 @@ use worldlib::{
     map::{
         World,
         warp::WarpDestination,
+        manager::{TrainerEntryRef, Door},
     },
 };
 
@@ -27,11 +28,11 @@ pub trait GameWorld: World {
 
     fn on_start(&mut self, ctx: &mut Context, music: bool);
 
-    fn on_tile(&mut self, ctx: &mut Context, battle: &mut Option<BattleEntry>, player: &mut PlayerCharacter);
+    fn on_tile(&mut self, ctx: &mut Context, battle: BattleEntryRef/*, trainer: TrainerEntryRef*/, player: &mut PlayerCharacter);
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: &mut Option<BattleEntry>, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow);
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut PlayerCharacter, battle: BattleEntryRef, trainer: TrainerEntryRef, warp: &mut Option<WarpDestination>, text_window: &mut TextWindow);
 
-    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool);
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<Door>, screen: &RenderCoords, border: bool);
 
 }
 

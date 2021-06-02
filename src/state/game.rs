@@ -25,9 +25,6 @@ pub struct GameStateManager {
 
 	action: Option<GameStateAction>,
 
-	#[deprecated]
-	next: Option<MainStates>,
-
 	state: GameStates,
 	
 	world: WorldManager,
@@ -61,7 +58,6 @@ impl GameStateManager {
 			action: None,
 
 			state: GameStates::default(),
-			next: None,
 			
 			world: WorldManager::new(ctx, party.clone(), bag.clone()),
 			battle: BattleManager::new(ctx, party, bag),
@@ -143,10 +139,6 @@ impl State for GameStateManager {
 				}
 			}
 		}
-
-		self.action.take().map(|action| match action {
-			GameStateAction::ExitToMenu => self.next = Some(MainStates::Menu),
-		});
         Ok(())
     }
 
@@ -165,7 +157,9 @@ impl State for GameStateManager {
 }
 
 impl MainState for GameStateManager {
-	fn next(&mut self) -> &mut Option<MainStates> {
-        &mut self.next
+	fn next(&mut self) -> Option<MainStates> {
+        self.action.take().map(|action| match action {
+			GameStateAction::ExitToMenu => MainStates::Menu,
+		})
 	}
 }

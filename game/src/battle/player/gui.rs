@@ -17,12 +17,6 @@ pub struct BattlePlayerGui {
 
 }
 
-// impl BattlePlayerGui {
-
-//     pub fn update(&mut self, ctx: &Context, delta: f32)
-
-// }
-
 impl BattlePlayerAction for BattlePlayerGui {
 
     fn moves(&mut self, ctx: &Context, delta: f32, data: &BattleData, active_index: &mut usize, user: &mut BattleParty, target: &ActivePokemonArray) -> bool {

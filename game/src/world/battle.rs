@@ -1,9 +1,5 @@
 use crate::{
-    deps::{
-        str::TinyStr16,
-        hash::HashSet,
-    },
-    util::LocationId,
+    util::Location,
     pokedex::{
         moves::target::Team,
         pokemon::{
@@ -18,7 +14,10 @@ use crate::{
 };
 
 use worldlib::{
-    map::wild::{WildEntry, WILD_RANDOM},
+    map::{
+        wild::{WildEntry, WILD_RANDOM},
+        manager::{TrainerEntry, TrainerEntryRef},
+    },
     character::npc::{NPC, NPCId},
 };
 
@@ -29,15 +28,6 @@ use crate::world::{
         texture::npc::NPCTextureManager,
     },
 };
-
-#[deprecated]
-pub static mut WORLD_TRAINER_DATA: Option<WorldTrainerData> = None;
-
-pub struct WorldTrainerData {
-    id: NPCId,
-    disable_others: HashSet<NPCId>,
-    map: TinyStr16,
-}
 
 pub fn random_wild_battle(battle: &mut Option<BattleEntry>) {
     let mut party = PersistentParty::new();
@@ -67,10 +57,10 @@ pub fn wild_battle(battle: BattleEntryRef, wild: &WildEntry) {
     });
 }
 
-pub fn trainer_battle(battle: BattleEntryRef, npc: &NPC, map_id: &LocationId, npc_id: &NPCId) {
+pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &NPC, map_id: &Location, npc_id: &NPCId) {
     if let Some(trainer) = npc.trainer.as_ref() {
         let save = data();
-        if let Some(map) = save.world.map.get(map_id) {
+        if let Some(map) = save.world.map.get(&map_id.index) {
             if !map.battled.contains(npc_id) {
                 let npc_type = npc_type(&npc.npc_type);
                 if let Some(trainer_type) = npc_type.trainer.as_ref() {
@@ -91,15 +81,13 @@ pub fn trainer_battle(battle: BattleEntryRef, npc: &NPC, map_id: &LocationId, np
                             size: 1,
                         }
                     );
-                    unsafe {
-                        WORLD_TRAINER_DATA = Some(
-                            WorldTrainerData {
-                                id: *npc_id,
-                                disable_others: trainer.disable.clone(),
-                                map: *map_id,
-                            }
-                        )
-                    }
+                    *world = Some(
+                        TrainerEntry {
+                            id: *npc_id,
+                            disable_others: trainer.disable.clone(),
+                            map: *map_id,
+                        }
+                    )
                 }
             }
         }
@@ -107,15 +95,13 @@ pub fn trainer_battle(battle: BattleEntryRef, npc: &NPC, map_id: &LocationId, np
 }
 
 pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, winner: Team, trainer: bool) {
-    if let Some(world) = unsafe{WORLD_TRAINER_DATA.take()} {
+    if let Some(world) = world_manager.map_manager.battling.take() {
         match winner {
             Team::Player => {
                 if trainer {
                     let battled = &mut player.world.get_map(&world.map).battled;
                     battled.insert(world.id);
-                    for npc in world.disable_others {
-                        battled.insert(npc);
-                    }
+                    battled.extend(world.disable_others);
                 }                	
             }
             Team::Opponent => {
