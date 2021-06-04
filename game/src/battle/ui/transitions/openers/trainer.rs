@@ -1,11 +1,7 @@
-use crate::{
-    util::{Reset, Completable},
-    graphics::draw_o_bottom,
-    tetra::{
+use crate::{battle::pokemon::gui::ActiveRenderer, graphics::draw_o_bottom, tetra::{
         Context,
         graphics::Texture,
-    }
-};
+    }, util::{Reset, Completable}};
 
 use crate::battle::{
     Battle,
@@ -40,9 +36,9 @@ impl BattleOpener for TrainerBattleOpener {
         self.opener.update(delta);
     }
 
-    fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle) {
+    fn draw_below_panel(&self, ctx: &mut Context, player: &ActiveRenderer, opponent: &ActiveRenderer) {
         draw_o_bottom(ctx, self.trainer.as_ref(), 144.0 - self.opener.offset, 74.0);
-        self.opener.draw_below_panel(ctx, battle);
+        self.opener.draw_below_panel(ctx, player, opponent);
     }
 
     fn draw(&self, ctx: &mut Context) {

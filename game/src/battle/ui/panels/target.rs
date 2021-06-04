@@ -1,6 +1,14 @@
-use crate::{battle::pokemon::BattlePartyView, graphics::{draw_text_left, draw_cursor}, gui::Panel, input::{pressed, Control}, tetra::Context, text::TextColor};
+use crate::{
+    input::{pressed, Control},
+    gui::Panel,
+    text::TextColor,
+    graphics::{draw_text_left, draw_cursor}, 
+    tetra::Context, 
+};
 
-use crate::battle::pokemon::ActivePokemonArray;
+use crate::battle::{
+    pokemon::BattlePartyUnknown,
+};
 
 pub struct TargetPanel {
 
@@ -23,10 +31,10 @@ impl TargetPanel {
         }
     }
 
-    pub fn update_names(&mut self, targets: &BattlePartyView) {
+    pub fn update_names(&mut self, targets: &BattlePartyUnknown) {
         self.names.clear();
-        for pokemon in targets.active.iter() {
-            self.names.push(pokemon.as_ref().map(|pokemon| pokemon.value().name.clone()));
+        for index in targets.active.iter() {
+            self.names.push(index.as_ref().map(|index| targets.pokemon[*index].as_ref().map(|pokemon| pokemon.pokemon.value().name.clone()).unwrap_or(String::from("Unknown"))));
         }
     }
 

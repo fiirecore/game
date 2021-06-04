@@ -3,12 +3,11 @@ use std::collections::BTreeMap;
 use crate::{
     types::Effective,
     moves::{
-        Move,
+        MoveRef,
         target::MoveTargetInstance,
     },
     pokemon::{
         Health,
-        instance::PokemonInstance,
         stat::{StatType, Stage},
         status::StatusEffect,
     }
@@ -24,13 +23,10 @@ pub enum MoveResult {
     Todo,
 }
 
+pub type MoveResults = BTreeMap<MoveTargetInstance, Option<MoveResult>>;
+
 pub struct TurnResult {
-    pub pokemon_move: &'static Move,
-    pub results: BTreeMap<MoveTargetInstance, Option<MoveResult>>,
+    pub pokemon_move: MoveRef,
+    pub results: MoveResults,
 }
 
-#[derive(Clone, Copy)]
-pub struct PokemonTarget<'a> {
-    pub instance: MoveTargetInstance,
-    pub pokemon: &'a PokemonInstance,
-}

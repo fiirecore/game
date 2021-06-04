@@ -1,4 +1,4 @@
-use crate::tetra::Context;
+use crate::{battle::pokemon::gui::ActiveRenderer, tetra::Context};
 
 use crate::battle::{
     Battle,
@@ -58,8 +58,8 @@ impl BattleOpenerManager {
         }
     }
 
-    pub fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle) {
-        self.get().draw_below_panel(ctx, battle);
+    pub fn draw_below_panel(&self, ctx: &mut Context, player: &ActiveRenderer, opponent: &ActiveRenderer) {
+        self.get().draw_below_panel(ctx, player, opponent);
     }
 
     pub fn draw(&self, ctx: &mut Context) {

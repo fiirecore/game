@@ -1,17 +1,10 @@
-use crate::{
-    util::{
-        Reset, 
-        Completable,
-    },
-    storage::data,
-    text::MessagePage,
-    gui::DynamicText,
-    graphics::draw_o_bottom,
-    tetra::{
+use crate::{battle::pokemon::gui::ActiveRenderer, graphics::draw_o_bottom, gui::DynamicText, storage::data, tetra::{
         Context,
         graphics::Texture,
-    }
-};
+    }, text::MessagePage, util::{
+        Reset, 
+        Completable,
+    }};
 
 use crate::battle::{
     Battle,
@@ -84,8 +77,8 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
-        self.introduction.update(ctx, delta, battle, text);
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActiveRenderer, opponent: &mut ActiveRenderer, text: &mut DynamicText) {
+        self.introduction.update(ctx, delta, player, opponent, text);
         if text.can_continue() {
             if text.current() == text.len() - 2 {
                 self.leaving = true;
@@ -96,13 +89,13 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         }
     }
 
-    fn draw(&self, ctx: &mut Context, battle: &Battle) {
+    fn draw(&self, ctx: &mut Context, player: &ActiveRenderer, opponent: &ActiveRenderer) {
         if self.offset < Self::FINAL_TRAINER_OFFSET {
             draw_o_bottom(ctx, self.texture.as_ref(), 144.0 + self.offset, 74.0);
         } else {
-            self.introduction.draw_opponent(ctx, battle);
+            self.introduction.draw_opponent(ctx, opponent);
         }
-        self.introduction.draw_player(ctx, battle);  
+        self.introduction.draw_player(ctx, player);  
     }
 }
 

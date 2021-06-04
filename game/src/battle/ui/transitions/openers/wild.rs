@@ -1,12 +1,8 @@
-use crate::{
-    util::{Reset, Completable},
-    graphics::{byte_texture, position},
-    tetra::{
+use crate::{battle::pokemon::gui::ActiveRenderer, graphics::{byte_texture, position}, tetra::{
         Context,
         math::Vec2,
         graphics::Texture,
-    }
-};
+    }, util::{Reset, Completable}};
 
 use crate::battle::{
     Battle,
@@ -59,11 +55,11 @@ impl BattleOpener for WildBattleOpener {
         self.opener.offset()
     }
 
-    fn draw_below_panel(&self, ctx: &mut Context, battle: &Battle) {
-        for active in battle.opponent.active.iter() {
+    fn draw_below_panel(&self, ctx: &mut Context, player: &ActiveRenderer, opponent: &ActiveRenderer) {
+        for active in opponent.iter() {
             active.renderer.draw(ctx, Vec2::new(-self.opener.offset, 0.0), crate::graphics::LIGHTGRAY);
         }
-        self.opener.draw_below_panel(ctx, battle);
+        self.opener.draw_below_panel(ctx, player, opponent);
         if self.offset.y > 0.0 {
             let y = 114.0 - self.offset.y;
             self.grass.draw(ctx, position(self.offset.x - Self::GRASS_WIDTH, y));

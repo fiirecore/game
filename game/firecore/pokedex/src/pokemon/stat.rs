@@ -9,7 +9,7 @@ pub type Stats = StatSet<Stat>;
 mod base;
 pub use base::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, PartialOrd, Ord)]
 pub enum StatType {
 	Attack,
 	Defense,

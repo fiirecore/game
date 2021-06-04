@@ -1,7 +1,7 @@
 use crate::{
     util::Reset,
     pokedex::{
-        pokemon::instance::PokemonInstance,
+        pokemon::PokemonId,
         texture::{PokemonTexture, pokemon_texture},
     },
     graphics::{byte_texture, position},
@@ -186,9 +186,9 @@ impl PokemonRenderer {
         }
     }
 
-    pub fn with(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: &PokemonInstance, side: PokemonTexture) -> Self {
+    pub fn with(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: Option<&PokemonId>, side: PokemonTexture) -> Self {
         Self {
-            texture: Some(pokemon_texture(&pokemon.pokemon.id(), side).clone()),
+            texture: pokemon.map(|pokemon| pokemon_texture(pokemon, side).clone()),
             ..Self::new(ctx, index, side)
         }
     }
@@ -201,8 +201,8 @@ impl PokemonRenderer {
         }
     }
 
-    pub fn new_pokemon(&mut self, pokemon: Option<&PokemonInstance>) {
-        self.texture = pokemon.map(|pokemon| pokemon_texture(pokemon.pokemon.id(), self.side)).cloned();
+    pub fn new_pokemon(&mut self, pokemon: Option<&PokemonId>) {
+        self.texture = pokemon.map(|pokemon| pokemon_texture(pokemon, self.side)).cloned();
         self.reset();
     }
 

@@ -98,9 +98,15 @@ impl Identifiable for Pokemon {
 		unsafe { dex::POKEDEX.as_ref().map(|map| map.get(id)).flatten() }
 	}
 
+	fn unknown() -> Option<&'static Self> {
+		Self::try_get(&UNKNOWN_POKEMON)
+	}
+
 }
 
 pub type PokemonRef = StaticRef<Pokemon>;
+
+pub const UNKNOWN_POKEMON: PokemonId = 0; // "unknown" = 31093567915781749
 
 pub fn default_iv() -> Stats {
     Stats::uniform(15)
@@ -108,4 +114,16 @@ pub fn default_iv() -> Stats {
 
 pub const fn default_friendship() -> Friendship {
     70
+}
+
+impl core::fmt::Debug for Pokemon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        core::fmt::Display::fmt(&self, f)
+    }
+}
+
+impl core::fmt::Display for Pokemon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} ({})", self.name, self.id)
+    }
 }

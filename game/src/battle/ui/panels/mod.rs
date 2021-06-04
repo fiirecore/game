@@ -1,4 +1,4 @@
-use crate::{battle::pokemon::BattlePartyView, input::{pressed, Control}, pokedex::pokemon::instance::PokemonInstance, tetra::Context, util::{Entity, Reset}};
+use crate::{battle::pokemon::BattlePartyUnknown, input::{pressed, Control}, pokedex::pokemon::instance::PokemonInstance, tetra::Context, util::{Entity, Reset}};
 
 use crate::battle::{
     ui::panels::{
@@ -58,7 +58,7 @@ impl BattlePanel {
         self.spawn();
     }
 
-    pub fn target(&mut self, targets: &BattlePartyView) {
+    pub fn target(&mut self, targets: &BattlePartyUnknown) {
         self.fight.target(targets);
     }
 

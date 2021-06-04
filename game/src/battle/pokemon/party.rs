@@ -8,25 +8,13 @@ use crate::{
                 PokemonParty,
             },
         },
-        texture::{
-            PokemonTexture,
-        }
     },
-    tetra::Context,
 };
 
 use crate::battle::{
     pokemon::{
         ActivePokemon,
         PokemonOption,
-    },
-    ui::{
-        BattleGuiPosition,
-        BattleGuiPositionIndex,
-        pokemon::{
-            PokemonRenderer,
-            status::PokemonStatusGui,            
-        },
     },
 };
 
@@ -44,7 +32,7 @@ pub struct BattleParty {
 
 impl BattleParty {
 
-    pub fn new(ctx: &mut Context, mut party: MoveableParty,/*player: Box<dyn BattlePlayer>,*/ size: usize, side: PokemonTexture, position: BattleGuiPosition) -> Self {
+    pub fn new(mut party: MoveableParty,/*player: Box<dyn BattlePlayer>,*/ size: usize) -> Self {
 
         let mut active = vec![None; size];
         let mut current = 0;
@@ -65,27 +53,8 @@ impl BattleParty {
 
         Self {
             active: active.into_iter().enumerate().map(|(index, active)| match active.map(|index| party[index].take().map(|pokemon| (index, pokemon))).flatten() {
-                Some((index2, pokemon)) => {
-                    let instance = pokemon.value();
-                    let index = BattleGuiPositionIndex::new(position, index as u8, size);
-                    ActivePokemon {
-                        status: PokemonStatusGui::with(ctx, index, instance),
-                        renderer: PokemonRenderer::with(ctx, index, instance, side),
-                        pokemon: PokemonOption::Some(index2, pokemon),
-                        queued_move: None,
-                        last_move: None,
-                    }
-                }
-                None => {
-                    let index = BattleGuiPositionIndex::new(position, index as u8, size);
-                    ActivePokemon {
-                        pokemon: PokemonOption::None,
-                        queued_move: None,
-                        status: PokemonStatusGui::new(ctx, index),
-                        renderer: PokemonRenderer::new(ctx, index, side),
-                        last_move: None,
-                    }
-                }
+                Some((index, pokemon)) => ActivePokemon::new(index, pokemon),
+                None => ActivePokemon::default()
             }).collect(),
             pokemon: party,
             // player,
@@ -125,46 +94,31 @@ impl BattleParty {
         self.active[active_index].pokemon.as_mut()
     }
 
-    pub fn queue_replace(&mut self, active_index: usize, new: usize) {
-        if let Some((index, instance)) = self.active[active_index].pokemon.replace(new) {
-            if self.pokemon[index].is_some() {
-                panic!("Party spot at {} is already occupied!", index);
-            }
-            let level = instance.value().level;
-            self.pokemon[index] = Some(instance);
-            self.active[active_index].update_status(level, true);
-        }
-    }
-
-    pub fn run_replace(&mut self) {
-        for active in self.active.iter_mut() {
-            if let PokemonOption::ToReplace(new) = &active.pokemon {
-                let new = *new;
-                active.pokemon = PokemonOption::Some(new, self.pokemon[new].take().expect("Could not get inactive pokemon from party!"));
-                active.reset();
-            }
-        }
-    }
-
-    pub fn replace(&mut self, active_index: usize, new: usize) {
+    pub fn replace(&mut self, active_index: usize, new: Option<usize>) {
         if let PokemonOption::Some(index, instance) = self.active[active_index].pokemon.take() {
             if self.pokemon[index].is_some() {
                 panic!("Party spot at {} is already occupied!", active_index);
             }
             self.pokemon[index] = Some(instance);
-            self.active[active_index].pokemon = PokemonOption::Some(new, self.pokemon[new].take().unwrap());
-            self.active[active_index].reset();
+            self.active[active_index].pokemon = match new {
+                Some(new) => PokemonOption::Some(new, self.pokemon[new].take().unwrap()),
+                None => PokemonOption::None,
+            };
+            self.active[active_index].dequeue();
         }
     }
 
-    pub fn remove_pokemon(&mut self, active_index: usize) {
-        if let PokemonOption::Some(index, instance) = self.active[active_index].pokemon.take() {
-            if self.pokemon[index].is_some() {
-                panic!("Party spot at {} is already occupied!, \n {:?} \n {:?}", index, self.active, self.pokemon);
-            }
-            self.pokemon[index] = Some(instance);
-            self.active[active_index].reset();
+    pub fn collect_ref(&self) -> ArrayVec<[&PokemonInstance; 6]> {
+        let mut party = Vec::new();
+        for pokemon in self.pokemon.iter() {
+            party.push(pokemon.as_ref().map(|p| p.value()));
         }
+        for active in &self.active {
+            if let PokemonOption::Some(index, pokemon) = &active.pokemon {
+                party[*index] = Some(pokemon.value());
+            }
+        }
+        party.into_iter().flatten().collect()
     }
 
     pub fn collect_cloned(&self) -> PokemonParty {
@@ -187,43 +141,27 @@ impl BattleParty {
         party
     }
 
-    pub fn as_player_view(&self) -> BattlePartyPlayerView {
-        BattlePartyPlayerView {
-            pokemon: self.pokemon.clone(),
-            active: self.active.iter().map(|active| active.pokemon.clone()).collect(),
+    pub fn as_known(&self) -> super::BattlePartyKnown {
+        super::BattlePartyKnown {
+            pokemon: self.collect_cloned(),
+            active: self.active.iter().map(|active| active.pokemon.index()).collect(),
         }
     }
 
-    pub fn as_view(&self) -> BattlePartyView {
-        BattlePartyView {
-            active: self.active.iter().map(|active| match &active.pokemon {
-                PokemonOption::Some(_, instance) => Some(instance.value().pokemon),
-                _ => None,
-            }).collect()
-        }
-    }
-
-}
-
-#[derive(Default, Clone)]
-pub struct BattlePartyPlayerView {
-    pub pokemon: MoveableParty,
-    pub active: ArrayVec<[PokemonOption; 3]>,
-}
-
-#[derive(Default, Clone)]
-pub struct BattlePartyView {
-    pub active: ArrayVec<[Option<pokedex::pokemon::PokemonRef>; 3]>,
-}
-
-impl BattlePartyPlayerView {
-    pub fn collect_cloned(&self) -> PokemonParty {
-        let mut party = self.pokemon.clone();
-        for pokemon in self.active.iter() {
-            if let PokemonOption::Some(index, instance) = pokemon.clone() {
-                party[index] = Some(instance);
+    pub fn as_unknown(&self) -> super::BattlePartyUnknown {
+        let active = self.active.iter().map(|active| active.pokemon.index()).collect::<ArrayVec<[Option<usize>; 3]>>();
+        let mut pokemon = ArrayVec::new();
+        for (i, p) in self.collect_ref().iter().enumerate() {
+            if active.contains(&Some(i)) {
+                pokemon.push(Some(super::PokemonUnknown::new(p)));
+            } else {
+                pokemon.push(None);
             }
         }
-        party.into_iter().flatten().map(|cow| cow.owned()).collect()
+        super::BattlePartyUnknown {
+            pokemon,
+            active,
+        }
     }
+
 }

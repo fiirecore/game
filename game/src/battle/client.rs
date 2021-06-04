@@ -1,6 +1,4 @@
-use deps::tetra::Context;
-
-use super::{BattleData, pokemon::{BattleMove, BattlePartyPlayerView, BattlePartyView}};
+use super::{BattleData, pokemon::{BattleClientActionInstance, BattleMove, BattlePartyKnown, BattlePartyUnknown, PokemonUnknown}};
 
 pub mod gui;
 pub mod ai;
@@ -9,16 +7,24 @@ pub trait BattleClient {
 
     // fn name(&self) -> Cow<str>;
 
-    fn begin(&mut self, data: &BattleData);
+    fn begin(&mut self, data: &BattleData, user: BattlePartyKnown, targets: BattlePartyUnknown);
 
-    fn start_moves(&mut self, user: BattlePartyPlayerView, targets: BattlePartyView);
 
-    fn wait_moves(&mut self) -> Option<Vec<BattleMove>>;
+    fn start_select(&mut self);
 
-    fn start_faint(&mut self, active: usize);
+    fn wait_select(&mut self) -> Option<Vec<BattleMove>>;
 
-    fn wait_faint(&mut self) -> Option<usize>;
+    fn start_moves(&mut self, queue: Vec<BattleClientActionInstance>);
 
-    fn draw(&self, ctx: &mut Context);
+
+    // #[deprecated]
+    // fn start_faint(&mut self, active: usize);
+
+    fn wait_faint(&mut self, active: usize) -> Option<usize>;
+
+    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>, unknown: Option<PokemonUnknown>);
+
+
+    fn wait_finish_turn(&mut self) -> bool;
 
 }

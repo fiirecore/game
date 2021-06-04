@@ -1,21 +1,14 @@
-use crate::{
-	util::Entity,
-	pokedex::pokemon::{
+use crate::{battle::pokemon::{PokemonKnowData, PokemonUnknown}, graphics::{byte_texture, position, draw_text_left, draw_text_right}, gui::health::HealthBar, pokedex::pokemon::{
 		Level,
 		instance::PokemonInstance,
 		stat::StatSet,
-	},
-	gui::health::HealthBar,
-	text::TextColor,
-	graphics::{byte_texture, position, draw_text_left, draw_text_right},
-	tetra::{
+	}, tetra::{
 		Context,
 		math::Vec2,
 		graphics::{
 			Texture,
 		},
-	}
-};
+	}, text::TextColor, util::Entity};
 
 use crate::battle::ui::{
 	BattleGuiPosition,
@@ -90,22 +83,39 @@ impl PokemonStatusGui {
 
 	}
 
-	pub fn with(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: &PokemonInstance) -> Self {
+	pub fn with_known(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: Option<&PokemonInstance>) -> Self {
 
 		let ((background, origin, exp), data_pos, hb) = Self::attributes(ctx, index);
 		Self {
 			alive: false,
 			origin,
 			background,
-			name: Some(pokemon.name().to_string()),
-			level: Some(Self::level(pokemon.level)),
+			name: pokemon.map(|pokemon| pokemon.name().to_string()),
+			level: pokemon.map(|pokemon| Self::level(pokemon.level)),
 			data_pos,
-			health: (HealthBar::with_size(ctx, HealthBar::width(pokemon.hp(), pokemon.max_hp())), hb),
-			health_text: exp.is_some().then(|| format!("{}/{}", pokemon.hp(), pokemon.max_hp())),
+			health: (HealthBar::with_size(ctx, pokemon.map(|pokemon| HealthBar::width(pokemon.hp(), pokemon.max_hp())).unwrap_or_default()), hb),
+			health_text: exp.is_some().then(|| pokemon.map(|pokemon| format!("{}/{}", pokemon.hp(), pokemon.max_hp())).unwrap_or_default()),
 			exp: exp.map(|mut exp| {
-				exp.update_exp(pokemon.level, pokemon, true);
+				if let Some(pokemon) = pokemon {
+					exp.update_exp(pokemon.level, pokemon, true);
+				}
 				exp
 			}),			
+		}
+	}
+
+	pub fn with_unknown(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: Option<PokemonUnknown>) -> Self {
+		let ((background, origin, exp), data_pos, hb) = Self::attributes(ctx, index);
+		Self {
+			alive: false,
+			origin,
+			background,
+			name: pokemon.as_ref().map(|pokemon| pokemon.pokemon.value().name.clone()),
+			level: pokemon.as_ref().map(|pokemon| Self::level(pokemon.level)),
+			data_pos,
+			health: (HealthBar::with_size(ctx, pokemon.map(|pokemon| pokemon.hp).unwrap_or_default() * HealthBar::WIDTH), hb),
+			health_text: None,
+			exp: None,
 		}
 	}
 
@@ -206,7 +216,7 @@ impl PokemonStatusGui {
 					level.0 = Self::level_fmt(level.1);
 					let base = StatSet::hp(pokemon.pokemon.value().base.hp, pokemon.ivs.hp, pokemon.evs.hp, level.1);
 					self.health_text = Some(format!("{}/{}", pokemon.hp(), base));
-					self.health.0.resize(pokemon.hp(), base, false);
+					self.health.0.resize_hp(pokemon.hp(), base, false);
 				}
 			}
 			self.health.0.update(delta);
@@ -221,19 +231,29 @@ impl PokemonStatusGui {
 		self.exp.as_ref().map(|exp| exp.moving()).unwrap_or_default() || self.health.0.is_moving()
 	}
 
-	pub fn update_gui(&mut self, pokemon: Option<(Level, &PokemonInstance)>, reset: bool) {
+	pub fn update_gui(&mut self, pokemon: Option<&dyn PokemonKnowData>, reset: bool) {
+		self.update_gui_ex(if let Some(pokemon) = pokemon {
+            Some((pokemon.level(), pokemon))
+        } else {
+            None
+        }, true);
+	}
+
+	pub fn update_gui_ex(&mut self, pokemon: Option<(Level, &dyn PokemonKnowData)>, reset: bool) {
 		self.name = pokemon.map(|(previous, pokemon)| {
-			if pokemon.level == previous {
-				self.health.0.resize(pokemon.hp(), pokemon.max_hp(), reset);
+			if pokemon.level() == previous {
+				self.health.0.resize(pokemon.hp(), reset);
 			} 
 			if let Some(exp) = self.exp.as_mut() {
-				exp.update_exp(previous, pokemon, reset);
-				if pokemon.level == previous {
-					self.health_text = Some(format!("{}/{}", pokemon.hp(), pokemon.max_hp()));
+				if let Some(pokemon) = pokemon.instance() {
+					exp.update_exp(previous, pokemon, reset);
+					if pokemon.level() == previous {
+						self.health_text = Some(format!("{}/{}", pokemon.hp(), pokemon.max_hp()));
+					}
 				}
 			}
 			if reset {
-				self.level = Some(Self::level(pokemon.level));
+				self.level = Some(Self::level(pokemon.level()));
 			}
 			pokemon.name().to_string()
 		});

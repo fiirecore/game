@@ -1,15 +1,11 @@
-use crate::{
-    util::{Reset, Completable, Timer, WIDTH},
-    graphics::{byte_texture, position, draw_rectangle},
-    tetra::{
+use crate::{battle::pokemon::gui::ActiveRenderer, graphics::{byte_texture, position, draw_rectangle}, tetra::{
         Context,
         graphics::{
             Texture,
             Rectangle,
             Color,
         },
-    },
-};
+    }, util::{Reset, Completable, Timer, WIDTH}};
 
 use crate::battle::{
     Battle,
@@ -102,7 +98,7 @@ impl BattleOpener for DefaultBattleOpener {
         }
     }
 
-    fn draw_below_panel(&self, ctx: &mut Context, _battle: &Battle) {
+    fn draw_below_panel(&self, ctx: &mut Context, _player: &ActiveRenderer, _opponent: &ActiveRenderer) {
         self.player.draw_region(
             ctx,
             Rectangle::new(

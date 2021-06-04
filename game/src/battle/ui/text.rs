@@ -18,13 +18,13 @@ use crate::{
     },
 };
 
-use crate::battle::BattleType;
+use crate::battle::pokemon::PokemonKnowData;
 
 pub fn new() -> DynamicText {
     DynamicText::new(super::PANEL_ORIGIN.position + Vec2::new(11.0, 11.0), 1, TextColor::White, 6)
 }
 
-pub(crate) fn on_move(text: &mut DynamicText, pokemon_move: &Move, user: &PokemonInstance) {
+pub(crate) fn on_move(text: &mut DynamicText, pokemon_move: &Move, user: &dyn PokemonKnowData) {
     text.push(
         MessagePage::new(
             vec![format!("{} used {}!", user.name(), pokemon_move.name)],
@@ -34,15 +34,17 @@ pub(crate) fn on_move(text: &mut DynamicText, pokemon_move: &Move, user: &Pokemo
 }
 
 pub(crate) fn on_effective(text: &mut DynamicText, effective: &Effective) {
-    text.push(
-        MessagePage::new(
-            vec![format!("It was {}{}", effective, if &Effective::SuperEffective == effective { "!" } else { "..." })], 
-            Some(0.5),
-        )
-    );
+    if effective != &Effective::Effective {
+        text.push(
+            MessagePage::new(
+                vec![format!("It was {}{}", effective, if &Effective::SuperEffective == effective { "!" } else { "..." })], 
+                Some(0.5),
+            )
+        );
+    }
 }
 
-pub(crate) fn on_stat_stage(text: &mut DynamicText, pokemon: &PokemonInstance, stat: StatType, stage: Stage) {
+pub(crate) fn on_stat_stage(text: &mut DynamicText, pokemon: &dyn PokemonKnowData, stat: StatType, stage: Stage) {
     text.push(
         MessagePage::new(
             vec![
@@ -54,7 +56,7 @@ pub(crate) fn on_stat_stage(text: &mut DynamicText, pokemon: &PokemonInstance, s
     )
 }
 
-pub(crate) fn on_miss(text: &mut DynamicText, pokemon: &PokemonInstance) {
+pub(crate) fn on_miss(text: &mut DynamicText, pokemon: &dyn PokemonKnowData) {
     text.push(
         MessagePage::new(
             vec![format!("{} missed!", pokemon.name())], 
@@ -63,7 +65,7 @@ pub(crate) fn on_miss(text: &mut DynamicText, pokemon: &PokemonInstance) {
     );
 }
 
-pub(crate) fn on_item(text: &mut DynamicText, pokemon: &PokemonInstance, item: &Item) {
+pub(crate) fn on_item(text: &mut DynamicText, pokemon: &dyn PokemonKnowData, item: &Item) {
     text.push(
         MessagePage::new(
             vec![format!("A {} was used on {}", item.name, pokemon.name())], 
@@ -72,7 +74,7 @@ pub(crate) fn on_item(text: &mut DynamicText, pokemon: &PokemonInstance, item: &
     );
 }
 
-pub(crate) fn on_switch(text: &mut DynamicText, leaving: &PokemonInstance, coming: &PokemonInstance) {
+pub(crate) fn on_switch(text: &mut DynamicText, leaving: &dyn PokemonKnowData, coming: &dyn PokemonKnowData) {
     text.push(
         MessagePage::new(
             vec![format!("Come back, {}!", leaving.name())],
@@ -82,7 +84,7 @@ pub(crate) fn on_switch(text: &mut DynamicText, leaving: &PokemonInstance, comin
     on_go(text, coming);
 }
 
-pub(crate) fn on_go(text: &mut DynamicText, coming: &PokemonInstance) {
+pub(crate) fn on_go(text: &mut DynamicText, coming: &dyn PokemonKnowData) {
     text.push(
         MessagePage::new(
             vec![format!("Go, {}!", coming.name())],
@@ -106,16 +108,16 @@ pub(crate) fn on_go(text: &mut DynamicText, coming: &PokemonInstance) {
 //     }, None));
 // }
 
-pub(crate) fn on_faint(text: &mut DynamicText, battle_type: BattleType, team: Team, pokemon: &PokemonInstance) {
+pub(crate) fn on_faint(text: &mut DynamicText, is_wild: bool, team: Team, pokemon: &dyn PokemonKnowData) {
     text.push(
         MessagePage::new(
             vec![
                 match team {
                     Team::Player => pokemon.name().to_string(),
                     Team::Opponent => format!("{} {}",
-                        match battle_type {
-                            BattleType::Wild => "Wild",
-                            _ => "Foe",
+                        match is_wild {
+                            true => "Wild",
+                            false => "Foe",
                         },
                         pokemon.name(),
                     ),

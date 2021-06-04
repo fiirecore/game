@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use serde::Serialize;
 
 use deps::{
@@ -192,11 +191,12 @@ impl PokemonInstance {
 		self.current_hp == 0
 	}
 
-	pub fn name(&self) -> Cow<'_, str> {
-		match self.nickname.as_ref() {
-		    Some(name) => Cow::Borrowed(name),
-		    None => Cow::Owned(self.pokemon.value().name.to_ascii_uppercase()),
-		}
+	pub fn name(&self) -> &String {
+		self.nickname.as_ref().unwrap_or(&self.pokemon.value().name)
+		// match self.nickname.as_ref() {
+		//     Some(name) => Cow::Borrowed(name),
+		//     None => Cow::Owned(self.pokemon.value().name.to_ascii_uppercase()),
+		// }
 	}
 
 	pub fn hp(&self) -> Health {

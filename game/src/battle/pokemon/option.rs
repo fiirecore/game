@@ -10,6 +10,12 @@ pub enum PokemonOption {
     ToReplace(usize), // new pokemon
 }
 
+impl Default for PokemonOption {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
 impl PokemonOption {
     pub fn as_ref(&self) -> Option<&PokemonInstance> {
         match self {
@@ -49,6 +55,13 @@ impl PokemonOption {
         match self {
             PokemonOption::Some(..) => true,
             PokemonOption::None | PokemonOption::ToReplace(..) => false,
+        }
+    }
+
+    pub fn index(&self) -> Option<usize> {
+        match self {
+            PokemonOption::Some(index, ..) => Some(*index),
+            PokemonOption::None | PokemonOption::ToReplace(..) => None,
         }
     }
 

@@ -49,8 +49,12 @@ impl HealthBar {
 		(current as f32 * Self::WIDTH / max as f32).clamp(0.0, Self::WIDTH)
 	}
 	
-	pub fn resize(&mut self, current: Health, max: Health, reset: bool) {
-		self.bar.resize(Self::width(current, max), reset);
+	pub fn resize_hp(&mut self, current: Health, max: Health, reset: bool) {
+		self.resize(current as f32 / max as f32, reset)
+	}
+
+	pub fn resize(&mut self, percent: f32, reset: bool) {
+		self.bar.resize(Self::WIDTH * percent, reset);
 	}
 
 	pub fn is_moving(&self) -> bool {

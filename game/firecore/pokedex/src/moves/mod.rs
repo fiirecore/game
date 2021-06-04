@@ -51,6 +51,8 @@ pub struct Move {
 
 pub type MoveRef = StaticRef<Move>;
 
+pub const MOVE_UNKNOWN: MoveId = unsafe { MoveId::new_unchecked(31093567915781749) };
+
 impl Identifiable for Move {
     type Id = MoveId;
 
@@ -60,6 +62,10 @@ impl Identifiable for Move {
 
 	fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized {
 		unsafe { dex::MOVEDEX.as_ref().map(|map| map.get(id)).flatten() }
+	}
+
+	fn unknown() -> Option<&'static Self> {
+		Self::try_get(&MOVE_UNKNOWN)
 	}
 
 }

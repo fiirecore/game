@@ -1,7 +1,3 @@
-use std::collections::VecDeque;
-
-use pokedex::moves::target::Team;
-
 use crate::battle::pokemon::BattleActionInstance;
 
 #[derive(Debug, PartialEq)]
@@ -35,7 +31,7 @@ impl Default for TransitionState {
 
 #[derive(Debug)]
 pub enum BattleState {
-	Begin,
+	StartWait,
 	Selecting(bool, bool, bool), // started, player done, opponent done
 	// Waiting (for opponent)
 	Moving(MoveState),
@@ -49,7 +45,7 @@ impl BattleState {
 
 impl Default for BattleState {
     fn default() -> Self {
-        Self::Begin
+        Self::StartWait
     }
 }
 
@@ -58,24 +54,9 @@ pub enum MoveState {
 
 	Start,
 	SetupPokemon,
-	Pokemon(MoveQueue), // queue of pokemon
+	Pokemon(Vec<BattleActionInstance>), // queue of pokemon
 	SetupPost,
 	Post,
 	End,
 
-}
-
-#[derive(Debug)]
-pub struct MoveQueue {
-	pub actions: VecDeque<BattleActionInstance>,
-	pub current: Option<BattleActionInstance>,
-}
-
-impl MoveQueue {
-	pub fn new(actions: VecDeque<BattleActionInstance>) -> Self {
-		Self {
-			actions,
-			current: None,
-		}
-	}
 }

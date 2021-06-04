@@ -8,6 +8,8 @@ pub use damage::*;
 mod result;
 pub use result::*;
 
+pub mod pokemon;
+
 pub mod script;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

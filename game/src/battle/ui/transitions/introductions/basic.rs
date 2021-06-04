@@ -1,16 +1,7 @@
-use crate::{
-    util::{Entity, Reset, Completable},
-    play_sound,
-    audio::Sound,
-    text::MessagePage,
-    gui::DynamicText,
-    CRY_ID,
-    graphics::{position, ZERO},
-    tetra::{
+use crate::{CRY_ID, audio::Sound, battle::pokemon::gui::ActiveRenderer, graphics::{position, ZERO}, gui::DynamicText, play_sound, tetra::{
         Context,
         graphics::{Texture, Rectangle, Color},
-    },
-};
+    }, text::MessagePage, util::{Entity, Reset, Completable}};
 
 use crate::battle::{
     Battle,
@@ -75,7 +66,7 @@ impl BasicBattleIntroduction {
         );
     }
 
-    pub(crate) fn draw_player(&self, ctx: &mut Context, battle: &Battle) {
+    pub(crate) fn draw_player(&self, ctx: &mut Context, player: &ActiveRenderer) {
         if self.counter < Self::PLAYER_DESPAWN {
             self.player.draw_region(
                 ctx, 
@@ -98,14 +89,14 @@ impl BasicBattleIntroduction {
                 position(41.0 + - self.counter, 49.0),
             )
         } else {
-            for active in battle.player.active.iter() {
+            for active in player.iter() {
                 active.renderer.draw(ctx, ZERO, Color::WHITE);
             }
         }
     }
 
-    pub(crate) fn draw_opponent(&self, ctx: &mut Context, battle: &Battle) {
-        for active in battle.opponent.active.iter() {
+    pub(crate) fn draw_opponent(&self, ctx: &mut Context, opponent: &ActiveRenderer) {
+        for active in opponent.iter() {
             active.renderer.draw(ctx, ZERO, Color::WHITE);
             active.status.draw(ctx, self.offsets.0, 0.0);
         }
@@ -128,7 +119,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
         self.common_setup(text, &battle.player.active);
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, battle: &mut Battle, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActiveRenderer, opponent: &mut ActiveRenderer, text: &mut DynamicText) {
 
         text.update(ctx, delta);
 
@@ -138,7 +129,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
             }
         }
 
-        if battle.opponent.active[0].status.alive() {
+        if opponent[0].status.alive() {
             if self.offsets.0 != 0.0 {
                 self.offsets.0 += delta * 240.0;
                 if self.offsets.0 > 0.0 {
@@ -146,20 +137,21 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 }
             }
         } else if text.can_continue() && text.current() >= text.len() - 2 {
-            for active in battle.opponent.active.iter_mut() {
+            for active in opponent.iter_mut() {
                 active.status.spawn();
-                if let Some(instance) = active.pokemon.as_ref() {
-                    play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
-                }
+                deps::log::warn!("to do play cry");
+                // if let Some(instance) = active.pokemon.as_ref() {
+                //     play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
+                // }
             }
             
         }
 
-        if battle.player.active[0].renderer.spawner.spawning() {
-            for active in battle.player.active.iter_mut() {
+        if player[0].renderer.spawner.spawning() {
+            for active in player.iter_mut() {
                 active.renderer.spawner.update(delta);
             }
-        } else if battle.player.active[0].status.alive() {
+        } else if player[0].status.alive() {
             if self.offsets.1 != 0.0 {
                 self.offsets.1 -= delta * 240.0;
                 if self.offsets.1 < 0.0 {
@@ -167,20 +159,21 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 }
             }
         } else if self.counter >= Self::PLAYER_T2 {
-            for active in battle.player.active.iter_mut() {
+            for active in player.iter_mut() {
                 active.renderer.spawn();
                 active.status.spawn();
-                if let Some(instance) = active.pokemon.as_ref() {
-                    play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
-                }
+                deps::log::warn!("to do play cry");
+                // if let Some(instance) = active.pokemon.as_ref() {
+                //     play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
+                // }
             }
         }
         
     }
 
-    fn draw(&self, ctx: &mut Context, battle: &Battle) {
-        self.draw_opponent(ctx, battle);
-        self.draw_player(ctx, battle);
+    fn draw(&self, ctx: &mut Context, player: &ActiveRenderer, opponent: &ActiveRenderer) {
+        self.draw_opponent(ctx, opponent);
+        self.draw_player(ctx, player);
     }
 
 }

@@ -56,6 +56,30 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 
 	let mut pokemon_textures = PokemonTextures::with_capacity(dex.pokemon.len());
 
+    pokedex.insert(
+        pokedex::pokemon::UNKNOWN_POKEMON, 
+        pokedex::pokemon::Pokemon {
+            id: pokedex::pokemon::UNKNOWN_POKEMON,
+            name: "Unknown".to_string(),
+            primary_type: pokedex::types::PokemonType::default(),
+            secondary_type: None,
+            base: Default::default(),
+            data: pokedex::pokemon::data::PokedexData {
+                species: "Unknown".to_string(),
+                height: 0,
+                weight: 0,
+            },
+            training: pokedex::pokemon::data::training::Training {
+                base_exp: 0,
+                growth_rate: Default::default(),
+            },
+            breeding: pokedex::pokemon::data::breeding::Breeding {
+                gender: None,
+            },
+            moves: Vec::new(),
+        }
+    );
+
 	for pokemon in dex.pokemon {
 
         pokemon_textures.insert(ctx, &pokemon)?;
