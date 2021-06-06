@@ -65,9 +65,7 @@ impl Pokemon {
 		moves.dedup();
 		moves.reverse();
 		moves.truncate(4);
-		// MoveInstanceSet::Init(
-			moves.into_iter().map(|id| Move::get(&id)).map(|move_ref| MoveInstance::new(move_ref)).collect()
-		// )
+		moves.into_iter().map(|id| Move::get(&id)).map(MoveInstance::new).collect()
 	}
 
     pub fn generate_gender(&self) -> Gender {

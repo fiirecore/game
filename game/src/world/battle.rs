@@ -66,7 +66,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &NPC,
                 if let Some(trainer_type) = npc_type.trainer.as_ref() {
                     *battle = Some(
                         BattleEntry {
-                            party: trainer.party.iter().cloned().map(|instance| instance).collect(),
+                            party: trainer.party.clone(),
                             trainer: Some(
                                 BattleTrainerEntry {
                                     prefix: trainer_type.name.clone(),

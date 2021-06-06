@@ -678,7 +678,7 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
                 })
             }
         }
-        const FIELDS: &'static [&'static str] = &[
+        const FIELDS: &[&str] = &[
             "id",
             "nickname",
             "level",

@@ -92,7 +92,7 @@ impl SummaryGui {
         let rw = firecore_util::WIDTH - w;
         draw_rectangle(ctx, 0.0, 1.0, w, 15.0, Self::HEADER_LEFT);
         draw_rectangle(ctx, w, 1.0, rw, 16.0, Self::HEADER_RIGHT);
-        draw_line(ctx, 0.0, 16.5, w, 16.5, 1.0, Self::HEADER_LEFT_DARK);
+        draw_line(ctx, 0.0, 16.5, w, true, 1.0, Self::HEADER_LEFT_DARK);
         draw_text_left(ctx, &1, self.headers[current_page], TextColor::White, 5.0, 1.0);
         for page in 0..Self::PAGES {
             let color = if current_page < page {

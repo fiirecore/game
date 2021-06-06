@@ -167,7 +167,7 @@ impl TouchButton {
     //     // }
     // }
 
-    pub fn touching(&self, touches: &Vec<Touch>, pressed: bool) -> bool {
+    pub fn touching(&self, touches: &[Touch], pressed: bool) -> bool {
         for touch in touches {
             if !pressed {
                 if touch.phase != TouchPhase::Started {

@@ -17,10 +17,7 @@ impl std::error::Error for DataError {}
 
 impl core::fmt::Display for DataError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            this => std::fmt::Debug::fmt(this, f),
-        }
-        
+        std::fmt::Debug::fmt(self, f)        
     }
 }
 

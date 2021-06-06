@@ -62,7 +62,7 @@ impl MoveTargetInstance {
     }
 
     pub fn opponents(size: usize) -> Vec<Self> {
-        (0..size).into_iter().map(|active| Self::Opponent(active)).collect()
+        (0..size).into_iter().map(Self::Opponent).collect()
     }
 
     pub fn all_but_user(user: usize, size: usize) -> Vec<Self> {

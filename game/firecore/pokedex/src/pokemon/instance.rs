@@ -95,7 +95,7 @@ impl PokemonInstance {
 			crate::RANDOM.gen_range(min, max + 1)
 		};
 
-		let ivs = ivs.unwrap_or(Stats::random());
+		let ivs = ivs.unwrap_or_else(Stats::random);
 		let evs = Stats::default();
 
 		let base = BaseStats::new(pokemon, &ivs, &evs, level);
@@ -103,11 +103,11 @@ impl PokemonInstance {
 		Self {
 
 			nickname: None,
-			level: level,
+			level,
 			gender: pokemon.generate_gender(),
 
-			ivs: ivs,
-			evs: evs,
+			ivs,
+			evs,
 
 			experience: 0,
 			friendship: 70,

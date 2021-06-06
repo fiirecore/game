@@ -48,6 +48,6 @@ pub fn compile<P: AsRef<std::path::Path>>(music_folder: P, output_file: P) {
 
     std::fs::File::create(output_file)
         .unwrap_or_else(|err| panic!("Could not create output file with error {}", err))
-            .write(&firecore_dependencies::ser::serialize(&data).unwrap_or_else(|err| panic!("Could not serialize audio data with error {}", err)))
+            .write_all(&firecore_dependencies::ser::serialize(&data).unwrap_or_else(|err| panic!("Could not serialize audio data with error {}", err)))
                 .unwrap_or_else(|err| panic!("Could not write to output file with error {}", err));
 }

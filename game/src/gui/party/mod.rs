@@ -203,11 +203,11 @@ impl PartyGui {
                 let selected_index = selected_index == 0;
                 if selected_index || selected {
                     
-                    draw_line(ctx, 10.5, 28.0, 10.5, 73.0, 2.0, Self::SELECT_LIGHT);
-                    draw_line(ctx, 10.0, 28.5, 84.0, 28.5, 2.0, Self::SELECT_LIGHT);
+                    draw_line(ctx, 10.5, 28.0, 45.0, false, 2.0, Self::SELECT_LIGHT);
+                    draw_line(ctx, 10.0, 28.5, 74.0, true, 2.0, Self::SELECT_LIGHT);
 
-                    draw_line(ctx, 83.5, 28.0, 83.5, 73.0, 1.0, Self::SELECT_CORNER);
-                    draw_line(ctx, 10.0, 72.5, 84.0, 72.5, 1.0, Self::SELECT_CORNER);
+                    draw_line(ctx, 83.5, 28.0, 45.0, false, 1.0, Self::SELECT_CORNER);
+                    draw_line(ctx, 10.0, 72.5, 74.0, true, 1.0, Self::SELECT_CORNER);
                     
                     self.draw_primary_color(ctx, Self::SELECT_LIGHT, Self::SELECT_DARK, Some( if selected { Self::HOVER_BORDER } else { Self::SELECT_BORDER }));
                     skip = true;
@@ -230,14 +230,14 @@ impl PartyGui {
 
     fn draw_primary_color(&self, ctx: &mut Context, light: Color, dark: Color, border: Option<Color>) {
         draw_rectangle(ctx, 11.0, 29.0, 72.0, 27.0, dark);
-        draw_line(ctx, 11.0, 56.5, 83.0, 56.5, 1.0, light);
-        draw_line(ctx, 11.0, 57.5, 83.0, 57.5, 1.0, dark);
+        draw_line(ctx, 11.0, 56.5, 72.0, true, 1.0, light);
+        draw_line(ctx, 11.0, 57.5, 72.0, true, 1.0, dark);
         draw_rectangle(ctx, 11.0, 58.0, 72.0, 14.0, light);
         if let Some(border) = border {
-            draw_line(ctx, 9.0, 27.0, 85.0, 27.0, 2.0, border);
-            draw_line(ctx, 9.0, 27.0, 9.0, 74.0, 2.0, border);
-            draw_line(ctx, 9.0, 74.0, 85.0, 74.0, 2.0, border);
-            draw_line(ctx, 85.0, 27.0, 85.0, 74.0, 2.0, border);
+            draw_line(ctx, 9.0, 27.0, 76.0, true, 2.0, border);
+            draw_line(ctx, 9.0, 27.0, 47.0, false, 2.0, border);
+            draw_line(ctx, 9.0, 74.0, 75.0, true, 2.0, border);
+            draw_line(ctx, 85.0, 27.0, 47.0, false, 2.0, border);
         } 
     }
 
@@ -270,16 +270,17 @@ impl PartyGui {
     fn draw_cell_color(&self, ctx: &mut Context, y: f32, light: Color, dark: Color, border: Option<Color>) { // 89 + 11
         draw_rectangle(ctx, 98.0, y + 2.0, 138.0, 12.0, dark);
         let y1 = y + 14.5;
-        draw_line(ctx, 98.0, y1, 236.0, y1, 1.0, light);
+        draw_line(ctx, 98.0, y1, 138.0, true, 1.0, light);
         let y1 = y1 + 1.0;
-        draw_line(ctx, 98.0, y1, 236.0, y1, 1.0, dark);
+        draw_line(ctx, 98.0, y1, 138.0, true, 1.0, dark);
         draw_rectangle(ctx, 98.0, y + 16.0, 138.0, 4.0, light);
         if let Some(border) = border {
             let y1 = y + 1.0;
-            draw_line(ctx, 97.0, y1, 237.0, y1, 2.0, border);
-            let y2 = y1 + 20.0;
-            draw_line(ctx, 97.0, y2, 237.0, y2, 2.0, border);
-            draw_line(ctx, 237.0, y1, 237.0, y2, 2.0, border);
+            const XLEN: f32 = 140.0;
+            const YLEN: f32 = 20.0;
+            draw_line(ctx, 97.0, y1, XLEN, true, 2.0, border);
+            draw_line(ctx, 97.0, y1 + YLEN, XLEN, true, 2.0, border);
+            draw_line(ctx, 237.0, y1, YLEN, false, 2.0, border);
         }
     }
 
@@ -341,6 +342,7 @@ impl PartyGui {
         self.cursor.store(0, Relaxed);
         self.right_cursor.store(None, Relaxed);
         self.accumulator.store(0.0, Relaxed);
+        self.selected.store(None, Relaxed);
         self.pokemon.borrow_mut().clear();
     }
 

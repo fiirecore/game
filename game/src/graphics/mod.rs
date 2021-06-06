@@ -83,24 +83,13 @@ pub fn draw_rectangle(ctx: &mut Context, x: f32, y: f32, w: f32, h: f32, color: 
 
 
 pub fn draw_rectangle_lines(ctx: &mut Context, x: f32, y: f32, w: f32, h: f32, thickness: f32, color: Color) {
-    draw_line_ex(ctx, x, y, w, true, thickness, color);
-	draw_line_ex(ctx, x, y, h, false, thickness, color);
-	draw_line_ex(ctx, x, y + h, w, true, thickness, color);
-	draw_line_ex(ctx, x + w, y, h, false, thickness, color);
+    draw_line(ctx, x, y, w, true, thickness, color);
+	draw_line(ctx, x, y, h, false, thickness, color);
+	draw_line(ctx, x, y + h, w, true, thickness, color);
+	draw_line(ctx, x + w, y, h, false, thickness, color);
 }
 
-pub fn draw_line(ctx: &mut Context, x1: f32, y1: f32, x2: f32, y2: f32, thickness: f32, color: Color) {
-	let horizontal = x1 != x2;
-	let len = if horizontal {
-		x2 - x1
-	} else {
-		y2 - y1
-	};
-	draw_line_ex(ctx, x1, y1, len, horizontal, thickness, color)
-}
-
-
-pub fn draw_line_ex(ctx: &mut Context, x: f32, y: f32, len: f32, horizontal: bool, thickness: f32, color: Color) {
+pub fn draw_line(ctx: &mut Context, x: f32, y: f32, len: f32, horizontal: bool, thickness: f32, color: Color) {
 	let (x, y, w, h) = if horizontal {
 		(x, y - thickness / 2.0, len, thickness)
 	} else {

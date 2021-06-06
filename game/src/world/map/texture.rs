@@ -26,7 +26,7 @@ impl WorldTextures {
         }
     }
 
-    pub fn setup(&mut self, ctx: &mut Context, textures: SerializedTextures, npc_types: &Vec<SerializedNPCType>) {
+    pub fn setup(&mut self, ctx: &mut Context, textures: SerializedTextures, npc_types: &[SerializedNPCType]) {
         self.tiles.setup(ctx, textures);
         self.npcs.with_capacity(npc_types.len());
     }

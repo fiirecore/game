@@ -1,5 +1,5 @@
 use crate::{
-    deps::vec::ArrayVec,
+    deps::{str::TinyStr16, vec::ArrayVec},
     pokedex::{
         pokemon::{
             instance::PokemonInstance,
@@ -21,10 +21,15 @@ use crate::battle::{
 // #[deprecated(note = "use enum instead")]
 pub type ActivePokemonArray = ArrayVec<[ActivePokemon; 3]>;
 
+pub type BattlePlayer = TinyStr16;
+
 
 pub struct BattleParty {
 
     pub name: String,
+
+    // pub client: Box<dyn BattleClient>,
+
     pub pokemon: MoveableParty, // to - do: i dont think i need a moveable party anymore, just a pointer to pokemon
     pub active: ActivePokemonArray,
 
@@ -49,6 +54,7 @@ impl BattleParty {
 
         Self {
             name: name.to_string(),
+            // client,
             active: active.into_iter().map(|active| match active.map(|index| party[index].take().map(|pokemon| (index, pokemon))).flatten() {
                 Some((index, pokemon)) => ActivePokemon::new(index, pokemon),
                 None => ActivePokemon::default()

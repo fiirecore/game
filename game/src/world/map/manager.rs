@@ -213,7 +213,7 @@ impl WorldManager {
                 self.debug_input(ctx, battle)
             }
 
-            if !(!self.map_manager.data.player.character.position.offset.is_zero() || self.map_manager.data.player.is_frozen() ) {
+            if self.map_manager.data.player.character.position.offset.is_zero() && !self.map_manager.data.player.is_frozen() {
 
                 if down(ctx, Control::B) {
                     if self.map_manager.data.player.character.move_type == MoveType::Walking {
@@ -281,7 +281,7 @@ impl WorldManager {
             if self.warp_transition.alive() {
                 self.warp_transition.update(delta);
                 if self.warp_transition.switch() {
-                    if let Some(destination) = self.map_manager.data.warp.clone() {
+                    if let Some(destination) = self.map_manager.data.warp {
                         self.textures.player.draw = !destination.transition.move_on_exit;
                         let change_music = destination.transition.change_music;
                         self.map_manager.warp(destination);
@@ -350,7 +350,7 @@ impl WorldManager {
 
     pub fn save_data(&self, save: &mut PlayerSave) {
         use crate::storage::player;
-        save.location = self.map_manager.data.current.unwrap_or(player::default_location());
+        save.location = self.map_manager.data.current.unwrap_or_else(player::default_location);
 		save.character = self.map_manager.data.player.character.clone();
     }
 

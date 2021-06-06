@@ -92,7 +92,7 @@ pub fn reload<D: Reloadable + Sized>(data: &mut D) -> Result<(), DataError> {
 
 pub fn directory() -> Result<std::path::PathBuf, DataError> {
     match SAVE_IN_LOCAL_DIRECTORY.load(Relaxed) {
-        true => std::env::current_dir().map_err(|err| DataError::IOError(err)),
+        true => std::env::current_dir().map_err(DataError::IOError),
         false => match dirs_next::data_dir() {
             Some(data_dir) => {
                 let dir = data_dir.join(DIR1).join(DIR2);
@@ -102,20 +102,18 @@ pub fn directory() -> Result<std::path::PathBuf, DataError> {
                     } else {
                         Err(DataError::ReadOnly)
                     }
-                } else {
-                    if !dir.exists() {
-                        if let Ok(()) = std::fs::create_dir_all(&dir) {
-                            directory()
-                        } else {
-                            Ok(dir)
-                        }
+                } else if !dir.exists() {
+                    if let Ok(()) = std::fs::create_dir_all(&dir) {
+                        directory()
                     } else {
                         Ok(dir)
                     }
+                } else {
+                    Ok(dir)
                 }
             }
             None => {
-                std::env::current_dir().map_err(|err| DataError::IOError(err))
+                std::env::current_dir().map_err(DataError::IOError)
             }
         }
     }
