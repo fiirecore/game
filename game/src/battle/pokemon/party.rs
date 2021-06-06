@@ -24,15 +24,15 @@ pub type ActivePokemonArray = ArrayVec<[ActivePokemon; 3]>;
 
 pub struct BattleParty {
 
-    // pub name:
-    pub pokemon: MoveableParty, // To - do: option<pokemonInstance> enum + unknown enum value
+    pub name: String,
+    pub pokemon: MoveableParty, // to - do: i dont think i need a moveable party anymore, just a pointer to pokemon
     pub active: ActivePokemonArray,
 
 }
 
 impl BattleParty {
 
-    pub fn new(mut party: MoveableParty,/*player: Box<dyn BattlePlayer>,*/ size: usize) -> Self {
+    pub fn new(name: &str, mut party: MoveableParty,/*player: Box<dyn BattlePlayer>,*/ size: usize) -> Self {
 
         let mut active = vec![None; size];
         let mut current = 0;
@@ -47,17 +47,13 @@ impl BattleParty {
 			}
 		}
 
-        // let mut pokemon: ArrayVec<[Option<PokemonInstance>; 6]> = party.into_iter().map(|pokemon| Some(pokemon)).collect();
-
-        let size = active.len() as u8;
-
         Self {
-            active: active.into_iter().enumerate().map(|(index, active)| match active.map(|index| party[index].take().map(|pokemon| (index, pokemon))).flatten() {
+            name: name.to_string(),
+            active: active.into_iter().map(|active| match active.map(|index| party[index].take().map(|pokemon| (index, pokemon))).flatten() {
                 Some((index, pokemon)) => ActivePokemon::new(index, pokemon),
                 None => ActivePokemon::default()
             }).collect(),
             pokemon: party,
-            // player,
         }
     }
 
@@ -78,12 +74,7 @@ impl BattleParty {
     }
 
     pub fn any_inactive(&self) -> bool {
-        for pokemon in self.pokemon.iter().flatten() {
-            if !pokemon.value().fainted() {
-                return true;
-            }
-        }
-        false
+        self.pokemon.iter().flatten().any(|p| !p.value().fainted())
     }
 
     pub fn pokemon(&self, active_index: usize) -> Option<&PokemonInstance> {
@@ -100,12 +91,13 @@ impl BattleParty {
                 panic!("Party spot at {} is already occupied!", active_index);
             }
             self.pokemon[index] = Some(instance);
-            self.active[active_index].pokemon = match new {
-                Some(new) => PokemonOption::Some(new, self.pokemon[new].take().unwrap()),
-                None => PokemonOption::None,
-            };
-            self.active[active_index].dequeue();
         }
+
+        self.active[active_index].pokemon = match new {
+            Some(new) => PokemonOption::Some(new, self.pokemon[new].take().unwrap()),
+            None => PokemonOption::None,
+        };
+        self.active[active_index].dequeue();
     }
 
     pub fn collect_ref(&self) -> ArrayVec<[&PokemonInstance; 6]> {

@@ -1,4 +1,4 @@
-use crate::{CRY_ID, audio::Sound, battle::pokemon::gui::ActiveRenderer, graphics::{position, ZERO}, gui::DynamicText, play_sound, tetra::{
+use crate::{CRY_ID, audio::Sound, battle::pokemon::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}, graphics::{position, ZERO}, gui::DynamicText, play_sound, tetra::{
         Context,
         graphics::{Texture, Rectangle, Color},
     }, text::MessagePage, util::{Entity, Reset, Completable}};
@@ -119,7 +119,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
         self.common_setup(text, &battle.player.active);
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActiveRenderer, opponent: &mut ActiveRenderer, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText) {
 
         text.update(ctx, delta);
 
@@ -129,7 +129,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
             }
         }
 
-        if opponent[0].status.alive() {
+        if opponent.renderer[0].status.alive() {
             if self.offsets.0 != 0.0 {
                 self.offsets.0 += delta * 240.0;
                 if self.offsets.0 > 0.0 {
@@ -137,21 +137,23 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 }
             }
         } else if text.can_continue() && text.current() >= text.len() - 2 {
-            for active in opponent.iter_mut() {
+            for active in opponent.renderer.iter_mut() {
                 active.status.spawn();
-                deps::log::warn!("to do play cry");
                 // if let Some(instance) = active.pokemon.as_ref() {
                 //     play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
                 // }
             }
-            
+            // deps::log::debug!("{:?}", player.party);
+            for instance in player.party.active.iter().flat_map(|index| index.map(|i| &player.party.pokemon[i] as &dyn crate::battle::pokemon::PokemonKnowData)) {
+                play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon().id())));
+            }            
         }
 
-        if player[0].renderer.spawner.spawning() {
-            for active in player.iter_mut() {
+        if player.renderer[0].renderer.spawner.spawning() {
+            for active in player.renderer.iter_mut() {
                 active.renderer.spawner.update(delta);
             }
-        } else if player[0].status.alive() {
+        } else if player.renderer[0].status.alive() {
             if self.offsets.1 != 0.0 {
                 self.offsets.1 -= delta * 240.0;
                 if self.offsets.1 < 0.0 {
@@ -159,13 +161,12 @@ impl BattleIntroduction for BasicBattleIntroduction {
                 }
             }
         } else if self.counter >= Self::PLAYER_T2 {
-            for active in player.iter_mut() {
+            for active in player.renderer.iter_mut() {
                 active.renderer.spawn();
                 active.status.spawn();
-                deps::log::warn!("to do play cry");
-                // if let Some(instance) = active.pokemon.as_ref() {
-                //     play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
-                // }
+            }
+            for instance in player.party.active.iter().flat_map(|index| index.map(|i| &player.party.pokemon[i])) {
+                play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
             }
         }
         

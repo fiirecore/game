@@ -9,6 +9,8 @@ pub trait BattleClient {
 
     fn begin(&mut self, data: &BattleData, user: BattlePartyKnown, targets: BattlePartyUnknown);
 
+    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown);
+
 
     fn start_select(&mut self);
 
@@ -22,7 +24,7 @@ pub trait BattleClient {
 
     fn wait_faint(&mut self, active: usize) -> Option<usize>;
 
-    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>, unknown: Option<PokemonUnknown>);
+    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>);
 
 
     fn wait_finish_turn(&mut self) -> bool;

@@ -1,4 +1,4 @@
-use crate::{battle::pokemon::gui::ActiveRenderer, graphics::draw_o_bottom, gui::DynamicText, storage::data, tetra::{
+use crate::{battle::pokemon::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}, graphics::draw_o_bottom, gui::DynamicText, storage::data, tetra::{
         Context,
         graphics::Texture,
     }, text::MessagePage, util::{
@@ -77,7 +77,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActiveRenderer, opponent: &mut ActiveRenderer, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText) {
         self.introduction.update(ctx, delta, player, opponent, text);
         if text.can_continue() {
             if text.current() == text.len() - 2 {

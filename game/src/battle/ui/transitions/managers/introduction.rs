@@ -1,4 +1,4 @@
-use crate::{battle::pokemon::gui::ActiveRenderer, gui::DynamicText, tetra::Context, util::Entity};
+use crate::{battle::pokemon::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}, gui::DynamicText, tetra::Context, util::Entity};
 
 use crate::battle::{
     Battle,
@@ -52,7 +52,7 @@ impl BattleIntroductionManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActiveRenderer, opponent: &mut ActiveRenderer, text: &mut DynamicText) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText) {
         let current = self.get_mut();
         current.update(ctx, delta, player, opponent, text);
         if current.finished() {

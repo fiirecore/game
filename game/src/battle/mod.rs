@@ -13,7 +13,6 @@ use crate::{
 		pokemon::{
 			instance::BorrowedPokemon,
 			stat::StatType,
-			party::MoveableParty,
 		},
 		moves::{
 			usage::{
@@ -99,28 +98,17 @@ impl Default for BattleType {
 
 impl Battle {
 	
-	pub fn new(player: MoveableParty, entry: BattleEntry) -> Option<Self> {		
-		if !(
-			player.is_empty() || 
-			entry.party.is_empty() ||
-			// Checks if player has any pokemon in party that aren't fainted (temporary)
-			player.iter().flatten().filter(|pokemon| !pokemon.value().fainted()).next().is_none()
-		) {
-			Some(
-				Self {
-					data: BattleData {
-						battle_type: entry.trainer.as_ref().map(|trainer| if trainer.gym_badge.is_some() { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild),
-						trainer: entry.trainer,
-						winner: None,
-					},
-					player: BattleParty::new(player, entry.size),
-					opponent: BattleParty::new(entry.party.into_iter().map(|instance| Some(BorrowedPokemon::Owned(instance))).collect(), entry.size),
-					state: BattleState::default(),
-					faints: Vec::new(),
-				}
-			)
-		} else {
-			None
+	pub fn new(player: BattleParty, entry: BattleEntry) -> Self {		
+		Self {
+			data: BattleData {
+				battle_type: entry.trainer.as_ref().map(|trainer| if trainer.gym_badge.is_some() { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild),
+				trainer: entry.trainer,
+				winner: None,
+			},
+			player,
+			opponent: BattleParty::new("opponent", entry.party.into_iter().map(|instance| Some(BorrowedPokemon::Owned(instance))).collect(), entry.size),
+			state: BattleState::default(),
+			faints: Vec::new(),
 		}
 	}
 
@@ -162,6 +150,23 @@ impl Battle {
 					fill_moves(odone, opponent_cli, &mut self.opponent);
 
 					if *pdone && *odone {
+
+						#[deprecated(note = "temporary")] {
+							use pokemon::PokemonUnknown;
+							for (i, p) in self.player.pokemon.iter().enumerate() {
+								if let Some(p) = p {
+									opponent_cli.add_unknown(i, PokemonUnknown::new(p.value()));
+								}
+								for (i, p) in self.opponent.pokemon.iter().enumerate() {
+									if let Some(p) = p {
+										player_cli.add_unknown(i, PokemonUnknown::new(p.value()));
+									}
+								}
+							}
+						}
+
+
+
 						debug!("Starting move calculations");
 						self.state = BattleState::MOVE_START;
 					}
@@ -236,7 +241,7 @@ impl Battle {
 											let userp = user.active[instance.pokemon.index].pokemon.as_ref().unwrap();
 											userp.use_own_move(engine, *move_index, targets.iter().map(|target| pokedex::moves::usage::pokemon::PokemonTarget {
 												pokemon: match target {
-													MoveTargetInstance::Opponent(index) => &other.active[*index].pokemon.as_ref().unwrap_or_else(|| panic!("{:?}: #{}", other.active, index)),
+													MoveTargetInstance::Opponent(index) => &other.active[*index].pokemon.as_ref().unwrap_or_else(|| panic!("{}.active[{}].pokemon", other.name, index)),
 													MoveTargetInstance::Team(index) => &user.active[*index].pokemon.as_ref().unwrap(),
 													MoveTargetInstance::User => userp,
 												},
@@ -570,26 +575,39 @@ impl Battle {
 								self.data.winner = Some(Team::Opponent);
 								self.state = BattleState::End;
 							} else if !self.faints.is_empty() {
-								debug!("End move faint wait");
+								debug!("End move faint wait {:?}", self.faints);
 								let mut i = 0;
 								while i != self.faints.len() {
 									let active = &self.faints[i];
 									match active.team {
-										Team::Player => if let Some(new) = player_cli.wait_faint(active.index) {
-											let index = active.index;
-											self.player.replace(index, Some(new));
-											opponent_cli.opponent_faint_replace(index, Some(new), self.player.pokemon(index).map(|p| pokemon::PokemonUnknown::new(p)));
-											self.faints.remove(i);
-										} else {
-											i += 1;
+										Team::Player => {
+											if self.opponent.any_inactive() {
+												if let Some(new) = player_cli.wait_faint(active.index) {
+													let index = active.index;
+													self.player.replace(index, Some(new));
+													opponent_cli.opponent_faint_replace(index, Some(new));
+													self.faints.remove(i);
+												} else {
+													i += 1;
+												}
+											} else {
+												self.player.replace(active.index, None);
+												self.faints.remove(i);
+											}
 										},
-										Team::Opponent => if let Some(new) = opponent_cli.wait_faint(active.index) {
-											let index = active.index;
-											self.opponent.replace(index, Some(new));
-											player_cli.opponent_faint_replace(index, Some(new), self.opponent.pokemon(index).map(|p| pokemon::PokemonUnknown::new(p)));
-											self.faints.remove(i);
-										} else {
-											i += 1;
+										Team::Opponent => {
+											if self.opponent.any_inactive() {
+												if let Some(new) = opponent_cli.wait_faint(active.index) {
+													self.opponent.replace(active.index, Some(new));
+													player_cli.opponent_faint_replace(active.index, Some(new));
+													self.faints.remove(i);
+												} else {
+													i += 1;
+												}
+											} else {
+												self.opponent.replace(active.index, None);
+												self.faints.remove(i);
+											}
 										}
 									} 
 								}

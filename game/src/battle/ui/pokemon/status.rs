@@ -105,7 +105,7 @@ impl PokemonStatusGui {
 	}
 
 	pub fn with_unknown(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: Option<PokemonUnknown>) -> Self {
-		let ((background, origin, exp), data_pos, hb) = Self::attributes(ctx, index);
+		let ((background, origin, _), data_pos, hb) = Self::attributes(ctx, index);
 		Self {
 			alive: false,
 			origin,
@@ -236,7 +236,7 @@ impl PokemonStatusGui {
             Some((pokemon.level(), pokemon))
         } else {
             None
-        }, true);
+        }, reset);
 	}
 
 	pub fn update_gui_ex(&mut self, pokemon: Option<(Level, &dyn PokemonKnowData)>, reset: bool) {

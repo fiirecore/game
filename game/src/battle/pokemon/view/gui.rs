@@ -10,6 +10,7 @@ use super::{BattlePartyKnown, BattlePartyUnknown, PokemonKnowData};
 
 pub type ActiveRenderer = ArrayVec<[ActivePokemonRenderer; 3]>;
 
+#[derive(Default)]
 pub struct ActivePokemonParty<T> {
     pub party: T,
     pub renderer: ActiveRenderer,

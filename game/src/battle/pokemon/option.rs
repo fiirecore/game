@@ -7,6 +7,7 @@ use crate::pokedex::pokemon::instance::{
 pub enum PokemonOption {
     Some(usize, BorrowedPokemon),
     None,
+    #[deprecated(note = "remove faints vec for this")]
     ToReplace(usize), // new pokemon
 }
 

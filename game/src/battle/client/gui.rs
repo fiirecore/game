@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use deps::log::debug;
 
-use crate::{battle::pokemon::{BattleClientMove, BattlePartyTrait, PokemonUnknown}, gui::{bag::BagGui, party::PartyGui}, log::warn, pokedex::{
+use crate::{battle::pokemon::{BattleClientMove, BattlePartyTrait, PokemonUnknown, gui::ActivePokemonParty}, gui::{bag::BagGui, party::PartyGui}, log::warn, pokedex::{
         item::ItemUseType, 
         moves::target::{
             MoveTarget, 
@@ -20,7 +20,7 @@ use crate::battle::{
         BattlePartyUnknown,
         BattleClientAction,
         BattleClientActionInstance,
-        gui::{ActivePokemonRenderer, ActiveRenderer},
+        gui::ActivePokemonRenderer,
     }, 
     ui::{
         self,
@@ -41,11 +41,9 @@ pub struct BattlePlayerGui {
 
     is_wild: bool,
 
-    user: BattlePartyKnown,
-    pub player_renderer: ActiveRenderer,
+    pub player: ActivePokemonParty<BattlePartyKnown>,
 
-    opponent: BattlePartyUnknown,
-    pub opponent_renderer: ActiveRenderer,
+    pub opponent: ActivePokemonParty<BattlePartyUnknown>,
 
     moves: Vec<BattleMove>,
 
@@ -93,10 +91,8 @@ impl BattlePlayerGui {
 			gui: BattleGui::new(ctx),
             state: Default::default(),
             is_wild: false,
-            user: BattlePartyKnown::default(),
-            player_renderer: Default::default(),
+            player: Default::default(),
             opponent: Default::default(),
-            opponent_renderer: Default::default(),
             moves: Vec::with_capacity(3),
             faint: Default::default(),
         }
@@ -106,10 +102,10 @@ impl BattlePlayerGui {
         match &mut self.state {
             BattlePlayerState::WaitToSelect | BattlePlayerState::WaitToMove => (),//debug!("{:?}", self.state),
             BattlePlayerState::Select(active_index) => {
-                match self.user.active.get(*active_index) {
+                match self.player.party.active.get(*active_index) {
                     Some(index) => match index {
                         Some(index) => {
-                            let pokemon = &self.user.pokemon[*index];
+                            let pokemon = &self.player.party.pokemon[*index];
                             match self.gui.panel.alive {
                                 true => match self.moves.len() <= *active_index {
                                     true => {
@@ -141,7 +137,7 @@ impl BattlePlayerGui {
                                                         match self.gui.panel.battle.cursor {
                                                             0 => self.gui.panel.active = BattlePanels::Fight,
                                                             1 => self.bag.spawn(),
-                                                            2 => crate::battle::ui::battle_party_known_gui(&self.party, &self.user, true),
+                                                            2 => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, true),
                                                             3 => if self.is_wild {
                                                                 // closer.spawn(self, &mut gui.text);
                                                                 todo!()
@@ -157,8 +153,8 @@ impl BattlePlayerGui {
                                                                 match move_ref.value().target {
                                                                     MoveTarget::User => MoveTargetInstance::user(),
                                                                     MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.fight.targets.cursor),
-                                                                    MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.user.active.len()),
-                                                                    MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.active.len()),
+                                                                    MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
+                                                                    MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
                                                                 }
                                                             )),
                                                             None => warn!("Pokemon is out of Power Points for this move!")
@@ -196,8 +192,8 @@ impl BattlePlayerGui {
                             Some(instance) => {
 
                                 let (user, user_ui, other, other_ui) = match instance.pokemon.team {
-                                    Team::Player => (&mut self.user as &mut dyn BattlePartyTrait, &mut self.player_renderer, &mut self.opponent as &mut dyn BattlePartyTrait, &mut self.opponent_renderer),
-                                    Team::Opponent => (&mut self.opponent as _, &mut self.opponent_renderer, &mut self.user as _, &mut self.player_renderer),
+                                    Team::Player => (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer),
+                                    Team::Opponent => (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer),
                                 };
 
                                 self.gui.text.clear();
@@ -257,9 +253,6 @@ impl BattlePlayerGui {
                                                             ui::text::on_stat_stage(&mut self.gui.text, target, *stat, *stage);
                                                         }
                                                         BattleClientMove::Faint(target_instance) => {
-                                                            target.set_hp(0.0);
-                                                            ui::text::on_faint(&mut self.gui.text, self.is_wild, instance.pokemon.team, target);
-                                                            target_ui.renderer.faint();
                                                             queue.actions.push_front(
                                                                 BattleClientActionInstance {
                                                                     pokemon: *target_instance,
@@ -294,6 +287,10 @@ impl BattlePlayerGui {
                                             ui::text::on_switch(&mut self.gui.text, user.active(instance.pokemon.index).unwrap(), coming);
                                         }
                                         BattleClientAction::Faint => {
+                                            let target = user.active_mut(instance.pokemon.index).unwrap();
+                                            target.set_hp(0.0);
+                                            ui::text::on_faint(&mut self.gui.text, self.is_wild, instance.pokemon.team, target);
+                                            user_ui[instance.pokemon.index].renderer.faint();
                                             // let target = match instance.pokemon.team {
                                             //     Team::Player => &mut self.user as &mut dyn BattlePartyTrait,
                                             //     Team::Opponent => &mut self.opponent as _,
@@ -364,8 +361,8 @@ impl BattlePlayerGui {
                     Some(instance) => {
 
                         let (user, user_ui, other, other_ui) = match instance.pokemon.team {
-                            Team::Player => (&mut self.user as &mut dyn BattlePartyTrait, &mut self.player_renderer, &mut self.opponent as &mut dyn BattlePartyTrait, &mut self.opponent_renderer),
-                            Team::Opponent => (&mut self.opponent as _, &mut self.opponent_renderer, &mut self.user as _, &mut self.player_renderer),
+                            Team::Player => (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer),
+                            Team::Opponent => (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer),
                         };
                         
 
@@ -434,27 +431,27 @@ impl BattlePlayerGui {
                                 	self.gui.text.update(ctx, delta);
                                 } else {
                                     match instance.pokemon.team {
-                                        Team::Player => if self.user.any_inactive() {
+                                        Team::Player => if self.player.party.any_inactive() {
                                             match self.party.alive() {
                                                 true => {
                                                     self.party.input(ctx);
                                                     self.party.update(delta);
                                                     if let Some(selected) = self.party.take_selected() {
-                                                        if !self.user.pokemon[selected].fainted() {
+                                                        if !self.player.party.pokemon[selected].fainted() {
                                                             // user.queue_replace(index, selected);
                                                             self.party.despawn();
                                                             self.faint.insert(instance.pokemon.index, selected);
-                                                            self.user.replace(instance.pokemon.index, Some(selected));
-                                                            ui.update(self.user.active(instance.pokemon.index));
+                                                            self.player.party.replace(instance.pokemon.index, Some(selected));
+                                                            ui.update(self.player.party.active(instance.pokemon.index));
                                                             queue.current = None;
                                                         }
                                                     }
                                                 },
-                                                false => crate::battle::ui::battle_party_known_gui(&self.party, &self.user, false)
+                                                false => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, false)
                                             }
                                         } else {
                                             debug!("no inactive!");
-                                            self.user.replace(instance.pokemon.index, None);
+                                            self.player.party.replace(instance.pokemon.index, None);
                                             user_ui[instance.pokemon.index].update(None);
                                             queue.current = None;
                                         },
@@ -488,14 +485,14 @@ impl BattlePlayerGui {
     }
 
     pub fn on_begin(&mut self, ctx: &mut Context) {
-        self.player_renderer = ActivePokemonRenderer::init_known(ctx, &self.user);
-        self.opponent_renderer = ActivePokemonRenderer::init_unknown(ctx, &self.opponent);
+        self.player.renderer = ActivePokemonRenderer::init_known(ctx, &self.player.party);
+        self.opponent.renderer = ActivePokemonRenderer::init_unknown(ctx, &self.opponent.party);
     }
 
     pub fn draw(&self, ctx: &mut Context) {
         use crate::{graphics::ZERO, tetra::{math::Vec2, graphics::Color}};
         self.gui.background.draw(ctx, 0.0);
-        for active in self.opponent_renderer.iter() {
+        for active in self.opponent.renderer.iter() {
             active.renderer.draw(ctx, ZERO, Color::WHITE);
             active.status.draw(ctx, 0.0, 0.0);
         }
@@ -506,7 +503,7 @@ impl BattlePlayerGui {
                 } else if self.bag.alive() {
                     self.bag.draw(ctx);
                 } else {
-                    for (current, active) in self.player_renderer.iter().enumerate() {
+                    for (current, active) in self.player.renderer.iter().enumerate() {
                         if &current == index {
                             active.renderer.draw(ctx, Vec2::new(0.0, self.gui.bounce.offset), Color::WHITE);
                             active.status.draw(ctx, 0.0, -self.gui.bounce.offset);
@@ -523,7 +520,7 @@ impl BattlePlayerGui {
             //     self.party.draw(ctx)
             // },
             BattlePlayerState::WaitToSelect | BattlePlayerState::WaitToMove | BattlePlayerState::Moving(..) => {
-                for active in self.player_renderer.iter().chain(self.opponent_renderer.iter()) {
+                for active in self.player.renderer.iter().chain(self.opponent.renderer.iter()) {
                     active.renderer.draw(ctx, ZERO, Color::WHITE);
                     active.status.draw(ctx, 0.0, 0.0);
                 }
@@ -542,9 +539,13 @@ impl BattleClient for BattlePlayerGui {
 
     fn begin(&mut self, data: &BattleData, user: BattlePartyKnown, targets: BattlePartyUnknown) {
         self.gui.panel.target(&targets);
-        self.user = user;
-        self.opponent = targets;
+        self.player.party = user;
+        self.opponent.party = targets;
         self.is_wild = data.battle_type == BattleType::Wild;
+    }
+
+    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
+        self.opponent.party.add(index, unknown);       
     }
 
     fn start_select(&mut self) {
@@ -554,7 +555,7 @@ impl BattleClient for BattlePlayerGui {
 
     fn wait_select(&mut self) -> Option<Vec<BattleMove>> {
         match &self.state {
-            BattlePlayerState::Select(index) => (index >= &self.user.active.len()).then(|| {
+            BattlePlayerState::Select(index) => (index >= &self.player.party.active.len()).then(|| {
                 self.state = BattlePlayerState::WaitToMove;
                 self.moves.drain(0..self.moves.len()).collect()
             }),
@@ -575,12 +576,9 @@ impl BattleClient for BattlePlayerGui {
         self.faint.remove(&active)
     }
 
-    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>, unknown: Option<PokemonUnknown>) {
-        if let (Some(new), Some(unknown)) = (new, unknown) {
-            self.opponent.add(new, unknown);
-        }
-        self.opponent.replace(active, new);
-        self.opponent_renderer[active].update(self.opponent.active(active));
+    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>) {
+        self.opponent.party.replace(active, new);
+        self.opponent.renderer[active].update(self.opponent.party.active(active));
     }
 
     fn wait_finish_turn(&mut self) -> bool {

@@ -22,6 +22,10 @@ impl BattleClient for BattlePlayerAi {
         self.targets = targets;
     }
 
+    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
+        self.targets.add(index, unknown);
+    }
+
     fn start_select(&mut self) { // note: does not use PP
         use crate::battle::BATTLE_RANDOM;
         self.moves = Some(
@@ -76,10 +80,7 @@ impl BattleClient for BattlePlayerAi {
         self.faint.remove(&active)
     }
 
-    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>, unknown: Option<PokemonUnknown>) {
-        if let (Some(new), Some(unknown)) = (new, unknown) {
-            self.targets.add(new, unknown);
-        }
+    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>) {
         self.targets.replace(active, new)
     }
 

@@ -122,7 +122,7 @@ impl State for GameStateManager {
 			GameStates::World => {
 				self.world.update(ctx, delta, &mut self.battle_entry, &mut self.action);
 				if let Some(entry) = self.battle_entry.take() {
-					if self.battle.battle(ctx, entry) {
+					if self.battle.battle(entry) {
 						self.state = GameStates::Battle;
 					}
 				}
