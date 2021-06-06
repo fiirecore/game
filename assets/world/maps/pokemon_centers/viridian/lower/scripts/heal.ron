@@ -39,7 +39,7 @@
             )),
             unfreeze: true,
         ),
-        NPCSay(
+        NpcSay(
             "nurse",
             [(
                 lines: [
@@ -51,7 +51,7 @@
         ),
         PlayerHealPokemon,
         Info("Healed player pokemon"),
-        NPCSay(
+        NpcSay(
             "nurse",
             [
                 (

@@ -24,7 +24,7 @@ fn get_item_config(dir: PathBuf) -> Option<SerializedItem> {
                         return Some(SerializedItem {
                             item,
                             texture,
-                        })
+                        });
                     }                    
                 }
                 Err(err) => {

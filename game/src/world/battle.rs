@@ -18,14 +18,14 @@ use worldlib::{
         wild::{WildEntry, WILD_RANDOM},
         manager::{TrainerEntry, TrainerEntryRef},
     },
-    character::npc::{NPC, NPCId},
+    character::npc::{Npc, NpcId},
 };
 
 use crate::world::{
     npc::npc_type,
     map::{
         manager::WorldManager,
-        texture::npc::NPCTextureManager,
+        texture::npc::NpcTextureManager,
     },
 };
 
@@ -57,7 +57,7 @@ pub fn wild_battle(battle: BattleEntryRef, wild: &WildEntry) {
     });
 }
 
-pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &NPC, map_id: &Location, npc_id: &NPCId) {
+pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc, map_id: &Location, npc_id: &NpcId) {
     if let Some(trainer) = npc.trainer.as_ref() {
         let save = data();
         if let Some(map) = save.world.map.get(&map_id.index) {
@@ -72,7 +72,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &NPC,
                                     prefix: trainer_type.name.clone(),
                                     name: npc.name.clone(),
                                     transition: trainer.battle_transition,
-                                    texture: NPCTextureManager::trainer_texture(&npc.npc_type).clone(),
+                                    texture: NpcTextureManager::trainer_texture(&npc.npc_type).clone(),
                                     gym_badge: trainer_type.badge,
                                     victory_message: trainer.victory_message.clone(),
                                     worth: trainer.worth,

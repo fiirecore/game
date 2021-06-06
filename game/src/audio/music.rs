@@ -29,7 +29,7 @@ pub fn add_track(music_data: SerializedMusicData) -> Result<(), AddAudioError> {
 pub fn get_music_id(name: &str) -> Option<Option<MusicId>> {
     #[cfg(feature = "audio")] {
         Some(match MUSIC_ID_MAP.lock().as_ref() {
-            Some(map) => map.get(name).map(|id| *id),
+            Some(map) => map.get(name).copied(),
             None => None,
         })
     }

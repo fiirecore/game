@@ -22,7 +22,7 @@ use crate::{
 use worldlib::{
     character::{
         movement::MovementType,
-        npc::{NPC, NPCId, NPCInteract},
+        npc::{Npc, NpcId, NpcInteract},
         player::PlayerCharacter,
     },
     map::{
@@ -30,7 +30,7 @@ use worldlib::{
         World,
         WorldMap,
         manager::{can_move, WorldMapManagerData},
-        ActiveNPC,
+        ActiveNpc,
     },
     script::world::{WorldScript, Condition, WorldActionKind, ScriptWarp},
 };
@@ -62,7 +62,7 @@ impl GameWorld for WorldMap {
         // if let Some(saves) = get::<PlayerSaves>() {
         //     if let Some(data) = saves.get().world.map.get(&self.name) {
         //         for (index, state) in data.npcs.iter() {
-        //             if let Some(npc) = self.npc_manager.npcs.get_mut(index) {
+        //             if let Some(npc) = self.NPC_manager.npcs.get_mut(index) {
         //                 // npc.alive = *state;
         //             }
         //         }
@@ -147,10 +147,7 @@ impl GameWorld for WorldMap {
         }
 
         if pressed(ctx, Control::A) && self.npcs.active.is_none() {
-            let pos = if self.tile(world.player.character.position.coords).map(|tile| match tile {
-                0x298 | 0x2A5 => true,
-                _ => false,
-            }).unwrap_or_default() {
+            let pos = if self.tile(world.player.character.position.coords).map(|tile| matches!(tile, 0x298 | 0x2A5)).unwrap_or_default() {
                 world.player.character.position.in_direction(world.player.character.position.direction)
             } else {
                 world.player.character.position
@@ -166,7 +163,7 @@ impl GameWorld for WorldMap {
             }
         }
 
-        // Move NPCs
+        // Move Npcs
 
         for npc in self.npcs.list.values_mut().flatten().filter(|npc| npc.character.destination.is_some() && npc.movement != MovementType::Still) {
             npc.character.move_to_destination(delta);            
@@ -282,46 +279,46 @@ impl GameWorld for WorldMap {
                             pop = true;
                         }
 
-                        WorldActionKind::NPCAdd(id, npc) => {
-                            if self.npcs.list.insert(*id, Some(npc.clone())).is_some() {
-                                warn!("Replaced NPC with id {}!", id);
+                        WorldActionKind::NpcAdd(id, npc) => {
+                            if self.npcs.list.insert(*id, Some(*npc.clone())).is_some() {
+                                warn!("Replaced Npc with id {}!", id);
                             }
                             pop = true;
                         }
 
-                        WorldActionKind::NPCRemove(id) => {
+                        WorldActionKind::NpcRemove(id) => {
                             if self.npcs.list.remove(id).is_none() {
-                                warn!("Could not remove NPC with id {}!", id);
+                                warn!("Could not remove Npc with id {}!", id);
                             }
                             pop = true;
                         }
 
-                        // WorldActionKind::NPCSpawn(id) => {
+                        // WorldActionKind::NpcSpawn(id) => {
                         //     if let Some(npc) = self.npc_manager.get_mut(id) {
                         //         error!("no npc spawn");// npc.spawn();
                         //     } else {
-                        //         warn!("Could not spawn NPC with id {}!", id);
+                        //         warn!("Could not spawn Npc with id {}!", id);
                         //     }
                         //     pop = true;
                         // }
-                        // WorldActionKind::NPCDespawn(id) => {
+                        // WorldActionKind::NpcDespawn(id) => {
                         //     if let Some(npc) = self.npc_manager.get_mut(id) {
                         //         error!("no npc despawn");// npc.despawn();
                         //     } else {
-                        //         warn!("Could not despawn NPC with id {}!", id);
+                        //         warn!("Could not despawn Npc with id {}!", id);
                         //     }
                         //     pop = true;
                         // }
 
 
-                        WorldActionKind::NPCLook(id, direction) => {
+                        WorldActionKind::NpcLook(id, direction) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
                                 npc.character.position.direction = *direction;                               
                             }
                             pop = true;
                         }
 
-                        WorldActionKind::NPCMove( id, pos ) => {
+                        WorldActionKind::NpcMove( id, pos ) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
                                 if npc.character.destination.is_some() {
                                     if npc.character.move_to_destination(delta) {
@@ -331,12 +328,12 @@ impl GameWorld for WorldMap {
                                     npc.character.go_to(pos.coords);
                                 }
                             } else {
-                                warn!("NPC script tried to move an unknown NPC (with id {})", id);
+                                warn!("Npc script tried to move an unknown Npc (with id {})", id);
                                 pop = true;
                             }
                         },
 
-                        WorldActionKind::NPCLeadPlayer( id, pos ) => {
+                        WorldActionKind::NpcLeadPlayer( id, pos ) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
                                 if npc.character.destination.is_some() {
                                     npc.character.move_to_destination(delta);
@@ -360,11 +357,11 @@ impl GameWorld for WorldMap {
                                     }
                                 }
                             } else {
-                                warn!("NPC script tried to lead player with an unknown NPC (with id {})", id);
+                                warn!("Npc script tried to lead player with an unknown Npc (with id {})", id);
                                 pop = true;
                             }
                         }
-                        WorldActionKind::NPCMoveToPlayer(id) => {
+                        WorldActionKind::NpcMoveToPlayer(id) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
                                 if npc.character.destination.is_some() {
                                     if npc.character.move_to_destination(delta) {
@@ -374,11 +371,11 @@ impl GameWorld for WorldMap {
                                     npc.character.go_next_to(world.player.character.position.coords)
                                 }
                             } else {
-                                warn!("NPC script tried to move to player with an unknown NPC (with id {})", id);
+                                warn!("Npc script tried to move to player with an unknown Npc (with id {})", id);
                                 pop = true;
                             }
                         }
-                        WorldActionKind::NPCInteract(id) => {
+                        WorldActionKind::NpcInteract(id) => {
                             if let Some(npc) = self.npcs.list.get_mut(id) {
                                 if let Some(npc_mut) = npc {
                                     if npc_mut.interact_from(&world.player.character.position) {
@@ -388,7 +385,7 @@ impl GameWorld for WorldMap {
                             }
                             pop = true;
                         }
-                        WorldActionKind::NPCSay(id, pages) => {
+                        WorldActionKind::NpcSay(id, pages) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
                                 if window.text.alive() {
                                     if !window.text.finished() {
@@ -408,7 +405,7 @@ impl GameWorld for WorldMap {
                                 pop = true;
                             }
                         }
-                        WorldActionKind::NPCBattle(id) => {
+                        WorldActionKind::NpcBattle(id) => {
                             if let Some(npc) = self.npcs.get(id) {
                                 trainer_battle(battle, &mut world.battling, npc, &self.id, id);
                             }
@@ -560,7 +557,7 @@ impl GameWorld for WorldMap {
 
         // Npc window manager code
 
-        // #[deprecated(note = "rewrite active NPC code")]
+        // #[deprecated(note = "rewrite active Npc code")]
         if let Some((id, npc)) = self.npcs.active.as_mut() {
             if window.text.alive() {
                 if window.text.finished() {
@@ -583,13 +580,13 @@ impl GameWorld for WorldMap {
                     let mut message_ran = false;
     
                     match &npc.interact {
-                        NPCInteract::Message(pages) => {
+                        NpcInteract::Message(pages) => {
                             window.text.set(pages.clone());
                             window.text.color(super::npc::npc_type(&npc.npc_type).text_color);
                             message_ran = true;
                         },
-                        NPCInteract::Script(_) => todo!(),
-                        NPCInteract::Nothing => (),
+                        NpcInteract::Script(_) => todo!(),
+                        NpcInteract::Nothing => (),
                     }
                     
                     if !data_mut().world.get_map(&self.id).battled.contains(id) {
@@ -710,7 +707,7 @@ impl GameWorld for WorldMap {
 fn debug_input(ctx: &Context, map: &mut WorldMap) {
     if debug_pressed(ctx, DebugBind::F8) {
         for (index, npc) in map.npcs.list.iter().flat_map(|(id, npc)| npc.as_ref().map(|npc| (id, npc))) {
-            info!("NPC {} (id: {}), is at {}, {}; looking {:?}", &npc.name, index, /*if npc.alive() {""} else {" (despawned)"},*/ &npc.character.position.coords.x, &npc.character.position.coords.y, &npc.character.position.direction);
+            info!("Npc {} (id: {}), is at {}, {}; looking {:?}", &npc.name, index, /*if npc.alive() {""} else {" (despawned)"},*/ &npc.character.position.coords.x, &npc.character.position.coords.y, &npc.character.position.direction);
         }
     }
 }
@@ -720,7 +717,7 @@ pub fn despawn_script(script: &mut WorldScript) {
     script.despawn();
 }
 
-fn find_battle(save: &mut PlayerSave, map: &Location, id: NPCId, npc: &mut Option<NPC>, active: &mut ActiveNPC, player: &mut PlayerCharacter) -> bool {
+fn find_battle(save: &mut PlayerSave, map: &Location, id: NpcId, npc: &mut Option<Npc>, active: &mut ActiveNpc, player: &mut PlayerCharacter) -> bool {
     if !save.world.has_battled(map, &id) {
         if npc.as_mut().map(|npc| npc.find_character(&mut player.character)).unwrap_or_default() {
             *active = Some((id, npc.take().unwrap()));

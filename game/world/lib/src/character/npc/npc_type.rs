@@ -5,11 +5,11 @@ use firecore_audio_lib::music::MusicName;
 
 use crate::character::sprite::SpriteIndexes;
 
-pub type NPCTypeId = TinyStr16;
+pub type NpcTypeId = TinyStr16;
 pub type BadgeId = TinyStr16;
 
 #[derive(Debug)]
-pub struct NPCType {
+pub struct NpcType {
 
     pub text_color: TextColor,
     pub sprite: &'static SpriteIndexes,

@@ -32,10 +32,7 @@ impl Direction {
 	}
 
 	pub const fn horizontal(&self) -> bool {
-		match self {
-			Self::Left | Self::Right => true,
-			_ => false,
-		}
+		matches!(self, Self::Left | Self::Right)
 	}
 
 	#[inline]

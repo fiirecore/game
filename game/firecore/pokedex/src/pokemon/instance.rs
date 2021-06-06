@@ -191,7 +191,7 @@ impl PokemonInstance {
 		self.current_hp == 0
 	}
 
-	pub fn name(&self) -> &String {
+	pub fn name(&self) -> &str {
 		self.nickname.as_ref().unwrap_or(&self.pokemon.value().name)
 		// match self.nickname.as_ref() {
 		//     Some(name) => Cow::Borrowed(name),

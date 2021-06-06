@@ -20,7 +20,7 @@ impl PlayerSaves {
         }
     }
 
-    pub fn select_new(&mut self, name: &String) {
+    pub fn select_new(&mut self, name: &str) {
         let index = self.saves.len();
         self.saves.push(PlayerSave::new(name));
         self.select(index);
@@ -41,10 +41,6 @@ impl PlayerSaves {
 
     pub fn get_mut(&mut self) -> &mut PlayerSave {
         &mut self.saves[self.selected.expect("Could not get selected player save!")]
-    }
-
-    pub fn name_list(&self) -> Vec<&String> {
-        self.saves.iter().map(|data| &data.name).collect()
     }
 
 }

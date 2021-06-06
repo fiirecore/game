@@ -34,6 +34,6 @@ pub trait GameWorld: World {
 }
 
 pub fn seed_randoms(seed: u64) {
-    firecore_world_lib::map::wild::WILD_RANDOM.seed(seed);
+    worldlib::map::wild::WILD_RANDOM.seed(seed);
 	map::NPC_RANDOM.seed(seed);
 }

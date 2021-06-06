@@ -4,31 +4,28 @@ use firecore_font::message::MessagePages;
 
 use crate::{character::Character, script::world::WorldScript};
 
-use super::NPC;
+use super::Npc;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub enum NPCInteract {
+pub enum NpcInteract {
     Message(MessagePages),
     Script(WorldScript),
     Nothing,
 }
 
-impl Default for NPCInteract {
+impl Default for NpcInteract {
     fn default() -> Self {
         Self::Nothing
     }
 }
 
-impl NPCInteract {
+impl NpcInteract {
     pub fn is_some(&self) -> bool {
-        match self {
-            Self::Nothing => false,
-            _ => true,
-        }
+        !matches!(self, Self::Nothing)
     }
 }
 
-impl NPC {
+impl Npc {
 
     pub fn find_character(&mut self, character: &mut Character) -> bool {
         if self.eye_track(&character.position.coords) {
@@ -45,25 +42,17 @@ impl NPC {
             if let Some(tracker) = trainer.tracking {
                 let tracker = tracker as i32;
                 match self.character.position.direction {
-                    firecore_util::Direction::Up => if self.character.position.coords.x == coords.x {
-                        if self.character.position.coords.y > coords.y && self.character.position.coords.y - tracker <= coords.y {
-                            return true;
-                        }
+                    firecore_util::Direction::Up => if self.character.position.coords.x == coords.x && self.character.position.coords.y > coords.y && self.character.position.coords.y - tracker <= coords.y {
+                        return true;
                     }
-                    firecore_util::Direction::Down => if self.character.position.coords.x == coords.x {
-                        if self.character.position.coords.y < coords.y && self.character.position.coords.y + tracker >= coords.y {
-                            return true;
-                        }
+                    firecore_util::Direction::Down => if self.character.position.coords.x == coords.x && self.character.position.coords.y < coords.y && self.character.position.coords.y + tracker >= coords.y {
+                        return true;
                     }
-                    firecore_util::Direction::Left => if self.character.position.coords.y == coords.y {
-                        if self.character.position.coords.x > coords.x && self.character.position.coords.x - tracker <= coords.x {
-                            return true;
-                        }
+                    firecore_util::Direction::Left => if self.character.position.coords.y == coords.y && self.character.position.coords.x > coords.x && self.character.position.coords.x - tracker <= coords.x {
+                        return true;
                     }
-                    firecore_util::Direction::Right => if self.character.position.coords.y == coords.y {
-                        if self.character.position.coords.x < coords.x && self.character.position.coords.x + tracker >= coords.x {
-                            return true;
-                        }
+                    firecore_util::Direction::Right => if self.character.position.coords.y == coords.y && self.character.position.coords.x < coords.x && self.character.position.coords.x + tracker >= coords.x {
+                        return true;
                     }
                 }
             }

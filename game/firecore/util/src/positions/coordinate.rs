@@ -36,13 +36,11 @@ impl Coordinate {
 			} else {
 				Direction::Right
 			}
-		} else {
-			if self.y > destination.y {
-				Direction::Up
-			} else {
-				Direction::Down
-			}
-		}
+		} else if self.y > destination.y {
+            Direction::Up
+        } else {
+            Direction::Down
+        }
 	}
 
     pub fn in_direction(self, direction: Direction) -> Self {

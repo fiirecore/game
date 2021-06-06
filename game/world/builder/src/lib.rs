@@ -26,7 +26,7 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, root_path: P, output_file: P)
     verify_warps(&manager);
     verify_connections(&manager);
 
-    println!("Loading NPC types...");
+    println!("Loading Npc types...");
     let npc_types = world::npc::npc_type::load_npc_types(root_path.as_ref());
 
     let output_file = output_file.as_ref();
@@ -53,7 +53,7 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, root_path: P, output_file: P)
 }
 
 fn verify_palettes(manager: &WorldMapManager, textures: &mut worldlib::serialized::SerializedTextures) {
-    let keys = textures.palettes.keys().map(|num| *num).collect::<Vec<worldlib::map::PaletteId>>();
+    let keys = textures.palettes.keys().copied().collect::<Vec<worldlib::map::PaletteId>>();
     let mut palettes = Vec::new();
     for map in manager.maps.values() {
         for palette in map.palettes.iter() {
@@ -87,7 +87,7 @@ fn verify_warps(manager: &WorldMapManager) {
     }
 }
 
-fn verify_warp(warp: &WarpEntry, map_name: &String, manager: &WorldMapManager) -> u32 {
+fn verify_warp(warp: &WarpEntry, map_name: &str, manager: &WorldMapManager) -> u32 {
     let mut errors: u32 = 0;
     if !manager.maps.contains_key(&warp.destination.location) {
         eprintln!("Map {} contains a warp to non-existent map {}", map_name, warp.destination.location.index);

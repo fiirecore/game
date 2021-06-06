@@ -26,7 +26,7 @@ My attempt to code somewhat of a clone of Pokemon FireRed in Rust
 ### Other Goals
 
 - [ ] Fixed all warp transitions
-- [ ] All NPCs up to Cerulean are added
+- [ ] All Npcs up to Cerulean are added
 - [ ] All scripts up to Cerulean are added
 ### Other Planned Ideas
 

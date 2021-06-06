@@ -53,7 +53,7 @@ pub fn get_pokemon<P: AsRef<std::path::Path>>(pokemon_dir: P, include_audio: boo
     pokemon
 }
 
-// fn find_entry_file(dir_path: &PathBuf) -> Option<Pokemon> {
+// fn find_entry_file(dir_path: &Path) -> Option<Pokemon> {
 //     for file_entry in read_dir(&dir_path).unwrap_or_else(|err| panic!("Could not read pokemon directory at {:?} with error {}", dir_path, err)) {
 //         let file = file_entry.unwrap_or_else(|err| panic!("Could not get pokemon directory entry path under {:?} with error {}", dir_path, err)).path();
 //         if let Some(ext) = file.extension() {

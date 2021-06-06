@@ -10,11 +10,11 @@ pub struct BoundingBox {
 
 impl BoundingBox {
 
-    pub const fn in_bounds(&self, coordinate: &Coordinate) -> bool{
+    pub const fn in_bounds(&self, coordinate: &Coordinate) -> bool {
         if coordinate.x >= self.min.x && coordinate.x <= self.max.x {
-            return coordinate.y >= self.min.y && coordinate.y <= self.max.y;
+            coordinate.y >= self.min.y && coordinate.y <= self.max.y
         } else {
-            return false;
+            false
         }
     }
 

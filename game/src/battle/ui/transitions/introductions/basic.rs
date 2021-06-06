@@ -140,10 +140,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
 
         text.update(ctx, delta);
 
-        if text.current() + 1 == text.len() {
-            if self.counter < Self::PLAYER_DESPAWN {
-                self.counter += delta * 180.0;                
-            }
+        if text.current() + 1 == text.len() && self.counter < Self::PLAYER_DESPAWN {
+            self.counter += delta * 180.0;
         }
 
         if opponent.renderer[0].status.alive() {

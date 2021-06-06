@@ -21,7 +21,7 @@ pub fn process_string(string: &mut String, save: &PlayerSave) {
     }
 }
 
-pub fn player_name(player_save: &PlayerSave) -> &String {
+pub fn player_name(player_save: &PlayerSave) -> &str {
     &player_save.name
 }
 

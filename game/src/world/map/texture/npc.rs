@@ -19,10 +19,10 @@ use crate::{
 };
 
 use worldlib::{
-    serialized::SerializedNPCType,
+    serialized::SerializedNpcType,
     character::npc::{
-        NPC,
-        npc_type::NPCTypeId,
+        Npc,
+        npc_type::NpcTypeId,
     },
 };
 
@@ -37,17 +37,17 @@ pub type TrainerTextures = NpcTextures;
 static mut TRAINER_TEXTURES: Option<TrainerTextures> = None;
 
 #[derive(Default)]
-pub struct NPCTextureManager {
+pub struct NpcTextureManager {
 
     pub npcs: NpcTextures,
     // pub trainer: TrainerTextures,
 
 }
 
-impl NPCTextureManager {
+impl NpcTextureManager {
 
-    pub fn trainer_texture(npc_type: &NPCTypeId) -> &'static Texture {
-        unsafe { TRAINER_TEXTURES.as_ref().expect("Could not get trainer textures! (Not initialized)").get(npc_type).unwrap_or_else(|| panic!("Could not get trainer texture for NPC Type {}", npc_type)) }
+    pub fn trainer_texture(npc_type: &NpcTypeId) -> &'static Texture {
+        unsafe { TRAINER_TEXTURES.as_ref().expect("Could not get trainer textures! (Not initialized)").get(npc_type).unwrap_or_else(|| panic!("Could not get trainer texture for Npc Type {}", npc_type)) }
     }
 
     pub fn with_capacity(&mut self, capacity: usize) {
@@ -55,7 +55,7 @@ impl NPCTextureManager {
         unsafe { TRAINER_TEXTURES = Some(HashMap::with_capacity(capacity)); }
     }
 
-    pub fn add_npc_type(&mut self, ctx: &mut Context, npc_type: &SerializedNPCType) {
+    pub fn add_npc_type(&mut self, ctx: &mut Context, npc_type: &SerializedNpcType) {
         self.npcs.insert(npc_type.config.identifier, byte_texture(ctx, &npc_type.texture));
         if let Some(texture) = &npc_type.battle_texture {
             unsafe {
@@ -64,7 +64,7 @@ impl NPCTextureManager {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, npc: &NPC, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x + npc.character.position.offset.x;
         let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32 - screen.focus.y + npc.character.position.offset.y;
         
@@ -91,7 +91,7 @@ impl NPCTextureManager {
 
 }
 
-pub fn current_texture_pos(npc: &NPC) -> f32 {
+pub fn current_texture_pos(npc: &Npc) -> f32 {
     let index = (
         if npc.character.position.offset.x != 0.0 {
             npc.character.position.offset.x

@@ -56,7 +56,7 @@ fn doors(path: PathBuf) -> Doors {
     doors
 }
 
-fn filename(path: &PathBuf) -> String {
+fn filename(path: &Path) -> String {
     path.file_stem().map(|filename| filename.to_string_lossy().to_string())
         .unwrap_or_else(|| panic!("Could not read the file stem of file at {:?}", path))
 }

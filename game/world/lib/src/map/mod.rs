@@ -71,7 +71,7 @@ pub struct WorldMap {
 
     pub wild: Option<WildEntry>,
     
-    pub npcs: NPCManager,
+    pub npcs: NpcManager,
 
     // pub objects: HashMap<u8, MapObject>,
 

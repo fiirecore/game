@@ -41,7 +41,7 @@ impl MainMenuState {
 	}
 
 	fn update_saves(&mut self, saves: &PlayerSaves) {
-		self.saves = saves.name_list().into_iter().map(|name| name.clone()).collect();
+		self.saves = saves.saves.iter().map(|save| save.name.clone()).collect();
 	}
 
 }

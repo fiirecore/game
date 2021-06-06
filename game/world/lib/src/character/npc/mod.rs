@@ -13,11 +13,11 @@ pub mod npc_type;
 
 pub mod trainer;
 
-pub type NPCId = TinyStr8;
+pub type NpcId = TinyStr8;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct NPC {
+pub struct Npc {
 
     pub name: String,
 
@@ -32,13 +32,13 @@ pub struct NPC {
     pub origin: Option<Coordinate>,
 
     #[serde(default)]
-    pub interact: NPCInteract,
+    pub interact: NpcInteract,
 
     pub trainer: Option<Trainer>,
 
 }
 
-impl NPC {
+impl Npc {
 
     pub fn default_npc() -> Self {
         Self {

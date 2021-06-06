@@ -1,7 +1,7 @@
 (
     id: "0",
     npc: (
-        name: "NPC 0",
+        name: "Npc 0",
         type: "woman",
         character: (
             position: (

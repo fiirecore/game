@@ -20,7 +20,7 @@
     ],
     actions: [
         PlayerFreezeInput,
-        NPCAdd(
+        NpcAdd(
             "oak",
             (
                 name: "Oak",
@@ -37,7 +37,7 @@
             )
         ),
         PlayMusic("Oak"),
-        NPCSay(
+        NpcSay(
             "oak",
             [(
                 lines: [
@@ -46,7 +46,7 @@
                 ],
             )]
         ),
-        NPCMove(
+        NpcMove(
             "oak",
             (
                 coords: (
@@ -55,7 +55,7 @@
                 ),
             ),
         ),
-        NPCMove(
+        NpcMove(
             "oak",
             (
                 coords: (
@@ -64,7 +64,7 @@
                 ),
             ),
         ),
-        NPCMove(
+        NpcMove(
             "oak",
             (
                 coords: (
@@ -73,7 +73,7 @@
                 ),
             ),
         ),
-        NPCMove(
+        NpcMove(
             "oak",
             (
                 coords: (
@@ -82,8 +82,8 @@
                 ),
             ),
         ),
-        NPCMoveToPlayer("oak"),
-        NPCSay(
+        NpcMoveToPlayer("oak"),
+        NpcSay(
             "oak",
             [
                 (
@@ -106,7 +106,7 @@
                 )
             ]
         ),
-        NPCLeadPlayer(
+        NpcLeadPlayer(
             "oak",
             (
                 coords: (
@@ -115,7 +115,7 @@
                 ),
             )
         ),
-        NPCLeadPlayer(
+        NpcLeadPlayer(
             "oak",
             (
                 coords: (
@@ -124,7 +124,7 @@
                 ),
             )
         ),
-        NPCLeadPlayer(
+        NpcLeadPlayer(
             "oak",
             (
                 coords: (
@@ -133,7 +133,7 @@
                 ),
             )
         ),
-        NPCLeadPlayer(
+        NpcLeadPlayer(
             "oak",
             (
                 coords: (
@@ -142,7 +142,7 @@
                 ),
             )
         ),
-        NPCLeadPlayer(
+        NpcLeadPlayer(
             "oak",
             (
                 coords: (
@@ -151,7 +151,7 @@
                 ),
             )
         ),
-        NPCRemove("oak"),
+        NpcRemove("oak"),
         PlayerUnfreezeInput,
         Warp(KeepMusic("oaks_lab")),
     ]

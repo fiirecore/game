@@ -1,8 +1,8 @@
-use std::path::PathBuf;
+use std::path::Path;
 use worldlib::map::WorldMap;
 use crate::world::{SerializedMapList, MapConfig};
 
-pub fn load_map_list(root_path: &PathBuf, list: SerializedMapList) -> Vec<WorldMap> {
+pub fn load_map_list(root_path: &Path, list: SerializedMapList) -> Vec<WorldMap> {
 
     println!("    Loading map set \"{}\"", list.identifier);
 

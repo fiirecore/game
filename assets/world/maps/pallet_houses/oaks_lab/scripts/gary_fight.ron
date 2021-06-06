@@ -28,7 +28,7 @@
     actions: [
         PlayerFreezeInput,
         PlayMusic("EncounterRival"),
-        NPCSay(
+        NpcSay(
             "gary",
             [
                 (
@@ -44,9 +44,9 @@
                 )
             ],
         ),
-        NPCMoveToPlayer("gary"),
-        NPCBattle("gary"),
-        NPCMove(
+        NpcMoveToPlayer("gary"),
+        NpcBattle("gary"),
+        NpcMove(
             "gary",
             (
                 coords: (
@@ -55,7 +55,7 @@
                 )
             )
         ),
-        NPCRemove("gary"),
+        NpcRemove("gary"),
         PlayMapMusic,
         PlayerUnfreezeInput,
     ]

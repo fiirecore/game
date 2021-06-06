@@ -27,14 +27,12 @@ pub fn get_gba_map(file: Vec<u8>) -> GbaMap  {
 	
 	let mut borders: [u16; 4] = [0; 4];
 	
-	for x in 0..4 {
-		
-		let location = 52+x*2;
+	for (i, t) in borders.iter_mut().enumerate() {
+		let location = 52+i*2;
 		
 		let tile_num = (bytes[location+1]%4) as u16 * 256 + bytes[location] as u16;
-		
-		borders[x] = tile_num;
-		
+
+		*t = tile_num;
 	}
 
 	let size = width * height;
@@ -57,11 +55,11 @@ pub fn get_gba_map(file: Vec<u8>) -> GbaMap  {
 
 	GbaMap {
 		
-		music: music,
+		music,
 		width: width as MapSize,
 		height: height as MapSize,
-		palettes: palettes,
-		borders: borders,
+		palettes,
+		borders,
 		tiles,
 		movements,
 		

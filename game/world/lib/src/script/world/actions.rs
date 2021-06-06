@@ -9,7 +9,7 @@ use pokedex::{
 };
 
 use crate::{
-    character::npc::{NPC, NPCId},
+    character::npc::{Npc, NpcId},
     map::warp::{WarpId, WarpDestination}
 };
 
@@ -34,20 +34,20 @@ pub enum WorldActionKind {
     PlayerGiveItem(ItemId),
 
 
-    NPCAdd(NPCId, NPC),
-    NPCRemove(NPCId),
-    // NPCSpawn(NPCId),
-    // NPCDespawn(NPCId),
+    NpcAdd(NpcId, Box<Npc>),
+    NpcRemove(NpcId),
+    // NpcSpawn(NpcId),
+    // NpcDespawn(NpcId),
 
-    NPCLook(NPCId, Direction),
-    NPCMove(NPCId, Destination),
+    NpcLook(NpcId, Direction),
+    NpcMove(NpcId, Destination),
 
-    NPCLeadPlayer(NPCId, Destination),
-    NPCMoveToPlayer(NPCId),
+    NpcLeadPlayer(NpcId, Destination),
+    NpcMoveToPlayer(NpcId),
 
-    NPCInteract(NPCId),
-    NPCSay(NPCId, MessagePages),
-    NPCBattle(NPCId),
+    NpcInteract(NpcId),
+    NpcSay(NpcId, MessagePages),
+    NpcBattle(NpcId),
 
 
     Info(String),

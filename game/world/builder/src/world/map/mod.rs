@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use util::{Location, LocationId};
 use worldlib::{
     map::{
@@ -68,7 +68,7 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
     (manager, textures)
 }
 
-fn load_map(root_path: &PathBuf, file: &PathBuf) -> Vec<WorldMap> {
+fn load_map(root_path: &Path, file: &Path) -> Vec<WorldMap> {
     println!("Loading map under: {:?}", root_path);
 
     let data = std::fs::read_to_string(file).unwrap_or_else(|err| {

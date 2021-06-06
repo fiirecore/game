@@ -2,23 +2,23 @@ use std::collections::VecDeque;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{character::npc::{NPC, NPCInteract}, script::world::WorldScript};
+use crate::{character::npc::{Npc, NpcInteract}, script::world::WorldScript};
 
 #[derive(Deserialize, Serialize)]
 pub struct WorldMapManagerConstants {
-    pub center_npc: NPC,
+    pub center_npc: Npc,
 }
 
 impl Default for WorldMapManagerConstants {
     fn default() -> Self {
         Self {
-            center_npc: NPC {
+            center_npc: Npc {
                 name: "Joy".to_string(),
                 npc_type: "joy".parse().unwrap(),
                 character: Default::default(),
                 movement: Default::default(),
                 origin: Default::default(),
-                interact: NPCInteract::Script(WorldScript {
+                interact: NpcInteract::Script(WorldScript {
                     identifier: "pkmn_center_heal".parse().unwrap(),
                     location: None,
                     conditions: Vec::new(),

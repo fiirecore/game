@@ -15,7 +15,7 @@
     ],
     actions: [
         PlayerFreezeInput,
-        NPCAdd(
+        NpcAdd(
             "oak_temp",
             (
                 name: "Oak",
@@ -33,7 +33,7 @@
         ),
         PlayMusic("Oak"),
         Wait(0.5),
-        NPCMove(
+        NpcMove(
             "oak_temp",
             (
                 coords: (
@@ -42,8 +42,8 @@
                 ),
             ),
         ),
-        NPCRemove("oak_temp"),
-        NPCAdd(
+        NpcRemove("oak_temp"),
+        NpcAdd(
             "gary",
             (
                 name: "%r",
@@ -82,7 +82,7 @@
                 direction: Some(Up),
             )
         ),
-        NPCSay(
+        NpcSay(
             "oak",
             [(
                 lines: [

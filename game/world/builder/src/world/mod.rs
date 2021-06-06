@@ -60,11 +60,11 @@ pub struct SerializedMapSettings {
 
 }
 
-impl Into<WorldChunk> for SerializedChunk {
-    fn into(self) -> WorldChunk {
+impl From<SerializedChunk> for WorldChunk {
+    fn from(chunk: SerializedChunk) -> Self {
         WorldChunk {
-            coords: self.coords,
-            connections: self.connections.into_iter().map(|index| Location::new(None, index)).collect()
+            coords: chunk.coords,
+            connections: chunk.connections.into_iter().map(|index| Location::new(None, index)).collect()
         }
     }
 }

@@ -123,45 +123,40 @@ impl PartyGui {
                     }
                 }
             }            
-        } else {
-
-            if pressed(ctx, Control::A) {
-                let is_world = self.select.is_world.load(Relaxed);
-                if let Some(selected) = self.take_selected() {
-                    if let Some(is_world) = is_world {
-                        if is_world {
-                            self.pokemon.borrow_mut().swap(self.cursor.load(Relaxed), selected);
-                            data_mut().party.swap(self.cursor.load(Relaxed), selected);
-                        }
-                    }
-                } else {
-                    if is_world.is_some() {
-                        self.select.toggle();
-                    } else {
-                        self.selected.store(Some(self.cursor.load(Relaxed)), Relaxed);
+        } else if pressed(ctx, Control::A) {
+            let is_world = self.select.is_world.load(Relaxed);
+            if let Some(selected) = self.take_selected() {
+                if let Some(is_world) = is_world {
+                    if is_world {
+                        self.pokemon.borrow_mut().swap(self.cursor.load(Relaxed), selected);
+                        data_mut().party.swap(self.cursor.load(Relaxed), selected);
                     }
                 }
+            } else if is_world.is_some() {
+                self.select.toggle();
             } else {
-                let cursor = self.cursor.load(Relaxed);
-                if pressed(ctx, Control::Up) && cursor > 1 {
-                    self.cursor.store(cursor - 1, Relaxed);
-                }
-                if pressed(ctx, Control::Down) {
-                    if cursor < self.pokemon.borrow().len() - 1 {
-                        self.cursor.store(cursor + 1, Relaxed);  
-                    }        
-                }
-                if pressed(ctx, Control::Left) && cursor != 0 {
-                    self.right_cursor.store(Some(cursor), Relaxed);
-                    self.cursor.store(0, Relaxed);
-                }
-                if pressed(ctx, Control::Right) && cursor == 0 {
-                    self.cursor.store(self.right_cursor.load(Relaxed).unwrap_or(1), Relaxed);
-                }
-                if (pressed(ctx, Control::B) || pressed(ctx, Control::Start)) && self.exitable.load(Relaxed) {
-                    self.despawn();
-                }
-            }           
+                self.selected.store(Some(self.cursor.load(Relaxed)), Relaxed);
+            }
+        } else {
+            let cursor = self.cursor.load(Relaxed);
+            if pressed(ctx, Control::Up) && cursor > 1 {
+                self.cursor.store(cursor - 1, Relaxed);
+            }
+            if pressed(ctx, Control::Down) {
+                if cursor < self.pokemon.borrow().len() - 1 {
+                    self.cursor.store(cursor + 1, Relaxed);  
+                }        
+            }
+            if pressed(ctx, Control::Left) && cursor != 0 {
+                self.right_cursor.store(Some(cursor), Relaxed);
+                self.cursor.store(0, Relaxed);
+            }
+            if pressed(ctx, Control::Right) && cursor == 0 {
+                self.cursor.store(self.right_cursor.load(Relaxed).unwrap_or(1), Relaxed);
+            }
+            if (pressed(ctx, Control::B) || pressed(ctx, Control::Start)) && self.exitable.load(Relaxed) {
+                self.despawn();
+            }
         }
     }
 

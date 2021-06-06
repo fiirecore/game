@@ -46,22 +46,14 @@ impl BattleOptions {
     }
 
     pub fn input(&mut self, ctx: &Context) {
-        if pressed(ctx, Control::Up) {
-            if self.cursor >= 2 {
-                self.cursor -= 2;
-            }            
-        } else if pressed(ctx, Control::Down) {
-            if self.cursor <= 2 {
-                self.cursor += 2;
-            } 
-        } else if pressed(ctx, Control::Left) {
-            if self.cursor > 0 {
-                self.cursor -= 1;
-            }
-        } else if pressed(ctx, Control::Right) {
-            if self.cursor < 3 {
-                self.cursor += 1;
-            }
+        if pressed(ctx, Control::Up) && self.cursor >= 2 {
+            self.cursor -= 2;          
+        } else if pressed(ctx, Control::Down) && self.cursor <= 2 {
+            self.cursor += 2;
+        } else if pressed(ctx, Control::Left) && self.cursor > 0 {
+            self.cursor -= 1;
+        } else if pressed(ctx, Control::Right) && self.cursor < 3 {
+            self.cursor += 1;
         }
     }
 

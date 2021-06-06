@@ -91,10 +91,8 @@ impl BattleIntroduction for TrainerBattleIntroduction {
 
     fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText) {
         self.introduction.update(ctx, delta, player, opponent, text);
-        if text.can_continue() {
-            if text.current() == text.len() - 2 {
-                self.leaving = true;
-            }           
+        if text.can_continue() && text.current() == text.len() - 2 {
+            self.leaving = true;          
         }
         if self.leaving && self.offset < Self::FINAL_TRAINER_OFFSET {
             self.offset += 300.0 * delta;

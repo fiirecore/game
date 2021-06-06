@@ -1,7 +1,7 @@
 (
     id: "2",
     npc: (
-        name: "NPC 2",
+        name: "Npc 2",
         type: "fat_man",
         character: (
             position: (

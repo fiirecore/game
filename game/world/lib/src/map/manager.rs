@@ -5,7 +5,7 @@ use crate::{
     character::{
         MoveType,
         player::PlayerCharacter,
-        npc::NPCId,
+        npc::NpcId,
     },
     map::{
         TileId,
@@ -56,8 +56,8 @@ pub struct WorldMapManagerData {
 
 pub struct TrainerEntry {
     pub map: Location,
-    pub id: NPCId,
-    pub disable_others: HashSet<NPCId>,
+    pub id: NpcId,
+    pub disable_others: HashSet<NpcId>,
 }
 
 pub type TrainerEntryRef<'a> = &'a mut Option<TrainerEntry>;
@@ -144,10 +144,7 @@ impl WorldMapManager {
 
         let walk = self.tile(coords).map(|tile_id| match direction {
             Direction::Up => false,
-            Direction::Down => match tile_id  {
-                135 | 176 | 177 | 143 | 151 | 184 | 185 | 192 | 193 | 217 | 1234 => true,
-                _ => false,
-            },
+            Direction::Down => matches!(tile_id, 135 | 176 | 177 | 143 | 151 | 184 | 185 | 192 | 193 | 217 | 1234),
             Direction::Left => tile_id == 133,
             Direction::Right => tile_id == 134,
         }).unwrap_or_default();
@@ -260,10 +257,6 @@ pub fn can_move(move_type: MoveType, code: MovementId) -> bool {
 
 pub fn can_walk(code: MovementId) -> bool {
     code == 0xC
-    // match move_code {
-    //     0x0C | 0x00 | 0x04 => true,
-    //     _ => false,
-    // }
 }
 
 pub fn can_swim(code: MovementId) -> bool {

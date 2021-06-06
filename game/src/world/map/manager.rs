@@ -37,7 +37,7 @@ use worldlib::{
     },
     character::{
         MoveType,
-        npc::npc_type::NPCType,
+        npc::npc_type::NpcType,
     },
 };
 
@@ -171,7 +171,7 @@ impl WorldManager {
                     self.textures.npcs.add_npc_type(ctx, &npc_type);
                     (
                         npc_type.config.identifier,
-                        NPCType {
+                        NpcType {
                             sprite: firecore_world_lib::character::sprite::SpriteIndexes::from_index(npc_type.config.sprite),
                             text_color: npc_type.config.text_color,
                             trainer: npc_type.config.trainer,

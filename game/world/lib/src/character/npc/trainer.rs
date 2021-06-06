@@ -6,7 +6,7 @@ use deps::{
 use firecore_pokedex::pokemon::party::PokemonParty;
 
 use crate::default_true;
-use super::NPCId;
+use super::NpcId;
 
 type MessageSet = Vec<Vec<String>>;
 
@@ -27,7 +27,7 @@ pub struct Trainer {
     #[serde(default)]
     pub victory_message: MessageSet,
     #[serde(default)]
-    pub disable: HashSet<NPCId>,
+    pub disable: HashSet<NpcId>,
     pub worth: u16,
 
 }

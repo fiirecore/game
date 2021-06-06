@@ -1,15 +1,19 @@
 use std::rc::Rc;
 
-use deps::log::debug;
-
-use crate::{battle::pokemon::{BattleClientMove, BattlePartyTrait, PokemonUnknown, gui::ActivePokemonParty}, gui::{bag::BagGui, party::PartyGui}, log::warn, pokedex::{
+use crate::{
+    util::{Entity, Completable, Reset},
+    pokedex::{
         item::ItemUseType, 
         moves::target::{
             MoveTarget, 
             MoveTargetInstance, 
             Team
         },
-    }, tetra::Context, util::{Entity, Completable, Reset}};
+    },
+    gui::{bag::BagGui, party::PartyGui}, 
+    tetra::Context,
+    log::warn,
+};
 
 use crate::battle::{
     BattleData, 
@@ -18,9 +22,15 @@ use crate::battle::{
         BattleMove,
         BattlePartyKnown, 
         BattlePartyUnknown,
+        PokemonUnknown,
         BattleClientAction,
         BattleClientActionInstance,
-        gui::ActivePokemonRenderer,
+        BattleClientMove,
+        BattlePartyTrait, 
+        gui::{
+            ActivePokemonParty,
+            ActivePokemonRenderer,
+        },
     }, 
     ui::{
         self,
@@ -130,37 +140,35 @@ impl BattlePlayerGui {
                                                 self.party.despawn();
                                                 self.moves.push(BattleMove::Switch(selected));
                                             }
-                                        } else {
-                                            if let Some(panels) = self.gui.panel.input(ctx, pokemon) {
-                                                match panels {
-                                                    BattlePanels::Main => {
-                                                        match self.gui.panel.battle.cursor {
-                                                            0 => self.gui.panel.active = BattlePanels::Fight,
-                                                            1 => self.bag.spawn(),
-                                                            2 => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, true),
-                                                            3 => if self.is_wild {
-                                                                // closer.spawn(self, &mut gui.text);
-                                                                todo!()
-                                                                // self.state = BattleState::End; // To - do: "Got away safely!" - run text and conditions
-                                                            },
-                                                            _ => unreachable!(),
-                                                        }
+                                        } else if let Some(panels) = self.gui.panel.input(ctx, pokemon) {
+                                            match panels {
+                                                BattlePanels::Main => {
+                                                    match self.gui.panel.battle.cursor {
+                                                        0 => self.gui.panel.active = BattlePanels::Fight,
+                                                        1 => self.bag.spawn(),
+                                                        2 => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, true),
+                                                        3 => if self.is_wild {
+                                                            // closer.spawn(self, &mut gui.text);
+                                                            todo!()
+                                                            // self.state = BattleState::End; // To - do: "Got away safely!" - run text and conditions
+                                                        },
+                                                        _ => unreachable!(),
                                                     }
-                                                    BattlePanels::Fight => match pokemon.moves.get(self.gui.panel.fight.moves.cursor) {
-                                                        Some(instance) => match instance.get() {
-                                                            Some(move_ref) => self.moves.push(BattleMove::Move(
-                                                                self.gui.panel.fight.moves.cursor,
-                                                                match move_ref.value().target {
-                                                                    MoveTarget::User => MoveTargetInstance::user(),
-                                                                    MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.fight.targets.cursor),
-                                                                    MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
-                                                                    MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
-                                                                }
-                                                            )),
-                                                            None => warn!("Pokemon is out of Power Points for this move!")
-                                                        }
-                                                        None => warn!("Could not get move at cursor!"),
+                                                }
+                                                BattlePanels::Fight => match pokemon.moves.get(self.gui.panel.fight.moves.cursor) {
+                                                    Some(instance) => match instance.get() {
+                                                        Some(move_ref) => self.moves.push(BattleMove::Move(
+                                                            self.gui.panel.fight.moves.cursor,
+                                                            match move_ref.value().target {
+                                                                MoveTarget::User => MoveTargetInstance::user(),
+                                                                MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.fight.targets.cursor),
+                                                                MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
+                                                                MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
+                                                            }
+                                                        )),
+                                                        None => warn!("Pokemon is out of Power Points for this move!")
                                                     }
+                                                    None => warn!("Could not get move at cursor!"),
                                                 }
                                             }
                                         }
@@ -580,10 +588,7 @@ impl BattleClient for BattlePlayerGui {
     }
 
     fn wait_finish_turn(&mut self) -> bool {
-        match &self.state {
-            BattlePlayerState::WaitToSelect => true,
-            _ => false,
-        }
+        matches!(self.state, BattlePlayerState::WaitToSelect)
     }
 
 }
