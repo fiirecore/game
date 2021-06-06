@@ -3,7 +3,7 @@ use crate::{
     graphics::draw_rectangle,
     tetra::{
         Context,
-        graphics::{Camera, get_transform_matrix, set_transform_matrix, reset_transform_matrix},
+        graphics::{get_transform_matrix, set_transform_matrix, reset_transform_matrix},
         graphics::Color,
     },
 };

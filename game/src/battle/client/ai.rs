@@ -62,6 +62,8 @@ impl BattleClient for BattlePlayerAi {
                                                 .map(|(index, _)| index)
                                                 .collect();
                                     
+                                            deps::log::debug!("to - do: fix opponent faint pokemon select");
+
                                             self.faint.insert(fainter.index, available[crate::battle::BATTLE_RANDOM.gen_range(0, available.len())]);
                                         }
                                     }

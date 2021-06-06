@@ -23,7 +23,7 @@ pub struct TrainerBattleTransition {
 
 impl BattleTransition for TrainerBattleTransition {
 
-    fn update(&mut self, ctx: &mut Context, delta: f32) {
+    fn update(&mut self, _ctx: &mut Context, delta: f32) {
         self.rect_width += 240.0 * delta;
     }
 

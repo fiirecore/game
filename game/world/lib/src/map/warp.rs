@@ -39,4 +39,7 @@ pub struct WarpTransition {
     #[serde(default = "crate::default_true")]
     pub change_music: bool,
 
+    #[serde(default = "crate::default_true")]
+    pub door: bool,
+
 }

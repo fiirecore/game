@@ -1,15 +1,32 @@
-use crate::{CRY_ID, audio::Sound, battle::pokemon::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}, graphics::{position, ZERO}, gui::DynamicText, play_sound, tetra::{
+use crate::{
+    util::{Entity, Reset, Completable},
+    text::MessagePage,
+    audio::Sound,
+    gui::DynamicText,
+    graphics::{position, ZERO},
+    tetra::{
         Context,
         graphics::{Texture, Rectangle, Color},
-    }, text::MessagePage, util::{Entity, Reset, Completable}};
+    }, 
+    CRY_ID, 
+    play_sound,
+};
 
 use crate::battle::{
     Battle,
+    pokemon::{
+        ActivePokemonArray,
+        BattlePartyKnown,
+        BattlePartyUnknown,
+        gui::{
+            ActivePokemonParty,
+            ActiveRenderer,
+        },
+    },
     ui::{
         pokemon::status::PokemonStatusGui,
         transitions::BattleIntroduction,
     },
-    pokemon::ActivePokemonArray,
 };
 
 pub struct BasicBattleIntroduction {
@@ -139,12 +156,8 @@ impl BattleIntroduction for BasicBattleIntroduction {
         } else if text.can_continue() && text.current() >= text.len() - 2 {
             for active in opponent.renderer.iter_mut() {
                 active.status.spawn();
-                // if let Some(instance) = active.pokemon.as_ref() {
-                //     play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
-                // }
             }
-            // deps::log::debug!("{:?}", player.party);
-            for instance in player.party.active.iter().flat_map(|index| index.map(|i| &player.party.pokemon[i] as &dyn crate::battle::pokemon::PokemonKnowData)) {
+            for instance in opponent.party.active.iter().flat_map(|index| index.map(|i| &opponent.party.pokemon[i] as &dyn crate::battle::pokemon::PokemonKnowData)) {
                 play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon().id())));
             }            
         }

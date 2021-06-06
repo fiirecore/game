@@ -1,4 +1,4 @@
-// #![feature(map_into_keys_values)] // for move queue fn ~line 558
+// #![feature(map_into_keys_values)] // for move queue fn
 
 use serde::{Deserialize, Serialize};
 
@@ -44,13 +44,13 @@ use crate::battle::{
 		BattleActionInstance,
 		BattleMove,
 		BattleClientMove,
+		BattleClientAction,
+		BattleClientActionInstance,
 	},
 	client::{
 		BattleClient,
 	},
 };
-
-use self::pokemon::{BattleClientAction, BattleClientActionInstance};
 
 pub mod state;
 pub mod manager;
@@ -140,7 +140,7 @@ impl Battle {
 								for active in party.active.iter_mut().rev().filter(|active| active.pokemon.is_active()) {
 									active.queued_move = moves.pop();
 								}
-								debug!("party with {:?} completed their moves.", party.pokemon(0));
+								// debug!("party with {:?} completed their moves.", party.pokemon(0));
 								*done = true;
 							}
 						}
@@ -167,7 +167,7 @@ impl Battle {
 
 
 
-						debug!("Starting move calculations");
+						// debug!("Starting move calculations");
 						self.state = BattleState::MOVE_START;
 					}
 					
@@ -403,13 +403,13 @@ impl Battle {
 										}
 									}
 									BattleMove::Switch(new) => {
-										debug!("dont send unknown every time");
+										debug!("to - do: dont send unknown every time");
 										user.replace(instance.pokemon.index, Some(*new));
 										player_queue.push(BattleClientActionInstance {
 											pokemon: instance.pokemon,
 											action: BattleClientAction::Switch(*new, Some(pokemon::PokemonUnknown::new(user.pokemon(instance.pokemon.index).unwrap()))),
 										}); // ui::text::on_switch(text, pokemon, user.pokemon[*new].as_ref().unwrap().value());
-										debug!("{:?}", user.active);
+										// debug!("{:?}", user.active);
 									}
 								}
 							}
@@ -425,7 +425,7 @@ impl Battle {
 
 						player_cli.start_moves(player_queue);
 
-						debug!("sent moves");
+						// debug!("sent moves");
 
 						*move_state = MoveState::SetupPost;
 
@@ -575,7 +575,6 @@ impl Battle {
 								self.data.winner = Some(Team::Opponent);
 								self.state = BattleState::End;
 							} else if !self.faints.is_empty() {
-								debug!("End move faint wait {:?}", self.faints);
 								let mut i = 0;
 								while i != self.faints.len() {
 									let active = &self.faints[i];
@@ -598,9 +597,13 @@ impl Battle {
 										Team::Opponent => {
 											if self.opponent.any_inactive() {
 												if let Some(new) = opponent_cli.wait_faint(active.index) {
-													self.opponent.replace(active.index, Some(new));
-													player_cli.opponent_faint_replace(active.index, Some(new));
-													self.faints.remove(i);
+													// if let Some(pokemon) = self.opponent.pokemon(active.index) {
+													// 	if !pokemon.fainted() {
+															self.opponent.replace(active.index, Some(new));
+															player_cli.opponent_faint_replace(active.index, Some(new));
+															self.faints.remove(i);
+													// 	}
+													// }
 												} else {
 													i += 1;
 												}

@@ -1,13 +1,25 @@
-use crate::{battle::pokemon::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}, graphics::draw_o_bottom, gui::DynamicText, storage::data, tetra::{
-        Context,
-        graphics::Texture,
-    }, text::MessagePage, util::{
+use crate::{
+    util::{
         Reset, 
         Completable,
-    }};
+    },
+    storage::data,
+    text::MessagePage,
+    gui::DynamicText, 
+    graphics::draw_o_bottom, 
+    tetra::{
+        Context,
+        graphics::Texture,
+    }
+};
 
 use crate::battle::{
     Battle,
+    pokemon::{
+        BattlePartyKnown, 
+        BattlePartyUnknown, 
+        gui::{ActivePokemonParty, ActiveRenderer}
+    },
     ui::transitions::{
         BattleIntroduction,
         introductions::basic::BasicBattleIntroduction,

@@ -119,14 +119,16 @@ impl WorldMapManager {
                         // open door on warp
 
                         let map = self.get().unwrap();
-                        self.data.door = Some(
-                            Door {
-                                position: coords.x as usize + coords.y as usize * map.width,
-                                tile: map.tile(coords).unwrap(),
-                                accumulator: 0.0,
-                                open: true,
-                            }
-                        );
+                        if destination.transition.door {
+                            self.data.door = Some(
+                                Door {
+                                    position: coords.x as usize + coords.y as usize * map.width,
+                                    tile: map.tile(coords).unwrap(),
+                                    accumulator: 0.0,
+                                    open: true,
+                                }
+                            );
+                        }
                         self.data.player.character.update_sprite();
 
                         // door open end
@@ -218,15 +220,17 @@ impl WorldMapManager {
     pub fn warp(&mut self, destination: WarpDestination) {
         match self.maps.get(&destination.location) {
             Some(map) => {
-                
-                self.data.door = Some(
-                    Door {
-                        position: destination.position.coords.x as usize + destination.position.coords.y as usize * map.width,
-                        tile: map.tile(destination.position.coords).unwrap(),
-                        accumulator: 0.0,
-                        open: true,
-                    }
-                );
+
+                if destination.transition.door {
+                    self.data.door = Some(
+                        Door {
+                            position: destination.position.coords.x as usize + destination.position.coords.y as usize * map.width,
+                            tile: map.tile(destination.position.coords).unwrap(),
+                            accumulator: 0.0,
+                            open: true,
+                        }
+                    );
+                }
 
                 self.data.player.character.position.from_destination(destination.position);
                 self.data.current = Some(destination.location);

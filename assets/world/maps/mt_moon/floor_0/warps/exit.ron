@@ -23,6 +23,7 @@
         transition: (
             move_on_exit: true,
             warp_on_tile: true,
+            door: false,
         ),
     ),
 )

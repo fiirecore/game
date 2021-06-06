@@ -450,13 +450,11 @@ impl BattlePlayerGui {
                                                 false => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, false)
                                             }
                                         } else {
-                                            debug!("no inactive!");
                                             self.player.party.replace(instance.pokemon.index, None);
                                             user_ui[instance.pokemon.index].update(None);
                                             queue.current = None;
                                         },
                                         Team::Opponent => {
-                                            debug!("opponent faint!");
                                             queue.current = None;
                                         }
                                     }
