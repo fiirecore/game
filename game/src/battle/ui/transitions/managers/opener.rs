@@ -1,4 +1,4 @@
-use crate::{battle::pokemon::gui::ActiveRenderer, tetra::Context};
+use crate::{battle::pokemon::view::gui::ActiveRenderer, tetra::Context};
 
 use crate::battle::{
     Battle,

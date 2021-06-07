@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::moves::MoveCategory;
 
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)] // To - do: move module
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum PokemonType {
 
 	Unknown,

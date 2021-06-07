@@ -2,7 +2,7 @@ use background::BattleBackground;
 use pokemon::bounce::PlayerBounce;
 use crate::{
 	gui::{
-		DynamicText,
+		TextDisplay,
 		party::PartyGui,
 		pokemon::PokemonDisplay,
 	},
@@ -15,7 +15,7 @@ use crate::{
 
 use self::panels::BattlePanel;
 
-use super::pokemon::{BattleParty, BattlePartyKnown};
+use super::pokemon::{BattleParty, view::BattlePartyKnown};
 // use self::panels::level_up::LevelUpMovePanel;
 
 pub mod background;
@@ -59,7 +59,7 @@ pub struct BattleGui {
 
 	pub panel: BattlePanel,
 
-	pub text: DynamicText,
+	pub text: TextDisplay,
 
 	pub bounce: PlayerBounce,
 

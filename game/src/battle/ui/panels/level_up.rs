@@ -13,7 +13,7 @@ use game::{
     text::{MessagePage, TextColor},
     input::{pressed, Control},
     macroquad::prelude::Vec2,
-    gui::text::DynamicText,
+    gui::text::TextDisplay,
 };
 
 use super::moves::MovePanel;
@@ -22,7 +22,7 @@ pub struct LevelUpMovePanel {
 
     alive: bool,
 
-    text: DynamicText,
+    text: TextDisplay,
     move_panel: MovePanel,
 
     name: String,
@@ -37,7 +37,7 @@ impl LevelUpMovePanel {
     pub fn new(panel: Vec2) -> Self {
         Self {
             alive: false,
-            text: DynamicText::new(Vec2::new(11.0, 11.0), panel, 1, &TextColor::White, 1, "levelup"),
+            text: TextDisplay::new(Vec2::new(11.0, 11.0), panel, 1, &TextColor::White, 1, "levelup"),
             move_panel: MovePanel::new(panel),
             name: String::new(),
             moves: Vec::new(),

@@ -7,7 +7,7 @@ use crate::{
     },
     pokedex::moves::target::Team,
     storage::data,
-    gui::DynamicText,
+    gui::TextDisplay,
     text::MessagePage,
     graphics::draw_o_bottom,
     tetra::{
@@ -45,7 +45,7 @@ impl Default for TrainerBattleCloser {
 
 impl BattleCloser for TrainerBattleCloser {
 
-    fn spawn(&mut self, battle: &Battle, text: &mut DynamicText) {
+    fn spawn(&mut self, battle: &Battle, text: &mut TextDisplay) {
         match battle.data.winner {
             Some(winner) => match winner {
                 Team::Player => {
@@ -92,7 +92,7 @@ impl BattleCloser for TrainerBattleCloser {
         }
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut TextDisplay) {
         if text.alive() {
             text.update(ctx, delta);
             if text.current() == 1 && self.offset > Self::XPOS {

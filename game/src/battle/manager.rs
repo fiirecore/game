@@ -100,7 +100,7 @@ impl BattleManager {
 			// Checks if player has any pokemon in party that aren't fainted (temporary)
 			!player.iter().any(|pokemon| !pokemon.fainted())
 		)).then(|| Battle::new(
-			BattleParty::new("Player", data_mut().party.iter_mut().map(|instance| Some(BorrowedPokemon::Borrowed(instance))).collect(), entry.size),
+			BattleParty::new("Player", data_mut().party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), entry.size),
 			entry
 		));
 		self.battle.is_some()
@@ -151,12 +151,12 @@ impl BattleManager {
 				}
 				BattleManagerState::Introduction => match self.introduction.state {
 					TransitionState::Begin => {
-						self.introduction.begin(battle, &mut self.player.gui.text);
+						self.introduction.begin(&battle.data, &self.player.player.party, &self.player.opponent.party, &mut self.player.gui.text);
 						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.introduction.update(ctx, delta, &mut self.player.player, &mut self.player.opponent, &mut self.player.gui.text),
 					TransitionState::End => {
-						self.introduction.end();
+						self.introduction.end(&mut self.player.gui.text);
 						self.state = BattleManagerState::Battle;
 						self.update(ctx, delta, input_lock);
 					}

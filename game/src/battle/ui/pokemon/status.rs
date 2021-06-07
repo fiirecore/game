@@ -1,4 +1,4 @@
-use crate::{battle::pokemon::{PokemonKnowData, PokemonUnknown}, graphics::{byte_texture, position, draw_text_left, draw_text_right}, gui::health::HealthBar, pokedex::pokemon::{
+use crate::{battle::pokemon::view::{PokemonKnowData, PokemonUnknown}, graphics::{byte_texture, position, draw_text_left, draw_text_right}, gui::health::HealthBar, pokedex::pokemon::{
 		Level,
 		instance::PokemonInstance,
 		stat::StatSet,
@@ -216,7 +216,7 @@ impl PokemonStatusGui {
 					level.0 = Self::level_fmt(level.1);
 					let base = StatSet::hp(pokemon.pokemon.value().base.hp, pokemon.ivs.hp, pokemon.evs.hp, level.1);
 					self.health_text = Some(format!("{}/{}", pokemon.hp(), base));
-					self.health.0.resize_hp(pokemon.hp(), base, false);
+					self.health.0.resize(pokemon.percent_hp(), false);
 				}
 			}
 			self.health.0.update(delta);

@@ -9,8 +9,6 @@ use std::fs::read_to_string;
 pub mod error;
 pub mod reload;
 
-// To - do: miniquad-cookie produces cookies that dont throw samesite errors
-
 const DIR1: &str = "rhysholloway"; // To - do: Custom specifiers for directories
 const DIR2: &str = "pokemon-firered-clone";
 const EXTENSION: &str = "ron";

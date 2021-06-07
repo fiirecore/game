@@ -1,9 +1,20 @@
-use crate::{battle::pokemon::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}, gui::DynamicText, tetra::Context, util::Entity};
+use crate::{
+    util::Entity,
+    gui::TextDisplay, 
+    tetra::Context,
+};
 
 use crate::battle::{
-    Battle,
+    BattleData,
     BattleType,
     state::TransitionState,
+    pokemon::{
+        view::{
+            BattlePartyKnown, 
+            BattlePartyUnknown,
+            gui::{ActivePokemonParty, ActiveRenderer}
+        },
+    },
     ui::transitions::{
         BattleIntroduction,
         introductions::{
@@ -36,23 +47,24 @@ impl BattleIntroductionManager {
         }
     }
 
-    pub fn begin(&mut self, battle: &Battle, text: &mut DynamicText) {
+    pub fn begin(&mut self, data: &BattleData, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
         self.state = TransitionState::Run;
-        match battle.data.battle_type {
+        match data.battle_type {
             BattleType::Wild => self.current = Introductions::Basic,
             _ => self.current = Introductions::Trainer,
         }
         let current = self.get_mut();
         current.reset();
-        current.spawn(battle, text);
+        current.spawn(data, player, opponent, text);
         text.spawn();
     }
 
-    pub fn end(&mut self) {
+    pub fn end(&mut self, text: &mut TextDisplay) {
+        text.clear();
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut TextDisplay) {
         let current = self.get_mut();
         current.update(ctx, delta, player, opponent, text);
         if current.finished() {

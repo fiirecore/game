@@ -2,7 +2,7 @@ use crate::{
     util::{Entity, Reset, Completable},
     text::MessagePage,
     audio::Sound,
-    gui::DynamicText,
+    gui::TextDisplay,
     graphics::{position, ZERO},
     tetra::{
         Context,
@@ -13,14 +13,17 @@ use crate::{
 };
 
 use crate::battle::{
-    Battle,
+    BattleData,
     pokemon::{
-        ActivePokemonArray,
-        BattlePartyKnown,
-        BattlePartyUnknown,
-        gui::{
-            ActivePokemonParty,
-            ActiveRenderer,
+        view::{
+            BattlePartyKnown,
+            BattlePartyUnknown,
+            BattlePartyTrait,
+            PokemonKnowData,
+            gui::{
+                ActivePokemonParty,
+                ActiveRenderer,
+            },
         },
     },
     ui::{
@@ -54,11 +57,11 @@ impl BasicBattleIntroduction {
     }
 
     #[deprecated(note = "bad code, return vec of string (lines)")]
-    pub(crate) fn concatenate(active: &ActivePokemonArray) -> String {
+    pub(crate) fn concatenate(party: &dyn BattlePartyTrait) -> String {
         let mut string = String::new();
-        let len = active.len();
-        for (index, active) in active.iter().enumerate() {
-            if let Some(instance) = active.pokemon.as_ref() {
+        let len = party.active_len();
+        for index in 0..len {
+            if let Some(instance) = party.active(index) {
                 if index != 0 {
                     if index == len - 2 {
                         string.push_str(", ");
@@ -72,11 +75,11 @@ impl BasicBattleIntroduction {
         string
     }
 
-    pub(crate) fn common_setup(&mut self, text: &mut DynamicText, active: &ActivePokemonArray) {        
+    pub(crate) fn common_setup(&mut self, text: &mut TextDisplay, party: &dyn BattlePartyTrait) {        
         text.push(
             MessagePage::new(
                 vec![
-                    format!("Go! {}!", Self::concatenate(active)),
+                    format!("Go! {}!", Self::concatenate(party)),
                 ],
                 Some(0.5),
             )
@@ -123,20 +126,20 @@ impl BasicBattleIntroduction {
 
 impl BattleIntroduction for BasicBattleIntroduction {
 
-    fn spawn(&mut self, battle: &Battle, text: &mut DynamicText) {
+    fn spawn(&mut self, data: &BattleData, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
         text.clear();
         text.push(
             MessagePage::new(
                 vec![
-                    format!("Wild {} appeared!", Self::concatenate(&battle.opponent.active))
+                    format!("Wild {} appeared!", Self::concatenate(opponent))
                 ],
                 None,
             )
         );
-        self.common_setup(text, &battle.player.active);
+        self.common_setup(text, player);
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut TextDisplay) {
 
         text.update(ctx, delta);
 
@@ -155,7 +158,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
             for active in opponent.renderer.iter_mut() {
                 active.status.spawn();
             }
-            for instance in opponent.party.active.iter().flat_map(|index| index.map(|i| &opponent.party.pokemon[i] as &dyn crate::battle::pokemon::PokemonKnowData)) {
+            for instance in opponent.party.active.iter().flat_map(|index| index.map(|i| &opponent.party.pokemon[i] as &dyn PokemonKnowData)) {
                 play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon().id())));
             }            
         }

@@ -1,4 +1,4 @@
-use crate::{battle::pokemon::gui::ActiveRenderer, graphics::draw_o_bottom, tetra::{
+use crate::{battle::pokemon::view::gui::ActiveRenderer, graphics::draw_o_bottom, tetra::{
         Context,
         graphics::Texture,
     }, util::{Reset, Completable}};

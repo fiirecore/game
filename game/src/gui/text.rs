@@ -10,7 +10,7 @@ use crate::tetra::{Context, math::Vec2};
 use crate::graphics::{draw_text_left, draw_button};
 
 #[derive(Clone)]
-pub struct DynamicText {
+pub struct TextDisplay {
 
 	alive: bool,
     
@@ -31,7 +31,7 @@ pub struct DynamicText {
 
 }
 
-impl DynamicText {
+impl TextDisplay {
 
 	pub fn new(origin: Vec2<f32>, font: FontId, color: TextColor, len: usize) -> Self {
 		Self {
@@ -187,7 +187,7 @@ impl DynamicText {
 
 }
 
-impl Reset for DynamicText {
+impl Reset for TextDisplay {
     fn reset(&mut self) {
         self.current = 0;
 		self.button = Default::default();
@@ -196,7 +196,7 @@ impl Reset for DynamicText {
     }
 }
 
-impl Completable for DynamicText {
+impl Completable for TextDisplay {
     fn finished(&self) -> bool {
 		(self.current + 1 >= self.len() && 
 		self.end &&
@@ -205,7 +205,7 @@ impl Completable for DynamicText {
     }
 }
 
-impl Entity for DynamicText {
+impl Entity for TextDisplay {
 
 	fn spawn(&mut self) {
 		self.alive = true;

@@ -170,6 +170,7 @@ impl BagGui {
             self.selected.store(None, Relaxed);
             let mut items = self.items.borrow_mut();
             let item = items[selected].decrement().then(|| items[selected].stack.item);
+            items.clear();
             self.despawn();
             item
         }).flatten()
@@ -186,7 +187,6 @@ impl BagGui {
 
     pub fn despawn(&self) {
         self.alive.store(false, Relaxed);
-        self.items.borrow_mut().clear();
     }
 
     pub fn alive(&self) -> bool {

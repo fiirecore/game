@@ -1,16 +1,16 @@
 extern crate firecore_dependencies as deps;
+extern crate firecore_util as util;
+extern crate firecore_pokedex as pokedex;
+extern crate firecore_world_lib as worldlib;
 
 use std::sync::atomic::AtomicBool;
-use deps::str::TinyStr16;
-use firecore_pokedex::{
+use serde::{Deserialize, Serialize};
+use util::{Location, LocationId, Position, Coordinate, Direction, PixelOffset};
+use pokedex::{
 	item::bag::Bag,
 	pokemon::party::PokemonParty,
 };
-use firecore_world_lib::character::Character;
-use serde::{Deserialize, Serialize};
-use firecore_util::{
-	Location, Position, Coordinate, Direction,
-};
+use worldlib::character::Character;
 
 use world::WorldStatus;
 
@@ -39,9 +39,8 @@ pub struct PlayerSave {
 	#[serde(default)]
 	pub party: PokemonParty,
 
-    // #[deprecated(note = "To - do: Item bag module")]
 	#[serde(default)]
-	pub bag: Bag, // ItemId is redundant
+	pub bag: Bag, // To - do: ItemId is redundant
 
 	#[serde(default)]
 	pub worth: Worth,
@@ -102,19 +101,19 @@ pub const fn default_position() -> Position {
 			y: 6,
 		},
 		direction: Direction::Down,
-		offset: firecore_util::PixelOffset::ZERO,
+		offset: PixelOffset::ZERO,
 	}
 }
 
-const DEFAULT_MAP: TinyStr16 = unsafe { TinyStr16::new_unchecked(9142636256173598303365790196080) };
-const DEFAULT_INDEX: TinyStr16 = unsafe { TinyStr16::new_unchecked(132299152847616915686911088) };
+const DEFAULT_MAP: LocationId = unsafe { LocationId::new_unchecked(9142636256173598303365790196080u128) };
+const DEFAULT_INDEX: LocationId = unsafe { LocationId::new_unchecked(132299152847616915686911088u128) };
 
 #[inline]
-pub const fn default_map() -> TinyStr16 { // To - do: get this from serialized world binary file
+pub const fn default_map() -> LocationId { // To - do: get this from serialized world binary file
 	DEFAULT_MAP
 }
 
 #[inline]
-pub const fn default_index() -> TinyStr16 {
+pub const fn default_index() -> LocationId {
 	DEFAULT_INDEX
 }

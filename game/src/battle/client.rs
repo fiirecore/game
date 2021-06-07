@@ -1,4 +1,4 @@
-use super::{BattleData, pokemon::{BattleClientActionInstance, BattleMove, BattlePartyKnown, BattlePartyUnknown, PokemonUnknown}};
+use super::{BattleData, pokemon::{BattleClientActionInstance, BattleMove, view::{BattlePartyKnown, BattlePartyUnknown, PokemonUnknown}}};
 
 pub mod gui;
 pub mod ai;
@@ -28,5 +28,7 @@ pub trait BattleClient {
 
 
     fn wait_finish_turn(&mut self) -> bool;
+
+    fn should_forfeit(&mut self) -> bool;
 
 }

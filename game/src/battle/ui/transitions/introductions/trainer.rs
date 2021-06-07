@@ -3,9 +3,9 @@ use crate::{
         Reset, 
         Completable,
     },
-    storage::data,
+    storage::data as save,
     text::MessagePage,
-    gui::DynamicText, 
+    gui::TextDisplay, 
     graphics::draw_o_bottom, 
     tetra::{
         Context,
@@ -14,11 +14,16 @@ use crate::{
 };
 
 use crate::battle::{
-    Battle,
+    BattleData,
     pokemon::{
-        BattlePartyKnown, 
-        BattlePartyUnknown, 
-        gui::{ActivePokemonParty, ActiveRenderer}
+        view::{
+            BattlePartyKnown, 
+            BattlePartyUnknown,
+            gui::{
+                ActivePokemonParty,
+                ActiveRenderer,
+            },
+        },
     },
     ui::transitions::{
         BattleIntroduction,
@@ -53,10 +58,10 @@ impl TrainerBattleIntroduction {
 
 impl BattleIntroduction for TrainerBattleIntroduction {
 
-    fn spawn(&mut self, battle: &Battle, text: &mut DynamicText) {
+    fn spawn(&mut self, data: &BattleData, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
         text.clear();
 
-        if let Some(trainer) = battle.data.trainer.as_ref() {
+        if let Some(trainer) = data.trainer.as_ref() {
             self.texture = Some(trainer.texture.clone());
 
             let name = format!("{} {}", trainer.prefix, trainer.name);
@@ -72,7 +77,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             text.push(MessagePage::new(
                 vec![
                     name + " sent", 
-                    format!("out {}", BasicBattleIntroduction::concatenate(&battle.opponent.active))
+                    format!("out {}", BasicBattleIntroduction::concatenate(opponent))
                 ],
                 Some(0.5),
             ));
@@ -83,13 +88,13 @@ impl BattleIntroduction for TrainerBattleIntroduction {
             ));
         }
 
-        text.process_messages(data());
+        text.process_messages(save());
 
-        self.introduction.common_setup(text, &battle.player.active);
+        self.introduction.common_setup(text, player);
         
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut TextDisplay) {
         self.introduction.update(ctx, delta, player, opponent, text);
         if text.can_continue() && text.current() == text.len() - 2 {
             self.leaving = true;          

@@ -44,13 +44,13 @@ impl TextRenderer {
         }
     }
 
-    pub fn draw_text_right(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
+    pub fn draw_text_right(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32) {
         if let Some(font) = self.fonts.get(font) {
             font.draw_text_right(ctx, text, x, y, color);
         }
     }
 
-    pub fn draw_text_center(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32, center_y: bool) { // To - do: Have struct that stores a message, font id and color
+    pub fn draw_text_center(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32, center_y: bool) {
         if let Some(font) = self.fonts.get(font) {
             font.draw_text_center(ctx, text, x, y, color, center_y);
         }

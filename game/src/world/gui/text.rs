@@ -1,6 +1,6 @@
 use crate::{
     util::Entity,
-    gui::DynamicText,
+    gui::TextDisplay,
     text::TextColor,
     graphics::{byte_texture, position},
     tetra::{
@@ -13,7 +13,7 @@ use crate::{
 pub struct TextWindow {
 
     background: Texture,
-    pub text: DynamicText,
+    pub text: TextDisplay,
 
 }
 
@@ -25,7 +25,7 @@ impl TextWindow {
     pub fn new(ctx: &mut Context) -> Self {
         Self {
             background: byte_texture(ctx, include_bytes!("../../../assets/world/gui/message.png")),
-            text: DynamicText::new(Self::ORIGIN + Self::TEXT_OFFSET, 1, TextColor::Black, 5),
+            text: TextDisplay::new(Self::ORIGIN + Self::TEXT_OFFSET, 1, TextColor::Black, 5),
         }
     }
 

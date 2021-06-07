@@ -29,7 +29,7 @@ use crate::{
 
 impl PokemonInstance {
 
-	// To - do: multiple targets, uses PP on use
+	// To - do: uses PP on use
 	pub fn use_own_move(&self, engine: &mut Engine, move_index: usize, targets: Vec<PokemonTarget>) -> TurnResult {
 		let pokemon_move = self.moves[move_index].move_ref;
 		let mut results = MoveResults::new();

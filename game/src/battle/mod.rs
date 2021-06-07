@@ -38,14 +38,15 @@ use crate::battle::{
 		MoveState,
 	},
 	pokemon::{
+		ActivePokemon,
 		BattleParty,
-		ActivePokemonArray,
 		ActivePokemonIndex,
 		BattleActionInstance,
 		BattleMove,
 		BattleClientMove,
 		BattleClientAction,
 		BattleClientActionInstance,
+		view::PokemonUnknown,
 	},
 	client::{
 		BattleClient,
@@ -70,8 +71,6 @@ pub struct Battle {
 	
 	player: BattleParty,
 	opponent: BattleParty,
-
-	faints: Vec<ActivePokemonIndex>,
 	
 }
 
@@ -106,9 +105,8 @@ impl Battle {
 				winner: None,
 			},
 			player,
-			opponent: BattleParty::new("opponent", entry.party.into_iter().map(|instance| Some(BorrowedPokemon::Owned(instance))).collect(), entry.size),
+			opponent: BattleParty::new("opponent", entry.party.into_iter().map(|instance| BorrowedPokemon::Owned(instance)).collect(), entry.size),
 			state: BattleState::default(),
-			faints: Vec::new(),
 		}
 	}
 
@@ -134,11 +132,16 @@ impl Battle {
 				}
 				true => {
 
-					fn fill_moves(done: &mut bool, cli: &mut dyn BattleClient, party: &mut BattleParty) {
+					fn fill_moves(done: &mut bool, cli: &mut dyn BattleClient, party: &mut BattleParty, other: Team, data: &mut BattleData) {
 						if !*done {
-							if let Some(mut moves) = cli.wait_select() {
-								for active in party.active.iter_mut().rev().filter(|active| active.pokemon.is_active()) {
-									active.queued_move = moves.pop();
+
+							if cli.should_forfeit() {
+								data.winner = Some(other);
+							} else if let Some(mut moves) = cli.wait_select() {
+								for active in party.active.iter_mut().rev() {
+									if let ActivePokemon::Some(_, queued_move) = active {
+										*queued_move = moves.pop();
+									}
 								}
 								// debug!("party with {:?} completed their moves.", party.pokemon(0));
 								*done = true;
@@ -146,22 +149,17 @@ impl Battle {
 						}
 					}
 
-					fill_moves(pdone, player_cli, &mut self.player);
-					fill_moves(odone, opponent_cli, &mut self.opponent);
+					fill_moves(pdone, player_cli, &mut self.player, Team::Opponent, &mut self.data);
+					fill_moves(odone, opponent_cli, &mut self.opponent, Team::Player, &mut self.data);
 
 					if *pdone && *odone {
 
 						#[deprecated(note = "temporary")] {
-							use pokemon::PokemonUnknown;
 							for (i, p) in self.player.pokemon.iter().enumerate() {
-								if let Some(p) = p {
-									opponent_cli.add_unknown(i, PokemonUnknown::new(p.value()));
-								}
-								for (i, p) in self.opponent.pokemon.iter().enumerate() {
-									if let Some(p) = p {
-										player_cli.add_unknown(i, PokemonUnknown::new(p.value()));
-									}
-								}
+								opponent_cli.add_unknown(i, PokemonUnknown::new(p.value()));
+							}
+							for (i, p) in self.opponent.pokemon.iter().enumerate() {
+								player_cli.add_unknown(i, PokemonUnknown::new(p.value()));
 							}
 						}
 
@@ -169,6 +167,8 @@ impl Battle {
 
 						// debug!("Starting move calculations");
 						self.state = BattleState::MOVE_START;
+					} else if self.data.winner.is_some() {
+						self.state = BattleState::End;
 					}
 					
 				}
@@ -182,7 +182,7 @@ impl Battle {
 					}
 					MoveState::SetupPokemon => {
 						// Queue pokemon moves					
-						*move_state = MoveState::Pokemon(Self::move_queue(&mut self.player.active, &mut self.opponent.active));
+						*move_state = MoveState::Pokemon(Self::move_queue(&mut self.player, &mut self.opponent));
 					},
 					MoveState::Pokemon(queue) => {
 
@@ -193,7 +193,7 @@ impl Battle {
 								Team::Player => (&mut self.player, &mut self.opponent),
 								Team::Opponent => (&mut self.opponent, &mut self.player),
 							};
-							if user.active[instance.pokemon.index].pokemon.is_active() {
+							if user.active(instance.pokemon.index).is_some() {
 								match &mut instance.action {
 									BattleMove::Move(move_index, targets) => {
 
@@ -201,7 +201,7 @@ impl Battle {
 
 										// retargets moves if target is None
 
-										debug!("fix retargeting system");
+										// debug!("fix retargeting system");
 
 										// if targets.len() > 1 {
 										// 	let mut a = None;
@@ -238,11 +238,11 @@ impl Battle {
 										// 	}
 										// }
 										
-										let userp = user.active[instance.pokemon.index].pokemon.as_ref().unwrap();
+										let userp = user.active(instance.pokemon.index).unwrap();
 
 										let targets = targets.iter().flat_map(|target| match target {
-											MoveTargetInstance::Opponent(index) => other.active.get(*index).map(|active| active.pokemon.as_ref()).flatten(),
-											MoveTargetInstance::Team(index) => user.active.get(*index).map(|active| active.pokemon.as_ref()).flatten(),
+											MoveTargetInstance::Opponent(index) => other.active(*index),
+											MoveTargetInstance::Team(index) => user.active(*index),
 											MoveTargetInstance::User => Some(userp),
 										}.map(|i| (target, i))).map(|(target, pokemon)| pokedex::moves::usage::pokemon::PokemonTarget {
 											pokemon,
@@ -264,7 +264,7 @@ impl Battle {
 											
 											{
 
-												let user = user.active[instance.pokemon.index].pokemon.as_mut().unwrap();
+												let user = user.active_mut(instance.pokemon.index).unwrap();
 
 												if let Some(result) = &result {
 													match result {
@@ -287,7 +287,7 @@ impl Battle {
 														MoveTargetInstance::Team(index) => (user, index),
 													};
 
-													let target = target_party.pokemon_mut(index).unwrap();
+													let target = target_party.active_mut(index).unwrap();
 
 													fn on_damage(pokemon: &mut crate::pokedex::pokemon::instance::PokemonInstance, results: &mut Vec<BattleClientMove>, damage: crate::pokedex::pokemon::Health, effective: Effective) {
 														pokemon.current_hp = pokemon.current_hp.saturating_sub(damage);
@@ -334,19 +334,13 @@ impl Battle {
 														};
 														
 														client_results.push(BattleClientMove::Faint(t)); // queue.actions.push_front(BattleActionInstance { pokemon, action: BattleAction::Faint(Some(target_instance)) });
-														self.faints.push(t);
-
-														target_party.replace(index, None);
+														target_party.active[index].replace();
 
 													}
-													
-													// target_cli.status.update_gui(Some((target_pokemon.level, target_pokemon)), false);
 													
 												}
 												None => client_results.push(BattleClientMove::Miss), // ui::text::on_miss(text, user.active[instance.pokemon.active].pokemon.as_ref().unwrap()),
 											}
-
-											// client_results.extend(user_results);
 
 											target_results.push((target_instance, client_results));
 
@@ -361,7 +355,7 @@ impl Battle {
 									BattleMove::UseItem(item, target) => {
 										if match &item.value().usage {
 											ItemUseType::Script(script) => {
-												user.active[instance.pokemon.index].pokemon.as_mut().unwrap().execute_item_script(script);
+												user.active_mut(instance.pokemon.index).unwrap().execute_item_script(script);
 												true
 											},
 											ItemUseType::Pokeball => {
@@ -387,7 +381,6 @@ impl Battle {
 															// );
 															// ui::text::on_catch(&mut gui.text, target);
 
-														// return; // To - do: remove returns
 													},
 													_ => info!("Cannot use pokeballs in trainer battles!"),
 												}
@@ -409,7 +402,7 @@ impl Battle {
 										user.replace(instance.pokemon.index, Some(*new));
 										player_queue.push(BattleClientActionInstance {
 											pokemon: instance.pokemon,
-											action: BattleClientAction::Switch(*new, Some(pokemon::PokemonUnknown::new(user.pokemon(instance.pokemon.index).unwrap()))),
+											action: BattleClientAction::Switch(*new, Some(PokemonUnknown::new(user.active(instance.pokemon.index).unwrap()))),
 										}); // ui::text::on_switch(text, pokemon, user.pokemon[*new].as_ref().unwrap().value());
 										// debug!("{:?}", user.active);
 									}
@@ -441,97 +434,6 @@ impl Battle {
 
 							// 		BattleAction::Pokemon(battle_move) => match battle_move {
 
-							// 			BattleMove::Move(.., move_target) => {
-
-							// 				fn vec_if<'a>(target: &'a mut pokemon::ActivePokemon, target_cli: &'a mut pokemon::gui::ActivePokemonRenderer) -> Vec<(&'a mut pokemon::ActivePokemon, &'a mut pokemon::gui::ActivePokemonRenderer)> {
-							// 					if target_cli.renderer.flicker.flickering() || target_cli.status.health_moving() {
-							// 						vec![(target, target_cli)]
-							// 					} else {
-							// 						Vec::new()
-							// 					}
-							// 				}
-
-							// 				let targets = match move_target {
-							// 					MoveTargetInstance::User => {
-							// 						vec_if(&mut user.active[instance.pokemon.active], &mut user_cli.get_renderer()[instance.pokemon.active])
-							// 					}
-							// 					MoveTargetInstance::Opponent(index) => {
-							// 						vec_if(&mut other.active[*index], &mut other_cli.get_renderer()[*index])
-							// 					},
-							// 					MoveTargetInstance::Team(index) => {
-							// 						vec_if(&mut user.active[*index], &mut user_cli.get_renderer()[*index])
-							// 					},
-							// 					MoveTargetInstance::Opponents => {
-							// 						let mut targets = Vec::with_capacity(other.active.len());
-							// 						for (i, target) in other.active.iter_mut().enumerate() {
-							// 							let cli = &mut other_cli.get_renderer()[i];
-							// 							if cli.renderer.flicker.flickering() || cli.status.health_moving() {
-							// 								targets.push((target, cli));															
-							// 							}
-							// 						}
-							// 						targets
-													
-							// 					}
-							// 					MoveTargetInstance::AllButUser => {
-							// 						let mut targets = Vec::with_capacity(user.active.len() - 1 + other.active.len());
-							// 						for (index, target) in user.active.iter_mut().enumerate() {
-							// 							let cli = &mut user_cli.get_renderer()[index];
-							// 							if index != instance.pokemon.active && (cli.renderer.flicker.flickering() || cli.status.health_moving()) {
-							// 								targets.push((target, cli));
-							// 							}
-							// 						}
-							// 						for (i, target) in other.active.iter_mut().enumerate() {
-							// 							let cli = &mut other_cli.get_renderer()[i];
-							// 							if cli.renderer.flicker.flickering() || cli.status.health_moving() {
-							// 								targets.push((target, cli));															
-							// 							}
-							// 						}
-							// 						targets
-							// 					}
-							// 				};
-
-							// 				if !text.finished() {
-							// 					text.update(ctx, delta);
-							// 				} else if targets.is_empty() {
-							// 					queue.current = None;
-							// 				}
-
-							// 				for (_, target) in targets {
-												
-							// 					if text.current > 0 || text.can_continue {
-							// 						target.renderer.flicker.update(delta);
-							// 						target.status.update_hp(delta);
-							// 					}
-							// 				}									
-							// 			}
-							// 		}
-							// 		// BattleAction::Effective(..) => text_update(delta, gui, queue),
-							// 		BattleAction::Faint(..) => {
-							// 			if let Some(assailant) = assailant {
-                            //                 if assailant.team == Team::Player {
-                            //                     let experience = {
-                            //                         let instance = user.active[instance.pokemon.active].pokemon.as_ref().unwrap();
-                            //                         instance.pokemon.value().exp_from(instance.level) as f32 * 
-                            //                         match self.is_wild {
-                            //                             true => 1.0,
-                            //                             false => 1.5,
-                            //                         } *
-                            //                         7.0
-                            //                     } as crate::pokedex::pokemon::Experience;
-                            //                     let (assailant_party, index) = (&mut match assailant.team {
-                            //                         Team::Player => &mut self.player,
-                            //                         Team::Opponent => &mut self.opponent,
-                            //                     }, assailant.active);
-                            //                     if let Some(assailant_pokemon) = assailant_party.active[index].pokemon.as_mut() {
-                            //                         let level = assailant_pokemon.level;
-                            //                         if let Some((level, moves)) = assailant_pokemon.add_exp(experience) {
-                            //                             queue.actions.push_front(BattleActionInstance { pokemon: *assailant, action: BattleAction::LevelUp(level, moves) });
-                            //                         }
-                            //                         queue.actions.push_front(BattleActionInstance { pokemon: *assailant, action: BattleAction::GainExp(level, experience) });
-                            //                     }
-                            //                 }
-                            //             }
-							// 		}
 							// 		BattleAction::GainExp(..) => {
 							// 		},
 							// 		BattleAction::LevelUp(..) => text_update(ctx, delta, text, queue),
@@ -565,10 +467,6 @@ impl Battle {
 					}
 					MoveState::End => {
 
-						// self.player.run_replace();
-						// self.opponent.run_replace();
-
-						// if started { stuff } else start and do calculations and add text
 						if player_cli.wait_finish_turn() && opponent_cli.wait_finish_turn() {
 							if self.opponent.all_fainted() {
 								self.data.winner = Some(Team::Player);
@@ -576,54 +474,26 @@ impl Battle {
 							} else if self.player.all_fainted() {
 								self.data.winner = Some(Team::Opponent);
 								self.state = BattleState::End;
-							} else if !self.faints.is_empty() {
-								let mut i = 0;
-								while i != self.faints.len() {
-									let active = &self.faints[i];
-									match active.team {
-										Team::Player => {
-											if self.opponent.any_inactive() {
-												if let Some(new) = player_cli.wait_faint(active.index) {
-													let index = active.index;
-													self.player.replace(index, Some(new));
-													opponent_cli.opponent_faint_replace(index, Some(new));
-													self.faints.remove(i);
-												} else {
-													i += 1;
-												}
-											} else {
-												self.player.replace(active.index, None);
-												self.faints.remove(i);
-											}
-										},
-										Team::Opponent => {
-											if self.opponent.any_inactive() {
-												if let Some(new) = opponent_cli.wait_faint(active.index) {
-													// if let Some(pokemon) = self.opponent.pokemon(active.index) {
-													// 	if !pokemon.fainted() {
-															self.opponent.replace(active.index, Some(new));
-															player_cli.opponent_faint_replace(active.index, Some(new));
-															self.faints.remove(i);
-													// 	}
-													// }
-												} else {
-													i += 1;
-												}
-											} else {
-												self.opponent.replace(active.index, None);
-												self.faints.remove(i);
+							} else if self.player.any_replace().is_some() || self.opponent.any_replace().is_some() {
+
+								fn replace_faint(party: &mut BattleParty, client: &mut dyn BattleClient, other_client: &mut dyn BattleClient) {
+									if let Some(active) = party.any_replace() {
+										if party.any_inactive() {
+											if let Some(new) = client.wait_faint(active) {
+												party.replace(active, Some(new));
+												other_client.opponent_faint_replace(active, Some(new));
 											}
 										}
-									} 
+									}
 								}
+
+								replace_faint(&mut self.player, player_cli, opponent_cli);
+								replace_faint(&mut self.opponent, opponent_cli, player_cli);
+								
 							} else  {
 								self.state = BattleState::SELECTING_START;
 							}
 						}
-
-						// Once the text is finished, despawn it
-						// text.despawn();
-
 					},
 				}
 			},
@@ -635,7 +505,7 @@ impl Battle {
 		}
 	}
 
-	pub fn move_queue(player: &mut ActivePokemonArray, opponent: &mut ActivePokemonArray) -> Vec<BattleActionInstance> {
+	pub fn move_queue(player: &mut BattleParty, opponent: &mut BattleParty) -> Vec<BattleActionInstance> {
 
 		use std::cmp::Reverse;
 
@@ -645,17 +515,19 @@ impl Battle {
 			Second(Reverse<u8>, Reverse<u16>, ActivePokemonIndex), // priority, speed, pokemon <- fix last, player always goes first
 		}
 
-		fn insert(map: &mut std::collections::BTreeMap<Priority, BattleActionInstance>, team: Team, active: &mut ActivePokemonArray) {
-			for (index, active) in active.iter_mut().enumerate() {
-				if let (Some(pokemon), Some(battle_move)) = (active.pokemon.as_ref(), active.queued_move.take()) {
-					let index = ActivePokemonIndex { team, index };
-					map.insert(
-						match battle_move {
-							BattleMove::Move(..) => Priority::Second(Reverse(0), Reverse(pokemon.base.get(StatType::Speed)), index),
-							_ => Priority::First(index),
-						}, 
-						BattleActionInstance { pokemon: index, action: battle_move }
-					);
+		fn insert(map: &mut std::collections::BTreeMap<Priority, BattleActionInstance>, team: Team, party: &mut BattleParty) {
+			for index in 0..party.active.len() {
+				if let Some(queued_move) = party.active[index].use_move() {
+					if let Some(pokemon) = party.active(index) {
+						let index = ActivePokemonIndex { team, index };
+						map.insert(
+							match queued_move {
+								BattleMove::Move(..) => Priority::Second(Reverse(0), Reverse(pokemon.base.get(StatType::Speed)), index),
+								_ => Priority::First(index),
+							}, 
+							BattleActionInstance { pokemon: index, action: queued_move }
+						);
+					}
 				}
 			}
 		}

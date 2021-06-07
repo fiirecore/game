@@ -18,8 +18,11 @@ My attempt to code somewhat of a clone of Pokemon FireRed in Rust
 ### v0.5.0
 
 - [ ] Make viridian forest a chunk map (because it is only 1 map)
+- [ ] /party command brings up party menu
 
+- [X] Commands and command prompt
 - [X] Basic player bag
+- [X] Detach battle gui code from battle
 - [ ] Working Pokemarts
 - [ ] Battle AI
 - [X] Proper texture animation support

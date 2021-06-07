@@ -20,16 +20,18 @@ use crate::battle::{
     BattleType, 
     pokemon::{
         BattleMove,
-        BattlePartyKnown, 
-        BattlePartyUnknown,
-        PokemonUnknown,
         BattleClientAction,
         BattleClientActionInstance,
         BattleClientMove,
-        BattlePartyTrait, 
-        gui::{
-            ActivePokemonParty,
-            ActivePokemonRenderer,
+        view::{
+            BattlePartyTrait,
+            BattlePartyKnown, 
+            BattlePartyUnknown,
+            PokemonUnknown,
+            gui::{
+                ActivePokemonParty,
+                ActivePokemonRenderer,
+            },
         },
     }, 
     ui::{
@@ -59,6 +61,7 @@ pub struct BattlePlayerGui {
 
     faint: deps::hash::HashMap<usize, usize>,
 
+    forfeit: bool,
 
 }
 
@@ -105,6 +108,7 @@ impl BattlePlayerGui {
             opponent: Default::default(),
             moves: Vec::with_capacity(3),
             faint: Default::default(),
+            forfeit: false,
         }
     }
 
@@ -148,9 +152,7 @@ impl BattlePlayerGui {
                                                         1 => self.bag.spawn(),
                                                         2 => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, true),
                                                         3 => if self.is_wild {
-                                                            // closer.spawn(self, &mut gui.text);
-                                                            todo!()
-                                                            // self.state = BattleState::End; // To - do: "Got away safely!" - run text and conditions
+                                                            self.forfeit = true; // To - do: "Got away safely!" - run text and conditions
                                                         },
                                                         _ => unreachable!(),
                                                     }
@@ -422,7 +424,7 @@ impl BattlePlayerGui {
 
                                     self.gui.text.update(ctx, delta);
 
-                                    if self.gui.text.current() == 1 {
+                                    if self.gui.text.current() == 1 && !user.active_eq(instance.pokemon.index, Some(*new)) {
                                         user.replace(instance.pokemon.index, Some(*new));
                                         user_ui[instance.pokemon.index].update(user.active(instance.pokemon.index));
                                     }
@@ -561,6 +563,9 @@ impl BattleClient for BattlePlayerGui {
         self.player.party = user;
         self.opponent.party = targets;
         self.is_wild = data.battle_type == BattleType::Wild;
+        self.forfeit = false;
+        self.faint.clear();
+        self.moves.clear();
     }
 
     fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
@@ -602,6 +607,10 @@ impl BattleClient for BattlePlayerGui {
 
     fn wait_finish_turn(&mut self) -> bool {
         matches!(self.state, BattlePlayerState::WaitToSelect)
+    }
+
+    fn should_forfeit(&mut self) -> bool {
+        self.forfeit
     }
 
 }

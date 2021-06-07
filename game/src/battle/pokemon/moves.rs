@@ -9,12 +9,12 @@ use crate::pokedex::{
     item::ItemRef,
 };
 
-use super::PokemonUnknown;
+use super::view::PokemonUnknown;
 
 #[derive(Debug, Clone)]
 pub enum BattleMove {
 
-    Move(usize, Vec<MoveTargetInstance>), // to - do: vec<targets>
+    Move(usize, Vec<MoveTargetInstance>),
     UseItem(ItemRef, MoveTargetInstance),
     Switch(usize),
 

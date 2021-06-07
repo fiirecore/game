@@ -1,4 +1,4 @@
-use crate::{battle::pokemon::gui::ActiveRenderer, graphics::{byte_texture, position}, tetra::{
+use crate::{battle::pokemon::view::gui::ActiveRenderer, graphics::{byte_texture, position}, tetra::{
         Context,
         math::Vec2,
         graphics::Texture,

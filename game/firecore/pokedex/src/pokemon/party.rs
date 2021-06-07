@@ -6,4 +6,4 @@ use super::instance::{
 };
 
 pub type PokemonParty = ArrayVec<[PokemonInstance; 6]>;
-pub type MoveableParty = ArrayVec<[Option<BorrowedPokemon>; 6]>;
+pub type BorrowedParty = ArrayVec<[BorrowedPokemon; 6]>;

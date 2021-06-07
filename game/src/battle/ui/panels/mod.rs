@@ -9,7 +9,7 @@ use crate::{
 };
 
 use crate::battle::{
-    pokemon::BattlePartyUnknown,
+    pokemon::view::BattlePartyUnknown,
     ui::panels::{
         battle::BattleOptions,
         fight::FightPanel,

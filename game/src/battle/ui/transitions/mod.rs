@@ -1,5 +1,6 @@
-use crate::{battle::pokemon::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}, gui::DynamicText, tetra::Context, util::Completable};
+use crate::{battle::{BattleData, pokemon::view::{BattlePartyKnown, BattlePartyUnknown, gui::{ActivePokemonParty, ActiveRenderer}}}, gui::TextDisplay, tetra::Context, util::Completable};
 
+#[deprecated]
 use crate::battle::Battle;
 
 pub mod managers;
@@ -36,9 +37,9 @@ pub(crate) trait BattleOpener: Completable  {
 
 pub(crate) trait BattleIntroduction: Completable {
 
-    fn spawn(&mut self, battle: &Battle, text: &mut DynamicText);
+    fn spawn(&mut self, data: &BattleData, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay);
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut DynamicText);
+    fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut TextDisplay);
 
     fn draw(&self, ctx: &mut Context, player: &ActiveRenderer, opponent: &ActiveRenderer);
 
@@ -46,9 +47,9 @@ pub(crate) trait BattleIntroduction: Completable {
 
 pub(crate) trait BattleCloser: Completable {
 
-    fn spawn(&mut self, battle: &Battle, text: &mut DynamicText);
+    fn spawn(&mut self, battle: &Battle, text: &mut TextDisplay);
     
-    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut DynamicText);
+    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut TextDisplay);
 
     fn draw(&self, ctx: &mut Context);
 

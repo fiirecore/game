@@ -65,7 +65,7 @@ fn main() -> Result {
     .show_mouse(true)
     .timestep(Timestep::Variable)
     .build()?
-    .run(|ctx| StateManager::new(ctx, args))?; // to - do: return state
+    .run(|ctx| StateManager::new(ctx, args))?;
 
     // #[cfg(feature = "discord")]
     // discord_rich_presence::DiscordIpc::close(&mut client).unwrap();

@@ -207,6 +207,10 @@ impl PokemonInstance {
 		self.base.hp()
 	}
 
+	pub fn percent_hp(&self) -> f32 {
+		self.hp() as f32 / self.max_hp() as f32
+	}
+
 	pub fn heal(&mut self) {
 		self.heal_hp();
 		self.heal_pp();

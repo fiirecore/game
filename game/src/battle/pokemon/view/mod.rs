@@ -9,6 +9,12 @@ pub trait BattlePartyTrait {
 
     fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonKnowData>;
 
+    fn active_len(&self) -> usize;
+
+    fn len(&self) -> usize;
+
+    fn active_eq(&self, active: usize, index: Option<usize>) -> bool;
+
     fn pokemon(&self, index: usize) -> Option<&dyn PokemonKnowData>;
 
     fn add(&mut self, index: usize, unknown: PokemonUnknown);
@@ -52,12 +58,11 @@ impl PokemonKnowData for PokemonInstance {
     }
 
     fn set_hp(&mut self, hp: f32) {
-        self.current_hp = (hp.max(0.0) * self.max_hp() as f32) as Health
+        self.current_hp = (hp.max(0.0) * self.max_hp() as f32) as Health;
     }
 
     fn hp(&self) -> f32 {
-        deps::log::info!("To - do: move hp / max hp into own function");
-        self.hp() as f32 / self.max_hp() as f32
+        self.percent_hp()
     }
 
     fn fainted(&self) -> bool {
@@ -74,7 +79,7 @@ impl PokemonKnowData for PokemonInstance {
 
 }
 
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct BattlePartyKnown {
     pub active: ArrayVec<[Option<usize>; 3]>,
     pub pokemon: PokemonParty,
@@ -82,18 +87,30 @@ pub struct BattlePartyKnown {
 
 impl BattlePartyTrait for BattlePartyKnown {
     fn active(&self, active: usize) -> Option<&dyn PokemonKnowData> {
-        self.active.get(active).copied().flatten().map(|index| &self.pokemon[index] as _)
+        self.active.get(active).copied().flatten().map(|index| self.pokemon.get(index)).flatten().map(|i| i as _)
     }
 
     fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonKnowData> {
-        self.active.get(active).copied().flatten().map(move |index| &mut self.pokemon[index] as _)
+        self.active.get(active).copied().flatten().map(move |index| self.pokemon.get_mut(index)).flatten().map(|i| i as _)
+    }
+
+    fn active_len(&self) -> usize {
+        self.active.len()
+    }
+
+    fn len(&self) -> usize {
+        self.pokemon.len()
+    }
+
+    fn active_eq(&self, active: usize, index: Option<usize>) -> bool {
+        self.active.get(active).map(|i| i == &index).unwrap_or_default()
     }
 
     fn pokemon(&self, index: usize) -> Option<&dyn PokemonKnowData> {
         self.pokemon.get(index).map(|i| i as _)
     }
 
-    fn add(&mut self, index: usize, unknown: PokemonUnknown) {
+    fn add(&mut self, _: usize, _: PokemonUnknown) {
         
     }
 
@@ -122,6 +139,18 @@ impl BattlePartyTrait for BattlePartyUnknown {
     fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonKnowData> {
         // if let Some(active) = self.active.g
         self.active.get(active).copied().flatten().map(move |active| &mut self.pokemon[active] as _)
+    }
+
+    fn active_len(&self) -> usize {
+        self.active.len()
+    }
+
+    fn len(&self) -> usize {
+        self.pokemon.len()
+    }
+
+    fn active_eq(&self, active: usize, index: Option<usize>) -> bool {
+        self.active.get(active).map(|i| i == &index).unwrap_or_default()
     }
 
     fn pokemon(&self, index: usize) -> Option<&dyn PokemonKnowData> {
@@ -156,7 +185,7 @@ impl PokemonUnknown {
         Self {
             pokemon: pokemon.pokemon,
             level: pokemon.level,
-            hp: pokemon.hp() as f32 / pokemon.max_hp() as f32,
+            hp: pokemon.percent_hp(),
         }
     }
 

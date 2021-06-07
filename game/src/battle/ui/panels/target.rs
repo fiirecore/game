@@ -8,7 +8,7 @@ use crate::{
 };
 
 use crate::battle::{
-    pokemon::BattlePartyUnknown,
+    pokemon::view::BattlePartyUnknown,
 };
 
 pub struct TargetPanel {

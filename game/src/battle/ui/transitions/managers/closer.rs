@@ -1,5 +1,5 @@
 use crate::{
-    gui::DynamicText,
+    gui::TextDisplay,
     tetra::Context,
 };
 
@@ -28,7 +28,7 @@ pub struct BattleCloserManager {
 
 impl BattleCloserManager {
 
-    pub fn begin(&mut self, battle: &Battle, text: &mut DynamicText) {
+    pub fn begin(&mut self, battle: &Battle, text: &mut TextDisplay) {
         self.state = TransitionState::Run;
         match battle.data.battle_type {
             BattleType::Wild => self.current = Closers::Wild,
@@ -43,7 +43,7 @@ impl BattleCloserManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut DynamicText) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut TextDisplay) {
         let current = self.get_mut();
         current.update(ctx, delta, text);
         if current.finished() {

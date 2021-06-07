@@ -173,7 +173,7 @@ impl PartyGui {
     }
 
     pub fn draw(&self, ctx: &mut Context) {
-        deps::log::debug!("to - do: /party brings up party gui");
+        // deps::log::debug!("to - do: /party brings up party gui");
         if self.summary.alive() {
             self.summary.draw(ctx);
         } else {

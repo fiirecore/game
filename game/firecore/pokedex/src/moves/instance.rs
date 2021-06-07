@@ -27,17 +27,12 @@ impl MoveInstance {
         }
     }
 
-    #[deprecated]
     pub fn get(&self) -> Option<MoveRef> {
         (self.pp != 0).then(|| self.move_ref)
     }
 
-    #[deprecated]
-    pub fn decrement(&mut self) -> Option<MoveRef> {
-        (self.pp != 0).then(|| {
-            self.pp -= 1;
-            self.move_ref
-        })
+    pub fn decrement(&mut self) {
+        self.pp = self.pp.saturating_sub(1);
     }
 
     pub fn empty(&self) -> bool {

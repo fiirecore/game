@@ -1,6 +1,6 @@
 use crate::{
     util::{Reset, Completable, WIDTH, HEIGHT},
-    gui::DynamicText,
+    gui::TextDisplay,
     graphics::draw_rectangle,
     tetra::{
         Context,
@@ -29,9 +29,9 @@ impl Default for WildBattleCloser {
 
 impl BattleCloser for WildBattleCloser {
 
-    fn spawn(&mut self, _battle: &Battle, _text: &mut DynamicText) {}
+    fn spawn(&mut self, _battle: &Battle, _text: &mut TextDisplay) {}
 
-    fn update(&mut self, _ctx: &mut Context, delta: f32, _text: &mut DynamicText) {
+    fn update(&mut self, _ctx: &mut Context, delta: f32, _text: &mut TextDisplay) {
         if self.world {
             self.color.a -= 4.5 * delta;
         } else {
