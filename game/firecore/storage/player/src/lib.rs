@@ -5,6 +5,7 @@ extern crate firecore_world_lib as worldlib;
 
 use std::sync::atomic::AtomicBool;
 use serde::{Deserialize, Serialize};
+use deps::str::TinyStr16;
 use util::{Location, LocationId, Position, Coordinate, Direction, PixelOffset};
 use pokedex::{
 	item::bag::Bag,
@@ -22,13 +23,18 @@ pub use list::PlayerSaves;
 
 pub static SHOULD_SAVE: AtomicBool = AtomicBool::new(false); // if true, save player data
 
+pub type PlayerId = TinyStr16;
+pub type Name = String;
 pub type Worth = u32;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerSave {
 
+	#[serde(default = "default_id")]
+	pub id: PlayerId,
+
 	#[serde(default = "default_name")]
-	pub name: String,
+	pub name: Name,
 
 	#[serde(default = "default_location")]
 	pub location: Location,
@@ -64,6 +70,7 @@ impl PlayerSave {
 impl Default for PlayerSave {
     fn default() -> Self {
 		Self {
+			id: default_id(),
 			name: default_name(),
 			party: Default::default(),
 			character: default_character(),
@@ -74,6 +81,12 @@ impl Default for PlayerSave {
 		}
 	}
 
+}
+
+pub fn default_id() -> PlayerId {
+	let mut str = format!("i{}", util::date());
+	str.truncate(16);
+	str.parse().unwrap_or_else(|err| panic!("Could not parse player id string {} with error {}", str, err))
 }
 
 pub fn default_name() -> String {

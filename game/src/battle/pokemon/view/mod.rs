@@ -1,9 +1,12 @@
 use deps::vec::ArrayVec;
 use pokedex::pokemon::{Health, Level, PokemonRef, instance::PokemonInstance, party::PokemonParty};
+use storage::player::PlayerId;
 
 pub mod gui;
 
 pub trait BattlePartyTrait {
+
+    fn id(&self) -> &PlayerId;
 
     fn active(&self, active: usize) -> Option<&dyn PokemonKnowData>;
 
@@ -79,13 +82,29 @@ impl PokemonKnowData for PokemonInstance {
 
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Clone)]
 pub struct BattlePartyKnown {
+    pub id: PlayerId,
     pub active: ArrayVec<[Option<usize>; 3]>,
     pub pokemon: PokemonParty,
 }
 
+impl Default for BattlePartyKnown {
+    fn default() -> Self {
+        Self {
+            id: "default".parse().unwrap(),
+            active: Default::default(),
+            pokemon: Default::default(),
+        }
+    }
+}
+
 impl BattlePartyTrait for BattlePartyKnown {
+
+    fn id(&self) -> &PlayerId {
+        &self.id
+    }
+
     fn active(&self, active: usize) -> Option<&dyn PokemonKnowData> {
         self.active.get(active).copied().flatten().map(|index| self.pokemon.get(index)).flatten().map(|i| i as _)
     }
@@ -124,13 +143,28 @@ impl BattlePartyTrait for BattlePartyKnown {
 
 }
 
-#[derive(Default, Clone)]
+#[derive(Clone)]
 pub struct BattlePartyUnknown {
+    pub id: PlayerId,
     pub active: ArrayVec<[Option<usize>; 3]>,
     pub pokemon: ArrayVec<[Option<PokemonUnknown>; 6]>,
 }
 
+impl Default for BattlePartyUnknown {
+    fn default() -> Self {
+        Self {
+            id: "default".parse().unwrap(),
+            active: Default::default(),
+            pokemon: Default::default(),
+        }
+    }
+}
+
 impl BattlePartyTrait for BattlePartyUnknown {
+
+    fn id(&self) -> &PlayerId {
+        &self.id
+    }
 
     fn active(&self, active: usize) -> Option<&dyn PokemonKnowData> {
         self.active.get(active).copied().flatten().map(|active| &self.pokemon[active] as _)

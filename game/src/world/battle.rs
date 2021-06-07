@@ -1,7 +1,6 @@
 use crate::{
     util::Location,
     pokedex::{
-        moves::target::Team,
         pokemon::{
             dex::pokedex_len,
             instance::PokemonInstance,
@@ -9,7 +8,7 @@ use crate::{
             stat::StatSet,
         },
     },
-    storage::{data, player::PlayerSave},
+    storage::{data, player::{PlayerSave, PlayerId}},
     battle_glue::{BattleEntry, BattleEntryRef, BattleTrainerEntry},
 };
 
@@ -95,21 +94,18 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
     }
 }
 
-pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, winner: Team, trainer: bool) {
+pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, winner: PlayerId, trainer: bool) {
     if let Some(world) = world_manager.map_manager.data.battling.take() {
-        match winner {
-            Team::Player => {
-                if trainer {
-                    let battled = &mut player.world.get_map(&world.map).battled;
-                    battled.insert(world.id);
-                    battled.extend(world.disable_others);
-                }                	
+        if winner == player.id {
+            if trainer {
+                let battled = &mut player.world.get_map(&world.map).battled;
+                battled.insert(world.id);
+                battled.extend(world.disable_others);
             }
-            Team::Opponent => {
-                player.location = player.world.heal.0;
-                world_manager.map_manager.data.player.character.position = player.world.heal.1;
-                world_manager.map_manager.data.current = Some(player.location);
-            }
+        } else {
+            player.location = player.world.heal.0;
+            world_manager.map_manager.data.player.character.position = player.world.heal.1;
+            world_manager.map_manager.data.current = Some(player.location);
         }
     }    
 }

@@ -12,7 +12,6 @@ use crate::{
         },
         moves::{
             Move,
-            target::Team,
         },
         item::Item,
     },
@@ -108,13 +107,13 @@ pub(crate) fn on_go(text: &mut TextDisplay, coming: &dyn PokemonKnowData) {
 //     }, None));
 // }
 
-pub(crate) fn on_faint(text: &mut TextDisplay, is_wild: bool, team: Team, pokemon: &dyn PokemonKnowData) {
+pub(crate) fn on_faint(text: &mut TextDisplay, is_wild: bool, is_player: bool, pokemon: &dyn PokemonKnowData) {
     text.push(
         MessagePage::new(
             vec![
-                match team {
-                    Team::Player => pokemon.name().to_string(),
-                    Team::Opponent => format!("{} {}",
+                match is_player {
+                    true => pokemon.name().to_string(),
+                    false => format!("{} {}",
                         match is_wild {
                             true => "Wild",
                             false => "Foe",

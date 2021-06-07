@@ -5,7 +5,7 @@ use crate::battle::{
         view::{BattlePartyKnown, BattlePartyTrait, BattlePartyUnknown, PokemonUnknown},
         BattleMove,
     },
-    BattleData,
+    BattleType,
 };
 
 use super::BattleClient;
@@ -13,19 +13,23 @@ use super::BattleClient;
 #[derive(Default)]
 pub struct BattlePlayerAi {
     user: BattlePartyKnown,
-    targets: BattlePartyUnknown,
+    opponent: BattlePartyUnknown,
 
     moves: Option<Vec<BattleMove>>,
 }
 
 impl BattleClient for BattlePlayerAi {
-    fn begin(&mut self, _data: &BattleData, user: BattlePartyKnown, targets: BattlePartyUnknown) {
+
+    fn user(&mut self, _type: BattleType, user: BattlePartyKnown) {
         self.user = user;
-        self.targets = targets;
+    }
+
+    fn opponents(&mut self, opponent: BattlePartyUnknown) {
+        self.opponent = opponent;        
     }
 
     fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
-        self.targets.add(index, unknown);
+        self.opponent.add(index, unknown);
     }
 
     fn start_select(&mut self) {
@@ -49,7 +53,8 @@ impl BattleClient for BattlePlayerAi {
                     BattleMove::Move(
                         moves[BATTLE_RANDOM.gen_range(0, moves.len())],
                         MoveTargetInstance::opponent(
-                            BATTLE_RANDOM.gen_range(0, self.targets.active.len()),
+                            self.opponent.id,
+                            BATTLE_RANDOM.gen_range(0, self.opponent.active.len()),
                         ),
                     )
                 })
@@ -90,7 +95,7 @@ impl BattleClient for BattlePlayerAi {
     }
 
     fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>) {
-        self.targets.replace(active, new)
+        self.opponent.replace(active, new)
     }
 
     fn wait_finish_turn(&mut self) -> bool {

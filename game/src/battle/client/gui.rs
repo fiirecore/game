@@ -6,8 +6,7 @@ use crate::{
         item::ItemUseType, 
         moves::target::{
             MoveTarget, 
-            MoveTargetInstance, 
-            Team
+            MoveTargetInstance,
         },
     },
     gui::{bag::BagGui, party::PartyGui}, 
@@ -16,7 +15,6 @@ use crate::{
 };
 
 use crate::battle::{
-    BattleData, 
     BattleType, 
     pokemon::{
         BattleMove,
@@ -64,6 +62,61 @@ pub struct BattlePlayerGui {
     forfeit: bool,
 
 }
+
+#[derive(Clone)]
+pub struct BattlePlayerGuiRef(pub Rc<std::cell::UnsafeCell<BattlePlayerGui>>);
+
+impl BattlePlayerGuiRef {
+    pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
+        Self(Rc::new(std::cell::UnsafeCell::new(BattlePlayerGui::new(ctx, party, bag))))
+    }
+    pub fn get(&self) -> &mut BattlePlayerGui {
+        unsafe { self.0.get().as_mut().unwrap() }
+    }
+}
+
+impl BattleClient for BattlePlayerGuiRef {
+    fn user(&mut self, battle_type: BattleType, user: BattlePartyKnown) {
+        self.get().user(battle_type, user)
+    }
+
+    fn opponents(&mut self, opponent: BattlePartyUnknown) {
+        self.get().opponents(opponent)
+    }
+
+    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
+        self.get().add_unknown(index, unknown)
+    }
+
+    fn start_select(&mut self) {
+        self.get().start_select()
+    }
+
+    fn wait_select(&mut self) -> Option<Vec<BattleMove>> {
+        self.get().wait_select()
+    }
+
+    fn start_moves(&mut self, queue: Vec<BattleClientActionInstance>) {
+        self.get().start_moves(queue)
+    }
+
+    fn wait_faint(&mut self, active: usize) -> Option<usize> {
+        self.get().wait_faint(active)
+    }
+
+    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>) {
+        self.get().opponent_faint_replace(active, new)
+    }
+
+    fn wait_finish_turn(&mut self) -> bool {
+        self.get().wait_finish_turn()
+    }
+
+    fn should_forfeit(&mut self) -> bool {
+        self.get().should_forfeit()
+    }
+}
+
 
 #[derive(Debug)]
 struct MoveQueue {
@@ -113,6 +166,7 @@ impl BattlePlayerGui {
     }
 
     pub fn update(&mut self, ctx: &Context, delta: f32) {
+
         match &mut self.state {
             BattlePlayerState::WaitToSelect | BattlePlayerState::WaitToMove => (),//debug!("{:?}", self.state),
             BattlePlayerState::Select(active_index) => {
@@ -130,7 +184,7 @@ impl BattlePlayerGui {
                                             self.bag.input(ctx);
                                             if let Some(item) = self.bag.take_selected_despawn() {
                                                 let target = match &item.value().usage {
-                                                    ItemUseType::Pokeball => MoveTargetInstance::Opponent(crate::battle::BATTLE_RANDOM.gen_range(0, self.gui.panel.targets.names.len())),
+                                                    ItemUseType::Pokeball => MoveTargetInstance::Opponent(self.opponent.party.id, crate::battle::BATTLE_RANDOM.gen_range(0, self.gui.panel.targets.names.len())),
                                                     ItemUseType::Script(..) => todo!("user targeting"),
                                                     ItemUseType::None => todo!("make item unusable"),
                                                     // MoveTarget::Opponents => todo!("make none"),
@@ -168,8 +222,8 @@ impl BattlePlayerGui {
                                                                         self.gui.panel.fight.moves.cursor,
                                                                         match target {
                                                                             MoveTarget::User => MoveTargetInstance::user(),
-                                                                            MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
-                                                                            MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
+                                                                            MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.opponent.party.id, self.player.party.active.len()),
+                                                                            MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.id, self.opponent.party.active.len()),
                                                                             MoveTarget::Opponent => unreachable!(),
                                                                         }
                                                                     )
@@ -181,7 +235,7 @@ impl BattlePlayerGui {
                                                     None => warn!("Could not get move at cursor!"),
                                                 }
                                                 BattlePanels::Target(target) => self.moves.push(BattleMove::Move(self.gui.panel.fight.moves.cursor, match target {
-                                                    MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.targets.cursor),
+                                                    MoveTarget::Opponent => MoveTargetInstance::opponent(self.opponent.party.id, self.gui.panel.targets.cursor),
                                                     _ => unreachable!(),
                                                 })),
                                             }
@@ -213,9 +267,12 @@ impl BattlePlayerGui {
                         match queue.actions.pop_front() {
                             Some(instance) => {
 
-                                let (user, user_ui, other, other_ui) = match instance.pokemon.team {
-                                    Team::Player => (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer),
-                                    Team::Opponent => (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer),
+                                // to - do: better client checking
+
+                                let (user, user_ui, other, other_ui) = if instance.pokemon.team == self.player.party.id {
+                                    (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer)
+                                } else {
+                                    (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer)
                                 };
 
                                 self.gui.text.clear();
@@ -255,7 +312,7 @@ impl BattlePlayerGui {
                                                 }
 
                                                 let (target, target_ui) = match target {
-                                                    MoveTargetInstance::Opponent(index) => (other.active_mut(*index).unwrap(), &mut other_ui[*index]),
+                                                    MoveTargetInstance::Opponent(team, index) => (other.active_mut(*index).unwrap(), &mut other_ui[*index]),
                                                     MoveTargetInstance::Team(index) => (user.active_mut(*index).unwrap(), &mut user_ui[*index]),
                                                     MoveTargetInstance::User => (user.active_mut(instance.pokemon.index).unwrap(), &mut user_ui[instance.pokemon.index]),
                                                 };
@@ -295,7 +352,7 @@ impl BattlePlayerGui {
                                         }
                                         BattleClientAction::UseItem(item, target) => {
                                             let target = match target {
-                                                MoveTargetInstance::Opponent(i) => other.active(*i),
+                                                MoveTargetInstance::Opponent(team, i) => other.active(*i),
                                                 MoveTargetInstance::Team(i) => user.active(*i),
                                                 MoveTargetInstance::User => user.active(instance.pokemon.index),
                                             }.unwrap();
@@ -309,9 +366,10 @@ impl BattlePlayerGui {
                                             ui::text::on_switch(&mut self.gui.text, user.active(instance.pokemon.index).unwrap(), coming);
                                         }
                                         BattleClientAction::Faint => {
+                                            let is_user = &instance.pokemon.team == user.id();
                                             let target = user.active_mut(instance.pokemon.index).unwrap();
                                             target.set_hp(0.0);
-                                            ui::text::on_faint(&mut self.gui.text, self.is_wild, instance.pokemon.team, target);
+                                            ui::text::on_faint(&mut self.gui.text, self.is_wild, is_user, target);
                                             user_ui[instance.pokemon.index].renderer.faint();
                                             // let target = match instance.pokemon.team {
                                             //     Team::Player => &mut self.user as &mut dyn BattlePartyTrait,
@@ -382,9 +440,10 @@ impl BattlePlayerGui {
                     },
                     Some(instance) => {
 
-                        let (user, user_ui, other, other_ui) = match instance.pokemon.team {
-                            Team::Player => (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer),
-                            Team::Opponent => (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer),
+                        let (user, user_ui, other, other_ui) = if instance.pokemon.team == self.player.party.id {
+                            (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer)
+                        } else {
+                            (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer)
                         };
                         
 
@@ -396,7 +455,7 @@ impl BattlePlayerGui {
                                     let index = instance.pokemon.index;
                                     targets.retain(|(t, _)| {
                                         let ui = match *t {
-                                            MoveTargetInstance::Opponent(i) => &other_ui[i],
+                                            MoveTargetInstance::Opponent(team ,i) => &other_ui[i],
                                             MoveTargetInstance::Team(i) => &user_ui[i],
                                             MoveTargetInstance::User => &user_ui[index],
                                         };
@@ -407,7 +466,7 @@ impl BattlePlayerGui {
                                     } else {
                                         for target in targets {
                                             let ui = match target.0 {
-                                                MoveTargetInstance::Opponent(i) => &mut other_ui[i],
+                                                MoveTargetInstance::Opponent(team ,i) => &mut other_ui[i],
                                                 MoveTargetInstance::Team(i) => &mut user_ui[i],
                                                 MoveTargetInstance::User => &mut user_ui[instance.pokemon.index],
                                             };
@@ -433,7 +492,7 @@ impl BattlePlayerGui {
                             },
                             BattleClientAction::UseItem(_, target) => {
                                 let target = match target {
-                                    MoveTargetInstance::Opponent(i) => &mut other_ui[*i],
+                                    MoveTargetInstance::Opponent(team ,i) => &mut other_ui[*i],
                                     MoveTargetInstance::Team(i) => &mut user_ui[*i],
                                     MoveTargetInstance::User => &mut user_ui[instance.pokemon.index],
                                 };
@@ -452,8 +511,8 @@ impl BattlePlayerGui {
                                 } else if !self.gui.text.finished() {
                                 	self.gui.text.update(ctx, delta);
                                 } else {
-                                    match instance.pokemon.team {
-                                        Team::Player => if self.player.party.any_inactive() {
+                                    match instance.pokemon.team == self.player.party.id {
+                                        true => if self.player.party.any_inactive() {
                                             match self.party.alive() {
                                                 true => {
                                                     self.party.input(ctx);
@@ -476,7 +535,7 @@ impl BattlePlayerGui {
                                             user_ui[instance.pokemon.index].update(None);
                                             queue.current = None;
                                         },
-                                        Team::Opponent => {
+                                        false => {
                                             self.opponent.party.replace(instance.pokemon.index, None);
                                             queue.current = None;
                                         }
@@ -541,7 +600,7 @@ impl BattlePlayerGui {
             //     self.party.draw(ctx)
             // },
             BattlePlayerState::WaitToSelect | BattlePlayerState::WaitToMove | BattlePlayerState::Moving(..) => {
-                for active in self.player.renderer.iter().chain(self.opponent.renderer.iter()) {
+                for active in self.opponent.renderer.iter().chain(self.player.renderer.iter()) {
                     active.renderer.draw(ctx, ZERO, Color::WHITE);
                     active.status.draw(ctx, 0.0, 0.0);
                 }
@@ -558,14 +617,17 @@ impl BattlePlayerGui {
 
 impl BattleClient for BattlePlayerGui {
 
-    fn begin(&mut self, data: &BattleData, user: BattlePartyKnown, targets: BattlePartyUnknown) {
-        self.gui.panel.target(&targets);
+    fn user(&mut self, battle_type: BattleType, user: BattlePartyKnown) {
         self.player.party = user;
-        self.opponent.party = targets;
-        self.is_wild = data.battle_type == BattleType::Wild;
+        self.is_wild = battle_type == BattleType::Wild;
         self.forfeit = false;
         self.faint.clear();
         self.moves.clear();
+    }
+
+    fn opponents(&mut self, opponent: BattlePartyUnknown) {
+        self.gui.panel.target(&opponent);
+        self.opponent.party = opponent;
     }
 
     fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {

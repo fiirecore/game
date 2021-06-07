@@ -1,5 +1,5 @@
 use crate::{
-    deps::{str::TinyStr16, vec::ArrayVec},
+    deps::vec::ArrayVec,
     pokedex::{
         pokemon::{
             instance::PokemonInstance,
@@ -9,21 +9,24 @@ use crate::{
             },
         },
     },
+    storage::player::PlayerId,
 };
 
-use crate::battle::pokemon::ActivePokemon;
+use crate::battle::{
+    client::BattleClient,
+    pokemon::ActivePokemon,
+};
 
 // #[deprecated(note = "use enum instead")]
 pub type ActivePokemonArray = ArrayVec<[ActivePokemon; 3]>;
 
-pub type BattlePlayer = TinyStr16;
-
 
 pub struct BattleParty {
 
+    pub id: PlayerId,
     pub name: String,
 
-    // pub client: Box<dyn BattleClient>,
+    pub client: Box<dyn BattleClient>,
 
     pub pokemon: BorrowedParty,
     pub active: ActivePokemonArray,
@@ -32,7 +35,7 @@ pub struct BattleParty {
 
 impl BattleParty {
 
-    pub fn new(name: &str, party: BorrowedParty,/*player: Box<dyn BattlePlayer>,*/ size: usize) -> Self {
+    pub fn new(id: PlayerId, name: &str, party: BorrowedParty, client: Box<dyn BattleClient>, size: usize) -> Self {
 
         let mut active = vec![None; size];
         let mut current = 0;
@@ -48,8 +51,9 @@ impl BattleParty {
 		}
 
         Self {
+            id,
             name: name.to_string(),
-            // client,
+            client,
             active: active.into_iter().map(|active| match active {
                 Some(index) => ActivePokemon::Some(index, None),
                 None => ActivePokemon::default()
@@ -96,6 +100,13 @@ impl BattleParty {
         };
     }
 
+    pub fn ready_to_move(&self) -> bool {
+        self.active.iter().filter(|a| a.is_active()).all(|a| match a {
+            ActivePokemon::Some(_, m) => m.is_some(),
+            _ => false
+        })
+    }
+
     pub fn collect_ref(&self) -> ArrayVec<[&PokemonInstance; 6]> {
         self.pokemon.iter().map(|b| b.value()).collect()
     }
@@ -110,6 +121,7 @@ impl BattleParty {
 
     pub fn as_known(&self) -> super::view::BattlePartyKnown {
         super::view::BattlePartyKnown {
+            id: self.id,
             pokemon: self.collect_cloned(),
             active: self.active.iter().map(|active| active.index()).collect(),
         }
@@ -126,6 +138,7 @@ impl BattleParty {
             }
         }
         super::view::BattlePartyUnknown {
+            id: self.id,
             pokemon,
             active,
         }

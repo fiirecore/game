@@ -1,4 +1,4 @@
-use super::{BattleData, pokemon::{BattleClientActionInstance, BattleMove, view::{BattlePartyKnown, BattlePartyUnknown, PokemonUnknown}}};
+use super::{BattleType, pokemon::{BattleClientActionInstance, BattleMove, view::{BattlePartyKnown, BattlePartyUnknown, PokemonUnknown}}};
 
 pub mod gui;
 pub mod ai;
@@ -7,7 +7,9 @@ pub trait BattleClient {
 
     // fn name(&self) -> Cow<str>;
 
-    fn begin(&mut self, data: &BattleData, user: BattlePartyKnown, targets: BattlePartyUnknown);
+    fn user(&mut self, battle_type: BattleType, user: BattlePartyKnown);
+
+    fn opponents(&mut self, opponent: BattlePartyUnknown); // maybe can send multiple
 
     fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown);
 

@@ -1,12 +1,15 @@
-use pokedex::{moves::target::Team, pokemon::stat::StatType, types::Effective};
+use pokedex::{pokemon::stat::StatType, types::Effective};
 
-use crate::pokedex::{
-    pokemon::{Level, Experience},
-    moves::{
-        MoveRef,
-        target::MoveTargetInstance,
+use crate::{
+    storage::player::PlayerId,
+    pokedex::{
+        pokemon::{Level, Experience},
+        moves::{
+            MoveRef,
+            target::MoveTargetInstance,
+        },
+        item::ItemRef,
     },
-    item::ItemRef,
 };
 
 use super::view::PokemonUnknown;
@@ -22,20 +25,20 @@ pub enum BattleMove {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ActivePokemonIndex {
-    pub team: Team,
+    pub team: PlayerId,
     pub index: usize,
 }
 
-impl ActivePokemonIndex {
+// impl ActivePokemonIndex {
 
-    pub fn into_other(self) -> Self {
-        Self {
-            team: self.team.other(),
-            index: self.index,
-        }
-    }
+//     pub fn into_other(self) -> Self {
+//         Self {
+//             team: self.team.other(),
+//             index: self.index,
+//         }
+//     }
 
-}
+// }
 
 impl core::fmt::Display for ActivePokemonIndex {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -66,14 +69,14 @@ pub struct BattleClientActionInstance {
     pub action: BattleClientAction,
 }
 
-impl BattleClientActionInstance {
-    pub fn into_other(self) -> Self {
-        Self {
-            pokemon: self.pokemon.into_other(),
-            action: self.action.into_other(),
-        }
-    }
-}
+// impl BattleClientActionInstance {
+//     pub fn into_other(self) -> Self {
+//         Self {
+//             pokemon: self.pokemon.into_other(),
+//             action: self.action.into_other(),
+//         }
+//     }
+// }
 
 #[derive(Debug, Clone)]
 pub enum BattleClientAction {
@@ -99,17 +102,17 @@ impl BattleClientAction {
     }
 }
 
-impl BattleClientAction {
-    pub fn into_other(self) -> Self {
-        match self {
-            BattleClientAction::Move(pokemon_move, targets) => Self::Move(pokemon_move, targets.into_iter().map(|(t, mut m)| {
-                m.iter_mut().for_each(|m| m.as_other());
-                (t, m)
-            }).collect()),
-            _ => self
-        }
-    }
-}
+// impl BattleClientAction {
+//     pub fn into_other(self) -> Self {
+//         match self {
+//             BattleClientAction::Move(pokemon_move, targets) => Self::Move(pokemon_move, targets.into_iter().map(|(t, mut m)| {
+//                 m.iter_mut().for_each(|m| m.as_other());
+//                 (t, m)
+//             }).collect()),
+//             _ => self
+//         }
+//     }
+// }
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub enum BattleClientMove {
@@ -122,11 +125,11 @@ pub enum BattleClientMove {
     Fail,
 }
 
-impl BattleClientMove {
-    fn as_other(&mut self) {
-        match self {
-            BattleClientMove::Faint(i) => *i = i.into_other(),
-            _ => (),
-        }
-    }
-}
+// impl BattleClientMove {
+//     fn as_other(&mut self) {
+//         match self {
+//             BattleClientMove::Faint(i) => *i = i.into_other(),
+//             _ => (),
+//         }
+//     }
+// }

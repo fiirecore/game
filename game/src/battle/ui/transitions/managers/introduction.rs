@@ -8,13 +8,8 @@ use crate::battle::{
     BattleData,
     BattleType,
     state::TransitionState,
-    pokemon::{
-        view::{
-            BattlePartyKnown, 
-            BattlePartyUnknown,
-            gui::{ActivePokemonParty, ActiveRenderer}
-        },
-    },
+    client::gui::BattlePlayerGui,
+    pokemon::view::gui::ActiveRenderer,
     ui::transitions::{
         BattleIntroduction,
         introductions::{
@@ -22,7 +17,7 @@ use crate::battle::{
             basic::BasicBattleIntroduction, 
             trainer::TrainerBattleIntroduction
         },
-    }
+    },
 };
 
 pub struct BattleIntroductionManager {
@@ -47,7 +42,7 @@ impl BattleIntroductionManager {
         }
     }
 
-    pub fn begin(&mut self, data: &BattleData, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
+    pub fn begin(&mut self, data: &BattleData, player: &mut BattlePlayerGui) {
         self.state = TransitionState::Run;
         match data.battle_type {
             BattleType::Wild => self.current = Introductions::Basic,
@@ -55,8 +50,8 @@ impl BattleIntroductionManager {
         }
         let current = self.get_mut();
         current.reset();
-        current.spawn(data, player, opponent, text);
-        text.spawn();
+        current.spawn(data, &player.player.party, &player.opponent.party, &mut player.gui.text);
+        player.gui.text.spawn();
     }
 
     pub fn end(&mut self, text: &mut TextDisplay) {
@@ -64,9 +59,9 @@ impl BattleIntroductionManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut ActivePokemonParty<BattlePartyKnown>, opponent: &mut ActivePokemonParty<BattlePartyUnknown>, text: &mut TextDisplay) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, player: &mut BattlePlayerGui) {
         let current = self.get_mut();
-        current.update(ctx, delta, player, opponent, text);
+        current.update(ctx, delta, &mut player.player, &mut player.opponent, &mut player.gui.text);
         if current.finished() {
             self.state = TransitionState::End;
         }

@@ -5,7 +5,6 @@ use crate::{
         Completable,
         WIDTH,
     },
-    pokedex::moves::target::Team,
     storage::data,
     gui::TextDisplay,
     text::MessagePage,
@@ -47,8 +46,8 @@ impl BattleCloser for TrainerBattleCloser {
 
     fn spawn(&mut self, battle: &Battle, text: &mut TextDisplay) {
         match battle.data.winner {
-            Some(winner) => match winner {
-                Team::Player => {
+            Some(winner) => match winner == data().id {
+                true => {
                     if let Some(trainer) = &battle.data.trainer {
                         self.trainer = Some(trainer.texture.clone());
 
@@ -82,7 +81,7 @@ impl BattleCloser for TrainerBattleCloser {
 
                     }
                 }
-                Team::Opponent => {
+                false => {
                     text.despawn();
                 }
             }

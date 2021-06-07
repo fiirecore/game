@@ -3,14 +3,13 @@ use std::rc::Rc;
 use crate::{
 	game::GameState,
 	deps::rhai::Engine,
-	storage::{data_mut, player::PlayerSave},
+	storage::{data_mut, player::{PlayerSave, PlayerId}},
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
 	},
 	pokedex::{
 		pokemon::instance::BorrowedPokemon,
-		moves::target::Team,
 	},
 	input::{debug_pressed, DebugBind},
 	graphics::ZERO,
@@ -39,8 +38,7 @@ use crate::battle::{
 		}
 	},
 	client::{
-		gui::BattlePlayerGui,
-		ai::BattlePlayerAi
+		gui::BattlePlayerGuiRef,
 	},
 };
 
@@ -57,8 +55,7 @@ pub struct BattleManager {
 
 	engine: Engine,
 
-	player: BattlePlayerGui,
-	ai: BattlePlayerAi,
+	player: BattlePlayerGuiRef,
 
 	pub finished: bool,
 	
@@ -81,8 +78,7 @@ impl BattleManager {
 
 			engine: crate::pokedex::moves::usage::script::engine(),
 
-			player: BattlePlayerGui::new(ctx, party, bag),
-			ai: BattlePlayerAi::default(),
+			player: BattlePlayerGuiRef::new(ctx, party, bag),
 
 			finished: false,
 
@@ -93,16 +89,27 @@ impl BattleManager {
 	pub fn battle(&mut self, entry: BattleEntry) -> bool { // add battle type parameter
 		self.finished = false;
 		self.state = BattleManagerState::default();
-		let player = &mut data_mut().party;
+		let data = data_mut();
+		let player = &mut data.party;
 		self.battle = (!(
 			player.is_empty() || 
 			entry.party.is_empty() ||
 			// Checks if player has any pokemon in party that aren't fainted (temporary)
 			!player.iter().any(|pokemon| !pokemon.fainted())
-		)).then(|| Battle::new(
-			BattleParty::new("Player", data_mut().party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), entry.size),
-			entry
-		));
+		)).then(|| {
+				let data = data_mut();
+				Battle::new(
+				BattleParty::new(
+					data.id, 
+					&data.name, 
+					data.party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), 
+					Box::new(self.player.clone()),
+					entry.size
+				),
+				entry
+			)
+		}
+	);
 		self.battle.is_some()
 	}
 
@@ -116,12 +123,12 @@ impl BattleManager {
 		if let Some(battle) = self.battle.as_mut() {
 			match self.state {
 				BattleManagerState::Begin => {
-					self.player.gui.reset();
+					self.player.get().gui.reset();
 					self.state = BattleManagerState::Transition;
 					self.transition.state = TransitionState::Begin;
 
-					battle.begin(&mut self.player, &mut self.ai);
-					self.player.on_begin(ctx);
+					battle.begin();
+					self.player.get().on_begin(ctx);
 
 					self.update(ctx, delta, input_lock);
 				},
@@ -151,12 +158,18 @@ impl BattleManager {
 				}
 				BattleManagerState::Introduction => match self.introduction.state {
 					TransitionState::Begin => {
-						self.introduction.begin(&battle.data, &self.player.player.party, &self.player.opponent.party, &mut self.player.gui.text);
+						{
+							let mut player = self.player.get();
+							self.introduction.begin(&battle.data, &mut player);
+						}
 						self.update(ctx, delta, input_lock);
 					}
-					TransitionState::Run => self.introduction.update(ctx, delta, &mut self.player.player, &mut self.player.opponent, &mut self.player.gui.text),
+					TransitionState::Run => {
+						let mut player = self.player.get();
+						self.introduction.update(ctx, delta, &mut player);
+					}
 					TransitionState::End => {
-						self.introduction.end(&mut self.player.gui.text);
+						self.introduction.end(&mut self.player.get().gui.text);
 						self.state = BattleManagerState::Battle;
 						self.update(ctx, delta, input_lock);
 					}
@@ -164,19 +177,21 @@ impl BattleManager {
 				BattleManagerState::Battle => match battle.state {
 					BattleState::End => self.state = BattleManagerState::Closer,
 					_ => {
-						
-						self.player.update(ctx, delta);
-						self.player.gui.bounce.update(delta);
 
-						battle.update(&mut self.engine, &mut self.player, &mut self.ai);
+						let mut player = self.player.get();
+
+						player.update(ctx, delta);
+						player.gui.bounce.update(delta);
+
+						battle.update(&mut self.engine);
 					}
 				},
 				BattleManagerState::Closer => match self.closer.state {
 					TransitionState::Begin => {
-						self.closer.begin(battle, &mut self.player.gui.text);
+						self.closer.begin(battle, &mut self.player.get().gui.text);
 						self.update(ctx, delta, input_lock);
 					}
-					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.gui.text),
+					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.get().gui.text),
 					TransitionState::End => {
 						self.closer.end();
 						self.state = BattleManagerState::default();
@@ -187,7 +202,7 @@ impl BattleManager {
 		}
 	}
 
-	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(Team, bool)> {
+	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(PlayerId, bool)> {
 		self.battle.take().map(|battle| battle.update_data(player_save)).flatten()
 	}
 
@@ -205,13 +220,13 @@ impl BattleManager {
 			BattleManagerState::Battle => {
 				if let Some(battle) = self.battle.as_mut() {
 					battle.state = BattleState::End;
-					battle.update(&mut self.engine, &mut self.player, &mut self.ai);
+					battle.update(&mut self.engine);
 				}
 			},
 			BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
 		}
 		if let Some(battle) = self.battle.as_mut() {
-			battle.data.winner = Some(Team::Player);
+			battle.data.winner = Some(data_mut().id);
 		}
 	}
 	
@@ -231,29 +246,29 @@ impl GameState for BattleManager {
 				BattleManagerState::Begin => (),
 			    BattleManagerState::Transition => self.transition.draw(ctx),
 			    BattleManagerState::Opener => {
-					self.player.gui.background.draw(ctx, self.opener.offset());
-					self.opener.draw_below_panel(ctx, &self.player.player.renderer, &self.player.opponent.renderer);
-					self.player.gui.draw_panel(ctx);
+					self.player.get().gui.background.draw(ctx, self.opener.offset());
+					self.opener.draw_below_panel(ctx, &self.player.get().player.renderer, &self.player.get().opponent.renderer);
+					self.player.get().gui.draw_panel(ctx);
 					self.opener.draw(ctx);
 				}
 			    BattleManagerState::Introduction => {
-					self.player.gui.background.draw(ctx, 0.0);
-					self.introduction.draw(ctx, &self.player.player.renderer, &self.player.opponent.renderer);
-					self.player.gui.draw_panel(ctx);
-					self.player.gui.text.draw(ctx);
+					self.player.get().gui.background.draw(ctx, 0.0);
+					self.introduction.draw(ctx, &self.player.get().player.renderer, &self.player.get().opponent.renderer);
+					self.player.get().gui.draw_panel(ctx);
+					self.player.get().gui.text.draw(ctx);
 				}
-			    BattleManagerState::Battle => self.player.draw(ctx),
+			    BattleManagerState::Battle => self.player.get().draw(ctx),
 			    BattleManagerState::Closer => {
 					if self.closer.state != TransitionState::End {
 						if !self.world_active() {
-							self.player.gui.background.draw(ctx, 0.0);
-							self.player.gui.draw_panel(ctx);
-							self.player.draw(ctx);
-							for active in self.player.player.renderer.iter() {
+							self.player.get().gui.background.draw(ctx, 0.0);
+							self.player.get().gui.draw_panel(ctx);
+							self.player.get().draw(ctx);
+							for active in self.player.get().player.renderer.iter() {
 								active.renderer.draw(ctx, ZERO, Color::WHITE);
 							}
 							self.closer.draw_battle(ctx);
-							self.player.gui.text.draw(ctx);
+							self.player.get().gui.text.draw(ctx);
 						}
 						self.closer.draw(ctx);
 					}
