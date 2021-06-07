@@ -116,3 +116,20 @@ impl World for WorldMap {
     }
 
 }
+
+impl WorldMap {
+
+    pub fn tenth_walkable_coord(&self) -> Option<Coordinate> {
+        let mut count: u8 = 0;
+        for (i, m) in self.movements.iter().copied().enumerate() {
+            if manager::can_walk(m) {
+                count += 1;
+                if count == 10 {
+                    return Some(Coordinate::new((i % self.width) as _, (i / self.width) as _));
+                }
+            }
+        }
+        None
+    }
+
+}

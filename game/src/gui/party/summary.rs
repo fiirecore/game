@@ -120,7 +120,7 @@ impl SummaryGui {
                             let x = 168.0 + 37.0 * index as f32;
                             draw_rectangle(ctx, x, 52.0, 32.0, 6.0, display.upper);
                             draw_rectangle(ctx, x, 58.0, 32.0, 6.0, display.lower);
-                            crate::graphics::draw_text_center(ctx, &0, &display.name, &TextColor::White, x + 16.0, 52.0)
+                            crate::graphics::draw_text_center(ctx, &0, &display.name, &TextColor::White, x + 16.0, 52.0, false)
                         }
 
                         // draw_text_left(1, &pokemon.item, &TextColor::Black, 168.0, 96.0);

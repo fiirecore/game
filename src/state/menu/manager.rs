@@ -1,4 +1,7 @@
-use game::tetra::{State, Context, Result};
+use game::tetra::{
+	State, Context, Result,
+	math::Vec2,
+};
 
 use crate::state::{MainState, MainStates};
 
@@ -24,12 +27,12 @@ pub struct MenuStateManager {
 
 impl MenuStateManager {
 
-	pub fn new(ctx: &mut Context) -> Self {
+	pub fn new(ctx: &mut Context, scaler: Vec2<f32>) -> Self {
 		Self {
 			current: MenuStates::default(),
 			next: None,
 			title: TitleState::new(ctx),
-			main_menu: MainMenuState::new(ctx),
+			main_menu: MainMenuState::new(ctx, scaler),
 			character: CharacterCreationState::new(ctx),
 		}
 	}

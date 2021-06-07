@@ -62,6 +62,7 @@ fn main() -> Result {
 
     ContextBuilder::new(TITLE, (game::util::WIDTH * DEFAULT_SCALE) as _, (game::util::HEIGHT * DEFAULT_SCALE) as _)
     .resizable(true)
+    .show_mouse(true)
     .timestep(Timestep::Variable)
     .build()?
     .run(|ctx| StateManager::new(ctx, args))?; // to - do: return state

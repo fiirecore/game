@@ -1,8 +1,10 @@
 mod panel;
+mod button;
 mod text;
 mod bar;
 
 pub use panel::*;
+pub use button::*;
 pub use text::*;
 pub use bar::*;
 

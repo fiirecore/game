@@ -126,9 +126,9 @@ pub fn draw_text_right(ctx: &mut Context, font: &FontId, text: &str, color: &imp
 	}
 }
 
-pub fn draw_text_center(ctx: &mut Context, font: &FontId, text: &str, color: &impl AsColor, x: f32, y: f32) {
+pub fn draw_text_center(ctx: &mut Context, font: &FontId, text: &str, color: &impl AsColor, x: f32, y: f32, center_y: bool) {
 	if let Some(renderer) = unsafe {TEXT_RENDERER.as_ref()} {
-		renderer.draw_text_center(ctx, font, text, color.as_color(), x, y);
+		renderer.draw_text_center(ctx, font, text, color.as_color(), x, y, center_y);
 	}
 }
 

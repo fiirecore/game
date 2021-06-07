@@ -24,26 +24,30 @@ impl Panel {
     }
 
     pub fn draw(&self, ctx: &mut Context, x: f32, y: f32, w: f32, h: f32) {
+        self.draw_color(ctx, x, y, w, h, Color::WHITE)
+    }
 
-        self.0.draw(ctx, position(x, y));
+    pub fn draw_color(&self, ctx: &mut Context, x: f32, y: f32, w: f32, h: f32, color: Color) {
+
+        self.0.draw(ctx, position(x, y).color(color));
         let x1 = x + w;
-        self.0.draw(ctx, flip_x(position(x1, y)));
+        self.0.draw(ctx, flip_x(position(x1, y).color(color)));
 
         let y1 = y + h;
-        self.0.draw(ctx, flip_y(position(x, y1)));
+        self.0.draw(ctx, flip_y(position(x, y1).color(color)));
 
-        self.0.draw(ctx, position(x1, y1).scale(Vec2::new(-1.0, -1.0)));
+        self.0.draw(ctx, position(x1, y1).scale(Vec2::new(-1.0, -1.0)).color(color));
 
         let w = w - 14.0;
         let h = h - 14.0;
 
-        crate::graphics::draw_rectangle(ctx, x + 7.0, y + 7.0, w, h, WHITE);
+        crate::graphics::draw_rectangle(ctx, x + 7.0, y + 7.0, w, h, color);
 
-        self.0.draw_region(ctx, Rectangle::new(6.0, 0.0, 1.0, 7.0), position(x + 7.0, y).scale(Vec2::new(w, 1.0)));
-        self.0.draw_region(ctx, Rectangle::new(6.0, 0.0, 1.0, 7.0), position(x + 7.0, y1).scale(Vec2::new(w, -1.0)));
+        self.0.draw_region(ctx, Rectangle::new(6.0, 0.0, 1.0, 7.0), position(x + 7.0, y).scale(Vec2::new(w, 1.0)).color(color));
+        self.0.draw_region(ctx, Rectangle::new(6.0, 0.0, 1.0, 7.0), position(x + 7.0, y1).scale(Vec2::new(w, -1.0)).color(color));
 
-        self.0.draw_region(ctx, Rectangle::new(0.0, 6.0, 7.0, 1.0), position(x, y + 7.0).scale(Vec2::new(1.0, h)));
-        self.0.draw_region(ctx, Rectangle::new(0.0, 6.0, 7.0, 1.0), position(x1, y + 7.0).scale(Vec2::new(-1.0, h)));
+        self.0.draw_region(ctx, Rectangle::new(0.0, 6.0, 7.0, 1.0), position(x, y + 7.0).scale(Vec2::new(1.0, h)).color(color));
+        self.0.draw_region(ctx, Rectangle::new(0.0, 6.0, 7.0, 1.0), position(x1, y + 7.0).scale(Vec2::new(-1.0, h)).color(color));
 
 
     }

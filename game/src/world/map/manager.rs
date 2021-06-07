@@ -14,9 +14,7 @@ use crate::{
         down, pressed, Control,
         debug_pressed, DebugBind,
     },
-    pokedex::{
-        moves::FieldMoveId,
-    },
+    pokedex::moves::FieldMoveId,
     tetra::Context,
     log::{info, warn},
     battle_glue::BattleEntryRef,
@@ -28,7 +26,6 @@ use crate::{
     is_debug, keybind,
 };
 
-use deps::rhai::FuncArgs;
 use worldlib::{
     serialized::SerializedWorld,
     map::{
@@ -491,6 +488,23 @@ impl GameState for WorldManager {
                 },
                 None => warn!("/script requires arguments \"clear\" or \"list\"."),
             },
+            "warp" => if let Some(map_or_index) = command.args.get(0).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
+                let location = if let Some(index) = command.args.get(1).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
+                    util::Location::new(Some(map_or_index), index)
+                } else {
+                    util::Location::new(None, map_or_index)
+                };
+                if let Some(map) = self.map_manager.maps.get(&location) {
+                    info!("Warping to {}", map.name);
+                    data_mut().location = location;
+                    self.map_manager.data.current = Some(location);
+                    if let Some(coord) = map.tenth_walkable_coord() {
+                        self.map_manager.data.player.character.position.coords = coord;
+                    }
+                }
+            } else {
+                warn!("Invalid warp command syntax!")
+            }
             _ => warn!("Unknown world command \"{}\".", command),
         }
     }

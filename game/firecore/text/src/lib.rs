@@ -50,9 +50,9 @@ impl TextRenderer {
         }
     }
 
-    pub fn draw_text_center(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
+    pub fn draw_text_center(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32, center_y: bool) { // To - do: Have struct that stores a message, font id and color
         if let Some(font) = self.fonts.get(font) {
-            font.draw_text_center(ctx, text, x, y, color);
+            font.draw_text_center(ctx, text, x, y, color, center_y);
         }
     }
 
@@ -112,12 +112,13 @@ impl Font {
         }
     }
 
-    pub fn draw_text_center(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: &Color) {
+    pub fn draw_text_center(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: &Color, center_y: bool) {
         let mut len = 0;
         let x_offset = self.text_pixel_length(text) / 2.0;
+        let y_offset = if center_y { (self.height >> 1) as f32 } else { 0.0 };
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x - x_offset + len as f32, y)).color(*color));
+                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x - x_offset + len as f32, y - y_offset)).color(*color));
                 texture.width()
             } else {
                 self.width as _

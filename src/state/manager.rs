@@ -1,6 +1,7 @@
 use game::{
     tetra::{
         State, Context, Result, Event,
+        math::Vec2,
         graphics::{
             self, Color,
             scaling::{ScreenScaler, ScalingMode},
@@ -147,12 +148,13 @@ impl StateManager {
 
     pub fn new(ctx: &mut Context, args: Vec<Args>) -> Result<Self> {
         // graphics::set_canvas(ctx, canvas)
+        let scaler = ScreenScaler::with_window_size(ctx, game::util::WIDTH as _, game::util::HEIGHT as _, ScalingMode::ShowAll)?;
         Ok(Self {
             current: MainStates::default(),
-            menu: MenuStateManager::new(ctx),
+            menu: MenuStateManager::new(ctx, scaler.project(Vec2::new(1.0, 1.0))),
             game: GameStateManager::new(ctx),
             args,
-            scaler: ScreenScaler::with_window_size(ctx, game::util::WIDTH as _, game::util::HEIGHT as _, ScalingMode::ShowAll)?,
+            scaler,
         })
     }
 
