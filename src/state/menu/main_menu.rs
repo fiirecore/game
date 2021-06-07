@@ -103,7 +103,7 @@ impl State for MainMenuState {
 		for (index, save) in self.saves.iter().enumerate() {
 			let y = 5.0 + index as f32 * Self::GAP;
 			self.button.draw(ctx, 20.0, y, 206.0, 30.0);
-			draw_text_left(ctx, &1, save, TextColor::Black, 31.0, y + 5.0);
+			draw_text_left(ctx, &1, save, &TextColor::Black, 31.0, y + 5.0);
 		}
 
 		let saves_len = self.saves.len() as f32;
@@ -111,18 +111,18 @@ impl State for MainMenuState {
 		{
 			let y = 5.0 + saves_len * Self::GAP;
 			self.button.draw(ctx, 20.0, y, 206.0, 30.0);
-			draw_text_left(ctx, &1, "New Game", TextColor::Black, 31.0, y + 5.0);
+			draw_text_left(ctx, &1, "New Game", &TextColor::Black, 31.0, y + 5.0);
 		}
 
 		{
 			let y = 5.0 + (saves_len + 1.0) * Self::GAP;
 			self.button.draw(ctx, 20.0, y, 206.0, 30.0);
-			draw_text_left(ctx, &1, if self.delete { "Play" } else { "Delete" }, TextColor::Black, 31.0, y + 5.0);
+			draw_text_left(ctx, &1, if self.delete { "Play" } else { "Delete" }, &TextColor::Black, 31.0, y + 5.0);
 		}
 
 		draw_rectangle_lines(ctx, 20.0, 5.0 + self.cursor as f32 * Self::GAP, 206.0, 30.0, 2.0, game::graphics::RED);
 
-		draw_text_left(ctx, &1, if self.delete { "Delete Mode: ON" } else { "Delete Mode: OFF" }, TextColor::Black, 5.0, 145.0);
+		draw_text_left(ctx, &1, if self.delete { "Delete Mode: ON" } else { "Delete Mode: OFF" }, &TextColor::Black, 5.0, 145.0);
 
 		Ok(())
 	}

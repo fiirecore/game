@@ -13,7 +13,7 @@ pub mod config;
 pub mod battle_glue;
 pub mod gui;
 pub mod text;
-pub mod state;
+pub mod game;
 pub mod init;
 pub mod graphics;
 

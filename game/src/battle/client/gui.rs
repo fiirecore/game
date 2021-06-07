@@ -126,7 +126,7 @@ impl BattlePlayerGui {
                                             self.bag.input(ctx);
                                             if let Some(item) = self.bag.take_selected_despawn() {
                                                 let target = match &item.value().usage {
-                                                    ItemUseType::Pokeball => MoveTargetInstance::Opponent(crate::battle::BATTLE_RANDOM.gen_range(0, self.gui.panel.fight.targets.names.len())),
+                                                    ItemUseType::Pokeball => MoveTargetInstance::Opponent(crate::battle::BATTLE_RANDOM.gen_range(0, self.gui.panel.targets.names.len())),
                                                     ItemUseType::Script(..) => todo!("user targeting"),
                                                     ItemUseType::None => todo!("make item unusable"),
                                                     // MoveTarget::Opponents => todo!("make none"),
@@ -157,19 +157,31 @@ impl BattlePlayerGui {
                                                 }
                                                 BattlePanels::Fight => match pokemon.moves.get(self.gui.panel.fight.moves.cursor) {
                                                     Some(instance) => match instance.get() {
-                                                        Some(move_ref) => self.moves.push(BattleMove::Move(
-                                                            self.gui.panel.fight.moves.cursor,
-                                                            match move_ref.value().target {
-                                                                MoveTarget::User => MoveTargetInstance::user(),
-                                                                MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.fight.targets.cursor),
-                                                                MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
-                                                                MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
+                                                        Some(move_ref) => {
+                                                            let target = move_ref.value().target;
+                                                            match target {
+                                                                MoveTarget::Opponent => self.gui.panel.active = BattlePanels::Target(target),
+                                                                _ => self.moves.push(
+                                                                    BattleMove::Move(
+                                                                        self.gui.panel.fight.moves.cursor,
+                                                                        match target {
+                                                                            MoveTarget::User => MoveTargetInstance::user(),
+                                                                            MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
+                                                                            MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
+                                                                            MoveTarget::Opponent => unreachable!(),
+                                                                        }
+                                                                    )
+                                                                ),
                                                             }
-                                                        )),
+                                                        }
                                                         None => warn!("Pokemon is out of Power Points for this move!")
                                                     }
                                                     None => warn!("Could not get move at cursor!"),
                                                 }
+                                                BattlePanels::Target(target) => self.moves.push(BattleMove::Move(self.gui.panel.fight.moves.cursor, match target {
+                                                    MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.targets.cursor),
+                                                    _ => unreachable!(),
+                                                })),
                                             }
                                         }
                                     }
@@ -463,6 +475,7 @@ impl BattlePlayerGui {
                                             queue.current = None;
                                         },
                                         Team::Opponent => {
+                                            self.opponent.party.replace(instance.pokemon.index, None);
                                             queue.current = None;
                                         }
                                     }

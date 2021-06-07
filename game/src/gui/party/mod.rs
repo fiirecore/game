@@ -218,8 +218,8 @@ impl PartyGui {
         }
         self.draw_ball(ctx, 3.0, 20.0, selected);
         self.draw_pokemon(ctx, &pokemon.icon, 0.0, 20.0, selected);
-        draw_text_left(ctx, &0, &pokemon.name, TextColor::White, 33.0, 36.0);
-        draw_text_left(ctx, &0, &pokemon.level, TextColor::White, 41.0, 45.0);
+        draw_text_left(ctx, &0, &pokemon.name, &TextColor::White, 33.0, 36.0);
+        draw_text_left(ctx, &0, &pokemon.level, &TextColor::White, 41.0, 45.0);
         self.draw_health(ctx, pokemon, 17.0, 57.0);
     }
 
@@ -257,8 +257,8 @@ impl PartyGui {
         }
         self.draw_ball(ctx, 88.0, offset - 1.0, selected);
         self.draw_pokemon(ctx, &pokemon.icon, 87.0, offset - 8.0, selected);
-        draw_text_left(ctx, &0, &pokemon.name, TextColor::White, 119.0, offset);
-        draw_text_left(ctx, &0, &pokemon.level, TextColor::White, 129.0, offset + 9.0);
+        draw_text_left(ctx, &0, &pokemon.name, &TextColor::White, 119.0, offset);
+        draw_text_left(ctx, &0, &pokemon.level, &TextColor::White, 129.0, offset + 9.0);
         self.draw_health(ctx, pokemon, 170.0, offset + 6.0);
     }
 
@@ -308,7 +308,7 @@ impl PartyGui {
 
     fn draw_health(&self, ctx: &mut Context, pokemon: &PokemonDisplay, x: f32, y: f32) {
         self.health.draw(ctx, position(x, y));
-        draw_text_left(ctx, &0, &pokemon.health.0, TextColor::White, x + 35.0, y + 5.0);
+        draw_text_left(ctx, &0, &pokemon.health.0, &TextColor::White, x + 35.0, y + 5.0);
         let x = x + 15.0;
         draw_rectangle(ctx, x, y + 2.0, pokemon.health.1, 1.0, HealthBar::UPPER);
         draw_rectangle(ctx, x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER);

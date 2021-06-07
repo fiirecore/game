@@ -12,7 +12,7 @@ readme = "README.md"
 include = ["/build", "/assets"]
 
 [profile.dev]
-opt-level = 3
+opt-level = 2
 debug-assertions = true
 panic = "abort"
 
@@ -26,8 +26,12 @@ opt-level = 3     # z = Optimize for size
 default = ["audio"]
 audio = ["firecore-game/audio", "audio-builder"]
 static-link = ["firecore-game/static-link"]
+discord = ["discord-rich-presence", "serde_json"]
 
 [dependencies]
+
+discord-rich-presence = { version = "0.1", optional = true }
+serde_json = { version = "1.0", optional = true }
 
 firecore-game = { path = "game/", default-features = false, features = ["ser", "world", "battle"] }
 

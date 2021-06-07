@@ -37,7 +37,7 @@ impl LevelUpMovePanel {
     pub fn new(panel: Vec2) -> Self {
         Self {
             alive: false,
-            text: DynamicText::new(Vec2::new(11.0, 11.0), panel, 1, TextColor::White, 1, "levelup"),
+            text: DynamicText::new(Vec2::new(11.0, 11.0), panel, 1, &TextColor::White, 1, "levelup"),
             move_panel: MovePanel::new(panel),
             name: String::new(),
             moves: Vec::new(),

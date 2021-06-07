@@ -70,7 +70,7 @@ impl NpcTextureManager {
         
         if let Some(texture) = self.npcs.get(&npc.npc_type) {
             let params = if npc.character.position.direction == Direction::Right {
-                position(x + 32.0, y).scale(Vec2::new(-1.0, 1.0))
+                position(x + 16.0, y).scale(Vec2::new(-1.0, 1.0))
             } else {
                 position(x, y)
             };

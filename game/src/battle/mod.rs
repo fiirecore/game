@@ -201,53 +201,55 @@ impl Battle {
 
 										// retargets moves if target is None
 
-										if targets.len() > 1 {
-											let mut a = None;
-											for (i, t) in targets.iter().enumerate() {
-												let p = match t {
-													MoveTargetInstance::Opponent(i) => other.active[*i].pokemon.as_ref(),
-													MoveTargetInstance::Team(i) => user.active[*i].pokemon.as_ref(),
-													MoveTargetInstance::User => user.active[instance.pokemon.index].pokemon.as_ref(),
-												};
-	
-												if p.is_some() {
-													a = Some(i);
-												}
-											}
-	
-											for t in targets.iter_mut() {
-												let p = match t {
-													MoveTargetInstance::Opponent(i) => other.active[*i].pokemon.as_ref(),
-													MoveTargetInstance::Team(i) => user.active[*i].pokemon.as_ref(),
-													MoveTargetInstance::User => user.active[instance.pokemon.index].pokemon.as_ref(),
-												};
-	
-												if p.is_none() {
-													match a {
-														Some(active) => *t = match t {
-															MoveTargetInstance::Opponent(..) => MoveTargetInstance::Opponent(active),
-															MoveTargetInstance::Team(..) => MoveTargetInstance::Team(active),
-															MoveTargetInstance::User => unreachable!(),
-														},
-														None => return,
-													}
-												}
-											}
-										}
+										debug!("fix retargeting system");
 
+										// if targets.len() > 1 {
+										// 	let mut a = None;
+										// 	for (i, t) in targets.iter().enumerate() {
+										// 		let p = match t {
+										// 			MoveTargetInstance::Opponent(i) => other.active[*i].pokemon.as_ref(),
+										// 			MoveTargetInstance::Team(i) => user.active[*i].pokemon.as_ref(),
+										// 			MoveTargetInstance::User => user.active[instance.pokemon.index].pokemon.as_ref(),
+										// 		};
+	
+										// 		if p.is_some() {
+										// 			a = Some(i);
+										// 		}
+										// 	}
+	
+										// 	for t in targets.iter_mut() {
+										// 		let p = match t {
+										// 			MoveTargetInstance::Opponent(i) => other.active[*i].pokemon.as_ref(),
+										// 			MoveTargetInstance::Team(i) => user.active[*i].pokemon.as_ref(),
+										// 			MoveTargetInstance::User => user.active[instance.pokemon.index].pokemon.as_ref(),
+										// 		};
+	
+										// 		if p.is_none() {
+										// 			debug!("retarget {:?}, {:?}", t, a);
+										// 			match a {
+										// 				Some(active) => *t = match t {
+										// 					MoveTargetInstance::Opponent(..) => MoveTargetInstance::Opponent(active),
+										// 					MoveTargetInstance::Team(..) => MoveTargetInstance::Team(active),
+										// 					MoveTargetInstance::User => unreachable!(),
+										// 				},
+										// 				None => return,
+										// 			}
+										// 		}
+										// 	}
+										// }
+										
+										let userp = user.active[instance.pokemon.index].pokemon.as_ref().unwrap();
 
+										let targets = targets.iter().flat_map(|target| match target {
+											MoveTargetInstance::Opponent(index) => other.active.get(*index).map(|active| active.pokemon.as_ref()).flatten(),
+											MoveTargetInstance::Team(index) => user.active.get(*index).map(|active| active.pokemon.as_ref()).flatten(),
+											MoveTargetInstance::User => Some(userp),
+										}.map(|i| (target, i))).map(|(target, pokemon)| pokedex::moves::usage::pokemon::PokemonTarget {
+											pokemon,
+											active: *target,
+										}).collect();
 
-										let turn = {
-											let userp = user.active[instance.pokemon.index].pokemon.as_ref().unwrap();
-											userp.use_own_move(engine, *move_index, targets.iter().map(|target| pokedex::moves::usage::pokemon::PokemonTarget {
-												pokemon: match target {
-													MoveTargetInstance::Opponent(index) => &other.active[*index].pokemon.as_ref().unwrap_or_else(|| panic!("{}.active[{}].pokemon", other.name, index)),
-													MoveTargetInstance::Team(index) => &user.active[*index].pokemon.as_ref().unwrap(),
-													MoveTargetInstance::User => userp,
-												},
-												active: *target,
-											}).collect())
-										};
+										let turn = userp.use_own_move(engine, *move_index, targets);
 
 										let mut target_results = Vec::with_capacity(turn.results.len());
 

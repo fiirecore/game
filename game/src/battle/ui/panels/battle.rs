@@ -60,11 +60,11 @@ impl BattleOptions {
     pub fn draw(&self, ctx: &mut Context) {
         self.panel.draw(ctx, 120.0, 113.0, 120.0, 47.0);
 
-        draw_text_left(ctx, &1, "What will", TextColor::White, 11.0, 123.0);
-        draw_text_left(ctx, &1, &self.pokemon_do, TextColor::White, 11.0, 139.0);
+        draw_text_left(ctx, &1, "What will", &TextColor::White, 11.0, 123.0);
+        draw_text_left(ctx, &1, &self.pokemon_do, &TextColor::White, 11.0, 139.0);
 
         for (index, string) in self.buttons.iter().enumerate() {
-            draw_text_left(ctx, &0, string, TextColor::Black, 138.0 + if index % 2 == 0 { 0.0 } else { 56.0 }, 123.0 + if index >> 1 == 0 { 0.0 } else { 16.0 })
+            draw_text_left(ctx, &0, string, &TextColor::Black, 138.0 + if index % 2 == 0 { 0.0 } else { 56.0 }, 123.0 + if index >> 1 == 0 { 0.0 } else { 16.0 })
         }
 
         draw_cursor(ctx, 131.0 + if self.cursor % 2 == 0 {

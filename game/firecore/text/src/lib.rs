@@ -38,19 +38,19 @@ impl TextRenderer {
         })
     }
 
-    pub fn draw_text_left(&self, ctx: &mut Context, font: &FontId, text: &str, color: Color, x: f32, y: f32) {
+    pub fn draw_text_left(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32) {
         if let Some(font) = self.fonts.get(font) {
             font.draw_text_left(ctx, text, x, y, color);
         }
     }
 
-    pub fn draw_text_right(&self, ctx: &mut Context, font: &FontId, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
+    pub fn draw_text_right(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
         if let Some(font) = self.fonts.get(font) {
             font.draw_text_right(ctx, text, x, y, color);
         }
     }
 
-    pub fn draw_text_center(&self, ctx: &mut Context, font: &FontId, text: &str, color: Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
+    pub fn draw_text_center(&self, ctx: &mut Context, font: &FontId, text: &str, color: &Color, x: f32, y: f32) { // To - do: Have struct that stores a message, font id and color
         if let Some(font) = self.fonts.get(font) {
             font.draw_text_center(ctx, text, x, y, color);
         }
@@ -66,6 +66,14 @@ impl TextRenderer {
         self.cursor.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x, y)));
     }
 
+    pub fn text_len(&self, font: &FontId, text: &str) -> f32 {
+        if let Some(font) = self.fonts.get(font) {
+            font.text_pixel_length(text)
+        } else {
+            0.0
+        }
+    }
+
 }
 
 pub struct Font {
@@ -79,11 +87,11 @@ pub struct Font {
 
 impl Font {
 
-    pub fn draw_text_left(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: Color) {
+    pub fn draw_text_left(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: &Color) {
         let mut len = 0;
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x + len as f32, y)).color(color));
+                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x + len as f32, y)).color(*color));
                 texture.width()
             } else {
                 self.width as _
@@ -91,12 +99,12 @@ impl Font {
         }
     }
 
-    pub fn draw_text_right(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: Color) {
+    pub fn draw_text_right(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: &Color) {
         let mut len = 0;
         let x = x - self.text_pixel_length(text);
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x + len as f32, y)).color(color));
+                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x + len as f32, y)).color(*color));
                 texture.width()
             } else {
                 self.width as _
@@ -104,12 +112,12 @@ impl Font {
         }
     }
 
-    pub fn draw_text_center(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: Color) {
+    pub fn draw_text_center(&self, ctx: &mut Context, text: &str, x: f32, y: f32, color: &Color) {
         let mut len = 0;
         let x_offset = self.text_pixel_length(text) / 2.0;
         for character in text.chars() {
             len += if let Some(texture) = self.chars.get(&character) {
-                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x - x_offset + len as f32, y)).color(color));
+                texture.draw(ctx, DrawParams::position(DrawParams::default(), Vec2::new(x - x_offset + len as f32, y)).color(*color));
                 texture.width()
             } else {
                 self.width as _
@@ -128,14 +136,12 @@ impl Font {
 
 }
 
-pub trait IntoMQColor: Copy {
-
-    fn into_color(self) -> Color;
-
+pub trait AsColor {
+    fn as_color(&self) -> &Color;
 }
 
-impl IntoMQColor for TextColor {
-    fn into_color(self) -> Color {
+impl AsColor for TextColor {
+    fn as_color(&self) -> &Color {
         match self {
             TextColor::White => WHITE_COLOR,
             TextColor::Gray => GRAY,
@@ -146,11 +152,11 @@ impl IntoMQColor for TextColor {
     }
 }
 
-const GRAY: Color = Color::rgb(0.51, 0.51, 0.51);
-const RED: Color = Color::rgb(0.90, 0.16, 0.22);
-const WHITE_COLOR: Color = Color::rgb(240.0 / 255.0, 240.0 / 255.0, 240.0 / 255.0);
-const BLACK_COLOR: Color = Color::rgb(20.0 / 255.0, 20.0 / 255.0, 20.0 / 255.0);
-const BLUE_COLOR: Color = Color::rgb(48.0 / 255.0, 80.0 / 255.0, 200.0 / 255.0);
+const GRAY: &Color = &Color::rgb(0.51, 0.51, 0.51);
+const RED: &Color = &Color::rgb(0.90, 0.16, 0.22);
+const WHITE_COLOR: &Color = &Color::rgb(240.0 / 255.0, 240.0 / 255.0, 240.0 / 255.0);
+const BLACK_COLOR: &Color = &Color::rgb(20.0 / 255.0, 20.0 / 255.0, 20.0 / 255.0);
+const BLUE_COLOR: &Color = &Color::rgb(48.0 / 255.0, 80.0 / 255.0, 200.0 / 255.0);
 
 pub fn init(ctx: &mut Context, font_sheets: SerializedFonts) -> Result {
 	let mut text_renderer = TextRenderer::new(ctx)?;

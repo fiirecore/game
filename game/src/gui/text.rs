@@ -172,10 +172,10 @@ impl DynamicText {
 				let current = &self.message.pages[self.current];
 
 				let y = (self.current_line << 4) as f32;
-				draw_text_left(ctx, &self.font, string, self.message.color, self.origin.x, self.origin.y + y);
+				draw_text_left(ctx, &self.font, string, &self.message.color, self.origin.x, self.origin.y + y);
 
 				for index in 0..self.current_line {
-					draw_text_left(ctx, &self.font, &current.lines[index], self.message.color, self.origin.x, self.origin.y + (index << 4) as f32);
+					draw_text_left(ctx, &self.font, &current.lines[index], &self.message.color, self.origin.x, self.origin.y + (index << 4) as f32);
 				}
 
 				if self.can_continue && current.wait.is_none() {

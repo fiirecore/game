@@ -59,10 +59,10 @@ impl Panel {
         let tx = x + 15.0;
         let ty = y + 11.0;
         for (index, text) in text.iter().enumerate() {
-            draw_text_left(ctx, &1, text, TextColor::Black, tx, ty + (index << 4) as f32);
+            draw_text_left(ctx, &1, text, &TextColor::Black, tx, ty + (index << 4) as f32);
         }
         if add_cancel {
-            draw_text_left(ctx, &1, "Cancel", TextColor::Black, tx, ty + (text.len() << 4) as f32);
+            draw_text_left(ctx, &1, "Cancel", &TextColor::Black, tx, ty + (text.len() << 4) as f32);
         }
         draw_cursor(ctx, x + 8.0, y + 13.0 + (cursor << 4) as f32);
     }

@@ -34,9 +34,9 @@ impl MoveInfoPanel {
 
     pub fn draw(&self, ctx: &mut Context) {
         self.background.draw(ctx, 160.0, 113.0, 80.0, 47.0);
-        draw_text_left(ctx, &0, "PP", TextColor::Black, 168.0, 124.0);
-        draw_text_left(ctx, &0, &self.move_type, TextColor::Black, 168.0, 140.0);
-        draw_text_right(ctx, &0, &self.pp, TextColor::Black, 232.0, 124.0);
+        draw_text_left(ctx, &0, "PP", &TextColor::Black, 168.0, 124.0);
+        draw_text_left(ctx, &0, &self.move_type, &TextColor::Black, 168.0, 140.0);
+        draw_text_right(ctx, &0, &self.pp, &TextColor::Black, 232.0, 124.0);
     }
 
 }

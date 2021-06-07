@@ -29,9 +29,10 @@ use crate::world::{
     },
 };
 
-pub fn random_wild_battle(battle: &mut Option<BattleEntry>) {
+pub const DEFAULT_RANDOM_BATTLE_SIZE: usize = 2;
+
+pub fn random_wild_battle(battle: &mut Option<BattleEntry>, size: usize) {
     let mut party = PokemonParty::new();
-    let size = 2;
     for _ in 0..size {
         party.push(PokemonInstance::generate(
             WILD_RANDOM.gen_range(0, pokedex_len()) + 1, 

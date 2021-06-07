@@ -1,4 +1,5 @@
 use crate::{
+    util::Reset,
     input::{pressed, Control},
     gui::Panel,
     text::TextColor,
@@ -66,11 +67,20 @@ impl TargetPanel {
             } else {
                 0.0
             };
-            draw_text_left(ctx, &0, name.as_ref().map(|name| name.as_str()).unwrap_or("None"), TextColor::Black, 16.0 + x_offset, 121.0 + y_offset);
+            draw_text_left(ctx, &0, name.as_ref().map(|name| name.as_str()).unwrap_or("None"), &TextColor::Black, 16.0 + x_offset, 121.0 + y_offset);
             if index == self.cursor {
                 draw_cursor(ctx, 10.0 + x_offset, 123.0 + y_offset);
             }
         }
     }
 
+}
+
+impl Reset for TargetPanel {
+    fn reset(&mut self) {
+        let len = self.names.len();
+        if self.cursor >= len {
+            self.cursor = 0;
+        }
+    }
 }

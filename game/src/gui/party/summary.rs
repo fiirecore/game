@@ -93,7 +93,7 @@ impl SummaryGui {
         draw_rectangle(ctx, 0.0, 1.0, w, 15.0, Self::HEADER_LEFT);
         draw_rectangle(ctx, w, 1.0, rw, 16.0, Self::HEADER_RIGHT);
         draw_line(ctx, 0.0, 16.5, w, true, 1.0, Self::HEADER_LEFT_DARK);
-        draw_text_left(ctx, &1, self.headers[current_page], TextColor::White, 5.0, 1.0);
+        draw_text_left(ctx, &1, self.headers[current_page], &TextColor::White, 5.0, 1.0);
         for page in 0..Self::PAGES {
             let color = if current_page < page {
                 Self::HEADER_RIGHT_DARK
@@ -107,23 +107,23 @@ impl SummaryGui {
         if let Some(pokemon) = self.pokemon.borrow().as_ref() {
             self.pokemon_background.draw(ctx, position(0.0, 17.0));
             pokemon.front.0.draw(ctx, position(28.0, pokemon.front.1 + self.offset.float.load(Relaxed)));
-            draw_text_left(ctx, &1, &pokemon.display.level, TextColor::White, 5.0, 19.0);
-            draw_text_left(ctx, &1, pokemon.pokemon.1, TextColor::White, 41.0, 19.0);
+            draw_text_left(ctx, &1, &pokemon.display.level, &TextColor::White, 5.0, 19.0);
+            draw_text_left(ctx, &1, pokemon.pokemon.1, &TextColor::White, 41.0, 19.0);
             const TOP: DrawParams = position(0.0, 17.0);
             match self.page.load(Relaxed) {
                 0 => {
                     self.pages[0].draw(ctx, TOP);
-                    draw_text_left(ctx, &1, &pokemon.pokemon.0, TextColor::Black, 168.0, 21.0);
-                    draw_text_left(ctx, &1, &pokemon.display.name, TextColor::Black, 168.0, 36.0);
+                    draw_text_left(ctx, &1, &pokemon.pokemon.0, &TextColor::Black, 168.0, 21.0);
+                    draw_text_left(ctx, &1, &pokemon.display.name, &TextColor::Black, 168.0, 36.0);
 
                         for (index, display) in pokemon.types.iter().enumerate() {
                             let x = 168.0 + 37.0 * index as f32;
                             draw_rectangle(ctx, x, 52.0, 32.0, 6.0, display.upper);
                             draw_rectangle(ctx, x, 58.0, 32.0, 6.0, display.lower);
-                            crate::graphics::draw_text_center(ctx, &0, &display.name, TextColor::White, x + 16.0, 52.0)
+                            crate::graphics::draw_text_center(ctx, &0, &display.name, &TextColor::White, x + 16.0, 52.0)
                         }
 
-                        // draw_text_left(1, &pokemon.item, TextColor::Black, 168.0, 96.0);
+                        // draw_text_left(1, &pokemon.item, &TextColor::Black, 168.0, 96.0);
                 }
                 1 => {
                     self.pages[1].draw(ctx, TOP);

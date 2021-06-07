@@ -9,7 +9,7 @@ use deps::tetra::{
 };
 
 use firecore_text::FontId;
-use firecore_text::{TEXT_RENDERER, IntoMQColor};
+use firecore_text::{TEXT_RENDERER, AsColor};
 
 pub const LIGHTGRAY: Color = Color::rgb(0.78, 0.78, 0.78);
 pub const GRAY: Color = Color::rgb(0.51, 0.51, 0.51);
@@ -114,21 +114,21 @@ pub fn draw_circle(ctx: &mut Context, x: f32, y: f32, r: f32, color: Color) {
 // 	message.lines.iter().enumerate().for_each(|(index, line)| renderer.draw_text_left(font_id, line, color, x, y + (index << 4) as f32));
 // }
 
-pub fn draw_text_left(ctx: &mut Context, font: &FontId, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
+pub fn draw_text_left(ctx: &mut Context, font: &FontId, text: &str, color: &impl AsColor, x: f32, y: f32) {
 	if let Some(renderer) = unsafe {TEXT_RENDERER.as_ref()} {
-		renderer.draw_text_left(ctx, font, text, color.into_color(), x, y);
+		renderer.draw_text_left(ctx, font, text, color.as_color(), x, y);
 	}
 }
 
-pub fn draw_text_right(ctx: &mut Context, font: &FontId, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
+pub fn draw_text_right(ctx: &mut Context, font: &FontId, text: &str, color: &impl AsColor, x: f32, y: f32) {
 	if let Some(renderer) = unsafe {TEXT_RENDERER.as_ref()} {
-		renderer.draw_text_right(ctx, font, text, color.into_color(), x, y);
+		renderer.draw_text_right(ctx, font, text, color.as_color(), x, y);
 	}
 }
 
-pub fn draw_text_center(ctx: &mut Context, font: &FontId, text: &str, color: impl IntoMQColor, x: f32, y: f32) {
+pub fn draw_text_center(ctx: &mut Context, font: &FontId, text: &str, color: &impl AsColor, x: f32, y: f32) {
 	if let Some(renderer) = unsafe {TEXT_RENDERER.as_ref()} {
-		renderer.draw_text_center(ctx, font, text, color.into_color(), x, y);
+		renderer.draw_text_center(ctx, font, text, color.as_color(), x, y);
 	}
 }
 
@@ -141,6 +141,14 @@ pub fn draw_cursor(ctx: &mut Context, x: f32, y: f32) {
 pub fn draw_button(ctx: &mut Context, font: &FontId, text: &str, x: f32, y: f32) {
 	if let Some(renderer) = unsafe {TEXT_RENDERER.as_ref()} {
 		renderer.draw_button(ctx, font, text, x, y)
+	}
+}
+
+pub fn text_len(font: &FontId, text: &str) -> f32 {
+	if let Some(renderer) = unsafe {TEXT_RENDERER.as_ref()} {
+		renderer.text_len(font, text)
+	} else {
+		0.0
 	}
 }
 

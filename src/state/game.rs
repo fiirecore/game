@@ -6,7 +6,7 @@ use game::{
 		party::PartyGui,
 		bag::BagGui,
 	},
-	state::GameStateAction,
+	game::{GameStateAction, GameState},
 	battle_glue::BattleEntry,
 	tetra::{
 		State, Context, Result,
@@ -21,6 +21,8 @@ use game::battle::manager::BattleManager;
 
 use crate::state::{MainState, MainStates};
 
+mod console;
+
 pub struct GameStateManager {
 
 	action: Option<GameStateAction>,
@@ -31,6 +33,8 @@ pub struct GameStateManager {
 	battle: BattleManager,
 	
 	battle_entry: Option<BattleEntry>,
+
+	console: console::Console,
 
 }
 
@@ -63,6 +67,9 @@ impl GameStateManager {
 			battle: BattleManager::new(ctx, party, bag),
 
 			battle_entry: None,
+
+			console: console::Console::default(),
+
 		}
 	}
 
@@ -104,8 +111,15 @@ impl State for GameStateManager {
 	}
 
     fn update(&mut self, ctx: &mut Context) -> Result {
+
+		if let Some(command) = self.console.update(ctx) {
+			match self.state {
+				GameStates::World => self.world.process(command),
+				GameStates::Battle => self.battle.process(command),
+			}
+		}
 		
-        // Speed game up if spacebar is held down
+		// Speed game up if spacebar is held down
 
 		let delta = get_delta_time(ctx).as_secs_f32() * if is_key_down(ctx, Key::Space) {
 			4.0
@@ -120,7 +134,7 @@ impl State for GameStateManager {
 		}
 		match self.state {
 			GameStates::World => {
-				self.world.update(ctx, delta, &mut self.battle_entry, &mut self.action);
+				self.world.update(ctx, delta, self.console.alive, &mut self.battle_entry, &mut self.action);
 				if let Some(entry) = self.battle_entry.take() {
 					if self.battle.battle(entry) {
 						self.state = GameStates::Battle;
@@ -128,7 +142,7 @@ impl State for GameStateManager {
 				}
 			}
 			GameStates::Battle => {
-				self.battle.update(ctx, delta);
+				self.battle.update(ctx, delta, self.console.alive);
 				if self.battle.finished {
 					let save = data_mut();
 					if let Some((winner, trainer)) = self.battle.update_data(save) {
@@ -152,6 +166,7 @@ impl State for GameStateManager {
 				self.battle.draw(ctx);
 			}
 		}
+		self.console.draw(ctx);
         Ok(())
     }
 }

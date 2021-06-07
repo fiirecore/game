@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use crate::{
-	// pokedex::pokemon::p,
+	game::GameState,
 	deps::rhai::Engine,
 	storage::{data_mut, player::PlayerSave},
 	gui::{
@@ -106,26 +106,10 @@ impl BattleManager {
 		self.battle.is_some()
 	}
 
-	pub fn update(&mut self, ctx: &mut Context, delta: f32) {
+	pub fn update(&mut self, ctx: &mut Context, delta: f32, input_lock: bool) {
 		if is_debug() {
 			if debug_pressed(ctx, DebugBind::F1) { // exit shortcut
-				self.finished = true;
-				match self.state {
-				    BattleManagerState::Begin => (),
-				    BattleManagerState::Transition => self.transition.state = TransitionState::Begin,
-				    BattleManagerState::Opener => self.opener.state = TransitionState::Begin,
-				    BattleManagerState::Introduction => self.introduction.state = TransitionState::Begin,
-				    BattleManagerState::Battle => {
-						if let Some(battle) = self.battle.as_mut() {
-							battle.state = BattleState::End;
-							battle.update(&mut self.engine, &mut self.player, &mut self.ai);
-						}
-					},
-				    BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
-				}
-				if let Some(battle) = self.battle.as_mut() {
-					battle.data.winner = Some(Team::Player);
-				}
+				self.end();
 				return;
 			}
 		}
@@ -139,42 +123,42 @@ impl BattleManager {
 					battle.begin(&mut self.player, &mut self.ai);
 					self.player.on_begin(ctx);
 
-					self.update(ctx, delta);
+					self.update(ctx, delta, input_lock);
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
 						self.transition.begin(ctx, battle.data.battle_type, &battle.data.trainer);
-						self.update(ctx, delta);
+						self.update(ctx, delta, input_lock);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
 					TransitionState::End => {
 						self.transition.end();
 						self.state = BattleManagerState::Opener;
-						self.update(ctx, delta);
+						self.update(ctx, delta, input_lock);
 					}
 				}
 				BattleManagerState::Opener => match self.opener.state {
 					TransitionState::Begin => {
 						self.opener.begin(battle);
-						self.update(ctx, delta);
+						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.opener.update(delta),
 					TransitionState::End => {
 						self.opener.end();
 						self.state = BattleManagerState::Introduction;
-						self.update(ctx, delta);
+						self.update(ctx, delta, input_lock);
 					}
 				}
 				BattleManagerState::Introduction => match self.introduction.state {
 					TransitionState::Begin => {
 						self.introduction.begin(battle, &mut self.player.gui.text);
-						self.update(ctx, delta);
+						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.introduction.update(ctx, delta, &mut self.player.player, &mut self.player.opponent, &mut self.player.gui.text),
 					TransitionState::End => {
 						self.introduction.end();
 						self.state = BattleManagerState::Battle;
-						self.update(ctx, delta);
+						self.update(ctx, delta, input_lock);
 					}
 				}
 				BattleManagerState::Battle => match battle.state {
@@ -190,7 +174,7 @@ impl BattleManager {
 				BattleManagerState::Closer => match self.closer.state {
 					TransitionState::Begin => {
 						self.closer.begin(battle, &mut self.player.gui.text);
-						self.update(ctx, delta);
+						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.gui.text),
 					TransitionState::End => {
@@ -201,10 +185,48 @@ impl BattleManager {
 				}
 			}
 		}
-	}	
+	}
 
-    pub fn draw(&self, ctx: &mut Context) {
-		if self.battle.is_some() {
+	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(Team, bool)> {
+		self.battle.take().map(|battle| battle.update_data(player_save)).flatten()
+	}
+
+	pub fn world_active(&self) -> bool {
+		self.state == BattleManagerState::Transition || self.closer.world_active()		
+	}
+
+	pub fn end(&mut self) {
+		self.finished = true;
+		match self.state {
+			BattleManagerState::Begin => (),
+			BattleManagerState::Transition => self.transition.state = TransitionState::Begin,
+			BattleManagerState::Opener => self.opener.state = TransitionState::Begin,
+			BattleManagerState::Introduction => self.introduction.state = TransitionState::Begin,
+			BattleManagerState::Battle => {
+				if let Some(battle) = self.battle.as_mut() {
+					battle.state = BattleState::End;
+					battle.update(&mut self.engine, &mut self.player, &mut self.ai);
+				}
+			},
+			BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
+		}
+		if let Some(battle) = self.battle.as_mut() {
+			battle.data.winner = Some(Team::Player);
+		}
+	}
+	
+}
+
+impl GameState for BattleManager {
+    fn process(&mut self, command: crate::game::CommandResult) {
+        match command.command.as_str() {
+			"end" => self.end(),
+			_ => (),
+		}
+    }
+
+    fn draw(&self, ctx: &mut deps::tetra::Context) {
+        if self.battle.is_some() {
 			match self.state {
 				BattleManagerState::Begin => (),
 			    BattleManagerState::Transition => self.transition.draw(ctx),
@@ -238,14 +260,5 @@ impl BattleManager {
 				}
 			}
 		}
-	}
-
-	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(Team, bool)> {
-		self.battle.take().map(|battle| battle.update_data(player_save)).flatten()
-	}
-
-	pub fn world_active(&self) -> bool {
-		self.state == BattleManagerState::Transition || self.closer.world_active()		
-	}
-	
+    }
 }

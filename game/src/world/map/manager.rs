@@ -16,19 +16,19 @@ use crate::{
     },
     pokedex::{
         moves::FieldMoveId,
-        item::{ItemStack, ItemId},
     },
     tetra::Context,
-    log::info,
+    log::{info, warn},
     battle_glue::BattleEntryRef,
     gui::{
         party::PartyGui,
         bag::BagGui,
     },
-    state::GameStateAction,
+    game::{GameState, GameStateAction},
     is_debug, keybind,
 };
 
+use deps::rhai::FuncArgs;
 use worldlib::{
     serialized::SerializedWorld,
     map::{
@@ -74,6 +74,8 @@ pub struct WorldManager {
 
     first_direction: Direction,
     player_move_accumulator: f32,
+
+    random_battle: Option<usize>,
 
 }
 
@@ -156,6 +158,8 @@ impl WorldManager {
             render_coords: RenderCoords::default(),
             // noclip_toggle: false,
             player_move_accumulator: 0.0,
+
+            random_battle: None,
         }
     }
 
@@ -164,6 +168,8 @@ impl WorldManager {
         self.textures.setup(ctx, world.textures, &world.npc_types);
         
         info!("Finished loading textures!");
+
+        println!();
 
         unsafe { crate::world::npc::NPC_TYPES = 
             Some(
@@ -199,76 +205,84 @@ impl WorldManager {
         on_start(&mut self.map_manager, ctx, music);
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, battle: BattleEntryRef, action: &mut Option<GameStateAction>) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, input_lock: bool, battle: BattleEntryRef, action: &mut Option<GameStateAction>) {
+
+        if let Some(size) = self.random_battle.take() {
+            random_wild_battle(battle, size)
+        }
 
         if self.start_menu.alive() {
-            self.start_menu.update(ctx, delta, action);
+            self.start_menu.update(ctx, delta, input_lock, action);
         } else {
 
-            if pressed(ctx, Control::Start) {
-                self.start_menu.spawn();
-            }
+            if !input_lock {
 
-            if is_debug() {
-                self.debug_input(ctx, battle)
-            }
-
-            if self.map_manager.data.player.character.position.offset.is_zero() && !self.map_manager.data.player.is_frozen() {
-
-                if down(ctx, Control::B) {
-                    if self.map_manager.data.player.character.move_type == MoveType::Walking {
-                        self.map_manager.data.player.character.move_type = MoveType::Running;
-                    }
-                } else if self.map_manager.data.player.character.move_type == MoveType::Running {
-                    self.map_manager.data.player.character.move_type = MoveType::Walking;
+                if pressed(ctx, Control::Start) {
+                    self.start_menu.spawn();
                 }
-
-                const SURF: FieldMoveId = unsafe { FieldMoveId::new_unchecked(1718777203) };
-
-                if down(ctx, crate::keybind(self.first_direction)) {
-                    if self.player_move_accumulator > PLAYER_MOVE_TIME {
-                        if let Some(result) = self.map_manager.try_move(self.first_direction, delta) {
-                            match result {
-                                TryMoveResult::MapUpdate => self.map_start(ctx, true),
-                                TryMoveResult::TrySwim => {
-                                    for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| &instance.move_ref.value().field_id)).flatten() {
-                                        if id == &SURF {
-                                            self.map_manager.data.player.character.move_type = MoveType::Swimming;
-                                            self.map_manager.try_move(self.first_direction, delta);
-                                            break;
+    
+                if is_debug() {
+                    self.debug_input(ctx)
+                }
+    
+                if self.map_manager.data.player.character.position.offset.is_zero() && !self.map_manager.data.player.is_frozen() {
+    
+                    if down(ctx, Control::B) {
+                        if self.map_manager.data.player.character.move_type == MoveType::Walking {
+                            self.map_manager.data.player.character.move_type = MoveType::Running;
+                        }
+                    } else if self.map_manager.data.player.character.move_type == MoveType::Running {
+                        self.map_manager.data.player.character.move_type = MoveType::Walking;
+                    }
+    
+                    const SURF: FieldMoveId = unsafe { FieldMoveId::new_unchecked(1718777203) };
+    
+                    if down(ctx, crate::keybind(self.first_direction)) {
+                        if self.player_move_accumulator > PLAYER_MOVE_TIME {
+                            if let Some(result) = self.map_manager.try_move(self.first_direction, delta) {
+                                match result {
+                                    TryMoveResult::MapUpdate => self.map_start(ctx, true),
+                                    TryMoveResult::TrySwim => {
+                                        for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| &instance.move_ref.value().field_id)).flatten() {
+                                            if id == &SURF {
+                                                self.map_manager.data.player.character.move_type = MoveType::Swimming;
+                                                self.map_manager.try_move(self.first_direction, delta);
+                                                break;
+                                            }
                                         }
+                                        // self.text_window.set_text(firecore_game::text::Message::new(firecore_game::text::TextColor::Black, vec![]));
                                     }
-                                    // self.text_window.set_text(firecore_game::text::Message::new(firecore_game::text::TextColor::Black, vec![]));
                                 }
                             }
+                        } else {
+                            self.player_move_accumulator += delta;
                         }
                     } else {
-                        self.player_move_accumulator += delta;
-                    }
-                } else {
-                    let mut movdir: Option<Direction> = None;
-                    for direction in &Direction::DIRECTIONS {
-                        let direction = *direction;
-                        if down(ctx, keybind(direction)) {
-                            movdir = if let Some(dir) = movdir {
-                                if dir.inverse() == direction {
-                                    None
+                        let mut movdir: Option<Direction> = None;
+                        for direction in &Direction::DIRECTIONS {
+                            let direction = *direction;
+                            if down(ctx, keybind(direction)) {
+                                movdir = if let Some(dir) = movdir {
+                                    if dir.inverse() == direction {
+                                        None
+                                    } else {
+                                        Some(direction)
+                                    }
                                 } else {
                                     Some(direction)
-                                }
-                            } else {
-                                Some(direction)
-                            };
-                        }                        
-                    }
-                    if let Some(direction) = movdir {
-                        self.map_manager.data.player.character.position.direction = direction;
-                        self.first_direction = direction;
-                    } else {
-                        self.player_move_accumulator = 0.0;
-                        self.map_manager.data.player.character.moving = false;
+                                };
+                            }                        
+                        }
+                        if let Some(direction) = movdir {
+                            self.map_manager.data.player.character.position.direction = direction;
+                            self.first_direction = direction;
+                        } else {
+                            self.player_move_accumulator = 0.0;
+                            self.map_manager.data.player.character.moving = false;
+                        }
                     }
                 }
+
             }
 
             // Update
@@ -330,24 +344,6 @@ impl WorldManager {
         
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
-        draw(&self.map_manager, ctx, &self.textures, &self.render_coords, true);
-        self.textures.player.draw(ctx, &self.map_manager.data.player.character);
-
-        let offset = match self.map_manager.get().map(|map| map.chunk.as_ref()).flatten() {
-            Some(chunk) => chunk.coords,
-            None => Coordinate::ZERO,
-        };
-
-        let screen = self.render_coords.offset(offset);
-
-        self.textures.player.bush.draw(ctx, &screen);
-
-        self.text_window.draw(ctx);
-        self.start_menu.draw(ctx); 
-        self.warp_transition.draw(ctx);
-    }
-
     pub fn save_data(&self, save: &mut PlayerSave) {
         use crate::storage::player;
         save.location = self.map_manager.data.current.unwrap_or_else(player::default_location);
@@ -388,16 +384,8 @@ impl WorldManager {
         // }     
     }
 
-    fn debug_input(&mut self, ctx: &Context, battle: BattleEntryRef) {
-
-        if debug_pressed(ctx, DebugBind::F1) {
-            random_wild_battle(battle);
-        }
-
-        if debug_pressed(ctx, DebugBind::F2) {
-            // self.noclip_toggle = true;
-            self.map_manager.data.player.character.noclip = !self.map_manager.data.player.character.noclip;
-        }
+    #[deprecated]
+    fn debug_input(&mut self, ctx: &Context) {
 
         if debug_pressed(ctx, DebugBind::F3) {
 
@@ -414,52 +402,116 @@ impl WorldManager {
             
         }
 
-        if debug_pressed(ctx, DebugBind::F4) {
-            for (slot, instance) in data().party.iter().enumerate() {
-                info!("Party Slot {}: Lv{} {}", slot, instance.level, instance.name());
-            }
-        }
-
         if debug_pressed(ctx, DebugBind::F5) {
             if let Some(map) = self.map_manager.get() {
                 info!("Resetting battled trainers in this map! ({})", map.name);
                 data_mut().world.get_map(&map.id).battled.clear();
             }
         }
-
-        if debug_pressed(ctx, DebugBind::F6) {
-            info!("Clearing used scripts in player data!");
-            data_mut().world.scripts.clear();
-        }
-
-        if debug_pressed(ctx, DebugBind::F7) {
-            self.map_manager.data.player.character.freeze();
-            self.map_manager.data.player.character.unfreeze();
-            self.map_manager.data.player.character.noclip = true;
-            info!("Unfroze player!");
-        }
-
-        // F8 in use
-        
-        if debug_pressed(ctx, DebugBind::F9) {
-            use std::sync::atomic::Ordering::Relaxed;
-            let wild = !super::WILD_ENCOUNTERS.load(Relaxed);
-            super::WILD_ENCOUNTERS.store(wild, Relaxed);
-            info!("Wild Encounters: {}", wild);
-        }
-
-        if debug_pressed(ctx, DebugBind::H) {
-            data_mut().party.iter_mut().for_each(|pokemon| {
-                pokemon.heal();
-            });
-        }
-
-        if debug_pressed(ctx, DebugBind::B) {
-            data_mut().bag.add_item(ItemStack::new(&"pokeball".parse::<ItemId>().unwrap(), 50));
-        }
         
     }
     
+}
+
+impl GameState for WorldManager {
+    fn process(&mut self, command: crate::game::CommandResult) {
+        match command.command.as_str() {
+            "heal" => {
+                data_mut().party.iter_mut().for_each(|pokemon| {
+                    pokemon.heal();
+                });
+                info!("Healed player pokemon.");
+            },
+            "wild" => {
+                use std::sync::atomic::Ordering::Relaxed;
+                let wild = !super::WILD_ENCOUNTERS.load(Relaxed);
+                super::WILD_ENCOUNTERS.store(wild, Relaxed);
+                info!("Wild Encounters: {}", wild);
+            },
+            "noclip" => {
+                self.map_manager.data.player.character.noclip = !self.map_manager.data.player.character.noclip;
+                info!("Toggled no clip! ({})", self.map_manager.data.player.character.noclip);
+            }
+            "unfreeze" => {
+                let player = &mut self.map_manager.data.player.character;
+                player.freeze();
+                player.unfreeze();
+                player.noclip = true;
+                info!("Unfroze player!");
+            },
+            "party" => match command.args.get(0) {
+                Some(arg) => match arg.as_str() { 
+                    "info" => match command.args.get(1) {
+                        Some(index) => match index.parse::<usize>() {
+                            Ok(index) => {
+                                if let Some(instance) = data().party.get(index) {
+                                    info!("Party Slot {}: Lv{} {}", index, instance.level, instance.name());
+                                } else {
+                                    info!("Could not get pokemon at index {}", index);
+                                }
+                            }
+                            Err(err) => warn!("Could not parse pokemon index for /party with error {}", err)
+                        }
+                        None => for (slot, instance) in data().party.iter().enumerate() {
+                            info!("Party Slot {}: Lv{} {}", slot, instance.level, instance.name());
+                        }
+                    },
+                    _ => (),
+                }
+                None => warn!("Command /party requires an index for a pokemon in the player's party!"),
+            }
+            "battle" => match command.args.get(0) {
+                Some(arg) => match arg.as_str() {
+                    "random" => {
+                        self.random_battle = match command.args.get(1) {
+                            Some(len) => match len.parse::<usize>() {
+                                Ok(size) => Some(size),
+                                Err(err) => {
+                                    warn!("Could not parse battle length for second /battle argument \"{}\" with error {}", len, err);
+                                    None
+                                }
+                            }
+                            None => Some(super::super::battle::DEFAULT_RANDOM_BATTLE_SIZE),
+                        };
+                    }
+                    _ => warn!("Unknown /battle argument \"{}\".", arg),
+                }
+                None => warn!("Command /battle requires arguments TODO"),
+            }
+            "script" => match command.args.get(0) {
+                Some(arg) => match arg.as_str() {
+                    "clear" => {
+                        data_mut().world.scripts.clear();
+                        info!("Cleared used scripts in player data!");
+                    },
+                    "list" => {
+                        todo!("World script list");
+                    },
+                    _ => warn!("Unknown /script argument \"{}\".", arg),
+                },
+                None => warn!("/script requires arguments \"clear\" or \"list\"."),
+            },
+            _ => warn!("Unknown world command \"{}\".", command),
+        }
+    }
+
+    fn draw(&self, ctx: &mut deps::tetra::Context) {
+        draw(&self.map_manager, ctx, &self.textures, &self.render_coords, true);
+        self.textures.player.draw(ctx, &self.map_manager.data.player.character);
+
+        let offset = match self.map_manager.get().map(|map| map.chunk.as_ref()).flatten() {
+            Some(chunk) => chunk.coords,
+            None => Coordinate::ZERO,
+        };
+
+        let screen = self.render_coords.offset(offset);
+
+        self.textures.player.bush.draw(ctx, &screen);
+
+        self.text_window.draw(ctx);
+        self.start_menu.draw(ctx); 
+        self.warp_transition.draw(ctx);
+    }
 }
 
 fn on_tile(wm: &mut WorldMapManager, textures: &mut WorldTextures, battle: BattleEntryRef) {

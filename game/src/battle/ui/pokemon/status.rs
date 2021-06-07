@@ -284,12 +284,12 @@ impl PokemonStatusGui {
 				let y = pos.y + 2.0;
 
 				if let Some(health_text) = self.health_text.as_ref() {
-					draw_text_right(ctx, &0, health_text, TextColor::Black, x2, y + 18.0);
+					draw_text_right(ctx, &0, health_text, &TextColor::Black, x2, y + 18.0);
 				}
 
-				draw_text_left(ctx, &0, name, TextColor::Black, pos.x + self.data_pos.name, y);
+				draw_text_left(ctx, &0, name, &TextColor::Black, pos.x + self.data_pos.name, y);
 				if let Some((level, _)) = &self.level {
-					draw_text_right(ctx, &0, level, TextColor::Black, x2, y);
+					draw_text_right(ctx, &0, level, &TextColor::Black, x2, y);
 				}
 
 				if let Some(exp) = self.exp.as_ref() {

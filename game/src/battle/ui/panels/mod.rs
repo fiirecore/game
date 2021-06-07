@@ -1,9 +1,19 @@
-use crate::{battle::pokemon::BattlePartyUnknown, input::{pressed, Control}, pokedex::pokemon::instance::PokemonInstance, tetra::Context, util::{Entity, Reset}};
+use crate::{
+    util::{Entity, Reset},
+    pokedex::{
+        pokemon::instance::PokemonInstance,
+        moves::target::MoveTarget,
+    },
+    input::{pressed, Control},
+    tetra::Context,
+};
 
 use crate::battle::{
+    pokemon::BattlePartyUnknown,
     ui::panels::{
         battle::BattleOptions,
         fight::FightPanel,
+        target::TargetPanel,
     },
 };
 
@@ -24,12 +34,14 @@ pub struct BattlePanel {
 
     pub battle: BattleOptions,
     pub fight: FightPanel,
+    pub targets: TargetPanel,
 
 }
 
 pub enum BattlePanels {
     Main,
     Fight,
+    Target(MoveTarget),
 }
 
 impl Default for BattlePanels {
@@ -46,6 +58,7 @@ impl BattlePanel {
             active: BattlePanels::default(),
             battle: BattleOptions::new(ctx),
             fight: FightPanel::new(ctx),
+            targets: TargetPanel::new(ctx),
         }
     }
 
@@ -54,12 +67,12 @@ impl BattlePanel {
         self.fight.user(instance);
         // let last_move = last_move.take().unwrap_or_default();
         self.fight.moves.cursor = 0; // self.fight.moves.cursor = last_move.0;
-        self.fight.targets.cursor = 0; // self.fight.targets.cursor = last_move.1;
+        self.targets.cursor = 0; // self.fight.targets.cursor = last_move.1;
         self.spawn();
     }
 
     pub fn target(&mut self, targets: &BattlePartyUnknown) {
-        self.fight.target(targets);
+        self.targets.update_names(targets);
     }
 
     pub fn input(&mut self, ctx: &Context, pokemon: &PokemonInstance) -> Option<BattlePanels> {
@@ -67,13 +80,21 @@ impl BattlePanel {
             match self.active {
                 BattlePanels::Main => {
                     self.battle.input(ctx);
-                    if pressed(ctx, Control::A) { Some(BattlePanels::Main) } else { None }
+                    pressed(ctx, Control::A).then(|| BattlePanels::Main)
                 }
                 BattlePanels::Fight => {    
                     if pressed(ctx, Control::B) {
                         self.active = BattlePanels::Main;
                     }
-                    if self.fight.input(ctx, pokemon) { Some(BattlePanels::Fight) } else { None }
+                    self.fight.input(ctx, pokemon);
+                    pressed(ctx, Control::A).then(|| BattlePanels::Fight)
+                }
+                BattlePanels::Target(..) => {
+                    if pressed(ctx, Control::B) {
+                        self.active = BattlePanels::Fight;
+                    }
+                    self.targets.input(ctx);
+                    pressed(ctx, Control::A).then(|| std::mem::take(&mut self.active))
                 }
             }
         } else {
@@ -86,6 +107,7 @@ impl BattlePanel {
             match self.active {
                 BattlePanels::Main => self.battle.draw(ctx),
                 BattlePanels::Fight => self.fight.draw(ctx),
+                BattlePanels::Target(..) => self.targets.draw(ctx),
             }
 		}
 	}

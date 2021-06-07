@@ -6,7 +6,7 @@ use crate::{
     storage::player::SHOULD_SAVE,
     gui::{Panel, party::PartyGui, bag::BagGui},
     tetra::{Context, math::Vec2},
-    state::GameStateAction,
+    game::GameStateAction,
     quit,
 };
 
@@ -41,14 +41,16 @@ impl StartMenu {
         }
     }
 
-    pub fn update(&mut self, ctx: &Context, delta: f32, action: &mut Option<GameStateAction>) {
-        if self.bag.alive() {
+    pub fn update(&mut self, ctx: &Context, delta: f32, input_lock: bool, action: &mut Option<GameStateAction>) {
+        if self.bag.alive() && !input_lock {
             self.bag.input(ctx);
             // bag_gui.up
         } else if self.party.alive() {
-            self.party.input(ctx);
+            if !input_lock {
+                self.party.input(ctx);
+            }
             self.party.update(delta);
-        } else {
+        } else if !input_lock {
             
             if pressed(ctx, Control::B) || pressed(ctx, Control::Start) {
                 self.despawn();

@@ -162,7 +162,7 @@ impl TouchButton {
     //     // if let Some(config) = get::<Configuration>() {
     //     //     if config.touchscreen {
     //             crate::util::graphics::draw_rect(self.color, self.pos.x, self.pos.y, BUTTON_SIZE, BUTTON_SIZE);
-    //             crate::util::graphics::draw_text_left(1, &format!("{:?}", self.control), TextColor::White, self.pos.x + 1.0, self.pos.y);
+    //             crate::util::graphics::draw_text_left(1, &format!("{:?}", self.control), &TextColor::White, self.pos.x + 1.0, self.pos.y);
     //     //     }
     //     // }
     // }

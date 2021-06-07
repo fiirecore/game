@@ -108,7 +108,7 @@ impl PartySelectMenu {
                     self.world.iter()
                 } else {
                     self.battle.iter()
-                }.enumerate().for_each(|(index, line)| draw_text_left(ctx, &1, line, TextColor::Black, 161.0, 93.0 + (index << 4) as f32));
+                }.enumerate().for_each(|(index, line)| draw_text_left(ctx, &1, line, &TextColor::Black, 161.0, 93.0 + (index << 4) as f32));
             }
         }        
     }
