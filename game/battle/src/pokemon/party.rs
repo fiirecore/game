@@ -9,10 +9,10 @@ use crate::{
             },
         },
     },
-    storage::player::PlayerId,
+    storage_player::PlayerId,
 };
 
-use crate::battle::{
+use crate::{
     client::BattleClient,
     pokemon::ActivePokemon,
 };

@@ -1,8 +1,5 @@
 use super::{BattleType, pokemon::{BattleClientActionInstance, BattleMove, view::{BattlePartyKnown, BattlePartyUnknown, PokemonUnknown}}};
 
-pub mod gui;
-pub mod ai;
-
 pub trait BattleClient {
 
     // fn name(&self) -> Cow<str>;

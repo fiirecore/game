@@ -396,6 +396,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-battle"
+version = "0.5.0-2021-06-07"
+dependencies = [
+ "firecore-dependencies",
+ "firecore-pokedex",
+ "firecore-saves",
+ "serde",
+]
+
+[[package]]
 name = "firecore-dependencies"
 version = "0.4.0"
 dependencies = [
@@ -423,6 +433,7 @@ dependencies = [
  "atomic",
  "enum-map",
  "firecore-audio-lib",
+ "firecore-battle",
  "firecore-dependencies",
  "firecore-pokedex-game",
  "firecore-text",

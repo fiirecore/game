@@ -1,14 +1,13 @@
 use pokedex::moves::target::MoveTargetInstance;
 
 use crate::battle::{
+    client::BattleClient,
     pokemon::{
         view::{BattlePartyKnown, BattlePartyTrait, BattlePartyUnknown, PokemonUnknown},
         BattleMove,
     },
     BattleType,
 };
-
-use super::BattleClient;
 
 #[derive(Default)]
 pub struct BattlePlayerAi {

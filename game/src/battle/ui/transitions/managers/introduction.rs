@@ -2,21 +2,23 @@ use crate::{
     util::Entity,
     gui::TextDisplay, 
     tetra::Context,
+    battle_glue::BattleTrainerEntry,
 };
 
 use crate::battle::{
-    BattleData,
     BattleType,
-    state::TransitionState,
-    client::gui::BattlePlayerGui,
-    pokemon::view::gui::ActiveRenderer,
-    ui::transitions::{
-        BattleIntroduction,
-        introductions::{
-            Introductions,
-            basic::BasicBattleIntroduction, 
-            trainer::TrainerBattleIntroduction
-        },
+    client_state::TransitionState,
+    gui::BattlePlayerGui,
+    ui::{
+        view::ActiveRenderer,
+        transitions::{
+            BattleIntroduction,
+            introductions::{
+                Introductions,
+                basic::BasicBattleIntroduction, 
+                trainer::TrainerBattleIntroduction
+            },
+        }
     },
 };
 
@@ -42,15 +44,15 @@ impl BattleIntroductionManager {
         }
     }
 
-    pub fn begin(&mut self, data: &BattleData, player: &mut BattlePlayerGui) {
+    pub fn begin(&mut self, battle_type: BattleType, trainer: Option<&BattleTrainerEntry>, player: &mut BattlePlayerGui) {
         self.state = TransitionState::Run;
-        match data.battle_type {
+        match battle_type {
             BattleType::Wild => self.current = Introductions::Basic,
             _ => self.current = Introductions::Trainer,
         }
         let current = self.get_mut();
         current.reset();
-        current.spawn(data, &player.player.party, &player.opponent.party, &mut player.gui.text);
+        current.spawn(battle_type, trainer, &player.player.party, &player.opponent.party, &mut player.gui.text);
         player.gui.text.spawn();
     }
 

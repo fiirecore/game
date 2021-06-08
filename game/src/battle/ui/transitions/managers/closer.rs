@@ -1,12 +1,13 @@
 use crate::{
+    pokedex::moves::target::PlayerId,
     gui::TextDisplay,
     tetra::Context,
+    battle_glue::BattleTrainerEntry,
 };
 
 use crate::battle::{
-    Battle,
     BattleType,
-    state::TransitionState,
+    client_state::TransitionState,
     ui::transitions::{
         BattleCloser,
         closers::{
@@ -28,15 +29,15 @@ pub struct BattleCloserManager {
 
 impl BattleCloserManager {
 
-    pub fn begin(&mut self, battle: &Battle, text: &mut TextDisplay) {
+    pub fn begin(&mut self, battle_type: BattleType, winner: Option<&PlayerId>, trainer: Option<&BattleTrainerEntry>, text: &mut TextDisplay) {
         self.state = TransitionState::Run;
-        match battle.data.battle_type {
+        match battle_type {
             BattleType::Wild => self.current = Closers::Wild,
             _ => self.current = Closers::Trainer,
         }
         let current = self.get_mut();
         current.reset();
-        current.spawn(battle, text);
+        current.spawn(winner, trainer, text);
     }
 
     pub fn end(&mut self) {

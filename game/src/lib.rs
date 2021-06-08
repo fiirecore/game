@@ -7,6 +7,8 @@ pub extern crate pokemon_firered_clone_storage as storage;
 pub mod input;
 pub extern crate firecore_pokedex_game as pokedex;
 // pub extern crate firecore_audio as audio;
+#[cfg(feature = "battle")]
+extern crate firecore_battle;
 
 pub mod audio;
 pub mod config;

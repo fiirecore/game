@@ -2,11 +2,10 @@ use crate::{
     deps::vec::ArrayVec,
     pokedex::pokemon::{Level, instance::PokemonInstance},
     tetra::Context,
+    battle::pokemon::view::{BattlePartyKnown, BattlePartyUnknown, PokemonKnowData}
 };
 
 use crate::battle::ui::{BattleGuiPosition, BattleGuiPositionIndex, pokemon::{PokemonRenderer, status::PokemonStatusGui}};
-
-use super::{BattlePartyKnown, BattlePartyUnknown, PokemonKnowData};
 
 pub type ActiveRenderer = ArrayVec<[ActivePokemonRenderer; 3]>;
 

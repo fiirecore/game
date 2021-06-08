@@ -26,20 +26,19 @@ use crate::battle::{
             BattlePartyKnown, 
             BattlePartyUnknown,
             PokemonUnknown,
-            gui::{
-                ActivePokemonParty,
-                ActivePokemonRenderer,
-            },
         },
-    }, 
+    },
+    client::BattleClient,
     ui::{
         self,
         BattleGui,
         panels::BattlePanels,
+        view::{
+            ActivePokemonParty,
+            ActivePokemonRenderer,
+        }
     },
 };
-
-use super::BattleClient;
 
 pub struct BattlePlayerGui {
 

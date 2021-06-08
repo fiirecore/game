@@ -8,10 +8,7 @@ use crate::{
     },
 };
 
-use crate::battle::{
-    Battle,
-    ui::transitions::BattleCloser,
-};
+use crate::battle::ui::transitions::BattleCloser;
 
 pub struct WildBattleCloser {
     color: Color,
@@ -29,7 +26,7 @@ impl Default for WildBattleCloser {
 
 impl BattleCloser for WildBattleCloser {
 
-    fn spawn(&mut self, _battle: &Battle, _text: &mut TextDisplay) {}
+    fn spawn(&mut self, _: Option<&pokedex::moves::target::PlayerId>, _: Option<&crate::battle_glue::BattleTrainerEntry>, _text: &mut TextDisplay) {}
 
     fn update(&mut self, _ctx: &mut Context, delta: f32, _text: &mut TextDisplay) {
         if self.world {

@@ -7,28 +7,29 @@ use crate::{
     tetra::{
         Context,
         graphics::{Texture, Rectangle, Color},
-    }, 
+    },
+    battle_glue::BattleTrainerEntry,
     CRY_ID, 
     play_sound,
 };
 
 use crate::battle::{
-    BattleData,
+    BattleType,
     pokemon::{
         view::{
             BattlePartyKnown,
             BattlePartyUnknown,
             BattlePartyTrait,
             PokemonKnowData,
-            gui::{
-                ActivePokemonParty,
-                ActiveRenderer,
-            },
         },
     },
     ui::{
         pokemon::status::PokemonStatusGui,
         transitions::BattleIntroduction,
+        view::{
+            ActivePokemonParty,
+            ActiveRenderer,
+        },
     },
 };
 
@@ -126,7 +127,7 @@ impl BasicBattleIntroduction {
 
 impl BattleIntroduction for BasicBattleIntroduction {
 
-    fn spawn(&mut self, data: &BattleData, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
+    fn spawn(&mut self, _: BattleType, _: Option<&BattleTrainerEntry>, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
         text.clear();
         text.push(
             MessagePage::new(

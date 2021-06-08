@@ -1,9 +1,8 @@
-use pokedex::{pokemon::stat::StatType, types::Effective};
-
 use crate::{
-    storage::player::PlayerId,
+    storage_player::PlayerId,
     pokedex::{
-        pokemon::{Level, Experience},
+        types::Effective,
+        pokemon::{Level, Experience, stat::StatType},
         moves::{
             MoveRef,
             target::MoveTargetInstance,

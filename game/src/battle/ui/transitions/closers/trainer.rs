@@ -5,6 +5,7 @@ use crate::{
         Completable,
         WIDTH,
     },
+    pokedex::moves::target::PlayerId,
     storage::data,
     gui::TextDisplay,
     text::MessagePage,
@@ -12,13 +13,11 @@ use crate::{
     tetra::{
         Context,
         graphics::Texture,
-    }
+    },
+    battle_glue::BattleTrainerEntry,
 };
 
-use crate::battle::{
-    Battle,
-    ui::transitions::BattleCloser,
-};
+use crate::battle::ui::transitions::BattleCloser;
 
 use super::wild::WildBattleCloser;
 
@@ -44,11 +43,11 @@ impl Default for TrainerBattleCloser {
 
 impl BattleCloser for TrainerBattleCloser {
 
-    fn spawn(&mut self, battle: &Battle, text: &mut TextDisplay) {
-        match battle.data.winner {
-            Some(winner) => match winner == data().id {
+    fn spawn(&mut self, winner: Option<&PlayerId>, trainer: Option<&BattleTrainerEntry>, text: &mut TextDisplay) {
+        match winner {
+            Some(winner) => match winner == &data().id {
                 true => {
-                    if let Some(trainer) = &battle.data.trainer {
+                    if let Some(trainer) = trainer {
                         self.trainer = Some(trainer.texture.clone());
 
                         text.reset();

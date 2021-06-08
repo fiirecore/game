@@ -10,24 +10,28 @@ use crate::{
     tetra::{
         Context,
         graphics::Texture,
-    }
+    },
+    battle_glue::BattleTrainerEntry,
 };
 
 use crate::battle::{
-    BattleData,
+    BattleType,
     pokemon::{
         view::{
             BattlePartyKnown, 
             BattlePartyUnknown,
-            gui::{
-                ActivePokemonParty,
-                ActiveRenderer,
-            },
+            
         },
     },
-    ui::transitions::{
-        BattleIntroduction,
-        introductions::basic::BasicBattleIntroduction,
+    ui::{
+        view::{
+            ActivePokemonParty,
+            ActiveRenderer,
+        },
+        transitions::{
+            BattleIntroduction,
+            introductions::basic::BasicBattleIntroduction,
+        },
     }
 };
 
@@ -58,10 +62,10 @@ impl TrainerBattleIntroduction {
 
 impl BattleIntroduction for TrainerBattleIntroduction {
 
-    fn spawn(&mut self, data: &BattleData, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
+    fn spawn(&mut self, battle_type: BattleType, trainer: Option<&BattleTrainerEntry>, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
         text.clear();
 
-        if let Some(trainer) = data.trainer.as_ref() {
+        if let Some(trainer) = trainer {
             self.texture = Some(trainer.texture.clone());
 
             let name = format!("{} {}", trainer.prefix, trainer.name);

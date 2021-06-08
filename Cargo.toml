@@ -56,6 +56,7 @@ members = [
     "game",
     "game/world/lib",
     "game/world/builder",
+    "game/battle",
     "game/firecore/deps",
     "game/firecore/util",
     "game/firecore/pokedex",

@@ -1,11 +1,18 @@
-use crate::{battle::pokemon::view::gui::ActiveRenderer, graphics::draw_o_bottom, tetra::{
+use crate::{
+    util::{Reset, Completable},
+    graphics::draw_o_bottom, 
+    tetra::{
         Context,
         graphics::Texture,
-    }, util::{Reset, Completable}};
+    }, 
+    battle_glue::BattleTrainerEntry,
+};
 
 use crate::battle::{
-    Battle,
-    ui::transitions::BattleOpener,
+    ui::{
+        view::ActiveRenderer,
+        transitions::BattleOpener,
+    },
 };
 
 use super::DefaultBattleOpener;
@@ -26,8 +33,8 @@ impl TrainerBattleOpener {
 
 impl BattleOpener for TrainerBattleOpener {
 
-    fn spawn(&mut self, battle: &Battle) {
-        if let Some(trainer) = battle.data.trainer.as_ref() {
+    fn spawn(&mut self, trainer: Option<&BattleTrainerEntry>) {
+        if let Some(trainer) = trainer {
             self.trainer = Some(trainer.texture.clone());
         }
     }

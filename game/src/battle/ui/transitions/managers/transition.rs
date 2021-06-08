@@ -6,7 +6,7 @@ use crate::{
 
 use crate::battle::{
     BattleType,
-    state::TransitionState,
+    client_state::TransitionState,
     ui::transitions::{
         BattleTransition,
         transitions::{

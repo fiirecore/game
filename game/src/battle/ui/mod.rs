@@ -15,7 +15,7 @@ use crate::{
 
 use self::panels::BattlePanel;
 
-use super::pokemon::{BattleParty, view::BattlePartyKnown};
+use crate::battle::pokemon::{BattleParty, view::BattlePartyKnown};
 // use self::panels::level_up::LevelUpMovePanel;
 
 pub mod background;
@@ -25,6 +25,8 @@ pub mod panels;
 pub mod exp_bar;
 
 pub mod transitions;
+
+pub mod view;
 
 pub(crate) const PANEL_ORIGIN: DrawParams = position(0.0f32, 113.0);
 

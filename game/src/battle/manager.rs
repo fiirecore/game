@@ -22,10 +22,10 @@ use crate::{
 };
 
 use crate::battle::{
-	Battle,
-	state::{
+	GameBattle,
+	state::BattleState,
+	client_state::{
 		BattleManagerState,
-		BattleState,
 		TransitionState,
 	},
 	pokemon::BattleParty,
@@ -37,16 +37,14 @@ use crate::battle::{
 			closer::BattleCloserManager,
 		}
 	},
-	client::{
-		gui::BattlePlayerGuiRef,
-	},
+	gui::BattlePlayerGuiRef,
 };
 
 pub struct BattleManager {
 
 	state: BattleManagerState,
 	
-	battle: Option<Battle>,
+	battle: Option<GameBattle>,
 	
 	transition: BattleScreenTransitionManager,
 	opener: BattleOpenerManager,
@@ -98,7 +96,7 @@ impl BattleManager {
 			!player.iter().any(|pokemon| !pokemon.fainted())
 		)).then(|| {
 				let data = data_mut();
-				Battle::new(
+				GameBattle::new(
 				BattleParty::new(
 					data.id, 
 					&data.name, 
@@ -127,14 +125,14 @@ impl BattleManager {
 					self.state = BattleManagerState::Transition;
 					self.transition.state = TransitionState::Begin;
 
-					battle.begin();
+					battle.battle.begin();
 					self.player.get().on_begin(ctx);
 
 					self.update(ctx, delta, input_lock);
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
-						self.transition.begin(ctx, battle.data.battle_type, &battle.data.trainer);
+						self.transition.begin(ctx, battle.battle.battle_type(), &battle.trainer);
 						self.update(ctx, delta, input_lock);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
@@ -146,7 +144,7 @@ impl BattleManager {
 				}
 				BattleManagerState::Opener => match self.opener.state {
 					TransitionState::Begin => {
-						self.opener.begin(battle);
+						self.opener.begin(battle.battle.battle_type(), battle.trainer.as_ref());
 						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.opener.update(delta),
@@ -160,7 +158,7 @@ impl BattleManager {
 					TransitionState::Begin => {
 						{
 							let mut player = self.player.get();
-							self.introduction.begin(&battle.data, &mut player);
+							self.introduction.begin(battle.battle.battle_type(), battle.trainer.as_ref(), &mut player);
 						}
 						self.update(ctx, delta, input_lock);
 					}
@@ -174,7 +172,7 @@ impl BattleManager {
 						self.update(ctx, delta, input_lock);
 					}
 				}
-				BattleManagerState::Battle => match battle.state {
+				BattleManagerState::Battle => match battle.battle.state {
 					BattleState::End => self.state = BattleManagerState::Closer,
 					_ => {
 
@@ -183,12 +181,12 @@ impl BattleManager {
 						player.update(ctx, delta);
 						player.gui.bounce.update(delta);
 
-						battle.update(&mut self.engine);
+						battle.battle.update(&mut self.engine);
 					}
 				},
 				BattleManagerState::Closer => match self.closer.state {
 					TransitionState::Begin => {
-						self.closer.begin(battle, &mut self.player.get().gui.text);
+						self.closer.begin(battle.battle.battle_type(), battle.battle.winner.as_ref(), battle.trainer.as_ref(), &mut self.player.get().gui.text);
 						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.get().gui.text),
@@ -219,14 +217,14 @@ impl BattleManager {
 			BattleManagerState::Introduction => self.introduction.state = TransitionState::Begin,
 			BattleManagerState::Battle => {
 				if let Some(battle) = self.battle.as_mut() {
-					battle.state = BattleState::End;
-					battle.update(&mut self.engine);
+					battle.battle.state = BattleState::End;
+					battle.battle.update(&mut self.engine);
 				}
 			},
 			BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
 		}
 		if let Some(battle) = self.battle.as_mut() {
-			battle.data.winner = Some(data_mut().id);
+			battle.battle.winner = Some(data_mut().id);
 		}
 	}
 	

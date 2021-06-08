@@ -1,15 +1,22 @@
-use crate::{battle::pokemon::view::gui::ActiveRenderer, graphics::{byte_texture, position, draw_rectangle}, tetra::{
+use crate::{
+    util::{Reset, Completable, Timer, WIDTH},
+    graphics::{byte_texture, position, draw_rectangle},
+    tetra::{
         Context,
         graphics::{
             Texture,
             Rectangle,
             Color,
         },
-    }, util::{Reset, Completable, Timer, WIDTH}};
+    },
+    battle_glue::BattleTrainerEntry,
+};
 
 use crate::battle::{
-    Battle,
-    ui::transitions::BattleOpener,
+    ui::{
+        view::ActiveRenderer,
+        transitions::BattleOpener,
+    },
 };
 
 mod trainer;
@@ -69,7 +76,7 @@ impl DefaultBattleOpener {
 
 impl BattleOpener for DefaultBattleOpener {
 
-    fn spawn(&mut self, _battle: &Battle) {}
+    fn spawn(&mut self, _: Option<&BattleTrainerEntry>) {}
 
     fn update(&mut self, delta: f32) {
         if self.start_timer.finished() {

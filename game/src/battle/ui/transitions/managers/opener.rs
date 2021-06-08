@@ -1,16 +1,21 @@
-use crate::{battle::pokemon::view::gui::ActiveRenderer, tetra::Context};
+use crate::{
+    tetra::Context,
+    battle_glue::BattleTrainerEntry,
+};
 
 use crate::battle::{
-    Battle,
     BattleType,
-    state::TransitionState,
-    ui::transitions::{
-        BattleOpener, 
-        openers::{
-            Openers,
-            WildBattleOpener,
-            TrainerBattleOpener,
-        },
+    client_state::TransitionState,
+    ui::{
+        view::ActiveRenderer,
+        transitions::{
+            BattleOpener, 
+            openers::{
+                Openers,
+                WildBattleOpener,
+                TrainerBattleOpener,
+            },
+        }
     }
 };
 
@@ -34,16 +39,16 @@ impl BattleOpenerManager {
         }
     }
 
-    pub fn begin(&mut self, battle: &Battle) {
+    pub fn begin(&mut self, battle_type: BattleType, trainer: Option<&BattleTrainerEntry>) {
         self.state = TransitionState::Run;
-        self.current = match battle.data.battle_type {
+        self.current = match battle_type {
             BattleType::Wild => Openers::Wild,
             BattleType::Trainer => Openers::Trainer,
             BattleType::GymLeader => Openers::Trainer,
         };
         let current = self.get_mut();
         current.reset();
-        current.spawn(battle);
+        current.spawn(trainer);
     }
     
     pub fn end(&mut self) {

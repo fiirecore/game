@@ -1,8 +1,6 @@
 use deps::vec::ArrayVec;
 use pokedex::pokemon::{Health, Level, PokemonRef, instance::PokemonInstance, party::PokemonParty};
-use storage::player::PlayerId;
-
-pub mod gui;
+use storage_player::PlayerId;
 
 pub trait BattlePartyTrait {
 

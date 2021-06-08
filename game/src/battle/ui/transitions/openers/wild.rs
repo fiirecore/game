@@ -1,15 +1,22 @@
-use crate::{battle::pokemon::view::gui::ActiveRenderer, graphics::{byte_texture, position}, tetra::{
+use crate::{
+    util::{Reset, Completable}, 
+    graphics::{byte_texture, position}, 
+    tetra::{
         Context,
         math::Vec2,
         graphics::Texture,
-    }, util::{Reset, Completable}};
+    },
+    battle_glue::BattleTrainerEntry,
+};
 
 use crate::battle::{
-    Battle,
-    ui::transitions::{
-        BattleOpener,
-        openers::DefaultBattleOpener,
-    }
+    ui::{
+        view::ActiveRenderer,
+        transitions::{
+            BattleOpener,
+            openers::DefaultBattleOpener,
+        }
+    },
 };
 
 pub struct WildBattleOpener {
@@ -35,7 +42,7 @@ impl WildBattleOpener {
 
 impl BattleOpener for WildBattleOpener {
 
-    fn spawn(&mut self, _battle: &Battle) {}
+    fn spawn(&mut self, trainer: Option<&BattleTrainerEntry>) {}
 
     fn update(&mut self, delta: f32) {
         self.opener.update(delta);

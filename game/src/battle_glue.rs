@@ -14,6 +14,7 @@ pub struct BattleEntry {
 }
 
 pub struct BattleTrainerEntry {
+    // pub id: TinyStr8,
     pub prefix: String,
     pub name: String,
     pub transition: TinyStr8,
