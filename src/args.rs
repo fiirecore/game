@@ -4,7 +4,7 @@ pub enum Args {
     DisableAudio,
     Debug,
     #[cfg(debug_assertions)]
-    Seed,
+    NoSeed,
 
 }
 
@@ -22,7 +22,7 @@ pub fn args() -> Vec<Args> {
 
     #[cfg(debug_assertions)]
     if args.contains("-s") {
-        list.push(Args::Seed);
+        list.push(Args::NoSeed);
     }
 
     list

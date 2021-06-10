@@ -39,6 +39,8 @@ pub struct SerializedChunk {
 
     pub coords: Coordinate,
     pub connections: Vec<LocationId>,
+    #[serde(default)]
+    pub map_position: Option<firecore_dependencies::tetra::math::Vec2<u8>>,
 
 }
 
@@ -56,7 +58,10 @@ pub struct SerializedMapList {
 #[serde(deny_unknown_fields)]
 pub struct SerializedMapSettings {
 
+    #[serde(default)]
     pub fly_position: Option<Coordinate>,
+    #[serde(default)]
+    pub time: worldlib::map::WorldTime,
 
 }
 

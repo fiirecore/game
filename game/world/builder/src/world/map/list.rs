@@ -2,7 +2,7 @@ use std::path::Path;
 use worldlib::map::WorldMap;
 use crate::world::{SerializedMapList, MapConfig};
 
-pub fn load_map_list(root_path: &Path, list: SerializedMapList) -> Vec<WorldMap> {
+pub fn load_map_list(root_path: &Path, list: SerializedMapList) -> (Vec<WorldMap>, super::MapGuiPos) {
 
     println!("    Loading map set \"{}\"", list.identifier);
 
@@ -18,13 +18,13 @@ pub fn load_map_list(root_path: &Path, list: SerializedMapList) -> Vec<WorldMap>
                         &std::fs::read_to_string(&file).unwrap_or_else(|err| panic!("Could not read map set configuration at {:?} to string with error {}", file, err))
                     ).unwrap_or_else(|err| panic!("Could not deserialize map set configuration at {:?} with error {}", file, err));
                     println!("        Loaded map set map \"{}\"", config.name);
-                    let map = super::load_map_from_config(&map_path, config, Some(list.identifier));
-                    maps.push(map);
+                    let map = super::load_map_from_config(&map_path, config, Some(list.identifier)).0;
+                    maps.extend(map);
                 }
             }
         }        
     }
 
-    maps
+    (maps, None)
 
 }

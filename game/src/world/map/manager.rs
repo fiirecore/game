@@ -15,7 +15,7 @@ use crate::{
         debug_pressed, DebugBind,
     },
     pokedex::moves::FieldMoveId,
-    tetra::Context,
+    tetra::{Context, graphics::Color},
     log::{info, warn},
     battle_glue::BattleEntryRef,
     gui::{
@@ -31,6 +31,7 @@ use worldlib::{
     map::{
         World,
         manager::{WorldMapManager, TryMoveResult, Door},
+        WorldTime,
     },
     character::{
         MoveType,
@@ -45,6 +46,7 @@ use crate::world::{
     gui::{
         TextWindow,
         StartMenu,
+        WorldMapGui,
     },
     battle::random_wild_battle,
 };
@@ -63,6 +65,7 @@ pub struct WorldManager {
 
     start_menu: StartMenu,
     text_window: TextWindow,
+    world_map: WorldMapGui,
 
     // Other
 
@@ -115,17 +118,26 @@ fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, battle: &mut 
 
 fn draw(wm: &WorldMapManager, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool) {
     if let Some(map) = wm.get() {
+
+        let color = match map.time {
+            WorldTime::Day => Color::WHITE,
+            WorldTime::Night => Color::rgb(0.6, 0.6, 0.6),
+        };
+
         match &map.chunk {
             Some(chunk) => {
-                map.draw(ctx, textures, &wm.data.door, &screen.offset(chunk.coords), border);
+                map.draw(ctx, textures, &wm.data.door, &screen.offset(chunk.coords), border, color);
                 for map in chunk.connections.iter().flat_map(|id| wm.maps.get(id)) {
                     if let Some(chunk) = &map.chunk {
-                        map.draw(ctx, textures, &None, &screen.offset(chunk.coords), false);
+                        map.draw(ctx, textures, &None, &screen.offset(chunk.coords), false, color);
                     }
                 }
             },
-            None => map.draw(ctx, textures, &wm.data.door, screen, border),
+            None => map.draw(ctx, textures, &wm.data.door, screen, border, color),
         }
+
+        textures.player.draw(ctx, &wm.data.player.character, color);
+
     }
 }
 
@@ -149,8 +161,11 @@ impl WorldManager {
             textures: WorldTextures::new(ctx),
 
             warp_transition: WarpTransition::new(),
+
             start_menu: StartMenu::new(ctx, party, bag),
             text_window: TextWindow::new(ctx),
+            world_map: Default::default(),
+
             first_direction: Direction::default(),
             render_coords: RenderCoords::default(),
             // noclip_toggle: false,
@@ -185,6 +200,8 @@ impl WorldManager {
             ); 
         }
 
+        self.world_map.add_locations(world.map_gui_locs);
+
         self.map_manager = world.manager;
     
     }
@@ -210,6 +227,13 @@ impl WorldManager {
 
         if self.start_menu.alive() {
             self.start_menu.update(ctx, delta, input_lock, action);
+        } else if self.world_map.alive() {
+            self.world_map.update(ctx);
+            if pressed(ctx, Control::A) {
+                if let Some(location) = self.world_map.despawn_get() {
+                    self.warp_to_location(location);
+                }
+            }
         } else {
 
             if !input_lock {
@@ -407,12 +431,39 @@ impl WorldManager {
         }
         
     }
+
+    fn warp_to_location(&mut self, location: util::Location) {
+        if let Some(map) = self.map_manager.maps.get(&location) {
+            info!("Warping to {}", map.name);
+            data_mut().location = location;
+            self.map_manager.data.current = Some(location);
+            let coordinate = if let Some(coord) = map.fly_position {
+                coord
+            } else if let Some(coord) = map.tenth_walkable_coord() {
+                coord
+            } else {
+                Coordinate::default()
+            };
+
+            let pos = &mut self.map_manager.data.player.character.position;
+            pos.coords = coordinate;
+            pos.direction = Direction::Down;
+            
+        }
+    }
     
 }
 
 impl GameState for WorldManager {
     fn process(&mut self, command: crate::game::CommandResult) {
         match command.command.as_str() {
+            "help" => {
+                info!("To - do: help list.");
+                info!("To - do: show messages in game")
+            }
+            "fly" => {
+                self.world_map.spawn();
+            }
             "heal" => {
                 data_mut().party.iter_mut().for_each(|pokemon| {
                     pokemon.heal();
@@ -494,14 +545,7 @@ impl GameState for WorldManager {
                 } else {
                     util::Location::new(None, map_or_index)
                 };
-                if let Some(map) = self.map_manager.maps.get(&location) {
-                    info!("Warping to {}", map.name);
-                    data_mut().location = location;
-                    self.map_manager.data.current = Some(location);
-                    if let Some(coord) = map.tenth_walkable_coord() {
-                        self.map_manager.data.player.character.position.coords = coord;
-                    }
-                }
+                self.warp_to_location(location);
             } else {
                 warn!("Invalid warp command syntax!")
             }
@@ -509,22 +553,30 @@ impl GameState for WorldManager {
         }
     }
 
-    fn draw(&self, ctx: &mut deps::tetra::Context) {
-        draw(&self.map_manager, ctx, &self.textures, &self.render_coords, true);
-        self.textures.player.draw(ctx, &self.map_manager.data.player.character);
+    fn draw(&self, ctx: &mut Context) {
 
-        let offset = match self.map_manager.get().map(|map| map.chunk.as_ref()).flatten() {
-            Some(chunk) => chunk.coords,
-            None => Coordinate::ZERO,
-        };
+        if self.start_menu.fullscreen() {
+            self.start_menu.draw(ctx); 
+        } else if self.world_map.alive() {
+            self.world_map.draw(ctx);
+        } else {
 
-        let screen = self.render_coords.offset(offset);
+            draw(&self.map_manager, ctx, &self.textures, &self.render_coords, true);
+    
+            let offset = match self.map_manager.get().map(|map| map.chunk.as_ref()).flatten() {
+                Some(chunk) => chunk.coords,
+                None => Coordinate::ZERO,
+            };
+    
+            let screen = self.render_coords.offset(offset);
+    
+            self.textures.player.bush.draw(ctx, &screen);
+    
+            self.text_window.draw(ctx);
+            self.start_menu.draw(ctx); 
+            self.warp_transition.draw(ctx);
 
-        self.textures.player.bush.draw(ctx, &screen);
-
-        self.text_window.draw(ctx);
-        self.start_menu.draw(ctx); 
-        self.warp_transition.draw(ctx);
+        }
     }
 }
 

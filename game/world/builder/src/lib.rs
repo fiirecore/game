@@ -18,7 +18,7 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, root_path: P, output_file: P)
     dex::setup(dex);
 
     println!("Started loading maps and tile textures...");
-    let (manager, mut textures) = world::map::load_maps(root_path.as_ref());
+    let (manager, mut textures, map_gui_locs) = world::map::load_maps(root_path.as_ref());
     println!("Finished loading maps and tile textures.");
 
     println!("Verifying palettes, maps, warps...");
@@ -43,6 +43,7 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, root_path: P, output_file: P)
         manager,
         npc_types,
         textures,
+        map_gui_locs,
     };
 
     println!("Saving data...");

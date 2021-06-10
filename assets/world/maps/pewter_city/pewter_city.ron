@@ -12,5 +12,13 @@
             "route_2",
             "route_3",
         ],
+        map_position: Some((
+            x: 3,
+            y: 3,
+        ))
     )),
+
+    settings: (
+        fly_position: Some((x: 17, y: 26))
+    )
 )

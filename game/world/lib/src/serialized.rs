@@ -14,12 +14,15 @@ use crate::character::npc::npc_type::TrainerType;
 use crate::character::sprite::SpriteIndexType;
 use crate::map::manager::WorldMapManager;
 
+pub type MapGuiLocs = HashMap<deps::tetra::math::Vec2<u8>, (String, util::Location)>;
+
 #[derive(Deserialize, Serialize)]
 pub struct SerializedWorld {
 
     pub manager: WorldMapManager,
 
     pub npc_types: Vec<SerializedNpcType>,
+    pub map_gui_locs: MapGuiLocs,
     pub textures: SerializedTextures,
 
 }

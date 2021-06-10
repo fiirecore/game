@@ -33,9 +33,8 @@ fn main() -> Result {
     let args = args();
 
     #[cfg(debug_assertions)]
-    if args.contains(&Args::Seed) {
+    if !args.contains(&Args::NoSeed) {
         game::init::seed_randoms(std::time::SystemTime::now().duration_since(std::time::SystemTime::UNIX_EPOCH).map(|dur| dur.as_secs()).unwrap_or_default() % 1000000)
-        
     }
 
     #[cfg(feature = "discord")] 

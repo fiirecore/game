@@ -77,12 +77,31 @@ pub struct WorldMap {
 
     pub scripts: Vec<WorldScript>,
 
+    #[serde(default)]
+    pub fly_position: Option<Coordinate>,
+
+    #[serde(default)]
+    pub time: WorldTime,
+
     // pub mart: Option<mart::Pokemart>,
 
     // #[serde(skip)]
     // pub state: WorldMapState,
 
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub enum WorldTime {
+    Day,
+    Night,
+}
+
+impl Default for WorldTime {
+    fn default() -> Self {
+        Self::Day
+    }
+}
+
 
 impl World for WorldMap {
 

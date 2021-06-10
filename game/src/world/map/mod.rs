@@ -13,7 +13,7 @@ use crate::{
     battle_glue::BattleEntryRef,
     play_music_named, play_music, play_sound,
     graphics::{position, draw_cursor},
-    tetra::Context,
+    tetra::{Context, graphics::Color},
     log::{info, warn},
     audio,
     is_debug,
@@ -645,7 +645,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<worldlib::map::manager::Door>, screen: &RenderCoords, border: bool) {
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<worldlib::map::manager::Door>, screen: &RenderCoords, border: bool, color: Color) {
         let primary = textures.tiles.palettes.get(&self.palettes[0]).expect("Could not get primary palette for map!");
         let length = primary.height() as TileId;
         let secondary = textures.tiles.palettes.get(&self.palettes[1]).expect("Could not get secondary palette for map!");
@@ -663,7 +663,7 @@ impl GameWorld for WorldMap {
                     let index = x as usize + row as usize;
                     let tile = self.tiles[index];
                     let (texture, tile) = if length > tile { (primary, tile) } else { (secondary, tile - length) };
-                    textures.tiles.draw_tile(ctx, texture, tile, render_x, render_y);
+                    textures.tiles.draw_tile(ctx, texture, tile, render_x, render_y, color);
                     if let Some(door) = door {
                         if door.position == index {
                             textures.tiles.draw_door(ctx, door, render_x, render_y);
@@ -676,7 +676,7 @@ impl GameWorld for WorldMap {
                         if y % 2 == 0 { 1 } else { 3 }
                     }];
                     let (texture, tile) = if length > tile { (primary, tile) } else { (secondary, tile - length) };
-                    textures.tiles.draw_tile(ctx, texture, tile, render_x, render_y);
+                    textures.tiles.draw_tile(ctx, texture, tile, render_x, render_y, color);
                 }
             }
         }

@@ -19,6 +19,7 @@ My attempt to code somewhat of a clone of Pokemon FireRed in Rust
 
 - [ ] Make viridian forest a chunk map (because it is only 1 map)
 - [ ] /party command brings up party menu
+- [ ] Door detection, no need for configuring warps to turn doors on / off
 
 - [X] Commands and command prompt
 - [X] Basic player bag
@@ -27,6 +28,9 @@ My attempt to code somewhat of a clone of Pokemon FireRed in Rust
 - [ ] Battle AI
 - [X] Proper texture animation support
     - [ ] Animated water
+- [ ] Maybe day/night cycle?
+- [ ] Fly move
+- [ ] World map
 
 ### Other Goals
 

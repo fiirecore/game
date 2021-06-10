@@ -153,6 +153,12 @@ impl AsColor for TextColor {
     }
 }
 
+impl AsColor for Color {
+    fn as_color(&self) -> &Color {
+        self
+    }
+}
+
 const GRAY: &Color = &Color::rgb(0.51, 0.51, 0.51);
 const RED: &Color = &Color::rgb(0.90, 0.16, 0.22);
 const WHITE_COLOR: &Color = &Color::rgb(240.0 / 255.0, 240.0 / 255.0, 240.0 / 255.0);

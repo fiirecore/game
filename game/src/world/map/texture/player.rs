@@ -8,6 +8,7 @@ use crate::{
 		graphics::{
 			Texture,
 			Rectangle,
+			Color,
 		},
 	},
 };
@@ -28,10 +29,6 @@ pub struct PlayerTexture {
 	pub bush: bush::PlayerBushTexture,
 
 	accumulator: f32,
-
-	// pub walking_texture: Option<Texture2D>,
-	// pub running_texture: Option<Texture2D>,
-	// pub surfing_texture: Option<Texture2D>,
 	
 }
 
@@ -86,7 +83,7 @@ impl PlayerTexture {
 		}
 	}
 
-	pub fn draw(&self, ctx: &mut Context, character: &Character) {
+	pub fn draw(&self, ctx: &mut Context, character: &Character, color: Color) {
 		if self.draw {
 			if let Some(texture) = self.textures.get(&character.move_type) {
 				let (x, width) = current_texture(character);
@@ -103,7 +100,7 @@ impl PlayerTexture {
 						width,
 						if !self.bush.in_bush || (character.moving && character.position.direction.vertical()) { 32.0 } else { 26.0 },
 					),
-					params,
+					params.color(color),
 				);
 			}
 		}

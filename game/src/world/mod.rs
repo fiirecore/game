@@ -2,7 +2,7 @@
 
 use crate::battle_glue::BattleEntryRef;
 
-use deps::tetra::Context;
+use deps::tetra::{Context, graphics::Color};
 
 use worldlib::map::{
     World,
@@ -29,7 +29,7 @@ pub trait GameWorld: World {
 
     fn update(&mut self, ctx: &mut Context, delta: f32, world: &mut WorldMapManagerData, battle: BattleEntryRef, text_window: &mut TextWindow);
 
-    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<Door>, screen: &RenderCoords, border: bool);
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<Door>, screen: &RenderCoords, border: bool, color: Color);
 
 }
 

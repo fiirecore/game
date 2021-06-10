@@ -18,7 +18,7 @@ use super::MapConfig;
 
 pub mod list;
 
-pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
+pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures, worldlib::serialized::MapGuiLocs) {
     let maps_path = root_path.join("maps");
     let textures_path = root_path.join("textures");
 
@@ -32,6 +32,7 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
     );
 
     let mut maps = Maps::default();
+    let mut map_gui_locs = worldlib::serialized::MapGuiLocs::new();
 
     println!("Loading maps...");
 
@@ -50,7 +51,12 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
                     let file = entry.path();
                     if let Some(ext) = file.extension() {
                         if ext == std::ffi::OsString::from("ron") {
-                            maps.extend(load_map(&worlds, &file).into_iter().map(|map| (map.id, map)));
+                            let (map, map_gui_loc) = load_map(&worlds, &file);
+                            let map = map.into_iter().map(|map| (map.id, map));
+                            maps.extend(map);
+                            if let Some(map_gui_loc) = map_gui_loc {
+                                map_gui_locs.insert(map_gui_loc.0, (map_gui_loc.1, map_gui_loc.2));
+                            }
                         }
                     }
                 }
@@ -65,10 +71,12 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
         data: WorldMapManagerData::default()
     };
 
-    (manager, textures)
+    (manager, textures, map_gui_locs)
 }
 
-fn load_map(root_path: &Path, file: &Path) -> Vec<WorldMap> {
+pub(crate) type MapGuiPos = Option<(firecore_dependencies::tetra::math::Vec2<u8>, String, Location)>;
+
+fn load_map(root_path: &Path, file: &Path) -> (Vec<WorldMap>, MapGuiPos) {
     println!("Loading map under: {:?}", root_path);
 
     let data = std::fs::read_to_string(file).unwrap_or_else(|err| {
@@ -79,7 +87,7 @@ fn load_map(root_path: &Path, file: &Path) -> Vec<WorldMap> {
     });
 
     match ron::from_str(&data) {
-        Ok(config) => vec![load_map_from_config(root_path, config, None)],
+        Ok(config) => load_map_from_config(root_path, config, None),
         Err(chunk_err) => match ron::from_str(&data) {
             Ok(list) => list::load_map_list(root_path, list),
             Err(set_err) => {
@@ -94,9 +102,15 @@ fn load_map(root_path: &Path, file: &Path) -> Vec<WorldMap> {
     }
 }
 
-pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map: Option<LocationId>) -> WorldMap {
+pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map: Option<LocationId>) -> (Vec<WorldMap>, MapGuiPos) {
     println!("    Loading map named {}", config.name);
+
     let root_path = root_path.as_ref();
+
+    let loc = Location::new(map, config.identifier);
+
+    let map_gui_pos = config.chunk.as_ref().map(|chunk| chunk.map_position.map(|pos| (pos, config.name.clone(), loc))).flatten();
+
     let gba_map = get_gba_map(
         std::fs::read(root_path.join(config.file)).unwrap_or_else(|err| {
             panic!(
@@ -106,30 +120,37 @@ pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map
         }),
     );
 
-    WorldMap {
-        id: Location::new(map, config.identifier),
+    (
+        vec![WorldMap {
+            id: loc,
 
-        name: config.name,
-        music: gba_map.music,
+            name: config.name,
+            music: gba_map.music,
 
-        width: gba_map.width,
-        height: gba_map.height,
+            width: gba_map.width,
+            height: gba_map.height,
 
-        palettes: gba_map.palettes,
+            palettes: gba_map.palettes,
 
-        tiles: gba_map.tiles,
-        movements: gba_map.movements,
+            tiles: gba_map.tiles,
+            movements: gba_map.movements,
 
-        border: gba_map.borders,
+            border: gba_map.borders,
 
-        chunk: config.chunk.map(|chunk| chunk.into()),
+            chunk: config.chunk.map(|chunk| chunk.into()),
 
-        warps: super::warp::load_warp_entries(root_path.join("warps")),
-        wild: super::wild::load_wild_entries(root_path.join("wild")),
-        npcs: super::npc::load_npc_entries(root_path.join("npcs")),
-        scripts: super::script::load_script_entries(root_path.join("scripts")),
+            warps: super::warp::load_warp_entries(root_path.join("warps")),
+            wild: super::wild::load_wild_entries(root_path.join("wild")),
+            npcs: super::npc::load_npc_entries(root_path.join("npcs")),
+            scripts: super::script::load_script_entries(root_path.join("scripts")),
 
-        // mart: None,//super::mart::load_mart(root_path.join("mart.ron")),
+            fly_position: config.settings.fly_position,
 
-    }
+            time: config.settings.time,
+
+            // mart: None,//super::mart::load_mart(root_path.join("mart.ron")),
+
+        }],
+        map_gui_pos
+    )
 }

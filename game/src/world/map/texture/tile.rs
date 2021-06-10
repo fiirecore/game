@@ -7,6 +7,7 @@ use crate::{
         graphics::{
             Texture,
             Rectangle,
+            Color,
         }
     },
 };
@@ -55,12 +56,12 @@ impl TileTextureManager {
         }
     }
 
-    pub fn draw_tile(&self, ctx: &mut Context, texture: &Texture, tile: TileId, x: f32, y: f32) {
+    pub fn draw_tile(&self, ctx: &mut Context, texture: &Texture, tile: TileId, x: f32, y: f32, color: Color) {
         if let Some(texture) = self.animated.get(&tile) {
             texture.draw_region(
                 ctx, 
                 Rectangle::new(0.0, (self.accumulator / Self::TEXTURE_TICK).floor() * TILE_SIZE, TILE_SIZE, TILE_SIZE), 
-                position(x, y)
+                position(x, y).color(color),
             );
         } else {
             let tx = ((tile % 16) << 4) as f32; // width = 256
@@ -68,7 +69,7 @@ impl TileTextureManager {
             texture.draw_region(
                 ctx,
                 Rectangle::new(tx, ty, TILE_SIZE, TILE_SIZE),
-                position(x, y),
+                position(x, y).color(color),
             );
         }
     }

@@ -117,6 +117,10 @@ impl StartMenu {
         }
     }
 
+    pub fn fullscreen(&self) -> bool {
+        self.party.alive() || self.bag.alive()
+    }
+
 }
 
 impl Entity for StartMenu {

@@ -11,8 +11,8 @@
     ),
     destination: (
         location: (
-            map: Some("viridian_forest"),
-            index: "forest",
+            map: None,
+            index: "viridian_forest",
         ),
         position: (
             coords: (
