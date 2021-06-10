@@ -14,7 +14,7 @@ use crate::character::npc::npc_type::TrainerType;
 use crate::character::sprite::SpriteIndexType;
 use crate::map::manager::WorldMapManager;
 
-pub type MapGuiLocs = HashMap<deps::tetra::math::Vec2<u8>, (String, util::Location)>;
+pub type MapGuiLocs = HashMap<crate::map::MapIcon, (String, util::Location)>;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedWorld {

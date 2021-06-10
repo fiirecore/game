@@ -1,10 +1,10 @@
 use firecore_pokedex::pokemon::{PokemonId, Level, instance::PokemonInstance};
 use serde::{Deserialize, Serialize};
-use deps::Random;
+use deps::random::{Random, RandomState, GLOBAL_STATE};
 
 use crate::map::TileId;
 
-pub static WILD_RANDOM: Random = Random::new();
+pub static WILD_RANDOM: Random = Random::new(RandomState::Static(&GLOBAL_STATE));
 
 // pub const DEFAULT_ENCOUNTER: u8 = 21;
 pub const CHANCES: [u8; 12] = [20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1];

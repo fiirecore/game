@@ -2,7 +2,7 @@ use crate::{
     deps::vec::ArrayVec,
     pokedex::pokemon::{Level, instance::PokemonInstance},
     tetra::Context,
-    battle::pokemon::view::{BattlePartyKnown, BattlePartyUnknown, PokemonKnowData}
+    battle::pokemon::view::{BattlePartyKnown, BattlePartyUnknown, PokemonView}
 };
 
 use crate::battle::ui::{BattleGuiPosition, BattleGuiPositionIndex, pokemon::{PokemonRenderer, status::PokemonStatusGui}};
@@ -14,6 +14,52 @@ pub struct ActivePokemonParty<T> {
     pub party: T,
     pub renderer: ActiveRenderer,
 }
+
+// use crate::battle::pokemon::view::BattlePartyTrait;
+
+// impl<T: BattlePartyTrait> BattlePartyTrait for ActivePokemonParty<T> {
+//     fn id(&self) -> &pokemon_firered_clone_storage::player::PlayerId {
+//         self.party.id()
+//     }
+
+//     fn active(&self, active: usize) -> Option<&dyn PokemonView> {
+//         self.party.active(active)
+//     }
+
+//     fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonView> {
+//         self.party.active_mut(active)
+//     }
+
+//     fn active_len(&self) -> usize {
+//         self.party.active_len()
+//     }
+
+//     fn len(&self) -> usize {
+//         self.party.len()
+//     }
+
+//     fn active_eq(&self, active: usize, index: Option<usize>) -> bool {
+//         self.party.active_eq(active, index)
+//     }
+
+//     fn pokemon(&self, index: usize) -> Option<&dyn PokemonView> {
+//         self.party.pokemon(index)
+//     }
+
+//     fn add(&mut self, index: usize, unknown: firecore_battle::pokemon::view::PokemonUnknown) {
+//         self.party.add(index, unknown)
+//         // update gui here
+//     }
+
+//     fn replace(&mut self, active: usize, new: Option<usize>) {
+//         self.party.replace(active, new)
+//         self.renderer.update
+//     }
+
+//     fn any_inactive(&self) -> bool {
+//         todo!()
+//     }
+// }
 
 pub struct ActivePokemonRenderer {
     // pub pokemon: PokemonOption,
@@ -48,12 +94,12 @@ impl ActivePokemonRenderer {
         }).collect()
     }
 
-    pub fn update(&mut self, pokemon: Option<&dyn PokemonKnowData>) {
+    pub fn update(&mut self, pokemon: Option<&dyn PokemonView>) {
         self.update_status(pokemon, true);
         self.renderer.new_pokemon(pokemon.map(|pokemon| *pokemon.pokemon().id()).as_ref());
     }
     
-    pub fn update_status(&mut self, pokemon: Option<&dyn PokemonKnowData>, reset: bool) {
+    pub fn update_status(&mut self, pokemon: Option<&dyn PokemonView>, reset: bool) {
         self.status.update_gui(pokemon, reset);
     }
     

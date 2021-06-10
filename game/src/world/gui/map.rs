@@ -10,7 +10,9 @@ use crate::{
     },
 };
 
-pub type Locations = HashMap<Vec2<u8>, (String, Location)>;
+use worldlib::map::MapIcon;
+
+pub type Locations = HashMap<MapIcon, (String, Location)>;
 
 #[derive(Default)]
 pub struct WorldMapGui {
@@ -18,15 +20,15 @@ pub struct WorldMapGui {
 
     selected: Vec2<u8>,
 
-    locations: Locations,
+    locations: HashMap<Vec2<u8>, (MapIconInit, String, Location)>,
 
     visited: Vec<Location>,
     fly: Option<Vec<Location>>,
 }
 
-pub enum MapIcon {
+enum MapIconInit {
     City,
-    Route,
+    Route(Vec2<u8>),
 }
 
 impl WorldMapGui {
@@ -35,7 +37,14 @@ impl WorldMapGui {
     pub const GUI_TILE_SIZE_MASK: u8 = 3;
 
     pub fn add_locations(&mut self, locations: Locations) {
-        self.locations = locations;
+        self.locations = locations.into_iter().map(|(i, (s, l))| {
+                let (i, si) = match i {
+                    MapIcon::City(x, y) => (Vec2::new(x, y), MapIconInit::City),
+                    MapIcon::Route(x, y, sx, sy) => (Vec2::new(x, y), MapIconInit::Route(Vec2::new(sx, sy))),
+                };
+                (i, (si, s, l))
+            }
+        ).collect();
     }
 
     pub fn update(&mut self, ctx: &Context) {
@@ -57,19 +66,24 @@ impl WorldMapGui {
     }
 
     pub fn draw(&self, ctx: &mut Context) {
-        let pos = self.selected << Self::GUI_TILE_SIZE_MASK;
-        draw_rectangle_lines(ctx, pos.x as f32, pos.y as f32, Self::GUI_TILE_SIZE, Self::GUI_TILE_SIZE, 1.0, Color::WHITE);
-        for pos in self.locations.keys() {
+        for (pos, (icon, ..)) in self.locations.iter() {
             let pos = *pos << Self::GUI_TILE_SIZE_MASK;
-            draw_rectangle(ctx, pos.x as f32, pos.y as f32, Self::GUI_TILE_SIZE, Self::GUI_TILE_SIZE, Color::RED);
+            let (size, color) = match icon {
+                MapIconInit::City => (Vec2::one(), Color::RED),
+                MapIconInit::Route(s) => (*s, Color::rgb(0.5, 0.5, 0.5)),
+            };
+            let size = size << Self::GUI_TILE_SIZE_MASK;
+            draw_rectangle(ctx, pos.x as f32, pos.y as f32, size.x as f32, size.y as f32, color);
         }
-        if let Some((name, _)) = self.locations.get(&self.selected) {
+        if let Some((_, name, _)) = self.locations.get(&self.selected) {
             draw_text_left(ctx, &1, name, &Color::WHITE, 5.0, util::HEIGHT - 20.0);
         }
+        let pos = self.selected << Self::GUI_TILE_SIZE_MASK;
+        draw_rectangle_lines(ctx, pos.x as f32, pos.y as f32, Self::GUI_TILE_SIZE, Self::GUI_TILE_SIZE, 1.0, Color::WHITE);
     }
 
     pub fn despawn_get(&mut self) -> Option<Location> {
-        let loc = self.locations.get(&self.selected).map(|(_, l)| *l);
+        let loc = self.locations.get(&self.selected).map(|(.., l)| *l);
         if loc.is_some() {
             self.despawn();
         }

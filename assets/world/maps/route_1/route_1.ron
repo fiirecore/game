@@ -12,5 +12,6 @@
             "pallet",
             "viridian"
         ],
+        map_icon: Some(Route(2, 6, 1, 2))
     )),
 )

@@ -11,11 +11,8 @@ pub type WarpMap = HashMap<WarpId, WarpEntry>;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct WarpEntry {
-    
     pub location: BoundingBox,
-
     pub destination: WarpDestination,
-
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
@@ -38,8 +35,5 @@ pub struct WarpTransition {
 
     #[serde(default = "crate::default_true")]
     pub change_music: bool,
-
-    #[serde(default = "crate::default_true")]
-    pub door: bool,
 
 }

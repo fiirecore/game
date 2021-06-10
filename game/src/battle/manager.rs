@@ -176,7 +176,7 @@ impl BattleManager {
 					BattleState::End => self.state = BattleManagerState::Closer,
 					_ => {
 
-						let mut player = self.player.get();
+						let player = self.player.get();
 
 						player.update(ctx, delta);
 						player.gui.bounce.update(delta);
@@ -231,8 +231,8 @@ impl BattleManager {
 }
 
 impl GameState for BattleManager {
-    fn process(&mut self, command: crate::game::CommandResult) {
-        match command.command.as_str() {
+    fn process(&mut self, result: crate::game::CommandResult) {
+        match result.command {
 			"end" => self.end(),
 			_ => (),
 		}

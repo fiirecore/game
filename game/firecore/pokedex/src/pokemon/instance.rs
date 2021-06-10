@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use deps::{
+use deps::borrow::{
 	Identifiable,
 	StaticRef,
 	BorrowableMut,

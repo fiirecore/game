@@ -12,10 +12,7 @@
             "route_1",
             "route_21_north"
         ],
-        map_position: Some((
-            x: 3,
-            y: 9,
-        ))
+        map_icon: Some(City(2, 8))
     )),
 
     settings: (

@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use deps::{
+use deps::borrow::{
 	Identifiable,
 	StaticRef,
 };

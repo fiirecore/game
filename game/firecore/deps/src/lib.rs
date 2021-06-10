@@ -1,7 +1,5 @@
 #[cfg(feature = "random")]
-mod random;
-#[cfg(feature = "random")]
-pub use random::Random;
+pub mod random;
 
 #[cfg(feature = "log")]
 pub extern crate log;
@@ -10,10 +8,7 @@ pub extern crate log;
 pub extern crate tetra;
 
 #[cfg(feature = "borrow")]
-mod borrow;
-
-#[cfg(feature = "borrow")]
-pub use borrow::*;
+pub mod borrow;
 
 #[cfg(feature = "tinystr")]
 pub extern crate tinystr as str;

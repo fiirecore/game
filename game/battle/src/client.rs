@@ -1,4 +1,11 @@
-use super::{BattleType, pokemon::{BattleClientActionInstance, BattleMove, view::{BattlePartyKnown, BattlePartyUnknown, PokemonUnknown}}};
+use super::{
+    BattleType, 
+    pokemon::{
+        BattleClientActionInstance, 
+        BattleMove, 
+        view::{BattlePartyKnown, BattlePartyUnknown, UnknownPokemon}
+    }
+};
 
 pub trait BattleClient {
 
@@ -8,7 +15,7 @@ pub trait BattleClient {
 
     fn opponents(&mut self, opponent: BattlePartyUnknown); // maybe can send multiple
 
-    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown);
+    fn add_unknown(&mut self, index: usize, unknown: UnknownPokemon);
 
 
     fn start_select(&mut self);

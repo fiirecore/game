@@ -1,3 +1,4 @@
+#[allow(deprecated, deprecated_in_future, useless_deprecated)]
 // #![feature(map_into_keys_values)] // for move queue fn
 
 extern crate firecore_dependencies as deps;
@@ -8,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use {
 	deps::{
-		Random,
+		random::{Random, RandomState, GLOBAL_STATE},
 		rhai::Engine,
         log::{info, debug}, 
 	},
@@ -42,7 +43,7 @@ use crate::{
 		BattleClientMove,
 		BattleClientAction,
 		BattleClientActionInstance,
-		view::PokemonUnknown,
+		view::UnknownPokemon,
 	},
 	client::BattleClient,
 };
@@ -52,17 +53,26 @@ pub mod state;
 pub mod pokemon;
 pub mod client;
 
-pub static BATTLE_RANDOM: Random = Random::new();
+#[deprecated(note = "look into replacing this")]
+pub static BATTLE_RANDOM: Random = Random::new(RandomState::Static(&GLOBAL_STATE));
 
 pub struct Battle {
 	
+	#[deprecated(note = "look into replacing this")]
 	pub state: BattleState,
 
 	battle_type: BattleType,
+
+	// add battle data (weather, etc) here.
+
+	#[deprecated(note = "look into replacing this")]
 	pub winner: Option<PlayerId>,
 	
+	#[deprecated(note = "use hashmap")]
 	player1: BattleParty,
 	player2: BattleParty,
+
+	// players: deps::hash::HashMap<PlayerId, UnsafeCell<BattleParty>>,
 	
 }
 
@@ -89,7 +99,7 @@ impl Battle {
             battle_type,
             winner: None,
             player1,
-            player2
+            player2,
         }
     }
 
@@ -149,10 +159,10 @@ impl Battle {
 
 						#[deprecated(note = "temporary")] {
 							for (i, p) in self.player1.pokemon.iter().enumerate() {
-								self.player2.client.add_unknown(i, PokemonUnknown::new(p.value()));
+								self.player2.client.add_unknown(i, UnknownPokemon::new(p.value()));
 							}
 							for (i, p) in self.player2.pokemon.iter().enumerate() {
-								self.player1.client.add_unknown(i, PokemonUnknown::new(p.value()));
+								self.player1.client.add_unknown(i, UnknownPokemon::new(p.value()));
 							}
 						}
 
@@ -386,7 +396,7 @@ impl Battle {
 										user.replace(instance.pokemon.index, Some(*new));
 										player_queue.push(BattleClientActionInstance {
 											pokemon: instance.pokemon,
-											action: BattleClientAction::Switch(*new, Some(PokemonUnknown::new(user.active(instance.pokemon.index).unwrap()))),
+											action: BattleClientAction::Switch(*new, Some(UnknownPokemon::new(user.active(instance.pokemon.index).unwrap()))),
 										}); // ui::text::on_switch(text, pokemon, user.pokemon[*new].as_ref().unwrap().value());
 										// debug!("{:?}", user.active);
 									}

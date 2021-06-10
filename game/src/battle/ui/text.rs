@@ -17,13 +17,13 @@ use crate::{
     },
 };
 
-use crate::battle::pokemon::view::PokemonKnowData;
+use crate::battle::pokemon::view::PokemonView;
 
 pub fn new() -> TextDisplay {
     TextDisplay::new(super::PANEL_ORIGIN.position + Vec2::new(11.0, 11.0), 1, TextColor::White, 6)
 }
 
-pub(crate) fn on_move(text: &mut TextDisplay, pokemon_move: &Move, user: &dyn PokemonKnowData) {
+pub(crate) fn on_move(text: &mut TextDisplay, pokemon_move: &Move, user: &dyn PokemonView) {
     text.push(
         MessagePage::new(
             vec![format!("{} used {}!", user.name(), pokemon_move.name)],
@@ -43,7 +43,7 @@ pub(crate) fn on_effective(text: &mut TextDisplay, effective: &Effective) {
     }
 }
 
-pub(crate) fn on_stat_stage(text: &mut TextDisplay, pokemon: &dyn PokemonKnowData, stat: StatType, stage: Stage) {
+pub(crate) fn on_stat_stage(text: &mut TextDisplay, pokemon: &dyn PokemonView, stat: StatType, stage: Stage) {
     text.push(
         MessagePage::new(
             vec![
@@ -55,7 +55,7 @@ pub(crate) fn on_stat_stage(text: &mut TextDisplay, pokemon: &dyn PokemonKnowDat
     )
 }
 
-pub(crate) fn on_miss(text: &mut TextDisplay, pokemon: &dyn PokemonKnowData) {
+pub(crate) fn on_miss(text: &mut TextDisplay, pokemon: &dyn PokemonView) {
     text.push(
         MessagePage::new(
             vec![format!("{} missed!", pokemon.name())], 
@@ -64,7 +64,7 @@ pub(crate) fn on_miss(text: &mut TextDisplay, pokemon: &dyn PokemonKnowData) {
     );
 }
 
-pub(crate) fn on_item(text: &mut TextDisplay, pokemon: &dyn PokemonKnowData, item: &Item) {
+pub(crate) fn on_item(text: &mut TextDisplay, pokemon: &dyn PokemonView, item: &Item) {
     text.push(
         MessagePage::new(
             vec![format!("A {} was used on {}", item.name, pokemon.name())], 
@@ -73,7 +73,7 @@ pub(crate) fn on_item(text: &mut TextDisplay, pokemon: &dyn PokemonKnowData, ite
     );
 }
 
-pub(crate) fn on_switch(text: &mut TextDisplay, leaving: &dyn PokemonKnowData, coming: &dyn PokemonKnowData) {
+pub(crate) fn on_switch(text: &mut TextDisplay, leaving: &dyn PokemonView, coming: &dyn PokemonView) {
     text.push(
         MessagePage::new(
             vec![format!("Come back, {}!", leaving.name())],
@@ -83,7 +83,7 @@ pub(crate) fn on_switch(text: &mut TextDisplay, leaving: &dyn PokemonKnowData, c
     on_go(text, coming);
 }
 
-pub(crate) fn on_go(text: &mut TextDisplay, coming: &dyn PokemonKnowData) {
+pub(crate) fn on_go(text: &mut TextDisplay, coming: &dyn PokemonView) {
     text.push(
         MessagePage::new(
             vec![format!("Go, {}!", coming.name())],
@@ -107,7 +107,7 @@ pub(crate) fn on_go(text: &mut TextDisplay, coming: &dyn PokemonKnowData) {
 //     }, None));
 // }
 
-pub(crate) fn on_faint(text: &mut TextDisplay, is_wild: bool, is_player: bool, pokemon: &dyn PokemonKnowData) {
+pub(crate) fn on_faint(text: &mut TextDisplay, is_wild: bool, is_player: bool, pokemon: &dyn PokemonView) {
     text.push(
         MessagePage::new(
             vec![

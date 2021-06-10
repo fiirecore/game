@@ -2,8 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use deps::{
     str::TinyStr16,
-    StaticRef,
-    Identifiable,
+    borrow::{
+        Identifiable,
+        StaticRef,
+    },
 };
 
 pub mod dex;

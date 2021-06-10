@@ -20,6 +20,8 @@ use worldlib::{
     serialized::SerializedTextures,
 };
 
+use crate::world::map::manager::Door;
+
 #[derive(Default)]
 pub struct TileTextureManager {
 
@@ -49,6 +51,10 @@ impl TileTextureManager {
         
     }
 
+    pub fn has_door(&self, tile: &TileId) -> bool {
+        self.doors.contains_key(tile)
+    }
+
     pub fn update(&mut self, delta: f32) {
         self.accumulator += delta;
         if self.accumulator > Self::TEXTURE_TICK * 5.0 {
@@ -74,7 +80,7 @@ impl TileTextureManager {
         }
     }
 
-    pub fn draw_door(&self, ctx: &mut Context, door: &worldlib::map::manager::Door, x: f32, y: f32) {
+    pub fn draw_door(&self, ctx: &mut Context, door: &Door, x: f32, y: f32) {
         if let Some(texture) = self.doors.get(&door.tile) {
             texture.draw_region(ctx, Rectangle::new(0.0, door.accumulator.floor() * TILE_SIZE, TILE_SIZE, TILE_SIZE), position(x, y))
         }

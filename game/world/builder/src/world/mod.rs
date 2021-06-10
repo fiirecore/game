@@ -40,7 +40,7 @@ pub struct SerializedChunk {
     pub coords: Coordinate,
     pub connections: Vec<LocationId>,
     #[serde(default)]
-    pub map_position: Option<firecore_dependencies::tetra::math::Vec2<u8>>,
+    pub map_icon: Option<worldlib::map::MapIcon>,
 
 }
 

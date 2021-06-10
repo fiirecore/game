@@ -26,8 +26,43 @@ use std::sync::atomic::{AtomicU64, Ordering};
 /// The current implementation is `PCG-XSH-RR`.
 #[derive(Debug)]
 pub struct Random {
-    state: AtomicU64,
+    state: RandomState,
     inc: AtomicU64,
+}
+
+/// Choose whether RNG is independent or attached to a global state.
+#[derive(Debug)]
+pub enum RandomState {
+    Unique(AtomicU64),
+    Static(&'static AtomicU64),
+}
+
+/// Global random state
+pub static GLOBAL_STATE: AtomicU64 = AtomicU64::new(0);
+
+/// Seed the global random state
+pub fn seed_global(seed: u64) {
+    GLOBAL_STATE.store(seed, Ordering::Relaxed);
+}
+
+impl RandomState {
+
+    pub const UNIQUE: Self = Self::Unique(AtomicU64::new(0));
+
+    pub fn store(&self, state: u64) {
+        match self {
+            RandomState::Unique(s) => s.store(state, Ordering::Relaxed),
+            RandomState::Static(s) => s.store(state, Ordering::Relaxed),
+        }
+    }
+
+    pub fn load(&self) -> u64 {
+        match self {
+            RandomState::Unique(s) => s.load(Ordering::Relaxed),
+            RandomState::Static(s) => s.load(Ordering::Relaxed),
+        }
+    }
+
 }
 
 impl Random {
@@ -44,9 +79,9 @@ impl Random {
     pub(crate) const MULTIPLIER: u64 = 6364136223846793005;
 
     /// Creates a new PRNG with the given seed and a default increment.
-    pub const fn new() -> Self {
+    pub const fn new(state: RandomState) -> Self {
         Self {
-            state: AtomicU64::new(0),
+            state,
             inc: AtomicU64::new(1),
         }
     }
@@ -69,7 +104,7 @@ impl Random {
         // This initialization song-and-dance is a little odd,
         // but seems to be just how things go.
         let _ = self.rand();
-        self.state.store(self.state.load(Ordering::Relaxed).wrapping_add(seed), Ordering::Relaxed);
+        self.state.store(self.state.load().wrapping_add(seed));
         let _ = self.rand();
     }
 
@@ -77,7 +112,7 @@ impl Random {
     /// you to save a PRNG and create a new one that will resume
     /// from the same spot in the sequence.
     pub fn state(&self) -> (u64, u64) {
-        (self.state.load(Ordering::Relaxed), self.inc.load(Ordering::Relaxed))
+        (self.state.load(), self.inc.load(Ordering::Relaxed))
     }
 
     /// Creates a new PRNG from a saved state from `Rand32::state()`.
@@ -90,10 +125,12 @@ impl Random {
 
     /// Produces a random `u32` in the range `[0, u32::MAX]`.
     pub fn rand(&self) -> u32 {
-        let oldstate: u64 = self.state.load(Ordering::Relaxed);
-        self.state.store(oldstate
-            .wrapping_mul(Self::MULTIPLIER)
-            .wrapping_add(self.inc.load(Ordering::Relaxed)), Ordering::Relaxed);
+        let oldstate: u64 = self.state.load();
+        self.state.store(
+            oldstate
+                .wrapping_mul(Self::MULTIPLIER)
+                .wrapping_add(self.inc.load(Ordering::Relaxed))
+        );
         let xorshifted: u32 = (((oldstate >> 18) ^ oldstate) >> 27) as u32;
         let rot: u32 = (oldstate >> 59) as u32;
         xorshifted.rotate_right(rot)

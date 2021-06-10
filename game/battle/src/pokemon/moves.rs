@@ -11,7 +11,7 @@ use crate::{
     },
 };
 
-use super::view::PokemonUnknown;
+use super::view::UnknownPokemon;
 
 #[derive(Debug, Clone)]
 pub enum BattleMove {
@@ -81,7 +81,7 @@ pub struct BattleClientActionInstance {
 pub enum BattleClientAction {
 
     Move(MoveRef, Vec<(MoveTargetInstance, Vec<BattleClientMove>)>),
-    Switch(usize, Option<PokemonUnknown>),
+    Switch(usize, Option<UnknownPokemon>),
     UseItem(ItemRef, MoveTargetInstance),
 
     // maybe move these

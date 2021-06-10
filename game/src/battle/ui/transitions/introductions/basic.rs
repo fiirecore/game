@@ -17,10 +17,10 @@ use crate::battle::{
     BattleType,
     pokemon::{
         view::{
+            BattlePartyView,
             BattlePartyKnown,
             BattlePartyUnknown,
-            BattlePartyTrait,
-            PokemonKnowData,
+            PokemonView,
         },
     },
     ui::{
@@ -58,7 +58,7 @@ impl BasicBattleIntroduction {
     }
 
     #[deprecated(note = "bad code, return vec of string (lines)")]
-    pub(crate) fn concatenate(party: &dyn BattlePartyTrait) -> String {
+    pub(crate) fn concatenate(party: &dyn BattlePartyView) -> String {
         let mut string = String::new();
         let len = party.active_len();
         for index in 0..len {
@@ -76,7 +76,7 @@ impl BasicBattleIntroduction {
         string
     }
 
-    pub(crate) fn common_setup(&mut self, text: &mut TextDisplay, party: &dyn BattlePartyTrait) {        
+    pub(crate) fn common_setup(&mut self, text: &mut TextDisplay, party: &dyn BattlePartyView) {        
         text.push(
             MessagePage::new(
                 vec![
@@ -159,7 +159,7 @@ impl BattleIntroduction for BasicBattleIntroduction {
             for active in opponent.renderer.iter_mut() {
                 active.status.spawn();
             }
-            for instance in opponent.party.active.iter().flat_map(|index| index.map(|i| &opponent.party.pokemon[i] as &dyn PokemonKnowData)) {
+            for instance in opponent.party.active.iter().flat_map(|index| index.map(|i| &opponent.party.pokemon[i] as &dyn PokemonView)) {
                 play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon().id())));
             }            
         }

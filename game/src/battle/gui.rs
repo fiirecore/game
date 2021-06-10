@@ -22,10 +22,10 @@ use crate::battle::{
         BattleClientActionInstance,
         BattleClientMove,
         view::{
-            BattlePartyTrait,
+            BattlePartyView,
             BattlePartyKnown, 
             BattlePartyUnknown,
-            PokemonUnknown,
+            UnknownPokemon,
         },
     },
     client::BattleClient,
@@ -83,7 +83,7 @@ impl BattleClient for BattlePlayerGuiRef {
         self.get().opponents(opponent)
     }
 
-    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
+    fn add_unknown(&mut self, index: usize, unknown: UnknownPokemon) {
         self.get().add_unknown(index, unknown)
     }
 
@@ -269,7 +269,7 @@ impl BattlePlayerGui {
                                 // to - do: better client checking
 
                                 let (user, user_ui, other, other_ui) = if instance.pokemon.team == self.player.party.id {
-                                    (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer)
+                                    (&mut self.player.party as &mut dyn BattlePartyView, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyView, &mut self.opponent.renderer)
                                 } else {
                                     (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer)
                                 };
@@ -311,40 +311,44 @@ impl BattlePlayerGui {
                                                 }
 
                                                 let (target, target_ui) = match target {
-                                                    MoveTargetInstance::Opponent(team, index) => (other.active_mut(*index).unwrap(), &mut other_ui[*index]),
-                                                    MoveTargetInstance::Team(index) => (user.active_mut(*index).unwrap(), &mut user_ui[*index]),
-                                                    MoveTargetInstance::User => (user.active_mut(instance.pokemon.index).unwrap(), &mut user_ui[instance.pokemon.index]),
+                                                    MoveTargetInstance::Opponent(team, index) => (other.active_mut(*index), &mut other_ui[*index]),
+                                                    MoveTargetInstance::Team(index) => (user.active_mut(*index), &mut user_ui[*index]),
+                                                    MoveTargetInstance::User => (user.active_mut(instance.pokemon.index), &mut user_ui[instance.pokemon.index]),
                                                 };
-        
-                                                for moves in moves {
-                                                    match moves {
-                                                        BattleClientMove::TargetHP(damage) => {
-                                                            target.set_hp(*damage);
-                                                            if damage >= &0.0 {
-                                                                target_ui.renderer.flicker()
-                                                            }
-                                                        },
-                                                        BattleClientMove::Effective(effective) => {
-                                                            ui::text::on_effective(&mut self.gui.text, effective);
-                                                        },
-                                                        BattleClientMove::StatStage(stat, stage) => {
-                                                            ui::text::on_stat_stage(&mut self.gui.text, target, *stat, *stage);
-                                                        }
-                                                        BattleClientMove::Faint(target_instance) => {
-                                                            queue.actions.push_front(
-                                                                BattleClientActionInstance {
-                                                                    pokemon: *target_instance,
-                                                                    action: BattleClientAction::Faint,
+
+                                                if let Some(target) = target {
+                                                    for moves in moves {
+                                                        match moves {
+                                                            BattleClientMove::TargetHP(damage) => {
+                                                                target.set_hp(*damage);
+                                                                if damage >= &0.0 {
+                                                                    target_ui.renderer.flicker()
                                                                 }
-                                                            );
-                                                            // exp gain stuff here
-
-                                                        },
-                                                        _ => (),
+                                                            },
+                                                            BattleClientMove::Effective(effective) => {
+                                                                ui::text::on_effective(&mut self.gui.text, effective);
+                                                            },
+                                                            BattleClientMove::StatStage(stat, stage) => {
+                                                                ui::text::on_stat_stage(&mut self.gui.text, target, *stat, *stage);
+                                                            }
+                                                            BattleClientMove::Faint(target_instance) => {
+                                                                queue.actions.push_front(
+                                                                    BattleClientActionInstance {
+                                                                        pokemon: *target_instance,
+                                                                        action: BattleClientAction::Faint,
+                                                                    }
+                                                                );
+                                                                // exp gain stuff here
+    
+                                                            },
+                                                            _ => (),
+                                                        }
                                                     }
-                                                }
 
-                                                target_ui.update_status(Some(target), false);
+                                                    target_ui.update_status(Some(target), false);
+                                                } else {
+                                                    target_ui.update_status(None, false);
+                                                }
 
                                             }
     
@@ -371,7 +375,7 @@ impl BattlePlayerGui {
                                             ui::text::on_faint(&mut self.gui.text, self.is_wild, is_user, target);
                                             user_ui[instance.pokemon.index].renderer.faint();
                                             // let target = match instance.pokemon.team {
-                                            //     Team::Player => &mut self.user as &mut dyn BattlePartyTrait,
+                                            //     Team::Player => &mut self.user as &mut dyn BattlePartyView,
                                             //     Team::Opponent => &mut self.opponent as _,
                                             // };
                                             // ui::text::on_faint(&mut self.gui.text, self.is_wild, instance.pokemon.team, target);
@@ -407,6 +411,12 @@ impl BattlePlayerGui {
                                             // }
     
                                         },
+                                        BattleClientAction::Catch(i) => {
+                                            let o = self.opponent.party.active(*i).unwrap();
+                                            pokemon_firered_clone_storage::data_mut().party.try_push(pokedex::pokemon::instance::PokemonInstance::generate(*o.pokemon().id(), o.level(), o.level(), None));
+                                            self.opponent.party.replace(*i, None);
+                                            self.opponent.renderer[*i].update(None);
+                                        }
                                         _ => todo!(),
                                         // BattleClientAction::GainExp(level, experience) => { // To - do: experience spreading
                                         //     ui::text::on_gain_exp(&mut self.gui.text, pokemon, *experience);
@@ -440,7 +450,7 @@ impl BattlePlayerGui {
                     Some(instance) => {
 
                         let (user, user_ui, other, other_ui) = if instance.pokemon.team == self.player.party.id {
-                            (&mut self.player.party as &mut dyn BattlePartyTrait, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyTrait, &mut self.opponent.renderer)
+                            (&mut self.player.party as &mut dyn BattlePartyView, &mut self.player.renderer, &mut self.opponent.party as &mut dyn BattlePartyView, &mut self.opponent.renderer)
                         } else {
                             (&mut self.opponent.party as _, &mut self.opponent.renderer, &mut self.player.party as _, &mut self.player.renderer)
                         };
@@ -541,8 +551,10 @@ impl BattlePlayerGui {
                                     }
                                 }
                             }
+                            BattleClientAction::Catch(_) => {
+                                queue.current = None;
+                            },
                             _ => todo!(),
-                            // BattleClientAction::Catch(_) => todo!(),
                             // BattleClientAction::GainExp(_, _) => {
                             //     let user = self.user.active_mut(instance.pokemon.index);
                             //     let renderer = user_rend[instance.pokemon.active];
@@ -629,7 +641,7 @@ impl BattleClient for BattlePlayerGui {
         self.opponent.party = opponent;
     }
 
-    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
+    fn add_unknown(&mut self, index: usize, unknown: UnknownPokemon) {
         self.opponent.party.add(index, unknown);       
     }
 

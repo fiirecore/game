@@ -28,18 +28,4 @@ impl PlayerCharacter {
         }        
     }
 
-    pub fn is_frozen(&self) -> bool {
-        self.input_frozen || self.character.is_frozen()
-    }
-
-    pub fn freeze_input(&mut self) {
-        self.input_frozen = true;
-        self.character.stop_move();
-    }
-
-    pub fn unfreeze(&mut self) {
-        self.input_frozen = false;
-        self.character.unfreeze();
-    }
-
 }

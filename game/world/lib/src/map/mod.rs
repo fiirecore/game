@@ -96,6 +96,14 @@ pub enum WorldTime {
     Night,
 }
 
+
+
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub enum MapIcon {
+    City(u8, u8),
+    Route(u8, u8, u8, u8),
+}
+
 impl Default for WorldTime {
     fn default() -> Self {
         Self::Day

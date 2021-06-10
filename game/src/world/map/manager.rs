@@ -30,7 +30,7 @@ use worldlib::{
     serialized::SerializedWorld,
     map::{
         World,
-        manager::{WorldMapManager, TryMoveResult, Door},
+        manager::{WorldMapManager, TryMoveResult},
         WorldTime,
     },
     character::{
@@ -61,22 +61,41 @@ pub struct WorldManager {
 
     textures: WorldTextures,
 
-    warp_transition: WarpTransition,
+    // GUI
 
     start_menu: StartMenu,
     text_window: TextWindow,
     world_map: WorldMapGui,
 
-    // Other
+    // Warp
 
-    pub render_coords: RenderCoords,
-    // noclip_toggle: bool,
+    warp_transition: WarpTransition,
+    door: Option<Door>,
+
+    // Movement
 
     first_direction: Direction,
     player_move_accumulator: f32,
 
-    random_battle: Option<usize>,
+    // Rendering
 
+    screen: RenderCoords,
+
+    // Other
+
+    random_battle: Option<usize>, // remove
+
+}
+
+pub struct Door {
+    pub position: usize,
+    pub tile: worldlib::map::TileId,
+    pub accumulator: f32,
+    pub open: bool,
+}
+
+impl Door {
+    pub const DOOR_MAX: f32 = 3.99;
 }
 
 fn on_start(wm: &mut WorldMapManager, ctx: &mut Context, music: bool) {
@@ -85,14 +104,15 @@ fn on_start(wm: &mut WorldMapManager, ctx: &mut Context, music: bool) {
     }
 }
 
-fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, battle: &mut Option<crate::battle_glue::BattleEntry>, text_window: &mut TextWindow) {
+fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, door_: &mut Option<Door>, first_direction: Direction, battle: &mut Option<crate::battle_glue::BattleEntry>, text_window: &mut TextWindow) {
 
-    if let Some(door) = &mut wm.data.door {
+    if let Some(door) = door_ {
         match door.open {
             true => {
                 if door.accumulator < Door::DOOR_MAX {
                     door.accumulator += delta * 6.0;
                     if door.accumulator >= Door::DOOR_MAX {
+                        wm.try_move(first_direction, delta); // maybe?
                         door.accumulator = Door::DOOR_MAX;
                     }
                 }
@@ -101,7 +121,7 @@ fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, battle: &mut 
                 if door.accumulator > 0.0 {
                     door.accumulator -= delta * 6.0;
                     if door.accumulator <= 0.0 {
-                        wm.data.door = None;
+                        *door_ = None;
                     }
                 }
             }
@@ -116,7 +136,7 @@ fn update(wm: &mut WorldMapManager, ctx: &mut Context, delta: f32, battle: &mut 
     }
 }
 
-fn draw(wm: &WorldMapManager, ctx: &mut Context, textures: &WorldTextures, screen: &RenderCoords, border: bool) {
+fn draw(wm: &WorldMapManager, ctx: &mut Context, door: &Option<Door>, textures: &WorldTextures, screen: &RenderCoords, border: bool) {
     if let Some(map) = wm.get() {
 
         let color = match map.time {
@@ -126,14 +146,14 @@ fn draw(wm: &WorldMapManager, ctx: &mut Context, textures: &WorldTextures, scree
 
         match &map.chunk {
             Some(chunk) => {
-                map.draw(ctx, textures, &wm.data.door, &screen.offset(chunk.coords), border, color);
+                map.draw(ctx, textures, door, &screen.offset(chunk.coords), border, color);
                 for map in chunk.connections.iter().flat_map(|id| wm.maps.get(id)) {
                     if let Some(chunk) = &map.chunk {
                         map.draw(ctx, textures, &None, &screen.offset(chunk.coords), false, color);
                     }
                 }
             },
-            None => map.draw(ctx, textures, &wm.data.door, screen, border, color),
+            None => map.draw(ctx, textures, door, screen, border, color),
         }
 
         textures.player.draw(ctx, &wm.data.player.character, color);
@@ -160,14 +180,15 @@ impl WorldManager {
 
             textures: WorldTextures::new(ctx),
 
-            warp_transition: WarpTransition::new(),
-
             start_menu: StartMenu::new(ctx, party, bag),
             text_window: TextWindow::new(ctx),
             world_map: Default::default(),
 
+            warp_transition: WarpTransition::new(),
+            door: None,
+
             first_direction: Direction::default(),
-            render_coords: RenderCoords::default(),
+            screen: RenderCoords::default(),
             // noclip_toggle: false,
             player_move_accumulator: 0.0,
 
@@ -246,7 +267,7 @@ impl WorldManager {
                     self.debug_input(ctx)
                 }
     
-                if self.map_manager.data.player.character.position.offset.is_zero() && !self.map_manager.data.player.is_frozen() {
+                if self.map_manager.data.player.character.position.offset.is_zero() && !self.map_manager.data.player.character.is_frozen() && !self.map_manager.data.player.input_frozen {
     
                     if down(ctx, Control::B) {
                         if self.map_manager.data.player.character.move_type == MoveType::Walking {
@@ -272,6 +293,19 @@ impl WorldManager {
                                             }
                                         }
                                         // self.text_window.set_text(firecore_game::text::Message::new(firecore_game::text::TextColor::Black, vec![]));
+                                    }
+                                    TryMoveResult::StartWarpOnTile(tile, coords) => {
+                                        if self.textures.tiles.has_door(&tile) {
+                                            self.door = Some(
+                                                Door {
+                                                    position: coords.x as usize + coords.y as usize * self.map_manager.get().unwrap().width,
+                                                    tile,
+                                                    accumulator: 0.0,
+                                                    open: true,
+                                                }
+                                            );
+                                        }
+                                        self.map_manager.player().input_frozen = true;
                                     }
                                 }
                             }
@@ -311,7 +345,7 @@ impl WorldManager {
             self.textures.tiles.update(delta);
             self.textures.player.update(delta, &mut self.map_manager.data.player.character);
     
-           update(&mut self.map_manager, ctx, delta, battle, &mut self.text_window);
+           update(&mut self.map_manager, ctx, delta, &mut self.door, self.first_direction, battle, &mut self.text_window);
     
             if self.warp_transition.alive() {
                 self.warp_transition.update(delta);
@@ -319,7 +353,20 @@ impl WorldManager {
                     if let Some(destination) = self.map_manager.data.warp {
                         self.textures.player.draw = !destination.transition.move_on_exit;
                         let change_music = destination.transition.change_music;
-                        self.map_manager.warp(destination);
+                        let position = destination.position;
+                        if self.map_manager.warp(destination) {
+                            let tile = self.map_manager.tile(position.coords).unwrap_or_default();
+                            if self.textures.tiles.has_door(&tile) {
+                                self.door = Some(
+                                    Door {
+                                        position: position.coords.x as usize + position.coords.y as usize * self.map_manager.get().unwrap().width,
+                                        tile,
+                                        accumulator: 0.0,
+                                        open: true,
+                                    }
+                                );
+                            }
+                        }
                         self.map_start(ctx, change_music);
                         on_tile(&mut self.map_manager, &mut self.textures, battle);
                     }
@@ -327,30 +374,34 @@ impl WorldManager {
                 if self.warp_transition.finished() {
                     self.textures.player.draw = true;
                     self.warp_transition.despawn();
-                    self.map_manager.data.player.unfreeze();
+                    self.map_manager.data.player.character.unfreeze();
+                    self.map_manager.player().input_frozen = false;
                     if let Some(destination) = self.map_manager.data.warp.take() {
                         if destination.transition.move_on_exit {
                             self.map_manager.try_move(destination.position.direction.unwrap_or(self.map_manager.data.player.character.position.direction), delta);
                         }
                     }
-                    
                 }
             } else {
                 if let Some(warp) = &self.map_manager.data.warp {
-                    if if let Some(door) = &self.map_manager.data.door {
+                    if if let Some(door) = &self.door {
                         door.accumulator == 0.0 && !door.open
                     } else {
                         true
                     } || !warp.transition.warp_on_tile {
                         self.warp_transition.spawn();                   
-                        self.map_manager.data.player.freeze_input();
+                        self.map_manager.data.player.input_frozen = true;
                     }
                 }
             }
     
-            if !self.map_manager.data.player.is_frozen() {
-                if self.map_manager.do_move(delta) {
-                    self.stop_player(battle);
+            if !self.map_manager.data.player.character.is_frozen() {
+                if if let Some(door) = &self.door {
+                    !door.open || door.accumulator == Door::DOOR_MAX
+                } else { true } {
+                    if self.map_manager.data.player.do_move(delta) {
+                        self.stop_player(battle);
+                    }
                 }
             }
 
@@ -359,7 +410,7 @@ impl WorldManager {
                 None => Coordinate::ZERO,
             };
     
-            self.render_coords = RenderCoords::new(offset, &self.map_manager.data.player.character);
+            self.screen = RenderCoords::new(offset, &self.map_manager.data.player.character);
 
         }
         
@@ -381,7 +432,7 @@ impl WorldManager {
             on_tile(&mut self.map_manager, &mut self.textures, battle);
         }
 
-        if let Some(door) = &mut self.map_manager.data.door {
+        if let Some(door) = &mut self.door {
             if self.map_manager.data.warp.is_some() {
                 self.textures.player.draw = false;
             }
@@ -455,8 +506,8 @@ impl WorldManager {
 }
 
 impl GameState for WorldManager {
-    fn process(&mut self, command: crate::game::CommandResult) {
-        match command.command.as_str() {
+    fn process(&mut self, result: crate::game::CommandResult) {
+        match result.command {
             "help" => {
                 info!("To - do: help list.");
                 info!("To - do: show messages in game")
@@ -487,9 +538,9 @@ impl GameState for WorldManager {
                 player.noclip = true;
                 info!("Unfroze player!");
             },
-            "party" => match command.args.get(0) {
-                Some(arg) => match arg.as_str() { 
-                    "info" => match command.args.get(1) {
+            "party" => match result.args.get(0) {
+                Some(arg) => match *arg { 
+                    "info" => match result.args.get(1) {
                         Some(index) => match index.parse::<usize>() {
                             Ok(index) => {
                                 if let Some(instance) = data().party.get(index) {
@@ -508,10 +559,10 @@ impl GameState for WorldManager {
                 }
                 None => warn!("Command /party requires an index for a pokemon in the player's party!"),
             }
-            "battle" => match command.args.get(0) {
-                Some(arg) => match arg.as_str() {
+            "battle" => match result.args.get(0) {
+                Some(arg) => match *arg {
                     "random" => {
-                        self.random_battle = match command.args.get(1) {
+                        self.random_battle = match result.args.get(1) {
                             Some(len) => match len.parse::<usize>() {
                                 Ok(size) => Some(size),
                                 Err(err) => {
@@ -526,8 +577,8 @@ impl GameState for WorldManager {
                 }
                 None => warn!("Command /battle requires arguments TODO"),
             }
-            "script" => match command.args.get(0) {
-                Some(arg) => match arg.as_str() {
+            "script" => match result.args.get(0) {
+                Some(arg) => match *arg {
                     "clear" => {
                         data_mut().world.scripts.clear();
                         info!("Cleared used scripts in player data!");
@@ -539,8 +590,8 @@ impl GameState for WorldManager {
                 },
                 None => warn!("/script requires arguments \"clear\" or \"list\"."),
             },
-            "warp" => if let Some(map_or_index) = command.args.get(0).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
-                let location = if let Some(index) = command.args.get(1).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
+            "warp" => if let Some(map_or_index) = result.args.get(0).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
+                let location = if let Some(index) = result.args.get(1).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
                     util::Location::new(Some(map_or_index), index)
                 } else {
                     util::Location::new(None, map_or_index)
@@ -549,7 +600,7 @@ impl GameState for WorldManager {
             } else {
                 warn!("Invalid warp command syntax!")
             }
-            _ => warn!("Unknown world command \"{}\".", command),
+            _ => warn!("Unknown world command \"{}\".", result),
         }
     }
 
@@ -561,14 +612,14 @@ impl GameState for WorldManager {
             self.world_map.draw(ctx);
         } else {
 
-            draw(&self.map_manager, ctx, &self.textures, &self.render_coords, true);
+            draw(&self.map_manager, ctx, &self.door, &self.textures, &self.screen, true);
     
             let offset = match self.map_manager.get().map(|map| map.chunk.as_ref()).flatten() {
                 Some(chunk) => chunk.coords,
                 None => Coordinate::ZERO,
             };
     
-            let screen = self.render_coords.offset(offset);
+            let screen = self.screen.offset(offset);
     
             self.textures.player.bush.draw(ctx, &screen);
     

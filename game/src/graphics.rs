@@ -65,7 +65,7 @@ static mut WHITE_TEXTURE: Option<Texture> = None;
 
 fn new_white_texture(ctx: &mut Context) {
 	if unsafe { WHITE_TEXTURE.is_none() } {
-		unsafe { WHITE_TEXTURE = Some(byte_texture(ctx, include_bytes!("../../assets/white.png"))) }		
+		unsafe { WHITE_TEXTURE = Some(byte_texture(ctx, include_bytes!("../assets/white.png"))) }		
 	}
 }
 
@@ -83,8 +83,8 @@ pub fn draw_rectangle(ctx: &mut Context, x: f32, y: f32, w: f32, h: f32, color: 
 
 
 pub fn draw_rectangle_lines(ctx: &mut Context, x: f32, y: f32, w: f32, h: f32, thickness: f32, color: Color) {
-    draw_line(ctx, x, y, w, true, thickness, color);
-	draw_line(ctx, x, y, h, false, thickness, color);
+    draw_line(ctx, x, y + 1.0, w, true, thickness, color);
+	draw_line(ctx, x + 1.0, y, h, false, thickness, color);
 	draw_line(ctx, x, y + h, w, true, thickness, color);
 	draw_line(ctx, x + w, y, h, false, thickness, color);
 }

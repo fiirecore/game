@@ -16,12 +16,9 @@ use crate::{
 
 use crate::battle::{
     BattleType,
-    pokemon::{
-        view::{
-            BattlePartyKnown, 
-            BattlePartyUnknown,
-            
-        },
+    pokemon::view::{
+        BattlePartyKnown, 
+        BattlePartyUnknown,
     },
     ui::{
         view::{

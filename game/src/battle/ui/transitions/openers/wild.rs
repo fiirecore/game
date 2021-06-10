@@ -42,7 +42,7 @@ impl WildBattleOpener {
 
 impl BattleOpener for WildBattleOpener {
 
-    fn spawn(&mut self, trainer: Option<&BattleTrainerEntry>) {}
+    fn spawn(&mut self, _trainer: Option<&BattleTrainerEntry>) {}
 
     fn update(&mut self, delta: f32) {
         self.opener.update(delta);

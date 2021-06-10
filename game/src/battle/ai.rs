@@ -3,7 +3,7 @@ use pokedex::moves::target::MoveTargetInstance;
 use crate::battle::{
     client::BattleClient,
     pokemon::{
-        view::{BattlePartyKnown, BattlePartyTrait, BattlePartyUnknown, PokemonUnknown},
+        view::{BattlePartyKnown, BattlePartyUnknown, BattlePartyView, UnknownPokemon},
         BattleMove,
     },
     BattleType,
@@ -18,16 +18,15 @@ pub struct BattlePlayerAi {
 }
 
 impl BattleClient for BattlePlayerAi {
-
     fn user(&mut self, _type: BattleType, user: BattlePartyKnown) {
         self.user = user;
     }
 
     fn opponents(&mut self, opponent: BattlePartyUnknown) {
-        self.opponent = opponent;        
+        self.opponent = opponent;
     }
 
-    fn add_unknown(&mut self, index: usize, unknown: PokemonUnknown) {
+    fn add_unknown(&mut self, index: usize, unknown: UnknownPokemon) {
         self.opponent.add(index, unknown);
     }
 
@@ -104,5 +103,4 @@ impl BattleClient for BattlePlayerAi {
     fn should_forfeit(&mut self) -> bool {
         false
     }
-
 }

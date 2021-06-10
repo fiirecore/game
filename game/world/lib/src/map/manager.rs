@@ -21,6 +21,7 @@ use crate::{
 pub enum TryMoveResult {
     MapUpdate,
     TrySwim,
+    StartWarpOnTile(TileId, Coordinate),
 }
 
 pub type Maps = HashMap<Location, WorldMap>;
@@ -29,29 +30,28 @@ pub type Maps = HashMap<Location, WorldMap>;
 pub struct WorldMapManager {
 
     pub maps: Maps,
+    #[serde(skip)]
     pub data: WorldMapManagerData,
 
 }
 
-#[derive(Default, Deserialize, Serialize)]
+#[derive(Default)]
 pub struct WorldMapManagerData {
 
     // pub constants: constants::WorldMapManagerConstants,
 
-    #[serde(skip)]
+    // #[serde(skip)]
     pub current: Option<Location>,
 
-    #[serde(skip)]
+    // #[serde(skip)]
     pub player: PlayerCharacter,
 
-    #[serde(skip)]
+    // #[serde(skip)]
     pub warp: Option<WarpDestination>,
 
-    #[serde(skip)]
+    // #[serde(skip)]
     pub battling: Option<TrainerEntry>,
 
-    #[serde(skip)]
-    pub door: Option<Door>,
 }
 
 pub struct TrainerEntry {
@@ -61,17 +61,6 @@ pub struct TrainerEntry {
 }
 
 pub type TrainerEntryRef<'a> = &'a mut Option<TrainerEntry>;
-
-pub struct Door {
-    pub position: usize,
-    pub tile: TileId,
-    pub accumulator: f32,
-    pub open: bool,
-}
-
-impl Door {
-    pub const DOOR_MAX: f32 = 3.99;
-}
 
 impl World for WorldMapManager {
     fn in_bounds(&self, coords: Coordinate) -> bool {
@@ -97,7 +86,13 @@ impl WorldMapManager {
         self.data.current.as_ref().map(|id| self.maps.get(id)).flatten()
     }
 
+    pub fn player(&mut self) -> &mut PlayerCharacter {
+        &mut self.data.player
+    }
+
     pub fn try_move(&mut self, direction: Direction, delta: f32) -> Option<TryMoveResult> { // return chunk update
+
+        let mut result = None;
 
         // let mut update = false;
 
@@ -116,19 +111,8 @@ impl WorldMapManager {
                         return Some(TryMoveResult::MapUpdate);
                     } else {
 
-                        // open door on warp
+                        result = Some(TryMoveResult::StartWarpOnTile(self.get().map(|m| m.tile(coords)).flatten().unwrap_or_default(), coords));
 
-                        let map = self.get().unwrap();
-                        if destination.transition.door {
-                            self.data.door = Some(
-                                Door {
-                                    position: coords.x as usize + coords.y as usize * map.width,
-                                    tile: map.tile(coords).unwrap(),
-                                    accumulator: 0.0,
-                                    open: true,
-                                }
-                            );
-                        }
                         self.data.player.character.update_sprite();
 
                         // door open end
@@ -142,14 +126,31 @@ impl WorldMapManager {
             false => false,
         };
 
+        #[deprecated(note = "add jumping")]
+        fn one_way_tile(tile_id: TileId) -> bool {
+            matches!(tile_id, 135 | 176 | 177 | 143 | 151 | 184 | 185 | 192 | 193 | 217 | 1234)
+        }
+
         let walk = self.tile(coords).map(|tile_id| match direction {
             Direction::Up => false,
-            Direction::Down => matches!(tile_id, 135 | 176 | 177 | 143 | 151 | 184 | 185 | 192 | 193 | 217 | 1234),
+            Direction::Down => one_way_tile(tile_id),
             Direction::Left => tile_id == 133,
             Direction::Right => tile_id == 134,
         }).unwrap_or_default();
         
         let allow = warp || walk;
+
+        let allow = if !allow {
+            // checks if player is inside a solid tile or outside of map, lets them move if true
+            // also checks if player is on a one way tile
+            if self.tile(self.data.player.character.position.coords).map(one_way_tile).unwrap_or(false) {
+                false
+            } else {
+                self.movement(self.data.player.character.position.coords).map(|code| !can_move(self.data.player.character.move_type, code)).unwrap_or(true)
+            }
+        } else {
+            allow
+        };            
 
         if self.data.player.character.move_type == MoveType::Swimming && can_walk(move_code) {
             self.data.player.character.move_type = MoveType::Walking
@@ -162,7 +163,8 @@ impl WorldMapManager {
         } else if can_swim(move_code) && self.data.player.character.move_type != MoveType::Swimming {
             return Some(TryMoveResult::TrySwim);
         }
-        None
+
+        result
     }
 
     pub fn walk_connections(&mut self, coords: Coordinate) -> Option<MovementId> {
@@ -214,36 +216,20 @@ impl WorldMapManager {
         
     }
 
-    pub fn warp(&mut self, destination: WarpDestination) {
-        match self.maps.get(&destination.location) {
-            Some(map) => {
-
-                if destination.transition.door {
-                    self.data.door = Some(
-                        Door {
-                            position: destination.position.coords.x as usize + destination.position.coords.y as usize * map.width,
-                            tile: map.tile(destination.position.coords).unwrap(),
-                            accumulator: 0.0,
-                            open: true,
-                        }
-                    );
-                }
-
+    pub fn warp(&mut self, destination: WarpDestination) -> bool {
+        match self.maps.contains_key(&destination.location) {
+            true => {
                 self.data.player.character.position.from_destination(destination.position);
                 self.data.current = Some(destination.location);
+
+                true
             }
-            None => todo!(),
+            false => todo!(),
         }
     }
 
     pub fn do_move(&mut self, delta: f32) -> bool {
-        if if let Some(door) = &self.data.door {
-            !door.open || door.accumulator == Door::DOOR_MAX
-        } else { true } {
-            self.data.player.do_move(delta)
-        } else {
-            false
-        }
+        self.data.player.do_move(delta)
     }
 
 }

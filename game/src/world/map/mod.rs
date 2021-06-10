@@ -1,7 +1,7 @@
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 use crate::{
-    deps::Random,
+    deps::random::{Random, RandomState, GLOBAL_STATE},
     util::{Entity, Completable, Direction, Timer, Location},
     pokedex::item::ItemStack,
     input::{pressed, Control, debug_pressed, DebugBind},
@@ -49,7 +49,7 @@ pub mod manager;
 pub mod texture;
 pub mod warp;
 
-pub static NPC_RANDOM: Random = Random::new();
+pub static NPC_RANDOM: Random = Random::new(RandomState::Static(&GLOBAL_STATE));
 pub static mut NPC_TIMER: Timer = Timer::new(true, 0.5);
 pub static WILD_ENCOUNTERS: AtomicBool = AtomicBool::new(true);
 
@@ -477,7 +477,7 @@ impl GameWorld for WorldMap {
                                     if window.text.finished() {
                                         window.text.despawn();
                                         if *unfreeze {
-                                            world.player.unfreeze();
+                                            world.player.character.unfreeze();
                                         }
                                         script.option = 0;
                                         despawn_script(script);
@@ -487,7 +487,7 @@ impl GameWorld for WorldMap {
 
                                 } else {
                                     if *unfreeze {
-                                        world.player.unfreeze();
+                                        world.player.character.unfreeze();
                                     }
                                     script.option = 0;
                                     despawn_script(script);
@@ -565,7 +565,7 @@ impl GameWorld for WorldMap {
                     window.text.despawn();
                     let (id, npc) = self.npcs.active.take().unwrap();
                     self.npcs.list.insert(id, Some(npc));
-                    world.player.unfreeze();
+                    world.player.character.unfreeze();
                 } else {
                     window.text.update(ctx, delta);
                 }
@@ -574,7 +574,7 @@ impl GameWorld for WorldMap {
                     npc.character.move_to_destination(delta);
                 } else {
                     window.text.spawn();
-                    world.player.freeze_input();
+                    world.player.input_frozen = true;
                     npc.character.destination = None;
     
                     let mut message_ran = false;
@@ -629,11 +629,12 @@ impl GameWorld for WorldMap {
     
                     world.player.character.position.direction = npc.character.position.direction.inverse();
                     if world.player.character.is_frozen() {
-                        world.player.unfreeze();
+                        world.player.character.unfreeze();
                     }
 
                     if !message_ran {
                         window.text.despawn();
+                        world.player.input_frozen = false;
                         let (id, npc) = self.npcs.active.take().unwrap();
                         self.npcs.list.insert(id, Some(npc));
                     } else {
@@ -645,7 +646,7 @@ impl GameWorld for WorldMap {
         }
     }
 
-    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<worldlib::map::manager::Door>, screen: &RenderCoords, border: bool, color: Color) {
+    fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<manager::Door>, screen: &RenderCoords, border: bool, color: Color) {
         let primary = textures.tiles.palettes.get(&self.palettes[0]).expect("Could not get primary palette for map!");
         let length = primary.height() as TileId;
         let secondary = textures.tiles.palettes.get(&self.palettes[1]).expect("Could not get secondary palette for map!");

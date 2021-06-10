@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
-use deps::{
-    StaticRef,
+use deps::borrow::{
     Identifiable,
+    StaticRef,
 };
 use super::{ItemId, Item, ItemRef, StackSize};
 

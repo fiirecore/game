@@ -14,7 +14,10 @@ use crate::{
 
 use crate::{
     client::BattleClient,
-    pokemon::ActivePokemon,
+    pokemon::{
+        ActivePokemon,
+        view::{BattlePartyKnown, BattlePartyUnknown, UnknownPokemon},
+    },
 };
 
 // #[deprecated(note = "use enum instead")]
@@ -117,27 +120,27 @@ impl BattleParty {
 
     pub fn collect_owned(self) -> BorrowedParty {
         self.pokemon
-    }
+    }    
 
-    pub fn as_known(&self) -> super::view::BattlePartyKnown {
-        super::view::BattlePartyKnown {
+    pub fn as_known(&self) -> BattlePartyKnown {
+        BattlePartyKnown {
             id: self.id,
             pokemon: self.collect_cloned(),
             active: self.active.iter().map(|active| active.index()).collect(),
         }
     }
 
-    pub fn as_unknown(&self) -> super::view::BattlePartyUnknown {
+    pub fn as_unknown(&self) -> BattlePartyUnknown {
         let active = self.active.iter().map(|active| active.index()).collect::<ArrayVec<[Option<usize>; 3]>>();
         let mut pokemon = ArrayVec::new();
         for (i, p) in self.collect_ref().iter().enumerate() {
             if active.contains(&Some(i)) {
-                pokemon.push(Some(super::view::PokemonUnknown::new(p)));
+                pokemon.push(Some(UnknownPokemon::new(p)));
             } else {
                 pokemon.push(None);
             }
         }
-        super::view::BattlePartyUnknown {
+        BattlePartyUnknown {
             id: self.id,
             pokemon,
             active,

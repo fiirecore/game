@@ -1,6 +1,7 @@
 use std::{rc::Rc, sync::atomic::Ordering::Relaxed};
 
 use game::{
+	util::Entity,
 	storage::{PLAYER_SAVES, save, data_mut, player::{SHOULD_SAVE, PlayerSaves}},
 	gui::{
 		party::PartyGui,
@@ -134,7 +135,7 @@ impl State for GameStateManager {
 		}
 		match self.state {
 			GameStates::World => {
-				self.world.update(ctx, delta, self.console.alive, &mut self.battle_entry, &mut self.action);
+				self.world.update(ctx, delta, self.console.alive(), &mut self.battle_entry, &mut self.action);
 				if let Some(entry) = self.battle_entry.take() {
 					if self.battle.battle(entry) {
 						self.state = GameStates::Battle;
@@ -142,7 +143,7 @@ impl State for GameStateManager {
 				}
 			}
 			GameStates::Battle => {
-				self.battle.update(ctx, delta, self.console.alive);
+				self.battle.update(ctx, delta, self.console.alive());
 				if self.battle.finished {
 					let save = data_mut();
 					if let Some((winner, trainer)) = self.battle.update_data(save) {

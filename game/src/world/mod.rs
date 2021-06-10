@@ -6,11 +6,14 @@ use deps::tetra::{Context, graphics::Color};
 
 use worldlib::map::{
     World,
-    manager::{WorldMapManagerData, Door},
+    manager::{WorldMapManagerData},
 };
 
-use map::texture::WorldTextures;
-use self::gui::TextWindow;
+use self::{
+    map::texture::WorldTextures,
+    gui::TextWindow,
+    map::manager::Door,
+};
 
 pub mod map;
 pub mod npc;
@@ -31,9 +34,4 @@ pub trait GameWorld: World {
 
     fn draw(&self, ctx: &mut Context, textures: &WorldTextures, door: &Option<Door>, screen: &RenderCoords, border: bool, color: Color);
 
-}
-
-pub fn seed_randoms(seed: u64) {
-    worldlib::map::wild::WILD_RANDOM.seed(seed);
-	map::NPC_RANDOM.seed(seed);
 }

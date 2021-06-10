@@ -21,12 +21,8 @@ pub use firecore_text::init as text;
 
 pub static LOADING_FINISHED: AtomicBool = AtomicBool::new(false);
 
-pub fn seed_randoms(seed: u64) {
-    pokedex::seed_random(seed);
-    #[cfg(feature = "world")]
-    crate::world::seed_randoms(seed);
-    #[cfg(feature = "battle")]
-	crate::battle::BATTLE_RANDOM.seed(seed);
+pub fn seed_random(seed: u64) {
+    deps::random::seed_global(seed);
 }
 
 pub fn configuration() -> Result {

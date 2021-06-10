@@ -2,13 +2,13 @@ use deps::vec::ArrayVec;
 use pokedex::pokemon::{Health, Level, PokemonRef, instance::PokemonInstance, party::PokemonParty};
 use storage_player::PlayerId;
 
-pub trait BattlePartyTrait {
+pub trait BattlePartyView {
 
     fn id(&self) -> &PlayerId;
 
-    fn active(&self, active: usize) -> Option<&dyn PokemonKnowData>;
+    fn active(&self, active: usize) -> Option<&dyn PokemonView>;
 
-    fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonKnowData>;
+    fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonView>;
 
     fn active_len(&self) -> usize;
 
@@ -16,9 +16,9 @@ pub trait BattlePartyTrait {
 
     fn active_eq(&self, active: usize, index: Option<usize>) -> bool;
 
-    fn pokemon(&self, index: usize) -> Option<&dyn PokemonKnowData>;
+    fn pokemon(&self, index: usize) -> Option<&dyn PokemonView>;
 
-    fn add(&mut self, index: usize, unknown: PokemonUnknown);
+    fn add(&mut self, index: usize, unknown: UnknownPokemon);
 
     fn replace(&mut self, active: usize, new: Option<usize>);
 
@@ -27,7 +27,7 @@ pub trait BattlePartyTrait {
     // fn update_hp(&mut self, active: usize, hp: f32);
 }
 
-pub trait PokemonKnowData {
+pub trait PokemonView {
 
     fn pokemon(&self) -> PokemonRef;
 
@@ -45,7 +45,7 @@ pub trait PokemonKnowData {
 
 }
 
-impl PokemonKnowData for PokemonInstance {
+impl PokemonView for PokemonInstance {
     fn pokemon(&self) -> PokemonRef {
         self.pokemon
     }
@@ -97,17 +97,17 @@ impl Default for BattlePartyKnown {
     }
 }
 
-impl BattlePartyTrait for BattlePartyKnown {
+impl BattlePartyView for BattlePartyKnown {
 
     fn id(&self) -> &PlayerId {
         &self.id
     }
 
-    fn active(&self, active: usize) -> Option<&dyn PokemonKnowData> {
+    fn active(&self, active: usize) -> Option<&dyn PokemonView> {
         self.active.get(active).copied().flatten().map(|index| self.pokemon.get(index)).flatten().map(|i| i as _)
     }
 
-    fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonKnowData> {
+    fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonView> {
         self.active.get(active).copied().flatten().map(move |index| self.pokemon.get_mut(index)).flatten().map(|i| i as _)
     }
 
@@ -123,11 +123,11 @@ impl BattlePartyTrait for BattlePartyKnown {
         self.active.get(active).map(|i| i == &index).unwrap_or_default()
     }
 
-    fn pokemon(&self, index: usize) -> Option<&dyn PokemonKnowData> {
+    fn pokemon(&self, index: usize) -> Option<&dyn PokemonView> {
         self.pokemon.get(index).map(|i| i as _)
     }
 
-    fn add(&mut self, _: usize, _: PokemonUnknown) {
+    fn add(&mut self, _: usize, _: UnknownPokemon) {
         
     }
 
@@ -145,7 +145,7 @@ impl BattlePartyTrait for BattlePartyKnown {
 pub struct BattlePartyUnknown {
     pub id: PlayerId,
     pub active: ArrayVec<[Option<usize>; 3]>,
-    pub pokemon: ArrayVec<[Option<PokemonUnknown>; 6]>,
+    pub pokemon: ArrayVec<[Option<UnknownPokemon>; 6]>,
 }
 
 impl Default for BattlePartyUnknown {
@@ -158,17 +158,17 @@ impl Default for BattlePartyUnknown {
     }
 }
 
-impl BattlePartyTrait for BattlePartyUnknown {
+impl BattlePartyView for BattlePartyUnknown {
 
     fn id(&self) -> &PlayerId {
         &self.id
     }
 
-    fn active(&self, active: usize) -> Option<&dyn PokemonKnowData> {
+    fn active(&self, active: usize) -> Option<&dyn PokemonView> {
         self.active.get(active).copied().flatten().map(|active| &self.pokemon[active] as _)
     }
     
-    fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonKnowData> {
+    fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonView> {
         // if let Some(active) = self.active.g
         self.active.get(active).copied().flatten().map(move |active| &mut self.pokemon[active] as _)
     }
@@ -185,11 +185,11 @@ impl BattlePartyTrait for BattlePartyUnknown {
         self.active.get(active).map(|i| i == &index).unwrap_or_default()
     }
 
-    fn pokemon(&self, index: usize) -> Option<&dyn PokemonKnowData> {
+    fn pokemon(&self, index: usize) -> Option<&dyn PokemonView> {
         self.pokemon.get(index).map(|p| p as _)
     }
 
-    fn add(&mut self, index: usize, unknown: PokemonUnknown) {
+    fn add(&mut self, index: usize, unknown: UnknownPokemon) {
         self.pokemon[index] = Some(unknown);
     }
 
@@ -204,14 +204,14 @@ impl BattlePartyTrait for BattlePartyUnknown {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct PokemonUnknown {
+pub struct UnknownPokemon {
     pub pokemon: PokemonRef,
     pub level: Level,
     pub hp: f32, // % of hp
     // pub moves:
 }
 
-impl PokemonUnknown {
+impl UnknownPokemon {
 
     pub fn new(pokemon: &PokemonInstance) -> Self {
         Self {
@@ -223,7 +223,7 @@ impl PokemonUnknown {
 
 }
 
-impl PokemonKnowData for Option<PokemonUnknown> {
+impl PokemonView for Option<UnknownPokemon> {
 
     fn pokemon(&self) -> PokemonRef {
         match self {

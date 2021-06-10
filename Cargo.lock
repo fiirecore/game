@@ -397,7 +397,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-battle"
-version = "0.5.0-2021-06-07"
+version = "0.5.0-beta.2021-06-10"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -428,7 +428,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-game"
-version = "0.5.0-2021-06-07"
+version = "0.5.0-beta.2021-06-10"
 dependencies = [
  "atomic",
  "enum-map",
@@ -446,7 +446,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex"
-version = "0.5.0-2021-06-07"
+version = "0.5.0-beta.2021-06-07"
 dependencies = [
  "firecore-dependencies",
  "serde",
@@ -454,7 +454,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex-game"
-version = "0.5.0-2021-05-26"
+version = "0.5.0-beta.2021-05-26"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -463,7 +463,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-saves"
-version = "0.5.0-2021-06-07"
+version = "0.5.0-beta.2021-06-07"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -485,7 +485,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-text"
-version = "0.5.0-2021-06-07"
+version = "0.5.0-beta.2021-06-07"
 dependencies = [
  "firecore-dependencies",
  "firecore-font",
@@ -502,7 +502,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-world-lib"
-version = "0.4.0"
+version = "0.5.0-beta.2021-06-10"
 dependencies = [
  "firecore-audio-lib",
  "firecore-dependencies",
@@ -866,7 +866,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone"
-version = "0.5.0-2021-06-07"
+version = "0.5.0-beta.2021-06-07"
 dependencies = [
  "audio-builder",
  "dex-builder",

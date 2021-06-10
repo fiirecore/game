@@ -74,7 +74,7 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures, worl
     (manager, textures, map_gui_locs)
 }
 
-pub(crate) type MapGuiPos = Option<(firecore_dependencies::tetra::math::Vec2<u8>, String, Location)>;
+pub(crate) type MapGuiPos = Option<(worldlib::map::MapIcon, String, Location)>;
 
 fn load_map(root_path: &Path, file: &Path) -> (Vec<WorldMap>, MapGuiPos) {
     println!("Loading map under: {:?}", root_path);
@@ -109,7 +109,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map
 
     let loc = Location::new(map, config.identifier);
 
-    let map_gui_pos = config.chunk.as_ref().map(|chunk| chunk.map_position.map(|pos| (pos, config.name.clone(), loc))).flatten();
+    let map_gui_pos = config.chunk.as_ref().map(|chunk| chunk.map_icon.map(|i| (i, config.name.clone(), loc))).flatten();
 
     let gba_map = get_gba_map(
         std::fs::read(root_path.join(config.file)).unwrap_or_else(|err| {

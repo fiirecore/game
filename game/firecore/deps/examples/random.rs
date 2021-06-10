@@ -1,6 +1,6 @@
-use firecore_dependencies::Random;
+use firecore_dependencies::random::{Random, RandomState};
 
-static RANDOM: Random = Random::new();
+static RANDOM: Random = Random::new(RandomState::UNIQUE);
 
 fn main() {
 

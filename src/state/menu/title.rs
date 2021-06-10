@@ -57,7 +57,7 @@ impl State for TitleState {
 	fn update(&mut self, ctx: &mut Context) -> Result {	
 		if pressed(ctx, Control::A) {
 			let seed = self.accumulator as u64 % 256;
-			game::init::seed_randoms(seed);
+			game::init::seed_random(seed);
 			self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
 		}
 		self.accumulator += game::tetra::time::get_delta_time(ctx).as_secs_f32();
