@@ -28,6 +28,7 @@ impl Console {
                 }
                 if input::is_key_pressed(ctx, Key::Slash) || input::is_key_pressed(ctx, Key::Escape) {
                     self.despawn();
+                    return None;
                 }
                 if input::is_key_pressed(ctx, Key::Up) {
                     self.position = (self.position + 1).min(self.commands.len().saturating_sub(1));
@@ -47,19 +48,18 @@ impl Console {
 
                     self.commands.push_front(String::new());
 
-                    if let Some(command) = self.commands.get(self.position) {
+                    if let Some(command) = self.commands.get(self.position + 1) {
+                        
                         let mut args = command.split_ascii_whitespace();
 
                         let command = match args.next() {
                             Some(command) => command,
                             None => {
-                                game::log::warn!("Could not parse command {}!", command);
+                                warn!("Could not parse command {} at position {}!", command, self.position);
                                 self.alive = false;
                                 return None;
                             },
                         };
-    
-                        let args = args.collect();
     
                         self.alive = false;
 

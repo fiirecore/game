@@ -59,7 +59,7 @@ impl TrainerBattleIntroduction {
 
 impl BattleIntroduction for TrainerBattleIntroduction {
 
-    fn spawn(&mut self, battle_type: BattleType, trainer: Option<&BattleTrainerEntry>, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
+    fn spawn(&mut self, _battle_type: BattleType, trainer: Option<&BattleTrainerEntry>, player: &BattlePartyKnown, opponent: &BattlePartyUnknown, text: &mut TextDisplay) {
         text.clear();
 
         if let Some(trainer) = trainer {

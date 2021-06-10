@@ -121,6 +121,11 @@ impl StartMenu {
         self.party.alive() || self.bag.alive()
     }
 
+    pub fn spawn_party(&mut self) {
+        self.spawn();
+        self.party.spawn_world();
+    }
+
 }
 
 impl Entity for StartMenu {

@@ -17,7 +17,7 @@ use worldlib::{
         wild::{WildEntry, WILD_RANDOM},
         manager::{TrainerEntry, TrainerEntryRef},
     },
-    character::npc::{Npc, NpcId},
+    character::npc::{Npc, NpcId, trainer::TrainerDisable},
 };
 
 use crate::world::{
@@ -99,8 +99,16 @@ pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, w
         if winner == player.id {
             if trainer {
                 let battled = &mut player.world.get_map(&world.map).battled;
-                battled.insert(world.id);
-                battled.extend(world.disable_others);
+                match world.disable_others {
+                    TrainerDisable::DisableSelf => {
+                        battled.insert(world.id);
+                    },
+                    TrainerDisable::Many(others) => {
+                        battled.insert(world.id);
+                        battled.extend(others);
+                    },
+                    TrainerDisable::None => (),
+                }
             }
         } else {
             player.location = player.world.heal.0;

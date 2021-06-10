@@ -69,8 +69,8 @@ pub struct Battle {
 	pub winner: Option<PlayerId>,
 	
 	#[deprecated(note = "use hashmap")]
-	player1: BattleParty,
-	player2: BattleParty,
+	pub player1: BattleParty,
+	pub player2: BattleParty,
 
 	// players: deps::hash::HashMap<PlayerId, UnsafeCell<BattleParty>>,
 	

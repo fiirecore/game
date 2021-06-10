@@ -5,7 +5,7 @@ pub enum GameStateAction {
 #[derive(Debug, Clone)]
 pub struct CommandResult<'a> {
     pub command: &'a str,
-    pub args: Vec<&'a str>,
+    pub args: std::str::SplitAsciiWhitespace<'a>,
 }
 
 impl<'a> core::fmt::Display for CommandResult<'a> {

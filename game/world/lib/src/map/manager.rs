@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
-use deps::hash::{HashMap, HashSet};
+use deps::hash::HashMap;
 use util::{Direction, Coordinate, Location};
 use crate::{
     character::{
         MoveType,
         player::PlayerCharacter,
-        npc::NpcId,
+        npc::{NpcId, trainer::TrainerDisable},
     },
     map::{
         TileId,
@@ -57,7 +57,7 @@ pub struct WorldMapManagerData {
 pub struct TrainerEntry {
     pub map: Location,
     pub id: NpcId,
-    pub disable_others: HashSet<NpcId>,
+    pub disable_others: TrainerDisable,
 }
 
 pub type TrainerEntryRef<'a> = &'a mut Option<TrainerEntry>;

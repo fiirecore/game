@@ -27,9 +27,23 @@ pub struct Trainer {
     #[serde(default)]
     pub victory_message: MessageSet,
     #[serde(default)]
-    pub disable: HashSet<NpcId>,
+    pub disable: TrainerDisable,
     pub worth: u16,
 
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum TrainerDisable {
+    #[serde(rename = "Self")]
+    DisableSelf,
+    Many(HashSet<NpcId>),
+    None,
+}
+
+impl Default for TrainerDisable {
+    fn default() -> Self {
+        Self::DisableSelf
+    }
 }
 
 fn default_battle_transition() -> TinyStr8 {

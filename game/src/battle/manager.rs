@@ -231,10 +231,48 @@ impl BattleManager {
 }
 
 impl GameState for BattleManager {
-    fn process(&mut self, result: crate::game::CommandResult) {
-        match result.command {
-			"end" => self.end(),
-			_ => (),
+    fn process(&mut self, mut result: crate::game::CommandResult) {
+		use deps::log::warn;
+		if let Some(battle) = self.battle.as_mut() {
+			match result.command {
+				"end" => self.end(),
+				"faint" => if let Some(team) = result.args.next() {
+					if let Some(index) = result.args.next().map(|index| index.parse::<usize>().ok()).flatten() {
+						match team {
+							"player" => if let Some(active) = battle.battle.player1.active_mut(index) {
+								active.current_hp = 0;
+								// battle.battle.player1.client.add_unknown(index, unknown)
+							}
+							"opponent" => if let Some(active) = battle.battle.player2.active_mut(index) {
+								active.current_hp = 0;
+							}
+							_ => warn!("Unknown team!"),
+						}
+					} else {
+						warn!("Unknown index!")
+					}
+				} else {
+					warn!("Provide arguments team and index")
+				}
+				"heal" => if let Some(team) = result.args.next() {
+					if let Some(index) = result.args.next().map(|index| index.parse::<usize>().ok()).flatten() {
+						match team {
+							"player" => if let Some(active) = battle.battle.player1.active_mut(index) {
+								active.current_hp = active.max_hp();
+							}
+							"opponent" => if let Some(active) = battle.battle.player2.active_mut(index) {
+								active.current_hp = active.max_hp();
+							}
+							_ => warn!("Unknown team!"),
+						}
+					} else {
+						warn!("Unknown index!")
+					}
+				} else {
+					warn!("Provide arguments team and index")
+				}
+				_ => warn!("Unknown command"),
+			}
 		}
     }
 

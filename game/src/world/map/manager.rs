@@ -506,7 +506,7 @@ impl WorldManager {
 }
 
 impl GameState for WorldManager {
-    fn process(&mut self, result: crate::game::CommandResult) {
+    fn process(&mut self, mut result: crate::game::CommandResult) {
         match result.command {
             "help" => {
                 info!("To - do: help list.");
@@ -532,15 +532,14 @@ impl GameState for WorldManager {
                 info!("Toggled no clip! ({})", self.map_manager.data.player.character.noclip);
             }
             "unfreeze" => {
-                let player = &mut self.map_manager.data.player.character;
-                player.freeze();
-                player.unfreeze();
-                player.noclip = true;
+                let player = &mut self.map_manager.data.player;
+                player.character.unfreeze();
+                player.input_frozen = false;
                 info!("Unfroze player!");
             },
-            "party" => match result.args.get(0) {
-                Some(arg) => match *arg { 
-                    "info" => match result.args.get(1) {
+            "party" => match result.args.next() {
+                Some(arg) => match arg { 
+                    "info" => match result.args.next() {
                         Some(index) => match index.parse::<usize>() {
                             Ok(index) => {
                                 if let Some(instance) = data().party.get(index) {
@@ -557,12 +556,12 @@ impl GameState for WorldManager {
                     },
                     _ => (),
                 }
-                None => warn!("Command /party requires an index for a pokemon in the player's party!"),
+                None => self.start_menu.spawn_party(),
             }
-            "battle" => match result.args.get(0) {
-                Some(arg) => match *arg {
+            "battle" => match result.args.next() {
+                Some(arg) => match arg {
                     "random" => {
-                        self.random_battle = match result.args.get(1) {
+                        self.random_battle = match result.args.next() {
                             Some(len) => match len.parse::<usize>() {
                                 Ok(size) => Some(size),
                                 Err(err) => {
@@ -577,8 +576,8 @@ impl GameState for WorldManager {
                 }
                 None => warn!("Command /battle requires arguments TODO"),
             }
-            "script" => match result.args.get(0) {
-                Some(arg) => match *arg {
+            "script" => match result.args.next() {
+                Some(arg) => match arg {
                     "clear" => {
                         data_mut().world.scripts.clear();
                         info!("Cleared used scripts in player data!");
@@ -590,8 +589,8 @@ impl GameState for WorldManager {
                 },
                 None => warn!("/script requires arguments \"clear\" or \"list\"."),
             },
-            "warp" => if let Some(map_or_index) = result.args.get(0).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
-                let location = if let Some(index) = result.args.get(1).map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
+            "warp" => if let Some(map_or_index) = result.args.next().map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
+                let location = if let Some(index) = result.args.next().map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
                     util::Location::new(Some(map_or_index), index)
                 } else {
                     util::Location::new(None, map_or_index)

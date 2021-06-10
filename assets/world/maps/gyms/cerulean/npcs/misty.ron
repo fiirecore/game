@@ -39,9 +39,7 @@
                 )
             ],
 
-            disable: [
-
-            ],
+            disable: Many([]),
             worth: 1400,
 
         ))

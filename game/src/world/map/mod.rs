@@ -219,162 +219,121 @@ impl GameWorld for WorldMap {
         // Update scripts
 
         for script in self.scripts.iter_mut().filter(|script| script.alive()) {
-            let mut pop = false;
-            match script.actions.front() {
-                Some(action) => {
-                    match action {
+            match &mut script.current {
+                None => match script.actions.pop_front() {
+                    Some(action) => if match &action {
                         WorldActionKind::PlayMusic(music) => {
-                            play_music_named(ctx, &music);
-                            pop = true;
+                            play_music_named(ctx, music);
+                            false
                         },
                         WorldActionKind::PlayMapMusic => {
                             play_music(ctx, self.music);
-                            pop = true;
+                            false
                         },
                         WorldActionKind::PlaySound(sound) => {
                             play_sound(ctx, sound);
-                            pop = true;
+                            false
                         }
                         WorldActionKind::PlayerFreezeInput => {
                             world.player.input_frozen = true;
                             world.player.character.stop_move();
-                            pop = true;
+                            false
                         },
                         WorldActionKind::PlayerUnfreezeInput => {
                             world.player.input_frozen = false;
-                            pop = true;
+                            false
                         }
                         WorldActionKind::PlayerUnfreeze => {
                             world.player.character.frozen = false;
-                            pop = true;
+                            false
                         }
                         WorldActionKind::PlayerLook(direction) => {
                             world.player.character.position.direction = *direction;
-                            pop = true;
+                            false
                         }
                         WorldActionKind::PlayerMove(destination) => {
-                            if world.player.character.destination.is_some() {
-                                if world.player.character.move_to_destination(delta) {
-                                    pop = true;
-                                }
-                            } else {
-                                world.player.character.move_to(*destination);
-                            }
-                        }
+                            world.player.character.move_to(*destination);
+                            true
+                        },
                         WorldActionKind::PlayerGivePokemon(instance) => {
                             if let Err(err) = data_mut().party.try_push(instance.clone()) {
                                 warn!("Could not add {} to player's party with error {}", instance.pokemon.value().name, err);
                             }
-                            pop = true;
+                            false
                         }
                         WorldActionKind::PlayerHealPokemon => {
                             for pokemon in data_mut().party.iter_mut() {
                                 pokemon.heal();
                             }
-                            pop = true;
+                            false
                         }
 
                         WorldActionKind::PlayerGiveItem(item) => {
                             data_mut().bag.add_item(ItemStack::new(item, 1));
-                            pop = true;
+                            false
                         }
 
                         WorldActionKind::NpcAdd(id, npc) => {
                             if self.npcs.list.insert(*id, Some(*npc.clone())).is_some() {
                                 warn!("Replaced Npc with id {}!", id);
                             }
-                            pop = true;
+                            false
                         }
 
                         WorldActionKind::NpcRemove(id) => {
                             if self.npcs.list.remove(id).is_none() {
                                 warn!("Could not remove Npc with id {}!", id);
                             }
-                            pop = true;
+                            false
                         }
-
-                        // WorldActionKind::NpcSpawn(id) => {
-                        //     if let Some(npc) = self.npc_manager.get_mut(id) {
-                        //         error!("no npc spawn");// npc.spawn();
-                        //     } else {
-                        //         warn!("Could not spawn Npc with id {}!", id);
-                        //     }
-                        //     pop = true;
-                        // }
-                        // WorldActionKind::NpcDespawn(id) => {
-                        //     if let Some(npc) = self.npc_manager.get_mut(id) {
-                        //         error!("no npc despawn");// npc.despawn();
-                        //     } else {
-                        //         warn!("Could not despawn Npc with id {}!", id);
-                        //     }
-                        //     pop = true;
-                        // }
-
 
                         WorldActionKind::NpcLook(id, direction) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
-                                npc.character.position.direction = *direction;                               
+                                npc.character.position.direction = *direction;
                             }
-                            pop = true;
+                            false
                         }
 
-                        WorldActionKind::NpcMove( id, pos ) => {
+                        WorldActionKind::NpcMove(id, pos) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
-                                if npc.character.destination.is_some() {
-                                    if npc.character.move_to_destination(delta) {
-                                        pop = true;
-                                    }
-                                } else {
-                                    npc.character.go_to(pos.coords);
-                                }
+                                npc.character.go_to(pos.coords);
+                                true
                             } else {
                                 warn!("Npc script tried to move an unknown Npc (with id {})", id);
-                                pop = true;
+                                false
                             }
                         },
 
                         WorldActionKind::NpcLeadPlayer( id, pos ) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
-                                if npc.character.destination.is_some() {
-                                    npc.character.move_to_destination(delta);
-                                } else {
-                                    if npc.character.position.coords != pos.coords {
-                                        npc.character.go_to(pos.coords);
-                                    }
+                                if npc.character.position.coords != pos.coords {
+                                    npc.character.go_to(pos.coords);
                                 }
-                                if world.player.character.destination.is_some() {
-                                    if world.player.character.move_to_destination(delta) {
-                                        pop = true;
+                                if world.player.character.position.coords.ne(&pos.coords) {
+                                    world.player.character.destination = npc.character.destination.clone();
+                                    if let Some(destination) = world.player.character.destination.as_mut() {
+                                        destination.queued_movements.pop_back();
+                                        destination.queued_movements.push_front(world.player.character.position.coords.towards(npc.character.position.coords))
                                     }
-                                } else {
-                                    if world.player.character.position.coords.ne(&pos.coords) {
-                                        world.player.character.destination = npc.character.destination.clone();
-                                        if let Some(destination) = world.player.character.destination.as_mut() {
-                                            destination.queued_movements.pop_back();
-                                            destination.queued_movements.push_front(world.player.character.position.coords.towards(npc.character.position.coords))
-                                        }
-                                        // player.move_to(Destination::next_to(&player.character.position.local, pos.coords));
-                                    }
+                                    // player.move_to(Destination::next_to(&player.character.position.local, pos.coords));
                                 }
+                                true
                             } else {
                                 warn!("Npc script tried to lead player with an unknown Npc (with id {})", id);
-                                pop = true;
+                                false
                             }
                         }
+
                         WorldActionKind::NpcMoveToPlayer(id) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
-                                if npc.character.destination.is_some() {
-                                    if npc.character.move_to_destination(delta) {
-                                        pop = true;
-                                    }
-                                } else {
-                                    npc.character.go_next_to(world.player.character.position.coords)
-                                }
+                                npc.character.go_next_to(world.player.character.position.coords);
+                                true
                             } else {
                                 warn!("Npc script tried to move to player with an unknown Npc (with id {})", id);
-                                pop = true;
+                                false
                             }
                         }
+
                         WorldActionKind::NpcInteract(id) => {
                             if let Some(npc) = self.npcs.list.get_mut(id) {
                                 if let Some(npc_mut) = npc {
@@ -383,148 +342,58 @@ impl GameWorld for WorldMap {
                                     }
                                 }
                             }
-                            pop = true;
+                            false
                         }
+
                         WorldActionKind::NpcSay(id, pages) => {
                             if let Some(npc) = self.npcs.get_mut(id) {
-                                if window.text.alive() {
-                                    if !window.text.finished() {
-                                        window.text.update(ctx, delta);
-                                    } else {
-                                        window.text.despawn();
-                                        pop = true;
-                                    }
-                                } else {
-                                    window.text.clear();
-                                    window.text.set(pages.clone());
-                                    window.text.color(npc_type(&npc.npc_type).text_color);
-                                    window.text.process_messages(data()); 
-                                    window.text.spawn();   
-                                }
+                                window.text.clear();
+                                window.text.set(pages.clone());
+                                window.text.color(npc_type(&npc.npc_type).text_color);
+                                window.text.process_messages(data()); 
+                                window.text.spawn();
+                                true
                             } else {
-                                pop = true;
+                                false
                             }
                         }
+
                         WorldActionKind::NpcBattle(id) => {
                             if let Some(npc) = self.npcs.get(id) {
                                 trainer_battle(battle, &mut world.battling, npc, &self.id, id);
                             }
-                            pop = true;
+                            false
                         }
 
                         WorldActionKind::Wait(time) => {
-                            if script.timer.alive() {
-                                script.timer.update(delta);
-                                if script.timer.finished() {
-                                    script.timer.despawn();
-                                    pop = true;
-                                }
-                            } else {
-                                script.timer.hard_reset();
-                                script.timer.spawn();
-                                script.timer.length = *time;
-                                script.timer.update(delta);
-                            }
+                            script.timer.hard_reset();
+                            script.timer.spawn();
+                            script.timer.length = *time;
+                            script.timer.update(delta);
+                            true
                         },
 
                         WorldActionKind::Info(string) => {
                             info!("{}: {}", script.identifier, string);
-                            pop = true;
+                            true
                         }
 
                         WorldActionKind::DisplayText(message) => {
-                            if window.text.alive() {
-                                if !window.text.finished() {
-                                    window.text.update(ctx, delta);
-                                } else {
-                                    window.text.despawn();
-                                    pop = true;
-                                }
-                            } else {
-                                window.text.clear();
-                                window.text.set(message.pages.clone());
-                                window.text.color(message.color);
-                                window.text.process_messages(data()); 
-                                window.text.spawn();   
-                            }
-                        },
+                            window.text.clear();
+                            window.text.set(message.pages.clone());
+                            window.text.color(message.color);
+                            window.text.process_messages(data()); 
+                            window.text.spawn();
+                            true
+                        }
 
-                        WorldActionKind::Conditional { message, end_message, unfreeze } => {
-
-                            /*
-                            * 0 = first message (default)
-                            * 1 = end message
-                            * 2 or 3 = yes/no option and cursor pos
-                            */
-
-                            if script.option == 0 {
-                                if window.text.alive() {
-                                    if window.text.finished() {
-                                        script.option = 2;
-                                    } else {
-                                        window.text.update(ctx, delta);
-                                    }
-                                } else {
-                                    window.text.clear();
-                                    window.text.spawn();
-                                    window.text.set(message.pages.clone());
-                                    window.text.color(message.color);
-                                }
-                            } else if script.option == 1 {
-
-                                if end_message.is_some() {
-
-                                    if window.text.finished() {
-                                        window.text.despawn();
-                                        if *unfreeze {
-                                            world.player.character.unfreeze();
-                                        }
-                                        script.option = 0;
-                                        despawn_script(script);
-                                    } else {
-                                        window.text.update(ctx, delta);
-                                    }
-
-                                } else {
-                                    if *unfreeze {
-                                        world.player.character.unfreeze();
-                                    }
-                                    script.option = 0;
-                                    despawn_script(script);
-                                }
-                            } else {
-                                if pressed(ctx, Control::A) {
-                                    if script.option == 2 {
-                                        script.option = 0;
-                                        window.text.despawn();
-                                        pop = true;
-                                    } else if script.option == 3 {
-
-                                        script.option = 1;
-                                        if let Some(end_message) = end_message {
-                                            window.text.clear();
-                                            window.text.set(end_message.pages.clone());
-                                            window.text.color(end_message.color);
-                                        }
-
-                                    }
-                                } else if pressed(ctx, Control::B) {
-
-                                    script.option = 1;
-                                    if let Some(end_message) = end_message {
-                                        window.text.clear();
-                                        window.text.set(end_message.pages.clone());
-                                        window.text.color(end_message.color);
-                                    }
-
-                                }
-                                if pressed(ctx, Control::Up) && script.option == 3 {
-                                    script.option = 2;
-                                }
-                                if pressed(ctx, Control::Down) && script.option == 2 {
-                                    script.option = 3;
-                                }
-                            }
+                        WorldActionKind::Conditional { message, .. } => {
+                            script.option = 0;
+                            window.text.clear();
+                            window.text.spawn();
+                            window.text.set(message.pages.clone());
+                            window.text.color(message.color);
+                            true
                         }
 
                         WorldActionKind::Warp(warp_type) => {
@@ -543,15 +412,150 @@ impl GameWorld for WorldMap {
                             });
                             world.player.character.destination = None; // fix so this is not necessary
                             despawn_script(script);
-                        },
+                            true
+                        }
+
+                    } {
+                        script.current = Some(action);
+                    }
+                        
+                    None => {
+                        despawn_script(script);
                     }
                 }
-                None => {
-                    despawn_script(script);
-                }
-            }
-            if pop {
-                script.actions.pop_front();
+                Some(current) => match current {
+                    WorldActionKind::PlayerMove(destination) => {
+                        if world.player.character.move_to_destination(delta) {
+                            script.current = None;
+                        }
+                    },
+                    WorldActionKind::NpcMove(id, pos) => {
+                        match self.npcs.get_mut(id) {
+                            Some(npc) => if npc.character.move_to_destination(delta) {
+                                script.current = None;
+                            }
+                            None => script.current = None,
+                        }
+                    }
+                    WorldActionKind::NpcLeadPlayer(id, ..) => {
+                        match self.npcs.get_mut(id) {
+                            Some(npc) => {
+                                if npc.character.destination.is_some() {
+                                    npc.character.move_to_destination(delta);
+                                        npc.character.move_to_destination(delta);
+                                }
+                                if world.player.character.destination.is_some() {
+                                    if world.player.character.move_to_destination(delta) {
+                                        script.current = None;
+                                    }
+                                }
+                            }
+                            None => script.current = None,
+                        }
+                    }
+                    WorldActionKind::NpcMoveToPlayer(id) => {
+                        match self.npcs.get_mut(id) {
+                            Some(npc) => if npc.character.move_to_destination(delta) {
+                                script.current = None;
+                            }
+                            None => script.current = None,
+                        }
+                    }
+                    WorldActionKind::NpcSay(..) => {
+                        if !window.text.finished() {
+                            window.text.update(ctx, delta);
+                        } else {
+                            window.text.despawn();
+                            script.current = None;
+                        }
+                    },
+                    WorldActionKind::Wait(..) => {
+                        script.timer.update(delta);
+                        if script.timer.finished() {
+                            script.timer.despawn();
+                            script.current = None;
+                        }
+                    }
+                    WorldActionKind::DisplayText(..) => {
+                        if !window.text.finished() {
+                            window.text.update(ctx, delta);
+                        } else {
+                            window.text.despawn();
+                            script.current = None;
+                        }
+                    }
+                    WorldActionKind::Conditional{ end_message, unfreeze, .. } => {
+
+                        /*
+                        * 0 = first message (default)
+                        * 1 = end message
+                        * 2 or 3 = yes/no option and cursor pos
+                        */
+
+                        if script.option == 0 {
+                            if window.text.finished() {
+                                script.option = 2;
+                            } else {
+                                window.text.update(ctx, delta);
+                            }
+                        } else if script.option == 1 {
+                            if end_message.is_some() {
+                                if window.text.finished() {
+                                    window.text.despawn();
+                                    if *unfreeze {
+                                        world.player.character.unfreeze();
+                                    }
+                                    script.option = 0;
+                                    despawn_script(script);
+                                } else {
+                                    window.text.update(ctx, delta);
+                                }
+                            } else {
+                                if *unfreeze {
+                                    world.player.character.unfreeze();
+                                }
+                                script.option = 0;
+                                despawn_script(script);
+                            }
+                        } else {
+                            if pressed(ctx, Control::A) {
+                                if script.option == 2 {
+                                    script.option = 0;
+                                    window.text.despawn();
+                                    script.current = None;
+                                } else if script.option == 3 {
+                                    script.option = 1;
+                                    if let Some(end_message) = end_message {
+                                        window.text.clear();
+                                        window.text.set(end_message.pages.clone());
+                                        window.text.color(end_message.color);
+                                    }
+                                }
+                            } else if pressed(ctx, Control::B) {
+                                script.option = 1;
+                                if let Some(end_message) = end_message {
+                                    window.text.clear();
+                                    window.text.set(end_message.pages.clone());
+                                    window.text.color(end_message.color);
+                                }
+
+                            }
+                            if pressed(ctx, Control::Up) && script.option == 3 {
+                                script.option = 2;
+                            }
+                            if pressed(ctx, Control::Down) && script.option == 2 {
+                                script.option = 3;
+                            }
+                        }
+                    }
+                    #[cfg(debug_assertions)]
+                    _ =>  {
+                        warn!("Script {} tried to make action {:?} current when it cannot be.", script.identifier, script.current);
+                        script.current = None;
+                    }
+                    #[cfg(not(debug_assertions))]
+                    _ => script.current = None,
+                },
             }
         }
 
@@ -705,17 +709,17 @@ impl GameWorld for WorldMap {
     }
 }
 
+pub fn despawn_script(script: &mut WorldScript) {
+    data_mut().world.scripts.insert(script.identifier);
+    script.despawn();
+}
+
 fn debug_input(ctx: &Context, map: &mut WorldMap) {
     if debug_pressed(ctx, DebugBind::F8) {
         for (index, npc) in map.npcs.list.iter().flat_map(|(id, npc)| npc.as_ref().map(|npc| (id, npc))) {
             info!("Npc {} (id: {}), is at {}, {}; looking {:?}", &npc.name, index, /*if npc.alive() {""} else {" (despawned)"},*/ &npc.character.position.coords.x, &npc.character.position.coords.y, &npc.character.position.direction);
         }
     }
-}
-
-pub fn despawn_script(script: &mut WorldScript) {
-    data_mut().world.scripts.insert(script.identifier);
-    script.despawn();
 }
 
 fn find_battle(save: &mut PlayerSave, map: &Location, id: NpcId, npc: &mut Option<Npc>, active: &mut ActiveNpc, player: &mut PlayerCharacter) -> bool {

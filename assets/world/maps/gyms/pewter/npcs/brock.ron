@@ -86,9 +86,9 @@
                 )
             ],
 
-            disable: [
+            disable: Many([
                 "liam",
-            ],
+            ]),
 
             worth: 1400,
 

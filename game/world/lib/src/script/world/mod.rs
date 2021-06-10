@@ -27,6 +27,9 @@ pub struct WorldScript {
     pub actions: VecDeque<WorldActionKind>, // clones actions to this so scripts can be reused as the main actions field does not use up its values
 
     #[serde(skip)]
+    pub current: Option<WorldActionKind>,
+
+    #[serde(skip)]
     pub(crate) alive: bool, // script is running or not
 
     #[serde(skip)]
@@ -39,18 +42,20 @@ pub struct WorldScript {
 
 impl WorldScript {
 
-    pub fn default() -> Self {
-        Self {
-            identifier: "temp".parse().unwrap(),
-            location: None,
-            conditions: Vec::new(),
-            original_actions: VecDeque::new(),
-            actions: VecDeque::new(),
-            alive: false,
-            option: 0,
-            timer: Timer::default()
-        }
-    }
+    // #[deprecated]
+    // pub fn default() -> Self {
+    //     Self {
+    //         identifier: "temp".parse().unwrap(),
+    //         location: None,
+    //         conditions: Vec::new(),
+    //         original_actions: VecDeque::new(),
+    //         actions: VecDeque::new(),
+    //         current: None,
+    //         alive: false,
+    //         option: 0,
+    //         timer: Timer::default()
+    //     }
+    // }
 
     fn on_spawn(&mut self) {
         self.actions = self.original_actions.clone();
