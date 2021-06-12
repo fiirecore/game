@@ -22,8 +22,8 @@ pub struct WorldMapGui {
 
     locations: HashMap<Vec2<u8>, (MapIconInit, String, Location)>,
 
-    visited: Vec<Location>,
-    fly: Option<Vec<Location>>,
+    // visited: Vec<Location>,
+    // fly: Option<Vec<Location>>,
 }
 
 enum MapIconInit {

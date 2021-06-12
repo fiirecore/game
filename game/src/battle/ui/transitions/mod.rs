@@ -2,7 +2,7 @@ use crate::{battle_glue::BattleTrainerEntry, gui::TextDisplay, tetra::Context, u
 
 use crate::battle::{BattleType, pokemon::view::{BattlePartyKnown, BattlePartyUnknown}, ui::view::{ActivePokemonParty, ActiveRenderer}};
 
-use crate::storage::player::PlayerId;
+use crate::pokedex::moves::target::PlayerId;
 
 pub mod managers;
 

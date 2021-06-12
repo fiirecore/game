@@ -30,7 +30,7 @@ use crate::{
 impl PokemonInstance {
 
 	// To - do: uses PP on use
-	pub fn use_own_move(&self, engine: &mut Engine, move_index: usize, targets: Vec<PokemonTarget>) -> TurnResult {
+	pub fn use_own_move(&self, engine: &Engine, move_index: usize, targets: Vec<PokemonTarget>) -> TurnResult {
 		let pokemon_move = self.moves[move_index].move_ref;
 		let mut results = MoveResults::new();
 
@@ -42,7 +42,7 @@ impl PokemonInstance {
 		 // check if target is in move target enum
 	}
 
-    pub fn use_move_on_target(&self, engine: &mut Engine, results: &mut MoveResults, pokemon_move: &'static Move, target: PokemonTarget) {
+    pub fn use_move_on_target(&self, engine: &Engine, results: &mut MoveResults, pokemon_move: &'static Move, target: PokemonTarget) {
 
 		let hit = pokemon_move.accuracy.map(|accuracy| {
 			let hit: u8 = RANDOM.gen_range(0, 100);

@@ -5,11 +5,11 @@ extern crate firecore_world_lib as worldlib;
 
 use std::sync::atomic::AtomicBool;
 use serde::{Deserialize, Serialize};
-use deps::str::TinyStr16;
 use util::{Location, LocationId, Position, Coordinate, Direction, PixelOffset};
 use pokedex::{
-	item::bag::Bag,
 	pokemon::party::PokemonParty,
+	moves::target::PlayerId,
+	item::bag::Bag,
 };
 use worldlib::character::Character;
 
@@ -23,7 +23,6 @@ pub use list::PlayerSaves;
 
 pub static SHOULD_SAVE: AtomicBool = AtomicBool::new(false); // if true, save player data
 
-pub type PlayerId = TinyStr16;
 pub type Name = String;
 pub type Worth = u32;
 

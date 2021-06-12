@@ -1,11 +1,10 @@
 use crate::{
-    storage_player::PlayerId,
     pokedex::{
         types::Effective,
-        pokemon::{Level, Experience, stat::StatType},
+        pokemon::stat::StatType,
         moves::{
             MoveRef,
-            target::MoveTargetInstance,
+            target::{MoveTargetInstance, PlayerId},
         },
         item::ItemRef,
     },
@@ -45,61 +44,32 @@ impl core::fmt::Display for ActivePokemonIndex {
     }
 }
 
-#[derive(Debug)]
-pub struct BattleActionInstance {
-    pub pokemon: ActivePokemonIndex,
-    pub action: BattleMove,
-}
-
-// #[deprecated]
-// #[derive(Debug)]
-// pub enum BattleAction {
-//     Pokemon(BattleMove),
-//     Faint(Option<MoveTargetInstance>), // user that made target faint
-//     Catch(MoveTargetInstance),
-//     GainExp(Level, Experience),
-//     LevelUp(Level, Option<Vec<MoveRef>>),
-//     // Wait(f32),
-// }
 
 #[derive(Debug, Clone)]
-pub struct BattleClientActionInstance {
+pub struct ActionInstance<T> {
     pub pokemon: ActivePokemonIndex,
-    pub action: BattleClientAction,
+    pub action: T,
 }
 
-// impl BattleClientActionInstance {
-//     pub fn into_other(self) -> Self {
-//         Self {
-//             pokemon: self.pokemon.into_other(),
-//             action: self.action.into_other(),
-//         }
-//     }
-// }
+pub type BattleMoveInstance = ActionInstance<BattleMove>;
+
+pub type BattleClientActionInstance = ActionInstance<BattleClientAction>;
 
 #[derive(Debug, Clone)]
 pub enum BattleClientAction {
-
     Move(MoveRef, Vec<(MoveTargetInstance, Vec<BattleClientMove>)>),
     Switch(usize, Option<UnknownPokemon>),
     UseItem(ItemRef, MoveTargetInstance),
-
-    // maybe move these
-
-    Faint,
-    Catch(usize),
-    GainExp(Level, Experience),
-    LevelUp(Level, Option<Vec<MoveRef>>),
 }
 
-impl BattleClientAction {
-    pub fn requires_user(&self) -> bool {
-        match self {
-            BattleClientAction::Faint => false,
-            _ => true,
-        }
-    }
-}
+// impl BattleClientAction {
+//     pub fn requires_user(&self) -> bool {
+//         match self {
+//             BattleClientAction::Faint => false,
+//             _ => true,
+//         }
+//     }
+// }
 
 // impl BattleClientAction {
 //     pub fn into_other(self) -> Self {

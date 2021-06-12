@@ -1,9 +1,15 @@
 pub use firecore_battle::*;
 
+use std::rc::Rc;
+
 use crate::{
+	deps::rhai::Engine,
 	battle::pokemon::BattleParty,
-	pokedex::pokemon::instance::BorrowedPokemon,
-	storage::player::{PlayerSave, PlayerId},
+	pokedex::{
+		pokemon::instance::BorrowedPokemon,
+		moves::target::PlayerId,
+	},
+	storage::player::PlayerSave,
 	battle_glue::{BattleEntry, BattleTrainerEntry},
 };
 
@@ -23,9 +29,10 @@ pub struct GameBattle {
 
 impl GameBattle {
 	
-	pub fn new(player: BattleParty, entry: BattleEntry) -> Self {
+	pub fn new(engine: Rc<Engine>, player: BattleParty, entry: BattleEntry) -> Self {
 		Self {
 			battle: Battle::new(
+				engine,
 				entry.trainer.as_ref().map(|trainer| if trainer.gym_badge.is_some() { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild), 
 				player, 
 				BattleParty::new("opponent".parse().unwrap(), "opponent", entry.party.into_iter().map(|instance| BorrowedPokemon::Owned(instance)).collect(), Box::new(BattlePlayerAi::default()), entry.size)

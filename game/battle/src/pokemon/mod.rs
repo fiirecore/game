@@ -22,6 +22,13 @@ impl Default for ActivePokemon {
 
 impl ActivePokemon {
 
+    pub fn new(index: usize, some: bool) -> Self {
+        match some {
+            true => Self::Some(index, None),
+            false => Self::None,
+        }
+    }
+
     pub fn take(&mut self) -> Self {
         std::mem::take(self)
     }

@@ -8,59 +8,123 @@ use crate::{
                 BorrowedParty,
             },
         },
+        moves::target::PlayerId,
     },
-    storage_player::PlayerId,
 };
 
 use crate::{
-    client::BattleClient,
+    client::{LocalBattleClient, BattleClient},
     pokemon::{
         ActivePokemon,
         view::{BattlePartyKnown, BattlePartyUnknown, UnknownPokemon},
     },
 };
 
-// #[deprecated(note = "use enum instead")]
-pub type ActivePokemonArray = ArrayVec<[ActivePokemon; 3]>;
-
-
 pub struct BattleParty {
 
     pub id: PlayerId,
     pub name: String,
 
-    pub client: Box<dyn BattleClient>,
+    pub client: LocalBattleClient,
 
     pub pokemon: BorrowedParty,
-    pub active: ActivePokemonArray,
+    pub active: PartyActive,
 
+}
+
+// pub enum BattlePartyType {
+//     Single,
+//     Double,
+//     Triple,
+//     Other(usize),
+// }
+
+pub enum PartyActive {
+    Single([ActivePokemon; 1]),
+    Double([ActivePokemon; 2]),
+    Triple([ActivePokemon; 3]),
+    Other(Vec<ActivePokemon>),
+}
+
+impl PartyActive {
+    pub fn get(&self, index: usize) -> Option<&ActivePokemon> {
+        match self {
+            PartyActive::Single(a) => a as &[ActivePokemon],
+            PartyActive::Double(a) => a,
+            PartyActive::Triple(a) => a,
+            PartyActive::Other(a) => a,
+        }.get(index)
+    }
+    pub fn get_mut(&mut self, index: usize) -> Option<&mut ActivePokemon> {
+        match self {
+            PartyActive::Single(a) => a as &mut [ActivePokemon],
+            PartyActive::Double(a) => a,
+            PartyActive::Triple(a) => a,
+            PartyActive::Other(a) => a,
+        }.get_mut(index)
+    }
+    pub fn set(&mut self, index: usize, active: ActivePokemon) {
+        let a = match self {
+            PartyActive::Single(a) => a as &mut [ActivePokemon],
+            PartyActive::Double(a) => a,
+            PartyActive::Triple(a) => a,
+            PartyActive::Other(a) => a,
+        }.get_mut(index);
+        if let Some(a) = a {
+            *a = active;
+        }
+    }
+    pub fn iter(&self) -> std::slice::Iter<'_, ActivePokemon> {
+        match self {
+            PartyActive::Double(a) => a as &[ActivePokemon],
+            PartyActive::Triple(a) => a,
+            PartyActive::Other(a) => a,
+            PartyActive::Single(a) => a,
+        }.iter()
+    }
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<'_, ActivePokemon> {
+        match self {
+            PartyActive::Double(a) => a as &mut [ActivePokemon],
+            PartyActive::Triple(a) => a,
+            PartyActive::Other(a) => a,
+            PartyActive::Single(a) => a,
+        }.iter_mut()
+    }
+    pub fn len(&self) -> usize {
+        match self {
+            PartyActive::Single(..) => 1,
+            PartyActive::Double(..) => 2,
+            PartyActive::Triple(..) => 3,
+            PartyActive::Other(a) => a.len(),
+        }
+    }
 }
 
 impl BattleParty {
 
-    pub fn new(id: PlayerId, name: &str, party: BorrowedParty, client: Box<dyn BattleClient>, size: usize) -> Self {
+    pub fn new(id: PlayerId, name: &str, party: BorrowedParty, client: Box<dyn BattleClient>, active: usize) -> Self {
 
-        let mut active = vec![None; size];
-        let mut current = 0;
-
-        for (index, pokemon) in party.iter().enumerate() {
-			if !pokemon.value().fainted() {
-				active[current] = Some(index);
-                current += 1;
-                if current == size {
-                    break;
-                }
-			}
-		}
+        let active = match active {
+            0 => panic!("Cannot create a battle party with 0 active pokemon!"),
+            1 => PartyActive::Single([ActivePokemon::new(0, party.get(0).map(|p| !p.value().fainted()).unwrap_or_default())]),
+            2 => PartyActive::Double([ActivePokemon::new(0, party.get(0).map(|p| !p.value().fainted()).unwrap_or_default()), ActivePokemon::new(1, party.get(1).map(|p| !p.value().fainted()).unwrap_or_default())]),
+            3 => PartyActive::Triple([
+                ActivePokemon::new(0, party.get(0).map(|p| !p.value().fainted()).unwrap_or_default()),
+                ActivePokemon::new(1, party.get(1).map(|p| !p.value().fainted()).unwrap_or_default()),
+                ActivePokemon::new(2, party.get(2).map(|p| !p.value().fainted()).unwrap_or_default()),
+            ]),
+            len => PartyActive::Other(party.iter().enumerate().flat_map(|(i, p)| {
+                (i < len).then(|| {
+                    ActivePokemon::new(i, !p.value().fainted())
+                })
+            }).collect()),
+        };       
 
         Self {
             id,
             name: name.to_string(),
-            client,
-            active: active.into_iter().map(|active| match active {
-                Some(index) => ActivePokemon::Some(index, None),
-                None => ActivePokemon::default()
-            }).collect(),
+            client: LocalBattleClient::new(client),
+            active,
             pokemon: party,
         }
     }
@@ -92,15 +156,21 @@ impl BattleParty {
         })
     }
 
-    pub fn any_replace(&self) -> Option<usize> {
-        self.active.iter().enumerate().find(|(_, a)| matches!(a, ActivePokemon::ToReplace)).map(|(i, _)| i)
+    pub fn needs_replace(&self) -> bool {
+        self.active.iter().any(|a| matches!(a, ActivePokemon::ToReplace))
     }
 
+    // pub fn request_replace(&mut self) {
+    //     for (i, _) in self.active.iter().enumerate().filter(|(_, a)| matches!(a, ActivePokemon::ToReplace)) {
+    //         self.client.send(crate::message::ServerMessage::RequestFaintReplace(i));
+    //     }
+    // }
+
     pub fn replace(&mut self, active: usize, new: Option<usize>) {
-        self.active[active] = match new {
+        self.active.set(active, match new {
             Some(new) => ActivePokemon::Some(new, None),
             None => ActivePokemon::None,
-        };
+        });
     }
 
     pub fn ready_to_move(&self) -> bool {

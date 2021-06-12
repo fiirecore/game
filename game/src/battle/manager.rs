@@ -3,13 +3,14 @@ use std::rc::Rc;
 use crate::{
 	game::GameState,
 	deps::rhai::Engine,
-	storage::{data_mut, player::{PlayerSave, PlayerId}},
+	storage::{data_mut, player::PlayerSave},
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
 	},
 	pokedex::{
 		pokemon::instance::BorrowedPokemon,
+		moves::target::PlayerId,
 	},
 	input::{debug_pressed, DebugBind},
 	graphics::ZERO,
@@ -51,7 +52,7 @@ pub struct BattleManager {
 	introduction: BattleIntroductionManager,
 	closer: BattleCloserManager,
 
-	engine: Engine,
+	engine: Rc<Engine>,
 
 	player: BattlePlayerGuiRef,
 
@@ -74,7 +75,7 @@ impl BattleManager {
 			introduction: BattleIntroductionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
-			engine: crate::pokedex::moves::usage::script::engine(),
+			engine: Rc::new(crate::pokedex::moves::usage::script::engine()),
 
 			player: BattlePlayerGuiRef::new(ctx, party, bag),
 
@@ -97,6 +98,7 @@ impl BattleManager {
 		)).then(|| {
 				let data = data_mut();
 				GameBattle::new(
+					self.engine.clone(),
 				BattleParty::new(
 					data.id, 
 					&data.name, 
@@ -181,7 +183,7 @@ impl BattleManager {
 						player.update(ctx, delta);
 						player.gui.bounce.update(delta);
 
-						battle.battle.update(&mut self.engine);
+						battle.battle.update();
 					}
 				},
 				BattleManagerState::Closer => match self.closer.state {
@@ -218,7 +220,7 @@ impl BattleManager {
 			BattleManagerState::Battle => {
 				if let Some(battle) = self.battle.as_mut() {
 					battle.battle.state = BattleState::End;
-					battle.battle.update(&mut self.engine);
+					battle.battle.update();
 				}
 			},
 			BattleManagerState::Closer => self.closer.state = TransitionState::Begin,

@@ -1,4 +1,4 @@
-use crate::pokemon::BattleActionInstance;
+use crate::pokemon::BattleMoveInstance;
 
 #[derive(Debug)]
 pub enum BattleState {
@@ -25,9 +25,10 @@ pub enum MoveState {
 
 	Start,
 	SetupPokemon,
-	Pokemon(Vec<BattleActionInstance>), // queue of pokemon
+	Pokemon(Vec<BattleMoveInstance>), // queue of pokemon
 	SetupPost,
 	Post,
+	SetupEnd,
 	End,
 
 }

@@ -1,40 +1,62 @@
-use super::{
-    BattleType, 
-    pokemon::{
-        BattleClientActionInstance, 
-        BattleMove, 
-        view::{BattlePartyKnown, BattlePartyUnknown, UnknownPokemon}
+// use std::{cell::RefCell, sync::atomic::{AtomicBool, Ordering}};
+
+use crate::message::{ServerMessage, ClientMessage};
+
+pub struct LocalBattleClient {
+    client: Box<dyn BattleClient>,
+    state: BattleClientState,
+    pub forfeit: bool,
+}
+
+impl LocalBattleClient {
+    pub fn new(client: Box<dyn BattleClient>) -> Self {
+        Self {
+            client,
+            state: BattleClientState::SelectMoves,
+            forfeit: false,
+        }
     }
-};
+    pub fn send(&mut self, message: ServerMessage) {
+        match &message {
+            ServerMessage::StartSelecting => if matches!(self.state, BattleClientState::FinishedTurnQueue) {
+                self.state = BattleClientState::SelectMoves;
+            },
+            ServerMessage::TurnQueue(..) => if matches!(self.state, BattleClientState::SelectMoves) {
+                self.state = BattleClientState::ProcessTurnQueue;
+            },
+            _ => (),
+        }
+        self.client.give_client(message)
+    }
+    pub fn receive(&mut self) -> Option<ClientMessage> {
+        let message = self.client.give_server();
+        if let Some(message) = &message {
+            match message {
+                ClientMessage::FinishedTurnQueue => if matches!(self.state, BattleClientState::ProcessTurnQueue) {
+                    self.state = BattleClientState::FinishedTurnQueue;
+                },
+                ClientMessage::Forfeit => self.forfeit = true,
+                _ => (),
+            }
+        }
+        message
+    }
+    pub fn finished_turn(&self) -> bool {
+        matches!(self.state, BattleClientState::FinishedTurnQueue)
+    }
+}
 
-pub trait BattleClient {
+#[derive(Clone, Copy)]
+pub enum BattleClientState {
+    SelectMoves,
+    ProcessTurnQueue,
+    FinishedTurnQueue,
+}
 
-    // fn name(&self) -> Cow<str>;
+pub trait BattleEndpoint {
+    fn give_client(&mut self, message: ServerMessage);
+}
 
-    fn user(&mut self, battle_type: BattleType, user: BattlePartyKnown);
-
-    fn opponents(&mut self, opponent: BattlePartyUnknown); // maybe can send multiple
-
-    fn add_unknown(&mut self, index: usize, unknown: UnknownPokemon);
-
-
-    fn start_select(&mut self);
-
-    fn wait_select(&mut self) -> Option<Vec<BattleMove>>;
-
-    fn start_moves(&mut self, queue: Vec<BattleClientActionInstance>);
-
-
-    // #[deprecated]
-    // fn start_faint(&mut self, active: usize);
-
-    fn wait_faint(&mut self, active: usize) -> Option<usize>;
-
-    fn opponent_faint_replace(&mut self, active: usize, new: Option<usize>);
-
-
-    fn wait_finish_turn(&mut self) -> bool;
-
-    fn should_forfeit(&mut self) -> bool;
-
+pub trait BattleClient: BattleEndpoint {
+    fn give_server(&mut self) -> Option<ClientMessage>;
 }

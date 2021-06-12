@@ -7,8 +7,9 @@ use crate::{
             party::PokemonParty,
             stat::StatSet,
         },
+        moves::target::PlayerId,
     },
-    storage::{data, player::{PlayerSave, PlayerId}},
+    storage::{data, player::PlayerSave},
     battle_glue::{BattleEntry, BattleEntryRef, BattleTrainerEntry},
 };
 
@@ -95,6 +96,9 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
 }
 
 pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, winner: PlayerId, trainer: bool) {
+    let p = world_manager.map_manager.player();
+    p.input_frozen = false;
+    p.character.unfreeze();
     if let Some(world) = world_manager.map_manager.data.battling.take() {
         if winner == player.id {
             if trainer {
