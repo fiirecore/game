@@ -121,14 +121,27 @@ impl BattlePlayer {
 
     pub fn new(id: PlayerId, name: &str, party: BorrowedParty, client: Box<dyn BattleClient>, active: usize) -> Self {
 
+        let mut active_pokemon = Vec::with_capacity(active);
+        let mut count = 0;
+
+        while active_pokemon.len() <= active {
+            match party.get(count) {
+                Some(p) => if !p.value().fainted() {
+                    active_pokemon.push(ActivePokemon::Some(count, None));
+                },
+                None => active_pokemon.push(ActivePokemon::None),
+            }
+            count+=1;
+        }
+
         let active = match active {
             0 => panic!("Cannot create a battle party with 0 active pokemon!"),
-            1 => PartyActive::Single([ActivePokemon::new(0, party.get(0).map(|p| !p.value().fainted()).unwrap_or_default())]),
-            2 => PartyActive::Double([ActivePokemon::new(0, party.get(0).map(|p| !p.value().fainted()).unwrap_or_default()), ActivePokemon::new(1, party.get(1).map(|p| !p.value().fainted()).unwrap_or_default())]),
+            1 => PartyActive::Single([active_pokemon.remove(0)]),
+            2 => PartyActive::Double([active_pokemon.remove(0), active_pokemon.remove(0)]),
             3 => PartyActive::Triple([
-                ActivePokemon::new(0, party.get(0).map(|p| !p.value().fainted()).unwrap_or_default()),
-                ActivePokemon::new(1, party.get(1).map(|p| !p.value().fainted()).unwrap_or_default()),
-                ActivePokemon::new(2, party.get(2).map(|p| !p.value().fainted()).unwrap_or_default()),
+                active_pokemon.remove(0),
+                active_pokemon.remove(0),
+                active_pokemon.remove(0)
             ]),
             len => PartyActive::Other(party.iter().enumerate().flat_map(|(i, p)| {
                 (i < len).then(|| {
@@ -221,7 +234,7 @@ impl BattlePlayer {
         BattlePartyKnown {
             id: self.id,
             name: self.name.clone(),
-            pokemon: self.collect_cloned(),
+            pokemon: self.pokemon.iter().map(|b| b.pokemon.cloned()).collect(),
             active: self.active.iter().map(|active| active.index()).collect(),
         }
     }

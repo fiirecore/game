@@ -146,9 +146,10 @@ impl State for GameStateManager {
 				self.battle.update(ctx, delta, self.console.alive());
 				if self.battle.finished {
 					let save = data_mut();
-					if let Some((winner, trainer)) = self.battle.update_data(save) {
-						game::world::battle::update_world(&mut self.world, save, winner, trainer);
-					}			
+					if let Some(winner) = self.battle.winner() {
+						let trainer = self.battle.update_data(&winner, save);
+						self.world.update_world(save, winner, trainer);
+					}		
 					self.state = GameStates::World;
 					self.world.map_start(ctx, true);
 				}

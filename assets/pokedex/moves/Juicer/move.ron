@@ -7,6 +7,7 @@
 		accuracy: None,
 		pp: 255,
 		usage: Damage(Power(255)),
-		target: Opponents,
+		target: Opponent,
+		priority: 20,
     ),
 )

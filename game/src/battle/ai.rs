@@ -1,5 +1,8 @@
 use firecore_battle::message::{ClientMessage, ServerMessage};
-use pokedex::moves::target::MoveTargetInstance;
+use pokedex::moves::{
+    instance::MoveInstance,
+    target::MoveTargetInstance,
+};
 
 use crate::battle::{
     client::{BattleClient, BattleEndpoint},
@@ -68,7 +71,7 @@ impl BattleEndpoint for BattlePlayerAi {
                                             .pokemon
                                             .iter()
                                             .enumerate()
-                                            .filter(|(index, pokemon)| active.ne(index) && !pokemon.fainted())
+                                            .filter(|(index, pokemon)| !self.user.active.iter().any(|u| u == &Some(*index)) && !pokemon.fainted())
                                             .map(|(index, _)| index)
                                             .collect(); // To - do: use position()
                                         
@@ -94,6 +97,12 @@ impl BattleEndpoint for BattlePlayerAi {
             }.replace(pokemon.index, new),
             ServerMessage::AddUnknown(index, unknown) => self.opponent.add(index, unknown),
             ServerMessage::PokemonRequest(index, instance) => self.opponent.add_instance(index, instance),
+            ServerMessage::Winner(..) => (),
+            ServerMessage::AddMove(pokemon, _, move_ref) => if pokemon.team == self.user.id {
+                if let Some(pokemon) = self.user.pokemon.get_mut(pokemon.index) {
+                    if let Err(_)  = pokemon.moves.try_push(MoveInstance::new(move_ref)) {}
+                }
+            }
         }
     }
 }

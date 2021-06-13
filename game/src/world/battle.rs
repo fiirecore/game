@@ -96,29 +96,33 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
     }
 }
 
-pub fn update_world(world_manager: &mut WorldManager, player: &mut PlayerSave, winner: PlayerId, trainer: bool) {
-    let p = world_manager.map_manager.player();
-    p.input_frozen = false;
-    p.character.unfreeze();
-    if let Some(world) = world_manager.map_manager.data.battling.take() {
-        if winner == player.id {
-            if trainer {
-                let battled = &mut player.world.get_map(&world.map).battled;
-                match world.disable_others {
-                    TrainerDisable::DisableSelf => {
-                        battled.insert(world.id);
-                    },
-                    TrainerDisable::Many(others) => {
-                        battled.insert(world.id);
-                        battled.extend(others);
-                    },
-                    TrainerDisable::None => (),
+impl WorldManager {
+
+    pub fn update_world(&mut self, player: &mut PlayerSave, winner: PlayerId, trainer: bool) {
+        let p = self.map_manager.player();
+        p.input_frozen = false;
+        p.character.unfreeze();
+        if let Some(world) = self.map_manager.data.battling.take() {
+            if winner == player.id {
+                if trainer {
+                    let battled = &mut player.world.get_map(&world.map).battled;
+                    match world.disable_others {
+                        TrainerDisable::DisableSelf => {
+                            battled.insert(world.id);
+                        },
+                        TrainerDisable::Many(others) => {
+                            battled.insert(world.id);
+                            battled.extend(others);
+                        },
+                        TrainerDisable::None => (),
+                    }
                 }
+            } else {
+                player.location = player.world.heal.0;
+                self.map_manager.data.player.character.position = player.world.heal.1;
+                self.map_manager.data.current = Some(player.location);
             }
-        } else {
-            player.location = player.world.heal.0;
-            world_manager.map_manager.data.player.character.position = player.world.heal.1;
-            world_manager.map_manager.data.current = Some(player.location);
-        }
-    }    
+        }    
+    }
+
 }

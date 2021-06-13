@@ -24,6 +24,6 @@ pub struct PokedexData {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct LearnableMove {
 	#[serde(rename = "move")]
-	pub move_id: MoveId,
+	pub id: MoveId,
 	pub level: Level,
 }

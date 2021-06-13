@@ -1,6 +1,6 @@
 use crate::{
     util::Entity,
-    pokedex::pokemon::{instance::PokemonInstance, stat::StatSet, Level},
+    pokedex::pokemon::{stat::StatSet, Level, instance::PokemonInstance},
     text::TextColor,
     gui::health::HealthBar,
     graphics::{byte_texture, draw_text_left, draw_text_right, position},
@@ -98,7 +98,7 @@ impl PokemonStatusGui {
             origin,
             background,
             name: pokemon.map(|pokemon| pokemon.name().to_string()),
-            level: pokemon.map(|pokemon| Self::level(pokemon.level)),
+            level: pokemon.map(|pokemon| Self::level(pokemon.level())),
             data_pos,
             health: (
                 HealthBar::with_size(
@@ -134,13 +134,13 @@ impl PokemonStatusGui {
             origin,
             background,
             name: pokemon
-                .map(|pokemon| pokemon.pokemon.value().name.clone()),
-            level: pokemon.as_ref().map(|pokemon| Self::level(pokemon.level)),
+                .map(|pokemon| pokemon.pokemon().value().name.clone()),
+            level: pokemon.as_ref().map(|pokemon| Self::level(pokemon.level())),
             data_pos,
             health: (
                 HealthBar::with_size(
                     ctx,
-                    pokemon.map(|pokemon| pokemon.hp).unwrap_or_default() * HealthBar::WIDTH,
+                    pokemon.map(|pokemon| pokemon.hp()).unwrap_or_default() * HealthBar::WIDTH,
                 ),
                 hb,
             ),
@@ -250,7 +250,7 @@ impl PokemonStatusGui {
                     level.1 += 1;
                     level.0 = Self::level_fmt(level.1);
                     let base = StatSet::hp(
-                        pokemon.pokemon.value().base.hp,
+                        pokemon.pokemon().value().base.hp,
                         pokemon.ivs.hp,
                         pokemon.evs.hp,
                         level.1,
@@ -294,7 +294,7 @@ impl PokemonStatusGui {
             if let Some(exp) = self.exp.as_mut() {
                 if let Some(pokemon) = pokemon.instance() {
                     exp.update_exp(previous, pokemon, reset);
-                    if pokemon.level() == previous {
+                    if pokemon.level == previous {
                         self.health_text = Some(format!("{}/{}", pokemon.hp(), pokemon.max_hp()));
                     }
                 }

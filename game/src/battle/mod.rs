@@ -47,27 +47,20 @@ impl GameBattle {
 		self.trainer = entry.trainer;
 	}
 
-	pub fn update_data(&mut self, player: &mut PlayerSave) -> Option<(PlayerId, bool)> {
+	pub fn update_data(&mut self, winner: &PlayerId, player: &mut PlayerSave) -> bool {
 
 		let trainer = self.trainer.is_some();
 
-		let winner = self.battle.state().map(|s| match s {
-			state::BattleState::End(w) => Some(*w),
-			_ => None,
-		}).flatten();
-
-		if let Some(winner) = &winner {
-			if &player.id == winner {
-				if let Some(trainer) = self.trainer.take() {
-					player.worth += trainer.worth as u32;
-					if let Some(badge) = trainer.gym_badge {
-						player.world.badges.insert(badge);
-					}
+		if &player.id == winner {
+			if let Some(trainer) = self.trainer.take() {
+				player.worth += trainer.worth as u32;
+				if let Some(badge) = trainer.gym_badge {
+					player.world.badges.insert(badge);
 				}
 			}
 		}
 
-		winner.map(|winner| (winner, trainer))
+		trainer
 		
 	}
 

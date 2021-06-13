@@ -53,9 +53,9 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 	let mut pokemon_textures = PokemonTextures::with_capacity(dex.pokemon.len());
 
     pokedex.insert(
-        pokedex::pokemon::UNKNOWN_POKEMON, 
+        <pokedex::pokemon::Pokemon as deps::borrow::Identifiable>::UNKNOWN, 
         pokedex::pokemon::Pokemon {
-            id: pokedex::pokemon::UNKNOWN_POKEMON,
+            id: <pokedex::pokemon::Pokemon as deps::borrow::Identifiable>::UNKNOWN,
             name: "Unknown".to_string(),
             primary_type: pokedex::types::PokemonType::default(),
             secondary_type: None,

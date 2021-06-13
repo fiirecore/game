@@ -7,9 +7,7 @@ use crate::{
     tetra::Context, 
 };
 
-use crate::battle::{
-    pokemon::view::BattlePartyUnknown,
-};
+use crate::battle::pokemon::view::{BattlePartyUnknown, PokemonView};
 
 pub struct TargetPanel {
 
@@ -35,7 +33,7 @@ impl TargetPanel {
     pub fn update_names(&mut self, targets: &BattlePartyUnknown) {
         self.names.clear();
         for index in targets.active.iter() {
-            self.names.push(index.as_ref().map(|index| targets.pokemon[*index].as_ref().map(|pokemon| pokemon.pokemon.value().name.clone()).unwrap_or_else(|| String::from("Unknown"))));
+            self.names.push(index.as_ref().map(|index| targets.pokemon[*index].as_ref().map(|pokemon| pokemon.pokemon().value().name.clone()).unwrap_or_else(|| String::from("Unknown"))));
         }
     }
 

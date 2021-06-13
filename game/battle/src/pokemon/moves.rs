@@ -1,6 +1,6 @@
 use pokedex::{
     types::Effective,
-    pokemon::stat::StatType,
+    pokemon::{Experience, stat::StatType},
     moves::target::MoveTargetInstance,
     item::ItemRef,
 };
@@ -22,5 +22,7 @@ pub enum BattleClientMove {
     Effective(Effective),
     StatStage(StatType, i8),
     Faint(ActivePokemonIndex), // target that is fainting
+    #[deprecated(note = "only needs to be sent to one client")]
+    GainExp(Experience),
     Fail,
 }

@@ -25,6 +25,7 @@ pub type MoveId = TinyStr16;
 pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
+pub type Priority = i8;
 
 pub type FieldMoveId = TinyStr4;
 
@@ -41,6 +42,8 @@ pub struct Move {
 
 	pub accuracy: Option<Accuracy>,
 	pub pp: PP,
+	#[serde(default)]
+	pub priority: Priority,
 
 	pub usage: usage::MoveUseType,
 
@@ -53,10 +56,10 @@ pub struct Move {
 
 pub type MoveRef = StaticRef<Move>;
 
-pub const MOVE_UNKNOWN: MoveId = unsafe { MoveId::new_unchecked(31093567915781749) };
-
 impl Identifiable for Move {
     type Id = MoveId;
+
+	const UNKNOWN: MoveId = unsafe { MoveId::new_unchecked(31093567915781749) };
 
     fn id(&self) -> &Self::Id {
         &self.id
@@ -64,10 +67,6 @@ impl Identifiable for Move {
 
 	fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized {
 		unsafe { dex::MOVEDEX.as_ref().map(|map| map.get(id)).flatten() }
-	}
-
-	fn unknown() -> Option<&'static Self> {
-		Self::try_get(&MOVE_UNKNOWN)
 	}
 
 }

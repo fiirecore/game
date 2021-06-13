@@ -6,9 +6,17 @@ pub enum StaticRef<V: 'static + Identifiable> {
     Uninit(V::Id),
 }
 
+impl<V: 'static + Identifiable> Default for StaticRef<V> {
+    fn default() -> Self {
+        Self::Uninit(V::UNKNOWN)
+    }
+}
+
 pub trait Identifiable {
 
     type Id: DeserializeOwned + Serialize + Display + Clone + Copy;
+
+    const UNKNOWN: Self::Id;
 
     fn id(&self) -> &Self::Id;
     
@@ -21,7 +29,9 @@ pub trait Identifiable {
 
     fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized;
 
-    fn unknown() -> Option<&'static Self> where Self: Sized;
+    fn unknown() -> Option<&'static Self> where Self: Sized {
+        Self::try_get(&Self::UNKNOWN)
+    }
 
 }
 

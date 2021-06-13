@@ -32,14 +32,6 @@ impl ActivePokemon {
         }
     }
 
-    pub fn take(&mut self) -> Self {
-        std::mem::take(self)
-    }
-
-    pub fn replace(&mut self) {
-        *self = Self::ToReplace;
-    }
-
     pub fn is_active(&self) -> bool {
         matches!(self, Self::Some(..))
     }

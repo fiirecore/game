@@ -3,9 +3,13 @@ use std::rc::Rc;
 use crate::{
     util::{Entity, Completable, Reset},
     pokedex::{
-        moves::target::{
-            MoveTarget, 
-            MoveTargetInstance,
+        moves::{
+            instance::MoveInstance,
+            target::{
+                MoveTarget, 
+                MoveTargetInstance,
+                PlayerId,
+            }
         },
         item::ItemUseType, 
     },
@@ -75,6 +79,7 @@ enum BattlePlayerState {
     WaitToSelect,
     Select(Active),
     Moving(MoveQueue),
+    Winner(PlayerId),
 }
 
 impl Default for BattlePlayerState {
@@ -130,6 +135,15 @@ impl BattleEndpoint for BattlePlayerGui {
                 }
             },
             ServerMessage::AddUnknown(index, unknown) => self.opponent.party.add(index, unknown),
+            ServerMessage::Winner(player) => self.state = BattlePlayerState::Winner(player),
+            ServerMessage::AddMove(pokemon, index, move_ref) => if pokemon.team == self.player.party.id {
+                if let Some(pokemon) = self.player.party.pokemon.get_mut(pokemon.index) {
+                    debug!("to - do: set move to its index.");
+                    if let Err(err) = pokemon.moves.try_push(MoveInstance::new(move_ref)) {
+                        warn!("Cannot add moves to {} because it has maximum number of moves. error: {}", pokemon.name(), err)
+                    }
+                }
+            }
         }
     }
 }
@@ -156,10 +170,18 @@ impl BattlePlayerGui {
         }
     }
 
+    pub fn winner(&self) -> Option<PlayerId> {
+        if let BattlePlayerState::Winner(w) = self.state {
+            Some(w)
+        } else {
+            None
+        }
+    }
+
     pub fn update(&mut self, ctx: &Context, delta: f32) {
 
         match &mut self.state {
-            BattlePlayerState::WaitToSelect => (),
+            BattlePlayerState::WaitToSelect | BattlePlayerState::Winner(..) => (),
             BattlePlayerState::Select(active_index) => {
                 match self.player.party.active.get(*active_index) {
                     Some(index) => match index {
@@ -191,6 +213,8 @@ impl BattlePlayerGui {
                                                         BattleMove::Switch(selected)
                                                     )
                                                 );
+                                                *active_index += 1;
+                                                self.gui.panel.despawn();
                                             }
                                         } else if let Some(panels) = self.gui.panel.input(ctx, pokemon) {
                                             match panels {
@@ -211,57 +235,59 @@ impl BattlePlayerGui {
                                                             let target = move_ref.value().target;
                                                             match target {
                                                                 MoveTarget::Opponent => self.gui.panel.active = BattlePanels::Target(target, None),
-                                                                _ => self.messages.push(
-                                                                    ClientMessage::Move(
-                                                                        *active_index,
-                                                                        BattleMove::Move(
-                                                                            self.gui.panel.fight.moves.cursor,
-                                                                            match target {
-                                                                                MoveTarget::User => MoveTargetInstance::user(),
-                                                                                MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
-                                                                                MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
-                                                                                MoveTarget::Opponent => unreachable!(),
-                                                                            }
+                                                                _ => {
+                                                                    self.messages.push(
+                                                                        ClientMessage::Move(
+                                                                            *active_index,
+                                                                            BattleMove::Move(
+                                                                                self.gui.panel.fight.moves.cursor,
+                                                                                match target {
+                                                                                    MoveTarget::User => MoveTargetInstance::user(),
+                                                                                    MoveTarget::AllButUser => MoveTargetInstance::all_but_user(*active_index, self.player.party.active.len()),
+                                                                                    MoveTarget::Opponents => MoveTargetInstance::opponents(self.opponent.party.active.len()),
+                                                                                    MoveTarget::Opponent => unreachable!(),
+                                                                                }
+                                                                            )
                                                                         )
-                                                                    )
-                                                                ),
+                                                                    );
+                                                                    *active_index += 1;
+                                                                    self.gui.panel.despawn();
+                                                                }
                                                             }
                                                         }
                                                         None => warn!("Pokemon is out of Power Points for this move!")
                                                     }
                                                     None => warn!("Could not get move at cursor!"),
                                                 }
-                                                BattlePanels::Target(target, item) => self.messages.push(
-                                                    ClientMessage::Move(
-                                                        *active_index,
-                                                        match item {
-                                                            Some(item) => BattleMove::UseItem(
-                                                                item,
-                                                                match target {
-                                                                    MoveTarget::Opponent => MoveTargetInstance::Opponent(self.gui.panel.targets.cursor),
-                                                                    _ => unreachable!(),
-                                                                }
-                                                            ),
-                                                            None => BattleMove::Move(
-                                                                self.gui.panel.fight.moves.cursor, 
-                                                                match target {
-                                                                    MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.targets.cursor),
-                                                                    _ => unreachable!(),
-                                                                }
-                                                            ),
-                                                        }
-                                                    )
-                                                ), 
+                                                BattlePanels::Target(target, item) => {
+                                                    self.messages.push(
+                                                        ClientMessage::Move(
+                                                            *active_index,
+                                                            match item {
+                                                                Some(item) => BattleMove::UseItem(
+                                                                    item,
+                                                                    match target {
+                                                                        MoveTarget::Opponent => MoveTargetInstance::Opponent(self.gui.panel.targets.cursor),
+                                                                        _ => unreachable!(),
+                                                                    }
+                                                                ),
+                                                                None => BattleMove::Move(
+                                                                    self.gui.panel.fight.moves.cursor, 
+                                                                    match target {
+                                                                        MoveTarget::Opponent => MoveTargetInstance::opponent(self.gui.panel.targets.cursor),
+                                                                        _ => unreachable!(),
+                                                                    }
+                                                                ),
+                                                            }
+                                                        )
+                                                    );
+                                                    *active_index += 1;
+                                                    self.gui.panel.despawn();
+                                                }
                                             }
                                         }
-                                    // }
-                                    // false => {
-                                    //     *active_index += 1;
-                                    //     self.gui.panel.despawn();
-                                    // }
                                 }
                                 false => {
-                                    
                                     self.gui.panel.user(pokemon);
                                 }
                             }
@@ -297,7 +323,7 @@ impl BattlePlayerGui {
 
                                 if user.active(instance.pokemon.index).is_some() || !instance.action.requires_user() {
 
-                                    let action = match instance.action {
+                                    if let Some(action) = match instance.action {
                                         BattleClientGuiAction::Action(action) => match action {
                                             BattleClientAction::Move(pokemon_move, targets) => {
                                                 match user.active(instance.pokemon.index) {
@@ -308,20 +334,32 @@ impl BattlePlayerGui {
             
                                                             {
             
-                                                                let user = user.active_mut(instance.pokemon.index).unwrap();
+                                                                let user_pokemon = user.active_mut(instance.pokemon.index).unwrap();
             
                                                                 let user_pokemon_ui = &mut user_ui[instance.pokemon.index];
-            
+
                                                                 for moves in moves {
                                                                     match moves {
-                                                                        BattleClientMove::UserHP(damage) => user.set_hp(*damage),
-                                                                        BattleClientMove::Fail => ui::text::on_fail(&mut self.gui.text, vec![format!("{} cannot use move", user.name()), format!("{} (Unimplemented)", pokemon_move.value().name)]),
-                                                                        BattleClientMove::Miss => ui::text::on_miss(&mut self.gui.text, user),
+                                                                        BattleClientMove::UserHP(damage) => user_pokemon.set_hp(*damage),
+                                                                        BattleClientMove::Fail => ui::text::on_fail(&mut self.gui.text, vec![format!("{} cannot use move", user_pokemon.name()), format!("{} (Unimplemented)", pokemon_move.value().name)]),
+                                                                        BattleClientMove::Miss => ui::text::on_miss(&mut self.gui.text, user_pokemon),
+                                                                        BattleClientMove::GainExp(experience) => if let Some(pokemon) = user_pokemon.instance_mut() {
+                                                                            queue.actions.push_front(ActionInstance { pokemon: instance.pokemon, action: BattleClientGuiAction::GainExp(pokemon.level, *experience) });
+                                                                            let prev = pokemon.level;
+                                                                            pokemon.add_exp(*experience);
+                                                                            if prev != pokemon.level {
+                                                                                debug!("To - do: pokemon level up");
+                                                                            }
+                                                                            // {
+                                                                            //     queue.actions.push_front(ActionInstance { pokemon: instance.pokemon, action: BattleClientGuiAction::LevelUp(level, moves) });
+                                                                            // }
+                                                                            user_pokemon_ui.update_status_with_level(Some(pokemon), pokemon.level, false);
+                                                                        },
                                                                         _ => (),
                                                                     }
                                                                 }
                 
-                                                                user_pokemon_ui.update_status(Some(user), false);
+                                                                user_pokemon_ui.update_status(Some(user_pokemon), false);
             
                                                             }
             
@@ -362,7 +400,7 @@ impl BattlePlayerGui {
                                                         queue.current = None;
                                                     }
                                                 }
-                                                BattleClientGuiCurrent::Move(targets)
+                                                Some(BattleClientGuiCurrent::Move(targets))
                                             }
                                             BattleClientAction::UseItem(item, target) => {
                                                 let (index, player) = match target {
@@ -381,7 +419,7 @@ impl BattlePlayerGui {
                                                     }
                                                     ui::text::on_item(&mut self.gui.text, player.pokemon(index), item);
                                                 }
-                                                BattleClientGuiCurrent::UseItem(target)
+                                                Some(BattleClientGuiCurrent::UseItem(target))
                                             }
                                             BattleClientAction::Switch(index, unknown_pokemon) => {
                                                 if let Some(unknown) = unknown_pokemon {
@@ -389,7 +427,7 @@ impl BattlePlayerGui {
                                                 }
                                                 let coming = user.pokemon(index).unwrap();
                                                 ui::text::on_switch(&mut self.gui.text, user.active(instance.pokemon.index).unwrap(), coming);
-                                                BattleClientGuiCurrent::Switch(index)
+                                                Some(BattleClientGuiCurrent::Switch(index))
                                             }
                                         }
                                         BattleClientGuiAction::Faint => {
@@ -398,7 +436,7 @@ impl BattlePlayerGui {
                                             target.set_hp(0.0);
                                             ui::text::on_faint(&mut self.gui.text, self.is_wild, is_user, target);
                                             user_ui[instance.pokemon.index].renderer.faint();
-                                            BattleClientGuiCurrent::Faint
+                                            Some(BattleClientGuiCurrent::Faint)
                                         },
                                         BattleClientGuiAction::Catch => {
                                             let pokemon = self.opponent.party.pokemon(instance.pokemon.index).map(|v| v.instance()).flatten();
@@ -410,24 +448,31 @@ impl BattlePlayerGui {
                                                 self.opponent.party.replace(instance.pokemon.index, None);
                                                 self.opponent.renderer[instance.pokemon.index].update(None);
                                             }
-                                            BattleClientGuiCurrent::Catch
+                                            Some(BattleClientGuiCurrent::Catch)
                                         }
                                         BattleClientGuiAction::Replace(new) => {
                                             ui::text::on_replace(&mut self.gui.text, user.name(), new.map(|index| user.pokemon(index)).flatten());
                                             user.replace(instance.pokemon.index, new);
-                                            BattleClientGuiCurrent::Replace(false)
+                                            Some(BattleClientGuiCurrent::Replace(false))
                                         }
-                                        _ => todo!(),
-                                        // BattleClientAction::GainExp(level, experience) => { // To - do: experience spreading
-                                        //     ui::text::on_gain_exp(&mut self.gui.text, pokemon, *experience);
-                                        //     user_pokemon_ui[instance.pokemon.index].update_status(user.active(instance.pokemon.index), *level, false);
-                                        // }
-                                        // BattleClientAction::LevelUp(level, moves) => {
-                                        //     ui::text::on_level_up(text, pokemon, *level);
-                                        //     if let Some(_) = moves {
-                                        //         ui::text::on_fail(&mut self.gui.text, vec![format!("To - do: handle moves on level up")]);
-                                        //     }
-                                        // }
+                                        BattleClientGuiAction::GainExp(level, experience) => { // To - do: experience spreading
+                                            if let Some(pokemon) = user.active(instance.pokemon.index).map(|v| v.instance()).flatten() {
+                                                ui::text::on_gain_exp(&mut self.gui.text, pokemon, experience);
+                                                user_ui[instance.pokemon.index].update_status_with_level(Some(pokemon), level, false);
+                                                Some(BattleClientGuiCurrent::GainExp)
+                                            } else {
+                                                None
+                                            }
+                                        }
+                                        BattleClientGuiAction::LevelUp(level, moves) => {
+                                            // if let Some() = user.active(instance.pokemon.index).map(|v| v.instance()).flatten() {
+                                            //     ui::text::on_level_up(text, pokemon, *level);
+                                            //     if let Some(_) = moves {
+                                            //         ui::text::on_fail(&mut self.gui.text, vec![format!("To - do: handle moves on level up")]);
+                                            //     }
+                                            // }
+                                            None
+                                        }
                                         // BattleClientAction::Catch(index) => {
                                         //     if let Some(target) = match index.team {
                                         //         Team::Player => &user.active[index.active],
@@ -436,13 +481,12 @@ impl BattlePlayerGui {
                                         //         ui::text::on_catch(text, target);
                                         //     }
                                         // }
-                                    };
-
-                                    queue.current = Some(ActionInstance {
-                                        pokemon: instance.pokemon,
-                                        action
-                                    });
-
+                                    } {
+                                        queue.current = Some(ActionInstance {
+                                            pokemon: instance.pokemon,
+                                            action
+                                        });
+                                    }
                                 }                                
                             },
                         }
@@ -520,32 +564,31 @@ impl BattlePlayerGui {
                                 } else if !self.gui.text.finished() {
                                 	self.gui.text.update(ctx, delta);
                                 } else {
-                                    match instance.pokemon.team == self.player.party.id {
-                                        true => if self.player.party.any_inactive() {
-                                            match self.party.alive() {
-                                                true => {
-                                                    self.party.input(ctx);
-                                                    self.party.update(delta);
-                                                    if let Some(selected) = self.party.take_selected() {
-                                                        if !self.player.party.pokemon[selected].fainted() {
-                                                            // user.queue_replace(index, selected);
-                                                            self.party.despawn();
-                                                            self.messages.push(ClientMessage::FaintReplace(instance.pokemon.index, selected));
-                                                            self.player.party.replace(instance.pokemon.index, Some(selected));
-                                                            ui.update(self.player.party.active(instance.pokemon.index));
-                                                            queue.current = None;
-                                                        }
+                                    match instance.pokemon.team == self.player.party.id && self.player.party.any_inactive() {
+                                        true => match self.party.alive() {
+                                            true => {
+                                                self.party.input(ctx);
+                                                self.party.update(delta);
+                                                if let Some(selected) = self.party.take_selected() {
+                                                    if !self.player.party.pokemon[selected].fainted() {
+                                                        // user.queue_replace(index, selected);
+                                                        self.party.despawn();
+                                                        self.messages.push(ClientMessage::FaintReplace(instance.pokemon.index, selected));
+                                                        self.player.party.replace(instance.pokemon.index, Some(selected));
+                                                        ui.update(self.player.party.active(instance.pokemon.index));
+                                                        queue.current = None;
                                                     }
-                                                },
-                                                false => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, false)
-                                            }
-                                        } else {
-                                            self.player.party.replace(instance.pokemon.index, None);
-                                            user_ui[instance.pokemon.index].update(None);
-                                            queue.current = None;
+                                                }
+                                            },
+                                            false => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, false)
                                         },
                                         false => {
-                                            self.opponent.party.replace(instance.pokemon.index, None);
+                                            let user = match instance.pokemon.team == self.player.party.id {
+                                                true => &mut self.player.party as &mut dyn BattlePartyView,
+                                                false => &mut self.opponent.party as _,
+                                            };
+                                            user.replace(instance.pokemon.index, None);
+                                            user_ui[instance.pokemon.index].update(None);
                                             queue.current = None;
                                         }
                                     }
@@ -565,6 +608,19 @@ impl BattlePlayerGui {
                             BattleClientGuiCurrent::Catch => {
                                 if !self.gui.text.finished() {
                                     self.gui.text.update(ctx, delta);
+                                } else {
+                                    queue.current = None;
+                                }
+                            }
+                            BattleClientGuiCurrent::GainExp => {
+                                if !self.gui.text.finished() || self.player.renderer[instance.pokemon.index].status.exp_moving() {
+                                    self.gui.text.update(ctx, delta);
+                                    if let Some(pokemon) = self.player.party.active(instance.pokemon.index).map(|v| v.instance()).flatten() {
+                                        self.player.renderer[instance.pokemon.index].status.update_exp(delta, pokemon);
+                                    } else {
+                                        warn!("Could not get pokemon gaining exp at {}", instance.pokemon);
+                                        queue.current = None;
+                                    }
                                 } else {
                                     queue.current = None;
                                 }
@@ -612,7 +668,7 @@ impl BattlePlayerGui {
             //     self.party.draw(ctx)
             // },
             BattlePlayerState::WaitToSelect | BattlePlayerState::Moving(..) => {
-                for active in self.opponent.renderer.iter().chain(self.player.renderer.iter()) {
+                for active in self.player.renderer.iter() {
                     active.renderer.draw(ctx, ZERO, Color::WHITE);
                     active.status.draw(ctx, 0.0, 0.0);
                 }
@@ -622,6 +678,14 @@ impl BattlePlayerGui {
                     self.party.draw(ctx)
                 }
             },
+            BattlePlayerState::Winner(..) => {
+                for active in self.player.renderer.iter() {
+                    active.renderer.draw(ctx, ZERO, Color::WHITE);
+                    active.status.draw(ctx, 0.0, 0.0);
+                }
+                self.gui.draw_panel(ctx);
+                self.gui.text.draw(ctx);
+            }
         }
         
     }

@@ -6,7 +6,7 @@ pub enum BattleState {
 	Setup,
 	Selecting(bool),
 	Moving(bool),
-	End(PlayerId),
+	End(bool, PlayerId),
 }
 
 impl BattleState {

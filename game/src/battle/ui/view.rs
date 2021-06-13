@@ -89,7 +89,7 @@ impl ActivePokemonRenderer {
             let pokemon = (*index).map(|index| party.pokemon[index].as_ref()).flatten();
             Self {
                 status: PokemonStatusGui::with_unknown(ctx, position, pokemon),
-                renderer: PokemonRenderer::with(ctx, position, pokemon.map(|pokemon| *pokemon.pokemon.id()).as_ref(), pokedex::texture::PokemonTexture::Front),
+                renderer: PokemonRenderer::with(ctx, position, pokemon.map(|pokemon| *pokemon.pokemon().id()).as_ref(), pokedex::texture::PokemonTexture::Front),
             }
         }).collect()
     }

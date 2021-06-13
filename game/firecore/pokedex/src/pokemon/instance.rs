@@ -21,13 +21,9 @@ use crate::{
 		stat::{Stats, BaseStats},
 	},
 	moves::{
-		Move,
 		MoveRef,
 		MoveCategory,
-		instance::{
-			MoveInstance,
-			MoveInstanceSet,
-		},
+		instance::MoveInstanceSet,
 		persistent::PersistentMoveInstance,
 	},
 	item::ItemRef,
@@ -37,6 +33,7 @@ mod deserialize;
 
 mod moves;
 mod item;
+mod exp;
 
 // pub mod instance_template;
 
@@ -129,60 +126,6 @@ impl PokemonInstance {
 		}
 	}
 
-	pub fn add_exp(&mut self, experience: super::Experience) -> Option<(Level, Option<Vec<MoveRef>>)> {
-
-		// add exp to pokemon
-
-		self.experience += experience * 5;
-
-		// level the pokemon up if they reach a certain amount of exp (and then subtract the exp by the maximum for the previous level)
-
-		let mut moves = Vec::new();
-		let prev = self.level;
-
-		let gr = self.pokemon.value().training.growth_rate;
-
-		while self.experience > gr.max_exp(self.level) {
-			self.experience -= gr.max_exp(self.level);
-
-			self.level_up();
-
-			// Get the moves the pokemon learns at the level it just gained.
-
-			moves.extend(self.moves_at_level());
-
-			// Add moves if the player's pokemon does not have a full set of moves;
-
-			if !self.moves.is_full() {
-				while let Some(pmove) = moves.pop() {
-					if !self.moves.is_full() {
-						self.moves.push(MoveInstance::new(pmove));
-					} else {
-						break;
-					}
-				}
-			}
-		}
-			
-		if prev != self.level {
-			Some((
-				self.level,
-				if !moves.is_empty() {
-					Some(moves)
-				} else {
-					None
-				}
-			))
-		} else {
-			None
-		}
-	}
-
-	pub fn level_up(&mut self) {
-		self.level += 1;
-		self.base = BaseStats::new(self.pokemon.value(), &self.ivs, &self.evs, self.level);
-	}
-
 	pub fn generate_with_level(id: PokemonId, level: Level, ivs: Option<Stats>) -> Self {
 		Self::generate(id, level, level, ivs)
 	}
@@ -227,13 +170,7 @@ impl PokemonInstance {
 	}
 
 	pub fn moves_at_level(&self) -> Vec<MoveRef> {
-		let mut moves = Vec::new();
-		for pokemon_move in &self.pokemon.value().moves {
-			if pokemon_move.level == self.level {
-				moves.push(Move::get(&pokemon_move.move_id))
-			}
-		}
-		moves
+		self.pokemon.value().moves_at_level(self.level)
 	}
 
 	pub fn effective(&self, pokemon_type: PokemonType, category: MoveCategory) -> Effective {

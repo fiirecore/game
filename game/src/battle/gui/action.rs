@@ -22,6 +22,7 @@ pub enum BattleClientGuiCurrent {
     Faint,
     Catch,
     Replace(bool),
+    GainExp,
 }
 
 impl BattleClientGuiAction {

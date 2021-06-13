@@ -42,11 +42,11 @@ pub struct Item {
 
 pub type ItemRef = StaticRef<Item>;
 
-pub const ITEM_UNKNOWN: ItemId = unsafe { ItemId::new_unchecked(31093567915781749) };
-
 impl Identifiable for Item {
 
     type Id = ItemId;
+
+    const UNKNOWN: ItemId = unsafe { ItemId::new_unchecked(31093567915781749) };
 
     fn id(&self) -> &Self::Id {
         &self.id
@@ -54,10 +54,6 @@ impl Identifiable for Item {
 
     fn try_get(id: &Self::Id) -> Option<&'static Self> {
         unsafe { dex::ITEMDEX.as_ref().expect("Itemdex was not initialized!").get(id) }
-    }
-
-    fn unknown() -> Option<&'static Self> {
-        Self::try_get(&ITEM_UNKNOWN)
     }
 
 }

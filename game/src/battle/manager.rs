@@ -2,7 +2,6 @@ use std::rc::Rc;
 
 use crate::{
 	game::GameState,
-	deps::rhai::Engine,
 	storage::{data_mut, player::PlayerSave},
 	gui::{
 		party::PartyGui,
@@ -24,7 +23,6 @@ use crate::{
 
 use crate::battle::{
 	GameBattle,
-	state::BattleState,
 	client_state::{
 		BattleManagerState,
 		TransitionState,
@@ -170,16 +168,17 @@ impl BattleManager {
 						self.update(ctx, delta, input_lock);
 					}
 				}
-				BattleManagerState::Battle => match self.battle.battle.state().unwrap() {
-					BattleState::End(id) => self.state = BattleManagerState::Closer(*id),
-					_ => {
+				BattleManagerState::Battle => {
 
-						let player = self.player.get();
+					let player = self.player.get();
 
-						player.update(ctx, delta);
-						player.gui.bounce.update(delta);
+					player.update(ctx, delta);
+					player.gui.bounce.update(delta);
 
-						self.battle.battle.update();
+					self.battle.battle.update();
+
+					if let Some(winner) = player.winner() {
+						self.state = BattleManagerState::Closer(winner);
 					}
 				},
 				BattleManagerState::Closer(winner) => match self.closer.state {
@@ -198,8 +197,12 @@ impl BattleManager {
 		}
 	}
 
-	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(PlayerId, bool)> {
-		self.battle.update_data(player_save)
+	pub fn winner(&self) -> Option<PlayerId> {
+		self.player.get().winner()
+	}
+
+	pub fn update_data(&mut self, winner: &PlayerId, player_save: &mut PlayerSave) -> bool {
+		self.battle.update_data(winner, player_save)
 	}
 
 	pub fn world_active(&self) -> bool {

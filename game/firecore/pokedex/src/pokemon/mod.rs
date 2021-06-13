@@ -18,6 +18,7 @@ use crate::{
 	moves::{
 		MoveId,
 		Move,
+		MoveRef,
 		instance::{MoveInstance, MoveInstanceSet}
 	},
 };
@@ -61,7 +62,7 @@ pub struct Pokemon {
 impl Pokemon {
 
 	pub fn generate_moves(&self, level: Level) -> MoveInstanceSet {
-		let mut moves = self.moves.iter().filter(|learnable_move| learnable_move.level <= level).map(|learnable_move| learnable_move.move_id).collect::<Vec<MoveId>>();
+		let mut moves = self.moves.iter().filter(|learnable_move| learnable_move.level <= level).map(|learnable_move| learnable_move.id).collect::<Vec<MoveId>>();
 		moves.dedup();
 		moves.reverse();
 		moves.truncate(4);
@@ -82,11 +83,24 @@ impl Pokemon {
 	pub fn exp_from(&self, level: Level) -> Experience {
 		((self.training.base_exp * level as u16) / 7) as Experience
 	}
+
+	pub fn moves_at_level(&self, level: Level) -> Vec<MoveRef> {
+		let mut moves = Vec::new();
+		for learnable in &self.moves {
+			if learnable.level == level {
+				moves.push(Move::get(&learnable.id))
+			}
+		}
+		moves
+	}
 	
 }
 
 impl Identifiable for Pokemon {
+
     type Id = PokemonId;
+
+	const UNKNOWN: PokemonId = 0; // "unknown" = 31093567915781749
 
     fn id(&self) -> &Self::Id {
         &self.id
@@ -96,15 +110,9 @@ impl Identifiable for Pokemon {
 		unsafe { dex::POKEDEX.as_ref().map(|map| map.get(id)).flatten() }
 	}
 
-	fn unknown() -> Option<&'static Self> {
-		Self::try_get(&UNKNOWN_POKEMON)
-	}
-
 }
 
 pub type PokemonRef = StaticRef<Pokemon>;
-
-pub const UNKNOWN_POKEMON: PokemonId = 0; // "unknown" = 31093567915781749
 
 pub fn default_iv() -> Stats {
     Stats::uniform(15)
