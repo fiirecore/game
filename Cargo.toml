@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-firered-clone"
-version = "0.5.0-beta.2021-06-07"
+version = "0.5.0-beta.2021-06-13"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 description = "Pokemon FireRed Clone"
@@ -23,9 +23,9 @@ panic = "abort"
 opt-level = 3     # z = Optimize for size
 
 [features]
-default = ["audio"]
+default = ["audio", "static-link"]
 audio = ["firecore-game/audio", "audio-builder"]
-static-link = ["firecore-game/static-link"]
+static-link = ["firecore-game/static-link", "firecore-game/bundled"]
 discord = ["discord-rich-presence", "serde_json"]
 
 [dependencies]
