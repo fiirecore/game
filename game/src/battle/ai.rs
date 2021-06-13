@@ -6,6 +6,8 @@ use crate::battle::{
     pokemon::{
         view::{BattlePartyKnown, BattlePartyUnknown, BattlePartyView},
         BattleMove,
+        BattleClientMove,
+        BattleClientAction,
     },
 };
 
@@ -41,10 +43,7 @@ impl BattleEndpoint for BattlePlayerAi {
                                 active, 
                                 BattleMove::Move(
                                     moves[BATTLE_RANDOM.gen_range(0, moves.len())],
-                                    MoveTargetInstance::opponent(
-                                        self.opponent.id,
-                                        BATTLE_RANDOM.gen_range(0, self.opponent.active.len()),
-                                    ),
+                                    MoveTargetInstance::opponent(BATTLE_RANDOM.gen_range(0, self.opponent.active.len())),
                                 )
                             )
                         );
@@ -54,10 +53,10 @@ impl BattleEndpoint for BattlePlayerAi {
 
             ServerMessage::TurnQueue(actions) => {
                 for instance in actions.iter() {
-                    if let firecore_battle::pokemon::BattleClientAction::Move(.., instances) = &instance.action {
+                    if let BattleClientAction::Move(.., instances) = &instance.action {
                         for (_, moves) in instances {
                             for moves in moves {
-                                if let firecore_battle::pokemon::BattleClientMove::Faint(instance) = moves {
+                                if let BattleClientMove::Faint(instance) = moves {
                                     if instance.team == self.user.id {
                                         let active = instance.index;
                                         if let Some(pokemon) = self.user.active_mut(active) {
@@ -72,17 +71,14 @@ impl BattleEndpoint for BattlePlayerAi {
                                             .filter(|(index, pokemon)| active.ne(index) && !pokemon.fainted())
                                             .map(|(index, _)| index)
                                             .collect(); // To - do: use position()
+                                        
+                                        if !available.is_empty() {
+                                            let r = available[crate::battle::BATTLE_RANDOM.gen_range(0, available.len())];
+                                            self.user.replace(active, Some(r));
                                 
-                                        let r = if available.is_empty() {
-                                            deps::log::debug!("AI has no inactive pokemon!");
-                                            return
-                                        } else {
-                                            available[crate::battle::BATTLE_RANDOM.gen_range(0, available.len())]
-                                        };
+                                            self.messages.push(ClientMessage::FaintReplace(active, r));
+                                        }
                                 
-                                        self.user.replace(active, Some(r));
-                                
-                                        self.messages.push(ClientMessage::FaintReplace(active, r));
                                     }
                                 }
                             }
@@ -92,13 +88,12 @@ impl BattleEndpoint for BattlePlayerAi {
                 self.messages.push(ClientMessage::FinishedTurnQueue);
             },
             ServerMessage::AskFinishedTurnQueue => self.messages.push(ClientMessage::FinishedTurnQueue),
-            ServerMessage::FaintReplace(id, active, new) => {
-                match id == self.user.id {
-                    true => &mut self.user as &mut dyn BattlePartyView,
-                    false => &mut self.opponent as _,
-                }.replace(active, new)
-            },
-            ServerMessage::AddUnknown(_, index, unknown) => self.opponent.add(index, unknown),
+            ServerMessage::FaintReplace(pokemon, new) => match pokemon.team == self.user.id {
+                true => &mut self.user as &mut dyn BattlePartyView,
+                false => &mut self.opponent as _,
+            }.replace(pokemon.index, new),
+            ServerMessage::AddUnknown(index, unknown) => self.opponent.add(index, unknown),
+            ServerMessage::PokemonRequest(index, instance) => self.opponent.add_instance(index, instance),
         }
     }
 }

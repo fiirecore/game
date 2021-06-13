@@ -86,7 +86,7 @@ impl ActivePokemonRenderer {
         let size = party.active.len() as u8;
         party.active.iter().enumerate().map(|(i, index)| {
             let position = BattleGuiPositionIndex::new(BattleGuiPosition::Top, i as u8, size);
-            let pokemon = (*index).map(|index| party.pokemon[index]).flatten();
+            let pokemon = (*index).map(|index| party.pokemon[index].as_ref()).flatten();
             Self {
                 status: PokemonStatusGui::with_unknown(ctx, position, pokemon),
                 renderer: PokemonRenderer::with(ctx, position, pokemon.map(|pokemon| *pokemon.pokemon.id()).as_ref(), pokedex::texture::PokemonTexture::Front),

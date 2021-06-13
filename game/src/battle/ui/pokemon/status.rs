@@ -126,7 +126,7 @@ impl PokemonStatusGui {
     pub fn with_unknown(
         ctx: &mut Context,
         index: BattleGuiPositionIndex,
-        pokemon: Option<UnknownPokemon>,
+        pokemon: Option<&UnknownPokemon>,
     ) -> Self {
         let ((background, origin, _), data_pos, hb) = Self::attributes(ctx, index);
         Self {
@@ -134,7 +134,6 @@ impl PokemonStatusGui {
             origin,
             background,
             name: pokemon
-                .as_ref()
                 .map(|pokemon| pokemon.pokemon.value().name.clone()),
             level: pokemon.as_ref().map(|pokemon| Self::level(pokemon.level)),
             data_pos,

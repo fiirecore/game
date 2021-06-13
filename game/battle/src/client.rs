@@ -5,7 +5,7 @@ use crate::message::{ServerMessage, ClientMessage};
 pub struct LocalBattleClient {
     client: Box<dyn BattleClient>,
     state: BattleClientState,
-    pub forfeit: bool,
+    // pub forfeit: bool,
 }
 
 impl LocalBattleClient {
@@ -13,7 +13,7 @@ impl LocalBattleClient {
         Self {
             client,
             state: BattleClientState::SelectMoves,
-            forfeit: false,
+            // forfeit: false,
         }
     }
     pub fn send(&mut self, message: ServerMessage) {
@@ -35,7 +35,7 @@ impl LocalBattleClient {
                 ClientMessage::FinishedTurnQueue => if matches!(self.state, BattleClientState::ProcessTurnQueue) {
                     self.state = BattleClientState::FinishedTurnQueue;
                 },
-                ClientMessage::Forfeit => self.forfeit = true,
+                // ClientMessage::Forfeit => self.forfeit = true,
                 _ => (),
             }
         }

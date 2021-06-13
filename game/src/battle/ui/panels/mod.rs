@@ -3,6 +3,7 @@ use crate::{
     pokedex::{
         pokemon::instance::PokemonInstance,
         moves::target::MoveTarget,
+        item::ItemRef,
     },
     input::{pressed, Control},
     tetra::Context,
@@ -41,7 +42,7 @@ pub struct BattlePanel {
 pub enum BattlePanels {
     Main,
     Fight,
-    Target(MoveTarget),
+    Target(MoveTarget, Option<ItemRef>),
 }
 
 impl Default for BattlePanels {

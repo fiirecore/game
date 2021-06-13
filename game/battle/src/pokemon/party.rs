@@ -2,11 +2,8 @@ use crate::{
     deps::vec::ArrayVec,
     pokedex::{
         pokemon::{
-            instance::PokemonInstance,
-            party::{
-                PokemonParty,
-                BorrowedParty,
-            },
+            instance::{PokemonInstance, BorrowedPokemon},
+            party::{PokemonParty, BorrowedParty},
         },
         moves::target::PlayerId,
     },
@@ -20,24 +17,44 @@ use crate::{
     },
 };
 
-pub struct BattleParty {
+pub struct BattlePlayer {
 
     pub id: PlayerId,
     pub name: String,
 
     pub client: LocalBattleClient,
 
-    pub pokemon: BorrowedParty,
+    pub pokemon: BattleParty,
     pub active: PartyActive,
 
 }
 
-// pub enum BattlePartyType {
-//     Single,
-//     Double,
-//     Triple,
-//     Other(usize),
-// }
+pub type BattleParty = ArrayVec<[BattlePartyPokemon; 6]>;
+
+pub struct BattlePartyPokemon {
+    pub pokemon: BorrowedPokemon,
+    pub known: bool,
+    pub requestable: bool,
+}
+
+impl From<BorrowedPokemon> for BattlePartyPokemon {
+    fn from(pokemon: BorrowedPokemon) -> Self {
+        Self {
+            pokemon,
+            known: false,
+            requestable: false,
+        }
+    }
+}
+
+impl BattlePartyPokemon {
+    pub fn know(&mut self) -> Option<UnknownPokemon> {
+        (!self.known).then(|| {
+            self.known = true;
+            UnknownPokemon::new(self.pokemon.value())
+        })
+    }
+}
 
 pub enum PartyActive {
     Single([ActivePokemon; 1]),
@@ -100,7 +117,7 @@ impl PartyActive {
     }
 }
 
-impl BattleParty {
+impl BattlePlayer {
 
     pub fn new(id: PlayerId, name: &str, party: BorrowedParty, client: Box<dyn BattleClient>, active: usize) -> Self {
 
@@ -125,27 +142,31 @@ impl BattleParty {
             name: name.to_string(),
             client: LocalBattleClient::new(client),
             active,
-            pokemon: party,
+            pokemon: party.into_iter().map(|b| BattlePartyPokemon::from(b)).collect(),
         }
     }
 
     pub fn all_fainted(&self) -> bool {
-        !self.pokemon.iter().any(|p| !p.value().fainted())
+        !self.pokemon.iter().any(|p| !p.pokemon.value().fainted()) || self.pokemon.len() == 0
     }
 
     pub fn any_inactive(&self) -> bool {
-        self.pokemon.iter().enumerate().filter(|(i, _)| !self.active_contains(*i)).any(|(_, p)| !p.value().fainted())
+        self.pokemon.iter().enumerate().filter(|(i, _)| !self.active_contains(*i)).any(|(_, p)| !p.pokemon.value().fainted())
     }
 
     pub fn active(&self, active: usize) -> Option<&PokemonInstance> {
-        self.active_index(active).map(|index| self.pokemon.get(index).map(|b| b.value())).flatten()
+        self.active_index(active).map(|index| self.pokemon.get(index).map(|b| b.pokemon.value())).flatten()
     }
 
     pub fn active_mut(&mut self, active: usize) -> Option<&mut PokemonInstance> {
-        self.active_index(active).map(move |index| self.pokemon.get_mut(index).map(|b| b.value_mut())).flatten()
+        self.active_index(active).map(move |index| self.pokemon.get_mut(index).map(|b| b.pokemon.value_mut())).flatten()
     }
 
-    fn active_index(&self, index: usize) -> Option<usize> {
+    pub fn know(&mut self, index: usize) -> Option<UnknownPokemon> {
+        self.pokemon.get_mut(index).map(|p| p.know()).flatten()
+    }
+
+    pub fn active_index(&self, index: usize) -> Option<usize> {
         self.active.get(index).map(|active| active.index()).flatten()
     }
 
@@ -160,11 +181,15 @@ impl BattleParty {
         self.active.iter().any(|a| matches!(a, ActivePokemon::ToReplace))
     }
 
-    // pub fn request_replace(&mut self) {
-    //     for (i, _) in self.active.iter().enumerate().filter(|(_, a)| matches!(a, ActivePokemon::ToReplace)) {
-    //         self.client.send(crate::message::ServerMessage::RequestFaintReplace(i));
-    //     }
-    // }
+    pub fn reveal_active(&mut self) {
+        for active in self.active.iter() {
+            if let Some(index) = active.index() {
+                if let Some(pokemon) = self.pokemon.get_mut(index) {
+                    pokemon.known = true;
+                }
+            }
+        }
+    }
 
     pub fn replace(&mut self, active: usize, new: Option<usize>) {
         self.active.set(active, match new {
@@ -181,20 +206,21 @@ impl BattleParty {
     }
 
     pub fn collect_ref(&self) -> ArrayVec<[&PokemonInstance; 6]> {
-        self.pokemon.iter().map(|b| b.value()).collect()
+        self.pokemon.iter().map(|b| b.pokemon.value()).collect()
     }
 
     pub fn collect_cloned(&self) -> PokemonParty {
-        self.pokemon.iter().map(|b| b.cloned()).collect()
+        self.pokemon.iter().map(|b| b.pokemon.cloned()).collect()
     }
 
     pub fn collect_owned(self) -> BorrowedParty {
-        self.pokemon
+        self.pokemon.into_iter().map(|b|b.pokemon).collect()
     }    
 
     pub fn as_known(&self) -> BattlePartyKnown {
         BattlePartyKnown {
             id: self.id,
+            name: self.name.clone(),
             pokemon: self.collect_cloned(),
             active: self.active.iter().map(|active| active.index()).collect(),
         }
@@ -203,15 +229,12 @@ impl BattleParty {
     pub fn as_unknown(&self) -> BattlePartyUnknown {
         let active = self.active.iter().map(|active| active.index()).collect::<ArrayVec<[Option<usize>; 3]>>();
         let mut pokemon = ArrayVec::new();
-        for (i, p) in self.collect_ref().iter().enumerate() {
-            if active.contains(&Some(i)) {
-                pokemon.push(Some(UnknownPokemon::new(p)));
-            } else {
-                pokemon.push(None);
-            }
+        for p in self.pokemon.iter() {
+            pokemon.push(p.known.then(|| UnknownPokemon::new(p.pokemon.value())));
         }
         BattlePartyUnknown {
             id: self.id,
+            name: self.name.clone(),
             pokemon,
             active,
         }

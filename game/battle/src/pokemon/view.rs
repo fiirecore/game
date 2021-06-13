@@ -4,25 +4,31 @@ use pokedex::{
     moves::target::PlayerId,
 };
 
+use crate::message::{Active, PartyIndex};
+
 pub trait BattlePartyView {
 
     fn id(&self) -> &PlayerId;
 
-    fn active(&self, active: usize) -> Option<&dyn PokemonView>;
+    fn name(&self) -> &str;
 
-    fn active_mut(&mut self, active: usize) -> Option<&mut dyn PokemonView>;
+    fn active(&self, active: Active) -> Option<&dyn PokemonView>;
+
+    fn active_mut(&mut self, active: Active) -> Option<&mut dyn PokemonView>;
 
     fn active_len(&self) -> usize;
 
     fn len(&self) -> usize;
 
-    fn active_eq(&self, active: usize, index: Option<usize>) -> bool;
+    fn active_eq(&self, active: Active, index: Option<PartyIndex>) -> bool;
 
-    fn pokemon(&self, index: usize) -> Option<&dyn PokemonView>;
+    fn index(&self, active: Active) -> Option<PartyIndex>;
 
-    fn add(&mut self, index: usize, unknown: UnknownPokemon);
+    fn pokemon(&self, index: PartyIndex) -> Option<&dyn PokemonView>;
 
-    fn replace(&mut self, active: usize, new: Option<usize>);
+    fn add(&mut self, index: PartyIndex, unknown: UnknownPokemon);
+
+    fn replace(&mut self, active: Active, new: Option<PartyIndex>);
 
     fn any_inactive(&self) -> bool;
     
@@ -43,9 +49,15 @@ pub trait PokemonView {
 
     fn instance(&self) -> Option<&PokemonInstance>;
 
-    fn instance_mut(&mut self) -> Option<&mut PokemonInstance>;
+    // fn instance_mut(&mut self) -> Option<&mut PokemonInstance>;
 
 }
+
+// impl core::fmt::Debug for dyn PokemonView {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(f, "Lv{} {}", self.level(), self.name())
+//     }
+// }
 
 impl PokemonView for PokemonInstance {
     fn pokemon(&self) -> PokemonRef {
@@ -76,15 +88,16 @@ impl PokemonView for PokemonInstance {
         Some(self)
     }
 
-    fn instance_mut(&mut self) -> Option<&mut PokemonInstance> {
-        Some(self)
-    }
+    // fn instance_mut(&mut self) -> Option<&mut PokemonInstance> {
+    //     Some(self)
+    // }
 
 }
 
 #[derive(Debug, Clone)]
 pub struct BattlePartyKnown {
     pub id: PlayerId,
+    pub name: String,
     pub active: ArrayVec<[Option<usize>; 3]>,
     pub pokemon: PokemonParty,
 }
@@ -93,6 +106,7 @@ impl Default for BattlePartyKnown {
     fn default() -> Self {
         Self {
             id: "default".parse().unwrap(),
+            name: String::new(),
             active: Default::default(),
             pokemon: Default::default(),
         }
@@ -103,6 +117,10 @@ impl BattlePartyView for BattlePartyKnown {
 
     fn id(&self) -> &PlayerId {
         &self.id
+    }
+
+    fn name(&self) -> &str {
+        &self.name
     }
 
     fn active(&self, active: usize) -> Option<&dyn PokemonView> {
@@ -123,6 +141,10 @@ impl BattlePartyView for BattlePartyKnown {
 
     fn active_eq(&self, active: usize, index: Option<usize>) -> bool {
         self.active.get(active).map(|i| i == &index).unwrap_or_default()
+    }
+
+    fn index(&self, active: Active) -> Option<PartyIndex> {
+        self.active.get(active).copied().flatten()
     }
 
     fn pokemon(&self, index: usize) -> Option<&dyn PokemonView> {
@@ -146,6 +168,7 @@ impl BattlePartyView for BattlePartyKnown {
 #[derive(Clone)]
 pub struct BattlePartyUnknown {
     pub id: PlayerId,
+    pub name: String,
     pub active: ArrayVec<[Option<usize>; 3]>,
     pub pokemon: ArrayVec<[Option<UnknownPokemon>; 6]>,
 }
@@ -154,8 +177,18 @@ impl Default for BattlePartyUnknown {
     fn default() -> Self {
         Self {
             id: "default".parse().unwrap(),
+            name: String::default(),
             active: Default::default(),
             pokemon: Default::default(),
+        }
+    }
+}
+
+impl BattlePartyUnknown {
+    pub fn add_instance(&mut self, index: PartyIndex, instance: PokemonInstance) {
+        if let Some(pokemon) = self.pokemon.get_mut(index) {
+            let pokemon = pokemon.get_or_insert(UnknownPokemon::new(&instance));
+            pokemon.instance = Some(instance);
         }
     }
 }
@@ -164,6 +197,10 @@ impl BattlePartyView for BattlePartyUnknown {
 
     fn id(&self) -> &PlayerId {
         &self.id
+    }
+
+    fn name(&self) -> &str {
+        &self.name
     }
 
     fn active(&self, active: usize) -> Option<&dyn PokemonView> {
@@ -187,6 +224,10 @@ impl BattlePartyView for BattlePartyUnknown {
         self.active.get(active).map(|i| i == &index).unwrap_or_default()
     }
 
+    fn index(&self, active: Active) -> Option<PartyIndex> {
+        self.active.get(active).copied().flatten()
+    }
+
     fn pokemon(&self, index: usize) -> Option<&dyn PokemonView> {
         self.pokemon.get(index).map(|p| p as _)
     }
@@ -205,12 +246,12 @@ impl BattlePartyView for BattlePartyUnknown {
 
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct UnknownPokemon {
     pub pokemon: PokemonRef,
     pub level: Level,
     pub hp: f32, // % of hp
-    // pub moves:
+    pub instance: Option<PokemonInstance>,
 }
 
 impl UnknownPokemon {
@@ -220,6 +261,7 @@ impl UnknownPokemon {
             pokemon: pokemon.pokemon,
             level: pokemon.level,
             hp: pokemon.percent_hp(),
+            instance: None,
         }
     }
 
@@ -269,11 +311,11 @@ impl PokemonView for Option<UnknownPokemon> {
     }
 
     fn instance(&self) -> Option<&PokemonInstance> {
-        None
+        self.as_ref().map(|p| p.instance.as_ref()).flatten()
     }
 
-    fn instance_mut(&mut self) -> Option<&mut PokemonInstance> {
-        None
-    }
+    // fn instance_mut(&mut self) -> Option<&mut PokemonInstance> {
+    //     self.as_mut().map(|p| p.instance.as_mut()).flatten()
+    // }
 
 }

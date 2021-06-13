@@ -1,6 +1,6 @@
 use crate::{battle_glue::BattleTrainerEntry, gui::TextDisplay, tetra::Context, util::Completable};
 
-use crate::battle::{BattleType, pokemon::view::{BattlePartyKnown, BattlePartyUnknown}, ui::view::{ActivePokemonParty, ActiveRenderer}};
+use crate::battle::{data::BattleType, pokemon::view::{BattlePartyKnown, BattlePartyUnknown}, ui::view::{ActivePokemonParty, ActiveRenderer}};
 
 use crate::pokedex::moves::target::PlayerId;
 

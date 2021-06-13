@@ -1,11 +1,13 @@
-#[derive(Debug, PartialEq)]
+use pokedex::moves::target::PlayerId;
+
+#[derive(Debug)]
 pub enum BattleManagerState {
 	Begin,
 	Transition,
 	Opener,
 	Introduction,
 	Battle,
-	Closer,
+	Closer(PlayerId),
 }
 
 impl Default for BattleManagerState {

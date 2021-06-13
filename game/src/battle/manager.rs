@@ -29,7 +29,7 @@ use crate::battle::{
 		BattleManagerState,
 		TransitionState,
 	},
-	pokemon::BattleParty,
+	pokemon::BattlePlayer,
 	ui::{
 		transitions::managers::{
 			transition::BattleScreenTransitionManager,
@@ -38,21 +38,19 @@ use crate::battle::{
 			closer::BattleCloserManager,
 		}
 	},
-	gui::BattlePlayerGuiRef,
+	gui::guiref::BattlePlayerGuiRef,
 };
 
 pub struct BattleManager {
 
 	state: BattleManagerState,
 	
-	battle: Option<GameBattle>,
+	battle: GameBattle,
 	
 	transition: BattleScreenTransitionManager,
 	opener: BattleOpenerManager,
 	introduction: BattleIntroductionManager,
 	closer: BattleCloserManager,
-
-	engine: Rc<Engine>,
 
 	player: BattlePlayerGuiRef,
 
@@ -68,14 +66,12 @@ impl BattleManager {
 
 			state: BattleManagerState::default(),
 
-			battle: None,
+			battle: GameBattle::new(crate::pokedex::moves::usage::script::engine()),
 
 			transition: BattleScreenTransitionManager::new(ctx),
 			opener: BattleOpenerManager::new(ctx),
 			introduction: BattleIntroductionManager::new(ctx),
 			closer: BattleCloserManager::default(),
-
-			engine: Rc::new(crate::pokedex::moves::usage::script::engine()),
 
 			player: BattlePlayerGuiRef::new(ctx, party, bag),
 
@@ -90,27 +86,26 @@ impl BattleManager {
 		self.state = BattleManagerState::default();
 		let data = data_mut();
 		let player = &mut data.party;
-		self.battle = (!(
+		(!(
 			player.is_empty() || 
 			entry.party.is_empty() ||
 			// Checks if player has any pokemon in party that aren't fainted (temporary)
 			!player.iter().any(|pokemon| !pokemon.fainted())
 		)).then(|| {
 				let data = data_mut();
-				GameBattle::new(
-					self.engine.clone(),
-				BattleParty::new(
-					data.id, 
-					&data.name, 
-					data.party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), 
-					Box::new(self.player.clone()),
-					entry.size
-				),
-				entry
-			)
-		}
-	);
-		self.battle.is_some()
+				self.battle.battle(
+					BattlePlayer::new(
+						data.id, 
+						&data.name, 
+						data.party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), 
+						Box::new(self.player.clone()),
+						entry.size
+					),
+					entry
+				)
+			}
+		);
+		self.battle.battle.is_some()
 	}
 
 	pub fn update(&mut self, ctx: &mut Context, delta: f32, input_lock: bool) {
@@ -120,21 +115,22 @@ impl BattleManager {
 				return;
 			}
 		}
-		if let Some(battle) = self.battle.as_mut() {
+		if let Some(data) = self.battle.battle.data() {
 			match self.state {
 				BattleManagerState::Begin => {
 					self.player.get().gui.reset();
 					self.state = BattleManagerState::Transition;
 					self.transition.state = TransitionState::Begin;
 
-					battle.battle.begin();
+					self.battle.battle.begin();
+
 					self.player.get().on_begin(ctx);
 
 					self.update(ctx, delta, input_lock);
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
-						self.transition.begin(ctx, battle.battle.battle_type(), &battle.trainer);
+						self.transition.begin(ctx, data.type_, &self.battle.trainer);
 						self.update(ctx, delta, input_lock);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
@@ -146,7 +142,7 @@ impl BattleManager {
 				}
 				BattleManagerState::Opener => match self.opener.state {
 					TransitionState::Begin => {
-						self.opener.begin(battle.battle.battle_type(), battle.trainer.as_ref());
+						self.opener.begin(data.type_, self.battle.trainer.as_ref());
 						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.opener.update(delta),
@@ -160,7 +156,7 @@ impl BattleManager {
 					TransitionState::Begin => {
 						{
 							let mut player = self.player.get();
-							self.introduction.begin(battle.battle.battle_type(), battle.trainer.as_ref(), &mut player);
+							self.introduction.begin(data.type_, self.battle.trainer.as_ref(), &mut player);
 						}
 						self.update(ctx, delta, input_lock);
 					}
@@ -174,8 +170,8 @@ impl BattleManager {
 						self.update(ctx, delta, input_lock);
 					}
 				}
-				BattleManagerState::Battle => match battle.battle.state {
-					BattleState::End => self.state = BattleManagerState::Closer,
+				BattleManagerState::Battle => match self.battle.battle.state().unwrap() {
+					BattleState::End(id) => self.state = BattleManagerState::Closer(*id),
 					_ => {
 
 						let player = self.player.get();
@@ -183,12 +179,12 @@ impl BattleManager {
 						player.update(ctx, delta);
 						player.gui.bounce.update(delta);
 
-						battle.battle.update();
+						self.battle.battle.update();
 					}
 				},
-				BattleManagerState::Closer => match self.closer.state {
+				BattleManagerState::Closer(winner) => match self.closer.state {
 					TransitionState::Begin => {
-						self.closer.begin(battle.battle.battle_type(), battle.battle.winner.as_ref(), battle.trainer.as_ref(), &mut self.player.get().gui.text);
+						self.closer.begin(data.type_, Some(&winner), self.battle.trainer.as_ref(), &mut self.player.get().gui.text);
 						self.update(ctx, delta, input_lock);
 					}
 					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.get().gui.text),
@@ -203,11 +199,11 @@ impl BattleManager {
 	}
 
 	pub fn update_data(&mut self, player_save: &mut PlayerSave) -> Option<(PlayerId, bool)> {
-		self.battle.take().map(|battle| battle.update_data(player_save)).flatten()
+		self.battle.update_data(player_save)
 	}
 
 	pub fn world_active(&self) -> bool {
-		self.state == BattleManagerState::Transition || self.closer.world_active()		
+		matches!(self.state, BattleManagerState::Transition) || self.closer.world_active()		
 	}
 
 	pub fn end(&mut self) {
@@ -217,16 +213,8 @@ impl BattleManager {
 			BattleManagerState::Transition => self.transition.state = TransitionState::Begin,
 			BattleManagerState::Opener => self.opener.state = TransitionState::Begin,
 			BattleManagerState::Introduction => self.introduction.state = TransitionState::Begin,
-			BattleManagerState::Battle => {
-				if let Some(battle) = self.battle.as_mut() {
-					battle.battle.state = BattleState::End;
-					battle.battle.update();
-				}
-			},
-			BattleManagerState::Closer => self.closer.state = TransitionState::Begin,
-		}
-		if let Some(battle) = self.battle.as_mut() {
-			battle.battle.winner = Some(data_mut().id);
+			BattleManagerState::Battle => self.battle.battle.end(),
+			BattleManagerState::Closer(..) => self.closer.state = TransitionState::Begin,
 		}
 	}
 	
@@ -235,17 +223,17 @@ impl BattleManager {
 impl GameState for BattleManager {
     fn process(&mut self, mut result: crate::game::CommandResult) {
 		use deps::log::warn;
-		if let Some(battle) = self.battle.as_mut() {
+		if let Some(battle) = self.battle.battle.as_mut() {
 			match result.command {
 				"end" => self.end(),
 				"faint" => if let Some(team) = result.args.next() {
 					if let Some(index) = result.args.next().map(|index| index.parse::<usize>().ok()).flatten() {
 						match team {
-							"player" => if let Some(active) = battle.battle.player1.active_mut(index) {
+							"player" => if let Some(active) = battle.player1.active_mut(index) {
 								active.current_hp = 0;
 								// battle.battle.player1.client.add_unknown(index, unknown)
 							}
-							"opponent" => if let Some(active) = battle.battle.player2.active_mut(index) {
+							"opponent" => if let Some(active) = battle.player2.active_mut(index) {
 								active.current_hp = 0;
 							}
 							_ => warn!("Unknown team!"),
@@ -259,10 +247,10 @@ impl GameState for BattleManager {
 				"heal" => if let Some(team) = result.args.next() {
 					if let Some(index) = result.args.next().map(|index| index.parse::<usize>().ok()).flatten() {
 						match team {
-							"player" => if let Some(active) = battle.battle.player1.active_mut(index) {
+							"player" => if let Some(active) = battle.player1.active_mut(index) {
 								active.current_hp = active.max_hp();
 							}
-							"opponent" => if let Some(active) = battle.battle.player2.active_mut(index) {
+							"opponent" => if let Some(active) = battle.player2.active_mut(index) {
 								active.current_hp = active.max_hp();
 							}
 							_ => warn!("Unknown team!"),
@@ -279,7 +267,7 @@ impl GameState for BattleManager {
     }
 
     fn draw(&self, ctx: &mut deps::tetra::Context) {
-        if self.battle.is_some() {
+        if self.battle.battle.is_some() {
 			match self.state {
 				BattleManagerState::Begin => (),
 			    BattleManagerState::Transition => self.transition.draw(ctx),
@@ -296,7 +284,7 @@ impl GameState for BattleManager {
 					self.player.get().gui.text.draw(ctx);
 				}
 			    BattleManagerState::Battle => self.player.get().draw(ctx),
-			    BattleManagerState::Closer => {
+			    BattleManagerState::Closer(..) => {
 					if self.closer.state != TransitionState::End {
 						if !self.world_active() {
 							self.player.get().gui.background.draw(ctx, 0.0);

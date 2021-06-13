@@ -1,34 +1,21 @@
-use crate::pokemon::BattleMoveInstance;
+use pokedex::moves::target::PlayerId;
 
 #[derive(Debug)]
 pub enum BattleState {
 	StartWait,
-	Selecting(bool), // started, player done, opponent done
-	// Waiting (for opponent)
-	Moving(MoveState),
-	End,
+	Setup,
+	Selecting(bool),
+	Moving(bool),
+	End(PlayerId),
 }
 
 impl BattleState {
 	pub const SELECTING_START: Self = Self::Selecting(false);
-	pub const MOVE_START: Self = Self::Moving(MoveState::Start);
+	pub const MOVE_START: Self = Self::Moving(false);
 }
 
 impl Default for BattleState {
     fn default() -> Self {
         Self::StartWait
     }
-}
-
-#[derive(Debug)]
-pub enum MoveState {
-
-	Start,
-	SetupPokemon,
-	Pokemon(Vec<BattleMoveInstance>), // queue of pokemon
-	SetupPost,
-	Post,
-	SetupEnd,
-	End,
-
 }

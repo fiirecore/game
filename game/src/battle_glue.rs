@@ -1,4 +1,4 @@
-use deps::str::TinyStr8;
+use deps::str::{TinyStr8, TinyStr16};
 use pokedex::pokemon::party::PokemonParty;
 
 use deps::tetra::graphics::Texture;
@@ -14,7 +14,7 @@ pub struct BattleEntry {
 }
 
 pub struct BattleTrainerEntry {
-    // pub id: TinyStr8,
+    pub id: TinyStr16,
     pub prefix: String,
     pub name: String,
     pub transition: TinyStr8,

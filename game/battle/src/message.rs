@@ -1,33 +1,39 @@
 use std::borrow::Cow;
 
-use pokedex::moves::target::PlayerId;
+use pokedex::pokemon::instance::PokemonInstance;
 
-use crate::{BattleType, pokemon::{BattleClientActionInstance, BattleMove, view::{BattlePartyKnown, BattlePartyUnknown, UnknownPokemon}}};
+use crate::{
+    pokemon::{
+        view::{BattlePartyKnown, BattlePartyUnknown, UnknownPokemon},
+        ActivePokemonIndex, BattleClientActionInstance, BattleMove,
+    },
+    BattleData,
+};
 
-pub type Active = usize; pub type PartyIndex = usize;
+pub type Active = usize;
+pub type PartyIndex = usize;
 
 pub enum ClientMessage {
     Move(Active, BattleMove),
     FaintReplace(Active, PartyIndex),
-    // RequestPokemon(PlayerId, usize)
+    RequestPokemon(PartyIndex),
     FinishedTurnQueue,
     Forfeit,
 }
 
 pub enum ServerMessage<'a> {
-    User(BattleType, BattlePartyKnown),
+    User(BattleData, BattlePartyKnown),
     Opponents(BattlePartyUnknown),
     // UpdatePokemon(PlayerId, usize, UnknownPokemon),
-    // PokemonRequest(PlayerId, usize, PokemonInstance),
+    PokemonRequest(PartyIndex, PokemonInstance),
     StartSelecting,
     TurnQueue(Cow<'a, Vec<BattleClientActionInstance>>),
     AskFinishedTurnQueue,
     // SelectMoveError(usize),
-
+    // Catch(ActivePokemonIndex),
     // RequestFaintReplace(Active),
     // FaintReplaceError(Active),
-
-    FaintReplace(PlayerId, Active, Option<PartyIndex>),
-    AddUnknown(PlayerId, PartyIndex, UnknownPokemon),
+    FaintReplace(ActivePokemonIndex, Option<PartyIndex>),
+    AddUnknown(PartyIndex, UnknownPokemon),
     // Winner(PlayerId),
 }

@@ -598,6 +598,10 @@ impl GameState for WorldManager {
                 self.warp_to_location(location);
             } else {
                 warn!("Invalid warp command syntax!")
+            },
+            "give" => if let Some(item) = result.args.next().map(|item| item.parse::<pokedex::item::ItemId>().ok()).flatten() {
+                let count = result.args.next().map(|count| count.parse::<pokedex::item::StackSize>().ok()).flatten().unwrap_or(1);
+                data_mut().bag.add_item(pokedex::item::ItemStack::new(&item, count));
             }
             _ => warn!("Unknown world command \"{}\".", result),
         }

@@ -2,7 +2,6 @@ use crate::{
     text::{MessagePage, TextColor},
     gui::TextDisplay,
     tetra::math::Vec2,
-    storage::data,
     pokedex::{
         types::Effective,
         pokemon::{
@@ -64,22 +63,26 @@ pub(crate) fn on_miss(text: &mut TextDisplay, pokemon: &dyn PokemonView) {
     );
 }
 
-pub(crate) fn on_item(text: &mut TextDisplay, pokemon: &dyn PokemonView, item: &Item) {
+pub(crate) fn on_item(text: &mut TextDisplay, pokemon: Option<&dyn PokemonView>, item: &Item) {
     text.push(
         MessagePage::new(
-            vec![format!("A {} was used on {}", item.name, pokemon.name())], 
+            vec![format!("A {} was used on {}", item.name, pokemon.map(|p| p.name()).unwrap_or("None"))], 
             Some(0.5)
         )
     );
 }
 
-pub(crate) fn on_switch(text: &mut TextDisplay, leaving: &dyn PokemonView, coming: &dyn PokemonView) {
+fn on_leave(text: &mut TextDisplay, leaving: &dyn PokemonView) {
     text.push(
         MessagePage::new(
             vec![format!("Come back, {}!", leaving.name())],
             Some(0.5),
         )
     );
+}
+
+pub(crate) fn on_switch(text: &mut TextDisplay, leaving: &dyn PokemonView, coming: &dyn PokemonView) {
+    on_leave(text, leaving);
     on_go(text, coming);
 }
 
@@ -90,6 +93,20 @@ pub(crate) fn on_go(text: &mut TextDisplay, coming: &dyn PokemonView) {
             Some(0.5),
         )
     );
+}
+
+pub(crate) fn on_replace(text: &mut TextDisplay, user: &str, coming: Option<&dyn PokemonView>) {
+    // if let Some(leaving) = leaving {
+    //     on_leave(text, leaving);
+    // }
+    if let Some(coming) = coming {
+        text.push(
+            MessagePage::new(
+                vec![format!("{} sent out {}!", user, coming.name())],
+                Some(0.5),
+            )
+        );
+    }
 }
 
 // #[deprecated(note = "todo")]
@@ -128,25 +145,22 @@ pub(crate) fn on_faint(text: &mut TextDisplay, is_wild: bool, is_player: bool, p
     );
 }
 
-pub(crate) fn on_catch(text: &mut TextDisplay, target: &PokemonInstance) {
-    text.push(
-        MessagePage::new(
-            vec![
-                format!("{} used", data().name),
-                String::from("Pokeball!")
-            ], 
-            Some(2.0)
-        )
-    );
-    text.push(
-        MessagePage::new(
+pub(crate) fn on_catch(text: &mut TextDisplay, pokemon: Option<&PokemonInstance>) {
+    text.push(match pokemon {
+        Some(pokemon) => MessagePage::new(
             vec![
                 String::from("Gotcha!"),
-                format!("{} was caught!", target.name())
+                format!("{} was caught!", pokemon.name())
             ], 
             None
-        )
-    )
+        ),
+        None => MessagePage::new(
+            vec![
+                String::from("Could not catch pokemon!"),                
+            ], 
+            Some(2.0)
+        ),
+    });
 }
 
 pub(crate) fn on_gain_exp(text: &mut TextDisplay, pokemon: &PokemonInstance, exp: u32) {

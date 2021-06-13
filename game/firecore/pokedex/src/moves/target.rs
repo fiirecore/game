@@ -28,7 +28,7 @@ pub const fn move_target_opponent() -> MoveTarget {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum MoveTargetInstance {
-	Opponent(PlayerId, usize),
+	Opponent(usize), // maybe add PlayerId
 	Team(usize),
 	User,
 }
@@ -39,26 +39,26 @@ impl MoveTargetInstance {
 		vec![Self::User]
     }
 
-    pub fn opponent(opponent: PlayerId, index: usize) -> Vec<Self> {
-		vec![Self::Opponent(opponent, index)]
+    pub fn opponent(index: usize) -> Vec<Self> {
+		vec![Self::Opponent(index)]
     }
 
     pub fn team(index: usize) -> Vec<Self> {
         vec![Self::Team(index)]
     }
 
-    pub fn opponents(opponent: PlayerId, size: usize) -> Vec<Self> {
-        (0..size).into_iter().map(|index| Self::Opponent(opponent, index)).collect()
+    pub fn opponents(size: usize) -> Vec<Self> {
+        (0..size).into_iter().map(Self::Opponent).collect()
     }
 
-    pub fn all_but_user(user: usize, opponent: PlayerId, size: usize) -> Vec<Self> {
+    pub fn all_but_user(user: usize, size: usize) -> Vec<Self> {
         let mut vec = Vec::with_capacity(size * 2 - 1);
 		for i in 0..size {
 			if i != user {
 				vec.push(Self::Team(i));
 			}
 		}
-		(0..size).into_iter().for_each(|index| vec.push(Self::Opponent(opponent, index)));
+		(0..size).into_iter().for_each(|index| vec.push(Self::Opponent(index)));
         vec
     }
 

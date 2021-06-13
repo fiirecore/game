@@ -1,10 +1,10 @@
 pub use firecore_battle::*;
 
-use std::rc::Rc;
+use data::*;
 
 use crate::{
 	deps::rhai::Engine,
-	battle::pokemon::BattleParty,
+	battle::pokemon::BattlePlayer,
 	pokedex::{
 		pokemon::instance::BorrowedPokemon,
 		moves::target::PlayerId,
@@ -28,26 +28,37 @@ pub struct GameBattle {
 }
 
 impl GameBattle {
-	
-	pub fn new(engine: Rc<Engine>, player: BattleParty, entry: BattleEntry) -> Self {
+
+	pub fn new(engine: Engine) -> Self {
 		Self {
-			battle: Battle::new(
-				engine,
-				entry.trainer.as_ref().map(|trainer| if trainer.gym_badge.is_some() { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild), 
-				player, 
-				BattleParty::new("opponent".parse().unwrap(), "opponent", entry.party.into_iter().map(|instance| BorrowedPokemon::Owned(instance)).collect(), Box::new(BattlePlayerAi::default()), entry.size)
-			),
-			trainer: entry.trainer,
+			battle: Battle::new(engine),
+			trainer: None,
 		}
 	}
+	
+	pub fn battle(&mut self, player: BattlePlayer, entry: BattleEntry) {
+		self.battle.battle(BattleHost::new(
+			BattleData {
+				type_: entry.trainer.as_ref().map(|trainer| if trainer.gym_badge.is_some() { BattleType::GymLeader } else { BattleType::Trainer }).unwrap_or(BattleType::Wild),
+			},
+			player, 
+			BattlePlayer::new(entry.trainer.as_ref().map(|t| t.id).unwrap_or("unknown".parse().unwrap()), entry.trainer.as_ref().map(|t| t.name.as_str()).unwrap_or("Wild"), entry.party.into_iter().map(|instance| BorrowedPokemon::Owned(instance)).collect(), Box::new(BattlePlayerAi::default()), entry.size)
+		));
+		self.trainer = entry.trainer;
+	}
 
-	pub fn update_data(self, player: &mut PlayerSave) -> Option<(PlayerId, bool)> {
+	pub fn update_data(&mut self, player: &mut PlayerSave) -> Option<(PlayerId, bool)> {
 
 		let trainer = self.trainer.is_some();
 
-		if let Some(winner) = self.battle.winner {
-			if player.id == winner {
-				if let Some(trainer) = self.trainer {
+		let winner = self.battle.state().map(|s| match s {
+			state::BattleState::End(w) => Some(*w),
+			_ => None,
+		}).flatten();
+
+		if let Some(winner) = &winner {
+			if &player.id == winner {
+				if let Some(trainer) = self.trainer.take() {
 					player.worth += trainer.worth as u32;
 					if let Some(badge) = trainer.gym_badge {
 						player.world.badges.insert(badge);
@@ -56,7 +67,7 @@ impl GameBattle {
 			}
 		}
 
-		self.battle.winner.map(|winner| (winner, trainer))
+		winner.map(|winner| (winner, trainer))
 		
 	}
 

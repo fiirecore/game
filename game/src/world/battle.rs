@@ -70,6 +70,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
                             party: trainer.party.clone(),
                             trainer: Some(
                                 BattleTrainerEntry {
+                                    id: npc_id.as_str().parse().unwrap(),
                                     prefix: trainer_type.name.clone(),
                                     name: npc.name.clone(),
                                     transition: trainer.battle_transition,
