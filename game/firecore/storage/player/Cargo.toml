@@ -15,7 +15,7 @@ firecore-storage = { path = "../", optional = true }
 
 firecore-util = { path = "../../util" }
 firecore-pokedex = { path = "../../pokedex" }
-firecore-world-lib = { path = "../../../world/lib" }
+firecore-world = { path = "../../../world" }
 
 firecore-dependencies = { path = "../../deps", features = ["hash", "tinystr"] }
 

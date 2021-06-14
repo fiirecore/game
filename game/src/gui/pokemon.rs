@@ -6,9 +6,7 @@ use pokedex::{
         pokemon_texture,
         PokemonTexture::Icon,
     },
-    pokemon::{
-        instance::PokemonInstance,
-    },
+    pokemon::instance::PokemonInstance,
 };
 
 use crate::tetra::graphics::{Color, Texture};
@@ -24,14 +22,12 @@ pub struct PokemonDisplay {
 
 }
 
-pub struct PokemonSummaryDisplay {
+// pub struct PokemonSummaryDisplay {
 
-    pub types: Vec<PokemonTypeDisplay>, // To - do: non-vec
-    pub item: String,
+//     pub types: ArrayVec<[PokemonTypeDisplay; 2]>, // To - do: non-vec
+//     pub item: String,
 
-}
-
-
+// }
 
 const PLACEHOLDER: Color = Color::rgb(30.0 / 255.0, 30.0 / 255.0, 30.0 / 255.0);
 

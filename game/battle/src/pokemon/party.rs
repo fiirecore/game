@@ -155,12 +155,12 @@ impl BattlePlayer {
             name: name.to_string(),
             client: LocalBattleClient::new(client),
             active,
-            pokemon: party.into_iter().map(|b| BattlePartyPokemon::from(b)).collect(),
+            pokemon: party.into_iter().map(BattlePartyPokemon::from).collect(),
         }
     }
 
     pub fn all_fainted(&self) -> bool {
-        !self.pokemon.iter().any(|p| !p.pokemon.value().fainted()) || self.pokemon.len() == 0
+        !self.pokemon.iter().any(|p| !p.pokemon.value().fainted()) || self.pokemon.is_empty()
     }
 
     pub fn any_inactive(&self) -> bool {

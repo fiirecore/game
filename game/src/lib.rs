@@ -23,7 +23,7 @@ pub mod graphics;
 pub mod battle;
 
 #[cfg(feature = "world")]
-extern crate firecore_world_lib as worldlib;
+extern crate firecore_world as worldlib;
 
 #[cfg(feature = "world")]
 pub mod world;

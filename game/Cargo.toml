@@ -10,7 +10,7 @@ default = ["audio", "static-link", "world", "battle"]
 ser = ["firecore-dependencies/ser"]
 audio = ["firecore-dependencies/audio", "parking_lot"]
 # ui = ["macroquad/ui"]
-world = ["firecore-world-lib"]
+world = ["firecore-world"]
 battle = ["firecore-battle"]
 static-link = ["firecore-dependencies/static-link", "bundled"]
 bundled = ["firecore-dependencies/bundled"]
@@ -25,7 +25,7 @@ pokemon-firered-clone-storage = { path = "firecore/storage/game" }
 firecore-audio-lib = { path = "firecore/audio/lib" }
 firecore-text = { path = "firecore/text" }
 
-firecore-world-lib = { path = "world/lib", optional = true }
+firecore-world = { path = "world", optional = true }
 firecore-battle = { path = "battle", optional = true }
 
 serde = { version = "1.0", features = ["derive"] }

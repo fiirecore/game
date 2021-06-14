@@ -1,18 +1,20 @@
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use core::fmt::Display;
+use core::fmt::{Display, Debug, Formatter, Result as FmtResult};
 
-pub enum StaticRef<V: 'static + Identifiable> {
-    Init(&'static V),
+pub type StaticRef<V> = IdentifiableRef<'static, V>;
+
+pub enum IdentifiableRef<'a, V: Identifiable<'a>> {
+    Init(&'a V),
     Uninit(V::Id),
 }
 
-impl<V: 'static + Identifiable> Default for StaticRef<V> {
+impl<'a, V: Identifiable<'a>> Default for IdentifiableRef<'a, V> {
     fn default() -> Self {
         Self::Uninit(V::UNKNOWN)
     }
 }
 
-pub trait Identifiable {
+pub trait Identifiable<'a> {
 
     type Id: DeserializeOwned + Serialize + Display + Clone + Copy;
 
@@ -20,29 +22,29 @@ pub trait Identifiable {
 
     fn id(&self) -> &Self::Id;
     
-    fn get(id: &Self::Id) -> StaticRef<Self> where Self: Sized {
+    fn get(id: &Self::Id) -> IdentifiableRef<'a, Self> where Self: Sized {
         match Self::try_get(id) {
-            Some(this) => StaticRef::Init(this),
-            None => StaticRef::Uninit(*id),
+            Some(this) => IdentifiableRef::Init(this),
+            None => IdentifiableRef::Uninit(*id),
         }
     }
 
-    fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized;
+    fn try_get(id: &Self::Id) -> Option<&'a Self> where Self: Sized;
 
-    fn unknown() -> Option<&'static Self> where Self: Sized {
+    fn unknown() -> Option<&'a Self> where Self: Sized {
         Self::try_get(&Self::UNKNOWN)
     }
 
 }
 
-impl<V: 'static + Identifiable> StaticRef<V> {
+impl<'a, V: Identifiable<'a>> IdentifiableRef<'a, V> {
 
-    pub fn value(&self) -> &'static V {
+    pub fn value(&self) -> &'a V {
         match self {
-            StaticRef::Init(value) => value,
-            StaticRef::Uninit(id) => match V::get(&id) {
-                StaticRef::Init(value) => value,
-                StaticRef::Uninit(..) => match V::unknown() {
+            IdentifiableRef::Init(value) => value,
+            IdentifiableRef::Uninit(id) => match V::get(&id) {
+                IdentifiableRef::Init(value) => value,
+                IdentifiableRef::Uninit(..) => match V::unknown() {
                     Some(unknown) => unknown,
                     None => panic!("Could not get reference for {} with id {}", {
                         let v = std::any::type_name::<V>();
@@ -57,25 +59,25 @@ impl<V: 'static + Identifiable> StaticRef<V> {
 
     pub fn id(&self) -> &V::Id {
         match self {
-            StaticRef::Init(v) => v.id(),
-            StaticRef::Uninit(id) => id,
+            IdentifiableRef::Init(v) => v.id(),
+            IdentifiableRef::Uninit(id) => id,
         }
     }
 }
 
-impl<V: 'static + Identifiable> Serialize for StaticRef<V> {
+impl<'a, V: Identifiable<'a>> Serialize for IdentifiableRef<'a, V> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
         self.id().serialize(serializer)
     }
 }
 
-impl<'de, V: 'static + Identifiable> Deserialize<'de> for StaticRef<V> {
+impl<'a, 'de, V: Identifiable<'a>> Deserialize<'de> for IdentifiableRef<'a, V> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: serde::Deserializer<'de> {
         V::Id::deserialize(deserializer).map(|id| V::get(&id)).map_err(|err| serde::de::Error::custom(format_args!("pokemon de err, {}", err)))
     }
 }
 
-impl<V: 'static + Identifiable> Clone for StaticRef<V> {
+impl<'a, V: Identifiable<'a>> Clone for IdentifiableRef<'a, V> {
     fn clone(&self) -> Self {
         match self {
             Self::Init(v) => Self::Init(v),
@@ -84,16 +86,16 @@ impl<V: 'static + Identifiable> Clone for StaticRef<V> {
     }
 }
 
-impl<V: 'static + Identifiable> Copy for StaticRef<V> {}
+impl<'a, V: Identifiable<'a>> Copy for IdentifiableRef<'a, V> {}
 
-impl<V: 'static + Identifiable> Display for StaticRef<V> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<'a, V: Identifiable<'a>> Display for IdentifiableRef<'a, V> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         Display::fmt(self.id(), f)
     }
 }
 
-impl<V: 'static + Identifiable> core::fmt::Debug for StaticRef<V> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        core::fmt::Display::fmt(self.id(), f)
+impl<'a, V: Identifiable<'a>> Debug for IdentifiableRef<'a, V> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        Display::fmt(self.id(), f)
     }
 }

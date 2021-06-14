@@ -24,15 +24,5 @@ My attempt to code somewhat of a clone of Pokemon FireRed in Rust
 - [ ] Battle AI
 - [X] Proper texture animation support
     - [ ] Animated water
-- [ ] Maybe day/night cycle?
-- [ ] Fly move
-- [ ] World map
-
-### Other Goals
-
-- [ ] Fixed all warp transitions
-- [ ] All Npcs up to Cerulean are added
-- [ ] All scripts up to Cerulean are added
-### Other Planned Ideas
-
- - [ ] Game server
+- [ ] Fly field move
+- [X] Basic world map

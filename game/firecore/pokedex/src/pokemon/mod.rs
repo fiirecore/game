@@ -96,7 +96,7 @@ impl Pokemon {
 	
 }
 
-impl Identifiable for Pokemon {
+impl<'a> Identifiable<'a> for Pokemon {
 
     type Id = PokemonId;
 
@@ -106,7 +106,7 @@ impl Identifiable for Pokemon {
         &self.id
     }
 
-	fn try_get(id: &Self::Id) -> Option<&'static Self> where Self: Sized {
+	fn try_get(id: &Self::Id) -> Option<&'a Self> where Self: Sized {
 		unsafe { dex::POKEDEX.as_ref().map(|map| map.get(id)).flatten() }
 	}
 

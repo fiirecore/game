@@ -1,7 +1,7 @@
 extern crate firecore_dependencies as deps;
 extern crate firecore_util as util;
 extern crate firecore_pokedex as pokedex;
-extern crate firecore_world_lib as worldlib;
+extern crate firecore_world as worldlib;
 
 use std::sync::atomic::AtomicBool;
 use serde::{Deserialize, Serialize};

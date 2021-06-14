@@ -3,7 +3,7 @@ use crate::{
     tetra::math::Vec2,
 };
 
-use firecore_world_lib::character::Character;
+use crate::worldlib::character::Character;
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct RenderCoords {

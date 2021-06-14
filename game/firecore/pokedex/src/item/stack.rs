@@ -14,7 +14,7 @@ pub struct ItemStack {
 #[derive(Debug)]
 pub struct ItemStackInstance<'a> {
     pub stack: &'a mut ItemStack,
-    pub count_string: String, // To - do: research into not creating string for count
+    pub count_string: String,
 }
 
 impl ItemStack {

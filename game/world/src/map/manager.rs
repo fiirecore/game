@@ -126,7 +126,6 @@ impl WorldMapManager {
             false => false,
         };
 
-        #[deprecated(note = "add jumping")]
         fn one_way_tile(tile_id: TileId) -> bool {
             matches!(tile_id, 135 | 176 | 177 | 143 | 151 | 184 | 185 | 192 | 193 | 217 | 1234)
         }

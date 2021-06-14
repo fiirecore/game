@@ -20,9 +20,9 @@ pub mod npc;
 pub mod gui;
 pub mod battle;
 
-mod render_coords;
+mod screen;
 
-pub use render_coords::RenderCoords;
+pub use screen::RenderCoords;
 
 pub trait GameWorld: World {
 

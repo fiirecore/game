@@ -30,12 +30,14 @@ use worldlib::{
     serialized::SerializedWorld,
     map::{
         World,
+        WorldMap,
         manager::{WorldMapManager, TryMoveResult},
         WorldTime,
     },
     character::{
         MoveType,
         npc::npc_type::NpcType,
+        sprite::SpriteIndexes,
     },
 };
 
@@ -161,7 +163,7 @@ fn draw(wm: &WorldMapManager, ctx: &mut Context, door: &Option<Door>, textures: 
     }
 }
 
-fn get_mut(wm: &mut WorldMapManager) -> Option<&mut firecore_world_lib::map::WorldMap> {
+fn get_mut(wm: &mut WorldMapManager) -> Option<&mut WorldMap> {
     match wm.data.current.as_ref() {
         Some(cur) => wm.maps.get_mut(cur),
         None => None,
@@ -202,8 +204,6 @@ impl WorldManager {
         
         info!("Finished loading textures!");
 
-        println!();
-
         unsafe { crate::world::npc::NPC_TYPES = 
             Some(
                 world.npc_types.into_iter().map(|npc_type| {
@@ -211,7 +211,7 @@ impl WorldManager {
                     (
                         npc_type.config.identifier,
                         NpcType {
-                            sprite: firecore_world_lib::character::sprite::SpriteIndexes::from_index(npc_type.config.sprite),
+                            sprite: SpriteIndexes::from_index(npc_type.config.sprite),
                             text_color: npc_type.config.text_color,
                             trainer: npc_type.config.trainer,
                         }
@@ -442,18 +442,8 @@ impl WorldManager {
     }
 
     pub fn load_player(&mut self, data: &PlayerSave) {
-
         self.map_manager.data.player.character = data.character.clone();
-
-        self.map_manager.data.current = Some(data.location);
-
-        // if let Some(map) = data.location.map {
-        //     self.map_manager.chunk_active = false;
-        //     self.map_manager.update_map_set(map, data.location.index);
-        // } else {
-        //     self.map_manager.chunk_active = true;
-        //     self.map_manager.update_chunk(data.location.index);
-        // }     
+        self.map_manager.data.current = Some(data.location); 
     }
 
     #[deprecated]
@@ -462,12 +452,10 @@ impl WorldManager {
         if debug_pressed(ctx, DebugBind::F3) {
 
             info!("Local Coordinates: {}", self.map_manager.data.player.character.position.coords);
-            // info!("Global Coordinates: ({}, {})", self.map_manager.player.position.get_x(), self.map_manager.player.position.get_y());
 
-            if let Some(tile) = self.map_manager.tile(self.map_manager.data.player.character.position.coords) {
-                info!("Current Tile ID: {:x}", tile);
-            } else {
-                info!("Currently out of bounds");
+            match self.map_manager.tile(self.map_manager.data.player.character.position.coords) {
+                Some(tile) => info!("Current Tile ID: {:x}", tile),
+                None => info!("Currently out of bounds"),
             }
 
             info!("Player is {:?}", self.map_manager.data.player.character.move_type);

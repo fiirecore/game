@@ -42,7 +42,7 @@ pub struct Item {
 
 pub type ItemRef = StaticRef<Item>;
 
-impl Identifiable for Item {
+impl<'a> Identifiable<'a> for Item {
 
     type Id = ItemId;
 
@@ -52,7 +52,7 @@ impl Identifiable for Item {
         &self.id
     }
 
-    fn try_get(id: &Self::Id) -> Option<&'static Self> {
+    fn try_get(id: &Self::Id) -> Option<&'a Self> {
         unsafe { dex::ITEMDEX.as_ref().expect("Itemdex was not initialized!").get(id) }
     }
 

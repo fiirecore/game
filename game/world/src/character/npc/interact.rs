@@ -9,7 +9,7 @@ use super::Npc;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum NpcInteract {
     Message(MessagePages),
-    Script(WorldScript),
+    Script(Box<WorldScript>),
     Nothing,
 }
 

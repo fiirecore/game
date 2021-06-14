@@ -1,12 +1,19 @@
-extern crate firecore_world_lib as worldlib;
+extern crate firecore_world as worldlib;
 extern crate firecore_util as util;
+extern crate firecore_dependencies as deps;
 
 use std::io::Write;
 use std::path::Path;
 
 use firecore_pokedex_game::serialize::SerializedDex;
-use worldlib::map::manager::WorldMapManager;
-use worldlib::map::warp::WarpEntry;
+use worldlib::{
+    serialized::{SerializedWorld, SerializedTextures},
+    map::{
+        PaletteId,
+        manager::WorldMapManager,
+        warp::WarpEntry
+    },
+};
 
 pub mod world;
 pub mod gba_map;
@@ -39,7 +46,7 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, root_path: P, output_file: P)
     
     let mut file = std::fs::File::create(output_file).unwrap_or_else(|err| panic!("Could not create output file at {:?} with error {}", output_file, err));
 
-    let data = firecore_world_lib::serialized::SerializedWorld {
+    let data = SerializedWorld {
         manager,
         npc_types,
         textures,
@@ -47,14 +54,14 @@ pub fn compile<P: AsRef<Path>>(dex: SerializedDex, root_path: P, output_file: P)
     };
 
     println!("Saving data...");
-    let bytes = firecore_dependencies::ser::serialize(&data).unwrap_or_else(|err| panic!("Could not serialize output file with error {}", err));
+    let bytes = deps::ser::serialize(&data).unwrap_or_else(|err| panic!("Could not serialize output file with error {}", err));
     let bytes = file.write(&bytes).unwrap_or_else(|err| panic!("Could not write to output file with error {}", err));
     println!("Wrote {} bytes to world file!", bytes);
 
 }
 
-fn verify_palettes(manager: &WorldMapManager, textures: &mut worldlib::serialized::SerializedTextures) {
-    let keys = textures.palettes.keys().copied().collect::<Vec<worldlib::map::PaletteId>>();
+fn verify_palettes(manager: &WorldMapManager, textures: &mut SerializedTextures) {
+    let keys = textures.palettes.keys().copied().collect::<Vec<PaletteId>>();
     let mut palettes = Vec::new();
     for map in manager.maps.values() {
         for palette in map.palettes.iter() {

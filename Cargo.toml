@@ -54,7 +54,7 @@ winres = "0.1"
 [workspace]
 members = [
     "game",
-    "game/world/lib",
+    "game/world",
     "game/world/builder",
     "game/battle",
     "game/firecore/deps",

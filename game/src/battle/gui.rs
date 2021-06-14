@@ -224,7 +224,7 @@ impl BattlePlayerGui {
                                                         1 => self.bag.spawn(),
                                                         2 => crate::battle::ui::battle_party_known_gui(&self.party, &self.player.party, true),
                                                         3 => if self.is_wild {
-                                                            self.messages.push(ClientMessage::Forfeit); // To - do: "Got away safely!" - run text and conditions
+                                                            self.messages.push(ClientMessage::Forfeit);
                                                         },
                                                         _ => unreachable!(),
                                                     }

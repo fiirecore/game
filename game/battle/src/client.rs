@@ -31,12 +31,10 @@ impl LocalBattleClient {
     pub fn receive(&mut self) -> Option<ClientMessage> {
         let message = self.client.give_server();
         if let Some(message) = &message {
-            match message {
-                ClientMessage::FinishedTurnQueue => if matches!(self.state, BattleClientState::ProcessTurnQueue) {
+            if let ClientMessage::FinishedTurnQueue = message {
+                if matches!(self.state, BattleClientState::ProcessTurnQueue) {
                     self.state = BattleClientState::FinishedTurnQueue;
-                },
-                // ClientMessage::Forfeit => self.forfeit = true,
-                _ => (),
+                }
             }
         }
         message

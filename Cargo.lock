@@ -437,7 +437,7 @@ dependencies = [
  "firecore-pokedex-game",
  "firecore-text",
  "firecore-util",
- "firecore-world-lib",
+ "firecore-world",
  "parking_lot",
  "pokemon-firered-clone-storage",
  "serde",
@@ -468,7 +468,7 @@ dependencies = [
  "firecore-pokedex",
  "firecore-storage",
  "firecore-util",
- "firecore-world-lib",
+ "firecore-world",
  "serde",
 ]
 
@@ -500,8 +500,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "firecore-world-lib"
-version = "0.5.0-beta.2021-06-10"
+name = "firecore-world"
+version = "0.5.0-beta.2021-06-13"
 dependencies = [
  "firecore-audio-lib",
  "firecore-dependencies",
@@ -1450,7 +1450,7 @@ dependencies = [
  "firecore-dependencies",
  "firecore-pokedex-game",
  "firecore-util",
- "firecore-world-lib",
+ "firecore-world",
  "image",
  "ron",
  "serde",

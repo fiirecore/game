@@ -70,7 +70,7 @@ pub struct PokemonInstance {
 	pub item: Option<ItemRef>,
 
 	#[serde(skip)]
-	pub persistent: Option<PersistentMoveInstance>, // to - do
+	pub persistent: Option<PersistentMoveInstance>,
 
 	#[serde(skip)]
 	pub base: BaseStats,

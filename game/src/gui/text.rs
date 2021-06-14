@@ -79,6 +79,10 @@ impl TextDisplay {
 		self.message.pages.len()
 	}
 
+	pub fn is_empty(&self) -> bool {
+		self.len() == 0
+	}
+
 	pub fn current(&self) -> usize {
 		self.current
 	}
@@ -201,7 +205,7 @@ impl Completable for TextDisplay {
 		(self.current + 1 >= self.len() && 
 		self.end &&
 		self.can_continue) ||
-		self.len() == 0
+		self.is_empty()
     }
 }
 

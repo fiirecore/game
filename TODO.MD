@@ -1,0 +1,37 @@
+# To - do List
+
+## High Priority
+
+- [ ] Move animations through scripting
+- [ ] Moves on level up
+
+## Medium Priority
+
+- [ ] Town Map item
+- [ ] Persistent moves in battle
+- [ ] Add jumping over one way tiles
+
+## Low Priority
+
+- [ ] Command shortcuts and better parsing
+- [ ] Try to remove "count_string" in ItemStackInstance because having strings to display things suck
+- [ ] Specify default player location in world binary
+- [ ] Moves use PP in battle
+- [ ] Running from battle chance and text
+
+## Other
+
+- [ ] Maybe day/night cycle?
+- [ ] Working Pokemarts
+
+<!-- - [ ] Trainer and Gym Leader Battle AI -->
+
+### Other Goals
+
+- [ ] Fixed all warp transitions
+- [ ] All Npcs up to Cerulean are added
+- [ ] All scripts up to Cerulean are added
+
+### Other Planned Ideas
+
+ - [ ] Game server

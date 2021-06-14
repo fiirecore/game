@@ -23,7 +23,7 @@ impl Console {
     pub fn update(&mut self, ctx: &Context) -> Option<CommandResult> {
         match self.alive {
             true => {
-                if self.commands.len() == 0 {
+                if self.commands.is_empty() {
                     self.commands.push_front(String::new());
                 }
                 if input::is_key_pressed(ctx, Key::Slash) || input::is_key_pressed(ctx, Key::Escape) {
