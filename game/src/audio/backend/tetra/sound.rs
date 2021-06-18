@@ -1,8 +1,7 @@
 use deps::hash::HashMap;
-use deps::tetra::Context;
-use firecore_audio_lib::sound::Sound;
-use parking_lot::Mutex;
-use parking_lot::const_mutex;
+use crate::tetra::Context;
+use crate::audio::sound::Sound;
+use parking_lot::{Mutex, const_mutex};
 
 use crate::audio::error::PlayAudioError;
 

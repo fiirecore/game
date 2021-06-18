@@ -85,7 +85,7 @@ dependencies = [
 name = "audio-builder"
 version = "0.4.0"
 dependencies = [
- "firecore-audio-lib",
+ "firecore-audio",
  "firecore-dependencies",
  "ron",
  "serde",
@@ -388,7 +388,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "firecore-audio-lib"
+name = "firecore-audio"
 version = "0.1.1"
 dependencies = [
  "firecore-dependencies",
@@ -427,11 +427,11 @@ dependencies = [
 
 [[package]]
 name = "firecore-game"
-version = "0.5.0-beta.2021-06-13"
+version = "0.5.0-beta.2021-06-18"
 dependencies = [
  "atomic",
  "enum-map",
- "firecore-audio-lib",
+ "firecore-audio",
  "firecore-battle",
  "firecore-dependencies",
  "firecore-pokedex-game",
@@ -503,7 +503,7 @@ dependencies = [
 name = "firecore-world"
 version = "0.5.0-beta.2021-06-13"
 dependencies = [
- "firecore-audio-lib",
+ "firecore-audio",
  "firecore-dependencies",
  "firecore-font",
  "firecore-pokedex",

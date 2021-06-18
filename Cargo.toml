@@ -68,6 +68,6 @@ members = [
     "game/firecore/storage",
     "game/firecore/storage/player",
     "game/firecore/storage/game",
-    "game/firecore/audio/lib",
+    "game/firecore/audio",
     "game/firecore/audio/builder",
 ]

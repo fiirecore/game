@@ -9,9 +9,8 @@ use pokedex::{
     serialize::SerializedDex,
 };
 use crate::audio::{
-    add_sound,
-    SerializedSoundData,
-    Sound,
+    sound::{Sound, add_sound},
+    serialized::SerializedSoundData,
 };
 use crate::config::{Configuration, CONFIGURATION};
 use pokedex::texture::{PokemonTextures, POKEMON_TEXTURES, ITEM_TEXTURES};
@@ -132,7 +131,7 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 }
 
 #[cfg(feature = "audio")]
-pub fn audio(audio: crate::audio::SerializedAudio) {
+pub fn audio(audio: crate::audio::serialized::SerializedAudio) {
     use crate::log::error;    
 
     if let Err(err) = crate::audio::create() {

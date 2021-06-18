@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use deps::str::TinyStr16;
 use firecore_font::message::TextColor;
-use firecore_audio_lib::music::MusicName;
+use audio::music::MusicName;
 
 use crate::character::sprite::SpriteIndexes;
 

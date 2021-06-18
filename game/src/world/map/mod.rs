@@ -70,7 +70,7 @@ impl GameWorld for WorldMap {
         // }
 
         if music {
-            if audio::get_current_music().map(|current| current != self.music).unwrap_or(true) {
+            if audio::music::get_current_music().map(|current| current != self.music).unwrap_or(true) {
                 play_music(ctx, self.music);
             }
         }
@@ -424,12 +424,12 @@ impl GameWorld for WorldMap {
                     }
                 }
                 Some(current) => match current {
-                    WorldActionKind::PlayerMove(destination) => {
+                    WorldActionKind::PlayerMove(..) => {
                         if world.player.character.move_to_destination(delta) {
                             script.current = None;
                         }
                     },
-                    WorldActionKind::NpcMove(id, pos) => {
+                    WorldActionKind::NpcMove(id, ..) => {
                         match self.npcs.get_mut(id) {
                             Some(npc) => if npc.character.move_to_destination(delta) {
                                 script.current = None;
@@ -616,8 +616,8 @@ impl GameWorld for WorldMap {
                                     // Play Trainer music
 
                                     if let Some(encounter_music) = trainer_type.music.as_ref() {
-                                        if let Some(playing_music) = audio::get_current_music() {
-                                            if let Some(music) = audio::get_music_id(encounter_music).flatten() {
+                                        if let Some(playing_music) = audio::music::get_current_music() {
+                                            if let Some(music) = audio::music::get_music_id(encounter_music).flatten() {
                                                 if playing_music != music {
                                                 play_music(ctx, music)
                                                 }

@@ -1,5 +1,5 @@
 [package]
-name = "firecore-audio-lib"
+name = "firecore-audio"
 version = "0.1.1"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
@@ -10,4 +10,4 @@ file = []
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-firecore-dependencies = { path = "../../deps", features = ["tinystr"] }
+firecore-dependencies = { path = "../deps", features = ["tinystr"] }

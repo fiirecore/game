@@ -1,7 +1,7 @@
 use crate::{
     util::{Entity, Reset, Completable},
     text::MessagePage,
-    audio::Sound,
+    audio::sound::Sound,
     gui::TextDisplay,
     graphics::{position, ZERO},
     tetra::{

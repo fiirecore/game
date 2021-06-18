@@ -1,5 +1,5 @@
 use deps::tetra::audio::Sound;
-use firecore_audio_lib::serialized::{SerializedMusicData, SerializedSoundData};
+use crate::audio::serialized::{SerializedMusicData, SerializedSoundData};
 use deps::hash::HashMap;
 
 use crate::audio::error::AddAudioError;

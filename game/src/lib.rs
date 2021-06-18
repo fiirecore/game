@@ -58,8 +58,8 @@ pub fn is_debug() -> bool {
 
 pub const CRY_ID: TinyStr8 = unsafe { TinyStr8::new_unchecked(7959107) };
 
-pub fn play_music(ctx: &Context, id: audio::MusicId) {
-    if let Err(err) = audio::play_music_id(ctx, id) {
+pub fn play_music(ctx: &Context, id: audio::music::MusicId) {
+    if let Err(err) = audio::music::play_music_id(ctx, id) {
         // match err {
             // audio::error::PlayAudioError::Uninitialized => (),
             warn!("Could not play music id {:x} with error {}", id, err);
@@ -68,7 +68,7 @@ pub fn play_music(ctx: &Context, id: audio::MusicId) {
 }
 
 pub fn play_music_named(ctx: &Context, music: &str) {
-    if let Err(err) = audio::play_music_named(ctx, music) {
+    if let Err(err) = audio::music::play_music_named(ctx, music) {
         // match err {
             // audio::error::PlayAudioError::Uninitialized => (),
             warn!("Could not play music named \"{}\" with error {}", music, err);
@@ -76,8 +76,8 @@ pub fn play_music_named(ctx: &Context, music: &str) {
     }
 }
 
-pub fn play_sound(ctx: &Context, sound: &audio::Sound) {
-    if let Err(err) = audio::play_sound(ctx, &sound) {
+pub fn play_sound(ctx: &Context, sound: &audio::sound::Sound) {
+    if let Err(err) = audio::sound::play_sound(ctx, &sound) {
         warn!("Could not play sound {} with error {}", sound, err);
     }
 }

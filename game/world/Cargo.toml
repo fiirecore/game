@@ -15,4 +15,4 @@ firecore-dependencies = { path = "../firecore/deps", features = ["random", "hash
 firecore-util = { path = "../firecore/util" }
 firecore-pokedex = { path = "../firecore/pokedex" }
 firecore-font = { path = "../firecore/text/font" }
-firecore-audio-lib = { path = "../firecore/audio/lib" }
+firecore-audio = { path = "../firecore/audio" }

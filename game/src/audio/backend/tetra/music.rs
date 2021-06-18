@@ -1,7 +1,7 @@
 use deps::hash::HashMap;
 use deps::tetra::{Context, audio::{Sound, SoundInstance}};
 use parking_lot::{Mutex, const_mutex};
-use firecore_audio_lib::music::{MusicId, MusicData};
+use crate::audio::music::{MusicId, MusicData};
 
 use crate::audio::error::{PlayAudioError, Lockable};
 

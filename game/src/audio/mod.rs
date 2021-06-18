@@ -1,21 +1,17 @@
+extern crate firecore_audio as audio;
+
 #[cfg(feature = "play")]
 extern crate firecore_dependencies as deps;
 
 use error::AddAudioError;
 
-mod music;
-mod sound;
+pub mod music;
+pub mod sound;
 
 pub mod error;
 pub mod backend;
 
-pub use firecore_audio_lib::music::*;
-pub use firecore_audio_lib::sound::*;
-
-pub use firecore_audio_lib::serialized::*;
-
-pub use music::{add_track, get_music_id, play_music_id, play_music_named, get_current_music};
-pub use sound::{add_sound, play_sound};
+pub use audio::serialized;
 
 #[cfg(feature = "audio")]
 pub fn create() -> Result<(), AddAudioError> {
@@ -24,12 +20,12 @@ pub fn create() -> Result<(), AddAudioError> {
 }
 
 #[cfg(feature = "audio")]
-pub fn load(data: SerializedAudio) -> Result<(), AddAudioError> {
+pub fn load(data: serialized::SerializedAudio) -> Result<(), AddAudioError> {
     for music_data in data.music {
-        add_track(music_data)?;
+        music::add_music(music_data)?;
     }
     for sound_data in data.sounds {
-        add_sound(sound_data)?;
+        sound::add_sound(sound_data)?;
     }
     Ok(())
 }
