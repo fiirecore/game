@@ -18,12 +18,16 @@ pub enum MoveTarget {
 	// ReachAll(u8),
 }
 
-pub const fn move_target_player() -> MoveTarget {
-	MoveTarget::User
-}
+impl MoveTarget {
 
-pub const fn move_target_opponent() -> MoveTarget {
-	MoveTarget::Opponent
+	pub const fn player() -> MoveTarget {
+		MoveTarget::User
+	}
+	
+	pub const fn opponent() -> MoveTarget {
+		MoveTarget::Opponent
+	}
+
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -58,7 +62,7 @@ impl MoveTargetInstance {
 				vec.push(Self::Team(i));
 			}
 		}
-		(0..size).into_iter().for_each(|index| vec.push(Self::Opponent(index)));
+		vec.extend((0..size).into_iter().map(|index| Self::Opponent(index)));
         vec
     }
 

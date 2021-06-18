@@ -12,7 +12,7 @@
 //! promises are made about its quality, and if you use it for
 //! cryptography you will get what you deserve.
 //!
-//! Works with `#![no_std]`, has no global state, no dependencies
+//! Works with `#![no_std]`, no dependencies
 //! apart from some in the unit tests, and is generally neato.
 
 // #![forbid(unsafe_code)]

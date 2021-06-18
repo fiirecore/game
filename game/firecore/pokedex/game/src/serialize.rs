@@ -4,7 +4,7 @@ use crate::pokemon::Pokemon;
 use crate::moves::Move;
 use crate::item::Item;
 
-use crate::battle::BattleMove;
+use crate::battle::serialized::SerializedBattleMoveBytes;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedDex {
@@ -24,7 +24,7 @@ pub struct SerializedPokemon {
 
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct SerializedMove {
 
@@ -32,7 +32,7 @@ pub struct SerializedMove {
 	pub pokemon_move: Move,
 
     #[serde(default)]
-    pub battle_move: Option<BattleMove>,
+    pub battle_move: Option<SerializedBattleMoveBytes>,
 	
 }
 
@@ -47,8 +47,6 @@ impl From<Move> for SerializedMove {
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedItem {
-
     pub item: Item,
-
     pub texture: Vec<u8>,
 }

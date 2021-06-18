@@ -5,6 +5,10 @@
 - [ ] Move animations through scripting
 - [ ] Moves on level up
 
+- [ ] Health bar colors
+- [ ] Health bar shake on hit
+- [ ] Tackle faster
+
 ## Medium Priority
 
 - [ ] Town Map item

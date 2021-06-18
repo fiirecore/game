@@ -47,7 +47,7 @@ pub struct Move {
 
 	pub usage: usage::MoveUseType,
 
-	#[serde(default = "target::move_target_opponent")]
+	#[serde(default = "target::MoveTarget::opponent")]
 	pub target: target::MoveTarget,
 
 	pub field_id: Option<FieldMoveId>,

@@ -1,13 +1,11 @@
 (    
-    move: (
-		id: "juicer",
-		name: "The Juicer",
-		category: Special,
-		type: Dragon,
-		accuracy: None,
-		pp: 255,
-		usage: Damage(Power(255)),
-		target: Opponent,
-		priority: 20,
-    ),
+	id: "juicer",
+	name: "The Juicer",
+	category: Special,
+	type: Dragon,
+	accuracy: None,
+	pp: 255,
+	usage: Damage(Power(255)),
+	target: Opponent,
+	priority: 127,
 )

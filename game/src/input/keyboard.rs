@@ -1,7 +1,12 @@
-use deps::hash::HashSet;
-use enum_map::EnumMap;
-use crate::tetra::{Context, input::{self, Key}};
+use crate::{
+    deps::hash::HashSet,
+    tetra::{
+        input::{self, Key},
+        Context,
+    },
+};
 
+use enum_map::EnumMap;
 
 use super::Control;
 
@@ -11,36 +16,29 @@ pub type KeyMap = EnumMap<Control, HashSet<Key>>;
 static mut KEY_CONTROLS: Option<KeyMap> = None;
 
 pub fn load(key_map: KeyMap) {
-    unsafe { KEY_CONTROLS = Some(key_map); }
+    unsafe {
+        KEY_CONTROLS = Some(key_map);
+    }
 }
 
 pub fn pressed(ctx: &Context, control: Control) -> bool {
-    if let Some(keys) = keys(control) {
-        for key in keys {
-            if input::is_key_pressed(ctx, *key) {
-                return true;
-            }
-        }
-    }
-    false
+    unsafe { KEY_CONTROLS.as_ref() }
+        .map(|controls| {
+            controls[control]
+                .iter()
+                .any(|key| input::is_key_pressed(ctx, *key))
+        })
+        .unwrap_or_default()
 }
 
 pub fn down(ctx: &Context, control: Control) -> bool {
-    if let Some(keys) = keys(control) {
-        for key in keys {
-            if input::is_key_down(ctx, *key) {
-                return true;
-            }
-        }
-    }
-    false
-}
-
-#[inline]
-pub fn keys(control: Control) -> Option<&'static KeySet> {
-    unsafe {
-        KEY_CONTROLS.as_ref().map(|controls| &controls[control])//.unwrap_or_else(|| panic!("Could not get keys for control {:?}!", control)))
-    }
+    unsafe { KEY_CONTROLS.as_ref() }
+        .map(|controls| {
+            controls[control]
+                .iter()
+                .any(|key| input::is_key_down(ctx, *key))
+        })
+        .unwrap_or_default()
 }
 
 pub fn default_key_map() -> KeyMap {
@@ -56,12 +54,10 @@ pub fn default_key_map() -> KeyMap {
     }
 }
 
-fn keyset(
-    codes: &[Key]
-) -> KeySet {
+fn keyset(codes: &[Key]) -> KeySet {
     let mut set = HashSet::new();
     for code in codes {
         set.insert(*code);
-    }    
+    }
     set
 }

@@ -1,27 +1,12 @@
 (
-    move: (
-        id: "surf",
-        name: "Surf",
-        type: Water,
-        category: Special,
-        accuracy: Some(100),
-        pp: 15,
-		usage: Damage(Power(90)),
-		target: AllButUser,
-        field_id: Some("surf"),
-    ),
-    // game_move: Some((
-    // )),
-
-    // battle_script: Some((
-    //     actions: [
-    //         SpawnTexture,
-    //         // MoveTexture(30.0, 5.0, 1.0),
-    //         Wait(0.5),
-    //         DespawnTexture,
-    //     ],
-    // )),
-
-    // texture: Some("surf.png"),
+    id: "surf",
+    name: "Surf",
+    type: Water,
+    category: Special,
+    accuracy: Some(100),
+    pp: 15,
+    usage: Damage(Power(90)),
+    target: AllButUser,
+    field_id: Some("surf"),
 
 )

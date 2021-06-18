@@ -1,22 +1,20 @@
-(
-    move: (
-        id: "false-swipe",
-        name: "False Swipe",
-        category: Physical,
-        type: Normal,
-        accuracy: Some(100),
-        pp: 40,
-        usage: Script(
-            "
-            let effective = target.effective(move.type, move.category);
-            let defense = target.defense(move.category);
-            let result = user.damage(move.type, 40, defense, effective);
-            if result.damage > target.current_hp {
-                result.damage = target.current_hp - 1;
-            }
-            [MoveResult::Damage(result)]
-            "
-        ),
-        target: Opponent,
-    )
+(    
+    id: "false-swipe",
+    name: "False Swipe",
+    category: Physical,
+    type: Normal,
+    accuracy: Some(100),
+    pp: 40,
+    usage: Script(
+        "
+        let effective = target.effective(move.type, move.category);
+        let defense = target.defense(move.category);
+        let result = user.damage(move.type, 40, defense, effective);
+        if result.damage > target.current_hp {
+            result.damage = target.current_hp - 1;
+        }
+        [MoveResult::Damage(result)]
+        "
+    ),
+    target: Opponent,
 )

@@ -18,10 +18,23 @@ use crate::{
 
 use crate::battle::ui::{BattleGuiPosition, BattleGuiPositionIndex};
 
-pub mod status;
+use self::{faint::Faint, flicker::Flicker, spawner::{Spawner, SpawnerState}};
+
+
+mod moves;
+mod status;
+
+pub use moves::*;
+pub use status::*;
 pub mod bounce;
 
+pub mod flicker;
+pub mod faint;
+pub mod spawner;
+
 pub struct PokemonRenderer {
+
+    pub moves: MoveRenderer,
 
     pub texture: Option<Texture>,
     side: PokemonTexture,
@@ -34,149 +47,11 @@ pub struct PokemonRenderer {
 
 }
 
-pub struct Spawner {
-    spawning: SpawnerState,
-    texture: Texture,
-    x: f32,
-}
-
-#[derive(PartialEq)]
-enum SpawnerState {
-    None,
-    Start,
-    Throwing,
-    Spawning,
-}
-
-static mut POKEBALL: Option<Texture> = None;
-
-impl Spawner {
-
-    const LEN: f32 = 20.0;
-    const ORIGIN: f32 = 0.0;
-    const OFFSET: f32 = -5.0;
-    const PARABOLA_ORIGIN: f32 = (Self::LEN / 3.0);
-
-    pub fn new(ctx: &mut Context) -> Self {
-        Self {
-            spawning: SpawnerState::None,
-            x: 0.0,
-            texture: unsafe { POKEBALL.get_or_insert(byte_texture(ctx, include_bytes!("../../../../assets/battle/thrown_pokeball.png"))).clone() }
-        }
-    }
-
-    fn f(x: f32) -> f32 {
-        0.5 * (x - Self::PARABOLA_ORIGIN).powi(2) - 50.0
-    }
-
-    pub fn update(&mut self, delta: f32) {
-        match self.spawning {
-            SpawnerState::Start => {
-                self.x = Self::ORIGIN;
-                self.spawning = SpawnerState::Throwing;
-                self.update(delta);
-            }
-            SpawnerState::Throwing => {
-                self.x += delta * 20.0;
-                if self.x > Self::LEN {
-                    self.spawning = SpawnerState::Spawning;
-                    self.x = 0.0;
-                }
-            }
-            SpawnerState::Spawning => {
-                self.x += delta * 1.5;
-                if self.x > 1.0 {
-                    self.spawning = SpawnerState::None;
-                }
-            }
-            SpawnerState::None => (),
-        }
-    }
-
-    fn draw(&self, ctx: &mut Context, origin: Vec2<f32>, texture: &Texture) {
-        match self.spawning {
-            SpawnerState::Throwing => self.texture.draw(
-                ctx, 
-                position(origin.x + self.x + Self::OFFSET, origin.y + Self::f(self.x)).origin(Vec2::new(6.0, 6.0)).rotation(self.x)
-            ),
-            SpawnerState::Spawning => {
-                let h = texture.height() as f32;
-                let scale = self.x * h;
-                let mut y = origin.y - scale * 1.5;
-                let max = origin.y - h;
-                if y < max {
-                    y = max;
-                }
-                texture.draw(ctx, position(origin.x, y)); // change color of texture when spawning here
-            },
-            SpawnerState::None | SpawnerState::Start => (),
-        }
-    }
-
-    pub fn spawning(&self) -> bool {
-        self.spawning != SpawnerState::None
-    }
-
-}
-
-#[derive(Default)]
-pub struct Flicker {
-    remaining: u8,
-    accumulator: f32,
-}
-
-impl Flicker {
-
-    const HALF: f32 = Self::LENGTH / 2.0;
-    const LENGTH: f32 = 0.20;
-    const TIMES: u8 = 4;
-
-    pub fn update(&mut self, delta: f32) {
-        if self.remaining != 0 {
-            self.accumulator += delta;
-            if self.accumulator > Self::LENGTH {
-                self.accumulator -= Self::LENGTH;
-                self.remaining -= 1;
-            }
-            if self.remaining == 0 {
-                self.accumulator = 0.0;
-            }
-        }
-    }
-
-    pub fn flickering(&self) -> bool {
-        self.remaining != 0
-    }
-
-}
-
-#[derive(Default)]
-pub struct Faint {
-    fainting: bool,
-    remaining: f32,
-}
-
-impl Faint {
-
-    pub fn update(&mut self, delta: f32) {
-        if self.fainting {
-            self.remaining -= delta * 128.0;
-            if self.remaining < 0.0 {
-                self.remaining = 0.0;
-            }
-        }
-    }
-
-    pub fn fainting(&self) -> bool {
-        self.fainting && self.remaining != 0.0
-    }
-
-}
-
 impl PokemonRenderer {
 
     pub fn new(ctx: &mut Context, index: BattleGuiPositionIndex, side: PokemonTexture) -> Self {
         Self {
+            moves: MoveRenderer::new(index.position),
             texture: None,
             side,
             pos: Self::position(index),
@@ -238,7 +113,7 @@ impl PokemonRenderer {
                         );
                     }
                 } else {
-                    texture.draw(ctx, position(pos.x, pos.y - texture.height() as f32).color(color));
+                    texture.draw(ctx, position(pos.x + self.moves.pokemon_x(), pos.y - texture.height() as f32).color(color));
                 }
             }
         }

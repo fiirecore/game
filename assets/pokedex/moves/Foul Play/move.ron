@@ -1,14 +1,10 @@
 (
-    move: (
-        id: "foul-play",
-        name: "Foul Play",
-        category: Physical,
-        type: Dark,
-        accuracy: Some(100),
-        pp: 15,
-        usage: Damage(Power(95)),
-        target: Opponent,
-    ),
-    // batt_move: Some((
-    // ))
+    id: "foul-play",
+    name: "Foul Play",
+    category: Physical,
+    type: Dark,
+    accuracy: Some(100),
+    pp: 15,
+    usage: Damage(Power(95)),
+    target: Opponent,
 )

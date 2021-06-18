@@ -24,7 +24,7 @@ use crate::battle::{
         },
     },
     ui::{
-        pokemon::status::PokemonStatusGui,
+        pokemon::PokemonStatusGui,
         transitions::BattleIntroduction,
         view::{
             ActivePokemonParty,

@@ -1,0 +1,11 @@
+(
+    id: "surf",
+    texture: Some("surf.png"),
+    script: (
+        actions: [
+            SpawnTexture(30.0, 30.0),
+            MoveTexture(50.0, 50.0, 10.0),
+            DespawnTexture,
+        ],
+    ),
+)

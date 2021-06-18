@@ -106,13 +106,8 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 	for serialized_move in dex.moves {
         let pmove = serialized_move.pokemon_move;
         if let Some(battle_move) = serialized_move.battle_move {
-            battle_movedex.insert(pmove.id, battle_move);
+            battle_movedex.insert(pmove.id, battle_move.into(ctx));
         }
-        // if let Some(script) = pmove.battle_script.as_mut() {
-        //     if !pokemon_move.battle_script_texture.is_empty() {
-        //         script.texture = Some(byte_texture(&pokemon_move.battle_script_texture));
-        //     }
-        // }
 		movedex.insert(pmove.id, pmove);
 	}
 

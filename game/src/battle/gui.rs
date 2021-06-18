@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use crate::{
+    deps::borrow::Identifiable,
     util::{Entity, Completable, Reset},
     pokedex::{
         moves::{
@@ -12,6 +13,7 @@ use crate::{
             }
         },
         item::ItemUseType, 
+        battle::BattleMove as BMove,
     },
     gui::{bag::BagGui, party::PartyGui}, 
     tetra::Context,
@@ -328,7 +330,16 @@ impl BattlePlayerGui {
                                             BattleClientAction::Move(pokemon_move, targets) => {
                                                 match user.active(instance.pokemon.index) {
                                                     Some(user_active) => {
-                                                        ui::text::on_move(&mut self.gui.text, pokemon_move.value(), user_active);
+
+                                                        // if targets.iter().any(|(t, _)| match &t {
+                                                        //     MoveTargetInstance::Opponent(index) => other.active(*index),
+                                                        //     MoveTargetInstance::Team(index) => user.active(*index),
+                                                        //     MoveTargetInstance::User => user.active(instance.pokemon.index),
+                                                        // }.map(|v| !v.fainted()).unwrap_or_default()) {
+
+                                                            ui::text::on_move(&mut self.gui.text, pokemon_move.value(), user_active);
+
+                                                        // }
             
                                                         for (target, moves) in &targets {
             
@@ -337,6 +348,10 @@ impl BattlePlayerGui {
                                                                 let user_pokemon = user.active_mut(instance.pokemon.index).unwrap();
             
                                                                 let user_pokemon_ui = &mut user_ui[instance.pokemon.index];
+
+                                                                if let Some(battle_move) = BMove::try_get(pokemon_move.id()) {
+                                                                    user_pokemon_ui.renderer.moves.init(battle_move.script());
+                                                                } 
 
                                                                 for moves in moves {
                                                                     match moves {
@@ -502,9 +517,12 @@ impl BattlePlayerGui {
 
                         match &mut instance.action {
                             BattleClientGuiCurrent::Move(targets) => {
+
+                                user_ui[instance.pokemon.index].renderer.moves.update(delta);
+
                                 if !self.gui.text.finished() {
                                     self.gui.text.update(ctx, delta);
-                                } else if self.gui.text.current > 0 || self.gui.text.can_continue {
+                                } else if (self.gui.text.current > 0 || self.gui.text.can_continue) && user_ui[instance.pokemon.index].renderer.moves.finished() {
                                     let index = instance.pokemon.index;
                                     targets.retain(|(t, _)| {
                                         let ui = match *t {
@@ -526,7 +544,7 @@ impl BattlePlayerGui {
                                             ui.renderer.flicker.update(delta);
                                             ui.status.update_hp(delta);
                                         }
-                                    }                                    
+                                    }
                                 }
                             },
                             BattleClientGuiCurrent::Switch(new) => {
@@ -641,8 +659,7 @@ impl BattlePlayerGui {
         use crate::{graphics::ZERO, tetra::{math::Vec2, graphics::Color}};
         self.gui.background.draw(ctx, 0.0);
         for active in self.opponent.renderer.iter() {
-            active.renderer.draw(ctx, ZERO, Color::WHITE);
-            active.status.draw(ctx, 0.0, 0.0);
+            active.draw(ctx);
         }
         match &self.state {
             BattlePlayerState::Select(index) => {
@@ -668,10 +685,7 @@ impl BattlePlayerGui {
             //     self.party.draw(ctx)
             // },
             BattlePlayerState::WaitToSelect | BattlePlayerState::Moving(..) => {
-                for active in self.player.renderer.iter() {
-                    active.renderer.draw(ctx, ZERO, Color::WHITE);
-                    active.status.draw(ctx, 0.0, 0.0);
-                }
+                self.player.renderer.iter().for_each(|active| active.draw(ctx));
                 self.gui.draw_panel(ctx);
                 self.gui.text.draw(ctx);
                 if self.party.alive() {
@@ -679,10 +693,7 @@ impl BattlePlayerGui {
                 }
             },
             BattlePlayerState::Winner(..) => {
-                for active in self.player.renderer.iter() {
-                    active.renderer.draw(ctx, ZERO, Color::WHITE);
-                    active.status.draw(ctx, 0.0, 0.0);
-                }
+                self.player.renderer.iter().for_each(|active| active.draw(ctx));
                 self.gui.draw_panel(ctx);
                 self.gui.text.draw(ctx);
             }
