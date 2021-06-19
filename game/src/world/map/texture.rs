@@ -1,5 +1,5 @@
 use deps::tetra::Context;
-use worldlib::serialized::{SerializedTextures, SerializedNpcType};
+use worldlib::serialized::SerializedTextures;
 
 pub mod tile;
 pub mod npc;
@@ -26,9 +26,8 @@ impl WorldTextures {
         }
     }
 
-    pub fn setup(&mut self, ctx: &mut Context, textures: SerializedTextures, npc_types: &[SerializedNpcType]) {
+    pub fn setup(&mut self, ctx: &mut Context, textures: SerializedTextures) {
         self.tiles.setup(ctx, textures);
-        self.npcs.with_capacity(npc_types.len());
     }
 
 }

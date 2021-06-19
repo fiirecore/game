@@ -349,7 +349,7 @@ impl GameWorld for WorldMap {
                             if let Some(npc) = self.npcs.get_mut(id) {
                                 window.text.clear();
                                 window.text.set(pages.clone());
-                                window.text.color(npc_type(&npc.npc_type).text_color);
+                                window.text.color(npc_type(&npc.type_id).text_color);
                                 window.text.process_messages(data()); 
                                 window.text.spawn();
                                 true
@@ -586,7 +586,7 @@ impl GameWorld for WorldMap {
                     match &npc.interact {
                         NpcInteract::Message(pages) => {
                             window.text.set(pages.clone());
-                            window.text.color(super::npc::npc_type(&npc.npc_type).text_color);
+                            window.text.color(super::npc::npc_type(&npc.type_id).text_color);
                             message_ran = true;
                         },
                         NpcInteract::Script(_) => todo!(),
@@ -598,7 +598,7 @@ impl GameWorld for WorldMap {
 
                             if trainer.battle_on_interact {
 
-                                let npc_type = super::npc::npc_type(&npc.npc_type);
+                                let npc_type = super::npc::npc_type(&npc.type_id);
                                 if let Some(trainer_type) = npc_type.trainer.as_ref() {
 
                                     // Spawn text window

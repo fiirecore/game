@@ -18,7 +18,7 @@ use game::{
 };
 
 use game::world::map::manager::WorldManager;
-use game::battle::manager::BattleManager;
+use game::battle_cli::manager::BattleManager;
 
 use crate::state::{MainState, MainStates};
 
@@ -116,7 +116,7 @@ impl State for GameStateManager {
 		if let Some(command) = self.console.update(ctx) {
 			match self.state {
 				GameStates::World => self.world.process(command),
-				GameStates::Battle => self.battle.process(command),
+				GameStates::Battle => warn!("Battle has no commands implemented."),
 			}
 		}
 		

@@ -15,6 +15,7 @@ use crate::audio::{
 use crate::config::{Configuration, CONFIGURATION};
 use pokedex::texture::{PokemonTextures, POKEMON_TEXTURES, ITEM_TEXTURES};
 use deps::hash::HashMap;
+use crate::graphics::byte_texture;
 
 pub use firecore_text::init as text;
 
@@ -126,9 +127,11 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
     let mut item_textures = HashMap::with_capacity(dex.items.len());
 
     for item in dex.items {
-        item_textures.insert(item.item.id, crate::graphics::byte_texture(ctx, &item.texture));
+        item_textures.insert(item.item.id, byte_texture(ctx, &item.texture));
         itemdex.insert(item.item.id, item.item);
     }
+
+    ::pokedex::texture::trainer::set_trainer_textures(dex.trainers.into_iter().map(|(k, bytes)| (k, byte_texture(ctx, &bytes))).collect());
 
     itemdex::set(itemdex);
 

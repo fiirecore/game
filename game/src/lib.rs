@@ -8,7 +8,7 @@ pub mod input;
 pub extern crate firecore_pokedex_game as pokedex;
 // pub extern crate firecore_audio as audio;
 #[cfg(feature = "battle")]
-extern crate firecore_battle;
+pub extern crate firecore_battle as battle;
 
 pub mod audio;
 pub mod config;
@@ -20,7 +20,7 @@ pub mod init;
 pub mod graphics;
 
 #[cfg(feature = "battle")]
-pub mod battle;
+pub mod battle_cli;
 
 #[cfg(feature = "world")]
 extern crate firecore_world as worldlib;

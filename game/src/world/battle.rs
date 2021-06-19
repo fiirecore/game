@@ -7,12 +7,13 @@ use crate::{
             party::PokemonParty,
             stat::StatSet,
         },
-        moves::target::PlayerId,
+        trainer::TrainerId,
     },
     storage::{data, player::PlayerSave},
     battle_glue::{BattleEntry, BattleEntryRef, BattleTrainerEntry},
 };
 
+use pokedex::trainer::TrainerData;
 use worldlib::{
     map::{
         wild::{WildEntry, WILD_RANDOM},
@@ -44,6 +45,7 @@ pub fn random_wild_battle(battle: &mut Option<BattleEntry>, size: usize) {
     *battle = Some(BattleEntry {
         party,
         trainer: None,
+        trainer_data: None,
         size,
     });
 }
@@ -54,6 +56,7 @@ pub fn wild_battle(battle: BattleEntryRef, wild: &WildEntry) {
     *battle = Some(BattleEntry {
         party,
         trainer: None,
+        trainer_data: None,
         size: 1,
     });
 }
@@ -63,7 +66,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
         let save = data();
         if let Some(map) = save.world.map.get(&map_id.index) {
             if !map.battled.contains(npc_id) {
-                let npc_type = npc_type(&npc.npc_type);
+                let npc_type = npc_type(&npc.type_id);
                 if let Some(trainer_type) = npc_type.trainer.as_ref() {
                     *battle = Some(
                         BattleEntry {
@@ -71,13 +74,18 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
                             trainer: Some(
                                 BattleTrainerEntry {
                                     id: npc_id.as_str().parse().unwrap(),
-                                    prefix: trainer_type.name.clone(),
-                                    name: npc.name.clone(),
                                     transition: trainer.battle_transition,
-                                    texture: NpcTextureManager::trainer_texture(&npc.npc_type).clone(),
+                                    texture: NpcTextureManager::trainer_texture(&npc.type_id).clone(),
                                     gym_badge: trainer_type.badge,
                                     victory_message: trainer.victory_message.clone(),
                                     worth: trainer.worth,
+                                }
+                            ),
+                            trainer_data: Some(
+                                TrainerData {
+                                    npc_type: npc.type_id,
+                                    prefix: trainer_type.name.clone(),
+                                    name: npc.name.clone(),
                                 }
                             ),
                             size: 1,
@@ -98,7 +106,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
 
 impl WorldManager {
 
-    pub fn update_world(&mut self, player: &mut PlayerSave, winner: PlayerId, trainer: bool) {
+    pub fn update_world(&mut self, player: &mut PlayerSave, winner: TrainerId, trainer: bool) {
         let p = self.map_manager.player();
         p.input_frozen = false;
         p.character.unfreeze();

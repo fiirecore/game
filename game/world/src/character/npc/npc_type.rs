@@ -5,7 +5,6 @@ use audio::music::MusicName;
 
 use crate::character::sprite::SpriteIndexes;
 
-pub type NpcTypeId = TinyStr16;
 pub type BadgeId = TinyStr16;
 
 #[derive(Debug)]

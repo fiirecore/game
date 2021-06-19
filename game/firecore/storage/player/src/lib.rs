@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use util::{Location, LocationId, Position, Coordinate, Direction, PixelOffset};
 use pokedex::{
 	pokemon::party::PokemonParty,
-	moves::target::PlayerId,
+	trainer::TrainerId,
 	item::bag::Bag,
 };
 use worldlib::character::Character;
@@ -30,7 +30,7 @@ pub type Worth = u32;
 pub struct PlayerSave {
 
 	#[serde(default = "default_id")]
-	pub id: PlayerId,
+	pub id: TrainerId,
 
 	#[serde(default = "default_name")]
 	pub name: Name,
@@ -82,7 +82,7 @@ impl Default for PlayerSave {
 
 }
 
-pub fn default_id() -> PlayerId {
+pub fn default_id() -> TrainerId {
 	let mut str = format!("i{}", util::date());
 	str.truncate(16);
 	str.parse().unwrap_or_else(|err| panic!("Could not parse player id string {} with error {}", str, err))

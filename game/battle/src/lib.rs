@@ -73,14 +73,8 @@ impl Battle {
 			battle.update(state, &self.engine);
 		}
 	}
-	pub fn data(&self) -> Option<&BattleData> {
-		self.battle.as_ref().map(|(_, b)| b.data())
-	}
 	pub fn take(&mut self) -> Option<BattleHost> {
 		self.battle.take().map(|(_, b)| b)
-	}
-	pub fn as_mut(&mut self) -> Option<&mut BattleHost> {
-		self.battle.as_mut().map(|(_, b)| b)
 	}
 	pub fn end(&mut self) {
 		if let Some((s, _)) = self.battle.as_mut() {
@@ -99,7 +93,7 @@ pub struct BattleHost { ////////////// if using hashmap, only remaining player s
 	pub player1: BattlePlayer,
 	pub player2: BattlePlayer,
 
-	// players: deps::hash::HashMap<PlayerId, UnsafeCell<BattlePlayer>>,
+	// players: deps::hash::HashMap<TrainerId, UnsafeCell<BattlePlayer>>,
 	
 }
 
@@ -120,8 +114,8 @@ impl BattleHost {
 	#[deprecated]
 	fn begin(&mut self, state: &mut BattleState) {
 
-		self.player1.client.send(ServerMessage::User(self.data, self.player1.as_known()));
-		self.player2.client.send(ServerMessage::User(self.data, self.player2.as_known()));
+		self.player1.client.send(ServerMessage::User(self.data.clone(), self.player1.as_known()));
+		self.player2.client.send(ServerMessage::User(self.data.clone(), self.player2.as_known()));
 
 		self.player1.reveal_active();
 		self.player2.reveal_active();
@@ -152,6 +146,7 @@ impl BattleHost {
 					}
 				},
 				ClientMessage::FaintReplace(active, index) => {
+					debug!("faint replace: {} replacing {} with {}", user.name(), active, index);
 					if !user.active_contains(index) {
 						if if let Some(pokemon) = user.pokemon.get(index) {
 							if !pokemon.pokemon.value().fainted() {
@@ -168,10 +163,10 @@ impl BattleHost {
 						} else {
 							true
 						} {
-							warn!("Player {} tried to replace a fainted pokemon with an missing/fainted pokemon", user.name);
+							warn!("Player {} tried to replace a fainted pokemon with an missing/fainted pokemon", user.name());
 						}
 					} else {
-						warn!("Player {} tried to replace a pokemon with a pokemon that is already active.", user.name);
+						warn!("Player {} tried to replace a pokemon with a pokemon that is already active.", user.name());
 					}
 				},
 				ClientMessage::RequestPokemon(request) => {
@@ -233,10 +228,10 @@ impl BattleHost {
 				true => {
 					if self.player1.client.finished_turn() && self.player2.client.finished_turn() {
 						if self.player2.all_fainted() {
-							debug!("{} won!", self.player1.name);
+							debug!("{} won!", self.player1.name());
 							*state = BattleState::End(false, self.player1.id);
 						} else if self.player1.all_fainted() {
-							debug!("{} won!", self.player2.name);
+							debug!("{} won!", self.player2.name());
 							*state = BattleState::End(false, self.player2.id);
 						} else if !self.player1.needs_replace() && !self.player2.needs_replace() {
 							*state = BattleState::SELECTING_START;

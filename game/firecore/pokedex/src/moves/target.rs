@@ -1,7 +1,4 @@
 use serde::{Deserialize, Serialize};
-use deps::str::TinyStr16;
-
-pub type PlayerId = TinyStr16;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 pub enum MoveTarget {
@@ -32,7 +29,7 @@ impl MoveTarget {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 pub enum MoveTargetInstance {
-	Opponent(usize), // maybe add PlayerId
+	Opponent(usize), // maybe add TrainerId
 	Team(usize),
 	User,
 }

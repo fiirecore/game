@@ -22,7 +22,7 @@ pub struct Npc {
     pub name: String,
 
     #[serde(rename = "type")]
-    pub npc_type: TinyStr16,
+    pub type_id: TinyStr16,
     
     pub character: Character,
 
@@ -38,18 +38,18 @@ pub struct Npc {
 
 }
 
-impl Npc {
+// impl Npc {
 
-    pub fn default_npc() -> Self {
-        Self {
-            name: "Default".to_string(),
-            npc_type: "default".parse().unwrap(),
-            character: Default::default(),
-            movement: Default::default(),
-            origin: None,
-            interact: Default::default(),
-            trainer: None,
-        }
-    }
+//     pub fn default_npc() -> Self {
+//         Self {
+//             name: "Default".to_string(),
+//             type_id: "default".parse().unwrap(),
+//             character: Default::default(),
+//             movement: Default::default(),
+//             origin: None,
+//             interact: Default::default(),
+//             trainer: None,
+//         }
+//     }
 
-}
+// }

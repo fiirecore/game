@@ -1,17 +1,17 @@
 use deps::hash::HashMap;
 use firecore_font::message::TextColor;
 use serde::{Deserialize, Serialize};
+use pokedex::trainer::TrainerId;
 
-use crate::character::npc::npc_type::NpcTypeId;
 use crate::map::{
     TileId,
     PaletteId, 
     // TileLocation,
 };
-use crate::character::npc::Npc;
-use crate::character::npc::NpcId;
-use crate::character::npc::npc_type::TrainerType;
-use crate::character::sprite::SpriteIndexType;
+use crate::character::{
+    npc::{Npc, NpcId, npc_type::TrainerType},
+    sprite::SpriteIndexType,
+};
 use crate::map::manager::WorldMapManager;
 
 pub type MapGuiLocs = HashMap<crate::map::MapIcon, (String, util::Location)>;
@@ -38,7 +38,7 @@ pub struct SerializedNpc {
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNpcTypeConfig {
 
-    pub identifier: NpcTypeId,
+    pub identifier: TrainerId,
     pub text_color: TextColor,
     pub sprite: SpriteIndexType,
     pub trainer: Option<TrainerType>,
@@ -51,7 +51,6 @@ pub struct SerializedNpcType {
     pub config: SerializedNpcTypeConfig,
 
     pub texture: Vec<u8>,
-    pub battle_texture: Option<Vec<u8>>,
 
 }
 

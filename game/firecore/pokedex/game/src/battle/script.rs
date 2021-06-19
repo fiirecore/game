@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 // }
 
 
-#[deprecated(note = "use scripting instead")]
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct BattleActionScript {
 

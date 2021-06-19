@@ -1,14 +1,16 @@
-
-use deps::hash::HashMap;
+use deps::{
+    hash::HashMap,
+    tetra::{Context, Result, graphics::Texture}
+};
 
 use pokedex::{
     pokemon::PokemonId,
     item::ItemId,
 };
 
-use deps::tetra::{Context, Result, graphics::Texture};
-
 use crate::serialize::SerializedPokemon;
+
+pub mod trainer;
 
 pub static mut POKEMON_TEXTURES: Option<PokemonTextures> = None;
 

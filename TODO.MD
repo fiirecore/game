@@ -9,6 +9,9 @@
 - [ ] Health bar shake on hit
 - [ ] Tackle faster
 
+- [ ] Pokemon count on trainer battle
+- [ ] Move BattleCloser to Battle GUI module
+
 ## Medium Priority
 
 - [ ] Town Map item

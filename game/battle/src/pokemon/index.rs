@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
-use pokedex::moves::target::PlayerId;
+use pokedex::trainer::TrainerId;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub struct PokemonIndex {
-    pub team: PlayerId,
+    pub team: TrainerId,
     pub index: usize,
 }
 

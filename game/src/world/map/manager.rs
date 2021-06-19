@@ -200,26 +200,28 @@ impl WorldManager {
 
     pub fn load(&mut self, ctx: &mut Context, world: SerializedWorld) {
 
-        self.textures.setup(ctx, world.textures, &world.npc_types);
+        self.textures.setup(ctx, world.textures);
         
         info!("Finished loading textures!");
 
-        unsafe { crate::world::npc::NPC_TYPES = 
-            Some(
-                world.npc_types.into_iter().map(|npc_type| {
-                    self.textures.npcs.add_npc_type(ctx, &npc_type);
-                    (
-                        npc_type.config.identifier,
-                        NpcType {
-                            sprite: SpriteIndexes::from_index(npc_type.config.sprite),
-                            text_color: npc_type.config.text_color,
-                            trainer: npc_type.config.trainer,
-                        }
-                    )
+        let (textures, types): (crate::world::map::texture::npc::NpcTextures, crate::world::npc::NpcTypes) = world.npc_types.into_iter().map(|npc_type| (
+            (
+                npc_type.config.identifier,
+                crate::graphics::byte_texture(ctx, &npc_type.texture)
+            ),
+            (
+                npc_type.config.identifier,
+                NpcType {
+                    sprite: SpriteIndexes::from_index(npc_type.config.sprite),
+                    text_color: npc_type.config.text_color,
+                    trainer: npc_type.config.trainer,
                 }
-                ).collect()
-            ); 
-        }
+            )
+        )
+        ).unzip();
+
+        unsafe { crate::world::npc::NPC_TYPES = Some(types); }
+        self.textures.npcs.set(textures);
 
         self.world_map.add_locations(world.map_gui_locs);
 

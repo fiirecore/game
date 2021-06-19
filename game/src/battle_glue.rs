@@ -1,5 +1,8 @@
 use deps::str::{TinyStr8, TinyStr16};
-use pokedex::pokemon::party::PokemonParty;
+use pokedex::{
+    trainer::TrainerData,
+    pokemon::party::PokemonParty,
+};
 
 use deps::tetra::graphics::Texture;
 
@@ -11,15 +14,14 @@ pub struct BattleEntry {
     pub size: usize,
     pub party: PokemonParty,
     pub trainer: Option<BattleTrainerEntry>,
+    pub trainer_data: Option<TrainerData>,
 }
 
 pub struct BattleTrainerEntry {
     pub id: TinyStr16,
-    pub prefix: String,
-    pub name: String,
     pub transition: TinyStr8,
     pub texture: Texture,
-    pub gym_badge: Option<deps::str::TinyStr16>,
+    pub gym_badge: Option<TinyStr16>,
     pub victory_message: Vec<Vec<String>>,
     pub worth: u16,
 }

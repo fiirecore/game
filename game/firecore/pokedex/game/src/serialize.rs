@@ -1,16 +1,23 @@
 use serde::{Deserialize, Serialize};
 
+use deps::hash::HashMap;
+
+use pokedex::trainer::TrainerId;
+
 use crate::pokemon::Pokemon;
 use crate::moves::Move;
 use crate::item::Item;
 
 use crate::battle::serialized::SerializedBattleMoveBytes;
 
+pub type SerializedTrainers = HashMap<TrainerId, Vec<u8>>;
+
 #[derive(Deserialize, Serialize)]
 pub struct SerializedDex {
 	pub pokemon: Vec<SerializedPokemon>,
 	pub moves: Vec<SerializedMove>,
     pub items: Vec<SerializedItem>,
+    pub trainers: SerializedTrainers,
 }
 
 #[derive(Deserialize, Serialize)]

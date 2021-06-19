@@ -8,11 +8,12 @@ use pokedex::serialize::SerializedDex;
 pub mod pokemon;
 pub mod moves;
 pub mod items;
+pub mod trainers;
 
 // #[cfg(feature = "gen")]
 pub mod gen;
 
-pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir: P, output_file: P, include_audio: bool) -> SerializedDex {
+pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir: P, trainer_dir: P, output_file: P, include_audio: bool) -> SerializedDex {
     let output_file = output_file.as_ref();
 
     // #[cfg(feature = "gen")]
@@ -24,11 +25,14 @@ pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir:
     let moves = moves::get_moves(move_dir);
     println!("Loading items...");
     let items = items::get_items(item_dir);
+    println!("Loading trainer textures...");
+    let trainers = trainers::get_trainers(trainer_dir);
     
     let dex = SerializedDex {
         pokemon,
         moves,
         items,
+        trainers,
     };
 
     println!("Saving to file...");

@@ -1,6 +1,6 @@
 use pokedex::{
     pokemon::{Level, PokemonRef, instance::PokemonInstance},
-    moves::target::PlayerId,
+    trainer::TrainerId,
 };
 
 use crate::message::{Active, PartyIndex};
@@ -13,7 +13,7 @@ pub use party::*;
 
 pub trait BattlePartyView {
 
-    fn id(&self) -> &PlayerId;
+    fn id(&self) -> &TrainerId;
 
     fn name(&self) -> &str;
 

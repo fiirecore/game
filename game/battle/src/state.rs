@@ -1,4 +1,4 @@
-use pokedex::moves::target::PlayerId;
+use pokedex::trainer::TrainerId;
 
 #[derive(Debug)]
 pub enum BattleState {
@@ -6,7 +6,7 @@ pub enum BattleState {
 	Setup,
 	Selecting(bool),
 	Moving(bool),
-	End(bool, PlayerId),
+	End(bool, TrainerId),
 }
 
 impl BattleState {

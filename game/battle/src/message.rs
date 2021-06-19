@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use pokedex::{
     pokemon::instance::PokemonInstance,
-    moves::{MoveRef, target::PlayerId},
+    moves::MoveRef,
+    trainer::TrainerId,
 };
 
 use crate::{
@@ -32,7 +33,7 @@ pub enum ClientMessage {
 pub enum ServerMessage<'a> {
     User(BattleData, BattlePartyKnown),
     Opponents(BattlePartyUnknown),
-    // UpdatePokemon(PlayerId, usize, UnknownPokemon),
+    // UpdatePokemon(TrainerId, usize, UnknownPokemon),
     PokemonRequest(PartyIndex, PokemonInstance),
     StartSelecting,
     TurnQueue(Cow<'a, Vec<BattleClientActionInstance>>),
@@ -46,5 +47,5 @@ pub enum ServerMessage<'a> {
     // FaintReplaceError(Active),
     FaintReplace(ActivePokemonIndex, Option<PartyIndex>),
     AddUnknown(PartyIndex, UnknownPokemon),
-    Winner(PlayerId),
+    Winner(TrainerId),
 }

@@ -2,17 +2,18 @@ use serde::{Deserialize, Serialize};
 use deps::vec::ArrayVec;
 use pokedex::{
     pokemon::instance::PokemonInstance,
-    moves::target::PlayerId,
+    trainer::TrainerId,
+    trainer::TrainerData,
 };
 
-use crate::message::{Active, PartyIndex};
+use crate::{message::{Active, PartyIndex}};
 
 use super::{BattlePartyView, PokemonView, UnknownPokemon};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct BattlePartyKnowable<P> {
-    pub id: PlayerId,
-    pub name: String,
+    pub id: TrainerId,
+    pub trainer: Option<TrainerData>,
     pub active: ArrayVec<[Option<usize>; 3]>,
     pub pokemon: ArrayVec<[P; 6]>,
 
@@ -25,7 +26,7 @@ impl<P> Default for BattlePartyKnowable<P> {
     fn default() -> Self {
         Self {
             id: "default".parse().unwrap(),
-            name: String::new(),
+            trainer: None,
             active: Default::default(),
             pokemon: Default::default(),
         }
@@ -34,12 +35,12 @@ impl<P> Default for BattlePartyKnowable<P> {
 
 impl BattlePartyView for BattlePartyKnown {
 
-    fn id(&self) -> &PlayerId {
+    fn id(&self) -> &TrainerId {
         &self.id
     }
 
     fn name(&self) -> &str {
-        &self.name
+        self.trainer.as_ref().map(|t| t.name.as_str()).unwrap_or("Unknown")
     }
 
     fn active(&self, active: usize) -> Option<&dyn PokemonView> {
@@ -97,12 +98,12 @@ impl BattlePartyUnknown {
 
 impl BattlePartyView for BattlePartyUnknown {
 
-    fn id(&self) -> &PlayerId {
+    fn id(&self) -> &TrainerId {
         &self.id
     }
 
     fn name(&self) -> &str {
-        &self.name
+        self.trainer.as_ref().map(|t| t.name.as_str()).unwrap_or("Unknown")
     }
 
     fn active(&self, active: usize) -> Option<&dyn PokemonView> {

@@ -295,7 +295,7 @@ dependencies = [
 
 [[package]]
 name = "dex-builder"
-version = "0.4.0"
+version = "0.5.0-2021-06-19"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex-game",
@@ -397,7 +397,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-battle"
-version = "0.5.0-beta.2021-06-13"
+version = "0.5.0-beta.2021-06-19"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -427,7 +427,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-game"
-version = "0.5.0-beta.2021-06-18"
+version = "0.5.0-beta.2021-06-19"
 dependencies = [
  "atomic",
  "enum-map",
@@ -445,7 +445,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex"
-version = "0.5.0-beta.2021-06-13"
+version = "0.5.0-beta.2021-06-19"
 dependencies = [
  "firecore-dependencies",
  "serde",
@@ -453,7 +453,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex-game"
-version = "0.5.0-beta.2021-05-26"
+version = "0.5.0-beta.2021-06-19"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",

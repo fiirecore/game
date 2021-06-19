@@ -1,6 +1,7 @@
+use deps::str::TinyStr16;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct BattleData {
     pub type_: BattleType,
 }

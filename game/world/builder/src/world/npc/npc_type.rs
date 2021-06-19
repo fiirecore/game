@@ -21,14 +21,11 @@ pub fn load_npc_types(root_path: &Path) -> Vec<SerializedNpcType> {
             let sprite_path = path.join(npc_type.identifier.to_string() + ".png");
             let battle_sprite_path = path.join("battle.png");
             let texture =  std::fs::read(&sprite_path).unwrap_or_else(|err| panic!("Could not get npc sprite at {:?} with error {}", sprite_path, err));
-            
-            let battle_texture = std::fs::read(battle_sprite_path).ok();
 
             types.push(
                 SerializedNpcType {
                     config: npc_type,
                     texture,
-                    battle_texture,
                 }
             );
         }
