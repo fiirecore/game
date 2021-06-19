@@ -1,6 +1,5 @@
 use crate::{
     util::{Entity, Reset, Completable},
-    pokedex::trainer::TrainerData,
     text::MessagePage,
     audio::sound::Sound,
     gui::TextDisplay,

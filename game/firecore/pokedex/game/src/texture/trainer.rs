@@ -1,14 +1,14 @@
-use deps::{hash::HashMap, tetra::graphics::Texture};
+use deps::{TextureManager, hash::HashMap, tetra::graphics::Texture};
 use pokedex::trainer::TrainerId;
 
-pub type TrainerTextures = HashMap<TrainerId, Texture>;
+pub struct TrainerTextures;
 
-pub static mut TRAINER_TEXTURES: Option<TrainerTextures> = None;
+static mut TRAINER_TEXTURES: Option<HashMap<TrainerId, Texture>> = None;
 
-pub fn trainer_texture(npc_type: &TrainerId) -> &'static Texture {
-    unsafe { TRAINER_TEXTURES.as_ref().expect("Could not get trainer textures! (Not initialized)").get(npc_type).unwrap_or_else(|| panic!("Could not get trainer texture for Npc Type {}", npc_type)) }
-}
+impl TextureManager for TrainerTextures {
+    type Id = TrainerId;
 
-pub fn set_trainer_textures(textures: TrainerTextures) {
-    unsafe { TRAINER_TEXTURES = Some(textures) }
+    fn map<'a>() -> &'a mut Option<HashMap<Self::Id, Texture>> {
+        unsafe { &mut TRAINER_TEXTURES }
+    }
 }

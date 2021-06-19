@@ -7,3 +7,7 @@ pub mod battle;
 pub mod texture;
 
 pub mod serialize;
+
+mod init;
+
+pub use init::*;

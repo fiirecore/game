@@ -18,6 +18,10 @@
 - [ ] Persistent moves in battle
 - [ ] Add jumping over one way tiles
 
+- [ ] Remove uses of data() and data_mut() in party and bag gui
+
+- [ ] Add UNKOWN pokemon, move and item values
+
 ## Low Priority
 
 - [ ] Command shortcuts and better parsing
@@ -25,6 +29,8 @@
 - [ ] Specify default player location in world binary
 - [ ] Moves use PP in battle
 - [ ] Running from battle chance and text
+
+- [ ] Logging in firecore-pokedex crate
 
 ## Other
 

@@ -1,11 +1,15 @@
 use crate::{
+    deps::TextureManager,
     util::{
         Entity,
         Reset,
         Completable,
         WIDTH,
     },
-    pokedex::trainer::{TrainerId, TrainerData},
+    pokedex::{
+        trainer::{TrainerId, TrainerData},
+        texture::TrainerTextures,
+    },
     storage::data,
     gui::TextDisplay,
     text::MessagePage,
@@ -48,7 +52,7 @@ impl BattleCloser for TrainerBattleCloser {
             Some(winner) => match winner == &data().id {
                 true => {
                     if let (Some(trainer_data), Some(trainer)) = (trainer_data, trainer_entry) {
-                        self.trainer = Some(trainer.texture.clone());
+                        self.trainer = Some(TrainerTextures::get(&trainer_data.npc_type).clone());
 
                         text.reset();
                         text.clear();

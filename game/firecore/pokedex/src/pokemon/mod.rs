@@ -1,9 +1,13 @@
 use serde::{Deserialize, Serialize};
-use deps::borrow::{
-	Identifiable,
-	StaticRef,
+use deps::{
+	hash::HashMap,
+	borrow::{
+		Identifiable,
+		StaticRef,
+	},
 };
 use crate::{
+	Dex,
 	types::PokemonType,
 	pokemon::{
 		data::{
@@ -23,13 +27,24 @@ use crate::{
 	},
 };
 
-pub mod dex;
 pub mod data;
 pub mod stat;
 pub mod types;
 pub mod status;
 pub mod instance;
 pub mod party;
+
+pub struct Pokedex;
+
+static mut POKEDEX: Option<HashMap<PokemonId, Pokemon>> = None;
+
+impl Dex<'static> for Pokedex {
+    type DexType = Pokemon;
+
+    fn dex() -> &'static mut Option<HashMap<<<Self as Dex<'static>>::DexType as Identifiable<'static>>::Id, Self::DexType>> {
+        unsafe { &mut POKEDEX }
+    }
+}
 
 pub type PokemonId = u16;
 pub type Level = u8;
@@ -107,7 +122,7 @@ impl<'a> Identifiable<'a> for Pokemon {
     }
 
 	fn try_get(id: &Self::Id) -> Option<&'a Self> where Self: Sized {
-		unsafe { dex::POKEDEX.as_ref().map(|map| map.get(id)).flatten() }
+		Pokedex::try_get(id)
 	}
 
 }

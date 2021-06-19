@@ -8,7 +8,7 @@ publish = false
 [features]
 default = ["audio", "static-link", "world", "battle"]
 ser = ["firecore-dependencies/ser"]
-audio = ["firecore-dependencies/audio", "parking_lot"]
+audio = ["firecore-dependencies/audio", "firecore-pokedex-game/audio", "parking_lot"]
 # ui = ["macroquad/ui"]
 world = ["firecore-world"]
 battle = ["firecore-battle"]

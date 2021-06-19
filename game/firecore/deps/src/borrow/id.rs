@@ -16,7 +16,7 @@ impl<'a, V: Identifiable<'a>> Default for IdentifiableRef<'a, V> {
 
 pub trait Identifiable<'a> {
 
-    type Id: DeserializeOwned + Serialize + Display + Clone + Copy;
+    type Id: DeserializeOwned + Serialize + Display + Clone + Copy + Eq + std::hash::Hash;
 
     const UNKNOWN: Self::Id;
 

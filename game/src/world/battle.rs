@@ -1,8 +1,9 @@
 use crate::{
     util::Location,
     pokedex::{
+        Dex,
         pokemon::{
-            dex::pokedex_len,
+            Pokedex,
             instance::PokemonInstance,
             party::PokemonParty,
             stat::StatSet,
@@ -24,10 +25,7 @@ use worldlib::{
 
 use crate::world::{
     npc::npc_type,
-    map::{
-        manager::WorldManager,
-        texture::npc::NpcTextureManager,
-    },
+    map::manager::WorldManager,
 };
 
 pub const DEFAULT_RANDOM_BATTLE_SIZE: usize = 2;
@@ -36,7 +34,7 @@ pub fn random_wild_battle(battle: &mut Option<BattleEntry>, size: usize) {
     let mut party = PokemonParty::new();
     for _ in 0..size {
         party.push(PokemonInstance::generate(
-            WILD_RANDOM.gen_range(0, pokedex_len()) + 1, 
+            WILD_RANDOM.gen_range(0, Pokedex::len() as u16) + 1, 
             1, 
             100, 
             Some(StatSet::random())
@@ -75,7 +73,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
                                 BattleTrainerEntry {
                                     id: npc_id.as_str().parse().unwrap(),
                                     transition: trainer.battle_transition,
-                                    texture: NpcTextureManager::trainer_texture(&npc.type_id).clone(),
+                                    // texture: TrainerTextures::get(&npc.type_id).clone(),
                                     gym_badge: trainer_type.badge,
                                     victory_message: trainer.victory_message.clone(),
                                     worth: trainer.worth,

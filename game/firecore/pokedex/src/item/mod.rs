@@ -2,26 +2,34 @@ use serde::{Deserialize, Serialize};
 
 use deps::{
     str::TinyStr16,
-    borrow::{
-        Identifiable,
-        StaticRef,
-    },
+    hash::HashMap,
+    borrow::{Identifiable, StaticRef},
 };
 
-pub mod dex;
+use crate::Dex;
 
 mod stack;
-pub use stack::*;
-
 mod uses;
-pub use uses::*;
-
 pub mod script;
-
 pub mod bag;
+
+pub use stack::*;
+pub use uses::*;
 
 pub type ItemId = TinyStr16;
 pub type StackSize = u16;
+
+pub struct Itemdex;
+
+static mut ITEMDEX: Option<HashMap<ItemId, Item>> = None;
+
+impl Dex<'static> for Itemdex {
+    type DexType = Item;
+
+    fn dex() -> &'static mut Option<HashMap<<<Self as Dex<'static>>::DexType as Identifiable<'static>>::Id, Self::DexType>> {
+        unsafe { &mut ITEMDEX }
+    }
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -53,7 +61,7 @@ impl<'a> Identifiable<'a> for Item {
     }
 
     fn try_get(id: &Self::Id) -> Option<&'a Self> {
-        unsafe { dex::ITEMDEX.as_ref().expect("Itemdex was not initialized!").get(id) }
+        Itemdex::try_get(id)
     }
 
 }

@@ -3,18 +3,17 @@ use deps::{
     tetra::{Context, Result, graphics::Texture}
 };
 
-use pokedex::{
-    pokemon::PokemonId,
-    item::ItemId,
-};
+use pokedex::pokemon::PokemonId;
 
 use crate::serialize::SerializedPokemon;
 
-pub mod trainer;
+mod item;
+mod trainer;
+
+pub use item::ItemTextures;
+pub use trainer::TrainerTextures;
 
 pub static mut POKEMON_TEXTURES: Option<PokemonTextures> = None;
-
-pub static mut ITEM_TEXTURES: Option<ItemTextures> = None;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PokemonTexture {
@@ -35,10 +34,6 @@ pub enum PokemonTexture {
 
 pub fn pokemon_texture(id: &PokemonId, side: PokemonTexture) -> &Texture {
 	unsafe{POKEMON_TEXTURES.as_ref()}.expect("Could not get pokemon textures!").get(id, side)
-}
-
-pub fn item_texture(id: &ItemId) -> Option<&Texture> {
-    unsafe{ITEM_TEXTURES.as_ref()}.expect("Could not get item textures!").get(id)
 }
 
 
@@ -76,5 +71,3 @@ impl PokemonTextures {
     }
 
 }
-
-pub type ItemTextures = HashMap<ItemId, Texture>;

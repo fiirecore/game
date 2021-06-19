@@ -7,7 +7,6 @@ use crate::{
         TILE_SIZE, 
         Direction,
     },
-    pokedex::trainer::TrainerId,
     graphics::{position, RED, draw_rectangle},
     tetra::{
         Context,
@@ -37,10 +36,6 @@ pub struct NpcTextureManager {
 }
 
 impl NpcTextureManager {
-
-    pub(crate) fn trainer_texture(npc_type: &TrainerId) -> &'static Texture {
-        pokedex::texture::trainer::trainer_texture(npc_type)
-    }
 
     pub fn set(&mut self, npcs: NpcTextures) {
         self.npcs = npcs;

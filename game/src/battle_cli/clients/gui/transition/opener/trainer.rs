@@ -1,6 +1,10 @@
 use crate::{
     util::{Reset, Completable},
-    pokedex::trainer::TrainerData,
+    deps::TextureManager,
+    pokedex::{
+        texture::TrainerTextures,
+        trainer::TrainerData,
+    },
     graphics::draw_o_bottom, 
     tetra::{
         Context,
@@ -30,7 +34,7 @@ impl BattleOpener for TrainerBattleOpener {
 
     fn spawn(&mut self, opponent: Option<&TrainerData>) {
         if let Some(trainer) = opponent {
-            self.trainer = Some(pokedex::texture::trainer::trainer_texture(&trainer.npc_type).clone());
+            self.trainer = Some(TrainerTextures::get(&trainer.npc_type).clone());
         }
     }
 

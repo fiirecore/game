@@ -1,15 +1,14 @@
 use serde::{Deserialize, Serialize};
 use deps::{
 	str::{TinyStr4, TinyStr16},
-	borrow::{
-		Identifiable,
-		StaticRef,
-	}
+	hash::HashMap,
+	borrow::{Identifiable, StaticRef},
 };
 
-use crate::types::PokemonType;
-
-pub mod dex;
+use crate::{
+	types::PokemonType,
+	Dex,
+};
 
 mod category;
 pub use category::*;
@@ -28,6 +27,18 @@ pub type PP = u8;
 pub type Priority = i8;
 
 pub type FieldMoveId = TinyStr4;
+
+pub struct Movedex;
+
+static mut MOVEDEX: Option<HashMap<MoveId, Move>> = None;
+
+impl Dex<'static> for Movedex {
+    type DexType = Move;
+
+    fn dex() -> &'static mut Option<HashMap<<<Self as Dex<'static>>::DexType as Identifiable<'static>>::Id, Self::DexType>> {
+        unsafe { &mut MOVEDEX }
+    }
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -66,7 +77,7 @@ impl<'a> Identifiable<'a> for Move {
     }
 
 	fn try_get(id: &Self::Id) -> Option<&'a Self> where Self: Sized {
-		unsafe { dex::MOVEDEX.as_ref().map(|map| map.get(id)).flatten() }
+		Movedex::try_get(id)
 	}
 
 }

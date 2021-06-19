@@ -6,7 +6,7 @@ use pokedex::{
         ItemRef,
         ItemStackInstance,
     },
-    texture::item_texture,
+    texture::ItemTextures,
 };
 
 use storage::data_mut;
@@ -146,7 +146,7 @@ impl BagGui {
         let cursor = self.cursor.load(Relaxed);
         if let Some(item) = items.get(cursor) {
             let item = item.stack.item.value();
-            draw_o(ctx, item_texture(&item.id), 8.0, 125.0);
+            draw_o(ctx, <ItemTextures as deps::TextureManager>::try_get(&item.id), 8.0, 125.0);
             for (index, line) in item.description.iter().enumerate() {
                 draw_text_left(ctx, &1, line, &TextColor::White, 41.0, 117.0 + (index * 14) as f32);
             }

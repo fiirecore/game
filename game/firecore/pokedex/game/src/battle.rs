@@ -1,17 +1,30 @@
 use deps::{
     borrow::Identifiable, 
+    hash::HashMap,
     tetra::graphics::Texture,
 };
 
-use pokedex::moves::{Move, MoveId};
+use pokedex::{
+    Dex,
+    moves::{Move, MoveId},
+};
 
 pub mod serialized;
-
-pub mod dex;
-
 pub mod script;
 
 pub type BattleMoveRef = &'static BattleMove;
+
+pub struct BattleMovedex;
+
+static mut BATTLE_MOVE_DEX: Option<HashMap<MoveId, BattleMove>> = None;
+
+impl Dex<'static> for BattleMovedex {
+    type DexType = BattleMove;
+
+    fn dex() -> &'static mut Option<HashMap<<<Self as Dex<'static>>::DexType as Identifiable<'static>>::Id, Self::DexType>> {
+        unsafe { &mut BATTLE_MOVE_DEX }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct BattleMove {
@@ -46,6 +59,6 @@ impl<'a> Identifiable<'a> for BattleMove {
     }
 
     fn try_get(id: &Self::Id) -> Option<&'a Self> where Self: Sized {
-        unsafe { dex::BATTLE_MOVE_DEX.as_ref().map(|dex| dex.get(id)).flatten() }
+        BattleMovedex::try_get(id)
     }
 }

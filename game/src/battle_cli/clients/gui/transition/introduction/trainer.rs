@@ -1,7 +1,7 @@
 use crate::{
+    deps::TextureManager,
+    pokedex::texture::TrainerTextures,
     util::{Reset, Completable},
-    pokedex::trainer::TrainerData,
-    storage::data as save,
     text::MessagePage,
     gui::TextDisplay, 
     graphics::draw_o_bottom, 
@@ -57,7 +57,7 @@ impl BattleIntroduction for TrainerBattleIntroduction {
         text.clear();
 
         if let Some(trainer) = &opponent.trainer {
-            self.texture = Some(pokedex::texture::trainer::trainer_texture(&trainer.npc_type).clone());
+            self.texture = Some(TrainerTextures::get(&trainer.npc_type).clone());
 
             let name = format!("{} {}", trainer.prefix, trainer.name);
 
@@ -82,8 +82,6 @@ impl BattleIntroduction for TrainerBattleIntroduction {
                 None,
             ));
         }
-
-        text.process_messages(save());
 
         self.introduction.common_setup(text, player);
         
