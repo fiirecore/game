@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use deps::vec::ArrayVec;
 use pokedex::{
     pokemon::instance::PokemonInstance,
@@ -8,15 +9,19 @@ use crate::message::{Active, PartyIndex};
 
 use super::{BattlePartyView, PokemonView, UnknownPokemon};
 
-#[derive(Debug, Clone)]
-pub struct BattlePartyKnown {
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct BattlePartyKnowable<P> {
     pub id: PlayerId,
     pub name: String,
     pub active: ArrayVec<[Option<usize>; 3]>,
-    pub pokemon: ArrayVec<[PokemonInstance; 6]>,
+    pub pokemon: ArrayVec<[P; 6]>,
+
 }
 
-impl Default for BattlePartyKnown {
+
+pub type BattlePartyKnown = BattlePartyKnowable<PokemonInstance>;
+
+impl<P> Default for BattlePartyKnowable<P> {
     fn default() -> Self {
         Self {
             id: "default".parse().unwrap(),
@@ -79,24 +84,7 @@ impl BattlePartyView for BattlePartyKnown {
 
 }
 
-#[derive(Clone)]
-pub struct BattlePartyUnknown {
-    pub id: PlayerId,
-    pub name: String,
-    pub active: ArrayVec<[Option<usize>; 3]>,
-    pub pokemon: ArrayVec<[Option<UnknownPokemon>; 6]>,
-}
-
-impl Default for BattlePartyUnknown {
-    fn default() -> Self {
-        Self {
-            id: "default".parse().unwrap(),
-            name: String::default(),
-            active: Default::default(),
-            pokemon: Default::default(),
-        }
-    }
-}
+pub type BattlePartyUnknown = BattlePartyKnowable<Option<UnknownPokemon>>;
 
 impl BattlePartyUnknown {
     pub fn add_instance(&mut self, index: PartyIndex, instance: PokemonInstance) {

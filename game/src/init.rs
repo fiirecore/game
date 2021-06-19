@@ -47,28 +47,36 @@ pub fn configuration() -> Result {
 
 pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 
-    let mut pokedex = HashMap::with_capacity(dex.pokemon.len());
+    use deps::borrow::Identifiable;
+    use ::pokedex::{
+        types::PokemonType, 
+        pokemon::{Pokemon, dex::{self as pokedex, Pokedex}, data::{PokedexData, Training, Breeding}},
+        moves::dex as movedex,
+        item::dex as itemdex,
+    };
+
+    let mut pokedex = Pokedex::with_capacity(dex.pokemon.len());
 
 	let mut pokemon_textures = PokemonTextures::with_capacity(dex.pokemon.len());
 
     pokedex.insert(
-        <pokedex::pokemon::Pokemon as deps::borrow::Identifiable>::UNKNOWN, 
-        pokedex::pokemon::Pokemon {
-            id: <pokedex::pokemon::Pokemon as deps::borrow::Identifiable>::UNKNOWN,
+        Pokemon::UNKNOWN, 
+        Pokemon {
+            id: Pokemon::UNKNOWN,
             name: "Unknown".to_string(),
-            primary_type: pokedex::types::PokemonType::default(),
+            primary_type: PokemonType::default(),
             secondary_type: None,
             base: Default::default(),
-            data: pokedex::pokemon::data::PokedexData {
+            data: PokedexData {
                 species: "Unknown".to_string(),
                 height: 0,
                 weight: 0,
             },
-            training: pokedex::pokemon::data::training::Training {
+            training: Training {
                 base_exp: 0,
                 growth_rate: Default::default(),
             },
-            breeding: pokedex::pokemon::data::breeding::Breeding {
+            breeding: Breeding {
                 gender: None,
             },
             moves: Vec::new(),
@@ -94,7 +102,7 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 		pokedex.insert(pokemon.pokemon.id, pokemon.pokemon);
 	}
 
-    pokedex::pokemon::dex::set(pokedex);
+    pokedex::set(pokedex);
     
 	unsafe { POKEMON_TEXTURES = Some(pokemon_textures); }
 
@@ -110,7 +118,7 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
 		movedex.insert(pmove.id, pmove);
 	}
 
-    pokedex::moves::dex::set(movedex);
+    movedex::set(movedex);
     battle::dex::set(battle_movedex);
 
     let mut itemdex = HashMap::with_capacity(dex.items.len());
@@ -122,7 +130,7 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
         itemdex.insert(item.item.id, item.item);
     }
 
-    pokedex::item::dex::set(itemdex);
+    itemdex::set(itemdex);
 
     unsafe { ITEM_TEXTURES = Some(item_textures); }
 

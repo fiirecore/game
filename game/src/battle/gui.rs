@@ -120,20 +120,25 @@ impl BattleEndpoint for BattlePlayerGui {
                 self.messages.push(ClientMessage::FinishedTurnQueue);
             },
             ServerMessage::PokemonRequest(index, instance) => self.opponent.party.add_instance(index, instance),
-            ServerMessage::FaintReplace(pokemon, new) => match &mut self.state {
-                BattlePlayerState::Moving(queue) => {
-                    queue.actions.push_back(ActionInstance {
-                        pokemon,
-                        action: BattleClientGuiAction::Replace(new),
-                    });
-                },
-                _ => {
-                    let (player, player_ui) = match pokemon.team == self.player.party.id {
-                        true => (&mut self.player.party as &mut dyn BattlePartyView, &mut self.player.renderer),
-                        false => (&mut self.opponent.party as _, &mut self.opponent.renderer),
-                    };
-                    player.replace(pokemon.index, new);
-                    player_ui[pokemon.index].update(self.opponent.party.active(pokemon.index))
+            ServerMessage::FaintReplace(pokemon, new) => {
+                match &mut self.state {
+                    BattlePlayerState::Moving(queue) => {
+                        queue.actions.push_back(ActionInstance {
+                            pokemon,
+                            action: BattleClientGuiAction::Replace(new),
+                        });
+                    },
+                    _ => {
+                        let (player, player_ui) = match pokemon.team == self.player.party.id {
+                            true => (&mut self.player.party as &mut dyn BattlePartyView, &mut self.player.renderer),
+                            false => (&mut self.opponent.party as _, &mut self.opponent.renderer),
+                        };
+                        player.replace(pokemon.index, new);
+                        player_ui[pokemon.index].update(self.opponent.party.active(pokemon.index))
+                    }
+                }
+                if pokemon.team != self.player.party.id {
+                    self.gui.panel.target(&self.opponent.party);
                 }
             },
             ServerMessage::AddUnknown(index, unknown) => self.opponent.party.add(index, unknown),
@@ -442,6 +447,9 @@ impl BattlePlayerGui {
                                                 }
                                                 let coming = user.pokemon(index).unwrap();
                                                 ui::text::on_switch(&mut self.gui.text, user.active(instance.pokemon.index).unwrap(), coming);
+                                                if instance.pokemon.team != self.player.party.id {
+                                                    self.gui.panel.target(&self.opponent.party);
+                                                }
                                                 Some(BattleClientGuiCurrent::Switch(index))
                                             }
                                         }

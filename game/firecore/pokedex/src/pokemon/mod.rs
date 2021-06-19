@@ -7,11 +7,11 @@ use crate::{
 	types::PokemonType,
 	pokemon::{
 		data::{
-			breeding::Breeding,
 			LearnableMove,
 			PokedexData,
-			training::Training,
 			Gender,
+			Training,
+			Breeding,
 		},
 		stat::Stats,
 	},

@@ -56,6 +56,7 @@ impl BattlePartyPokemon {
     }
 }
 
+#[derive(Debug)]
 pub enum PartyActive {
     Single([ActivePokemon; 1]),
     Double([ActivePokemon; 2]),

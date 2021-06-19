@@ -156,11 +156,11 @@ impl BattleHost {
 						if if let Some(pokemon) = user.pokemon.get(index) {
 							if !pokemon.pokemon.value().fainted() {
 								user.active.set(active, ActivePokemon::Some(index, None));
-								other.client.send(ServerMessage::FaintReplace(ActivePokemonIndex { team: user.id, index: active }, Some(index)));
 								if let Some(pokemon) = user.know(index) {
 									other.client.send(ServerMessage::AddUnknown(index, pokemon));
 								}
-								false					
+								other.client.send(ServerMessage::FaintReplace(ActivePokemonIndex { team: user.id, index: active }, Some(index)));
+								false
 							} else {
 								true
 							}
@@ -240,8 +240,6 @@ impl BattleHost {
 							*state = BattleState::End(false, self.player2.id);
 						} else if !self.player1.needs_replace() && !self.player2.needs_replace() {
 							*state = BattleState::SELECTING_START;
-						} else if !self.player1.needs_replace() {
-							debug!("p1 needs replace.");
 						}
 					}
 				}

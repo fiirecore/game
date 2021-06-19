@@ -30,7 +30,7 @@ impl MoveTarget {
 
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 pub enum MoveTargetInstance {
 	Opponent(usize), // maybe add PlayerId
 	Team(usize),

@@ -1,10 +1,9 @@
-use pokedex::{
-    pokemon::{Health, Level, PokemonRef, instance::PokemonInstance},
-};
+use serde::{Deserialize, Serialize};
+use pokedex::pokemon::{Health, Level, PokemonRef, instance::PokemonInstance};
 
 use super::PokemonView;
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
 pub struct UnknownPokemon {
     pokemon: PokemonRef,
     name: String,

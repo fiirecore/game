@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use pokedex::{
     types::Effective,
     pokemon::{Experience, stat::StatType},
@@ -7,14 +9,14 @@ use pokedex::{
 
 use super::ActivePokemonIndex;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BattleMove {
     Move(usize, Vec<MoveTargetInstance>),
     UseItem(ItemRef, MoveTargetInstance),
     Switch(usize),
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum BattleClientMove {
     Miss,
     TargetHP(f32),

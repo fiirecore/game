@@ -3,9 +3,11 @@ use serde::{Deserialize, Serialize};
 use crate::pokemon::Level;
 use crate::moves::MoveId;
 
-pub mod training;
-pub mod breeding;
+mod training;
+mod breeding;
 
+pub use training::*;
+pub use breeding::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
 pub enum Gender {

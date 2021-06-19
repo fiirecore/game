@@ -1,5 +1,7 @@
 use std::borrow::Cow;
 
+use serde::{Deserialize, Serialize};
+
 use pokedex::{
     pokemon::instance::PokemonInstance,
     moves::{MoveRef, target::PlayerId},
@@ -16,6 +18,7 @@ use crate::{
 pub type Active = usize;
 pub type PartyIndex = usize;
 
+#[derive(Debug, Deserialize, Serialize)]
 pub enum ClientMessage {
     // Connect(BattleParty),
     Move(Active, BattleMove),
@@ -25,6 +28,7 @@ pub enum ClientMessage {
     Forfeit,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub enum ServerMessage<'a> {
     User(BattleData, BattlePartyKnown),
     Opponents(BattlePartyUnknown),
@@ -33,8 +37,7 @@ pub enum ServerMessage<'a> {
     StartSelecting,
     TurnQueue(Cow<'a, Vec<BattleClientActionInstance>>),
     AskFinishedTurnQueue,
-    #[deprecated(note = "should not be sent to opponent")]
-    AddMove(ActivePokemonIndex, usize, MoveRef), // pokemon, move index, move
+    /*#[deprecated(note = "should not be sent to opponent")]*/ AddMove(ActivePokemonIndex, usize, MoveRef), // pokemon, move index, move
     // GainExp(Active, Experience),
     // LevelUp(Level, Option<Vec<MoveRef>>),
     // SelectMoveError(usize),
