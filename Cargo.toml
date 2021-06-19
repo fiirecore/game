@@ -33,7 +33,7 @@ discord = ["discord-rich-presence", "serde_json"]
 discord-rich-presence = { version = "0.1", optional = true }
 serde_json = { version = "1.0", optional = true }
 
-firecore-game = { path = "game/", default-features = false, features = ["ser", "world", "battle"] }
+firecore-game = { git = "https://github.com/DoNotDoughnut/firecore-game", default-features = false, features = ["ser", "world", "battle"] }
 
 ### Other
 
@@ -45,29 +45,8 @@ pico-args = "0.4"
 
 [build-dependencies]
 
-dex-builder = { path = "game/firecore/pokedex/builder" }
-world-builder = { path = "game/world/builder" }
-font-builder = { path = "game/firecore/text/builder" }
-audio-builder = { path = "game/firecore/audio/builder", optional = true }
+dex-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "dex-builder" }
+world-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "world-builder" }
+font-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "font-builder" }
+audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "audio-builder", optional = true }
 winres = "0.1"
-
-[workspace]
-members = [
-    "game",
-    "game/world",
-    "game/world/builder",
-    "game/battle",
-    "game/firecore/deps",
-    "game/firecore/util",
-    "game/firecore/pokedex",
-    "game/firecore/pokedex/game",
-    "game/firecore/pokedex/builder",
-    "game/firecore/text",
-    "game/firecore/text/font",
-    "game/firecore/text/builder",
-    "game/firecore/storage",
-    "game/firecore/storage/player",
-    "game/firecore/storage/game",
-    "game/firecore/audio",
-    "game/firecore/audio/builder",
-]
