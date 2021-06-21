@@ -33,11 +33,9 @@ discord = ["discord-rich-presence", "serde_json"]
 discord-rich-presence = { version = "0.1", optional = true }
 serde_json = { version = "1.0", optional = true }
 
-firecore-game = { git = "https://github.com/DoNotDoughnut/firecore-game", default-features = false, features = ["ser", "world", "battle"] }
+firecore-game = { git = "https://github.com/DoNotDoughnut/firecore-game", default-features = false, features = ["logger", "world", "battle"] }
 
 ### Other
-
-simple_logger = "1.11"
 
 pico-args = "0.4"
 

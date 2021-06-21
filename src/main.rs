@@ -23,9 +23,7 @@ use args::*;
 
 fn main() -> Result {
 
-    // Sets up logger
-
-    simple_logger::SimpleLogger::new().init().unwrap();
+    game::init::logger();
 
     info!("Starting {} v{}", TITLE, VERSION);
     info!("By {}", AUTHORS);
