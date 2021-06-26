@@ -1,8 +1,0 @@
-(
-    id: "tackle",
-    script: (
-        actions: [
-            MoveAndReturnPokemon(30.0),
-        ],
-    ),
-)

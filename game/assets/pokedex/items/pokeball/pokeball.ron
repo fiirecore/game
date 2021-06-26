@@ -1,9 +1,0 @@
-(
-    id: "pokeball",
-    name: "Pokeball",
-    description: [
-        "Catches a Pokemon"
-    ],
-    use: Pokeball,
-    // target: Opponent,
-)

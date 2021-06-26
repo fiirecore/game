@@ -1,9 +1,0 @@
-(
-    identifier: "route_2_houses",
-    dirs: [
-        "forest/south",
-        "house",
-        "east_warp",
-        "forest/north",
-    ]
-)
