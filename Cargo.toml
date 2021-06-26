@@ -4,7 +4,6 @@ version = "0.5.0-beta.2021-06-21"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 publish = false
-# default-run = "pokemon-game"
 
 [features]
 default = ["logger", "audio", "static-link", "world", "battle"]
