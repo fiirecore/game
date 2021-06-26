@@ -1,0 +1,3 @@
+[submodule "pokemon-assets"]
+	path = game/assets
+	url = https://github.com/DoNotDoughnut/pokemon-assets
