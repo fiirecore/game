@@ -30,7 +30,7 @@ opt-level = 3     # z = Optimize for size
 firecore-dependencies = { path = "firecore/deps", features = ["hash", "vec", "str", "engine", "log", "ser"] }
 
 firecore-util = { path = "firecore/util" }
-firecore-pokedex-game = { path = "firecore/pokedex/game" }
+firecore-pokedex-game = { path = "pokedex/game" }
 pokemon-firered-clone-storage = { path = "firecore/storage/game" }
 firecore-audio = { path = "firecore/audio" }
 firecore-text = { path = "firecore/text" }
@@ -48,14 +48,14 @@ parking_lot = { version = "0.11", optional = true }
 
 [workspace]
 members = [
+    "pokedex",
+    "pokedex/game",
+    "pokedex/builder",
     "world",
     "world/builder",
     "battle",
     "firecore/deps",
     "firecore/util",
-    "firecore/pokedex",
-    "firecore/pokedex/game",
-    "firecore/pokedex/builder",
     "firecore/text",
     "firecore/text/font",
     "firecore/text/builder",

@@ -11,7 +11,7 @@ edition = "2018"
 ### Map specifications
 
 firecore-world = { path = ".." }
-firecore-pokedex-game = { path = "../../firecore/pokedex/game" }
+firecore-pokedex-game = { path = "../../pokedex/game" }
 firecore-util = { path = "../../firecore/util" }
 firecore-dependencies = { path = "../../firecore/deps", features = ["ser"] }
 

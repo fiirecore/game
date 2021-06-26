@@ -8,4 +8,4 @@ edition = "2018"
 serde = { version = "1.0", features = ["derive"] }
 
 firecore-dependencies = { path = "../firecore/deps", features = ["random", "log", "script"] }
-firecore-pokedex = { path = "../firecore/pokedex" }
+firecore-pokedex = { path = "../pokedex" }

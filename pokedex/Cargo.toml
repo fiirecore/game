@@ -12,5 +12,5 @@ default = []
 logging = ["firecore-dependencies/log"]
 
 [dependencies]
-firecore-dependencies = { path = "../deps", features = ["str", "vec", "hash", "random", "borrow", "script"] }
+firecore-dependencies = { path = "../firecore/deps", features = ["str", "vec", "hash", "random", "borrow", "script"] }
 serde = { version = "1.0", features = ["derive"] }

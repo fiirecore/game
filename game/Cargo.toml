@@ -32,8 +32,8 @@ pico-args = "0.4"
 
 [build-dependencies]
 
-dex-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "dex-builder" }
-world-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "world-builder" }
-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "font-builder" }
-audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-game", package = "audio-builder", optional = true }
+dex-builder = { path = "../pokedex/builder", package = "dex-builder" }
+world-builder = { path = "../world/builder" }
+font-builder = { path = "../firecore/text/builder" }
+audio-builder = { path = "../firecore/audio/builder", package = "audio-builder", optional = true }
 winres = "0.1"

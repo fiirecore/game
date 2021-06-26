@@ -13,6 +13,6 @@ serde = { version = "1.0", features = ["derive"] }
 firecore-dependencies = { path = "../firecore/deps", features = ["random", "hash", "vec"] }
 
 firecore-util = { path = "../firecore/util" }
-firecore-pokedex = { path = "../firecore/pokedex" }
+firecore-pokedex = { path = "../pokedex" }
 firecore-font = { path = "../firecore/text/font" }
 firecore-audio = { path = "../firecore/audio" }
