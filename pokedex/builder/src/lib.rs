@@ -13,8 +13,7 @@ pub mod trainers;
 // #[cfg(feature = "gen")]
 pub mod gen;
 
-pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir: P, trainer_dir: P, output_file: P, include_audio: bool, save: bool) -> SerializedDex {
-    let output_file = output_file.as_ref();
+pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir: P, trainer_dir: P, output_file: Option<P>, include_audio: bool) -> SerializedDex {
 
     // #[cfg(feature = "gen")]
     // gen::gen(pokemon_dir, move_dir)
@@ -35,7 +34,8 @@ pub fn compile<P: AsRef<std::path::Path>>(pokemon_dir: P, move_dir: P, item_dir:
         trainers,
     };
 
-    if save {
+    if let Some(output_file) = output_file {
+        let output_file = output_file.as_ref();
         println!("Saving to file...");
         let size = File::create(output_file)
             .unwrap_or_else(|err| panic!("Could not create output file at {:?} with error {}", output_file, err))
