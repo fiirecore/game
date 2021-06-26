@@ -2,6 +2,8 @@
 
 ## High Priority
 
+- [ ] Move more functions to worldlib
+
 - [ ] Move animations through scripting
 - [ ] Moves on level up
 
@@ -23,6 +25,8 @@
 - [ ] Add UNKOWN pokemon, move and item values
 
 ## Low Priority
+
+- [ ] Move assets to own github repo
 
 - [ ] Command shortcuts and better parsing
 - [ ] Try to remove "count_string" in ItemStackInstance because having strings to display things suck

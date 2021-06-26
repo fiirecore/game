@@ -1,0 +1,10 @@
+[package]
+name = "pokemon-firered-clone-storage"
+version = "0.4.0"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+readme = "README.md"
+
+[dependencies]
+firecore-storage = { path = "../" }
+firecore-saves = { path = "../player" }

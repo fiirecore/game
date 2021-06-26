@@ -1,0 +1,19 @@
+[package]
+name = "firecore-storage"
+version = "0.4.0"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2018"
+readme = "README.md"
+
+[dependencies]
+
+firecore-dependencies = { path = "../deps", features = ["log"] }
+
+### Serialization
+
+serde = "1.0"
+ron = "0.6"
+
+### File management
+
+dirs-next = "2.0"
