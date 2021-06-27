@@ -23,6 +23,7 @@ use crate::{
 };
 
 use battle::player::{BattlePlayer, PlayerSettings};
+use deps::borrow::BorrowableMut;
 
 use crate::battle_cli::{
 	GameBattleWrapper,
@@ -81,7 +82,7 @@ impl BattleManager {
 			transition: BattleScreenTransitionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
-			player: BattlePlayerGuiRef::new(ctx, party, bag, Move::UNKNOWN), // id is trainerId, move::unknown is also a tinystr16 so it is used
+			player: BattlePlayerGuiRef::new(ctx, party, bag, BorrowableMut::Borrowed(&mut data_mut().bag), Move::UNKNOWN), // id is trainerId, move::unknown is also a tinystr16 so it is used
 
 			finished: false,
 

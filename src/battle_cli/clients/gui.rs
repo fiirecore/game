@@ -38,6 +38,7 @@ use battle::{
     client::{BattleEndpoint, BattleClient},
     message::{ClientMessage, ServerMessage},
 };
+use deps::borrow::BorrowableMut;
 
 use self::ui::{
     BattleGui,
@@ -73,7 +74,7 @@ pub struct BattlePlayerGui<ID: Sized + Copy + core::fmt::Debug + core::fmt::Disp
     pub player: ActivePokemonParty<BattlePartyKnown<ID>>,
     pub opponent: ActivePokemonParty<BattlePartyUnknown<ID>>,
 
-    player_bag: Bag,
+    player_bag: BorrowableMut<'static, Bag>,
 
     messages: Vec<ClientMessage>,
 
@@ -171,7 +172,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
 
 impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> BattlePlayerGui<ID> {
 
-    pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>, id_default: ID) -> Self {
+    pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>, player_bag: BorrowableMut<'static, Bag>, id_default: ID) -> Self {
         Self {
             party,
             bag,
@@ -187,7 +188,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 party: BattlePartyUnknown::default_with_id(id_default),
                 renderer: Default::default(),
             },
-            player_bag: Bag::default(),
+            player_bag,
             messages: Default::default(),
         }
     }
