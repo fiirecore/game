@@ -392,6 +392,14 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
 
                                 if target.pokemon.fainted() {
 
+                                    let experience = (target.pokemon.exp_from() as f32
+                                    * match matches!(self.data.type_, BattleType::Wild) {
+                                        true => 1.5,
+                                        false => 1.0,
+                                    }
+                                    * 7.0)
+                                    as Experience;
+
                                     client_results.push(BattleClientMove::Faint(PokemonIndex {
                                         team: target_party.party.id,
                                         index,
@@ -407,14 +415,6 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                     }
 
                                     if target_party.settings.gains_exp {
-
-                                        let experience = (target_party.party.active(index).unwrap().pokemon.exp_from() as f32
-                                        * match matches!(self.data.type_, BattleType::Wild) {
-                                            true => 1.5,
-                                            false => 1.0,
-                                        }
-                                        * 7.0)
-                                        as Experience;
 
                                         let user = match instance.pokemon.team == self.player1.party.id
                                         {
@@ -432,6 +432,8 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                             .pokemon;
 
                                         let level = pokemon.level;
+
+                                        // To - do: send opponent level ups
 
                                         pokemon.add_exp(experience);
 

@@ -27,7 +27,6 @@
 - [ ] Move assets to own github repo
 
 - [ ] Command shortcuts and better parsing
-- [ ] Try to remove "count_string" in ItemStackInstance because having strings to display things suck
 - [ ] Specify default player location in world binary
 - [ ] Moves use PP in battle
 - [ ] Running from battle chance and text

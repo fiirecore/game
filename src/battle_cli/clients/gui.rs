@@ -425,7 +425,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                                 for moves in moves {
                                                                     match moves {
                                                                         BattleClientMove::UserHP(damage) => user_pokemon.set_hp(*damage),
-                                                                        BattleClientMove::Fail => ui::text::on_fail(&mut self.gui.text, vec![format!("{} cannot use move", user_pokemon.name()), format!("{} (Unimplemented)", pokemon_move.name)]),
+                                                                        BattleClientMove::Fail => ui::text::on_fail(&mut self.gui.text, vec![format!("{} cannot use move", user_pokemon.name()), format!("{} is unimplemented", pokemon_move.name)]),
                                                                         BattleClientMove::Miss => ui::text::on_miss(&mut self.gui.text, user_pokemon),
                                                                         BattleClientMove::GainExp(experience) => if let Some(pokemon) = user_pokemon.instance_mut() {
                                                                             queue.actions.push_front(ActionInstance { pokemon: instance.pokemon, action: BattleClientGuiAction::GainExp(pokemon.level, *experience) });

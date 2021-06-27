@@ -10,7 +10,9 @@ publish = false
 [features]
 default = []
 logging = ["firecore-dependencies/log"]
+stackcount = ["itoa"]
 
 [dependencies]
 firecore-dependencies = { path = "../firecore/deps", features = ["str", "vec", "hash", "random", "borrow", "script"] }
 serde = { version = "1.0", features = ["derive"] }
+itoa = { version = "0.4", optional = true }

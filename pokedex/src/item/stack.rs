@@ -1,9 +1,6 @@
+use super::{Item, ItemId, ItemRef, StackSize};
+use deps::borrow::{Identifiable, StaticRef};
 use serde::{Deserialize, Serialize};
-use deps::borrow::{
-    Identifiable,
-    StaticRef,
-};
-use super::{ItemId, Item, ItemRef, StackSize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ItemStack {
@@ -13,12 +10,12 @@ pub struct ItemStack {
 
 #[derive(Debug)]
 pub struct ItemStackInstance {
-    pub stack: *mut ItemStack,
-    pub count_string: String, // tinystr4
+    pub stack: *mut ItemStack,              // we do a little trolling
+    #[cfg(feature = "stackcount")]
+    count: ([u8; 4], Option<StackSize>),    // i think this is fine
 }
 
 impl ItemStack {
-
     pub fn new(item: &ItemId, count: StackSize) -> Self {
         Self {
             item: Item::get(item),
@@ -33,12 +30,10 @@ impl ItemStack {
                 if self.count > item.stack_size {
                     let count = self.count - item.stack_size;
                     self.count = item.stack_size;
-                    Some(
-                        ItemStack {
-                            item: stack.item,
-                            count,
-                        }
-                    )
+                    Some(ItemStack {
+                        item: stack.item,
+                        count,
+                    })
                 } else {
                     None
                 }
@@ -55,21 +50,30 @@ impl ItemStack {
             false
         }
     }
-
 }
 
 impl ItemStackInstance {
-
     pub fn stack(&self) -> &mut ItemStack {
-        unsafe { &mut *self.stack }
+        unsafe { self.stack.as_mut().unwrap() }
     }
-    
-    pub fn decrement(&mut self) -> bool {
-        if unsafe { &mut *self.stack }.decrement() {
-            self.count_string = unsafe { &*self.stack }.count.to_string();
-            true
-        } else {
-            false
+
+    #[cfg(feature = "stackcount")]
+    pub fn count(&mut self) -> &str {
+        let count = self.stack().count;
+        if self.count.1 != Some(count) {
+            itoa::write(self.count.0.as_mut(), count).unwrap();
+            self.count.1 = Some(count);
+        }
+        unsafe { std::str::from_utf8_unchecked(&self.count.0) }
+    }
+}
+
+impl From<&mut ItemStack> for ItemStackInstance {
+    fn from(stack: &mut ItemStack) -> Self {
+        Self {
+            stack: stack as *mut ItemStack,
+            #[cfg(feature = "stackcount")]
+            count: Default::default(),
         }
     }
 }

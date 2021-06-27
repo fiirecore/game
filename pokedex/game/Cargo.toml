@@ -12,7 +12,7 @@ audio = ["firecore-audio"]
 
 [dependencies]
 
-firecore-pokedex = { path = "../" }
+firecore-pokedex = { path = "../", features = ["logging", "stackcount"] }
 firecore-dependencies = { path = "../../firecore/deps", features = ["random", "vec", "hash", "tinystr", "script", "engine"] }
 firecore-audio = { path = "../../firecore/audio", optional = true }
 

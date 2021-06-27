@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use crate::{
+	deps::borrow::Identifiable,
 	storage::{data_mut, player::PlayerSave},
 	gui::{
 		party::PartyGui,
@@ -9,6 +10,7 @@ use crate::{
 	pokedex::{
 		pokemon::instance::BorrowedPokemon,
 		trainer::TrainerId,
+		moves::Move,
 	},
 	input::{debug_pressed, DebugBind},
 	graphics::ZERO,
@@ -79,7 +81,7 @@ impl BattleManager {
 			transition: BattleScreenTransitionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
-			player: BattlePlayerGuiRef::new(ctx, party, bag, <pokedex::moves::Move as deps::borrow::Identifiable>::UNKNOWN),
+			player: BattlePlayerGuiRef::new(ctx, party, bag, Move::UNKNOWN), // id is trainerId, move::unknown is also a tinystr16 so it is used
 
 			finished: false,
 

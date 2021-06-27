@@ -4,7 +4,10 @@ use crate::input::{pressed, Control};
 use crate::text::TextColor;
 use atomic::Atomic;
 use deps::tetra::{graphics::Texture, Context};
-use pokedex::{item::{ItemRef, ItemStack, ItemStackInstance, bag::Bag}, texture::ItemTextures};
+use pokedex::{
+    item::{bag::Bag, ItemRef, ItemStackInstance},
+    texture::ItemTextures,
+};
 use std::{
     cell::RefCell,
     sync::atomic::{AtomicBool, AtomicUsize, Ordering::Relaxed},
@@ -119,13 +122,13 @@ impl BagGui {
     pub fn draw(&self, ctx: &mut Context) {
         self.background
             .draw(ctx, crate::graphics::position(0.0, 0.0));
-        let items = self.items.borrow();
+        let mut items = self.items.borrow_mut();
         let cursor = self.cursor.load(Relaxed);
-        for (index, item) in items.iter().enumerate() {
+        for (index, item) in items.iter_mut().enumerate() {
             let y = 11.0 + (index << 4) as f32;
             draw_text_left(ctx, &1, &item.stack().item.name, &TextColor::Black, 98.0, y);
             draw_text_left(ctx, &1, "x", &TextColor::Black, 200.0, y);
-            // draw_text_right(ctx, &1, &item.count, &TextColor::Black, 221.0, y);
+            draw_text_left(ctx, &1, item.count(), &TextColor::Black, 208.0, y);
         }
         draw_text_left(
             ctx,
@@ -181,8 +184,9 @@ impl BagGui {
         selected
             .map(|selected| {
                 self.selected.store(None, Relaxed);
-                let mut items = self.items.borrow_mut();
+                let items = self.items.borrow();
                 let item = items[selected]
+                    .stack()
                     .decrement()
                     .then(|| items[selected].stack().item);
                 self.despawn();
@@ -194,10 +198,7 @@ impl BagGui {
     pub fn spawn(&self, bag: &mut Bag) {
         self.alive.store(true, Relaxed);
         // self.select_text.store(Some(BATTLE_OPTIONS), Relaxed);
-        *self.items.borrow_mut() = bag.items.iter_mut().map(|stack| ItemStackInstance {
-            count_string: stack.count.to_string(),
-            stack: stack as *mut ItemStack,
-        }).collect();
+        *self.items.borrow_mut() = bag.items.iter_mut().map(ItemStackInstance::from).collect();
     }
 
     pub fn despawn(&self) {

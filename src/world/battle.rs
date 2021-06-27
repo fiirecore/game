@@ -71,7 +71,7 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
                             party: trainer.party.clone(),
                             trainer: Some(
                                 BattleTrainerEntry {
-                                    id: npc_id.as_str().parse().unwrap(),
+                                    id: unsafe { TrainerId::new_unchecked(npc_id.as_unsigned() as u128) },
                                     transition: trainer.battle_transition,
                                     // texture: TrainerTextures::get(&npc.type_id).clone(),
                                     gym_badge: trainer_type.badge,
