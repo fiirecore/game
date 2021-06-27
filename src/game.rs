@@ -13,8 +13,3 @@ impl<'a> core::fmt::Display for CommandResult<'a> {
         write!(f, "{} {:?}", self.command, self.args)
     }
 }
-
-pub trait GameState {
-    fn process(&mut self, result: CommandResult);
-    fn draw(&self, ctx: &mut deps::tetra::Context);
-}

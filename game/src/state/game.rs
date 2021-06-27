@@ -7,7 +7,7 @@ use game::{
 		party::PartyGui,
 		bag::BagGui,
 	},
-	game::{GameStateAction, GameState},
+	game::GameStateAction,
 	battle_glue::BattleEntry,
 	tetra::{
 		State, Context, Result,
@@ -18,7 +18,7 @@ use game::{
 };
 
 use game::world::map::manager::WorldManager;
-use game::battle_cli::manager::BattleManager;
+use firecore_battle_game::BattleManager;
 
 use crate::state::{MainState, MainStates};
 
@@ -115,7 +115,7 @@ impl State for GameStateManager {
 
 		if let Some(command) = self.console.update(ctx) {
 			match self.state {
-				GameStates::World => self.world.process(command),
+				GameStates::World => self.world.process(command, &mut self.battle_entry),
 				GameStates::Battle => warn!("Battle has no commands implemented."),
 			}
 		}

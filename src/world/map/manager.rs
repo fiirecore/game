@@ -27,7 +27,7 @@ use crate::{
         party::PartyGui,
         bag::BagGui,
     },
-    game::{GameState, GameStateAction},
+    game::{GameStateAction, CommandResult},
     is_debug, keybind,
 };
 
@@ -87,10 +87,6 @@ pub struct WorldManager {
     // Rendering
 
     screen: RenderCoords,
-
-    // Other
-
-    random_battle: Option<usize>, // remove
 
 }
 
@@ -198,8 +194,6 @@ impl WorldManager {
             screen: RenderCoords::default(),
             // noclip_toggle: false,
             player_move_accumulator: 0.0,
-
-            random_battle: None,
         }
     }
 
@@ -248,10 +242,6 @@ impl WorldManager {
     }
 
     pub fn update(&mut self, ctx: &mut Context, delta: f32, input_lock: bool, battle: BattleEntryRef, action: &mut Option<GameStateAction>) {
-
-        if let Some(size) = self.random_battle.take() {
-            random_wild_battle(battle, size)
-        }
 
         if self.start_menu.alive() {
             self.start_menu.update(ctx, delta, input_lock, action);
@@ -497,17 +487,14 @@ impl WorldManager {
             
         }
     }
-    
-}
 
-impl GameState for WorldManager {
-    fn process(&mut self, mut result: crate::game::CommandResult) {
+    pub fn process(&mut self, mut result: CommandResult, battle: BattleEntryRef) {
         match result.command {
             "help" => {
                 info!("To - do: help list.");
                 info!("To - do: show messages in game")
             }
-            "fly" => {
+            "fly_temp" => {
                 self.world_map.spawn();
             }
             "heal" => {
@@ -556,15 +543,14 @@ impl GameState for WorldManager {
             "battle" => match result.args.next() {
                 Some(arg) => match arg {
                     "random" => {
-                        self.random_battle = match result.args.next() {
+                        match result.args.next() {
                             Some(len) => match len.parse::<usize>() {
-                                Ok(size) => Some(size),
+                                Ok(size) => random_wild_battle(battle, size),
                                 Err(err) => {
                                     warn!("Could not parse battle length for second /battle argument \"{}\" with error {}", len, err);
-                                    None
                                 }
                             }
-                            None => Some(super::super::battle::DEFAULT_RANDOM_BATTLE_SIZE),
+                            None => random_wild_battle(battle, super::super::battle::DEFAULT_RANDOM_BATTLE_SIZE),
                         };
                     }
                     _ => warn!("Unknown /battle argument \"{}\".", arg),
@@ -602,7 +588,7 @@ impl GameState for WorldManager {
         }
     }
 
-    fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut Context) {
 
         if self.start_menu.fullscreen() {
             self.start_menu.draw(ctx); 
@@ -627,6 +613,7 @@ impl GameState for WorldManager {
 
         }
     }
+    
 }
 
 fn on_tile(wm: &mut WorldMapManager, textures: &mut WorldTextures, battle: BattleEntryRef) {

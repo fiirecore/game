@@ -5,8 +5,6 @@ pub use deps::{log, tetra};
 pub extern crate firecore_util as util;
 pub extern crate pokemon_firered_clone_storage as storage;
 pub mod input;
-#[cfg(feature = "battle")]
-pub extern crate firecore_battle as battle;
 pub extern crate firecore_pokedex_game as pokedex;
 
 pub extern crate simple_logger as logger;
@@ -20,9 +18,6 @@ pub mod graphics;
 pub mod gui;
 pub mod init;
 pub mod text;
-
-#[cfg(feature = "battle")]
-pub mod battle_cli;
 
 #[cfg(feature = "world")]
 extern crate firecore_world as worldlib;
