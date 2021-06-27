@@ -238,7 +238,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 TransitionState::Run => {
                     self.gui.introduction.update(state, ctx, delta, &mut self.player, &mut self.opponent, &mut self.gui.text);
                     self.gui.trainer.update(delta);
-                    if self.gui.text.current() > 0 && !self.gui.trainer.ending() {
+                    if self.gui.text.current() > 0 && !self.gui.trainer.ending() && !matches!(self.battle_data.type_, BattleType::Wild) {
                         self.gui.trainer.end();
                     }
                 }

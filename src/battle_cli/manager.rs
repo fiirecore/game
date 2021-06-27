@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
 use crate::{
-	deps::borrow::Identifiable,
 	storage::{data_mut, player::PlayerSave},
 	gui::{
 		party::PartyGui,
@@ -10,7 +9,6 @@ use crate::{
 	pokedex::{
 		pokemon::instance::BorrowedPokemon,
 		trainer::TrainerId,
-		moves::Move,
 	},
 	input::{debug_pressed, DebugBind},
 	graphics::ZERO,
@@ -24,6 +22,7 @@ use crate::{
 
 use battle::player::{BattlePlayer, PlayerSettings};
 use deps::borrow::BorrowableMut;
+use pokedex::trainer::TrainerData;
 
 use crate::battle_cli::{
 	GameBattleWrapper,
@@ -82,7 +81,7 @@ impl BattleManager {
 			transition: BattleScreenTransitionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
-			player: BattlePlayerGuiRef::new(ctx, party, bag, BorrowableMut::Borrowed(&mut data_mut().bag), Move::UNKNOWN), // id is trainerId, move::unknown is also a tinystr16 so it is used
+			player: BattlePlayerGuiRef::new(ctx, party, bag, BorrowableMut::Borrowed(&mut data_mut().bag), deps::UNKNOWN16),
 
 			finished: false,
 
@@ -106,7 +105,11 @@ impl BattleManager {
 					BattlePlayer::new(
 						data.id,
 						data.party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), 
-						None,
+						Some(TrainerData {
+							npc_type: deps::UNKNOWN16,
+							prefix: String::from("Trainer"),
+							name: data.name.clone(),
+						}),
 						PlayerSettings {
 							gains_exp: true,
 						},

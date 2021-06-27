@@ -27,88 +27,12 @@ pub struct StateManager {
     menu: MenuStateManager,
     game: GameStateManager,
 
-    args: Vec<Args>,
     scaler: ScreenScaler,
 
 }
 
 impl State for StateManager {
     fn begin(&mut self, ctx: &mut Context) -> Result {
-        // Loads fonts
-    
-        match game::deps::ser::deserialize(include_bytes!("../../build/data/fonts.bin")) {
-            Ok(font_sheets) => game::init::text(ctx, font_sheets)?,
-            Err(err) => {
-                error!("Could not load font sheets with error {}", err);
-                error!("Game will start with no text display.");
-            }
-        }
-
-        // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
-    
-        // let texture = game::graphics::byte_texture(include_bytes!("../build/assets/loading.png"));
-        
-        // Flash the loading screen once so the screen freezes on this instead of a blank one
-    
-        // loading_screen(texture);
-    
-        // let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
-        //     start_coroutine(load_coroutine())
-        // } else {
-        //     start_coroutine(async move {
-        //         loop {
-        //             loading_screen(texture);
-        //             next_frame().await;
-        //         }
-        //     })
-        // };
-    
-        info!("Loading assets...");
-    
-        // Parses arguments
-    
-        // let args = getopts();
-    
-        #[cfg(feature = "audio")]
-        if !self.args.contains(&Args::DisableAudio) {
-            //Load audio files and setup audio
-            match game::deps::ser::deserialize(include_bytes!("../../build/data/audio.bin")) {
-                Ok(sound) => game::init::audio(sound),
-                Err(err) => error!("Could not read sound file with error {}", err)
-            }
-        }
-    
-        {
-    
-            if self.args.contains(&Args::Debug) {
-                game::set_debug(true);
-            }
-            
-            if game::is_debug() {
-                info!("Running in debug mode");
-            }    
-    
-        }
-
-        // Load pokedex and movedex;
-
-        match game::deps::ser::deserialize(include_bytes!("../../build/data/dex.bin")) {
-            Ok(dex) => game::init::pokedex(ctx, dex)?,
-            Err(err) => panic!("Could not deserialize pokedex with error {}", err),
-        }
-
-        // loads player saves
-        
-        game::storage::init();
-    
-        #[cfg(debug_assertions)] {
-			let saves = unsafe{game::storage::PLAYER_SAVES.as_mut()}.expect("Could not get player saves");
-			if saves.saves.is_empty() {
-				self.current = MainStates::Menu;
-			} else {
-				saves.select(0);
-			}			
-		}
 
         self.game.load(ctx);
 
@@ -148,12 +72,91 @@ impl State for StateManager {
 impl StateManager {
 
     pub fn new(ctx: &mut Context, args: Vec<Args>) -> Result<Self> {
+
+        // Loads fonts
+    
+        match game::deps::ser::deserialize(include_bytes!("../../build/data/fonts.bin")) {
+            Ok(font_sheets) => game::init::text(ctx, font_sheets)?,
+            Err(err) => {
+                error!("Could not load font sheets with error {}", err);
+                error!("Game will start with no text display.");
+            }
+        }
+
+        // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
+    
+        // let texture = game::graphics::byte_texture(include_bytes!("../build/assets/loading.png"));
+        
+        // Flash the loading screen once so the screen freezes on this instead of a blank one
+    
+        // loading_screen(texture);
+    
+        // let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
+        //     start_coroutine(load_coroutine())
+        // } else {
+        //     start_coroutine(async move {
+        //         loop {
+        //             loading_screen(texture);
+        //             next_frame().await;
+        //         }
+        //     })
+        // };
+    
+        info!("Loading assets...");
+    
+        // Parses arguments
+    
+        // let args = getopts();
+    
+        #[cfg(feature = "audio")]
+        if !args.contains(&Args::DisableAudio) {
+            //Load audio files and setup audio
+            match game::deps::ser::deserialize(include_bytes!("../../build/data/audio.bin")) {
+                Ok(sound) => game::init::audio(sound),
+                Err(err) => error!("Could not read sound file with error {}", err)
+            }
+        }
+    
+        {
+    
+            if args.contains(&Args::Debug) {
+                game::set_debug(true);
+            }
+            
+            if game::is_debug() {
+                info!("Running in debug mode");
+            }    
+    
+        }
+
+        // Load pokedex and movedex;
+
+        match game::deps::ser::deserialize(include_bytes!("../../build/data/dex.bin")) {
+            Ok(dex) => game::init::pokedex(ctx, dex)?,
+            Err(err) => panic!("Could not deserialize pokedex with error {}", err),
+        }
+
+        let mut current = Default::default();
+
+        // loads player saves
+        
+        game::storage::init();
+    
+        #[cfg(debug_assertions)] {
+			let saves = unsafe{game::storage::PLAYER_SAVES.as_mut()}.expect("Could not get player saves");
+			if saves.saves.is_empty() {
+				current = MainStates::Menu;
+			} else {
+				saves.select(0);
+			}			
+		}
+
         let scaler = ScreenScaler::with_window_size(ctx, WIDTH as _, HEIGHT as _, ScalingMode::ShowAll)?;
+
         Ok(Self {
-            current: MainStates::default(),
+            current,
             menu: MenuStateManager::new(ctx, scaler.project(Vec2::new(1.0, 1.0))),
             game: GameStateManager::new(ctx),
-            args,
             scaler,
         })
     }

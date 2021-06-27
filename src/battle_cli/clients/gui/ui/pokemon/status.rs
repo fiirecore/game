@@ -1,16 +1,18 @@
 use crate::{
-    util::Entity,
-    pokedex::{
-        pokemon::{stat::StatSet, Level, instance::PokemonInstance},
-        battle::view::{PokemonView, UnknownPokemon},
-    },
-    text::TextColor,
-    gui::health::HealthBar,
     graphics::{byte_texture, draw_text_left, draw_text_right, position},
+    gui::health::HealthBar,
+    pokedex::{
+        battle::view::{PokemonView, UnknownPokemon},
+        pokemon::{instance::PokemonInstance, stat::StatSet, Level},
+    },
     tetra::{graphics::Texture, math::Vec2, Context},
+    text::TextColor,
+    util::Entity,
 };
 
-use crate::battle_cli::clients::gui::ui::{exp_bar::ExperienceBar, BattleGuiPosition, BattleGuiPositionIndex};
+use crate::battle_cli::clients::gui::ui::{
+    exp_bar::ExperienceBar, BattleGuiPosition, BattleGuiPositionIndex,
+};
 
 static mut PLAYER: Option<Texture> = None;
 
@@ -48,6 +50,8 @@ fn small_ui(ctx: &mut Context) -> &'static Texture {
 pub struct PokemonStatusGui {
     alive: bool,
 
+    position: BattleGuiPosition,
+
     origin: Vec2<f32>,
 
     background: (Option<Texture>, Texture),
@@ -70,10 +74,12 @@ impl PokemonStatusGui {
     const HEALTH_Y: f32 = 15.0;
 
     pub fn new(ctx: &mut Context, index: BattleGuiPositionIndex) -> Self {
-        let ((background, origin, exp), data_pos, hb) = Self::attributes(ctx, index);
+        let (((background, origin, exp), data_pos, hb), position) = Self::attributes(ctx, index);
 
         Self {
             alive: false,
+
+            position,
 
             origin,
 
@@ -92,9 +98,10 @@ impl PokemonStatusGui {
         index: BattleGuiPositionIndex,
         pokemon: Option<&PokemonInstance>,
     ) -> Self {
-        let ((background, origin, exp), data_pos, hb) = Self::attributes(ctx, index);
+        let (((background, origin, exp), data_pos, hb), position) = Self::attributes(ctx, index);
         Self {
             alive: false,
+            position,
             origin,
             background,
             name: pokemon.map(|pokemon| pokemon.name().to_string()),
@@ -128,13 +135,13 @@ impl PokemonStatusGui {
         index: BattleGuiPositionIndex,
         pokemon: Option<&UnknownPokemon>,
     ) -> Self {
-        let ((background, origin, _), data_pos, hb) = Self::attributes(ctx, index);
+        let (((background, origin, _), data_pos, hb), position) = Self::attributes(ctx, index);
         Self {
             alive: false,
+            position,
             origin,
             background,
-            name: pokemon
-                .map(|pokemon| pokemon.name().to_owned()),
+            name: pokemon.map(|pokemon| pokemon.name().to_owned()),
             level: pokemon.as_ref().map(|pokemon| Self::level(pokemon.level())),
             data_pos,
             health: (
@@ -167,21 +174,18 @@ impl PokemonStatusGui {
     fn attributes(
         ctx: &mut Context,
         index: BattleGuiPositionIndex,
-    ) -> (
+    ) -> ((
         ((Option<Texture>, Texture), Vec2<f32>, Option<ExperienceBar>),
         PokemonStatusPos,
         Vec2<f32>,
-    ) {
-        match index.position {
+    ), BattleGuiPosition) {
+        (match index.position {
             BattleGuiPosition::Top => {
                 if index.size == 1 {
                     (
                         (
-                            (
-                                Some(padding(ctx).clone()),
-                                small_ui(ctx).clone(),
-                            ), // Background
-                            Self::TOP_SINGLE, // Panel
+                            (Some(padding(ctx).clone()), small_ui(ctx).clone()), // Background
+                            Self::TOP_SINGLE,                                    // Panel
                             None,
                         ),
                         Self::OPPONENT_POSES,         // Text positions
@@ -228,7 +232,7 @@ impl PokemonStatusGui {
                     )
                 }
             }
-        }
+        }, index.position)
     }
 
     fn level(level: Level) -> (String, Level) {
@@ -309,16 +313,17 @@ impl PokemonStatusGui {
     pub fn draw(&self, ctx: &mut Context, offset: f32, bounce: f32) {
         if self.alive {
             if let Some(name) = &self.name {
+                let should_bounce = self.health_text.is_some() || matches!(self.position, BattleGuiPosition::Top);
                 let pos = Vec2::new(
                     self.origin.x
                         + offset
-                        + if self.health_text.is_some() {
+                        + if should_bounce {
                             0.0
                         } else {
                             bounce
                         },
                     self.origin.y
-                        + if self.health_text.is_some() {
+                        + if should_bounce {
                             bounce
                         } else {
                             0.0

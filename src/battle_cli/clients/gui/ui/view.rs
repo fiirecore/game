@@ -1,16 +1,16 @@
 use crate::{
     pokedex::{
-        pokemon::{instance::PokemonInstance, Level},
         battle::{
             party::knowable::{BattlePartyKnown, BattlePartyUnknown},
             view::PokemonView,
         },
+        pokemon::{instance::PokemonInstance, Level},
     },
     tetra::Context,
 };
 
 use super::{
-    pokemon::{PokemonRenderer, PokemonStatusGui},
+    pokemon::{flicker::Flicker, PokemonRenderer, PokemonStatusGui},
     BattleGuiPosition, BattleGuiPositionIndex,
 };
 
@@ -28,7 +28,10 @@ pub struct ActivePokemonRenderer {
 }
 
 impl ActivePokemonRenderer {
-    pub fn init_known<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord>(ctx: &mut Context, party: &BattlePartyKnown<ID>) -> ActiveRenderer {
+    pub fn init_known<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord>(
+        ctx: &mut Context,
+        party: &BattlePartyKnown<ID>,
+    ) -> ActiveRenderer {
         let size = party.active.len() as u8;
         party
             .active
@@ -51,7 +54,10 @@ impl ActivePokemonRenderer {
             .collect()
     }
 
-    pub fn init_unknown<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord>(ctx: &mut Context, party: &BattlePartyUnknown<ID>) -> ActiveRenderer {
+    pub fn init_unknown<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord>(
+        ctx: &mut Context,
+        party: &BattlePartyUnknown<ID>,
+    ) -> ActiveRenderer {
         let size = party.active.len() as u8;
         party
             .active
@@ -101,7 +107,17 @@ impl ActivePokemonRenderer {
             crate::graphics::ZERO,
             deps::tetra::graphics::Color::WHITE,
         );
-        self.status.draw(ctx, 0.0, 0.0);
+        self.status.draw(
+            ctx,
+            0.0,
+            if self.renderer.flicker.accumulator % Flicker::HALF > Flicker::HALF / 8.0
+                && self.renderer.flicker.remaining > (Flicker::TIMES >> 1)
+            {
+                0.0
+            } else {
+                1.0
+            },
+        );
         self.renderer.moves.draw(ctx);
     }
 }

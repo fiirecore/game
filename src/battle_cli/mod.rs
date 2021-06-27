@@ -6,8 +6,8 @@ use battle::{
 
 use crate::{
     battle_glue::{BattleEntry, BattleTrainerEntry},
-    deps::{rhai::Engine, borrow::Identifiable},
-    pokedex::{pokemon::instance::BorrowedPokemon, trainer::TrainerId, moves::Move},
+    deps::rhai::Engine,
+    pokedex::{pokemon::instance::BorrowedPokemon, trainer::TrainerId},
     storage::player::PlayerSave,
 };
 
@@ -53,7 +53,7 @@ impl GameBattleWrapper {
                     player,
                     BattlePlayer::new(
                         entry.trainer.as_ref().map(|t| t.id).unwrap_or(
-                            Move::UNKNOWN,
+                            deps::UNKNOWN16,
                         ),
                         entry
                             .party
@@ -65,7 +65,7 @@ impl GameBattleWrapper {
 							gains_exp: false,
 						},
                         Box::new(BattlePlayerAi::new(
-                            Move::UNKNOWN,
+                            deps::UNKNOWN16,
                         )),
                         entry.size,
                     ),

@@ -22,7 +22,7 @@ impl PokemonInstance {
         move_index: usize,
         targets: Vec<PokemonTarget>,
     ) -> TurnResult {
-        let pokemon_move = self.moves[move_index].move_ref;
+        let pokemon_move = self.moves.get(move_index).map(|i| i.move_ref).unwrap_or_else(|| panic!("Could not get move at index {} for pokemon {}", move_index, self.name()));
         let mut results = MoveResults::new();
 
         for target in targets {

@@ -7,8 +7,11 @@ pub extern crate log;
 #[cfg(feature = "borrow")]
 pub mod borrow;
 
-#[cfg(feature = "tinystr")]
+#[cfg(feature = "str")]
 pub extern crate tinystr as str;
+
+#[cfg(feature = "str")]
+pub const UNKNOWN16: str::TinyStr16 = unsafe { str::TinyStr16::new_unchecked(31093567915781749) };
 
 #[cfg(feature = "vec")]
 

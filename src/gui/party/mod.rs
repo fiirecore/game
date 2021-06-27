@@ -304,11 +304,8 @@ impl PartyGui {
     }
 
     fn draw_health(&self, ctx: &mut Context, pokemon: &PokemonDisplay, x: f32, y: f32) {
-        self.health.draw(ctx, Vec2::new(x, y));
+        self.health.draw_width(ctx, Vec2::new(x, y), pokemon.health.1);
         draw_text_left(ctx, &0, &pokemon.health.0, &TextColor::White, x + 35.0, y + 5.0);
-        // let x = x + 15.0;
-        // draw_rectangle(ctx, x, y + 2.0, pokemon.health.1, 1.0, HealthBar::UPPER);
-        // draw_rectangle(ctx, x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER);
     }
 
     pub fn take_selected(&self) -> Option<usize> {

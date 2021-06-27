@@ -124,6 +124,7 @@ impl WorldManager {
                 player.location = player.world.heal.0;
                 self.map_manager.data.player.character.position = player.world.heal.1;
                 self.map_manager.data.current = Some(player.location);
+                player.party.iter_mut().for_each(PokemonInstance::heal);
             }
         }    
     }

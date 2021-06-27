@@ -3,6 +3,7 @@ use deps::{
 	str::{TinyStr4, TinyStr16},
 	hash::HashMap,
 	borrow::{Identifiable, StaticRef},
+	UNKNOWN16,
 };
 
 use crate::Dex;
@@ -81,7 +82,7 @@ pub type MoveRef = StaticRef<Move>;
 impl<'a> Identifiable<'a> for Move {
     type Id = MoveId;
 
-	const UNKNOWN: MoveId = unsafe { MoveId::new_unchecked(31093567915781749) };
+	const UNKNOWN: MoveId = UNKNOWN16;
 
     fn id(&self) -> &Self::Id {
         &self.id

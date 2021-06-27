@@ -74,18 +74,22 @@ impl HealthBar {
 	}
 
 	pub fn draw(&self, ctx: &mut Context, origin: Vec2<f32>) {
+		self.draw_width(ctx, origin, self.bar.width().ceil());
+		
+	}
+
+	pub fn draw_width(&self, ctx: &mut Context, origin: Vec2<f32>, width: f32) {
 		self.background.draw(ctx, DrawParams::position(DrawParams::default(), origin));
 		let x = origin.x + 15.0;
-		let w = self.bar.width().ceil();
-		let color = if w < Self::WIDTH / 8.0 {
+		let color = if width < Self::WIDTH / 8.0 {
 			Self::RED
-		} else if w < Self::WIDTH / 2.0 {
+		} else if width < Self::WIDTH / 2.0 {
 			Self::YELLOW
 		} else {
 			Self::GREEN
 		};
-		draw_rectangle(ctx, x, origin.y + 2.0, w, 1.0, color.upper);
-		draw_rectangle(ctx, x, origin.y + 3.0, w, 2.0, color.lower);
+		draw_rectangle(ctx, x, origin.y + 2.0, width, 1.0, color.upper);
+		draw_rectangle(ctx, x, origin.y + 3.0, width, 2.0, color.lower);
 	}
 
 }

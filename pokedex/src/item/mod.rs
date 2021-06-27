@@ -4,6 +4,7 @@ use deps::{
     str::TinyStr16,
     hash::HashMap,
     borrow::{Identifiable, StaticRef},
+    UNKNOWN16,
 };
 
 use crate::Dex;
@@ -54,7 +55,7 @@ impl<'a> Identifiable<'a> for Item {
 
     type Id = ItemId;
 
-    const UNKNOWN: ItemId = unsafe { ItemId::new_unchecked(31093567915781749) };
+    const UNKNOWN: ItemId = UNKNOWN16;
 
     fn id(&self) -> &Self::Id {
         &self.id
