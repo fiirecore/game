@@ -10,7 +10,6 @@ pub extern crate firecore_pokedex_game as pokedex;
 pub extern crate simple_logger as logger;
 
 pub mod audio;
-#[cfg(any(feature = "battle", feature = "world"))]
 pub mod battle_glue;
 pub mod config;
 pub mod game;

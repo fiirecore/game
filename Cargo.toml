@@ -6,11 +6,10 @@ edition = "2018"
 publish = false
 
 [features]
-default = ["logger", "audio", "static-link", "world", "battle"]
+default = ["logger", "audio", "static-link", "world"]
 logger = ["simple_logger"]
 audio = ["firecore-dependencies/audio", "firecore-pokedex-game/audio", "parking_lot"]
 world = ["firecore-world"]
-battle = []
 static-link = ["firecore-dependencies/static-link", "bundled"]
 bundled = ["firecore-dependencies/bundled"]
 
