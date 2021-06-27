@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::{
     battle::{view::UnknownPokemon, ActivePokemon},
     pokemon::{
@@ -15,6 +17,8 @@ use super::{
 pub struct BattlePartyPokemon {
     pub pokemon: BorrowedPokemon,
     pub known: bool,
+    pub flinch: bool,
+    // pub persistent
     pub requestable: bool,
 }
 
@@ -23,6 +27,7 @@ impl From<BorrowedPokemon> for BattlePartyPokemon {
         Self {
             pokemon,
             known: false,
+            flinch: false,
             requestable: false,
         }
     }
@@ -32,7 +37,7 @@ impl BattlePartyPokemon {
     pub fn know(&mut self) -> Option<UnknownPokemon> {
         (!self.known).then(|| {
             self.known = true;
-            UnknownPokemon::new(self.pokemon.value())
+            UnknownPokemon::new(&self.pokemon)
         })
     }
 }
@@ -48,7 +53,7 @@ impl<ID, A, P> BattleParty<ID, A, P> {
 
 impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     pub fn all_fainted(&self) -> bool {
-        !self.pokemon.iter().any(|p| !p.pokemon.value().fainted()) || self.pokemon.is_empty()
+        !self.pokemon.iter().any(|p| !p.pokemon.fainted()) || self.pokemon.is_empty()
     }
 
     pub fn any_inactive(&self) -> bool {
@@ -56,18 +61,18 @@ impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
             .iter()
             .enumerate()
             .filter(|(i, _)| !self.active_contains(*i))
-            .any(|(_, b)| !b.pokemon.value().fainted())
+            .any(|(_, b)| !b.pokemon.fainted())
     }
 
-    pub fn active(&self, active: usize) -> Option<&PokemonInstance> {
+    pub fn active(&self, active: usize) -> Option<&BattlePartyPokemon> {
         self.active_index(active)
-            .map(|index| self.pokemon.get(index).map(|b| b.pokemon.value()))
+            .map(|index| self.pokemon.get(index))
             .flatten()
     }
 
-    pub fn active_mut(&mut self, active: usize) -> Option<&mut PokemonInstance> {
+    pub fn active_mut(&mut self, active: usize) -> Option<&mut BattlePartyPokemon> {
         self.active_index(active)
-            .map(move |index| self.pokemon.get_mut(index).map(|b| b.pokemon.value_mut()))
+            .map(move |index| self.pokemon.get_mut(index))
             .flatten()
     }
 
@@ -123,7 +128,7 @@ impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     }
 
     pub fn as_ref(&self) -> Party<&PokemonInstance> {
-        self.pokemon.iter().map(|b| b.pokemon.value()).collect()
+        self.pokemon.iter().map(|b| b.pokemon.deref()).collect()
     }
 
     pub fn cloned(&self) -> PokemonParty {
@@ -136,7 +141,6 @@ impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
 }
 
 impl<ID: Copy> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
-
     pub fn as_known(&self) -> BattlePartyKnown<ID> {
         BattlePartyKnown {
             id: self.id,
@@ -153,10 +157,9 @@ impl<ID: Copy> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
             pokemon: self
                 .pokemon
                 .iter()
-                .map(|p| p.known.then(|| UnknownPokemon::new(p.pokemon.value())))
+                .map(|p| p.known.then(|| UnknownPokemon::new(&p.pokemon)))
                 .collect(),
             active: self.active.iter().map(|active| active.index()).collect(),
         }
     }
-
 }

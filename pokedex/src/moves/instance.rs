@@ -1,28 +1,21 @@
-use serde::{Serialize, Deserialize};
 use deps::vec::ArrayVec;
+use serde::{Deserialize, Serialize};
 
-use crate::moves::{
-    MoveRef,
-    PP,
-};
+use crate::moves::{MoveRef, PP};
 
 pub type MoveInstanceSet = ArrayVec<[MoveInstance; 4]>;
 
-
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct MoveInstance {
-    
     #[serde(rename = "move")]
     pub move_ref: MoveRef,
     pub pp: PP,
-    
 }
 
 impl MoveInstance {
-
     pub fn new(move_ref: MoveRef) -> Self {
         Self {
-            pp: move_ref.value().pp,
+            pp: move_ref.pp,
             move_ref,
         }
     }
@@ -40,8 +33,6 @@ impl MoveInstance {
     }
 
     pub fn restore(&mut self) {
-        self.pp = self.move_ref.value().pp;
+        self.pp = self.move_ref.pp;
     }
-
 }
-

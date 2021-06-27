@@ -707,17 +707,17 @@ impl<'de> serde::Deserialize<'de> for PokemonInstance {
 
 #[inline]
 fn default_gender(pokemon: PokemonRef) -> Gender {
-    pokemon.value().generate_gender()
+    pokemon.generate_gender()
 }
 
 #[inline]
 fn default_moves(pokemon: PokemonRef, level: Level) -> MoveInstanceSet {
-    pokemon.value().generate_moves(level)
+    pokemon.generate_moves(level)
 }
 
 #[inline]
 fn default_base(pokemon: PokemonRef, ivs: &Stats, evs: &Stats, level: Level) -> BaseStats {
-    BaseStats::new(pokemon.value(), ivs, evs, level)
+    BaseStats::new(&pokemon, ivs, evs, level)
 }
 
 #[inline]

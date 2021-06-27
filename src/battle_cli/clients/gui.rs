@@ -67,8 +67,8 @@ pub struct BattlePlayerGui<ID: Sized + Copy + core::fmt::Debug + core::fmt::Disp
 
 #[derive(Debug)]
 struct MoveQueue<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> {
-    actions: VecDeque<BattleClientGuiActionInstance<ID>>,
-    current: Option<BattleClientGuiCurrentInstance<ID>>,
+    actions: VecDeque<ActionInstance<ID, BattleClientGuiAction<ID>>>,
+    current: Option<ActionInstance<ID, BattleClientGuiCurrent<ID>>>,
 }
 
 
@@ -244,7 +244,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                         if self.bag.alive() {
                                             self.bag.input(ctx);
                                             if let Some(item) = self.bag.take_selected_despawn() {
-                                                match &item.value().usage {
+                                                match &item.usage {
                                                     ItemUseType::Pokeball => self.gui.panel.active = BattlePanels::Target(MoveTarget::Opponent, Some(item)),
                                                     ItemUseType::Script(..) => todo!("user targeting"),
                                                     ItemUseType::None => todo!("make item unusable"),
@@ -280,7 +280,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                 BattlePanels::Fight => match pokemon.moves.get(self.gui.panel.fight.moves.cursor) {
                                                     Some(instance) => match instance.get() {
                                                         Some(move_ref) => {
-                                                            let target = move_ref.value().target;
+                                                            let target = move_ref.target;
                                                             match target {
                                                                 MoveTarget::Opponent => self.gui.panel.active = BattlePanels::Target(target, None),
                                                                 _ => {
@@ -383,7 +383,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                         //     MoveTargetInstance::User => user.active(instance.pokemon.index),
                                                         // }.map(|v| !v.fainted()).unwrap_or_default()) {
 
-                                                            ui::text::on_move(&mut self.gui.text, pokemon_move.value(), user_active);
+                                                            ui::text::on_move(&mut self.gui.text, &pokemon_move, user_active);
 
                                                         // }
             
@@ -402,7 +402,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                                 for moves in moves {
                                                                     match moves {
                                                                         BattleClientMove::UserHP(damage) => user_pokemon.set_hp(*damage),
-                                                                        BattleClientMove::Fail => ui::text::on_fail(&mut self.gui.text, vec![format!("{} cannot use move", user_pokemon.name()), format!("{} (Unimplemented)", pokemon_move.value().name)]),
+                                                                        BattleClientMove::Fail => ui::text::on_fail(&mut self.gui.text, vec![format!("{} cannot use move", user_pokemon.name()), format!("{} (Unimplemented)", pokemon_move.name)]),
                                                                         BattleClientMove::Miss => ui::text::on_miss(&mut self.gui.text, user_pokemon),
                                                                         BattleClientMove::GainExp(experience) => if let Some(pokemon) = user_pokemon.instance_mut() {
                                                                             queue.actions.push_front(ActionInstance { pokemon: instance.pokemon, action: BattleClientGuiAction::GainExp(pokemon.level, *experience) });
@@ -470,7 +470,6 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                     MoveTargetInstance::User => (user.index(instance.pokemon.index), user),
                                                 };
                                                 if let Some(index) = index {
-                                                    let item = item.value();
                                                     if let ItemUseType::Pokeball = item.usage {
                                                         // self.messages.push(ClientMessage::RequestPokemon(index));
                                                         queue.actions.push_front(ActionInstance {
@@ -478,7 +477,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                             action: BattleClientGuiAction::Catch,
                                                         });
                                                     }
-                                                    ui::text::on_item(&mut self.gui.text, player.pokemon(index), item);
+                                                    ui::text::on_item(&mut self.gui.text, player.pokemon(index), &item);
                                                 }
                                                 Some(BattleClientGuiCurrent::UseItem(target))
                                             }

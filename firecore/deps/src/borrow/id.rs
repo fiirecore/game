@@ -1,5 +1,6 @@
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use core::fmt::{Display, Debug, Formatter, Result as FmtResult};
+use std::ops::Deref;
 
 pub type StaticRef<V> = IdentifiableRef<'static, V>;
 
@@ -39,6 +40,8 @@ pub trait Identifiable<'a> {
 
 impl<'a, V: Identifiable<'a>> IdentifiableRef<'a, V> {
 
+    // pub fn try_value()
+
     pub fn value(&self) -> &'a V {
         match self {
             IdentifiableRef::Init(value) => value,
@@ -55,13 +58,19 @@ impl<'a, V: Identifiable<'a>> IdentifiableRef<'a, V> {
         }
     }
 
-    // pub fn try_value()
-
     pub fn id(&self) -> &V::Id {
         match self {
             IdentifiableRef::Init(v) => v.id(),
             IdentifiableRef::Uninit(id) => id,
         }
+    }
+}
+
+impl<'a, V: Identifiable<'a>> Deref for IdentifiableRef<'a, V> {
+    type Target = V;
+
+    fn deref(&self) -> &'a Self::Target {
+        self.value()
     }
 }
 

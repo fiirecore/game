@@ -1,7 +1,6 @@
 use std::collections::BTreeMap;
 
 use crate::{
-    types::Effective,
     moves::{
         MoveRef,
         target::MoveTargetInstance,
@@ -13,17 +12,27 @@ use crate::{
     }
 };
 
+use super::DamageResult;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MoveResult {
-    Damage(Health, Effective, bool), // bool = crit
+    Damage(DamageResult<Health>), // bool = crit
     Status(StatusEffect),
-    Drain(Health, Health, Effective, bool), // damage, healing, effective, crit
+    Drain(DamageResult<Health>, Health), // damage, healing, effective, crit
     StatStage(StatType, Stage),
+    Flinch,
     // NextHit(), next hit protect, next hit endure
+    NoHit(NoHitResult),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NoHitResult {
+    Ineffective,
+    Miss,
     Todo,
 }
 
-pub type MoveResults = BTreeMap<MoveTargetInstance, Option<MoveResult>>;
+pub type MoveResults = BTreeMap<MoveTargetInstance, Vec<MoveResult>>;
 
 pub struct TurnResult {
     pub pokemon_move: MoveRef,

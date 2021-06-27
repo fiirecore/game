@@ -134,7 +134,7 @@ impl PokemonStatusGui {
             origin,
             background,
             name: pokemon
-                .map(|pokemon| pokemon.pokemon().value().name.clone()),
+                .map(|pokemon| pokemon.name().to_owned()),
             level: pokemon.as_ref().map(|pokemon| Self::level(pokemon.level())),
             data_pos,
             health: (
@@ -250,7 +250,7 @@ impl PokemonStatusGui {
                     level.1 += 1;
                     level.0 = Self::level_fmt(level.1);
                     let base = StatSet::hp(
-                        pokemon.pokemon().value().base.hp,
+                        pokemon.pokemon().base.hp,
                         pokemon.ivs.hp,
                         pokemon.evs.hp,
                         level.1,

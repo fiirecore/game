@@ -2,7 +2,6 @@ use serde::Serialize;
 
 use deps::borrow::{
 	Identifiable,
-	StaticRef,
 	BorrowableMut,
 };
 
@@ -69,6 +68,7 @@ pub struct PokemonInstance {
 	#[serde(default)]
 	pub item: Option<ItemRef>,
 
+	#[deprecated(note = "will be removed")]
 	#[serde(skip)]
 	pub persistent: Option<PersistentMoveInstance>,
 
@@ -84,7 +84,7 @@ pub type BorrowedPokemon = BorrowableMut<'static, PokemonInstance>;
 impl PokemonInstance {
 
 	pub fn generate(id: PokemonId, min: Level, max: Level, ivs: Option<Stats>) -> Self {
-		let pokemon = Pokemon::get(&id).value();
+		let pokemon = Pokemon::get(&id);
 
         let level = if min == max {
 			max
@@ -95,7 +95,7 @@ impl PokemonInstance {
 		let ivs = ivs.unwrap_or_else(Stats::random);
 		let evs = Stats::default();
 
-		let base = BaseStats::new(pokemon, &ivs, &evs, level);
+		let base = BaseStats::new(&pokemon, &ivs, &evs, level);
 
 		Self {
 
@@ -121,7 +121,7 @@ impl PokemonInstance {
 
 			base,
 			
-			pokemon: StaticRef::Init(pokemon),
+			pokemon,
 			
 		}
 	}
@@ -135,7 +135,7 @@ impl PokemonInstance {
 	}
 
 	pub fn name(&self) -> &str {
-		self.nickname.as_ref().unwrap_or(&self.pokemon.value().name)
+		self.nickname.as_ref().unwrap_or(&self.pokemon.name)
 		// match self.nickname.as_ref() {
 		//     Some(name) => Cow::Borrowed(name),
 		//     None => Cow::Owned(self.pokemon.value().name.to_ascii_uppercase()),
@@ -170,11 +170,11 @@ impl PokemonInstance {
 	}
 
 	pub fn moves_at_level(&self) -> Vec<MoveRef> {
-		self.pokemon.value().moves_at_level(self.level)
+		self.pokemon.moves_at_level(self.level)
 	}
 
 	pub fn effective(&self, pokemon_type: PokemonType, category: MoveCategory) -> Effective {
-		let pokemon = self.pokemon.value();
+		let pokemon = self.pokemon;
 		let primary = pokemon_type.effective(pokemon.primary_type, category);
 		if let Some(secondary) = pokemon.secondary_type {
 			primary * pokemon_type.effective(secondary, category)

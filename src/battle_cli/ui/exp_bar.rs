@@ -43,7 +43,7 @@ impl ExperienceBar {
     }
 
     pub fn update_exp(&mut self, previous: Level, pokemon: &PokemonInstance, reset: bool) {
-        let width = Self::width(pokemon.experience, pokemon.pokemon.value().training.growth_rate.max_exp(pokemon.level));
+        let width = Self::width(pokemon.experience, pokemon.pokemon.training.growth_rate.max_exp(pokemon.level));
         self.remaining = (pokemon.level.saturating_sub(previous), width);
         if self.remaining.0 != 0 {
             self.bar.resize(Self::WIDTH, false);

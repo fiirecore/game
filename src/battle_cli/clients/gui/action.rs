@@ -31,6 +31,3 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
         matches!(self, Self::Faint)
     }
 }
-
-pub type BattleClientGuiActionInstance<ID> = ActionInstance<ID, BattleClientGuiAction<ID>>;
-pub type BattleClientGuiCurrentInstance<ID> = ActionInstance<ID, BattleClientGuiCurrent<ID>>;

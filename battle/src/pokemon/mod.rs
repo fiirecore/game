@@ -3,7 +3,7 @@ use crate::pokedex::{
     pokemon::{Experience, stat::{StatType, Stage}},
     item::ItemRef,
     moves::{target::MoveTargetInstance, MoveRef},
-    battle::{view::UnknownPokemon, ActionInstance},
+    battle::view::UnknownPokemon,
     types::Effective,
     battle::PokemonIndex,
 };
@@ -12,7 +12,7 @@ mod party;
 
 pub use party::*;
 
-#[derive(Debug, Clone, PartialEq, PartialOrd, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum BattleClientMove<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> {
     Miss,
     TargetHP(f32),
@@ -31,5 +31,3 @@ pub enum BattleClientAction<ID: Sized + Copy + core::fmt::Debug + core::fmt::Dis
     Switch(usize, Option<UnknownPokemon>),
     UseItem(ItemRef, MoveTargetInstance),
 }
-
-pub type BattleClientActionInstance<ID> = ActionInstance<ID, BattleClientAction<ID>>;

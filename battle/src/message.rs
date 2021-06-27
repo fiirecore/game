@@ -4,13 +4,13 @@ use pokedex::{
     battle::{
         party::knowable::{BattlePartyKnown, BattlePartyUnknown},
         view::UnknownPokemon,
-        PokemonIndex, BattleMove, Active, PartyIndex,
+        ActionInstance, Active, BattleMove, PartyIndex, PokemonIndex,
     },
     moves::MoveRef,
     pokemon::instance::PokemonInstance,
 };
 
-use crate::{pokemon::BattleClientActionInstance, BattleData};
+use crate::{pokemon::BattleClientAction, BattleData};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub enum ClientMessage {
@@ -29,7 +29,7 @@ pub enum ServerMessage<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display 
     // UpdatePokemon(TrainerId, usize, UnknownPokemon),
     PokemonRequest(PartyIndex, PokemonInstance),
     StartSelecting,
-    TurnQueue(Vec<BattleClientActionInstance<ID>>),
+    TurnQueue(Vec<ActionInstance<ID, BattleClientAction<ID>>>),
     AskFinishedTurnQueue,
     /*#[deprecated(note = "should not be sent to opponent")]*/
     AddMove(PokemonIndex<ID>, usize, MoveRef), // pokemon, move index, move

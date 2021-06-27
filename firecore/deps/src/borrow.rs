@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, ops::{Deref, DerefMut}};
 
 mod id;
 pub use id::*;
@@ -10,20 +10,6 @@ pub enum BorrowableMut<'a, T> {
 }
 
 impl<'a, T> BorrowableMut<'a, T> {
-
-    pub fn value(&self) -> &T {
-        match self {
-            Self::Owned(instance) => instance,
-            Self::Borrowed(instance) => &**instance,
-        }
-    }
-
-    pub fn value_mut(&mut self) -> &mut T {
-        match self {
-            Self::Owned(instance) => instance,
-            Self::Borrowed(instance) => instance,
-        }
-    }
     
     pub fn as_ref(&'a self) -> Cow<'a, T> where T: ToOwned {
         match self {
@@ -46,6 +32,27 @@ impl<'a, T> BorrowableMut<'a, T> {
         }
     }
     
+}
+
+impl<'a, T> Deref for BorrowableMut<'a, T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            Self::Owned(instance) => instance,
+            Self::Borrowed(instance) => &**instance,
+        }
+    }
+}
+
+impl<'a, T> DerefMut for BorrowableMut<'a, T> {
+
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        match self {
+            Self::Owned(instance) => instance,
+            Self::Borrowed(instance) => *instance,
+        }
+    }
 }
 
 impl<'a, T: Clone> Clone for BorrowableMut<'a, T> {

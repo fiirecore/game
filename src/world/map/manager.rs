@@ -287,7 +287,7 @@ impl WorldManager {
                                 match result {
                                     TryMoveResult::MapUpdate => self.map_start(ctx, true),
                                     TryMoveResult::TrySwim => {
-                                        for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| &instance.move_ref.value().field_id)).flatten() {
+                                        for id in data().party.iter().map(|pokemon| pokemon.moves.iter().flat_map(|instance| &instance.move_ref.field_id)).flatten() {
                                             if id == &SURF {
                                                 self.map_manager.data.player.character.move_type = MoveType::Swimming;
                                                 self.map_manager.try_move(self.first_direction, delta);

@@ -73,8 +73,8 @@ pub fn move_queue<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Par
                         map.insert(
                             match action {
                                 BattleMove::Move(index, ..) => MovePriority::Second(
-                                    Reverse(instance.moves[index].move_ref.value().priority),
-                                    Reverse(instance.base.get(StatType::Speed)),
+                                    Reverse(instance.pokemon.moves[index].move_ref.priority),
+                                    Reverse(instance.pokemon.base.get(StatType::Speed)),
                                 ),
                                 _ => MovePriority::First,
                             },

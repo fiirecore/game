@@ -138,14 +138,14 @@ impl BagGui {
         let items = self.items.borrow();
         for (index, item) in items.iter().enumerate() {
             let y = 11.0 + (index << 4) as f32;
-            draw_text_left(ctx, &1, &item.stack.item.value().name, &TextColor::Black, 98.0, y);
+            draw_text_left(ctx, &1, &item.stack.item.name, &TextColor::Black, 98.0, y);
             draw_text_left(ctx, &1, "x", &TextColor::Black, 200.0, y);
             draw_text_right(ctx, &1, &item.count_string, &TextColor::Black, 221.0, y);
         }
         draw_text_left(ctx, &1, "Cancel", &TextColor::Black, 98.0, 11.0 + (items.len() << 4) as f32);
         let cursor = self.cursor.load(Relaxed);
         if let Some(item) = items.get(cursor) {
-            let item = item.stack.item.value();
+            let item = &item.stack.item;
             draw_o(ctx, <ItemTextures as deps::TextureManager>::try_get(&item.id), 8.0, 125.0);
             for (index, line) in item.description.iter().enumerate() {
                 draw_text_left(ctx, &1, line, &TextColor::White, 41.0, 117.0 + (index * 14) as f32);

@@ -35,7 +35,7 @@ impl TargetPanel {
     pub fn update_names<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord>(&mut self, targets: &BattlePartyUnknown<ID>) {
         self.names.clear();
         for index in targets.active.iter() {
-            self.names.push(index.as_ref().map(|index| targets.pokemon[*index].as_ref().map(|pokemon| pokemon.pokemon().value().name.clone()).unwrap_or_else(|| String::from("Unknown"))));
+            self.names.push(index.as_ref().map(|index| targets.pokemon[*index].as_ref().map(|pokemon| pokemon.name()).unwrap_or("Unknown").to_owned()));
         }
     }
 

@@ -1,6 +1,9 @@
 use pokedex::{
+    battle::{
+        party::{battle::BattlePartyPokemon, BattleParty},
+        ActivePokemon,
+    },
     pokemon::party::BorrowedParty,
-    battle::{ActivePokemon, party::{BattleParty, battle::BattlePartyPokemon}},
     trainer::TrainerData,
 };
 
@@ -25,7 +28,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> Battl
         while active.len() < active_size {
             match party.get(count) {
                 Some(p) => {
-                    if !p.value().fainted() {
+                    if !p.fainted() {
                         active.push(ActivePokemon::Some(count, None));
                     }
                 }
@@ -41,8 +44,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> Battl
                 trainer,
                 active,
                 pokemon: party.into_iter().map(BattlePartyPokemon::from).collect(),
-            }
+            },
         }
     }
-
 }

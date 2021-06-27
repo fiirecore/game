@@ -5,10 +5,7 @@ use deps::{
 	borrow::{Identifiable, StaticRef},
 };
 
-use crate::{
-	types::PokemonType,
-	Dex,
-};
+use crate::Dex;
 
 mod category;
 pub use category::*;
@@ -49,20 +46,34 @@ pub struct Move {
 	pub name: String,
 	pub category: MoveCategory,
 	#[serde(rename = "type")]
-	pub pokemon_type: PokemonType,
+	pub pokemon_type: crate::types::PokemonType,
 
 	pub accuracy: Option<Accuracy>,
 	pub pp: PP,
 	#[serde(default)]
 	pub priority: Priority,
 
-	pub usage: usage::MoveUseType,
+	pub usage: Vec<usage::MoveUseType>,
 
 	#[serde(default = "target::MoveTarget::opponent")]
 	pub target: target::MoveTarget,
 
+	#[serde(default)]
+	pub contact: bool,
+
+	#[serde(default = "Move::default_crit_chance", rename = "crit")]
+	pub crit_chance: f32,
+
 	pub field_id: Option<FieldMoveId>,
 	
+}
+
+impl Move {
+
+	pub const fn default_crit_chance() -> f32 {
+		0.0416666666667
+	}
+
 }
 
 pub type MoveRef = StaticRef<Move>;
