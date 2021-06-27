@@ -14,33 +14,33 @@ use crate::battle_cli::clients::gui::ui::{exp_bar::ExperienceBar, BattleGuiPosit
 
 static mut PLAYER: Option<Texture> = None;
 
-fn player_texture(ctx: &mut Context) -> &'static Texture {
+fn large_ui(ctx: &mut Context) -> &'static Texture {
     unsafe {
         PLAYER.get_or_insert(byte_texture(
             ctx,
-            include_bytes!("../../../../../../assets/battle/gui/player.png"),
+            include_bytes!("../../../../../../assets/battle/gui/large.png"),
         ))
     }
 }
 
 static mut OPPONENT_PADDING: Option<Texture> = None;
 
-fn opponent_padding(ctx: &mut Context) -> &'static Texture {
+fn padding(ctx: &mut Context) -> &'static Texture {
     unsafe {
         OPPONENT_PADDING.get_or_insert(byte_texture(
             ctx,
-            include_bytes!("../../../../../../assets/battle/gui/opponent_padding.png"),
+            include_bytes!("../../../../../../assets/battle/gui/padding.png"),
         ))
     }
 }
 
 static mut OPPONENT: Option<Texture> = None;
 
-fn opponent_texture(ctx: &mut Context) -> &'static Texture {
+fn small_ui(ctx: &mut Context) -> &'static Texture {
     unsafe {
         OPPONENT.get_or_insert(byte_texture(
             ctx,
-            include_bytes!("../../../../../../assets/battle/gui/opponent.png"),
+            include_bytes!("../../../../../../assets/battle/gui/small.png"),
         ))
     }
 }
@@ -178,8 +178,8 @@ impl PokemonStatusGui {
                     (
                         (
                             (
-                                Some(opponent_padding(ctx).clone()),
-                                opponent_texture(ctx).clone(),
+                                Some(padding(ctx).clone()),
+                                small_ui(ctx).clone(),
                             ), // Background
                             Self::TOP_SINGLE, // Panel
                             None,
@@ -188,7 +188,7 @@ impl PokemonStatusGui {
                         Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
                     )
                 } else {
-                    let texture = opponent_texture(ctx).clone();
+                    let texture = small_ui(ctx).clone();
                     let mut pos = Vec2::zero();
                     pos.y += index.index as f32 * texture.height() as f32;
                     (
@@ -206,7 +206,7 @@ impl PokemonStatusGui {
                 if index.size == 1 {
                     (
                         (
-                            (None, player_texture(ctx).clone()),
+                            (None, large_ui(ctx).clone()),
                             Self::BOTTOM_SINGLE,
                             Some(ExperienceBar::new(/*Self::BOTTOM_SINGLE + Self::EXP_OFFSET*/)),
                         ),
@@ -217,7 +217,7 @@ impl PokemonStatusGui {
                         Vec2::new(33.0, Self::HEALTH_Y),
                     )
                 } else {
-                    let texture = opponent_texture(ctx).clone();
+                    let texture = small_ui(ctx).clone();
                     let mut pos = Self::BOTTOM_MANY_WITH_BOTTOM_RIGHT;
                     pos.x -= texture.width() as f32;
                     pos.y -= (index.index + 1) as f32 * (texture.height() as f32 + 1.0);

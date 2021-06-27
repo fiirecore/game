@@ -31,11 +31,11 @@ impl BattleTrainerPartyIntro {
             state: None,
             bar: byte_texture(
                 ctx,
-                include_bytes!("../../../../../assets/battle/player_bar.png"),
+                include_bytes!("../../../../../assets/battle/gui/bar.png"),
             ),
             ball: byte_texture(
                 ctx,
-                include_bytes!("../../../../../assets/battle/player_pokemon.png"),
+                include_bytes!("../../../../../assets/battle/gui/owned.png"),
             ),
             player: 0,
             opponent: 0,

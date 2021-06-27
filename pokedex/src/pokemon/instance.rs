@@ -23,7 +23,6 @@ use crate::{
 		MoveRef,
 		MoveCategory,
 		instance::MoveInstanceSet,
-		persistent::PersistentMoveInstance,
 	},
 	item::ItemRef,
 };
@@ -68,10 +67,6 @@ pub struct PokemonInstance {
 	#[serde(default)]
 	pub item: Option<ItemRef>,
 
-	#[deprecated(note = "will be removed")]
-	#[serde(skip)]
-	pub persistent: Option<PersistentMoveInstance>,
-
 	#[serde(skip)]
 	pub base: BaseStats,
 
@@ -108,8 +103,6 @@ impl PokemonInstance {
 
 			experience: 0,
 			friendship: 70,
-
-			persistent: None,
 
 			moves: pokemon.generate_moves(level),
 
