@@ -52,8 +52,6 @@ pub type Experience = u32;
 pub type Friendship = u8;
 pub type Health = stat::BaseStat;
 
-// pub type PokemonRef = &'static Pokemon;
-
 #[derive(Serialize, Deserialize)]
 pub struct Pokemon {
 

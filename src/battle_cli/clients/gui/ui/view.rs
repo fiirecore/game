@@ -1,5 +1,4 @@
 use crate::{
-    deps::vec::ArrayVec,
     pokedex::{
         pokemon::{instance::PokemonInstance, Level},
         battle::{
@@ -10,12 +9,12 @@ use crate::{
     tetra::Context,
 };
 
-use crate::battle_cli::ui::{
+use super::{
     pokemon::{PokemonRenderer, PokemonStatusGui},
     BattleGuiPosition, BattleGuiPositionIndex,
 };
 
-pub type ActiveRenderer = ArrayVec<[ActivePokemonRenderer; 3]>;
+pub type ActiveRenderer = Vec<ActivePokemonRenderer>;
 
 #[derive(Default)]
 pub struct ActivePokemonParty<T> {
@@ -43,7 +42,7 @@ impl ActivePokemonRenderer {
                     renderer: PokemonRenderer::with(
                         ctx,
                         position,
-                        pokemon.map(|pokemon| pokemon.pokemon.id()),
+                        pokemon.map(|pokemon| *pokemon.pokemon.id()),
                         pokedex::texture::PokemonTexture::Back,
                     ),
                     status: PokemonStatusGui::with_known(ctx, position, pokemon),
@@ -67,7 +66,7 @@ impl ActivePokemonRenderer {
                     renderer: PokemonRenderer::with(
                         ctx,
                         position,
-                        pokemon.map(|pokemon| *pokemon.pokemon().id()).as_ref(),
+                        pokemon.map(|pokemon| *pokemon.pokemon().id()),
                         pokedex::texture::PokemonTexture::Front,
                     ),
                     status: PokemonStatusGui::with_unknown(ctx, position, pokemon),
@@ -79,7 +78,7 @@ impl ActivePokemonRenderer {
     pub fn update(&mut self, pokemon: Option<&dyn PokemonView>) {
         self.update_status(pokemon, true);
         self.renderer
-            .new_pokemon(pokemon.map(|pokemon| *pokemon.pokemon().id()).as_ref());
+            .new_pokemon(pokemon.map(|pokemon| *pokemon.pokemon().id()));
     }
 
     pub fn update_status(&mut self, pokemon: Option<&dyn PokemonView>, reset: bool) {

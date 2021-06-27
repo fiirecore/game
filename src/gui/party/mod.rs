@@ -4,8 +4,8 @@ use std::{cell::RefCell, sync::atomic::{
 }};
 
 use atomic::Atomic;
+use pokedex::pokemon::party::Party;
 use crate::input::{pressed, Control};
-use storage::{data, data_mut};
 use crate::text::TextColor;
 use deps::vec::ArrayVec;
 
@@ -18,6 +18,7 @@ use crate::tetra::{
         Texture,
         Rectangle,
     },
+    math::Vec2,
 };
 
 use self::select::PartySelectMenu;
@@ -38,9 +39,9 @@ pub struct PartyGui {
 
     background: Texture,
     ball: Texture,
-    health: Texture,
+    health: HealthBar,
     
-    pokemon: RefCell<ArrayVec<[PokemonDisplay; 6]>>,
+    pokemon: RefCell<Party<PokemonDisplay>>,
 
     selected: Atomic<Option<usize>>,
 
@@ -77,7 +78,7 @@ impl PartyGui {
             summary: SummaryGui::new(ctx),
             background: byte_texture(ctx, include_bytes!("../../../assets/gui/party/background.png")),
             ball: byte_texture(ctx, include_bytes!("../../../assets/gui/party/ball.png")),
-            health: HealthBar::texture(ctx).clone(),
+            health: HealthBar::new(ctx),
             accumulator: Atomic::new(0.0),
             pokemon: RefCell::new(ArrayVec::new()),
             cursor: AtomicUsize::new(0),
@@ -100,13 +101,7 @@ impl PartyGui {
         self.exitable.store(exitable, Relaxed);
     }
 
-    pub fn spawn_world(&self) {
-        self.on_spawn(Some(true));
-        self.exitable.store(true, Relaxed);
-        self.spawn(data().party.iter().map(|instance| PokemonDisplay::new(std::borrow::Cow::Borrowed(instance))).collect(), Some(true), true);
-    }
-
-    pub fn input(&self, ctx: &Context) {
+    pub fn input<P>(&self, ctx: &Context, party: &mut [P]) {
         if self.summary.alive() {
             self.summary.input(ctx);
         } else if self.select.alive.load(Relaxed) {
@@ -128,8 +123,9 @@ impl PartyGui {
             if let Some(selected) = self.take_selected() {
                 if let Some(is_world) = is_world {
                     if is_world {
-                        self.pokemon.borrow_mut().swap(self.cursor.load(Relaxed), selected);
-                        data_mut().party.swap(self.cursor.load(Relaxed), selected);
+                        let old = self.cursor.load(Relaxed);
+                        self.pokemon.borrow_mut().swap(old, selected);
+                        party.swap(old, selected);
                     }
                 }
             } else if is_world.is_some() {
@@ -308,11 +304,11 @@ impl PartyGui {
     }
 
     fn draw_health(&self, ctx: &mut Context, pokemon: &PokemonDisplay, x: f32, y: f32) {
-        self.health.draw(ctx, position(x, y));
+        self.health.draw(ctx, Vec2::new(x, y));
         draw_text_left(ctx, &0, &pokemon.health.0, &TextColor::White, x + 35.0, y + 5.0);
-        let x = x + 15.0;
-        draw_rectangle(ctx, x, y + 2.0, pokemon.health.1, 1.0, HealthBar::UPPER);
-        draw_rectangle(ctx, x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER);
+        // let x = x + 15.0;
+        // draw_rectangle(ctx, x, y + 2.0, pokemon.health.1, 1.0, HealthBar::UPPER);
+        // draw_rectangle(ctx, x, y + 3.0, pokemon.health.1, 2.0, HealthBar::LOWER);
     }
 
     pub fn take_selected(&self) -> Option<usize> {

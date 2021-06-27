@@ -4,14 +4,13 @@
 
 - [ ] Move more functions to worldlib
 
-- [ ] Move animations through scripting
+- [X] Move animations through scripting
+    - [ ] Better scripting
 - [ ] Moves on level up
 
-- [ ] Health bar colors
 - [ ] Health bar shake on hit
 - [ ] Tackle faster
 
-- [ ] Pokemon count on trainer battle
 - [ ] Move BattleCloser to Battle GUI module
 
 ## Medium Priority
@@ -20,9 +19,8 @@
 - [ ] Persistent moves in battle
 - [ ] Add jumping over one way tiles
 
-- [ ] Remove uses of data() and data_mut() in party and bag gui
-
-- [ ] Add UNKOWN pokemon, move and item values
+- [ ] Add UNKNOWN pokemon, move and item values
+- [ ] Text line wrapping
 
 ## Low Priority
 

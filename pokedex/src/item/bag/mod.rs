@@ -1,26 +1,38 @@
-use serde::{Deserialize, Serialize};
-use deps::hash::HashMap;
 use super::{ItemId, ItemRef, ItemStack};
-
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Clone, Deserialize, Serialize)]
 pub struct Bag {
-	#[serde(default)]
-    pub items: HashMap<ItemId, ItemStack>,
+    #[serde(default)]
+    pub items: Vec<ItemStack>,
 }
 
 impl Bag {
+    pub fn add_item(&mut self, stack: ItemStack) -> Option<ItemStack> {
+        // returns extra item
+        match self
+            .items
+            .iter()
+            .position(|stack2| stack2.item.id() == stack.item.id())
+        {
+            Some(pos) => self.items[pos].add(stack),
+            None => {
+                self.items.push(stack);
+                None
+            }
+        }
+    }
 
-	pub fn add_item(&mut self, stack: ItemStack) -> Option<ItemStack> { // returns extra item
-		if let Some(owned) = self.items.get_mut(stack.item.id()) {
-			owned.add(stack)
-		} else {
-			self.items.insert(*stack.item.id(), stack)
-		}
-	}
+    pub fn position(&self, id: &ItemId) -> Option<usize> {
+        self.items.iter().position(|stack| stack.item.id() == id)
+    }
 
-	pub fn use_item(&mut self, id: &ItemId) -> Option<ItemRef> {
-		self.items.get_mut(id).map(|stack| if stack.decrement() { Some(stack.item) } else { None }).flatten()
-	}
-
+    pub fn use_item(&mut self, id: &ItemId) -> Option<ItemRef> {
+        self.position(id)
+            .map(|id| {
+                let stack = &mut self.items[id];
+                stack.decrement().then(|| stack.item)
+            })
+            .flatten()
+    }
 }

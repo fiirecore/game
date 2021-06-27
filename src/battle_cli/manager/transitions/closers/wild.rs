@@ -8,7 +8,7 @@ use crate::{
     },
 };
 
-use crate::battle_cli::ui::transitions::BattleCloser;
+use crate::battle_cli::manager::transitions::BattleCloser;
 
 pub struct WildBattleCloser {
     color: Color,

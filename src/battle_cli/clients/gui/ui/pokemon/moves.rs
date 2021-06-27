@@ -1,7 +1,7 @@
 use deps::tetra::{Context, graphics::DrawParams, math::Vec2};
 use pokedex::battle2::script::{BattleAction, BattleActionInstance, BattleActionScriptInstance};
 
-use crate::battle_cli::ui::BattleGuiPosition;
+use crate::battle_cli::clients::gui::ui::BattleGuiPosition;
 
 pub struct MoveRenderer {
     flip: bool,

@@ -1,4 +1,5 @@
 use game::{
+    util::{WIDTH, HEIGHT},
     tetra::{
         State, Context, Result, Event,
         math::Vec2,
@@ -147,8 +148,7 @@ impl State for StateManager {
 impl StateManager {
 
     pub fn new(ctx: &mut Context, args: Vec<Args>) -> Result<Self> {
-        // graphics::set_canvas(ctx, canvas)
-        let scaler = ScreenScaler::with_window_size(ctx, game::util::WIDTH as _, game::util::HEIGHT as _, ScalingMode::ShowAll)?;
+        let scaler = ScreenScaler::with_window_size(ctx, WIDTH as _, HEIGHT as _, ScalingMode::ShowAll)?;
         Ok(Self {
             current: MainStates::default(),
             menu: MenuStateManager::new(ctx, scaler.project(Vec2::new(1.0, 1.0))),
@@ -157,17 +157,6 @@ impl StateManager {
             scaler,
         })
     }
-
-    // pub async fn load(&mut self) {
-	// 	self.game.load().await;
-	// }
-
-    // fn get(&self) -> &dyn MainState {
-	// 	match self.current {
-	// 	    MainStates::Menu => &self.menu,
-	// 	    MainStates::Game => &self.game,
-	// 	}
-	// }
 
 	fn get_mut(&mut self) -> &mut dyn MainState {
 		match self.current {

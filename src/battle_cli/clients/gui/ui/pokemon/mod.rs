@@ -16,7 +16,7 @@ use crate::{
     },
 };
 
-use crate::battle_cli::ui::{BattleGuiPosition, BattleGuiPositionIndex};
+use crate::battle_cli::clients::gui::ui::{BattleGuiPosition, BattleGuiPositionIndex};
 
 use self::{faint::Faint, flicker::Flicker, spawner::{Spawner, SpawnerState}};
 
@@ -36,7 +36,7 @@ pub struct PokemonRenderer {
 
     pub moves: MoveRenderer,
 
-    pub texture: Option<Texture>,
+    pub pokemon: Option<Texture>,
     side: PokemonTexture,
 
     pub pos: Vec2<f32>,
@@ -52,18 +52,19 @@ impl PokemonRenderer {
     pub fn new(ctx: &mut Context, index: BattleGuiPositionIndex, side: PokemonTexture) -> Self {
         Self {
             moves: MoveRenderer::new(index.position),
-            texture: None,
+            pokemon: None,
             side,
             pos: Self::position(index),
-            spawner: Spawner::new(ctx),
+            spawner: Spawner::new(ctx, None),
             faint: Faint::default(),
             flicker: Flicker::default(),
         }
     }
 
-    pub fn with(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: Option<&PokemonId>, side: PokemonTexture) -> Self {
+    pub fn with(ctx: &mut Context, index: BattleGuiPositionIndex, pokemon: Option<PokemonId>, side: PokemonTexture) -> Self {
         Self {
-            texture: pokemon.map(|pokemon| pokemon_texture(pokemon, side).clone()),
+            pokemon: pokemon.map(|pokemon| pokemon_texture(&pokemon, side).clone()),
+            spawner: Spawner::new(ctx, pokemon),
             ..Self::new(ctx, index, side)
         }
     }
@@ -76,8 +77,9 @@ impl PokemonRenderer {
         }
     }
 
-    pub fn new_pokemon(&mut self, pokemon: Option<&PokemonId>) {
-        self.texture = pokemon.map(|pokemon| pokemon_texture(pokemon, self.side)).cloned();
+    pub fn new_pokemon(&mut self, pokemon: Option<PokemonId>) {
+        self.spawner.id = pokemon;
+        self.pokemon = pokemon.map(|pokemon| pokemon_texture(&pokemon, self.side).clone());
         self.reset();
     }
 
@@ -87,7 +89,7 @@ impl PokemonRenderer {
     }
 
     pub fn faint(&mut self) {
-        if let Some(texture) =self.texture.as_ref() {
+        if let Some(texture) =self.pokemon.as_ref() {
             self.faint.fainting = true;
             self.faint.remaining = texture.height() as f32;
         }
@@ -99,7 +101,7 @@ impl PokemonRenderer {
     }
 
     pub fn draw(&self, ctx: &mut Context, offset: Vec2<f32>, color: Color) {
-        if let Some(texture) = &self.texture {
+        if let Some(texture) = &self.pokemon {
             let pos = self.pos + offset;
             if self.spawner.spawning() {
                 self.spawner.draw(ctx, pos, texture);

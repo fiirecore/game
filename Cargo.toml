@@ -1,6 +1,6 @@
 [package]
 name = "firecore-game"
-version = "0.5.0-beta.2021-06-21"
+version = "0.5.0-beta.2021-06-27"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 publish = false
@@ -36,7 +36,7 @@ firecore-audio = { path = "firecore/audio" }
 firecore-text = { path = "firecore/text" }
 
 firecore-world = { path = "world", optional = true }
-firecore-battle = { path = "battle", optional = true }
+firecore-battle = { path = "battle", features = ["ai"], optional = true }
 
 simple_logger = { version = "1", optional = true }
 

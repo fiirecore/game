@@ -20,7 +20,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
         ))))
     }
     pub fn get(&self) -> &mut BattlePlayerGui<ID> {
-        unsafe { self.0.get().as_mut().unwrap() }
+        unsafe { &mut *self.0.get() }
     }
 }
 

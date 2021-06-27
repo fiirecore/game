@@ -1,6 +1,8 @@
 pub mod opener;
 pub mod introduction;
 
+pub mod trainer;
+
 #[derive(Debug)]
 pub enum TransitionState {
 	Begin, // runs on spawn methods

@@ -21,7 +21,7 @@ use crate::{
     battle_glue::BattleTrainerEntry,
 };
 
-use crate::battle_cli::ui::transitions::BattleCloser;
+use crate::battle_cli::manager::transitions::BattleCloser;
 
 use super::wild::WildBattleCloser;
 
@@ -108,11 +108,6 @@ impl BattleCloser for TrainerBattleCloser {
             }
         } else {
             self.wild.update(ctx, delta, text);
-            #[deprecated(note = "temporary bug fix")] {
-                if self.wild.finished() {
-                    self.offset = WIDTH;
-                }
-            }
         }
     }
 

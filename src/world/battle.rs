@@ -105,9 +105,6 @@ pub fn trainer_battle(battle: BattleEntryRef, world: TrainerEntryRef, npc: &Npc,
 impl WorldManager {
 
     pub fn update_world(&mut self, player: &mut PlayerSave, winner: TrainerId, trainer: bool) {
-        let p = self.map_manager.player();
-        p.input_frozen = false;
-        p.character.unfreeze();
         if let Some(world) = self.map_manager.data.battling.take() {
             if winner == player.id {
                 if trainer {

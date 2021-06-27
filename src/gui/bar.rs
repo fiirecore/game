@@ -1,3 +1,5 @@
+pub mod health;
+
 pub struct ProgressBar {
     width: f32,
     gap: f32,

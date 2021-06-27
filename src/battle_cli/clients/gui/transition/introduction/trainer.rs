@@ -16,7 +16,7 @@ use crate::{
 
 use battle::data::BattleType;
 
-use crate::battle_cli::ui::view::{
+use crate::battle_cli::clients::gui::ui::view::{
     ActivePokemonParty,
     ActiveRenderer,
 };

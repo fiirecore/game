@@ -1,6 +1,13 @@
 use std::{collections::VecDeque, rc::Rc};
 
-use crate::{battle_cli::clients::party::{BattlePartyView, BattlePartyEditableView}, deps::borrow::Identifiable, gui::{bag::BagGui, party::PartyGui}, log::{warn, debug}, pokedex::{
+use crate::{
+    battle_cli::clients::party::{
+        BattlePartyView, BattlePartyEditableView
+    }, 
+    deps::borrow::Identifiable, 
+    gui::{bag::BagGui, party::PartyGui}, 
+    log::{warn, debug}, 
+    pokedex::{
         moves::{
             instance::MoveInstance,
             target::{
@@ -8,7 +15,7 @@ use crate::{battle_cli::clients::party::{BattlePartyView, BattlePartyEditableVie
                 MoveTargetInstance,
             }
         },
-        item::ItemUseType, 
+        item::{ItemUseType, bag::Bag}, 
         battle::{
             Active,
             PokemonIndex,
@@ -17,11 +24,14 @@ use crate::{battle_cli::clients::party::{BattlePartyView, BattlePartyEditableVie
             party::knowable::{BattlePartyKnown, BattlePartyUnknown},
         },
         battle2::BattleMove as BMove,
-    }, tetra::Context, util::{Entity, Completable, Reset}};
+    }, 
+    tetra::Context, 
+    util::{Entity, Completable, Reset}
+};
 
 use battle::{
     data::{BattleType, BattleData},
-    pokemon::{
+    client::{
         BattleClientMove,
         BattleClientAction,
     },
@@ -29,19 +39,21 @@ use battle::{
     message::{ClientMessage, ServerMessage},
 };
 
-use crate::battle_cli::ui::{
-    self,
+use self::ui::{
     BattleGui,
     panels::BattlePanels,
     view::{
         ActivePokemonParty,
         ActivePokemonRenderer,
     },
+    battle_party_known_gui,
 };
 
 pub mod action;
 pub mod transition;
 pub mod guiref;
+
+pub mod ui;
 
 use action::*;
 
@@ -61,6 +73,8 @@ pub struct BattlePlayerGui<ID: Sized + Copy + core::fmt::Debug + core::fmt::Disp
     pub player: ActivePokemonParty<BattlePartyKnown<ID>>,
     pub opponent: ActivePokemonParty<BattlePartyUnknown<ID>>,
 
+    player_bag: Bag,
+
     messages: Vec<ClientMessage>,
 
 }
@@ -77,7 +91,7 @@ enum BattlePlayerState<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display 
     WaitToStart,
     Opening(TransitionState),
     Introduction(TransitionState),
-    WaitToSelect, // rename back
+    WaitToSelect,
     Select(Active),
     Moving(MoveQueue<ID>),
     Winner(ID),
@@ -173,6 +187,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 party: BattlePartyUnknown::default_with_id(id_default),
                 renderer: Default::default(),
             },
+            player_bag: Bag::default(),
             messages: Default::default(),
         }
     }
@@ -203,6 +218,9 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
             BattlePlayerState::Opening(state) => match state {
                 TransitionState::Begin => {
                     self.gui.opener.begin(state, self.battle_data.type_, self.opponent.party.trainer.as_ref());
+                    if !matches!(self.battle_data.type_, BattleType::Wild) {
+                        self.gui.trainer.spawn(self.player.party.len(), self.opponent.party.len());
+                    }
                     self.update(ctx, delta, input_lock);
                 }
                 TransitionState::Run => self.gui.opener.update(state, delta),
@@ -218,9 +236,14 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 }
                 TransitionState::Run => {
                     self.gui.introduction.update(state, ctx, delta, &mut self.player, &mut self.opponent, &mut self.gui.text);
+                    self.gui.trainer.update(delta);
+                    if self.gui.text.current() > 0 && !self.gui.trainer.ending() {
+                        self.gui.trainer.end();
+                    }
                 }
                 TransitionState::End => {
                     self.gui.introduction.end(&mut self.gui.text);
+                    self.gui.trainer.despawn();
                     self.state = BattlePlayerState::WaitToSelect;
                     self.update(ctx, delta, input_lock);
                 }
@@ -251,7 +274,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                 }
                                             }
                                         } else if self.party.alive() {
-                                            self.party.input(ctx);
+                                            self.party.input(ctx, self.player.party.pokemon.as_mut_slice());
                                             self.party.update(delta);
                                             if let Some(selected) = self.party.take_selected() {
                                                 self.party.despawn();
@@ -269,8 +292,8 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                 BattlePanels::Main => {
                                                     match self.gui.panel.battle.cursor {
                                                         0 => self.gui.panel.active = BattlePanels::Fight,
-                                                        1 => self.bag.spawn(),
-                                                        2 => crate::battle_cli::ui::battle_party_known_gui(&self.party, &self.player.party, true),
+                                                        1 => self.bag.spawn(&mut self.player_bag),
+                                                        2 => battle_party_known_gui(&self.party, &self.player.party, true),
                                                         3 => if matches!(self.battle_data.type_, BattleType::Wild) {
                                                             self.messages.push(ClientMessage::Forfeit);
                                                         },
@@ -633,7 +656,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                     match instance.pokemon.team == self.player.party.id && self.player.party.any_inactive() {
                                         true => match self.party.alive() {
                                             true => {
-                                                self.party.input(ctx);
+                                                self.party.input(ctx, self.player.party.pokemon.as_mut_slice());
                                                 self.party.update(delta);
                                                 if let Some(selected) = self.party.take_selected() {
                                                     if !self.player.party.pokemon[selected].fainted() {
@@ -646,7 +669,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                     }
                                                 }
                                             },
-                                            false => crate::battle_cli::ui::battle_party_known_gui(&self.party, &self.player.party, false)
+                                            false => battle_party_known_gui(&self.party, &self.player.party, false)
                                         },
                                         false => {
                                             let user = match instance.pokemon.team == self.player.party.id {
@@ -715,12 +738,14 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 BattlePlayerState::Opening(..) => {
                     self.gui.background.draw(ctx, self.gui.opener.offset());
                     self.gui.opener.draw_below_panel(ctx, &self.player.renderer, &self.opponent.renderer);
+                    self.gui.trainer.draw(ctx);
                     self.gui.draw_panel(ctx);
                     self.gui.opener.draw(ctx);
                 }
                 BattlePlayerState::Introduction(..) => {
                     self.gui.background.draw(ctx, 0.0);
                     self.gui.introduction.draw::<ID>(ctx, &self.player.renderer, &self.opponent.renderer);
+                    self.gui.trainer.draw(ctx);
                     self.gui.draw_panel(ctx);
                     self.gui.text.draw(ctx);
                 }

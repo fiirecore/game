@@ -10,7 +10,7 @@ use crate::{
     tetra::{graphics::Texture, math::Vec2, Context},
 };
 
-use crate::battle_cli::ui::{exp_bar::ExperienceBar, BattleGuiPosition, BattleGuiPositionIndex};
+use crate::battle_cli::clients::gui::ui::{exp_bar::ExperienceBar, BattleGuiPosition, BattleGuiPositionIndex};
 
 static mut PLAYER: Option<Texture> = None;
 
@@ -18,7 +18,7 @@ fn player_texture(ctx: &mut Context) -> &'static Texture {
     unsafe {
         PLAYER.get_or_insert(byte_texture(
             ctx,
-            include_bytes!("../../../../assets/battle/gui/player.png"),
+            include_bytes!("../../../../../../assets/battle/gui/player.png"),
         ))
     }
 }
@@ -29,7 +29,7 @@ fn opponent_padding(ctx: &mut Context) -> &'static Texture {
     unsafe {
         OPPONENT_PADDING.get_or_insert(byte_texture(
             ctx,
-            include_bytes!("../../../../assets/battle/gui/opponent_padding.png"),
+            include_bytes!("../../../../../../assets/battle/gui/opponent_padding.png"),
         ))
     }
 }
@@ -40,7 +40,7 @@ fn opponent_texture(ctx: &mut Context) -> &'static Texture {
     unsafe {
         OPPONENT.get_or_insert(byte_texture(
             ctx,
-            include_bytes!("../../../../assets/battle/gui/opponent.png"),
+            include_bytes!("../../../../../../assets/battle/gui/opponent.png"),
         ))
     }
 }

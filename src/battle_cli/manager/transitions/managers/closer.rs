@@ -9,7 +9,7 @@ use battle::data::BattleType;
 
 use crate::battle_cli::{
     clients::gui::transition::TransitionState,
-    ui::transitions::{
+    manager::transitions::{
         BattleCloser,
         closers::{
             Closers,

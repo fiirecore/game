@@ -12,9 +12,9 @@ pub struct ItemStack {
 }
 
 #[derive(Debug)]
-pub struct ItemStackInstance<'a> {
-    pub stack: &'a mut ItemStack,
-    pub count_string: String,
+pub struct ItemStackInstance {
+    pub stack: *mut ItemStack,
+    pub count_string: String, // tinystr4
 }
 
 impl ItemStack {
@@ -58,10 +58,15 @@ impl ItemStack {
 
 }
 
-impl<'a> ItemStackInstance<'a> {
+impl ItemStackInstance {
+
+    pub fn stack(&self) -> &mut ItemStack {
+        unsafe { &mut *self.stack }
+    }
+    
     pub fn decrement(&mut self) -> bool {
-        if self.stack.decrement() {
-            self.count_string = self.stack.count.to_string();
+        if unsafe { &mut *self.stack }.decrement() {
+            self.count_string = unsafe { &*self.stack }.count.to_string();
             true
         } else {
             false

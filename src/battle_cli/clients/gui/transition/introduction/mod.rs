@@ -7,7 +7,7 @@ use crate::{
 
 use crate::battle::data::BattleType;
 
-use crate::battle_cli::ui::view::{ActiveRenderer, ActivePokemonParty};
+use crate::battle_cli::clients::gui::ui::view::{ActiveRenderer, ActivePokemonParty};
 
 use super::TransitionState;
 

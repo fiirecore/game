@@ -9,7 +9,7 @@ use crate::{
 static mut PANEL: Option<Texture> = None;
 
 pub fn panel_texture(ctx: &mut Context) -> &Texture {
-	unsafe { PANEL.get_or_insert(byte_texture(ctx, include_bytes!("../../../assets/battle/gui/panel.png"))) }
+	unsafe { PANEL.get_or_insert(byte_texture(ctx, include_bytes!("../../../../../assets/battle/gui/panel.png"))) }
 }
 
 pub struct BattleBackground {
@@ -24,8 +24,8 @@ impl BattleBackground {
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            background: byte_texture(ctx, include_bytes!("../../../assets/battle/background.png")),
-            ground: byte_texture(ctx, include_bytes!("../../../assets/battle/ground.png")),
+            background: byte_texture(ctx, include_bytes!("../../../../../assets/battle/background.png")),
+            ground: byte_texture(ctx, include_bytes!("../../../../../assets/battle/ground.png")),
             panel: panel_texture(ctx).clone(),
         }
 

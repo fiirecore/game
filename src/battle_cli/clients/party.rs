@@ -99,7 +99,7 @@ impl<ID, P: PokemonView> BattlePartyView<ID> for BattleParty<ID, Option<usize>, 
 }
 
 impl<ID> BattlePartyEditableView<ID> for BattleParty<ID, Option<usize>, PokemonInstance> {
-    fn add(&mut self, index: PartyIndex, unknown: UnknownPokemon) {
+    fn add(&mut self, _index: PartyIndex, _unknown: UnknownPokemon) {
         
     }
 }

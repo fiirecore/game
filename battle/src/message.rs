@@ -10,7 +10,7 @@ use pokedex::{
     pokemon::instance::PokemonInstance,
 };
 
-use crate::{pokemon::BattleClientAction, BattleData};
+use crate::{client::BattleClientAction, BattleData};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub enum ClientMessage {

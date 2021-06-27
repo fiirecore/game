@@ -1,26 +1,13 @@
-use crate::{
-    util::Reset,
-    pokedex::pokemon::instance::PokemonInstance, 
-    tetra::Context, 
-};
+use crate::{pokedex::pokemon::instance::PokemonInstance, tetra::Context, util::Reset};
 
-use crate::battle_cli::{
-    ui::panels::{
-        moves::MovePanel,
-        move_info::MoveInfoPanel,
-    },
-};
+use super::{move_info::MoveInfoPanel, moves::MovePanel};
 
 pub struct FightPanel {
-
     pub moves: MovePanel,
-    // #[deprecated(note = "fix")]
     info: MoveInfoPanel,
-
 }
 
 impl FightPanel {
-
     pub fn new(ctx: &mut Context) -> Self {
         Self {
             moves: MovePanel::new(ctx),
@@ -41,7 +28,7 @@ impl FightPanel {
 
     pub fn draw(&self, ctx: &mut Context) {
         self.moves.draw(ctx);
-        self.info.draw(ctx);  
+        self.info.draw(ctx);
     }
 
     pub fn input(&mut self, ctx: &Context, pokemon: &PokemonInstance) {
@@ -49,7 +36,6 @@ impl FightPanel {
             self.update_move(pokemon);
         }
     }
-
 }
 
 impl Reset for FightPanel {

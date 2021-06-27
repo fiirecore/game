@@ -1,25 +1,19 @@
 use crate::{
-    audio::sound::Sound,
     battle_cli::clients::party::BattlePartyView,
     graphics::{position, ZERO},
     gui::TextDisplay,
-    play_sound,
-    pokedex::battle::{
-        party::knowable::{BattlePartyKnown, BattlePartyUnknown},
-        view::PokemonView,
-    },
+    pokedex::battle::party::knowable::{BattlePartyKnown, BattlePartyUnknown},
     tetra::{
         graphics::{Color, Rectangle, Texture},
         Context,
     },
     text::MessagePage,
     util::{Completable, Entity, Reset},
-    CRY_ID,
 };
 
 use battle::data::BattleType;
 
-use crate::battle_cli::ui::{
+use crate::battle_cli::clients::gui::ui::{
     pokemon::PokemonStatusGui,
     view::{ActivePokemonParty, ActiveRenderer},
 };
@@ -166,20 +160,13 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 for active in opponent.renderer.iter_mut() {
                     active.status.spawn();
                 }
-                for instance in
-                    opponent.party.active.iter().flat_map(|index| {
-                        index.map(|i| &opponent.party.pokemon[i] as &dyn PokemonView)
-                    })
-                {
-                    play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon().id())));
-                }
             }
         }
 
         if let Some(active) = player.renderer.get(0) {
             if active.renderer.spawner.spawning() {
                 for active in player.renderer.iter_mut() {
-                    active.renderer.spawner.update(delta);
+                    active.renderer.spawner.update(ctx, delta);
                 }
             } else if active.status.alive() {
                 if self.offsets.1 != 0.0 {
@@ -192,14 +179,6 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 for active in player.renderer.iter_mut() {
                     active.renderer.spawn();
                     active.status.spawn();
-                }
-                for instance in player
-                    .party
-                    .active
-                    .iter()
-                    .flat_map(|index| index.map(|i| &player.party.pokemon[i]))
-                {
-                    play_sound(ctx, &Sound::variant(CRY_ID, Some(*instance.pokemon.id())));
                 }
             }
         }

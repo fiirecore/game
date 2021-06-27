@@ -1,10 +1,10 @@
-use std::rc::Rc;
+use std::{borrow::Cow, rc::Rc};
 
 use crate::{
     util::Entity,
     input::{pressed, Control},
-    storage::player::SHOULD_SAVE,
-    gui::{Panel, party::PartyGui, bag::BagGui},
+    storage::{data, data_mut, player::SHOULD_SAVE},
+    gui::{Panel, party::PartyGui, bag::BagGui, pokemon::PokemonDisplay},
     tetra::{Context, math::Vec2},
     game::GameStateAction,
     quit,
@@ -47,7 +47,7 @@ impl StartMenu {
             // bag_gui.up
         } else if self.party.alive() {
             if !input_lock {
-                self.party.input(ctx);
+                self.party.input(ctx, data_mut().party.as_mut_slice());
             }
             self.party.update(delta);
         } else if !input_lock {
@@ -65,11 +65,11 @@ impl StartMenu {
                     },
                     1 => {
                         // Bag
-                        self.bag.spawn();
+                        self.bag.spawn(&mut data_mut().bag);
                     },
                     2 => {
                         // Pokemon
-                        self.party.spawn_world();
+                        spawn_party(&self.party);
                     },
                     3 => {
                         // Exit to Main Menu
@@ -123,9 +123,13 @@ impl StartMenu {
 
     pub fn spawn_party(&mut self) {
         self.spawn();
-        self.party.spawn_world();
+        spawn_party(&self.party)
     }
 
+}
+
+fn spawn_party(party: &PartyGui) {
+    party.spawn(data().party.iter().map(|instance| PokemonDisplay::new(Cow::Borrowed(instance))).collect(), Some(true), true);
 }
 
 impl Entity for StartMenu {

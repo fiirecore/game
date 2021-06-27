@@ -8,7 +8,6 @@ pub use button::*;
 pub use text::*;
 pub use bar::*;
 
-pub mod health;
 pub mod party;
 pub mod bag;
 

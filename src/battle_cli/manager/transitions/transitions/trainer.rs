@@ -11,7 +11,7 @@ use crate::{
     },
 };
 
-use crate::battle_cli::ui::transitions::BattleTransition;
+use crate::battle_cli::manager::transitions::BattleTransition;
 
 pub struct TrainerBattleTransition {
 

@@ -5,10 +5,7 @@ use crate::{
 
 use battle::data::BattleType;
 
-use crate::battle_cli::{
-    clients::gui::transition::TransitionState,
-    ui::view::ActiveRenderer,
-};
+use crate::battle_cli::clients::gui::{transition::TransitionState, ui::view::ActiveRenderer};
 
 use super::{
     Openers,

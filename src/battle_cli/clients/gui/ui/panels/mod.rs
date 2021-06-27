@@ -10,12 +10,10 @@ use crate::{
     tetra::Context,
 };
 
-use crate::battle_cli::{
-    ui::panels::{
-        battle::BattleOptions,
-        fight::FightPanel,
-        target::TargetPanel,
-    },
+use self::{
+    battle::BattleOptions,
+    fight::FightPanel,
+    target::TargetPanel,
 };
 
 pub mod moves;

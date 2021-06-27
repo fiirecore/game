@@ -145,6 +145,9 @@ impl State for GameStateManager {
 			GameStates::Battle => {
 				self.battle.update(ctx, delta, self.console.alive());
 				if self.battle.finished {
+					let p = self.world.map_manager.player();
+					p.input_frozen = false;
+					p.character.unfreeze();
 					let save = data_mut();
 					if let Some(winner) = self.battle.winner() {
 						let trainer = self.battle.update_data(&winner, save);

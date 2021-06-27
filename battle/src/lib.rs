@@ -29,14 +29,15 @@ use pokedex::{
 use crate::{
     data::*,
     message::{ClientMessage, ServerMessage},
-    pokemon::*,
+    player::BattlePlayer,
     state::BattleState,
+    client::{BattleClientMove, BattleClientAction},
 };
 
 pub mod data;
 pub mod state;
 
-pub mod pokemon;
+pub mod player;
 
 pub mod client;
 pub mod message;
@@ -390,13 +391,6 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                 }
 
                                 if target.pokemon.fainted() {
-                                    let experience = (target.pokemon.exp_from() as f32
-                                        * match matches!(self.data.type_, BattleType::Wild) {
-                                            true => 1.5,
-                                            false => 1.0,
-                                        }
-                                        * 7.0)
-                                        as Experience;
 
                                     client_results.push(BattleClientMove::Faint(PokemonIndex {
                                         team: target_party.party.id,
@@ -412,34 +406,48 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                         }
                                     }
 
-                                    let user = match instance.pokemon.team == self.player1.party.id
-                                    {
-                                        true => (&mut self.player1),
-                                        false => (&mut self.player2),
-                                    };
+                                    if target_party.settings.gains_exp {
 
-                                    client_results.push(BattleClientMove::GainExp(experience)); // .send(ServerMessage::GainExp(instance.pokemon.index, experience));
+                                        let experience = (target_party.party.active(index).unwrap().pokemon.exp_from() as f32
+                                        * match matches!(self.data.type_, BattleType::Wild) {
+                                            true => 1.5,
+                                            false => 1.0,
+                                        }
+                                        * 7.0)
+                                        as Experience;
 
-                                    let pokemon = &mut user
-                                        .party
-                                        .active_mut(instance.pokemon.index)
-                                        .unwrap()
-                                        .pokemon;
+                                        let user = match instance.pokemon.team == self.player1.party.id
+                                        {
+                                            true => (&mut self.player1),
+                                            false => (&mut self.player2),
+                                        };
+                                        
 
-                                    let level = pokemon.level;
+                                        client_results.push(BattleClientMove::GainExp(experience)); // .send(ServerMessage::GainExp(instance.pokemon.index, experience));
 
-                                    pokemon.add_exp(experience);
+                                        let pokemon = &mut user
+                                            .party
+                                            .active_mut(instance.pokemon.index)
+                                            .unwrap()
+                                            .pokemon;
 
-                                    if !pokemon.moves.is_full() {
-                                        let mut moves = pokemon.moves_from(level..pokemon.level);
-                                        while let Some(moves) = moves.pop() {
-                                            if let Err(_) =
-                                                pokemon.moves.try_push(MoveInstance::new(moves))
-                                            {
-                                                break;
+                                        let level = pokemon.level;
+
+                                        pokemon.add_exp(experience);
+
+                                        if !pokemon.moves.is_full() {
+                                            let mut moves = pokemon.moves_from(level..pokemon.level);
+                                            while let Some(moves) = moves.pop() {
+                                                if let Err(_) =
+                                                    pokemon.moves.try_push(MoveInstance::new(moves))
+                                                {
+                                                    break;
+                                                }
                                             }
                                         }
+
                                     }
+
                                 }
                             }
 

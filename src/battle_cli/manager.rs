@@ -20,7 +20,7 @@ use crate::{
 	is_debug,
 };
 
-use battle::pokemon::BattlePlayer;
+use battle::player::{BattlePlayer, PlayerSettings};
 
 use crate::battle_cli::{
 	GameBattleWrapper,
@@ -28,10 +28,13 @@ use crate::battle_cli::{
 		guiref::BattlePlayerGuiRef,
 		transition::TransitionState,
 	},
-	ui::transitions::managers::{
-		transition::BattleScreenTransitionManager,
-		closer::BattleCloserManager,
-	},
+};
+
+pub mod transitions;
+
+use transitions::managers::{
+	transition::BattleScreenTransitionManager,
+	closer::BattleCloserManager,
 };
 
 pub struct BattleManager {
@@ -99,8 +102,11 @@ impl BattleManager {
 				self.battle.battle(
 					BattlePlayer::new(
 						data.id,
-						None,
 						data.party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), 
+						None,
+						PlayerSettings {
+							gains_exp: true,
+						},
 						Box::new(self.player.clone()),
 						entry.size
 					),

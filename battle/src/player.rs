@@ -9,16 +9,24 @@ use pokedex::{
 
 use crate::client::{BattleClient, LocalBattleClient};
 
+mod settings;
+
+pub use settings::*;
+
+#[cfg(feature = "ai")]
+pub mod ai;
 pub struct BattlePlayer<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> {
     pub client: LocalBattleClient<ID>,
     pub party: BattleParty<ID, ActivePokemon, BattlePartyPokemon>,
+    pub settings: PlayerSettings,
 }
 
 impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> BattlePlayer<ID> {
     pub fn new(
         id: ID,
-        trainer: Option<TrainerData>,
         party: BorrowedParty,
+        trainer: Option<TrainerData>,
+        settings: PlayerSettings,
         client: Box<dyn BattleClient<ID>>,
         active_size: usize,
     ) -> Self {
@@ -45,6 +53,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> Battl
                 active,
                 pokemon: party.into_iter().map(BattlePartyPokemon::from).collect(),
             },
+            settings,
         }
     }
 }

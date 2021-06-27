@@ -1,8 +1,7 @@
-use battle::pokemon::{BattleClientAction, BattleClientMove};
+use battle::client::{BattleClientAction, BattleClientMove};
 use pokedex::{
     moves::{target::MoveTargetInstance, MoveRef},
     pokemon::{Experience, Level},
-    battle::ActionInstance,
 };
 
 #[derive(Debug, Clone)]

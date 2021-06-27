@@ -12,7 +12,7 @@ use crate::{
     },
 };
 
-use crate::battle_cli::ui::view::ActiveRenderer;
+use crate::battle_cli::clients::gui::ui::view::ActiveRenderer;
 
 use super::{BattleOpener, DefaultBattleOpener};
 

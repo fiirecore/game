@@ -6,6 +6,8 @@ use crate::{
         Completable, 
         Direction,
         Coordinate,
+        Location,
+        LocationId,
     },
     storage::{
         data, data_mut, player::PlayerSave,
@@ -14,7 +16,10 @@ use crate::{
         down, pressed, Control,
         debug_pressed, DebugBind,
     },
-    pokedex::moves::FieldMoveId,
+    pokedex::{
+        moves::FieldMoveId,
+        item::{ItemId, StackSize, ItemStack},
+    },
     tetra::{Context, graphics::Color},
     log::{info, warn},
     battle_glue::BattleEntryRef,
@@ -579,19 +584,19 @@ impl GameState for WorldManager {
                 },
                 None => warn!("/script requires arguments \"clear\" or \"list\"."),
             },
-            "warp" => if let Some(map_or_index) = result.args.next().map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
-                let location = if let Some(index) = result.args.next().map(|a| a.parse::<deps::str::TinyStr16>().ok()).flatten() {
-                    util::Location::new(Some(map_or_index), index)
+            "warp" => if let Some(map_or_index) = result.args.next().map(|a| a.parse::<LocationId>().ok()).flatten() {
+                let location = if let Some(index) = result.args.next().map(|a| a.parse::<LocationId>().ok()).flatten() {
+                    Location::new(Some(map_or_index), index)
                 } else {
-                    util::Location::new(None, map_or_index)
+                    Location::new(None, map_or_index)
                 };
                 self.warp_to_location(location);
             } else {
                 warn!("Invalid warp command syntax!")
             },
-            "give" => if let Some(item) = result.args.next().map(|item| item.parse::<pokedex::item::ItemId>().ok()).flatten() {
-                let count = result.args.next().map(|count| count.parse::<pokedex::item::StackSize>().ok()).flatten().unwrap_or(1);
-                data_mut().bag.add_item(pokedex::item::ItemStack::new(&item, count));
+            "give" => if let Some(item) = result.args.next().map(|item| item.parse::<ItemId>().ok()).flatten() {
+                let count = result.args.next().map(|count| count.parse::<StackSize>().ok()).flatten().unwrap_or(1);
+                data_mut().bag.add_item(ItemStack::new(&item, count));
             }
             _ => warn!("Unknown world command \"{}\".", result),
         }
