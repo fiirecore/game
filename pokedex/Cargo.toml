@@ -13,6 +13,6 @@ logging = ["firecore-dependencies/log"]
 stackcount = ["itoa"]
 
 [dependencies]
-firecore-dependencies = { path = "../firecore/deps", features = ["str", "vec", "hash", "random", "borrow", "script"] }
+firecore-dependencies = { path = "../firecore/deps", features = ["str", "vec", "hash", "random", "borrow", "script", "log"] }
 serde = { version = "1.0", features = ["derive"] }
 itoa = { version = "0.4", optional = true }
