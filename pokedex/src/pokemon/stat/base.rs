@@ -15,6 +15,12 @@ pub struct BaseStats {
 	pub stages: StatSet<i8>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct StatStage {
+	pub stat: StatType,
+	pub stage: Stage,
+}
+
 impl BaseStats {
 
 	pub fn new(pokemon: &Pokemon, ivs: &Stats, evs: &Stats, level: Level) -> Self {
@@ -32,12 +38,12 @@ impl BaseStats {
         self.stats.hp
     }
 
-	pub fn can_change_stage(&self, stat: StatType, stage: Stage) -> bool {
-		self.stages.get(stat).abs() + stage < 6
+	pub fn can_change_stage(&self, stat: &StatStage) -> bool {
+		self.stages.get(stat.stat).abs() + stat.stage < 6
 	}
 
-	pub fn change_stage(&mut self, stat: StatType, stage: Stage) {
-		*self.stages.get_mut(stat) += stage;
+	pub fn change_stage(&mut self, stat: StatStage) {
+		*self.stages.get_mut(stat.stat) += stat.stage;
 	}
 
 }

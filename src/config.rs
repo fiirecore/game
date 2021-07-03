@@ -26,7 +26,7 @@ impl Default for Configuration {
 }
 
 impl storage::PersistantData for Configuration {
-    fn file_name() -> &'static str {
+    fn path() -> &'static str {
         "config"
     }
 }

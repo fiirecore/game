@@ -3,7 +3,7 @@ use crate::tetra::{
     Context, 
     Result,
 };
-use storage::load;
+use storage::try_load;
 use pokedex::serialize::{SerializedDex, SerializedPokemon};
 use crate::audio::{
     sound::{Sound, add_sound},
@@ -38,7 +38,7 @@ pub fn logger() {
 }
 
 pub fn configuration() -> Result {
-    let config = load::<Configuration>();
+    let config = try_load::<Configuration>().unwrap_or_else(|err| panic!("Could not read configuration with error {}", err));
     // store::<PlayerSaves>().await;
 
     {

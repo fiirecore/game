@@ -136,25 +136,18 @@ impl StateManager {
             Err(err) => panic!("Could not deserialize pokedex with error {}", err),
         }
 
-        let mut current = Default::default();
-
         // loads player saves
         
-        game::storage::init();
+        game::storage::init().unwrap_or_else(|err| panic!("Could not initialize save data manager with error {}", err));
     
         #[cfg(debug_assertions)] {
-			let saves = unsafe{game::storage::PLAYER_SAVES.as_mut()}.expect("Could not get player saves");
-			if saves.saves.is_empty() {
-				current = MainStates::Menu;
-			} else {
-				saves.select(0);
-			}			
+			game::storage::saves().select_first_or_default();	
 		}
 
         let scaler = ScreenScaler::with_window_size(ctx, WIDTH as _, HEIGHT as _, ScalingMode::ShowAll)?;
 
         Ok(Self {
-            current,
+            current: Default::default(),
             menu: MenuStateManager::new(ctx, scaler.project(Vec2::new(1.0, 1.0))),
             game: GameStateManager::new(ctx),
             scaler,

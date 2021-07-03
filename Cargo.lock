@@ -398,7 +398,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-battle"
-version = "0.5.0-beta.2021-06-27"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -407,7 +407,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-battle-client"
-version = "0.5.0-beta.2021-06-27"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "firecore-battle",
  "firecore-game",
@@ -424,7 +424,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-dependencies"
-version = "0.5.0-beta.2021-06-19"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "ahash",
  "arrayvec",
@@ -445,7 +445,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-game"
-version = "0.5.0-beta.2021-06-27"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "atomic",
  "enum-map",
@@ -463,7 +463,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex"
-version = "0.5.0-beta.2021-06-27"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "firecore-dependencies",
  "itoa",
@@ -482,7 +482,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-saves"
-version = "0.5.0-beta.2021-06-07"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "firecore-dependencies",
  "firecore-pokedex",
@@ -494,7 +494,7 @@ dependencies = [
 
 [[package]]
 name = "firecore-storage"
-version = "0.4.0"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "dirs-next",
  "firecore-dependencies",
@@ -885,7 +885,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-firered-clone-storage"
-version = "0.4.0"
+version = "0.5.0-beta.2021-07-02"
 dependencies = [
  "firecore-saves",
  "firecore-storage",

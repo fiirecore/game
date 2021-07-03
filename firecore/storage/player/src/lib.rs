@@ -1,11 +1,13 @@
 extern crate firecore_dependencies as deps;
 extern crate firecore_pokedex as pokedex;
+extern crate firecore_storage as storage;
 extern crate firecore_util as util;
 extern crate firecore_world as worldlib;
 
 use pokedex::{item::bag::Bag, pokemon::party::PokemonParty, trainer::TrainerId};
 use serde::{Deserialize, Serialize};
-use std::sync::atomic::AtomicBool;
+use std::{path::PathBuf, sync::atomic::AtomicBool};
+use storage::error::DataError;
 use util::{Coordinate, Direction, Location, LocationId, PixelOffset, Position};
 use worldlib::character::Character;
 
@@ -54,6 +56,18 @@ impl PlayerSave {
             name: name.to_owned(),
             ..Default::default()
         }
+    }
+
+    pub fn save(&self) -> Result<(), DataError> {
+        use deps::log::{info, warn};
+        info!("Saving player data!");
+        if let Err(err) = storage::save(
+            self,
+            PathBuf::from("saves").join(storage::file_name(&format!("{}-{}", self.name, self.id))),
+        ) {
+            warn!("Could not save player data with error: {}", err);
+        }
+        Ok(())
     }
 }
 

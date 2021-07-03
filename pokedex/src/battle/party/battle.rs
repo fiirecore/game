@@ -2,6 +2,7 @@ use std::ops::Deref;
 
 use crate::{
     battle::{view::UnknownPokemon, ActivePokemon},
+    moves::MoveRef,
     pokemon::{
         instance::{BorrowedPokemon, PokemonInstance},
         party::{BorrowedParty, Party, PokemonParty},
@@ -16,9 +17,11 @@ use super::{
 #[derive(Debug, Clone)]
 pub struct BattlePartyPokemon {
     pub pokemon: BorrowedPokemon,
+    pub learnable_moves: Vec<MoveRef>,
+    // pub persistent: Option<PersistentMove>,
+    pub caught: bool,
     pub known: bool,
     pub flinch: bool,
-    // pub persistent
     pub requestable: bool,
 }
 
@@ -26,6 +29,8 @@ impl From<BorrowedPokemon> for BattlePartyPokemon {
     fn from(pokemon: BorrowedPokemon) -> Self {
         Self {
             pokemon,
+            learnable_moves: Vec::new(),
+            caught: false,
             known: false,
             flinch: false,
             requestable: false,
@@ -53,7 +58,7 @@ impl<ID, A, P> BattleParty<ID, A, P> {
 
 impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     pub fn all_fainted(&self) -> bool {
-        !self.pokemon.iter().any(|p| !p.pokemon.fainted()) || self.pokemon.is_empty()
+        !self.pokemon.iter().any(|b| !b.pokemon.fainted() && !b.caught) || self.pokemon.is_empty()
     }
 
     pub fn any_inactive(&self) -> bool {
@@ -61,7 +66,7 @@ impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
             .iter()
             .enumerate()
             .filter(|(i, _)| !self.active_contains(*i))
-            .any(|(_, b)| !b.pokemon.fainted())
+            .any(|(_, b)| !b.pokemon.fainted() && !b.caught)
     }
 
     pub fn active(&self, active: usize) -> Option<&BattlePartyPokemon> {
@@ -140,12 +145,12 @@ impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     }
 }
 
-impl<ID: Copy> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
+impl<'a, ID: Copy> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     pub fn as_known(&self) -> BattlePartyKnown<ID> {
         BattlePartyKnown {
             id: self.id,
             trainer: self.trainer.clone(),
-            pokemon: self.pokemon.iter().map(|b| b.pokemon.cloned()).collect(),
+            pokemon: self.pokemon.iter().map(|b| b.pokemon.clone()).collect(),
             active: self.active.iter().map(|active| active.index()).collect(),
         }
     }

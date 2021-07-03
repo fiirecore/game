@@ -1,5 +1,5 @@
 use game::{
-	storage::PLAYER_SAVES,
+	storage::saves,
 	tetra::{State, Context, Result},
 };
 
@@ -19,7 +19,7 @@ impl CharacterCreationState {
 
 impl State for CharacterCreationState {
 	fn begin(&mut self, _ctx: &mut Context) -> Result {
-		unsafe{PLAYER_SAVES.as_mut()}.expect("Could not get player saves!").select_new(&format!("Player{}", game::util::date()));
+		saves().select_new(&format!("Player{}", game::util::date()));
 		self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
 		Ok(())
 	}

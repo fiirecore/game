@@ -17,10 +17,10 @@ pub mod target;
 pub mod battle;
 pub mod fight;
 
-// pub mod level_up;
+pub mod level;
 
 pub struct BattlePanel {
-    pub alive: bool,
+    alive: bool,
 
     pub active: BattlePanels,
 
@@ -52,15 +52,12 @@ impl BattlePanel {
         }
     }
 
-    pub fn user(
-        &mut self,
-        /*last_move: &mut Option<(usize, usize)>,*/ instance: &PokemonInstance,
-    ) {
+    pub fn user(&mut self, instance: &PokemonInstance) {
         self.battle.setup(instance);
         self.fight.user(instance);
-        // let last_move = last_move.take().unwrap_or_default();
-        self.fight.moves.cursor = 0; // self.fight.moves.cursor = last_move.0;
-        self.targets.cursor = 0; // self.fight.targets.cursor = last_move.1;
+        self.battle.cursor = 0;
+        self.fight.moves.cursor = 0;
+        self.targets.cursor = 0;
         self.spawn();
     }
 

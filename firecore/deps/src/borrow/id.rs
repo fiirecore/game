@@ -108,3 +108,11 @@ impl<'a, V: Identifiable<'a>> Debug for IdentifiableRef<'a, V> {
         Display::fmt(self.id(), f)
     }
 }
+
+impl<'a, V: Identifiable<'a>> PartialEq for IdentifiableRef<'a, V> {
+    fn eq(&self, other: &Self) -> bool {
+        self.id() == other.id()
+    }
+}
+
+impl<'a, V: Identifiable<'a>> Eq for IdentifiableRef<'a, V> {}

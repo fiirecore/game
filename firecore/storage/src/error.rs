@@ -6,7 +6,7 @@ pub enum DataError {
 
     NoDirectory,
     Serialize(ron::Error),
-    Deserialize(&'static str, ron::Error),
+    Deserialize(ron::Error),
 
     IOError(std::io::Error),
     // FileError(macroquad::file::FileError),

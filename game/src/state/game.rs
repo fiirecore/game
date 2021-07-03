@@ -2,7 +2,7 @@ use std::{rc::Rc, sync::atomic::Ordering::Relaxed};
 
 use game::{
 	util::Entity,
-	storage::{PLAYER_SAVES, save, data_mut, player::{SHOULD_SAVE, PlayerSaves}},
+	storage::{saves, data_mut, player::{SHOULD_SAVE, PlayerSaves}},
 	gui::{
 		party::PartyGui,
 		bag::BagGui,
@@ -14,7 +14,7 @@ use game::{
 		time::get_delta_time,
 		input::{Key, is_key_down},
 	},
-	log::{info, warn},
+	log::warn,
 };
 
 use game::world::map::manager::WorldManager;
@@ -88,9 +88,9 @@ impl GameStateManager {
 
     pub fn save_data(&mut self, saves: &mut PlayerSaves) {
         self.world.save_data(saves.get_mut());
-		info!("Saving player data!");
-		if let Err(err) = save(saves) {
-			warn!("Could not save player data with error: {}", err);
+		let save = saves.get();
+		if let Err(err) = save.save() {
+			warn!("Could not save player data for {} with error {}", save.name, err);
 		}
     }
 	
@@ -105,9 +105,7 @@ impl State for GameStateManager {
 	}
 
 	fn end(&mut self, _: &mut Context) -> Result {
-		if let Some(mut saves) = unsafe{PLAYER_SAVES.as_mut()} {
-			self.save_data(&mut saves);
-		}
+		self.save_data(saves());
 		Ok(())
 	}
 
@@ -129,9 +127,7 @@ impl State for GameStateManager {
 		};
 
 		if SHOULD_SAVE.load(Relaxed) {
-			if let Some(mut saves) = unsafe{PLAYER_SAVES.as_mut()} {
-				self.data_dirty(&mut saves);
-			}	
+			self.data_dirty(saves());	
 		}
 		match self.state {
 			GameStates::World => {
@@ -143,7 +139,7 @@ impl State for GameStateManager {
 				}
 			}
 			GameStates::Battle => {
-				self.battle.update(ctx, delta, self.console.alive());
+				self.battle.update(ctx, delta);
 				if self.battle.finished {
 					let p = self.world.map_manager.player();
 					p.input_frozen = false;

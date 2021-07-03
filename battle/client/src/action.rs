@@ -1,4 +1,4 @@
-use battle::client::{BattleClientAction, BattleClientMove};
+use battle::client::action::{BattleClientAction, BattleClientMove};
 use game::pokedex::{
     moves::{target::MoveTargetInstance, MoveRef},
     pokemon::{Experience, Level},
@@ -9,8 +9,8 @@ pub enum BattleClientGuiAction<ID: Sized + Copy + core::fmt::Debug + core::fmt::
     Action(BattleClientAction<ID>),
     Faint,
     Catch,
-    GainExp(Level, Experience),
-    LevelUp(Level, Option<Vec<MoveRef>>),
+    SetExp(Level, Experience, Vec<MoveRef>),
+    LevelUp(Vec<MoveRef>),
     Replace(Option<usize>),
 }
 
@@ -22,7 +22,8 @@ pub enum BattleClientGuiCurrent<ID: Sized + Copy + core::fmt::Debug + core::fmt:
     Faint,
     Catch,
     Replace(bool),
-    GainExp,
+    SetExp,
+    LevelUp,
 }
 
 impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> BattleClientGuiAction<ID> {

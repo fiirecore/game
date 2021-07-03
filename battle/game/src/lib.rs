@@ -70,6 +70,7 @@ impl GameBattleWrapper {
                         entry.trainer_data,
 						PlayerSettings {
 							gains_exp: false,
+							request_party: false,
 						},
                         Box::new(BattlePlayerAi::new(
                             UNKNOWN16,

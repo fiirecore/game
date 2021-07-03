@@ -54,7 +54,7 @@ impl HealthBar {
 	}
 
 	pub fn width(current: Health, max: Health) -> f32 {
-		(current as f32 * Self::WIDTH / max as f32).clamp(0.0, Self::WIDTH)
+		current as f32 * Self::WIDTH / max as f32
 	}
 	
 	pub fn resize_hp(&mut self, current: Health, max: Health, reset: bool) {
@@ -75,7 +75,6 @@ impl HealthBar {
 
 	pub fn draw(&self, ctx: &mut Context, origin: Vec2<f32>) {
 		self.draw_width(ctx, origin, self.bar.width().ceil());
-		
 	}
 
 	pub fn draw_width(&self, ctx: &mut Context, origin: Vec2<f32>, width: f32) {
@@ -88,6 +87,7 @@ impl HealthBar {
 		} else {
 			Self::GREEN
 		};
+		let width = width.clamp(0.0, Self::WIDTH);
 		draw_rectangle(ctx, x, origin.y + 2.0, width, 1.0, color.upper);
 		draw_rectangle(ctx, x, origin.y + 3.0, width, 2.0, color.lower);
 	}

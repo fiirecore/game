@@ -7,7 +7,7 @@ use crate::{
     },
     pokemon::{
         Health,
-        stat::{StatType, Stage},
+        stat::StatStage,
         status::StatusEffect,
     }
 };
@@ -19,7 +19,7 @@ pub enum MoveResult {
     Damage(DamageResult<Health>), // bool = crit
     Status(StatusEffect),
     Drain(DamageResult<Health>, Health), // damage, healing, effective, crit
-    StatStage(StatType, Stage),
+    StatStage(StatStage),
     Flinch,
     // NextHit(), next hit protect, next hit endure
     NoHit(NoHitResult),

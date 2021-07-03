@@ -41,10 +41,8 @@ impl BattleState {
             .unwrap(),
         )?;
         game::init::seed_random(game::util::date());
-        game::storage::init();
-        unsafe {
-            game::storage::PLAYER_SAVES.as_mut().unwrap().select(0)
-        }
+        game::storage::init().unwrap();
+        game::storage::saves().select_first_or_default();
         Ok(Self {
             scaler: ScreenScaler::with_window_size(ctx, game::util::WIDTH as _, game::util::HEIGHT as _, ScalingMode::ShowAll)?,
             manager: BattleManager::new(ctx, party, bag),
@@ -66,7 +64,7 @@ impl State for BattleState {
 
     fn update(&mut self, ctx: &mut Context) -> Result {
         self.manager
-            .update(ctx, time::get_delta_time(ctx).as_secs_f32(), false);
+            .update(ctx, time::get_delta_time(ctx).as_secs_f32());
         Ok(())
     }
 

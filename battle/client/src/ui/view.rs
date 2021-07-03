@@ -5,7 +5,6 @@ use game::{
             party::knowable::{BattlePartyKnown, BattlePartyUnknown},
             view::PokemonView,
         },
-        pokemon::{instance::PokemonInstance, Level},
         texture::PokemonTexture,
     },
     tetra::{graphics::Color, Context},
@@ -50,7 +49,7 @@ impl ActivePokemonRenderer {
                         pokemon.map(|pokemon| *pokemon.pokemon.id()),
                         PokemonTexture::Back,
                     ),
-                    status: PokemonStatusGui::with_known(ctx, position, pokemon),
+                    status: PokemonStatusGui::with_known(ctx, position, pokemon.map(std::ops::Deref::deref)),
                 }
             })
             .collect()
@@ -91,16 +90,6 @@ impl ActivePokemonRenderer {
 
     pub fn update_status(&mut self, pokemon: Option<&dyn PokemonView>, reset: bool) {
         self.status.update_gui(pokemon, reset);
-    }
-
-    pub fn update_status_with_level(
-        &mut self,
-        pokemon: Option<&PokemonInstance>,
-        level: Level,
-        reset: bool,
-    ) {
-        self.status
-            .update_gui_ex(pokemon.map(|i| (level, i as _)), reset)
     }
 
     pub fn draw(&self, ctx: &mut Context) {

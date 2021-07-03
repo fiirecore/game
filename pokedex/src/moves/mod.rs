@@ -23,6 +23,7 @@ pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
 pub type Priority = i8;
+pub type Critical = bool;
 
 pub type FieldMoveId = TinyStr4;
 

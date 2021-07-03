@@ -4,7 +4,7 @@ use game::{
     tetra::{Context, graphics::DrawParams},
 };
 
-use self::{background::BattleBackground, panels::BattlePanel, pokemon::bounce::PlayerBounce};
+use self::{background::BattleBackground, panels::{BattlePanel, level::LevelUpMovePanel}, pokemon::bounce::PlayerBounce};
 
 use super::transition::{
     introduction::BattleIntroductionManager, opener::BattleOpenerManager,
@@ -57,7 +57,7 @@ pub struct BattleGui {
     pub opener: BattleOpenerManager,
     pub introduction: BattleIntroductionManager,
     pub trainer: BattleTrainerPartyIntro,
-    // pub level_up: LevelUpMovePanel,
+    pub level_up: LevelUpMovePanel,
 }
 
 impl BattleGui {
@@ -74,7 +74,7 @@ impl BattleGui {
             opener: BattleOpenerManager::new(ctx),
             introduction: BattleIntroductionManager::new(ctx),
 			trainer: BattleTrainerPartyIntro::new(ctx),
-            // level_up: LevelUpMovePanel::new(Vec2::new(0.0, 113.0)),
+            level_up: LevelUpMovePanel::new(ctx),
         }
     }
 

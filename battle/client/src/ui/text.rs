@@ -4,11 +4,7 @@ use game::{
         battle::view::PokemonView,
         item::Item,
         moves::Move,
-        pokemon::{
-            instance::PokemonInstance,
-            stat::{Stage, StatType},
-            Level,
-        },
+        pokemon::{instance::PokemonInstance, stat::StatStage, Level, Experience},
         types::Effective,
     },
     tetra::math::Vec2,
@@ -48,23 +44,22 @@ pub(crate) fn on_effective(text: &mut TextDisplay, effective: &Effective) {
     }
 }
 
-pub(crate) fn on_stat_stage(
-    text: &mut TextDisplay,
-    pokemon: &dyn PokemonView,
-    stat: StatType,
-    stage: Stage,
-) {
+pub(crate) fn on_crit(text: &mut TextDisplay) {
+    text.push(MessagePage::new(vec!["It was a critical hit!".to_owned()], Some(0.5)))
+}
+
+pub(crate) fn on_stat_stage(text: &mut TextDisplay, pokemon: &dyn PokemonView, stat: &StatStage) {
     text.push(MessagePage::new(
         vec![
-            format!("{}'s {:?} was", pokemon.name(), stat),
+            format!("{}'s {:?} was", pokemon.name(), stat.stat),
             format!(
                 "{} by {}!",
-                if stage.is_positive() {
+                if stat.stage.is_positive() {
                     "raised"
                 } else {
                     "lowered"
                 },
-                stage.abs()
+                stat.stage.abs()
             ),
         ],
         Some(0.5),
@@ -177,25 +172,25 @@ pub(crate) fn on_catch(text: &mut TextDisplay, pokemon: Option<&PokemonInstance>
     });
 }
 
-pub(crate) fn on_gain_exp(text: &mut TextDisplay, pokemon: &PokemonInstance, exp: u32) {
+pub(crate) fn on_gain_exp(text: &mut TextDisplay, pokemon: &PokemonInstance, experience: Experience, level: Level) {
     text.push(MessagePage::new(
         vec![
-            format!("{} gained", pokemon.name()),
-            format!("{} EXP. points!", exp),
+            format!("{} gained {} EXP. points", pokemon.name(), experience),
+            format!("and {} levels!", level),
         ],
         Some(1.0),
     ));
 }
 
-pub(crate) fn on_level_up(text: &mut TextDisplay, pokemon: &PokemonInstance, level: Level) {
-    text.push(MessagePage::new(
-        vec![
-            format!("{} grew to", pokemon.name()),
-            format!("LV. {}!", level),
-        ],
-        Some(0.5),
-    ));
-}
+// pub(crate) fn on_level_up(text: &mut TextDisplay, pokemon: &PokemonInstance, level: Level) {
+//     text.push(MessagePage::new(
+//         vec![
+//             format!("{} grew to", pokemon.name()),
+//             format!("LV. {}!", level),
+//         ],
+//         Some(0.5),
+//     ));
+// }
 
 pub(crate) fn on_fail(text: &mut TextDisplay, lines: Vec<String>) {
     text.push(MessagePage::new(lines, Some(0.5)));

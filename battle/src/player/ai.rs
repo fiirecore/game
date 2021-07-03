@@ -1,17 +1,21 @@
-use deps::random::{GLOBAL_STATE, Random, RandomState};
+use deps::random::{Random, RandomState, GLOBAL_STATE};
 use pokedex::{
     battle::{
         party::knowable::{BattlePartyKnown, BattlePartyUnknown},
         BattleMove,
+        view::PokemonView,
     },
-    moves::{instance::MoveInstance, target::MoveTargetInstance},
+    moves::target::MoveTargetInstance,
 };
 
 use crate::{
-    client::{BattleClient, BattleClientAction, BattleClientMove, BattleEndpoint},
+    client::{
+        action::{BattleClientAction, BattleClientMove},
+        BattleClient, BattleEndpoint,
+    },
     message::{ClientMessage, ServerMessage},
 };
-                
+
 static AI_RANDOM: Random = Random::new(RandomState::Static(&GLOBAL_STATE));
 
 #[derive(Default)]
@@ -39,7 +43,6 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
             ServerMessage::User(_, user) => self.user = user,
             ServerMessage::Opponents(opponent) => self.opponent = opponent,
             ServerMessage::StartSelecting => {
-
                 for (active, pokemon) in self
                     .user
                     .active
@@ -72,16 +75,23 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
             }
 
             ServerMessage::TurnQueue(actions) => {
-                for instance in actions.iter() {
+                for instance in actions {
                     if let BattleClientAction::Move(.., instances) = &instance.action {
-                        for (_, moves) in instances {
+                        for (.., moves) in instances {
                             for moves in moves {
-                                if let BattleClientMove::Faint(instance) = moves {
-                                    if instance.team == self.user.id {
-
+                                match moves {
+                                    BattleClientMove::Faint(instance) => if instance.team == self.user.id {
                                         let active = instance.index;
 
-                                        if let Some(pokemon) = self.user.active.get(active).copied().flatten().map(|index| self.user.pokemon.get_mut(index)).flatten() {
+                                        if let Some(pokemon) = self
+                                            .user
+                                            .active
+                                            .get(active)
+                                            .copied()
+                                            .flatten()
+                                            .map(|index| self.user.pokemon.get_mut(index))
+                                            .flatten()
+                                        {
                                             pokemon.current_hp = 0;
                                         }
 
@@ -98,14 +108,34 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                             .collect(); // To - do: use position()
 
                                         if !available.is_empty() {
-                                            let r = available[AI_RANDOM
-                                                .gen_range(0, available.len())];
+                                            let r =
+                                                available[AI_RANDOM.gen_range(0, available.len())];
                                             self.user.active[active] = Some(r);
 
                                             self.messages
                                                 .push(ClientMessage::FaintReplace(active, r));
                                         }
-                                    }
+                                    },
+                                    BattleClientMove::SetExp(.., level) => {
+                                        match instance.pokemon.team == self.user.id {
+                                            false => {
+                                                if let Some(active) = self.opponent.active.get(instance.pokemon.index).copied().flatten() {
+                                                    if let Some(pokemon) = self.opponent.pokemon.get_mut(active) {
+                                                        pokemon.set_level(*level);
+                                                        // Ai does not learn moves
+                                                    }
+                                                }
+                                            },
+                                            true => {
+                                                if let Some(active) = self.user.active.get(instance.pokemon.index).copied().flatten() {
+                                                    if let Some(pokemon) = self.user.pokemon.get_mut(active) {
+                                                        pokemon.set_level(*level);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    _ => (),
                                 }
                             }
                         }
@@ -113,25 +143,15 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                 }
                 self.messages.push(ClientMessage::FinishedTurnQueue);
             }
-            ServerMessage::AskFinishedTurnQueue => {
-                self.messages.push(ClientMessage::FinishedTurnQueue)
-            }
             ServerMessage::FaintReplace(pokemon, new) => match pokemon.team == self.user.id {
                 true => self.user.active[pokemon.index] = new,
                 false => self.opponent.active[pokemon.index] = new,
-            }
+            },
             ServerMessage::AddUnknown(index, unknown) => self.opponent.add_unknown(index, unknown),
             ServerMessage::PokemonRequest(index, instance) => {
                 self.opponent.add_instance(index, instance)
             }
             ServerMessage::Winner(..) => (),
-            ServerMessage::AddMove(pokemon, _, move_ref) => {
-                if pokemon.team == self.user.id {
-                    if let Some(pokemon) = self.user.pokemon.get_mut(pokemon.index) {
-                        if let Err(_) = pokemon.moves.try_push(MoveInstance::new(move_ref)) {}
-                    }
-                }
-            }
         }
     }
 }

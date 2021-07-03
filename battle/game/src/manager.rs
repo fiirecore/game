@@ -109,6 +109,7 @@ impl BattleManager {
 						}),
 						PlayerSettings {
 							gains_exp: true,
+							request_party: false,
 						},
 						Box::new(self.player.clone()),
 						entry.size
@@ -120,7 +121,7 @@ impl BattleManager {
 		self.battle.battle.is_some()
 	}
 
-	pub fn update(&mut self, ctx: &mut Context, delta: f32, input_lock: bool) {
+	pub fn update(&mut self, ctx: &mut Context, delta: f32) {
 		if is_debug() {
 			if debug_pressed(ctx, DebugBind::F1) { // exit shortcut
 				self.end();
@@ -138,19 +139,19 @@ impl BattleManager {
 
 					self.player.get().on_begin(ctx);
 
-					self.update(ctx, delta, input_lock);
+					self.update(ctx, delta);
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
 						self.transition.begin(ctx, self.player.get().battle_data.type_, &battle.trainer);
-						self.update(ctx, delta, input_lock);
+						self.update(ctx, delta);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
 					TransitionState::End => {
 						self.transition.end();
 						self.state = BattleManagerState::Battle;
 						self.player.get().start(true);
-						self.update(ctx, delta, input_lock);
+						self.update(ctx, delta);
 					}
 				}
 				BattleManagerState::Battle => {
@@ -166,13 +167,13 @@ impl BattleManager {
 						}
 					}
 
-					player.update(ctx, delta, input_lock);
+					player.update(ctx, delta);
 
 				},
 				BattleManagerState::Closer(winner) => match self.closer.state {
 					TransitionState::Begin => {
 						self.closer.begin(self.player.get().battle_data.type_, Some(&winner), self.player.get().opponent.party.trainer.as_ref(), battle.trainer.as_ref(), &mut self.player.get().gui.text);
-						self.update(ctx, delta, input_lock);
+						self.update(ctx, delta);
 					}
 					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.get().gui.text),
 					TransitionState::End => {

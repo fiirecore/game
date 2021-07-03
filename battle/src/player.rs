@@ -7,7 +7,7 @@ use pokedex::{
     trainer::TrainerData,
 };
 
-use crate::client::{BattleClient, LocalBattleClient};
+use crate::client::{BattleClient, local::LocalBattleClient};
 
 mod settings;
 

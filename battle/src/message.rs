@@ -7,10 +7,10 @@ use pokedex::{
         ActionInstance, Active, BattleMove, PartyIndex, PokemonIndex,
     },
     moves::MoveRef,
-    pokemon::instance::PokemonInstance,
+    pokemon::{instance::PokemonInstance, party::PokemonParty},
 };
 
-use crate::{client::BattleClientAction, BattleData};
+use crate::{client::action::BattleClientAction, BattleData};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub enum ClientMessage {
@@ -19,6 +19,7 @@ pub enum ClientMessage {
     FaintReplace(Active, PartyIndex),
     RequestPokemon(PartyIndex),
     FinishedTurnQueue,
+    AddLearnedMove(PartyIndex, usize, MoveRef),
     Forfeit,
 }
 
@@ -30,16 +31,12 @@ pub enum ServerMessage<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display 
     PokemonRequest(PartyIndex, PokemonInstance),
     StartSelecting,
     TurnQueue(Vec<ActionInstance<ID, BattleClientAction<ID>>>),
-    AskFinishedTurnQueue,
-    /*#[deprecated(note = "should not be sent to opponent")]*/
-    AddMove(PokemonIndex<ID>, usize, MoveRef), // pokemon, move index, move
-    // GainExp(Active, Experience),
-    // LevelUp(Level, Option<Vec<MoveRef>>),
+    // AskFinishedTurnQueue,
     // SelectMoveError(usize),
     // Catch(PokemonIndex),
     // RequestFaintReplace(Active),
     // FaintReplaceError(Active),
     FaintReplace(PokemonIndex<ID>, Option<PartyIndex>),
     AddUnknown(PartyIndex, UnknownPokemon),
-    Winner(ID),
+    Winner(ID, Option<Box<PokemonParty>>), // party is for when user requests party back. used in remote clients
 }

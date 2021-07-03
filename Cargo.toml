@@ -1,6 +1,6 @@
 [package]
 name = "firecore-game"
-version = "0.5.0-beta.2021-06-27"
+version = "0.5.0-beta.2021-07-02"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 publish = false
@@ -8,13 +8,17 @@ publish = false
 [features]
 default = ["logger", "audio", "static-link", "world"]
 logger = ["simple_logger"]
-audio = ["firecore-dependencies/audio", "firecore-pokedex-game/audio", "parking_lot"]
+audio = [
+    "firecore-dependencies/audio",
+    "firecore-pokedex-game/audio",
+    "parking_lot",
+]
 world = ["firecore-world"]
 static-link = ["firecore-dependencies/static-link", "bundled"]
 bundled = ["firecore-dependencies/bundled"]
 
 [profile.dev]
-opt-level = 2
+# opt-level = 2
 debug-assertions = true
 panic = "abort"
 
@@ -22,27 +26,27 @@ panic = "abort"
 codegen-units = 1
 lto = true
 panic = "abort"
-opt-level = 3     # z = Optimize for size
+opt-level = 3 # z = Optimize for size
 
 [dependencies]
 
-firecore-dependencies = { path = "firecore/deps", features = ["hash", "vec", "str", "engine", "log", "ser"] }
+firecore-dependencies = { path="firecore/deps", features=["hash", "vec", "str", "engine", "log", "ser"] }
 
-firecore-util = { path = "firecore/util" }
-firecore-pokedex-game = { path = "pokedex/game" }
-pokemon-firered-clone-storage = { path = "firecore/storage/game" }
-firecore-audio = { path = "firecore/audio" }
-firecore-text = { path = "firecore/text" }
+firecore-util = { path="firecore/util" }
+firecore-pokedex-game = { path="pokedex/game" }
+pokemon-firered-clone-storage = { path="firecore/storage/game" }
+firecore-audio = { path="firecore/audio" }
+firecore-text = { path="firecore/text" }
 
-firecore-world = { path = "world", optional = true }
+firecore-world = { path="world", optional=true }
 
-simple_logger = { version = "1", optional = true }
+simple_logger = { version="1", optional=true }
 
-serde = { version = "1.0", features = ["derive"] }
-enum-map = { version = "1.1", features = ["serde"] }
+serde = { version="1.0", features=["derive"] }
+enum-map = { version="1.1", features=["serde"] }
 atomic = "0.5"
 
-parking_lot = { version = "0.11", optional = true }
+parking_lot = { version="0.11", optional=true }
 
 [workspace]
 members = [

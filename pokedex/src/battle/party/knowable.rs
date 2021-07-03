@@ -1,14 +1,11 @@
 use crate::{
-    battle::{
-        view::UnknownPokemon,
-        PartyIndex,
-    },
-    pokemon::instance::PokemonInstance,
+    battle::{view::UnknownPokemon, PartyIndex},
+    pokemon::instance::{BorrowedPokemon, PokemonInstance},
 };
 
 use super::BattleParty;
 
-pub type BattlePartyKnown<ID> = BattleParty<ID, Option<usize>, PokemonInstance>;
+pub type BattlePartyKnown<ID> = BattleParty<ID, Option<usize>, BorrowedPokemon>;
 pub type BattlePartyUnknown<ID> = BattleParty<ID, Option<usize>, Option<UnknownPokemon>>;
 
 impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> BattlePartyUnknown<ID> {

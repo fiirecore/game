@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use game::{
 	gui::{Button, ButtonBase},
 	input::{pressed, Control},
-	storage::{PLAYER_SAVES, player::PlayerSaves},
+	storage::{saves, player::PlayerSaves},
 	text::TextColor,
 	graphics::{draw_text_left, draw_rectangle, draw_rectangle_lines, DARKBLUE},
 	tetra::{
@@ -11,7 +11,6 @@ use game::{
 		math::Vec2,
 		input,
 	},
-	log::warn,
 };
 
 use super::{MenuState, MenuStateAction, MenuStates};
@@ -56,7 +55,7 @@ impl MainMenuState {
 	}
 
 	fn update_saves(ctx: &mut Context, list: &mut Vec<Button>, saves: &'static PlayerSaves) {
-		*list = saves.saves.iter().enumerate().map(|(index, save)| Button::new(ctx, Vec2::new(20.0, 5.0 + index as f32 * Self::GAP), Vec2::new(206.0, 30.0), Cow::Borrowed(&save.name))).collect();
+		*list = saves.saves.iter().enumerate().map(|(index, save)| Button::new(ctx, Vec2::new(20.0, 5.0 + index as f32 * Self::GAP), Vec2::new(206.0, 30.0), Cow::Borrowed(save.as_ref().map(|save| save.name.as_str()).unwrap_or("ERROR")))).collect();
 	}
 
 }
@@ -66,9 +65,7 @@ impl State for MainMenuState {
 	fn begin(&mut self, ctx: &mut Context) -> Result {
 		self.cursor = Default::default();
 		self.delete = false;
-		if let Some(saves) = unsafe{PLAYER_SAVES.as_ref()} {
-			Self::update_saves(ctx, &mut self.saves, saves);
-		}
+		Self::update_saves(ctx, &mut self.saves, saves());
 		Ok(())
 	}
 	
@@ -89,21 +86,18 @@ impl State for MainMenuState {
 				self.cursor = index;
 			}
 			if click {
-				if let Some(saves) = unsafe{PLAYER_SAVES.as_mut()} {
-					if self.delete {
-						if saves.delete(index) {
-							// if index >= self.cursor {
-							// 	self.cursor -= 1;
-							// }
-							Self::update_saves(ctx, &mut self.saves, saves);
-							break;
-						};
-					} else {
-						saves.select(index);
-						self.action = Some(MenuStateAction::StartGame);
-					}					
+				let saves = saves();
+				if self.delete {
+					if saves.delete(index) {
+						// if index >= self.cursor {
+						// 	self.cursor -= 1;
+						// }
+						Self::update_saves(ctx, &mut self.saves, saves);
+						break;
+					};
 				} else {
-					warn!("Could not get player save data!");
+					saves.select(index);
+					self.action = Some(MenuStateAction::StartGame);
 				}
 			}
 		}
