@@ -9,7 +9,6 @@ use serde::{Deserialize, Serialize};
 use crate::{
     moves::{target::MoveTarget, usage::MoveUseType},
     types::PokemonType,
-    HashableDex,
 };
 
 use crate::Dex;
@@ -47,9 +46,7 @@ impl Dex<'static> for Movedex {
     }
 }
 
-impl HashableDex<'static> for Movedex {}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Move {
     pub id: MoveId,

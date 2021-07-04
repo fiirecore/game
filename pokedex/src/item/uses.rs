@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::script::ItemScript;
 
-#[derive(Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum ItemUseType {
     Script(ItemScript),
     Pokeball,

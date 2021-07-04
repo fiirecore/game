@@ -9,21 +9,21 @@ mod breeding;
 pub use training::*;
 pub use breeding::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum Gender {
 	None,
 	Male,
 	Female,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PokedexData {
 	pub species: String,
 	pub height: u8,
 	pub weight: u16,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LearnableMove {
 	#[serde(rename = "move")]
 	pub id: MoveId,

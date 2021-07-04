@@ -274,11 +274,10 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                 true => (&mut self.player1, &mut self.player2),
                 false => (&mut self.player2, &mut self.player1),
             };
-            if user.party.active(instance.pokemon.index).is_some() {
+
+            if let Some(user_pokemon) = user.party.active(instance.pokemon.index) {
                 match instance.action {
                     BattleMove::Move(move_index, target) => {
-                        let user_pokemon = user.party.active(instance.pokemon.index).unwrap();
-
                         let targets = match target {
                             MoveTargetInstance::Any(user, index) => vec![match user {
                                 true => match index == instance.pokemon.index {
@@ -377,25 +376,25 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                     false => &mut self.player2,
                                 };
 
-                                let user = &mut user
+                                if let Some(user) = user
                                     .party
                                     .active_mut(instance.pokemon.index)
-                                    .unwrap()
-                                    .pokemon;
-
-                                for result in &result {
-                                    match result {
-                                        MoveResult::Drain(.., heal) => {
-                                            let gain = heal.is_positive();
-                                            let heal = (heal.abs() as u16).min(user.base.hp());
-                                            user.current_hp = match gain {
-                                                true => user.current_hp.saturating_add(heal),
-                                                false => user.current_hp.saturating_sub(heal),
-                                            };
-                                            client_results
-                                                .push(BattleClientMove::UserHP(user.percent_hp()));
+                                    .map(|p| &mut p.pokemon)
+                                {
+                                    for result in &result {
+                                        match result {
+                                            MoveResult::Drain(.., heal) => {
+                                                let gain = heal.is_positive();
+                                                let heal = (heal.abs() as u16).min(user.base.hp());
+                                                user.current_hp = match gain {
+                                                    true => user.current_hp.saturating_add(heal),
+                                                    false => user.current_hp.saturating_sub(heal),
+                                                };
+                                                client_results
+                                                    .push(BattleClientMove::UserHP(user.percent_hp()));
+                                            }
+                                            _ => (),
                                         }
-                                        _ => (),
                                     }
                                 }
                             }
@@ -412,10 +411,6 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                     MoveTargetLocation::User => (user, instance.pokemon.index),
                                     MoveTargetLocation::Team(index) => (user, index),
                                 };
-
-                                if target_party.party.active(index).is_none() {
-                                    debug!("{:?}", target_party.party);
-                                }
 
                                 if let Some(target) = target_party.party.active_mut(index) {
                                     fn on_damage<

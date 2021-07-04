@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{moves::usage::Percent, status::Status};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ItemScript {
     pub conditions: Option<Vec<ItemCondition>>, // optional because some items cannot be used
 
@@ -15,12 +15,12 @@ pub struct ItemScript {
     pub consume: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum ItemCondition {
     BelowHealthPercent(Percent),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum ItemActionKind {
     CurePokemon(Option<Status>),
     HealPokemon(u16),

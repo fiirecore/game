@@ -1,3 +1,4 @@
+use core::fmt::{Debug, Display};
 use serde::{Deserialize, Serialize};
 use pokedex::{
     pokemon::{Level, Experience, stat::StatStage},
@@ -9,8 +10,8 @@ use pokedex::{
     status::StatusEffectInstance,
 };
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize, Deserialize)]
-pub enum BattleClientMove<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> {
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum BattleClientMove<ID: Sized + Copy + Debug + Display + PartialEq> {
     Miss,
     TargetHP(f32, Critical), // bool = crit
     UserHP(f32), // dont heal the target
@@ -23,7 +24,7 @@ pub enum BattleClientMove<ID: Sized + Copy + core::fmt::Debug + core::fmt::Displ
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub enum BattleClientAction<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> {
+pub enum BattleClientAction<ID: Sized + Copy + Debug + Display + PartialEq> {
     Move(MoveRef, Vec<(MoveTargetLocation, Vec<BattleClientMove<ID>>)>),
     Switch(usize, Option<UnknownPokemon>),
     UseItem(ItemRef, MoveTargetLocation),

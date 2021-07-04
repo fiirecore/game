@@ -10,7 +10,7 @@ use crate::{
         stat::Stats,
     },
     types::PokemonType,
-    Dex, HashableDex,
+    Dex,
 };
 use deps::{
     borrow::{Identifiable, StaticRef},
@@ -38,15 +38,13 @@ impl Dex<'static> for Pokedex {
     }
 }
 
-impl HashableDex<'static> for Pokedex {}
-
 pub type PokemonId = u16;
 pub type Level = u8;
 pub type Experience = u32;
 pub type Friendship = u8;
 pub type Health = stat::BaseStat;
 
-#[derive(PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Pokemon {
     pub id: PokemonId,
     pub name: String,

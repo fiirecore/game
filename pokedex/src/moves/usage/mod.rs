@@ -20,7 +20,7 @@ pub mod script;
 pub type Critical = bool;
 pub type Percent = u8; // 0 to 100
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum MoveUseType {
     Damage(DamageKind),
     Status(Status, StatusRange, Percent),
