@@ -1,12 +1,11 @@
 use game::{
     input::{pressed, Control},
-    pokedex::{
-        battle::party::knowable::BattlePartyUnknown, item::ItemRef, moves::target::MoveTarget,
-        pokemon::instance::PokemonInstance,
-    },
+    pokedex::{item::ItemRef, moves::target::MoveTarget, pokemon::instance::PokemonInstance},
     tetra::Context,
     util::{Entity, Reset},
 };
+
+use crate::view::BattlePartyView;
 
 use self::{battle::BattleOptions, fight::FightPanel, target::TargetPanel};
 
@@ -61,10 +60,7 @@ impl BattlePanel {
         self.spawn();
     }
 
-    pub fn target<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord>(
-        &mut self,
-        targets: &BattlePartyUnknown<ID>,
-    ) {
+    pub fn target<ID, P: BattlePartyView<ID>>(&mut self, targets: &P) {
         self.targets.update_names(targets);
     }
 

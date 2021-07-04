@@ -2,7 +2,7 @@ use game::{
     graphics::{byte_texture, draw_text_left, draw_text_right, position},
     gui::health::HealthBar,
     pokedex::{
-        battle::view::{PokemonView, UnknownPokemon},
+        battle::view::UnknownPokemon,
         pokemon::{instance::PokemonInstance, stat::StatSet, Level},
     },
     tetra::{graphics::Texture, math::Vec2, Context},
@@ -10,8 +10,9 @@ use game::{
     util::Entity,
 };
 
-use crate::ui::{
-    exp_bar::ExperienceBar, BattleGuiPosition, BattleGuiPositionIndex,
+use crate::{
+    ui::{exp_bar::ExperienceBar, BattleGuiPosition, BattleGuiPositionIndex},
+    view::PokemonView,
 };
 
 static mut PLAYER: Option<Texture> = None;
@@ -174,65 +175,73 @@ impl PokemonStatusGui {
     fn attributes(
         ctx: &mut Context,
         index: BattleGuiPositionIndex,
-    ) -> ((
-        ((Option<Texture>, Texture), Vec2<f32>, Option<ExperienceBar>),
-        PokemonStatusPos,
-        Vec2<f32>,
-    ), BattleGuiPosition) {
-        (match index.position {
-            BattleGuiPosition::Top => {
-                if index.size == 1 {
-                    (
+    ) -> (
+        (
+            ((Option<Texture>, Texture), Vec2<f32>, Option<ExperienceBar>),
+            PokemonStatusPos,
+            Vec2<f32>,
+        ),
+        BattleGuiPosition,
+    ) {
+        (
+            match index.position {
+                BattleGuiPosition::Top => {
+                    if index.size == 1 {
                         (
-                            (Some(padding(ctx).clone()), small_ui(ctx).clone()), // Background
-                            Self::TOP_SINGLE,                                    // Panel
-                            None,
-                        ),
-                        Self::OPPONENT_POSES,         // Text positions
-                        Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
-                    )
-                } else {
-                    let texture = small_ui(ctx).clone();
-                    let mut pos = Vec2::zero();
-                    pos.y += index.index as f32 * texture.height() as f32;
-                    (
+                            (
+                                (Some(padding(ctx).clone()), small_ui(ctx).clone()), // Background
+                                Self::TOP_SINGLE,                                    // Panel
+                                None,
+                            ),
+                            Self::OPPONENT_POSES,         // Text positions
+                            Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
+                        )
+                    } else {
+                        let texture = small_ui(ctx).clone();
+                        let mut pos = Vec2::zero();
+                        pos.y += index.index as f32 * texture.height() as f32;
                         (
-                            (None, texture), // Background
-                            pos,             // Panel
-                            None,
-                        ),
-                        Self::OPPONENT_POSES,
-                        Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
-                    )
+                            (
+                                (None, texture), // Background
+                                pos,             // Panel
+                                None,
+                            ),
+                            Self::OPPONENT_POSES,
+                            Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
+                        )
+                    }
                 }
-            }
-            BattleGuiPosition::Bottom => {
-                if index.size == 1 {
-                    (
+                BattleGuiPosition::Bottom => {
+                    if index.size == 1 {
                         (
-                            (None, large_ui(ctx).clone()),
-                            Self::BOTTOM_SINGLE,
-                            Some(ExperienceBar::new(/*Self::BOTTOM_SINGLE + Self::EXP_OFFSET*/)),
-                        ),
-                        PokemonStatusPos {
-                            name: 17.0,
-                            level: 95.0,
-                        },
-                        Vec2::new(33.0, Self::HEALTH_Y),
-                    )
-                } else {
-                    let texture = small_ui(ctx).clone();
-                    let mut pos = Self::BOTTOM_MANY_WITH_BOTTOM_RIGHT;
-                    pos.x -= texture.width() as f32;
-                    pos.y -= (index.index + 1) as f32 * (texture.height() as f32 + 1.0);
-                    (
-                        ((None, texture), pos, None),
-                        Self::OPPONENT_POSES,
-                        Self::OPPONENT_HEALTH_OFFSET,
-                    )
+                            (
+                                (None, large_ui(ctx).clone()),
+                                Self::BOTTOM_SINGLE,
+                                Some(
+                                    ExperienceBar::new(/*Self::BOTTOM_SINGLE + Self::EXP_OFFSET*/),
+                                ),
+                            ),
+                            PokemonStatusPos {
+                                name: 17.0,
+                                level: 95.0,
+                            },
+                            Vec2::new(33.0, Self::HEALTH_Y),
+                        )
+                    } else {
+                        let texture = small_ui(ctx).clone();
+                        let mut pos = Self::BOTTOM_MANY_WITH_BOTTOM_RIGHT;
+                        pos.x -= texture.width() as f32;
+                        pos.y -= (index.index + 1) as f32 * (texture.height() as f32 + 1.0);
+                        (
+                            ((None, texture), pos, None),
+                            Self::OPPONENT_POSES,
+                            Self::OPPONENT_HEALTH_OFFSET,
+                        )
+                    }
                 }
-            }
-        }, index.position)
+            },
+            index.position,
+        )
     }
 
     fn level(level: Level) -> (String, Level) {
@@ -313,21 +322,11 @@ impl PokemonStatusGui {
     pub fn draw(&self, ctx: &mut Context, offset: f32, bounce: f32) {
         if self.alive {
             if let Some(name) = &self.name {
-                let should_bounce = self.health_text.is_some() || matches!(self.position, BattleGuiPosition::Top);
+                let should_bounce =
+                    self.health_text.is_some() || matches!(self.position, BattleGuiPosition::Top);
                 let pos = Vec2::new(
-                    self.origin.x
-                        + offset
-                        + if should_bounce {
-                            0.0
-                        } else {
-                            bounce
-                        },
-                    self.origin.y
-                        + if should_bounce {
-                            bounce
-                        } else {
-                            0.0
-                        },
+                    self.origin.x + offset + if should_bounce { 0.0 } else { bounce },
+                    self.origin.y + if should_bounce { bounce } else { 0.0 },
                 );
 
                 if let Some(padding) = &self.background.0 {

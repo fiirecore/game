@@ -1,15 +1,13 @@
 use game::{
     util::Reset,
-    pokedex::battle::{
-        view::PokemonView,
-        party::knowable::BattlePartyUnknown,
-    },
     input::{pressed, Control},
     gui::Panel,
     text::TextColor,
     graphics::{draw_text_left, draw_cursor}, 
     tetra::Context, 
 };
+
+use crate::view::BattlePartyView;
 
 pub struct TargetPanel {
 
@@ -32,11 +30,9 @@ impl TargetPanel {
         }
     }
 
-    pub fn update_names<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord>(&mut self, targets: &BattlePartyUnknown<ID>) {
+    pub fn update_names<ID, P: BattlePartyView<ID>>(&mut self, targets: &P) {
         self.names.clear();
-        for index in targets.active.iter() {
-            self.names.push(index.as_ref().map(|index| targets.pokemon[*index].as_ref().map(|pokemon| pokemon.name()).unwrap_or("Unknown").to_owned()));
-        }
+        self.names.extend((0..targets.active_len()).into_iter().map(|active| targets.active(active).map(|v| v.name().to_owned())));
     }
 
     pub fn input(&mut self, ctx: &Context) {

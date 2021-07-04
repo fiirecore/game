@@ -11,6 +11,7 @@ pub mod moves;
 pub mod item;
 
 pub mod types;
+pub mod status;
 
 pub mod battle;
 pub mod trainer;

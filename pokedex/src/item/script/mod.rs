@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::pokemon::status::Status;
+use crate::status::Status;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ItemScript {

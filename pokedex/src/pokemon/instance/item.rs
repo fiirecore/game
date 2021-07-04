@@ -39,18 +39,18 @@ impl PokemonInstance {
         for action in &script.actions {
             match action {
                 ItemActionKind::CurePokemon(status) => {
-                    if let Some(effect) = self.status {
+                    if let Some(effect) = self.effect {
                         if let Some(status) = status {
                             if &effect.status == status {
-                                self.status = None;
+                                self.effect = None;
                             }
                         } else {
-                            self.status = None;
+                            self.effect = None;
                         }
                     }
                 }
                 ItemActionKind::HealPokemon(hp) => {
-                    self.current_hp += (*hp).min(self.base.hp());
+                    self.current_hp += (*hp).min(self.max_hp())
                 }
             }
         }

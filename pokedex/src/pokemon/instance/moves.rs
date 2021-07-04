@@ -3,17 +3,16 @@ use deps::rhai::{Engine, Scope};
 use crate::{
     moves::{
         instance::MoveInstance,
-        target::MoveTargetInstance,
+        target::MoveTargetLocation,
         usage::{
             DamageKind, DamageResult, MoveResult, MoveResults, MoveUseType, NoHitResult,
             PokemonTarget, TurnResult,
         },
-        Move, MoveCategory, MoveRef, Power,
+        CriticalRate, Move, MoveCategory, MoveRef, Power,
     },
     pokemon::{
         instance::PokemonInstance,
-        stat::{BaseStat, StatStage},
-        status::StatusEffect,
+        stat::{BaseStat, BattleStatType, StatStage},
         Health,
     },
     types::{Effective, PokemonType},
@@ -98,7 +97,7 @@ impl PokemonInstance {
                             *kind,
                             pokemon_move.category,
                             pokemon_move.pokemon_type,
-                            pokemon_move.crit_chance,
+                            pokemon_move.crit_rate,
                             &target.pokemon,
                         ) {
                             Some(result) => MoveResult::Damage(result),
@@ -106,9 +105,9 @@ impl PokemonInstance {
                         },
                     );
                 }
-                MoveUseType::Status(chance, effect) => {
-                    if let Some(effect) = target.pokemon.can_afflict(*chance, effect) {
-                        move_results.push(MoveResult::Status(*effect));
+                MoveUseType::Status(status, range, chance) => {
+                    if target.pokemon.can_afflict_status(*chance) {
+                        move_results.push(MoveResult::Status(range.init(*status, &RANDOM)));
                     }
                 }
                 MoveUseType::Drain(kind, percent) => {
@@ -117,7 +116,7 @@ impl PokemonInstance {
                             *kind,
                             pokemon_move.category,
                             pokemon_move.pokemon_type,
-                            pokemon_move.crit_chance,
+                            pokemon_move.crit_rate,
                             &target.pokemon,
                         ) {
                             Some(result) => {
@@ -147,14 +146,14 @@ impl PokemonInstance {
                     }
                 }
                 MoveUseType::User(usage) => {
-                    if !results.contains_key(&MoveTargetInstance::User) {
+                    if !results.contains_key(&MoveTargetLocation::User) {
                         self.usage(
                             results,
                             engine,
                             pokemon_move,
                             PokemonTarget {
                                 pokemon: self,
-                                active: MoveTargetInstance::User,
+                                active: MoveTargetLocation::User,
                             },
                             usage,
                         );
@@ -196,12 +195,12 @@ impl PokemonInstance {
         kind: DamageKind,
         category: MoveCategory,
         pokemon_type: PokemonType,
-        crit_chance: f32,
+        crit_rate: CriticalRate,
         target: &PokemonInstance,
     ) -> Option<DamageResult<Health>> {
         match kind {
             DamageKind::Power(power) => {
-                self.move_power_damage(target, power, category, pokemon_type, crit_chance)
+                self.move_power_damage(target, power, category, pokemon_type, crit_rate)
             }
             DamageKind::PercentCurrent(percent) => {
                 let effective = target.effective(pokemon_type, category);
@@ -230,40 +229,27 @@ impl PokemonInstance {
         }
     }
 
-    pub fn can_afflict<'a>(
-        &self,
-        chance: u8,
-        effect: &'a StatusEffect,
-    ) -> Option<&'a StatusEffect> {
-        if self.status.is_none() {
-            if chance >= RANDOM.gen_range(1, 11) {
-                Some(effect)
-            } else {
-                None
-            }
-        } else {
-            None
-        }
-    }
-
     pub fn move_power_damage(
         &self,
         target: &PokemonInstance,
         power: Power,
         category: MoveCategory,
         use_type: PokemonType,
-        crit_chance: f32,
+        crit_rate: CriticalRate,
     ) -> Option<DamageResult<Health>> {
         let effective = target.effective(use_type, category);
         let (atk, def) = category.stats();
-        let (atk, def) = (self.base.get(atk), target.base.get(def));
+        let (atk, def) = (
+            self.base.get(BattleStatType::Basic(atk)),
+            target.base.get(BattleStatType::Basic(def)),
+        );
         self.move_power_damage_stat(
             effective,
             power,
             atk,
             def,
             self.pokemon.primary_type == use_type,
-            crit_chance,
+            crit_rate,
         )
     }
 
@@ -274,12 +260,19 @@ impl PokemonInstance {
         attack: BaseStat,
         defense: BaseStat,
         same_type_as_user: bool,
-        crit_chance: f32,
+        crit_rate: CriticalRate,
     ) -> Option<DamageResult<Health>> {
         if effective == Effective::Ineffective {
             return None;
         }
-        let crit = RANDOM.gen_float() < crit_chance;
+        let crit = RANDOM.gen_float()
+            < match crit_rate {
+                0 => 0.0625, // 1 / 16
+                1 => 0.125,  // 1 / 8
+                2 => 0.25,   // 1 / 4
+                3 => 1.0 / 3.0,
+                _ => 0.5, // rates 4 and above, 1 / 2
+            };
         let damage =
             (((((2.0 * self.level as f64 / 5.0 + 2.0).floor() * attack as f64 * power as f64
                 / defense as f64)

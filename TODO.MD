@@ -24,7 +24,7 @@
 
 ## Low Priority
 
-- [ ] Move assets to own github repo
+- [ ] Fix move targeting so client doesnt completely decide what gets targeted. (do a check on serverside)
 
 - [ ] Command shortcuts and better parsing
 - [ ] Specify default player location in world binary

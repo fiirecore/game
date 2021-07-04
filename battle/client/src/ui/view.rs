@@ -1,18 +1,18 @@
 use game::{
     graphics::ZERO,
     pokedex::{
-        battle::{
-            party::knowable::{BattlePartyKnown, BattlePartyUnknown},
-            view::PokemonView,
-        },
+        battle::party::knowable::{BattlePartyKnown, BattlePartyUnknown},
         texture::PokemonTexture,
     },
     tetra::{graphics::Color, Context},
 };
 
-use super::{
-    pokemon::{flicker::Flicker, PokemonRenderer, PokemonStatusGui},
-    BattleGuiPosition, BattleGuiPositionIndex,
+use crate::{
+    ui::{
+        pokemon::{flicker::Flicker, PokemonRenderer, PokemonStatusGui},
+        BattleGuiPosition, BattleGuiPositionIndex,
+    },
+    view::PokemonView,
 };
 
 pub type ActiveRenderer = Vec<ActivePokemonRenderer>;
@@ -49,7 +49,11 @@ impl ActivePokemonRenderer {
                         pokemon.map(|pokemon| *pokemon.pokemon.id()),
                         PokemonTexture::Back,
                     ),
-                    status: PokemonStatusGui::with_known(ctx, position, pokemon.map(std::ops::Deref::deref)),
+                    status: PokemonStatusGui::with_known(
+                        ctx,
+                        position,
+                        pokemon,
+                    ),
                 }
             })
             .collect()

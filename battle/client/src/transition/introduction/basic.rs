@@ -1,10 +1,7 @@
 use game::{
     graphics::{position, ZERO},
     gui::TextDisplay,
-    pokedex::battle::{
-        party::knowable::{BattlePartyKnown, BattlePartyUnknown},
-        view::BattlePartyView,
-    },
+    pokedex::battle::party::knowable::{BattlePartyKnown, BattlePartyUnknown},
     tetra::{
         graphics::{Color, Rectangle, Texture},
         Context,
@@ -20,6 +17,7 @@ use crate::{
         pokemon::PokemonStatusGui,
         view::{ActivePokemonParty, ActiveRenderer},
     },
+    view::BattlePartyView,
 };
 
 use super::BattleIntroduction;

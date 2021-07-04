@@ -1,12 +1,12 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    moves::target::MoveTargetInstance,
+    moves::target::MoveTargetLocation,
     pokemon::{
         instance::PokemonInstance,
-        stat::{Stage, StatType},
-        status::StatusEffect,
+        stat::{BattleStatType, Stage},
     },
+    status::{Status, StatusRange},
 };
 
 mod damage;
@@ -17,23 +17,24 @@ pub use result::*;
 
 pub mod script;
 
+pub type Critical = bool;
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum MoveUseType {
     Damage(DamageKind),
-    Status(u8, StatusEffect), // u8 is 1 - 10, 1 = 10%, 10 = 100%
+    Status(Status, StatusRange, f32),
+    // Ailment(Ailment, f32),
     Drain(DamageKind, f32),
-    StatStage(StatType, Stage),
+    StatStage(BattleStatType, Stage),
     Flinch,
     Script(String),
     Chance(Vec<Self>, f32),
     User(Vec<Self>),
     Todo,
-    // Linger(u8, DamageKind),
-    // TriggerLate(u8, Box<MoveUseType>),
 }
 
 #[derive(Clone, Copy)]
 pub struct PokemonTarget<'a> {
     pub pokemon: &'a PokemonInstance,
-    pub active: MoveTargetInstance,
+    pub active: MoveTargetLocation,
 }

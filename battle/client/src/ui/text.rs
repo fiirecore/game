@@ -1,15 +1,17 @@
 use game::{
     gui::TextDisplay,
     pokedex::{
-        battle::view::PokemonView,
         item::Item,
         moves::Move,
-        pokemon::{instance::PokemonInstance, stat::StatStage, Level, Experience},
+        pokemon::{instance::PokemonInstance, stat::StatStage, Experience, Level},
+        status::Status,
         types::Effective,
     },
     tetra::math::Vec2,
     text::{MessagePage, TextColor},
 };
+
+use crate::view::PokemonView;
 
 pub fn new() -> TextDisplay {
     TextDisplay::new(
@@ -45,7 +47,10 @@ pub(crate) fn on_effective(text: &mut TextDisplay, effective: &Effective) {
 }
 
 pub(crate) fn on_crit(text: &mut TextDisplay) {
-    text.push(MessagePage::new(vec!["It was a critical hit!".to_owned()], Some(0.5)))
+    text.push(MessagePage::new(
+        vec!["It was a critical hit!".to_owned()],
+        Some(0.5),
+    ))
 }
 
 pub(crate) fn on_stat_stage(text: &mut TextDisplay, pokemon: &dyn PokemonView, stat: &StatStage) {
@@ -61,6 +66,16 @@ pub(crate) fn on_stat_stage(text: &mut TextDisplay, pokemon: &dyn PokemonView, s
                 },
                 stat.stage.abs()
             ),
+        ],
+        Some(0.5),
+    ))
+}
+
+pub(crate) fn on_status(text: &mut TextDisplay, pokemon: &dyn PokemonView, status: &Status) {
+    text.push(MessagePage::new(
+        vec![
+            format!("{} was afflicted", pokemon.name()),
+            format!("with {:?}", status),
         ],
         Some(0.5),
     ))
@@ -172,7 +187,12 @@ pub(crate) fn on_catch(text: &mut TextDisplay, pokemon: Option<&PokemonInstance>
     });
 }
 
-pub(crate) fn on_gain_exp(text: &mut TextDisplay, pokemon: &PokemonInstance, experience: Experience, level: Level) {
+pub(crate) fn on_gain_exp(
+    text: &mut TextDisplay,
+    pokemon: &PokemonInstance,
+    experience: Experience,
+    level: Level,
+) {
     text.push(MessagePage::new(
         vec![
             format!("{} gained {} EXP. points", pokemon.name(), experience),

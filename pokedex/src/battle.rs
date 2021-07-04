@@ -2,7 +2,15 @@ use std::cmp::Reverse;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{battle::party::battle::BattlePartyPokemon, item::ItemRef, moves::{target::MoveTargetInstance, Priority}, pokemon::stat::{BaseStat, StatType}};
+use crate::{
+    battle::party::battle::BattlePartyPokemon,
+    item::ItemRef,
+    moves::{
+        target::{MoveTargetInstance, MoveTargetLocation},
+        Priority,
+    },
+    pokemon::stat::{BaseStat, BattleStatType, StatType},
+};
 
 mod active;
 pub mod party;
@@ -23,11 +31,10 @@ pub enum MovePriority {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BattleMove {
-    Move(usize, Vec<MoveTargetInstance>),
-    UseItem(ItemRef, MoveTargetInstance),
+    Move(usize, MoveTargetInstance),
+    UseItem(ItemRef, MoveTargetLocation),
     Switch(usize),
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub struct PokemonIndex<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> {
@@ -35,7 +42,9 @@ pub struct PokemonIndex<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display
     pub index: usize,
 }
 
-impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> core::fmt::Display for PokemonIndex<ID> {
+impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq> core::fmt::Display
+    for PokemonIndex<ID>
+{
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?} #{}", self.team, self.index)
     }
@@ -74,7 +83,12 @@ pub fn move_queue<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Par
                             match action {
                                 BattleMove::Move(index, ..) => MovePriority::Second(
                                     Reverse(instance.pokemon.moves[index].move_ref.priority),
-                                    Reverse(instance.pokemon.base.get(StatType::Speed)),
+                                    Reverse(
+                                        instance
+                                            .pokemon
+                                            .base
+                                            .get(BattleStatType::Basic(StatType::Speed)),
+                                    ),
                                 ),
                                 _ => MovePriority::First,
                             },

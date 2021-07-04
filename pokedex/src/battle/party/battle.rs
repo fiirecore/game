@@ -5,7 +5,7 @@ use crate::{
     moves::MoveRef,
     pokemon::{
         instance::{BorrowedPokemon, PokemonInstance},
-        party::{BorrowedParty, Party, PokemonParty},
+        party::{Party, PokemonParty},
     },
 };
 
@@ -58,7 +58,11 @@ impl<ID, A, P> BattleParty<ID, A, P> {
 
 impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     pub fn all_fainted(&self) -> bool {
-        !self.pokemon.iter().any(|b| !b.pokemon.fainted() && !b.caught) || self.pokemon.is_empty()
+        !self
+            .pokemon
+            .iter()
+            .any(|b| !b.pokemon.fainted() && !b.caught)
+            || self.pokemon.is_empty()
     }
 
     pub fn any_inactive(&self) -> bool {
@@ -131,17 +135,17 @@ impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
                 _ => false,
             })
     }
+}
 
+impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     pub fn as_ref(&self) -> Party<&PokemonInstance> {
         self.pokemon.iter().map(|b| b.pokemon.deref()).collect()
     }
+}
 
+impl<ID> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
     pub fn cloned(&self) -> PokemonParty {
-        self.pokemon.iter().map(|b| b.pokemon.cloned()).collect()
-    }
-
-    pub fn owned(self) -> BorrowedParty {
-        self.pokemon.into_iter().map(|b| b.pokemon).collect()
+        self.pokemon.iter().map(|b| b.pokemon.deref().clone()).collect()
     }
 }
 
@@ -150,7 +154,7 @@ impl<'a, ID: Copy> BattleParty<ID, ActivePokemon, BattlePartyPokemon> {
         BattlePartyKnown {
             id: self.id,
             trainer: self.trainer.clone(),
-            pokemon: self.pokemon.iter().map(|b| b.pokemon.clone()).collect(),
+            pokemon: self.pokemon.iter().map(|b| b.pokemon.deref().clone()).collect(),
             active: self.active.iter().map(|active| active.index()).collect(),
         }
     }

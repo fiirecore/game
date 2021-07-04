@@ -23,7 +23,7 @@ pub type Power = u8;
 pub type Accuracy = u8;
 pub type PP = u8;
 pub type Priority = i8;
-pub type Critical = bool;
+pub type CriticalRate = u8;
 
 pub type FieldMoveId = TinyStr4;
 
@@ -57,25 +57,17 @@ pub struct Move {
 
 	pub usage: Vec<usage::MoveUseType>,
 
-	#[serde(default = "target::MoveTarget::opponent")]
+	#[serde(default)]
 	pub target: target::MoveTarget,
 
 	#[serde(default)]
 	pub contact: bool,
 
-	#[serde(default = "Move::default_crit_chance", rename = "crit")]
-	pub crit_chance: f32,
+	#[serde(default)]
+	pub crit_rate: CriticalRate,
 
 	pub field_id: Option<FieldMoveId>,
 	
-}
-
-impl Move {
-
-	pub const fn default_crit_chance() -> f32 {
-		0.0416666666667
-	}
-
 }
 
 pub type MoveRef = StaticRef<Move>;

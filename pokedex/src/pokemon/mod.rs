@@ -22,7 +22,6 @@ pub mod data;
 pub mod instance;
 pub mod party;
 pub mod stat;
-pub mod status;
 pub mod types;
 
 pub struct Pokedex;
