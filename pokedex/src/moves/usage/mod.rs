@@ -25,7 +25,7 @@ pub enum MoveUseType {
     Damage(DamageKind),
     Status(Status, StatusRange, Percent),
     // Ailment(Ailment, f32),
-    Drain(DamageKind, Percent),
+    Drain(DamageKind, i8),
     StatStage(BattleStatType, Stage),
     Flinch,
     Script(String),

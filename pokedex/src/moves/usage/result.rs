@@ -18,7 +18,7 @@ use super::DamageResult;
 pub enum MoveResult {
     Damage(DamageResult<Health>), // bool = crit
     Status(StatusEffectInstance),
-    Drain(DamageResult<Health>, Health), // damage, healing, effective, crit
+    Drain(DamageResult<Health>, i16), // damage, health gained/lost
     StatStage(StatStage),
     Flinch,
     // NextHit(), next hit protect, next hit endure

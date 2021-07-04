@@ -331,8 +331,17 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                 );
                                 vec![]
                             }
-                            MoveTargetInstance::UserAndAllies => MoveTargetLocation::user_and_allies(instance.pokemon.index, user.party.active.len()),
-                            MoveTargetInstance::AllPokemon => MoveTargetLocation::all_pokemon(instance.pokemon.index, user.party.active.len(), other.party.active.len()),
+                            MoveTargetInstance::UserAndAllies => {
+                                MoveTargetLocation::user_and_allies(
+                                    instance.pokemon.index,
+                                    user.party.active.len(),
+                                )
+                            }
+                            MoveTargetInstance::AllPokemon => MoveTargetLocation::all_pokemon(
+                                instance.pokemon.index,
+                                user.party.active.len(),
+                                other.party.active.len(),
+                            ),
                         };
 
                         let targets = targets
@@ -376,12 +385,15 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
 
                                 for result in &result {
                                     match result {
-                                        MoveResult::Drain(_, heal, ..) => {
-                                            user.current_hp =
-                                                (user.current_hp + *heal).min(user.base.hp());
-                                            client_results.push(BattleClientMove::UserHP(
-                                                user.current_hp as f32 / user.max_hp() as f32,
-                                            ));
+                                        MoveResult::Drain(.., heal) => {
+                                            let gain = heal.is_positive();
+                                            let heal = (heal.abs() as u16).min(user.base.hp());
+                                            user.current_hp = match gain {
+                                                true => user.current_hp.saturating_add(heal),
+                                                false => user.current_hp.saturating_sub(heal),
+                                            };
+                                            client_results
+                                                .push(BattleClientMove::UserHP(user.percent_hp()));
                                         }
                                         _ => (),
                                     }
@@ -389,7 +401,6 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                             }
 
                             for result in result {
-
                                 let (user, other) =
                                     match instance.pokemon.team == self.player1.party.id {
                                         true => (&mut self.player1, &mut self.player2),
@@ -425,21 +436,27 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                             result.crit,
                                         ));
                                         if !matches!(result.effective, Effective::Effective) {
-                                            results.push(BattleClientMove::Effective(result.effective));
+                                            results.push(BattleClientMove::Effective(
+                                                result.effective,
+                                            ));
                                         }
                                     }
-    
+
                                     match result {
-                                        MoveResult::Damage(result) => {
-                                            on_damage(&mut target.pokemon, &mut client_results, result)
-                                        }
+                                        MoveResult::Damage(result) => on_damage(
+                                            &mut target.pokemon,
+                                            &mut client_results,
+                                            result,
+                                        ),
                                         MoveResult::Status(effect) => {
                                             target.pokemon.effect = Some(effect);
                                             client_results.push(BattleClientMove::Status(effect));
                                         }
-                                        MoveResult::Drain(result, ..) => {
-                                            on_damage(&mut target.pokemon, &mut client_results, result)
-                                        }
+                                        MoveResult::Drain(result, ..) => on_damage(
+                                            &mut target.pokemon,
+                                            &mut client_results,
+                                            result,
+                                        ),
                                         MoveResult::StatStage(stat) => {
                                             target.pokemon.base.change_stage(stat);
                                             client_results.push(BattleClientMove::StatStage(stat));
@@ -453,10 +470,12 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                                 client_results.push(BattleClientMove::Miss);
                                                 continue;
                                             }
-                                            NoHitResult::Todo => client_results.push(BattleClientMove::Fail),
+                                            NoHitResult::Todo => {
+                                                client_results.push(BattleClientMove::Fail)
+                                            }
                                         },
                                     }
-    
+
                                     if target.pokemon.fainted() {
                                         let experience = target.pokemon.exp_from();
                                         let experience =
@@ -464,41 +483,46 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                                                 true => experience.saturating_mul(3) / 2,
                                                 false => experience,
                                             };
-    
+
                                         #[cfg(debug_assertions)]
                                         let experience = experience.saturating_mul(7);
-    
-                                        client_results.push(BattleClientMove::Faint(PokemonIndex {
-                                            team: target_party.party.id,
-                                            index,
-                                        }));
-    
+
+                                        client_results.push(BattleClientMove::Faint(
+                                            PokemonIndex {
+                                                team: target_party.party.id,
+                                                index,
+                                            },
+                                        ));
+
                                         let inactive = target_party.party.any_inactive();
-                                        if let Some(active) = target_party.party.active.get_mut(index) {
+                                        if let Some(active) =
+                                            target_party.party.active.get_mut(index)
+                                        {
                                             if inactive {
                                                 *active = ActivePokemon::ToReplace;
                                             } else {
                                                 *active = ActivePokemon::None;
                                             }
                                         }
-    
+
                                         if target_party.party.id != instance.pokemon.team {
-                                            let user =
-                                                match instance.pokemon.team == self.player1.party.id {
-                                                    true => (&mut self.player1),
-                                                    false => (&mut self.player2),
-                                                };
-    
+                                            let user = match instance.pokemon.team
+                                                == self.player1.party.id
+                                            {
+                                                true => (&mut self.player1),
+                                                false => (&mut self.player2),
+                                            };
+
                                             if user.settings.gains_exp {
                                                 let pokemon = &mut user
                                                     .party
                                                     .active_mut(instance.pokemon.index)
                                                     .unwrap();
-    
+
                                                 pokemon
                                                     .learnable_moves
                                                     .extend(pokemon.pokemon.add_exp(experience));
-    
+
                                                 client_results.push(BattleClientMove::SetExp(
                                                     experience,
                                                     pokemon.pokemon.level,

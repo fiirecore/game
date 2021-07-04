@@ -122,7 +122,7 @@ impl PokemonInstance {
                             &target.pokemon,
                         ) {
                             Some(result) => {
-                                let heal = (result.damage as f32 * *percent as f32 / 100.0) as Health;
+                                let heal = (result.damage as f32 * *percent as f32 / 100.0) as i16;
                                 MoveResult::Drain(result, heal)
                             }
                             None => MoveResult::NoHit(NoHitResult::Ineffective),
