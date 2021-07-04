@@ -9,7 +9,7 @@ pub type Stats = StatSet<Stat>;
 mod base;
 pub use base::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum StatType {
     Health,
     Attack,
@@ -19,14 +19,14 @@ pub enum StatType {
     Speed,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum BattleStatType {
     Basic(StatType),
     Accuracy,
     Evasion,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize, Default)]
 pub struct StatSet<S> {
     pub hp: S,
     pub atk: S,

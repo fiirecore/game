@@ -1,7 +1,7 @@
 use deps::random::Random;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Deserialize, Serialize)]
 pub enum Status {
     Paralysis,
     Sleep,
@@ -10,7 +10,7 @@ pub enum Status {
     Poison,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Deserialize, Serialize)]
 pub enum StatusRange {
     Permanent,
     Temporary(u8, u8),

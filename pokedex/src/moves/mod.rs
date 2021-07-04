@@ -1,9 +1,15 @@
-use serde::{Deserialize, Serialize};
 use deps::{
-	str::{TinyStr4, TinyStr16},
-	hash::HashMap,
-	borrow::{Identifiable, StaticRef},
-	UNKNOWN16,
+    borrow::{Identifiable, StaticRef},
+    hash::HashMap,
+    str::{TinyStr16, TinyStr4},
+    UNKNOWN16,
+};
+use serde::{Deserialize, Serialize};
+
+use crate::{
+    moves::{target::MoveTarget, usage::MoveUseType},
+    types::PokemonType,
+    HashableDex,
 };
 
 use crate::Dex;
@@ -13,8 +19,8 @@ pub use category::*;
 
 pub mod instance;
 
-pub mod usage;
 pub mod target;
+pub mod usage;
 
 pub mod persistent;
 
@@ -34,40 +40,42 @@ static mut MOVEDEX: Option<HashMap<MoveId, Move>> = None;
 impl Dex<'static> for Movedex {
     type DexType = Move;
 
-    fn dex() -> &'static mut Option<HashMap<<<Self as Dex<'static>>::DexType as Identifiable<'static>>::Id, Self::DexType>> {
+    fn dex() -> &'static mut Option<
+        HashMap<<<Self as Dex<'static>>::DexType as Identifiable<'static>>::Id, Self::DexType>,
+    > {
         unsafe { &mut MOVEDEX }
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+impl HashableDex<'static> for Movedex {}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Move {
+    pub id: MoveId,
 
-	pub id: MoveId,
+    pub name: String,
+    pub category: MoveCategory,
+    #[serde(rename = "type")]
+    pub pokemon_type: PokemonType,
 
-	pub name: String,
-	pub category: MoveCategory,
-	#[serde(rename = "type")]
-	pub pokemon_type: crate::types::PokemonType,
+    pub accuracy: Option<Accuracy>,
+    pub pp: PP,
+    #[serde(default)]
+    pub priority: Priority,
 
-	pub accuracy: Option<Accuracy>,
-	pub pp: PP,
-	#[serde(default)]
-	pub priority: Priority,
+    pub usage: Vec<MoveUseType>,
 
-	pub usage: Vec<usage::MoveUseType>,
+    #[serde(default)]
+    pub target: MoveTarget,
 
-	#[serde(default)]
-	pub target: target::MoveTarget,
+    #[serde(default)]
+    pub contact: bool,
 
-	#[serde(default)]
-	pub contact: bool,
+    #[serde(default)]
+    pub crit_rate: CriticalRate,
 
-	#[serde(default)]
-	pub crit_rate: CriticalRate,
-
-	pub field_id: Option<FieldMoveId>,
-	
+    pub field_id: Option<FieldMoveId>,
 }
 
 pub type MoveRef = StaticRef<Move>;
@@ -75,16 +83,18 @@ pub type MoveRef = StaticRef<Move>;
 impl<'a> Identifiable<'a> for Move {
     type Id = MoveId;
 
-	const UNKNOWN: MoveId = UNKNOWN16;
+    const UNKNOWN: MoveId = UNKNOWN16;
 
     fn id(&self) -> &Self::Id {
         &self.id
     }
 
-	fn try_get(id: &Self::Id) -> Option<&'a Self> where Self: Sized {
-		Movedex::try_get(id)
-	}
-
+    fn try_get(id: &Self::Id) -> Option<&'a Self>
+    where
+        Self: Sized,
+    {
+        Movedex::try_get(id)
+    }
 }
 
 impl core::fmt::Display for Move {

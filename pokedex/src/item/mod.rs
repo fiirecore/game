@@ -7,7 +7,7 @@ use deps::{
     UNKNOWN16,
 };
 
-use crate::Dex;
+use crate::{Dex, HashableDex};
 
 mod stack;
 mod uses;
@@ -32,7 +32,9 @@ impl Dex<'static> for Itemdex {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+impl HashableDex<'static> for Itemdex {}
+
+#[derive(Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Item {
 

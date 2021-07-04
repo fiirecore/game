@@ -1,11 +1,11 @@
 use crate::pokemon::stat::StatType;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum MoveCategory {
+    Status,
     Physical,
     Special,
-    Status,
 }
 
 impl MoveCategory {

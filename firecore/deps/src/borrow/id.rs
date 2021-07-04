@@ -1,6 +1,6 @@
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use core::fmt::{Display, Debug, Formatter, Result as FmtResult};
-use std::ops::Deref;
+use std::{ops::Deref, hash::Hash};
 
 pub type StaticRef<V> = IdentifiableRef<'static, V>;
 
@@ -17,7 +17,7 @@ impl<'a, V: Identifiable<'a>> Default for IdentifiableRef<'a, V> {
 
 pub trait Identifiable<'a> {
 
-    type Id: DeserializeOwned + Serialize + Display + Clone + Copy + Eq + std::hash::Hash;
+    type Id: DeserializeOwned + Serialize + Display + Clone + Copy + Eq + Hash;
 
     const UNKNOWN: Self::Id;
 

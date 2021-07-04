@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::pokemon::{Level, Experience};
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Training {
 	
 	pub base_exp: u16,
@@ -14,7 +14,7 @@ pub struct Training {
 	
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GrowthRate {
 
 	Slow,

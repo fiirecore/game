@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::battle::Active;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum MoveTarget {
     Any,
     Ally,

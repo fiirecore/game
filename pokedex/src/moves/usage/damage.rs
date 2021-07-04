@@ -1,11 +1,13 @@
 use crate::{moves::Power, pokemon::Health, types::Effective};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+use super::Percent;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum DamageKind {
     Power(Power),
-    PercentCurrent(f32),
-    PercentMax(f32),
+    PercentCurrent(Percent),
+    PercentMax(Percent),
     Constant(Health),
 }
 

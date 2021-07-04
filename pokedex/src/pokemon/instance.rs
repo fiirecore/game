@@ -120,8 +120,8 @@ impl PokemonInstance {
         self.current_hp as f32 / self.max_hp() as f32
     }
 
-    pub fn can_afflict_status(&self, chance: f32) -> bool {
-        self.effect.is_none() && chance >= crate::RANDOM.gen_float()
+    pub fn can_afflict_status(&self) -> bool {
+        self.effect.is_none()
     }
 
     pub fn max_hp(&self) -> Health {
@@ -138,9 +138,7 @@ impl PokemonInstance {
     }
 
     pub fn heal_pp(&mut self) {
-        self.moves
-            .iter_mut()
-            .for_each(MoveInstance::restore)
+        self.moves.iter_mut().for_each(MoveInstance::restore)
     }
 
     pub fn moves_at_level(&self) -> Vec<MoveRef> {

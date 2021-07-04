@@ -18,17 +18,18 @@ pub use result::*;
 pub mod script;
 
 pub type Critical = bool;
+pub type Percent = u8; // 0 to 100
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum MoveUseType {
     Damage(DamageKind),
-    Status(Status, StatusRange, f32),
+    Status(Status, StatusRange, Percent),
     // Ailment(Ailment, f32),
-    Drain(DamageKind, f32),
+    Drain(DamageKind, Percent),
     StatStage(BattleStatType, Stage),
     Flinch,
     Script(String),
-    Chance(Vec<Self>, f32),
+    Chance(Vec<Self>, Percent),
     User(Vec<Self>),
     Todo,
 }

@@ -1,5 +1,7 @@
 extern crate firecore_dependencies as deps;
 
+use std::hash::Hash;
+
 use deps::{
     random::{Random, RandomState, GLOBAL_STATE},
     borrow::Identifiable,
@@ -44,4 +46,17 @@ pub trait Dex<'a> {
         HashMap::with_capacity(capacity)
     }
 
+}
+
+pub trait HashableDex<'a>: Dex<'a> where <Self as Dex<'a>>::DexType: Hash {
+    
+    fn hash() -> u64 {
+        Self::dex().as_ref().map(|dex| {
+            use std::hash::Hasher;
+            let mut hasher = deps::hash::Hasher::default();
+            dex.values().for_each(|t| std::hash::Hash::hash(t, &mut hasher));            
+            hasher.finish()
+        }).unwrap_or_default()
+    }
+    
 }

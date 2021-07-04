@@ -106,8 +106,10 @@ impl PokemonInstance {
                     );
                 }
                 MoveUseType::Status(status, range, chance) => {
-                    if target.pokemon.can_afflict_status(*chance) {
-                        move_results.push(MoveResult::Status(range.init(*status, &RANDOM)));
+                    if target.pokemon.can_afflict_status() {
+                        if RANDOM.gen_float() <= *chance as f32 / 100.0 {
+                            move_results.push(MoveResult::Status(range.init(*status, &RANDOM)));
+                        } 
                     }
                 }
                 MoveUseType::Drain(kind, percent) => {
@@ -120,7 +122,7 @@ impl PokemonInstance {
                             &target.pokemon,
                         ) {
                             Some(result) => {
-                                let heal = (result.damage as f32 * percent) as Health;
+                                let heal = (result.damage as f32 * *percent as f32 / 100.0) as Health;
                                 MoveResult::Drain(result, heal)
                             }
                             None => MoveResult::NoHit(NoHitResult::Ineffective),
@@ -141,7 +143,7 @@ impl PokemonInstance {
                 // }
                 MoveUseType::Flinch => move_results.push(MoveResult::Flinch),
                 MoveUseType::Chance(usage, chance) => {
-                    if &RANDOM.gen_float() < chance {
+                    if RANDOM.gen_float() < *chance as f32 / 100.0 {
                         self.usage(results, engine, pokemon_move, target, usage);
                     }
                 }
@@ -205,7 +207,7 @@ impl PokemonInstance {
             DamageKind::PercentCurrent(percent) => {
                 let effective = target.effective(pokemon_type, category);
                 (!matches!(effective, Effective::Ineffective)).then(|| DamageResult {
-                    damage: (target.hp() as f32 * percent * effective.multiplier()) as Health,
+                    damage: (target.hp() as f32 * effective.multiplier() * percent as f32 / 100.0) as Health,
                     effective,
                     crit: false,
                 })
@@ -213,7 +215,7 @@ impl PokemonInstance {
             DamageKind::PercentMax(percent) => {
                 let effective = target.effective(pokemon_type, category);
                 (!matches!(effective, Effective::Ineffective)).then(|| DamageResult {
-                    damage: (target.max_hp() as f32 * percent * effective.multiplier()) as Health,
+                    damage: (target.max_hp() as f32 * effective.multiplier() * percent as f32 / 100.0) as Health,
                     effective,
                     crit: false,
                 })

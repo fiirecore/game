@@ -1,12 +1,11 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::status::Status;
+use crate::{moves::usage::Percent, status::Status};
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct ItemScript {
-    
     pub conditions: Option<Vec<ItemCondition>>, // optional because some items cannot be used
-    
+
     // #[serde(rename = "actions")]
     // original_actions: VecDeque<ItemActionKind>,
 
@@ -14,20 +13,15 @@ pub struct ItemScript {
     pub actions: Vec<ItemActionKind>, // this should not need to update
 
     pub consume: bool,
-
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum ItemCondition {
-
-    BelowHealthPercent(f32),
-
+    BelowHealthPercent(Percent),
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum ItemActionKind {
-
     CurePokemon(Option<Status>),
     HealPokemon(u16),
-
 }
