@@ -3,13 +3,27 @@ extern crate firecore_battle as battle;
 
 use std::{collections::VecDeque, rc::Rc};
 
-use game::{deps::borrow::{Identifiable, BorrowableMut}, graphics::ZERO, gui::{bag::BagGui, party::PartyGui}, log::{warn, debug}, pokedex::{battle::{
+use game::{
+    deps::borrow::{Identifiable, BorrowableMut}, 
+    graphics::ZERO, 
+    gui::{bag::BagGui, party::PartyGui}, 
+    log::warn, 
+    pokedex::{
+        battle::{
             Active,
             PokemonIndex,
             ActionInstance,
             BattleMove,
             party::knowable::{BattlePartyKnown, BattlePartyUnknown},
-        }, battle2::BattleMove as BMove, item::{ItemUseType, bag::Bag}, moves::target::{MoveTarget, MoveTargetInstance, MoveTargetLocation}, pokemon::party::PokemonParty}, tetra::{Context, math::Vec2, graphics::Color}, util::{Entity, Completable, Reset}};
+        }, 
+        battle2::BattleMove as BMove, 
+        item::{ItemUseType, bag::Bag}, 
+        moves::target::{MoveTarget, MoveTargetInstance, MoveTargetLocation}, 
+        pokemon::party::PokemonParty
+    }, 
+    tetra::{Context, math::Vec2, graphics::Color}, 
+    util::{Entity, Completable, Reset}
+};
 
 use battle::{
     data::{BattleType, BattleData},
@@ -20,7 +34,6 @@ use battle::{
     client::{BattleEndpoint, BattleClient},
     message::{ClientMessage, ServerMessage},
 };
-use view::BattlePartyView;
 
 use self::{
     ui::{
@@ -31,7 +44,8 @@ use self::{
             ActivePokemonRenderer,
         },
     },
-    party::battle_party_known_gui,
+    party::battle_party_gui,
+    view::BattlePartyView,
 };
 
 pub mod action;
@@ -122,8 +136,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                         });
                     },
                     _ => {
-                        let is_player = pokemon.team == self.player.party.id;
-                        let (player, player_ui) = match is_player {
+                        let (player, player_ui) = match pokemon.team == self.player.party.id {
                             true => (&mut self.player.party as &mut dyn BattlePartyView<ID>, &mut self.player.renderer),
                             false => (&mut self.opponent.party as _, &mut self.opponent.renderer),
                         };
@@ -281,7 +294,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                     match self.gui.panel.battle.cursor {
                                                         0 => self.gui.panel.active = BattlePanels::Fight,
                                                         1 => self.bag.spawn(&mut self.player_bag),
-                                                        2 => battle_party_known_gui(&self.party, &self.player.party, true),
+                                                        2 => battle_party_gui(&self.party, &self.player.party, true),
                                                         3 => if matches!(self.battle_data.type_, BattleType::Wild) {
                                                             self.messages.push(ClientMessage::Forfeit);
                                                         },
@@ -408,7 +421,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                         //     MoveTargetLocation::User => user.active(instance.pokemon.index),
                                                         // }.map(|v| !v.fainted()).unwrap_or_default()) {
 
-                                                            ui::text::on_move(&mut self.gui.text, &pokemon_move, user_active);
+                                                        ui::text::on_move(&mut self.gui.text, &pokemon_move, user_active);
 
                                                         // }
             
@@ -485,13 +498,10 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                                 target_ui.update_status(None, false);
                                                             }
                                                         }
+                                                        Some(BattleClientGuiCurrent::Move(targets))
                                                     }
-                                                    None => {
-                                                        debug!("client was sent extra information!");
-                                                        queue.current = None;
-                                                    }
+                                                    None => None,
                                                 }
-                                                Some(BattleClientGuiCurrent::Move(targets))
                                             }
                                             BattleClientAction::UseItem(item, target) => {
                                                 let (index, player) = match target {
@@ -511,15 +521,9 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                 }
                                                 Some(BattleClientGuiCurrent::UseItem(target))
                                             }
-                                            BattleClientAction::Switch(index, unknown_pokemon) => {
+                                            BattleClientAction::Switch(index) => {
                                                 let coming = user.pokemon(index).unwrap();
                                                 ui::text::on_switch(&mut self.gui.text, user.active(instance.pokemon.index).unwrap(), coming);
-                                                if instance.pokemon.team == self.opponent.party.id {
-                                                    if let Some(unknown) = unknown_pokemon {
-                                                        self.opponent.party.add_unknown(index, unknown);
-                                                    }
-                                                    self.gui.panel.target(&self.opponent.party);
-                                                }
                                                 Some(BattleClientGuiCurrent::Switch(index))
                                             }
                                         }
@@ -601,29 +605,30 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
 
                                 user_ui[instance.pokemon.index].renderer.moves.update(delta);
 
-                                if !self.gui.text.finished() {
-                                    self.gui.text.update(ctx, delta);
-                                } else if (self.gui.text.current > 0 || self.gui.text.can_continue) && user_ui[instance.pokemon.index].renderer.moves.finished() {
-                                    let index = instance.pokemon.index;
-                                    targets.retain(|(t, _)| {
-                                        let ui = match *t {
-                                            MoveTargetLocation::Opponent(i) => &other_ui[i],
-                                            MoveTargetLocation::Team(i) => &user_ui[i],
-                                            MoveTargetLocation::User => &user_ui[index],
-                                        };
-                                        ui.renderer.flicker.flickering() || ui.status.health_moving()
-                                    });
-                                    if targets.is_empty() {
-                                        queue.current = None;
-                                    } else {
-                                        for target in targets {
-                                            let ui = match target.0 {
-                                                MoveTargetLocation::Opponent(i) => &mut other_ui[i],
-                                                MoveTargetLocation::Team(i) => &mut user_ui[i],
-                                                MoveTargetLocation::User => &mut user_ui[instance.pokemon.index],
+                                match self.gui.text.finished() {
+                                    false => self.gui.text.update(ctx, delta),
+                                    true => if (self.gui.text.current > 0 || self.gui.text.can_continue) && user_ui[instance.pokemon.index].renderer.moves.finished() {
+                                        let index = instance.pokemon.index;
+                                        targets.retain(|(t, _)| {
+                                            let ui = match *t {
+                                                MoveTargetLocation::Opponent(i) => &other_ui[i],
+                                                MoveTargetLocation::Team(i) => &user_ui[i],
+                                                MoveTargetLocation::User => &user_ui[index],
                                             };
-                                            ui.renderer.flicker.update(delta);
-                                            ui.status.update_hp(delta);
+                                            ui.renderer.flicker.flickering() || ui.status.health_moving()
+                                        });
+                                        if targets.is_empty() {
+                                            queue.current = None;
+                                        } else {
+                                            for target in targets {
+                                                let ui = match target.0 {
+                                                    MoveTargetLocation::Opponent(i) => &mut other_ui[i],
+                                                    MoveTargetLocation::Team(i) => &mut user_ui[i],
+                                                    MoveTargetLocation::User => &mut user_ui[instance.pokemon.index],
+                                                };
+                                                ui.renderer.flicker.update(delta);
+                                                ui.status.update_hp(delta);
+                                            }
                                         }
                                     }
                                 }
@@ -660,7 +665,7 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                 } else if !self.gui.text.finished() {
                                 	self.gui.text.update(ctx, delta);
                                 } else {
-                                    match &instance.pokemon.team == user.id() && user.any_inactive() {
+                                    match instance.pokemon.team == self.player.party.id && self.player.party.any_inactive() {
                                         true => match self.party.alive() {
                                             true => {
                                                 self.party.input(ctx, self.player.party.pokemon.as_mut_slice());
@@ -676,9 +681,13 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + Eq + Ord> Battle
                                                     }
                                                 }
                                             },
-                                            false => battle_party_known_gui(&self.party, &self.player.party, false)
+                                            false => battle_party_gui(&self.party, &self.player.party, false)
                                         },
                                         false => {
+                                            let user = match instance.pokemon.team == self.player.party.id {
+                                                true => &mut self.player.party as &mut dyn BattlePartyView<ID>,
+                                                false => &mut self.opponent.party as _,
+                                            };
                                             user.replace(instance.pokemon.index, None);
                                             user_ui[instance.pokemon.index].update(None);
                                             queue.current = None;

@@ -29,7 +29,7 @@ pub fn logger() {
     let logger = SimpleLogger::new();
 
     #[cfg(debug_assertions)]
-    let logger = logger.with_level(LevelFilter::Debug);
+    let logger = logger.with_level(LevelFilter::Trace);
     #[cfg(not(debug_assertions))]
     let logger = logger.with_level(LevelFilter::Info);
 

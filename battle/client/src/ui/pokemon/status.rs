@@ -3,7 +3,7 @@ use game::{
     gui::health::HealthBar,
     pokedex::{
         battle::view::UnknownPokemon,
-        pokemon::{instance::PokemonInstance, stat::StatSet, Level},
+        pokemon::{instance::PokemonInstance, stat::StatSet, Level, Health},
     },
     tetra::{graphics::Texture, math::Vec2, Context},
     text::TextColor,
@@ -56,12 +56,19 @@ pub struct PokemonStatusGui {
     origin: Vec2<f32>,
 
     background: (Option<Texture>, Texture),
-    name: Option<String>,
-    level: Option<(String, Level)>,
+    small: bool,
     data_pos: PokemonStatusPos,
     health: (HealthBar, Vec2<f32>),
-    health_text: Option<String>,
-    exp: Option<ExperienceBar>,
+    data: PokemonStatusData,
+    exp: ExperienceBar,
+}
+
+#[derive(Default)]
+struct PokemonStatusData {
+    active: bool,
+    name: String,
+    level: (String, Level),
+    health: String,
 }
 
 struct PokemonStatusPos {
@@ -75,7 +82,7 @@ impl PokemonStatusGui {
     const HEALTH_Y: f32 = 15.0;
 
     pub fn new(ctx: &mut Context, index: BattleGuiPositionIndex) -> Self {
-        let (((background, origin, exp), data_pos, hb), position) = Self::attributes(ctx, index);
+        let (((background, origin, small), data_pos, hb), position) = Self::attributes(ctx, index);
 
         Self {
             alive: false,
@@ -84,13 +91,12 @@ impl PokemonStatusGui {
 
             origin,
 
+            small,
             background,
-            name: None,
-            level: None,
             data_pos,
             health: (HealthBar::new(ctx), hb),
-            health_text: None,
-            exp,
+            exp: ExperienceBar::new(),
+            data: Default::default(),
         }
     }
 
@@ -99,14 +105,19 @@ impl PokemonStatusGui {
         index: BattleGuiPositionIndex,
         pokemon: Option<&PokemonInstance>,
     ) -> Self {
-        let (((background, origin, exp), data_pos, hb), position) = Self::attributes(ctx, index);
+        let (((background, origin, small), data_pos, hb), position) = Self::attributes(ctx, index);
         Self {
             alive: false,
             position,
             origin,
+            small,
             background,
-            name: pokemon.map(|pokemon| pokemon.name().to_string()),
-            level: pokemon.map(|pokemon| Self::level(pokemon.level())),
+            data: pokemon.map(|pokemon| PokemonStatusData {
+                active: true,
+                name: pokemon.name().to_owned(),
+                level: Self::level(pokemon.level()),
+                health: format!("{}/{}", pokemon.hp(), pokemon.max_hp()),
+            }).unwrap_or_default(),
             data_pos,
             health: (
                 HealthBar::with_size(
@@ -117,17 +128,7 @@ impl PokemonStatusGui {
                 ),
                 hb,
             ),
-            health_text: exp.is_some().then(|| {
-                pokemon
-                    .map(|pokemon| format!("{}/{}", pokemon.hp(), pokemon.max_hp()))
-                    .unwrap_or_default()
-            }),
-            exp: exp.map(|mut exp| {
-                if let Some(pokemon) = pokemon {
-                    exp.update_exp(pokemon.level, pokemon, true);
-                }
-                exp
-            }),
+            exp: ExperienceBar::new(),
         }
     }
 
@@ -136,14 +137,19 @@ impl PokemonStatusGui {
         index: BattleGuiPositionIndex,
         pokemon: Option<&UnknownPokemon>,
     ) -> Self {
-        let (((background, origin, _), data_pos, hb), position) = Self::attributes(ctx, index);
+        let (((background, origin, small), data_pos, hb), position) = Self::attributes(ctx, index);
         Self {
             alive: false,
             position,
             origin,
             background,
-            name: pokemon.map(|pokemon| pokemon.name().to_owned()),
-            level: pokemon.as_ref().map(|pokemon| Self::level(pokemon.level())),
+            small,
+            data: pokemon.map(|pokemon| PokemonStatusData {
+                active: true,
+                name: pokemon.name().to_owned(),
+                level: Self::level(pokemon.level()),
+                health: String::new(),
+            }).unwrap_or_default(),
             data_pos,
             health: (
                 HealthBar::with_size(
@@ -152,8 +158,7 @@ impl PokemonStatusGui {
                 ),
                 hb,
             ),
-            health_text: None,
-            exp: None,
+            exp: ExperienceBar::new(),
         }
     }
 
@@ -177,7 +182,7 @@ impl PokemonStatusGui {
         index: BattleGuiPositionIndex,
     ) -> (
         (
-            ((Option<Texture>, Texture), Vec2<f32>, Option<ExperienceBar>),
+            ((Option<Texture>, Texture), Vec2<f32>, bool),
             PokemonStatusPos,
             Vec2<f32>,
         ),
@@ -190,8 +195,8 @@ impl PokemonStatusGui {
                         (
                             (
                                 (Some(padding(ctx).clone()), small_ui(ctx).clone()), // Background
-                                Self::TOP_SINGLE,                                    // Panel
-                                None,
+                                Self::TOP_SINGLE,
+                                true,
                             ),
                             Self::OPPONENT_POSES,         // Text positions
                             Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
@@ -204,7 +209,7 @@ impl PokemonStatusGui {
                             (
                                 (None, texture), // Background
                                 pos,             // Panel
-                                None,
+                                true,
                             ),
                             Self::OPPONENT_POSES,
                             Self::OPPONENT_HEALTH_OFFSET, // Health Bar Pos
@@ -217,9 +222,8 @@ impl PokemonStatusGui {
                             (
                                 (None, large_ui(ctx).clone()),
                                 Self::BOTTOM_SINGLE,
-                                Some(
-                                    ExperienceBar::new(/*Self::BOTTOM_SINGLE + Self::EXP_OFFSET*/),
-                                ),
+                                false,
+                                // Some(ExperienceBar::new(/*Self::BOTTOM_SINGLE + Self::EXP_OFFSET*/),),
                             ),
                             PokemonStatusPos {
                                 name: 17.0,
@@ -233,7 +237,7 @@ impl PokemonStatusGui {
                         pos.x -= texture.width() as f32;
                         pos.y -= (index.index + 1) as f32 * (texture.height() as f32 + 1.0);
                         (
-                            ((None, texture), pos, None),
+                            ((None, texture), pos, true),
                             Self::OPPONENT_POSES,
                             Self::OPPONENT_HEALTH_OFFSET,
                         )
@@ -257,21 +261,23 @@ impl PokemonStatusGui {
     }
 
     pub fn update_exp(&mut self, delta: f32, pokemon: &PokemonInstance) {
-        if let Some(exp) = self.exp.as_mut() {
-            if exp.update(delta) {
-                if let Some(level) = self.level.as_mut() {
-                    level.1 += 1;
-                    level.0 = Self::level_fmt(level.1);
+        if self.data.active {
+            if self.small {
+                self.exp.update_exp(pokemon.level, pokemon, true)
+            } else {
+                if self.exp.update(delta) {
+                    self.data.level.1 += 1;
+                    self.data.level.0 = Self::level_fmt(self.data.level.1);
                     let base = StatSet::hp(
                         pokemon.pokemon().base.hp,
                         pokemon.ivs.hp,
                         pokemon.evs.hp,
-                        level.1,
+                        self.data.level.1,
                     );
-                    self.health_text = Some(format!("{}/{}", pokemon.hp(), base));
-                    self.health.0.resize(pokemon.percent_hp(), false);
+                    self.data.update_health(pokemon.hp(), base);
                 }
             }
+            self.health.0.resize(pokemon.percent_hp(), false);
             self.health.0.update(delta);
         }
     }
@@ -281,11 +287,7 @@ impl PokemonStatusGui {
     }
 
     pub fn exp_moving(&self) -> bool {
-        self.exp
-            .as_ref()
-            .map(|exp| exp.moving())
-            .unwrap_or_default()
-            || self.health.0.is_moving()
+        (self.exp.moving() && !self.small) || self.health.0.is_moving()
     }
 
     pub fn update_gui(&mut self, pokemon: Option<&dyn PokemonView>, reset: bool) {
@@ -300,30 +302,19 @@ impl PokemonStatusGui {
     }
 
     pub fn update_gui_ex(&mut self, pokemon: Option<(Level, &dyn PokemonView)>, reset: bool) {
-        self.name = pokemon.map(|(previous, pokemon)| {
-            if pokemon.level() == previous {
-                self.health.0.resize(pokemon.hp(), reset);
-            }
-            if let Some(exp) = self.exp.as_mut() {
-                if let Some(pokemon) = pokemon.instance() {
-                    exp.update_exp(previous, pokemon, reset);
-                    if pokemon.level == previous {
-                        self.health_text = Some(format!("{}/{}", pokemon.hp(), pokemon.max_hp()));
-                    }
-                }
-            }
-            if reset {
-                self.level = Some(Self::level(pokemon.level()));
-            }
-            pokemon.name().to_string()
-        });
+        self.data.active = if let Some((previous, pokemon)) = pokemon {
+            self.data.update(previous, pokemon, reset, &mut self.health.0, &mut self.exp, !self.small);
+            true
+        } else {
+            false
+        };
     }
 
     pub fn draw(&self, ctx: &mut Context, offset: f32, bounce: f32) {
         if self.alive {
-            if let Some(name) = &self.name {
+            if self.data.active {
                 let should_bounce =
-                    self.health_text.is_some() || matches!(self.position, BattleGuiPosition::Top);
+                    !self.data.health.is_empty() || matches!(self.position, BattleGuiPosition::Top);
                 let pos = Vec2::new(
                     self.origin.x + offset + if should_bounce { 0.0 } else { bounce },
                     self.origin.y + if should_bounce { bounce } else { 0.0 },
@@ -337,28 +328,62 @@ impl PokemonStatusGui {
                 let x2 = pos.x + self.data_pos.level;
                 let y = pos.y + 2.0;
 
-                if let Some(health_text) = self.health_text.as_ref() {
-                    draw_text_right(ctx, &0, health_text, &TextColor::Black, x2, y + 18.0);
-                }
-
                 draw_text_left(
                     ctx,
                     &0,
-                    name,
+                    &self.data.name,
                     &TextColor::Black,
                     pos.x + self.data_pos.name,
                     y,
                 );
-                if let Some((level, _)) = &self.level {
-                    draw_text_right(ctx, &0, level, &TextColor::Black, x2, y);
-                }
 
-                if let Some(exp) = self.exp.as_ref() {
-                    exp.draw(ctx, pos + Self::EXP_OFFSET);
+                draw_text_right(ctx, &0, &self.data.level.0, &TextColor::Black, x2, y);
+
+                if !self.small {
+                    self.exp.draw(ctx, pos + Self::EXP_OFFSET);
+                    draw_text_right(ctx, &0, &self.data.health, &TextColor::Black, x2, y + 18.0);
                 }
 
                 self.health.0.draw(ctx, pos + self.health.1);
             }
+        }
+    }
+}
+
+impl PokemonStatusData {
+
+    pub fn update(
+        &mut self,
+        previous: Level,
+        pokemon: &dyn PokemonView,
+        reset: bool,
+        health: &mut HealthBar,
+        exp: &mut ExperienceBar,
+        exp_active: bool,
+    ) {
+        if &self.name != pokemon.name() {
+            self.name = pokemon.name().to_owned();
+        }
+        if pokemon.level() == previous {
+            health.resize(pokemon.hp(), reset);
+        }
+        if exp_active {
+            if let Some(pokemon) = pokemon.instance() {
+                exp.update_exp(previous, pokemon, reset);
+                if pokemon.level == previous {
+                }
+            }
+        }
+        if reset {
+            self.level = PokemonStatusGui::level(pokemon.level());
+        }
+    }
+
+    fn update_health(&mut self, current: Health, max: Health) {
+        self.health.clear();
+        use std::fmt::Write;
+        if let Err(err) = write!(self.health, "{}/{}", current, max) {
+            game::log::warn!("Could not write to health text with error {}", err);
         }
     }
 }

@@ -4,7 +4,6 @@ use pokedex::{
     pokemon::{Level, Experience, stat::StatStage},
     item::ItemRef,
     moves::{target::MoveTargetLocation, MoveRef, usage::Critical},
-    battle::view::UnknownPokemon,
     types::Effective,
     battle::PokemonIndex,
     status::StatusEffectInstance,
@@ -26,6 +25,6 @@ pub enum BattleClientMove<ID: Sized + Copy + Debug + Display + PartialEq> {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum BattleClientAction<ID: Sized + Copy + Debug + Display + PartialEq> {
     Move(MoveRef, Vec<(MoveTargetLocation, Vec<BattleClientMove<ID>>)>),
-    Switch(usize, Option<UnknownPokemon>),
+    Switch(usize),
     UseItem(ItemRef, MoveTargetLocation),
 }

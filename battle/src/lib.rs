@@ -589,14 +589,16 @@ impl<ID: Sized + Copy + core::fmt::Debug + core::fmt::Display + PartialEq + Ord>
                     }
                     BattleMove::Switch(new) => {
                         user.party.replace(instance.pokemon.index, Some(new));
-                        let unknown = user
+                        if let Some(unknown) = user
                             .party
                             .active_index(instance.pokemon.index)
                             .map(|index| user.party.know(index))
-                            .flatten();
+                            .flatten() {
+                                other.client.send(ServerMessage::AddUnknown(new, unknown))
+                            }
                         player_queue.push(ActionInstance {
                             pokemon: instance.pokemon,
-                            action: BattleClientAction::Switch(new, unknown),
+                            action: BattleClientAction::Switch(new),
                         });
                     }
                 }
