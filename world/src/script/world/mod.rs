@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use firecore_util::{Entity, Timer, BoundingBox, Coordinate};
+use crate::positions::{BoundingBox, Coordinate};
 
 use std::collections::VecDeque;
 
@@ -35,49 +35,29 @@ pub struct WorldScript {
     #[serde(skip)]
     pub option: u8, // variable to be used by script for persistant data in update loop (used in ConditionOrBreak)
 
+    #[deprecated]
     #[serde(skip)]
-    pub timer: Timer, // timer for script waiting events
+    pub counter: f32, // timer for script waiting events
 
 }
 
 impl WorldScript {
 
-    // #[deprecated]
-    // pub fn default() -> Self {
-    //     Self {
-    //         identifier: "temp".parse().unwrap(),
-    //         location: None,
-    //         conditions: Vec::new(),
-    //         original_actions: VecDeque::new(),
-    //         actions: VecDeque::new(),
-    //         current: None,
-    //         alive: false,
-    //         option: 0,
-    //         timer: Timer::default()
-    //     }
-    // }
-
-    fn on_spawn(&mut self) {
-        self.actions = self.original_actions.clone();
-    }
-
     pub fn in_location(&self, coords: &Coordinate) -> bool {
         self.location.as_ref().map(|location| location.in_bounds(coords)).unwrap_or(true)
     }
 
-}
-
-impl Entity for WorldScript {
-    fn spawn(&mut self) {
+    pub fn spawn(&mut self) {
         self.alive = true;
-        self.on_spawn();
+        self.actions = self.original_actions.clone();
     }
 
-    fn despawn(&mut self) {
+    pub fn despawn(&mut self) {
         self.alive = false;
     }
 
-    fn alive(&self) -> bool {
+    pub fn alive(&self) -> bool {
         self.alive
     }
+
 }

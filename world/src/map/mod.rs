@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use util::{Coordinate, Location};
+use crate::positions::{Coordinate, Location};
 use audio::music::MusicId;
 
 use crate::script::world::WorldScript;

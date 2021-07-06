@@ -1,6 +1,8 @@
 use serde::Deserialize;
-use util::{Coordinate, Location, LocationId};
-use worldlib::map::WorldChunk;
+use worldlib::{
+    map::WorldChunk,
+    positions::{Coordinate, Location, LocationId},
+};
 
 pub mod map;
 pub mod textures;

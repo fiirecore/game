@@ -2,7 +2,7 @@
 
 use crate::battle_glue::BattleEntryRef;
 
-use deps::tetra::{Context, graphics::Color};
+use engine::tetra::{Context, graphics::Color};
 
 use worldlib::map::{
     World,

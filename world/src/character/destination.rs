@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use firecore_util::{Coordinate, Direction, Destination};
+use crate::positions::{Coordinate, Direction, Destination};
 
 #[derive(Debug, Clone)]
 pub struct DestinationPath {

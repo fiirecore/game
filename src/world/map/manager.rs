@@ -1,35 +1,35 @@
 use std::rc::Rc;
 
 use crate::{
-    util::{
-        Entity, 
-        Completable, 
-        Direction,
-        Coordinate,
-        Location,
-        LocationId,
+    engine::{
+        tetra::{Context, graphics::Color},
+        graphics::byte_texture,
+        util::{
+            Entity, 
+            Completable, 
+        },
+        input::{
+            down, pressed, Control,
+            debug_pressed, DebugBind,
+        },
     },
     storage::{
         data, data_mut, player::PlayerSave,
     },
-    input::{
-        down, pressed, Control,
-        debug_pressed, DebugBind,
-    },
     pokedex::{
         moves::FieldMoveId,
         item::{ItemId, StackSize, ItemStack},
+        gui::{
+            party::PartyGui,
+            bag::BagGui,
+        },
     },
-    tetra::{Context, graphics::Color},
-    log::{info, warn},
     battle_glue::BattleEntryRef,
-    gui::{
-        party::PartyGui,
-        bag::BagGui,
-    },
     game::{GameStateAction, CommandResult},
     is_debug, keybind,
 };
+
+use log::{info, warn};
 
 use worldlib::{
     serialized::SerializedWorld,
@@ -44,6 +44,12 @@ use worldlib::{
         npc::npc_type::NpcType,
         sprite::SpriteIndexes,
     },
+    positions::{
+        Direction,
+        Coordinate,
+        Location,
+        LocationId,
+    }
 };
 
 use crate::world::{
@@ -206,7 +212,7 @@ impl WorldManager {
         let (textures, types): (crate::world::map::texture::npc::NpcTextures, crate::world::npc::NpcTypes) = world.npc_types.into_iter().map(|npc_type| (
             (
                 npc_type.config.identifier,
-                crate::graphics::byte_texture(ctx, &npc_type.texture)
+                byte_texture(ctx, &npc_type.texture)
             ),
             (
                 npc_type.config.identifier,
@@ -468,7 +474,7 @@ impl WorldManager {
         
     }
 
-    fn warp_to_location(&mut self, location: util::Location) {
+    fn warp_to_location(&mut self, location: Location) {
         if let Some(map) = self.map_manager.maps.get(&location) {
             info!("Warping to {}", map.name);
             data_mut().location = location;

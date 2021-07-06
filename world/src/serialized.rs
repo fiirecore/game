@@ -1,57 +1,52 @@
 use deps::hash::HashMap;
 use firecore_font::message::TextColor;
-use serde::{Deserialize, Serialize};
 use pokedex::trainer::TrainerId;
+use serde::{Deserialize, Serialize};
 
-use crate::map::{
-    TileId,
-    PaletteId, 
-    // TileLocation,
+use crate::{
+    character::{
+        npc::{npc_type::TrainerType, Npc, NpcId},
+        sprite::SpriteIndexType,
+    },
+    map::{
+        // TileLocation,
+        manager::WorldMapManager,
+        PaletteId,
+        TileId,
+    },
+    positions::Location,
 };
-use crate::character::{
-    npc::{Npc, NpcId, npc_type::TrainerType},
-    sprite::SpriteIndexType,
-};
-use crate::map::manager::WorldMapManager;
 
-pub type MapGuiLocs = HashMap<crate::map::MapIcon, (String, util::Location)>;
+pub type MapGuiLocs = HashMap<crate::map::MapIcon, (String, Location)>;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedWorld {
-
     pub manager: WorldMapManager,
 
     pub npc_types: Vec<SerializedNpcType>,
     pub map_gui_locs: MapGuiLocs,
     pub textures: SerializedTextures,
-
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNpc {
-
     pub id: NpcId,
     pub npc: Npc,
-
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNpcTypeConfig {
-
     pub identifier: TrainerId,
     pub text_color: TextColor,
     pub sprite: SpriteIndexType,
     pub trainer: Option<TrainerType>,
-
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNpcType {
-
     pub config: SerializedNpcTypeConfig,
 
     pub texture: Vec<u8>,
-
 }
 
 pub type Palettes = HashMap<PaletteId, Vec<u8>>;
@@ -61,13 +56,11 @@ pub type Doors = HashMap<Vec<TileId>, Vec<u8>>;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedTextures {
-
     pub palettes: Palettes,
 
     pub animated: Animated,
 
     pub doors: Doors,
-
 }
 
 #[derive(Deserialize)]

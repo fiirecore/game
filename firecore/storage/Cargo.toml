@@ -7,7 +7,7 @@ readme = "README.md"
 
 [dependencies]
 
-firecore-dependencies = { path = "../deps", features = ["log"] }
+log = "0.4"
 
 ### Serialization
 

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::input::keyboard::{KeyMap, default_key_map, load};
-use crate::log::info;
+use engine::input::keyboard::{KeyMap, default_key_map, load};
+use log::info;
 
 pub static mut CONFIGURATION: Option<Configuration> = None;
 

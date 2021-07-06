@@ -1,4 +1,4 @@
-use deps::tetra::Context;
+use engine::tetra::Context;
 use worldlib::serialized::SerializedTextures;
 
 pub mod tile;

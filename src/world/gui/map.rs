@@ -1,6 +1,5 @@
-use crate::{
-    deps::hash::HashMap,
-    util::{Entity, Reset, Location},
+use engine::{
+    util::{Entity, Reset, HEIGHT},
     input::{pressed, Control},
     graphics::{draw_rectangle_lines, draw_rectangle, draw_text_left},
     tetra::{
@@ -9,8 +8,12 @@ use crate::{
         graphics::Color,
     },
 };
+use deps::hash::HashMap;
 
-use worldlib::map::MapIcon;
+use worldlib::{
+    map::MapIcon,
+    positions::Location,
+};
 
 pub type Locations = HashMap<MapIcon, (String, Location)>;
 
@@ -76,7 +79,7 @@ impl WorldMapGui {
             draw_rectangle(ctx, pos.x as f32, pos.y as f32, size.x as f32, size.y as f32, color);
         }
         if let Some((_, name, _)) = self.locations.get(&self.selected) {
-            draw_text_left(ctx, &1, name, &Color::WHITE, 5.0, util::HEIGHT - 20.0);
+            draw_text_left(ctx, &1, name, &Color::WHITE, 5.0, HEIGHT - 20.0);
         }
         let pos = self.selected << Self::GUI_TILE_SIZE_MASK;
         draw_rectangle_lines(ctx, pos.x as f32, pos.y as f32, Self::GUI_TILE_SIZE, Self::GUI_TILE_SIZE, 1.0, Color::WHITE);

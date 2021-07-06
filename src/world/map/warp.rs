@@ -1,4 +1,4 @@
-use crate::{
+use crate::engine::{
     util::{WIDTH, HEIGHT, Entity, Reset, Completable},
     graphics::draw_rectangle,
     tetra::{Context, graphics::Color},

@@ -1,4 +1,4 @@
-use firecore_util::Direction;
+use crate::positions::Direction;
 use serde::{Deserialize, Serialize};
 
 use crate::script::ScriptId;

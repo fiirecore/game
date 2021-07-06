@@ -1,12 +1,13 @@
 use std::borrow::Cow;
 
-use crate::{
+use engine::{
     input::{pressed, Control},
     text::TextColor,
     graphics::{
         // draw_rectangle, draw_rectangle_lines,
         draw_text_center,
     },
+    gui::Panel,
     tetra::{
         input,
         Context, 
@@ -14,8 +15,6 @@ use crate::{
         graphics::Color,
     },
 };
-
-use super::Panel;
 
 pub struct Button {
     pub origin: Vec2<f32>,

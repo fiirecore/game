@@ -46,7 +46,7 @@ impl PlayerSaves {
         if self.saves.is_empty() {
             let data = PlayerSave::default();
             if let Err(err) = data.save() {
-                deps::log::warn!("Could not save new player file with error {}", err);
+                log::warn!("Could not save new player file with error {}", err);
             }
             self.saves.push(Ok(data));
         }

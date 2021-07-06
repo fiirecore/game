@@ -1,4 +1,4 @@
-pub use firecore_text::message::*;
+pub use engine::text::*;
 use storage::player::PlayerSave;
 
 const PLAYER_ID: &str = "%p";

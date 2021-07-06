@@ -1,17 +1,18 @@
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-use crate::tetra::{
+use engine::tetra::{
     Context, 
     Result,
 };
+use engine::input;
 use storage::try_load;
-use pokedex::serialize::{SerializedDex, SerializedPokemon};
-use crate::audio::{
+use pokedex::{CRY_ID, serialize::{SerializedDex, SerializedPokemon}};
+use engine::audio::{
     sound::{Sound, add_sound},
     serialized::SerializedSoundData,
 };
 use crate::config::{Configuration, CONFIGURATION};
 
-pub use firecore_text::init as text;
+pub use engine::graphics::text::init as text;
 
 pub static LOADING_FINISHED: AtomicBool = AtomicBool::new(false);
 
@@ -22,7 +23,7 @@ pub fn seed_random(seed: u64) {
 pub fn logger() {
 
     use simple_logger::SimpleLogger;
-    use deps::log::LevelFilter;
+    use log::LevelFilter;
 
     // Initialize logger
 
@@ -43,8 +44,8 @@ pub fn configuration() -> Result {
 
     {
 
-        crate::input::keyboard::load(config.controls.clone());
-        crate::input::controller::load(crate::input::controller::default_button_map());
+        input::keyboard::load(config.controls.clone());
+        input::controller::load(input::controller::default_button_map());
 
         // if config.touchscreen {
         //     crate::input::touchscreen::touchscreen(true);
@@ -63,7 +64,7 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
         if !pokemon.cry_ogg.is_empty() {
             if let Err(_) = add_sound(SerializedSoundData {
                 bytes: std::mem::take(&mut pokemon.cry_ogg),
-                sound: Sound::variant(crate::CRY_ID, Some(pokemon.pokemon.id)),
+                sound: Sound::variant(CRY_ID, Some(pokemon.pokemon.id)),
             }) {
                 // warn!("Error adding pokemon cry: {}", err);
             }
@@ -72,16 +73,17 @@ pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
     pokedex::init(ctx, dex, #[cfg(feature = "audio")] callback)
 }
 
+#[cfg(feature = "audio")]
+use {engine::audio, log::error};
+
 
 #[cfg(feature = "audio")]
-pub fn audio(audio: crate::audio::serialized::SerializedAudio) {
-    use crate::log::error;    
-
-    if let Err(err) = crate::audio::create() {
+pub fn audio(audio: audio::serialized::SerializedAudio) {
+    if let Err(err) = audio::create() {
         error!("{}", err);
     } else {
         std::thread::spawn( || {
-            if let Err(err) = crate::audio::load(audio) {
+            if let Err(err) = audio::load(audio) {
                 error!("Could not load audio files with error {}", err);
             }
         });

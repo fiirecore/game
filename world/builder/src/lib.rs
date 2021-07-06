@@ -1,5 +1,4 @@
 extern crate firecore_world as worldlib;
-extern crate firecore_util as util;
 extern crate firecore_dependencies as deps;
 
 use std::io::Write;

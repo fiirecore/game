@@ -1,11 +1,11 @@
 use std::path::Path;
-use util::{Location, LocationId};
 use worldlib::{
     map::{
         manager::{Maps, WorldMapManager, WorldMapManagerData},
         WorldMap,
     },
     serialized::SerializedTextures,
+    positions::{Location, LocationId},
 };
 
 use crate::gba_map::get_gba_map;

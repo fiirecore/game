@@ -1,4 +1,4 @@
-use firecore_util::Coordinate;
+use crate::positions::Coordinate;
 use serde::{Deserialize, Serialize};
 use deps::str::{TinyStr8, TinyStr16};
 

@@ -10,17 +10,16 @@ edition = "2018"
 
 ### Map specifications
 
-firecore-world = { path = ".." }
-firecore-pokedex-game = { path = "../../pokedex/game" }
-firecore-util = { path = "../../firecore/util" }
-firecore-dependencies = { path = "../../firecore/deps", features = ["ser"] }
+firecore-world = { path=".." }
+firecore-pokedex-game = { git="https://github.com/DoNotDoughnut/firecore-pokedex-game" }
+firecore-dependencies = { git="https://github.com/DoNotDoughnut/firecore-dependencies", features=["ser"] }
 
 ### Serialization
 
-serde = { version = "1.0", features = ["derive"] }
+serde = { version="1.0", features=["derive"] }
 toml = "0.5"
 ron = "0.6"
 
 ### Other
 
-image = { version = "0.23.12", default-features = false, features = ["png", "tga"] }
+image = { version="0.23.12", default-features=false, features=["png", "tga"] }

@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use util::{Direction, Destination};
+use crate::positions::{Direction, Destination};
 use font::message::{Message, MessagePages};
 use audio::{music::MusicName, sound::Sound};
 

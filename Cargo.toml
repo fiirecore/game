@@ -1,21 +1,23 @@
 [package]
-name = "firecore-game"
-version = "0.5.0-beta.2021-07-02"
+name = "pokemon-game"
+version = "0.5.0-beta.2021-06-13"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
+description = "Pokemon FireRed Clone"
+repository = "https://github.com/DoNotDoughnut/pokemon-game"
+keywords = ["games", "pokemon"]
+categories = ["games"]
+build = "build/build.rs"
+readme = "README.md"
+include = ["/build", "/assets"]
 publish = false
 
 [features]
-default = ["logger", "audio", "static-link", "world"]
+default = ["logger", "audio", "world"]
+audio = ["firecore-engine/audio", "audio-builder"]
+discord = ["discord-rich-presence", "serde_json"]
 logger = ["simple_logger"]
-audio = [
-    "firecore-dependencies/audio",
-    "firecore-pokedex-game/audio",
-    "parking_lot",
-]
 world = ["firecore-world"]
-static-link = ["firecore-dependencies/static-link", "bundled"]
-bundled = ["firecore-dependencies/bundled"]
 
 [profile.dev]
 # opt-level = 2
@@ -30,43 +32,48 @@ opt-level = 3 # z = Optimize for size
 
 [dependencies]
 
-firecore-dependencies = { path="firecore/deps", features=["hash", "vec", "str", "engine", "log", "ser"] }
+firecore-engine = { git="https://github.com/DoNotDoughnut/firecore-engine" }
+firecore-dependencies = { git="https://github.com/DoNotDoughnut/firecore-dependencies", features=["hash", "vec", "str", "ser"] }
 
-firecore-util = { path="firecore/util" }
-firecore-pokedex-game = { path="pokedex/game" }
+firecore-pokedex-game = { git="https://github.com/DoNotDoughnut/firecore-pokedex-game" }
 pokemon-firered-clone-storage = { path="firecore/storage/game" }
-firecore-audio = { path="firecore/audio" }
-firecore-text = { path="firecore/text" }
 
 firecore-world = { path="world", optional=true }
 
 simple_logger = { version="1", optional=true }
 
 serde = { version="1.0", features=["derive"] }
-enum-map = { version="1.1", features=["serde"] }
-atomic = "0.5"
 
 parking_lot = { version="0.11", optional=true }
 
+### Battle
+
+firecore-battle = { git="https://github.com/DoNotDoughnut/firecore-battle", features=["ai"] }
+firecore-battle-gui = { git="https://github.com/DoNotDoughnut/firecore-battle-gui" }
+
+### Other
+
+log = "0.4"
+pico-args = "0.4"
+
+discord-rich-presence = { version="0.1", optional=true }
+serde_json = { version="1.0", optional=true }
+
+### Build dependencies
+
+[build-dependencies]
+
+dex-builder = { git="https://github.com/DoNotDoughnut/dex-builder" }
+world-builder = { path="world/builder" }
+font-builder = { git="https://github.com/DoNotDoughnut/firecore-font", package="font-builder" }
+audio-builder = { git="https://github.com/DoNotDoughnut/firecore-audio", package="audio-builder", optional=true }
+winres = "0.1"
+
 [workspace]
 members = [
-    "pokedex",
-    "pokedex/game",
-    "pokedex/builder",
     "world",
     "world/builder",
-    "battle",
-    "battle/client",
-    "battle/game",
-    "firecore/deps",
-    "firecore/util",
-    "firecore/text",
-    "firecore/text/font",
-    "firecore/text/builder",
     "firecore/storage",
     "firecore/storage/player",
     "firecore/storage/game",
-    "firecore/audio",
-    "firecore/audio/builder",
-    "game",
 ]

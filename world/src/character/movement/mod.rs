@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use util::positions::coordinate::CoordNum;
+use crate::positions::CoordNum;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum MovementType {

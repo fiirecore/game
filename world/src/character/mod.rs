@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use firecore_util::{Direction, Coordinate, Position, Destination};
+use crate::positions::{Direction, Coordinate, Position, Destination};
 
 use self::destination::DestinationPath;
 

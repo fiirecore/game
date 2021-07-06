@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use util::{Direction, Coordinate, Position};
+use crate::positions::{Direction, Coordinate, Position};
 use firecore_font::message::MessagePages;
 
 use crate::{character::Character, script::world::WorldScript};
@@ -42,16 +42,16 @@ impl Npc {
             if let Some(tracker) = trainer.tracking {
                 let tracker = tracker as i32;
                 match self.character.position.direction {
-                    firecore_util::Direction::Up => if self.character.position.coords.x == coords.x && self.character.position.coords.y > coords.y && self.character.position.coords.y - tracker <= coords.y {
+                    Direction::Up => if self.character.position.coords.x == coords.x && self.character.position.coords.y > coords.y && self.character.position.coords.y - tracker <= coords.y {
                         return true;
                     }
-                    firecore_util::Direction::Down => if self.character.position.coords.x == coords.x && self.character.position.coords.y < coords.y && self.character.position.coords.y + tracker >= coords.y {
+                    Direction::Down => if self.character.position.coords.x == coords.x && self.character.position.coords.y < coords.y && self.character.position.coords.y + tracker >= coords.y {
                         return true;
                     }
-                    firecore_util::Direction::Left => if self.character.position.coords.y == coords.y && self.character.position.coords.x > coords.x && self.character.position.coords.x - tracker <= coords.x {
+                    Direction::Left => if self.character.position.coords.y == coords.y && self.character.position.coords.x > coords.x && self.character.position.coords.x - tracker <= coords.x {
                         return true;
                     }
-                    firecore_util::Direction::Right => if self.character.position.coords.y == coords.y && self.character.position.coords.x < coords.x && self.character.position.coords.x + tracker >= coords.x {
+                    Direction::Right => if self.character.position.coords.y == coords.y && self.character.position.coords.x < coords.x && self.character.position.coords.x + tracker >= coords.x {
                         return true;
                     }
                 }

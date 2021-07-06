@@ -1,9 +1,13 @@
-use crate::{
-    util::{WIDTH, HEIGHT, TILE_SIZE, Coordinate, positions::coordinate::CoordNum},
+use engine::{
+    util::{WIDTH, HEIGHT},
     tetra::math::Vec2,
 };
 
-use crate::worldlib::character::Character;
+use crate::worldlib::{
+    character::Character,
+    TILE_SIZE,
+    positions::{Coordinate, CoordNum},
+};
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct RenderCoords {

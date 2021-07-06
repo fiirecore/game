@@ -1,6 +1,4 @@
-extern crate firecore_dependencies as deps;
-
-use deps::log::warn;
+use log::warn;
 use error::DataError;
 use serde::{de::DeserializeOwned, Serialize};
 use std::{path::{Path, PathBuf}, sync::atomic::{AtomicBool, Ordering::Relaxed}};

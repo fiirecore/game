@@ -1,5 +1,4 @@
 use crate::{
-    util::Location,
     pokedex::{
         Dex,
         pokemon::{
@@ -21,6 +20,7 @@ use worldlib::{
         manager::{TrainerEntry, TrainerEntryRef},
     },
     character::npc::{Npc, NpcId, trainer::TrainerDisable},
+    positions::Location,
 };
 
 use crate::world::{
