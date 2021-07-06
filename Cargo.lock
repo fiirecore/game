@@ -889,7 +889,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-game"
-version = "0.5.0-beta.2021-06-13"
+version = "0.5.0-beta.2021-07-05"
 dependencies = [
  "discord-rich-presence",
  "firecore-audio-builder",
