@@ -81,17 +81,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "audio-builder"
-version = "0.4.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#ee6529f18e35c9805f58a072da7e672742fc2b0b"
-dependencies = [
- "firecore-audio",
- "firecore-dependencies",
- "ron",
- "serde",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -294,17 +283,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dex-builder"
-version = "0.5.0-2021-06-19"
-source = "git+https://github.com/DoNotDoughnut/dex-builder#074b4101b2277e1f2c92958b76a453bd00c04435"
-dependencies = [
- "firecore-dependencies",
- "firecore-pokedex-game",
- "ron",
- "serde",
-]
-
-[[package]]
 name = "dirs-next"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -399,6 +377,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-audio-builder"
+version = "0.4.0"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio-builder#1e6baceb5ff74994eabfe4cf69d699858d6b0b72"
+dependencies = [
+ "firecore-audio",
+ "firecore-dependencies",
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "firecore-battle"
 version = "0.5.0-beta.2021-07-04"
 source = "git+https://github.com/DoNotDoughnut/firecore-battle#9712ab2cc5cf74fd6e87b18908a714b36ff2b7f9"
@@ -455,6 +444,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-font-builder"
+version = "0.4.0"
+source = "git+https://github.com/DoNotDoughnut/firecore-font-builder#4759e13b35c3d2186e35bcd073cc6aad2f3dd294"
+dependencies = [
+ "firecore-dependencies",
+ "firecore-font",
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "firecore-pokedex"
 version = "0.5.0-beta.2021-07-04"
 source = "git+https://github.com/DoNotDoughnut/firecore-pokedex#86412418471128578806882d743da79fdc65026e"
@@ -462,6 +462,17 @@ dependencies = [
  "firecore-dependencies",
  "itoa",
  "rhai",
+ "serde",
+]
+
+[[package]]
+name = "firecore-pokedex-builder"
+version = "0.5.0-2021-06-19"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-builder#0cf55926ac3d6ac3af8b7e198d81549fdcca769c"
+dependencies = [
+ "firecore-dependencies",
+ "firecore-pokedex-game",
+ "ron",
  "serde",
 ]
 
@@ -511,6 +522,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-world-builder"
+version = "0.4.0"
+dependencies = [
+ "firecore-dependencies",
+ "firecore-pokedex-game",
+ "firecore-world",
+ "image",
+ "ron",
+ "serde",
+ "toml",
+]
+
+[[package]]
 name = "flate2"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -529,17 +553,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4fc612c5837986b7104a87a0df74a5460931f1c5274be12f8d0f40aa2f30d632"
 dependencies = [
  "num-traits",
-]
-
-[[package]]
-name = "font-builder"
-version = "0.4.0"
-source = "git+https://github.com/DoNotDoughnut/firecore-font#50b02791d61daff006f06fe5df719c65d417462b"
-dependencies = [
- "firecore-dependencies",
- "firecore-font",
- "ron",
- "serde",
 ]
 
 [[package]]
@@ -886,16 +899,17 @@ dependencies = [
 name = "pokemon-game"
 version = "0.5.0-beta.2021-06-13"
 dependencies = [
- "audio-builder",
- "dex-builder",
  "discord-rich-presence",
+ "firecore-audio-builder",
  "firecore-battle",
  "firecore-battle-gui",
  "firecore-dependencies",
  "firecore-engine",
+ "firecore-font-builder",
+ "firecore-pokedex-builder",
  "firecore-pokedex-game",
  "firecore-world",
- "font-builder",
+ "firecore-world-builder",
  "log",
  "parking_lot",
  "pico-args",
@@ -904,7 +918,6 @@ dependencies = [
  "serde_json",
  "simple_logger",
  "winres",
- "world-builder",
 ]
 
 [[package]]
@@ -1461,19 +1474,6 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff4fb510bbfe5b8992ff15f77a2e6fe6cf062878f0eda00c0f44963a807ca5dc"
 dependencies = [
- "toml",
-]
-
-[[package]]
-name = "world-builder"
-version = "0.4.0"
-dependencies = [
- "firecore-dependencies",
- "firecore-pokedex-game",
- "firecore-world",
- "image",
- "ron",
- "serde",
  "toml",
 ]
 

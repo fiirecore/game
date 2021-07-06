@@ -14,7 +14,7 @@ publish = false
 
 [features]
 default = ["logger", "audio", "world"]
-audio = ["firecore-engine/audio", "audio-builder"]
+audio = ["firecore-engine/audio", "firecore-audio-builder"]
 discord = ["discord-rich-presence", "serde_json"]
 logger = ["simple_logger"]
 world = ["firecore-world"]
@@ -63,10 +63,10 @@ serde_json = { version="1.0", optional=true }
 
 [build-dependencies]
 
-dex-builder = { git="https://github.com/DoNotDoughnut/dex-builder" }
-world-builder = { path="world/builder" }
-font-builder = { git="https://github.com/DoNotDoughnut/firecore-font", package="font-builder" }
-audio-builder = { git="https://github.com/DoNotDoughnut/firecore-audio", package="audio-builder", optional=true }
+firecore-pokedex-builder = { git="https://github.com/DoNotDoughnut/firecore-pokedex-builder" }
+firecore-world-builder = { path="world/builder" }
+firecore-font-builder = { git="https://github.com/DoNotDoughnut/firecore-font-builder" }
+firecore-audio-builder = { git="https://github.com/DoNotDoughnut/firecore-audio-builder", optional=true }
 winres = "0.1"
 
 [workspace]
