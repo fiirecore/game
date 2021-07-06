@@ -10,9 +10,11 @@ use engine::{
 use pokedex::gui::{bag::BagGui, party::PartyGui, pokemon::PokemonDisplay};
 
 use crate::{
-    game::GameStateAction,
-    quit,
-    storage::{data, data_mut, player::SHOULD_SAVE},
+    state::MainStates,
+    game::{
+        quit,
+        storage::{data, data_mut},
+    },
 };
 
 pub struct StartMenu {
@@ -43,7 +45,7 @@ impl StartMenu {
         ctx: &Context,
         delta: f32,
         input_lock: bool,
-        action: &mut Option<GameStateAction>,
+        action: &mut Option<MainStates>,
     ) {
         if self.bag.alive() && !input_lock {
             self.bag.input(ctx);
@@ -62,8 +64,7 @@ impl StartMenu {
                 match self.cursor {
                     0 => {
                         // Save
-                        // #[deprecated(note = "change this")]
-                        SHOULD_SAVE.store(true, std::sync::atomic::Ordering::Relaxed);
+                        data_mut().should_save = true;
                     }
                     1 => {
                         // Bag
@@ -75,7 +76,7 @@ impl StartMenu {
                     }
                     3 => {
                         // Exit to Main Menu
-                        *action = Some(GameStateAction::ExitToMenu);
+                        *action = Some(MainStates::Menu);
                         self.despawn();
                     }
                     4 => {

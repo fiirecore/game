@@ -5,7 +5,7 @@ extern crate firecore_world as worldlib;
 
 use pokedex::{item::bag::Bag, pokemon::party::PokemonParty, trainer::TrainerId};
 use serde::{Deserialize, Serialize};
-use std::{path::PathBuf, sync::atomic::AtomicBool};
+use std::path::PathBuf;
 use storage::error::DataError;
 use worldlib::{
     character::Character,
@@ -19,13 +19,15 @@ pub mod world;
 
 pub use list::PlayerSaves;
 
-pub static SHOULD_SAVE: AtomicBool = AtomicBool::new(false); // if true, save player data
-
 pub type Name = String;
 pub type Worth = u32;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerSave {
+
+    #[serde(skip)]
+    pub should_save: bool,
+
     #[serde(default = "default_id")]
     pub id: TrainerId,
 
@@ -59,11 +61,12 @@ impl PlayerSave {
         }
     }
 
-    pub fn save(&self) -> Result<(), DataError> {
+    pub fn save(&self, local: bool) -> Result<(), DataError> {
         use log::{info, warn};
         info!("Saving player data!");
         if let Err(err) = storage::save(
             self,
+            local,
             PathBuf::from("saves").join(storage::file_name(&format!("{}-{}", self.name, self.id))),
         ) {
             warn!("Could not save player data with error: {}", err);
@@ -75,6 +78,7 @@ impl PlayerSave {
 impl Default for PlayerSave {
     fn default() -> Self {
         Self {
+            should_save: Default::default(),
             id: default_id(),
             name: default_name(),
             party: Default::default(),

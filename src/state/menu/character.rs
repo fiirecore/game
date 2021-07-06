@@ -1,5 +1,5 @@
 use crate::{
-	storage::{saves, player::default_name_str},
+	game::storage::{saves, player::default_name_str},
 	engine::tetra::{State, Context, Result},
 };
 

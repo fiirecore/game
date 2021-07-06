@@ -1,6 +1,6 @@
 use crate::{
-    battle_glue::BattleTrainerEntry,
     engine::{gui::TextDisplay, tetra::Context},
+    game::battle_glue::BattleTrainerEntry,
     pokedex::trainer::{TrainerData, TrainerId},
 };
 

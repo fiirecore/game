@@ -2,7 +2,6 @@ use std::rc::Rc;
 
 use crate::{
 	deps::borrow::{BorrowableMut, UNKNOWN},
-	storage::{data_mut, player::PlayerSave},
 	pokedex::{
 		pokemon::instance::BorrowedPokemon,
 		trainer::{TrainerId, TrainerData},
@@ -19,8 +18,11 @@ use crate::{
 			graphics::Color,
 		},
 	},
-	battle_glue::BattleEntry,
-	is_debug,
+	game::{
+		battle_glue::BattleEntry,
+		is_debug,
+		storage::{data_mut, player::PlayerSave},
+	},
 };
 
 use battlelib::player::{BattlePlayer, PlayerSettings};

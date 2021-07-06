@@ -1,5 +1,5 @@
 pub use engine::text::*;
-use storage::player::PlayerSave;
+use crate::game::storage::player::PlayerSave;
 
 const PLAYER_ID: &str = "%p";
 const RIVAL_ID: &str = "%r";

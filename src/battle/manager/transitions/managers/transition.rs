@@ -1,36 +1,26 @@
 use crate::{
-    engine::{
-        play_music_named,
-        tetra::Context,
-    },
-    battle_glue::BattleTrainerEntry,
+    engine::{play_music_named, tetra::Context},
+    game::battle_glue::BattleTrainerEntry,
 };
 
 use battlelib::data::BattleType;
 
 use crate::battle::manager::transitions::{
+    transitions::{BattleTransitions, FlashBattleTransition, TrainerBattleTransition},
     BattleTransition,
-    transitions::{
-        BattleTransitions,
-        FlashBattleTransition,
-        TrainerBattleTransition,
-    },
 };
 
 use firecore_battle_gui::transition::TransitionState;
 
 pub struct BattleScreenTransitionManager {
-
     pub state: TransitionState,
     current: BattleTransitions,
 
     flash: FlashBattleTransition,
     trainer: TrainerBattleTransition,
-
 }
 
 impl BattleScreenTransitionManager {
-
     pub fn new(ctx: &mut Context) -> Self {
         Self {
             state: TransitionState::default(),
@@ -41,7 +31,12 @@ impl BattleScreenTransitionManager {
         }
     }
 
-    pub fn begin(&mut self, ctx: &mut Context, battle_type: BattleType, trainer: &Option<BattleTrainerEntry>) {
+    pub fn begin(
+        &mut self,
+        ctx: &mut Context,
+        battle_type: BattleType,
+        trainer: &Option<BattleTrainerEntry>,
+    ) {
         self.play_music(ctx, battle_type);
         match trainer {
             Some(trainer) => self.current = BattleTransitions::from(trainer.transition),
@@ -54,7 +49,7 @@ impl BattleScreenTransitionManager {
     pub fn end(&mut self) {
         self.state = TransitionState::Begin;
     }
-    
+
     pub fn update(&mut self, ctx: &mut Context, delta: f32) {
         let current = self.get_mut();
         current.update(ctx, delta);
@@ -66,7 +61,6 @@ impl BattleScreenTransitionManager {
     pub fn draw(&self, ctx: &mut Context) {
         self.get().draw(ctx);
     }
-
 
     fn play_music(&mut self, ctx: &mut Context, battle_type: BattleType) {
         match battle_type {
@@ -89,5 +83,4 @@ impl BattleScreenTransitionManager {
             BattleTransitions::Trainer => &mut self.trainer,
         }
     }
-
 }

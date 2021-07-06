@@ -1,3 +1,4 @@
+use super::storage::{PersistantData, Reloadable};
 use serde::{Deserialize, Serialize};
 
 use engine::input::keyboard::{KeyMap, default_key_map, load};
@@ -25,13 +26,13 @@ impl Default for Configuration {
     }
 }
 
-impl storage::PersistantData for Configuration {
+impl PersistantData for Configuration {
     fn path() -> &'static str {
         "config"
     }
 }
 
-impl storage::Reloadable for Configuration {
+impl Reloadable for Configuration {
     fn on_reload(&self) {
         info!("Running configuration reload tasks...");
         load(self.controls.clone());

@@ -1,17 +1,16 @@
 use crate::{
-    battle_glue::BattleTrainerEntry,
     engine::{
         graphics::{draw_o_bottom, TextureManager},
         gui::TextDisplay,
         tetra::{graphics::Texture, Context},
+        text::MessagePage,
         util::{Completable, Entity, Reset, WIDTH},
     },
+    game::{battle_glue::BattleTrainerEntry, storage::data},
     pokedex::{
         texture::TrainerTextures,
         trainer::{TrainerData, TrainerId},
     },
-    storage::data,
-    text::MessagePage,
 };
 
 use crate::battle::manager::transitions::BattleCloser;

@@ -1,15 +1,41 @@
-pub enum GameStateAction {
-    ExitToMenu,
+pub mod battle_glue;
+pub mod config;
+pub mod gui;
+pub mod init;
+pub mod storage;
+pub mod text;
+
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
+
+static QUIT: AtomicBool = AtomicBool::new(false);
+
+pub fn quit() {
+    QUIT.store(true, Relaxed)
 }
 
-#[derive(Debug, Clone)]
-pub struct CommandResult<'a> {
-    pub command: &'a str,
-    pub args: std::str::SplitAsciiWhitespace<'a>,
+#[inline(always)]
+pub fn should_quit() -> bool {
+    QUIT.load(Relaxed)
 }
 
-impl<'a> core::fmt::Display for CommandResult<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {:?}", self.command, self.args)
+pub static DEBUG: AtomicBool = AtomicBool::new(cfg!(debug_assertions));
+
+pub fn set_debug(debug: bool) {
+    DEBUG.store(debug, Relaxed);
+}
+
+pub fn is_debug() -> bool {
+    DEBUG.load(Relaxed)
+}
+
+#[cfg(feature = "world")]
+pub fn keybind(direction: worldlib::positions::Direction) -> engine::input::Control {
+    use engine::input::Control;
+    use worldlib::positions::Direction;
+    match direction {
+        Direction::Up => Control::Up,
+        Direction::Down => Control::Down,
+        Direction::Left => Control::Left,
+        Direction::Right => Control::Right,
     }
 }

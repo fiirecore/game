@@ -12,8 +12,10 @@ use crate::{
 		},
 		util::{WIDTH, HEIGHT},
 	},
-	gui::{Button, ButtonBase},
-	storage::{saves, player::PlayerSaves},
+	game::{
+		gui::{Button, ButtonBase},
+		storage::{saves, player::PlayerSaves},
+	},
 };
 
 use super::{MenuState, MenuStateAction, MenuStates};

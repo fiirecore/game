@@ -1,7 +1,7 @@
-use log::warn;
 use error::DataError;
+use log::warn;
 use serde::{de::DeserializeOwned, Serialize};
-use std::{path::{Path, PathBuf}, sync::atomic::{AtomicBool, Ordering::Relaxed}};
+use std::path::{Path, PathBuf};
 
 // pub use macroquad::prelude::collections::storage::{try_get as get, try_get_mut as get_mut, store};
 use std::fs::read_to_string;
@@ -15,44 +15,47 @@ const DIR1: &str = "rhysholloway"; // To - do: Custom specifiers for directories
 const DIR2: &str = "pokemon-game";
 const EXTENSION: &str = "ron";
 
-// #[cfg(not(target_arch = "wasm32"))]
-pub static SAVE_IN_LOCAL_DIRECTORY: AtomicBool = AtomicBool::new(false);
-
 pub trait PersistantData: Serialize + DeserializeOwned + Default {
-
     fn path() -> &'static str;
 
-    fn save(&self) -> Result<(), DataError> {
-        save(self, crate::directory()?.join(file_name(Self::path())))
+    fn save(&self, local: bool) -> Result<(), DataError> {
+        save(
+            self,
+            local,
+            crate::directory(local)?.join(file_name(Self::path())),
+        )
     }
-
 }
 
 pub trait Reloadable: PersistantData {
     fn on_reload(&self);
 }
 
-pub fn try_load<D: PersistantData + Sized>() -> Result<D, DataError> {
+pub fn try_load<D: PersistantData + Sized>(local: bool) -> Result<D, DataError> {
     let path = D::path();
-    let dir =  crate::directory()?;
+    let dir = crate::directory(local)?;
     let path = dir.join(file_name(path));
     let data = match path.exists() {
         true => deserialize(&read_to_string(&*path.to_string_lossy())?)?,
         false => {
             let data = D::default();
-            if let Err(err) = save(&data, D::path()) {
+            if let Err(err) = save(&data, local, D::path()) {
                 let name = std::any::type_name::<D>();
                 let name = name.split("::").last().unwrap_or(name);
                 warn!("Could not save new {} with error {}", name, err);
             }
             data
-        },
+        }
     };
     Ok(data)
 }
 
-pub fn save<D: Serialize + DeserializeOwned + Default, P: AsRef<Path>>(data: &D, path: P) -> Result<(), DataError> {
-    let dir = crate::directory()?;
+pub fn save<D: Serialize + DeserializeOwned + Default, P: AsRef<Path>>(
+    data: &D,
+    local: bool,
+    path: P,
+) -> Result<(), DataError> {
+    let dir = crate::directory(local)?;
     let path = dir.join(path.as_ref());
 
     if !dir.exists() {
@@ -66,14 +69,14 @@ pub fn save<D: Serialize + DeserializeOwned + Default, P: AsRef<Path>>(data: &D,
     Ok(())
 }
 
-pub fn reload<D: Reloadable + Sized>(data: &mut D) -> Result<(), DataError> {
-    *data = try_load::<D>()?;
+pub fn reload<D: Reloadable + Sized>(data: &mut D, local: bool) -> Result<(), DataError> {
+    *data = try_load::<D>(local)?;
     data.on_reload();
     Ok(())
 }
 
-pub fn directory() -> Result<PathBuf, DataError> {
-    match SAVE_IN_LOCAL_DIRECTORY.load(Relaxed) {
+pub fn directory(local: bool) -> Result<PathBuf, DataError> {
+    match local {
         true => std::env::current_dir().map_err(DataError::IOError),
         false => match dirs_next::data_dir() {
             Some(data_dir) => {
@@ -86,7 +89,7 @@ pub fn directory() -> Result<PathBuf, DataError> {
                     }
                 } else if !dir.exists() {
                     if let Ok(()) = std::fs::create_dir_all(&dir) {
-                        directory()
+                        directory(local)
                     } else {
                         Ok(dir)
                     }

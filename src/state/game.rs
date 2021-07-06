@@ -1,7 +1,6 @@
-use std::{rc::Rc, sync::atomic::Ordering::Relaxed};
+use std::rc::Rc;
 
 use crate::{
-    battle_glue::BattleEntry,
     deps::ser,
     engine::{
         tetra::{
@@ -11,35 +10,40 @@ use crate::{
         },
         util::Entity,
     },
-    game::GameStateAction,
-    pokedex::gui::{bag::BagGui, party::PartyGui},
-    storage::{
-        data_mut,
-        player::{PlayerSaves, SHOULD_SAVE},
-        saves,
+    game::{
+        battle_glue::BattleEntry,
+        storage::{
+            data_mut,
+            player::PlayerSave,
+            save_locally,
+        },
     },
+    pokedex::gui::{bag::BagGui, party::PartyGui},
 };
+
+use command::Console;
 
 use log::warn;
 
-use crate::battle::BattleManager;
-use crate::world::map::manager::WorldManager;
+use crate::{
+    battle::BattleManager,
+    state::{MainState, MainStates},
+    world::map::manager::WorldManager,
+};
 
-use crate::state::{MainState, MainStates};
-
-mod console;
+pub mod command;
 
 pub struct GameStateManager {
-    action: Option<GameStateAction>,
+    state: Option<MainStates>,
 
-    state: GameStates,
+    gamestate: GameStates,
 
     world: WorldManager,
     battle: BattleManager,
 
     battle_entry: Option<BattleEntry>,
 
-    console: console::Console,
+    console: Console,
 }
 
 pub enum GameStates {
@@ -59,16 +63,16 @@ impl GameStateManager {
         let bag = Rc::new(BagGui::new(ctx));
 
         Self {
-            action: None,
+            state: None,
 
-            state: GameStates::default(),
+            gamestate: GameStates::default(),
 
             world: WorldManager::new(ctx, party.clone(), bag.clone()),
             battle: BattleManager::new(ctx, party, bag),
 
             battle_entry: None,
 
-            console: console::Console::default(),
+            console: Console::default(),
         }
     }
 
@@ -79,15 +83,14 @@ impl GameStateManager {
         }
     }
 
-    pub fn data_dirty(&mut self, saves: &mut PlayerSaves) {
-        self.save_data(saves);
-        SHOULD_SAVE.store(false, Relaxed);
+    pub fn data_dirty(&mut self, save: &mut PlayerSave) {
+        self.save_data(save);
+        save.should_save = false;
     }
 
-    pub fn save_data(&mut self, saves: &mut PlayerSaves) {
-        self.world.save_data(saves.get_mut());
-        let save = saves.get();
-        if let Err(err) = save.save() {
+    pub fn save_data(&mut self, save: &mut PlayerSave) {
+        self.world.save_data(save);
+        if let Err(err) = save.save(save_locally()) {
             warn!(
                 "Could not save player data for {} with error {}",
                 save.name, err
@@ -104,13 +107,13 @@ impl State for GameStateManager {
     }
 
     fn end(&mut self, _: &mut Context) -> Result {
-        self.save_data(saves());
+        self.save_data(data_mut());
         Ok(())
     }
 
     fn update(&mut self, ctx: &mut Context) -> Result {
         if let Some(command) = self.console.update(ctx) {
-            match self.state {
+            match self.gamestate {
                 GameStates::World => self.world.process(command, &mut self.battle_entry),
                 GameStates::Battle => warn!("Battle has no commands implemented."),
             }
@@ -125,21 +128,22 @@ impl State for GameStateManager {
                 1.0
             };
 
-        if SHOULD_SAVE.load(Relaxed) {
-            self.data_dirty(saves());
+        let save = data_mut();
+        if save.should_save {
+            self.data_dirty(save);
         }
-        match self.state {
+        match self.gamestate {
             GameStates::World => {
                 self.world.update(
                     ctx,
                     delta,
                     self.console.alive(),
                     &mut self.battle_entry,
-                    &mut self.action,
+                    &mut self.state,
                 );
                 if let Some(entry) = self.battle_entry.take() {
                     if self.battle.battle(entry) {
-                        self.state = GameStates::Battle;
+                        self.gamestate = GameStates::Battle;
                     }
                 }
             }
@@ -154,7 +158,7 @@ impl State for GameStateManager {
                         let trainer = self.battle.update_data(&winner, save);
                         self.world.update_world(save, winner, trainer);
                     }
-                    self.state = GameStates::World;
+                    self.gamestate = GameStates::World;
                     self.world.map_start(ctx, true);
                 }
             }
@@ -163,7 +167,7 @@ impl State for GameStateManager {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> Result {
-        match self.state {
+        match self.gamestate {
             GameStates::World => self.world.draw(ctx),
             GameStates::Battle => {
                 if self.battle.world_active() {
@@ -179,8 +183,6 @@ impl State for GameStateManager {
 
 impl MainState for GameStateManager {
     fn next(&mut self) -> Option<MainStates> {
-        self.action.take().map(|action| match action {
-            GameStateAction::ExitToMenu => MainStates::Menu,
-        })
+        self.state.take()
     }
 }

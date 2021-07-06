@@ -13,13 +13,16 @@ use engine::{
 use crate::{
     deps::ser,
     init,
-    set_debug,
-    is_debug,
+    game::{
+        set_debug,
+        is_debug,
+        storage,
+    },
 };
 
 use log::{info, error};
 
-use crate::args::Args;
+use crate::Args;
 
 use super::{
 	MainState,
@@ -149,7 +152,7 @@ impl StateManager {
         storage::init().unwrap_or_else(|err| panic!("Could not initialize save data manager with error {}", err));
     
         #[cfg(debug_assertions)] {
-			storage::saves().select_first_or_default();	
+			storage::saves().select_first_or_default(storage::save_locally());	
 		}
 
         let scaler = ScreenScaler::with_window_size(ctx, WIDTH as _, HEIGHT as _, ScalingMode::ShowAll)?;

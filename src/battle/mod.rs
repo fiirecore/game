@@ -5,14 +5,16 @@ use battlelib::{
 };
 
 use crate::{
-    battle_glue::{BattleEntry, BattleTrainerEntry},
     deps::borrow::UNKNOWN,
+    game::{
+        battle_glue::{BattleEntry, BattleTrainerEntry},
+        storage::player::PlayerSave,
+    },
     pokedex::{
         moves::usage::script::{engine, Engine},
         pokemon::instance::BorrowedPokemon,
         trainer::TrainerId,
     },
-    storage::player::PlayerSave,
 };
 
 mod guiref;

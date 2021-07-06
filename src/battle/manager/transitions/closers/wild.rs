@@ -1,11 +1,11 @@
 use crate::{
-    battle_glue::BattleTrainerEntry,
     engine::{
         graphics::draw_rectangle,
         gui::TextDisplay,
         tetra::{graphics::Color, Context},
         util::{Completable, Reset, HEIGHT, WIDTH},
     },
+    game::battle_glue::BattleTrainerEntry,
     pokedex::trainer::{TrainerData, TrainerId},
 };
 

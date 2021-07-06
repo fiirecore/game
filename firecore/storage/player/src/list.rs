@@ -15,8 +15,8 @@ pub struct PlayerSaves {
 
 impl PlayerSaves {
 
-    pub fn load() -> Result<Self, DataError> {
-        let dir = storage::directory()?.join("saves");
+    pub fn load(local: bool) -> Result<Self, DataError> {
+        let dir = storage::directory(local)?.join("saves");
         if !dir.exists() {
             create_dir_all(&dir)?;
         }
@@ -42,10 +42,10 @@ impl PlayerSaves {
         self.select(index);
     }
 
-    pub fn select_first_or_default(&mut self) {
+    pub fn select_first_or_default(&mut self, local: bool) {
         if self.saves.is_empty() {
             let data = PlayerSave::default();
-            if let Err(err) = data.save() {
+            if let Err(err) = data.save(local) {
                 log::warn!("Could not save new player file with error {}", err);
             }
             self.saves.push(Ok(data));

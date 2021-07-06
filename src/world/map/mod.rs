@@ -1,20 +1,23 @@
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 use crate::{
-    battle_glue::BattleEntryRef,
     deps::random::{Random, RandomState, GLOBAL_STATE},
     engine::{
-        util::{Timer, Entity, Completable},
         audio,
         graphics::{draw_cursor, position},
         input::{debug_pressed, pressed, Control, DebugBind},
         play_music, play_music_named, play_sound,
         tetra::{graphics::Color, Context},
+        text::MessagePage,
+        util::{Completable, Entity, Timer},
     },
-    is_debug,
+    game::{
+        battle_glue::BattleEntryRef,
+        is_debug,
+        storage::{data, data_mut, player::PlayerSave},
+        text::process_messages,
+    },
     pokedex::item::ItemStack,
-    storage::{data, data_mut, player::PlayerSave},
-    text::{process_messages, MessagePage},
 };
 
 use log::{info, warn};

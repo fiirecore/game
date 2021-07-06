@@ -36,15 +36,23 @@ firecore-engine = { git="https://github.com/DoNotDoughnut/firecore-engine" }
 firecore-dependencies = { git="https://github.com/DoNotDoughnut/firecore-dependencies", features=["hash", "vec", "str", "ser"] }
 
 firecore-pokedex-game = { git="https://github.com/DoNotDoughnut/firecore-pokedex-game" }
-pokemon-firered-clone-storage = { path="firecore/storage/game" }
-
-firecore-world = { path="world", optional=true }
 
 simple_logger = { version="1", optional=true }
 
 serde = { version="1.0", features=["derive"] }
 
+### Audio
+
 parking_lot = { version="0.11", optional=true }
+
+### Storage
+
+firecore-storage = { path = "firecore/storage" }
+firecore-saves = { path = "firecore/storage/player" }
+
+### World
+
+firecore-world = { path="world", optional=true }
 
 ### Battle
 
@@ -75,5 +83,4 @@ members = [
     "world/builder",
     "firecore/storage",
     "firecore/storage/player",
-    "firecore/storage/game",
 ]

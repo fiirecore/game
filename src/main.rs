@@ -1,4 +1,15 @@
-use args::*;
+pub extern crate firecore_dependencies as deps;
+extern crate firecore_storage;
+pub extern crate firecore_engine as engine;
+pub extern crate firecore_pokedex_game as pokedex;
+
+pub mod world;
+pub mod battle;
+pub mod game;
+pub mod state;
+pub mod args;
+
+use game::{init, storage};
 
 use engine::{
     tetra::{Result, ContextBuilder, time::Timestep},
@@ -11,12 +22,6 @@ use state::StateManager;
 
 extern crate firecore_world as worldlib;
 extern crate firecore_battle as battlelib;
-
-pub mod world;
-pub mod battle;
-
-pub mod state;
-pub mod args;
 
 pub const TITLE: &str = "Pokemon FireRed";
 pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
@@ -59,7 +64,7 @@ fn main() -> Result {
     
     // Save data in local directory in debug builds
     #[cfg(debug_assertions)]
-    storage::SAVE_IN_LOCAL_DIRECTORY.store(true, std::sync::atomic::Ordering::Relaxed);
+    storage::should_save_locally(true);
 
     ContextBuilder::new(TITLE, (WIDTH * DEFAULT_SCALE) as _, (HEIGHT * DEFAULT_SCALE) as _)
     .resizable(true)
@@ -75,52 +80,32 @@ fn main() -> Result {
 
 }
 
-pub extern crate firecore_dependencies as deps;
+#[derive(PartialEq)]
+pub enum Args {
 
-pub extern crate firecore_engine as engine;
-pub extern crate pokemon_firered_clone_storage as storage;
-pub extern crate firecore_pokedex_game as pokedex;
+    DisableAudio,
+    Debug,
+    #[cfg(debug_assertions)]
+    NoSeed,
 
-pub extern crate simple_logger as logger;
-
-pub mod battle_glue;
-pub mod config;
-pub mod game;
-pub mod gui;
-pub mod init;
-pub mod text;
-
-use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-
-static QUIT: AtomicBool = AtomicBool::new(false);
-
-pub fn quit() {
-    QUIT.store(true, Relaxed)
 }
 
-#[inline(always)]
-pub fn should_quit() -> bool {
-    QUIT.load(Relaxed)
-}
+pub fn args() -> Vec<Args> {
+    let mut list = Vec::new();
+    let mut args = pico_args::Arguments::from_env();
 
-pub static DEBUG: AtomicBool = AtomicBool::new(cfg!(debug_assertions));
-
-pub fn set_debug(debug: bool) {
-    DEBUG.store(debug, Relaxed);
-}
-
-pub fn is_debug() -> bool {
-    DEBUG.load(Relaxed)
-}
-
-#[cfg(feature = "world")]
-pub fn keybind(direction: worldlib::positions::Direction) -> engine::input::Control {
-    use worldlib::positions::Direction;
-    use engine::input::Control;
-    match direction {
-        Direction::Up => Control::Up,
-        Direction::Down => Control::Down,
-        Direction::Left => Control::Left,
-        Direction::Right => Control::Right,
+    if args.contains("-a") {
+        list.push(Args::DisableAudio);
     }
+
+    if args.contains("-d") {
+        list.push(Args::Debug);
+    }
+
+    #[cfg(debug_assertions)]
+    if args.contains("-s") {
+        list.push(Args::NoSeed);
+    }
+
+    list
 }
