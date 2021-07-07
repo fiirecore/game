@@ -13,11 +13,13 @@ include = ["/build", "/assets"]
 publish = false
 
 [features]
-default = ["logger", "audio", "world"]
-audio = ["firecore-engine/audio", "firecore-audio-builder"]
+default = ["audio"]
+audio = [
+    "firecore-engine/audio",
+    "firecore-audio-builder",
+    "firecore-pokedex-client/audio",
+]
 discord = ["discord-rich-presence", "serde_json"]
-logger = ["simple_logger"]
-world = ["firecore-world"]
 
 [profile.dev]
 # opt-level = 2
@@ -35,9 +37,9 @@ opt-level = 3 # z = Optimize for size
 firecore-engine = { git="https://github.com/DoNotDoughnut/firecore-engine" }
 firecore-dependencies = { git="https://github.com/DoNotDoughnut/firecore-dependencies", features=["hash", "vec", "str", "ser"] }
 
-firecore-pokedex-game = { git="https://github.com/DoNotDoughnut/firecore-pokedex-game" }
+firecore-pokedex-client = { git="https://github.com/DoNotDoughnut/firecore-pokedex-client" }
 
-simple_logger = { version="1", optional=true }
+simple_logger = { version="1" }
 
 serde = { version="1.0", features=["derive"] }
 
@@ -47,12 +49,12 @@ parking_lot = { version="0.11", optional=true }
 
 ### Storage
 
-firecore-storage = { path = "firecore/storage" }
-firecore-saves = { path = "firecore/storage/player" }
+firecore-storage = { path="firecore/storage" }
+firecore-saves = { path="firecore/storage/player" }
 
 ### World
 
-firecore-world = { path="world", optional=true }
+firecore-world = { path="world" }
 
 ### Battle
 

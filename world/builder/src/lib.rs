@@ -1,10 +1,11 @@
 extern crate firecore_world as worldlib;
 extern crate firecore_dependencies as deps;
+extern crate firecore_pokedex_client as pokedex;
 
 use std::io::Write;
 use std::path::Path;
 
-use firecore_pokedex_game::serialize::SerializedDex;
+use pokedex::serialize::SerializedDex;
 use worldlib::{
     serialized::{SerializedWorld, SerializedTextures},
     map::{

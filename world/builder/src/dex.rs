@@ -1,4 +1,4 @@
-use firecore_pokedex_game::{
+use pokedex::{
     serialize::SerializedDex,
     Dex,
     pokemon::Pokedex,

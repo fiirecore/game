@@ -28,7 +28,6 @@ pub fn is_debug() -> bool {
     DEBUG.load(Relaxed)
 }
 
-#[cfg(feature = "world")]
 pub fn keybind(direction: worldlib::positions::Direction) -> engine::input::Control {
     use engine::input::Control;
     use worldlib::positions::Direction;

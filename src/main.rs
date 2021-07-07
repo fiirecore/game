@@ -1,7 +1,7 @@
 pub extern crate firecore_dependencies as deps;
 extern crate firecore_storage;
 pub extern crate firecore_engine as engine;
-pub extern crate firecore_pokedex_game as pokedex;
+pub extern crate firecore_pokedex_client as pokedex;
 
 pub mod world;
 pub mod battle;

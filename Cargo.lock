@@ -370,7 +370,7 @@ dependencies = [
 [[package]]
 name = "firecore-audio"
 version = "0.1.1"
-source = "git+https://github.com/DoNotDoughnut/firecore-audio#ee6529f18e35c9805f58a072da7e672742fc2b0b"
+source = "git+https://github.com/DoNotDoughnut/firecore-audio#abff719d83fd197f393ba574372a9bc47e26bf3c"
 dependencies = [
  "firecore-dependencies",
  "serde",
@@ -401,10 +401,10 @@ dependencies = [
 [[package]]
 name = "firecore-battle-gui"
 version = "0.5.0-beta.2021-07-04"
-source = "git+https://github.com/DoNotDoughnut/firecore-battle-gui#6ce31772d432adaa2cc2d72341bebdc7b4373aa9"
+source = "git+https://github.com/DoNotDoughnut/firecore-battle-gui#d271942677c4fec8fa876d52a5938125d16fc95f"
 dependencies = [
  "firecore-battle",
- "firecore-pokedex-game",
+ "firecore-pokedex-client",
  "log",
 ]
 
@@ -468,18 +468,18 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-builder"
 version = "0.5.0-2021-06-19"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-builder#0cf55926ac3d6ac3af8b7e198d81549fdcca769c"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-builder#91a8fc3c4fb95482cd5d4c2859dd69d4a1bc56b4"
 dependencies = [
  "firecore-dependencies",
- "firecore-pokedex-game",
+ "firecore-pokedex-client",
  "ron",
  "serde",
 ]
 
 [[package]]
-name = "firecore-pokedex-game"
+name = "firecore-pokedex-client"
 version = "0.5.0-beta.2021-06-19"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-game#8b823168ab7dd57c666d90b9631b36bc81cfc952"
+source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-client#86bcae703a431bf70bdfa131d659b882a7f3bcc2"
 dependencies = [
  "atomic",
  "firecore-dependencies",
@@ -526,7 +526,7 @@ name = "firecore-world-builder"
 version = "0.4.0"
 dependencies = [
  "firecore-dependencies",
- "firecore-pokedex-game",
+ "firecore-pokedex-client",
  "firecore-world",
  "image",
  "ron",
@@ -899,7 +899,7 @@ dependencies = [
  "firecore-engine",
  "firecore-font-builder",
  "firecore-pokedex-builder",
- "firecore-pokedex-game",
+ "firecore-pokedex-client",
  "firecore-saves",
  "firecore-storage",
  "firecore-world",
