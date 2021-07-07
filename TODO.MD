@@ -6,9 +6,7 @@
 
 - [X] Move animations through scripting
     - [ ] Better scripting
-- [ ] Moves on level up
 
-- [ ] Health bar shake on hit
 - [ ] Tackle faster
 
 - [ ] Move BattleCloser to Battle GUI module
@@ -21,6 +19,7 @@
 
 - [ ] Add UNKNOWN pokemon, move and item values
 - [ ] Text line wrapping
+- [ ] Uuid for trainer IDs
 
 ## Low Priority
 

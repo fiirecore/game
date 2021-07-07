@@ -14,6 +14,7 @@ fn main() {
     );
     firecore_world_builder::compile(dex, "assets/game/world", "build/data/world.bin");
 
+    #[cfg(windows)]
     // embed_resource::compile("build/resources.rc");
     winres::WindowsResource::new()
         .set_icon("build/icon.ico")

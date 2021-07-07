@@ -1,27 +1,27 @@
 pub extern crate firecore_dependencies as deps;
-extern crate firecore_storage;
 pub extern crate firecore_engine as engine;
 pub extern crate firecore_pokedex_client as pokedex;
+extern crate firecore_storage;
 
-pub mod world;
+pub mod args;
 pub mod battle;
 pub mod game;
 pub mod state;
-pub mod args;
+pub mod world;
 
 use game::{init, storage};
 
 use engine::{
-    tetra::{Result, ContextBuilder, time::Timestep},
-    util::{WIDTH, HEIGHT},
+    tetra::{time::Timestep, ContextBuilder, Result},
+    util::{HEIGHT, WIDTH},
 };
 
 use log::info;
 
 use state::StateManager;
 
-extern crate firecore_world as worldlib;
 extern crate firecore_battle as battlelib;
+extern crate firecore_world as worldlib;
 
 pub const TITLE: &str = "Pokemon FireRed";
 pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
@@ -31,7 +31,6 @@ pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const DEFAULT_SCALE: f32 = 3.0;
 
 fn main() -> Result {
-
     init::logger();
 
     info!("Starting {} v{}", TITLE, VERSION);
@@ -41,53 +40,62 @@ fn main() -> Result {
 
     #[cfg(debug_assertions)]
     if !args.contains(&Args::NoSeed) {
-        init::seed_random(std::time::SystemTime::now().duration_since(std::time::SystemTime::UNIX_EPOCH).map(|dur| dur.as_secs()).unwrap_or_default() % 1000000)
+        init::seed_random(
+            std::time::SystemTime::now()
+                .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                .map(|dur| dur.as_secs())
+                .unwrap_or_default()
+                % 1000000,
+        )
     }
 
-    #[cfg(feature = "discord")] 
-    log::warn!("Discord support is broken!");
-    // let mut client = {
-    //     use discord_rich_presence::{new_client, DiscordIpc};
-    //     use serde_json::json;
-    //     let mut client = new_client("976382684683496880171344").unwrap();
-    //     client.connect().unwrap();
-    //     client.set_activity(json!({
-    //         "state": "Test Game",
-    //         // "details": "By DoNotDoughnut"
-    //     })).unwrap();
-    //     client
-    // };
-    
+    #[cfg(feature = "discord")]
+    use discord_rich_presence::{activity::Activity, new_client, DiscordIpc};
+
+    #[cfg(feature = "discord")]
+    let mut client = {
+        let mut client = new_client("862413316420665386")
+            .unwrap_or_else(|err| panic!("Could not create discord IPC client with error {}", err));
+        client
+            .connect()
+            .unwrap_or_else(|err| panic!("Could not connect to discord with error {}", err));
+        client
+            .set_activity(Activity::new().state("test state").details("test details"))
+            .unwrap_or_else(|err| panic!("Could not set client activity with error {}", err));
+        client
+    };
+
     // Loads configuration, sets up controls
 
     init::configuration()?;
-    
+
     // Save data in local directory in debug builds
     #[cfg(debug_assertions)]
     storage::should_save_locally(true);
 
-    ContextBuilder::new(TITLE, (WIDTH * DEFAULT_SCALE) as _, (HEIGHT * DEFAULT_SCALE) as _)
+    ContextBuilder::new(
+        TITLE,
+        (WIDTH * DEFAULT_SCALE) as _,
+        (HEIGHT * DEFAULT_SCALE) as _,
+    )
     .resizable(true)
     .show_mouse(true)
     .timestep(Timestep::Variable)
     .build()?
     .run(|ctx| StateManager::new(ctx, args))?;
 
-    // #[cfg(feature = "discord")]
-    // discord_rich_presence::DiscordIpc::close(&mut client).unwrap();
+    #[cfg(feature = "discord")]
+    client.close().unwrap();
 
     Ok(())
-
 }
 
 #[derive(PartialEq)]
 pub enum Args {
-
     DisableAudio,
     Debug,
     #[cfg(debug_assertions)]
     NoSeed,
-
 }
 
 pub fn args() -> Vec<Args> {
