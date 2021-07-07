@@ -18,6 +18,7 @@ audio = [
     "firecore-engine/audio",
     "firecore-audio-builder",
     "firecore-pokedex-client/audio",
+    "firecore-battle-gui/audio"
 ]
 discord = ["discord-rich-presence", "serde_json"]
 
@@ -37,7 +38,7 @@ opt-level = 3 # z = Optimize for size
 firecore-engine = { git="https://github.com/DoNotDoughnut/firecore-engine" }
 firecore-dependencies = { git="https://github.com/DoNotDoughnut/firecore-dependencies", features=["hash", "vec", "str", "ser"] }
 
-firecore-pokedex-client = { git="https://github.com/DoNotDoughnut/firecore-pokedex-client" }
+firecore-pokedex-client = { git="https://github.com/DoNotDoughnut/firecore-pokedex-client", default-features = false }
 
 simple_logger = { version="1" }
 
@@ -59,7 +60,7 @@ firecore-world = { path="world" }
 ### Battle
 
 firecore-battle = { git="https://github.com/DoNotDoughnut/firecore-battle", features=["ai"] }
-firecore-battle-gui = { git="https://github.com/DoNotDoughnut/firecore-battle-gui" }
+firecore-battle-gui = { git="https://github.com/DoNotDoughnut/firecore-battle-gui", default-features = false }
 
 ### Other
 

@@ -61,21 +61,20 @@ pub fn configuration() -> Result {
 }
 
 pub fn pokedex(ctx: &mut Context, dex: SerializedDex) -> Result {
-    let callback = |pokemon: &mut SerializedPokemon| {
-        if !pokemon.cry_ogg.is_empty() {
-            if let Err(_) = add_sound(SerializedSoundData {
-                bytes: std::mem::take(&mut pokemon.cry_ogg),
-                sound: Sound::variant(CRY_ID, Some(pokemon.pokemon.id)),
-            }) {
-                // warn!("Error adding pokemon cry: {}", err);
-            }
-        }
-    };
     pokedex::init(
         ctx,
         dex,
         #[cfg(feature = "audio")]
-        callback,
+        |pokemon: &mut SerializedPokemon| {
+            if !pokemon.cry_ogg.is_empty() {
+                if let Err(_) = add_sound(SerializedSoundData {
+                    bytes: std::mem::take(&mut pokemon.cry_ogg),
+                    sound: Sound::variant(CRY_ID, Some(pokemon.pokemon.id)),
+                }) {
+                    // warn!("Error adding pokemon cry: {}", err);
+                }
+            }
+        }
     )
 }
 
