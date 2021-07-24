@@ -50,12 +50,12 @@ impl Direction {
 		}
 	}
 
-	pub const fn pixel_offset(&self) -> PixelOffset {
+	pub fn pixel_offset(&self, increment: f32) -> PixelOffset {
 		match self {
-		    Direction::Up => PixelOffset { x: 0.0, y: -1.0 },
-		    Direction::Down => PixelOffset { x: 0.0, y: 1.0 },
-		    Direction::Left => PixelOffset { x: -1.0, y: 0.0 },
-		    Direction::Right => PixelOffset { x: 1.0, y: 0.0 },
+		    Direction::Up => PixelOffset { x: 0.0, y: -increment },
+		    Direction::Down => PixelOffset { x: 0.0, y: increment },
+		    Direction::Left => PixelOffset { x: -increment, y: 0.0 },
+		    Direction::Right => PixelOffset { x: increment, y: 0.0 },
 		}
 	}
 

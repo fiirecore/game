@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
-use crate::positions::{Direction, Coordinate, Position};
+use crate::positions::{Coordinate, Destination, Direction, Position};
 use firecore_font::message::MessagePages;
+use serde::{Deserialize, Serialize};
 
 use crate::{character::Character, script::world::WorldScript};
 
@@ -26,10 +26,12 @@ impl NpcInteract {
 }
 
 impl Npc {
-
     pub fn find_character(&mut self, character: &mut Character) -> bool {
         if self.eye_track(&character.position.coords) {
-            self.character.go_next_to(character.position.coords);
+            self.character.pathing.extend(
+                &self.character.position,
+                Destination::next_to(&self.character.position, character.position.coords),
+            );
             character.freeze();
             true
         } else {
@@ -42,17 +44,37 @@ impl Npc {
             if let Some(tracker) = trainer.tracking {
                 let tracker = tracker as i32;
                 match self.character.position.direction {
-                    Direction::Up => if self.character.position.coords.x == coords.x && self.character.position.coords.y > coords.y && self.character.position.coords.y - tracker <= coords.y {
-                        return true;
+                    Direction::Up => {
+                        if self.character.position.coords.x == coords.x
+                            && self.character.position.coords.y > coords.y
+                            && self.character.position.coords.y - tracker <= coords.y
+                        {
+                            return true;
+                        }
                     }
-                    Direction::Down => if self.character.position.coords.x == coords.x && self.character.position.coords.y < coords.y && self.character.position.coords.y + tracker >= coords.y {
-                        return true;
+                    Direction::Down => {
+                        if self.character.position.coords.x == coords.x
+                            && self.character.position.coords.y < coords.y
+                            && self.character.position.coords.y + tracker >= coords.y
+                        {
+                            return true;
+                        }
                     }
-                    Direction::Left => if self.character.position.coords.y == coords.y && self.character.position.coords.x > coords.x && self.character.position.coords.x - tracker <= coords.x {
-                        return true;
+                    Direction::Left => {
+                        if self.character.position.coords.y == coords.y
+                            && self.character.position.coords.x > coords.x
+                            && self.character.position.coords.x - tracker <= coords.x
+                        {
+                            return true;
+                        }
                     }
-                    Direction::Right => if self.character.position.coords.y == coords.y && self.character.position.coords.x < coords.x && self.character.position.coords.x + tracker >= coords.x {
-                        return true;
+                    Direction::Right => {
+                        if self.character.position.coords.y == coords.y
+                            && self.character.position.coords.x < coords.x
+                            && self.character.position.coords.x + tracker >= coords.x
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -61,10 +83,12 @@ impl Npc {
     }
 
     pub fn interact_from(&mut self, position: &Position) -> bool {
-        self.can_interact_from(position).map(|dir| {
-            self.character.position.direction = dir;
-            true
-        }).unwrap_or_default()
+        self.can_interact_from(position)
+            .map(|dir| {
+                self.character.position.direction = dir;
+                true
+            })
+            .unwrap_or_default()
     }
 
     pub fn can_interact_from(&self, position: &Position) -> Option<Direction> {
@@ -76,14 +100,14 @@ impl Npc {
                     } else {
                         None
                     }
-                },
+                }
                 Direction::Down => {
                     if position.coords.y + 1 == self.character.position.coords.y {
                         Some(Direction::Up)
                     } else {
                         None
                     }
-                },
+                }
                 _ => None,
             }
         } else if position.coords.y == self.character.position.coords.y {
@@ -94,19 +118,18 @@ impl Npc {
                     } else {
                         None
                     }
-                },
+                }
                 Direction::Left => {
                     if position.coords.x - 1 == self.character.position.coords.x {
                         Some(Direction::Right)
                     } else {
                         None
                     }
-                },
+                }
                 _ => None,
             }
         } else {
             None
         }
     }
-
 }

@@ -10,7 +10,7 @@ use engine::{
 };
 
 use worldlib::{
-    character::{Character, MoveType},
+    character::{Character, Movement},
     positions::Direction,
     TILE_SIZE,
 };
@@ -21,9 +21,7 @@ const SCREEN_Y: f32 = ((HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - TIL
 pub mod bush;
 
 pub struct PlayerTexture {
-    pub draw: bool,
-
-    pub textures: HashMap<MoveType, CharacterTexture>,
+    pub textures: HashMap<Movement, CharacterTexture>,
 
     pub bush: bush::PlayerBushTexture,
 
@@ -49,7 +47,7 @@ impl PlayerTexture {
         bush::new(ctx);
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
-            MoveType::Walking,
+            Movement::Walking,
             byte_texture(
                 ctx,
                 include_bytes!("../../../../assets/world/player/walking.png"),
@@ -57,7 +55,7 @@ impl PlayerTexture {
             .into(),
         );
         textures.insert(
-            MoveType::Running,
+            Movement::Running,
             byte_texture(
                 ctx,
                 include_bytes!("../../../../assets/world/player/running.png"),
@@ -65,7 +63,7 @@ impl PlayerTexture {
             .into(),
         );
         textures.insert(
-            MoveType::Swimming,
+            Movement::Swimming,
             CharacterTexture {
                 idle: Some(0.5),
                 texture: byte_texture(
@@ -76,7 +74,6 @@ impl PlayerTexture {
         );
 
         Self {
-            draw: true,
             textures,
             bush: bush::PlayerBushTexture::default(),
             accumulator: 0.0,
@@ -85,8 +82,8 @@ impl PlayerTexture {
 
     pub fn update(&mut self, delta: f32, character: &mut Character) {
         self.bush.update(delta);
-        if !character.moving {
-            if let Some(texture) = self.textures.get(&character.move_type) {
+        if character.offset.is_zero() {
+            if let Some(texture) = self.textures.get(&character.movement) {
                 if let Some(idle) = texture.idle {
                     self.accumulator += delta;
                     if self.accumulator > idle {
@@ -99,8 +96,8 @@ impl PlayerTexture {
     }
 
     pub fn draw(&self, ctx: &mut Context, character: &Character, color: Color) {
-        if self.draw {
-            if let Some(texture) = self.textures.get(&character.move_type) {
+        if !character.hidden {
+            if let Some(texture) = self.textures.get(&character.movement) {
                 let (x, width) = current_texture(character);
                 let params = if character.position.direction == Direction::Right {
                     position(SCREEN_X + width / 2.0, SCREEN_Y).scale(Vec2::new(-1.0, 1.0))
@@ -114,7 +111,8 @@ impl PlayerTexture {
                         0.0,
                         width,
                         if !self.bush.in_bush
-                            || (character.moving && character.position.direction.vertical())
+                            || (character.offset.is_zero()
+                                && character.position.direction.vertical())
                         {
                             32.0
                         } else {
@@ -129,27 +127,21 @@ impl PlayerTexture {
 }
 
 fn current_texture(character: &Character) -> (f32, f32) {
+
+    const HALF_TILE_SIZE: f32 = TILE_SIZE / 2.0;
     // x, width
     let (indexes, width) = player_texture_index(character);
     (
         (*indexes
             .get(
                 (
-                    if if character.position.offset.x != 0.0 {
-                        character.position.offset.x
-                    } else {
-                        character.position.offset.y
-                    }
-                    .abs()
-                        < 8.0
-                        && character.moving
-                    {
+                    if character.offset.offset().abs() < HALF_TILE_SIZE && !character.offset.is_zero() {
                         1
                     } else {
                         0
                     }
                     //.abs() as usize >> 3
-                ) + character.sprite_index as usize,
+                ) + character.sprite as usize,
             )
             .unwrap_or(&3) as f32)
             * width,
@@ -157,29 +149,29 @@ fn current_texture(character: &Character) -> (f32, f32) {
     )
 }
 
-pub const fn player_texture_index(character: &Character) -> ([u8; 4], f32) {
-    match character.move_type {
-        MoveType::Walking => (
+pub const fn player_texture_index(character: &Character) -> (&[u8; 4], f32) {
+    match character.movement {
+        Movement::Walking => (
             match character.position.direction {
-                Direction::Up => [1, 5, 1, 6],
-                Direction::Down => [0, 3, 0, 4],
-                _ => [2, 7, 2, 8],
+                Direction::Up => &[1, 5, 1, 6],
+                Direction::Down => &[0, 3, 0, 4],
+                _ => &[2, 7, 2, 8],
             },
             16.0,
         ),
-        MoveType::Running => (
+        Movement::Running => (
             match character.position.direction {
-                Direction::Up => [6, 7, 6, 8],
-                Direction::Down => [3, 4, 3, 5],
-                _ => [9, 10, 9, 11],
+                Direction::Up => &[6, 7, 6, 8],
+                Direction::Down => &[3, 4, 3, 5],
+                _ => &[9, 10, 9, 11],
             },
             16.0,
         ),
-        MoveType::Swimming => (
+        Movement::Swimming => (
             match character.position.direction {
-                Direction::Up => [2, 2, 3, 3],
-                Direction::Down => [0, 0, 1, 1],
-                _ => [4, 4, 5, 5],
+                Direction::Up => &[2, 2, 3, 3],
+                Direction::Down => &[0, 0, 1, 1],
+                _ => &[4, 4, 5, 5],
             },
             32.0,
         ),

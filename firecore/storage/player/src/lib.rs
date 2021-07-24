@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use storage::error::DataError;
 use worldlib::{
     character::Character,
-    positions::{Coordinate, Direction, Location, LocationId, PixelOffset, Position},
+    positions::{Coordinate, Direction, Location, LocationId, Position},
 };
 
 use world::WorldStatus;
@@ -119,17 +119,13 @@ pub const fn default_location() -> Location {
 }
 
 pub fn default_character() -> Character {
-    Character {
-        position: default_position(),
-        ..Default::default()
-    }
+    Character::new(default_position())
 }
 
 pub const fn default_position() -> Position {
     Position {
         coords: Coordinate { x: 6, y: 6 },
         direction: Direction::Down,
-        offset: PixelOffset::ZERO,
     }
 }
 

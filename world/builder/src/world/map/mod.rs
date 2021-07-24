@@ -1,24 +1,21 @@
 use std::path::Path;
 use worldlib::{
     map::{
-        manager::{Maps, WorldMapManager, WorldMapManagerData},
+        manager::{Maps, WorldMapManager},
         WorldMap,
     },
-    serialized::SerializedTextures,
     positions::{Location, LocationId},
+    serialized::SerializedTextures,
 };
 
 use crate::gba_map::get_gba_map;
-use crate::world::{
-    // constants::get_constants, 
-    textures::get_textures
-};
+use crate::world::textures::get_textures;
 
 use super::MapConfig;
 
 pub mod list;
 
-pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures, worldlib::serialized::MapGuiLocs) {
+pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
     let maps_path = root_path.join("maps");
     let textures_path = root_path.join("textures");
 
@@ -32,11 +29,16 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures, worl
     );
 
     let mut maps = Maps::default();
-    let mut map_gui_locs = worldlib::serialized::MapGuiLocs::new();
+    // let mut map_gui_locs = worldlib::serialized::MapGuiLocs::new();
 
     println!("Loading maps...");
 
-    for worlds in std::fs::read_dir(&maps_path).unwrap_or_else(|err| panic!("Could not read directory at {:?} with error {}", maps_path, err)) {
+    for worlds in std::fs::read_dir(&maps_path).unwrap_or_else(|err| {
+        panic!(
+            "Could not read directory at {:?} with error {}",
+            maps_path, err
+        )
+    }) {
         let worlds = worlds
             .unwrap_or_else(|err| {
                 panic!(
@@ -51,12 +53,12 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures, worl
                     let file = entry.path();
                     if let Some(ext) = file.extension() {
                         if ext == std::ffi::OsString::from("ron") {
-                            let (map, map_gui_loc) = load_map(&worlds, &file);
+                            let map = load_map(&worlds, &file);
                             let map = map.into_iter().map(|map| (map.id, map));
                             maps.extend(map);
-                            if let Some(map_gui_loc) = map_gui_loc {
-                                map_gui_locs.insert(map_gui_loc.0, (map_gui_loc.1, map_gui_loc.2));
-                            }
+                            // if let Some(map_gui_loc) = map_gui_loc {
+                            //     map_gui_locs.insert(map_gui_loc.0, (map_gui_loc.1, map_gui_loc.2));
+                            // }
                         }
                     }
                 }
@@ -66,18 +68,18 @@ pub fn load_maps(root_path: &Path) -> (WorldMapManager, SerializedTextures, worl
 
     println!("Finished loading maps!");
 
-    let manager = WorldMapManager {
-        maps,
-        data: WorldMapManagerData::default()
-    };
-
-    (manager, textures, map_gui_locs)
+    (maps.into(), textures)
 }
 
-pub(crate) type MapGuiPos = Option<(worldlib::map::MapIcon, String, Location)>;
+// pub(crate) type MapGuiPos = Option<(worldlib::map::MapIcon, String, Location)>;
 
-fn load_map(root_path: &Path, file: &Path) -> (Vec<WorldMap>, MapGuiPos) {
+fn load_map(root_path: &Path, file: &Path) -> Vec<WorldMap> {
     println!("Loading map under: {:?}", root_path);
+
+    let extension = file
+        .extension()
+        .map(|str| str.to_str().unwrap_or_else(|| panic!("Could not read file extension of file at {:?}", file)))
+        .unwrap_or_else(|| panic!("Error: could not get file extension for file at {:?}", file));
 
     let data = std::fs::read_to_string(file).unwrap_or_else(|err| {
         panic!(
@@ -86,30 +88,53 @@ fn load_map(root_path: &Path, file: &Path) -> (Vec<WorldMap>, MapGuiPos) {
         )
     });
 
-    match ron::from_str(&data) {
-        Ok(config) => load_map_from_config(root_path, config, None),
-        Err(chunk_err) => match ron::from_str(&data) {
-            Ok(list) => list::load_map_list(root_path, list),
-            Err(set_err) => {
-                panic!(
-                    "Map config at {:?} does not contain either a MapConfig or a map list. 
-                        MapConfig error: {}, 
-                        Map list error: {}\n",
-                    &root_path, chunk_err, set_err
-                );
-            }
+    match extension {
+        "ron" => match ron::from_str(&data) {
+            Ok(config) => load_map_from_config(root_path, config, None),
+            Err(chunk_err) => match ron::from_str(&data) {
+                Ok(list) => list::load_map_list(root_path, list),
+                Err(set_err) => {
+                    panic!(
+                        "Map config at {:?} does not contain either a MapConfig or a map list. 
+                            MapConfig error: {}, 
+                            Map list error: {}\n",
+                        &root_path, chunk_err, set_err
+                    );
+                }
+            },
+        }
+        "toml" => match toml::from_str(&data) {
+            Ok(config) => load_map_from_config(root_path, config, None),
+            Err(chunk_err) => match toml::from_str(&data) {
+                Ok(list) => list::load_map_list(root_path, list),
+                Err(set_err) => {
+                    panic!(
+                        "Map config at {:?} does not contain either a MapConfig or a map list. 
+                            MapConfig error: {}, 
+                            Map list error: {}\n",
+                        &root_path, chunk_err, set_err
+                    );
+                }
+            },
         },
+        unknown => panic!("Could not read unknown map config/map list with extension {}. File at {:?}", unknown, file),
     }
+
+    
 }
 
-pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map: Option<LocationId>) -> (Vec<WorldMap>, MapGuiPos) {
+pub fn load_map_from_config<P: AsRef<Path>>(
+    root_path: P,
+    config: MapConfig,
+    map: Option<LocationId>,
+) -> Vec<WorldMap> {
     println!("    Loading map named {}", config.name);
 
     let root_path = root_path.as_ref();
 
     let loc = Location::new(map, config.identifier);
 
-    let map_gui_pos = config.chunk.as_ref().map(|chunk| chunk.map_icon.map(|i| (i, config.name.clone(), loc))).flatten();
+    // let map_gui_pos = config.chunk.as_ref().map(|chunk| chunk.map_icon.map(|i| (i, config.name.clone(), loc))).flatten();
 
     let gba_map = get_gba_map(
         std::fs::read(root_path.join(config.file)).unwrap_or_else(|err| {
@@ -120,37 +145,29 @@ pub fn load_map_from_config<P: AsRef<Path>>(root_path: P, config: MapConfig, map
         }),
     );
 
-    (
-        vec![WorldMap {
-            id: loc,
+    vec![WorldMap {
+        id: loc,
 
-            name: config.name,
-            music: gba_map.music,
+        name: config.name,
+        music: gba_map.music,
 
-            width: gba_map.width,
-            height: gba_map.height,
+        width: gba_map.width,
+        height: gba_map.height,
 
-            palettes: gba_map.palettes,
+        palettes: gba_map.palettes,
 
-            tiles: gba_map.tiles,
-            movements: gba_map.movements,
+        tiles: gba_map.tiles,
+        movements: gba_map.movements,
 
-            border: gba_map.borders,
+        border: gba_map.borders,
 
-            chunk: config.chunk.map(|chunk| chunk.into()),
+        chunk: config.chunk.map(|chunk| chunk.into()),
 
-            warps: super::warp::load_warp_entries(root_path.join("warps")),
-            wild: super::wild::load_wild_entries(root_path.join("wild")),
-            npcs: super::npc::load_npc_entries(root_path.join("npcs")),
-            scripts: super::script::load_script_entries(root_path.join("scripts")),
+        warps: super::warp::load_warp_entries(root_path.join("warps")),
+        wild: super::wild::load_wild_entries(root_path.join("wild")),
+        npcs: super::npc::load_npc_entries(root_path.join("npcs")),
+        scripts: super::script::load_script_entries(root_path.join("scripts")),
 
-            fly_position: config.settings.fly_position,
-
-            time: config.settings.time,
-
-            // mart: None,//super::mart::load_mart(root_path.join("mart.ron")),
-
-        }],
-        map_gui_pos
-    )
+        settings: config.settings,
+    }]
 }

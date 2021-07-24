@@ -1,9 +1,9 @@
 use std::fs::{read_dir, read_to_string};
 use std::path::PathBuf;
 use worldlib::map::warp::WarpEntry;
-use worldlib::map::warp::WarpMap;
+use worldlib::map::warp::Warps;
 
-pub fn load_warp_entries(warp_path: PathBuf) -> WarpMap {
+pub fn load_warp_entries(warp_path: PathBuf) -> Warps {
     read_dir(warp_path).map(|dir| {
         dir.flatten()
             .map(|dir| (dir.file_name(), dir.path()))

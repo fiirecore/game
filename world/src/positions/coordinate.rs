@@ -1,46 +1,38 @@
-use std::ops::{
-    Add, AddAssign,
-    Sub, SubAssign,
-};
+use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::positions::{Direction, Position};
 
-pub type CoordNum = i32;
+pub type CoordinateInt = i32;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct Coordinate {
-
-	pub x: CoordNum,
-	pub y: CoordNum,
-
+    pub x: CoordinateInt,
+    pub y: CoordinateInt,
 }
 
 impl Coordinate {
-
+    // pub type Integer = i32;
     pub const ZERO: Coordinate = Coordinate { x: 0, y: 0 };
 
-    pub fn new(x: CoordNum, y: CoordNum) -> Self {
-        Self {
-            x,
-            y,
-        }
+    pub fn new(x: CoordinateInt, y: CoordinateInt) -> Self {
+        Self { x, y }
     }
 
-	pub const fn towards(&self, destination: Coordinate) -> Direction {
-		if (self.x - destination.x).abs() > (self.y - destination.y).abs() {
-			if self.x > destination.x {
-				Direction::Left
-			} else {
-				Direction::Right
-			}
-		} else if self.y > destination.y {
+    pub const fn towards(&self, destination: Coordinate) -> Direction {
+        if (self.x - destination.x).abs() > (self.y - destination.y).abs() {
+            if self.x > destination.x {
+                Direction::Left
+            } else {
+                Direction::Right
+            }
+        } else if self.y > destination.y {
             Direction::Up
         } else {
             Direction::Down
         }
-	}
+    }
 
     pub fn in_direction(self, direction: Direction) -> Self {
         self + direction.tile_offset()
@@ -52,6 +44,10 @@ impl Coordinate {
             direction,
             ..Default::default()
         }
+    }
+
+    pub fn equal(&self, x: &CoordinateInt, y: &CoordinateInt) -> bool {
+        self.x.eq(x) && self.y.eq(y)
     }
 
 }

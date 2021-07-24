@@ -14,20 +14,19 @@ use worldlib::{
     TILE_SIZE,
 };
 
-use crate::world::map::manager::Door;
+use crate::world::map::warp::WarpTransition;
 
 #[derive(Default)]
 pub struct TileTextureManager {
     pub palettes: HashMap<PaletteId, Texture>,
     animated: HashMap<TileId, Texture>,
-    doors: HashMap<TileId, Texture>,
     accumulator: f32,
 }
 
 impl TileTextureManager {
     const TEXTURE_TICK: f32 = 0.25; // i think its 16/60 not 15/60
 
-    pub fn setup(&mut self, ctx: &mut Context, textures: SerializedTextures) {
+    pub fn setup(&mut self, ctx: &mut Context, warper: &mut WarpTransition, textures: SerializedTextures) {
         self.palettes = textures
             .palettes
             .into_iter()
@@ -46,11 +45,7 @@ impl TileTextureManager {
                 map.insert(loc, texture.clone());
             }
         }
-        self.doors = map;
-    }
-
-    pub fn has_door(&self, tile: &TileId) -> bool {
-        self.doors.contains_key(tile)
+        warper.doors = map;
     }
 
     pub fn update(&mut self, delta: f32) {
@@ -88,21 +83,6 @@ impl TileTextureManager {
                 Rectangle::new(tx, ty, TILE_SIZE, TILE_SIZE),
                 position(x, y).color(color),
             );
-        }
-    }
-
-    pub fn draw_door(&self, ctx: &mut Context, door: &Door, x: f32, y: f32) {
-        if let Some(texture) = self.doors.get(&door.tile) {
-            texture.draw_region(
-                ctx,
-                Rectangle::new(
-                    0.0,
-                    door.accumulator.floor() * TILE_SIZE,
-                    TILE_SIZE,
-                    TILE_SIZE,
-                ),
-                position(x, y),
-            )
         }
     }
 }

@@ -1,19 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-use crate::positions::{Coordinate, Destination, Direction, PixelOffset};
+use crate::positions::{Coordinate, Destination, Direction};
 
 #[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
 pub struct Position {
-
-	pub coords: Coordinate,
-	pub direction: Direction,
-    #[serde(skip)]
-    pub offset: PixelOffset,
-
+    pub coords: Coordinate,
+    pub direction: Direction,
 }
 
 impl Position {
-
     pub fn from_destination(&mut self, destination: Destination) {
         self.coords = destination.coords;
         if let Some(direction) = destination.direction {
@@ -26,6 +21,10 @@ impl Position {
             coords: self.coords.in_direction(direction),
             ..*self
         }
+    }
+
+    pub fn forwards(&self) -> Coordinate {
+        self.coords.in_direction(self.direction)
     }
 
 }

@@ -1,64 +1,59 @@
+use crate::positions::{Destination, Direction, Path, PixelOffset, Position};
 use serde::{Deserialize, Serialize};
-use crate::positions::{Direction, Coordinate, Position, Destination};
 
-use self::destination::DestinationPath;
-
-pub mod movement;
-pub mod destination;
 pub mod npc;
-pub mod sprite;
+// pub mod pathfind;
 pub mod player;
+pub mod sprite;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct Character {
-
     pub position: Position,
 
-    #[serde(default = "default_speed")]
-    pub speed: f32,
-
-    #[serde(skip)]
-    pub sprite_index: u8,
-
-    #[serde(skip)]
-    pub moving: bool,
+    #[serde(default)]
+    pub movement: Movement,
 
     #[serde(default)]
-    pub move_type: MoveType,
+    pub frozen: bool,
 
     #[serde(skip)]
-    pub frozen: bool,
+    pub offset: PixelOffset,
+
+    #[serde(skip)]
+    pub sprite: u8,
 
     #[serde(skip)]
     pub noclip: bool,
 
     #[serde(skip)]
-    pub destination: Option<DestinationPath>,
+    pub hidden: bool,
 
+    #[serde(skip)]
+    pub pathing: Path,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
+pub enum Movement {
+    Walking,
+    Running,
+    Swimming,
 }
 
 impl Character {
-
-    pub const fn new(position: Position) -> Self {
+    pub fn new(position: Position) -> Self {
         Self {
             position,
-            // base_speed: default_speed(),
-            speed: default_speed(),
-            sprite_index: 0,
-            moving: false,
-            move_type: default_move_type(),
-            frozen: false,
-            noclip: false,
-            destination: None,
+            ..Default::default()
         }
     }
 
+    pub fn moving(&self) -> bool {
+        !self.pathing.queue.is_empty() || !self.offset.is_zero()
+    }
+
     pub fn update_sprite(&mut self) {
-        self.sprite_index = if self.sprite_index == 0 {
-            2
-        } else {
-            0
-        }
+        self.sprite = if self.sprite == 0 { 2 } else { 0 }
     }
 
     pub fn on_try_move(&mut self, direction: Direction) {
@@ -67,8 +62,7 @@ impl Character {
     }
 
     pub fn stop_move(&mut self) {
-        self.moving = false;
-        self.position.offset.reset();
+        self.offset.reset();
         // self.reset_speed();
     }
 
@@ -83,109 +77,80 @@ impl Character {
         self.frozen = false;
     }
 
-    pub fn is_frozen(&self) -> bool {
+    pub fn frozen(&self) -> bool {
         self.frozen && !self.noclip
     }
 
-    pub fn move_to(&mut self, destination: Destination) {
-        self.destination = Some(crate::character::DestinationPath::new_path(self.position.coords, destination));
+    pub fn pathfind(&mut self, destination: Destination) {
+        self.pathing.extend(&self.position, destination);
+        // match pathfind {
+        //     true => {
+        //         if let Some(path) = pathfind::pathfind(&self.position, destination, player, world) {
+        //             self.pathing += path;
+        //         }
+        //     }
+        //     false => ,
+        // }
     }
 
-    pub fn move_to_destination(&mut self, delta: f32) -> bool {
-        if let Some(destination) = self.destination.as_mut() {
-            if destination.started {
-                if self.position.offset.update(delta * self.speed * match self.move_type {
-                    MoveType::Walking => 1.0,
-                    _ => 2.0,
-                }, &self.position.direction) {
-                    self.position.coords += self.position.direction.tile_offset();
-                    if let Some(direction) = destination.queued_movements.pop_front() {
-                        self.position.direction = direction;
-                    } else if let Some(direction) = destination.final_direction {
-                        self.destination = None;
-                        self.position.direction = direction;
-                        return true;
-                    };
-                    self.update_sprite();
+    pub fn do_move(&mut self, delta: f32) -> bool {
+        if !self.frozen() {
+            match self.offset.is_zero() {
+                true => {
+                    match self.pathing.queue.pop() {
+                        Some(direction) => {
+                            self.position.direction = direction;
+                            self.offset = direction.pixel_offset(self.speed() * 60.0 * delta);
+                        }
+                        None => {
+                            if let Some(direction) = self.pathing.turn.take() {
+                                self.position.direction = direction;
+                            }
+                        }
+                    }
+                    false
                 }
-            } else if let Some(direction) = destination.queued_movements.pop_front() {
-                self.speed = default_speed();
-                destination.started = true;
-                self.moving = true;
-                self.position.direction = direction;
-                self.move_to_destination(delta);
-            } else if destination.queued_movements.is_empty() {
-                if let Some(direction) = destination.final_direction {
-                    self.position.direction = direction;
+                false => {
+                    if self
+                        .offset
+                        .update(&self.position.direction, delta * self.speed() * 60.0)
+                    {
+                        self.position.coords += self.position.direction.tile_offset();
+                        self.update_sprite();
+                        true
+                    } else {
+                        false
+                    }
                 }
-                self.moving = false;
-                self.destination = None;
-                return true;
             }
+        } else {
+            false
         }
-        false
     }
 
     pub fn speed(&self) -> f32 {
-        self.speed * match self.move_type {
-            MoveType::Walking => 1.0,
-            _ => 2.0,
-        } * if self.noclip {
-            3.0
-        } else {
-            1.0
+        match self.movement {
+            Movement::Walking => 1.0,
+            Movement::Running | Movement::Swimming => 2.0,
         }
     }
 
-    // pub fn reset_speed(&mut self) {
-    //     self.speed = self.base_speed;
-    // }
-
-    pub fn go_to(&mut self, to: Coordinate) {
-        self.move_to(Destination::to(&self.position, to));
-    }
-
-    pub fn go_next_to(&mut self, to: Coordinate) {
-        self.move_to(Destination::next_to(&self.position, to));
-    }
-
-}
-
-impl Default for Character {
-    fn default() -> Self {
+    pub fn copy(&self) -> Self {
         Self {
-            position: Position::default(),
-            // base_speed: default_speed(),
-            speed: default_speed(),
-            sprite_index: 0,
-            moving: false,
-            move_type: MoveType::default(),
-            frozen: false,
-            noclip: false,
-            destination: None,
+            pathing: Path::default(),
+            position: self.position,
+            offset: self.offset,
+            sprite: self.sprite,
+            movement: self.movement,
+            frozen: self.frozen,
+            noclip: self.noclip,
+            hidden: self.hidden,
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
-pub enum MoveType {
-
-    Walking,
-    Running,
-    Swimming,
-
-}
-
-impl Default for MoveType {
+impl Default for Movement {
     fn default() -> Self {
-        default_move_type()
+        Movement::Walking
     }
-}
-
-const fn default_speed() -> f32 {
-    1.0
-}
-
-const fn default_move_type() -> MoveType {
-    MoveType::Walking
 }

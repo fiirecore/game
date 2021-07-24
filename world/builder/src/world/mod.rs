@@ -1,6 +1,6 @@
 use serde::Deserialize;
 use worldlib::{
-    map::WorldChunk,
+    map::{WorldChunk, WorldMapSettings},
     positions::{Coordinate, Location, LocationId},
 };
 
@@ -28,12 +28,17 @@ pub struct MapConfig {
     pub chunk: Option<SerializedChunk>,
 
     #[serde(default)]
-    pub settings: SerializedMapSettings,
+    pub settings: WorldMapSettings,
 
-    #[serde(default)]
-    pub pokemon_center: bool,
+    // #[serde(default)]
+    // pub pokemon_center: bool,
 
 }
+
+// pub enum MapType {
+//     Chunk(),
+
+// }
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -41,11 +46,10 @@ pub struct SerializedChunk {
 
     pub coords: Coordinate,
     pub connections: Vec<LocationId>,
-    #[serde(default)]
-    pub map_icon: Option<worldlib::map::MapIcon>,
+    // #[serde(default)]
+    // pub map_icon: Option<worldlib::map::MapIcon>,
 
 }
-
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SerializedMapList {
@@ -53,17 +57,6 @@ pub struct SerializedMapList {
     // #[deprecated(note = "remove")]
     pub identifier: LocationId,
     pub dirs: Vec<String>,
-
-}
-
-#[derive(Default, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct SerializedMapSettings {
-
-    #[serde(default)]
-    pub fly_position: Option<Coordinate>,
-    #[serde(default)]
-    pub time: worldlib::map::WorldTime,
 
 }
 

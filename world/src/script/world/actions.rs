@@ -1,81 +1,81 @@
-use serde::{Deserialize, Serialize};
-use crate::positions::{Direction, Destination};
-use font::message::{Message, MessagePages};
+use crate::{map::warp::WarpId, positions::{CoordinateInt, Direction, Location, Position}, script::ScriptId};
 use audio::{music::MusicName, sound::Sound};
+use font::message::{Message, MessagePages};
+use serde::{Deserialize, Serialize};
 
-use pokedex::{
-    pokemon::instance::PokemonInstance,
-    item::ItemId,
-};
+use pokedex::{item::ItemId, pokemon::instance::PokemonInstance};
 
 use crate::{
     character::npc::{Npc, NpcId},
-    map::warp::{WarpId, WarpDestination}
+    map::warp::WarpDestination,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum WorldActionKind {
-
+pub enum WorldAction {
     PlayMusic(MusicName),
     PlayMapMusic,
     PlaySound(Sound),
 
-
     PlayerFreezeInput,
     PlayerUnfreezeInput,
-    PlayerUnfreeze,
+
+    // PlayerIgnoreTiles,
 
     PlayerLook(Direction),
-    PlayerMove(Destination),
+    PlayerMove(CoordinateInt, CoordinateInt),
 
-    PlayerGivePokemon(PokemonInstance),
+    PlayerGivePokemon(PokemonInstance), //, bool),
     PlayerHealPokemon,
 
     PlayerGiveItem(ItemId),
-
 
     NpcAdd(NpcId, Box<Npc>),
     NpcRemove(NpcId),
     // NpcSpawn(NpcId),
     // NpcDespawn(NpcId),
-
     NpcLook(NpcId, Direction),
-    NpcMove(NpcId, Destination),
+    NpcMove(NpcId, CoordinateInt, CoordinateInt),
 
-    NpcLeadPlayer(NpcId, Destination),
+    NpcLeadPlayer(NpcId, CoordinateInt, CoordinateInt),
     NpcMoveToPlayer(NpcId),
 
     NpcInteract(NpcId),
     NpcSay(NpcId, MessagePages),
     NpcBattle(NpcId),
+    NpcWarp(NpcId, NpcWarp),
 
-
-    Info(String),
+    // Info(String),
     // Warn(String),
-
     Wait(f32),
+    WaitFinishWarp,
 
     DisplayText(Message),
-    
+
     Conditional {
         // #[deprecated]
         message: Message,
 
-        #[serde(default)] end_message: Option<Message>,
+        #[serde(default)]
+        end_message: Option<Message>,
         // false_next: Vec<WorldActionKind>,
         #[serde(default = "def_true")]
         unfreeze: bool,
     }, // yes or no box, no despawns the script after an optional message, and bool unfreezes player if true,
 
-    Warp(ScriptWarp), // bool: change music
-
+    Warp(PlayerWarp, bool), // bool = keep music
+    Finish(ScriptId),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum ScriptWarp {
+pub enum PlayerWarp {
     Id(WarpId),
     Dest(WarpDestination),
-    KeepMusic(WarpId),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum NpcWarp {
+    Id(WarpId),
+    Dest(Location, Position),
 }
 
 const fn def_true() -> bool {

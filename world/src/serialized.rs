@@ -9,22 +9,21 @@ use crate::{
         sprite::SpriteIndexType,
     },
     map::{
-        // TileLocation,
         manager::WorldMapManager,
         PaletteId,
         TileId,
     },
-    positions::Location,
+    // positions::Location,
 };
 
-pub type MapGuiLocs = HashMap<crate::map::MapIcon, (String, Location)>;
+// pub type MapGuiLocs = HashMap<crate::map::MapIcon, (String, Location)>;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedWorld {
     pub manager: WorldMapManager,
 
     pub npc_types: Vec<SerializedNpcType>,
-    pub map_gui_locs: MapGuiLocs,
+    // pub map_gui_locs: MapGuiLocs,
     pub textures: SerializedTextures,
 }
 

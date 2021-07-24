@@ -6,16 +6,16 @@ use engine::{
 use crate::worldlib::{
     character::Character,
     TILE_SIZE,
-    positions::{Coordinate, CoordNum},
+    positions::{Coordinate, CoordinateInt},
 };
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct RenderCoords {
 
-    pub left: CoordNum,
-    pub right: CoordNum,
-    pub top: CoordNum,
-    pub bottom: CoordNum,
+    pub left: CoordinateInt,
+    pub right: CoordinateInt,
+    pub top: CoordinateInt,
+    pub bottom: CoordinateInt,
 
     pub focus: Vec2<f32>,
 
@@ -43,7 +43,7 @@ impl RenderCoords {
             bottom: coords.y + HALF_HEIGHT_TILE,
 
             #[deprecated(note = "rounding may fix problem of black spaces between tiles while moving")]
-            focus: Vec2::new((coords.x + 1 << 4) as f32 + character.position.offset.x - HALF_WIDTH as f32, (coords.y + 1 << 4) as f32 + character.position.offset.y - HALF_HEIGHT as f32)
+            focus: Vec2::new((coords.x + 1 << 4) as f32 + character.offset.x - HALF_WIDTH as f32, (coords.y + 1 << 4) as f32 + character.offset.y - HALF_HEIGHT as f32)
             .round(),
 
             ..Default::default()

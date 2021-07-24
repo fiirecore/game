@@ -1,16 +1,17 @@
+use std::ops::{Deref, DerefMut};
+
 use crate::{
     character::{
-        npc::{trainer::TrainerDisable, NpcId},
+        npc::{trainer::TrainerDisable, Npc, NpcId},
         player::PlayerCharacter,
-        MoveType,
+        Movement,
     },
-    map::{MovementId, TileId, WarpDestination, World, WorldMap},
+    map::{can_move, can_swim, can_walk, MovementId, TileId, WarpDestination, World, WorldMap},
     positions::{Coordinate, Direction, Location},
+    script::world::WorldAction,
 };
 use deps::hash::HashMap;
 use serde::{Deserialize, Serialize};
-
-// pub mod constants;
 
 pub enum TryMoveResult {
     MapUpdate,
@@ -24,24 +25,7 @@ pub type Maps = HashMap<Location, WorldMap>;
 pub struct WorldMapManager {
     pub maps: Maps,
     #[serde(skip)]
-    pub data: WorldMapManagerData,
-}
-
-#[derive(Default)]
-pub struct WorldMapManagerData {
-    // pub constants: constants::WorldMapManagerConstants,
-
-    // #[serde(skip)]
-    pub current: Option<Location>,
-
-    // #[serde(skip)]
-    pub player: PlayerCharacter,
-
-    // #[serde(skip)]
-    pub warp: Option<WarpDestination>,
-
-    // #[serde(skip)]
-    pub battling: Option<TrainerEntry>,
+    pub data: WorldMapData,
 }
 
 pub struct TrainerEntry {
@@ -52,6 +36,7 @@ pub struct TrainerEntry {
 
 pub type TrainerEntryRef<'a> = &'a mut Option<TrainerEntry>;
 
+// To - do: check surrounding maps
 impl World for WorldMapManager {
     fn in_bounds(&self, coords: Coordinate) -> bool {
         self.get()
@@ -74,53 +59,35 @@ impl World for WorldMapManager {
 
 impl WorldMapManager {
     pub fn get(&self) -> Option<&WorldMap> {
-        self.data
-            .current
-            .as_ref()
-            .map(|id| self.maps.get(id))
-            .flatten()
+        self.location.as_ref().map(|id| self.maps.get(id)).flatten()
     }
 
-    pub fn player(&mut self) -> &mut PlayerCharacter {
-        &mut self.data.player
-    }
+    pub fn try_move(&mut self, direction: Direction) -> Option<TryMoveResult> {
 
-    pub fn try_move(&mut self, direction: Direction, delta: f32) -> Option<TryMoveResult> {
-        // return chunk update
-
-        let mut result = None;
-
-        // let mut update = false;
-
-        self.data.player.character.on_try_move(direction);
+        self.player.on_try_move(direction);
 
         let offset = direction.tile_offset();
-        let coords = self.data.player.character.position.coords + offset;
+        let coords = self.player.position.coords + offset;
 
-        let move_code = self
+        let movecode = self
             .movement(coords)
             .unwrap_or_else(|| self.walk_connections(coords).unwrap_or(1));
 
-        let warp = match self.data.warp.is_none() {
+        let warp = match self.warp.is_none() {
             true => {
                 if let Some(destination) = self.warp_at(coords) {
-                    if !destination.transition.warp_on_tile {
-                        self.data.warp = Some(*destination);
+                    let warp_on_tile = destination.transition.warp_on_tile;
+                    self.warp = Some(*destination);
+                    if !warp_on_tile {
                         return Some(TryMoveResult::MapUpdate);
                     } else {
-                        result = Some(TryMoveResult::StartWarpOnTile(
+                        return Some(TryMoveResult::StartWarpOnTile(
                             self.get()
                                 .map(|m| m.tile(coords))
                                 .flatten()
                                 .unwrap_or_default(),
                             coords,
                         ));
-
-                        self.data.player.character.update_sprite();
-
-                        // door open end
-
-                        true
                     }
                 } else {
                     false
@@ -152,37 +119,33 @@ impl WorldMapManager {
             // checks if player is inside a solid tile or outside of map, lets them move if true
             // also checks if player is on a one way tile
             if self
-                .tile(self.data.player.character.position.coords)
+                .tile(self.player.position.coords)
                 .map(one_way_tile)
                 .unwrap_or(false)
             {
                 false
             } else {
-                self.movement(self.data.player.character.position.coords)
-                    .map(|code| !can_move(self.data.player.character.move_type, code))
+                self.movement(self.player.position.coords)
+                    .map(|code| !can_move(self.player.movement, code))
                     .unwrap_or(true)
             }
         } else {
             allow
         };
 
-        if self.data.player.character.move_type == MoveType::Swimming && can_walk(move_code) {
-            self.data.player.character.move_type = MoveType::Walking
+        if self.player.movement == Movement::Swimming && can_walk(movecode) {
+            self.player.movement = Movement::Walking
         }
 
-        if can_move(self.data.player.character.move_type, move_code)
-            || allow
-            || self.data.player.character.noclip
-        {
-            let mult = self.data.player.character.speed() * 60.0 * delta;
-            self.data.player.character.position.offset = direction.pixel_offset().scale(mult);
-            self.data.player.character.moving = true;
-        } else if can_swim(move_code) && self.data.player.character.move_type != MoveType::Swimming
-        {
+        if can_move(self.player.movement, movecode) || allow || self.player.noclip {
+            self.player.pathing.queue.push(direction);
+            // self.player.offset =
+            //     direction.pixel_offset(self.player.speed() * 60.0 * delta);
+        } else if can_swim(movecode) && self.player.movement != Movement::Swimming {
             return Some(TryMoveResult::TrySwim);
         }
 
-        result
+        None
     }
 
     pub fn walk_connections(&mut self, coords: Coordinate) -> Option<MovementId> {
@@ -195,76 +158,72 @@ impl WorldMapManager {
                         if let Some(chunk) = &current.chunk {
                             if let Some(movement) = current.movement(absolute - chunk.coords) {
                                 let c = current_coords - chunk.coords;
-                                self.data.current = Some(*connection);
-                                self.data.player.character.position.coords += c;
+                                self.location = Some(*connection);
+                                self.player.position.coords += c;
                                 return Some(movement);
                             }
                         }
                     }
                 }
-                None
-                // if let Some((connection_id, connection, move_id)) = chunk.connections.iter().map(|id| self.maps.get(&Location::new(None, *id)).map(|map| map.movement(absolute).map(|move_id| (id, map, move_id)))).flatten().flatten().find(|(_, _, id)| crate::map::manager::can_move(self.player.character.move_type, *id)) {
-                //     let c = current_coords - connection.chunk.as_ref().unwrap().coords;
-                //     self.current = Some(Location::new(None, *connection_id));
-                //     self.player.character.position.coords += c;
-                //     Some(move_id)
-                // } else {
-                //     None
-                // }
-            } else {
-                None
             }
-        } else {
-            None
         }
-        // self.get().map(|map| map.chunk.as_ref().map(|chunk| {
-        //     for connection_id in &chunk.connections {
-        //         if let Some(connection) = self.maps.get(connection_id) {
-        //             let connection_coords = absolute - current_coords;
-        //             move_code = connection.movement(connection_coords);
-        //             if let Some(move_code) = move_code {
-        //                 if crate::map::manager::can_move(self.player.character.move_type, move_code) {
-        //                 }
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     move_code
-        // })).flatten().flatten()
+        None
     }
 
     pub fn warp(&mut self, destination: WarpDestination) -> bool {
         match self.maps.contains_key(&destination.location) {
             true => {
-                self.data
-                    .player
-                    .character
-                    .position
-                    .from_destination(destination.position);
-                self.data.current = Some(destination.location);
-
+                self.player.position.from_destination(destination.position);
+                self.player.pathing.clear();
+                self.location = Some(destination.location);
                 true
             }
             false => todo!(),
         }
     }
+}
 
-    pub fn do_move(&mut self, delta: f32) -> bool {
-        self.data.player.do_move(delta)
+#[derive(Default)]
+pub struct WorldMapData {
+    pub location: Option<Location>,
+    pub player: PlayerCharacter,
+    pub npc: WorldNpcData,
+    pub warp: Option<WarpDestination>,
+    pub script: WorldGlobalScriptData,
+    pub battling: Option<TrainerEntry>,
+}
+
+#[derive(Default)]
+pub struct WorldGlobalScriptData {
+    pub actions: Vec<WorldAction>,
+    pub npcs: HashMap<NpcId, (Location, Npc)>,
+}
+
+#[derive(Default)]
+pub struct WorldNpcData {
+    pub active: Option<NpcId>,
+    pub timer: f32,
+}
+
+impl From<Maps> for WorldMapManager {
+    fn from(maps: Maps) -> Self {
+        Self {
+            maps,
+            data: Default::default(),
+        }
     }
 }
 
-pub fn can_move(move_type: MoveType, code: MovementId) -> bool {
-    match move_type {
-        MoveType::Swimming => can_swim(code),
-        _ => can_walk(code),
+impl Deref for WorldMapManager {
+    type Target = WorldMapData;
+
+    fn deref(&self) -> &Self::Target {
+        &self.data
     }
 }
 
-pub fn can_walk(code: MovementId) -> bool {
-    code == 0xC
-}
-
-pub fn can_swim(code: MovementId) -> bool {
-    code == 0x4
+impl DerefMut for WorldMapManager {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.data
+    }
 }

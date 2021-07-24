@@ -96,16 +96,16 @@ pub fn trainer_battle(
 
 impl WorldManager {
     pub fn update_world(&mut self, player: &mut PlayerSave, winner: TrainerId, trainer: bool) {
-        if let Some(world) = self.map_manager.data.battling.take() {
+        if let Some(entry) = self.world.battling.take() {
             if winner == player.id {
                 if trainer {
-                    let battled = &mut player.world.get_map(&world.map).battled;
-                    match world.disable_others {
+                    let battled = &mut player.world.get_map(&entry.map).battled;
+                    match entry.disable_others {
                         TrainerDisable::DisableSelf => {
-                            battled.insert(world.id);
+                            battled.insert(entry.id);
                         }
                         TrainerDisable::Many(others) => {
-                            battled.insert(world.id);
+                            battled.insert(entry.id);
                             battled.extend(others);
                         }
                         TrainerDisable::None => (),
@@ -113,8 +113,8 @@ impl WorldManager {
                 }
             } else {
                 player.location = player.world.heal.0;
-                self.map_manager.data.player.character.position = player.world.heal.1;
-                self.map_manager.data.current = Some(player.location);
+                self.world.player.position = player.world.heal.1;
+                self.world.location = Some(player.location);
                 player.party.iter_mut().for_each(PokemonInstance::heal);
             }
         }

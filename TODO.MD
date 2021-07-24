@@ -2,7 +2,9 @@
 
 ## High Priority
 
-- [ ] Move more functions to worldlib
+- [ ] Tetra custom context support
+
+- [ ] Figure out if world updating code needs a rewrite
 
 - [X] Move animations through scripting
     - [ ] Better scripting
@@ -12,6 +14,15 @@
 - [ ] Move BattleCloser to Battle GUI module
 
 ## Medium Priority
+
+- [ ] Pokemarts and Pokemon centers are stored in their own HashMap
+- [ ] Remove Timer struct
+- [ ] World config
+- [ ] Online battles over discord rich presence
+- [ ] New world and NPC scripting language
+- [ ] New move scripting language
+- [ ] Maybe make character position a BorrowableMut
+- [ ] Maybe world manager gives out more moveresults
 
 - [ ] Town Map item
 - [ ] Persistent moves in battle

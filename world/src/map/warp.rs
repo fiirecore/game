@@ -3,7 +3,7 @@ use deps::{hash::HashMap, str::TinyStr16};
 use serde::{Deserialize, Serialize};
 
 pub type WarpId = TinyStr16;
-pub type WarpMap = HashMap<WarpId, WarpEntry>;
+pub type Warps = HashMap<WarpId, WarpEntry>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

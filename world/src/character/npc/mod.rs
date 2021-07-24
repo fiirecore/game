@@ -1,9 +1,8 @@
 use crate::positions::Coordinate;
 use serde::{Deserialize, Serialize};
-use deps::str::{TinyStr8, TinyStr16};
+use deps::{hash::HashMap, str::{TinyStr8, TinyStr16}};
 
 use super::Character;
-use super::movement::MovementType;
 use self::trainer::Trainer;
 
 mod interact;
@@ -14,6 +13,7 @@ pub mod npc_type;
 pub mod trainer;
 
 pub type NpcId = TinyStr8;
+pub type Npcs = HashMap<NpcId, Npc>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -27,7 +27,7 @@ pub struct Npc {
     pub character: Character,
 
     #[serde(default)]
-    pub movement: MovementType,
+    pub movement: NpcMovement,
     #[serde(skip, default)]
     pub origin: Option<Coordinate>,
 
@@ -38,18 +38,15 @@ pub struct Npc {
 
 }
 
-// impl Npc {
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub enum NpcMovement {
+    Still,
+    LookAround,
+    WalkUpAndDown(u8),
+}
 
-//     pub fn default_npc() -> Self {
-//         Self {
-//             name: "Default".to_string(),
-//             type_id: "default".parse().unwrap(),
-//             character: Default::default(),
-//             movement: Default::default(),
-//             origin: None,
-//             interact: Default::default(),
-//             trainer: None,
-//         }
-//     }
-
-// }
+impl Default for NpcMovement {
+    fn default() -> Self {
+        Self::Still
+    }
+}

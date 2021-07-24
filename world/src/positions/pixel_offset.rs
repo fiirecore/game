@@ -4,23 +4,22 @@ use serde::{Deserialize, Serialize};
 
 use crate::{positions::Direction, TILE_SIZE};
 
+type OffsetNum = f32;
 #[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
 pub struct PixelOffset {
-	pub x: f32,
-	pub y: f32,
+	pub x: OffsetNum,
+	pub y: OffsetNum,
 }
 
 impl PixelOffset {
-
-    pub const ZERO: Self = Self { x: 0.0, y: 0.0 };
 
     pub fn is_zero(&self) -> bool {
         self.x == 0.0 && self.y == 0.0
     }
 
-    pub fn update(&mut self, delta: f32, direction: &Direction) -> bool {
-        let offsets = direction.pixel_offset();
-        self.add_assign(offsets.scale(60.0 * delta));
+    pub fn update(&mut self, direction: &Direction, increment: OffsetNum) -> bool {
+        let offsets = direction.pixel_offset(increment);
+        self.add_assign(offsets);
         if self.y.abs() >= TILE_SIZE {
             self.y = 0.0;
             true
@@ -32,16 +31,17 @@ impl PixelOffset {
         }
     }
 
-    pub fn scale(self, scale: f32) -> Self {
-        Self {
-            x: self.x * scale,
-            y: self.y * scale,
-        }
-    }
-
     pub fn reset(&mut self) {
         self.x = 0.0;
         self.y = 0.0;
+    }
+
+    pub fn offset(&self) -> OffsetNum {
+        if self.x != 0.0 {
+            self.x
+        } else {
+            self.y
+        }
     }
 
 }

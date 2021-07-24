@@ -27,14 +27,3 @@ pub fn set_debug(debug: bool) {
 pub fn is_debug() -> bool {
     DEBUG.load(Relaxed)
 }
-
-pub fn keybind(direction: worldlib::positions::Direction) -> engine::input::Control {
-    use engine::input::Control;
-    use worldlib::positions::Direction;
-    match direction {
-        Direction::Up => Control::Up,
-        Direction::Down => Control::Down,
-        Direction::Left => Control::Left,
-        Direction::Right => Control::Right,
-    }
-}

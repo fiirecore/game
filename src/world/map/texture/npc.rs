@@ -28,10 +28,10 @@ impl NpcTextureManager {
 
     pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x
-            + npc.character.position.offset.x;
+            + npc.character.offset.x;
         let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32
             - screen.focus.y
-            + npc.character.position.offset.y;
+            + npc.character.offset.y;
 
         if let Some(texture) = self.npcs.get(&npc.type_id) {
             let params = if npc.character.position.direction == Direction::Right {
@@ -51,14 +51,7 @@ impl NpcTextureManager {
 }
 
 pub fn current_texture_pos(npc: &Npc) -> f32 {
-    let index = (if npc.character.position.offset.x != 0.0 {
-        npc.character.position.offset.x
-    } else {
-        npc.character.position.offset.y
-    }
-    .abs() as usize
-        >> 3)
-        + npc.character.sprite_index as usize;
+    let index = (npc.character.offset.offset().abs() as usize >> 3) + npc.character.sprite as usize;
 
     let npc_type = npc_type(&npc.type_id);
 

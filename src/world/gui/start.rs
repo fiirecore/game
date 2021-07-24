@@ -25,6 +25,7 @@ pub struct StartMenu {
     cursor: usize,
     party: Rc<PartyGui>,
     bag: Rc<BagGui>,
+    // world_map: WorldMapGui,
 }
 
 impl StartMenu {
