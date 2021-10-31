@@ -58,12 +58,10 @@ impl Character {
 
     pub fn on_try_move(&mut self, direction: Direction) {
         self.position.direction = direction;
-        // self.update_sprite();
     }
 
     pub fn stop_move(&mut self) {
         self.offset.reset();
-        // self.reset_speed();
     }
 
     pub fn freeze(&mut self) {

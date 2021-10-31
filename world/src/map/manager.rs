@@ -10,7 +10,7 @@ use crate::{
     positions::{Coordinate, Direction, Location},
     script::world::WorldAction,
 };
-use deps::hash::HashMap;
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
 pub enum TryMoveResult {
@@ -190,6 +190,7 @@ pub struct WorldMapData {
     pub npc: WorldNpcData,
     pub warp: Option<WarpDestination>,
     pub script: WorldGlobalScriptData,
+    pub wild: WorldGlobalWildData,
     pub battling: Option<TrainerEntry>,
 }
 
@@ -203,6 +204,18 @@ pub struct WorldGlobalScriptData {
 pub struct WorldNpcData {
     pub active: Option<NpcId>,
     pub timer: f32,
+}
+
+pub struct WorldGlobalWildData {
+    pub encounters: bool,
+}
+
+impl Default for WorldGlobalWildData {
+    fn default() -> Self {
+        Self {
+            encounters: true,
+        }
+    }
 }
 
 impl From<Maps> for WorldMapManager {

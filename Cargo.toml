@@ -17,8 +17,9 @@ default = ["audio"]
 audio = [
     "firecore-engine/audio",
     "firecore-audio-builder",
-    "firecore-pokedex-client/audio",
-    "firecore-battle-gui/audio"
+    "firecore-pokedex-engine/audio",
+    "firecore-battle-gui/audio",
+    "firecore-pokedex-engine-builder/audio"
 ]
 discord = ["discord-rich-presence"]
 
@@ -31,52 +32,58 @@ panic = "abort"
 codegen-units = 1
 lto = true
 panic = "abort"
-opt-level = 3 # z = Optimize for size
+opt-level = 3     # z = Optimize for size
 
 [dependencies]
 
-firecore-engine = { git="https://github.com/DoNotDoughnut/firecore-engine" }
-firecore-dependencies = { git="https://github.com/DoNotDoughnut/firecore-dependencies", features=["hash", "vec", "str", "ser"] }
+firecore-engine = { path = "../firecore/engine/" }
 
-firecore-pokedex-client = { git="https://github.com/DoNotDoughnut/firecore-pokedex-client", default-features = false }
+firecore-pokedex-engine = { path = "../firecore/engine/crates/pokedex-engine", default-features = false }
 
-simple_logger = { version="1" }
+simple_logger = { version = "1" }
 
-serde = { version="1.0", features=["derive"] }
-
-### Audio
-
-parking_lot = { version="0.11", optional=true }
+serde = { version = "1.0", features = ["derive"] }
 
 ### Storage
 
-firecore-storage = { path="firecore/storage" }
-firecore-saves = { path="firecore/storage/player" }
+firecore-storage = { path = "firecore/storage" }
+firecore-saves = { path = "firecore/storage/player" }
 
 ### World
 
-firecore-world = { path="world" }
+firecore-world = { path = "world" }
+hashbrown = "0.11"
 
 ### Battle
 
-firecore-battle = { git="https://github.com/DoNotDoughnut/firecore-battle", features=["ai"] }
-firecore-battle-gui = { git="https://github.com/DoNotDoughnut/firecore-battle-gui", default-features = false }
+firecore-battle = { git = "https://github.com/fiirecore/battle", features = [
+    "ai",
+    "host",
+    "default_engine_scripting",
+] }
+firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
 ### Other
 
+rand = { version = "0.8", features = ["small_rng"] }
 log = "0.4"
 pico-args = "0.4"
+bincode = "1.3"
 
-discord-rich-presence = { version="0.1", optional=true }
+discord-rich-presence = { version = "0.1", optional = true }
 
 ### Build dependencies
 
 [build-dependencies]
 
-firecore-pokedex-builder = { git="https://github.com/DoNotDoughnut/firecore-pokedex-builder" }
-firecore-world-builder = { path="world/builder" }
-firecore-font-builder = { git="https://github.com/DoNotDoughnut/firecore-font-builder" }
-firecore-audio-builder = { git="https://github.com/DoNotDoughnut/firecore-audio-builder", optional=true }
+firecore-pokedex-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-builder" }
+firecore-pokedex-engine-builder = { path = "../firecore/builder-pokedex-engine", default-features = false }
+firecore-battle-builder = { git = "https://github.com/DoNotDoughnut/firecore-battle-builder", rev = "57708e0" }
+firecore-world-builder = { path = "world/builder" }
+firecore-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-builder" }
+firecore-audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-audio-builder", optional = true }
+
+bincode = "1.3"
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"

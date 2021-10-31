@@ -6,8 +6,7 @@ use engine::{
     graphics::byte_texture,
 };
 
-use 
-deps::hash::HashMap;
+use hashbrown::HashMap;
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum GuiTexture {

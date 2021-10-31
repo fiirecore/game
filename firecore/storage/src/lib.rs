@@ -27,10 +27,6 @@ pub trait PersistantData: Serialize + DeserializeOwned + Default {
     }
 }
 
-pub trait Reloadable: PersistantData {
-    fn on_reload(&self);
-}
-
 pub fn try_load<D: PersistantData + Sized>(local: bool) -> Result<D, DataError> {
     let path = D::path();
     let dir = crate::directory(local)?;
@@ -66,12 +62,6 @@ pub fn save<D: Serialize + DeserializeOwned + Default, P: AsRef<Path>>(
 
     std::fs::write(&path, string.as_bytes())?;
 
-    Ok(())
-}
-
-pub fn reload<D: Reloadable + Sized>(data: &mut D, local: bool) -> Result<(), DataError> {
-    *data = try_load::<D>(local)?;
-    data.on_reload();
     Ok(())
 }
 

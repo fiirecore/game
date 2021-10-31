@@ -1,5 +1,4 @@
 use audio::music::MusicId;
-use deps::vec::ArrayVec;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -68,7 +67,7 @@ pub struct WorldMap {
 
 }
 
-pub type ChunkConnections = ArrayVec<[Location; 6]>;
+pub type ChunkConnections = Vec<Location>;
 
 #[derive(Serialize, Deserialize)]
 pub struct WorldChunk {

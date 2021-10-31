@@ -1,14 +1,16 @@
 use crate::positions::Coordinate;
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
-use deps::{hash::HashMap, str::{TinyStr8, TinyStr16}};
+use tinystr::TinyStr8;
 
-use super::Character;
 use self::trainer::Trainer;
+use super::Character;
 
 mod interact;
 pub use interact::*;
 
-pub mod npc_type;
+mod npc_type;
+pub use npc_type::*;
 
 pub mod trainer;
 
@@ -18,12 +20,11 @@ pub type Npcs = HashMap<NpcId, Npc>;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Npc {
-
     pub name: String,
 
     #[serde(rename = "type")]
-    pub type_id: TinyStr16,
-    
+    pub type_id: NpcTypeId,
+
     pub character: Character,
 
     #[serde(default)]
@@ -35,7 +36,6 @@ pub struct Npc {
     pub interact: NpcInteract,
 
     pub trainer: Option<Trainer>,
-
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]

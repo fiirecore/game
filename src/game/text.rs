@@ -1,10 +1,10 @@
 pub use engine::text::*;
-use crate::game::storage::player::PlayerSave;
+use saves::PlayerData;
 
 const PLAYER_ID: &str = "%p";
 const RIVAL_ID: &str = "%r";
 
-pub fn process_messages(pages: &mut MessagePages, save: &PlayerSave) {
+pub fn process_messages(pages: &mut MessagePages, save: &PlayerData) {
     for page in pages {
         for lines in page.lines.iter_mut() {
             process_string(lines, save);
@@ -12,7 +12,7 @@ pub fn process_messages(pages: &mut MessagePages, save: &PlayerSave) {
     }
 }
 
-pub fn process_string(string: &mut String, save: &PlayerSave) {
+pub fn process_string(string: &mut String, save: &PlayerData) {
     if string.contains(PLAYER_ID) {
         *string = string.replace("%p", player_name(save));
     }
@@ -21,7 +21,7 @@ pub fn process_string(string: &mut String, save: &PlayerSave) {
     }
 }
 
-pub fn player_name(player_save: &PlayerSave) -> &str {
+pub fn player_name<'d>(player_save: &'d PlayerData) -> &'d str {
     &player_save.name
 }
 

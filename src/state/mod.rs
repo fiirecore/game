@@ -1,41 +1,40 @@
-use engine::tetra::{State, Context};
+use engine::tetra::State;
+
+use crate::GameContext;
 
 mod manager;
 pub use manager::*;
 
-pub mod menu;
 pub mod game;
+pub mod menu;
 
 // pub mod loading;
 
-#[deprecated]
-pub trait NewState {
-    fn new(ctx: &mut Context) -> Self where Self: Sized;
+pub trait MainState<'d>: State<GameContext<'d>> {
+    fn action(&mut self) -> Option<Action>;
 }
 
-pub trait MainState: State {
-    
-    // #[deprecated(note = "fix so usable with other enums")]
-    fn next(&mut self) -> Option<MainStates>;
-    
+pub enum Action {
+    Goto(MainStates),
+    Seed(u64),
 }
 
 // #[derive(Clone, Copy)]
 pub enum MainStates {
-
-	// Loading,
-	Menu,
-	Game,
-
+    // Loading,
+    Menu,
+    Game,
 }
 
 impl Default for MainStates {
     fn default() -> Self {
-        #[cfg(not(debug_assertions))] {
-            Self::Menu
-        }
-        #[cfg(debug_assertions)] {
+        // #[cfg(not(debug_assertions))]
+        // {
+        //     Self::Menu
+        // }
+        // #[cfg(debug_assertions)]
+        // {
             Self::Game
-        }
+        // }
     }
 }

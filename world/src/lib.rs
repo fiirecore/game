@@ -1,6 +1,5 @@
-extern crate firecore_dependencies as deps;
 extern crate firecore_pokedex as pokedex;
-extern crate firecore_font as font;
+extern crate firecore_text as text;
 extern crate firecore_audio as audio;
 
 pub mod positions;
@@ -15,3 +14,5 @@ pub const TILE_SIZE: f32 = 16.0;
 pub(crate) const fn default_true() -> bool {
     true
 }
+
+pub type TrainerId = tinystr::TinyStr16;

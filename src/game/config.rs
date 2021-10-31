@@ -1,10 +1,8 @@
-use super::storage::{PersistantData, Reloadable};
+use storage::PersistantData;
 use serde::{Deserialize, Serialize};
 
-use engine::input::keyboard::{KeyMap, default_key_map, load};
-use log::info;
-
-pub static mut CONFIGURATION: Option<Configuration> = None;
+use engine::{input::keyboard::{KeyMap, default_key_map}, tetra::Result, EngineContext};
+use firecore_storage::try_load;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Configuration {
@@ -14,6 +12,20 @@ pub struct Configuration {
 
 	#[serde(default)]
 	pub touchscreen: bool,
+
+}
+
+impl Configuration {
+
+	pub fn load(engine: &mut EngineContext, save_locally: bool) -> Result<Self> {
+		let config = try_load::<Self>(save_locally)
+        .unwrap_or_else(|err| panic!("Could not read configuration with error {}", err));
+
+		engine.controls.keyboard = config.controls.clone();
+		// engine.controls.controller = config.controls.controller.clone();
+
+		Ok(config)
+	}
 
 }
 
@@ -29,14 +41,5 @@ impl Default for Configuration {
 impl PersistantData for Configuration {
     fn path() -> &'static str {
         "config"
-    }
-}
-
-impl Reloadable for Configuration {
-    fn on_reload(&self) {
-        info!("Running configuration reload tasks...");
-        load(self.controls.clone());
-        // input::touchscreen::touchscreen(self.touchscreen);
-        info!("Finished configuration reload tasks!");
     }
 }

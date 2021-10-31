@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
-use deps::{
-    str::TinyStr8,
-    hash::HashSet,
-};
+use tinystr::TinyStr8;
+use hashbrown::HashSet;
 
-#[derive(Debug, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct MapData {
 
     #[serde(default)]

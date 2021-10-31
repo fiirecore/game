@@ -1,5 +1,8 @@
-use deps::hash::HashMap;
-use worldlib::{map::{TileId, World, manager::WorldMapManager}, positions::Coordinate};
+use hashbrown::HashMap;
+use worldlib::{
+    map::{manager::WorldMapManager, TileId, World},
+    positions::Coordinate,
+};
 
 use crate::{
     engine::{
@@ -9,6 +12,7 @@ use crate::{
             Context,
         },
         util::{Entity, Reset, HEIGHT, WIDTH},
+        EngineContext,
     },
     world::RenderCoords,
 };
@@ -104,7 +108,9 @@ impl WarpTransition {
                             if door.accumulator >= Door::DOOR_MAX {
                                 door.accumulator = Door::DOOR_MAX;
                                 //door fully open
-                                if !self.warped || self.warp.as_ref().map(|d| d.1).unwrap_or_default() {
+                                if !self.warped
+                                    || self.warp.as_ref().map(|d| d.1).unwrap_or_default()
+                                {
                                     // world.try_move(world.player.position.direction, delta);
                                     let direction = world.player.position.direction;
                                     world.player.pathing.queue.push(direction);
@@ -127,7 +133,10 @@ impl WarpTransition {
                                 world.player.hidden = destination.transition.move_on_exit;
                                 let change_music = destination.transition.change_music;
                                 world.warp(destination);
-                                self.warp = Some((destination.position.coords, destination.transition.move_on_exit));
+                                self.warp = Some((
+                                    destination.position.coords,
+                                    destination.transition.move_on_exit,
+                                ));
                                 self.warped = true;
                                 return Some(change_music);
                             }
@@ -149,25 +158,25 @@ impl WarpTransition {
                         //     }
                         // }
                     }
-                }
+                },
             },
         }
         None
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut EngineContext) {
         if self.alive {
             draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.color);
             // if self.switch {
-                // draw_rectangle(ctx, 0.0, 0.0, self.rect_width, HEIGHT, Color::BLACK);
-                // draw_rectangle(
-                //     ctx,
-                //     WIDTH - self.rect_width,
-                //     0.0,
-                //     self.rect_width,
-                //     HEIGHT,
-                //     Color::BLACK,
-                // );
+            // draw_rectangle(ctx, 0.0, 0.0, self.rect_width, HEIGHT, Color::BLACK);
+            // draw_rectangle(
+            //     ctx,
+            //     WIDTH - self.rect_width,
+            //     0.0,
+            //     self.rect_width,
+            //     HEIGHT,
+            //     Color::BLACK,
+            // );
             // }
         }
     }

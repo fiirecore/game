@@ -1,35 +1,32 @@
+use pokedex::pokemon::{party::Party, owned::SavedPokemon};
+use hashbrown::HashSet;
 use serde::{Deserialize, Serialize};
-use deps::{
-    hash::HashSet,
-    str::TinyStr8,
-};
-use firecore_pokedex::pokemon::party::PokemonParty;
+use tinystr::TinyStr8;
 
-use crate::default_true;
 use super::NpcId;
+use crate::default_true;
 
 type MessageSet = Vec<Vec<String>>;
+pub type TransitionId = TinyStr8;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Trainer {
-
     #[serde(default = "default_true")]
     pub battle_on_interact: bool,
     pub tracking: Option<u8>,
     pub encounter_message: MessageSet,
 
     #[serde(default = "default_battle_transition")]
-    pub battle_transition: TinyStr8,
+    pub battle_transition: TransitionId,
 
-    pub party: PokemonParty,
+    pub party: Party<SavedPokemon>,
 
     #[serde(default)]
     pub victory_message: MessageSet,
     #[serde(default)]
     pub disable: TrainerDisable,
     pub worth: u16,
-
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -46,6 +43,6 @@ impl Default for TrainerDisable {
     }
 }
 
-fn default_battle_transition() -> TinyStr8 {
+fn default_battle_transition() -> TransitionId {
     "default".parse().unwrap()
 }

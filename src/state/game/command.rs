@@ -4,12 +4,12 @@ use crate::{
     engine::{
         tetra::{
             input::{self, Key},
-            Context,
             graphics::Color,
         },
         util::{Entity, Reset, HEIGHT},
         graphics,
         text::TextColor,
+        EngineContext,
     },
     game::is_debug,
 };
@@ -38,7 +38,7 @@ pub struct Console {
 impl Console {
     const MAX_COMMANDS: usize = 10;
 
-    pub fn update(&mut self, ctx: &Context) -> Option<CommandResult> {
+    pub fn update(&mut self, ctx: &EngineContext) -> Option<CommandResult> {
         match self.alive {
             true => {
                 if self.commands.is_empty() {
@@ -104,7 +104,7 @@ impl Console {
         None
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut EngineContext) {
         if self.alive {
             if let Some(command) = self.commands.get(self.position) {
                 const Y: f32 = HEIGHT - 30.0;
@@ -112,7 +112,7 @@ impl Console {
                     ctx,
                     8.0,
                     Y,
-                    graphics::text_len(&1, command) + 10.0,
+                    graphics::text_len(ctx, &1, command) + 10.0,
                     18.0,
                     Color::BLACK,
                 );
@@ -120,7 +120,7 @@ impl Console {
                     ctx,
                     &1,
                     "/",
-                    &TextColor::White,
+                    TextColor::White,
                     10.0,
                     Y,
                 );
@@ -128,7 +128,7 @@ impl Console {
                     ctx,
                     &1,
                     command,
-                    &TextColor::White,
+                    TextColor::White,
                     16.0,
                     Y,
                 );

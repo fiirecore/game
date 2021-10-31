@@ -8,11 +8,24 @@ fn main() {
         "assets/game/pokedex/pokemon",
         "assets/game/pokedex/moves",
         "assets/game/pokedex/items",
-        "assets/game/pokedex/trainers",
-        Some("build/data/dex.bin"),
-        cfg!(feature = "audio"),
+        // ,
+        // Some("build/data/dex.bin"),
+        // cfg!(feature = "audio"),
     );
-    firecore_world_builder::compile(dex, "assets/game/world", "build/data/world.bin");
+
+    std::fs::write("build/data/dex.bin", bincode::serialize(&dex).unwrap()).unwrap();
+
+    let dex_engine = firecore_pokedex_engine_builder::compile("assets/game/pokedex/client/pokemon", "assets/game/pokedex/client/items", "assets/game/pokedex/client/trainers");
+
+    std::fs::write("build/data/dex_engine.bin", bincode::serialize(&dex_engine).unwrap()).unwrap();
+
+    firecore_world_builder::compile("assets/game/world", "build/data/world.bin");
+
+    let battle = std::path::Path::new("assets/game/pokedex/battle");
+
+    let battle = firecore_battle_builder::compile(battle, &battle.join("scripts"));
+
+    std::fs::write("build/data/battle.bin", bincode::serialize(&battle).unwrap()).unwrap();
 
     #[cfg(windows)]
     // embed_resource::compile("build/resources.rc");

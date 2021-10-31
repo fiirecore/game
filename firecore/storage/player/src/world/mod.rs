@@ -1,7 +1,5 @@
-use deps::{
-    hash::{HashMap, HashSet},
-    str::{TinyStr16, TinyStr8},
-};
+use hashbrown::{HashMap, HashSet};
+use tinystr::{TinyStr16, TinyStr8};
 use serde::{Deserialize, Serialize};
 use worldlib::positions::{Location, Position};
 
@@ -9,7 +7,7 @@ use self::map::MapData;
 
 pub mod map;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WorldStatus {
     #[serde(default)]
     pub map: HashMap<TinyStr16, MapData>, // battled trainers, map stops, etc.

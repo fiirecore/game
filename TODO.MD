@@ -15,6 +15,7 @@
 
 ## Medium Priority
 
+- [ ] Asset loader crate
 - [ ] Pokemarts and Pokemon centers are stored in their own HashMap
 - [ ] Remove Timer struct
 - [ ] World config

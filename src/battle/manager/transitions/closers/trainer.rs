@@ -1,17 +1,14 @@
-use crate::{
-    engine::{
+use pokedex::context::PokedexClientContext;
+use worldlib::TrainerId;
+
+use crate::{engine::{
         graphics::{draw_o_bottom, TextureManager},
-        gui::TextDisplay,
-        tetra::{graphics::Texture, Context},
+        gui::MessageBox,
+        tetra::graphics::Texture,
         text::MessagePage,
         util::{Completable, Entity, Reset, WIDTH},
-    },
-    game::{battle_glue::BattleTrainerEntry, storage::data},
-    pokedex::{
-        texture::TrainerTextures,
-        trainer::{TrainerData, TrainerId},
-    },
-};
+        EngineContext,
+    }, game::battle_glue::{BattleId, BattleTrainerEntry}};
 
 use crate::battle::manager::transitions::BattleCloser;
 
@@ -38,41 +35,50 @@ impl Default for TrainerBattleCloser {
 }
 
 impl BattleCloser for TrainerBattleCloser {
-    fn spawn(
+    fn spawn<'d>(
         &mut self,
-        winner: Option<&TrainerId>,
-        trainer_data: Option<&TrainerData>,
+        ctx: &PokedexClientContext<'d>,
+        player: &BattleId,
+        player_name: &str,
+        winner: Option<&BattleId>,
         trainer_entry: Option<&BattleTrainerEntry>,
-        text: &mut TextDisplay,
+        text: &mut MessageBox,
     ) {
         match winner {
-            Some(winner) => match winner == &data().id {
+            Some(winner) => match winner == player {
                 true => {
-                    if let (Some(trainer_data), Some(trainer)) = (trainer_data, trainer_entry) {
-                        self.trainer = Some(TrainerTextures::get(&trainer_data.npc_type).clone());
+                    if let Some(trainer) = trainer_entry {
 
-                        text.reset();
-                        text.clear();
+                        log::debug!("todo set trainer textures and name in intro");
 
-                        text.push(MessagePage::new(
-                            vec![
-                                String::from("Player defeated"),
-                                format!("{} {}!", trainer_data.prefix, trainer_data.name),
-                            ],
-                            None,
-                        ));
+                        // self.trainer =
+                        //     Some(ctx.trainer_textures.get(&trainer_data.npc_type).clone());
+
+                        // text.reset();
+                        // text.clear();
+
+                        // text.push(MessagePage {
+                        //     lines: vec![
+                        //         String::from("Player defeated"),
+                        //         format!("{} {}!", trainer_data.prefix, trainer_data.name),
+                        //     ],
+                        //     wait: None,
+                        // });
 
                         for message in trainer.victory_message.iter() {
-                            text.push(MessagePage::new(message.clone(), None));
+                            text.push(MessagePage {
+                                lines: message.clone(),
+                                wait: None,
+                            });
                         }
 
-                        text.push(MessagePage::new(
-                            vec![
-                                format!("{} got ${}", data().name, trainer.worth),
+                        text.push(MessagePage {
+                            lines: vec![
+                                format!("{} got ${}", player_name, trainer.worth),
                                 String::from("for winning!"),
                             ],
-                            None,
-                        ));
+                            wait: None,
+                        });
 
                         text.spawn();
                     }
@@ -87,10 +93,10 @@ impl BattleCloser for TrainerBattleCloser {
         }
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut TextDisplay) {
+    fn update(&mut self, ctx: &mut EngineContext, delta: f32, text: &mut MessageBox) {
         if text.alive() {
             text.update(ctx, delta);
-            if text.current() == 1 && self.offset > Self::XPOS {
+            if text.page() == 1 && self.offset > Self::XPOS {
                 self.offset -= 300.0 * delta;
                 if self.offset < Self::XPOS {
                     self.offset = Self::XPOS;
@@ -108,11 +114,11 @@ impl BattleCloser for TrainerBattleCloser {
         self.wild.world_active()
     }
 
-    fn draw(&self, ctx: &mut Context) {
+    fn draw(&self, ctx: &mut EngineContext) {
         self.wild.draw(ctx);
     }
 
-    fn draw_battle(&self, ctx: &mut Context) {
+    fn draw_battle(&self, ctx: &mut EngineContext) {
         draw_o_bottom(ctx, self.trainer.as_ref(), self.offset, 74.0);
     }
 }

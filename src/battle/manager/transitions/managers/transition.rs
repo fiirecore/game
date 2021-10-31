@@ -1,5 +1,5 @@
 use crate::{
-    engine::{play_music_named, tetra::Context},
+    engine::{audio::play_music_named, EngineContext},
     game::battle_glue::BattleTrainerEntry,
 };
 
@@ -21,7 +21,7 @@ pub struct BattleScreenTransitionManager {
 }
 
 impl BattleScreenTransitionManager {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut EngineContext) -> Self {
         Self {
             state: TransitionState::default(),
             current: BattleTransitions::default(),
@@ -33,7 +33,7 @@ impl BattleScreenTransitionManager {
 
     pub fn begin(
         &mut self,
-        ctx: &mut Context,
+        ctx: &mut EngineContext,
         battle_type: BattleType,
         trainer: &Option<BattleTrainerEntry>,
     ) {
@@ -50,7 +50,7 @@ impl BattleScreenTransitionManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
+    pub fn update(&mut self, ctx: &mut EngineContext, delta: f32) {
         let current = self.get_mut();
         current.update(ctx, delta);
         if current.finished() {
@@ -58,11 +58,11 @@ impl BattleScreenTransitionManager {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut EngineContext) {
         self.get().draw(ctx);
     }
 
-    fn play_music(&mut self, ctx: &mut Context, battle_type: BattleType) {
+    fn play_music(&mut self, ctx: &mut EngineContext, battle_type: BattleType) {
         match battle_type {
             BattleType::Wild => play_music_named(ctx, "BattleWild"),
             BattleType::Trainer => play_music_named(ctx, "BattleTrainer"),

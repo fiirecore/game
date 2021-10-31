@@ -1,4 +1,4 @@
-use deps::hash::HashMap;
+use hashbrown::HashMap;
 use engine::{
     graphics::{byte_texture, position},
     tetra::{

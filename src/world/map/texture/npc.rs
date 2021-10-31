@@ -3,17 +3,19 @@ use engine::{
     tetra::{
         graphics::{Rectangle, Texture},
         math::Vec2,
-        Context,
     },
+    EngineContext,
 };
-
-use deps::{hash::HashMap, str::TinyStr16};
-
-use worldlib::{character::npc::Npc, positions::Direction, TILE_SIZE};
+use hashbrown::HashMap;
+use worldlib::{
+    character::npc::{Npc, NpcTypeId},
+    positions::Direction,
+    TILE_SIZE,
+};
 
 use crate::world::{npc::npc_type, RenderCoords};
 
-pub type NpcTextures = HashMap<TinyStr16, Texture>;
+pub type NpcTextures = HashMap<NpcTypeId, Texture>;
 
 #[derive(Default)]
 pub struct NpcTextureManager {
@@ -26,7 +28,7 @@ impl NpcTextureManager {
         self.npcs = npcs;
     }
 
-    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut EngineContext, npc: &Npc, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x
             + npc.character.offset.x;
         let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32

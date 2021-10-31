@@ -1,6 +1,7 @@
 use crate::positions::{BoundingBox, Destination, Location};
-use deps::{hash::HashMap, str::TinyStr16};
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
+use tinystr::TinyStr16;
 
 pub type WarpId = TinyStr16;
 pub type Warps = HashMap<WarpId, WarpEntry>;

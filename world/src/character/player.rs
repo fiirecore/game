@@ -1,13 +1,12 @@
-// use util::Coordinate;
-
+use serde::{Deserialize, Serialize};
 use std::ops::{Deref, DerefMut};
 
 use super::Character;
 
-#[derive(Default, serde::Serialize, serde::Deserialize)]
+#[derive(Default, Serialize, Deserialize)]
 pub struct PlayerCharacter {
-	pub character: Character,
-	pub input_frozen: bool,
+    pub character: Character,
+    pub input_frozen: bool,
     pub ignore: bool,
 }
 

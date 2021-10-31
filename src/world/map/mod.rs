@@ -1,6 +1,4 @@
-use std::sync::atomic::AtomicBool;
-
-use crate::engine::tetra::{graphics::Color, Context};
+use crate::engine::{EngineContext, tetra::graphics::Color};
 
 use worldlib::map::{manager::WorldMapData, TileId, WorldMap};
 
@@ -14,13 +12,10 @@ pub mod manager;
 pub mod texture;
 pub mod warp;
 
-#[deprecated(note = "make private and use functions to access")]
-pub static WILD_ENCOUNTERS: AtomicBool = AtomicBool::new(true);
-
 pub fn draw(
     map: &WorldMap,
     world: &WorldMapData,
-    ctx: &mut Context,
+    ctx: &mut EngineContext,
     textures: &WorldTextures,
     screen: &RenderCoords,
     border: bool,

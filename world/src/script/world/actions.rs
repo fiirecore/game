@@ -1,9 +1,9 @@
 use crate::{map::warp::WarpId, positions::{CoordinateInt, Direction, Location, Position}, script::ScriptId};
 use audio::{music::MusicName, sound::Sound};
-use font::message::{Message, MessagePages};
+use text::{Message, MessagePages};
 use serde::{Deserialize, Serialize};
 
-use pokedex::{item::ItemId, pokemon::instance::PokemonInstance};
+use pokedex::{item::ItemId, pokemon::owned::SavedPokemon};
 
 use crate::{
     character::npc::{Npc, NpcId},
@@ -24,7 +24,7 @@ pub enum WorldAction {
     PlayerLook(Direction),
     PlayerMove(CoordinateInt, CoordinateInt),
 
-    PlayerGivePokemon(PokemonInstance), //, bool),
+    PlayerGivePokemon(SavedPokemon), //, bool),
     PlayerHealPokemon,
 
     PlayerGiveItem(ItemId),

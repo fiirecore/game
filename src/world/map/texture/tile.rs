@@ -5,9 +5,7 @@ use engine::{
         Context,
     },
 };
-
-use deps::hash::HashMap;
-
+use hashbrown::HashMap;
 use worldlib::{
     map::{PaletteId, TileId},
     serialized::SerializedTextures,
@@ -26,7 +24,12 @@ pub struct TileTextureManager {
 impl TileTextureManager {
     const TEXTURE_TICK: f32 = 0.25; // i think its 16/60 not 15/60
 
-    pub fn setup(&mut self, ctx: &mut Context, warper: &mut WarpTransition, textures: SerializedTextures) {
+    pub fn setup(
+        &mut self,
+        ctx: &mut Context,
+        warper: &mut WarpTransition,
+        textures: SerializedTextures,
+    ) {
         self.palettes = textures
             .palettes
             .into_iter()

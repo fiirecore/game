@@ -1,7 +1,7 @@
-pub extern crate firecore_dependencies as deps;
 pub extern crate firecore_engine as engine;
-pub extern crate firecore_pokedex_client as pokedex;
-extern crate firecore_storage;
+pub extern crate firecore_pokedex_engine as pokedex;
+extern crate firecore_storage as storage;
+extern crate firecore_saves as saves;
 
 pub mod args;
 pub mod battle;
@@ -9,15 +9,19 @@ pub mod game;
 pub mod state;
 pub mod world;
 
-use game::{init, storage};
+use std::ops::{Deref, DerefMut};
+
+use saves::PlayerSaves;
+use game::{config::Configuration, init};
 
 use engine::{
-    tetra::{time::Timestep, ContextBuilder, Result},
+    tetra::{Context, ContextBuilder, Result},
     util::{HEIGHT, WIDTH},
+    EngineContext,
 };
 
 use log::info;
-
+use pokedex::context::PokedexClientContext;
 use state::StateManager;
 
 extern crate firecore_battle as battlelib;
@@ -40,13 +44,7 @@ fn main() -> Result {
 
     #[cfg(debug_assertions)]
     if !args.contains(&Args::NoSeed) {
-        init::seed_random(
-            std::time::SystemTime::now()
-                .duration_since(std::time::SystemTime::UNIX_EPOCH)
-                .map(|dur| dur.as_secs())
-                .unwrap_or_default()
-                % 1000000,
-        )
+        // init::seed_random(engine::util::date() % 1000000)
     }
 
     #[cfg(feature = "discord")]
@@ -65,29 +63,84 @@ fn main() -> Result {
         client
     };
 
-    // Loads configuration, sets up controls
+    let mut debug = cfg!(debug_assertions);
+    let mut save_locally = false;
 
-    init::configuration()?;
+    let fonts = bincode::deserialize(include_bytes!("../build/data/fonts.bin"))
+    .unwrap_or_else(|err| panic!("Could not load font sheets with error {}", err));
+
+    let mut engine = engine::build(
+        ContextBuilder::new(
+            TITLE,
+            (WIDTH * DEFAULT_SCALE) as _,
+            (HEIGHT * DEFAULT_SCALE) as _,
+        )
+        .resizable(true)
+        .show_mouse(true),
+        fonts,
+    )?;
 
     // Save data in local directory in debug builds
-    #[cfg(debug_assertions)]
-    storage::should_save_locally(true);
+    #[cfg(debug_assertions)] {
+        save_locally = true;
+    }
 
-    ContextBuilder::new(
-        TITLE,
-        (WIDTH * DEFAULT_SCALE) as _,
-        (HEIGHT * DEFAULT_SCALE) as _,
-    )
-    .resizable(true)
-    .show_mouse(true)
-    .timestep(Timestep::Variable)
-    .build()?
-    .run(|ctx| StateManager::new(ctx, args))?;
+    // Loads configuration, sets up controls
+
+    let configuration = Configuration::load(&mut engine, save_locally)?;
+
+    // Load pokedex and movedex;
+
+    let (pokedex, movedex, itemdex) = bincode::deserialize(include_bytes!("../build/data/dex.bin"))
+        .unwrap_or_else(|err| panic!("Could not deserialize pokedex with error {}", err));
+
+    let dex_engine = bincode::deserialize(include_bytes!("../build/data/dex_engine.bin"))
+        .unwrap_or_else(|err| panic!("Could not deserialize pokedex engine data with error {}", err));
+
+    let dex = PokedexClientContext::new(&mut engine, &pokedex, &movedex, &itemdex, dex_engine)?;
+
+    let mut saves = PlayerSaves::load(save_locally).unwrap_or_else(|err| panic!("Could not load player saves with error {}", err));
+
+    saves.select_first_or_default(save_locally, &mut rand::thread_rng(), dex.pokedex, dex.movedex, dex.itemdex);
+
+    let mut ctx = GameContext {
+        engine,
+        dex,
+        configuration,
+        saves,
+        save_locally,
+        debug,
+    };
+
+    engine::tetra::run(&mut ctx, |ctx| StateManager::new(ctx, args))?;
 
     #[cfg(feature = "discord")]
     client.close().unwrap();
 
     Ok(())
+}
+
+pub struct GameContext<'d> {
+    pub engine: EngineContext,
+    pub dex: PokedexClientContext<'d>,
+    pub configuration: Configuration,
+    pub saves: PlayerSaves<'d>,
+    pub save_locally: bool,
+    pub debug: bool,
+}
+
+impl<'d> Deref for GameContext<'d> {
+    type Target = Context;
+
+    fn deref(&self) -> &Self::Target {
+        self.engine.deref()
+    }
+}
+
+impl<'d> DerefMut for GameContext<'d> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.engine.deref_mut()
+    }
 }
 
 #[derive(PartialEq)]

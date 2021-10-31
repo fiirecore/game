@@ -1,10 +1,11 @@
 use engine::{
-    play_music, play_music_named, play_sound,
-    tetra::Context,
+    audio::{play_music, play_music_named, play_sound},
     util::{Completable, Entity},
+    EngineContext,
 };
 use log::warn;
-use pokedex::{item::ItemStack, pokemon::instance::PokemonInstance};
+use pokedex::{Dex, context::PokedexClientContext, item::ItemStack, pokemon::owned::OwnedPokemon};
+use saves::PlayerData;
 use worldlib::{
     character::Movement,
     map::{manager::WorldMapData, WorldMap},
@@ -13,16 +14,15 @@ use worldlib::{
 };
 
 use crate::{
-    game::{
-        battle_glue::BattleEntryRef,
-        storage::{data, data_mut},
-    },
+    game::battle_glue::BattleEntryRef,
     world::{gui::TextWindow, map::warp::WarpTransition},
 };
 
 /// Update scripts from WorldManager
-pub(crate) fn update_script(
-    ctx: &mut Context,
+pub(crate) fn update_script<'d>(
+    ctx: &mut EngineContext,
+    dex: &PokedexClientContext<'d>,
+    save: &mut PlayerData<'d>,
     delta: f32,
     map: &mut WorldMap,
     world: &mut WorldMapData,
@@ -75,19 +75,31 @@ pub(crate) fn update_script(
                 // warn!("Waiting on player move");
             }
             WorldAction::PlayerGivePokemon(instance) => {
-                let party = &mut data_mut().party;
-                match party.is_full() {
-                    false => party.push(instance.clone()),
+                match save.party.is_full() {
+                    false => match instance.clone().init(
+                        &mut rand::thread_rng(),
+                        dex.pokedex,
+                        dex.movedex,
+                        dex.itemdex,
+                    ) {
+                        Some(p) => save.party.push(p),
+                        None => warn!("Cannot initialize given pokemon!"),
+                    },
                     true => warn!("PlayerGivePokemon command requires party space"),
                 }
                 world.script.actions.pop();
             }
             WorldAction::PlayerHealPokemon => {
-                data_mut().party.iter_mut().for_each(PokemonInstance::heal);
+                save.party.iter_mut().for_each(|o| o.heal(None, None));
                 world.script.actions.pop();
             }
             WorldAction::PlayerGiveItem(item) => {
-                data_mut().bag.add_item(ItemStack::new(item, 1));
+                match dex.itemdex.try_get(item) {
+                    Some(item) => {
+                        save.bag.add_item(ItemStack::new(item, 1));
+                    },
+                    None => warn!("Could not get item {}", item),
+                }
                 world.script.actions.pop();
             }
             WorldAction::NpcAdd(id, npc) => {
@@ -225,7 +237,7 @@ pub(crate) fn update_script(
                         false => {
                             window.text.clear();
                             let mut pages = pages.clone();
-                            crate::game::text::process_messages(&mut pages, data());
+                            crate::game::text::process_messages(&mut pages, save);
                             window.text.set(pages);
                             window
                                 .text
@@ -240,6 +252,7 @@ pub(crate) fn update_script(
             WorldAction::NpcBattle(id) => {
                 if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
                     crate::world::battle::trainer_battle(
+                        save,
                         battle,
                         &mut world.battling,
                         npc,
@@ -293,7 +306,7 @@ pub(crate) fn update_script(
                 false => {
                     window.text.clear();
                     let mut pages = message.pages.clone();
-                    crate::game::text::process_messages(&mut pages, data());
+                    crate::game::text::process_messages(&mut pages, save);
                     window.text.set(pages);
                     window.text.color(message.color);
                     window.text.spawn();
@@ -313,25 +326,26 @@ pub(crate) fn update_script(
             }
             WorldAction::Warp(warp, music) => {
                 let mut destination = match warp {
-                    PlayerWarp::Id(id) => map
-                        .warps
-                        .get(id)
-                        .unwrap_or_else(|| {
-                            log::error!(
+                    PlayerWarp::Id(id) => {
+                        map.warps
+                            .get(id)
+                            .unwrap_or_else(|| {
+                                log::error!(
                                 "Could not get warp with id {} in map {} because it doesn't exist!",
                                 id,
                                 map.name,
                             );
-                            panic!("Available warps: {:?}", map.warps.keys())
-                        })
-                        .destination,
+                                panic!("Available warps: {:?}", map.warps.keys())
+                            })
+                            .destination
+                    }
                     PlayerWarp::Dest(destination) => *destination,
                 };
                 destination.transition.change_music = *music;
                 world.warp = Some(destination);
             }
             WorldAction::Finish(id) => {
-                data_mut().world.scripts.insert(*id);
+                save.world.scripts.insert(*id);
                 world.script.actions.pop();
             }
         }
@@ -441,7 +455,7 @@ pub(crate) fn update_script(
     // }
 }
 
-use deps::hash::HashMap;
+use hashbrown::HashMap;
 use worldlib::{
     character::npc::{Npc, NpcId, Npcs},
     positions::Location,

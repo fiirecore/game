@@ -3,7 +3,7 @@ use engine::tetra::{
 	math::Vec2,
 };
 
-use crate::state::{MainState, MainStates};
+use crate::{GameContext, state::{Action, MainState, MainStates}};
 
 use super::{
 	MenuState,
@@ -17,7 +17,7 @@ use super::{
 pub struct MenuStateManager {
 
 	current: MenuStates,
-	next: Option<MainStates>,
+	action: Option<Action>,
 
 	title: TitleState,
 	main_menu: MainMenuState,
@@ -30,10 +30,10 @@ impl MenuStateManager {
 	pub fn new(ctx: &mut Context, scaler: Vec2<f32>) -> Self {
 		Self {
 			current: MenuStates::default(),
-			next: None,
+			action: Default::default(),
 			title: TitleState::new(ctx),
-			main_menu: MainMenuState::new(ctx, scaler),
-			character: CharacterCreationState::new(ctx),
+			main_menu: MainMenuState::new(scaler),
+			character: CharacterCreationState::new(),
 		}
 	}
 
@@ -45,7 +45,7 @@ impl MenuStateManager {
 	// 	}
 	// }
 
-	fn get_mut(&mut self) -> &mut dyn MenuState {
+	fn get_mut<'d>(&mut self) -> &mut dyn MenuState<'d> {
 		match self.current {
 		    MenuStates::Title => &mut self.title,
 		    MenuStates::MainMenu => &mut self.main_menu,
@@ -55,41 +55,51 @@ impl MenuStateManager {
 	
 }
 
-impl State for MenuStateManager {
+impl<'d> State<GameContext<'d>> for MenuStateManager {
 
-    fn begin(&mut self, ctx: &mut Context) -> Result {
+    fn begin(&mut self, ctx: &mut GameContext<'d>) -> Result {
 		self.get_mut().begin(ctx)
     }
 
-    fn end(&mut self, ctx: &mut Context) -> Result {
+    fn end(&mut self, ctx: &mut GameContext<'d>) -> Result {
         self.get_mut().end(ctx)
     }
 
-    fn update(&mut self, ctx: &mut Context) -> Result {
+    fn update(&mut self, ctx: &mut GameContext<'d>) -> Result {
 		self.get_mut().update(ctx)?;
 		if let Some(action) = self.get_mut().next().take() {
 			match action {
 				MenuStateAction::Goto(state) => {
-					self.get_mut().end(ctx)?;
-					self.current = state;
-					self.get_mut().begin(ctx)?;
+					self.state(ctx, state)?;
 				}
 				MenuStateAction::StartGame => {
-					self.next = Some(MainStates::Game);
+					self.action = Some(Action::Goto(MainStates::Game));
+				}
+				MenuStateAction::SeedAndGoto(seed, state) => {
+					self.state(ctx, state)?;
+					self.action = Some(Action::Seed(seed));
 				}
 			}
 		}
         Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut Context) -> Result {
+    fn draw(&mut self, ctx: &mut GameContext<'d>) -> Result {
         self.get_mut().draw(ctx)
     }
 
 }
 
-impl MainState for MenuStateManager {
-    fn next(&mut self) -> Option<MainStates> {
-        self.next.take()
+impl MenuStateManager {
+	fn state<'d>(&mut self, ctx: &mut GameContext<'d>, state: MenuStates) -> Result {
+		self.get_mut().end(ctx)?;
+		self.current = state;
+		self.get_mut().begin(ctx)
+	}
+}
+
+impl<'d> MainState<'d> for MenuStateManager {
+    fn action(&mut self) -> Option<Action> {
+        self.action.take()
     }
 }

@@ -1,23 +1,24 @@
 use log::{info, warn};
-use pokedex::item::{ItemId, ItemStack, StackSize};
+use pokedex::{Dex, context::PokedexClientContext, item::{ItemId, ItemStack, StackSize}};
+use saves::PlayerData;
 use worldlib::positions::{Location, LocationId};
 
 use crate::{
-    game::{
-        battle_glue::BattleEntryRef,
-        storage::{data, data_mut},
-    },
+    game::battle_glue::BattleEntryRef,
     state::game::command::CommandResult,
-    world::{
-        battle::{random_wild_battle, DEFAULT_RANDOM_BATTLE_SIZE},
-        map::WILD_ENCOUNTERS,
-    },
+    world::battle::{random_wild_battle, DEFAULT_RANDOM_BATTLE_SIZE},
 };
 
 use super::WorldManager;
 
 impl WorldManager {
-    pub fn process(&mut self, mut result: CommandResult, battle: BattleEntryRef) {
+    pub fn process<'d>(
+        &mut self,
+        mut result: CommandResult,
+        dex: &PokedexClientContext<'d>,
+        save: &mut PlayerData<'d>,
+        battle: BattleEntryRef,
+    ) {
         match result.command {
             "help" => {
                 info!("To - do: help list.");
@@ -27,16 +28,14 @@ impl WorldManager {
             //     self.world_map.spawn();
             // }
             "heal" => {
-                data_mut().party.iter_mut().for_each(|pokemon| {
-                    pokemon.heal();
+                save.party.iter_mut().for_each(|pokemon| {
+                    pokemon.heal(None, None);
                 });
                 info!("Healed player pokemon.");
             }
             "wild" => {
-                use std::sync::atomic::Ordering::Relaxed;
-                let wild = !WILD_ENCOUNTERS.load(Relaxed);
-                WILD_ENCOUNTERS.store(wild, Relaxed);
-                info!("Wild Encounters: {}", wild);
+                self.world.wild.encounters = !self.world.wild.encounters;
+                info!("Wild Encounters: {}", self.world.wild.encounters);
             }
             "noclip" => {
                 self.world.player.noclip = !self.world.player.noclip;
@@ -53,7 +52,7 @@ impl WorldManager {
                     "info" => match result.args.next() {
                         Some(index) => match index.parse::<usize>() {
                             Ok(index) => {
-                                if let Some(instance) = data().party.get(index) {
+                                if let Some(instance) = save.party.get(index) {
                                     info!(
                                         "Party Slot {}: Lv{} {}",
                                         index,
@@ -70,7 +69,7 @@ impl WorldManager {
                             ),
                         },
                         None => {
-                            for (slot, instance) in data().party.iter().enumerate() {
+                            for (slot, instance) in save.party.iter().enumerate() {
                                 info!(
                                     "Party Slot {}: Lv{} {}",
                                     slot,
@@ -82,19 +81,21 @@ impl WorldManager {
                     },
                     _ => (),
                 },
-                None => self.menu.spawn_party(),
+                None => self.menu.spawn_party(dex, save),
             },
             "battle" => match result.args.next() {
                 Some(arg) => match arg {
                     "random" => {
                         match result.args.next() {
                             Some(len) => match len.parse::<usize>() {
-                                Ok(size) => random_wild_battle(battle, size),
+                                Ok(size) => {
+                                    random_wild_battle(&mut self.randoms.wild, dex.pokedex.len() as _, battle, size)
+                                }
                                 Err(err) => {
                                     warn!("Could not parse battle length for second /battle argument \"{}\" with error {}", len, err);
                                 }
                             },
-                            None => random_wild_battle(battle, DEFAULT_RANDOM_BATTLE_SIZE),
+                            None => random_wild_battle(&mut self.randoms.wild, dex.pokedex.len() as _, battle, DEFAULT_RANDOM_BATTLE_SIZE),
                         };
                     }
                     _ => warn!("Unknown /battle argument \"{}\".", arg),
@@ -104,12 +105,12 @@ impl WorldManager {
             "script" => match result.args.next() {
                 Some(arg) => match arg {
                     "clear" => {
-                        data_mut().world.scripts.clear();
+                        save.world.scripts.clear();
                         info!("Cleared used scripts in player data!");
                     }
                     "list" => {
                         if let Some(map) = self.world.get() {
-                            info!("{:?}", map.scripts.iter().map(|s|&s.identifier));
+                            info!("{:?}", map.scripts.iter().map(|s| &s.identifier));
                         }
                     }
                     _ => warn!("Unknown /script argument \"{}\".", arg),
@@ -133,7 +134,7 @@ impl WorldManager {
                     } else {
                         Location::new(None, map_or_index)
                     };
-                    self.warp_to_location(location);
+                    self.warp_to_location(save, location);
                 } else {
                     warn!("Invalid warp command syntax!")
                 }
@@ -151,7 +152,12 @@ impl WorldManager {
                         .map(|count| count.parse::<StackSize>().ok())
                         .flatten()
                         .unwrap_or(1);
-                    data_mut().bag.add_item(ItemStack::new(&item, count));
+                    match dex.itemdex.try_get(&item) {
+                        Some(item) => {
+                            save.bag.add_item(ItemStack::new(item, count));
+                        }
+                        None => warn!("Could not get item with id {}", item),
+                    }
                 }
             }
             _ => warn!("Unknown world command \"{}\".", result),

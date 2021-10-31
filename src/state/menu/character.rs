@@ -1,31 +1,30 @@
+use engine::tetra::{Result, State};
+use saves::default_name_str;
+
 use crate::{
-	game::storage::{saves, player::default_name_str},
-	engine::tetra::{State, Context, Result},
+	state::menu::{MenuState, MenuStateAction, MenuStates},
+	GameContext,
 };
 
-use crate::state::menu::{MenuState, MenuStateAction, MenuStates};
-
 pub struct CharacterCreationState {
-	action: Option<MenuStateAction>,
+    action: Option<MenuStateAction>,
 }
 
 impl CharacterCreationState {
-	pub fn new(_ctx: &mut Context) -> Self {
-		Self {
-			action: None,
-		}
-	}
+    pub fn new() -> Self {
+        Self { action: None }
+    }
 }
 
-impl State for CharacterCreationState {
-	fn begin(&mut self, _ctx: &mut Context) -> Result {
-		saves().select_new(default_name_str());
-		self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
-		Ok(())
-	}
+impl<'d> State<GameContext<'d>> for CharacterCreationState {
+    fn begin(&mut self, ctx: &mut GameContext<'d>) -> Result {
+        ctx.saves.select_new(default_name_str(), &mut rand::thread_rng(), ctx.dex.pokedex, ctx.dex.movedex, ctx.dex.itemdex);
+        self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
+        Ok(())
+    }
 }
 
-impl MenuState for CharacterCreationState {
+impl<'d> MenuState<'d> for CharacterCreationState {
     fn next(&mut self) -> &mut Option<MenuStateAction> {
         &mut self.action
     }

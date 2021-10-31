@@ -1,19 +1,19 @@
 use engine::{
     util::Entity,
-    gui::TextDisplay,
-    text::TextColor,
+    gui::MessageBox,
     graphics::{byte_texture, position},
     tetra::{
         Context,
         math::Vec2,
         graphics::Texture,
     },
+    EngineContext,
 };
 
 pub struct TextWindow {
 
     background: Texture,
-    pub text: TextDisplay,
+    pub text: MessageBox,
 
 }
 
@@ -25,11 +25,11 @@ impl TextWindow {
     pub fn new(ctx: &mut Context) -> Self {
         Self {
             background: byte_texture(ctx, include_bytes!("../../../assets/world/gui/message.png")),
-            text: TextDisplay::new(Self::ORIGIN + Self::TEXT_OFFSET, 1, TextColor::Black, 5),
+            text: MessageBox::new(Self::ORIGIN + Self::TEXT_OFFSET, 1),
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut EngineContext) {
         if self.text.alive() {
             self.background.draw(ctx, position(Self::ORIGIN.x, Self::ORIGIN.y));
             self.text.draw(ctx);

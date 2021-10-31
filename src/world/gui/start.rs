@@ -1,26 +1,25 @@
-use std::{borrow::Cow, rc::Rc};
-
 use engine::{
     gui::Panel,
     input::{pressed, Control},
-    tetra::{math::Vec2, Context},
+    tetra::math::Vec2,
     util::Entity,
+    EngineContext,
 };
-
-use pokedex::gui::{bag::BagGui, party::PartyGui, pokemon::PokemonDisplay};
+use pokedex::{
+    context::PokedexClientContext,
+    gui::{bag::BagGui, party::PartyGui},
+};
+use saves::PlayerData;
+use std::rc::Rc;
 
 use crate::{
-    state::MainStates,
-    game::{
-        quit,
-        storage::{data, data_mut},
-    },
+    game::quit,
+    state::{Action, MainStates},
 };
 
 pub struct StartMenu {
     alive: bool,
     pos: Vec2<f32>,
-    panel: Panel,
     buttons: [&'static str; 6],
     cursor: usize,
     party: Rc<PartyGui>,
@@ -29,11 +28,10 @@ pub struct StartMenu {
 }
 
 impl StartMenu {
-    pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
+    pub fn new(party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
         Self {
             alive: false,
             pos: Vec2::new(169.0, 1.0),
-            panel: Panel::new(ctx),
             buttons: ["Save", "Bag", "Pokemon", "Menu", "Exit", "Cancel"],
             cursor: 0,
             party,
@@ -41,19 +39,21 @@ impl StartMenu {
         }
     }
 
-    pub fn update(
+    pub fn update<'d>(
         &mut self,
-        ctx: &Context,
+        ctx: &EngineContext,
+        dex: &PokedexClientContext<'d>,
+        save: &mut PlayerData<'d>,
         delta: f32,
         input_lock: bool,
-        action: &mut Option<MainStates>,
+        action: &mut Option<Action>,
     ) {
         if self.bag.alive() && !input_lock {
-            self.bag.input(ctx);
+            self.bag.input(ctx, &save.bag.items);
             // bag_gui.up
         } else if self.party.alive() {
             if !input_lock {
-                self.party.input(ctx, data_mut().party.as_mut_slice());
+                self.party.input(ctx, dex, save.party.as_mut_slice());
             }
             self.party.update(delta);
         } else if !input_lock {
@@ -65,19 +65,19 @@ impl StartMenu {
                 match self.cursor {
                     0 => {
                         // Save
-                        data_mut().should_save = true;
+                        save.should_save = true;
                     }
                     1 => {
                         // Bag
-                        self.bag.spawn(&mut data_mut().bag);
+                        self.bag.spawn();
                     }
                     2 => {
                         // Pokemon
-                        spawn_party(&self.party);
+                        spawn_party(dex, &self.party, save);
                     }
                     3 => {
                         // Exit to Main Menu
-                        *action = Some(MainStates::Menu);
+                        *action = Some(Action::Goto(MainStates::Menu));
                         self.despawn();
                     }
                     4 => {
@@ -109,14 +109,14 @@ impl StartMenu {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw<'d>(&self, ctx: &mut EngineContext, dex: &PokedexClientContext<'d>, save: &PlayerData) {
         if self.alive {
             if self.bag.alive() {
-                self.bag.draw(ctx);
+                self.bag.draw(ctx, dex, &save.bag.items);
             } else if self.party.alive() {
-                self.party.draw(ctx);
+                self.party.draw(ctx, &save.party);
             } else {
-                self.panel.draw_text(
+                Panel::draw_text(
                     ctx,
                     self.pos.x,
                     self.pos.y,
@@ -134,22 +134,14 @@ impl StartMenu {
         self.party.alive() || self.bag.alive()
     }
 
-    pub fn spawn_party(&mut self) {
+    pub fn spawn_party<'d>(&mut self, ctx: &PokedexClientContext<'d>, save: &PlayerData<'d>) {
         self.spawn();
-        spawn_party(&self.party)
+        spawn_party(ctx, &self.party, save)
     }
 }
 
-fn spawn_party(party: &PartyGui) {
-    party.spawn(
-        data()
-            .party
-            .iter()
-            .map(|instance| PokemonDisplay::new(Cow::Borrowed(instance)))
-            .collect(),
-        Some(true),
-        true,
-    );
+fn spawn_party<'d>(ctx: &PokedexClientContext<'d>, party: &PartyGui, save: &PlayerData<'d>) {
+    party.spawn(ctx, &save.party, Some(true), true);
 }
 
 impl Entity for StartMenu {

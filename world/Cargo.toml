@@ -1,18 +1,19 @@
 [package]
 name = "firecore-world"
-version = "0.5.0-beta.2021-07-24"
+version = "0.5.0-beta.2021-07-28"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
 edition = "2018"
 
 [dependencies]
 
 serde = { version = "1.0", features = ["derive"] }
+hashbrown = { version = "0.11", features = ["serde"] }
+tinystr = { version = "0.4", features = ["serde"] }
+rand = { version = "0.8", default-features = false }
 
-firecore-dependencies = { git = "https://github.com/DoNotDoughnut/firecore-dependencies", features = ["random", "hash", "vec"] }
-
-firecore-pokedex = { git = "https://github.com/DoNotDoughnut/firecore-pokedex" }
-firecore-font = { git = "https://github.com/DoNotDoughnut/firecore-font" }
-firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-audio" }
+firecore-pokedex = { git = "https://github.com/fiirecore/pokedex" }
+firecore-text = { path = "../../firecore/engine/crates/text" }
+firecore-audio = { path = "../../firecore/engine/crates/audio" }
 
 ### Pathfinding
 

@@ -17,15 +17,15 @@ impl Default for BattleTransitions {
     }
 }
 
-use deps::str::TinyStr8;
+use worldlib::character::npc::trainer::TransitionId;
 
 impl BattleTransitions {
-    const FLASH: TinyStr8 = unsafe { TinyStr8::new_unchecked(448612363334) }; 
-    const TRAINER: TinyStr8 = unsafe { TinyStr8::new_unchecked(32199672233816660) };
+    const FLASH: TransitionId = unsafe { TransitionId::new_unchecked(448612363334) }; 
+    const TRAINER: TransitionId = unsafe { TransitionId::new_unchecked(32199672233816660) };
 }
 
-impl From<TinyStr8> for BattleTransitions {
-    fn from(transition: TinyStr8) -> Self {
+impl From<TransitionId> for BattleTransitions {
+    fn from(transition: TransitionId) -> Self {
         match transition {
             Self::FLASH => Self::Flash,
             Self::TRAINER => Self::Trainer,

@@ -1,15 +1,22 @@
-extern crate firecore_dependencies as deps;
 extern crate firecore_pokedex as pokedex;
 extern crate firecore_storage as storage;
 extern crate firecore_world as worldlib;
 
-use pokedex::{item::bag::Bag, pokemon::party::PokemonParty, trainer::TrainerId};
+use pokedex::{Dex, Initializable, Uninitializable, item::{
+        bag::{OwnedBag, SavedBag},
+        Item,
+    }, moves::Move, pokemon::{
+        owned::{OwnedPokemon, SavedPokemon},
+        party::Party,
+        Pokemon,
+    }};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use storage::error::DataError;
 use worldlib::{
     character::Character,
     positions::{Coordinate, Direction, Location, LocationId, Position},
+    TrainerId,
 };
 
 use world::WorldStatus;
@@ -22,9 +29,11 @@ pub use list::PlayerSaves;
 pub type Name = String;
 pub type Worth = u32;
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PlayerSave {
+pub type SavedPlayer = Player<SavedPokemon, SavedBag>;
+pub type PlayerData<'d> = Player<OwnedPokemon<'d>, OwnedBag<&'d Item>>;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Player<P, B> {
     #[serde(skip)]
     pub should_save: bool,
 
@@ -40,20 +49,21 @@ pub struct PlayerSave {
     #[serde(default = "default_character")]
     pub character: Character,
 
-    #[serde(default)]
-    pub party: PokemonParty,
+    #[serde(default = "Party::default")]
+    pub party: Party<P>,
 
     #[serde(default)]
-    pub bag: Bag,
+    pub bag: B,
 
     #[serde(default)]
     pub worth: Worth,
 
+    #[deprecated(note = "move")]
     #[serde(default)]
     pub world: WorldStatus,
 }
 
-impl PlayerSave {
+impl SavedPlayer {
     pub fn new(name: &str) -> Self {
         Self {
             name: name.to_owned(),
@@ -73,9 +83,55 @@ impl PlayerSave {
         }
         Ok(())
     }
+
+    pub fn init<'d>(
+        self,
+        random: &mut impl rand::Rng,
+        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
+        movedex: &'d dyn Dex<'d, Move, &'d Move>,
+        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
+    ) -> Option<PlayerData<'d>> {
+
+        let mut party = Party::new();
+
+        for p in self.party.into_iter() {
+            let p = p.init(random, pokedex, movedex, itemdex)?;
+            party.push(p);
+        }
+
+        Some(Player {
+            should_save: self.should_save,
+            id: self.id,
+            name: self.name,
+            location: self.location,
+            character: self.character,
+            party,
+            bag: self.bag.init(itemdex)?,
+            worth: self.worth,
+            world: self.world,
+        })
+    }
 }
 
-impl Default for PlayerSave {
+impl<'d> Uninitializable for PlayerData<'d> {
+    type Output = SavedPlayer;
+
+    fn uninit(self) -> Self::Output {
+        SavedPlayer {
+            should_save: self.should_save,
+            id: self.id,
+            name: self.name,
+            location: self.location,
+            character: self.character,
+            party: self.party.into_iter().map(Uninitializable::uninit).collect(),
+            bag: self.bag.uninit(),
+            worth: self.worth,
+            world: self.world,
+        }
+    }
+}
+
+impl Default for SavedPlayer {
     fn default() -> Self {
         Self {
             should_save: Default::default(),
@@ -92,7 +148,10 @@ impl Default for PlayerSave {
 }
 
 pub fn default_id() -> TrainerId {
-    let t = std::time::SystemTime::now().duration_since(std::time::SystemTime::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or_default();
+    let t = std::time::SystemTime::now()
+        .duration_since(std::time::SystemTime::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or_default();
     let mut str = format!("{}i", t).chars().rev().collect::<String>();
     str.truncate(16);
     str.parse().unwrap_or_else(|err| {

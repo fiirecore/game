@@ -1,37 +1,22 @@
 use std::rc::Rc;
 
-use crate::{
-	deps::borrow::{BorrowableMut, UNKNOWN},
-	pokedex::{
-		pokemon::instance::BorrowedPokemon,
-		trainer::{TrainerId, TrainerData},
-		gui::{
-			party::PartyGui,
-			bag::BagGui,
-		},
-	},
-	engine::{
+use crate::{engine::{
 		input::{debug_pressed, DebugBind},
 		graphics::ZERO,
-		tetra::{
-			Context,
-			graphics::Color,
-		},
-	},
-	game::{
-		battle_glue::BattleEntry,
-		is_debug,
-		storage::{data_mut, player::PlayerSave},
-	},
-};
+		tetra::{graphics::Color},
+		EngineContext,
+	}, game::{battle_glue::{BattleEntry, BattleId}, is_debug}};
 
-use battlelib::player::{BattlePlayer, PlayerSettings};
+use pokedex::{context::PokedexClientContext, gui::{
+		party::PartyGui,
+		bag::BagGui,
+	}};
+use rand::{SeedableRng, prelude::SmallRng};
+use saves::PlayerData;
 
-use super::{GameBattleWrapper, BattlePlayerGuiRef};
+use super::{GameBattleWrapper};
 
-use firecore_battle_gui::{
-	transition::TransitionState,
-};
+use firecore_battle_gui::{BattlePlayerGui, transition::TransitionState};
 
 pub mod transitions;
 
@@ -40,16 +25,18 @@ use transitions::managers::{
 	closer::BattleCloserManager,
 };
 
-pub struct BattleManager {
+pub struct BattleManager<'d> {
 
 	state: BattleManagerState,
 	
-	battle: GameBattleWrapper,
+	battle: GameBattleWrapper<'d>,
 	
 	transition: BattleScreenTransitionManager,
 	closer: BattleCloserManager,
 
-	player: BattlePlayerGuiRef<TrainerId>,
+	player: BattlePlayerGui<'d, BattleId>,
+
+	pub random: SmallRng,
 
 	pub finished: bool,
 	
@@ -60,7 +47,7 @@ pub enum BattleManagerState {
 	Begin,
 	Transition,
 	Battle,
-	Closer(TrainerId),
+	Closer(BattleId),
 }
 
 impl Default for BattleManagerState {
@@ -69,11 +56,11 @@ impl Default for BattleManagerState {
     }
 }
 
-impl BattleManager {
+impl<'d> BattleManager<'d> {
 	
-	pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> BattleManager {
+	pub fn new(ctx: &mut EngineContext, dex: &PokedexClientContext<'d>, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
 		
-		BattleManager {
+		Self {
 
 			state: BattleManagerState::default(),
 
@@ -82,7 +69,9 @@ impl BattleManager {
 			transition: BattleScreenTransitionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
-			player: BattlePlayerGuiRef::new(ctx, party, bag, BorrowableMut::Borrowed(&mut data_mut().bag), UNKNOWN),
+			player: BattlePlayerGui::new(ctx, dex, party, bag),
+
+			random: SmallRng::seed_from_u64(0),
 
 			finished: false,
 
@@ -90,34 +79,23 @@ impl BattleManager {
 		
 	}
 
-	pub fn battle(&mut self, entry: BattleEntry) -> bool { // add battle type parameter
+	pub fn battle(&mut self, save: &mut PlayerData, dex: &PokedexClientContext<'d>, entry: BattleEntry) -> bool { // add battle type parameter
 		self.finished = false;
 		self.state = BattleManagerState::default();
-		let data = data_mut();
-		let player = &mut data.party;
+		let player = &mut save.party;
 		(!(
 			player.is_empty() || 
 			entry.party.is_empty() ||
 			// Checks if player has any pokemon in party that aren't fainted (temporary)
 			!player.iter().any(|pokemon| !pokemon.fainted())
 		)).then(|| {
-				let data = data_mut();
 				self.battle.battle(
-					BattlePlayer::new(
-						data.id,
-						data.party.iter_mut().map(|instance| BorrowedPokemon::Borrowed(instance)).collect(), 
-						Some(TrainerData {
-							npc_type: UNKNOWN,
-							prefix: String::from("Trainer"),
-							name: data.name.clone(),
-						}),
-						PlayerSettings {
-							gains_exp: true,
-							request_party: false,
-						},
-						Box::new(self.player.clone()),
-						entry.size
-					),
+					&mut self.random,
+					dex.pokedex,
+					dex.movedex,
+					dex.itemdex,
+					save,
+					self.player.endpoint(),
 					entry
 				)
 			}
@@ -125,7 +103,7 @@ impl BattleManager {
 		self.battle.battle.is_some()
 	}
 
-	pub fn update(&mut self, ctx: &mut Context, delta: f32) {
+	pub fn update(&mut self, ctx: &mut EngineContext, dex: &PokedexClientContext<'d>, delta: f32, save: &mut PlayerData<'d>) {
 		if is_debug() {
 			if debug_pressed(ctx, DebugBind::F1) { // exit shortcut
 				self.end();
@@ -133,53 +111,52 @@ impl BattleManager {
 			}
 		}
 		if let Some(battle) = &mut self.battle.battle {
+			self.player.process(&mut self.random, dex, &mut save.party);
 			match self.state {
 				BattleManagerState::Begin => {
-					self.player.get().gui.reset();
+					self.player.gui.reset();
 					self.state = BattleManagerState::Transition;
 					self.transition.state = TransitionState::Begin;
 
-					battle.battle.begin();
+					battle.begin();
 
-					self.player.get().on_begin(ctx);
+					// self.player.on_begin(dex);
 
-					self.update(ctx, delta);
+					self.update(ctx, dex, delta, save);
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
-						self.transition.begin(ctx, self.player.get().battle_data.type_, &battle.trainer);
-						self.update(ctx, delta);
+						self.transition.begin(ctx, self.player.data.type_, &self.battle.trainer);
+						self.update(ctx, dex, delta, save);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
 					TransitionState::End => {
 						self.transition.end();
 						self.state = BattleManagerState::Battle;
-						self.player.get().start(true);
-						self.update(ctx, delta);
+						self.player.start(true);
+						self.update(ctx, dex, delta, save);
 					}
 				}
 				BattleManagerState::Battle => {
 
-					let player = self.player.get();
+					if self.player.battling() {
 
-					if player.battling() {
-
-						battle.battle.update(&self.battle.engine);
+						battle.update(&mut self.random, &mut self.battle.engine, dex.movedex, dex.itemdex);
 	
-						if let Some(winner) = player.winner() {
-							self.state = BattleManagerState::Closer(winner);
+						if let Some(winner) = battle.winner() {
+							self.state = BattleManagerState::Closer(*winner);
 						}
 					}
 
-					player.update(ctx, delta);
+					self.player.update(ctx, dex, delta, &mut save.bag);
 
 				},
 				BattleManagerState::Closer(winner) => match self.closer.state {
 					TransitionState::Begin => {
-						self.closer.begin(self.player.get().battle_data.type_, Some(&winner), self.player.get().opponent.party.trainer.as_ref(), battle.trainer.as_ref(), &mut self.player.get().gui.text);
-						self.update(ctx, delta);
+						self.closer.begin(dex, self.player.data.type_, self.player.local.player.id(), self.player.local.player.name(), Some(&winner), self.battle.trainer.as_ref(), &mut self.player.gui.text);
+						self.update(ctx, dex, delta, save);
 					}
-					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.get().gui.text),
+					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.gui.text),
 					TransitionState::End => {
 						self.closer.end();
 						self.state = BattleManagerState::default();
@@ -188,18 +165,28 @@ impl BattleManager {
 				}
 			}
 		}
+
+		if let Some(ai) = self.battle.ai.as_mut() {
+			ai.update();
+		}
+
 	}
 
-	pub fn winner(&self) -> Option<TrainerId> {
-		self.player.get().winner()
+	pub fn winner(&self) -> Option<&BattleId> {
+		self.battle.battle.as_ref().map(|b| b.winner()).flatten()
 	}
 
-	pub fn update_data(&mut self, winner: &TrainerId, player_save: &mut PlayerSave) -> bool {
-		self.battle.battle.as_mut().map(|b| b.update_data(winner, player_save)).unwrap_or_default()
+	pub fn update_data(&mut self, winner: &BattleId, player_save: &mut PlayerData) -> bool {
+		self.battle.update_data(winner, player_save)
 	}
 
 	pub fn world_active(&self) -> bool {
 		matches!(self.state, BattleManagerState::Transition) || self.closer.world_active()		
+	}
+
+	pub fn seed(&mut self, seed: u64) {
+		self.battle.seed = seed;
+		self.random = SmallRng::seed_from_u64(seed);
 	}
 
 	pub fn end(&mut self) {
@@ -212,23 +199,23 @@ impl BattleManager {
 		}
 	}
 
-	pub fn draw(&self, ctx: &mut Context) {
+	pub fn draw(&self, ctx: &mut EngineContext, dex: &PokedexClientContext<'d>, save: &PlayerData<'d>) {
         if self.battle.battle.is_some() {
 			match self.state {
 				BattleManagerState::Begin => (),
 			    BattleManagerState::Transition => self.transition.draw(ctx),
-			    BattleManagerState::Battle => self.player.get().draw(ctx),
+			    BattleManagerState::Battle => self.player.draw(ctx, dex, &save.party, &save.bag),
 			    BattleManagerState::Closer(..) => {
 					if !matches!(self.closer.state, TransitionState::End) {
 						if !self.world_active() {
-							self.player.get().gui.background.draw(ctx, 0.0);
-							self.player.get().gui.draw_panel(ctx);
-							self.player.get().draw(ctx);
-							for active in self.player.get().player.renderer.iter() {
-								active.renderer.draw(ctx, ZERO, Color::WHITE);
+							self.player.gui.background.draw(ctx, 0.0);
+							self.player.gui.draw_panel(ctx);
+							self.player.draw(ctx, dex, &save.party, &save.bag);
+							for active in self.player.local.renderer.iter() {
+								active.pokemon.draw(ctx, ZERO, Color::WHITE);
 							}
 							self.closer.draw_battle(ctx);
-							self.player.get().gui.text.draw(ctx);
+							self.player.gui.text.draw(ctx);
 						}
 						self.closer.draw(ctx);
 					}

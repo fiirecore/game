@@ -1,10 +1,8 @@
-use crate::{
-    engine::{gui::TextDisplay, tetra::Context},
-    game::battle_glue::BattleTrainerEntry,
-    pokedex::trainer::{TrainerData, TrainerId},
-};
+use crate::{engine::{gui::MessageBox, EngineContext}, game::battle_glue::{BattleId, BattleTrainerEntry}};
 
 use battlelib::data::BattleType;
+use pokedex::context::PokedexClientContext;
+use worldlib::TrainerId;
 
 use crate::battle::manager::transitions::{
     closers::{Closers, TrainerBattleCloser, WildBattleCloser},
@@ -23,13 +21,15 @@ pub struct BattleCloserManager {
 }
 
 impl BattleCloserManager {
-    pub fn begin(
+    pub fn begin<'d>(
         &mut self,
+        ctx: &PokedexClientContext<'d>,
         battle_type: BattleType,
-        winner: Option<&TrainerId>,
-        trainer: Option<&TrainerData>,
+        player: &BattleId,
+        player_name: &str,
+        winner: Option<&BattleId>,
         trainer_entry: Option<&BattleTrainerEntry>,
-        text: &mut TextDisplay,
+        text: &mut MessageBox,
     ) {
         self.state = TransitionState::Run;
         match battle_type {
@@ -38,14 +38,14 @@ impl BattleCloserManager {
         }
         let current = self.get_mut();
         current.reset();
-        current.spawn(winner, trainer, trainer_entry, text);
+        current.spawn(ctx, player, player_name, winner, trainer_entry, text);
     }
 
     pub fn end(&mut self) {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut TextDisplay) {
+    pub fn update(&mut self, ctx: &mut EngineContext, delta: f32, text: &mut MessageBox) {
         let current = self.get_mut();
         current.update(ctx, delta, text);
         if current.finished() {
@@ -53,11 +53,11 @@ impl BattleCloserManager {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut EngineContext) {
         self.get().draw(ctx);
     }
 
-    pub fn draw_battle(&self, ctx: &mut Context) {
+    pub fn draw_battle(&self, ctx: &mut EngineContext) {
         self.get().draw_battle(ctx);
     }
 

@@ -1,5 +1,5 @@
 use crate::positions::{Coordinate, Destination, Direction, Position};
-use firecore_font::message::MessagePages;
+use text::MessagePages;
 use serde::{Deserialize, Serialize};
 
 use crate::{character::Character, script::world::WorldScript};

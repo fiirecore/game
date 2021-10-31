@@ -1,18 +1,14 @@
-use deps::hash::HashMap;
-use firecore_font::message::TextColor;
-use pokedex::trainer::TrainerId;
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
+use text::TextColor;
 
 use crate::{
     character::{
-        npc::{npc_type::TrainerType, Npc, NpcId},
+        npc::{Npc, NpcId, TrainerType},
         sprite::SpriteIndexType,
     },
-    map::{
-        manager::WorldMapManager,
-        PaletteId,
-        TileId,
-    },
+    map::{manager::WorldMapManager, PaletteId, TileId},
+    TrainerId,
     // positions::Location,
 };
 
