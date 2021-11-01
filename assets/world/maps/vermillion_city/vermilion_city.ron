@@ -1,0 +1,16 @@
+(
+    identifier: "vermilion",
+    name: "Vermilion City",
+    file: "3.5_VERMILION CITY.map",
+
+    chunk: Some((
+        coords: (
+            x: 264,
+            y: 200,
+        ),
+        connections: [
+            "route_6",
+            "route_11",
+        ],
+    )),
+)

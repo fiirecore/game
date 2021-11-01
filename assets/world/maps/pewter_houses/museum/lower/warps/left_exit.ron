@@ -1,0 +1,28 @@
+(
+    location: (
+        min: (
+            x: 0x0E,
+            y: 0x0A,
+        ),
+        max: (
+            x: 0x0E,
+            y: 0x0A,
+        )
+    ),
+    destination: (
+        location: (
+            index: "pewter",
+        ),
+        position: (
+            coords: (
+                x: 0x11,
+                y: 0x06,
+            ),
+            direction: Some(Down),
+        ),
+        transition: (
+            move_on_exit: true,
+            warp_on_tile: false,
+        ),
+    )
+)

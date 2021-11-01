@@ -1,0 +1,29 @@
+(
+    location: (
+        min: (
+            x: 0x24,
+            y: 0x0A,
+        ),
+        max: (
+            x: 0x24,
+            y: 0x0A,
+        )
+    ),
+    destination: (
+        location: (
+            map: Some("viridian_houses"),
+            index: "north",
+        ),
+        position: (
+            coords: (
+                x: 4,
+                y: 7,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    ),
+)

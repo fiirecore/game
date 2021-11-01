@@ -50,7 +50,7 @@ impl PlayerTexture {
             Movement::Walking,
             byte_texture(
                 ctx,
-                include_bytes!("../../../../assets/world/player/walking.png"),
+                include_bytes!("../../../../assets/world/textures/player/walking.png"),
             )
             .into(),
         );
@@ -58,7 +58,7 @@ impl PlayerTexture {
             Movement::Running,
             byte_texture(
                 ctx,
-                include_bytes!("../../../../assets/world/player/running.png"),
+                include_bytes!("../../../../assets/world/textures/player/running.png"),
             )
             .into(),
         );
@@ -68,7 +68,7 @@ impl PlayerTexture {
                 idle: Some(0.5),
                 texture: byte_texture(
                     ctx,
-                    include_bytes!("../../../../assets/world/player/surfing.png"),
+                    include_bytes!("../../../../assets/world/textures/player/surfing.png"),
                 ),
             },
         );

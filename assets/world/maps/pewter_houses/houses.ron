@@ -1,0 +1,9 @@
+(
+    identifier: "pewter_houses",
+    dirs: [
+        "museum/lower",
+        "museum/upper",
+        "east",
+        "west"
+    ]    
+)

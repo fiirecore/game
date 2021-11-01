@@ -1,0 +1,21 @@
+(
+    identifier: "pewter",
+    name: "Pewter City",
+    file: "3.2_PEWTER CITY.map",
+
+    chunk: Some((
+        coords: (
+            x: 48,
+            y: 60,
+        ),
+        connections: [
+            "route_2",
+            "route_3",
+        ],
+        // map_icon: Some(City(2, 2))
+    )),
+
+    settings: (
+        fly_position: Some((x: 17, y: 26))
+    )
+)

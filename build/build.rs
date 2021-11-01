@@ -22,7 +22,7 @@ fn main() {
 
     write("dex_engine", &dex_engine);
 
-    firecore_world_builder::compile("assets/game/world", "build/data/world.bin");
+    firecore_world_builder::compile("assets/world", "build/data/world.bin");
 
     let battle = std::path::Path::new("assets/game/pokedex/battle");
 

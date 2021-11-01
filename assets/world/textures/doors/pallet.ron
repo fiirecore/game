@@ -1,0 +1,7 @@
+(
+    tiles: [
+        0x2A3,
+        0x2CE,
+    ],
+    file: "pallet.png",
+)

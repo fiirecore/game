@@ -1,0 +1,16 @@
+(
+    id: "mom",
+    npc: (
+        name: "Mom",
+        type: "mom",
+        character: (
+            position: (
+                coords: (
+                    x: 8,
+                    y: 4
+                ),
+                direction: Left
+            ),
+        )
+    )
+)

@@ -1,0 +1,63 @@
+ratio = 21
+
+tiles = [0x0D]
+
+[[pokemon]]
+min_level = 6
+max_level = 6
+pokemon_id = 21
+
+[[pokemon]]
+min_level = 6
+max_level = 6
+pokemon_id = 16
+
+[[pokemon]]
+min_level = 7
+max_level = 7
+pokemon_id = 21
+
+[[pokemon]]
+min_level = 7
+max_level = 7
+pokemon_id = 56
+
+[[pokemon]]
+min_level = 6
+max_level = 6
+pokemon_id = 32
+
+[[pokemon]]
+min_level = 7
+max_level = 7
+pokemon_id = 16
+
+[[pokemon]]
+min_level = 8
+max_level = 8
+pokemon_id = 21
+
+[[pokemon]]
+min_level = 3
+max_level = 3
+pokemon_id = 39
+
+[[pokemon]]
+min_level = 7
+max_level = 7
+pokemon_id = 32
+
+[[pokemon]]
+min_level = 5
+max_level = 5
+pokemon_id = 39
+
+[[pokemon]]
+min_level = 6
+max_level = 6
+pokemon_id = 29
+
+[[pokemon]]
+min_level = 7
+max_level = 7
+pokemon_id = 39

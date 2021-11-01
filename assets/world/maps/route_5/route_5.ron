@@ -1,0 +1,16 @@
+(
+    identifier: "route_5",
+    name: "Route 5",
+    file: "3.23_ROUTE 5.map",
+
+    chunk: Some((
+        coords: (
+            x: 264,
+            y: 80,
+        ),
+        connections: [
+            "cerulean",
+            "saffron"
+        ],
+    )),
+)

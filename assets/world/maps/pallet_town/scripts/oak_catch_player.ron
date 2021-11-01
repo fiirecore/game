@@ -1,0 +1,161 @@
+(
+    identifier: "oak_catch",
+    conditions: [
+        NoRepeat,
+        Location((
+            min: (
+                x: 12,
+                y: 1
+            ),
+            max: (
+                x: 13,
+                y: 1
+            )
+        ))
+    ],
+    actions: [
+        PlayerFreezeInput,
+        NpcAdd(
+            "oak",
+            (
+                name: "Oak",
+                type: "prof_oak",
+                character: (
+                    position: (
+                        coords: (
+                            x: 10,
+                            y: 7
+                        ),
+                        direction: Up
+                    ),
+                )
+            )
+        ),
+        PlayMusic("Oak"),
+        NpcSay(
+            "oak",
+            [(
+                lines: [
+                    "OAK: Hey! Wait!",
+                    "Don't go out!"
+                ],
+            )]
+        ),
+        NpcMove("oak", 10, 6),
+        NpcMove("oak", 11, 6),
+        NpcMove("oak", 11, 4),
+        NpcMove("oak", 12, 4),
+        NpcMoveToPlayer("oak"),
+        NpcSay(
+            "oak",
+            [
+                (
+                    lines: [
+                        "OAK: It's unsafe!",
+                        "Wild POKEMON live in tall grass!"
+                    ],
+                ),
+                (
+                    lines: [
+                        "You need your own POKEMON for",
+                        "your protection."
+                    ],
+                ),
+                (
+                    lines: [
+                        "I know!",
+                        "Here, come with me!"
+                    ],
+                )
+            ]
+        ),
+        NpcLeadPlayer("oak", 12, 3),
+        NpcLeadPlayer("oak", 11, 3),
+        NpcLeadPlayer("oak", 11, 14),
+        NpcLeadPlayer("oak", 16, 14),
+        NpcLook("oak", Up),
+        Wait(0.125),
+        NpcWarp("oak", Dest(
+            (
+                map: Some("pallet_houses"),
+                index: "oaks_lab"
+            ),
+            (
+                coords: (
+                    x: 6,
+                    y: 11,
+                ),
+                direction: Up,
+            )
+        )),
+        Wait(0.125),
+        PlayerMove(16, 13),
+        WaitFinishWarp,
+        Wait(0.5),
+        NpcMove("oak", 6, 6),
+        NpcRemove("oak"),
+        NpcAdd(
+            "rival",
+            (
+                name: "%r",
+                type: "rival",
+                character: (
+                    position: (
+                        coords: (
+                            x: 5,
+                            y: 4,
+                        ),
+                        direction: Down,
+                    ),
+                ),
+                trainer: Some(
+                    (
+                        battle_on_interact: false,
+                        encounter_message: [],
+                        party: [
+                            (
+                                pokemon: 7,
+                                level: 5,
+                                gender: Some(Male),
+                            ),
+                        ],
+                        worth: 80,
+                        disable: None,
+                    )
+                ),
+            )
+        ),
+        PlayerMove(6, 4),
+        NpcSay(
+            "oak",
+            [(
+                lines: [
+                    "Here's some pokemon"
+                ]                
+            )],
+        ),
+        PlayerGivePokemon(
+            (
+                pokemon: 1,
+                level: 5,
+                gender: Some(Male),
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                pokemon: 4,
+                level: 5,
+                gender: Some(Male),
+            )
+        ),
+        PlayerGivePokemon(
+            (
+                pokemon: 7,
+                level: 5,
+                gender: Some(Female),
+            )
+        ),
+        PlayMapMusic,
+        PlayerUnfreezeInput,
+    ]
+)

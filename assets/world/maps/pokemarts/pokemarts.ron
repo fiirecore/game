@@ -1,0 +1,8 @@
+(
+    identifier: "pokemarts",
+    dirs: [
+        "viridian",
+        "pewter",
+        "cerulean",
+    ]
+)

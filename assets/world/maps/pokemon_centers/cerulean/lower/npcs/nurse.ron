@@ -1,0 +1,16 @@
+(
+    id: "nurse",
+    npc: (
+        name: "Joy",    
+        type: "nurse",
+        character: (
+            position: (
+                coords: (
+                    x: 7,
+                    y: 2,
+                ),
+                direction: Down
+            ),
+        ),
+    ),
+)

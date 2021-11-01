@@ -1,0 +1,47 @@
+(
+    id: "misty",
+    npc: (
+        name: "Misty",
+        type: "misty",
+        character: (
+            position: (
+                coords: (
+                    x: 8,
+                    y: 6
+                ),
+                direction: Down
+            ),
+        ),
+        interact: Message([
+            (
+                color: Red,
+                lines: [
+                    "Temporary post-battle message"
+                ]
+            )
+        ]), 
+        trainer: Some((
+            encounter_message: [
+                [
+                    "Temporary message"
+                ],
+            ],
+            party: [
+                (
+                    pokemon: 120,
+                    level: 18,
+                    gender: None,               
+                ),
+                (
+                    pokemon: 121,
+                    level: 21,
+                    gender: None,
+                )
+            ],
+
+            disable: Many([]),
+            worth: 1400,
+
+        ))
+    )
+)

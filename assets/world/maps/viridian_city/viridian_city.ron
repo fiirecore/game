@@ -1,0 +1,22 @@
+(
+    identifier: "viridian",
+    name: "Viridian City",
+    file: "3.1_VIRIDIAN CITY.map",
+
+    chunk: Some((
+        coords: (
+            x: 48,
+            y: 180,
+        ),
+        connections: [
+            "route_1",
+            "route_2",
+            "route_22",
+        ],
+        // map_icon: Some(City(2, 5))
+    )),
+
+    settings: (
+        fly_position: Some((x: 26, y: 27))
+    )
+)

@@ -1,0 +1,5 @@
+(
+    identifier: "nurse",
+    text_color: Red,
+    sprite: Still,
+)

@@ -1,0 +1,29 @@
+(
+    location: (
+        min: (
+            x: 6,
+            y: 9,
+        ),
+        max: (
+            x: 8,
+            y: 9,
+        )
+    ),
+    destination: (
+        location: (
+            map: Some("route_2_houses"),
+            index: "forest_north",
+        ),
+        position: (
+            coords: (
+                x: 7,
+                y: 10,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    )
+)

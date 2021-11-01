@@ -24,7 +24,7 @@ impl TextWindow {
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            background: byte_texture(ctx, include_bytes!("../../../assets/world/gui/message.png")),
+            background: byte_texture(ctx, include_bytes!("../../../assets/world/textures/gui/message.png")),
             text: MessageBox::new(Self::ORIGIN + Self::TEXT_OFFSET, 1),
         }
     }

@@ -28,7 +28,7 @@ impl GuiTextures {
 impl GuiTextures {
     pub fn new(ctx: &mut Context) -> Self {
         let mut map = HashMap::with_capacity(1);
-        map.insert(GuiTexture::Condition, byte_texture(ctx, include_bytes!("../../../../assets/world/gui/world/condition.png")));
+        map.insert(GuiTexture::Condition, byte_texture(ctx, include_bytes!("../../../../assets/world/textures/gui/world/condition.png")));
         Self {
             textures: map,
         }

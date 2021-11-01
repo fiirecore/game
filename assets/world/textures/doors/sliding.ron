@@ -1,0 +1,6 @@
+(
+    tiles: [
+        0x62,
+    ],
+    file: "sliding.png",
+)

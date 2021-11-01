@@ -1,0 +1,28 @@
+(
+    location: (
+        min: (
+            x: 0x1F,
+            y: 0x0B,
+        ),
+        max: (
+            x: 0x1F,
+            y: 0x0B,
+        ),
+    ),
+    destination: (
+        location: (
+            map: Some("mt_moon"),
+            index: "floor_1",
+        ),
+        position: (
+            coords: (
+                x: 17,
+                y: 5,
+            ),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    ),
+)

@@ -1,0 +1,63 @@
+(
+    id: "ben",
+    npc: (
+        name: "Ben",
+        type: "youngster",
+        character: (
+            position: (
+                coords: (
+                    x: 18,
+                    y: 4
+                ),
+                direction: Down
+            ),
+        ),
+        interact: Message([
+            (
+                lines: [
+                    "Are you using a POKEMON CENTER's",
+                    "PC for storing your POKEMON?"
+                ],
+                color: Blue,
+            ),
+            (
+                lines: [
+                    "Each box can hold up to",
+                    "30 POKEMON."
+                ],
+                color: Blue,
+            )
+        ]),
+        trainer: Some((
+            tracking: Some(2),
+            encounter_message: [
+                [
+                    "Hi!",
+                    "I like shorts!"
+                ],
+                [
+                    "They're delightfully comfy and",
+                    "easy to wear!"
+                ]
+            ],
+            party: [
+                (
+                    pokemon: 19,
+                    level: 11,
+                    gender: Some(Male),
+                ),
+                (
+                    pokemon: 23,
+                    level: 11,
+                    gender: Some(Male),
+                )
+            ],
+            victory_message: [
+                [
+                    "I don't believe it!"
+                ]            
+            ],
+            worth: 176,
+        )),
+    ),
+)

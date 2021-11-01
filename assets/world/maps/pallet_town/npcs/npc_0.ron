@@ -1,0 +1,29 @@
+(
+    id: "0",
+    npc: (
+        name: "Npc 0",
+        type: "woman",
+        character: (
+            position: (
+                coords: (
+                    x: 3,
+                    y: 10
+                ),
+                direction: Down
+            ),
+        ),
+        interact: Message([
+            (
+                lines: [
+                    "I'm raising POKEMON too."
+                ],
+            ),
+            (
+                lines: [
+                    "When they get strong, they can",
+                    "protect me."
+                ]
+            )
+        ]),
+    )
+)

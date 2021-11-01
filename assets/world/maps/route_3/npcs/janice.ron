@@ -1,0 +1,47 @@
+(
+    id: "janice",
+    npc: (
+        name: "Janice",
+        type: "lass",
+        character: (
+            position: (
+                coords: (
+                    x: 19,
+                    y: 9
+                ),
+                direction: Left
+            ),
+        ),
+        interact: Message([
+            (
+                lines: [
+                    "You shouldn't be staring if you",
+                    "don't want to battle!"
+                ],
+                color: Red,
+            )
+        ]),
+        trainer: Some((
+            tracking: Some(5),
+            encounter_message: [
+                [
+                    "Excuse me?",
+                    "You looked at me, didn't you?"
+                ]
+            ],
+            party: [
+                (
+                    pokemon: 16,
+                    level: 9,
+                    gender: Some(Female),
+                ),
+                (
+                    pokemon: 16,
+                    level: 9,
+                    gender: Some(Female),
+                )
+            ],
+            worth: 0
+        )),
+    ),
+)

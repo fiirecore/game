@@ -1,0 +1,43 @@
+(
+    id: "robin",
+    npc: (
+        name: "Robin",
+        type: "lass",
+        character: (
+            position: (
+                coords: (
+                    x: 40,
+                    y: 11
+                ),
+                direction: Down
+            ),
+        ),
+        movement: WalkUpAndDown(2),
+        interact: Message([
+            (
+                lines: [
+                    "ROUTE 4 is at the foot of",
+                    "MT. MOON."
+                ],
+                color: Red,
+            )
+        ]),
+        trainer: Some((
+            tracking: Some(2),
+            encounter_message: [
+                [
+                    "Eek!",
+                    "Did you touch me?"
+                ]
+            ],
+            party: [
+                (
+                    pokemon: 39,
+                    level: 14,
+                    gender: Some(Female),
+                )
+            ],
+            worth: 0
+        )),
+    ),
+)

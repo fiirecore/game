@@ -1,0 +1,61 @@
+ratio = 7
+
+[[pokemon]]
+min_level = 7
+max_level = 7
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 8
+max_level = 8
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 5
+max_level = 5
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 6
+max_level = 6
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 9
+max_level = 9
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 10
+max_level = 10
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 7
+max_level = 7
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 8
+max_level = 8
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 5
+max_level = 5
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 6
+max_level = 6
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 9
+max_level = 9
+pokemon_id = 46
+
+[[pokemon]]
+min_level = 10
+max_level = 10
+pokemon_id = 46

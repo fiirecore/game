@@ -1,0 +1,48 @@
+(
+    id: "sally",
+    npc: (
+        name: "Sally",
+        type: "lass",
+        character: (
+            position: (
+                coords: (
+                    x: 30,
+                    y: 3
+                ),
+                direction: Left,
+            ),
+        ),
+        trainer: Some((
+            tracking: Some(5),
+            encounter_message: [
+                [
+                    "That look you gave me.",
+                    "It's so intriguing!"
+                ]
+            ],
+            party: [
+                (
+                    pokemon: 19,
+                    level: 10,
+                    gender: Some(Female),
+                ),
+                (
+                    pokemon: 29,
+                    level: 10,
+                    gender: Some(Female),
+                ),
+                (
+                    pokemon: 14,
+                    level: 9,
+                    gender: Some(Female),
+                ),
+                (
+                    pokemon: 11,
+                    level: 9,
+                    gender: Some(Female),
+                )
+            ],
+            worth: 0
+        )),
+    ),
+)

@@ -1,0 +1,28 @@
+(
+    location: (
+        min: (
+            x: 3,
+            y: 3,
+        ),
+        max: (
+            x: 3,
+            y: 3,
+        ),
+    ),
+    destination: (
+        location: (
+            map: Some("digletts_cave"),
+            index: "route_2",
+        ),
+        position: (
+            coords: (
+                x: 6,
+                y: 4,
+            ),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    ),
+)

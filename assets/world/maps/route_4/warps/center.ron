@@ -1,0 +1,28 @@
+(
+    location: (
+        min: (
+            x: 0xC,
+            y: 0x5,
+        ),
+        max: (
+            x: 0xC,
+            y: 0x5,
+        ),
+    ),
+    destination: (
+        location: (
+            map: Some("pokemon_centers"),
+            index: "route_4",
+        ),
+        position: (
+            coords: (
+                x: 7,
+                y: 8,
+            ),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    ),
+)

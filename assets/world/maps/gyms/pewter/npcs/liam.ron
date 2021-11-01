@@ -1,0 +1,57 @@
+(
+    id: "liam",
+    npc: (
+        name: "Liam",
+        type: "camper",
+        character: (
+            position: (
+                coords: (
+                    x: 3,
+                    y: 8
+                ),
+                direction: Right
+            ),
+        ),
+        interact: Message([(
+            color: Blue,
+            lines: [
+                "You're pretty hot.",
+                "...But not as hot as BROCK!"
+            ]
+        )]),
+        trainer: Some((
+            tracking: Some(3),
+            encounter_message: [
+                [
+                    "Stop right there, kid!"
+                ],
+                [
+                    "You're ten thousand light-years",
+                    "from facing BROCK!"
+                ]
+            ],
+            party: [
+                (
+                    pokemon: 74,
+                    level: 10,
+                    gender: Some(Male),
+                ),
+                (
+                    pokemon: 27,
+                    level: 11,
+                    gender: Some(Male),
+                )
+            ],
+            victory_message: [
+                [
+                    "Darn!",
+                ],
+                [
+                    "Light-years isn't time...",
+                    "It measures distance!",
+                ]
+            ],
+            worth: 220,
+        )),
+    )
+)

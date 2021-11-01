@@ -37,7 +37,7 @@ impl BushRustle {
 static mut BUSH_TEXTURE: Option<Texture> = None;
 
 pub (crate) fn new(ctx: &mut Context) {
-    unsafe { BUSH_TEXTURE = Some(byte_texture(ctx, include_bytes!("../../../../../assets/world/player/bush_temp.png"))) }
+    unsafe { BUSH_TEXTURE = Some(byte_texture(ctx, include_bytes!("../../../../../assets/world/textures/player/bush_temp.png"))) }
 }
 
 fn bush_rustle() -> &'static Texture {

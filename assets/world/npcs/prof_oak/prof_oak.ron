@@ -1,0 +1,5 @@
+(
+    identifier: "prof_oak",
+    text_color: Blue,
+    sprite: Walk,
+)
