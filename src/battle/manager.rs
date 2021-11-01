@@ -139,16 +139,15 @@ impl<'d> BattleManager<'d> {
 				}
 				BattleManagerState::Battle => {
 
-					if self.player.battling() {
-
+					if !battle.finished() {
 						battle.update(&mut self.random, &mut self.battle.engine, dex.movedex, dex.itemdex);
-	
-						if let Some(winner) = battle.winner() {
-							self.state = BattleManagerState::Closer(*winner);
-						}
 					}
 
 					self.player.update(ctx, dex, delta, &mut save.bag);
+
+					if let Some(winner) = self.player.winner().flatten() {
+						self.state = BattleManagerState::Closer(*winner);
+					}
 
 				},
 				BattleManagerState::Closer(winner) => match self.closer.state {

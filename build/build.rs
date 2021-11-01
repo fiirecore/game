@@ -1,23 +1,26 @@
+fn write<S: serde::Serialize>(file: &str, data: &S) {
+    std::fs::write(format!("build/data/{}.bin", file), bincode::serialize(data).unwrap()).unwrap()
+}
+
 fn main() {
     println!("cargo:rerun-if-changed=assets");
 
-    firecore_font_builder::compile("assets/game/fonts", "build/data/fonts.bin");
+    write("fonts", &firecore_font_builder::compile("assets/game/fonts"));
+
     #[cfg(feature = "audio")]
-    firecore_audio_builder::compile("assets/game/music", "build/data/audio.bin");
+    write("audio", &firecore_audio_builder::compile("assets/game/music"));
+
     let dex = firecore_pokedex_builder::compile(
         "assets/game/pokedex/pokemon",
         "assets/game/pokedex/moves",
         "assets/game/pokedex/items",
-        // ,
-        // Some("build/data/dex.bin"),
-        // cfg!(feature = "audio"),
     );
 
-    std::fs::write("build/data/dex.bin", bincode::serialize(&dex).unwrap()).unwrap();
+    write("dex", &dex);
 
     let dex_engine = firecore_pokedex_engine_builder::compile("assets/game/pokedex/client/pokemon", "assets/game/pokedex/client/items", "assets/game/pokedex/client/trainers");
 
-    std::fs::write("build/data/dex_engine.bin", bincode::serialize(&dex_engine).unwrap()).unwrap();
+    write("dex_engine", &dex_engine);
 
     firecore_world_builder::compile("assets/game/world", "build/data/world.bin");
 
@@ -25,7 +28,7 @@ fn main() {
 
     let battle = firecore_battle_builder::compile(battle, &battle.join("scripts"));
 
-    std::fs::write("build/data/battle.bin", bincode::serialize(&battle).unwrap()).unwrap();
+    write("battle", &battle);
 
     #[cfg(windows)]
     // embed_resource::compile("build/resources.rc");

@@ -1,5 +1,4 @@
 use pokedex::context::PokedexClientContext;
-use worldlib::TrainerId;
 
 use crate::{engine::{
         graphics::draw_rectangle,

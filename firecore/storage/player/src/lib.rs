@@ -58,7 +58,7 @@ pub struct Player<P, B> {
     #[serde(default)]
     pub worth: Worth,
 
-    #[deprecated(note = "move")]
+    /// To - do: move
     #[serde(default)]
     pub world: WorldStatus,
 }

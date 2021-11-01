@@ -1,7 +1,7 @@
 pub extern crate firecore_engine as engine;
 pub extern crate firecore_pokedex_engine as pokedex;
-extern crate firecore_storage as storage;
 extern crate firecore_saves as saves;
+extern crate firecore_storage as storage;
 
 pub mod args;
 pub mod battle;
@@ -11,8 +11,8 @@ pub mod world;
 
 use std::ops::{Deref, DerefMut};
 
-use saves::PlayerSaves;
 use game::{config::Configuration, init};
+use saves::PlayerSaves;
 
 use engine::{
     tetra::{Context, ContextBuilder, Result},
@@ -63,11 +63,11 @@ fn main() -> Result {
         client
     };
 
-    let mut debug = cfg!(debug_assertions);
-    let mut save_locally = false;
+    let debug = cfg!(debug_assertions);
+    let save_locally = cfg!(debug_assertions);
 
     let fonts = bincode::deserialize(include_bytes!("../build/data/fonts.bin"))
-    .unwrap_or_else(|err| panic!("Could not load font sheets with error {}", err));
+        .unwrap_or_else(|err| panic!("Could not load font sheets with error {}", err));
 
     let mut engine = engine::build(
         ContextBuilder::new(
@@ -80,28 +80,35 @@ fn main() -> Result {
         fonts,
     )?;
 
-    // Save data in local directory in debug builds
-    #[cfg(debug_assertions)] {
-        save_locally = true;
-    }
-
     // Loads configuration, sets up controls
 
     let configuration = Configuration::load(&mut engine, save_locally)?;
 
-    // Load pokedex and movedex;
+    // Load dexes;
 
     let (pokedex, movedex, itemdex) = bincode::deserialize(include_bytes!("../build/data/dex.bin"))
         .unwrap_or_else(|err| panic!("Could not deserialize pokedex with error {}", err));
 
     let dex_engine = bincode::deserialize(include_bytes!("../build/data/dex_engine.bin"))
-        .unwrap_or_else(|err| panic!("Could not deserialize pokedex engine data with error {}", err));
+        .unwrap_or_else(|err| {
+            panic!(
+                "Could not deserialize pokedex engine data with error {}",
+                err
+            )
+        });
 
     let dex = PokedexClientContext::new(&mut engine, &pokedex, &movedex, &itemdex, dex_engine)?;
 
-    let mut saves = PlayerSaves::load(save_locally).unwrap_or_else(|err| panic!("Could not load player saves with error {}", err));
+    let mut saves = PlayerSaves::load(save_locally)
+        .unwrap_or_else(|err| panic!("Could not load player saves with error {}", err));
 
-    saves.select_first_or_default(save_locally, &mut rand::thread_rng(), dex.pokedex, dex.movedex, dex.itemdex);
+    saves.select_first_or_default(
+        save_locally,
+        &mut rand::thread_rng(),
+        dex.pokedex,
+        dex.movedex,
+        dex.itemdex,
+    );
 
     let mut ctx = GameContext {
         engine,

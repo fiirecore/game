@@ -1,16 +1,7 @@
 #[derive(Debug)]
 pub enum DataError {
-    
-    NoFileName,
-    ReadOnly,
-
-    NoDirectory,
-    Serialize(ron::Error),
-    Deserialize(ron::Error),
-
+    Serialization(ron::Error),
     IOError(std::io::Error),
-    // FileError(macroquad::file::FileError),
-
 }
 
 impl std::error::Error for DataError {}
@@ -29,12 +20,6 @@ impl From<std::io::Error> for DataError {
 
 impl From<ron::Error> for DataError {
     fn from(error: ron::Error) -> Self {
-        Self::Serialize(error)
+        Self::Serialization(error)
     }
 }
-
-// impl From<macroquad::file::FileError> for DataError {
-//     fn from(error: macroquad::file::FileError) -> Self {
-//         Self::FileError(error)
-//     }
-// }

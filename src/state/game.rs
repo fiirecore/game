@@ -7,7 +7,7 @@ use crate::{
         tetra::{
             input::{is_key_down, Key},
             time::get_delta_time,
-            Context, Result, State,
+            Result, State,
         },
         util::Entity,
     },

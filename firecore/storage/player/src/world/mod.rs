@@ -15,8 +15,8 @@ pub struct WorldStatus {
     pub scripts: HashSet<TinyStr16>,
     #[serde(default)]
     pub badges: HashSet<TinyStr16>,
-    #[serde(default = "default_heal_loc")]
-    pub heal: (Location, Position),
+    #[serde(default)]
+    pub heal: Option<(Location, Position)>,
 }
 
 impl WorldStatus {
@@ -38,11 +38,11 @@ impl Default for WorldStatus {
             map: HashMap::default(),
             scripts: HashSet::default(),
             badges: HashSet::default(),
-            heal: default_heal_loc(),
+            heal: None,
         }
     }
 }
 
-const fn default_heal_loc() -> (Location, Position) {
+pub const fn default_heal_loc() -> (Location, Position) {
     (crate::default_location(), crate::default_position())
 }

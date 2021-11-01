@@ -11,9 +11,9 @@ hashbrown = { version = "0.11", features = ["serde"] }
 tinystr = { version = "0.4", features = ["serde"] }
 rand = { version = "0.8", default-features = false }
 
-firecore-pokedex = { git = "https://github.com/fiirecore/pokedex" }
-firecore-text = { path = "../../firecore/engine/crates/text" }
-firecore-audio = { path = "../../firecore/engine/crates/audio" }
+firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "a99a3439" }
+firecore-text = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "a147490", package = "firecore-text" }
+firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "a147490", package = "firecore-audio" }
 
 ### Pathfinding
 

@@ -3,7 +3,7 @@ use std::fs::{create_dir_all, read_to_string};
 use crate::PlayerData;
 
 use super::SavedPlayer;
-use firecore_pokedex::{Dex, item::Item, moves::Move, pokemon::Pokemon};
+use firecore_pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex};
 use storage::error::DataError;
 
 // #[deprecated(note = "to-do: own version of storage::get for this")]
@@ -23,11 +23,9 @@ impl<'d> PlayerSaves<'d> {
 
         for dir in dir.read_dir()?.flatten() {
             let path = dir.path();
-            let p = storage::deserialize::<SavedPlayer>(&read_to_string(&path).map_err(DataError::IOError)?)
-                .map_err(DataError::Deserialize)?;
-                list.push(p);
+            let p = storage::deserialize::<SavedPlayer>(&read_to_string(&path)?)?;
+            list.push(p);
         }
-
 
         Ok(Self {
             selected: None,
@@ -55,28 +53,34 @@ impl<'d> PlayerSaves<'d> {
         }
     }
 
-    pub fn select_new(&mut self, name: &str,
+    pub fn select_new(
+        &mut self,
+        name: &str,
         random: &mut impl rand::Rng,
         pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
         movedex: &'d dyn Dex<'d, Move, &'d Move>,
-        itemdex: &'d dyn Dex<'d, Item, &'d Item>,) {
+        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
+    ) {
         let index = self.list.len();
         self.list.push(SavedPlayer::new(name));
         self.select(index, random, pokedex, movedex, itemdex);
     }
 
-    pub fn select_first_or_default(&mut self, local: bool,
+    pub fn select_first_or_default(
+        &mut self,
+        local: bool,
         random: &mut impl rand::Rng,
         pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
         movedex: &'d dyn Dex<'d, Move, &'d Move>,
-        itemdex: &'d dyn Dex<'d, Item, &'d Item>,) {
-        // if self.list.iter().flatten().count() == 0 {
+        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
+    ) {
+        if self.list.is_empty() {
             let data = SavedPlayer::default();
-            // if let Err(err) = data.save(local) {
-            //     log::warn!("Could not save new player file with error {}", err);
-            // }
+            if let Err(err) = data.save(local) {
+                log::warn!("Could not save new player file with error {}", err);
+            }
             self.list.push(data);
-        // }
+        }
         self.select(0, random, pokedex, movedex, itemdex);
     }
 
@@ -96,7 +100,6 @@ impl<'d> PlayerSaves<'d> {
     pub fn get_mut(&mut self) -> &mut PlayerData<'d> {
         self.selected.as_mut().unwrap()
     }
-
 }
 
 // fn get<S, E: std::error::Error>(save: Option<Option<Result<S, E>>>) -> S {

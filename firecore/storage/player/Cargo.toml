@@ -17,7 +17,7 @@ log = "0.4"
 
 firecore-storage = { path="../", optional=true }
 
-firecore-pokedex = { git="https://github.com/fiirecore/pokedex" }
+firecore-pokedex = { git="https://github.com/fiirecore/pokedex", rev = "a99a3439" }
 firecore-world = { path="../../../world" }
 
 hashbrown = { version = "0.11", features = ["serde"] }

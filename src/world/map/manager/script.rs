@@ -4,11 +4,11 @@ use engine::{
     EngineContext,
 };
 use log::warn;
-use pokedex::{Dex, context::PokedexClientContext, item::ItemStack, pokemon::owned::OwnedPokemon};
+use pokedex::{context::PokedexClientContext, item::ItemStack, Dex};
 use saves::PlayerData;
 use worldlib::{
     character::Movement,
-    map::{manager::WorldMapData, WorldMap},
+    map::{manager::data::WorldMapData, WorldMap},
     positions::{Coordinate, Destination},
     script::world::{NpcWarp, PlayerWarp, WorldAction},
 };
@@ -97,7 +97,7 @@ pub(crate) fn update_script<'d>(
                 match dex.itemdex.try_get(item) {
                     Some(item) => {
                         save.bag.add_item(ItemStack::new(item, 1));
-                    },
+                    }
                     None => warn!("Could not get item {}", item),
                 }
                 world.script.actions.pop();

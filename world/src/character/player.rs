@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Character;
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Default, Clone, Debug, Serialize, Deserialize)]
 pub struct PlayerCharacter {
     pub character: Character,
     pub input_frozen: bool,

@@ -1,5 +1,5 @@
 use log::{info, warn};
-use pokedex::{Dex, context::PokedexClientContext, item::{ItemId, ItemStack, StackSize}};
+use pokedex::{Dex, context::PokedexClientContext, item::{ItemId, ItemStack, StackSize}, pokemon::{Level, PokemonId, owned::SavedPokemon, stat::{Stat, StatSet}}};
 use saves::PlayerData;
 use worldlib::positions::{Location, LocationId};
 
@@ -88,14 +88,22 @@ impl WorldManager {
                     "random" => {
                         match result.args.next() {
                             Some(len) => match len.parse::<usize>() {
-                                Ok(size) => {
-                                    random_wild_battle(&mut self.randoms.wild, dex.pokedex.len() as _, battle, size)
-                                }
+                                Ok(size) => random_wild_battle(
+                                    &mut self.randoms.wild,
+                                    dex.pokedex.len() as _,
+                                    battle,
+                                    size,
+                                ),
                                 Err(err) => {
                                     warn!("Could not parse battle length for second /battle argument \"{}\" with error {}", len, err);
                                 }
                             },
-                            None => random_wild_battle(&mut self.randoms.wild, dex.pokedex.len() as _, battle, DEFAULT_RANDOM_BATTLE_SIZE),
+                            None => random_wild_battle(
+                                &mut self.randoms.wild,
+                                dex.pokedex.len() as _,
+                                battle,
+                                DEFAULT_RANDOM_BATTLE_SIZE,
+                            ),
                         };
                     }
                     _ => warn!("Unknown /battle argument \"{}\".", arg),
@@ -139,27 +147,54 @@ impl WorldManager {
                     warn!("Invalid warp command syntax!")
                 }
             }
-            "give" => {
-                if let Some(item) = result
-                    .args
-                    .next()
-                    .map(|item| item.parse::<ItemId>().ok())
-                    .flatten()
-                {
-                    let count = result
-                        .args
-                        .next()
-                        .map(|count| count.parse::<StackSize>().ok())
-                        .flatten()
-                        .unwrap_or(1);
-                    match dex.itemdex.try_get(&item) {
-                        Some(item) => {
-                            save.bag.add_item(ItemStack::new(item, count));
+            "give" => match result.args.next() {
+                Some(arg) => match arg {
+                    "pokemon" => match result.args.next().map(|arg| arg.parse::<PokemonId>().ok()).flatten() {
+                        Some(id) => {
+                            let level = match result.args.next().map(|arg| arg.parse::<Level>().ok()).flatten() {
+                                Some(level) => level,
+                                None => 5,
+                            };
+                            let ivs = match result.args.next().map(|arg| arg.parse::<Stat>().ok()).flatten() {
+                                Some(iv) => StatSet::uniform(iv),
+                                None => Default::default(),
+                            };
+                            let mut random = rand::thread_rng();
+                            match SavedPokemon::generate(&mut random, id, level, None, Some(ivs)).init(&mut random, dex.pokedex, dex.movedex, dex.itemdex) {
+                                Some(p) => if let Err(..) = save.party.try_push(p) {
+                                    warn!("Party full!");
+                                },
+                                None => warn!("Cannot create pokemon!"),
+                            }
+                            
                         }
-                        None => warn!("Could not get item with id {}", item),
+                        None => warn!("Please provide a pokemon ID!"),
                     }
-                }
-            }
+                    "item" => {
+                        if let Some(item) = result
+                            .args
+                            .next()
+                            .map(|item| item.parse::<ItemId>().ok())
+                            .flatten()
+                        {
+                            let count = result
+                                .args
+                                .next()
+                                .map(|count| count.parse::<StackSize>().ok())
+                                .flatten()
+                                .unwrap_or(1);
+                            match dex.itemdex.try_get(&item) {
+                                Some(item) => {
+                                    save.bag.add_item(ItemStack::new(item, count));
+                                }
+                                None => warn!("Could not get item with id {}", item),
+                            }
+                        }
+                    }
+                    _ => warn!("Please provide either \"pokemon\" or \"item\" when using /give!"),
+                },
+                None => warn!("Please provide either \"pokemon\" or \"item\" when using /give!"),
+            },
             _ => warn!("Unknown world command \"{}\".", result),
         }
     }

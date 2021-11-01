@@ -1,17 +1,16 @@
 use std::ops::{Deref, DerefMut};
 
 use crate::{
-    character::{
-        npc::{trainer::TrainerDisable, Npc, NpcId},
-        player::PlayerCharacter,
-        Movement,
-    },
+    character::Movement,
     map::{can_move, can_swim, can_walk, MovementId, TileId, WarpDestination, World, WorldMap},
     positions::{Coordinate, Direction, Location},
-    script::world::WorldAction,
 };
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
+
+use self::data::WorldMapData;
+
+pub mod data;
 
 pub enum TryMoveResult {
     MapUpdate,
@@ -27,14 +26,6 @@ pub struct WorldMapManager {
     #[serde(skip)]
     pub data: WorldMapData,
 }
-
-pub struct TrainerEntry {
-    pub map: Location,
-    pub id: NpcId,
-    pub disable_others: TrainerDisable,
-}
-
-pub type TrainerEntryRef<'a> = &'a mut Option<TrainerEntry>;
 
 // To - do: check surrounding maps
 impl World for WorldMapManager {
@@ -63,7 +54,6 @@ impl WorldMapManager {
     }
 
     pub fn try_move(&mut self, direction: Direction) -> Option<TryMoveResult> {
-
         self.player.on_try_move(direction);
 
         let offset = direction.tile_offset();
@@ -179,41 +169,6 @@ impl WorldMapManager {
                 true
             }
             false => todo!(),
-        }
-    }
-}
-
-#[derive(Default)]
-pub struct WorldMapData {
-    pub location: Option<Location>,
-    pub player: PlayerCharacter,
-    pub npc: WorldNpcData,
-    pub warp: Option<WarpDestination>,
-    pub script: WorldGlobalScriptData,
-    pub wild: WorldGlobalWildData,
-    pub battling: Option<TrainerEntry>,
-}
-
-#[derive(Default)]
-pub struct WorldGlobalScriptData {
-    pub actions: Vec<WorldAction>,
-    pub npcs: HashMap<NpcId, (Location, Npc)>,
-}
-
-#[derive(Default)]
-pub struct WorldNpcData {
-    pub active: Option<NpcId>,
-    pub timer: f32,
-}
-
-pub struct WorldGlobalWildData {
-    pub encounters: bool,
-}
-
-impl Default for WorldGlobalWildData {
-    fn default() -> Self {
-        Self {
-            encounters: true,
         }
     }
 }

@@ -28,13 +28,13 @@ pub enum MainStates {
 
 impl Default for MainStates {
     fn default() -> Self {
-        // #[cfg(not(debug_assertions))]
-        // {
-        //     Self::Menu
-        // }
-        // #[cfg(debug_assertions)]
-        // {
+        #[cfg(not(debug_assertions))]
+        {
+            Self::Menu
+        }
+        #[cfg(debug_assertions)]
+        {
             Self::Game
-        // }
+        }
     }
 }

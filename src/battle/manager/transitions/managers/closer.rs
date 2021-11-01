@@ -2,7 +2,6 @@ use crate::{engine::{gui::MessageBox, EngineContext}, game::battle_glue::{Battle
 
 use battlelib::data::BattleType;
 use pokedex::context::PokedexClientContext;
-use worldlib::TrainerId;
 
 use crate::battle::manager::transitions::{
     closers::{Closers, TrainerBattleCloser, WildBattleCloser},

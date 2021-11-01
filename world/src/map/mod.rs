@@ -79,6 +79,7 @@ pub struct WorldChunk {
 #[serde(deny_unknown_fields)]
 pub struct WorldMapSettings {
     #[serde(default)]
+    /// To - do: rename to "fly"
     pub fly_position: Option<Coordinate>,
     #[serde(default)]
     pub brightness: Brightness,
@@ -132,7 +133,7 @@ impl World for WorldMap {
     }
 }
 
-#[deprecated(note = "move")]
+/// To - do: move
 #[derive(Debug, Deserialize, Serialize)]
 pub enum Brightness {
     Day,

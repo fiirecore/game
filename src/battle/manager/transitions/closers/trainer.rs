@@ -1,8 +1,7 @@
 use pokedex::context::PokedexClientContext;
-use worldlib::TrainerId;
 
 use crate::{engine::{
-        graphics::{draw_o_bottom, TextureManager},
+        graphics::{draw_o_bottom},
         gui::MessageBox,
         tetra::graphics::Texture,
         text::MessagePage,

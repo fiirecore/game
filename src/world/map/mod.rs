@@ -1,6 +1,6 @@
 use crate::engine::{EngineContext, tetra::graphics::Color};
 
-use worldlib::map::{manager::WorldMapData, TileId, WorldMap};
+use worldlib::map::{manager::data::WorldMapData, TileId, WorldMap};
 
 use crate::world::RenderCoords;
 

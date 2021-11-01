@@ -1,17 +1,10 @@
-use pokedex::{
-    pokemon::{
-        owned::{OwnedPokemon, SavedPokemon},
-        party::Party,
-        stat::StatSet,
-    },
-    Dex,
-};
+use pokedex::pokemon::{owned::SavedPokemon, party::Party, stat::StatSet};
 use rand::Rng;
 use saves::PlayerData;
 use worldlib::{
     character::npc::{trainer::TrainerDisable, Npc, NpcId},
     map::{
-        manager::{TrainerEntry, TrainerEntryRef},
+        manager::data::{TrainerEntry, TrainerEntryRef},
         wild::WildEntry,
     },
     positions::Location,
@@ -58,7 +51,7 @@ pub fn wild_battle(random: &mut impl Rng, battle: BattleEntryRef, wild: &WildEnt
 }
 
 pub fn trainer_battle(
-    save: &PlayerData,
+    save: &mut PlayerData,
     battle: BattleEntryRef,
     world: TrainerEntryRef,
     npc: &Npc,
@@ -66,29 +59,28 @@ pub fn trainer_battle(
     npc_id: &NpcId,
 ) {
     if let Some(trainer) = npc.trainer.as_ref() {
-        if let Some(map) = save.world.map.get(&map_id.index) {
-            if !map.battled.contains(npc_id) {
-                let npc_type = npc_type(&npc.type_id);
-                if let Some(trainer_type) = npc_type.trainer.as_ref() {
-                    *battle = Some(BattleEntry {
-                        id: BattleId(Some(npc_id.as_str().parse().unwrap())),
-                        name: Some(format!("{} {}", trainer_type.name, npc.name)),
-                        party: trainer.party.clone(),
-                        trainer: Some(BattleTrainerEntry {
-                            transition: trainer.battle_transition,
-                            // texture: TrainerTextures::get(&npc.type_id).clone(),
-                            gym_badge: trainer_type.badge,
-                            victory_message: trainer.victory_message.clone(),
-                            worth: trainer.worth,
-                        }),
-                        active: 1,
-                    });
-                    *world = Some(TrainerEntry {
-                        id: *npc_id,
-                        disable_others: trainer.disable.clone(),
-                        map: *map_id,
-                    })
-                }
+        let map = save.world.get_map(&map_id);
+        if !map.battled.contains(npc_id) {
+            let npc_type = npc_type(&npc.type_id);
+            if let Some(trainer_type) = npc_type.trainer.as_ref() {
+                *battle = Some(BattleEntry {
+                    id: BattleId(Some(npc_id.as_str().parse().unwrap())),
+                    name: Some(format!("{} {}", trainer_type.name, npc.name)),
+                    party: trainer.party.clone(),
+                    trainer: Some(BattleTrainerEntry {
+                        transition: trainer.battle_transition,
+                        // texture: TrainerTextures::get(&npc.type_id).clone(),
+                        gym_badge: trainer_type.badge,
+                        victory_message: trainer.victory_message.clone(),
+                        worth: trainer.worth,
+                    }),
+                    active: 1,
+                });
+                *world = Some(TrainerEntry {
+                    id: *npc_id,
+                    disable_others: trainer.disable.clone(),
+                    map: *map_id,
+                })
             }
         }
     }
@@ -112,10 +104,11 @@ impl WorldManager {
                     }
                 }
             } else {
-                player.location = player.world.heal.0;
-                self.world.player.position = player.world.heal.1;
+                let loc = player.world.heal.unwrap_or_else(saves::world::default_heal_loc);
+                player.location = loc.0;
+                self.world.player.position = loc.1;
                 self.world.location = Some(player.location);
-                player.party.iter_mut().for_each(|o |o.heal(None, None));
+                player.party.iter_mut().for_each(|o| o.heal(None, None));
             }
         }
     }

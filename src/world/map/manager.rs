@@ -7,7 +7,11 @@ use engine::{
     EngineContext,
 };
 use log::info;
-use pokedex::{context::PokedexClientContext, gui::{bag::BagGui, party::PartyGui}, moves::MoveId};
+use pokedex::{
+    context::PokedexClientContext,
+    gui::{bag::BagGui, party::PartyGui},
+    moves::MoveId,
+};
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use saves::PlayerData;
 use std::rc::Rc;
@@ -21,7 +25,10 @@ use worldlib::{
     serialized::SerializedWorld,
 };
 
-use crate::{game::{battle_glue::BattleEntryRef, is_debug}, state::{Action, MainStates}};
+use crate::{
+    game::{battle_glue::BattleEntryRef, is_debug},
+    state::Action,
+};
 
 use crate::world::{
     gui::{StartMenu, TextWindow},
@@ -136,7 +143,12 @@ impl WorldManager {
         self.load_player(save);
     }
 
-    pub fn on_start(&mut self, ctx: &mut EngineContext, save: &mut PlayerData, battle: BattleEntryRef) {
+    pub fn on_start(
+        &mut self,
+        ctx: &mut EngineContext,
+        save: &mut PlayerData,
+        battle: BattleEntryRef,
+    ) {
         self.map_start(ctx, true);
         on_tile(
             &mut self.world,
@@ -187,21 +199,16 @@ impl WorldManager {
                         match result {
                             TryMoveResult::MapUpdate => self.map_start(ctx, true),
                             TryMoveResult::TrySwim => {
-                                const SURF: MoveId =
-                                    unsafe { MoveId::new_unchecked(1718777203) };
+                                const SURF: MoveId = unsafe { MoveId::new_unchecked(1718777203) };
 
                                 if save
                                     .party
                                     .iter()
-                                    .flat_map(|pokemon| {
-                                        pokemon
-                                            .moves
-                                            .iter()
-                                    })
+                                    .flat_map(|pokemon| pokemon.moves.iter())
                                     .any(|m| m.0.id == SURF)
                                 {
-                                        self.world.player.movement = Movement::Swimming;
-                                        self.world.player.pathing.queue.push(direction);
+                                    self.world.player.movement = Movement::Swimming;
+                                    self.world.player.pathing.queue.push(direction);
                                 }
                             }
                             TryMoveResult::StartWarpOnTile(tile, coords) => {
@@ -328,7 +335,12 @@ impl WorldManager {
         }
     }
 
-    pub fn draw<'d>(&self, ctx: &mut EngineContext, dex: &PokedexClientContext<'d>, save: &PlayerData) {
+    pub fn draw<'d>(
+        &self,
+        ctx: &mut EngineContext,
+        dex: &PokedexClientContext<'d>,
+        save: &PlayerData,
+    ) {
         if self.menu.fullscreen() {
             self.menu.draw(ctx, dex, save);
         // } else if self.world_map.alive() {
@@ -529,7 +541,7 @@ fn update1<'d>(
     save: &mut PlayerData<'d>,
     delta: f32,
     map: &mut WorldMap,
-    world: &mut worldlib::map::manager::WorldMapData,
+    world: &mut worldlib::map::manager::data::WorldMapData,
     battle: BattleEntryRef,
     window: &mut TextWindow,
     warper: &mut WarpTransition,
@@ -664,7 +676,14 @@ fn update1<'d>(
     {
         if window.text.alive() {
             if window.text.finished() {
-                crate::world::battle::trainer_battle(save, battle, &mut world.battling, npc, &map_id, id);
+                crate::world::battle::trainer_battle(
+                    save,
+                    battle,
+                    &mut world.battling,
+                    npc,
+                    &map_id,
+                    id,
+                );
                 window.text.despawn();
                 world.npc.active = None;
                 world.player.unfreeze();
