@@ -1,0 +1,11 @@
+(
+    id: "battle_gym",
+    data: "files/vs_gym.ogg",
+    // music: (
+    //     track: 0x2A,
+    //     name: "battle_gym",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

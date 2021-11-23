@@ -1,10 +1,11 @@
-use engine::{
-    audio::{play_music, play_music_named, play_sound},
+use crate::engine::{
+    audio::{play_music, play_sound},
     util::{Completable, Entity},
-    EngineContext,
+    Context,
 };
-use log::warn;
-use pokedex::{context::PokedexClientContext, item::ItemStack, Dex};
+use crate::engine::log::{warn, error};
+use crate::pokedex::{context::PokedexClientData, item::ItemStack, Dex};
+use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
 use saves::PlayerData;
 use worldlib::{
     character::Movement,
@@ -20,8 +21,8 @@ use crate::{
 
 /// Update scripts from WorldManager
 pub(crate) fn update_script<'d>(
-    ctx: &mut EngineContext,
-    dex: &PokedexClientContext<'d>,
+    ctx: &mut Context,
+    dex: &PokedexClientData,
     save: &mut PlayerData<'d>,
     delta: f32,
     map: &mut WorldMap,
@@ -29,19 +30,23 @@ pub(crate) fn update_script<'d>(
     battle: BattleEntryRef,
     window: &mut TextWindow,
     warper: &mut WarpTransition,
+    random: &mut impl rand::Rng,
+    pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
+    movedex: &'d dyn Dex<'d, Move, &'d Move>,
+    itemdex: &'d dyn Dex<'d, Item, &'d Item>,
 ) {
     if let Some(action) = world.script.actions.last_mut() {
         match action {
             WorldAction::PlayMusic(music) => {
-                play_music_named(ctx, music);
+                play_music(ctx, music);
                 world.script.actions.pop();
             }
             WorldAction::PlayMapMusic => {
-                play_music(ctx, map.music);
+                play_music(ctx, &map.music);
                 world.script.actions.pop();
             }
-            WorldAction::PlaySound(sound) => {
-                play_sound(ctx, sound);
+            WorldAction::PlaySound(sound, variant) => {
+                play_sound(ctx, sound, *variant);
                 world.script.actions.pop();
             }
             WorldAction::PlayerFreezeInput => {
@@ -77,10 +82,10 @@ pub(crate) fn update_script<'d>(
             WorldAction::PlayerGivePokemon(instance) => {
                 match save.party.is_full() {
                     false => match instance.clone().init(
-                        &mut rand::thread_rng(),
-                        dex.pokedex,
-                        dex.movedex,
-                        dex.itemdex,
+                        random,
+                        pokedex,
+                        movedex,
+                        itemdex,
                     ) {
                         Some(p) => save.party.push(p),
                         None => warn!("Cannot initialize given pokemon!"),
@@ -94,7 +99,7 @@ pub(crate) fn update_script<'d>(
                 world.script.actions.pop();
             }
             WorldAction::PlayerGiveItem(item) => {
-                match dex.itemdex.try_get(item) {
+                match itemdex.try_get(item) {
                     Some(item) => {
                         save.bag.add_item(ItemStack::new(item, 1));
                     }
@@ -271,7 +276,7 @@ pub(crate) fn update_script<'d>(
                                     Some((warp.destination.location, warp.destination.position))
                                 }
                                 None => {
-                                    log::error!("Could not get warp {} in map {}", id, map.name);
+                                    error!("Could not get warp {} in map {}", id, map.name);
                                     None
                                 }
                             },
@@ -321,7 +326,7 @@ pub(crate) fn update_script<'d>(
                 }
             },
             WorldAction::Conditional { .. } => {
-                log::error!("cannot use script Conditional command");
+                error!("cannot use script Conditional command");
                 world.script.actions.pop();
             }
             WorldAction::Warp(warp, music) => {
@@ -330,7 +335,7 @@ pub(crate) fn update_script<'d>(
                         map.warps
                             .get(id)
                             .unwrap_or_else(|| {
-                                log::error!(
+                                error!(
                                 "Could not get warp with id {} in map {} because it doesn't exist!",
                                 id,
                                 map.name,
@@ -455,7 +460,7 @@ pub(crate) fn update_script<'d>(
     // }
 }
 
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use worldlib::{
     character::npc::{Npc, NpcId, Npcs},
     positions::Location,

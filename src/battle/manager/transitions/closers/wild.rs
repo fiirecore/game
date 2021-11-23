@@ -1,12 +1,15 @@
-use pokedex::context::PokedexClientContext;
+use crate::pokedex::context::PokedexClientData;
 
-use crate::{engine::{
+use crate::{
+    engine::{
         graphics::draw_rectangle,
+        inner::prelude::Color,
         gui::MessageBox,
-        tetra::graphics::Color,
         util::{Completable, Reset, HEIGHT, WIDTH},
-        EngineContext,
-    }, game::battle_glue::{BattleId, BattleTrainerEntry}};
+        Context,
+    },
+    game::battle_glue::{BattleId, BattleTrainerEntry},
+};
 
 use crate::battle::manager::transitions::BattleCloser;
 
@@ -18,7 +21,7 @@ pub struct WildBattleCloser {
 impl Default for WildBattleCloser {
     fn default() -> Self {
         Self {
-            color: Color::BLACK,
+            color: Color::from_rgba(0, 0, 0, 255),
             world: false,
         }
     }
@@ -27,7 +30,7 @@ impl Default for WildBattleCloser {
 impl BattleCloser for WildBattleCloser {
     fn spawn<'d>(
         &mut self,
-        _: &PokedexClientContext<'d>,
+        _: &PokedexClientData,
         _: &BattleId,
         _: &str,
         _: Option<&BattleId>,
@@ -37,7 +40,7 @@ impl BattleCloser for WildBattleCloser {
     ) {
     }
 
-    fn update(&mut self, _ctx: &mut EngineContext, delta: f32, _text: &mut MessageBox) {
+    fn update(&mut self, _ctx: &mut Context, delta: f32, _text: &mut MessageBox) {
         if self.world {
             self.color.a -= 4.5 * delta;
         } else {
@@ -52,11 +55,11 @@ impl BattleCloser for WildBattleCloser {
         self.world
     }
 
-    fn draw(&self, ctx: &mut EngineContext) {
-        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.color);
+    fn draw(&self, ctx: &mut Context) {
+        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, unsafe { std::mem::transmute(self.color) });
     }
 
-    fn draw_battle(&self, _ctx: &mut EngineContext) {}
+    fn draw_battle(&self, _ctx: &mut Context) {}
 }
 
 impl Reset for WildBattleCloser {

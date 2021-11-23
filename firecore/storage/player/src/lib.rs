@@ -30,7 +30,8 @@ pub type Name = String;
 pub type Worth = u32;
 
 pub type SavedPlayer = Player<SavedPokemon, SavedBag>;
-pub type PlayerData<'d> = Player<OwnedPokemon<'d>, OwnedBag<&'d Item>>;
+pub type PlayerData<'d> = NewPlayerData<&'d Pokemon, &'d Move, &'d Item>;
+pub type NewPlayerData<P, M, I> = Player<OwnedPokemon<P, M, I>, OwnedBag<I>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Player<P, B> {
@@ -72,7 +73,7 @@ impl SavedPlayer {
     }
 
     pub fn save(&self, local: bool) -> Result<(), DataError> {
-        use log::{info, warn};
+        use storage::{info, warn};
         info!("Saving player data!");
         if let Err(err) = storage::save(
             self,
@@ -148,10 +149,7 @@ impl Default for SavedPlayer {
 }
 
 pub fn default_id() -> TrainerId {
-    let t = std::time::SystemTime::now()
-        .duration_since(std::time::SystemTime::UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or_default();
+    let t = (storage::time() * 10000.0) as u32;
     let mut str = format!("{}i", t).chars().rev().collect::<String>();
     str.truncate(16);
     str.parse().unwrap_or_else(|err| {

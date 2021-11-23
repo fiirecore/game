@@ -1,4 +1,4 @@
-use crate::engine::{EngineContext, tetra::graphics::Color};
+use crate::engine::{Context, graphics::Color};
 
 use worldlib::map::{manager::data::WorldMapData, TileId, WorldMap};
 
@@ -15,7 +15,7 @@ pub mod warp;
 pub fn draw(
     map: &WorldMap,
     world: &WorldMapData,
-    ctx: &mut EngineContext,
+    ctx: &mut Context,
     textures: &WorldTextures,
     screen: &RenderCoords,
     border: bool,

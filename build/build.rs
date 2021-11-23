@@ -8,7 +8,7 @@ fn main() {
     write("fonts", &firecore_font_builder::compile("assets/game/fonts"));
 
     #[cfg(feature = "audio")]
-    write("audio", &firecore_audio_builder::compile("assets/game/music"));
+    write("audio", &firecore_audio_builder::compile("assets/music"));
 
     let dex = firecore_pokedex_builder::compile(
         "assets/game/pokedex/pokemon",
@@ -22,7 +22,9 @@ fn main() {
 
     write("dex_engine", &dex_engine);
 
-    firecore_world_builder::compile("assets/world", "build/data/world.bin");
+    let world = firecore_world_builder::compile("assets/world");
+
+    write("world", &world);
 
     let battle = std::path::Path::new("assets/game/pokedex/battle");
 
@@ -30,10 +32,10 @@ fn main() {
 
     write("battle", &battle);
 
-    #[cfg(windows)]
-    // embed_resource::compile("build/resources.rc");
-    winres::WindowsResource::new()
-        .set_icon("build/icon.ico")
-        .compile()
-        .unwrap();
+    // #[cfg(windows)]
+    // // embed_resource::compile("build/resources.rc");
+    // winres::WindowsResource::new()
+    //     .set_icon("build/icon.ico")
+    //     .compile()
+    //     .unwrap();
 }

@@ -1,4 +1,4 @@
-use hashbrown::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use tinystr::{TinyStr16, TinyStr8};
 use serde::{Deserialize, Serialize};
 use worldlib::positions::{Location, Position};

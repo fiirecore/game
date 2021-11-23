@@ -1,4 +1,3 @@
-use audio::music::MusicName;
 use serde::{Deserialize, Serialize};
 use text::TextColor;
 use tinystr::TinyStr16;
@@ -21,5 +20,5 @@ pub struct TrainerType {
     pub name: String,
     #[serde(default)]
     pub badge: Option<BadgeId>,
-    pub music: Option<MusicName>,
+    pub music: Option<TinyStr16>,
 }

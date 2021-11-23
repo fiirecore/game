@@ -1,0 +1,11 @@
+(
+    id: "battle_wild",
+    data: "files/vs_wild.ogg",
+    // music: (
+    //     track: 0x28,
+    //     name: "battle_wild",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

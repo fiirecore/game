@@ -1,4 +1,4 @@
-pub use engine::text::*;
+pub use crate::engine::text::*;
 use saves::PlayerData;
 
 const PLAYER_ID: &str = "%p";

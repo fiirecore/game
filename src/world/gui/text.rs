@@ -1,37 +1,28 @@
-use engine::{
-    util::Entity,
-    gui::MessageBox,
-    graphics::{byte_texture, position},
-    tetra::{
-        Context,
-        math::Vec2,
-        graphics::Texture,
-    },
-    EngineContext,
-};
+use crate::engine::{graphics::Texture, gui::MessageBox, math::{Vec2, vec2}, util::Entity, Context};
 
 pub struct TextWindow {
-
     background: Texture,
     pub text: MessageBox,
-
 }
 
 impl TextWindow {
-
-    const ORIGIN: Vec2<f32> = Vec2::new(6.0, 116.0);
-    const TEXT_OFFSET: Vec2<f32> = Vec2::new(11.0, 5.0);
+    const ORIGIN: Vec2 = vec2(6.0, 116.0);
+    const TEXT_OFFSET: Vec2 = vec2(11.0, 5.0);
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            background: byte_texture(ctx, include_bytes!("../../../assets/world/textures/gui/message.png")),
+            background: Texture::new(
+                ctx,
+                include_bytes!("../../../assets/world/textures/gui/message.png"),
+            ).unwrap(),
             text: MessageBox::new(Self::ORIGIN + Self::TEXT_OFFSET, 1),
         }
     }
 
-    pub fn draw(&self, ctx: &mut EngineContext) {
+    pub fn draw(&self, ctx: &mut Context) {
         if self.text.alive() {
-            self.background.draw(ctx, position(Self::ORIGIN.x, Self::ORIGIN.y));
+            self.background
+                .draw(ctx, Self::ORIGIN.x, Self::ORIGIN.y, Default::default());
             self.text.draw(ctx);
         }
     }

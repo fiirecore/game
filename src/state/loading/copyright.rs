@@ -18,7 +18,7 @@ impl super::LoadingScene for CopyrightLoadingScene {
 	fn new() -> Self {
 		Self {
 			state: LoadingState::Continue,
-			scene_texture: byte_texture(include_bytes!("../../../build/assets/scenes/loading/copyright.png")),
+			scene_texture: Texture::new(include_bytes!("../../../build/assets/scenes/loading/copyright.png")),
 			accumulator: 0.0,
 		}
 	}

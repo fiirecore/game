@@ -1,12 +1,9 @@
-use engine::{
-    graphics::{draw_rectangle, position, RED},
-    tetra::{
-        graphics::{Rectangle, Texture},
-        math::Vec2,
-    },
-    EngineContext,
+use crate::engine::{
+    graphics::{draw_rectangle, Color, DrawParams, Texture},
+    math::{Rectangle},
+    Context,
 };
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use worldlib::{
     character::npc::{Npc, NpcTypeId},
     positions::Direction,
@@ -28,7 +25,7 @@ impl NpcTextureManager {
         self.npcs = npcs;
     }
 
-    pub fn draw(&self, ctx: &mut EngineContext, npc: &Npc, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x
             + npc.character.offset.x;
         let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32
@@ -36,18 +33,25 @@ impl NpcTextureManager {
             + npc.character.offset.y;
 
         if let Some(texture) = self.npcs.get(&npc.type_id) {
-            let params = if npc.character.position.direction == Direction::Right {
-                position(x + 16.0, y).scale(Vec2::new(-1.0, 1.0))
-            } else {
-                position(x, y)
-            };
-            texture.draw_region(
+            texture.draw(
                 ctx,
-                Rectangle::new(current_texture_pos(npc), 0.0, 16.0, 32.0),
-                params,
+                x,
+                y,
+                DrawParams {
+                    flip_x: npc.character.position.direction == Direction::Right,
+                    source: Some(Rectangle::new(current_texture_pos(npc), 0.0, 16.0, 32.0)),
+                    ..Default::default()
+                },
             );
         } else {
-            draw_rectangle(ctx, x, y + TILE_SIZE, TILE_SIZE, TILE_SIZE * 2.0, RED);
+            draw_rectangle(
+                ctx,
+                x,
+                y + TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE * 2.0,
+                Color::rgb(1.0, 0.0, 0.0),
+            );
         }
     }
 }

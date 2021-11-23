@@ -1,6 +1,5 @@
 extern crate firecore_pokedex as pokedex;
 extern crate firecore_text as text;
-extern crate firecore_audio as audio;
 
 pub mod positions;
 pub mod map;

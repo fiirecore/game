@@ -1,12 +1,10 @@
 use crate::engine::{
     graphics::draw_rectangle,
-    tetra::{
-        graphics::Color,
-        graphics::{get_transform_matrix, reset_transform_matrix, set_transform_matrix},
-        math::{Vec2, Vec3},
-    },
+    inner::{self, prelude::Color},
+    // graphics::{get_transform_matrix, reset_transform_matrix, set_transform_matrix},
+    // math::{Vec2, Vec3},
     util::{Completable, Reset, HEIGHT, WIDTH},
-    EngineContext,
+    Context,
 };
 
 use crate::battle::manager::transitions::BattleTransition;
@@ -23,7 +21,7 @@ pub struct FlashBattleTransition {
 
 impl FlashBattleTransition {
     const ZOOM_OFFSET: f32 = 1.0;
-    const DEFAULT_COLOR: Color = Color::rgba(1.0, 1.0, 1.0, 0.0);
+    const DEFAULT_COLOR: Color = inner::prelude::Color::new(1.0, 1.0, 1.0, 0.0);
     const FINAL_INDEX: u8 = 4;
 }
 
@@ -42,7 +40,7 @@ impl Default for FlashBattleTransition {
 }
 
 impl BattleTransition for FlashBattleTransition {
-    fn update(&mut self, ctx: &mut EngineContext, delta: f32) {
+    fn update(&mut self, _: &mut Context, delta: f32) {
         if self.waning {
             self.screen.a -= self.fade * 60.0 * delta;
         } else {
@@ -55,7 +53,6 @@ impl BattleTransition for FlashBattleTransition {
             self.waning = true;
         }
         if self.index == Self::FINAL_INDEX && self.screen.a <= 0.0 {
-            self.screen.a = -2.0;
             self.screen.r = 0.0;
             self.screen.g = 0.0;
             self.screen.b = 0.0;
@@ -63,25 +60,16 @@ impl BattleTransition for FlashBattleTransition {
             self.zoom = true;
         }
         if self.zoom {
-            self.zoom_offset += 6.0 * delta;
-
-            let mut mat = get_transform_matrix(ctx);
-
-            mat.scale_3d(Vec3::new(self.zoom_offset, self.zoom_offset, 1.0));
-            mat.translate_2d(Vec2::new(
-                -(self.zoom_offset - 1.0) * (WIDTH / 2.0),
-                -(self.zoom_offset - 1.0) * (HEIGHT / 2.0),
-            ));
-
-            set_transform_matrix(ctx, mat);
+            self.zoom_offset += 600.0 * delta;
+            inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(inner::prelude::Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, WIDTH - self.zoom_offset, HEIGHT - self.zoom_offset)))
         }
         if self.finished() {
-            reset_transform_matrix(ctx);
+            inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(inner::prelude::Rect::new(0.0, 0.0, WIDTH, HEIGHT)));
         }
     }
 
-    fn draw(&self, ctx: &mut EngineContext) {
-        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.screen);
+    fn draw(&self, ctx: &mut Context) {
+        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, unsafe { std::mem::transmute(self.screen) });
     }
 }
 

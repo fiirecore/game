@@ -1,9 +1,9 @@
-use engine::tetra::{Result, State};
+use crate::engine::State;
 use saves::default_name_str;
 
 use crate::{
-	state::menu::{MenuState, MenuStateAction, MenuStates},
-	GameContext,
+    state::menu::{MenuState, MenuStateAction, MenuStates},
+    GameContext,
 };
 
 pub struct CharacterCreationState {
@@ -16,11 +16,16 @@ impl CharacterCreationState {
     }
 }
 
-impl<'d> State<GameContext<'d>> for CharacterCreationState {
-    fn begin(&mut self, ctx: &mut GameContext<'d>) -> Result {
-        ctx.saves.select_new(default_name_str(), &mut rand::thread_rng(), ctx.dex.pokedex, ctx.dex.movedex, ctx.dex.itemdex);
+impl<'d> State<GameContext> for CharacterCreationState {
+    fn start(&mut self, ctx: &mut GameContext) {
+        ctx.saves.select_new(
+            default_name_str(),
+            &mut ctx.random,
+            crate::pokedex(),
+            crate::movedex(),
+            crate::itemdex(),
+        );
         self.action = Some(MenuStateAction::Goto(MenuStates::MainMenu));
-        Ok(())
     }
 }
 

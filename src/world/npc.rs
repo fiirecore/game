@@ -1,4 +1,4 @@
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use worldlib::character::npc::{NpcTypeId, NpcType};
 
 pub type NpcTypes = HashMap<NpcTypeId, NpcType>;

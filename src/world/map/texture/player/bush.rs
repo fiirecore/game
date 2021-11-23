@@ -1,27 +1,22 @@
-use worldlib::positions::Coordinate;
-use engine::{
-    tetra::{
-        Context,
-        graphics::{
-            Texture,
-            Rectangle,
-        },
-    },
-    graphics::{byte_texture, position},
+use crate::engine::{
+    graphics::{DrawParams, Texture},
+    math::Rectangle,
+    Context,
 };
+use worldlib::positions::Coordinate;
 
 use crate::world::RenderCoords;
 
 #[derive(Default)]
 pub struct PlayerBushTexture {
-	instances: Vec<BushRustle>,
+    instances: Vec<BushRustle>,
     pub in_bush: bool,
 }
 
 struct BushRustle {
-	counter: f32,
+    counter: f32,
     coords: Coordinate,
-	texture: &'static Texture,
+    texture: &'static Texture,
 }
 
 impl BushRustle {
@@ -36,19 +31,24 @@ impl BushRustle {
 
 static mut BUSH_TEXTURE: Option<Texture> = None;
 
-pub (crate) fn new(ctx: &mut Context) {
-    unsafe { BUSH_TEXTURE = Some(byte_texture(ctx, include_bytes!("../../../../../assets/world/textures/player/bush_temp.png"))) }
+pub(crate) fn new(ctx: &mut Context) {
+    unsafe {
+        BUSH_TEXTURE = Some(Texture::new(
+            ctx,
+            include_bytes!("../../../../../assets/world/textures/player/bush_temp.png"),
+        ).unwrap())
+    }
 }
 
 fn bush_rustle() -> &'static Texture {
-	unsafe { BUSH_TEXTURE.as_ref().unwrap() }
+    unsafe { BUSH_TEXTURE.as_ref().unwrap() }
 }
 
 impl PlayerBushTexture {
     pub fn add(&mut self, coords: Coordinate) {
         self.instances.push(BushRustle::new(coords));
     }
-	pub fn update(&mut self, delta: f32) {
+    pub fn update(&mut self, delta: f32) {
         for (index, rustle) in self.instances.iter_mut().enumerate() {
             rustle.counter += delta;
             if rustle.counter > 1.0 {
@@ -56,15 +56,17 @@ impl PlayerBushTexture {
                 return;
             }
         }
-	}
+    }
     pub fn draw(&self, ctx: &mut Context, screen: &RenderCoords) {
         for rustle in self.instances.iter() {
             let x = ((rustle.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x;
             let y = ((rustle.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y;
-            rustle.texture.draw_region(
+            rustle.texture.draw(
                 ctx,
-                Rectangle::new(
-                    0.0, 
+                x,
+                y,
+                DrawParams::source(Rectangle::new(
+                    0.0,
                     if rustle.counter < 0.25 {
                         0.0
                     } else if rustle.counter < 0.5 {
@@ -73,13 +75,11 @@ impl PlayerBushTexture {
                         32.0
                     } else {
                         48.0
-                    }, 
-                    16.0, 
-                    16.0
-                ),
-                position(x, y)
+                    },
+                    16.0,
+                    16.0,
+                )),
             );
         }
-
     }
 }

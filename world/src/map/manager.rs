@@ -5,7 +5,7 @@ use crate::{
     map::{can_move, can_swim, can_walk, MovementId, TileId, WarpDestination, World, WorldMap},
     positions::{Coordinate, Direction, Location},
 };
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use self::data::WorldMapData;

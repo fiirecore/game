@@ -1,0 +1,11 @@
+(
+    id: "Oak",
+    data: "files/oak.ogg",
+    // music: (
+    //     track: 0x2E,
+    //     name: "Oak",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

@@ -1,4 +1,4 @@
-use engine::tetra::State;
+use crate::engine::State;
 
 use crate::GameContext;
 
@@ -10,7 +10,7 @@ pub mod menu;
 
 // pub mod loading;
 
-pub trait MainState<'d>: State<GameContext<'d>> {
+pub trait MainState: State<GameContext> {
     fn action(&mut self) -> Option<Action>;
 }
 
@@ -28,11 +28,11 @@ pub enum MainStates {
 
 impl Default for MainStates {
     fn default() -> Self {
-        #[cfg(not(debug_assertions))]
+        #[cfg(not(any(debug_assertions, target_arch = "wasm32")))]
         {
             Self::Menu
         }
-        #[cfg(debug_assertions)]
+        #[cfg(any(debug_assertions, target_arch = "wasm32"))]
         {
             Self::Game
         }

@@ -2,6 +2,7 @@
 pub enum DataError {
     Serialization(ron::Error),
     IOError(std::io::Error),
+    Macroquad(macroquad::prelude::FileError),
 }
 
 impl std::error::Error for DataError {}
@@ -21,5 +22,11 @@ impl From<std::io::Error> for DataError {
 impl From<ron::Error> for DataError {
     fn from(error: ron::Error) -> Self {
         Self::Serialization(error)
+    }
+}
+
+impl From<macroquad::prelude::FileError> for DataError {
+    fn from(error: macroquad::prelude::FileError) -> Self {
+        Self::Macroquad(error)
     }
 }

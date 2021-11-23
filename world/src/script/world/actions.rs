@@ -1,9 +1,9 @@
 use crate::{map::warp::WarpId, positions::{CoordinateInt, Direction, Location, Position}, script::ScriptId};
-use audio::{music::MusicName, sound::Sound};
 use text::{Message, MessagePages};
 use serde::{Deserialize, Serialize};
 
 use pokedex::{item::ItemId, pokemon::owned::SavedPokemon};
+use tinystr::{TinyStr16, TinyStr8};
 
 use crate::{
     character::npc::{Npc, NpcId},
@@ -12,9 +12,9 @@ use crate::{
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum WorldAction {
-    PlayMusic(MusicName),
+    PlayMusic(TinyStr16),
     PlayMapMusic,
-    PlaySound(Sound),
+    PlaySound(TinyStr8, Option<u16>),
 
     PlayerFreezeInput,
     PlayerUnfreezeInput,

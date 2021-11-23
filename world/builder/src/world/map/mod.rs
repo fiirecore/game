@@ -149,7 +149,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(
         id: loc,
 
         name: config.name,
-        music: gba_map.music,
+        music: crate::gba_map::get_gba_music(gba_map.music),
 
         width: gba_map.width,
         height: gba_map.height,

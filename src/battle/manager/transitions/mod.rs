@@ -1,7 +1,7 @@
-use pokedex::context::PokedexClientContext;
+use crate::pokedex::context::PokedexClientData;
 
 use crate::{
-    engine::{gui::MessageBox, util::Completable, EngineContext},
+    engine::{gui::MessageBox, util::Completable, Context},
     game::battle_glue::{BattleId, BattleTrainerEntry},
 };
 
@@ -11,9 +11,9 @@ pub mod closers;
 pub mod transitions;
 
 pub(crate) trait BattleTransition: Completable {
-    fn update(&mut self, ctx: &mut EngineContext, delta: f32);
+    fn update(&mut self, ctx: &mut Context, delta: f32);
 
-    fn draw(&self, ctx: &mut EngineContext);
+    fn draw(&self, ctx: &mut Context);
 
     // fn render_below_player(&self);
 }
@@ -21,7 +21,7 @@ pub(crate) trait BattleTransition: Completable {
 pub(crate) trait BattleCloser: Completable {
     fn spawn<'d>(
         &mut self,
-        ctx: &PokedexClientContext<'d>,
+        ctx: &PokedexClientData,
         player: &BattleId,
         player_name: &str,
         winner: Option<&BattleId>,
@@ -29,11 +29,11 @@ pub(crate) trait BattleCloser: Completable {
         text: &mut MessageBox,
     );
 
-    fn update(&mut self, ctx: &mut EngineContext, delta: f32, text: &mut MessageBox);
+    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut MessageBox);
 
-    fn draw(&self, ctx: &mut EngineContext);
+    fn draw(&self, ctx: &mut Context);
 
-    fn draw_battle(&self, ctx: &mut EngineContext);
+    fn draw_battle(&self, ctx: &mut Context);
 
     fn world_active(&self) -> bool;
 }

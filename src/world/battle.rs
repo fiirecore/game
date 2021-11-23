@@ -1,4 +1,4 @@
-use pokedex::pokemon::{owned::SavedPokemon, party::Party, stat::StatSet};
+use crate::pokedex::pokemon::{owned::SavedPokemon, party::Party, stat::StatSet};
 use rand::Rng;
 use saves::PlayerData;
 use worldlib::{

@@ -1,5 +1,5 @@
 use crate::positions::Coordinate;
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyStr8;
 

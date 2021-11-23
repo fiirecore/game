@@ -1,0 +1,11 @@
+(
+    id: "encounter_rival",
+    data: "files/encounter_rival.ogg",
+    // music: (
+    //     track: 59,
+    //     name: "encounter_rival",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

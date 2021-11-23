@@ -1,12 +1,12 @@
-use engine::{
+use crate::engine::{
     gui::Panel,
     input::{pressed, Control},
-    tetra::math::Vec2,
+    math::Vec2,
     util::Entity,
-    EngineContext,
+    Context,
 };
-use pokedex::{
-    context::PokedexClientContext,
+use crate::pokedex::{
+    context::PokedexClientData,
     gui::{bag::BagGui, party::PartyGui},
 };
 use saves::PlayerData;
@@ -19,7 +19,7 @@ use crate::{
 
 pub struct StartMenu {
     alive: bool,
-    pos: Vec2<f32>,
+    pos: Vec2,
     buttons: [&'static str; 6],
     cursor: usize,
     party: Rc<PartyGui>,
@@ -41,8 +41,8 @@ impl StartMenu {
 
     pub fn update<'d>(
         &mut self,
-        ctx: &EngineContext,
-        dex: &PokedexClientContext<'d>,
+        ctx: &Context,
+        dex: &PokedexClientData,
         save: &mut PlayerData<'d>,
         delta: f32,
         input_lock: bool,
@@ -109,7 +109,7 @@ impl StartMenu {
         }
     }
 
-    pub fn draw<'d>(&self, ctx: &mut EngineContext, dex: &PokedexClientContext<'d>, save: &PlayerData) {
+    pub fn draw<'d>(&self, ctx: &mut Context, dex: &PokedexClientData, save: &PlayerData) {
         if self.alive {
             if self.bag.alive() {
                 self.bag.draw(ctx, dex, &save.bag.items);
@@ -134,13 +134,13 @@ impl StartMenu {
         self.party.alive() || self.bag.alive()
     }
 
-    pub fn spawn_party<'d>(&mut self, ctx: &PokedexClientContext<'d>, save: &PlayerData<'d>) {
+    pub fn spawn_party<'d>(&mut self, ctx: &PokedexClientData, save: &PlayerData<'d>) {
         self.spawn();
         spawn_party(ctx, &self.party, save)
     }
 }
 
-fn spawn_party<'d>(ctx: &PokedexClientContext<'d>, party: &PartyGui, save: &PlayerData<'d>) {
+fn spawn_party<'d>(ctx: &PokedexClientData, party: &PartyGui, save: &PlayerData<'d>) {
     party.spawn(ctx, &save.party, Some(true), true);
 }
 

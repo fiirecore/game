@@ -1,5 +1,5 @@
-use audio::music::MusicId;
 use serde::{Deserialize, Serialize};
+use tinystr::TinyStr16;
 
 use crate::{
     character::{
@@ -37,7 +37,7 @@ pub struct WorldMap {
     pub id: Location,
 
     pub name: String,
-    pub music: MusicId,
+    pub music: TinyStr16,
 
     pub width: MapSize,
     pub height: MapSize,

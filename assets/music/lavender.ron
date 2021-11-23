@@ -1,0 +1,11 @@
+(
+    id: "lavender",
+    data: "files/lavender.ogg",
+    // music: (
+    //     track: 0x18,
+    //     name: "Lavender",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

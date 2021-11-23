@@ -1,23 +1,23 @@
-use pokedex::Uninitializable;
+use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
 use saves::PlayerData;
 use std::rc::Rc;
 
 use crate::{
     engine::{
-        tetra::{
-            input::{is_key_down, Key},
-            time::get_delta_time,
-            Result, State,
-        },
+        input::keyboard::{is_key_down, Key},
         util::Entity,
+        State,
     },
     game::battle_glue::{BattleEntry, BattleId},
-    pokedex::gui::{bag::BagGui, party::PartyGui},
+    pokedex::{
+        gui::{bag::BagGui, party::PartyGui},
+        Uninitializable,
+    },
 };
 
 use command::Console;
 
-use log::warn;
+use crate::engine::log::warn;
 
 use crate::{
     battle::BattleManager, state::MainState, world::map::manager::WorldManager, GameContext,
@@ -27,13 +27,13 @@ use super::Action;
 
 pub mod command;
 
-pub struct GameStateManager<'d> {
+pub struct GameStateManager {
     state: Option<Action>,
 
     gamestate: GameStates,
 
     world: WorldManager,
-    battle: BattleManager<'d>,
+    battle: BattleManager<&'static Pokemon, &'static Move, &'static Item>,
 
     battle_entry: Option<BattleEntry>,
 
@@ -51,8 +51,8 @@ impl Default for GameStates {
     }
 }
 
-impl<'d> GameStateManager<'d> {
-    pub fn new(ctx: &mut GameContext<'d>) -> Self {
+impl GameStateManager {
+    pub fn new(ctx: &mut GameContext) -> Self {
         let party = Rc::new(PartyGui::new(&ctx.dex));
         let bag = Rc::new(BagGui::new(&ctx.dex));
 
@@ -62,7 +62,7 @@ impl<'d> GameStateManager<'d> {
             gamestate: GameStates::default(),
 
             world: WorldManager::new(ctx, party.clone(), bag.clone()),
-            battle: BattleManager::new(&mut ctx.engine, &ctx.dex, party, bag),
+            battle: BattleManager::new(&mut ctx.engine, &ctx.btl, party, bag),
 
             battle_entry: None,
 
@@ -97,21 +97,21 @@ impl<'d> GameStateManager<'d> {
     }
 }
 
-impl<'d> State<GameContext<'d>> for GameStateManager<'d> {
-    fn begin(&mut self, ctx: &mut GameContext<'d>) -> Result {
+impl State<GameContext> for GameStateManager {
+    fn start(&mut self, ctx: &mut GameContext) {
         let save = ctx.saves.get_mut();
         self.world.load_with_data(save);
         self.world
             .on_start(&mut ctx.engine, save, &mut self.battle_entry);
-        Ok(())
+        // Ok(())
     }
 
-    fn end(&mut self, ctx: &mut GameContext<'d>) -> Result {
+    fn end(&mut self, ctx: &mut GameContext) {
         self.save_data(ctx.saves.get_mut(), ctx.save_locally);
-        Ok(())
+        // Ok(())
     }
 
-    fn update(&mut self, ctx: &mut GameContext<'d>) -> Result {
+    fn update(&mut self, ctx: &mut GameContext, delta: f32) {
         if let Some(command) = self.console.update(&mut ctx.engine) {
             match self.gamestate {
                 GameStates::World => self.world.process(
@@ -119,6 +119,10 @@ impl<'d> State<GameContext<'d>> for GameStateManager<'d> {
                     &ctx.dex,
                     ctx.saves.get_mut(),
                     &mut self.battle_entry,
+                    &mut ctx.random,
+                    crate::pokedex(),
+                    crate::movedex(),
+                    crate::itemdex(),
                 ),
                 GameStates::Battle => warn!("Battle has no commands implemented."),
             }
@@ -126,7 +130,7 @@ impl<'d> State<GameContext<'d>> for GameStateManager<'d> {
 
         // Speed game up if spacebar is held down
 
-        let delta = get_delta_time(ctx).as_secs_f32()
+        let delta = delta
             * if is_key_down(ctx, Key::Space) {
                 4.0
             } else {
@@ -147,15 +151,34 @@ impl<'d> State<GameContext<'d>> for GameStateManager<'d> {
                     self.console.alive(),
                     &mut self.battle_entry,
                     &mut self.state,
+                    &mut ctx.random,
+                    crate::pokedex(),
+                    crate::movedex(),
+                    crate::itemdex(),
                 );
                 if let Some(entry) = self.battle_entry.take() {
-                    if self.battle.battle(save, &ctx.dex, entry) {
+                    if self.battle.battle(
+                        crate::pokedex(),
+                        crate::movedex(),
+                        crate::itemdex(),
+                        save,
+                        entry,
+                    ) {
                         self.gamestate = GameStates::Battle;
                     }
                 }
             }
             GameStates::Battle => {
-                self.battle.update(&mut ctx.engine, &ctx.dex, delta, save);
+                self.battle.update(
+                    &mut ctx.engine,
+                    crate::pokedex(),
+                    crate::movedex(),
+                    crate::itemdex(),
+                    &ctx.dex,
+                    &ctx.btl,
+                    delta,
+                    save,
+                );
                 if self.battle.finished {
                     let p = &mut self.world.world.player;
                     p.input_frozen = false;
@@ -173,10 +196,10 @@ impl<'d> State<GameContext<'d>> for GameStateManager<'d> {
                 }
             }
         }
-        Ok(())
+        // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut GameContext<'d>) -> Result {
+    fn draw(&mut self, ctx: &mut GameContext) {
         match self.gamestate {
             GameStates::World => self.world.draw(&mut ctx.engine, &ctx.dex, ctx.saves.get()),
             GameStates::Battle => {
@@ -187,11 +210,11 @@ impl<'d> State<GameContext<'d>> for GameStateManager<'d> {
             }
         }
         self.console.draw(&mut ctx.engine);
-        Ok(())
+        // Ok(())
     }
 }
 
-impl<'d> MainState<'d> for GameStateManager<'d> {
+impl MainState for GameStateManager {
     fn action(&mut self) -> Option<Action> {
         self.state.take()
     }

@@ -1,8 +1,5 @@
 extern crate firecore_world as worldlib;
 
-use std::io::Write;
-use std::path::Path;
-
 use worldlib::{
     serialized::{SerializedWorld, SerializedTextures},
     map::{
@@ -15,10 +12,10 @@ use worldlib::{
 pub mod world;
 pub mod gba_map;
 
-pub fn compile<P: AsRef<Path>>(root_path: P, output_file: P) {
+pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
 
     println!("Started loading maps and tile textures...");
-    let (manager, mut textures) = world::map::load_maps(root_path.as_ref());
+    let (manager, mut textures) = world::map::load_maps(path.as_ref());
     println!("Finished loading maps and tile textures.");
 
     println!("Verifying palettes, maps, warps...");
@@ -27,17 +24,7 @@ pub fn compile<P: AsRef<Path>>(root_path: P, output_file: P) {
     verify_connections(&manager);
 
     println!("Loading Npc types...");
-    let npc_types = world::npc::npc_type::load_npc_types(root_path.as_ref());
-
-    let output_file = output_file.as_ref();
-
-    if let Some(parent) = output_file.parent() {
-        if !parent.exists() {
-            std::fs::create_dir_all(parent).unwrap_or_else(|err| panic!("Could not create directories for output file with error {}", err));
-        }
-    }
-    
-    let mut file = std::fs::File::create(output_file).unwrap_or_else(|err| panic!("Could not create output file at {:?} with error {}", output_file, err));
+    let npc_types = world::npc::npc_type::load_npc_types(path.as_ref());
 
     let data = SerializedWorld {
         manager,
@@ -46,11 +33,7 @@ pub fn compile<P: AsRef<Path>>(root_path: P, output_file: P) {
         // map_gui_locs,
     };
 
-    println!("Saving data...");
-    let bytes = bincode::serialize(&data).unwrap_or_else(|err| panic!("Could not serialize output file with error {}", err));
-    let bytes = file.write(&bytes).unwrap_or_else(|err| panic!("Could not write to output file with error {}", err));
-    println!("Wrote {} bytes to world file!", bytes);
-
+    data
 }
 
 fn verify_palettes(manager: &WorldMapManager, textures: &mut SerializedTextures) {

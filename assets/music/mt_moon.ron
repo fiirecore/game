@@ -1,0 +1,11 @@
+(
+    id: "mt_moon",
+    data: "files/mt_moon.ogg",
+    // music: (
+    //     track: 0x20,
+    //     name: "MountMoon",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

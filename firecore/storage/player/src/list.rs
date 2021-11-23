@@ -1,5 +1,3 @@
-use std::fs::{create_dir_all, read_to_string};
-
 use crate::PlayerData;
 
 use super::SavedPlayer;
@@ -7,49 +5,80 @@ use firecore_pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex};
 use storage::error::DataError;
 
 // #[deprecated(note = "to-do: own version of storage::get for this")]
-pub struct PlayerSaves<'d> {
-    pub selected: Option<PlayerData<'d>>,
+pub struct PlayerSaves {
+    pub selected: Option<PlayerData<'static>>,
     pub list: Vec<SavedPlayer>,
 }
 
-impl<'d> PlayerSaves<'d> {
-    pub fn load(local: bool) -> Result<Self, DataError> {
-        let dir = storage::directory(local)?.join("saves");
-        if !dir.exists() {
-            create_dir_all(&dir)?;
+#[cfg(target_arch = "wasm32")] 
+#[derive(Default, Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct WASMSave(SavedPlayer);
+
+#[cfg(target_arch = "wasm32")] 
+impl storage::PersistantData for WASMSave {
+    fn path() -> &'static str {
+        "save"
+    }
+}
+
+impl PlayerSaves {
+    pub async fn load(local: bool) -> Result<Self, DataError> {
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            let dir = storage::directory(local)?.join("saves");
+            if !dir.exists() {
+                std::fs::create_dir_all(&dir)?;
+            }
+
+            let mut list = Vec::new();
+
+            for dir in dir.read_dir()?.flatten() {
+                let path = dir.path();
+                let p = storage::deserialize::<SavedPlayer>(&std::fs::read_to_string(&path)?)?;
+                list.push(p);
+            }
+
+            Ok(Self {
+                selected: None,
+                list,
+            })
         }
-
-        let mut list = Vec::new();
-
-        for dir in dir.read_dir()?.flatten() {
-            let path = dir.path();
-            let p = storage::deserialize::<SavedPlayer>(&read_to_string(&path)?)?;
-            list.push(p);
+        #[cfg(target_arch = "wasm32")] 
+        {
+            use storage::PersistantData;
+            
+            let player = storage::try_load::<WASMSave>(local).await.unwrap_or_else(|err| {
+                storage::warn!("Cannot load save with error {}", err);
+                let default = Default::default();
+                if let Err(err) = storage::save(&default, local, storage::file_name(WASMSave::path())) {
+                    storage::warn!("Cannot save with error {}", err);
+                }
+                default
+            });
+            Ok(Self {
+                selected: None,
+                list: vec![player.0],
+            })
         }
-
-        Ok(Self {
-            selected: None,
-            list,
-        })
     }
 
     pub fn select(
         &mut self,
         index: usize,
         random: &mut impl rand::Rng,
-        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
-        movedex: &'d dyn Dex<'d, Move, &'d Move>,
-        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
+        pokedex: &'static dyn Dex<'static, Pokemon, &'static Pokemon>,
+        movedex: &'static dyn Dex<'static, Move, &'static Move>,
+        itemdex: &'static dyn Dex<'static, Item, &'static Item>,
     ) {
         if index < self.list.len() {
             let selected = self.list.remove(index);
             if let Some(selected) = selected.init(random, pokedex, movedex, itemdex) {
                 self.selected = Some(selected);
             } else {
-                log::warn!("Cannot select {}! (cant init)", index);
+                storage::warn!("Cannot select {}! (cant init)", index);
             }
         } else {
-            log::warn!("Cannot select {}! (doesnt exist)", index);
+            storage::warn!("Cannot select {}! (doesnt exist)", index);
         }
     }
 
@@ -57,9 +86,9 @@ impl<'d> PlayerSaves<'d> {
         &mut self,
         name: &str,
         random: &mut impl rand::Rng,
-        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
-        movedex: &'d dyn Dex<'d, Move, &'d Move>,
-        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
+        pokedex: &'static dyn Dex<'static, Pokemon, &'static Pokemon>,
+        movedex: &'static dyn Dex<'static, Move, &'static Move>,
+        itemdex: &'static dyn Dex<'static, Item, &'static Item>,
     ) {
         let index = self.list.len();
         self.list.push(SavedPlayer::new(name));
@@ -70,14 +99,14 @@ impl<'d> PlayerSaves<'d> {
         &mut self,
         local: bool,
         random: &mut impl rand::Rng,
-        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
-        movedex: &'d dyn Dex<'d, Move, &'d Move>,
-        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
+        pokedex: &'static dyn Dex<'static, Pokemon, &'static Pokemon>,
+        movedex: &'static dyn Dex<'static, Move, &'static Move>,
+        itemdex: &'static dyn Dex<'static, Item, &'static Item>,
     ) {
         if self.list.is_empty() {
             let data = SavedPlayer::default();
             if let Err(err) = data.save(local) {
-                log::warn!("Could not save new player file with error {}", err);
+                storage::warn!("Could not save new player file with error {}", err);
             }
             self.list.push(data);
         }
@@ -93,11 +122,11 @@ impl<'d> PlayerSaves<'d> {
         }
     }
 
-    pub fn get(&self) -> &PlayerData<'d> {
+    pub fn get(&self) -> &PlayerData<'static> {
         self.selected.as_ref().unwrap()
     }
 
-    pub fn get_mut(&mut self) -> &mut PlayerData<'d> {
+    pub fn get_mut(&mut self) -> &mut PlayerData<'static> {
         self.selected.as_mut().unwrap()
     }
 }

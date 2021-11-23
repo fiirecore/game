@@ -1,11 +1,9 @@
-use engine::{
-    graphics::{byte_texture, position},
-    tetra::{
-        graphics::{Color, Rectangle, Texture},
-        Context,
-    },
+use crate::engine::{
+    graphics::{Color, DrawParams, Texture},
+    math::Rectangle,
+    Context,
 };
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use worldlib::{
     map::{PaletteId, TileId},
     serialized::SerializedTextures,
@@ -33,17 +31,17 @@ impl TileTextureManager {
         self.palettes = textures
             .palettes
             .into_iter()
-            .map(|(id, image)| (id, byte_texture(ctx, &image)))
+            .map(|(id, image)| (id, Texture::new(ctx, &image).unwrap()))
             .collect::<HashMap<PaletteId, Texture>>();
         self.animated = textures
             .animated
             .into_iter()
-            .map(|(tile, image)| (tile, byte_texture(ctx, &image)))
+            .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
             .collect::<HashMap<TileId, Texture>>();
 
         let mut map = HashMap::with_capacity(textures.doors.len());
         for (loc, image) in textures.doors {
-            let texture = byte_texture(ctx, &image);
+            let texture = Texture::new(ctx, &image).unwrap();
             for loc in loc {
                 map.insert(loc, texture.clone());
             }
@@ -68,23 +66,33 @@ impl TileTextureManager {
         color: Color,
     ) {
         if let Some(texture) = self.animated.get(&tile) {
-            texture.draw_region(
+            texture.draw(
                 ctx,
-                Rectangle::new(
-                    0.0,
-                    (self.accumulator / Self::TEXTURE_TICK).floor() * TILE_SIZE,
-                    TILE_SIZE,
-                    TILE_SIZE,
-                ),
-                position(x, y).color(color),
+                x,
+                y,
+                DrawParams {
+                    source: Some(Rectangle::new(
+                        0.0,
+                        (self.accumulator / Self::TEXTURE_TICK).floor() * TILE_SIZE,
+                        TILE_SIZE,
+                        TILE_SIZE,
+                    )),
+                    color,
+                    ..Default::default()
+                },
             );
         } else {
             let tx = ((tile % 16) << 4) as f32; // width = 256
             let ty = ((tile >> 4) << 4) as f32;
-            texture.draw_region(
+            texture.draw(
                 ctx,
-                Rectangle::new(tx, ty, TILE_SIZE, TILE_SIZE),
-                position(x, y).color(color),
+                x,
+                y,
+                DrawParams {
+                    source: Some(Rectangle::new(tx, ty, TILE_SIZE, TILE_SIZE)),
+                    color,
+                    ..Default::default()
+                },
             );
         }
     }

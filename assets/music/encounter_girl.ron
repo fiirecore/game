@@ -1,0 +1,11 @@
+(
+    id: "encounter_girl",
+    data: "files/encounter_girl.ogg",
+    // music: (
+    //     track: 28,
+    //     name: "encounter_girl",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

@@ -1,13 +1,15 @@
-use pokedex::context::PokedexClientContext;
+use crate::pokedex::context::PokedexClientData;
 
-use crate::{engine::{
-        graphics::{draw_o_bottom},
+use crate::{
+    engine::{
+        graphics::Texture,
         gui::MessageBox,
-        tetra::graphics::Texture,
         text::MessagePage,
         util::{Completable, Entity, Reset, WIDTH},
-        EngineContext,
-    }, game::battle_glue::{BattleId, BattleTrainerEntry}};
+        Context,
+    },
+    game::battle_glue::{BattleId, BattleTrainerEntry},
+};
 
 use crate::battle::manager::transitions::BattleCloser;
 
@@ -36,7 +38,7 @@ impl Default for TrainerBattleCloser {
 impl BattleCloser for TrainerBattleCloser {
     fn spawn<'d>(
         &mut self,
-        ctx: &PokedexClientContext<'d>,
+        _: &PokedexClientData,
         player: &BattleId,
         player_name: &str,
         winner: Option<&BattleId>,
@@ -47,8 +49,7 @@ impl BattleCloser for TrainerBattleCloser {
             Some(winner) => match winner == player {
                 true => {
                     if let Some(trainer) = trainer_entry {
-
-                        log::debug!("todo set trainer textures and name in intro");
+                        crate::engine::log::debug!("todo set trainer textures and name in intro");
 
                         // self.trainer =
                         //     Some(ctx.trainer_textures.get(&trainer_data.npc_type).clone());
@@ -92,7 +93,7 @@ impl BattleCloser for TrainerBattleCloser {
         }
     }
 
-    fn update(&mut self, ctx: &mut EngineContext, delta: f32, text: &mut MessageBox) {
+    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut MessageBox) {
         if text.alive() {
             text.update(ctx, delta);
             if text.page() == 1 && self.offset > Self::XPOS {
@@ -113,12 +114,14 @@ impl BattleCloser for TrainerBattleCloser {
         self.wild.world_active()
     }
 
-    fn draw(&self, ctx: &mut EngineContext) {
+    fn draw(&self, ctx: &mut Context) {
         self.wild.draw(ctx);
     }
 
-    fn draw_battle(&self, ctx: &mut EngineContext) {
-        draw_o_bottom(ctx, self.trainer.as_ref(), self.offset, 74.0);
+    fn draw_battle(&self, ctx: &mut Context) {
+        if let Some(texture) = self.trainer.as_ref() {
+            texture.draw(ctx, self.offset, 74.0 - texture.height(), Default::default());
+        }
     }
 }
 

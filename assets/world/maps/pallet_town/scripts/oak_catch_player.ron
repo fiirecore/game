@@ -31,7 +31,7 @@
                 )
             )
         ),
-        PlayMusic("Oak"),
+        PlayMusic("oak"),
         NpcSay(
             "oak",
             [(

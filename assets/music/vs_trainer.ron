@@ -1,0 +1,11 @@
+(
+    id: "battle_trainer",
+    data: "files/vs_trainer.ogg",
+    // music: (
+    //     track: 0x29,
+    //     name: "battle_trainer",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

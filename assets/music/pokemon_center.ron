@@ -1,0 +1,11 @@
+(
+    id: "pokemon_center",
+    data: "files/pokemon_center.ogg",
+    // music: (
+    //     track: 0x2F,
+    //     name: "PokemonCenter",
+    //     data: (
+    //         loop_start: None,
+    //     )
+    // )
+)

@@ -3,11 +3,11 @@ use crate::{
     GameContext,
 };
 
-use engine::{
-    audio::play_music_named,
+use crate::engine::{
+    audio::play_music,
+    graphics::Texture,
     input::{pressed, Control},
-    tetra::{graphics::Texture, time::get_delta_time, Context, Result, State},
-    graphics::{byte_texture, position},
+    Context, State,
 };
 
 pub struct TitleState {
@@ -27,61 +27,60 @@ impl TitleState {
     pub fn new(ctx: &mut Context) -> Self {
         Self {
             action: None,
-            background: byte_texture(
+            background: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/background.png"),
-            ),
-            title: byte_texture(
+            ).unwrap(),
+            title: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/title.png"),
-            ),
-            trademark: byte_texture(
+            ).unwrap(),
+            trademark: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/trademark.png"),
-            ),
-            subtitle: byte_texture(
+            ).unwrap(),
+            subtitle: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/subtitle.png"),
-            ),
-            charizard: byte_texture(
+            ).unwrap(),
+            charizard: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/charizard.png"),
-            ),
-            start: byte_texture(
+            ).unwrap(),
+            start: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/start.png"),
-            ),
+            ).unwrap(),
             accumulator: 0.0,
         }
     }
 }
 
-impl<'d> State<GameContext<'d>> for TitleState {
-    fn begin(&mut self, ctx: &mut GameContext) -> Result {
-        play_music_named(&mut ctx.engine, "Title");
+impl<'d> State<GameContext> for TitleState {
+    fn start(&mut self, ctx: &mut GameContext) {
+        play_music(&mut ctx.engine, &"title".parse().unwrap());
         self.accumulator = 0.0;
-        Ok(())
     }
 
-    fn update(&mut self, ctx: &mut GameContext) -> Result {
+    fn update(&mut self, ctx: &mut GameContext, delta: f32) {
         if pressed(&ctx.engine, Control::A) {
             let seed = self.accumulator as u64 % u8::MAX as u64;
             self.action = Some(MenuStateAction::SeedAndGoto(seed, MenuStates::MainMenu));
         }
-        self.accumulator += get_delta_time(ctx).as_secs_f32();
-        Ok(())
+        self.accumulator += delta;
+        // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut GameContext) -> Result {
-        self.background.draw(ctx, position(0.0, 0.0));
-        self.title.draw(ctx, position(3.0, 3.0));
-        self.trademark.draw(ctx, position(158.0, 53.0));
-        self.subtitle.draw(ctx, position(52.0, 57.0));
+    fn draw(&mut self, ctx: &mut GameContext) {
+        self.background.draw(ctx, 0.0, 0.0, Default::default());
+        self.title.draw(ctx, 3.0, 3.0, Default::default());
+        self.trademark.draw(ctx, 158.0, 53.0, Default::default());
+        self.subtitle.draw(ctx, 52.0, 57.0, Default::default());
         if self.accumulator as u8 % 2 == 1 {
-            self.start.draw(ctx, position(44.0, 130.0));
+            self.start.draw(ctx, 44.0, 130.0, Default::default());
         }
-        self.charizard.draw(ctx, position(129.0, 49.0));
-        Ok(())
+        self.charizard.draw(ctx, 129.0, 49.0, Default::default());
+        // Ok(())
     }
 }
 

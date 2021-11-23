@@ -1,13 +1,12 @@
 use error::DataError;
-use log::warn;
 use serde::{de::DeserializeOwned, Serialize};
 use std::io::{Error as IOError, ErrorKind};
 use std::path::{Path, PathBuf};
 
-// pub use macroquad::prelude::collections::storage::{try_get as get, try_get_mut as get_mut, store};
-use std::fs::read_to_string;
-
 pub use ron::{from_str as deserialize, to_string as serialize};
+
+pub use macroquad::prelude::{info, warn};
+pub use macroquad::miniquad::date::now as time;
 
 pub mod error;
 pub mod reload;
@@ -28,23 +27,29 @@ pub trait PersistantData: Serialize + DeserializeOwned + Default {
     }
 }
 
-pub fn try_load<D: PersistantData + Sized>(local: bool) -> Result<D, DataError> {
-    let file_name = file_name(D::path());
-    let dir = crate::directory(local)?;
-    let path = dir.join(&file_name);
-    let data = match path.exists() {
-        true => deserialize(&read_to_string(&*path.to_string_lossy())?)?,
-        false => {
-            let data = D::default();
-            if let Err(err) = save(&data, local, file_name) {
-                let name = std::any::type_name::<D>();
-                let name = name.split("::").last().unwrap_or(name);
-                warn!("Could not save new {} with error {}", name, err);
+pub async fn try_load<D: PersistantData + Sized>(local: bool) -> Result<D, DataError> {
+    #[cfg(not(target_arch = "wasm32"))] {
+        let file_name = file_name(D::path());
+        let dir = crate::directory(local)?;
+        let path = dir.join(&file_name);
+        let data = match path.exists() {
+            true => deserialize(&macroquad::file::load_string(&*path.to_string_lossy()).await?)?,
+            false => {
+                let data = D::default();
+                if let Err(err) = save(&data, local, file_name) {
+                    let name = std::any::type_name::<D>();
+                    let name = name.split("::").last().unwrap_or(name);
+                    warn!("Could not save new {} with error {}", name, err);
+                }
+                data
             }
-            data
-        }
-    };
-    Ok(data)
+        };
+        Ok(data)
+    }
+    #[cfg(target_arch = "wasm32")] {
+        let data = Default::default();
+        Ok(data)
+    }
 }
 
 pub fn save<D: Serialize + DeserializeOwned + Default, P: AsRef<Path>>(
@@ -52,16 +57,19 @@ pub fn save<D: Serialize + DeserializeOwned + Default, P: AsRef<Path>>(
     local: bool,
     path: P,
 ) -> Result<(), DataError> {
-    let dir = crate::directory(local)?;
-    let path = dir.join(path.as_ref());
-
-    if !dir.exists() {
-        std::fs::create_dir_all(&dir)?;
-    }
 
     let string = ron::ser::to_string_pretty(data, ron::ser::PrettyConfig::default())?;
 
-    std::fs::write(&path, string.as_bytes())?;
+    #[cfg(not(target_arch = "wasm32"))] {
+        let dir = crate::directory(local)?;
+        let path = dir.join(path.as_ref());
+    
+        if !dir.exists() {
+            std::fs::create_dir_all(&dir)?;
+        }
+    
+        std::fs::write(&path, string.as_bytes())?;
+    }
 
     Ok(())
 }

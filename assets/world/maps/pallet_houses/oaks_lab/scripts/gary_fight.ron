@@ -17,7 +17,7 @@
     ],
     actions: [
         PlayerFreezeInput,
-        PlayMusic("EncounterRival"),
+        PlayMusic("encounter_rival"),
         NpcSay(
             "rival",
             [

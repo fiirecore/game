@@ -1,11 +1,8 @@
 use crate::engine::{
-    graphics::{byte_texture, draw_rectangle, position},
-    tetra::{
-        graphics::{Color, Texture},
-        math::Vec2,
-    },
+    graphics::{draw_rectangle, Color, Texture, DrawParams},
+    math::Vec2,
     util::{Completable, Reset, WIDTH},
-    EngineContext,
+    Context,
 };
 
 use crate::battle::manager::transitions::BattleTransition;
@@ -17,11 +14,11 @@ pub struct TrainerBattleTransition {
 }
 
 impl BattleTransition for TrainerBattleTransition {
-    fn update(&mut self, _ctx: &mut EngineContext, delta: f32) {
+    fn update(&mut self, _ctx: &mut Context, delta: f32) {
         self.rect_width += 240.0 * delta;
     }
 
-    fn draw(&self, ctx: &mut EngineContext) {
+    fn draw(&self, ctx: &mut Context) {
         self.draw_lines(ctx, 0.0, false);
         self.draw_lines(ctx, 32.0, true);
         self.draw_lines(ctx, 64.0, false);
@@ -35,18 +32,18 @@ impl TrainerBattleTransition {
 
     const DEF_RECT_WIDTH: f32 = -16.0;
 
-    pub fn new(ctx: &mut EngineContext) -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         Self {
             rect_width: Self::DEF_RECT_WIDTH,
-            texture: byte_texture(
+            texture: Texture::new(
                 ctx,
                 include_bytes!("../../../../../assets/battle/encounter_ball.png"),
-            ),
+            ).unwrap(),
         }
     }
 
-    fn draw_lines(&self, ctx: &mut EngineContext, y: f32, invert: bool) {
-        let o = (self.texture.width() >> 1) as f32;
+    fn draw_lines(&self, ctx: &mut Context, y: f32, invert: bool) {
+        let o = (self.texture.width() / 2.0) as f32;
         draw_rectangle(
             ctx,
             if invert { WIDTH - self.rect_width } else { 0.0 },
@@ -57,16 +54,18 @@ impl TrainerBattleTransition {
         );
         self.texture.draw(
             ctx,
-            position(
                 if invert {
                     WIDTH - self.rect_width
                 } else {
                     self.rect_width
                 },
                 y + o,
-            )
-            .origin(Vec2::new(o, o))
-            .rotation((self.rect_width * 2.0).to_radians()),
+                DrawParams {
+                    rotation: (self.rect_width * 2.0).to_radians(),
+                    ..Default::default()
+                }
+            // .origin(Vec2::new(o, o))
+            // .rotation(),
         );
     }
 }

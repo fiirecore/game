@@ -1,6 +1,6 @@
-use engine::{
+use crate::engine::{
     util::{WIDTH, HEIGHT},
-    tetra::math::Vec2,
+    math::Vec2,
 };
 
 use crate::worldlib::{
@@ -17,7 +17,7 @@ pub struct RenderCoords {
     pub top: CoordinateInt,
     pub bottom: CoordinateInt,
 
-    pub focus: Vec2<f32>,
+    pub focus: Vec2,
 
     pub offset: Coordinate,
 

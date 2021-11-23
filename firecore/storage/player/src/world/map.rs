@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use tinystr::TinyStr8;
-use hashbrown::HashSet;
+use std::collections::HashSet;
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct MapData {

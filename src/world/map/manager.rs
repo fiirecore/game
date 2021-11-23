@@ -1,17 +1,20 @@
-use engine::{
-    graphics::byte_texture,
-    input::{debug_pressed, pressed, Control, DebugBind},
-    tetra::{graphics::Color, Context},
+use crate::engine::{
+    graphics::Texture,
+    input::{
+        controls::{pressed, Control},
+        keyboard::{is_key_pressed, Key},
+    },
     text::MessagePage,
     util::{Completable, Entity},
-    EngineContext,
+    {graphics::Color, Context},
 };
-use log::info;
-use pokedex::{
-    context::PokedexClientContext,
+use crate::engine::log::info;
+use crate::pokedex::{
+    context::PokedexClientData,
     gui::{bag::BagGui, party::PartyGui},
     moves::MoveId,
 };
+use firecore_battle::pokedex::{Dex, item::Item, moves::Move, pokemon::Pokemon};
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use saves::PlayerData;
 use std::rc::Rc;
@@ -115,7 +118,7 @@ impl WorldManager {
                 (
                     (
                         npc_type.config.identifier,
-                        byte_texture(ctx, &npc_type.texture),
+                        Texture::new(ctx, &npc_type.texture).unwrap(),
                     ),
                     (
                         npc_type.config.identifier,
@@ -143,12 +146,7 @@ impl WorldManager {
         self.load_player(save);
     }
 
-    pub fn on_start(
-        &mut self,
-        ctx: &mut EngineContext,
-        save: &mut PlayerData,
-        battle: BattleEntryRef,
-    ) {
+    pub fn on_start(&mut self, ctx: &mut Context, save: &mut PlayerData, battle: BattleEntryRef) {
         self.map_start(ctx, true);
         on_tile(
             &mut self.world,
@@ -159,19 +157,23 @@ impl WorldManager {
         );
     }
 
-    pub fn map_start(&mut self, ctx: &mut EngineContext, music: bool) {
+    pub fn map_start(&mut self, ctx: &mut Context, music: bool) {
         on_start(&mut self.world, ctx, music);
     }
 
     pub fn update<'d>(
         &mut self,
-        ctx: &mut EngineContext,
-        dex: &PokedexClientContext<'d>,
+        ctx: &mut Context,
+        dex: &PokedexClientData,
         save: &mut PlayerData<'d>,
         delta: f32,
         input_lock: bool,
         battle: BattleEntryRef,
         action: &mut Option<Action>,
+        random: &mut impl rand::Rng,
+        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
+        movedex: &'d dyn Dex<'d, Move, &'d Move>,
+        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
     ) {
         if self.menu.alive() {
             self.menu.update(ctx, dex, save, delta, input_lock, action);
@@ -253,6 +255,10 @@ impl WorldManager {
                     &mut self.text,
                     &mut self.warper,
                     &mut self.randoms,
+                    random,
+                    pokedex,
+                    movedex,
+                    itemdex,
                 );
             }
 
@@ -297,7 +303,7 @@ impl WorldManager {
 
     #[deprecated]
     fn debug_input(&mut self, ctx: &Context, save: &mut PlayerData) {
-        if debug_pressed(ctx, DebugBind::F3) {
+        if is_key_pressed(ctx, Key::F3) {
             info!("Local Coordinates: {}", self.world.player.position.coords);
 
             match self.world.tile(self.world.player.position.coords) {
@@ -308,7 +314,7 @@ impl WorldManager {
             info!("Player is {:?}", self.world.player.movement);
         }
 
-        if debug_pressed(ctx, DebugBind::F5) {
+        if is_key_pressed(ctx, Key::F5) {
             if let Some(map) = self.world.get() {
                 info!("Resetting battled trainers in this map! ({})", map.name);
                 save.world.get_map(&map.id).battled.clear();
@@ -335,12 +341,7 @@ impl WorldManager {
         }
     }
 
-    pub fn draw<'d>(
-        &self,
-        ctx: &mut EngineContext,
-        dex: &PokedexClientContext<'d>,
-        save: &PlayerData,
-    ) {
+    pub fn draw<'d>(&self, ctx: &mut Context, dex: &PokedexClientData, save: &PlayerData) {
         if self.menu.fullscreen() {
             self.menu.draw(ctx, dex, save);
         // } else if self.world_map.alive() {
@@ -504,7 +505,7 @@ fn on_tile(
     }
 }
 
-fn on_start(world: &mut WorldMapManager, ctx: &mut EngineContext, music: bool) {
+fn on_start(world: &mut WorldMapManager, ctx: &mut Context, music: bool) {
     if let Some(map) = get_mut(world) {
         // if let Some(saves) = get::<PlayerDatas>() {
         //     if let Some(data) = saves.get().world.map.get(&self.name) {
@@ -517,11 +518,11 @@ fn on_start(world: &mut WorldMapManager, ctx: &mut EngineContext, music: bool) {
         // }
 
         if music {
-            if engine::audio::music::get_current_music(ctx)
+            if crate::engine::audio::music::get_current_music(ctx)
                 .map(|current| current != map.music)
                 .unwrap_or(true)
             {
-                engine::audio::play_music(ctx, map.music);
+                crate::engine::audio::play_music(ctx, &map.music);
             }
         }
     }
@@ -536,8 +537,8 @@ fn get_mut(world: &mut WorldMapManager) -> Option<&mut WorldMap> {
 
 #[deprecated]
 fn update1<'d>(
-    ctx: &mut EngineContext,
-    dex: &PokedexClientContext<'d>,
+    ctx: &mut Context,
+    dex: &PokedexClientData,
     save: &mut PlayerData<'d>,
     delta: f32,
     map: &mut WorldMap,
@@ -546,6 +547,10 @@ fn update1<'d>(
     window: &mut TextWindow,
     warper: &mut WarpTransition,
     randoms: &mut Randoms,
+    random: &mut impl rand::Rng,
+    pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
+    movedex: &'d dyn Dex<'d, Move, &'d Move>,
+    itemdex: &'d dyn Dex<'d, Item, &'d Item>,
 ) {
     if is_debug() {
         debug_input(ctx, map);
@@ -661,7 +666,7 @@ fn update1<'d>(
         true => world.npc.timer -= delta,
     }
 
-    script::update_script(ctx, dex, save, delta, map, world, battle, window, warper);
+    script::update_script(ctx, dex, save, delta, map, world, battle, window, warper, random, pokedex, movedex, itemdex);
 
     // Npc window manager code
 
@@ -732,20 +737,15 @@ fn update1<'d>(
 
                                 // Play Trainer music
 
-                                use engine::audio::{
-                                    music::{get_current_music, get_music_id},
-                                    play_music, play_music_named,
-                                };
+                                use crate::engine::audio::{music::get_current_music, play_music};
 
                                 if let Some(encounter_music) = trainer_type.music.as_ref() {
-                                    if let Some(playing_music) = get_current_music(ctx) {
-                                        if let Some(music) = get_music_id(ctx, encounter_music) {
-                                            if playing_music != music {
-                                                play_music(ctx, music)
-                                            }
+                                    if let Some(ref playing_music) = get_current_music(ctx) {
+                                        if playing_music != encounter_music {
+                                            play_music(ctx, encounter_music)
                                         }
                                     } else {
-                                        play_music_named(ctx, encounter_music)
+                                        play_music(ctx, encounter_music)
                                     }
                                 }
                             }
@@ -771,7 +771,7 @@ fn update1<'d>(
 }
 
 fn debug_input(ctx: &Context, map: &mut WorldMap) {
-    if debug_pressed(ctx, DebugBind::F8) {
+    if is_key_pressed(ctx, Key::F8) {
         for (index, npc) in map.npcs.iter() {
             info!(
                 "Npc {} (id: {}), is at {}, {}; looking {:?}",

@@ -1,37 +1,29 @@
 use std::borrow::Cow;
 
-use engine::{
-    graphics::draw_text_center,
+use crate::engine::{
+    graphics::{draw_text_center, Color, DrawParams},
     gui::Panel,
+    inner::input,
     input::{pressed, Control},
-    tetra::{graphics::Color, input, math::Vec2},
+    math::Vec2,
     text::TextColor,
-    EngineContext,
+    Context,
 };
 
 pub struct Button {
-    pub origin: Vec2<f32>,
+    pub origin: Vec2,
     pub button: ButtonBase,
 }
 
 impl Button {
-    pub fn new(
-        position: Vec2<f32>,
-        size: Vec2<f32>,
-        text: Cow<'static, str>,
-    ) -> Self {
+    pub fn new(position: Vec2, size: Vec2, text: Cow<'static, str>) -> Self {
         Self {
             origin: position,
             button: ButtonBase::new(size, text),
         }
     }
 
-    pub fn update(
-        &mut self,
-        ctx: &EngineContext,
-        mouse: Option<Vec2<f32>>,
-        selected: bool,
-    ) -> (bool, bool) {
+    pub fn update(&mut self, ctx: &Context, mouse: Option<Vec2>, selected: bool) -> (bool, bool) {
         self.button.update(ctx, &self.origin, mouse, selected)
     }
 
@@ -39,13 +31,13 @@ impl Button {
         self.button.state()
     }
 
-    pub fn draw(&self, ctx: &mut EngineContext) {
+    pub fn draw(&self, ctx: &mut Context) {
         self.button.draw(ctx, self.origin)
     }
 }
 
 pub struct ButtonBase {
-    pub size: Vec2<f32>,
+    pub size: Vec2,
     pub state: ButtonState,
     pub text: Cow<'static, str>,
 }
@@ -68,7 +60,7 @@ impl ButtonBase {
     pub const HOVERED: Color = Color::rgb(0.9, 0.9, 0.9);
     pub const CLICKED: Color = Color::rgb(0.8, 0.8, 0.8);
 
-    pub fn new(size: Vec2<f32>, text: Cow<'static, str>) -> Self {
+    pub fn new(size: Vec2, text: Cow<'static, str>) -> Self {
         Self {
             size,
             state: Default::default(),
@@ -78,9 +70,9 @@ impl ButtonBase {
 
     pub fn update(
         &mut self,
-        ctx: &EngineContext,
-        origin: &Vec2<f32>,
-        mouse: Option<Vec2<f32>>,
+        ctx: &Context,
+        origin: &Vec2,
+        mouse: Option<Vec2>,
         selected: bool,
     ) -> (bool, bool) {
         if selected {
@@ -98,7 +90,7 @@ impl ButtonBase {
                 && mouse.y < origin.y + self.size.y
             /*(*origin + self.size).gt(&mouse)*/
             {
-                if input::is_mouse_button_pressed(ctx, input::MouseButton::Left) {
+                if input::is_mouse_button_pressed(input::MouseButton::Left) {
                     self.state = ButtonState::Clicked;
                     return (true, true);
                 } else {
@@ -108,7 +100,7 @@ impl ButtonBase {
             } else {
                 self.state = ButtonState::None;
             }
-        } else if input::is_mouse_button_pressed(ctx, input::MouseButton::Left)
+        } else if input::is_mouse_button_pressed(input::MouseButton::Left)
             && matches!(self.state, ButtonState::Hovered)
         {
             self.state = ButtonState::Clicked;
@@ -121,7 +113,7 @@ impl ButtonBase {
         &self.state
     }
 
-    pub fn draw(&self, ctx: &mut EngineContext, origin: Vec2<f32>) {
+    pub fn draw(&self, ctx: &mut Context, origin: Vec2) {
         // draw_rectangle(ctx, origin.x, origin.y, self.size.x, self.size.y);
         // draw_rectangle_lines(ctx, origin.x, origin.y, self.size.x, self.size.y, 2.0, Color::BLACK);
         Panel::draw_color(
@@ -141,10 +133,10 @@ impl ButtonBase {
             ctx,
             &1,
             &self.text,
-            TextColor::Black,
+            true,
             center.x,
             center.y,
-            true,
+            DrawParams::color(TextColor::Black.into()),
         );
     }
 }

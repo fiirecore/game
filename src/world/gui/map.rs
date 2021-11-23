@@ -2,7 +2,7 @@ use engine::{
     util::{Entity, Reset, HEIGHT},
     input::{pressed, Control},
     graphics::{draw_rectangle_lines, draw_rectangle, draw_text_left},
-    tetra::{
+    {
         Context,
         math::Vec2,
         graphics::Color,

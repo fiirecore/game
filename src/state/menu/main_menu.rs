@@ -2,11 +2,12 @@ use std::borrow::Cow;
 
 use crate::{
     engine::{
-        graphics::{draw_rectangle, draw_rectangle_lines, draw_text_left, DARKBLUE, RED},
+        graphics::{draw_rectangle, draw_rectangle_lines, draw_text_left, Color, DrawParams},
         input::{pressed, Control},
-        tetra::{input, math::Vec2, Result, State},
+        math::Vec2,
         text::TextColor,
         util::{HEIGHT, WIDTH},
+        State,
     },
     game::gui::{Button, ButtonBase},
     GameContext,
@@ -25,18 +26,17 @@ pub struct MainMenuState {
 
     delete: bool,
 
-    last_mouse_pos: Vec2<f32>,
+    last_mouse_pos: Vec2,
 
     new_game: ButtonBase,
     delete_button: ButtonBase,
 
-    scaler: Vec2<f32>,
 }
 
 impl MainMenuState {
     const GAP: f32 = 35.0;
 
-    pub fn new(scaler: Vec2<f32>) -> Self {
+    pub fn new() -> Self {
         Self {
             action: None,
             cursor: Default::default(),
@@ -45,7 +45,6 @@ impl MainMenuState {
             last_mouse_pos: Default::default(),
             new_game: ButtonBase::new(Vec2::new(206.0, 30.0), Cow::Borrowed("New Game")),
             delete_button: ButtonBase::new(Vec2::new(206.0, 30.0), Cow::Borrowed("Play/Delete")),
-            scaler,
         }
     }
 
@@ -59,25 +58,24 @@ impl MainMenuState {
                 Button::new(
                     Vec2::new(20.0, 5.0 + index as f32 * Self::GAP),
                     Vec2::new(206.0, 30.0),
-                    Cow::Borrowed(
-                        unsafe{&*(save.name.as_str() as *const str)},
-                    ),
+                    Cow::Borrowed(unsafe { &*(save.name.as_str() as *const str) }),
                 )
             })
             .collect();
     }
 }
 
-impl<'d> State<GameContext<'d>> for MainMenuState {
-    fn begin<'c>(&mut self, ctx: &'c mut GameContext<'d>) -> Result {
+impl<'d> State<GameContext> for MainMenuState {
+    fn start(&mut self, ctx: &mut GameContext) {
         self.cursor = Default::default();
         self.delete = false;
         Self::update_saves(ctx, &mut self.saves);
-        Ok(())
+
+        // Ok(())
     }
 
-    fn update(&mut self, ctx: &mut GameContext<'d>) -> Result {
-        let mouse_pos = input::get_mouse_position(ctx) * self.scaler;
+    fn update(&mut self, ctx: &mut GameContext, _: f32) {
+        let mouse_pos = crate::engine::inner::prelude::mouse_position().into();
 
         let last = if self.last_mouse_pos != mouse_pos {
             self.last_mouse_pos = mouse_pos;
@@ -102,7 +100,13 @@ impl<'d> State<GameContext<'d>> for MainMenuState {
                         break;
                     };
                 } else {
-                    ctx.saves.select(index, &mut rand::thread_rng(), ctx.dex.pokedex, ctx.dex.movedex, ctx.dex.itemdex);
+                    ctx.saves.select(
+                        index,
+                        &mut ctx.random,
+                        crate::pokedex(),
+                        crate::movedex(),
+                        crate::itemdex(),
+                    );
                     self.action = Some(MenuStateAction::StartGame);
                 }
             }
@@ -158,11 +162,18 @@ impl<'d> State<GameContext<'d>> for MainMenuState {
             self.cursor += 1;
         }
 
-        Ok(())
+        // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut GameContext<'d>) -> Result {
-        draw_rectangle(&mut ctx.engine, 0.0, 0.0, WIDTH, HEIGHT, DARKBLUE);
+    fn draw(&mut self, ctx: &mut GameContext) {
+        draw_rectangle(
+            &mut ctx.engine,
+            0.0,
+            0.0,
+            WIDTH,
+            HEIGHT,
+            Color::rgb(0.00, 0.32, 0.67),
+        );
 
         for save in self.saves.iter() {
             save.draw(&mut ctx.engine);
@@ -191,7 +202,7 @@ impl<'d> State<GameContext<'d>> for MainMenuState {
             206.0,
             30.0,
             2.0,
-            RED,
+            Color::rgb(1.0, 0.0, 0.0),
         );
 
         draw_text_left(
@@ -202,12 +213,13 @@ impl<'d> State<GameContext<'d>> for MainMenuState {
             } else {
                 "Delete Mode: OFF"
             },
-            TextColor::Black,
+            
             5.0,
             145.0,
+            DrawParams::color(TextColor::Black.into()),
         );
 
-        Ok(())
+        // Ok(())
     }
 }
 

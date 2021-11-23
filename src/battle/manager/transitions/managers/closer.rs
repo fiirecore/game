@@ -1,7 +1,7 @@
-use crate::{engine::{gui::MessageBox, EngineContext}, game::battle_glue::{BattleId, BattleTrainerEntry}};
+use crate::{engine::{gui::MessageBox, Context}, game::battle_glue::{BattleId, BattleTrainerEntry}};
 
 use battlelib::data::BattleType;
-use pokedex::context::PokedexClientContext;
+use crate::pokedex::context::PokedexClientData;
 
 use crate::battle::manager::transitions::{
     closers::{Closers, TrainerBattleCloser, WildBattleCloser},
@@ -22,7 +22,7 @@ pub struct BattleCloserManager {
 impl BattleCloserManager {
     pub fn begin<'d>(
         &mut self,
-        ctx: &PokedexClientContext<'d>,
+        ctx: &PokedexClientData,
         battle_type: BattleType,
         player: &BattleId,
         player_name: &str,
@@ -44,7 +44,7 @@ impl BattleCloserManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut EngineContext, delta: f32, text: &mut MessageBox) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut MessageBox) {
         let current = self.get_mut();
         current.update(ctx, delta, text);
         if current.finished() {
@@ -52,11 +52,11 @@ impl BattleCloserManager {
         }
     }
 
-    pub fn draw(&self, ctx: &mut EngineContext) {
+    pub fn draw(&self, ctx: &mut Context) {
         self.get().draw(ctx);
     }
 
-    pub fn draw_battle(&self, ctx: &mut EngineContext) {
+    pub fn draw_battle(&self, ctx: &mut Context) {
         self.get().draw_battle(ctx);
     }
 

@@ -1,15 +1,17 @@
-use battlelib::prelude::{
-    Battle, BattleAi, BattleData, BattleType, DefaultMoveEngine, PlayerData, PlayerSettings,
-};
-use firecore_battle::endpoint::MpscEndpoint;
-use pokedex::{
+use std::ops::Deref;
+
+use crate::pokedex::{
     item::Item,
     moves::Move,
     pokemon::{owned::OwnedPokemon, Pokemon},
     Dex, Uninitializable,
 };
+use battlelib::prelude::{
+    Battle, BattleAi, BattleData, BattleType, DefaultMoveEngine, PlayerData, PlayerSettings,
+};
+use firecore_battle::endpoint::MpscEndpoint;
 use rand::{prelude::SmallRng, Rng, SeedableRng};
-use saves::PlayerData as PD;
+use saves::NewPlayerData;
 
 use crate::game::battle_glue::{BattleEntry, BattleId, BattleTrainerEntry};
 
@@ -17,21 +19,29 @@ mod manager;
 
 pub use manager::*;
 
-pub struct GameBattleWrapper<'d> {
-    pub battle: Option<Battle<'d, BattleId>>,
-    pub ai: Option<BattleAi<'d, SmallRng, BattleId>>,
+pub struct GameBattleWrapper<
+    P: Deref<Target = Pokemon> + Clone,
+    M: Deref<Target = Move> + Clone,
+    I: Deref<Target = Item> + Clone,
+> {
+    pub battle: Option<Battle<BattleId, P, M, I>>,
+    pub ai: Option<BattleAi<SmallRng, BattleId, P, M, I>>,
     pub trainer: Option<BattleTrainerEntry>,
     pub engine: DefaultMoveEngine,
     pub seed: u64,
 }
 
-impl<'d> GameBattleWrapper<'d> {
-
+impl<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    > GameBattleWrapper<P, M, I>
+{
     pub fn new() -> Self {
-
         let mut engine = DefaultMoveEngine::new::<BattleId, SmallRng>();
 
-        let (bmoves, scripts) = bincode::deserialize(include_bytes!("../../build/data/battle.bin")).unwrap();
+        let (bmoves, scripts) =
+            bincode::deserialize(include_bytes!("../../build/data/battle.bin")).unwrap();
 
         engine.moves = bmoves;
 
@@ -46,13 +56,13 @@ impl<'d> GameBattleWrapper<'d> {
         }
     }
 
-    pub fn battle(
+    pub fn battle<'d>(
         &mut self,
         random: &mut impl Rng,
-        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
-        movedex: &'d dyn Dex<'d, Move, &'d Move>,
-        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
-        player: &PD,
+        pokedex: &'d dyn Dex<'d, Pokemon, P>,
+        movedex: &'d dyn Dex<'d, Move, M>,
+        itemdex: &'d dyn Dex<'d, Item, I>,
+        player: &NewPlayerData<P, M, I>,
         endpoint: &MpscEndpoint<BattleId>,
         entry: BattleEntry,
     ) {
@@ -76,7 +86,12 @@ impl<'d> GameBattleWrapper<'d> {
             .flat_map(|o| o.init(random, pokedex, movedex, itemdex))
             .collect();
 
-        let ai = BattleAi::new(SmallRng::seed_from_u64(random.next_u64()), entry.active, p);
+        let ai = BattleAi::new(
+            BattleId::default(),
+            SmallRng::seed_from_u64(random.next_u64()),
+            entry.active,
+            p,
+        );
 
         let ai_player = PlayerData {
             id: entry.id,
@@ -110,10 +125,8 @@ impl<'d> GameBattleWrapper<'d> {
         self.trainer = entry.trainer;
         self.ai = Some(ai);
     }
-}
 
-impl GameBattleWrapper<'_> {
-    pub fn update_data(&mut self, winner: &BattleId, player: &mut PD) -> bool {
+    pub fn update_data(&mut self, winner: &BattleId, player: &mut NewPlayerData<P, M, I>) -> bool {
         let trainer = self.trainer.is_some();
 
         if &BattleId(Some(player.id)) == winner {

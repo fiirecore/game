@@ -11,16 +11,11 @@ default = ["firecore-storage"]
 
 rand = { version = "0.8", default-features = false }
 
-log = "0.4"
+firecore-storage = { path = "../", optional = true }
 
-### Specifications
+firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "18f1de3" }
+firecore-world = { path = "../../../world" }
 
-firecore-storage = { path="../", optional=true }
+tinystr = { version = "0.4", features = ["serde"], default-features = false }
 
-firecore-pokedex = { git="https://github.com/fiirecore/pokedex", rev = "a99a3439" }
-firecore-world = { path="../../../world" }
-
-hashbrown = { version = "0.11", features = ["serde"] }
-tinystr = { version = "0.4", features = ["serde"] }
-
-serde = { version="1.0", features=["derive"] }
+serde = { version = "1.0", features = ["derive"] }

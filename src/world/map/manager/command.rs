@@ -1,5 +1,15 @@
-use log::{info, warn};
-use pokedex::{Dex, context::PokedexClientContext, item::{ItemId, ItemStack, StackSize}, pokemon::{Level, PokemonId, owned::SavedPokemon, stat::{Stat, StatSet}}};
+use crate::engine::log::{info, warn};
+use crate::pokedex::{
+    context::PokedexClientData,
+    item::{ItemId, ItemStack, StackSize},
+    pokemon::{
+        owned::SavedPokemon,
+        stat::{Stat, StatSet},
+        Level, PokemonId,
+    },
+    Dex,
+};
+use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
 use saves::PlayerData;
 use worldlib::positions::{Location, LocationId};
 
@@ -15,9 +25,13 @@ impl WorldManager {
     pub fn process<'d>(
         &mut self,
         mut result: CommandResult,
-        dex: &PokedexClientContext<'d>,
+        dex: &PokedexClientData,
         save: &mut PlayerData<'d>,
         battle: BattleEntryRef,
+        random: &mut impl rand::Rng,
+        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
+        movedex: &'d dyn Dex<'d, Move, &'d Move>,
+        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
     ) {
         match result.command {
             "help" => {
@@ -90,7 +104,7 @@ impl WorldManager {
                             Some(len) => match len.parse::<usize>() {
                                 Ok(size) => random_wild_battle(
                                     &mut self.randoms.wild,
-                                    dex.pokedex.len() as _,
+                                    pokedex.len() as _,
                                     battle,
                                     size,
                                 ),
@@ -100,7 +114,7 @@ impl WorldManager {
                             },
                             None => random_wild_battle(
                                 &mut self.randoms.wild,
-                                dex.pokedex.len() as _,
+                                pokedex.len() as _,
                                 battle,
                                 DEFAULT_RANDOM_BATTLE_SIZE,
                             ),
@@ -149,27 +163,44 @@ impl WorldManager {
             }
             "give" => match result.args.next() {
                 Some(arg) => match arg {
-                    "pokemon" => match result.args.next().map(|arg| arg.parse::<PokemonId>().ok()).flatten() {
+                    "pokemon" => match result
+                        .args
+                        .next()
+                        .map(|arg| arg.parse::<PokemonId>().ok())
+                        .flatten()
+                    {
                         Some(id) => {
-                            let level = match result.args.next().map(|arg| arg.parse::<Level>().ok()).flatten() {
+                            let level = match result
+                                .args
+                                .next()
+                                .map(|arg| arg.parse::<Level>().ok())
+                                .flatten()
+                            {
                                 Some(level) => level,
                                 None => 5,
                             };
-                            let ivs = match result.args.next().map(|arg| arg.parse::<Stat>().ok()).flatten() {
+                            let ivs = match result
+                                .args
+                                .next()
+                                .map(|arg| arg.parse::<Stat>().ok())
+                                .flatten()
+                            {
                                 Some(iv) => StatSet::uniform(iv),
                                 None => Default::default(),
                             };
-                            let mut random = rand::thread_rng();
-                            match SavedPokemon::generate(&mut random, id, level, None, Some(ivs)).init(&mut random, dex.pokedex, dex.movedex, dex.itemdex) {
-                                Some(p) => if let Err(..) = save.party.try_push(p) {
-                                    warn!("Party full!");
-                                },
+                            match SavedPokemon::generate(random, id, level, None, Some(ivs))
+                                .init(random, pokedex, movedex, itemdex)
+                            {
+                                Some(p) => {
+                                    if let Err(..) = save.party.try_push(p) {
+                                        warn!("Party full!");
+                                    }
+                                }
                                 None => warn!("Cannot create pokemon!"),
                             }
-                            
                         }
                         None => warn!("Please provide a pokemon ID!"),
-                    }
+                    },
                     "item" => {
                         if let Some(item) = result
                             .args
@@ -183,7 +214,7 @@ impl WorldManager {
                                 .map(|count| count.parse::<StackSize>().ok())
                                 .flatten()
                                 .unwrap_or(1);
-                            match dex.itemdex.try_get(&item) {
+                            match itemdex.try_get(&item) {
                                 Some(item) => {
                                     save.bag.add_item(ItemStack::new(item, count));
                                 }

@@ -1,13 +1,10 @@
-use hashbrown::HashMap;
-use engine::{
-    graphics::{byte_texture, position},
-    tetra::{
-        graphics::{Color, Rectangle, Texture},
-        math::Vec2,
-        Context,
-    },
+use crate::engine::{
+    graphics::{Color, DrawParams, Texture},
+    math::{Rectangle, Vec2},
     util::{HEIGHT, WIDTH},
+    Context,
 };
+use std::collections::HashMap;
 
 use worldlib::{
     character::{Character, Movement},
@@ -48,28 +45,28 @@ impl PlayerTexture {
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
             Movement::Walking,
-            byte_texture(
+            Texture::new(
                 ctx,
                 include_bytes!("../../../../assets/world/textures/player/walking.png"),
-            )
+            ).unwrap()
             .into(),
         );
         textures.insert(
             Movement::Running,
-            byte_texture(
+            Texture::new(
                 ctx,
                 include_bytes!("../../../../assets/world/textures/player/running.png"),
-            )
+            ).unwrap()
             .into(),
         );
         textures.insert(
             Movement::Swimming,
             CharacterTexture {
                 idle: Some(0.5),
-                texture: byte_texture(
+                texture: Texture::new(
                     ctx,
                     include_bytes!("../../../../assets/world/textures/player/surfing.png"),
-                ),
+                ).unwrap(),
             },
         );
 
@@ -99,27 +96,28 @@ impl PlayerTexture {
         if !character.hidden {
             if let Some(texture) = self.textures.get(&character.movement) {
                 let (x, width) = current_texture(character);
-                let params = if character.position.direction == Direction::Right {
-                    position(SCREEN_X + width / 2.0, SCREEN_Y).scale(Vec2::new(-1.0, 1.0))
-                } else {
-                    position(SCREEN_X - width / 2.0, SCREEN_Y)
-                };
-                texture.texture.draw_region(
+                texture.texture.draw(
                     ctx,
-                    Rectangle::new(
-                        x,
-                        0.0,
-                        width,
-                        if !self.bush.in_bush
-                            || (character.offset.is_zero()
-                                && character.position.direction.vertical())
-                        {
-                            32.0
-                        } else {
-                            26.0
-                        },
-                    ),
-                    params.color(color),
+                    SCREEN_X - width / 2.0,
+                    SCREEN_Y,
+                    DrawParams {
+                        source: Some(Rectangle::new(
+                            x,
+                            0.0,
+                            width,
+                            if !self.bush.in_bush
+                                || (character.offset.is_zero()
+                                    && character.position.direction.vertical())
+                            {
+                                32.0
+                            } else {
+                                26.0
+                            },
+                        )),
+                        flip_x: character.position.direction == Direction::Right,
+                        color,
+                        ..Default::default()
+                    },
                 );
             }
         }
@@ -127,7 +125,6 @@ impl PlayerTexture {
 }
 
 fn current_texture(character: &Character) -> (f32, f32) {
-
     const HALF_TILE_SIZE: f32 = TILE_SIZE / 2.0;
     // x, width
     let (indexes, width) = player_texture_index(character);
@@ -135,7 +132,9 @@ fn current_texture(character: &Character) -> (f32, f32) {
         (*indexes
             .get(
                 (
-                    if character.offset.offset().abs() < HALF_TILE_SIZE && !character.offset.is_zero() {
+                    if character.offset.offset().abs() < HALF_TILE_SIZE
+                        && !character.offset.is_zero()
+                    {
                         1
                     } else {
                         0

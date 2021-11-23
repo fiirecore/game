@@ -1,4 +1,4 @@
-use crate::{engine::tetra::State, GameContext};
+use crate::{engine::State, GameContext};
 
 mod manager;
 pub use manager::*;
@@ -8,7 +8,7 @@ pub mod character;
 pub mod main_menu;
 pub mod title;
 
-pub trait MenuState<'d>: State<GameContext<'d>> {
+pub trait MenuState<'d>: State<GameContext> {
     fn next(&mut self) -> &mut Option<MenuStateAction>;
 }
 

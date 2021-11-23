@@ -7,13 +7,15 @@ readme = "README.md"
 
 [dependencies]
 
-log = "0.4"
-
 ### Serialization
 
-serde = "1.0"
-ron = "0.6"
+serde = "1"
+ron = "0.7"
 
 ### File management
 
+macroquad = "0.3"
 dirs-next = "2.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie" }

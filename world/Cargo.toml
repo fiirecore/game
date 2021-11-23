@@ -7,13 +7,14 @@ edition = "2018"
 [dependencies]
 
 serde = { version = "1.0", features = ["derive"] }
-hashbrown = { version = "0.11", features = ["serde"] }
-tinystr = { version = "0.4", features = ["serde"] }
+tinystr = { version = "0.4", features = ["serde"], default-features = false }
 rand = { version = "0.8", default-features = false }
 
-firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "a99a3439" }
-firecore-text = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "a147490", package = "firecore-text" }
-firecore-audio = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "a147490", package = "firecore-audio" }
+firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "18f1de3" }
+# firecore-pokedex = { path = "../../firecore/pokedex" }
+
+firecore-text = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "5ca80c4", package = "firecore-text" }
+# firecore-text = { path = "../../firecore/engine/crates/text" }
 
 ### Pathfinding
 

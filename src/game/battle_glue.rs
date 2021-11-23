@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use pokedex::pokemon::{owned::SavedPokemon, party::Party};
+use crate::pokedex::pokemon::{owned::SavedPokemon, party::Party};
 use worldlib::character::npc::{trainer::TransitionId, BadgeId};
 
 pub use worldlib::TrainerId;

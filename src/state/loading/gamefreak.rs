@@ -28,9 +28,9 @@ impl super::LoadingScene for GamefreakLoadingScene {
 			state: LoadingState::Continue,
 			rect_size: 0.0,
 			accumulator: 0.0,
-			star: byte_texture(include_bytes!("../../../build/assets/scenes/loading/star.png")),
-			logo: byte_texture(include_bytes!("../../../build/assets/scenes/loading/logo.png")),
-			text: byte_texture(include_bytes!("../../../build/assets/scenes/loading/text.png")),
+			star: Texture::new(include_bytes!("../../../build/assets/scenes/loading/star.png")),
+			logo: Texture::new(include_bytes!("../../../build/assets/scenes/loading/logo.png")),
+			text: Texture::new(include_bytes!("../../../build/assets/scenes/loading/text.png")),
 		}
 	}
 

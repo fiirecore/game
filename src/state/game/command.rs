@@ -2,19 +2,16 @@ use std::collections::VecDeque;
 
 use crate::{
     engine::{
-        tetra::{
-            input::{self, Key},
-            graphics::Color,
-        },
-        util::{Entity, Reset, HEIGHT},
-        graphics,
+        graphics::{self, Color, DrawParams},
+        input::keyboard::{self as input, Key},
         text::TextColor,
-        EngineContext,
+        util::{Entity, Reset, HEIGHT},
+        Context,
     },
     game::is_debug,
 };
 
-use log::warn;
+use crate::engine::log::warn;
 
 #[derive(Debug, Clone)]
 pub struct CommandResult<'a> {
@@ -38,7 +35,7 @@ pub struct Console {
 impl Console {
     const MAX_COMMANDS: usize = 10;
 
-    pub fn update(&mut self, ctx: &EngineContext) -> Option<CommandResult> {
+    pub fn update(&mut self, ctx: &Context) -> Option<CommandResult> {
         match self.alive {
             true => {
                 if self.commands.is_empty() {
@@ -87,9 +84,9 @@ impl Console {
                         return Some(CommandResult { command, args });
                     }
                 } else {
-                    if let Some(new) = input::get_text_input(ctx) {
+                    while let Some(new) = crate::engine::inner::input::get_char_pressed() {
                         match self.commands.get_mut(self.position) {
-                            Some(command) => command.push_str(new),
+                            Some(command) => command.push(new),
                             None => warn!("Could not get current command at {}!", self.position),
                         }
                     }
@@ -104,7 +101,7 @@ impl Console {
         None
     }
 
-    pub fn draw(&self, ctx: &mut EngineContext) {
+    pub fn draw(&self, ctx: &mut Context) {
         if self.alive {
             if let Some(command) = self.commands.get(self.position) {
                 const Y: f32 = HEIGHT - 30.0;
@@ -120,17 +117,17 @@ impl Console {
                     ctx,
                     &1,
                     "/",
-                    TextColor::White,
                     10.0,
                     Y,
+                    DrawParams::color(TextColor::White.into()),
                 );
                 graphics::draw_text_left(
                     ctx,
                     &1,
                     command,
-                    TextColor::White,
                     16.0,
                     Y,
+                    DrawParams::color(TextColor::White.into()),
                 );
             } else {
                 warn!("Cannot get string at position {}", self.position);

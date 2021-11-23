@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use hashbrown::HashMap;
+use std::collections::HashMap;
 
 use crate::{
     character::{

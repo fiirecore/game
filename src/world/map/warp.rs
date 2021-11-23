@@ -1,4 +1,4 @@
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use worldlib::{
     map::{manager::WorldMapManager, TileId, World},
     positions::Coordinate,
@@ -6,13 +6,10 @@ use worldlib::{
 
 use crate::{
     engine::{
-        graphics::draw_rectangle,
-        tetra::{
-            graphics::{Color, Texture},
-            Context,
-        },
+        graphics::{draw_rectangle, Color, DrawParams, Texture},
         util::{Entity, Reset, HEIGHT, WIDTH},
-        EngineContext,
+        math::Rectangle,
+        Context,
     },
     world::RenderCoords,
 };
@@ -21,7 +18,7 @@ pub struct WarpTransition {
     alive: bool,
     door: Option<Door>,
     pub doors: HashMap<TileId, Texture>,
-    color: Color,
+    color: crate::engine::inner::prelude::Color,
     // rect_width: f32,
     faded: bool,
     warped: bool,
@@ -56,7 +53,7 @@ impl WarpTransition {
             alive: false,
             door: None,
             doors: HashMap::new(),
-            color: Color::BLACK,
+            color: crate::engine::inner::prelude::BLACK,
             // rect_width: Self::RECT_WIDTH,
             faded: false,
             warped: false,
@@ -164,9 +161,9 @@ impl WarpTransition {
         None
     }
 
-    pub fn draw(&self, ctx: &mut EngineContext) {
+    pub fn draw(&self, ctx: &mut Context) {
         if self.alive {
-            draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.color);
+            draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, Color::rgba(self.color.r, self.color.g, self.color.b, self.color.a));
             // if self.switch {
             // draw_rectangle(ctx, 0.0, 0.0, self.rect_width, HEIGHT, Color::BLACK);
             // draw_rectangle(
@@ -184,22 +181,18 @@ impl WarpTransition {
     pub fn draw_door(&self, ctx: &mut Context, screen: &RenderCoords) {
         if self.alive {
             if let Some(door) = &self.door {
-                use engine::graphics::position;
-                use engine::tetra::graphics::Rectangle;
                 use worldlib::TILE_SIZE;
                 if let Some(texture) = self.doors.get(&door.tile) {
-                    texture.draw_region(
+                    texture.draw(
                         ctx,
-                        Rectangle::new(
+                        ((door.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x,
+                        ((door.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y,
+                        DrawParams::source(Rectangle::new(
                             0.0,
                             door.accumulator.floor() * TILE_SIZE,
                             TILE_SIZE,
                             TILE_SIZE,
-                        ),
-                        position(
-                            ((door.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x,
-                            ((door.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y,
-                        ),
+                        )),
                     )
                 }
             }
