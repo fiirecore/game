@@ -13,17 +13,13 @@
             ),
         ),
         interact: Message([
-            (
-                lines: [
+            [
                     "I'm raising POKEMON too."
-                ],
-            ),
-            (
-                lines: [
+            ],
+            [
                     "When they get strong, they can",
                     "protect me."
-                ]
-            )
+            ],
         ]),
     )
 )

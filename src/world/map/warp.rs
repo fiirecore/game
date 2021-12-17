@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use worldlib::{
-    map::{manager::WorldMapManager, TileId, World},
-    positions::Coordinate,
+    map::{manager::WorldMapManager, TileId},
+    positions::Coordinate, character::player::PlayerCharacter,
 };
 
 use crate::{
@@ -62,7 +62,7 @@ impl WarpTransition {
         }
     }
 
-    pub fn update(&mut self, world: &mut WorldMapManager, delta: f32) -> Option<bool> {
+    pub fn update(&mut self, world: &mut WorldMapManager, player: &mut PlayerCharacter, delta: f32) -> Option<bool> {
         // returns map change
 
         match self.faded {
@@ -73,14 +73,14 @@ impl WarpTransition {
                     self.faded = false;
                     if self.warped {
                         let coords = self.warp.as_ref().unwrap().0;
-                        let tile = world.tile(coords).unwrap_or_default();
+                        let tile = world.get(&player.location).map(|map| map.tile(coords)).flatten().unwrap_or_default();
                         if self.doors.contains_key(&tile) {
                             //exit door
                             self.door = Some(Door::new(tile, coords));
                         } else if self.warp.as_ref().unwrap().1 {
-                            world.player.hidden = false;
-                            let direction = world.player.position.direction;
-                            world.player.pathing.queue.push(direction);
+                            player.hidden = false;
+                            let direction = player.position.direction;
+                            player.pathing.queue.push(direction);
                         }
                     }
                 }
@@ -88,9 +88,9 @@ impl WarpTransition {
             false => match &mut self.door {
                 Some(door) => match door.open {
                     true => {
-                        if !world.player.moving() && door.accumulator >= 0.0 {
+                        if !player.moving() && door.accumulator >= 0.0 {
                             if door.accumulator == Door::DOOR_MAX && !self.warped {
-                                world.player.hidden = true;
+                                player.hidden = true;
                             }
                             door.accumulator -= delta * 6.0;
                             if door.accumulator <= 0.0 {
@@ -108,13 +108,13 @@ impl WarpTransition {
                                 if !self.warped
                                     || self.warp.as_ref().map(|d| d.1).unwrap_or_default()
                                 {
-                                    // world.try_move(world.player.position.direction, delta);
-                                    let direction = world.player.position.direction;
-                                    world.player.pathing.queue.push(direction);
+                                    // world.try_move(player.position.direction, delta);
+                                    let direction = player.position.direction;
+                                    player.pathing.queue.push(direction);
                                 }
                                 door.open = true;
                                 if self.warped {
-                                    world.player.hidden = false;
+                                    player.hidden = false;
                                 }
                             }
                         }
@@ -126,10 +126,10 @@ impl WarpTransition {
                         if self.color.a >= 1.0 {
                             self.color.a = 1.0;
                             self.faded = true;
-                            if let Some(destination) = world.warp.take() {
-                                world.player.hidden = destination.transition.move_on_exit;
+                            if let Some(destination) = player.world.warp.take() {
+                                player.hidden = destination.transition.move_on_exit;
                                 let change_music = destination.transition.change_music;
-                                world.warp(destination);
+                                world.warp(player, destination);
                                 self.warp = Some((
                                     destination.position.coords,
                                     destination.transition.move_on_exit,
@@ -141,15 +141,15 @@ impl WarpTransition {
                     }
                     true => {
                         self.despawn();
-                        world.player.unfreeze();
-                        world.player.input_frozen = self.freeze;
+                        player.unfreeze();
+                        player.input_frozen = self.freeze;
                         // if let Some(destination) = self.warp.take() {
                         //     if destination.transition.move_on_exit {
                         //         world.try_move(
                         //             destination
                         //                 .position
                         //                 .direction
-                        //                 .unwrap_or(world.player.position.direction),
+                        //                 .unwrap_or(player.position.direction),
                         //             delta,
                         //         );
                         //     }
@@ -199,12 +199,12 @@ impl WarpTransition {
         }
     }
 
-    pub fn queue(&mut self, world: &mut WorldMapManager, tile: TileId, coords: Coordinate) {
+    pub fn queue(&mut self, world: &mut WorldMapManager, player: &mut PlayerCharacter, tile: TileId, coords: Coordinate) {
         if self.doors.contains_key(&tile) {
             // enterance door
             self.door = Some(Door::new(tile, coords));
-            self.freeze = world.player.input_frozen;
-            world.player.input_frozen = true;
+            self.freeze = player.input_frozen;
+            player.input_frozen = true;
             self.spawn();
         }
     }

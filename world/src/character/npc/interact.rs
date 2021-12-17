@@ -1,15 +1,17 @@
-use crate::positions::{Coordinate, Destination, Direction, Position};
-use text::MessagePages;
+use crate::{
+    positions::{Coordinate, Destination, Direction, Position},
+    script::ScriptId,
+};
 use serde::{Deserialize, Serialize};
 
-use crate::{character::Character, script::world::WorldScript};
+use crate::{character::Character};
 
 use super::Npc;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum NpcInteract {
-    Message(MessagePages),
-    Script(Box<WorldScript>),
+    Message(Vec<Vec<String>>),
+    Script(ScriptId),
     Nothing,
 }
 

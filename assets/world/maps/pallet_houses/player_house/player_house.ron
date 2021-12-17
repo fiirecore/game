@@ -1,5 +1,8 @@
 (
-    identifier: "player_house",
+    identifier: (
+        map: Some("pallet_houses"),
+        index: "player_house",
+    ),
     name: "%p's House",
     file: "4.0_PALLET TOWN.map",
 )

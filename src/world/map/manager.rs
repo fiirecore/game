@@ -1,59 +1,65 @@
-use crate::engine::{
-    graphics::Texture,
-    input::{
-        controls::{pressed, Control},
-        keyboard::{is_key_pressed, Key},
+use std::collections::HashMap;
+
+use crate::saves::{GamePokemon, PlayerData};
+use crate::Sender;
+use crate::{engine::log::info, world::WorldActions};
+use crate::{
+    engine::{
+        graphics::Texture,
+        gui::MessagePage,
+        input::controls::{pressed, Control},
+        util::{Completable, Entity},
+        {graphics::Color, Context},
     },
-    text::MessagePage,
-    util::{Completable, Entity},
-    {graphics::Color, Context},
+    world::npc::NpcTypes,
 };
-use crate::engine::log::info;
-use crate::pokedex::{
-    context::PokedexClientData,
-    gui::{bag::BagGui, party::PartyGui},
-    moves::MoveId,
+use crate::{
+    pokedex::{context::PokedexClientData, moves::MoveId},
+    world::npc::color,
 };
-use firecore_battle::pokedex::{Dex, item::Item, moves::Move, pokemon::Pokemon};
+use firecore_battle::pokedex::{
+    item::Item,
+    moves::Move,
+    pokemon::{party::Party, Pokemon},
+    Dex,
+};
+use firecore_battle_gui::pokedex::engine::log::warn;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
-use saves::PlayerData;
-use std::rc::Rc;
 use worldlib::{
-    character::{npc::NpcType, sprite::SpriteIndexes, Movement},
+    character::{
+        npc::{MessageColor, NpcType, NpcTypeId},
+        player::PlayerCharacter,
+        sprite::SpriteIndexes,
+        Movement,
+    },
     map::{
+        chunk::Connection,
         manager::{TryMoveResult, WorldMapManager},
-        Brightness, World, WorldMap,
+        Brightness, WorldMap,
     },
     positions::{Coordinate, Direction, Location},
     serialized::SerializedWorld,
 };
 
-use crate::{
-    game::{battle_glue::BattleEntryRef, is_debug},
-    state::Action,
-};
-
 use crate::world::{
-    gui::{StartMenu, TextWindow},
+    gui::TextWindow,
     map::{input::PlayerInput, texture::WorldTextures, warp::WarpTransition},
     RenderCoords,
 };
 
-pub mod command;
 pub mod script;
 
-pub struct WorldManager {
-    pub world: WorldMapManager,
+pub struct GameWorldMapManager {
+    world: WorldMapManager,
 
     textures: WorldTextures,
+    npc_types: NpcTypes,
 
-    menu: StartMenu,
-    text: TextWindow,
     warper: WarpTransition,
-
     input: PlayerInput,
-
     screen: RenderCoords,
+
+    sender: Sender<WorldActions>,
 
     pub randoms: Randoms,
 }
@@ -81,23 +87,18 @@ impl Randoms {
     }
 }
 
-impl WorldManager {
-    pub fn new(ctx: &mut Context, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
+impl GameWorldMapManager {
+    pub(crate) fn new(ctx: &mut Context, sender: Sender<WorldActions>) -> Self {
         Self {
-            world: WorldMapManager {
-                maps: Default::default(),
-                data: Default::default(),
-            },
+            world: WorldMapManager::default(),
 
+            npc_types: Default::default(),
             textures: WorldTextures::new(ctx),
-
-            menu: StartMenu::new(party, bag),
-            text: TextWindow::new(ctx),
             warper: WarpTransition::new(),
-
             input: PlayerInput::default(),
-
             screen: RenderCoords::default(),
+
+            sender,
 
             randoms: Randoms::default(),
         }
@@ -123,8 +124,15 @@ impl WorldManager {
                     (
                         npc_type.config.identifier,
                         NpcType {
-                            sprite: SpriteIndexes::from_index(npc_type.config.sprite),
-                            text_color: npc_type.config.text_color,
+                            sprite: match npc_type.config.sprite {
+                                worldlib::character::sprite::SpriteIndexType::Still => {
+                                    SpriteIndexes::STILL
+                                }
+                                worldlib::character::sprite::SpriteIndexType::Walk => {
+                                    SpriteIndexes::WALK
+                                }
+                            },
+                            message: npc_type.config.text_color,
                             trainer: npc_type.config.trainer,
                         },
                     ),
@@ -132,9 +140,7 @@ impl WorldManager {
             })
             .unzip();
 
-        unsafe {
-            crate::world::npc::NPC_TYPES = Some(types);
-        }
+        self.npc_types = types;
         self.textures.npcs.set(textures);
 
         // self.world_map.add_locations(world.map_gui_locs);
@@ -142,41 +148,37 @@ impl WorldManager {
         self.world = world.manager;
     }
 
-    pub fn load_with_data(&mut self, save: &PlayerData) {
-        self.load_player(save);
-    }
-
-    pub fn on_start(&mut self, ctx: &mut Context, save: &mut PlayerData, battle: BattleEntryRef) {
-        self.map_start(ctx, true);
-        on_tile(
-            &mut self.world,
-            save,
-            &mut self.randoms,
-            &mut self.textures,
-            battle,
-        );
-    }
-
-    pub fn map_start(&mut self, ctx: &mut Context, music: bool) {
-        on_start(&mut self.world, ctx, music);
-    }
-
-    pub fn update<'d>(
+    pub fn on_start(
         &mut self,
         ctx: &mut Context,
-        dex: &PokedexClientData,
-        save: &mut PlayerData<'d>,
-        delta: f32,
-        input_lock: bool,
-        battle: BattleEntryRef,
-        action: &mut Option<Action>,
-        random: &mut impl rand::Rng,
-        pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
-        movedex: &'d dyn Dex<'d, Move, &'d Move>,
-        itemdex: &'d dyn Dex<'d, Item, &'d Item>,
+        player: &mut PlayerCharacter,
+        party: &mut Party<GamePokemon>,
     ) {
-        if self.menu.alive() {
-            self.menu.update(ctx, dex, save, delta, input_lock, action);
+        self.map_start(ctx, player, true);
+        if let Some(map) = self.world.maps.get_mut(&player.location) {
+            on_tile(
+                map,
+                player,
+                party,
+                &mut self.randoms,
+                &mut self.textures,
+                &self.sender,
+            );
+        }
+    }
+
+    pub fn map_start(&mut self, ctx: &mut Context, player: &mut PlayerCharacter, music: bool) {
+        on_start(ctx, &mut self.world, player, music);
+    }
+
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        player: &mut PlayerCharacter,
+        party: &mut Party<GamePokemon>,
+        text: &mut TextWindow,
+        delta: f32,
+    ) {
         // } else if self.world_map.alive() {
         //     self.world_map.update(ctx);
         //     if pressed(ctx, Control::A) {
@@ -184,149 +186,118 @@ impl WorldManager {
         //             self.warp_to_location(location);
         //         }
         //     }
-        } else {
-            // Input
+        // Input
 
-            if !input_lock {
-                if pressed(ctx, Control::Start) {
-                    self.menu.spawn();
-                }
+        // if !input_lock {
 
-                if is_debug() {
-                    self.debug_input(ctx, save)
-                }
+        // if is_debug() {
+        //     self.debug_input(ctx, save)
+        // }
 
-                if let Some(direction) = self.input.update(&mut self.world.player, ctx, delta) {
-                    if let Some(result) = self.world.try_move(direction) {
-                        match result {
-                            TryMoveResult::MapUpdate => self.map_start(ctx, true),
-                            TryMoveResult::TrySwim => {
-                                const SURF: MoveId = unsafe { MoveId::new_unchecked(1718777203) };
+        if let Some(direction) = self.input.update(player, ctx, delta) {
+            if let Some(result) = self.world.try_move(player, direction) {
+                match result {
+                    TryMoveResult::MapUpdate => self.map_start(ctx, player, true),
+                    TryMoveResult::TrySwim => {
+                        const SURF: MoveId = unsafe { MoveId::new_unchecked(1718777203) };
 
-                                if save
-                                    .party
-                                    .iter()
-                                    .flat_map(|pokemon| pokemon.moves.iter())
-                                    .any(|m| m.0.id == SURF)
-                                {
-                                    self.world.player.movement = Movement::Swimming;
-                                    self.world.player.pathing.queue.push(direction);
-                                }
-                            }
-                            TryMoveResult::StartWarpOnTile(tile, coords) => {
-                                self.warper.queue(&mut self.world, tile, coords);
-                            }
+                        if party
+                            .iter()
+                            .flat_map(|pokemon| pokemon.moves.iter())
+                            .any(|m| m.0.id == SURF)
+                        {
+                            player.movement = Movement::Swimming;
+                            player.pathing.queue.push(direction);
                         }
+                    }
+                    TryMoveResult::StartWarpOnTile(tile, coords) => {
+                        self.warper.queue(&mut self.world, player, tile, coords);
                     }
                 }
             }
+        }
+        // }
 
-            // Update
+        // Update
 
-            if self.warper.alive() {
-                if let Some(music) = self.warper.update(&mut self.world, delta) {
-                    self.map_start(ctx, music);
-                }
-            } else if self.world.warp.is_some() {
-                self.warper.spawn();
-                self.world.player.input_frozen = true;
+        if self.warper.alive() {
+            if let Some(music) = self.warper.update(&mut self.world, player, delta) {
+                self.map_start(ctx, player, music);
             }
+        } else if player.world.warp.is_some() {
+            self.warper.spawn();
+            player.input_frozen = true;
+        }
 
-            if self.world.player.do_move(delta) {
-                self.stop_player(save, battle);
-            }
+        if player.do_move(delta) {
+            self.stop_player(player, party);
+        }
 
-            self.textures.tiles.update(delta);
-            self.textures.player.update(delta, &mut self.world.player);
+        self.textures.tiles.update(delta);
+        self.textures.player.update(delta, player);
 
-            if let Some(map) = if let Some(loc) = &self.world.data.location {
-                self.world.maps.get_mut(loc)
-            } else {
-                None
-            } {
-                update1(
-                    ctx,
-                    dex,
-                    save,
-                    delta,
+        if let Some(map) = self.world.maps.get_mut(&player.location) {
+            update1(
+                ctx,
+                delta,
+                map,
+                player,
+                &self.sender,
+                &self.npc_types,
+                text,
+                &mut self.warper,
+                &mut self.randoms,
+            );
+        }
+
+        self.screen = RenderCoords::new(&player);
+    }
+
+    fn stop_player(&mut self, player: &mut PlayerCharacter, party: &mut Party<GamePokemon>) {
+        player.stop_move();
+
+        if let Some(map) = self.world.maps.get_mut(&player.location) {
+            if let Some(destination) = map.warp_at(player.position.coords) {
+                // Warping does not trigger tile actions!
+                player.world.warp = Some(*destination);
+            } else if map.in_bounds(player.position.coords) {
+                on_tile(
                     map,
-                    &mut self.world.data,
-                    battle,
-                    &mut self.text,
-                    &mut self.warper,
+                    player,
+                    party,
                     &mut self.randoms,
-                    random,
-                    pokedex,
-                    movedex,
-                    itemdex,
+                    &mut self.textures,
+                    &self.sender,
                 );
             }
-
-            self.screen = RenderCoords::new(
-                match self.world.get().map(|map| map.chunk.as_ref()).flatten() {
-                    Some(chunk) => chunk.coords,
-                    None => Coordinate::ZERO,
-                },
-                &self.world.player,
-            );
         }
     }
 
-    pub fn save_data(&self, save: &mut PlayerData) {
-        if let Some(location) = self.world.location {
-            save.location = location;
-        }
-        save.character = self.world.data.player.copy();
-    }
+    // #[deprecated]
+    // fn debug_input(&mut self, ctx: &Context, save: &mut PlayerData) {
+    //     if is_key_pressed(ctx, Key::F3) {
+    //         info!("Local Coordinates: {}", self.player.position.coords);
 
-    fn stop_player(&mut self, save: &mut PlayerData, battle: BattleEntryRef) {
-        self.world.player.stop_move();
+    //         match self.world.tile(self.player.position.coords) {
+    //             Some(tile) => info!("Current Tile ID: {:x}", tile),
+    //             None => info!("Currently out of bounds"),
+    //         }
 
-        if let Some(destination) = self.world.warp_at(self.world.player.position.coords) {
-            // Warping does not trigger tile actions!
-            self.world.warp = Some(*destination);
-        } else if self.world.in_bounds(self.world.player.position.coords) {
-            on_tile(
-                &mut self.world,
-                save,
-                &mut self.randoms,
-                &mut self.textures,
-                battle,
-            );
-        }
-    }
+    //         info!("Player is {:?}", self.player.movement);
+    //     }
 
-    pub fn load_player(&mut self, save: &PlayerData) {
-        *self.world.player = save.character.copy();
-        self.world.location = Some(save.location);
-    }
+    //     if is_key_pressed(ctx, Key::F5) {
+    //         if let Some(map) = self.world.get() {
+    //             info!("Resetting battled trainers in this map! ({})", map.name);
+    //             save.world.get_map(&map.id).battled.clear();
+    //         }
+    //     }
+    // }
 
-    #[deprecated]
-    fn debug_input(&mut self, ctx: &Context, save: &mut PlayerData) {
-        if is_key_pressed(ctx, Key::F3) {
-            info!("Local Coordinates: {}", self.world.player.position.coords);
-
-            match self.world.tile(self.world.player.position.coords) {
-                Some(tile) => info!("Current Tile ID: {:x}", tile),
-                None => info!("Currently out of bounds"),
-            }
-
-            info!("Player is {:?}", self.world.player.movement);
-        }
-
-        if is_key_pressed(ctx, Key::F5) {
-            if let Some(map) = self.world.get() {
-                info!("Resetting battled trainers in this map! ({})", map.name);
-                save.world.get_map(&map.id).battled.clear();
-            }
-        }
-    }
-
-    fn warp_to_location(&mut self, save: &mut PlayerData, location: Location) {
+    fn warp_to_location(&mut self, player: &mut PlayerCharacter, location: Location) {
         if let Some(map) = self.world.maps.get(&location) {
             info!("Warping to {}", map.name);
-            save.location = location;
-            self.world.data.location = Some(location);
+            player.location = location;
             let coordinate = if let Some(coord) = map.settings.fly_position {
                 coord
             // } else if let Some(coord) = worldlib::character::pathfind::tenth_walkable_coord(map) {
@@ -335,178 +306,194 @@ impl WorldManager {
                 Coordinate::default()
             };
 
-            let pos = &mut self.world.player.position;
+            let pos = &mut player.position;
             pos.coords = coordinate;
             pos.direction = Direction::Down;
         }
     }
 
-    pub fn draw<'d>(&self, ctx: &mut Context, dex: &PokedexClientData, save: &PlayerData) {
-        if self.menu.fullscreen() {
-            self.menu.draw(ctx, dex, save);
-        // } else if self.world_map.alive() {
-        //     self.world_map.draw(ctx);
-        } else {
-            if let Some(map) = self.world.get() {
-                let color = match map.settings.brightness {
-                    Brightness::Day => Color::WHITE,
-                    Brightness::Night => Color::rgb(0.6, 0.6, 0.6),
-                };
+    pub fn draw(&self, ctx: &mut Context, player: &PlayerCharacter) {
+        let color = if let Some(map) = self.world.get(&player.location) {
+            let color = match map.settings.brightness {
+                Brightness::Day => Color::WHITE,
+                Brightness::Night => Color::rgb(0.6, 0.6, 0.6),
+            };
 
-                let screen = match &map.chunk {
-                    Some(chunk) => {
-                        let screen = self.screen.offset(chunk.coords);
-                        super::draw(map, &self.world, ctx, &self.textures, &screen, true, color);
-                        for map in chunk
-                            .connections
-                            .iter()
-                            .flat_map(|id| self.world.maps.get(id))
-                        {
-                            if let Some(chunk) = &map.chunk {
-                                super::draw(
-                                    map,
-                                    &self.world,
-                                    ctx,
-                                    &self.textures,
-                                    &self.screen.offset(chunk.coords),
-                                    false,
-                                    color,
-                                );
+            match &map.chunk {
+                Some(chunk) => {
+
+
+                    super::draw(
+                        map,
+                        &player.world,
+                        ctx,
+                        &self.textures,
+                        &self.npc_types,
+                        &self.screen,
+                        true,
+                        color,
+                    );
+                    for (connection, direction, offset) in chunk.connections.iter().flat_map(
+                        |(direction, Connection(location, offset))| {
+                            self.world
+                                .maps
+                                .get(location)
+                                .map(|map| (map, direction, offset))
+                        },
+                    ) {
+                        fn map_offset(
+                            direction: &Direction,
+                            current: &WorldMap,
+                            map: &WorldMap,
+                            offset: i32,
+                        ) -> Coordinate {
+                            match direction {
+                                Direction::Down => Coordinate::new(offset, current.height),
+                                Direction::Up => Coordinate::new(offset, -map.height),
+                                Direction::Left => Coordinate::new(-map.width, offset),
+                                Direction::Right => Coordinate::new(current.width, offset),
                             }
                         }
-                        screen
-                    }
-                    None => {
+
                         super::draw(
                             map,
-                            &self.world,
+                            &player.world,
                             ctx,
                             &self.textures,
-                            &self.screen,
-                            true,
+                            &self.npc_types,
+                            &self
+                                .screen
+                                .offset(map_offset(direction, map, connection, *offset)),
+                            false,
                             color,
                         );
-                        self.screen
                     }
-                };
+                }
+                None => {
+                    super::draw(
+                        map,
+                        &player.world,
+                        ctx,
+                        &self.textures,
+                        &self.npc_types,
+                        &self.screen,
+                        true,
+                        color,
+                    );
+                }
+            };
 
-                self.warper.draw_door(ctx, &screen);
-                self.textures.player.draw(ctx, &self.world.player, color);
-                self.textures.player.bush.draw(ctx, &screen);
-                self.warper.draw(ctx);
-            }
+            color
 
-            self.text.draw(ctx);
-            self.menu.draw(ctx, dex, save);
-        }
+        } else {
+            Color::WHITE
+        };
+
+        self.warper.draw_door(ctx, &self.screen);
+        self.textures.player.draw(ctx, player, color);
+        self.textures.player.bush.draw(ctx, &self.screen);
+        self.warper.draw(ctx);
+
     }
 }
 
 fn on_tile(
-    world: &mut WorldMapManager,
-    save: &mut PlayerData,
+    map: &mut WorldMap,
+    player: &mut PlayerCharacter,
+    party: &mut Party<GamePokemon>,
     randoms: &mut Randoms,
     textures: &mut WorldTextures,
-    battle: BattleEntryRef,
+    sender: &Sender<WorldActions>,
 ) {
-    textures.player.bush.in_bush = world.tile(world.player.position.coords) == Some(0x0D);
+    textures.player.bush.in_bush = map.tile(player.position.coords) == Some(0x0D);
     if textures.player.bush.in_bush {
-        textures.player.bush.add(world.player.position.coords);
+        textures.player.bush.add(player.position.coords);
     }
-    if let Some(map) = if let Some(loc) = &world.data.location {
-        world.maps.get_mut(&loc)
-    } else {
-        None
-    } {
-        let world = &mut world.data;
-        // check for wild encounter
+    // check for wild encounter
 
-        use crate::world::battle::wild_battle;
+    use crate::world::battle::wild_battle;
 
-        if let Some(tile_id) = map.tile(world.player.position.coords) {
-            if world.wild.encounters {
-                if let Some(wild) = &map.wild {
-                    if wild.should_encounter(&mut randoms.wild) {
-                        if let Some(tiles) = wild.tiles.as_ref() {
-                            for tile in tiles.iter() {
-                                if &tile_id == tile {
-                                    wild_battle(&mut randoms.wild, battle, wild);
-                                    break;
-                                }
+    if let Some(tile_id) = map.tile(player.position.coords) {
+        if player.world.wild.encounters {
+            if let Some(wild) = &map.wild {
+                if wild.should_encounter(&mut randoms.wild) {
+                    if let Some(tiles) = wild.tiles.as_ref() {
+                        for tile in tiles.iter() {
+                            if &tile_id == tile {
+                                sender.send(WorldActions::Battle(wild_battle(&mut randoms.wild, wild)));
+                                break;
                             }
-                        } else {
-                            wild_battle(&mut randoms.wild, battle, wild);
                         }
+                    } else {
+                        sender.send(WorldActions::Battle(wild_battle(&mut randoms.wild, wild)));
                     }
                 }
             }
+        }
 
-            // look for player
+        // look for player
 
-            if world.npc.active.is_none() {
-                for (index, npc) in map.npcs.iter_mut().filter(|(_, npc)| npc.trainer.is_some()) {
-                    find_battle(
-                        save,
-                        &map.id,
-                        index,
-                        npc,
-                        &mut world.npc.active,
-                        &mut world.player,
-                    );
-                }
+        if player.world.npc.active.is_none() {
+            for (index, npc) in map.npcs.iter_mut().filter(|(_, npc)| npc.trainer.is_some()) {
+                find_battle(player, &map.id, index, npc);
             }
+        }
 
-            // try running scripts
+        // try running scripts
 
-            if world.script.actions.is_empty() {
-                'scripts: for script in map.scripts.iter() {
-                    use worldlib::script::world::Condition;
-                    for condition in &script.conditions {
-                        match condition {
-                            Condition::Location(location) => {
-                                if !location.in_bounds(&world.player.position.coords) {
-                                    continue 'scripts;
-                                }
+        if player.world.scripts.actions.is_empty() {
+            'scripts: for script in map.scripts.iter() {
+                use worldlib::script::world::Condition;
+                for condition in &script.conditions {
+                    match condition {
+                        Condition::Location(location) => {
+                            if !location.in_bounds(&player.position.coords) {
+                                continue 'scripts;
                             }
-                            Condition::Activate(direction) => {
-                                if world.player.position.direction.ne(direction) {
-                                    continue 'scripts;
-                                }
+                        }
+                        Condition::Activate(direction) => {
+                            if player.position.direction.ne(direction) {
+                                continue 'scripts;
                             }
-                            Condition::NoRepeat => {
-                                if save.world.scripts.contains(&script.identifier) {
-                                    continue 'scripts;
-                                }
+                        }
+                        Condition::NoRepeat => {
+                            if player.world.scripts.executed.contains(&script.identifier) {
+                                continue 'scripts;
                             }
-                            Condition::Script(script, happened) => {
-                                if save.world.scripts.contains(script).ne(happened) {
-                                    continue 'scripts;
-                                }
+                        }
+                        Condition::Script(script, happened) => {
+                            if player.world.scripts.executed.contains(script).ne(happened) {
+                                continue 'scripts;
                             }
-                            Condition::PlayerHasPokemon(is_true) => {
-                                if save.party.is_empty().eq(is_true) {
-                                    continue 'scripts;
-                                }
+                        }
+                        Condition::PlayerHasPokemon(is_true) => {
+                            if party.is_empty().eq(is_true) {
+                                continue 'scripts;
                             }
                         }
                     }
-                    world.script.actions.extend_from_slice(&script.actions);
-                    world
-                        .script
-                        .actions
-                        .push(worldlib::script::world::WorldAction::Finish(
-                            script.identifier,
-                        ));
-                    world.script.actions.reverse();
-                    break;
                 }
+                player
+                    .world
+                    .scripts
+                    .actions
+                    .extend_from_slice(&script.actions);
+                player
+                    .world
+                    .scripts
+                    .actions
+                    .push(worldlib::script::world::WorldAction::Finish(
+                        script.identifier,
+                    ));
+                player.world.scripts.actions.reverse();
+                break;
             }
         }
     }
 }
 
-fn on_start(world: &mut WorldMapManager, ctx: &mut Context, music: bool) {
-    if let Some(map) = get_mut(world) {
+fn on_start(ctx: &mut Context, world: &WorldMapManager, player: &PlayerCharacter, music: bool) {
+    if let Some(map) = world.get(&player.location) {
         // if let Some(saves) = get::<PlayerDatas>() {
         //     if let Some(data) = saves.get().world.map.get(&self.name) {
         //         for (index, state) in data.npcs.iter() {
@@ -517,62 +504,52 @@ fn on_start(world: &mut WorldMapManager, ctx: &mut Context, music: bool) {
         //     }
         // }
 
+        use crate::engine::audio;
+
         if music {
-            if crate::engine::audio::music::get_current_music(ctx)
-                .map(|current| current != map.music)
+            if audio::get_current_music(ctx)
+                .map(|current| current != &map.music)
                 .unwrap_or(true)
             {
-                crate::engine::audio::play_music(ctx, &map.music);
+                audio::play_music(ctx, &map.music);
             }
         }
     }
 }
 
-fn get_mut(world: &mut WorldMapManager) -> Option<&mut WorldMap> {
-    match world.data.location.as_ref() {
-        Some(cur) => world.maps.get_mut(cur),
-        None => None,
-    }
-}
+// fn get_mut(world: &mut WorldMapManager) -> Option<&mut WorldMap> {
+//     match world.data.location.as_ref() {
+//         Some(cur) => world.maps.get_mut(cur),
+//         None => None,
+//     }
+// }
 
 #[deprecated]
 fn update1<'d>(
     ctx: &mut Context,
-    dex: &PokedexClientData,
-    save: &mut PlayerData<'d>,
     delta: f32,
     map: &mut WorldMap,
-    world: &mut worldlib::map::manager::data::WorldMapData,
-    battle: BattleEntryRef,
+    player: &mut PlayerCharacter,
+    sender: &Sender<WorldActions>,
+    npc_types: &NpcTypes,
     window: &mut TextWindow,
     warper: &mut WarpTransition,
     randoms: &mut Randoms,
-    random: &mut impl rand::Rng,
-    pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
-    movedex: &'d dyn Dex<'d, Move, &'d Move>,
-    itemdex: &'d dyn Dex<'d, Item, &'d Item>,
 ) {
-    if is_debug() {
-        debug_input(ctx, map);
-    }
-
-    if pressed(ctx, Control::A) && world.npc.active.is_none() {
+    if pressed(ctx, Control::A) && player.world.npc.active.is_none() {
         let pos = if map
-            .tile(world.player.position.coords)
+            .tile(player.position.coords)
             .map(|tile| matches!(tile, 0x298 | 0x2A5))
             .unwrap_or_default()
         {
-            world
-                .player
-                .position
-                .in_direction(world.player.position.direction)
+            player.position.in_direction(player.position.direction)
         } else {
-            world.player.position
+            player.position
         };
         for (id, npc) in map.npcs.iter_mut() {
             if npc.interact.is_some() || npc.trainer.is_some() {
                 if npc.interact_from(&pos) {
-                    world.npc.active = Some(*id);
+                    player.world.npc.active = Some(*id);
                 }
             }
         }
@@ -580,8 +557,9 @@ fn update1<'d>(
 
     // Move Npcs
 
-    for npc in world
-        .script
+    for npc in player
+        .world
+        .scripts
         .npcs
         .values_mut()
         .filter(|(loc, ..)| loc == &map.id)
@@ -596,9 +574,9 @@ fn update1<'d>(
 
     use worldlib::{character::npc::NpcMovement, positions::Destination};
 
-    match world.npc.timer > 0.0 {
+    match player.world.npc.timer > 0.0 {
         false => {
-            world.npc.timer += 1.0;
+            player.world.npc.timer += 1.0;
 
             const NPC_MOVE_CHANCE: f64 = 1.0 / 12.0;
 
@@ -610,14 +588,7 @@ fn update1<'d>(
                             NpcMovement::LookAround => {
                                 npc.character.position.direction =
                                     Direction::DIRECTIONS[randoms.npc.gen_range(0..4)];
-                                find_battle(
-                                    save,
-                                    &map.id,
-                                    index,
-                                    npc,
-                                    &mut world.npc.active,
-                                    &mut world.player,
-                                );
+                                find_battle(player, &map.id, index, npc);
                             }
                             NpcMovement::WalkUpAndDown(steps) => {
                                 let origin =
@@ -635,21 +606,15 @@ fn update1<'d>(
                                     Direction::Up
                                 };
                                 let coords = npc.character.position.coords.in_direction(direction);
-                                if worldlib::map::can_move(
+                                if worldlib::map::movement::can_move(
                                     npc.character.movement,
                                     map.movements[npc.character.position.coords.x as usize
-                                        + npc.character.position.coords.y as usize * map.width],
+                                        + npc.character.position.coords.y as usize
+                                            * map.width as usize],
                                 ) {
                                     npc.character.position.direction = direction;
-                                    if !find_battle(
-                                        save,
-                                        &map.id,
-                                        index,
-                                        npc,
-                                        &mut world.npc.active,
-                                        &mut world.player,
-                                    ) {
-                                        if coords.y != world.player.position.coords.y {
+                                    if !find_battle(player, &map.id, index, npc) {
+                                        if coords.y != player.position.coords.y {
                                             npc.character.pathing.extend(
                                                 &npc.character.position,
                                                 Destination::to(&npc.character.position, coords),
@@ -663,16 +628,17 @@ fn update1<'d>(
                 }
             }
         }
-        true => world.npc.timer -= delta,
+        true => player.world.npc.timer -= delta,
     }
 
-    script::update_script(ctx, dex, save, delta, map, world, battle, window, warper, random, pokedex, movedex, itemdex);
+    script::update_script(ctx, delta, map, player, sender, npc_types, window, warper);
 
     // Npc window manager code
 
     let map_id = map.id;
     // #[deprecated(note = "rewrite active Npc code")]
-    if let Some((id, npc)) = world
+    if let Some((id, npc)) = player
+        .world
         .npc
         .active
         .as_ref()
@@ -681,24 +647,25 @@ fn update1<'d>(
     {
         if window.text.alive() {
             if window.text.finished() {
-                crate::world::battle::trainer_battle(
-                    save,
-                    battle,
-                    &mut world.battling,
-                    npc,
+                if let Some(battle) = crate::world::battle::trainer_battle(
+                    npc_types,
+                    &mut player.world.battle,
                     &map_id,
                     id,
-                );
+                    npc,
+                ) {
+                    sender.send(WorldActions::Battle(battle));
+                };
                 window.text.despawn();
-                world.npc.active = None;
-                world.player.unfreeze();
+                player.world.npc.active = None;
+                player.unfreeze();
             } else {
                 window.text.update(ctx, delta);
             }
         } else {
             if !npc.character.moving() {
                 window.text.spawn();
-                world.player.input_frozen = true;
+                player.input_frozen = true;
 
                 let mut message_ran = false;
 
@@ -706,46 +673,58 @@ fn update1<'d>(
 
                 match &npc.interact {
                     NpcInteract::Message(pages) => {
-                        window.text.set(pages.clone());
-                        window
-                            .text
-                            .color(crate::world::npc::npc_type(&npc.type_id).text_color);
+                        window.text.set(
+                            pages
+                                .iter()
+                                .map(|lines| MessagePage {
+                                    lines: lines.clone(),
+                                    wait: None,
+                                })
+                                .collect(),
+                        );
+                        window.text.color(color(
+                            npc_types
+                                .get(&npc.type_id)
+                                .map(|npc| &npc.message)
+                                .unwrap_or(&MessageColor::Black),
+                        ));
                         message_ran = true;
                     }
                     NpcInteract::Script(_) => todo!(),
                     NpcInteract::Nothing => (),
                 }
 
-                if !save.world.get_map(&map_id).battled.contains(id) {
+                if !player.world.battle.battled(&map_id, id) {
                     if let Some(trainer) = npc.trainer.as_ref() {
                         if trainer.battle_on_interact {
-                            let npc_type = crate::world::npc::npc_type(&npc.type_id);
-                            if let Some(trainer_type) = npc_type.trainer.as_ref() {
-                                // Spawn text window
-                                window.text.set(
-                                    trainer
-                                        .encounter_message
-                                        .iter()
-                                        .map(|message| MessagePage {
-                                            lines: message.clone(),
-                                            wait: None,
-                                        })
-                                        .collect(),
-                                );
-                                window.text.color(npc_type.text_color);
-                                message_ran = true;
+                            if let Some(npc_type) = npc_types.get(&npc.type_id) {
+                                if let Some(trainer_type) = npc_type.trainer.as_ref() {
+                                    // Spawn text window
+                                    window.text.set(
+                                        trainer
+                                            .encounter_message
+                                            .iter()
+                                            .map(|message| MessagePage {
+                                                lines: message.clone(),
+                                                wait: None,
+                                            })
+                                            .collect(),
+                                    );
+                                    window.text.color(color(&npc_type.message));
+                                    message_ran = true;
 
-                                // Play Trainer music
+                                    // Play Trainer music
 
-                                use crate::engine::audio::{music::get_current_music, play_music};
+                                    use crate::engine::audio::{get_current_music, play_music};
 
-                                if let Some(encounter_music) = trainer_type.music.as_ref() {
-                                    if let Some(ref playing_music) = get_current_music(ctx) {
-                                        if playing_music != encounter_music {
+                                    if let Some(encounter_music) = trainer_type.music.as_ref() {
+                                        if let Some(playing_music) = get_current_music(ctx) {
+                                            if playing_music != encounter_music {
+                                                play_music(ctx, encounter_music)
+                                            }
+                                        } else {
                                             play_music(ctx, encounter_music)
                                         }
-                                    } else {
-                                        play_music(ctx, encounter_music)
                                     }
                                 }
                             }
@@ -753,51 +732,34 @@ fn update1<'d>(
                     }
                 }
 
-                world.player.position.direction = npc.character.position.direction.inverse();
-                if world.player.frozen() {
-                    world.player.unfreeze();
+                player.position.direction = npc.character.position.direction.inverse();
+                if player.frozen() {
+                    player.unfreeze();
                 }
 
                 if !message_ran {
                     window.text.despawn();
-                    world.player.input_frozen = false;
-                    world.npc.active = None;
+                    player.input_frozen = false;
+                    player.world.npc.active = None;
                 } else {
-                    crate::game::text::process_messages(&mut window.text.message.pages, save);
+                    warn!("process messages 1");
+                    // crate::game::text::process_messages(&mut window.text.message.pages, save);
                 }
             }
         }
     }
 }
 
-fn debug_input(ctx: &Context, map: &mut WorldMap) {
-    if is_key_pressed(ctx, Key::F8) {
-        for (index, npc) in map.npcs.iter() {
-            info!(
-                "Npc {} (id: {}), is at {}, {}; looking {:?}",
-                &npc.name,
-                index,
-                /*if npc.alive() {""} else {" (despawned)"},*/
-                &npc.character.position.coords.x,
-                &npc.character.position.coords.y,
-                &npc.character.position.direction
-            );
-        }
-    }
-}
-
 fn find_battle(
-    save: &mut PlayerData,
+    player: &mut PlayerCharacter,
     map: &Location,
     id: &worldlib::character::npc::NpcId,
     npc: &mut worldlib::character::npc::Npc,
-    active: &mut Option<worldlib::character::npc::NpcId>,
-    player: &mut worldlib::character::player::PlayerCharacter,
 ) -> bool {
-    if active.is_none() {
-        if !save.world.has_battled(map, &id) {
+    if player.world.npc.active.is_none() {
+        if !player.world.battle.battled(map, &id) {
             if npc.find_character(player) {
-                *active = Some(*id);
+                player.world.npc.active = Some(*id);
                 return true;
             }
         }

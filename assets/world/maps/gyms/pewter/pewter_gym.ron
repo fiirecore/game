@@ -1,5 +1,8 @@
 (
-    identifier: "pewter",
+    identifier: (
+        map: Some("gyms"),
+        index: "pewter"
+    ),
     name: "Pewter Gym",
     file: "6.2_PEWTER CITY.map",
 )

@@ -31,9 +31,9 @@ const HALF_HEIGHT_TILE: i32 = (HALF_HEIGHT >> 4) + 2;
 
 impl RenderCoords {
 
-    pub fn new(offset: Coordinate, character: &Character) -> Self {
+    pub fn new(character: &Character) -> Self {
 
-        let coords = offset + character.position.coords;
+        let coords = character.position.coords;
 
         Self {
 

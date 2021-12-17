@@ -11,7 +11,8 @@ use battlelib::prelude::{
 };
 use firecore_battle::endpoint::MpscEndpoint;
 use rand::{prelude::SmallRng, Rng, SeedableRng};
-use saves::NewPlayerData;
+use worldlib::character::player::PlayerCharacter;
+use crate::saves::OwnedPlayer;
 
 use crate::game::battle_glue::{BattleEntry, BattleId, BattleTrainerEntry};
 
@@ -62,7 +63,7 @@ impl<
         pokedex: &'d dyn Dex<'d, Pokemon, P>,
         movedex: &'d dyn Dex<'d, Move, M>,
         itemdex: &'d dyn Dex<'d, Item, I>,
-        player: &NewPlayerData<P, M, I>,
+        player: &OwnedPlayer<P, M, I>,
         endpoint: &MpscEndpoint<BattleId>,
         entry: BattleEntry,
     ) {
@@ -126,10 +127,10 @@ impl<
         self.ai = Some(ai);
     }
 
-    pub fn update_data(&mut self, winner: &BattleId, player: &mut NewPlayerData<P, M, I>) -> bool {
+    pub fn update_data(&mut self, winner: bool, player: &mut PlayerCharacter) -> bool {
         let trainer = self.trainer.is_some();
 
-        if &BattleId(Some(player.id)) == winner {
+        if winner {
             if let Some(trainer) = self.trainer.take() {
                 player.worth += trainer.worth as u32;
                 if let Some(badge) = trainer.gym_badge {

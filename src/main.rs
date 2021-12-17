@@ -1,23 +1,33 @@
-extern crate firecore_saves as saves;
-extern crate firecore_storage as storage;
-
 use battlelib::pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex};
 pub(crate) use firecore_battle_gui::pokedex;
 pub(crate) use pokedex::engine;
+use worldlib::serialized::SerializedWorld;
 
-pub mod args;
-pub mod battle;
-pub mod game;
-pub mod state;
-pub mod world;
+// mod args;
+mod battle;
+mod game;
+mod saves;
+mod state;
+mod world;
+mod command;
+mod storage;
 
-use std::{collections::HashMap, ops::{Deref, DerefMut}};
+use std::collections::HashMap;
 
-use game::{config::Configuration, init};
 use rand::prelude::{SeedableRng, SmallRng};
-use saves::PlayerSaves;
 
-use firecore_battle_gui::{context::BattleGuiContext, pokedex::engine::{Context, ContextBuilder, audio::MusicId, util::{HEIGHT, WIDTH}, graphics::{self, Color, DrawParams}}};
+use crate::saves::PlayerSaves;
+use game::config::Configuration;
+
+use firecore_battle_gui::{
+    context::BattleGuiContext,
+    pokedex::engine::{
+        audio::MusicId,
+        graphics::{self, Color, DrawParams},
+        util::{HEIGHT, WIDTH},
+        ContextBuilder,
+    },
+};
 
 use crate::engine::log::info;
 use pokedex::context::PokedexClientData;
@@ -26,12 +36,11 @@ use state::StateManager;
 extern crate firecore_battle as battlelib;
 extern crate firecore_world as worldlib;
 
-pub const TITLE: &str = "Pokemon FireRed";
-pub const DEBUG_NAME: &str = env!("CARGO_PKG_NAME");
-pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
-pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+const TITLE: &str = "Pokemon FireRed";
+const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-pub const DEFAULT_SCALE: f32 = 3.0;
+const SCALE: f32 = 3.0;
 
 static mut POKEDEX: Option<BasicDex<Pokemon>> = None;
 static mut MOVEDEX: Option<BasicDex<Move>> = None;
@@ -50,55 +59,39 @@ fn itemdex() -> &'static BasicDex<Item> {
 }
 
 fn main() {
-    init::logger();
-
-    info!("Starting {} v{}", TITLE, VERSION);
-    info!("By {}", AUTHORS);
-
-    let args = args();
-
-    #[cfg(debug_assertions)]
-    if !args.contains(&Args::NoSeed) {
-        // init::seed_random(engine::util::date() % 1000000)
-    }
-
-    #[cfg(feature = "discord")]
-    use discord_rich_presence::{activity::Activity, new_client, DiscordIpc};
-
-    #[cfg(feature = "discord")]
-    let mut client = {
-        let mut client = new_client("862413316420665386")
-            .unwrap_or_else(|err| panic!("Could not create discord IPC client with error {}", err));
-        client
-            .connect()
-            .unwrap_or_else(|err| panic!("Could not connect to discord with error {}", err));
-        client
-            .set_activity(Activity::new().state("test state").details("test details"))
-            .unwrap_or_else(|err| panic!("Could not set client activity with error {}", err));
-        client
-    };
-
-    let debug = cfg!(debug_assertions);
-    let save_locally = cfg!(debug_assertions);
-
-    #[cfg(feature = "audio")]
-    let audio = !args.contains(&Args::DisableAudio);
-
     engine::run(
-        ContextBuilder::new(
-            TITLE,
-            (WIDTH * DEFAULT_SCALE) as _,
-            (HEIGHT * DEFAULT_SCALE) as _,
-        ), // .resizable(true)
+        ContextBuilder::new(TITLE, (WIDTH * SCALE) as _, (HEIGHT * SCALE) as _), // .resizable(true)
         // .show_mouse(true)
-        move |mut ctx| async move {
-            
+        async {
+            let save_locally = cfg!(debug_assertions);
 
-            info!("Loading configuration...");
-
-            let configuration = Configuration::load(&mut ctx, save_locally)
+            let configuration = Configuration::load(save_locally)
                 .await
                 .unwrap_or_else(|err| panic!("Cannot load configuration with error {}", err));
+
+            let saves = PlayerSaves::load(save_locally)
+                .await
+                .unwrap_or_else(|err| panic!("Could not load player saves with error {}", err));
+
+            OpenContext {
+                configuration,
+                saves,
+            }
+        },
+        move |mut ctx,
+              OpenContext {
+                  configuration,
+                  saves,
+              }| {
+            info!("Starting {} v{}", TITLE, VERSION);
+            info!("By {}", AUTHORS);
+
+            let debug = cfg!(debug_assertions);
+
+            // #[cfg(feature = "audio")]
+            // let audio = !args.contains(&Args::DisableAudio);
+
+            info!("Loading configuration...");
 
             // Load dexes;
 
@@ -130,22 +123,31 @@ fn main() {
             }
 
             #[cfg(feature = "audio")]
-            if audio {
+            /* if audio */
+            {
                 info!("Loading audio...");
                 //Load audio files and setup audio
-                match bincode::deserialize::<HashMap<MusicId, Vec<u8>>>(include_bytes!("../build/data/audio.bin")) {
+                match bincode::deserialize::<HashMap<MusicId, Vec<u8>>>(include_bytes!(
+                    "../build/data/audio.bin"
+                )) {
                     Ok(audio_data) => {
-                        graphics::draw_text_left(&mut ctx, &0, "Loading audio...", 5.0, 5.0, DrawParams::color(Color::WHITE));
+                        graphics::draw_text_left(
+                            &mut ctx,
+                            &0,
+                            "Loading audio...",
+                            5.0,
+                            5.0,
+                            DrawParams::color(Color::WHITE),
+                        );
                         for (id, data) in audio_data {
-                            engine::audio::add_music(&mut ctx, id, data).await;
+                            engine::audio::add_music(&mut ctx, id, data);
                         }
-                        
                     }
                     Err(err) => engine::log::error!("Could not read sound file with error {}", err),
                 }
-            } else {
-                info!("Skipping audio loading...");
-            }
+            } // else {
+              //     info!("Skipping audio loading...");
+              // }
 
             graphics::clear(&mut ctx, Color::BLACK);
 
@@ -162,96 +164,93 @@ fn main() {
                 });
 
             let dex = PokedexClientData::new(&mut ctx, dex_engine)
-                .await
-                .unwrap_or_else(|err| panic!("Could not initialize dex engine with error {}", err));
+                .unwrap_or_else(|err| panic!("Could not initialize dex data with error {}", err));
 
-            let btl = BattleGuiContext::new(&mut ctx).unwrap();
+            let btl = BattleGuiContext::new(&mut ctx).unwrap_or_else(|err| {
+                panic!("Could not initialize battle data with error {}", err)
+            });
 
-            let mut saves = PlayerSaves::load(save_locally)
-                .await
-                .unwrap_or_else(|err| panic!("Could not load player saves with error {}", err));
+            let world = bincode::deserialize(include_bytes!("../build/data/world.bin")).unwrap_or_else(|err| panic!("Could not load world data with error {}", err));
 
-            saves.select_first_or_default(
-                save_locally,
-                &mut random,
-                crate::pokedex(),
-                crate::movedex(),
-                crate::itemdex(),
-            );
+            #[cfg(feature = "discord")]
+            use discord_rich_presence::{activity::Activity, new_client, DiscordIpc};
+
+            #[cfg(feature = "discord")]
+            let mut client = {
+                let mut client = new_client("862413316420665386").unwrap_or_else(|err| {
+                    panic!("Could not create discord IPC client with error {}", err)
+                });
+                client.connect().unwrap_or_else(|err| {
+                    panic!("Could not connect to discord with error {}", err)
+                });
+                client
+                    .set_activity(Activity::new().state("test state").details("test details"))
+                    .unwrap_or_else(|err| {
+                        panic!("Could not set client activity with error {}", err)
+                    });
+                client
+            };
+
+            // {
+            //     if args.contains(&Args::Debug) {
+            //         set_debug(true);
+            //     }
+
+            //     if is_debug() {
+            //         info!("Running in debug mode");
+            //     }
+            // }
 
             info!("Initialized game context!");
 
-            GameContext {
-                engine: ctx,
-                random,
-                dex,
-                btl,
+            LoadContext {
                 configuration,
                 saves,
-                save_locally,
-                debug,
+                dex,
+                btl,
+                world,
+                random,
             }
         },
-        |ctx| StateManager::new(ctx, args),
+        StateManager::new,
     );
 
     #[cfg(feature = "discord")]
     client.close().unwrap();
 }
 
-pub struct GameContext {
-    pub engine: Context,
-    pub random: SmallRng,
-    pub dex: PokedexClientData,
-    pub btl: BattleGuiContext,
+struct OpenContext {
+    configuration: Configuration,
+    saves: PlayerSaves,
+}
+
+pub(crate) struct LoadContext {
     pub configuration: Configuration,
     pub saves: PlayerSaves,
-    pub save_locally: bool,
-    pub debug: bool,
+    pub dex: PokedexClientData,
+    pub btl: BattleGuiContext,
+    pub world: SerializedWorld,
+    pub random: SmallRng,
 }
 
-impl Deref for GameContext {
-    type Target = Context;
+pub(crate) use crossbeam_channel::Receiver;
 
-    fn deref(&self) -> &Self::Target {
-        &self.engine
-    }
+pub(crate) fn split<T>() -> (Sender<T>, Receiver<T>) {
+    let (x, y) = crossbeam_channel::unbounded();
+    (Sender(x), y)
 }
 
-impl DerefMut for GameContext {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.engine
-    }
-}
+#[derive(Clone)]
+pub(crate) struct Sender<T>(crossbeam_channel::Sender<T>);
 
-#[derive(PartialEq)]
-pub enum Args {
-    DisableAudio,
-    Debug,
-    #[cfg(debug_assertions)]
-    NoSeed,
-}
-
-pub fn args() -> Vec<Args> {
-    let mut list = Vec::new();
-
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-        let mut args = pico_args::Arguments::from_env();
-
-        if args.contains("-a") {
-            list.push(Args::DisableAudio);
-        }
-
-        if args.contains("-d") {
-            list.push(Args::Debug);
-        }
-
-        #[cfg(debug_assertions)]
-        if args.contains("-s") {
-            list.push(Args::NoSeed);
+impl<T> Sender<T> {
+    pub fn send(&self, msg: T) {
+        if let Err(err) = self.0.try_send(msg) {
+            engine::log::warn!(
+                "Could not send message {} with error {}",
+                std::any::type_name::<T>(),
+                err
+            );
         }
     }
-
-    list
 }

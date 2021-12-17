@@ -3,8 +3,7 @@ use crate::pokedex::context::PokedexClientData;
 use crate::{
     engine::{
         graphics::Texture,
-        gui::MessageBox,
-        text::MessagePage,
+        gui::{MessageBox, MessagePage},
         util::{Completable, Entity, Reset, WIDTH},
         Context,
     },
@@ -120,7 +119,12 @@ impl BattleCloser for TrainerBattleCloser {
 
     fn draw_battle(&self, ctx: &mut Context) {
         if let Some(texture) = self.trainer.as_ref() {
-            texture.draw(ctx, self.offset, 74.0 - texture.height(), Default::default());
+            texture.draw(
+                ctx,
+                self.offset,
+                74.0 - texture.height(),
+                Default::default(),
+            );
         }
     }
 }

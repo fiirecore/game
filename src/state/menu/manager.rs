@@ -1,95 +1,92 @@
-use crate::engine::{Context, State};
+use firecore_battle_gui::pokedex::engine::EngineError;
 
 use crate::{
-    state::{Action, MainState, MainStates},
-    GameContext,
+    saves::SavedPlayer,
+    state::{MainStates, StateMessage},
 };
+use crate::{split, Receiver, Sender};
 
-use super::{
-    character::CharacterCreationState, main_menu::MainMenuState, title::TitleState, MenuState,
-    MenuStateAction, MenuStates,
-};
+use crate::engine::Context;
+
+use super::{main::MainMenuState, title::TitleState, MenuActions, MenuStates};
 
 pub struct MenuStateManager {
     current: MenuStates,
-    action: Option<Action>,
 
     title: TitleState,
     main_menu: MainMenuState,
-    character: CharacterCreationState,
+    // character: CharacterCreationState,
+    sender: Sender<StateMessage>,
+    receiver: Receiver<MenuActions>,
 }
 
 impl MenuStateManager {
-    pub fn new(ctx: &mut Context) -> Self {
-        Self {
+    pub(crate) fn new(ctx: &mut Context, sender: Sender<StateMessage>) -> Result<Self, EngineError> {
+        let (actions, receiver) = split();
+
+        Ok(Self {
             current: MenuStates::default(),
-            action: Default::default(),
-            title: TitleState::new(ctx),
-            main_menu: MainMenuState::new(),
-            character: CharacterCreationState::new(),
-        }
-    }
 
-    // fn get(&self) -> &dyn MenuState {
-    // 	match self.current {
-    // 	    MenuStates::Title => &self.title,
-    // 	    MenuStates::MainMenu => &self.main_menu,
-    // 		MenuStates::CharacterCreation => &self.character,
-    // 	}
-    // }
-
-    fn get_mut<'d>(&mut self) -> &mut dyn MenuState<'d> {
-        match self.current {
-            MenuStates::Title => &mut self.title,
-            MenuStates::MainMenu => &mut self.main_menu,
-            MenuStates::CharacterCreation => &mut self.character,
-        }
+            title: TitleState::new(ctx, actions.clone())?,
+            main_menu: MainMenuState::new(actions),
+            // character: CharacterCreationState::new(),
+            sender,
+            receiver,
+        })
     }
 }
 
-impl<'d> State<GameContext> for MenuStateManager {
-    fn start(&mut self, ctx: &mut GameContext) {
-        self.get_mut().start(ctx)
+impl MenuStateManager {
+    pub fn start(&mut self, ctx: &mut Context, saves: &[SavedPlayer]) {
+        match self.current {
+            MenuStates::Title => self.title.start(ctx),
+            MenuStates::MainMenu => self.main_menu.start(saves),
+        }
     }
 
-    fn end(&mut self, ctx: &mut GameContext) {
-        self.get_mut().end(ctx)
+    pub fn end(&mut self, ctx: &mut Context) {
+        // self.get_mut().end(ctx)
+        match self.current {
+            MenuStates::Title => self.title.end(ctx),
+            MenuStates::MainMenu => (),
+        }
     }
 
-    fn update(&mut self, ctx: &mut GameContext, delta: f32) {
-        self.get_mut().update(ctx, delta);
-        if let Some(action) = self.get_mut().next().take() {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, saves: &mut Vec<SavedPlayer>) {
+        match self.current {
+            MenuStates::Title => self.title.update(ctx, delta),
+            MenuStates::MainMenu => self.main_menu.update(ctx, saves),
+        }
+        for action in self.receiver.try_iter() {
             match action {
-                MenuStateAction::Goto(state) => {
-                    self.state(ctx, state);
+                MenuActions::Seed(seed) => self.sender.send(StateMessage::Seed(seed)),
+                MenuActions::Goto(state) => {
+                    match self.current {
+                        MenuStates::Title => self.title.end(ctx),
+                        MenuStates::MainMenu => (),
+                    }
+                    self.current = state;
+                    match self.current {
+                        MenuStates::Title => self.title.start(ctx),
+                        MenuStates::MainMenu => self.main_menu.start(saves),
+                    }
                 }
-                MenuStateAction::StartGame => {
-                    self.action = Some(Action::Goto(MainStates::Game));
+                MenuActions::StartGame(index) => {
+                    if let Some(save) = saves.get(index) {
+                        self.sender.send(StateMessage::UseSave(save.clone()));
+                        self.sender.send(StateMessage::Goto(MainStates::Game));
+                    }
                 }
-                MenuStateAction::SeedAndGoto(seed, state) => {
-                    self.state(ctx, state);
-                    self.action = Some(Action::Seed(seed));
-                }
+                MenuActions::ExitGame => self.sender.send(StateMessage::Exit),
             }
         }
         // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut GameContext) {
-        self.get_mut().draw(ctx)
-    }
-}
-
-impl MenuStateManager {
-    fn state<'d>(&mut self, ctx: &mut GameContext, state: MenuStates) {
-        self.get_mut().end(ctx);
-        self.current = state;
-        self.get_mut().start(ctx)
-    }
-}
-
-impl<'d> MainState for MenuStateManager {
-    fn action(&mut self) -> Option<Action> {
-        self.action.take()
+    pub fn draw(&mut self, ctx: &mut Context, saves: &[SavedPlayer]) {
+        match self.current {
+            MenuStates::Title => self.title.draw(ctx),
+            MenuStates::MainMenu => self.main_menu.draw(ctx, saves),
+        }
     }
 }

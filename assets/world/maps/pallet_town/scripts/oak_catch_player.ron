@@ -34,12 +34,12 @@
         PlayMusic("oak"),
         NpcSay(
             "oak",
-            [(
-                lines: [
+            [
+                [
                     "OAK: Hey! Wait!",
                     "Don't go out!"
                 ],
-            )]
+            ]
         ),
         NpcMove("oak", 10, 6),
         NpcMove("oak", 11, 6),
@@ -49,24 +49,18 @@
         NpcSay(
             "oak",
             [
-                (
-                    lines: [
-                        "OAK: It's unsafe!",
-                        "Wild POKEMON live in tall grass!"
-                    ],
-                ),
-                (
-                    lines: [
-                        "You need your own POKEMON for",
-                        "your protection."
-                    ],
-                ),
-                (
-                    lines: [
-                        "I know!",
-                        "Here, come with me!"
-                    ],
-                )
+                [
+                    "OAK: It's unsafe!",
+                    "Wild POKEMON live in tall grass!"
+                ],
+                [
+                    "You need your own POKEMON for",
+                    "your protection."
+                ],
+                [
+                    "I know!",
+                    "Here, come with me!"
+                ],
             ]
         ),
         NpcLeadPlayer("oak", 12, 3),
@@ -128,11 +122,11 @@
         PlayerMove(6, 4),
         NpcSay(
             "oak",
-            [(
-                lines: [
+            [
+                [
                     "Here's some pokemon"
                 ]                
-            )],
+            ],
         ),
         PlayerGivePokemon(
             (

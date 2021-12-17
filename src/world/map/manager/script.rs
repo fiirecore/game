@@ -1,141 +1,136 @@
-use crate::engine::{
-    audio::{play_music, play_sound},
-    util::{Completable, Entity},
-    Context,
+use crate::{
+    engine::{
+        audio::{play_music, play_sound},
+        log::{error, warn},
+        util::{Completable, Entity},
+        Context,
+    },
+    Sender, world::npc::color,
 };
-use crate::engine::log::{warn, error};
-use crate::pokedex::{context::PokedexClientData, item::ItemStack, Dex};
-use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-use saves::PlayerData;
+use firecore_battle_gui::pokedex::engine::gui::MessagePage;
 use worldlib::{
-    character::Movement,
-    map::{manager::data::WorldMapData, WorldMap},
+    character::{player::PlayerCharacter, Movement, npc::MessageColor},
+    map::WorldMap,
     positions::{Coordinate, Destination},
     script::world::{NpcWarp, PlayerWarp, WorldAction},
 };
 
-use crate::{
-    game::battle_glue::BattleEntryRef,
-    world::{gui::TextWindow, map::warp::WarpTransition},
-};
+use crate::world::{gui::TextWindow, map::warp::WarpTransition, npc::NpcTypes, WorldActions};
 
 /// Update scripts from WorldManager
 pub(crate) fn update_script<'d>(
     ctx: &mut Context,
-    dex: &PokedexClientData,
-    save: &mut PlayerData<'d>,
+    // save: &mut PlayerData<'d>,
     delta: f32,
     map: &mut WorldMap,
-    world: &mut WorldMapData,
-    battle: BattleEntryRef,
+    player: &mut PlayerCharacter,
+    sender: &Sender<WorldActions>,
+    npc_types: &NpcTypes,
     window: &mut TextWindow,
     warper: &mut WarpTransition,
-    random: &mut impl rand::Rng,
-    pokedex: &'d dyn Dex<'d, Pokemon, &'d Pokemon>,
-    movedex: &'d dyn Dex<'d, Move, &'d Move>,
-    itemdex: &'d dyn Dex<'d, Item, &'d Item>,
 ) {
-    if let Some(action) = world.script.actions.last_mut() {
+    if let Some(action) = player.world.scripts.actions.last_mut() {
         match action {
             WorldAction::PlayMusic(music) => {
                 play_music(ctx, music);
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             WorldAction::PlayMapMusic => {
                 play_music(ctx, &map.music);
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             WorldAction::PlaySound(sound, variant) => {
                 play_sound(ctx, sound, *variant);
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             WorldAction::PlayerFreezeInput => {
-                world.player.input_frozen = true;
-                world.player.stop_move();
-                world.script.actions.pop();
+                player.input_frozen = true;
+                player.stop_move();
+                player.world.scripts.actions.pop();
             }
             WorldAction::PlayerUnfreezeInput => {
-                world.player.input_frozen = false;
-                world.script.actions.pop();
+                player.input_frozen = false;
+                player.world.scripts.actions.pop();
             }
             WorldAction::PlayerLook(direction) => {
-                world.player.position.direction = *direction;
-                world.script.actions.pop();
+                player.position.direction = *direction;
+                player.world.scripts.actions.pop();
             }
             WorldAction::PlayerMove(x, y) => {
-                if !world.player.moving() {
-                    match world.player.character.position.coords.equal(x, y) {
+                if !player.character.moving() {
+                    match player.character.position.coords.equal(x, y) {
                         true => {
-                            world.script.actions.pop();
+                            player.world.scripts.actions.pop();
                         }
                         false => {
                             let destination = Destination::to(
-                                &world.player.character.position,
+                                &player.character.position,
                                 Coordinate::new(*x, *y),
                             );
-                            world.player.pathfind(destination);
+                            player.pathfind(destination);
                         }
                     }
                 }
                 // warn!("Waiting on player move");
             }
-            WorldAction::PlayerGivePokemon(instance) => {
-                match save.party.is_full() {
-                    false => match instance.clone().init(
-                        random,
-                        pokedex,
-                        movedex,
-                        itemdex,
-                    ) {
-                        Some(p) => save.party.push(p),
-                        None => warn!("Cannot initialize given pokemon!"),
-                    },
-                    true => warn!("PlayerGivePokemon command requires party space"),
+            WorldAction::PlayerGivePokemon(..) => {
+                if let Some(WorldAction::PlayerGivePokemon(pokemon)) =
+                    player.world.scripts.actions.pop()
+                {
+                    sender.send(WorldActions::GivePokemon(pokemon));
                 }
-                world.script.actions.pop();
+                // match save.party.is_full() {
+                //     false => match instance.clone().init(
+                //         random,
+                //         pokedex,
+                //         movedex,
+                //         itemdex,
+                //     ) {
+                //         Some(p) => save.party.push(p),
+                //         None => warn!("Cannot initialize given pokemon!"),
+                //     },
+                //     true => warn!("PlayerGivePokemon command requires party space"),
+                // }
             }
             WorldAction::PlayerHealPokemon => {
-                save.party.iter_mut().for_each(|o| o.heal(None, None));
-                world.script.actions.pop();
+                sender.send(WorldActions::HealPokemon(None));
+                player.world.scripts.actions.pop();
             }
-            WorldAction::PlayerGiveItem(item) => {
-                match itemdex.try_get(item) {
-                    Some(item) => {
-                        save.bag.add_item(ItemStack::new(item, 1));
-                    }
-                    None => warn!("Could not get item {}", item),
+            WorldAction::PlayerGiveItem(..) => {
+                if let Some(WorldAction::PlayerGiveItem(item)) = player.world.scripts.actions.pop() {
+                    sender.send(WorldActions::GiveItem(item));
                 }
-                world.script.actions.pop();
             }
             WorldAction::NpcAdd(id, npc) => {
-                if world
-                    .script
+                if player
+                    .world
+                    .scripts
                     .npcs
                     .insert(*id, (map.id, *npc.clone()))
                     .is_some()
                 {
                     warn!("Replaced Npc with id {}!", id);
                 }
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             WorldAction::NpcRemove(id) => {
-                if world.script.npcs.remove(id).is_none() {
+                if player.world.scripts.npcs.remove(id).is_none() {
                     warn!("Could not remove Npc with id {}!", id);
                 }
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             WorldAction::NpcLook(id, direction) => {
-                if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
+                if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
                     npc.character.position.direction = *direction;
                 }
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             WorldAction::NpcMove(id, x, y) => {
-                if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
+                if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
                     if !npc.character.moving() {
                         match npc.character.position.coords.equal(x, y) {
                             true => {
-                                world.script.actions.pop();
+                                player.world.scripts.actions.pop();
                             }
                             false => npc.character.pathfind(Destination::to(
                                 &npc.character.position,
@@ -145,16 +140,16 @@ pub(crate) fn update_script<'d>(
                     }
                 } else {
                     warn!("Npc script tried to move an unknown Npc (with id {})", id);
-                    world.script.actions.pop();
+                    player.world.scripts.actions.pop();
                 }
             }
             WorldAction::NpcLeadPlayer(id, x, y) => {
-                if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
-                    if !world.player.moving() {
-                        match world.player.character.position.coords.equal(x, y) {
+                if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
+                    if !player.character.moving() {
+                        match player.character.position.coords.equal(x, y) {
                             true => {
-                                world.player.input_frozen = false;
-                                world.script.actions.pop();
+                                player.input_frozen = false;
+                                player.world.scripts.actions.pop();
                             }
                             false => {
                                 if !npc.character.position.coords.equal(x, y) {
@@ -164,22 +159,20 @@ pub(crate) fn update_script<'d>(
                                     ));
                                 }
 
-                                world.player.input_frozen = true;
-                                world.player.movement = Movement::Walking;
+                                player.input_frozen = true;
+                                player.character.movement = Movement::Walking;
 
-                                if !world.player.position.coords.equal(x, y) {
-                                    world.player.pathing.queue =
-                                        npc.character.pathing.queue.clone();
+                                if !player.character.position.coords.equal(x, y) {
+                                    player.character.pathing.queue = npc.character.pathing.queue.clone();
 
-                                    world.player.pathing.queue.pop();
+                                    player.character.pathing.queue.pop();
 
-                                    let d = world
-                                        .player
+                                    let d = player.character
                                         .position
                                         .coords
                                         .towards(npc.character.position.coords);
 
-                                    world.player.pathing.queue.insert(0, d);
+                                    player.pathing.queue.insert(0, d);
 
                                     // player.move_to(Destination::next_to(&player.position.local, pos.coords));
                                 }
@@ -191,25 +184,25 @@ pub(crate) fn update_script<'d>(
                         "Npc script tried to lead player with an unknown Npc (with id {})",
                         id
                     );
-                    world.script.actions.pop();
+                    player.world.scripts.actions.pop();
                 }
             }
             WorldAction::NpcMoveToPlayer(id) => {
-                if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
+                if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
                     if !npc.character.moving() {
                         match npc
                             .character
                             .position
                             .coords
                             .in_direction(npc.character.position.direction)
-                            == world.player.position.coords
+                            == player.character.position.coords
                         {
                             true => {
-                                world.script.actions.pop();
+                                player.world.scripts.actions.pop();
                             }
                             false => npc.character.pathfind(Destination::next_to(
                                 &npc.character.position,
-                                world.player.position.coords,
+                                player.character.position.coords,
                             )),
                         }
                     }
@@ -218,57 +211,47 @@ pub(crate) fn update_script<'d>(
                         "Npc script tried to move to player with an unknown Npc (with id {})",
                         id
                     );
-                    world.script.actions.pop();
+                    player.world.scripts.actions.pop();
                 }
             }
             WorldAction::NpcInteract(id) => {
-                if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
-                    if npc.interact_from(&world.player.position) {
-                        world.npc.active = Some(*id);
+                if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
+                    if npc.interact_from(&player.character.position) {
+                        player.world.npc.active = Some(*id);
                     }
                 }
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
-            WorldAction::NpcSay(id, pages) => {
-                if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
-                    match window.text.alive() {
-                        true => match window.text.finished() {
-                            false => window.text.update(ctx, delta),
-                            true => {
-                                window.text.despawn();
-                                world.script.actions.pop();
-                            }
-                        },
-                        false => {
-                            window.text.clear();
-                            let mut pages = pages.clone();
-                            crate::game::text::process_messages(&mut pages, save);
-                            window.text.set(pages);
-                            window
-                                .text
-                                .color(crate::world::npc::npc_type(&npc.type_id).text_color);
-                            window.text.spawn();
-                        }
-                    }
+            WorldAction::NpcSay(id, pages, queue) => {
+                if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
+                    let color = color(npc_types.get(&npc.type_id).map(|npc| &npc.message).unwrap_or(&MessageColor::Black));
+                    let pages = std::mem::take(pages);
+                    
+                    sender.send(WorldActions::Message(
+                        pages.into_iter().map(MessagePage::from).collect(),
+                        Some(color),
+                        *queue,
+                    ));
                 } else {
-                    world.script.actions.pop();
+                    player.world.scripts.actions.pop();
                 }
             }
             WorldAction::NpcBattle(id) => {
-                if let Some(npc) = get_npc(id, &mut world.script.npcs, &mut map.npcs) {
-                    crate::world::battle::trainer_battle(
-                        save,
-                        battle,
-                        &mut world.battling,
-                        npc,
+                if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
+                    if let Some(entry) = crate::world::battle::trainer_battle(
+                        npc_types,
+                        &mut player.world.battle,
                         &map.id,
                         id,
-                    );
+                        npc,
+                    ) {
+                        sender.send(WorldActions::Battle(entry));
+                    }
                 }
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             WorldAction::NpcWarp(id, warp) => {
-                match world.script.npcs.get_mut(id) {
+                match player.world.scripts.npcs.get_mut(id) {
                     Some((npc_location, npc)) => {
                         if let Some((location, destination)) = match warp {
                             NpcWarp::Id(id) => match map.warps.get(id) {
@@ -290,45 +273,46 @@ pub(crate) fn update_script<'d>(
                     }
                     None => warn!("Could not get script Npc with id {}", id),
                 }
-                world.script.actions.pop();
+                player.world.scripts.actions.pop();
             }
             // WorldAction::Info(text) => {
             //     info!("{}: {}", script.identifier, string);
-            //     world.script.actions.pop();
+            //     player.world.scripts.actions.pop();
             // },
             WorldAction::Wait(remaining) => {
                 *remaining -= delta;
                 if remaining < &mut 0.0 {
-                    world.script.actions.pop();
+                    player.world.scripts.actions.pop();
+                }
+            }
+            WorldAction::WaitMessage => {
+                if window.text.finished() || !window.text.alive() {
+                    window.text.despawn();
+                    player.world.scripts.actions.pop();
                 }
             }
             WorldAction::WaitFinishWarp => {
                 if !warper.alive() {
-                    world.script.actions.pop();
+                    player.world.scripts.actions.pop();
                 }
             }
-            WorldAction::DisplayText(message) => match window.text.alive() {
-                false => {
-                    window.text.clear();
-                    let mut pages = message.pages.clone();
-                    crate::game::text::process_messages(&mut pages, save);
-                    window.text.set(pages);
-                    window.text.color(message.color);
-                    window.text.spawn();
-                }
-                true => {
-                    if !window.text.finished() {
-                        window.text.update(ctx, delta);
-                    } else {
-                        window.text.despawn();
-                        world.script.actions.pop();
-                    }
-                }
-            },
-            WorldAction::Conditional { .. } => {
-                error!("cannot use script Conditional command");
-                world.script.actions.pop();
-            }
+            // WorldAction::DisplayText(message) => match window.text.alive() {
+            //     false => {
+            //         let mut pages = message.pages.clone();
+            //     }
+            //     true => {
+            //         if !window.text.finished() {
+            //             window.text.update(ctx, delta);
+            //         } else {
+            //             window.text.despawn();
+            //             player.world.scripts.actions.pop();
+            //         }
+            //     }
+            // },
+            // WorldAction::Conditional { .. } => {
+            //     error!("cannot use script Conditional command");
+            //     player.world.scripts.actions.pop();
+            // }
             WorldAction::Warp(warp, music) => {
                 let mut destination = match warp {
                     PlayerWarp::Id(id) => {
@@ -347,11 +331,11 @@ pub(crate) fn update_script<'d>(
                     PlayerWarp::Dest(destination) => *destination,
                 };
                 destination.transition.change_music = *music;
-                world.warp = Some(destination);
+                player.world.warp = Some(destination);
             }
             WorldAction::Finish(id) => {
-                save.world.scripts.insert(*id);
-                world.script.actions.pop();
+                sender.send(WorldActions::EndScript(*id));
+                player.world.scripts.actions.pop();
             }
         }
     }
@@ -401,7 +385,7 @@ pub(crate) fn update_script<'d>(
     //                         if window.text.finished() {
     //                             window.text.despawn();
     //                             if *unfreeze {
-    //                                 world.player.unfreeze();
+    //                                  player.unfreeze();
     //                             }
     //                             script.option = 0;
     //                             despawn_script(script);
@@ -410,7 +394,7 @@ pub(crate) fn update_script<'d>(
     //                         }
     //                     } else {
     //                         if *unfreeze {
-    //                             world.player.unfreeze();
+    //                              player.unfreeze();
     //                         }
     //                         script.option = 0;
     //                         despawn_script(script);

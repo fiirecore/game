@@ -6,6 +6,8 @@ pub mod npc;
 pub mod player;
 pub mod sprite;
 
+pub type Worth = u32;
+
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Character {
@@ -13,6 +15,9 @@ pub struct Character {
 
     #[serde(default)]
     pub movement: Movement,
+
+    #[serde(default)]
+    pub worth: Worth,
 
     #[serde(default)]
     pub frozen: bool,
@@ -31,6 +36,7 @@ pub struct Character {
 
     #[serde(skip)]
     pub pathing: Path,
+
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
@@ -143,6 +149,7 @@ impl Character {
             frozen: self.frozen,
             noclip: self.noclip,
             hidden: self.hidden,
+            worth: self.worth,
         }
     }
 }

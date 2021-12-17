@@ -1,44 +1,29 @@
+use crate::{
+    command::{CommandProcessor, CommandResult},
+    saves::PlayerData,
+};
 use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-use saves::PlayerData;
+use firecore_battle_gui::{context::BattleGuiContext, pokedex::context::PokedexClientData};
 use std::rc::Rc;
+use worldlib::serialized::SerializedWorld;
+
+use crate::{split, Receiver, Sender};
 
 use crate::{
     engine::{
-        input::keyboard::{is_key_down, Key},
-        util::Entity,
-        State,
+        error::ImageError,
+        input::keyboard::{down as is_key_down, Key},
+        Context,
     },
-    game::battle_glue::{BattleEntry, BattleId},
-    pokedex::{
-        gui::{bag::BagGui, party::PartyGui},
-        Uninitializable,
-    },
+    game::battle_glue::BattleEntry,
+    pokedex::gui::{bag::BagGui, party::PartyGui},
 };
-
-use command::Console;
 
 use crate::engine::log::warn;
 
-use crate::{
-    battle::BattleManager, state::MainState, world::map::manager::WorldManager, GameContext,
-};
+use crate::{battle::BattleManager, world::manager::WorldManager};
 
-use super::Action;
-
-pub mod command;
-
-pub struct GameStateManager {
-    state: Option<Action>,
-
-    gamestate: GameStates,
-
-    world: WorldManager,
-    battle: BattleManager<&'static Pokemon, &'static Move, &'static Item>,
-
-    battle_entry: Option<BattleEntry>,
-
-    console: Console,
-}
+use super::{MainStates, StateMessage};
 
 pub enum GameStates {
     World,
@@ -51,83 +36,90 @@ impl Default for GameStates {
     }
 }
 
+#[derive(Clone)]
+pub enum GameActions {
+    Battle(BattleEntry),
+    Save,
+    Exit,
+}
+
+pub struct GameStateManager {
+    state: GameStates,
+
+    dex: Rc<PokedexClientData>,
+
+    world: WorldManager,
+    battle: BattleManager<&'static Pokemon, &'static Move, &'static Item>,
+
+    pub save: Option<PlayerData>,
+
+    sender: Sender<StateMessage>,
+    receiver: Receiver<GameActions>,
+}
+
 impl GameStateManager {
-    pub fn new(ctx: &mut GameContext) -> Self {
-        let party = Rc::new(PartyGui::new(&ctx.dex));
-        let bag = Rc::new(BagGui::new(&ctx.dex));
+    pub(crate) fn new(
+        ctx: &mut Context,
+        dex: PokedexClientData,
+        btl: BattleGuiContext,
+        wrld: SerializedWorld,
+        sender: Sender<StateMessage>,
+    ) -> Result<Self, ImageError> {
+        let dex = Rc::new(dex);
+        let party = Rc::new(PartyGui::new(&dex));
+        let bag = Rc::new(BagGui::new(&dex));
 
-        Self {
-            state: None,
+        let (actions, receiver) = split();
 
-            gamestate: GameStates::default(),
+        let mut world = WorldManager::new(
+            ctx,
+            dex.clone(),
+            party.clone(),
+            bag.clone(),
+            actions.clone(),
+        )?;
 
-            world: WorldManager::new(ctx, party.clone(), bag.clone()),
-            battle: BattleManager::new(&mut ctx.engine, &ctx.btl, party, bag),
+        world.load(ctx, wrld);
 
-            battle_entry: None,
+        Ok(Self {
+            state: GameStates::default(),
 
-            console: Console::default(),
-        }
-    }
+            world,
+            battle: BattleManager::new(ctx, btl, dex.clone(), party, bag),
 
-    pub fn load(&mut self, ctx: &mut GameContext) {
-        match bincode::deserialize(include_bytes!("../../build/data/world.bin")) {
-            Ok(world) => self.world.load(ctx, world),
-            Err(err) => panic!("Could not load world file with error {}", err),
-        }
-    }
+            dex,
 
-    pub fn data_dirty(&mut self, save: &mut PlayerData, local: bool) {
-        self.save_data(save, local);
-        save.should_save = false;
-    }
+            save: None,
 
-    pub fn save_data(&mut self, save: &mut PlayerData, local: bool) {
-        self.world.save_data(save);
-        if let Err(err) = save.clone().uninit().save(local) {
-            warn!(
-                "Could not save player data for {} with error {}",
-                save.name, err
-            );
-        }
+            sender,
+            receiver,
+        })
     }
 
     pub fn seed(&mut self, seed: u64) {
-        self.world.randoms.seed(seed);
+        self.world.seed(seed);
     }
 }
 
-impl State<GameContext> for GameStateManager {
-    fn start(&mut self, ctx: &mut GameContext) {
-        let save = ctx.saves.get_mut();
-        self.world.load_with_data(save);
-        self.world
-            .on_start(&mut ctx.engine, save, &mut self.battle_entry);
-        // Ok(())
-    }
-
-    fn end(&mut self, ctx: &mut GameContext) {
-        self.save_data(ctx.saves.get_mut(), ctx.save_locally);
-        // Ok(())
-    }
-
-    fn update(&mut self, ctx: &mut GameContext, delta: f32) {
-        if let Some(command) = self.console.update(&mut ctx.engine) {
-            match self.gamestate {
-                GameStates::World => self.world.process(
-                    command,
-                    &ctx.dex,
-                    ctx.saves.get_mut(),
-                    &mut self.battle_entry,
-                    &mut ctx.random,
-                    crate::pokedex(),
-                    crate::movedex(),
-                    crate::itemdex(),
-                ),
-                GameStates::Battle => warn!("Battle has no commands implemented."),
+impl GameStateManager {
+    pub fn start(&mut self, ctx: &mut Context) {
+        if let Some(save) = self.save.as_mut() {
+            match self.state {
+                GameStates::World => self.world.start(ctx, &mut save.character, &mut save.party),
+                GameStates::Battle => (),
             }
         }
+        // Ok(())
+    }
 
+    pub fn end(&mut self) {
+        if let Some(save) = self.save.take() {
+            self.sender.send(StateMessage::UpdateSave(save));
+        }
+        // Ok(())
+    }
+
+    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
         // Speed game up if spacebar is held down
 
         let delta = delta
@@ -137,85 +129,88 @@ impl State<GameContext> for GameStateManager {
                 1.0
             };
 
-        let save = ctx.saves.get_mut();
-        if save.should_save {
-            self.data_dirty(save, ctx.save_locally);
-        }
-        match self.gamestate {
-            GameStates::World => {
-                self.world.update(
-                    &mut ctx.engine,
-                    &ctx.dex,
-                    save,
-                    delta,
-                    self.console.alive(),
-                    &mut self.battle_entry,
-                    &mut self.state,
-                    &mut ctx.random,
-                    crate::pokedex(),
-                    crate::movedex(),
-                    crate::itemdex(),
-                );
-                if let Some(entry) = self.battle_entry.take() {
-                    if self.battle.battle(
+        if let Some(save) = self.save.as_mut() {
+            for action in self.receiver.try_iter() {
+                match action {
+                    GameActions::Battle(entry) => match self.state {
+                        GameStates::World => {
+                            if self.battle.battle(
+                                crate::pokedex(),
+                                crate::movedex(),
+                                crate::itemdex(),
+                                save,
+                                entry,
+                            ) {
+                                self.state = GameStates::Battle;
+                            }
+                        }
+                        GameStates::Battle => warn!("Cannot start new battle, already in one!"),
+                    },
+                    GameActions::Save => self.sender.send(StateMessage::UpdateSave(save.clone())),
+                    GameActions::Exit => self.sender.send(StateMessage::Goto(MainStates::Menu)),
+                }
+            }
+
+            match self.state {
+                GameStates::World => {
+                    self.world
+                        .update(ctx, delta, &mut save.character, &mut save.party, &save.bag);
+                }
+                GameStates::Battle => {
+                    self.battle.update(
+                        ctx,
                         crate::pokedex(),
                         crate::movedex(),
                         crate::itemdex(),
+                        delta,
                         save,
-                        entry,
-                    ) {
-                        self.gamestate = GameStates::Battle;
-                    }
-                }
-            }
-            GameStates::Battle => {
-                self.battle.update(
-                    &mut ctx.engine,
-                    crate::pokedex(),
-                    crate::movedex(),
-                    crate::itemdex(),
-                    &ctx.dex,
-                    &ctx.btl,
-                    delta,
-                    save,
-                );
-                if self.battle.finished {
-                    let p = &mut self.world.world.player;
-                    p.input_frozen = false;
-                    p.unfreeze();
-                    if let Some(winner) = self.battle.winner() {
-                        let winner = *winner;
-                        let save = ctx.saves.get_mut();
-                        let trainer = self.battle.update_data(&winner, save);
-                        if let BattleId(Some(winner)) = winner {
-                            self.world.update_world(save, winner, trainer);
+                    );
+                    if self.battle.finished {
+                        save.character.input_frozen = false;
+                        save.character.unfreeze();
+                        if let Some(winner) = self.battle.winner() {
+                            let winner = winner.0.as_ref() == Some(&save.id);
+                            let trainer = self.battle.update_data(winner, &mut save.character);
+                            self.world.update_world(
+                                &mut save.character,
+                                &mut save.party,
+                                winner,
+                                trainer,
+                            );
                         }
+                        self.state = GameStates::World;
+                        self.world.start(ctx, &mut save.character, &mut save.party);
                     }
-                    self.gamestate = GameStates::World;
-                    self.world.map_start(&mut ctx.engine, true);
                 }
             }
+        } else if self.sender.0.is_empty() {
+            self.sender.send(StateMessage::Goto(MainStates::Menu));
         }
         // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut GameContext) {
-        match self.gamestate {
-            GameStates::World => self.world.draw(&mut ctx.engine, &ctx.dex, ctx.saves.get()),
-            GameStates::Battle => {
-                if self.battle.world_active() {
-                    self.world.draw(&mut ctx.engine, &ctx.dex, ctx.saves.get());
+    pub fn draw(&mut self, ctx: &mut Context) {
+        if let Some(save) = self.save.as_ref() {
+            match self.state {
+                GameStates::World => self.world.draw(ctx, save),
+                GameStates::Battle => {
+                    if self.battle.world_active() {
+                        self.world.draw(ctx, save);
+                    }
+                    self.battle.draw(ctx, save);
                 }
-                self.battle.draw(&mut ctx.engine, &ctx.dex, ctx.saves.get());
             }
         }
-        self.console.draw(&mut ctx.engine);
+
         // Ok(())
     }
 }
 
-impl MainState for GameStateManager {
-    fn action(&mut self) -> Option<Action> {
-        self.state.take()
+impl CommandProcessor for GameStateManager {
+    fn process(&mut self, command: CommandResult) {
+        match self.state {
+            GameStates::World => self.world.process(command),
+            GameStates::Battle => (), //self.battle.process(result),
+        }
     }
 }

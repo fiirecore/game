@@ -1,62 +1,64 @@
+use crate::{
+    saves::{GameBag, GameParty},
+    Sender,
+};
+
+use std::rc::Rc;
+
 use crate::engine::{
     gui::Panel,
-    input::{pressed, Control},
+    input::controls::{pressed, Control},
     math::Vec2,
     util::Entity,
     Context,
 };
-use crate::pokedex::{
-    context::PokedexClientData,
-    gui::{bag::BagGui, party::PartyGui},
-};
-use saves::PlayerData;
-use std::rc::Rc;
-
+use crate::saves::PlayerData;
 use crate::{
-    game::quit,
-    state::{Action, MainStates},
+    pokedex::{
+        context::PokedexClientData,
+        gui::{bag::BagGui, party::PartyGui},
+    },
+    state::game::GameActions,
 };
 
 pub struct StartMenu {
     alive: bool,
     pos: Vec2,
-    buttons: [&'static str; 6],
+    buttons: [&'static str; 5],
     cursor: usize,
+    dex: Rc<PokedexClientData>,
     party: Rc<PartyGui>,
     bag: Rc<BagGui>,
-    // world_map: WorldMapGui,
+    actions: Sender<GameActions>,
 }
 
 impl StartMenu {
-    pub fn new(party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
+    pub(crate) fn new(
+        dex: Rc<PokedexClientData>,
+        party: Rc<PartyGui>,
+        bag: Rc<BagGui>,
+        sender: Sender<GameActions>,
+    ) -> Self {
         Self {
             alive: false,
             pos: Vec2::new(169.0, 1.0),
-            buttons: ["Save", "Bag", "Pokemon", "Menu", "Exit", "Cancel"],
+            buttons: ["Save", "Bag", "Pokemon", "Menu", "Cancel"],
             cursor: 0,
+            dex,
             party,
             bag,
+            actions: sender,
         }
     }
 
-    pub fn update<'d>(
-        &mut self,
-        ctx: &Context,
-        dex: &PokedexClientData,
-        save: &mut PlayerData<'d>,
-        delta: f32,
-        input_lock: bool,
-        action: &mut Option<Action>,
-    ) {
-        if self.bag.alive() && !input_lock {
-            self.bag.input(ctx, &save.bag.items);
+    pub fn update(&mut self, ctx: &Context, delta: f32, party: &mut GameParty, bag: &GameBag) {
+        if self.bag.alive() {
+            self.bag.input(ctx, &bag.items);
             // bag_gui.up
         } else if self.party.alive() {
-            if !input_lock {
-                self.party.input(ctx, dex, save.party.as_mut_slice());
-            }
+            self.party.input(ctx, &self.dex, party);
             self.party.update(delta);
-        } else if !input_lock {
+        } else {
             if pressed(ctx, Control::B) || pressed(ctx, Control::Start) {
                 self.despawn();
             }
@@ -65,7 +67,7 @@ impl StartMenu {
                 match self.cursor {
                     0 => {
                         // Save
-                        save.should_save = true;
+                        self.actions.send(GameActions::Save);
                     }
                     1 => {
                         // Bag
@@ -73,18 +75,14 @@ impl StartMenu {
                     }
                     2 => {
                         // Pokemon
-                        spawn_party(dex, &self.party, save);
+                        self.spawn_party(party);
                     }
                     3 => {
                         // Exit to Main Menu
-                        *action = Some(Action::Goto(MainStates::Menu));
+                        self.actions.send(GameActions::Exit);
                         self.despawn();
                     }
                     4 => {
-                        // Exit Game
-                        quit();
-                    }
-                    5 => {
                         // Close Menu
                         self.despawn();
                     }
@@ -109,10 +107,10 @@ impl StartMenu {
         }
     }
 
-    pub fn draw<'d>(&self, ctx: &mut Context, dex: &PokedexClientData, save: &PlayerData) {
+    pub fn draw<'d>(&self, ctx: &mut Context, save: &PlayerData) {
         if self.alive {
             if self.bag.alive() {
-                self.bag.draw(ctx, dex, &save.bag.items);
+                self.bag.draw(ctx, &self.dex, &save.bag.items);
             } else if self.party.alive() {
                 self.party.draw(ctx, &save.party);
             } else {
@@ -134,14 +132,9 @@ impl StartMenu {
         self.party.alive() || self.bag.alive()
     }
 
-    pub fn spawn_party<'d>(&mut self, ctx: &PokedexClientData, save: &PlayerData<'d>) {
-        self.spawn();
-        spawn_party(ctx, &self.party, save)
+    pub fn spawn_party(&mut self, party: &GameParty) {
+        self.party.spawn(&self.dex, party, Some(true), true);
     }
-}
-
-fn spawn_party<'d>(ctx: &PokedexClientData, party: &PartyGui, save: &PlayerData<'d>) {
-    party.spawn(ctx, &save.party, Some(true), true);
 }
 
 impl Entity for StartMenu {

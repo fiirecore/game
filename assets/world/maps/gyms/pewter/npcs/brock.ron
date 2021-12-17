@@ -13,33 +13,21 @@
             ),
         ),
         interact: Message([
-            (
-                color: Blue,
-                lines: [
-                    "There are all kinds of TRAINERS in",
-                    "this huge world of ours."
-                ]
-            ),
-            (
-                color: Blue,
-                lines: [
-                    "You appear to be very gifted as a",
-                    "POKEMON TRAINER."
-                ]
-            ),
-            (
-                color: Blue,
-                lines: [
-                    "So let me make a suggestion."
-                ]
-            ),
-            (
-                color: Blue,
-                lines: [
-                    "Go to the GYM in CERULEAN and test",
-                    "your abilities."
-                ]
-            )
+            [
+                "There are all kinds of TRAINERS in",
+                "this huge world of ours."
+            ],
+            [
+                "You appear to be very gifted as a",
+                "POKEMON TRAINER."
+            ],
+            [
+                "So let me make a suggestion."
+            ],
+            [
+                "Go to the GYM in CERULEAN and test",
+                "your abilities."
+            ],
         ]),
         trainer: Some((
             encounter_message: [

@@ -1,8 +1,7 @@
 use crate::{map::warp::WarpId, positions::{CoordinateInt, Direction, Location, Position}, script::ScriptId};
-use text::{Message, MessagePages};
 use serde::{Deserialize, Serialize};
 
-use pokedex::{item::ItemId, pokemon::owned::SavedPokemon};
+use pokedex::{item::SavedItemStack, pokemon::owned::SavedPokemon};
 use tinystr::{TinyStr16, TinyStr8};
 
 use crate::{
@@ -27,12 +26,10 @@ pub enum WorldAction {
     PlayerGivePokemon(SavedPokemon), //, bool),
     PlayerHealPokemon,
 
-    PlayerGiveItem(ItemId),
+    PlayerGiveItem(SavedItemStack),
 
     NpcAdd(NpcId, Box<Npc>),
     NpcRemove(NpcId),
-    // NpcSpawn(NpcId),
-    // NpcDespawn(NpcId),
     NpcLook(NpcId, Direction),
     NpcMove(NpcId, CoordinateInt, CoordinateInt),
 
@@ -40,27 +37,26 @@ pub enum WorldAction {
     NpcMoveToPlayer(NpcId),
 
     NpcInteract(NpcId),
-    NpcSay(NpcId, MessagePages),
+    NpcSay(NpcId, Vec<Vec<String>>, #[serde(default = "crate::default_true")] bool),
     NpcBattle(NpcId),
     NpcWarp(NpcId, NpcWarp),
 
     // Info(String),
     // Warn(String),
     Wait(f32),
+    WaitMessage,
     WaitFinishWarp,
 
-    DisplayText(Message),
+    // Conditional {
+    //     // #[deprecated]
+    //     message: Message,
 
-    Conditional {
-        // #[deprecated]
-        message: Message,
-
-        #[serde(default)]
-        end_message: Option<Message>,
-        // false_next: Vec<WorldActionKind>,
-        #[serde(default = "def_true")]
-        unfreeze: bool,
-    }, // yes or no box, no despawns the script after an optional message, and bool unfreezes player if true,
+    //     #[serde(default)]
+    //     end_message: Option<Message>,
+    //     // false_next: Vec<WorldActionKind>,
+    //     #[serde(default = "def_true")]
+    //     unfreeze: bool,
+    // }, // yes or no box, no despawns the script after an optional message, and bool unfreezes player if true,
 
     Warp(PlayerWarp, bool), // bool = keep music
     Finish(ScriptId),
@@ -76,8 +72,4 @@ pub enum PlayerWarp {
 pub enum NpcWarp {
     Id(WarpId),
     Dest(Location, Position),
-}
-
-const fn def_true() -> bool {
-    true
 }

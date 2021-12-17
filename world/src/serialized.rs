@@ -1,10 +1,9 @@
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
-use text::TextColor;
 
 use crate::{
     character::{
-        npc::{Npc, NpcId, TrainerType},
+        npc::{Npc, NpcId, TrainerType, MessageColor},
         sprite::SpriteIndexType,
     },
     map::{manager::WorldMapManager, PaletteId, TileId},
@@ -32,7 +31,7 @@ pub struct SerializedNpc {
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNpcTypeConfig {
     pub identifier: TrainerId,
-    pub text_color: TextColor,
+    pub text_color: MessageColor,
     pub sprite: SpriteIndexType,
     pub trainer: Option<TrainerType>,
 }

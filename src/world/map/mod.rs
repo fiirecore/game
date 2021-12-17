@@ -1,10 +1,12 @@
 use crate::engine::{Context, graphics::Color};
 
-use worldlib::map::{manager::data::WorldMapData, TileId, WorldMap};
+use worldlib::map::{manager::state::WorldMapState, TileId, WorldMap};
 
 use crate::world::RenderCoords;
 
 use self::texture::WorldTextures;
+
+use super::npc::NpcTypes;
 
 pub mod input;
 pub mod manager;
@@ -14,9 +16,10 @@ pub mod warp;
 
 pub fn draw(
     map: &WorldMap,
-    world: &WorldMapData,
+    world: &WorldMapState,
     ctx: &mut Context,
     textures: &WorldTextures,
+    npc_types: &NpcTypes,
     screen: &RenderCoords,
     border: bool,
     color: Color,
@@ -36,7 +39,7 @@ pub fn draw(
     for yy in screen.top..screen.bottom {
         let y = yy - screen.offset.y;
         let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
-        let row = (y as usize).saturating_mul(map.width);
+        let row = y.saturating_mul(map.width);
 
         for xx in screen.left..screen.right {
             let x = xx - screen.offset.x;
@@ -86,13 +89,13 @@ pub fn draw(
     }
     for npc in map.npcs.values().filter(|npc| !npc.character.hidden).chain(
         world
-            .script
+            .scripts
             .npcs
             .values()
             .filter(|(loc, ..)| loc == &map.id)
             .map(|(.., n)| n),
     ) {
-        textures.npcs.draw(ctx, npc, &screen);
+        textures.npcs.draw(ctx, npc_types, npc, &screen);
     }
     // for script in map.scripts.iter() {
     //     if script.alive() {

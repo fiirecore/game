@@ -31,7 +31,7 @@ pub fn pathfind(
 
 fn valid_positions(
     coordinate: Coordinate,
-    world: &impl World,
+    world: &WorldMap,
     player: &Coordinate,
 ) -> Vec<((Direction, Coordinate), isize)> {
     Direction::DIRECTIONS
@@ -39,7 +39,7 @@ fn valid_positions(
         .map(|direction| (*direction, coordinate + direction.tile_offset()))
         .filter(|(_, coords)| {
             if world.in_bounds(*coords) && coords != player {
-                world.movement(*coords).map(can_walk).unwrap_or_default()
+                world.local_movement(*coords).map(can_walk).unwrap_or_default()
             } else {
                 false
             }

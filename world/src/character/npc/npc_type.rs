@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use text::TextColor;
 use tinystr::TinyStr16;
 
 use crate::character::sprite::SpriteIndexes;
@@ -7,10 +6,17 @@ use crate::character::sprite::SpriteIndexes;
 pub type NpcTypeId = TinyStr16;
 pub type BadgeId = TinyStr16;
 
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+pub enum MessageColor {
+    Black,
+    White,
+    Red,
+    Blue,
+}
 #[derive(Debug)]
 pub struct NpcType {
-    pub text_color: TextColor,
-    pub sprite: &'static SpriteIndexes,
+    pub message: MessageColor,
+    pub sprite: SpriteIndexes,
     pub trainer: Option<TrainerType>,
 }
 

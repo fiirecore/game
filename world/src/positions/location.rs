@@ -1,17 +1,18 @@
-use tinystr::TinyStr16;
 use serde::{Deserialize, Serialize};
+use tinystr::TinyStr16;
 
 pub type LocationId = TinyStr16;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Location {
+    #[serde(default)]
     pub map: Option<LocationId>,
     pub index: LocationId,
 }
 
-impl Location {
-    pub const fn new(map: Option<LocationId>, index: LocationId) -> Self {
-        Self { map, index }
+impl From<LocationId> for Location {
+    fn from(index: LocationId) -> Self {
+        Self { map: None, index }
     }
 }
 

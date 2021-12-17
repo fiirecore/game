@@ -1,29 +1,17 @@
 use std::collections::VecDeque;
 
 use crate::{
+    command::CommandResult,
     engine::{
         graphics::{self, Color, DrawParams},
-        input::keyboard::{self as input, Key},
-        text::TextColor,
+        gui::TextColor,
+        input::keyboard::{self, Key},
         util::{Entity, Reset, HEIGHT},
         Context,
     },
-    game::is_debug,
 };
 
 use crate::engine::log::warn;
-
-#[derive(Debug, Clone)]
-pub struct CommandResult<'a> {
-    pub command: &'a str,
-    pub args: std::str::SplitAsciiWhitespace<'a>,
-}
-
-impl<'a> core::fmt::Display for CommandResult<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {:?}", self.command, self.args)
-    }
-}
 
 #[derive(Default)]
 pub struct Console {
@@ -41,23 +29,23 @@ impl Console {
                 if self.commands.is_empty() {
                     self.commands.push_front(String::new());
                 }
-                if input::is_key_pressed(ctx, Key::Slash) || input::is_key_pressed(ctx, Key::Escape)
+                if keyboard::pressed(ctx, Key::Slash) || keyboard::pressed(ctx, Key::Escape)
                 {
                     self.despawn();
                     return None;
                 }
-                if input::is_key_pressed(ctx, Key::Up) {
+                if keyboard::pressed(ctx, Key::Up) {
                     self.position = (self.position + 1).min(self.commands.len().saturating_sub(1));
                 }
-                if input::is_key_pressed(ctx, Key::Down) {
+                if keyboard::pressed(ctx, Key::Down) {
                     self.position = self.position.saturating_sub(1);
                 }
-                if input::is_key_pressed(ctx, Key::Backspace) {
+                if keyboard::pressed(ctx, Key::Backspace) {
                     if let Some(command) = self.commands.get_mut(self.position) {
                         command.pop();
                     }
                 }
-                if input::is_key_pressed(ctx, Key::Enter) {
+                if keyboard::pressed(ctx, Key::Enter) {
                     if self.commands.len() == Self::MAX_COMMANDS {
                         self.commands.pop_back();
                     }
@@ -93,7 +81,7 @@ impl Console {
                 }
             }
             false => {
-                if input::is_key_pressed(ctx, Key::Slash) && is_debug() {
+                if keyboard::pressed(ctx, Key::Slash) && ctx.debug() {
                     self.spawn();
                 }
             }
@@ -119,7 +107,7 @@ impl Console {
                     "/",
                     10.0,
                     Y,
-                    DrawParams::color(TextColor::White.into()),
+                    DrawParams::color(TextColor::WHITE),
                 );
                 graphics::draw_text_left(
                     ctx,
@@ -127,7 +115,7 @@ impl Console {
                     command,
                     16.0,
                     Y,
-                    DrawParams::color(TextColor::White.into()),
+                    DrawParams::color(TextColor::WHITE),
                 );
             } else {
                 warn!("Cannot get string at position {}", self.position);

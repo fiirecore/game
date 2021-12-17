@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
-use storage::PersistantData;
+use crate::storage::PersistantData;
 
 use crate::engine::{
     input::controls::keyboard::{default_key_map, KeyMap},
     Context,
 };
-use firecore_storage::{error::DataError, try_load};
+use crate::storage::{error::DataError, try_load};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Configuration {
@@ -17,16 +17,17 @@ pub struct Configuration {
 }
 
 impl Configuration {
-    pub async fn load(engine: &mut Context, save_locally: bool) -> Result<Self, DataError> {
+    pub async fn load(save_locally: bool) -> Result<Self, DataError> {
         let config = try_load::<Self>(save_locally).await
             .unwrap_or_else(|err| panic!("Could not read configuration with error {}", err));
 
-        crate::engine::log::info!("to - do: allow engine to set controls");
-        // engine.controls.keyboard = config.controls.clone();
-        // engine.controls.controller = config.controls.controller.clone();
-
         Ok(config)
     }
+
+    pub fn reload(&self, ctx: &mut Context) {
+
+    }
+
 }
 
 impl Default for Configuration {

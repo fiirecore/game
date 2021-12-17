@@ -2,35 +2,26 @@ use serde::{Deserialize, Serialize};
 use tinystr::TinyStr16;
 
 use crate::{
-    character::{
-        npc::Npcs,
-        Movement,
-    },
-    positions::{Coordinate, Location},
+    character::npc::Npcs,
+    positions::{Coordinate, Direction, Location, CoordinateInt},
     script::world::WorldScript,
 };
-
 use warp::{WarpDestination, Warps};
 use wild::WildEntry;
+
+use self::{chunk::WorldChunk, movement::MovementResult};
+
+pub mod chunk;
+pub mod movement;
 
 pub mod manager;
 pub mod warp;
 pub mod wild;
 
 pub type TileId = u16;
-pub type MovementId = u8;
 pub type MapSize = usize;
 pub type PaletteId = u8;
-
-pub trait World {
-    fn in_bounds(&self, coords: Coordinate) -> bool;
-
-    fn tile(&self, coords: Coordinate) -> Option<TileId>;
-
-    fn movement(&self, coords: Coordinate) -> Option<MovementId>;
-
-    fn warp_at(&self, coords: Coordinate) -> Option<&WarpDestination>;
-}
+pub type MovementId = movement::MovementId;
 
 #[derive(Serialize, Deserialize)]
 pub struct WorldMap {
@@ -39,8 +30,8 @@ pub struct WorldMap {
     pub name: String,
     pub music: TinyStr16,
 
-    pub width: MapSize,
-    pub height: MapSize,
+    pub width: CoordinateInt,
+    pub height: CoordinateInt,
 
     pub palettes: [PaletteId; 2],
 
@@ -64,15 +55,6 @@ pub struct WorldMap {
     #[serde(default)]
     pub settings: WorldMapSettings,
     // pub mart: Option<mart::Pokemart>,
-
-}
-
-pub type ChunkConnections = Vec<Location>;
-
-#[derive(Serialize, Deserialize)]
-pub struct WorldChunk {
-    pub connections: ChunkConnections,
-    pub coords: Coordinate,
 }
 
 #[derive(Default, Deserialize, Serialize)]
@@ -85,47 +67,77 @@ pub struct WorldMapSettings {
     pub brightness: Brightness,
 }
 
-pub fn can_move(movement: Movement, code: MovementId) -> bool {
-    match movement {
-        Movement::Swimming => can_swim(code),
-        _ => can_walk(code),
-    }
-}
-
-pub fn can_walk(code: MovementId) -> bool {
-    code == 0xC
-}
-
-pub fn can_swim(code: MovementId) -> bool {
-    code == 0x4
-}
-
-impl World for WorldMap {
-    fn in_bounds(&self, coords: Coordinate) -> bool {
+impl WorldMap {
+    pub fn in_bounds(&self, coords: Coordinate) -> bool {
         !(coords.x.is_negative()
-            || coords.x >= self.width as i32
+            || coords.x >= self.width
             || coords.y.is_negative()
-            || coords.y >= self.height as i32)
+            || coords.y >= self.height)
     }
 
-    fn tile(&self, coords: Coordinate) -> Option<TileId> {
+    pub fn tile(&self, coords: Coordinate) -> Option<TileId> {
         self.in_bounds(coords)
-            .then(|| self.tiles[coords.x as usize + coords.y as usize * self.width])
+            .then(|| self.tiles[coords.x as usize + coords.y as usize * self.width as usize])
     }
 
-    fn movement(&self, coords: Coordinate) -> Option<MovementId> {
-        if self
-            .npcs
-            .values()
-            .any(|npc| npc.character.position.coords == coords)
-        {
-            return Some(1);
+    pub fn local_movement(&self, coords: Coordinate) -> Option<MovementId> {
+        self.in_bounds(coords)
+            .then(|| self.unbounded_movement(coords))
+            .flatten()
+    }
+
+    pub fn unbounded_movement(&self, coords: Coordinate) -> Option<MovementId> {
+        self.movements
+            .get(coords.x as usize + coords.y as usize * self.width as usize)
+            .map(|code| {
+                match self
+                    .npcs
+                    .values()
+                    .any(|npc| npc.character.position.coords == coords)
+                {
+                    true => 1,
+                    false => *code,
+                }
+            })
+    }
+
+    pub fn movement(&self, coords: Coordinate) -> MovementResult {
+        if let Some(chunk) = self.chunk.as_ref() {
+            if coords.x.is_negative() {
+                return chunk
+                    .connections
+                    .get_key_value(&Direction::Left)
+                    .map(|(d, c)| (d, coords.y, c))
+                    .into();
+            }
+            if coords.x < self.width {
+                return chunk
+                    .connections
+                    .get_key_value(&Direction::Right)
+                    .map(|(d, c)| (d, coords.y, c))
+                    .into();
+            }
+            if coords.y.is_negative() {
+                return chunk
+                    .connections
+                    .get_key_value(&Direction::Up)
+                    .map(|(d, c)| (d, coords.x, c))
+                    .into();
+            }
+            if coords.y < self.height {
+                return chunk
+                    .connections
+                    .get_key_value(&Direction::Down)
+                    .map(|(d, c)| (d, coords.x, c))
+                    .into();
+            }
+        } else if !self.in_bounds(coords) {
+            return MovementResult::NONE;
         }
-        self.in_bounds(coords)
-            .then(|| self.movements[coords.x as usize + coords.y as usize * self.width])
+        self.unbounded_movement(coords).into()
     }
 
-    fn warp_at(&self, coords: Coordinate) -> Option<&WarpDestination> {
+    pub fn warp_at(&self, coords: Coordinate) -> Option<&WarpDestination> {
         self.warps
             .values()
             .find(|warp| warp.location.in_bounds(&coords))

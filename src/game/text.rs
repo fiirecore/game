@@ -1,10 +1,10 @@
-pub use crate::engine::text::*;
-use saves::PlayerData;
+use crate::engine::gui::MessagePage;
+use crate::saves::PlayerData;
 
 const PLAYER_ID: &str = "%p";
 const RIVAL_ID: &str = "%r";
 
-pub fn process_messages(pages: &mut MessagePages, save: &PlayerData) {
+pub fn process_messages(pages: &mut [MessagePage], save: &PlayerData) {
     for page in pages {
         for lines in page.lines.iter_mut() {
             process_string(lines, save);

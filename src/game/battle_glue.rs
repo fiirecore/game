@@ -7,8 +7,7 @@ pub use worldlib::TrainerId;
 
 /***********************/
 
-pub type BattleEntryRef<'a> = &'a mut Option<BattleEntry>;
-
+#[derive(Clone)]
 pub struct BattleEntry {
     pub id: BattleId,
     pub name: Option<String>,
@@ -17,6 +16,7 @@ pub struct BattleEntry {
     pub active: usize,
 }
 
+#[derive(Clone)]
 pub struct BattleTrainerEntry {
     pub transition: TransitionId,
     pub gym_badge: Option<BadgeId>,

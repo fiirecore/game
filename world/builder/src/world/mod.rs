@@ -1,70 +1,62 @@
+use std::collections::HashMap;
+
+use either::Either;
+
 use serde::Deserialize;
 use worldlib::{
-    map::{WorldChunk, WorldMapSettings},
-    positions::{Coordinate, Location, LocationId},
+    map::{WorldMapSettings, chunk::Connection},
+    positions::{LocationId, Direction, Location, CoordinateInt},
 };
 
 pub mod map;
 pub mod textures;
 // pub mod constants;
 
-pub mod wild;
-pub mod warp;
 pub mod npc;
 pub mod script;
+pub mod warp;
+pub mod wild;
 // pub mod mart;
-
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct MapConfig {
-
     // #[deprecated(note = "use full location")]
-    pub identifier: LocationId,
+    pub identifier: MapLocation,
     pub name: String,
     pub file: String,
 
     #[serde(default)]
-    pub chunk: Option<SerializedChunk>,
+    pub chunk: HashMap<Direction, MapConnection>,
 
     #[serde(default)]
     pub settings: WorldMapSettings,
-
     // #[serde(default)]
     // pub pokemon_center: bool,
-
 }
-
-// pub enum MapType {
-//     Chunk(),
-
-// }
 
 #[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct SerializedChunk {
+pub struct MapConnection(MapLocation, CoordinateInt);
 
-    pub coords: Coordinate,
-    pub connections: Vec<LocationId>,
-    // #[serde(default)]
-    // pub map_icon: Option<worldlib::map::MapIcon>,
-
-}
 #[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct SerializedMapList {
-
-    // #[deprecated(note = "remove")]
-    pub identifier: LocationId,
-    pub dirs: Vec<String>,
-
+#[serde(transparent)]
+pub struct MapLocation {
+    #[serde(with = "either::serde_untagged")]
+    inner: Either<LocationId, Location>,
 }
 
-impl From<SerializedChunk> for WorldChunk {
-    fn from(chunk: SerializedChunk) -> Self {
-        WorldChunk {
-            coords: chunk.coords,
-            connections: chunk.connections.into_iter().map(|index| Location::new(None, index)).collect()
+impl From<MapLocation> for Location {
+    fn from(location: MapLocation) -> Self {
+        match location.inner {
+            Either::Left(id) => Location::from(id),
+            Either::Right(loc) => loc,
         }
+    }
+}
+
+impl From<MapConnection> for Connection {
+    fn from(connection: MapConnection) -> Self {
+        let location = connection.0.into();
+        Self(location, connection.1)
     }
 }

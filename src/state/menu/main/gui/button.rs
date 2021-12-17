@@ -2,11 +2,9 @@ use std::borrow::Cow;
 
 use crate::engine::{
     graphics::{draw_text_center, Color, DrawParams},
-    gui::Panel,
-    inner::input,
-    input::{pressed, Control},
+    gui::{Panel, TextColor},
+    input::{controls::{pressed, Control}, mouse::{self, MouseButton}},
     math::Vec2,
-    text::TextColor,
     Context,
 };
 
@@ -90,7 +88,7 @@ impl ButtonBase {
                 && mouse.y < origin.y + self.size.y
             /*(*origin + self.size).gt(&mouse)*/
             {
-                if input::is_mouse_button_pressed(input::MouseButton::Left) {
+                if mouse::pressed(ctx, MouseButton::Left) {
                     self.state = ButtonState::Clicked;
                     return (true, true);
                 } else {
@@ -100,7 +98,7 @@ impl ButtonBase {
             } else {
                 self.state = ButtonState::None;
             }
-        } else if input::is_mouse_button_pressed(input::MouseButton::Left)
+        } else if mouse::pressed(ctx, MouseButton::Left)
             && matches!(self.state, ButtonState::Hovered)
         {
             self.state = ButtonState::Clicked;
@@ -136,7 +134,7 @@ impl ButtonBase {
             true,
             center.x,
             center.y,
-            DrawParams::color(TextColor::Black.into()),
+            DrawParams::color(TextColor::BLACK),
         );
     }
 }

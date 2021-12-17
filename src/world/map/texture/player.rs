@@ -1,6 +1,6 @@
 use crate::engine::{
     graphics::{Color, DrawParams, Texture},
-    math::{Rectangle, Vec2},
+    math::Rectangle,
     util::{HEIGHT, WIDTH},
     Context,
 };
@@ -48,7 +48,8 @@ impl PlayerTexture {
             Texture::new(
                 ctx,
                 include_bytes!("../../../../assets/world/textures/player/walking.png"),
-            ).unwrap()
+            )
+            .unwrap()
             .into(),
         );
         textures.insert(
@@ -56,7 +57,8 @@ impl PlayerTexture {
             Texture::new(
                 ctx,
                 include_bytes!("../../../../assets/world/textures/player/running.png"),
-            ).unwrap()
+            )
+            .unwrap()
             .into(),
         );
         textures.insert(
@@ -66,7 +68,8 @@ impl PlayerTexture {
                 texture: Texture::new(
                     ctx,
                     include_bytes!("../../../../assets/world/textures/player/surfing.png"),
-                ).unwrap(),
+                )
+                .unwrap(),
             },
         );
 

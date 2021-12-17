@@ -3,15 +3,9 @@
     name: "Fuchsia City",
     file: "3.7_FUCHSIA CITY.map",
 
-    chunk: Some((
-        coords: (
-            x: 192,
-            y: 300,
-        ),
-        connections: [
-            "route_15",
-            "route_18",
-            "route_19"
-        ],
-    )),
+    chunk: {
+        Right: ("route_15", 10),
+        Left: ("route_18", 10),
+        Down: ("route_19", 12),
+    },
 )

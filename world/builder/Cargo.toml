@@ -14,9 +14,10 @@ firecore-world = { path = ".." }
 
 ### Serialization
 
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
 toml = "0.5"
-ron = "0.6"
+ron = "0.7"
+either = { version = "1", features = ["serde"] }
 
 ### Other
 

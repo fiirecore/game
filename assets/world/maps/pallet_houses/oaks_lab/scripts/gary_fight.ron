@@ -21,17 +21,13 @@
         NpcSay(
             "rival",
             [
-                (
-                    lines: [
-                        "%r: Wait, %p!",
-                        "Let's check out our POKEMON!"
-                    ],
-                ),
-                (
-                    lines: [
-                        "Come on, I'll take you on!"
-                    ],
-                )
+                [
+                    "%r: Wait, %p!",
+                    "Let's check out our POKEMON!"
+                ],
+                [
+                    "Come on, I'll take you on!"
+                ],
             ],
         ),
         NpcMoveToPlayer("rival"),

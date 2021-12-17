@@ -3,14 +3,8 @@
     name: "Cinnabar Island",
     file: "3.8_CINNABAR ISLAND.map",
 
-    chunk: Some((
-        coords: (
-            x: 60,
-            y: 380,
-        ),
-        connections: [
-            "route_20",
-            "route_21_south",
-        ],
-    )),
+    chunk: {
+        Right: ("route_20", 0),
+        Up: ("route_21_south", 0)
+    },
 )

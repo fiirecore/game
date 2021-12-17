@@ -1,22 +1,18 @@
-use crate::{engine::State, GameContext};
-
 mod manager;
 pub use manager::*;
 
-// pub mod first_scene;
-pub mod character;
-pub mod main_menu;
 pub mod title;
 
-pub trait MenuState<'d>: State<GameContext> {
-    fn next(&mut self) -> &mut Option<MenuStateAction>;
-}
+pub mod main;
+// pub mod first_scene;
+// pub mod character;
 
-#[derive(Clone, Copy)]
-pub enum MenuStateAction {
+#[derive(Clone)]
+pub enum MenuActions {
     Goto(MenuStates),
-    StartGame,
-    SeedAndGoto(u64, MenuStates),
+    Seed(u8),
+    StartGame(usize),
+    ExitGame,
 }
 
 #[derive(Clone, Copy)]
@@ -24,8 +20,6 @@ pub enum MenuStates {
     // FirstLoad,
     Title,
     MainMenu,
-
-    CharacterCreation,
 }
 
 impl Default for MenuStates {

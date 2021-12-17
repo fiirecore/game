@@ -1,5 +1,8 @@
 (
-    identifier: "floor_0",
+    identifier: (
+        map: Some("mt_moon"),
+        index: "floor_0",
+    ),
     name: "Mt. Moon",
     file: "1.1_MT. MOON.map",
 )

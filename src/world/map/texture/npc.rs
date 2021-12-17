@@ -1,8 +1,8 @@
-use crate::engine::{
+use crate::{engine::{
     graphics::{draw_rectangle, Color, DrawParams, Texture},
-    math::{Rectangle},
+    math::Rectangle,
     Context,
-};
+}, world::npc::NpcTypes};
 use std::collections::HashMap;
 use worldlib::{
     character::npc::{Npc, NpcTypeId},
@@ -10,7 +10,7 @@ use worldlib::{
     TILE_SIZE,
 };
 
-use crate::world::{npc::npc_type, RenderCoords};
+use crate::world::RenderCoords;
 
 pub type NpcTextures = HashMap<NpcTypeId, Texture>;
 
@@ -25,7 +25,7 @@ impl NpcTextureManager {
         self.npcs = npcs;
     }
 
-    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut Context, npc_types: &NpcTypes, npc: &Npc, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x
             + npc.character.offset.x;
         let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32
@@ -39,7 +39,7 @@ impl NpcTextureManager {
                 y,
                 DrawParams {
                     flip_x: npc.character.position.direction == Direction::Right,
-                    source: Some(Rectangle::new(current_texture_pos(npc), 0.0, 16.0, 32.0)),
+                    source: Some(Rectangle::new(current_texture_pos(npc_types, npc), 0.0, 16.0, 32.0)),
                     ..Default::default()
                 },
             );
@@ -56,14 +56,14 @@ impl NpcTextureManager {
     }
 }
 
-pub fn current_texture_pos(npc: &Npc) -> f32 {
+pub fn current_texture_pos(npc_types: &NpcTypes, npc: &Npc) -> f32 {
     let index = (npc.character.offset.offset().abs() as usize >> 3) + npc.character.sprite as usize;
 
-    let npc_type = npc_type(&npc.type_id);
-
-    (match npc.character.position.direction {
+    npc_types.get(&npc.type_id).map(|npc_type| (match npc.character.position.direction {
         Direction::Down => npc_type.sprite.down[index],
         Direction::Up => npc_type.sprite.up[index],
         _ => npc_type.sprite.side[index],
-    } << 4) as f32
+    } << 4) as f32).unwrap_or_default()
+
+    
 }

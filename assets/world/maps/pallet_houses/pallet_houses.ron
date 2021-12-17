@@ -1,9 +1,0 @@
-(
-    identifier: "pallet_houses",
-    dirs: [
-        "player_house",
-        "player_room",
-        "rival_house",
-        "oaks_lab",
-    ] 
-)

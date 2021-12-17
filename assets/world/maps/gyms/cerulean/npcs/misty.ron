@@ -13,12 +13,10 @@
             ),
         ),
         interact: Message([
-            (
-                color: Red,
-                lines: [
-                    "Temporary post-battle message"
-                ]
-            )
+            [
+                "Temporary post-battle message"
+            ]
+            
         ]), 
         trainer: Some((
             encounter_message: [

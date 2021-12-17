@@ -1,28 +1,30 @@
+mod gui;
+
 use std::borrow::Cow;
 
 use crate::{
     engine::{
         graphics::{draw_rectangle, draw_rectangle_lines, draw_text_left, Color, DrawParams},
-        input::{pressed, Control},
+        gui::TextColor,
+        input::controls::{pressed, Control},
         math::Vec2,
-        text::TextColor,
         util::{HEIGHT, WIDTH},
-        State,
+        Context,
     },
-    game::gui::{Button, ButtonBase},
-    GameContext,
+    saves::SavedPlayer,
+    Sender,
 };
 
-use super::{MenuState, MenuStateAction, MenuStates};
+use gui::{Button, ButtonBase};
+
+use super::{MenuActions, MenuStates};
 
 // have normal main menu + video settings + controls + exit
 
 pub struct MainMenuState {
-    action: Option<MenuStateAction>,
-
     cursor: usize,
 
-    saves: Vec<Button>,
+    save_buttons: Vec<Button>,
 
     delete: bool,
 
@@ -31,27 +33,26 @@ pub struct MainMenuState {
     new_game: ButtonBase,
     delete_button: ButtonBase,
 
+    sender: Sender<MenuActions>,
 }
 
 impl MainMenuState {
     const GAP: f32 = 35.0;
 
-    pub fn new() -> Self {
+    pub(crate)fn new(sender: Sender<MenuActions>) -> Self {
         Self {
-            action: None,
             cursor: Default::default(),
-            saves: Vec::new(),
+            save_buttons: Vec::new(),
             delete: false,
             last_mouse_pos: Default::default(),
             new_game: ButtonBase::new(Vec2::new(206.0, 30.0), Cow::Borrowed("New Game")),
             delete_button: ButtonBase::new(Vec2::new(206.0, 30.0), Cow::Borrowed("Play/Delete")),
+            sender,
         }
     }
 
-    fn update_saves(ctx: &mut GameContext, list: &mut Vec<Button>) {
-        *list = ctx
-            .saves
-            .list
+    fn update_saves(saves: &[SavedPlayer], list: &mut Vec<Button>) {
+        *list = saves
             .iter()
             .enumerate()
             .map(|(index, save)| {
@@ -65,16 +66,28 @@ impl MainMenuState {
     }
 }
 
-impl<'d> State<GameContext> for MainMenuState {
-    fn start(&mut self, ctx: &mut GameContext) {
+impl MainMenuState {
+    pub fn start(&mut self, saves: &[SavedPlayer]) {
         self.cursor = Default::default();
         self.delete = false;
-        Self::update_saves(ctx, &mut self.saves);
+        Self::update_saves(saves, &mut self.save_buttons);
 
         // Ok(())
     }
 
-    fn update(&mut self, ctx: &mut GameContext, _: f32) {
+    pub fn update(&mut self, ctx: &mut Context, saves: &mut Vec<SavedPlayer>) {
+
+        if pressed(ctx, Control::Up) {
+            let index = saves.len();
+            saves.push(crate::saves::Player::new(
+                format!(
+                    "Player {}",
+                    (crate::engine::inner::miniquad::date::now() * 100.0) as u64
+                ),
+            ));
+            self.sender.send(MenuActions::StartGame(index));
+        }
+
         let mouse_pos = crate::engine::inner::prelude::mouse_position().into();
 
         let last = if self.last_mouse_pos != mouse_pos {
@@ -84,39 +97,32 @@ impl<'d> State<GameContext> for MainMenuState {
             false
         };
 
-        for (index, button) in self.saves.iter_mut().enumerate() {
-            let (click, mouse) =
-                button.update(&ctx.engine, last.then(|| mouse_pos), self.cursor == index);
+        for (index, button) in self.save_buttons.iter_mut().enumerate() {
+            let (click, mouse) = button.update(ctx, last.then(|| mouse_pos), self.cursor == index);
             if mouse {
                 self.cursor = index;
             }
             if click {
                 if self.delete {
-                    if ctx.saves.delete(index) {
+                    if saves.len() < index {
+                        saves.remove(index);
                         // if index >= self.cursor {
                         // 	self.cursor -= 1;
                         // }
-                        Self::update_saves(ctx, &mut self.saves);
+                        Self::update_saves(saves, &mut self.save_buttons);
                         break;
                     };
                 } else {
-                    ctx.saves.select(
-                        index,
-                        &mut ctx.random,
-                        crate::pokedex(),
-                        crate::movedex(),
-                        crate::itemdex(),
-                    );
-                    self.action = Some(MenuStateAction::StartGame);
+                    self.sender.send(MenuActions::StartGame(index));
                 }
             }
         }
 
-        let new_game_pos = self.saves.len();
+        let new_game_pos = saves.len();
 
         {
             let (click, mouse) = self.new_game.update(
-                &ctx.engine,
+                ctx,
                 &Vec2::new(20.0, 5.0 + new_game_pos as f32 * Self::GAP),
                 last.then(|| mouse_pos),
                 self.cursor == new_game_pos,
@@ -127,7 +133,12 @@ impl<'d> State<GameContext> for MainMenuState {
             }
 
             if click {
-                self.action = Some(MenuStateAction::Goto(MenuStates::CharacterCreation));
+                saves.push(crate::saves::Player::new(
+                        format!(
+                            "Player {}",
+                            (crate::engine::inner::miniquad::date::now() * 100.0) as u64
+                        ),
+                    ));
             }
         }
 
@@ -135,7 +146,7 @@ impl<'d> State<GameContext> for MainMenuState {
 
         {
             let (click, mouse) = self.delete_button.update(
-                &ctx.engine,
+                ctx,
                 &Vec2::new(20.0, 5.0 + delete_pos as f32 * Self::GAP),
                 last.then(|| mouse_pos),
                 self.cursor == delete_pos,
@@ -150,53 +161,46 @@ impl<'d> State<GameContext> for MainMenuState {
             }
         }
 
-        if pressed(&ctx.engine, Control::B) {
-            self.action = Some(MenuStateAction::Goto(MenuStates::Title));
+        if pressed(ctx, Control::B) {
+            self.sender.send(MenuActions::Goto(MenuStates::Title));
         }
 
-        if pressed(&ctx.engine, Control::Up) && self.cursor > 0 {
+        if pressed(ctx, Control::Up) && self.cursor > 0 {
             self.cursor -= 1;
         }
 
-        if pressed(&ctx.engine, Control::Down) && self.cursor <= self.saves.len() {
+        if pressed(ctx, Control::Down) && self.cursor <= saves.len() {
             self.cursor += 1;
         }
 
         // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut GameContext) {
-        draw_rectangle(
-            &mut ctx.engine,
-            0.0,
-            0.0,
-            WIDTH,
-            HEIGHT,
-            Color::rgb(0.00, 0.32, 0.67),
-        );
+    pub fn draw(&mut self, ctx: &mut Context, saves: &[SavedPlayer]) {
+        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, Color::rgb(0.00, 0.32, 0.67));
 
-        for save in self.saves.iter() {
-            save.draw(&mut ctx.engine);
+        for save in self.save_buttons.iter() {
+            save.draw(ctx);
             // self.button.draw(ctx, 20.0, y, 206.0, 30.0);
             // draw_text_left(ctx, &1, save, &TextColor::Black, 31.0, y + 5.0);
         }
 
-        let saves_len = self.saves.len() as f32;
+        let saves_len = saves.len() as f32;
 
         {
             let y = 5.0 + saves_len * Self::GAP;
-            self.new_game.draw(&mut ctx.engine, Vec2::new(20.0, y));
+            self.new_game.draw(ctx, Vec2::new(20.0, y));
             // 	draw_text_left(ctx, &1, "New Game", &TextColor::Black, 31.0, y + 5.0);
         }
 
         {
             let y = 5.0 + (saves_len + 1.0) * Self::GAP;
-            self.delete_button.draw(&mut ctx.engine, Vec2::new(20.0, y));
+            self.delete_button.draw(ctx, Vec2::new(20.0, y));
             // 	draw_text_left(ctx, &1, &TextColor::Black, 31.0, y + 5.0);
         }
 
         draw_rectangle_lines(
-            &mut ctx.engine,
+            ctx,
             20.0,
             5.0 + self.cursor as f32 * Self::GAP,
             206.0,
@@ -206,25 +210,18 @@ impl<'d> State<GameContext> for MainMenuState {
         );
 
         draw_text_left(
-            &mut ctx.engine,
+            ctx,
             &1,
             if self.delete {
                 "Delete Mode: ON"
             } else {
                 "Delete Mode: OFF"
             },
-            
             5.0,
             145.0,
-            DrawParams::color(TextColor::Black.into()),
+            DrawParams::color(TextColor::BLACK),
         );
 
         // Ok(())
-    }
-}
-
-impl<'d> MenuState<'d> for MainMenuState {
-    fn next(&mut self) -> &mut Option<MenuStateAction> {
-        &mut self.action
     }
 }

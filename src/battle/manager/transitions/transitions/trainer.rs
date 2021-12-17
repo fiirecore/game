@@ -1,6 +1,5 @@
 use crate::engine::{
-    graphics::{draw_rectangle, Color, Texture, DrawParams},
-    math::Vec2,
+    graphics::{draw_rectangle, Color, DrawParams, Texture},
     util::{Completable, Reset, WIDTH},
     Context,
 };
@@ -38,7 +37,8 @@ impl TrainerBattleTransition {
             texture: Texture::new(
                 ctx,
                 include_bytes!("../../../../../assets/battle/encounter_ball.png"),
-            ).unwrap(),
+            )
+            .unwrap(),
         }
     }
 

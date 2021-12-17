@@ -1,8 +1,0 @@
-(
-    identifier: "mt_moon",
-    dirs: [
-        "floor_0",
-        "floor_1",
-        "floor_2",
-    ],
-)

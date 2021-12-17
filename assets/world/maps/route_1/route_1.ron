@@ -9,8 +9,8 @@
             y: 220,
         ),
         connections: [
-            "pallet",
-            "viridian"
+            Down: ("pallet", 0),
+            Up: ("viridian", -12),
         ],
         // map_icon: Some(Route(2, 6, 1, 2))
     )),

@@ -12,13 +12,12 @@
                 direction: Right
             ),
         ),
-        interact: Message([(
-            color: Blue,
-            lines: [
+        interact: Message([
+            [
                 "You're pretty hot.",
                 "...But not as hot as BROCK!"
             ]
-        )]),
+        ]),
         trainer: Some((
             tracking: Some(3),
             encounter_message: [

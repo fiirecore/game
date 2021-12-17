@@ -6,15 +6,13 @@ edition = "2018"
 
 [dependencies]
 
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
 tinystr = { version = "0.4", features = ["serde"], default-features = false }
 rand = { version = "0.8", default-features = false }
+# enum-map = { version = "1", features = ["serde"] }
 
 firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "18f1de3" }
 # firecore-pokedex = { path = "../../firecore/pokedex" }
-
-firecore-text = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "5ca80c4", package = "firecore-text" }
-# firecore-text = { path = "../../firecore/engine/crates/text" }
 
 ### Pathfinding
 

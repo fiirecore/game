@@ -3,15 +3,9 @@
     name: "Lavender Town",
     file: "3.4_LAVENDER TOWN.map",
 
-    chunk: Some((
-        coords: (
-            x: 384,
-            y: 130,
-        ),
-        connections: [
-            "route_8",
-            "route_10",
-            "route_12",
-        ],
-    )),
+    chunk: {
+        Left: ("route_8", 0),
+        Up: ("route_10", 0),
+        Down: ("route_12", 0),
+    },
 )

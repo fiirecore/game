@@ -1,18 +1,17 @@
 use crate::{
-    state::menu::{MenuState, MenuStateAction, MenuStates},
-    GameContext,
+    state::menu::{MenuActions, MenuStates},
+    Sender,
 };
 
 use crate::engine::{
-    audio::play_music,
+    audio::{play_music, stop_music},
+    error::ImageError,
     graphics::Texture,
-    input::{pressed, Control},
-    Context, State,
+    input::controls::{pressed, Control},
+    Context,
 };
 
 pub struct TitleState {
-    action: Option<MenuStateAction>,
-
     accumulator: f32,
 
     background: Texture,
@@ -21,57 +20,65 @@ pub struct TitleState {
     subtitle: Texture,
     charizard: Texture,
     start: Texture,
+
+    sender: Sender<MenuActions>,
 }
 
 impl TitleState {
-    pub fn new(ctx: &mut Context) -> Self {
-        Self {
-            action: None,
+    pub(crate) fn new(ctx: &mut Context, sender: Sender<MenuActions>) -> Result<Self, ImageError> {
+        Ok(Self {
+            accumulator: 0.0,
             background: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/background.png"),
-            ).unwrap(),
+            )?,
             title: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/title.png"),
-            ).unwrap(),
+            )?,
             trademark: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/trademark.png"),
-            ).unwrap(),
+            )?,
             subtitle: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/subtitle.png"),
-            ).unwrap(),
+            )?,
             charizard: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/charizard.png"),
-            ).unwrap(),
+            )?,
             start: Texture::new(
                 ctx,
                 include_bytes!("../../../build/assets/scenes/title/start.png"),
-            ).unwrap(),
-            accumulator: 0.0,
-        }
+            )?,
+            sender,
+        })
     }
 }
 
-impl<'d> State<GameContext> for TitleState {
-    fn start(&mut self, ctx: &mut GameContext) {
-        play_music(&mut ctx.engine, &"title".parse().unwrap());
+impl TitleState {
+    pub fn start(&mut self, ctx: &mut Context) {
+        play_music(ctx, &"title".parse().unwrap());
         self.accumulator = 0.0;
     }
 
-    fn update(&mut self, ctx: &mut GameContext, delta: f32) {
-        if pressed(&ctx.engine, Control::A) {
-            let seed = self.accumulator as u64 % u8::MAX as u64;
-            self.action = Some(MenuStateAction::SeedAndGoto(seed, MenuStates::MainMenu));
+    pub fn end(&mut self, ctx: &mut Context) {
+        stop_music(ctx);
+    }
+
+    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
+        if pressed(ctx, Control::A) {
+            let seed = (self.accumulator as usize % u8::MAX as usize) as u8;
+            self.sender.send(MenuActions::Seed(seed));
+            // self.action = Some(MenuStateAction::SeedAndGoto(seed, MenuStates::MainMenu));
+            self.sender.send(MenuActions::Goto(MenuStates::MainMenu));
         }
         self.accumulator += delta;
         // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut GameContext) {
+    pub fn draw(&mut self, ctx: &mut Context) {
         self.background.draw(ctx, 0.0, 0.0, Default::default());
         self.title.draw(ctx, 3.0, 3.0, Default::default());
         self.trademark.draw(ctx, 158.0, 53.0, Default::default());
@@ -81,11 +88,5 @@ impl<'d> State<GameContext> for TitleState {
         }
         self.charizard.draw(ctx, 129.0, 49.0, Default::default());
         // Ok(())
-    }
-}
-
-impl<'d> MenuState<'d> for TitleState {
-    fn next(&mut self) -> &mut Option<MenuStateAction> {
-        &mut self.action
     }
 }

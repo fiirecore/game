@@ -1,61 +1,44 @@
 # To - do List
 
-## High Priority
+* Coding world in Bevy > Coding world in macroquad
 
-- [ ] Tetra custom context support
+* Figure out if world updating code needs a rewrite
+* Move animations through scripting
+* Move BattleCloser to Battle GUI crate
 
-- [ ] Figure out if world updating code needs a rewrite
+* Online battles over discord rich presence
 
-- [X] Move animations through scripting
-    - [ ] Better scripting
+* Pokemarts and Pokemon centers implementation
+* World data save
+* Add rhai scripting to world and NPC scripting
+* Maybe world manager gives out more MoveResult
+* Town Map item
 
-- [ ] Tackle faster
+* Persistent moves in battle
 
-- [ ] Move BattleCloser to Battle GUI module
+* Add jumping over one way tiles (cliffs)
 
-## Medium Priority
+* Add UNKNOWN pokemon, move and item values
+* Text line wrapping
 
-- [ ] Asset loader crate
-- [ ] Pokemarts and Pokemon centers are stored in their own HashMap
-- [ ] Remove Timer struct
-- [ ] World config
-- [ ] Online battles over discord rich presence
-- [ ] New world and NPC scripting language
-- [ ] New move scripting language
-- [ ] Maybe make character position a BorrowableMut
-- [ ] Maybe world manager gives out more moveresults
 
-- [ ] Town Map item
-- [ ] Persistent moves in battle
-- [ ] Add jumping over one way tiles
-
-- [ ] Add UNKNOWN pokemon, move and item values
-- [ ] Text line wrapping
-- [ ] Uuid for trainer IDs
-
-## Low Priority
-
-- [ ] Fix move targeting so client doesnt completely decide what gets targeted. (do a check on serverside)
-
-- [ ] Command shortcuts and better parsing
-- [ ] Specify default player location in world binary
-- [ ] Moves use PP in battle
-- [ ] Running from battle chance and text
-
-- [ ] Logging in firecore-pokedex crate
+* Command shortcuts and better parsing
+* Specify default player location in world binary 
+* Moves use PP in battle
+-* Running from battle chance and text
 
 ## Other
 
-- [ ] Maybe day/night cycle?
-- [ ] Working Pokemarts
+* Maybe day/night cycle?
+* Working Pokemarts
 
 <!-- - [ ] Trainer and Gym Leader Battle AI -->
 
 ### Other Goals
 
-- [ ] Fixed all warp transitions
-- [ ] All Npcs up to Cerulean are added
-- [ ] All scripts up to Cerulean are added
+* Fixed all warp transitions
+* All Npcs up to Cerulean are added
+* All scripts up to Cerulean are added
 
 ### Other Planned Ideas
 

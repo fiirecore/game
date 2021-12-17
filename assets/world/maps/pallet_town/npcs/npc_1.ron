@@ -13,17 +13,13 @@
             ),
         ),
         interact: Message([
-            (
-                lines: [
+            [
                     "Technology is incredible!"
-                ]
-            ),
-            (
-                lines: [
-                    "You can now store and recall items",
-                    "and POKEMON as data via PC."
-                ]
-            )
+            ],
+            [
+                "You can now store and recall items",
+                "and POKEMON as data via PC."
+            ],
         ]),
     )
 )

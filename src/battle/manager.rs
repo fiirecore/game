@@ -1,10 +1,10 @@
 use std::{ops::Deref, rc::Rc};
 
 use crate::{engine::{
-		input::keyboard::{Key, is_key_pressed},
+		input::keyboard::{Key, pressed as is_key_pressed},
 		graphics::Color,
 		Context,
-	}, game::{battle_glue::{BattleEntry, BattleId}, is_debug}};
+	}, game::{battle_glue::{BattleEntry, BattleId}}};
 
 use crate::pokedex::{context::PokedexClientData, gui::{
 		party::PartyGui,
@@ -12,7 +12,8 @@ use crate::pokedex::{context::PokedexClientData, gui::{
 	}};
 use firecore_battle::pokedex::Dex;
 use rand::{SeedableRng, prelude::SmallRng};
-use saves::{NewPlayerData, PlayerData};
+use worldlib::character::player::PlayerCharacter;
+use crate::saves::OwnedPlayer;
 
 use crate::pokedex::{pokemon::Pokemon, moves::Move, item::Item};
 
@@ -32,6 +33,9 @@ pub struct BattleManager<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = M
 	state: BattleManagerState,
 	
 	battle: GameBattleWrapper<P, M, I>,
+
+	dex: Rc<PokedexClientData>,
+	btl: BattleGuiContext,
 	
 	transition: BattleScreenTransitionManager,
 	closer: BattleCloserManager,
@@ -60,7 +64,7 @@ impl Default for BattleManagerState {
 
 impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Deref<Target = Item> + Clone> BattleManager<P, M, I> {
 	
-	pub fn new(ctx: &mut Context, btl: &BattleGuiContext, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
+	pub fn new(ctx: &mut Context, btl: BattleGuiContext, dex: Rc<PokedexClientData>, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
 		
 		Self {
 
@@ -71,11 +75,13 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 			transition: BattleScreenTransitionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
-			player: BattlePlayerGui::new(ctx, btl, party, bag),
+			player: BattlePlayerGui::new(ctx, &btl, party, bag),
 
 			random: SmallRng::seed_from_u64(0),
 
 			finished: false,
+    dex,
+    btl,
 
 		}
 		
@@ -85,7 +91,7 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		pokedex: &'d dyn Dex<'d, Pokemon, P>,
 	movedex: &'d dyn Dex<'d, Move, M>,
 	itemdex: &'d dyn Dex<'d, Item, I>, 
-	save: &mut NewPlayerData<P, M, I>, entry: BattleEntry, 
+	save: &mut OwnedPlayer<P, M, I>, entry: BattleEntry, 
         ) -> bool { // add battle type parameter
 		self.finished = false;
 		self.state = BattleManagerState::default();
@@ -111,15 +117,15 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 	pub fn update<'d>(&mut self, ctx: &mut Context,
 		pokedex: &'d dyn Dex<'d, Pokemon, P>,
 	movedex: &'d dyn Dex<'d, Move, M>,
-	itemdex: &'d dyn Dex<'d, Item, I>, dex: &PokedexClientData, btl: &BattleGuiContext, delta: f32, save: &mut NewPlayerData<P, M, I>) {
-		if is_debug() {
+	itemdex: &'d dyn Dex<'d, Item, I>, delta: f32, save: &mut OwnedPlayer<P, M, I>) {
+		if ctx.debug() {
 			if is_key_pressed(ctx, Key::F1) { // exit shortcut
 				self.end();
 				return;
 			}
 		}
 		if let Some(battle) = &mut self.battle.battle {
-			self.player.process(&mut self.random, dex, btl,
+			self.player.process(&mut self.random, &self.dex, &self.btl,
 				pokedex,
 				movedex,
 				itemdex, &mut save.party, );
@@ -133,19 +139,19 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 
 					// self.player.on_begin(dex);
 
-					self.update(ctx, pokedex, movedex, itemdex, dex, btl, delta, save);
+					self.update(ctx, pokedex, movedex, itemdex, delta, save);
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
 						self.transition.begin(ctx, self.player.data.type_, &self.battle.trainer);
-						self.update(ctx, pokedex, movedex, itemdex, dex, btl, delta, save);
+						self.update(ctx, pokedex, movedex, itemdex, delta, save);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
 					TransitionState::End => {
 						self.transition.end();
 						self.state = BattleManagerState::Battle;
 						self.player.start(true);
-						self.update(ctx, pokedex, movedex, itemdex, dex, btl, delta, save);
+						self.update(ctx, pokedex, movedex, itemdex, delta, save);
 					}
 				}
 				BattleManagerState::Battle => {
@@ -154,7 +160,7 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 						battle.update(&mut self.random, &mut self.battle.engine, delta, movedex, itemdex);
 					}
 
-					self.player.update(ctx, dex, pokedex, movedex, itemdex, delta, &mut save.bag);
+					self.player.update(ctx, &self.dex, pokedex, movedex, itemdex, delta, &mut save.bag);
 
 					if let Some(winner) = self.player.winner().flatten() {
 						self.state = BattleManagerState::Closer(*winner);
@@ -163,8 +169,8 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 				},
 				BattleManagerState::Closer(winner) => match self.closer.state {
 					TransitionState::Begin => {
-						self.closer.begin(dex, self.player.data.type_, self.player.local.player.id(), self.player.local.player.name(), Some(&winner), self.battle.trainer.as_ref(), &mut self.player.gui.text);
-						self.update(ctx, pokedex, movedex, itemdex, dex, btl, delta, save);
+						self.closer.begin(&self.dex, self.player.data.type_, self.player.local.player.id(), self.player.local.player.name(), Some(&winner), self.battle.trainer.as_ref(), &mut self.player.gui.text);
+						self.update(ctx, pokedex, movedex, itemdex, delta, save);
 					}
 					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.gui.text),
 					TransitionState::End => {
@@ -186,8 +192,8 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		self.battle.battle.as_ref().map(|b| b.winner()).flatten()
 	}
 
-	pub fn update_data(&mut self, winner: &BattleId, player_save: &mut NewPlayerData<P, M, I>) -> bool {
-		self.battle.update_data(winner, player_save)
+	pub fn update_data(&mut self, winner: bool, player: &mut PlayerCharacter) -> bool {
+		self.battle.update_data(winner, player)
 	}
 
 	pub fn world_active(&self) -> bool {
@@ -209,18 +215,18 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		}
 	}
 
-	pub fn draw(&self, ctx: &mut Context, dex: &PokedexClientData, save: &NewPlayerData<P, M, I>) {
+	pub fn draw(&self, ctx: &mut Context, save: &OwnedPlayer<P, M, I>) {
         if self.battle.battle.is_some() {
 			match self.state {
 				BattleManagerState::Begin => (),
 			    BattleManagerState::Transition => self.transition.draw(ctx),
-			    BattleManagerState::Battle => self.player.draw(ctx, dex, &save.party, &save.bag),
+			    BattleManagerState::Battle => self.player.draw(ctx, &self.dex, &save.party, &save.bag),
 			    BattleManagerState::Closer(..) => {
 					if !matches!(self.closer.state, TransitionState::End) {
 						if !self.world_active() {
 							self.player.gui.background.draw(ctx, 0.0);
 							self.player.gui.draw_panel(ctx);
-							self.player.draw(ctx, dex, &save.party, &save.bag);
+							self.player.draw(ctx, &self.dex, &save.party, &save.bag);
 							for active in self.player.local.renderer.iter() {
 								active.pokemon.draw(ctx, firecore_battle_gui::pokedex::engine::math::Vec2::ZERO, Color::WHITE);
 							}

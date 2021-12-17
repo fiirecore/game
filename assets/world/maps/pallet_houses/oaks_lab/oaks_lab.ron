@@ -1,5 +1,8 @@
 (
-    identifier: "oaks_lab",
+    identifier: (
+        map: Some("pallet_houses"),
+        index: "oaks_lab",
+    ),
     name: "Oak's Laboratory",
     file: "4.3_PALLET TOWN.map",
 )

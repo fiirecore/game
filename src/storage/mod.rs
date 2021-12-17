@@ -1,12 +1,13 @@
 use error::DataError;
+use firecore_battle_gui::pokedex::engine::fs::read_to_string;
 use serde::{de::DeserializeOwned, Serialize};
 use std::io::{Error as IOError, ErrorKind};
 use std::path::{Path, PathBuf};
 
 pub use ron::{from_str as deserialize, to_string as serialize};
 
-pub use macroquad::prelude::{info, warn};
-pub use macroquad::miniquad::date::now as time;
+pub use crate::engine::log::{info, warn};
+pub use crate::engine::inner::miniquad::date::now as time;
 
 pub mod error;
 pub mod reload;
@@ -22,7 +23,7 @@ pub trait PersistantData: Serialize + DeserializeOwned + Default {
         save(
             self,
             local,
-            crate::directory(local)?.join(file_name(Self::path())),
+            self::directory(local)?.join(file_name(Self::path())),
         )
     }
 }
@@ -30,10 +31,10 @@ pub trait PersistantData: Serialize + DeserializeOwned + Default {
 pub async fn try_load<D: PersistantData + Sized>(local: bool) -> Result<D, DataError> {
     #[cfg(not(target_arch = "wasm32"))] {
         let file_name = file_name(D::path());
-        let dir = crate::directory(local)?;
+        let dir = self::directory(local)?;
         let path = dir.join(&file_name);
         let data = match path.exists() {
-            true => deserialize(&macroquad::file::load_string(&*path.to_string_lossy()).await?)?,
+            true => deserialize(&read_to_string(&*path.to_string_lossy()).await?)?,
             false => {
                 let data = D::default();
                 if let Err(err) = save(&data, local, file_name) {
@@ -61,7 +62,7 @@ pub fn save<D: Serialize + DeserializeOwned + Default, P: AsRef<Path>>(
     let string = ron::ser::to_string_pretty(data, ron::ser::PrettyConfig::default())?;
 
     #[cfg(not(target_arch = "wasm32"))] {
-        let dir = crate::directory(local)?;
+        let dir = self::directory(local)?;
         let path = dir.join(path.as_ref());
     
         if !dir.exists() {

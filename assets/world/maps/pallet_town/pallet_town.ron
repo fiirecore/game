@@ -3,19 +3,13 @@
     name: "Pallet Town",
     file: "3.0_PALLET TOWN.map",
 
-    chunk: Some((
-        coords: (
-            x: 60,
-            y: 260,
-        ),
-        connections: [
-            "route_1",
-            "route_21_north"
-        ],
-        // map_icon: Some(City(2, 8))
-    )),
+    chunk: {
+        Up: ("route_1", 0),
+        Down: ("route_21_north", 0),
+    },
 
     settings: (
         fly_position: Some((x: 6, y: 8))
+        // map_icon: Some(City(2, 8))
     )
 )
