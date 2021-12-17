@@ -1,23 +1,18 @@
 use crate::pokedex::{
-    context::PokedexClientData,
-    item::{ItemId, ItemStack, StackSize},
+    item::{ItemId},
     pokemon::{
-        owned::SavedPokemon,
-        stat::{Stat, StatSet},
+        stat::{Stat},
         Level, PokemonId,
     },
-    Dex,
 };
-use crate::saves::PlayerData;
+
 use crate::{
     command::CommandProcessor,
-    engine::log::{info, warn},
 };
-use worldlib::positions::{Location, LocationId};
+use worldlib::positions::{LocationId};
 
 use crate::{
     command::CommandResult,
-    world::battle::{random_wild_battle, DEFAULT_RANDOM_BATTLE_SIZE},
 };
 
 use super::WorldManager;

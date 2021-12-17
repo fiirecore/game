@@ -118,12 +118,10 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		pokedex: &'d dyn Dex<'d, Pokemon, P>,
 	movedex: &'d dyn Dex<'d, Move, M>,
 	itemdex: &'d dyn Dex<'d, Item, I>, delta: f32, save: &mut OwnedPlayer<P, M, I>) {
-		if ctx.debug() {
-			if is_key_pressed(ctx, Key::F1) { // exit shortcut
-				self.end();
-				return;
-			}
-		}
+		if ctx.debug() && is_key_pressed(ctx, Key::F1) { // exit shortcut
+  				self.end();
+  				return;
+  			}
 		if let Some(battle) = &mut self.battle.battle {
 			self.player.process(&mut self.random, &self.dex, &self.btl,
 				pokedex,

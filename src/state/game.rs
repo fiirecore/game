@@ -76,7 +76,7 @@ impl GameStateManager {
             dex.clone(),
             party.clone(),
             bag.clone(),
-            actions.clone(),
+            actions,
         )?;
 
         world.load(ctx, wrld);

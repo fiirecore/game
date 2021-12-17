@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 
-use crate::saves::{GamePokemon, PlayerData};
+
+use crate::saves::{GamePokemon};
 use crate::Sender;
 use crate::{engine::log::info, world::WorldActions};
 use crate::{
@@ -14,20 +14,18 @@ use crate::{
     world::npc::NpcTypes,
 };
 use crate::{
-    pokedex::{context::PokedexClientData, moves::MoveId},
+    pokedex::{moves::MoveId},
     world::npc::color,
 };
 use firecore_battle::pokedex::{
-    item::Item,
-    moves::Move,
-    pokemon::{party::Party, Pokemon},
+    pokemon::{party::Party},
     Dex,
 };
 use firecore_battle_gui::pokedex::engine::log::warn;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use worldlib::{
     character::{
-        npc::{MessageColor, NpcType, NpcTypeId},
+        npc::{MessageColor, NpcType},
         player::PlayerCharacter,
         sprite::SpriteIndexes,
         Movement,
@@ -211,7 +209,7 @@ impl GameWorldMapManager {
                         }
                     }
                     TryMoveResult::StartWarpOnTile(tile, coords) => {
-                        self.warper.queue(&mut self.world, player, tile, coords);
+                        self.warper.queue(player, tile, coords);
                     }
                 }
             }
@@ -250,7 +248,7 @@ impl GameWorldMapManager {
             );
         }
 
-        self.screen = RenderCoords::new(&player);
+        self.screen = RenderCoords::new(player);
     }
 
     fn stop_player(&mut self, player: &mut PlayerCharacter, party: &mut Party<GamePokemon>) {
@@ -506,13 +504,10 @@ fn on_start(ctx: &mut Context, world: &WorldMapManager, player: &PlayerCharacter
 
         use crate::engine::audio;
 
-        if music {
-            if audio::get_current_music(ctx)
+        if music && audio::get_current_music(ctx)
                 .map(|current| current != &map.music)
-                .unwrap_or(true)
-            {
-                audio::play_music(ctx, &map.music);
-            }
+                .unwrap_or(true) {
+            audio::play_music(ctx, &map.music);
         }
     }
 }
@@ -547,10 +542,8 @@ fn update1<'d>(
             player.position
         };
         for (id, npc) in map.npcs.iter_mut() {
-            if npc.interact.is_some() || npc.trainer.is_some() {
-                if npc.interact_from(&pos) {
-                    player.world.npc.active = Some(*id);
-                }
+            if (npc.interact.is_some() || npc.trainer.is_some()) && npc.interact_from(&pos) {
+                player.world.npc.active = Some(*id);
             }
         }
     }
@@ -581,46 +574,42 @@ fn update1<'d>(
             const NPC_MOVE_CHANCE: f64 = 1.0 / 12.0;
 
             for (index, npc) in map.npcs.iter_mut() {
-                if !npc.character.moving() {
-                    if randoms.npc.gen_bool(NPC_MOVE_CHANCE) {
-                        match npc.movement {
-                            NpcMovement::Still => (),
-                            NpcMovement::LookAround => {
-                                npc.character.position.direction =
-                                    Direction::DIRECTIONS[randoms.npc.gen_range(0..4)];
-                                find_battle(player, &map.id, index, npc);
-                            }
-                            NpcMovement::WalkUpAndDown(steps) => {
-                                let origin =
-                                    npc.origin.get_or_insert(npc.character.position.coords);
-                                let direction = if npc.character.position.coords.y
-                                    <= origin.y - steps as i32
-                                {
-                                    Direction::Down
-                                } else if npc.character.position.coords.y >= origin.y + steps as i32
-                                {
-                                    Direction::Up
-                                } else if randoms.npc.gen_bool(0.5) {
-                                    Direction::Down
-                                } else {
-                                    Direction::Up
-                                };
-                                let coords = npc.character.position.coords.in_direction(direction);
-                                if worldlib::map::movement::can_move(
-                                    npc.character.movement,
-                                    map.movements[npc.character.position.coords.x as usize
-                                        + npc.character.position.coords.y as usize
-                                            * map.width as usize],
-                                ) {
-                                    npc.character.position.direction = direction;
-                                    if !find_battle(player, &map.id, index, npc) {
-                                        if coords.y != player.position.coords.y {
-                                            npc.character.pathing.extend(
-                                                &npc.character.position,
-                                                Destination::to(&npc.character.position, coords),
-                                            );
-                                        }
-                                    }
+                if !npc.character.moving() && randoms.npc.gen_bool(NPC_MOVE_CHANCE) {
+                    match npc.movement {
+                        NpcMovement::Still => (),
+                        NpcMovement::LookAround => {
+                            npc.character.position.direction =
+                                Direction::DIRECTIONS[randoms.npc.gen_range(0..4)];
+                            find_battle(player, &map.id, index, npc);
+                        }
+                        NpcMovement::WalkUpAndDown(steps) => {
+                            let origin =
+                                npc.origin.get_or_insert(npc.character.position.coords);
+                            let direction = if npc.character.position.coords.y
+                                <= origin.y - steps as i32
+                            {
+                                Direction::Down
+                            } else if npc.character.position.coords.y >= origin.y + steps as i32
+                            {
+                                Direction::Up
+                            } else if randoms.npc.gen_bool(0.5) {
+                                Direction::Down
+                            } else {
+                                Direction::Up
+                            };
+                            let coords = npc.character.position.coords.in_direction(direction);
+                            if worldlib::map::movement::can_move(
+                                npc.character.movement,
+                                map.movements[npc.character.position.coords.x as usize
+                                    + npc.character.position.coords.y as usize
+                                        * map.width as usize],
+                            ) {
+                                npc.character.position.direction = direction;
+                                if !find_battle(player, &map.id, index, npc) && coords.y != player.position.coords.y {
+                                    npc.character.pathing.extend(
+                                        &npc.character.position,
+                                        Destination::to(&npc.character.position, coords),
+                                    );
                                 }
                             }
                         }
@@ -662,89 +651,87 @@ fn update1<'d>(
             } else {
                 window.text.update(ctx, delta);
             }
-        } else {
-            if !npc.character.moving() {
-                window.text.spawn();
-                player.input_frozen = true;
+        } else if !npc.character.moving() {
+            window.text.spawn();
+            player.input_frozen = true;
 
-                let mut message_ran = false;
+            let mut message_ran = false;
 
-                use worldlib::character::npc::NpcInteract;
+            use worldlib::character::npc::NpcInteract;
 
-                match &npc.interact {
-                    NpcInteract::Message(pages) => {
-                        window.text.set(
-                            pages
-                                .iter()
-                                .map(|lines| MessagePage {
-                                    lines: lines.clone(),
-                                    wait: None,
-                                })
-                                .collect(),
-                        );
-                        window.text.color(color(
-                            npc_types
-                                .get(&npc.type_id)
-                                .map(|npc| &npc.message)
-                                .unwrap_or(&MessageColor::Black),
-                        ));
-                        message_ran = true;
-                    }
-                    NpcInteract::Script(_) => todo!(),
-                    NpcInteract::Nothing => (),
+            match &npc.interact {
+                NpcInteract::Message(pages) => {
+                    window.text.set(
+                        pages
+                            .iter()
+                            .map(|lines| MessagePage {
+                                lines: lines.clone(),
+                                wait: None,
+                            })
+                            .collect(),
+                    );
+                    window.text.color(color(
+                        npc_types
+                            .get(&npc.type_id)
+                            .map(|npc| &npc.message)
+                            .unwrap_or(&MessageColor::Black),
+                    ));
+                    message_ran = true;
                 }
+                NpcInteract::Script(_) => todo!(),
+                NpcInteract::Nothing => (),
+            }
 
-                if !player.world.battle.battled(&map_id, id) {
-                    if let Some(trainer) = npc.trainer.as_ref() {
-                        if trainer.battle_on_interact {
-                            if let Some(npc_type) = npc_types.get(&npc.type_id) {
-                                if let Some(trainer_type) = npc_type.trainer.as_ref() {
-                                    // Spawn text window
-                                    window.text.set(
-                                        trainer
-                                            .encounter_message
-                                            .iter()
-                                            .map(|message| MessagePage {
-                                                lines: message.clone(),
-                                                wait: None,
-                                            })
-                                            .collect(),
-                                    );
-                                    window.text.color(color(&npc_type.message));
-                                    message_ran = true;
+            if !player.world.battle.battled(&map_id, id) {
+                if let Some(trainer) = npc.trainer.as_ref() {
+                    if trainer.battle_on_interact {
+                        if let Some(npc_type) = npc_types.get(&npc.type_id) {
+                            if let Some(trainer_type) = npc_type.trainer.as_ref() {
+                                // Spawn text window
+                                window.text.set(
+                                    trainer
+                                        .encounter_message
+                                        .iter()
+                                        .map(|message| MessagePage {
+                                            lines: message.clone(),
+                                            wait: None,
+                                        })
+                                        .collect(),
+                                );
+                                window.text.color(color(&npc_type.message));
+                                message_ran = true;
 
-                                    // Play Trainer music
+                                // Play Trainer music
 
-                                    use crate::engine::audio::{get_current_music, play_music};
+                                use crate::engine::audio::{get_current_music, play_music};
 
-                                    if let Some(encounter_music) = trainer_type.music.as_ref() {
-                                        if let Some(playing_music) = get_current_music(ctx) {
-                                            if playing_music != encounter_music {
-                                                play_music(ctx, encounter_music)
-                                            }
-                                        } else {
+                                if let Some(encounter_music) = trainer_type.music.as_ref() {
+                                    if let Some(playing_music) = get_current_music(ctx) {
+                                        if playing_music != encounter_music {
                                             play_music(ctx, encounter_music)
                                         }
+                                    } else {
+                                        play_music(ctx, encounter_music)
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                player.position.direction = npc.character.position.direction.inverse();
-                if player.frozen() {
-                    player.unfreeze();
-                }
+            player.position.direction = npc.character.position.direction.inverse();
+            if player.frozen() {
+                player.unfreeze();
+            }
 
-                if !message_ran {
-                    window.text.despawn();
-                    player.input_frozen = false;
-                    player.world.npc.active = None;
-                } else {
-                    warn!("process messages 1");
-                    // crate::game::text::process_messages(&mut window.text.message.pages, save);
-                }
+            if !message_ran {
+                window.text.despawn();
+                player.input_frozen = false;
+                player.world.npc.active = None;
+            } else {
+                warn!("process messages 1");
+                // crate::game::text::process_messages(&mut window.text.message.pages, save);
             }
         }
     }
@@ -756,13 +743,9 @@ fn find_battle(
     id: &worldlib::character::npc::NpcId,
     npc: &mut worldlib::character::npc::Npc,
 ) -> bool {
-    if player.world.npc.active.is_none() {
-        if !player.world.battle.battled(map, &id) {
-            if npc.find_character(player) {
-                player.world.npc.active = Some(*id);
-                return true;
-            }
-        }
+    if player.world.npc.active.is_none() && !player.world.battle.battled(map, id) && npc.find_character(player) {
+        player.world.npc.active = Some(*id);
+        return true;
     }
     false
 }

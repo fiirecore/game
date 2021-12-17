@@ -199,7 +199,7 @@ impl WarpTransition {
         }
     }
 
-    pub fn queue(&mut self, world: &mut WorldMapManager, player: &mut PlayerCharacter, tile: TileId, coords: Coordinate) {
+    pub fn queue(&mut self, player: &mut PlayerCharacter, tile: TileId, coords: Coordinate) {
         if self.doors.contains_key(&tile) {
             // enterance door
             self.door = Some(Door::new(tile, coords));

@@ -78,15 +78,13 @@ fn main() {
                 saves,
             }
         },
-        move |mut ctx,
+        move |ctx,
               OpenContext {
                   configuration,
                   saves,
               }| {
             info!("Starting {} v{}", TITLE, VERSION);
             info!("By {}", AUTHORS);
-
-            let debug = cfg!(debug_assertions);
 
             // #[cfg(feature = "audio")]
             // let audio = !args.contains(&Args::DisableAudio);
@@ -119,7 +117,7 @@ fn main() {
                     .unwrap_or_else(|err| panic!("Could not load font sheets with error {}", err));
 
             for font in fonts {
-                engine::text::insert_font(&mut ctx, &font).unwrap();
+                engine::text::insert_font(ctx, &font).unwrap();
             }
 
             #[cfg(feature = "audio")]
@@ -132,7 +130,7 @@ fn main() {
                 )) {
                     Ok(audio_data) => {
                         graphics::draw_text_left(
-                            &mut ctx,
+                            ctx,
                             &0,
                             "Loading audio...",
                             5.0,
@@ -140,7 +138,7 @@ fn main() {
                             DrawParams::color(Color::WHITE),
                         );
                         for (id, data) in audio_data {
-                            engine::audio::add_music(&mut ctx, id, data);
+                            engine::audio::add_music(ctx, id, data);
                         }
                     }
                     Err(err) => engine::log::error!("Could not read sound file with error {}", err),
@@ -149,9 +147,9 @@ fn main() {
               //     info!("Skipping audio loading...");
               // }
 
-            graphics::clear(&mut ctx, Color::BLACK);
+            graphics::clear(ctx, Color::BLACK);
 
-            let mut random = SmallRng::seed_from_u64(engine::util::seed());
+            let random = SmallRng::seed_from_u64(engine::util::seed());
 
             info!("Loading dex textures and audio...");
 
@@ -163,10 +161,10 @@ fn main() {
                     )
                 });
 
-            let dex = PokedexClientData::new(&mut ctx, dex_engine)
+            let dex = PokedexClientData::new(ctx, dex_engine)
                 .unwrap_or_else(|err| panic!("Could not initialize dex data with error {}", err));
 
-            let btl = BattleGuiContext::new(&mut ctx).unwrap_or_else(|err| {
+            let btl = BattleGuiContext::new(ctx).unwrap_or_else(|err| {
                 panic!("Could not initialize battle data with error {}", err)
             });
 

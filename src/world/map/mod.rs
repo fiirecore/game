@@ -69,12 +69,10 @@ pub fn draw(
                     } else {
                         2
                     }
+                } else if y % 2 == 0 {
+                    1
                 } else {
-                    if y % 2 == 0 {
-                        1
-                    } else {
-                        3
-                    }
+                    3
                 }];
                 let (texture, tile) = if length > tile {
                     (primary, tile)
@@ -95,7 +93,7 @@ pub fn draw(
             .filter(|(loc, ..)| loc == &map.id)
             .map(|(.., n)| n),
     ) {
-        textures.npcs.draw(ctx, npc_types, npc, &screen);
+        textures.npcs.draw(ctx, npc_types, npc, screen);
     }
     // for script in map.scripts.iter() {
     //     if script.alive() {

@@ -43,7 +43,7 @@ impl RenderCoords {
             bottom: coords.y + HALF_HEIGHT_TILE,
 
             #[deprecated(note = "rounding may fix problem of black spaces between tiles while moving")]
-            focus: Vec2::new((coords.x + 1 << 4) as f32 + character.offset.x - HALF_WIDTH as f32, (coords.y + 1 << 4) as f32 + character.offset.y - HALF_HEIGHT as f32)
+            focus: Vec2::new(((coords.x + 1) << 4) as f32 + character.offset.x - HALF_WIDTH as f32, ((coords.y + 1) << 4) as f32 + character.offset.y - HALF_HEIGHT as f32)
             .round(),
 
             ..Default::default()

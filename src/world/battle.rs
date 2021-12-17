@@ -14,7 +14,7 @@ use worldlib::{
     },
     map::{
         manager::state::{
-            default_heal_loc, TrainerEntry, TrainerEntryRef, WorldBattleState, WorldMapState,
+            default_heal_loc, TrainerEntry, WorldBattleState,
         },
         wild::WildEntry,
     },

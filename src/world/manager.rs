@@ -47,7 +47,7 @@ impl WorldManager {
     ) -> Result<Self, ImageError> {
         let (world, receiver) = split();
         Ok(Self {
-            map: GameWorldMapManager::new(ctx, world.clone()),
+            map: GameWorldMapManager::new(ctx, world),
             menu: StartMenu::new(dex, party, bag, sender.clone()),
             text: TextWindow::new(ctx)?,
             sender,
