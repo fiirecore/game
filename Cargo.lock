@@ -281,7 +281,8 @@ dependencies = [
 
 [[package]]
 name = "firecore-battle-gui"
-version = "0.0.1"
+version = "0.0.2"
+source = "git+https://github.com/DoNotDoughnut/firecore-engine?rev=ea35f18#ea35f184a2f792479778ecf8607f81961135ea9c"
 dependencies = [
  "arrayvec",
  "crossbeam-channel",
@@ -294,6 +295,7 @@ dependencies = [
 [[package]]
 name = "firecore-engine"
 version = "0.0.3"
+source = "git+https://github.com/DoNotDoughnut/firecore-engine?rev=ea35f18#ea35f184a2f792479778ecf8607f81961135ea9c"
 dependencies = [
  "enum-map",
  "firecore-font-builder",
@@ -347,6 +349,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-engine"
 version = "0.0.3"
+source = "git+https://github.com/DoNotDoughnut/firecore-engine?rev=ea35f18#ea35f184a2f792479778ecf8607f81961135ea9c"
 dependencies = [
  "enum-map",
  "firecore-engine",

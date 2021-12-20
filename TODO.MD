@@ -10,6 +10,9 @@
  - [ ] Fix player data creating
  - [ ] Actually save player data
  - [ ] Load more tile and location data from world binary
+ - [ ] Move battle intro transition to world code
+ - [ ] Reimplement scripts
+ - [ ] Fix BattleGui
 
 
 

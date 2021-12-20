@@ -76,8 +76,7 @@ impl WorldManager {
     pub fn update(&mut self, ctx: &mut Context, delta: f32, save: &mut PlayerData, console: bool) {
         if self.menu.alive() {
             self.menu.update(ctx, delta, &mut save.party, &mut save.bag);
-        }
-        if !self.menu.fullscreen() {
+        } else {
             if pressed(ctx, Control::Start) && !save.character.input_frozen && !console {
                 self.menu.spawn();
             }

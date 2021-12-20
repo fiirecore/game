@@ -4,7 +4,7 @@ use crate::{
 };
 use battlelib::default_engine::{EngineMoves, scripting::MoveScripts};
 use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-use firecore_battle_gui::{context::BattleGuiData, pokedex::PokedexClientData};
+use firecore_battle_gui::{context::BattleGuiData, pokedex::{PokedexClientData, engine::audio}};
 use std::rc::Rc;
 use worldlib::{serialized::SerializedWorld, events::*};
 
@@ -144,7 +144,10 @@ impl GameStateManager {
                         GameStates::Battle => warn!("Cannot start new battle, already in one!"),
                     },
                     GameActions::Save => self.sender.send(StateMessage::UpdateSave(save.clone())),
-                    GameActions::Exit => self.sender.send(StateMessage::Goto(MainStates::Menu)),
+                    GameActions::Exit => {
+                        audio::stop_music(ctx);
+                        self.sender.send(StateMessage::Goto(MainStates::Menu));
+                    },
                     GameActions::CommandError(error) => self.sender.send(StateMessage::CommandError(error)),
                 }
             }

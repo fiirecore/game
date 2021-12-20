@@ -32,8 +32,8 @@ opt-level = "z"
 
 [dependencies]
 # Battle GUI, also re-exports game engine
-# firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "4c35070", package = "firecore-battle-gui", default-features = false }
-firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
+firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "ea35f18", package = "firecore-battle-gui", default-features = false }
+# firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
 firecore-world = { path = "world" }
 
