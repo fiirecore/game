@@ -13,7 +13,7 @@ use crate::{
     LoadContext,
 };
 
-use crate::{split, Receiver};
+use firecore_world::events::{split, Receiver};
 
 use super::{console::Console, game::GameStateManager, menu::MenuStateManager, StateMessage};
 
@@ -47,9 +47,8 @@ impl State for StateManager {
         }
     }
     fn update(&mut self, ctx: &mut Context, delta: f32) {
-        self.console.update(ctx);
 
-        if let Some(command) = self.console.update(ctx) {
+        if let Some(command) = self.console.update(ctx, delta, self.game.save.as_mut().map(|p| &mut p.character)) {
             match self.state {
                 MainStates::Menu => (),
                 MainStates::Game => self.game.process(command),
@@ -58,7 +57,7 @@ impl State for StateManager {
 
         match self.state {
             MainStates::Menu => self.menu.update(ctx, delta, &mut self.saves.list),
-            MainStates::Game => self.game.update(ctx, delta),
+            MainStates::Game => self.game.update(ctx, delta, self.console.alive()),
         }
 
         for message in self.receiver.try_iter() {
@@ -85,7 +84,8 @@ impl State for StateManager {
                     }
                 }
                 StateMessage::Seed(seed) => self.game.seed(seed as _),
-                StateMessage::Exit => crate::engine::quit(ctx),
+                StateMessage::Exit => ctx.quit(),
+                StateMessage::CommandError(error) => self.console.error(error),
             }
         }
 
@@ -134,16 +134,9 @@ impl StateManager {
         //     })
         // };
 
-        use crate::engine::{graphics::scaling::*, util};
+        use crate::engine::graphics::{ScalingMode, set_scaling_mode};
 
-        let scaler = ScreenScaler::with_size(
-            ctx,
-            util::WIDTH as _,
-            util::HEIGHT as _,
-            ScalingMode::Stretch,
-        );
-
-        set_scaler(ctx, scaler);
+        set_scaling_mode(ctx, ScalingMode::Stretch, Some(crate::SCALE));
 
         let (sender, receiver) = split();
 
@@ -152,7 +145,7 @@ impl StateManager {
 
             menu: MenuStateManager::new(ctx, sender.clone())
                 .unwrap_or_else(|err| panic!("Could not create main menu with error {}", err)),
-            game: GameStateManager::new(ctx, load.dex, load.btl, load.world, sender).unwrap_or_else(|err| panic!("Could not create game state with error {}", err)),
+            game: GameStateManager::new(ctx, load.dex, load.btl, load.world, load.battle, sender).unwrap_or_else(|err| panic!("Could not create game state with error {}", err)),
 
             console: Console::default(),
 

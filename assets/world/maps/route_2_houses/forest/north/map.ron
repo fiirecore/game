@@ -1,5 +1,8 @@
 (
-    identifier: "forest_north",
+    identifier: (
+        map: Some("route_2_houses"),
+        index: "forest_north",
+    ),
     name: "Viridian Forest Warp - North",
     file: "15.3_ROUTE 2.map",
 )

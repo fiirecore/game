@@ -1,31 +1,39 @@
 # To - do List
 
-* Coding world in Bevy > Coding world in macroquad
+
+
+ - [X] Load asset files from AppData folder
+ - [ ] Fix pokemon not getting updated after battle
+ - [ ] Fix Battle GUI sucking
+ - [ ] Fix higher level pokemon not doing correct damage in battles
+ - [ ] Correctly add BattleCloser to BattleGui
+ - [ ] Fix player data creating
+ - [ ] Actually save player data
+ - [ ] Load more tile and location data from world binary
+
+
 
 * Figure out if world updating code needs a rewrite
 * Move animations through scripting
-* Move BattleCloser to Battle GUI crate
 
-* Online battles over discord rich presence
+* Online battles over discord rich presence?
 
 * Pokemarts and Pokemon centers implementation
-* World data save
 * Add rhai scripting to world and NPC scripting
 * Maybe world manager gives out more MoveResult
 * Town Map item
 
 * Persistent moves in battle
 
-* Add jumping over one way tiles (cliffs)
+* Add proper jumping over one way tiles (cliffs)
 
 * Add UNKNOWN pokemon, move and item values
 * Text line wrapping
 
 
 * Command shortcuts and better parsing
-* Specify default player location in world binary 
 * Moves use PP in battle
--* Running from battle chance and text
+* Running from battle chance and text
 
 ## Other
 

@@ -3,15 +3,8 @@
     name: "Route 1",
     file: "3.19_ROUTE 1.map",
 
-    chunk: Some((
-        coords: (
-            x: 60,
-            y: 220,
-        ),
-        connections: [
-            Down: ("pallet", 0),
-            Up: ("viridian", -12),
-        ],
-        // map_icon: Some(Route(2, 6, 1, 2))
-    )),
+    chunk: {
+        Down: ("pallet", 0),
+        Up: ("viridian", -12),
+    },
 )

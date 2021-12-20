@@ -1,13 +1,12 @@
 use crate::{
     command::{CommandProcessor, CommandResult},
-    saves::PlayerData,
+    saves::PlayerData, game::battle_glue::BattleId,
 };
+use battlelib::default_engine::{EngineMoves, scripting::MoveScripts};
 use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-use firecore_battle_gui::{context::BattleGuiContext, pokedex::context::PokedexClientData};
+use firecore_battle_gui::{context::BattleGuiData, pokedex::PokedexClientData};
 use std::rc::Rc;
-use worldlib::serialized::SerializedWorld;
-
-use crate::{split, Receiver, Sender};
+use worldlib::{serialized::SerializedWorld, events::*};
 
 use crate::{
     engine::{
@@ -39,14 +38,13 @@ impl Default for GameStates {
 #[derive(Clone)]
 pub enum GameActions {
     Battle(BattleEntry),
+    CommandError(&'static str),
     Save,
     Exit,
 }
 
 pub struct GameStateManager {
     state: GameStates,
-
-    dex: Rc<PokedexClientData>,
 
     world: WorldManager,
     battle: BattleManager<&'static Pokemon, &'static Move, &'static Item>,
@@ -61,8 +59,9 @@ impl GameStateManager {
     pub(crate) fn new(
         ctx: &mut Context,
         dex: PokedexClientData,
-        btl: BattleGuiContext,
+        btl: BattleGuiData,
         wrld: SerializedWorld,
+        battle: (EngineMoves, MoveScripts),
         sender: Sender<StateMessage>,
     ) -> Result<Self, ImageError> {
         let dex = Rc::new(dex);
@@ -71,23 +70,20 @@ impl GameStateManager {
 
         let (actions, receiver) = split();
 
-        let mut world = WorldManager::new(
+        let world = WorldManager::new(
             ctx,
             dex.clone(),
             party.clone(),
             bag.clone(),
             actions,
+            wrld,
         )?;
-
-        world.load(ctx, wrld);
 
         Ok(Self {
             state: GameStates::default(),
 
             world,
-            battle: BattleManager::new(ctx, btl, dex.clone(), party, bag),
-
-            dex,
+            battle: BattleManager::new(ctx, btl, dex, party, bag, battle),
 
             save: None,
 
@@ -98,14 +94,15 @@ impl GameStateManager {
 
     pub fn seed(&mut self, seed: u64) {
         self.world.seed(seed);
+        self.battle.seed(seed);
     }
 }
 
 impl GameStateManager {
-    pub fn start(&mut self, ctx: &mut Context) {
+    pub fn start(&mut self, _ctx: &mut Context) {
         if let Some(save) = self.save.as_mut() {
             match self.state {
-                GameStates::World => self.world.start(ctx, &mut save.character, &mut save.party),
+                GameStates::World => self.world.start(&mut save.character),
                 GameStates::Battle => (),
             }
         }
@@ -119,7 +116,7 @@ impl GameStateManager {
         // Ok(())
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, console: bool) {
         // Speed game up if spacebar is held down
 
         let delta = delta
@@ -148,13 +145,14 @@ impl GameStateManager {
                     },
                     GameActions::Save => self.sender.send(StateMessage::UpdateSave(save.clone())),
                     GameActions::Exit => self.sender.send(StateMessage::Goto(MainStates::Menu)),
+                    GameActions::CommandError(error) => self.sender.send(StateMessage::CommandError(error)),
                 }
             }
 
             match self.state {
                 GameStates::World => {
                     self.world
-                        .update(ctx, delta, &mut save.character, &mut save.party, &save.bag);
+                        .update(ctx, delta, save, console);
                 }
                 GameStates::Battle => {
                     self.battle.update(
@@ -169,9 +167,9 @@ impl GameStateManager {
                         save.character.input_frozen = false;
                         save.character.unfreeze();
                         if let Some(winner) = self.battle.winner() {
-                            let winner = winner.0.as_ref() == Some(&save.id);
+                            let winner = winner == &BattleId::Player;
                             let trainer = self.battle.update_data(winner, &mut save.character);
-                            self.world.update_world(
+                            self.world.post_battle(
                                 &mut save.character,
                                 &mut save.party,
                                 winner,
@@ -179,11 +177,11 @@ impl GameStateManager {
                             );
                         }
                         self.state = GameStates::World;
-                        self.world.start(ctx, &mut save.character, &mut save.party);
+                        self.world.start(&mut save.character);
                     }
                 }
             }
-        } else if self.sender.0.is_empty() {
+        } else if self.sender.is_empty() {
             self.sender.send(StateMessage::Goto(MainStates::Menu));
         }
         // Ok(())

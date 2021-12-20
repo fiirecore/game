@@ -1,9 +1,8 @@
 (
     id: "oak",
     npc: (
-        name: "Oak",
-        type: "prof_oak",
         character: (
+            name: "Oak",
             position: (
                 coords: (
                     x: 6,
@@ -11,6 +10,13 @@
                 ),
                 direction: Down
             ),
-        )
-    )
+        ),
+        type: "prof_oak",
+        interact: Message([
+            [
+                "%n: Hello %p! Have you",
+                "seen %r?"
+            ]
+        ])
+    ),
 )

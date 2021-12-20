@@ -18,9 +18,8 @@
         NpcAdd(
             "oak",
             (
-                name: "Oak",
-                type: "prof_oak",
                 character: (
+                    name: "Oak",
                     position: (
                         coords: (
                             x: 10,
@@ -28,7 +27,8 @@
                         ),
                         direction: Up
                     ),
-                )
+                ),
+                type: "prof_oak",
             )
         ),
         PlayMusic("oak"),
@@ -91,9 +91,8 @@
         NpcAdd(
             "rival",
             (
-                name: "%r",
-                type: "rival",
                 character: (
+                    name: "%r",
                     position: (
                         coords: (
                             x: 5,
@@ -102,6 +101,7 @@
                         direction: Down,
                     ),
                 ),
+                type: "rival",
                 trainer: Some(
                     (
                         battle_on_interact: false,

@@ -16,8 +16,10 @@ pub const CHANCES: &[u8; 12] = &[20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1];
 #[derive(Serialize, Deserialize)]
 pub struct WildEntry {
     pub tiles: Option<Vec<TileId>>,
+    /// Out of 255
     #[serde(default = "default_ratio")]
     pub ratio: u8,
+    /// To - do: make this better (like add chances for double battles)
     pub pokemon: [WildPokemon; 12],
 }
 

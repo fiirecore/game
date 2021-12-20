@@ -2,9 +2,13 @@ use std::borrow::Cow;
 
 use crate::engine::{
     graphics::{draw_text_center, Color, DrawParams},
-    gui::{Panel, TextColor},
-    input::{controls::{pressed, Control}, mouse::{self, MouseButton}},
+    gui::Panel,
+    input::{
+        controls::{pressed, Control},
+        mouse::{self, MouseButton},
+    },
     math::Vec2,
+    text::MessagePage,
     Context,
 };
 
@@ -134,7 +138,7 @@ impl ButtonBase {
             true,
             center.x,
             center.y,
-            DrawParams::color(TextColor::BLACK),
+            DrawParams::color(MessagePage::BLACK),
         );
     }
 }

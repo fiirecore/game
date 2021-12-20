@@ -1,5 +1,5 @@
 use crate::engine::{
-    util::{WIDTH, HEIGHT},
+    utils::{WIDTH, HEIGHT},
     math::Vec2,
 };
 

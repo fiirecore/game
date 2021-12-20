@@ -1,11 +1,10 @@
-use crate::pokedex::context::PokedexClientData;
+use crate::pokedex::PokedexClientData;
 
 use crate::{
     engine::{
-        graphics::draw_rectangle,
-        inner::prelude::Color,
+        graphics::{draw_rectangle, Color},
         gui::MessageBox,
-        util::{Completable, Reset, HEIGHT, WIDTH},
+        utils::{Completable, Reset, HEIGHT, WIDTH},
         Context,
     },
     game::battle_glue::{BattleId, BattleTrainerEntry},
@@ -56,7 +55,7 @@ impl BattleCloser for WildBattleCloser {
     }
 
     fn draw(&self, ctx: &mut Context) {
-        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, unsafe { std::mem::transmute(self.color) });
+        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.color);
     }
 
     fn draw_battle(&self, _ctx: &mut Context) {}

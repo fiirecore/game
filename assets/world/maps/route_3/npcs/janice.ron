@@ -1,9 +1,8 @@
 (
     id: "janice",
     npc: (
-        name: "Janice",
-        type: "lass",
         character: (
+            name: "Janice",
             position: (
                 coords: (
                     x: 19,
@@ -12,14 +11,12 @@
                 direction: Left
             ),
         ),
+        type: "lass",
         interact: Message([
-            (
-                lines: [
-                    "You shouldn't be staring if you",
-                    "don't want to battle!"
-                ],
-                color: Red,
-            )
+            [
+                "You shouldn't be staring if you",
+                "don't want to battle!"
+            ],
         ]),
         trainer: Some((
             tracking: Some(5),

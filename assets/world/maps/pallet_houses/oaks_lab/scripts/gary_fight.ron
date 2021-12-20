@@ -22,7 +22,7 @@
             "rival",
             [
                 [
-                    "%r: Wait, %p!",
+                    "%n: Wait, %p!",
                     "Let's check out our POKEMON!"
                 ],
                 [

@@ -3,17 +3,10 @@
     name: "Pewter City",
     file: "3.2_PEWTER CITY.map",
 
-    chunk: Some((
-        coords: (
-            x: 48,
-            y: 60,
-        ),
-        connections: [
-            "route_2",
-            "route_3",
-        ],
-        // map_icon: Some(City(2, 2))
-    )),
+    chunk: {
+        Down: ("route_2", 12),
+        Right: ("route_3", 10),
+    },
 
     settings: (
         fly_position: Some((x: 17, y: 26))

@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
 use crate::{
-    character::npc::{trainer::TrainerDisable, Npc, NpcId, BadgeId},
-    map::warp::WarpDestination,
-    positions::{Location, Position, LocationId},
+    character::npc::{BadgeId, Npc, NpcId},
+    map::{battle::TrainerEntry, warp::WarpDestination},
+    positions::{Location, LocationId, Position},
     script::{world::WorldAction, ScriptId},
 };
 
@@ -25,6 +25,8 @@ pub struct WorldMapState {
     pub heal: Option<(Location, Position)>,
     #[serde(default)]
     pub badges: HashSet<BadgeId>,
+    #[serde(default)]
+    pub debug_draw: bool,
 }
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
@@ -33,7 +35,6 @@ pub struct WorldBattleState {
     pub battling: Option<TrainerEntry>,
 }
 impl WorldBattleState {
-
     pub fn insert(&mut self, location: &Location, npc: NpcId) {
         if let Some(battled) = self.battled.get_mut(location) {
             battled.insert(npc);
@@ -45,19 +46,12 @@ impl WorldBattleState {
     }
 
     pub fn battled(&mut self, map: &Location, npc: &NpcId) -> bool {
-        self.battled.get(map).map(|battled| battled.contains(npc)).unwrap_or_default()
+        self.battled
+            .get(map)
+            .map(|battled| battled.contains(npc))
+            .unwrap_or_default()
     }
 }
-
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TrainerEntry {
-    pub map: Location,
-    pub id: NpcId,
-    pub disable_others: TrainerDisable,
-}
-
-pub type TrainerEntryRef<'a> = &'a mut Option<TrainerEntry>;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WorldGlobalScriptData {

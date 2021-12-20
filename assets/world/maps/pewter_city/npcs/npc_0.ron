@@ -1,9 +1,8 @@
 (
     id: "0",
     npc: (
-        name: "Npc 0",
-        type: "woman",
         character: (
+            name: "Npc 0",
             position: (
                 coords: (
                     x: 6,
@@ -12,6 +11,7 @@
                 direction: Down,
             ),
         ),
+        type: "woman",
         movement: LookAround,
     ),
 )

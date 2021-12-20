@@ -4,7 +4,7 @@ use crate::{
     saves::SavedPlayer,
     state::{MainStates, StateMessage},
 };
-use crate::{split, Receiver, Sender};
+use firecore_world::events::{split, Receiver, Sender};
 
 use crate::engine::Context;
 

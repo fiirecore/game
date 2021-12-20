@@ -1,52 +1,59 @@
 use crate::engine::{
+    error::ImageError,
     graphics::{DrawParams, Texture},
     math::Rectangle,
     Context,
 };
-use worldlib::positions::Coordinate;
+
+use worldlib::{positions::Coordinate, map::WorldMap};
 
 use crate::world::RenderCoords;
 
-#[derive(Default)]
 pub struct PlayerBushTexture {
+    pub texture: Texture,
     instances: Vec<BushRustle>,
     pub in_bush: bool,
+}
+
+impl PlayerBushTexture {
+    pub fn new(ctx: &mut Context) -> Result<Self, ImageError> {
+        Ok(Self {
+            texture: Texture::new(
+                ctx,
+                include_bytes!("../../../../../assets/world/textures/player/bush_temp.png"),
+            )?,
+            instances: Vec::new(),
+            in_bush: false,
+        })
+    }
+
+    pub fn check(&mut self, map: &WorldMap, coords: Coordinate) {
+        self.in_bush = map.tile(coords) == Some(0x0D);
+        if self.in_bush {
+            self.add(coords);
+        }
+    }
 }
 
 struct BushRustle {
     counter: f32,
     coords: Coordinate,
-    texture: &'static Texture,
+    texture: Texture,
 }
 
 impl BushRustle {
-    pub fn new(coords: Coordinate) -> Self {
+    pub fn new(coords: Coordinate, texture: Texture) -> Self {
         Self {
             counter: 0.0,
             coords,
-            texture: bush_rustle(),
+            texture,
         }
     }
 }
 
-static mut BUSH_TEXTURE: Option<Texture> = None;
-
-pub(crate) fn new(ctx: &mut Context) {
-    unsafe {
-        BUSH_TEXTURE = Some(Texture::new(
-            ctx,
-            include_bytes!("../../../../../assets/world/textures/player/bush_temp.png"),
-        ).unwrap())
-    }
-}
-
-fn bush_rustle() -> &'static Texture {
-    unsafe { BUSH_TEXTURE.as_ref().unwrap() }
-}
-
 impl PlayerBushTexture {
     pub fn add(&mut self, coords: Coordinate) {
-        self.instances.push(BushRustle::new(coords));
+        self.instances.push(BushRustle::new(coords, self.texture.clone()));
     }
     pub fn update(&mut self, delta: f32) {
         for (index, rustle) in self.instances.iter_mut().enumerate() {

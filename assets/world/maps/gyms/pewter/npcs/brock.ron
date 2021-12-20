@@ -1,9 +1,8 @@
 (
     id: "brock",
     npc: (
-        name: "Brock",
-        type: "brock",
         character: (
+            name: "Brock",
             position: (
                 coords: (
                     x: 6,
@@ -12,6 +11,7 @@
                 direction: Down
             ),
         ),
+        type: "brock",
         interact: Message([
             [
                 "There are all kinds of TRAINERS in",
@@ -73,6 +73,8 @@
                     gender: Some(Male),
                 )
             ],
+            
+            badge: Some("boulder"),
 
             disable: Many([
                 "liam",

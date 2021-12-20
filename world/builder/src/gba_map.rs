@@ -1,4 +1,4 @@
-use worldlib::map::{MapSize, MovementId, TileId};
+use worldlib::map::{MovementId, TileId};
 
 pub struct GbaMap {
     pub music: u8,
@@ -11,8 +11,12 @@ pub struct GbaMap {
 }
 
 impl GbaMap {
-    pub fn load(file: Vec<u8>) -> Self {
+    pub fn load(file: Vec<u8>) -> Result<Self, GbaMapError> {
         let bytes = file;
+
+        if bytes.len() < 40 {
+            return Err(GbaMapError::EndOfFile);
+        }
 
         let music = bytes[40];
 
@@ -35,6 +39,10 @@ impl GbaMap {
 
         let size = width as usize * height as usize;
 
+        if bytes.len() < 58 + size * 2 {
+            return Err(GbaMapError::EndOfFile);
+        }
+
         let mut tiles: Vec<TileId> = Vec::with_capacity(size);
         let mut movements: Vec<MovementId> = Vec::with_capacity(size);
 
@@ -49,7 +57,7 @@ impl GbaMap {
             movements.push(movement);
         }
 
-        Self {
+        Ok(Self {
             music,
             width,
             height,
@@ -57,7 +65,7 @@ impl GbaMap {
             borders,
             tiles,
             movements,
-        }
+        })
     }
 
     pub fn map_music(music: u8) -> Result<tinystr::TinyStr16, GbaMapError> {
@@ -90,6 +98,7 @@ impl GbaMap {
 #[derive(Debug)]
 pub enum GbaMapError {
     MusicMapping(u8),
+    EndOfFile,
 }
 
 impl std::error::Error for GbaMapError {}
@@ -102,6 +111,7 @@ impl std::fmt::Display for GbaMapError {
                 "Could not get map music id from {} because it has not been added yet!",
                 music,
             ),
+            GbaMapError::EndOfFile => write!(f, "Reached end of file too soon!"),
         }
     }
 }

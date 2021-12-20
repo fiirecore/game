@@ -1,0 +1,28 @@
+[package]
+name = "firecore-storage"
+version = "0.5.0-beta.2021-07-02"
+authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+edition = "2021"
+readme = "README.md"
+
+[features]
+default = ["io"]
+io = ["firecore-engine", "miniquad-cookie"]
+
+[dependencies]
+
+# firecore-engine = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "4c35070", default-features = false, optional = true }
+firecore-engine = { path = "../../firecore/engine", default-features = false, optional = true }
+
+### Serialization
+
+serde = "1"
+ron = { version = "0.7" }
+bincode = { version = "1" }
+
+### File management
+
+dirs-next = "2.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie", optional = true }

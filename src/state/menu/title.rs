@@ -1,7 +1,8 @@
 use crate::{
     state::menu::{MenuActions, MenuStates},
-    Sender,
 };
+
+use firecore_world::events::Sender;
 
 use crate::engine::{
     audio::{play_music, stop_music},

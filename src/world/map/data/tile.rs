@@ -3,16 +3,13 @@ use crate::engine::{
     math::Rectangle,
     Context,
 };
+use firecore_world::serialized::{Animated, Palettes};
 use std::collections::HashMap;
 use worldlib::{
     map::{PaletteId, TileId},
-    serialized::SerializedTextures,
     TILE_SIZE,
 };
 
-use crate::world::map::warp::WarpTransition;
-
-#[derive(Default)]
 pub struct TileTextureManager {
     pub palettes: HashMap<PaletteId, Texture>,
     animated: HashMap<TileId, Texture>,
@@ -22,31 +19,18 @@ pub struct TileTextureManager {
 impl TileTextureManager {
     const TEXTURE_TICK: f32 = 0.25; // i think its 16/60 not 15/60
 
-    pub fn setup(
-        &mut self,
-        ctx: &mut Context,
-        warper: &mut WarpTransition,
-        textures: SerializedTextures,
-    ) {
-        self.palettes = textures
-            .palettes
-            .into_iter()
-            .map(|(id, image)| (id, Texture::new(ctx, &image).unwrap()))
-            .collect::<HashMap<PaletteId, Texture>>();
-        self.animated = textures
-            .animated
-            .into_iter()
-            .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
-            .collect::<HashMap<TileId, Texture>>();
-
-        let mut map = HashMap::with_capacity(textures.doors.len());
-        for (loc, image) in textures.doors {
-            let texture = Texture::new(ctx, &image).unwrap();
-            for loc in loc {
-                map.insert(loc, texture.clone());
-            }
+    pub fn new(ctx: &mut Context, palettes: Palettes, animated: Animated) -> Self {
+        Self {
+            palettes: palettes
+                .into_iter()
+                .map(|(id, image)| (id, Texture::new(ctx, &image).unwrap()))
+                .collect::<HashMap<PaletteId, Texture>>(),
+            animated: animated
+                .into_iter()
+                .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
+                .collect::<HashMap<TileId, Texture>>(),
+            accumulator: 0.0,
         }
-        warper.doors = map;
     }
 
     pub fn update(&mut self, delta: f32) {

@@ -1,9 +1,8 @@
 use crate::engine::{
-    graphics::draw_rectangle,
-    inner::{self, prelude::Color},
+    graphics::{draw_rectangle, Color},
     // graphics::{get_transform_matrix, reset_transform_matrix, set_transform_matrix},
     // math::{Vec2, Vec3},
-    util::{Completable, Reset, HEIGHT, WIDTH},
+    utils::{Completable, Reset, HEIGHT, WIDTH},
     Context,
 };
 
@@ -21,7 +20,7 @@ pub struct FlashBattleTransition {
 
 impl FlashBattleTransition {
     const ZOOM_OFFSET: f32 = 1.0;
-    const DEFAULT_COLOR: Color = inner::prelude::Color::new(1.0, 1.0, 1.0, 0.0);
+    const DEFAULT_COLOR: Color = Color::new(1.0, 1.0, 1.0, 0.0);
     const FINAL_INDEX: u8 = 4;
 }
 
@@ -61,15 +60,25 @@ impl BattleTransition for FlashBattleTransition {
         }
         if self.zoom {
             self.zoom_offset += 600.0 * delta;
-            inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(inner::prelude::Rect::new(self.zoom_offset / 2.0, self.zoom_offset / 2.0, WIDTH - self.zoom_offset, HEIGHT - self.zoom_offset)))
+            // inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(
+            //     inner::prelude::Rect::new(
+            //         self.zoom_offset / 2.0,
+            //         self.zoom_offset / 2.0,
+            //         WIDTH - self.zoom_offset,
+            //         HEIGHT - self.zoom_offset,
+            //     ),
+            // ))
         }
         if self.finished() {
-            inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(inner::prelude::Rect::new(0.0, 0.0, WIDTH, HEIGHT)));
+            
+            // inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(
+            //     inner::prelude::Rect::new(0.0, 0.0, WIDTH, HEIGHT),
+            // ));
         }
     }
 
     fn draw(&self, ctx: &mut Context) {
-        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, unsafe { std::mem::transmute(self.screen) });
+        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.screen);
     }
 }
 

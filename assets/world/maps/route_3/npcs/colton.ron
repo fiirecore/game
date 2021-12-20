@@ -1,9 +1,8 @@
 (
     id: "colton",
     npc: (
-        name: "Colton",
-        type: "bug_catcher",
         character: (
+            name: "Colton",
             position: (
                 coords: (
                     x: 13,
@@ -12,14 +11,12 @@
                 direction: Right
             ),
         ),
+        type: "bug_catcher",
         interact: Message([
-            (
-                lines: [
+            [
                     "There are other kinds of POKEMON", 
                     "than the ones you find in forests."
-                ],
-                color: Blue,
-            )
+            ],
         ]),
         trainer: Some((
             tracking: Some(3),

@@ -1,34 +1,46 @@
 use std::fmt::Debug;
 
 use crate::pokedex::pokemon::{owned::SavedPokemon, party::Party};
+use firecore_battle_gui::pokedex::NpcGroupId;
+use firecore_world::character::{npc::NpcId, Worth};
 use worldlib::character::npc::{trainer::TransitionId, BadgeId};
-
-pub use worldlib::TrainerId;
 
 /***********************/
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct BattleEntry {
     pub id: BattleId,
-    pub name: Option<String>,
     pub party: Party<SavedPokemon>,
     pub trainer: Option<BattleTrainerEntry>,
     pub active: usize,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct BattleTrainerEntry {
+    pub name: String,
+    pub badge: Option<BadgeId>,
+    pub sprite: NpcGroupId,
     pub transition: TransitionId,
-    pub gym_badge: Option<BadgeId>,
     pub victory_message: Vec<Vec<String>>,
-    pub worth: u16,
+    pub worth: Worth,
 }
 
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct BattleId(pub Option<TrainerId>);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum BattleId {
+    Default,
+    Player,
+    Wild,
+    Trainer(NpcId),
+}
+
+impl Default for BattleId {
+    fn default() -> Self {
+        Self::Default
+    }
+}
 
 impl core::fmt::Display for BattleId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.0.fmt(f)
+        core::fmt::Debug::fmt(&self, f)
     }
 }

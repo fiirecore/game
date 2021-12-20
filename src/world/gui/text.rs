@@ -3,7 +3,7 @@ use crate::engine::{
     graphics::Texture,
     gui::MessageBox,
     math::{vec2, Vec2},
-    util::Entity,
+    utils::Entity,
     Context,
 };
 

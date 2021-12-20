@@ -1,9 +1,8 @@
 (
     id: "nurse",
-    npc: (
-        name: "Joy",    
-        type: "nurse",
+    npc: (   
         character: (
+            name: "Joy", 
             position: (
                 coords: (
                     x: 7,
@@ -12,5 +11,6 @@
                 direction: Down
             ),
         ),
+        type: "nurse",
     ),
 )

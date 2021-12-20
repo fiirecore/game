@@ -1,6 +1,7 @@
+use firecore_world::events::Sender;
+
 use crate::{
     saves::{GameBag, GameParty},
-    Sender,
 };
 
 use std::rc::Rc;
@@ -9,13 +10,13 @@ use crate::engine::{
     gui::Panel,
     input::controls::{pressed, Control},
     math::Vec2,
-    util::Entity,
+    utils::Entity,
     Context,
 };
 use crate::saves::PlayerData;
 use crate::{
     pokedex::{
-        context::PokedexClientData,
+        PokedexClientData,
         gui::{bag::BagGui, party::PartyGui},
     },
     state::game::GameActions,
@@ -53,7 +54,7 @@ impl StartMenu {
 
     pub fn update(&mut self, ctx: &Context, delta: f32, party: &mut GameParty, bag: &GameBag) {
         if self.bag.alive() {
-            self.bag.input(ctx, &bag.items);
+            self.bag.input(ctx, bag);
             // bag_gui.up
         } else if self.party.alive() {
             self.party.input(ctx, &self.dex, party);
@@ -110,7 +111,7 @@ impl StartMenu {
     pub fn draw<'d>(&self, ctx: &mut Context, save: &PlayerData) {
         if self.alive {
             if self.bag.alive() {
-                self.bag.draw(ctx, &self.dex, &save.bag.items);
+                self.bag.draw(ctx, &self.dex, &save.bag);
             } else if self.party.alive() {
                 self.party.draw(ctx, &save.party);
             } else {

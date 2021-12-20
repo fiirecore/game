@@ -1,30 +1,29 @@
-use crate::engine::gui::MessagePage;
-use crate::saves::PlayerData;
+use firecore_world::character::{player::PlayerCharacter, Character};
+
+use crate::engine::text::MessagePage;
 
 const PLAYER_ID: &str = "%p";
 const RIVAL_ID: &str = "%r";
+const NPC_ID: &str = "%n";
 
-pub fn process_messages(pages: &mut [MessagePage], save: &PlayerData) {
+pub fn process_messages(pages: &mut [MessagePage], player: &PlayerCharacter, npc: Option<&Character>) {
     for page in pages {
         for lines in page.lines.iter_mut() {
-            process_string(lines, save);
+            process_string(lines, player, npc);
         }
     }
 }
 
-pub fn process_string(string: &mut String, save: &PlayerData) {
+pub fn process_string(string: &mut String, player: &PlayerCharacter, npc: Option<&Character>) {
     if string.contains(PLAYER_ID) {
-        *string = string.replace("%p", player_name(save));
+        *string = string.replace(PLAYER_ID, &player.name);
     }
     if string.contains(RIVAL_ID) {
-        *string = string.replace("%r", rival_name());
+        *string = string.replace(RIVAL_ID, &player.rival);
     }
-}
-
-pub fn player_name<'d>(player_save: &'d PlayerData) -> &'d str {
-    &player_save.name
-}
-
-pub fn rival_name() -> &'static str {
-    "Gary"
+    if let Some(npc) = npc {
+        if string.contains(NPC_ID) {
+            *string = string.replace(NPC_ID, &npc.name);
+        }
+    }
 }

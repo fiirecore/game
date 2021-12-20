@@ -1,5 +1,8 @@
 (
-    identifier: "museum",
+    identifier: (
+        map: Some("pewter_houses"),
+        index: "museum",
+    ),
     name: "Pewter City Museum",
     file: "6.0_PEWTER CITY.map",
 )

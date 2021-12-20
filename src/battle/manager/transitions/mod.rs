@@ -1,7 +1,7 @@
-use crate::pokedex::context::PokedexClientData;
+use crate::pokedex::PokedexClientData;
 
 use crate::{
-    engine::{gui::MessageBox, util::Completable, Context},
+    engine::{gui::MessageBox, utils::Completable, Context},
     game::battle_glue::{BattleId, BattleTrainerEntry},
 };
 

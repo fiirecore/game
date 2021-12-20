@@ -24,7 +24,5 @@ pub struct NpcType {
 #[serde(deny_unknown_fields)]
 pub struct TrainerType {
     pub name: String,
-    #[serde(default)]
-    pub badge: Option<BadgeId>,
     pub music: Option<TinyStr16>,
 }

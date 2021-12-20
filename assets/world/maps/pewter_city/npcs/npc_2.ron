@@ -1,9 +1,8 @@
 (
     id: "2",
     npc: (
-        name: "Npc 2",
-        type: "fat_man",
         character: (
+            name: "Npc 2",
             position: (
                 coords: (
                     x: 21,
@@ -12,29 +11,21 @@
                 direction: Down
             ),
         ),
+        type: "fat_man",
         movement: LookAround,
         interact: Message([
-            (
-                color: Blue,
-                lines: [
-                    "There aren't many serious POKEMON",
-                    "TRAINERS here."
-                ]
-            ),
-            (
-                color: Blue,
-                lines: [
-                    "They're all like BUG CATCHERS,",
-                    "you know, just hobbyists."
-                ]
-            ),
-            (
-                color: Blue,
-                lines: [
-                    "But PEWTER GYM's BROCK isn't like",
-                    "that, not one bit."
-                ]
-            )
+            [
+                "There aren't many serious POKEMON",
+                "TRAINERS here."
+            ],
+            [
+                "They're all like BUG CATCHERS,",
+                "you know, just hobbyists."
+            ],
+            [
+                "But PEWTER GYM's BROCK isn't like",
+                "that, not one bit."
+            ],
         ]),
     ),
     

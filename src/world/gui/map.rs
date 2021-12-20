@@ -1,5 +1,5 @@
 use engine::{
-    util::{Entity, Reset, HEIGHT},
+    utils::{Entity, Reset, HEIGHT},
     input::{pressed, Control},
     graphics::{draw_rectangle_lines, draw_rectangle, draw_text_left},
     {

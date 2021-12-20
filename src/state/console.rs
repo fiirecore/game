@@ -1,141 +1,176 @@
-use std::collections::VecDeque;
+use firecore_world::character::player::PlayerCharacter;
 
 use crate::{
     command::CommandResult,
     engine::{
         graphics::{self, Color, DrawParams},
-        gui::TextColor,
         input::keyboard::{self, Key},
-        util::{Entity, Reset, HEIGHT},
+        text::MessagePage,
+        utils::{Reset, HEIGHT},
         Context,
     },
 };
 
-use crate::engine::log::warn;
-
 #[derive(Default)]
 pub struct Console {
     alive: bool,
-    commands: VecDeque<String>,
+    command: String,
+    previous: String,
+    error: Option<Error>,
     position: usize,
+    flicker: f32,
+}
+
+struct Error {
+    text: &'static str,
+    timer: f32,
+}
+
+impl From<&'static str> for Error {
+    fn from(text: &'static str) -> Self {
+        Self { text, timer: 3.0 }
+    }
 }
 
 impl Console {
-    const MAX_COMMANDS: usize = 10;
+    pub fn spawn(&mut self, ctx: &mut Context, player: Option<&mut PlayerCharacter>) {
+        while keyboard::get_char_queue(ctx).is_some() {}
+        if let Some(player) = player {
+            player.input_frozen = true;
+        }
+        self.alive = true;
+        self.reset();
+    }
 
-    pub fn update(&mut self, ctx: &Context) -> Option<CommandResult> {
+    pub fn alive(&self) -> bool {
+        self.alive
+    }
+
+    pub fn despawn(&mut self, player: Option<&mut PlayerCharacter>) {
+        self.alive = false;
+        if let Some(player) = player {
+            player.input_frozen = false;
+        }
+    }
+
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        delta: f32,
+        player: Option<&mut PlayerCharacter>,
+    ) -> Option<CommandResult> {
         match self.alive {
             true => {
-                if self.commands.is_empty() {
-                    self.commands.push_front(String::new());
+                self.flicker += delta;
+                if self.flicker > 2.0 {
+                    self.flicker -= 2.0;
                 }
-                if keyboard::pressed(ctx, Key::Slash) || keyboard::pressed(ctx, Key::Escape)
-                {
-                    self.despawn();
+
+                if let Some(error) = self.error.as_mut() {
+                    error.timer -= delta;
+                    if error.timer <= 0.0 {
+                        self.error = None;
+                    }
+                }
+
+                if keyboard::pressed(ctx, Key::Slash) || keyboard::pressed(ctx, Key::Escape) {
+                    self.despawn(player);
                     return None;
                 }
-                if keyboard::pressed(ctx, Key::Up) {
-                    self.position = (self.position + 1).min(self.commands.len().saturating_sub(1));
+
+                if keyboard::pressed(ctx, Key::Left) && self.position > 0 {
+                    self.position(false);
                 }
-                if keyboard::pressed(ctx, Key::Down) {
-                    self.position = self.position.saturating_sub(1);
+
+                if keyboard::pressed(ctx, Key::Right) && self.position < self.command.len() {
+                    self.position(true);
                 }
-                if keyboard::pressed(ctx, Key::Backspace) {
-                    if let Some(command) = self.commands.get_mut(self.position) {
-                        command.pop();
-                    }
+
+                if keyboard::pressed(ctx, Key::Backspace) && self.position <= self.command.len() && self.position > 0 {
+                    self.command.remove(self.position - 1);
+                    self.position(false);
                 }
+
                 if keyboard::pressed(ctx, Key::Enter) {
-                    if self.commands.len() == Self::MAX_COMMANDS {
-                        self.commands.pop_back();
-                    }
+                    self.previous = std::mem::take(&mut self.command);
+                    self.position = 0;
 
-                    self.commands.push_front(String::new());
+                    let mut args = self.previous.split_ascii_whitespace();
 
-                    if let Some(command) = self.commands.get(self.position + 1) {
-                        let mut args = command.split_ascii_whitespace();
-
-                        let command = match args.next() {
-                            Some(command) => command,
-                            None => {
-                                warn!(
-                                    "Could not parse command {} at position {}!",
-                                    command, self.position
-                                );
-                                self.alive = false;
-                                return None;
-                            }
-                        };
-
-                        self.alive = false;
-
+                    if let Some(command) = args.next() {
                         return Some(CommandResult { command, args });
+                    } else {
+                        self.error = Some(Error::from("Could not parse command!"));
+                        return None;
                     }
                 } else {
-                    while let Some(new) = crate::engine::inner::input::get_char_pressed() {
-                        match self.commands.get_mut(self.position) {
-                            Some(command) => command.push(new),
-                            None => warn!("Could not get current command at {}!", self.position),
-                        }
+                    while let Some(char) = keyboard::get_char_queue(ctx) {
+                        self.command.insert(self.position, char);
+                        self.position(true);
                     }
                 }
             }
             false => {
                 if keyboard::pressed(ctx, Key::Slash) && ctx.debug() {
-                    self.spawn();
+                    self.spawn(ctx, player);
                 }
             }
         }
         None
     }
 
+    fn position(&mut self, add: bool) {
+        match add {
+            true => self.position += 1,
+            false => self.position -= 1,
+        }
+        self.flicker = 1.0;
+    }
+
+    pub fn error(&mut self, error: &'static str) {
+        self.error = Some(Error::from(error))
+    }
+
     pub fn draw(&self, ctx: &mut Context) {
+
+        const Y: f32 = HEIGHT - 30.0;
+        const Y2: f32 = Y - 20.0;
+
+        if let Some(error) = self.error.as_ref() {
+            graphics::draw_text_left(ctx, &1, error.text, 8.0, Y2, DrawParams::color(Color::RED));
+        }
+
         if self.alive {
-            if let Some(command) = self.commands.get(self.position) {
-                const Y: f32 = HEIGHT - 30.0;
-                graphics::draw_rectangle(
-                    ctx,
-                    8.0,
-                    Y,
-                    graphics::text_len(ctx, &1, command) + 10.0,
-                    18.0,
-                    Color::BLACK,
-                );
-                graphics::draw_text_left(
-                    ctx,
-                    &1,
-                    "/",
-                    10.0,
-                    Y,
-                    DrawParams::color(TextColor::WHITE),
-                );
-                graphics::draw_text_left(
-                    ctx,
-                    &1,
-                    command,
-                    16.0,
-                    Y,
-                    DrawParams::color(TextColor::WHITE),
-                );
-            } else {
-                warn!("Cannot get string at position {}", self.position);
+            graphics::draw_rectangle(
+                ctx,
+                8.0,
+                Y,
+                graphics::text_len(ctx, &1, &self.command) + 10.0,
+                18.0,
+                Color::BLACK
+            );
+            graphics::draw_text_left(ctx, &1, "/", 10.0, Y, DrawParams::color(MessagePage::WHITE));
+            graphics::draw_text_left(
+                ctx,
+                &1,
+                &self.command,
+                16.0,
+                Y,
+                DrawParams::color(MessagePage::WHITE),
+            );
+            if self.flicker >= 1.0 {
+                if let Some(text) = self.command.get(..self.position) {
+                    graphics::draw_rectangle(
+                        ctx,
+                        16.0 + graphics::text_len(ctx, &1, text) as f32,
+                        Y + 1.0,
+                        1.0,
+                        14.0,
+                        Color::WHITE,
+                    );
+                }
             }
         }
-    }
-}
-
-impl Entity for Console {
-    fn spawn(&mut self) {
-        self.alive = true;
-        self.reset();
-    }
-
-    fn despawn(&mut self) {
-        self.alive = false;
-    }
-
-    fn alive(&self) -> bool {
-        self.alive
     }
 }
 

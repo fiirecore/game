@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use firecore_util::Coordinate;
+use firecore_utils::Coordinate;
 
 #[derive(Deserialize, Serialize)]
 pub struct MapObject {

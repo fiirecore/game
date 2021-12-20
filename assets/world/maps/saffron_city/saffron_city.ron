@@ -3,16 +3,10 @@
         name: "Saffron City",
         file: "3.11_SAFFRON CITY.map",
 
-    chunk: Some((
-        coords: (
-            x: 264,
-            y: 120,
-        ),
-        connections: [
-            "route_5",
-            "route_6",
-            "route_7",
-            "route_8",
-        ],
-    )),
+    chunk: {
+        Up: ("route_5", 0),
+        Down: ("route_6", 12),
+        Left: ("route_7", 10),
+        Right: ("route_8", 10),
+    },
 )

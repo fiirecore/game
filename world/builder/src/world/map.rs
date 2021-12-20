@@ -1,13 +1,18 @@
-use std::{path::Path, fmt::Display, collections::HashMap};
+use std::{
+    collections::HashMap,
+    ffi::{OsStr, OsString},
+    fmt::Display,
+    path::Path,
+};
 
-use serde::Deserialize;
 use worldlib::{
     map::{
         chunk::{ChunkConnections, WorldChunk},
-        manager::{Maps, WorldMapManager},
+        manager::Maps,
         WorldMap,
     },
-    serialized::SerializedTextures, positions::Location,
+    positions::Location,
+    serialized::SerializedTextures,
 };
 
 use crate::gba_map::{GbaMap, GbaMapError};
@@ -15,15 +20,15 @@ use crate::world::textures::get_textures;
 
 use super::MapConfig;
 
-pub mod list;
-
-pub fn load_world(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
+pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
     let maps_path = root_path.join("maps");
     let textures_path = root_path.join("textures");
 
+    let extension = Some(OsString::from("ron"));
+
     // let constants = get_constants(root_path);
 
-    let textures = get_textures(textures_path);
+    let textures = get_textures(textures_path, extension.as_deref());
     println!(
         "Loaded {} palettes and {} animated textures",
         textures.palettes.len(),
@@ -50,9 +55,13 @@ pub fn load_world(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
             })
             .path();
 
-        recurse_dir(&worlds, &mut world_maps);
-        
-        fn recurse_dir(worlds: &Path, world_maps: &mut HashMap<Location, WorldMap>) {
+        recurse_dir(&worlds, extension.as_deref(), &mut world_maps);
+
+        fn recurse_dir(
+            worlds: &Path,
+            extension: Option<&OsStr>,
+            world_maps: &mut HashMap<Location, WorldMap>,
+        ) {
             if let Ok(dir) = std::fs::read_dir(&worlds) {
                 let mut count = 0;
                 for entry in dir {
@@ -63,13 +72,15 @@ pub fn load_world(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
                         }
                         if let Some(ext) = file.extension() {
                             if ext == std::ffi::OsString::from("ron") {
-                                match load_maps(&worlds, &file) {
+                                match load_maps(&worlds, extension, &file) {
                                     Ok(map) => {
                                         world_maps.insert(map.id, map);
                                     }
-                                    Err(err) => eprintln!("Error loading map under {:?}: {}", worlds, err),
+                                    Err(err) => {
+                                        eprintln!("Error loading map under {:?}: {}", worlds, err)
+                                    }
                                 }
-    
+
                                 // if let Some(map_gui_loc) = map_gui_loc {
                                 //     map_gui_locs.insert(map_gui_loc.0, (map_gui_loc.1, map_gui_loc.2));
                                 // }
@@ -81,34 +92,29 @@ pub fn load_world(root_path: &Path) -> (WorldMapManager, SerializedTextures) {
                     for entry in std::fs::read_dir(&worlds).unwrap().flatten() {
                         let path = entry.path();
                         if path.is_dir() {
-                            recurse_dir(&path, world_maps)
+                            recurse_dir(&path, extension, world_maps)
                         }
                     }
                 }
             }
         }
-
     }
 
     println!("Finished loading maps!");
 
-    (world_maps.into(), textures)
-}
-
-#[derive(Deserialize)]
-#[serde(transparent)]
-struct SerializedMap {
-    // #[serde(with = "either::serde_untagged")]
-    // inner: Either<MapConfig, SerializedMapList>,
-    inner: MapConfig,
+    (world_maps, textures)
 }
 
 // pub(crate) type MapGuiPos = Option<(worldlib::map::MapIcon, String, Location)>;
 
-fn load_maps(root_path: &Path, file: &Path) -> Result<WorldMap, LoadMapError> {
+fn load_maps(
+    root_path: &Path,
+    extension: Option<&OsStr>,
+    file: &Path,
+) -> Result<WorldMap, LoadMapError> {
     println!("Loading map under: {:?}", root_path);
 
-    let extension = file
+    let file_extension = file
         .extension()
         .map(|str| {
             str.to_str()
@@ -124,20 +130,21 @@ fn load_maps(root_path: &Path, file: &Path) -> Result<WorldMap, LoadMapError> {
     });
 
     fn load<'de, E: Into<LoadMapError>>(
+        root_path: &Path,
+        extension: Option<&OsStr>,
         func: impl FnOnce(&'de str) -> Result<MapConfig, E>,
         data: &'de str,
-        root_path: &Path,
     ) -> Result<WorldMap, LoadMapError> {
         match (func)(data).map_err(Into::into) {
-            Ok(config) => Ok(load_map_from_config(root_path, config)?),
+            Ok(config) => Ok(load_map_from_config(root_path, extension, config)?),
             // Ok(config) => Ok(vec![load_map_from_config(root_path, config.inner, None)?]),
             Err(err) => Err(err),
         }
     }
 
-    match extension {
-        "ron" => load(ron::from_str, &data, root_path),
-        "toml" => load(toml::from_str, &data, root_path),
+    match file_extension {
+        "ron" => load(root_path, extension, ron::from_str, &data),
+        "toml" => load(root_path, extension, toml::from_str, &data),
         unknown => panic!(
             "Could not read unknown map config/map list with extension {}. File at {:?}",
             unknown, file
@@ -147,6 +154,7 @@ fn load_maps(root_path: &Path, file: &Path) -> Result<WorldMap, LoadMapError> {
 
 pub fn load_map_from_config<P: AsRef<Path>>(
     root_path: P,
+    extension: Option<&OsStr>,
     config: MapConfig,
 ) -> Result<WorldMap, LoadMapError> {
     println!("    Loading map named {}", config.name);
@@ -164,7 +172,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(
                 root_path, err
             )
         }),
-    );
+    )?;
 
     let chunk: ChunkConnections = config
         .chunk
@@ -195,7 +203,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(
         warps: super::warp::load_warp_entries(root_path.join("warps")),
         wild: super::wild::load_wild_entries(root_path.join("wild")),
         npcs: super::npc::load_npc_entries(root_path.join("npcs")),
-        scripts: super::script::load_script_entries(root_path.join("scripts")),
+        scripts: super::script::load_script_entries(root_path.join("scripts"), extension),
 
         settings: config.settings,
     })

@@ -1,9 +1,8 @@
 (
     id: "sally",
     npc: (
-        name: "Sally",
-        type: "lass",
         character: (
+            name: "Sally",
             position: (
                 coords: (
                     x: 30,
@@ -12,6 +11,7 @@
                 direction: Left,
             ),
         ),
+        type: "lass",
         trainer: Some((
             tracking: Some(5),
             encounter_message: [

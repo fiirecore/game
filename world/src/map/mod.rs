@@ -3,7 +3,7 @@ use tinystr::TinyStr16;
 
 use crate::{
     character::npc::Npcs,
-    positions::{Coordinate, Direction, Location, CoordinateInt},
+    positions::{Coordinate, CoordinateInt, Direction, Location},
     script::world::WorldScript,
 };
 use warp::{WarpDestination, Warps};
@@ -17,6 +17,8 @@ pub mod movement;
 pub mod manager;
 pub mod warp;
 pub mod wild;
+
+pub mod battle;
 
 pub type TileId = u16;
 pub type MapSize = usize;
@@ -101,7 +103,7 @@ impl WorldMap {
             })
     }
 
-    pub fn movement(&self, coords: Coordinate) -> MovementResult {
+    pub fn chunk_movement(&self, coords: Coordinate) -> MovementResult {
         if let Some(chunk) = self.chunk.as_ref() {
             if coords.x.is_negative() {
                 return chunk
@@ -110,13 +112,15 @@ impl WorldMap {
                     .map(|(d, c)| (d, coords.y, c))
                     .into();
             }
-            if coords.x < self.width {
+
+            if coords.x >= self.width {
                 return chunk
                     .connections
                     .get_key_value(&Direction::Right)
                     .map(|(d, c)| (d, coords.y, c))
                     .into();
             }
+
             if coords.y.is_negative() {
                 return chunk
                     .connections
@@ -124,7 +128,8 @@ impl WorldMap {
                     .map(|(d, c)| (d, coords.x, c))
                     .into();
             }
-            if coords.y < self.height {
+
+            if coords.y >= self.height {
                 return chunk
                     .connections
                     .get_key_value(&Direction::Down)
@@ -142,6 +147,20 @@ impl WorldMap {
             .values()
             .find(|warp| warp.location.in_bounds(&coords))
             .map(|entry| &entry.destination)
+    }
+
+    pub fn contains(&self, location: &Location) -> bool {
+        &self.id == location
+            || self
+                .chunk
+                .as_ref()
+                .map(|chunk| {
+                    chunk
+                        .connections
+                        .values()
+                        .any(|connection| &connection.0 == location)
+                })
+                .unwrap_or_default()
     }
 }
 

@@ -18,6 +18,7 @@ pub(crate) enum StateMessage {
     Save,
     Goto(MainStates),
     Seed(u8),
+    CommandError(&'static str),
     Exit,
 }
 

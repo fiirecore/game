@@ -1,6 +1,6 @@
 use super::SavedPlayer;
-use crate::pokedex::Dex;
-use crate::storage::{self, error::DataError};
+
+use storage::{self, error::DataError};
 
 // #[deprecated(note = "to-do: own version of storage::get for this")]
 pub struct PlayerSaves {
@@ -19,10 +19,10 @@ impl storage::PersistantData for WASMSave {
 }
 
 impl PlayerSaves {
-    pub async fn load(local: bool) -> Result<Self, DataError> {
+    pub async fn load() -> Result<Self, DataError> {
         #[cfg(not(target_arch = "wasm32"))]
         {
-            let dir = storage::directory(local)?.join("saves");
+            let dir = storage::directory(false, crate::PUBLISHER, crate::APPLICATION)?.join("saves");
             if !dir.exists() {
                 std::fs::create_dir_all(&dir)?;
             }
@@ -31,7 +31,7 @@ impl PlayerSaves {
 
             for dir in dir.read_dir()?.flatten() {
                 let path = dir.path();
-                let p = storage::deserialize::<SavedPlayer>(&std::fs::read_to_string(&path)?)?;
+                let p = storage::from_str::<SavedPlayer>(&std::fs::read_to_string(&path)?)?;
                 list.push(p);
             }
 

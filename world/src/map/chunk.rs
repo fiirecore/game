@@ -20,10 +20,10 @@ impl Connection {
 
     pub fn offset(direction: Direction, map: &WorldMap, offset: i32) -> Coordinate {
         match direction {
-            Direction::Down => Coordinate::new(offset, 0),
-            Direction::Up => Coordinate::new(offset, (map.height - 1) as _),
-            Direction::Left => Coordinate::new((map.width - 1) as _, offset),
-            Direction::Right => Coordinate::new(0, offset),
+            Direction::Down => Coordinate::new(offset, -1),
+            Direction::Up => Coordinate::new(offset, map.height as _),
+            Direction::Left => Coordinate::new(map.width as _, offset),
+            Direction::Right => Coordinate::new(-1, offset),
         }
     }
 

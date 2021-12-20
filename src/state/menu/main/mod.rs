@@ -5,15 +5,16 @@ use std::borrow::Cow;
 use crate::{
     engine::{
         graphics::{draw_rectangle, draw_rectangle_lines, draw_text_left, Color, DrawParams},
-        gui::TextColor,
-        input::controls::{pressed, Control},
+        input::{controls::{pressed, Control}, mouse},
         math::Vec2,
-        util::{HEIGHT, WIDTH},
+        utils::{HEIGHT, WIDTH},
         Context,
+        text::MessagePage,
     },
     saves::SavedPlayer,
-    Sender,
 };
+
+use firecore_world::events::Sender;
 
 use gui::{Button, ButtonBase};
 
@@ -59,7 +60,7 @@ impl MainMenuState {
                 Button::new(
                     Vec2::new(20.0, 5.0 + index as f32 * Self::GAP),
                     Vec2::new(206.0, 30.0),
-                    Cow::Borrowed(unsafe { &*(save.name.as_str() as *const str) }),
+                    Cow::Borrowed(unsafe { &*(save.character.name.as_str() as *const str) }),
                 )
             })
             .collect();
@@ -77,18 +78,18 @@ impl MainMenuState {
 
     pub fn update(&mut self, ctx: &mut Context, saves: &mut Vec<SavedPlayer>) {
 
-        if pressed(ctx, Control::Up) {
+        if pressed(ctx, Control::Start) {
             let index = saves.len();
             saves.push(crate::saves::Player::new(
                 format!(
                     "Player {}",
-                    (crate::engine::inner::miniquad::date::now() * 100.0) as u64
+                    crate::engine::utils::seed()
                 ),
             ));
             self.sender.send(MenuActions::StartGame(index));
         }
 
-        let mouse_pos = crate::engine::inner::prelude::mouse_position().into();
+        let mouse_pos = mouse::position(ctx);
 
         let last = if self.last_mouse_pos != mouse_pos {
             self.last_mouse_pos = mouse_pos;
@@ -136,7 +137,7 @@ impl MainMenuState {
                 saves.push(crate::saves::Player::new(
                         format!(
                             "Player {}",
-                            (crate::engine::inner::miniquad::date::now() * 100.0) as u64
+                            crate::engine::utils::seed()
                         ),
                     ));
             }
@@ -182,7 +183,7 @@ impl MainMenuState {
         for save in self.save_buttons.iter() {
             save.draw(ctx);
             // self.button.draw(ctx, 20.0, y, 206.0, 30.0);
-            // draw_text_left(ctx, &1, save, &TextColor::Black, 31.0, y + 5.0);
+            // draw_text_left(ctx, &1, save, &Message::Black, 31.0, y + 5.0);
         }
 
         let saves_len = saves.len() as f32;
@@ -190,13 +191,13 @@ impl MainMenuState {
         {
             let y = 5.0 + saves_len * Self::GAP;
             self.new_game.draw(ctx, Vec2::new(20.0, y));
-            // 	draw_text_left(ctx, &1, "New Game", &TextColor::Black, 31.0, y + 5.0);
+            // 	draw_text_left(ctx, &1, "New Game", &Message::Black, 31.0, y + 5.0);
         }
 
         {
             let y = 5.0 + (saves_len + 1.0) * Self::GAP;
             self.delete_button.draw(ctx, Vec2::new(20.0, y));
-            // 	draw_text_left(ctx, &1, &TextColor::Black, 31.0, y + 5.0);
+            // 	draw_text_left(ctx, &1, &Message::Black, 31.0, y + 5.0);
         }
 
         draw_rectangle_lines(
@@ -219,7 +220,7 @@ impl MainMenuState {
             },
             5.0,
             145.0,
-            DrawParams::color(TextColor::BLACK),
+            DrawParams::color(MessagePage::BLACK),
         );
 
         // Ok(())

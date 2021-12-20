@@ -1,10 +1,11 @@
-use crate::pokedex::context::PokedexClientData;
+use crate::pokedex::PokedexClientData;
 
 use crate::{
     engine::{
         graphics::Texture,
-        gui::{MessageBox, MessagePage},
-        util::{Completable, Entity, Reset, WIDTH},
+        gui::MessageBox,
+        text::MessagePage,
+        utils::{Completable, Entity, Reset, WIDTH},
         Context,
     },
     game::battle_glue::{BattleId, BattleTrainerEntry},
@@ -65,18 +66,20 @@ impl BattleCloser for TrainerBattleCloser {
                         // });
 
                         for message in trainer.victory_message.iter() {
-                            text.push(MessagePage {
+                            text.pages.push(MessagePage {
                                 lines: message.clone(),
                                 wait: None,
+                                color: MessagePage::WHITE,
                             });
                         }
 
-                        text.push(MessagePage {
+                        text.pages.push(MessagePage {
                             lines: vec![
                                 format!("{} got ${}", player_name, trainer.worth),
                                 String::from("for winning!"),
                             ],
                             wait: None,
+                            color: MessagePage::WHITE,
                         });
 
                         text.spawn();

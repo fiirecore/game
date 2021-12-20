@@ -1,9 +1,8 @@
 (
     id: "misty",
     npc: (
-        name: "Misty",
-        type: "misty",
         character: (
+            name: "Misty",
             position: (
                 coords: (
                     x: 8,
@@ -12,6 +11,7 @@
                 direction: Down
             ),
         ),
+        type: "misty",
         interact: Message([
             [
                 "Temporary post-battle message"
@@ -19,6 +19,7 @@
             
         ]), 
         trainer: Some((
+            badge: Some("cascade"),
             encounter_message: [
                 [
                     "Temporary message"

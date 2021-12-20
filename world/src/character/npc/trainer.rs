@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyStr8;
 
-use super::NpcId;
+use super::{NpcId, BadgeId};
 use crate::default_true;
 
 type MessageSet = Vec<Vec<String>>;
@@ -21,6 +21,9 @@ pub struct Trainer {
     pub battle_transition: TransitionId,
 
     pub party: Party<SavedPokemon>,
+    
+    #[serde(default)]
+    pub badge: Option<BadgeId>,
 
     #[serde(default)]
     pub victory_message: MessageSet,

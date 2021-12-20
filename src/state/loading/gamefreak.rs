@@ -68,9 +68,9 @@ impl super::LoadingScene for GamefreakLoadingScene {
 		fade_in(self.text, 51.0, 74.0, self.accumulator - 4.0, 1.0); //51x, 41y
 
 
-		draw_text_left(1, &format!("A Button is{:?}Key", keys(&Control::A).expect("Could not get keys for A button")), &TextColor::White, 5.0, 5.0);
-		draw_text_left(1, &format!("B Button is{:?}Key", keys(&Control::B).expect("Could not get keys for B button")), &TextColor::White, 125.0, 5.0);
-		draw_text_left(1, "D-Pad is Arrow Keys", &TextColor::White, 5.0, 15.0);
+		draw_text_left(1, &format!("A Button is{:?}Key", keys(&Control::A).expect("Could not get keys for A button")), &Message::White, 5.0, 5.0);
+		draw_text_left(1, &format!("B Button is{:?}Key", keys(&Control::B).expect("Could not get keys for B button")), &Message::White, 125.0, 5.0);
+		draw_text_left(1, "D-Pad is Arrow Keys", &Message::White, 5.0, 15.0);
 
 	}
 

@@ -2,16 +2,18 @@
 name = "firecore-world"
 version = "0.5.0-beta.2021-07-28"
 authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 
 serde = { version = "1", features = ["derive"] }
 tinystr = { version = "0.4", features = ["serde"], default-features = false }
 rand = { version = "0.8", default-features = false }
+smallvec = { version = "1", features = ["union", "const_new"] }
+crossbeam-channel = "0.5"
 # enum-map = { version = "1", features = ["serde"] }
 
-firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "18f1de3" }
+firecore-pokedex = { version = "0.0.7", git = "https://github.com/fiirecore/pokedex", rev = "0efc1ce" }
 # firecore-pokedex = { path = "../../firecore/pokedex" }
 
 ### Pathfinding

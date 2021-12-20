@@ -1,5 +1,8 @@
 (
-    identifier: "cerulean_upper",
+    identifier: (
+        map: Some("pokemon_centers"),
+        index: "cerulean_upper",
+    ),
     name: "Pokemon Center",
     file: "7.4_CERULEAN CITY.map",
 )

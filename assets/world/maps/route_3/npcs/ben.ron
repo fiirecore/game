@@ -1,9 +1,8 @@
 (
     id: "ben",
     npc: (
-        name: "Ben",
-        type: "youngster",
         character: (
+            name: "Ben",
             position: (
                 coords: (
                     x: 18,
@@ -12,21 +11,16 @@
                 direction: Down
             ),
         ),
+        type: "youngster",
         interact: Message([
-            (
-                lines: [
-                    "Are you using a POKEMON CENTER's",
-                    "PC for storing your POKEMON?"
-                ],
-                color: Blue,
-            ),
-            (
-                lines: [
-                    "Each box can hold up to",
-                    "30 POKEMON."
-                ],
-                color: Blue,
-            )
+            [
+                "Are you using a POKEMON CENTER's",
+                "PC for storing your POKEMON?"
+            ],
+            [
+                "Each box can hold up to",
+                "30 POKEMON."
+            ],
         ]),
         trainer: Some((
             tracking: Some(2),

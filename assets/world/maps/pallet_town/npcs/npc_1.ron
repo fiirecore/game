@@ -1,9 +1,8 @@
 (
     id: "1",
     npc: (
-        name: "Npc 1",
-        type: "fat_man",
         character: (
+            name: "Npc 1",
             position: (
                 coords: (
                     x: 13,
@@ -12,6 +11,7 @@
                 direction: Down
             ),
         ),
+        type: "fat_man",
         interact: Message([
             [
                     "Technology is incredible!"

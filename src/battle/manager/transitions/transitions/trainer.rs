@@ -1,6 +1,6 @@
 use crate::engine::{
     graphics::{draw_rectangle, Color, DrawParams, Texture},
-    util::{Completable, Reset, WIDTH},
+    utils::{Completable, Reset, WIDTH},
     Context,
 };
 

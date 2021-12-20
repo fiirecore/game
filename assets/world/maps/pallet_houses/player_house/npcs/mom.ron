@@ -1,9 +1,8 @@
 (
     id: "mom",
     npc: (
-        name: "Mom",
-        type: "mom",
         character: (
+            name: "Mom",
             position: (
                 coords: (
                     x: 8,
@@ -11,6 +10,7 @@
                 ),
                 direction: Left
             ),
-        )
+        ),
+        type: "mom",
     )
 )

@@ -1,6 +1,6 @@
 use crate::positions::Coordinate;
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use tinystr::TinyStr8;
 
 use self::trainer::Trainer;
@@ -20,13 +20,9 @@ pub type Npcs = HashMap<NpcId, Npc>;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Npc {
-    pub name: String,
-
+    pub character: Character,
     #[serde(rename = "type")]
     pub type_id: NpcTypeId,
-
-    pub character: Character,
-
     #[serde(default)]
     pub movement: NpcMovement,
     #[serde(skip, default)]

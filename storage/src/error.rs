@@ -1,10 +1,10 @@
-use firecore_battle_gui::pokedex::engine::error::FileError;
-
 #[derive(Debug)]
 pub enum DataError {
-    Serialization(ron::Error),
     IOError(std::io::Error),
-    File(FileError),
+    Ron(ron::Error),
+    Bincode(bincode::Error),
+    #[cfg(feature = "io")]
+    File(engine::error::FileError),
 }
 
 impl std::error::Error for DataError {}
@@ -23,12 +23,19 @@ impl From<std::io::Error> for DataError {
 
 impl From<ron::Error> for DataError {
     fn from(error: ron::Error) -> Self {
-        Self::Serialization(error)
+        Self::Ron(error)
     }
 }
 
-impl From<FileError> for DataError {
-    fn from(error: FileError) -> Self {
+impl From<bincode::Error> for DataError {
+    fn from(error: bincode::Error) -> Self {
+        Self::Bincode(error)
+    }
+}
+
+#[cfg(feature = "io")]
+impl From<engine::error::FileError> for DataError {
+    fn from(error: engine::error::FileError) -> Self {
         Self::File(error)
     }
 }

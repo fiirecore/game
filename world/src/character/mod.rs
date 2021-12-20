@@ -11,6 +11,9 @@ pub type Worth = u32;
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Character {
+
+    pub name: String,
+
     pub position: Position,
 
     #[serde(default)]
@@ -47,8 +50,9 @@ pub enum Movement {
 }
 
 impl Character {
-    pub fn new(position: Position) -> Self {
+    pub fn new<S: Into<String>>(name: S, position: Position) -> Self {
         Self {
+            name: name.into(),
             position,
             ..Default::default()
         }
@@ -139,19 +143,6 @@ impl Character {
         }
     }
 
-    pub fn copy(&self) -> Self {
-        Self {
-            pathing: Path::default(),
-            position: self.position,
-            offset: self.offset,
-            sprite: self.sprite,
-            movement: self.movement,
-            frozen: self.frozen,
-            noclip: self.noclip,
-            hidden: self.hidden,
-            worth: self.worth,
-        }
-    }
 }
 
 impl Default for Movement {

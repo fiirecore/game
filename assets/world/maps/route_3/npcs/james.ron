@@ -1,9 +1,8 @@
 (
     id: "james",
     npc: (
-        name: "James",
-        type: "bug_catcher",
         character: (
+            name: "James",
             position: (
                 coords: (
                     x: 32,
@@ -12,14 +11,12 @@
                 direction: Right,
             ),
         ),
+        type: "bug_catcher",
         interact: Message([
-            (
-                lines: [
-                    "Trained POKEMON are stronger than",
-                    "the wild ones."
-                ],
-                color: Blue
-            )
+            [
+                "Trained POKEMON are stronger than",
+                "the wild ones."
+            ],
         ]),
         trainer: Some((
             tracking: Some(4),

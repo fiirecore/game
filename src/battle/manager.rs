@@ -6,12 +6,13 @@ use crate::{engine::{
 		Context,
 	}, game::{battle_glue::{BattleEntry, BattleId}}};
 
-use crate::pokedex::{context::PokedexClientData, gui::{
+use crate::pokedex::{PokedexClientData, gui::{
 		party::PartyGui,
 		bag::BagGui,
 	}};
+use battlelib::{default_engine::{scripting::MoveScripts, EngineMoves}, prelude::{DefaultEngine, Battle, BattleData, BattleType, PlayerSettings, PlayerData, BattleAi}, pokedex::{Uninitializable, pokemon::owned::OwnedPokemon}};
 use firecore_battle::pokedex::Dex;
-use rand::{SeedableRng, prelude::SmallRng};
+use rand::{SeedableRng, prelude::SmallRng, RngCore};
 use worldlib::character::player::PlayerCharacter;
 use crate::saves::OwnedPlayer;
 
@@ -19,7 +20,7 @@ use crate::pokedex::{pokemon::Pokemon, moves::Move, item::Item};
 
 use super::{GameBattleWrapper};
 
-use firecore_battle_gui::{BattlePlayerGui, context::BattleGuiContext, transition::TransitionState};
+use firecore_battle_gui::{BattlePlayerGui, context::BattleGuiData, transition::TransitionState, pokedex::engine::utils::Reset};
 
 pub mod transitions;
 
@@ -32,17 +33,21 @@ pub struct BattleManager<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = M
 
 	state: BattleManagerState,
 	
-	battle: GameBattleWrapper<P, M, I>,
+    engine: DefaultEngine,
+	
+	battle: Option<GameBattleWrapper<P, M, I>>,
 
 	dex: Rc<PokedexClientData>,
-	btl: BattleGuiContext,
+	btl: BattleGuiData,
 	
 	transition: BattleScreenTransitionManager,
 	closer: BattleCloserManager,
 
 	player: BattlePlayerGui<BattleId, P, M, I>,
 
-	pub random: SmallRng,
+	seed: u64,
+
+	random: SmallRng,
 
 	pub finished: bool,
 	
@@ -64,18 +69,28 @@ impl Default for BattleManagerState {
 
 impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Deref<Target = Item> + Clone> BattleManager<P, M, I> {
 	
-	pub fn new(ctx: &mut Context, btl: BattleGuiContext, dex: Rc<PokedexClientData>, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self {
+	pub fn new(ctx: &mut Context, btl: BattleGuiData, dex: Rc<PokedexClientData>, party: Rc<PartyGui>, bag: Rc<BagGui>, data: (EngineMoves, MoveScripts)) -> Self {
+
+        let mut engine = DefaultEngine::new::<BattleId, SmallRng>();
+
+        engine.moves = data.0;
+
+        engine.scripting.moves = data.1;
 		
 		Self {
 
 			state: BattleManagerState::default(),
 
-			battle: GameBattleWrapper::new(),
+			battle: None,
 
 			transition: BattleScreenTransitionManager::new(ctx),
 			closer: BattleCloserManager::default(),
 
 			player: BattlePlayerGui::new(ctx, &btl, party, bag),
+
+			engine,
+
+			seed: 0,
 
 			random: SmallRng::seed_from_u64(0),
 
@@ -95,23 +110,71 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
         ) -> bool { // add battle type parameter
 		self.finished = false;
 		self.state = BattleManagerState::default();
-		let player = &mut save.party;
+		self.player.reset();
 		(!(
-			player.is_empty() || 
+			save.party.is_empty() || 
 			entry.party.is_empty() ||
 			// Checks if player has any pokemon in party that aren't fainted (temporary)
-			!player.iter().any(|pokemon| !pokemon.fainted())
+			!save.party.iter().any(|pokemon| !pokemon.fainted())
 		)).then(|| {
-				self.battle.battle(
-					&mut self.random,
-					pokedex, movedex, itemdex,
-					save,
-					self.player.endpoint(),
-					entry
-				)
+
+				if let Some(trainer) = entry.trainer.as_ref() {
+					let mut sprites: firecore_battle_gui::pokedex::engine::utils::HashMap<_, _> = Default::default();
+					sprites.insert(entry.id, trainer.sprite);
+					self.player.set_next_groups(sprites);
+				}
+
+				let player = PlayerData {
+					id: BattleId::Player,
+					name: Some(save.character.name.clone()),
+					party: save
+						.party
+						.iter()
+						.cloned()
+						.map(OwnedPokemon::uninit)
+						.collect(),
+					settings: PlayerSettings { gains_exp: true },
+					endpoint: Box::new(self.player.endpoint().clone()),
+				};
+		
+				let ai = BattleAi::new(SmallRng::seed_from_u64(self.random.next_u64()));
+		
+				let ai_player = PlayerData {
+					id: entry.id,
+					name: entry.trainer.as_ref().map(|trainer| trainer.name.clone()),
+					party: entry.party,
+					settings: PlayerSettings { gains_exp: false },
+					endpoint: Box::new(ai.endpoint().clone()),
+				};
+		
+				self.battle = Some(GameBattleWrapper {
+					battle: Battle::new(
+						BattleData {
+							type_: entry
+								.trainer
+								.as_ref()
+								.map(|trainer| {
+									if trainer.badge.is_some() {
+										BattleType::GymLeader
+									} else {
+										BattleType::Trainer
+									}
+								})
+								.unwrap_or(BattleType::Wild),
+						},
+						&mut self.random,
+						entry.active,
+						pokedex,
+						movedex,
+						itemdex,
+						std::iter::once(player).chain(std::iter::once(ai_player)),
+					),
+					trainer: entry.trainer,
+					ai,
+				});
 			}
 		);
-		self.battle.battle.is_some()
+		self.battle.is_some()
 	}
 
 	pub fn update<'d>(&mut self, ctx: &mut Context,
@@ -122,18 +185,18 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
   				self.end();
   				return;
   			}
-		if let Some(battle) = &mut self.battle.battle {
+		if let Some(battle) = &mut self.battle {
 			self.player.process(&mut self.random, &self.dex, &self.btl,
 				pokedex,
 				movedex,
-				itemdex, &mut save.party, );
+				itemdex);
 			match self.state {
 				BattleManagerState::Begin => {
 					self.player.gui.reset();
 					self.state = BattleManagerState::Transition;
 					self.transition.state = TransitionState::Begin;
 
-					battle.begin();
+					battle.battle.begin();
 
 					// self.player.on_begin(dex);
 
@@ -141,7 +204,10 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
-						self.transition.begin(ctx, self.player.data.type_, &self.battle.trainer);
+						for p in self.player.remotes.values() {
+							println!("{}", p.player.pokemon.len());
+						}
+						self.transition.begin(ctx, self.player.local.as_ref().unwrap().data.type_, &battle.trainer);
 						self.update(ctx, pokedex, movedex, itemdex, delta, save);
 					},
 					TransitionState::Run => self.transition.update(ctx, delta),
@@ -154,8 +220,8 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 				}
 				BattleManagerState::Battle => {
 
-					if !battle.finished() {
-						battle.update(&mut self.random, &mut self.battle.engine, delta, movedex, itemdex);
+					if !battle.battle.finished() {
+						battle.update(&mut self.random, &mut self.engine, delta, pokedex, movedex, itemdex);
 					}
 
 					self.player.update(ctx, &self.dex, pokedex, movedex, itemdex, delta, &mut save.bag);
@@ -167,7 +233,8 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 				},
 				BattleManagerState::Closer(winner) => match self.closer.state {
 					TransitionState::Begin => {
-						self.closer.begin(&self.dex, self.player.data.type_, self.player.local.player.id(), self.player.local.player.name(), Some(&winner), self.battle.trainer.as_ref(), &mut self.player.gui.text);
+						let local = self.player.local.as_ref().unwrap();
+						self.closer.begin(&self.dex, local.data.type_, local.player.id(), local.player.name(), Some(&winner), battle.trainer.as_ref(), &mut self.player.gui.text);
 						self.update(ctx, pokedex, movedex, itemdex, delta, save);
 					}
 					TransitionState::Run => self.closer.update(ctx, delta, &mut self.player.gui.text),
@@ -179,19 +246,27 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 				}
 			}
 		}
-
-		if let Some(ai) = self.battle.ai.as_mut() {
-			ai.update();
-		}
-
 	}
 
 	pub fn winner(&self) -> Option<&BattleId> {
-		self.battle.battle.as_ref().map(|b| b.winner()).flatten()
+		self.battle.as_ref().map(|b| b.battle.winner()).flatten()
 	}
 
 	pub fn update_data(&mut self, winner: bool, player: &mut PlayerCharacter) -> bool {
-		self.battle.update_data(winner, player)
+		self.battle.as_mut().map(|battle| {
+			let trainer = battle.trainer.is_some();
+
+        if winner {
+            if let Some(trainer) = battle.trainer.take() {
+                player.worth += trainer.worth as u32;
+                if let Some(badge) = trainer.badge {
+                    player.world.badges.insert(badge);
+                }
+            }
+        }
+
+        trainer
+		}).unwrap_or_default()
 	}
 
 	pub fn world_active(&self) -> bool {
@@ -199,7 +274,7 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 	}
 
 	pub fn seed(&mut self, seed: u64) {
-		self.battle.seed = seed;
+		self.seed = seed;
 		self.random = SmallRng::seed_from_u64(seed);
 	}
 
@@ -208,13 +283,13 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		match self.state {
 			BattleManagerState::Begin => (),
 			BattleManagerState::Transition => self.transition.state = TransitionState::Begin,
-			BattleManagerState::Battle => self.battle.battle = None,
+			BattleManagerState::Battle => self.battle = None,
 			BattleManagerState::Closer(..) => self.closer.state = TransitionState::Begin,
 		}
 	}
 
 	pub fn draw(&self, ctx: &mut Context, save: &OwnedPlayer<P, M, I>) {
-        if self.battle.battle.is_some() {
+        if self.battle.is_some() {
 			match self.state {
 				BattleManagerState::Begin => (),
 			    BattleManagerState::Transition => self.transition.draw(ctx),
@@ -225,7 +300,7 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 							self.player.gui.background.draw(ctx, 0.0);
 							self.player.gui.draw_panel(ctx);
 							self.player.draw(ctx, &self.dex, &save.party, &save.bag);
-							for active in self.player.local.renderer.iter() {
+							for active in self.player.local.as_ref().unwrap().renderer.iter() {
 								active.pokemon.draw(ctx, firecore_battle_gui::pokedex::engine::math::Vec2::ZERO, Color::WHITE);
 							}
 							self.closer.draw_battle(ctx);

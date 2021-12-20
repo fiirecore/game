@@ -4,14 +4,8 @@
     name: "Route 2",
     file: "3.20_ROUTE 2.map",
 
-    chunk: Some((
-        coords: (
-            x: 60,
-            y: 100,
-        ),
-        connections: [
-            "viridian",
-            "pewter",
-        ],
-    )),
+    chunk: {
+        Down: ("viridian", -12),
+        Up: ("pewter", -12),
+    },
 )

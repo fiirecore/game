@@ -1,13 +1,12 @@
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::{
     character::{
-        npc::{Npc, NpcId, TrainerType, MessageColor},
+        npc::{MessageColor, Npc, NpcId, TrainerType, NpcTypeId},
         sprite::SpriteIndexType,
     },
-    map::{manager::WorldMapManager, PaletteId, TileId},
-    TrainerId,
+    map::{manager::Maps, PaletteId, TileId},
     // positions::Location,
 };
 
@@ -15,7 +14,7 @@ use crate::{
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedWorld {
-    pub manager: WorldMapManager,
+    pub maps: Maps,
 
     pub npc_types: Vec<SerializedNpcType>,
     // pub map_gui_locs: MapGuiLocs,
@@ -30,7 +29,7 @@ pub struct SerializedNpc {
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNpcTypeConfig {
-    pub identifier: TrainerId,
+    pub identifier: NpcTypeId,
     pub text_color: MessageColor,
     pub sprite: SpriteIndexType,
     pub trainer: Option<TrainerType>,

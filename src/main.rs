@@ -1,18 +1,24 @@
-use battlelib::pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex};
+use std::hash::Hash;
+
+use assets::AssetContext;
+use battlelib::{
+    default_engine::{scripting::MoveScripts, EngineMoves},
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex},
+};
 pub(crate) use firecore_battle_gui::pokedex;
 pub(crate) use pokedex::engine;
 use worldlib::serialized::SerializedWorld;
 
 // mod args;
+mod assets;
 mod battle;
+mod command;
 mod game;
 mod saves;
 mod state;
 mod world;
-mod command;
-mod storage;
 
-use std::collections::HashMap;
+extern crate firecore_storage as storage;
 
 use rand::prelude::{SeedableRng, SmallRng};
 
@@ -20,17 +26,16 @@ use crate::saves::PlayerSaves;
 use game::config::Configuration;
 
 use firecore_battle_gui::{
-    context::BattleGuiContext,
+    context::BattleGuiData,
     pokedex::engine::{
-        audio::MusicId,
         graphics::{self, Color, DrawParams},
-        util::{HEIGHT, WIDTH},
+        utils::{HEIGHT, WIDTH, HashSet},
         ContextBuilder,
     },
 };
 
 use crate::engine::log::info;
-use pokedex::context::PokedexClientData;
+use pokedex::PokedexClientData;
 use state::StateManager;
 
 extern crate firecore_battle as battlelib;
@@ -39,6 +44,9 @@ extern crate firecore_world as worldlib;
 const TITLE: &str = "Pokemon FireRed";
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+const PUBLISHER: Option<&str> = Some("fiirecore");
+const APPLICATION: &str = env!("CARGO_PKG_NAME");
 
 const SCALE: f32 = 3.0;
 
@@ -63,112 +71,80 @@ fn main() {
         ContextBuilder::new(TITLE, (WIDTH * SCALE) as _, (HEIGHT * SCALE) as _), // .resizable(true)
         // .show_mouse(true)
         async {
-            let save_locally = cfg!(debug_assertions);
-
-            let configuration = Configuration::load(save_locally)
+            info!("Loading configuration...");
+            let configuration = storage::try_load(PUBLISHER, APPLICATION)
                 .await
                 .unwrap_or_else(|err| panic!("Cannot load configuration with error {}", err));
 
-            let saves = PlayerSaves::load(save_locally)
+            info!("Loading assets (this may take a while)...");
+            let assets = AssetContext::load()
+                .await
+                .unwrap_or_else(|err| panic!("Could not load assets with error {}", err));
+
+            info!("Loading player saves...");
+            let saves = PlayerSaves::load()
                 .await
                 .unwrap_or_else(|err| panic!("Could not load player saves with error {}", err));
 
             OpenContext {
+                assets,
                 configuration,
                 saves,
             }
         },
         move |ctx,
               OpenContext {
+                  assets,
                   configuration,
                   saves,
               }| {
             info!("Starting {} v{}", TITLE, VERSION);
             info!("By {}", AUTHORS);
 
-            // #[cfg(feature = "audio")]
-            // let audio = !args.contains(&Args::DisableAudio);
-
-            info!("Loading configuration...");
-
-            // Load dexes;
-
-            info!("Loading dexes...");
-
-            let (pokedex, movedex, itemdex) = bincode::deserialize(include_bytes!(
-                "../build/data/dex.bin"
-            ))
-            .unwrap_or_else(|err| panic!("Could not deserialize pokedex with error {}", err));
-
             unsafe {
-                POKEDEX = Some(pokedex);
+                POKEDEX = Some(assets.pokedex);
 
-                MOVEDEX = Some(movedex);
+                MOVEDEX = Some(assets.movedex);
 
-                ITEMDEX = Some(itemdex);
+                ITEMDEX = Some(assets.itemdex);
             }
 
-            info!("Loading fonts...");
+            info!("Initializing fonts...");
 
-            // Loads configuration, sets up controls
-
-            let fonts: Vec<engine::text::FontSheet<Vec<u8>>> =
-                bincode::deserialize(include_bytes!("../build/data/fonts.bin"))
-                    .unwrap_or_else(|err| panic!("Could not load font sheets with error {}", err));
-
-            for font in fonts {
+            for font in assets.fonts {
                 engine::text::insert_font(ctx, &font).unwrap();
             }
 
             #[cfg(feature = "audio")]
-            /* if audio */
             {
-                info!("Loading audio...");
+                info!("Initializing audio...");
                 //Load audio files and setup audio
-                match bincode::deserialize::<HashMap<MusicId, Vec<u8>>>(include_bytes!(
-                    "../build/data/audio.bin"
-                )) {
-                    Ok(audio_data) => {
-                        graphics::draw_text_left(
-                            ctx,
-                            &0,
-                            "Loading audio...",
-                            5.0,
-                            5.0,
-                            DrawParams::color(Color::WHITE),
-                        );
-                        for (id, data) in audio_data {
-                            engine::audio::add_music(ctx, id, data);
-                        }
-                    }
-                    Err(err) => engine::log::error!("Could not read sound file with error {}", err),
+
+                graphics::draw_text_left(
+                    ctx,
+                    &0,
+                    "Loading audio...",
+                    5.0,
+                    5.0,
+                    DrawParams::color(Color::WHITE),
+                );
+                for (id, data) in assets.audio {
+                    engine::audio::add_music(ctx, id, data);
                 }
-            } // else {
-              //     info!("Skipping audio loading...");
-              // }
+            }
 
             graphics::clear(ctx, Color::BLACK);
 
-            let random = SmallRng::seed_from_u64(engine::util::seed());
+            let random = SmallRng::seed_from_u64(engine::utils::seed());
 
-            info!("Loading dex textures and audio...");
+            info!("Initializing dex textures and audio...");
 
-            let dex_engine = bincode::deserialize(include_bytes!("../build/data/dex_engine.bin"))
-                .unwrap_or_else(|err| {
-                    panic!(
-                        "Could not deserialize pokedex engine data with error {}",
-                        err
-                    )
-                });
-
-            let dex = PokedexClientData::new(ctx, dex_engine)
+            let dex = PokedexClientData::new(ctx, assets.dex)
                 .unwrap_or_else(|err| panic!("Could not initialize dex data with error {}", err));
 
-            let btl = BattleGuiContext::new(ctx).unwrap_or_else(|err| {
+            let btl = BattleGuiData::new(ctx).unwrap_or_else(|err| {
                 panic!("Could not initialize battle data with error {}", err)
             });
-
-            let world = bincode::deserialize(include_bytes!("../build/data/world.bin")).unwrap_or_else(|err| panic!("Could not load world data with error {}", err));
 
             #[cfg(feature = "discord")]
             use discord_rich_presence::{activity::Activity, new_client, DiscordIpc};
@@ -205,8 +181,9 @@ fn main() {
                 configuration,
                 saves,
                 dex,
+                battle: assets.battle,
                 btl,
-                world,
+                world: assets.world,
                 random,
             }
         },
@@ -218,6 +195,7 @@ fn main() {
 }
 
 struct OpenContext {
+    assets: AssetContext,
     configuration: Configuration,
     saves: PlayerSaves,
 }
@@ -226,29 +204,52 @@ pub(crate) struct LoadContext {
     pub configuration: Configuration,
     pub saves: PlayerSaves,
     pub dex: PokedexClientData,
-    pub btl: BattleGuiContext,
+    pub battle: (EngineMoves, MoveScripts),
+    pub btl: BattleGuiData,
     pub world: SerializedWorld,
     pub random: SmallRng,
 }
 
-pub(crate) use crossbeam_channel::Receiver;
+// pub(crate) struct EventReciver<T: Eq + Hash>(pub std::rc::Rc<std::cell::RefCell<EventReciverInner<T>>>);
 
-pub(crate) fn split<T>() -> (Sender<T>, Receiver<T>) {
-    let (x, y) = crossbeam_channel::unbounded();
-    (Sender(x), y)
+// impl<T: Eq + Hash> Default for EventReciver<T> {
+//     fn default() -> Self {
+//         Self(Default::default())
+//     }
+// }
+
+// impl<T: Eq + Hash> Clone for EventReciver<T> {
+//     fn clone(&self) -> Self {
+//         Self(self.0.clone())
+//     }
+// }
+
+
+
+
+pub(crate) struct EventReceiver<T: Eq + Hash> {
+    pub long: HashSet<T>,
+    pub short: HashSet<T>,
 }
 
-#[derive(Clone)]
-pub(crate) struct Sender<T>(crossbeam_channel::Sender<T>);
 
-impl<T> Sender<T> {
-    pub fn send(&self, msg: T) {
-        if let Err(err) = self.0.try_send(msg) {
-            engine::log::warn!(
-                "Could not send message {} with error {}",
-                std::any::type_name::<T>(),
-                err
-            );
+impl<T: Eq + Hash> EventReceiver<T> {
+    pub fn flush(&mut self) {
+        self.short.clear();
+    }
+
+    pub fn contains(&self, x: &T) -> bool
+    {
+        self.short.contains(x) || self.long.contains(x)
+    }
+
+}
+
+impl<T: Eq + Hash> Default for EventReceiver<T> {
+    fn default() -> Self {
+        Self {
+            long: Default::default(),
+            short: Default::default(),
         }
     }
 }

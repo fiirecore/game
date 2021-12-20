@@ -1,9 +1,9 @@
-use std::fs::{read_dir, read, read_to_string};
+use std::{fs::{read_dir, read, read_to_string}, ffi::OsStr};
 use worldlib::serialized::{Doors, SerializedDoor, SerializedTextures};
 use worldlib::map::{TileId, PaletteId};
 use std::path::{Path, PathBuf};
 
-pub fn get_textures<P: AsRef<Path>>(textures: P) -> SerializedTextures {
+pub fn get_textures<P: AsRef<Path>>(textures: P, extension: Option<&OsStr>) -> SerializedTextures {
     let textures = textures.as_ref();
     SerializedTextures {
         palettes: read_dir(textures.join("palettes"))
@@ -38,14 +38,14 @@ pub fn get_textures<P: AsRef<Path>>(textures: P) -> SerializedTextures {
                 )
             })
             .collect(),
-        doors: doors(textures.join("doors"))
+        doors: doors(textures.join("doors"), extension)
     }
 }
 
-fn doors(path: PathBuf) -> Doors {
+fn doors(path: PathBuf, extension: Option<&OsStr>) -> Doors {
     let mut doors = Doors::new();
     for path in read_dir(path).unwrap().flatten().map(|entry| entry.path()) {
-        if path.is_file() && path.extension() == Some(&std::ffi::OsString::from("ron")) {
+        if path.is_file() && path.extension() == extension {
             let door = ron::from_str::<SerializedDoor>(
                 &read_to_string(&path).unwrap_or_else(|err| panic!("Could not get door file from path {:?} with error {}", path, err))
             ).unwrap();

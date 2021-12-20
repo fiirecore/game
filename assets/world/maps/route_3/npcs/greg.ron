@@ -1,9 +1,8 @@
 (
     id: "greg",
     npc: (
-        name: "Greg",
-        type: "bug_catcher",
         character: (
+            name: "Greg",
             position: (
                 coords: (
                     x: 25,
@@ -12,12 +11,13 @@
                 direction: Down
             ),
         ),
-        interact: Message([(
-            lines: [
+        type: "bug_catcher",
+        interact: Message([
+            [
                 "If a POKEMON BOX on the PC gets",
                 "full, just switch to another BOX."
             ]
-        )]),
+        ]),
         trainer: Some((
             tracking: Some(2),
             battle_transition: "Trainer",

@@ -2,32 +2,30 @@ use crate::{
     engine::{
         audio::{play_music, play_sound},
         log::{error, warn},
-        util::{Completable, Entity},
+        text::MessagePage,
         Context,
     },
-    Sender, world::npc::color,
+    world::{map::data::npc::NpcData, npc::color, WorldEvents},
+    EventReceiver, Sender,
 };
-use firecore_battle_gui::pokedex::engine::gui::MessagePage;
 use worldlib::{
-    character::{player::PlayerCharacter, Movement, npc::MessageColor},
+    character::{npc::MessageColor, player::PlayerCharacter, Movement},
     map::WorldMap,
     positions::{Coordinate, Destination},
     script::world::{NpcWarp, PlayerWarp, WorldAction},
 };
 
-use crate::world::{gui::TextWindow, map::warp::WarpTransition, npc::NpcTypes, WorldActions};
+use crate::world::WorldActions;
 
 /// Update scripts from WorldManager
-pub(crate) fn update_script<'d>(
+pub(crate) fn update_script(
     ctx: &mut Context,
-    // save: &mut PlayerData<'d>,
     delta: f32,
     map: &mut WorldMap,
     player: &mut PlayerCharacter,
     sender: &Sender<WorldActions>,
-    npc_types: &NpcTypes,
-    window: &mut TextWindow,
-    warper: &mut WarpTransition,
+    events: &EventReceiver<WorldEvents>,
+    npc_data: &NpcData,
 ) {
     if let Some(action) = player.world.scripts.actions.last_mut() {
         match action {
@@ -79,25 +77,14 @@ pub(crate) fn update_script<'d>(
                 {
                     sender.send(WorldActions::GivePokemon(pokemon));
                 }
-                // match save.party.is_full() {
-                //     false => match instance.clone().init(
-                //         random,
-                //         pokedex,
-                //         movedex,
-                //         itemdex,
-                //     ) {
-                //         Some(p) => save.party.push(p),
-                //         None => warn!("Cannot initialize given pokemon!"),
-                //     },
-                //     true => warn!("PlayerGivePokemon command requires party space"),
-                // }
             }
             WorldAction::PlayerHealPokemon => {
                 sender.send(WorldActions::HealPokemon(None));
                 player.world.scripts.actions.pop();
             }
             WorldAction::PlayerGiveItem(..) => {
-                if let Some(WorldAction::PlayerGiveItem(item)) = player.world.scripts.actions.pop() {
+                if let Some(WorldAction::PlayerGiveItem(item)) = player.world.scripts.actions.pop()
+                {
                     sender.send(WorldActions::GiveItem(item));
                 }
             }
@@ -163,11 +150,13 @@ pub(crate) fn update_script<'d>(
                                 player.character.movement = Movement::Walking;
 
                                 if !player.character.position.coords.equal(x, y) {
-                                    player.character.pathing.queue = npc.character.pathing.queue.clone();
+                                    player.character.pathing.queue =
+                                        npc.character.pathing.queue.clone();
 
                                     player.character.pathing.queue.pop();
 
-                                    let d = player.character
+                                    let d = player
+                                        .character
                                         .position
                                         .coords
                                         .towards(npc.character.position.coords);
@@ -224,12 +213,24 @@ pub(crate) fn update_script<'d>(
             }
             WorldAction::NpcSay(id, pages, queue) => {
                 if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
-                    let color = color(npc_types.get(&npc.type_id).map(|npc| &npc.message).unwrap_or(&MessageColor::Black));
+                    let color = color(
+                        npc_data
+                            .types
+                            .get(&npc.type_id)
+                            .map(|npc| &npc.message)
+                            .unwrap_or(&MessageColor::Black),
+                    );
                     let pages = std::mem::take(pages);
-                    
+
                     sender.send(WorldActions::Message(
-                        pages.into_iter().map(MessagePage::from).collect(),
-                        Some(color),
+                        pages
+                            .into_iter()
+                            .map(|lines| MessagePage {
+                                lines,
+                                wait: None,
+                                color,
+                            })
+                            .collect(),
                         *queue,
                     ));
                 } else {
@@ -239,7 +240,7 @@ pub(crate) fn update_script<'d>(
             WorldAction::NpcBattle(id) => {
                 if let Some(npc) = get_npc(id, &mut player.world.scripts.npcs, &mut map.npcs) {
                     if let Some(entry) = crate::world::battle::trainer_battle(
-                        npc_types,
+                        npc_data,
                         &mut player.world.battle,
                         &map.id,
                         id,
@@ -286,13 +287,12 @@ pub(crate) fn update_script<'d>(
                 }
             }
             WorldAction::WaitMessage => {
-                if window.text.finished() || !window.text.alive() {
-                    window.text.despawn();
+                if events.contains(&WorldEvents::TextFinished) {
                     player.world.scripts.actions.pop();
                 }
             }
             WorldAction::WaitFinishWarp => {
-                if !warper.alive() {
+                if events.contains(&WorldEvents::WarpFinished) {
                     player.world.scripts.actions.pop();
                 }
             }
@@ -334,7 +334,7 @@ pub(crate) fn update_script<'d>(
                 player.world.warp = Some(destination);
             }
             WorldAction::Finish(id) => {
-                sender.send(WorldActions::EndScript(*id));
+                player.world.scripts.executed.insert(*id);
                 player.world.scripts.actions.pop();
             }
         }

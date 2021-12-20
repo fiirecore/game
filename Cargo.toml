@@ -32,29 +32,25 @@ opt-level = "z"
 
 [dependencies]
 # Battle GUI, also re-exports game engine
-firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "6cebab8", package = "firecore-battle-gui", default-features = false }
-
-### World
+# firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "4c35070", package = "firecore-battle-gui", default-features = false }
+firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
 firecore-world = { path = "world" }
 
-### Battle
-
-firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "e83c8d4", features = [
+firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "69618af", features = [
     "ai",
     "host",
     "default_engine_scripting",
 ] }
 
+firecore-storage = { path = "storage" }
+
 ### Other
 
 serde = { version = "1.0", features = ["derive"] }
 rand = { version = "0.8", features = ["small_rng"], default-features = false }
-bincode = "1.3"
 tinystr = { version = "0.4", features = ["serde"], default-features = false }
 crossbeam-channel = "0.5"
-ron = "0.7"
-dirs-next = "2"
 
 # discord-rich-presence = { version = "0.1", optional = true }
 
@@ -65,21 +61,22 @@ dirs-next = "2"
 
 [build-dependencies]
 
-firecore-pokedex-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-builder", rev = "71ec330" }
+firecore-pokedex-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-builder", rev = "ed51ebe" }
 firecore-pokedex-engine-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder", rev = "396e79e", default-features = false }
 firecore-battle-builder = { git = "https://github.com/DoNotDoughnut/firecore-battle-builder", rev = "1c253dc" }
 firecore-world-builder = { path = "world/builder" }
 firecore-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-builder", rev = "057373a" }
 firecore-audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-audio-builder", rev = "90af8c1", optional = true }
 serde = "1"
-bincode = "1.3"
+firecore-storage = { path = "storage", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]
-# winres = "0.1"
+embed-resource = "1"
 
 
 [workspace]
 members = [
     "world",
     "world/builder",
+    "storage"
 ]

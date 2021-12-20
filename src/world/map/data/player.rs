@@ -1,10 +1,10 @@
 use crate::engine::{
+    error::ImageError,
     graphics::{Color, DrawParams, Texture},
     math::Rectangle,
-    util::{HEIGHT, WIDTH},
+    utils::{HEIGHT, WIDTH, HashMap},
     Context,
 };
-use std::collections::HashMap;
 
 use worldlib::{
     character::{Character, Movement},
@@ -40,16 +40,14 @@ impl From<Texture> for CharacterTexture {
 }
 
 impl PlayerTexture {
-    pub fn new(ctx: &mut Context) -> Self {
-        bush::new(ctx);
+    pub fn new(ctx: &mut Context) -> Result<Self, ImageError> {
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
             Movement::Walking,
             Texture::new(
                 ctx,
                 include_bytes!("../../../../assets/world/textures/player/walking.png"),
-            )
-            .unwrap()
+            )?
             .into(),
         );
         textures.insert(
@@ -57,8 +55,7 @@ impl PlayerTexture {
             Texture::new(
                 ctx,
                 include_bytes!("../../../../assets/world/textures/player/running.png"),
-            )
-            .unwrap()
+            )?
             .into(),
         );
         textures.insert(
@@ -68,16 +65,15 @@ impl PlayerTexture {
                 texture: Texture::new(
                     ctx,
                     include_bytes!("../../../../assets/world/textures/player/surfing.png"),
-                )
-                .unwrap(),
+                )?,
             },
         );
 
-        Self {
+        Ok(Self {
             textures,
-            bush: bush::PlayerBushTexture::default(),
+            bush: bush::PlayerBushTexture::new(ctx)?,
             accumulator: 0.0,
-        }
+        })
     }
 
     pub fn update(&mut self, delta: f32, character: &mut Character) {

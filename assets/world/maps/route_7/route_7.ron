@@ -1,16 +1,10 @@
 (
-        identifier: "route_7",
-        name: "Route 7",
-        file: "3.25_ROUTE 7.map",
+    identifier: "route_7",
+    name: "Route 7",
+    file: "3.25_ROUTE 7.map",
 
-    chunk: Some((
-        coords: (
-            x: 240,
-            y: 130,
-        ),
-        connections: [
-            "celadon",
-            "saffron",
-        ],
-    )),
+    chunk: {
+        Left: ("celadon", -10),
+        Right: ("saffron", -10),
+    },
 )

@@ -1,12 +1,12 @@
 use crate::{WIDTH, HEIGHT};
-use crate::util::{Update, Render};
+use crate::utils::{Update, Render};
 use crate::transitions::BattleScreenTransition;
 use crate::transitions::BattleTransition;
-use firecore_util::{Reset, Completable};
-use crate::util::Load;
-use firecore_util::Entity;
+use firecore_utils::{Reset, Completable};
+use crate::utils::Load;
+use firecore_utils::Entity;
 
-use crate::util::graphics::draw_rect;
+use crate::utils::graphics::draw_rect;
 
 pub struct VerticalCloseBattleScreenTransition {
 

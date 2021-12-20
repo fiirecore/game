@@ -1,5 +1,8 @@
 (
-    identifier: "route_4_upper",
+    identifier: (
+        map: Some("pokemon_centers"),
+        index: "route_4_upper",
+    ),
     name: "Pokemon Center",
     file: "16.1_ROUTE 4.map",
 )

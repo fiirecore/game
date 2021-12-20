@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+use firecore_world::serialized::Doors;
+use rand::{Rng, SeedableRng};
 use worldlib::{
     map::{manager::WorldMapManager, TileId},
     positions::Coordinate, character::player::PlayerCharacter,
@@ -7,7 +8,7 @@ use worldlib::{
 use crate::{
     engine::{
         graphics::{draw_rectangle, Color, DrawParams, Texture},
-        util::{Entity, Reset, HEIGHT, WIDTH},
+        utils::{Entity, Reset, HEIGHT, WIDTH, HashMap},
         math::Rectangle,
         Context,
     },
@@ -16,9 +17,11 @@ use crate::{
 
 pub struct WarpTransition {
     alive: bool,
+
+    doors: HashMap<TileId, Texture>,
+
     door: Option<Door>,
-    pub doors: HashMap<TileId, Texture>,
-    color: crate::engine::inner::prelude::Color,
+    color: Color,
     // rect_width: f32,
     faded: bool,
     warped: bool,
@@ -48,13 +51,15 @@ impl Door {
 impl WarpTransition {
     // const RECT_WIDTH: f32 = WIDTH / 2.0;
 
-    pub fn new() -> Self {
+    pub fn new(ctx: &mut Context, doors: Doors) -> Self {
         Self {
             alive: false,
             door: None,
-            doors: HashMap::new(),
-            color: crate::engine::inner::prelude::BLACK,
-            // rect_width: Self::RECT_WIDTH,
+            doors: doors.into_iter().flat_map(|(locations, texture)| {
+                let texture = Texture::new(ctx, &texture).unwrap();
+                locations.into_iter().map(move |tile| (tile, texture.clone()))
+            }).collect(),
+            color: Color::BLACK,
             faded: false,
             warped: false,
             warp: None,
@@ -62,7 +67,7 @@ impl WarpTransition {
         }
     }
 
-    pub fn update(&mut self, world: &mut WorldMapManager, player: &mut PlayerCharacter, delta: f32) -> Option<bool> {
+    pub fn update<R: Rng + SeedableRng + Clone>(&mut self, world: &mut WorldMapManager<R>, player: &mut PlayerCharacter, delta: f32) -> Option<bool> {
         // returns map change
 
         match self.faded {

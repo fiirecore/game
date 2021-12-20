@@ -1,9 +1,8 @@
 (
     id: "robin",
     npc: (
-        name: "Robin",
-        type: "lass",
         character: (
+            name: "Robin",
             position: (
                 coords: (
                     x: 40,
@@ -12,15 +11,13 @@
                 direction: Down
             ),
         ),
+        type: "lass",
         movement: WalkUpAndDown(2),
         interact: Message([
-            (
-                lines: [
-                    "ROUTE 4 is at the foot of",
-                    "MT. MOON."
-                ],
-                color: Red,
-            )
+            [
+                "ROUTE 4 is at the foot of",
+                "MT. MOON."
+            ],
         ]),
         trainer: Some((
             tracking: Some(2),

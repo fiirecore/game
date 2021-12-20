@@ -3,14 +3,8 @@
     name: "Route 20",
     file: "3.38_ROUTE 20.map",
 
-    chunk: Some((
-        coords: (
-            x: 84,
-            y: 380,
-        ),
-        connections: [
-            "cinnabar",
-            "route_19",
-        ],
-    )),
+    chunk: {
+        Left: ("cinnabar", 0),
+        Right: ("route_19", -40),
+    },
 )

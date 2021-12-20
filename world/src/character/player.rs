@@ -3,12 +3,13 @@ use std::ops::{Deref, DerefMut};
 
 use crate::{positions::Location, map::manager::state::WorldMapState};
 
-use super::Character;
+use super::{Character, npc::{NpcId, Npc}};
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]
 pub struct PlayerCharacter {
     pub location: Location,
     pub character: Character,
+    pub rival: String,
     pub input_frozen: bool,
     pub ignore: bool,
     
@@ -27,4 +28,20 @@ impl DerefMut for PlayerCharacter {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.character
     }
+}
+
+impl PlayerCharacter {
+
+    pub fn find_battle(&mut self, map: &Location, id: &NpcId, npc: &mut Npc) -> bool {
+        if self.world.npc.active.is_none()
+            && !self.world.battle.battled(map, id)
+            && npc.find_character(&mut self.character)
+        {
+            self.world.npc.active = Some(*id);
+            true
+        } else {
+            false
+        }
+    }
+
 }
