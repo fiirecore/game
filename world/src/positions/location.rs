@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
-use tinystr::TinyStr16;
 
-pub type LocationId = TinyStr16;
+pub type LocationId = tinystr::TinyStr16;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Location {
     #[serde(default)]
     pub map: Option<LocationId>,

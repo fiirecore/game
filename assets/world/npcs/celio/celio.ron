@@ -1,0 +1,5 @@
+(
+    identifier: "celio",
+    sprite: Walk,
+    text_color: Blue,
+)

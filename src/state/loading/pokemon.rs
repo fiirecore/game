@@ -1,26 +1,28 @@
 use super::LoadingState;
 
+use crate::engine::{Context, error::ImageError};
+
 pub struct PokemonLoadingScene {
 	state: LoadingState,
 }
 
 impl super::LoadingScene for PokemonLoadingScene {
 
-	fn new() -> Self {
-		Self {
+	fn new(ctx: &mut Context) -> Result<Self, ImageError> {
+		Ok(Self {
             state: LoadingState::Continue,
-        }
+        })
 	}
 
-	fn on_start(&mut self) {
+	fn start(&mut self, ctx: &mut Context) {
 		todo!()
 	}
 	
-	fn update(&mut self, _delta: f32) {
+	fn update(&mut self, ctx: &mut Context, _delta: f32) {
         todo!()
     }
 	   
-	fn render(&self) {
+	fn draw(&self, ctx: &mut Context) {
 		todo!()
 	}
 

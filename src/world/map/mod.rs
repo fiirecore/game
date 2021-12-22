@@ -1,5 +1,6 @@
-use crate::engine::{Context, graphics::Color};
+use crate::engine::{graphics::Color, Context};
 
+use firecore_world::TILE_SIZE;
 use worldlib::map::{manager::state::WorldMapState, TileId, WorldMap};
 
 use crate::world::RenderCoords;
@@ -50,18 +51,46 @@ pub fn draw(
                     // let str = firecore_battle_gui::pokedex::gui::IntegerStr4::new(num as _).unwrap();
                     let mut str = [0u8; 3];
                     use std::io::Write;
-                    write!(&mut str as &mut [u8], "{}", num).unwrap();
+                    write!(&mut str as &mut [u8], "{:X}", num).unwrap();
                     let str = unsafe { std::str::from_utf8_unchecked(&str) };
                     let color = match num {
                         1 => Color::BLACK,
                         0xC => Color::WHITE,
+                        0x4 => Color::SKYBLUE,
                         _ => Color::RED,
                     };
                     use firecore_battle_gui::pokedex::engine::graphics::{self, DrawParams};
-                    let inverse = Color { r: 1.0 - color.r, g: 1.0 - color.g, b: 1.0 - color.b, a: color.a };
-                    graphics::draw_rectangle(ctx, render_x, render_y, firecore_world::TILE_SIZE, firecore_world::TILE_SIZE, color);
-                    graphics::draw_rectangle_lines(ctx, render_x, render_y, firecore_world::TILE_SIZE, firecore_world::TILE_SIZE, 1.0, inverse);
-                    graphics::draw_text_left(ctx, &0, str, render_x + 2.0, render_y + 3.0, DrawParams::color(inverse));
+                    let inverse = Color {
+                        r: 1.0 - color.r,
+                        g: 1.0 - color.g,
+                        b: 1.0 - color.b,
+                        a: color.a,
+                    };
+                    graphics::draw_rectangle(
+                        ctx,
+                        render_x,
+                        render_y,
+                        TILE_SIZE,
+                        TILE_SIZE,
+                        color,
+                    );
+                    graphics::draw_rectangle_lines(
+                        ctx,
+                        render_x,
+                        render_y,
+                        TILE_SIZE,
+                        TILE_SIZE,
+                        1.0,
+                        inverse,
+                    );
+                    graphics::draw_text_left(
+                        ctx,
+                        &0,
+                        str,
+                        render_x + 3.0,
+                        render_y + 1.0,
+                        DrawParams::color(inverse),
+                    );
                 } else {
                     let tile = map.tiles[index];
                     let (texture, tile) = if length > tile {
@@ -69,11 +98,8 @@ pub fn draw(
                     } else {
                         (secondary, tile - length)
                     };
-    
-    
-    
-                    data
-                        .tiles
+
+                    data.tiles
                         .draw_tile(ctx, texture, tile, render_x, render_y, color);
                     // if let Some(door) = door {
                     //     if door.position == index {
@@ -99,10 +125,36 @@ pub fn draw(
                 } else {
                     (secondary, tile - length)
                 };
-                data
-                    .tiles
+                data.tiles
                     .draw_tile(ctx, texture, tile, render_x, render_y, color);
             }
+
+            // if world.debug_draw {
+            //     let coordinates = map
+            //         .warps
+            //         .values()
+            //         .flat_map(|entry| entry.location.iter())
+            //         .collect::<Vec<_>>();
+            //     let y = yy - screen.offset.y;
+            //     let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
+            //     // let row = y.saturating_mul(map.width);
+            //     for xx in screen.left..screen.right {
+            //         let x = xx - screen.offset.x;
+            //         let coordinate = Coordinate { x, y };
+            //         if coordinates.contains(&coordinate) {
+            //             let render_x = (xx << 4) as f32 - screen.focus.x;
+            //             firecore_battle_gui::pokedex::engine::graphics::draw_rectangle_lines(
+            //                 ctx,
+            //                 render_x,
+            //                 render_y,
+            //                 TILE_SIZE,
+            //                 TILE_SIZE,
+            //                 1.0,
+            //                 Color::LIME,
+            //             );
+            //         }
+            //     }
+            // }
         }
     }
     for npc in map.npcs.values().filter(|npc| !npc.character.hidden).chain(

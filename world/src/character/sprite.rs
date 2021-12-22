@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct SpriteIndexes {
     pub up: [u8; 4],
     pub down: [u8; 4],

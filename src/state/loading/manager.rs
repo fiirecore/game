@@ -1,65 +1,76 @@
+use firecore_world::events::Sender;
+
 use super::{
-    LoadingScene, LoadingState, LoadingScenes,
-    copyright::CopyrightLoadingScene,
-    gamefreak::GamefreakLoadingScene,
-    pokemon::PokemonLoadingScene,
+    copyright::CopyrightLoadingScene, gamefreak::GamefreakLoadingScene,
+    pokemon::PokemonLoadingScene, LoadingScene, LoadingScenes, LoadingState,
 };
 
-use game::macroquad::prelude::info;
+use crate::{
+    engine::{
+        error::ImageError,
+        input::controls::{pressed, Control},
+        log::info,
+        Context,
+    },
+    state::{MainStates, StateMessage},
+};
 
-pub struct LoadingSceneManager {
-    
-    current_scene: LoadingScenes,
+pub struct LoadingStateManager {
+    current: LoadingScenes,
 
     copyright: CopyrightLoadingScene,
     gamefreak: GamefreakLoadingScene,
     pokemon: PokemonLoadingScene,
-    pub finished: bool,
 
+    sender: Sender<StateMessage>,
 }
 
-impl LoadingSceneManager {
-
-    pub fn new() -> Self {
-        Self {
-            current_scene: LoadingScenes::default(),
-            copyright: CopyrightLoadingScene::new(),
-            gamefreak: GamefreakLoadingScene::new(),
-            pokemon: PokemonLoadingScene::new(),
-            finished: false,
-        }
+impl LoadingStateManager {
+    pub(crate) fn new(ctx: &mut Context, sender: Sender<StateMessage>) -> Result<Self, ImageError> {
+        Ok(Self {
+            current: LoadingScenes::default(),
+            copyright: CopyrightLoadingScene::new(ctx)?,
+            gamefreak: GamefreakLoadingScene::new(ctx)?,
+            pokemon: PokemonLoadingScene::new(ctx)?,
+            sender,
+        })
     }
 
-    pub fn update(&mut self, delta: f32) {
-        if !self.finished {
-            match self.get().state() {
-                LoadingState::Continue => {
-                    self.get_mut().update(delta);
-                }
-                LoadingState::Scene(scene) => {
-                    self.current_scene = scene;
-                    self.get_mut().on_start();
-                }
-                LoadingState::End => {
-                    self.finish();
-                }
+    pub fn start(&mut self, ctx: &mut Context) {
+        self.current = LoadingScenes::Copyright;
+        self.get_mut().start(ctx);
+    }
+
+    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
+        if pressed(ctx, Control::A) {
+            self.sender.send(StateMessage::Goto(MainStates::Menu));
+        }
+
+        match self.get().state() {
+            LoadingState::Continue => {
+                self.get_mut().update(ctx, delta);
+            }
+            LoadingState::Next(scene) => {
+                self.current = scene;
+                self.get_mut().start(ctx);
+            }
+            LoadingState::End => {
+                self.finish();
             }
         }
     }
 
-    pub fn render(&self) {
-        if !self.finished {
-            self.get().render();
-        }
+    pub fn draw(&self, ctx: &mut Context) {
+        self.get().draw(ctx);
     }
 
     fn finish(&mut self) {
-        self.finished = true;
+        self.sender.send(StateMessage::Goto(MainStates::Menu));
         info!("Finished loading scene sequence.");
     }
 
     fn get(&self) -> &dyn LoadingScene {
-        match self.current_scene {
+        match self.current {
             LoadingScenes::Copyright => &self.copyright,
             LoadingScenes::Gamefreak => &self.gamefreak,
             LoadingScenes::Pokemon => &self.pokemon,
@@ -67,11 +78,10 @@ impl LoadingSceneManager {
     }
 
     fn get_mut(&mut self) -> &mut dyn LoadingScene {
-        match self.current_scene {
+        match self.current {
             LoadingScenes::Copyright => &mut self.copyright,
             LoadingScenes::Gamefreak => &mut self.gamefreak,
             LoadingScenes::Pokemon => &mut self.pokemon,
         }
     }
-
 }

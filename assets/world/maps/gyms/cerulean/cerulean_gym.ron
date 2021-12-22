@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("gyms"),
-        index: "cerulean",
-    ),
-    name: "Cerulean Gym",
-    file: "7.5_CERULEAN CITY.map",
-)

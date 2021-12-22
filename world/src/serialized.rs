@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use crate::{
     character::{
         npc::{MessageColor, Npc, NpcId, TrainerType, NpcTypeId},
-        sprite::SpriteIndexType,
+        sprite::SpriteIndexType, Movement,
     },
     map::{manager::Maps, PaletteId, TileId},
     // positions::Location,
@@ -44,15 +44,14 @@ pub struct SerializedNpcType {
 
 pub type Palettes = HashMap<PaletteId, Vec<u8>>;
 pub type Animated = HashMap<TileId, Vec<u8>>;
-
 pub type Doors = HashMap<Vec<TileId>, Vec<u8>>;
+pub type Player = HashMap<Movement, Vec<u8>>;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedTextures {
+    pub player: Player,
     pub palettes: Palettes,
-
     pub animated: Animated,
-
     pub doors: Doors,
 }
 

@@ -1,38 +1,35 @@
 use std::ops::Deref;
 
-use crate::saves::GamePokemon;
-use crate::world::npc::color;
 use crate::{
     engine::{
-        graphics::{self},
+        audio,
+        error::ImageError,
+        graphics::{self, Color},
         input::controls::{pressed, Control},
         text::MessagePage,
-        utils::Entity,
-        {graphics::Color, Context},
+        utils::{Completable, Entity},
+        Context,
     },
-    game::battle_glue::{BattleId, BattleTrainerEntry},
-    saves::GameBag,
-    world::gui::TextWindow,
+    game::battle_glue::{BattleEntry as GameBattleEntry, BattleId, BattleTrainerEntry},
+    saves::{GameBag, GameParty},
+    state::game::GameActions,
 };
-use crate::{game::battle_glue::BattleEntry as GameBattleEntry, state::game::GameActions};
+
 use battlelib::pokedex::{
     item::Item,
     moves::Move,
     pokemon::{owned::OwnedPokemon, Pokemon},
     Initializable,
 };
-use crossbeam_channel::Receiver;
-use firecore_battle::pokedex::pokemon::party::Party;
-use firecore_battle_gui::pokedex::engine::{
-    audio::{self},
-    utils::Completable,
-};
+
 use firecore_world::{
     actions::WorldActions,
-    events::{split, Sender},
+    events::{split, Receiver, Sender},
     map::manager::state::default_heal_loc,
 };
+
 use rand::prelude::SmallRng;
+
 use worldlib::{
     character::player::PlayerCharacter,
     map::{chunk::Connection, manager::WorldMapManager, Brightness, WorldMap},
@@ -41,11 +38,11 @@ use worldlib::{
 };
 
 use crate::world::{
-    map::{input::PlayerInput, warp::WarpTransition},
+    gui::TextWindow,
+    map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition},
+    npc::color,
     RenderCoords,
 };
-
-use super::data::ClientWorldData;
 
 // pub mod script;
 
@@ -69,12 +66,12 @@ impl GameWorldMapManager {
         ctx: &mut Context,
         actions: Sender<GameActions>,
         world: SerializedWorld,
-    ) -> Self {
+    ) -> Result<Self, ImageError> {
         // let events = Default::default();
 
         let (sender, receiver) = split();
 
-        Self {
+        Ok(Self {
             world: WorldMapManager::new(world.maps, default_heal_loc(), sender.clone()),
 
             data: ClientWorldData::new(
@@ -82,16 +79,21 @@ impl GameWorldMapManager {
                 world.textures.palettes,
                 world.textures.animated,
                 world.npc_types,
-            ),
+                world.textures.player,
+            )?,
             warper: WarpTransition::new(ctx, world.textures.doors),
-            text: TextWindow::new(ctx).unwrap(),
+            text: TextWindow::new(ctx)?,
             input: PlayerInput::default(),
             sender: actions,
             sender2: sender,
             // screen: RenderCoords::default(),
             // events,
             receiver,
-        }
+        })
+    }
+
+    pub fn get(&self, location: &Location) -> Option<&WorldMap> {
+        self.world.get(location)
     }
 
     pub fn start(&mut self, player: &mut PlayerCharacter) {
@@ -129,7 +131,7 @@ impl GameWorldMapManager {
         &mut self,
         ctx: &mut Context,
         player: &mut PlayerCharacter,
-        party: &mut Party<GamePokemon>,
+        party: &mut GameParty,
         bag: &mut GameBag,
         delta: f32,
     ) {
@@ -145,8 +147,8 @@ impl GameWorldMapManager {
         for action in self.receiver.try_iter() {
             match action {
                 WorldActions::Battle(entry) => {
-                    if let Some(trainer) = &player.world.battle.battling {
-                        let (id, trainer) = (
+                    let (id, t) = if let Some(trainer) = entry.trainer {
+                        let (id, t) = (
                             BattleId::Trainer(trainer.id),
                             if let Some(npc) = self
                                 .world
@@ -155,7 +157,7 @@ impl GameWorldMapManager {
                                 .flatten()
                             {
                                 let trainer = npc.trainer.as_ref().unwrap();
-                                let npc_type = self.data.npc.types.get(&npc.type_id).unwrap();
+                                let npc_type = self.data.npc.types.get(&npc.type_id);
                                 Some(BattleTrainerEntry {
                                     name: npc_type
                                         .trainer
@@ -172,14 +174,19 @@ impl GameWorldMapManager {
                                 None
                             },
                         );
-                        self.sender.send(GameActions::Battle(GameBattleEntry {
-                            id,
-                            party: entry.party,
-                            trainer,
-                            active: entry.active,
-                        }))
-                    }
+                        player.world.battle.battling = Some(trainer);
+                        (id, t)
+                    } else {
+                        (BattleId::Wild, None)
+                    };
+                    self.sender.send(GameActions::Battle(GameBattleEntry {
+                        id,
+                        party: entry.party,
+                        trainer: t,
+                        active: entry.active,
+                    }))
                 }
+                WorldActions::PlayerJump => self.data.player.jump(player),
                 // WorldActions::GivePokemon(pokemon) => {
                 //     if let Some(pokemon) = pokemon.init(
                 //         &mut self.data.randoms.general,
@@ -191,7 +198,7 @@ impl GameWorldMapManager {
                 //     }
                 // }
                 WorldActions::GiveItem(stack) => {
-                    if let Some(stack) = stack.init(crate::itemdex()) {
+                    if let Some(stack) = stack.init(crate::dex::itemdex()) {
                         bag.insert(stack);
                     }
                 }
@@ -230,10 +237,9 @@ impl GameWorldMapManager {
                                             .npc
                                             .types
                                             .get(&npc.type_id)
-                                            .map(|npc| {
-                                                npc.trainer.as_ref().map(|trainer| trainer.music)
-                                            })
-                                            .flatten()
+                                            .trainer
+                                            .as_ref()
+                                            .map(|trainer| trainer.music)
                                             .flatten()
                                         {
                                             self.sender2.send(WorldActions::PlayMusic(music));
@@ -241,14 +247,7 @@ impl GameWorldMapManager {
                                     }
                                     (
                                         &npc.character,
-                                        color(
-                                            self.data
-                                                .npc
-                                                .types
-                                                .get(&npc.type_id)
-                                                .map(|t| &t.message)
-                                                .unwrap(),
-                                        ),
+                                        color(&self.data.npc.types.get(&npc.type_id).message),
                                     )
                                 })
                             })
@@ -448,8 +447,30 @@ impl GameWorldMapManager {
         };
 
         if player.world.debug_draw {
+            graphics::draw_text_left(
+                ctx,
+                &1,
+                player
+                    .location
+                    .map
+                    .as_ref()
+                    .map(|s| s.as_str())
+                    .unwrap_or("No Base Map ID"),
+                5.0,
+                5.0,
+                Default::default(),
+            );
+            graphics::draw_text_left(
+                ctx,
+                &1,
+                player.location.index.as_str(),
+                5.0,
+                15.0,
+                Default::default(),
+            );
+
             let coordinates = format!("{}", player.character.position.coords);
-            graphics::draw_text_left(ctx, &0, &coordinates, 5.0, 5.0, Default::default());
+            graphics::draw_text_left(ctx, &1, &coordinates, 5.0, 25.0, Default::default());
         }
 
         self.warper.draw_door(ctx, &screen);

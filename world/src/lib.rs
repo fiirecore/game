@@ -46,6 +46,7 @@ pub mod actions {
     pub enum WorldActions {
         PlayMusic(TinyStr16),
         BeginWarpTransition(Coordinate),
+        PlayerJump,
         Message(Option<(NpcId, bool)>, Vec<Vec<String>>, bool),
         Battle(BattleEntry),
         // GivePokemon(SavedPokemon),

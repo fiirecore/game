@@ -1,0 +1,11 @@
+(
+    identifier: "channeler",
+    sprite: Walk,
+    text_color: Red,
+    trainer: Some(
+        (
+            name: "Chaneller",
+            // music: Some("encounter_boy"),
+        )
+    )
+)

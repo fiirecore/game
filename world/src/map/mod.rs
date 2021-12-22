@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use tinystr::TinyStr16;
 
 use crate::{
     character::npc::Npcs,
@@ -24,13 +23,14 @@ pub type TileId = u16;
 pub type MapSize = usize;
 pub type PaletteId = u8;
 pub type MovementId = movement::MovementId;
+pub type MusicId = tinystr::TinyStr16;
 
 #[derive(Serialize, Deserialize)]
 pub struct WorldMap {
     pub id: Location,
 
     pub name: String,
-    pub music: TinyStr16,
+    pub music: MusicId,
 
     pub width: CoordinateInt,
     pub height: CoordinateInt,
@@ -59,7 +59,7 @@ pub struct WorldMap {
     // pub mart: Option<mart::Pokemart>,
 }
 
-#[derive(Default, Deserialize, Serialize)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct WorldMapSettings {
     #[serde(default)]

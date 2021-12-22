@@ -1,9 +1,8 @@
 use crate::positions::{BoundingBox, Destination, Location};
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
-use tinystr::TinyStr16;
 
-pub type WarpId = TinyStr16;
+pub type WarpId = tinystr::TinyStr16;
 pub type Warps = HashMap<WarpId, WarpEntry>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

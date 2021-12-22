@@ -1,0 +1,22 @@
+(
+    id: "npc_4",
+    npc: (
+        character: (
+            name: "NPC 26-1",
+            position: (
+                coords: (
+                    x: 26,
+                    y: 1,
+                ),
+                direction: Down,
+            ),
+            movement: Walking,
+            worth: 0,
+            frozen: false,
+        ),
+        type: "bug_catcher",
+        movement: Still,
+        interact: Nothing,
+        trainer: None,
+    ),
+)

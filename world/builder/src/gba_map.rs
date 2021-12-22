@@ -84,7 +84,7 @@ impl GbaMap {
             0x24 => "route_2",
             0x25 => "route_3",
             0x26 => "route_4",
-            0x39 => "vermillion",
+            0x39 => "vermilion",
             0x1F => "viridian_forest",
             id => return Err(GbaMapError::MusicMapping(id)),
         };

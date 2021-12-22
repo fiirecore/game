@@ -13,7 +13,7 @@ pub enum MessageColor {
     Red,
     Blue,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NpcType {
     pub message: MessageColor,
     pub sprite: SpriteIndexes,

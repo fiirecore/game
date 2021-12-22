@@ -1,0 +1,5 @@
+(
+    identifier: "old_man_2",
+    text_color: Blue,
+    sprite: Walk,
+)

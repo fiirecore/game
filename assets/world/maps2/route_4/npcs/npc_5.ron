@@ -1,0 +1,22 @@
+(
+    id: "npc_5",
+    npc: (
+        character: (
+            name: "NPC 50-3",
+            position: (
+                coords: (
+                    x: 50,
+                    y: 3,
+                ),
+                direction: Left,
+            ),
+            movement: Walking,
+            worth: 0,
+            frozen: false,
+        ),
+        type: "blackbelt",
+        movement: Still,
+        interact: Nothing,
+        trainer: None,
+    ),
+)

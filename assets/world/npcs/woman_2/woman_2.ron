@@ -1,0 +1,5 @@
+(
+    identifier: "woman_2",
+    text_color: Red,
+    sprite: Walk,
+)

@@ -2,7 +2,26 @@ use firecore_battle_gui::pokedex::engine::graphics::Color;
 use std::collections::HashMap;
 use worldlib::character::npc::{MessageColor, NpcType, NpcTypeId};
 
-pub type NpcTypes = HashMap<NpcTypeId, NpcType>;
+use super::map::data::npc::NpcData;
+
+pub type NpcTypeMap = HashMap<NpcTypeId, NpcType>;
+
+#[derive(Debug, Clone)]
+pub struct NpcTypes(NpcTypeMap);
+
+impl NpcTypes {
+    pub fn new(map: NpcTypeMap) -> Self {
+        Self(map)
+    }
+
+    pub fn get(&self, id: &NpcTypeId) -> &NpcType {
+        self.0.get(id).unwrap_or_else(|| {
+            self.0
+                .get(&NpcData::PLACEHOLDER)
+                .unwrap_or_else(|| panic!("Cannot get placeholder npc type!"))
+        })
+    }
+}
 
 pub fn color(message: &MessageColor) -> Color {
     match message {

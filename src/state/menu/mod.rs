@@ -1,9 +1,8 @@
 mod manager;
 pub use manager::*;
 
-pub mod title;
-
-pub mod main;
+mod title;
+mod main;
 // pub mod first_scene;
 // pub mod character;
 
@@ -11,7 +10,7 @@ pub mod main;
 pub enum MenuActions {
     Goto(MenuStates),
     Seed(u8),
-    StartGame(usize),
+    StartGame,
     ExitGame,
 }
 

@@ -30,6 +30,6 @@ impl Default for Configuration {
 
 impl PersistantData for Configuration {
     fn path() -> &'static str {
-        "config.ron"
+        "config"
     }
 }

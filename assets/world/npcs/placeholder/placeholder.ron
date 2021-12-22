@@ -1,0 +1,5 @@
+(
+    identifier: "placeholder",
+    sprite: Walk,
+    text_color: Black,
+)

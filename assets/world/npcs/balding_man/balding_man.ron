@@ -1,0 +1,5 @@
+(
+    identifier: "balding_man",
+    sprite: Walk,
+    text_color: Blue,
+)

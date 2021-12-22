@@ -8,7 +8,7 @@ use super::WorldMap;
 
 pub type ChunkConnections = HashMap<Direction, Connection>;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct WorldChunk {
     pub connections: ChunkConnections,
 }

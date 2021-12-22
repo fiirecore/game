@@ -1,0 +1,10 @@
+(
+    identifier: "clerk",
+    sprite: Walk,
+    text_color: Blue,
+    trainer: Some(
+        (
+            name: "Clerk",
+        )
+    )
+)

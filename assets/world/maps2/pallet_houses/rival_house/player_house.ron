@@ -1,0 +1,8 @@
+(
+    identifier: (
+        map: Some("pallet"),
+        index: "rival_house",
+    ),
+    name: "%r's House",
+    file: "4.2_PALLET TOWN.map",
+)

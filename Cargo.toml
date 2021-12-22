@@ -62,7 +62,7 @@ crossbeam-channel = "0.5"
 [build-dependencies]
 
 firecore-pokedex-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-builder", rev = "ed51ebe" }
-firecore-pokedex-engine-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder", rev = "396e79e", default-features = false }
+firecore-pokedex-engine-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder", rev = "396e79e", default-features = false, features = ["compile"] }
 firecore-battle-builder = { git = "https://github.com/DoNotDoughnut/firecore-battle-builder", rev = "1c253dc" }
 firecore-world-builder = { path = "world/builder" }
 firecore-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-builder", rev = "057373a" }

@@ -21,7 +21,10 @@ pub struct MenuStateManager {
 }
 
 impl MenuStateManager {
-    pub(crate) fn new(ctx: &mut Context, sender: Sender<StateMessage>) -> Result<Self, EngineError> {
+    pub(crate) fn new(
+        ctx: &mut Context,
+        sender: Sender<StateMessage>,
+    ) -> Result<Self, EngineError> {
         let (actions, receiver) = split();
 
         Ok(Self {
@@ -37,10 +40,10 @@ impl MenuStateManager {
 }
 
 impl MenuStateManager {
-    pub fn start(&mut self, ctx: &mut Context, saves: &[SavedPlayer]) {
+    pub fn start(&mut self, ctx: &mut Context) {
         match self.current {
             MenuStates::Title => self.title.start(ctx),
-            MenuStates::MainMenu => self.main_menu.start(saves),
+            MenuStates::MainMenu => self.main_menu.start(),
         }
     }
 
@@ -52,10 +55,10 @@ impl MenuStateManager {
         }
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, saves: &mut Vec<SavedPlayer>) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, save: &mut Option<SavedPlayer>) {
         match self.current {
             MenuStates::Title => self.title.update(ctx, delta),
-            MenuStates::MainMenu => self.main_menu.update(ctx, saves),
+            MenuStates::MainMenu => self.main_menu.update(ctx, save),
         }
         for action in self.receiver.try_iter() {
             match action {
@@ -68,12 +71,12 @@ impl MenuStateManager {
                     self.current = state;
                     match self.current {
                         MenuStates::Title => self.title.start(ctx),
-                        MenuStates::MainMenu => self.main_menu.start(saves),
+                        MenuStates::MainMenu => self.main_menu.start(),
                     }
                 }
-                MenuActions::StartGame(index) => {
-                    if let Some(save) = saves.get(index) {
-                        self.sender.send(StateMessage::UseSave(save.clone()));
+                MenuActions::StartGame => {
+                    if save.is_some() {
+                        self.sender.send(StateMessage::LoadSave);
                         self.sender.send(StateMessage::Goto(MainStates::Game));
                     }
                 }
@@ -83,10 +86,10 @@ impl MenuStateManager {
         // Ok(())
     }
 
-    pub fn draw(&mut self, ctx: &mut Context, saves: &[SavedPlayer]) {
+    pub fn draw(&mut self, ctx: &mut Context) {
         match self.current {
             MenuStates::Title => self.title.draw(ctx),
-            MenuStates::MainMenu => self.main_menu.draw(ctx, saves),
+            MenuStates::MainMenu => self.main_menu.draw(ctx),
         }
     }
 }

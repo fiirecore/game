@@ -29,6 +29,7 @@ pub enum WorldCommands {
     NoClip(Option<bool>),
     DebugDraw,
     Unfreeze,
+    Tile,
 }
 
 pub enum PartyCommand {
@@ -87,6 +88,9 @@ impl CommandProcessor for WorldManager {
             "debugdraw" => {
                 self.commands
                     .send(WorldCommands::DebugDraw);
+            },
+            "tile" => {
+                self.commands.send(WorldCommands::Tile);
             }
             //         "party" => match result.args.next() {
             //             Some(arg) => match arg {

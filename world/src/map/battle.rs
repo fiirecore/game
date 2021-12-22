@@ -13,7 +13,7 @@ use super::{manager::state::WorldBattleState, wild::WildEntry};
 pub struct BattleEntry {
     pub party: Party<SavedPokemon>,
     pub active: usize,
-    // pub trainer: Option<TrainerEntry>,
+    pub trainer: Option<TrainerEntry>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -29,7 +29,7 @@ impl BattleEntry {
         Self {
             party,
             active: 1,
-            // trainer: None,
+            trainer: None,
         }
     }
 
@@ -41,20 +41,13 @@ impl BattleEntry {
     ) -> Option<Self> {
         if let Some(trainer) = npc.trainer.as_ref() {
             if !world.battled(map, id) {
-                world.battling = Some(TrainerEntry {
-                    id: *id,
-                    location: *map,
-                });
                 return Some(BattleEntry {
                     party: trainer.party.clone(),
-                    // trainer: Some(BattleTrainerEntry {
-                    //     transition: trainer.battle_transition,
-                    //     sprite: data.trainer.get(&npc.type_id).clone(),
-                    //     gym_badge: trainer_type.badge,
-                    //     victory_message: trainer.victory_message.clone(),
-                    //     worth: trainer.worth,
-                    // }),
                     active: 1,
+                    trainer:  Some(TrainerEntry {
+                        id: *id,
+                        location: *map,
+                    }),
                 });
             }
         }

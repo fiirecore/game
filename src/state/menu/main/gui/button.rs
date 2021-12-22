@@ -5,7 +5,6 @@ use crate::engine::{
     gui::Panel,
     input::{
         controls::{pressed, Control},
-        mouse::{self, MouseButton},
     },
     math::Vec2,
     text::MessagePage,
@@ -13,32 +12,6 @@ use crate::engine::{
 };
 
 pub struct Button {
-    pub origin: Vec2,
-    pub button: ButtonBase,
-}
-
-impl Button {
-    pub fn new(position: Vec2, size: Vec2, text: Cow<'static, str>) -> Self {
-        Self {
-            origin: position,
-            button: ButtonBase::new(size, text),
-        }
-    }
-
-    pub fn update(&mut self, ctx: &Context, mouse: Option<Vec2>, selected: bool) -> (bool, bool) {
-        self.button.update(ctx, &self.origin, mouse, selected)
-    }
-
-    pub fn state(&self) -> &ButtonState {
-        self.button.state()
-    }
-
-    pub fn draw(&self, ctx: &mut Context) {
-        self.button.draw(ctx, self.origin)
-    }
-}
-
-pub struct ButtonBase {
     pub size: Vec2,
     pub state: ButtonState,
     pub text: Cow<'static, str>,
@@ -57,7 +30,7 @@ impl Default for ButtonState {
     }
 }
 
-impl ButtonBase {
+impl Button {
     pub const NONE: Color = Color::WHITE;
     pub const HOVERED: Color = Color::rgb(0.9, 0.9, 0.9);
     pub const CLICKED: Color = Color::rgb(0.8, 0.8, 0.8);
@@ -73,46 +46,19 @@ impl ButtonBase {
     pub fn update(
         &mut self,
         ctx: &Context,
-        origin: &Vec2,
-        mouse: Option<Vec2>,
         selected: bool,
-    ) -> (bool, bool) {
+    ) -> bool {
         if selected {
             if pressed(ctx, Control::A) {
                 self.state = ButtonState::Clicked;
-                return (true, false);
+                return true;
             } else {
                 self.state = ButtonState::Hovered;
             }
+        } else {
+            self.state = ButtonState::None;
         }
-        if let Some(mouse) = mouse {
-            if mouse.x > origin.x
-                && mouse.y > origin.y
-                && mouse.x < origin.x + self.size.x
-                && mouse.y < origin.y + self.size.y
-            /*(*origin + self.size).gt(&mouse)*/
-            {
-                if mouse::pressed(ctx, MouseButton::Left) {
-                    self.state = ButtonState::Clicked;
-                    return (true, true);
-                } else {
-                    self.state = ButtonState::Hovered;
-                    return (false, true);
-                }
-            } else {
-                self.state = ButtonState::None;
-            }
-        } else if mouse::pressed(ctx, MouseButton::Left)
-            && matches!(self.state, ButtonState::Hovered)
-        {
-            self.state = ButtonState::Clicked;
-            return (true, true);
-        }
-        (false, false)
-    }
-
-    pub fn state(&self) -> &ButtonState {
-        &self.state
+        false
     }
 
     pub fn draw(&self, ctx: &mut Context, origin: Vec2) {

@@ -33,7 +33,7 @@ impl Default for PaletteTileData {
         cliffs.insert(Direction::Right, vec![134]);
         cliffs.insert(
             Direction::Down,
-            vec![135, 176, 177, 143, 151, 184, 185, 192, 193, 217, 1234],
+            vec![135, 176, 177, 143, 151, 184, 185, 192, 193, 1234],
         );
 
         Self {

@@ -1,34 +1,40 @@
-use firecore_battle::pokedex::Uninitializable;
+use battlelib::pokedex::Uninitializable;
 use rand::prelude::SmallRng;
 
 use crate::{
     command::CommandProcessor,
     engine::{
+        error::EngineError,
         graphics::{self, Color},
-        log::info,
+        log::{error, info},
         Context, State,
     },
-    saves::PlayerSaves,
+    saves::SavedPlayer,
     state::MainStates,
     LoadContext,
 };
 
-use firecore_world::events::{split, Receiver};
+use firecore_world::events::{split, Receiver, Sender};
 
-use super::{console::Console, game::GameStateManager, menu::MenuStateManager, StateMessage};
+use super::{
+    console::Console, game::GameStateManager, loading::LoadingStateManager, menu::MenuStateManager,
+    StateMessage,
+};
 
 pub struct StateManager {
     state: MainStates,
 
+    loading: LoadingStateManager,
     menu: MenuStateManager,
     game: GameStateManager,
 
     console: Console,
 
-    saves: PlayerSaves,
+    save: Option<SavedPlayer>,
 
     random: SmallRng,
 
+    sender: Sender<StateMessage>,
     receiver: Receiver<StateMessage>,
 }
 
@@ -36,50 +42,69 @@ impl State for StateManager {
     fn start(&mut self, ctx: &mut Context) {
         info!("Starting game!");
         match self.state {
-            MainStates::Menu => self.menu.start(ctx, &self.saves.list),
+            MainStates::Loading => (), //self.loading.start()
+            MainStates::Menu => self.menu.start(ctx),
             MainStates::Game => self.game.start(ctx),
         }
     }
     fn end(&mut self, ctx: &mut Context) {
         match self.state {
+            MainStates::Loading => (),
             MainStates::Menu => self.menu.end(ctx),
             MainStates::Game => self.game.end(),
         }
     }
     fn update(&mut self, ctx: &mut Context, delta: f32) {
-
-        if let Some(command) = self.console.update(ctx, delta, self.game.save.as_mut().map(|p| &mut p.character)) {
+        if let Some(command) = self.console.update(
+            ctx,
+            delta,
+            self.game.save.as_mut().map(|p| &mut p.character),
+        ) {
             match self.state {
+                MainStates::Loading => (),
                 MainStates::Menu => (),
                 MainStates::Game => self.game.process(command),
             }
         }
 
         match self.state {
-            MainStates::Menu => self.menu.update(ctx, delta, &mut self.saves.list),
+            MainStates::Loading => self.loading.update(ctx, delta),
+            MainStates::Menu => self.menu.update(ctx, delta, &mut self.save),
             MainStates::Game => self.game.update(ctx, delta, self.console.alive()),
         }
 
         for message in self.receiver.try_iter() {
             match message {
-                StateMessage::UseSave(save) => self.game.save = save.init(&mut self.random),
                 StateMessage::UpdateSave(save) => {
-                    let save = save.uninit();
-                    if let Some(pos) = self.saves.list.iter().position(|s| s.id == save.id) {
-                        self.saves.list[pos] = save;
-                    } else {
-                        self.saves.list.push(save);
+                    self.save = Some(save.uninit());
+                    self.sender.send(StateMessage::WriteSave);
+                }
+                StateMessage::WriteSave => {
+                    if let Some(save) = &self.save {
+                        if let Err(err) = storage::save::<storage::RonSerializer, SavedPlayer>(
+                            save,
+                            crate::PUBLISHER,
+                            crate::APPLICATION,
+                        ) {
+                            error!("Cannot write save with error {}", err);
+                        }
                     }
                 }
-                StateMessage::Save => {}
+                StateMessage::LoadSave => {
+                    if let Some(save) = self.save.take().map(|save| save.init(&mut self.random)).flatten() {
+                        self.game.save = Some(save);
+                    }
+                }
                 StateMessage::Goto(state) => {
                     match self.state {
+                        MainStates::Loading => (),
                         MainStates::Menu => self.menu.end(ctx),
                         MainStates::Game => self.game.end(),
                     }
                     self.state = state;
                     match self.state {
-                        MainStates::Menu => self.menu.start(ctx, &self.saves.list),
+                        MainStates::Loading => self.loading.start(ctx),
+                        MainStates::Menu => self.menu.start(ctx),
                         MainStates::Game => self.game.start(ctx),
                     }
                 }
@@ -95,7 +120,8 @@ impl State for StateManager {
         // graphics::set_canvas(ctx, self.scaler.canvas());
         graphics::clear(ctx, Color::BLACK);
         match self.state {
-            MainStates::Menu => self.menu.draw(ctx, &self.saves.list),
+            MainStates::Loading => self.loading.draw(ctx),
+            MainStates::Menu => self.menu.draw(ctx),
             MainStates::Game => self.game.draw(ctx),
         }
         self.console.draw(ctx);
@@ -115,6 +141,11 @@ impl State for StateManager {
 }
 impl StateManager {
     pub(crate) fn new(ctx: &mut Context, load: LoadContext) -> Self {
+        Self::try_new(ctx, load)
+            .unwrap_or_else(|err| panic!("Could not create state manager with error {}", err))
+    }
+
+    fn try_new(ctx: &mut Context, load: LoadContext) -> Result<Self, EngineError> {
         // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
 
         // let texture = game::graphics::Texture::new(include_bytes!("../build/assets/loading.png"));
@@ -134,26 +165,27 @@ impl StateManager {
         //     })
         // };
 
-        use crate::engine::graphics::{ScalingMode, set_scaling_mode};
+        use crate::engine::graphics::{set_scaling_mode, ScalingMode};
 
         set_scaling_mode(ctx, ScalingMode::Stretch, Some(crate::SCALE));
 
         let (sender, receiver) = split();
 
-        Self {
+        Ok(Self {
             state: MainStates::default(),
 
-            menu: MenuStateManager::new(ctx, sender.clone())
-                .unwrap_or_else(|err| panic!("Could not create main menu with error {}", err)),
-            game: GameStateManager::new(ctx, load.dex, load.btl, load.world, load.battle, sender).unwrap_or_else(|err| panic!("Could not create game state with error {}", err)),
+            loading: LoadingStateManager::new(ctx, sender.clone())?,
+            menu: MenuStateManager::new(ctx, sender.clone())?,
+            game: GameStateManager::new(ctx, load.dex, load.btl, load.world, load.battle, sender.clone())?,
 
             console: Console::default(),
 
-            saves: load.saves,
+            save: load.save,
             random: load.random,
 
+            sender,
             receiver,
             // scaler,
-        }
+        })
     }
 }

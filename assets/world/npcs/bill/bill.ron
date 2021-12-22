@@ -1,0 +1,5 @@
+(
+    identifier: "bill",
+    sprite: Walk,
+    text_color: Blue,
+)

@@ -204,9 +204,6 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 				},
 				BattleManagerState::Transition => match self.transition.state {
 					TransitionState::Begin => {
-						for p in self.player.remotes.values() {
-							println!("{}", p.player.pokemon.len());
-						}
 						self.transition.begin(ctx, self.player.local.as_ref().unwrap().data.type_, &battle.trainer);
 						self.update(ctx, pokedex, movedex, itemdex, delta, save);
 					},

@@ -2,12 +2,13 @@ use crate::engine::{
     error::ImageError,
     graphics::{Color, DrawParams, Texture},
     math::Rectangle,
-    utils::{HEIGHT, WIDTH, HashMap},
+    utils::{HashMap, HEIGHT, WIDTH},
     Context,
 };
 
+use firecore_world::serialized::Player;
 use worldlib::{
-    character::{Character, Movement},
+    character::{player::PlayerCharacter, Character, Movement},
     positions::Direction,
     TILE_SIZE,
 };
@@ -23,6 +24,7 @@ pub struct PlayerTexture {
     pub bush: bush::PlayerBushTexture,
 
     accumulator: f32,
+    jumping: bool,
 }
 
 pub struct CharacterTexture {
@@ -40,32 +42,21 @@ impl From<Texture> for CharacterTexture {
 }
 
 impl PlayerTexture {
-    pub fn new(ctx: &mut Context) -> Result<Self, ImageError> {
+    pub fn new(ctx: &mut Context, player: Player) -> Result<Self, ImageError> {
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
             Movement::Walking,
-            Texture::new(
-                ctx,
-                include_bytes!("../../../../assets/world/textures/player/walking.png"),
-            )?
-            .into(),
+            Texture::new(ctx, player.get(&Movement::Walking).unwrap())?.into(),
         );
         textures.insert(
             Movement::Running,
-            Texture::new(
-                ctx,
-                include_bytes!("../../../../assets/world/textures/player/running.png"),
-            )?
-            .into(),
+            Texture::new(ctx, player.get(&Movement::Running).unwrap())?.into(),
         );
         textures.insert(
             Movement::Swimming,
             CharacterTexture {
                 idle: Some(0.5),
-                texture: Texture::new(
-                    ctx,
-                    include_bytes!("../../../../assets/world/textures/player/surfing.png"),
-                )?,
+                texture: Texture::new(ctx, player.get(&Movement::Swimming).unwrap())?,
             },
         );
 
@@ -73,19 +64,47 @@ impl PlayerTexture {
             textures,
             bush: bush::PlayerBushTexture::new(ctx)?,
             accumulator: 0.0,
+            jumping: false,
         })
     }
 
-    pub fn update(&mut self, delta: f32, character: &mut Character) {
+    pub fn jump(&mut self, player: &mut PlayerCharacter) {
+        player.sprite = 0;
+        player.noclip = true;
+        player.input_frozen = true;
+        for _ in 0..2 {
+            player
+                .character
+                .pathing
+                .queue
+                .insert(0, player.character.position.direction);
+        }
+        self.accumulator = 0.0;
+        self.jumping = true;
+    }
+
+    pub fn update(&mut self, delta: f32, player: &mut PlayerCharacter) {
         self.bush.update(delta);
-        if character.offset.is_zero() {
-            if let Some(texture) = self.textures.get(&character.movement) {
-                if let Some(idle) = texture.idle {
-                    self.accumulator += delta;
-                    if self.accumulator > idle {
-                        self.accumulator -= idle;
-                        character.update_sprite();
+        match self.jumping {
+            false => {
+                if player.offset.is_zero() {
+                    if let Some(texture) = self.textures.get(&player.movement) {
+                        if let Some(idle) = texture.idle {
+                            self.accumulator += delta;
+                            if self.accumulator > idle {
+                                self.accumulator -= idle;
+                                player.update_sprite();
+                            }
+                        }
                     }
+                }
+            }
+            true => {
+                if !player.character.moving() {
+                    player.input_frozen = false;
+                    player.noclip = false;
+                    self.jumping = false;
+                    self.accumulator = 0.0;
                 }
             }
         }
@@ -94,11 +113,30 @@ impl PlayerTexture {
     pub fn draw(&self, ctx: &mut Context, character: &Character, color: Color) {
         if !character.hidden {
             if let Some(texture) = self.textures.get(&character.movement) {
+                if self.jumping {
+                    firecore_battle_gui::pokedex::engine::graphics::draw_circle(ctx, SCREEN_X, SCREEN_Y + 24.0, 8.0, Color::BLACK);
+                }
                 let (x, width) = current_texture(character);
                 texture.texture.draw(
                     ctx,
                     SCREEN_X - width / 2.0,
-                    SCREEN_Y,
+                    match self.jumping {
+                        true => {
+                            let negative = matches!(character.position.direction, Direction::Up);
+                            let o = character.offset.offset() / 4.0;
+                            match character.pathing.queue.is_empty() {
+                                false => match negative {
+                                    true => SCREEN_Y + o,
+                                    false => SCREEN_Y - o,
+                                },
+                                true => match negative {
+                                    true => SCREEN_Y + (TILE_SIZE / 4.0) - o,
+                                    false => SCREEN_Y - (TILE_SIZE / 4.0) + o,
+                                } ,
+                            }
+                        }
+                        false => SCREEN_Y,
+                    },
                     DrawParams {
                         source: Some(Rectangle::new(
                             x,

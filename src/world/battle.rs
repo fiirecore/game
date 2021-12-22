@@ -7,9 +7,6 @@ use rand::Rng;
 
 use crate::game::battle_glue::{BattleEntry, BattleId};
 
-
-
-
 pub const DEFAULT_RANDOM_BATTLE_SIZE: usize = 2;
 
 pub fn random_wild_battle(random: &mut impl Rng, pokedex: u16, size: usize) -> BattleEntry {

@@ -43,7 +43,7 @@ pub enum GameActions {
     Exit,
 }
 
-pub struct GameStateManager {
+pub(super) struct GameStateManager {
     state: GameStates,
 
     world: WorldManager,
@@ -56,7 +56,7 @@ pub struct GameStateManager {
 }
 
 impl GameStateManager {
-    pub(crate) fn new(
+    pub fn new(
         ctx: &mut Context,
         dex: PokedexClientData,
         btl: BattleGuiData,
@@ -132,9 +132,9 @@ impl GameStateManager {
                     GameActions::Battle(entry) => match self.state {
                         GameStates::World => {
                             if self.battle.battle(
-                                crate::pokedex(),
-                                crate::movedex(),
-                                crate::itemdex(),
+                                crate::dex::pokedex(),
+                                crate::dex::movedex(),
+                                crate::dex::itemdex(),
                                 save,
                                 entry,
                             ) {
@@ -160,9 +160,9 @@ impl GameStateManager {
                 GameStates::Battle => {
                     self.battle.update(
                         ctx,
-                        crate::pokedex(),
-                        crate::movedex(),
-                        crate::itemdex(),
+                        crate::dex::pokedex(),
+                        crate::dex::movedex(),
+                        crate::dex::itemdex(),
                         delta,
                         save,
                     );

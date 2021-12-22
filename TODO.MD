@@ -13,7 +13,7 @@
  - [ ] Move battle intro transition to world code
  - [ ] Reimplement scripts
  - [ ] Fix BattleGui
-
+ - [X] Reimplement loading/copyright screen
 
 
 * Figure out if world updating code needs a rewrite

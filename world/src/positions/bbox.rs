@@ -18,4 +18,8 @@ impl BoundingBox {
         }
     }
 
+    pub fn iter(&self) -> impl Iterator<Item = Coordinate> + '_ {
+        (self.min.x..self.max.x).flat_map(|x| (self.min.y..self.max.y).into_iter().map(move |y| Coordinate { x, y }))
+    }
+
 }

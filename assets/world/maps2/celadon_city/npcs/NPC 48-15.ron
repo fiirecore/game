@@ -1,0 +1,22 @@
+(
+    id: "npc_0",
+    npc: (
+        character: (
+            name: "NPC 48-15",
+            position: (
+                coords: (
+                    x: 48,
+                    y: 15,
+                ),
+                direction: Down,
+            ),
+            movement: Walking,
+            worth: 0,
+            frozen: false,
+        ),
+        type: "placeholder",
+        movement: Still,
+        interact: Nothing,
+        trainer: None,
+    ),
+)

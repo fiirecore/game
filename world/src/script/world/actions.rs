@@ -2,16 +2,16 @@ use crate::{map::warp::WarpId, positions::{CoordinateInt, Direction, Location, P
 use serde::{Deserialize, Serialize};
 
 use pokedex::{item::SavedItemStack, pokemon::owned::SavedPokemon};
-use tinystr::{TinyStr16, TinyStr8};
+use tinystr::TinyStr8;
 
 use crate::{
     character::npc::{Npc, NpcId},
-    map::warp::WarpDestination,
+    map::{warp::WarpDestination, MusicId},
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum WorldAction {
-    PlayMusic(TinyStr16),
+    PlayMusic(MusicId),
     PlayMapMusic,
     PlaySound(TinyStr8, Option<u16>),
 

@@ -45,7 +45,7 @@ impl WorldBattleState {
         }
     }
 
-    pub fn battled(&mut self, map: &Location, npc: &NpcId) -> bool {
+    pub fn battled(&self, map: &Location, npc: &NpcId) -> bool {
         self.battled
             .get(map)
             .map(|battled| battled.contains(npc))
@@ -96,7 +96,7 @@ pub const fn default_position() -> Position {
 }
 
 const DEFAULT_MAP: LocationId =
-    unsafe { LocationId::new_unchecked(9142636256173598303365790196080u128) };
+    unsafe { LocationId::new_unchecked(0x70616C6C6574u128) };
 const DEFAULT_INDEX: LocationId =
     unsafe { LocationId::new_unchecked(132299152847616915686911088u128) };
 

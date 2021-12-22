@@ -13,7 +13,7 @@ pub const CHANCES: &[u8; 12] = &[20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1];
 
 // }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct WildEntry {
     pub tiles: Option<Vec<TileId>>,
     /// Out of 255
@@ -23,7 +23,7 @@ pub struct WildEntry {
     pub pokemon: [WildPokemon; 12],
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct WildPokemon {
     #[serde(rename = "pokemon_id")]
     pub id: PokemonId,

@@ -1,0 +1,30 @@
+(
+    location: (
+        min: (
+            x: 11,
+            y: 30,
+        ),
+        max: (
+            x: 11,
+            y: 30,
+        ),
+    ),
+    destination: (
+        location: (
+            map: Some("gym"),
+            index: "celadon",
+        ),
+        position: (
+            coords: (
+                x: 6,
+                y: 18,
+            ),
+            direction: None,
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+            change_music: true,
+        ),
+    ),
+)

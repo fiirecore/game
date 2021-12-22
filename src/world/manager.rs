@@ -1,13 +1,13 @@
 use std::rc::Rc;
 
-use crate::saves::GamePokemon;
+use crate::saves::GameParty;
 use battlelib::pokedex::Initializable;
 use crossbeam_channel::Receiver;
-use firecore_battle::pokedex::pokemon::party::Party;
 use firecore_battle_gui::pokedex::{
     engine::{
         error::ImageError,
         input::controls::{pressed, Control},
+        log::info,
         utils::Entity,
         Context,
     },
@@ -54,7 +54,7 @@ impl WorldManager {
         let (actions, receiver) = split();
         // let events = EventReciver::default();
         Ok(Self {
-            manager: GameWorldMapManager::new(ctx, sender.clone(), world),
+            manager: GameWorldMapManager::new(ctx, sender.clone(), world)?,
             menu: StartMenu::new(dex, party, bag, sender.clone()),
             sender,
             commands: actions,
@@ -110,9 +110,9 @@ impl WorldManager {
                     WorldCommands::GivePokemon(pokemon) => {
                         if let Some(pokemon) = pokemon.init(
                             &mut self.random,
-                            crate::pokedex(),
-                            crate::movedex(),
-                            crate::itemdex(),
+                            crate::dex::pokedex(),
+                            crate::dex::movedex(),
+                            crate::dex::itemdex(),
                         ) {
                             save.party.try_push(pokemon);
                         }
@@ -126,9 +126,18 @@ impl WorldManager {
                         None => save.party.iter_mut().for_each(|p| p.heal(None, None)),
                     },
                     WorldCommands::GiveItem(item) => {
-                        if let Some(stack) = item.init(crate::itemdex()) {
+                        if let Some(stack) = item.init(crate::dex::itemdex()) {
                             save.bag.insert(stack);
                         }
+                    }
+                    WorldCommands::Tile => {
+                        info!(
+                            "{:?}",
+                            self.manager
+                                .get(&save.character.location)
+                                .map(|map| map.tile(save.character.position.coords))
+                                .flatten()
+                        );
                     }
                 }
             }
@@ -154,7 +163,7 @@ impl WorldManager {
     pub fn post_battle(
         &mut self,
         player: &mut PlayerCharacter,
-        party: &mut Party<GamePokemon>,
+        party: &mut GameParty,
         winner: bool,
         trainer: bool,
     ) {

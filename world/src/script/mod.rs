@@ -1,8 +1,6 @@
-use tinystr::TinyStr16;
-
 pub mod world;
 
-pub type ScriptId = TinyStr16;
+pub type ScriptId = tinystr::TinyStr16;
 
 #[derive(Debug, Clone, Copy, PartialEq, serde::Deserialize, serde::Serialize)]
 pub enum MatchCondition {

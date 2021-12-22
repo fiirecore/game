@@ -1,0 +1,29 @@
+(
+    location: (
+        min: (
+            x: 16,
+            y: 13,
+        ),
+        max: (
+            x: 16,
+            y: 13,
+        )
+    ),
+    destination: (
+        location: (
+            map: Some("pallet"),
+            index: "oaks_lab",
+        ),
+        position: (
+            coords: (
+                x: 6,
+                y: 12,
+            ),
+            direction: Some(Up),
+        ),
+        transition: (
+            move_on_exit: false,
+            warp_on_tile: true,
+        ),
+    )
+)

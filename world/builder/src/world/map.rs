@@ -15,8 +15,7 @@ use worldlib::{
     serialized::SerializedTextures,
 };
 
-use crate::gba_map::{GbaMap, GbaMapError};
-use crate::world::textures::get_textures;
+use crate::{bin::BinaryMap, world::textures::get_textures};
 
 use super::MapConfig;
 
@@ -84,6 +83,17 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
                                 // if let Some(map_gui_loc) = map_gui_loc {
                                 //     map_gui_locs.insert(map_gui_loc.0, (map_gui_loc.1, map_gui_loc.2));
                                 // }
+                            }
+                            if ext == std::ffi::OsString::from("world") {
+                                match std::fs::read(&file) {
+                                    Ok(bytes) => match bincode::deserialize::<WorldMap>(&bytes) {
+                                        Ok(map) => {
+                                            world_maps.insert(map.id, map);
+                                        }
+                                        Err(err) => panic!("Could not deserialize map with error {}", err),
+                                    }
+                                    Err(err) => eprintln!("Could not read world map file with error {}", err),
+                                }
                             }
                         }
                     }
@@ -165,14 +175,22 @@ pub fn load_map_from_config<P: AsRef<Path>>(
 
     // let map_gui_pos = config.chunk.as_ref().map(|chunk| chunk.map_icon.map(|i| (i, config.name.clone(), loc))).flatten();
 
-    let gba_map = GbaMap::load(
-        std::fs::read(root_path.join(config.file)).unwrap_or_else(|err| {
+    let map = BinaryMap::load(
+        &std::fs::read(root_path.join(&config.map)).unwrap_or_else(|err| {
             panic!(
                 "Could not get map file at {:?} with error {}",
                 root_path, err
             )
         }),
-    )?;
+        &std::fs::read(root_path.join(&config.border)).unwrap_or_else(|err| {
+            panic!(
+                "Could not get borders file at {:?} with error {}",
+                root_path, err
+            )
+        }),
+        config.width * config.height,
+    )
+    .ok_or(LoadMapError::BinaryMap)?;
 
     let chunk: ChunkConnections = config
         .chunk
@@ -186,17 +204,22 @@ pub fn load_map_from_config<P: AsRef<Path>>(
         id,
 
         name: config.name,
-        music: GbaMap::map_music(gba_map.music)?,
+        music: config.music,
 
-        width: gba_map.width as _,
-        height: gba_map.height as _,
+        width: config.width as _,
+        height: config.height as _,
 
-        palettes: gba_map.palettes,
+        palettes: config.palettes,
 
-        tiles: gba_map.tiles,
-        movements: gba_map.movements,
+        tiles: map.tiles,
+        movements: map.movements,
 
-        border: gba_map.borders,
+        border: [
+            map.border.tiles[0],
+            map.border.tiles[1],
+            map.border.tiles[2],
+            map.border.tiles[3],
+        ],
 
         chunk,
 
@@ -211,7 +234,8 @@ pub fn load_map_from_config<P: AsRef<Path>>(
 
 #[derive(Debug)]
 pub enum LoadMapError {
-    GbaMap(GbaMapError),
+    BinaryMap,
+    // GbaMap(GbaMapError),
     Io(std::io::Error),
     Ron(ron::Error),
     Toml(toml::de::Error),
@@ -220,7 +244,7 @@ pub enum LoadMapError {
 impl Display for LoadMapError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            LoadMapError::GbaMap(err) => Display::fmt(err, f),
+            LoadMapError::BinaryMap => core::fmt::Debug::fmt(self, f),
             LoadMapError::Io(err) => Display::fmt(err, f),
             LoadMapError::Ron(err) => Display::fmt(err, f),
             LoadMapError::Toml(err) => Display::fmt(err, f),
@@ -234,11 +258,11 @@ impl Display for LoadMapError {
     }
 }
 
-impl From<GbaMapError> for LoadMapError {
-    fn from(err: GbaMapError) -> Self {
-        Self::GbaMap(err)
-    }
-}
+// impl From<GbaMapError> for LoadMapError {
+//     fn from(err: GbaMapError) -> Self {
+//         Self::GbaMap(err)
+//     }
+// }
 
 impl From<std::io::Error> for LoadMapError {
     fn from(err: std::io::Error) -> Self {

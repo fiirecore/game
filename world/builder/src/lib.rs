@@ -1,12 +1,14 @@
-extern crate firecore_world as worldlib;
+pub extern crate firecore_world as worldlib;
 
 use worldlib::{
     map::{chunk::Connection, manager::Maps, warp::WarpEntry, PaletteId},
     serialized::{SerializedTextures, SerializedWorld},
 };
 
-pub mod gba_map;
 pub mod world;
+
+pub mod bin;
+// mod gba_map;
 
 pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
     println!("Started loading maps and tile textures...");

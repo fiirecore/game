@@ -13,20 +13,16 @@ use crate::pokedex::{
     },
     Initializable, Uninitializable,
 };
-use crate::engine::log::{info, warn};
 use serde::{Deserialize, Serialize};
-use std::{ops::Deref, path::PathBuf};
-use crate::storage::error::DataError;
+use std::ops::Deref;
 use worldlib::{
     character::{player::PlayerCharacter, Character},
     map::manager::state::{default_location, default_position},
 };
 
-mod list;
+// mod list;
 
-pub use list::PlayerSaves;
-
-pub type Name = String;
+// pub use list::PlayerSaves;
 
 pub type PlayerData = OwnedPlayer<&'static Pokemon, &'static Move, &'static Item>;
 
@@ -40,7 +36,6 @@ pub type OwnedPlayer<P, M, I> = Player<OwnedPokemon<P, M, I>, OwnedBag<I>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Player<P, B> {
-
     #[serde(default = "default_id")]
     pub id: u64,
 
@@ -52,16 +47,15 @@ pub struct Player<P, B> {
 
     #[serde(default)]
     pub bag: B,
-
 }
 
 impl SavedPlayer {
-    pub fn new(name: String) -> Self {
+    pub fn new<S: Into<String>>(name: S) -> Self {
         Self {
             character: PlayerCharacter {
                 rival: "Gary".to_owned(),
                 character: Character {
-                    name,
+                    name: name.into(),
                     position: default_position(),
                     ..Default::default()
                 },
@@ -71,18 +65,18 @@ impl SavedPlayer {
         }
     }
 
-    pub fn save(&self, _local: bool) -> Result<(), DataError> {
-        info!("Saving player data!");
-        if let Err(err) = crate::storage::save(
-            self,
-            crate::PUBLISHER,
-            crate::APPLICATION,
-            PathBuf::from("saves").join(&format!("{}-{}.ron", self.character.name, self.id)),
-        ) {
-            warn!("Could not save player data with error: {}", err);
-        }
-        Ok(())
-    }
+    // pub fn save(&self) -> Result<(), DataError> {
+    //     info!("Saving player data!");
+    //     if let Err(err) = crate::storage::save(
+    //         self,
+    //         crate::PUBLISHER,
+    //         crate::APPLICATION,
+    //         PathBuf::from("saves").join(&format!("{}-{}.ron", self.character.name, self.id)),
+    //     ) {
+    //         warn!("Could not save player data with error: {}", err);
+    //     }
+    //     Ok(())
+    // }
 
     pub fn init(
         self,
@@ -93,10 +87,15 @@ impl SavedPlayer {
     ) -> Option<PlayerData> {
         let mut party = Party::new();
 
-        let itemdex = crate::itemdex();
+        let itemdex = crate::dex::itemdex();
 
         for p in self.party.into_iter() {
-            let p = p.init(random, crate::pokedex(), crate::movedex(), itemdex)?;
+            let p = p.init(
+                random,
+                crate::dex::pokedex(),
+                crate::dex::movedex(),
+                itemdex,
+            )?;
             party.push(p);
         }
 
@@ -106,6 +105,12 @@ impl SavedPlayer {
             party,
             bag: self.bag.init(itemdex)?,
         })
+    }
+}
+
+impl storage::PersistantData for SavedPlayer {
+    fn path() -> &'static str {
+        "save"
     }
 }
 

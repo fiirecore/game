@@ -1,0 +1,10 @@
+(
+    identifier: "beauty",
+    sprite: Walk,
+    text_color: Red,
+    trainer: Some(
+        (
+            name: "Beauty",
+        )
+    )
+)

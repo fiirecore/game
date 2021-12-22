@@ -1,6 +1,7 @@
 #[derive(Debug)]
 pub enum DataError {
     IOError(std::io::Error),
+    Utf8Error(std::str::Utf8Error),
     Ron(ron::Error),
     Bincode(bincode::Error),
     #[cfg(feature = "io")]
@@ -18,6 +19,12 @@ impl core::fmt::Display for DataError {
 impl From<std::io::Error> for DataError {
     fn from(error: std::io::Error) -> Self {
         Self::IOError(error)
+    }
+}
+
+impl From<std::str::Utf8Error> for DataError {
+    fn from(error: std::str::Utf8Error) -> Self {
+        Self::Utf8Error(error)
     }
 }
 
