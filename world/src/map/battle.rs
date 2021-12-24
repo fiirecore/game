@@ -1,5 +1,4 @@
 use firecore_pokedex::pokemon::{owned::SavedPokemon, party::Party};
-use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -7,7 +6,7 @@ use crate::{
     positions::Location,
 };
 
-use super::{manager::state::WorldBattleState, wild::WildEntry};
+use super::manager::state::WorldBattleState;
 
 #[derive(Debug, Clone)]
 pub struct BattleEntry {
@@ -23,16 +22,6 @@ pub struct TrainerEntry {
 }
 
 impl BattleEntry {
-    pub fn wild(random: &mut impl Rng, wild: &WildEntry) -> Self {
-        let mut party = Party::new();
-        party.push(wild.generate(random));
-        Self {
-            party,
-            active: 1,
-            trainer: None,
-        }
-    }
-
     pub fn trainer(
         world: &mut WorldBattleState,
         map: &Location,
@@ -44,7 +33,7 @@ impl BattleEntry {
                 return Some(BattleEntry {
                     party: trainer.party.clone(),
                     active: 1,
-                    trainer:  Some(TrainerEntry {
+                    trainer: Some(TrainerEntry {
                         id: *id,
                         location: *map,
                     }),

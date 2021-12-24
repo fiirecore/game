@@ -1,7 +1,7 @@
 (
     identifier: "camper",
     sprite: Walk,
-    text_color: Blue,
+    message: Blue,
     trainer: Some(
         (
             name: "Camper",

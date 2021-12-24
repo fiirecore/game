@@ -22,17 +22,17 @@ use battlelib::pokedex::{
     Initializable,
 };
 
-use firecore_world::{
-    actions::WorldActions,
-    events::{split, Receiver, Sender},
-    map::manager::state::default_heal_loc,
-};
-
 use rand::prelude::SmallRng;
 
 use worldlib::{
+    actions::WorldActions,
     character::player::PlayerCharacter,
-    map::{chunk::Connection, manager::WorldMapManager, Brightness, WorldMap},
+    events::{split, Receiver, Sender},
+    map::{
+        chunk::Connection,
+        manager::{state::default_heal_loc, tile::PaletteTileData, WorldMapData, WorldMapManager},
+        Brightness, WorldMap,
+    },
     positions::{Coordinate, Direction, Location},
     serialized::SerializedWorld,
 };
@@ -40,9 +40,10 @@ use worldlib::{
 use crate::world::{
     gui::TextWindow,
     map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition},
-    npc::color,
     RenderCoords,
 };
+
+mod npc;
 
 // pub mod script;
 
@@ -71,17 +72,28 @@ impl GameWorldMapManager {
 
         let (sender, receiver) = split();
 
-        Ok(Self {
-            world: WorldMapManager::new(world.maps, default_heal_loc(), sender.clone()),
+        let (npcs, textures) = world
+            .npcs
+            .into_iter()
+            .map(|(id, s)| ((id, s.group), (id, s.texture)))
+            .unzip();
 
-            data: ClientWorldData::new(
-                ctx,
-                world.textures.palettes,
-                world.textures.animated,
-                world.npc_types,
-                world.textures.player,
-            )?,
-            warper: WarpTransition::new(ctx, world.textures.doors),
+        let data = WorldMapData {
+            maps: world.maps,
+            tiles: [0, 2, 14, 15, 40, 43, 59, 60]
+                .into_iter()
+                .map(|i| (i, PaletteTileData::temp_new(i)))
+                .collect(),
+            wild: worldlib::map::wild::default_chances(),
+            npcs,
+            default: default_heal_loc(),
+        };
+
+        Ok(Self {
+            world: WorldMapManager::new(data, sender.clone()),
+
+            data: ClientWorldData::new(ctx, world.textures, textures)?,
+            warper: WarpTransition::new(),
             text: TextWindow::new(ctx)?,
             input: PlayerInput::default(),
             sender: actions,
@@ -157,17 +169,17 @@ impl GameWorldMapManager {
                                 .flatten()
                             {
                                 let trainer = npc.trainer.as_ref().unwrap();
-                                let npc_type = self.data.npc.types.get(&npc.type_id);
+                                let group = npc::group(&self.world.data.npcs, &npc.group);
                                 Some(BattleTrainerEntry {
-                                    name: npc_type
+                                    name: group
                                         .trainer
                                         .as_ref()
                                         .map(|t| format!("{} {}", t.name, npc.character.name))
                                         .unwrap_or_else(|| npc.character.name.clone()),
                                     badge: trainer.badge,
-                                    sprite: npc.type_id,
-                                    transition: trainer.battle_transition,
-                                    victory_message: trainer.victory_message.clone(),
+                                    sprite: npc.group,
+                                    transition: trainer.transition,
+                                    victory_message: trainer.defeat.clone(),
                                     worth: trainer.worth as _,
                                 })
                             } else {
@@ -220,58 +232,57 @@ impl GameWorldMapManager {
                 //             .send(GameActions::CommandError("Unknown location!"));
                 //     }
                 // }
-                WorldActions::Message(npc, pages, queue) => {
+                WorldActions::Message(pages, color) => {
                     if !self.text.text.alive() {
                         self.text.text.spawn();
                     }
-                    if !queue {
-                        self.text.text.pages.clear();
-                    }
-                    let npc = npc
-                        .map(|(npc, music)| {
-                            self.world.get(&player.location).map(|map| {
-                                map.npcs.get(&npc).map(|npc| {
-                                    if music {
-                                        if let Some(music) = self
-                                            .data
-                                            .npc
-                                            .types
-                                            .get(&npc.type_id)
-                                            .trainer
-                                            .as_ref()
-                                            .map(|trainer| trainer.music)
-                                            .flatten()
-                                        {
-                                            self.sender2.send(WorldActions::PlayMusic(music));
-                                        }
-                                    }
-                                    (
-                                        &npc.character,
-                                        color(&self.data.npc.types.get(&npc.type_id).message),
-                                    )
-                                })
-                            })
-                        })
-                        .flatten()
-                        .flatten();
+                    self.text.text.pages.clear();
 
-                    let mut color = None;
+                    // let npc = npc
+                    //     .map(|(npc, music)| {
+                    //         self.world.get(&player.location).map(|map| {
+                    //             map.npcs.get(&npc).map(|npc| {
+                    //                 if music {
+                    //                     if let Some(music) = self
+                    //                         .data
+                    //                         .npc
+                    //                         .types
+                    //                         .get(&npc.type_id)
+                    //                         .trainer
+                    //                         .as_ref()
+                    //                         .map(|trainer| trainer.music)
+                    //                         .flatten()
+                    //                     {
+                    //                         self.sender2.send(WorldActions::PlayMusic(music));
+                    //                     }
+                    //                 }
+                    //                 (
+                    //                     &npc.character,
+                    //                     color(&self.data.npc.types.get(&npc.type_id).message),
+                    //                 )
+                    //             })
+                    //         })
+                    //     })
+                    //     .flatten()
+                    //     .flatten();
 
-                    let npc = npc.map(|(ch, co)| {
-                        color = Some(co);
-                        ch
-                    });
+                    // let mut color = None;
+
+                    // let npc = npc.map(|(ch, co)| {
+                    //     color = Some(co);
+                    //     ch
+                    // });
 
                     let mut pages = pages
                         .into_iter()
                         .map(|lines| MessagePage {
                             lines,
                             wait: None,
-                            color: color.unwrap_or(MessagePage::BLACK),
+                            color: npc::color(&color),
                         })
                         .collect::<Vec<_>>();
 
-                    crate::game::text::process_messages(&mut pages, player, npc);
+                    crate::game::text::process_messages(&mut pages, player);
                     self.text.text.pages.extend(pages);
                     player.input_frozen = true;
                 }
@@ -355,7 +366,7 @@ impl GameWorldMapManager {
     // }
 
     pub fn warp_to_location(&mut self, player: &mut PlayerCharacter, location: Location) {
-        if let Some(map) = self.world.maps.get(&location) {
+        if let Some(map) = self.world.data.maps.get(&location) {
             player.location = location;
             let pos = &mut player.position;
             pos.coords = map.settings.fly_position.unwrap_or_default();
@@ -389,6 +400,7 @@ impl GameWorldMapManager {
                         for (connection, direction, offset) in chunk.connections.iter().flat_map(
                             |(direction, Connection(location, offset))| {
                                 self.world
+                                    .data
                                     .maps
                                     .get(location)
                                     .map(|map| (map, direction, offset))

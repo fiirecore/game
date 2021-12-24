@@ -1,6 +1,6 @@
 use crate::{
     engine::{audio::play_music, Context},
-    game::battle_glue::BattleTrainerEntry,
+    game::battle_glue::BattleTrainerEntry, battle::TransitionState,
 };
 
 use battlelib::data::BattleType;
@@ -9,8 +9,6 @@ use crate::battle::manager::transitions::{
     transitions::{BattleTransitions, FlashBattleTransition, TrainerBattleTransition},
     BattleTransition,
 };
-
-use firecore_battle_gui::transition::TransitionState;
 
 pub struct BattleScreenTransitionManager {
     pub state: TransitionState,

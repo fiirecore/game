@@ -1,5 +1,5 @@
 (
     identifier: "nurse",
-    text_color: Red,
+    message: Red,
     sprite: Still,
 )

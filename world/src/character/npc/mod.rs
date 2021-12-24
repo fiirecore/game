@@ -1,7 +1,6 @@
 use crate::positions::Coordinate;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use tinystr::TinyStr8;
 
 use self::trainer::Trainer;
 use super::Character;
@@ -9,20 +8,22 @@ use super::Character;
 mod interact;
 pub use interact::*;
 
-mod npc_type;
-pub use npc_type::*;
-
+pub mod group;
 pub mod trainer;
 
-pub type NpcId = TinyStr8;
+pub type NpcId = tinystr::TinyStr8;
 pub type Npcs = HashMap<NpcId, Npc>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Npc {
     pub character: Character,
+    /// The NPC's type.
+    /// This determines the texture of the NPC,
+    /// what color their message text is,
+    /// and what song is played on an encounter
     #[serde(rename = "type")]
-    pub type_id: NpcTypeId,
+    pub group: group::NpcGroupId,
     #[serde(default)]
     pub movement: NpcMovement,
     #[serde(skip, default)]

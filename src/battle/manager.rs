@@ -20,7 +20,7 @@ use crate::pokedex::{pokemon::Pokemon, moves::Move, item::Item};
 
 use super::{GameBattleWrapper};
 
-use firecore_battle_gui::{BattlePlayerGui, context::BattleGuiData, transition::TransitionState, pokedex::engine::utils::Reset};
+use firecore_battle_gui::{BattlePlayerGui, context::BattleGuiData, pokedex::engine::utils::Reset};
 
 pub mod transitions;
 
@@ -52,6 +52,20 @@ pub struct BattleManager<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = M
 	pub finished: bool,
 	
 }
+
+#[derive(Debug)]
+pub enum TransitionState {
+    Begin, // runs on spawn methods
+    Run,
+    End, // spawns next state and goes back to beginning
+}
+
+impl Default for TransitionState {
+    fn default() -> Self {
+        Self::Begin
+    }
+}
+
 
 #[derive(Debug)]
 pub enum BattleManagerState {

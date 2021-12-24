@@ -1,6 +1,4 @@
-use worldlib::map::{MovementId, TileId};
-
-use crate::world::MapConfig;
+use world::map::{MovementId, TileId};
 
 #[derive(Debug, Clone)]
 pub struct BinaryMap {

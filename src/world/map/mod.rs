@@ -1,7 +1,7 @@
 use crate::engine::{graphics::Color, Context};
 
 use firecore_world::TILE_SIZE;
-use worldlib::map::{manager::state::WorldMapState, TileId, WorldMap};
+use worldlib::map::{manager::state::WorldMapState, WorldMap};
 
 use crate::world::RenderCoords;
 
@@ -22,17 +22,6 @@ pub fn draw(
     border: bool,
     color: Color,
 ) {
-    let primary = data
-        .tiles
-        .palettes
-        .get(&map.palettes[0])
-        .expect("Could not get primary palette for map!");
-    let length = primary.height() as TileId;
-    let secondary = data
-        .tiles
-        .palettes
-        .get(&map.palettes[1])
-        .expect("Could not get secondary palette for map!");
 
     for yy in screen.top..screen.bottom {
         let y = yy - screen.offset.y;
@@ -93,14 +82,9 @@ pub fn draw(
                     );
                 } else {
                     let tile = map.tiles[index];
-                    let (texture, tile) = if length > tile {
-                        (primary, tile)
-                    } else {
-                        (secondary, tile - length)
-                    };
 
                     data.tiles
-                        .draw_tile(ctx, texture, tile, render_x, render_y, color);
+                        .draw_tile(ctx, &map.palettes, tile, render_x, render_y, color);
                     // if let Some(door) = door {
                     //     if door.position == index {
                     //         textures.tiles.draw_door(ctx, door, render_x, render_y);
@@ -120,13 +104,8 @@ pub fn draw(
                 } else {
                     3
                 }];
-                let (texture, tile) = if length > tile {
-                    (primary, tile)
-                } else {
-                    (secondary, tile - length)
-                };
                 data.tiles
-                    .draw_tile(ctx, texture, tile, render_x, render_y, color);
+                    .draw_tile(ctx, &map.palettes, tile, render_x, render_y, color);
             }
 
             // if world.debug_draw {

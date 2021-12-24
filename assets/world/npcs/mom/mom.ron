@@ -1,5 +1,8 @@
 (
-    identifier: "mom",
-    text_color: Red,
-    sprite: Still,
+    message: Red,
+    trainer: Some(
+        (
+            name: "Your"
+        )
+    )
 )

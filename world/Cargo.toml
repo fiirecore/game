@@ -9,7 +9,8 @@ edition = "2021"
 serde = { version = "1", features = ["derive"] }
 tinystr = { version = "0.4", features = ["serde"], default-features = false }
 rand = { version = "0.8", default-features = false }
-smallvec = { version = "1", features = ["union", "const_new"] }
+hashbrown = { version = "0.9", features = ["serde"] }
+# smallvec = { version = "1", features = ["union", "const_new"] }
 crossbeam-channel = "0.5"
 # enum-map = { version = "1", features = ["serde"] }
 

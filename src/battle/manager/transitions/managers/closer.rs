@@ -1,4 +1,4 @@
-use crate::{engine::{gui::MessageBox, Context}, game::battle_glue::{BattleId, BattleTrainerEntry}};
+use crate::{engine::{gui::MessageBox, Context}, game::battle_glue::{BattleId, BattleTrainerEntry}, battle::TransitionState};
 
 use battlelib::data::BattleType;
 use crate::pokedex::PokedexClientData;
@@ -7,8 +7,6 @@ use crate::battle::manager::transitions::{
     closers::{Closers, TrainerBattleCloser, WildBattleCloser},
     BattleCloser,
 };
-
-use firecore_battle_gui::transition::TransitionState;
 
 #[derive(Default)]
 pub struct BattleCloserManager {

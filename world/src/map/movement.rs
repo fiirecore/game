@@ -37,7 +37,7 @@ pub fn can_move(movement: Movement, code: MovementId) -> bool {
 }
 
 pub fn can_walk(code: MovementId) -> bool {
-    code == 0xC
+    matches!(code, 0 | 0xC | 14)
 }
 
 pub fn can_swim(code: MovementId) -> bool {

@@ -1,7 +1,8 @@
 use firecore_world::{
-    character::player::PlayerCharacter,
-    serialized::{Animated, Palettes, Player, SerializedNpcType},
+    character::npc::group::NpcGroupId, character::player::PlayerCharacter,
+    serialized::SerializedTextures,
 };
+use hashbrown::HashMap;
 
 use crate::engine::{error::ImageError, Context};
 
@@ -11,8 +12,8 @@ pub mod player;
 pub mod tile;
 
 pub struct ClientWorldData {
-    pub tiles: tile::TileTextureManager,
-    pub npc: npc::NpcData,
+    pub tiles: tile::PaletteTextureManager,
+    pub npc: npc::NpcTextures,
     pub player: player::PlayerTexture,
     pub gui: gui::GuiTextures,
 }
@@ -20,15 +21,13 @@ pub struct ClientWorldData {
 impl ClientWorldData {
     pub fn new(
         ctx: &mut Context,
-        palettes: Palettes,
-        animated: Animated,
-        npcs: Vec<SerializedNpcType>,
-        player: Player,
+        textures: SerializedTextures,
+        npcs: HashMap<NpcGroupId, Vec<u8>>,
     ) -> Result<Self, ImageError> {
         Ok(Self {
-            tiles: tile::TileTextureManager::new(ctx, palettes, animated),
-            npc: npc::NpcData::new(ctx, npcs)?,
-            player: player::PlayerTexture::new(ctx, player)?,
+            tiles: tile::PaletteTextureManager::new(ctx, textures.palettes),
+            npc: npc::NpcTextures::new(ctx, npcs)?,
+            player: player::PlayerTexture::new(ctx, textures.player)?,
             gui: gui::GuiTextures::new(ctx),
         })
     }

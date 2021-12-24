@@ -6,7 +6,7 @@ use crate::{
     script::world::WorldScript,
 };
 use warp::{WarpDestination, Warps};
-use wild::WildEntry;
+use wild::WildEntries;
 
 use self::{chunk::WorldChunk, movement::MovementResult};
 
@@ -22,10 +22,12 @@ pub mod battle;
 pub type TileId = u16;
 pub type MapSize = usize;
 pub type PaletteId = u8;
+pub type Palettes = [PaletteId; 2];
 pub type MovementId = movement::MovementId;
 pub type MusicId = tinystr::TinyStr16;
+pub type TransitionId = tinystr::TinyStr8;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldMap {
     pub id: Location,
 
@@ -35,7 +37,7 @@ pub struct WorldMap {
     pub width: CoordinateInt,
     pub height: CoordinateInt,
 
-    pub palettes: [PaletteId; 2],
+    pub palettes: Palettes,
 
     pub tiles: Vec<TileId>,
     pub movements: Vec<MovementId>,
@@ -47,7 +49,7 @@ pub struct WorldMap {
     // Map objects
     pub warps: Warps,
 
-    pub wild: Option<WildEntry>,
+    pub wild: Option<WildEntries>,
 
     pub npcs: Npcs,
 
@@ -59,7 +61,7 @@ pub struct WorldMap {
     // pub mart: Option<mart::Pokemart>,
 }
 
-#[derive(Debug, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct WorldMapSettings {
     #[serde(default)]
@@ -165,7 +167,7 @@ impl WorldMap {
 }
 
 /// To - do: move
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum Brightness {
     Day,
     Night,

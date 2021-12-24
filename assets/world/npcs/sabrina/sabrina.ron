@@ -1,0 +1,8 @@
+(
+    message: Red,
+    trainer: Some(
+        (
+            name: "Gym Leader",
+        )
+    )
+)

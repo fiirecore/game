@@ -1,72 +1,92 @@
-use firecore_pokedex::pokemon::{owned::SavedPokemon, Level, PokemonId};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use std::ops::RangeInclusive;
+use hashbrown::HashMap;
 
-use crate::map::TileId;
+use pokedex::pokemon::{owned::SavedPokemon, party::Party, Level, PokemonId};
 
-// pub const DEFAULT_ENCOUNTER: u8 = 21;
-pub const CHANCES: &[u8; 12] = &[20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1];
+use super::battle::BattleEntry;
 
-// pub struct WildEntry {
+pub type Ratio = u8;
 
-//     grass: WildGrassEntry,
+pub type WildEntries = HashMap<WildType, WildEntry>;
 
-// }
+pub type WildChances = HashMap<WildType, Vec<u8>>;
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct WildEntry {
-    pub tiles: Option<Vec<TileId>>,
-    /// Out of 255
-    #[serde(default = "default_ratio")]
-    pub ratio: u8,
-    /// To - do: make this better (like add chances for double battles)
-    pub pokemon: [WildPokemon; 12],
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum WildType {
+    Land,
+    Rock,
+    Water,
+    Fishing(u8),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WildEntry {
+    #[serde(default = "WildEntry::default_ratio")]
+    pub ratio: Ratio,
+    pub encounters: Vec<WildPokemon>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WildPokemon {
-    #[serde(rename = "pokemon_id")]
-    pub id: PokemonId,
-
-    #[serde(rename = "min_level")]
-    pub min: Level,
-
-    #[serde(rename = "max_level")]
-    pub max: Level,
+    pub species: PokemonId,
+    pub levels: RangeInclusive<Level>,
 }
 
 impl WildEntry {
-    pub fn should_encounter(&self, random: &mut impl Rng) -> bool {
-        random.gen_range(u8::MIN..u8::MAX) < self.ratio
+    pub const fn default_ratio() -> Ratio {
+        21
     }
 
-    pub fn generate(&self, random: &mut impl Rng) -> SavedPokemon {
-        let pokemon = &self.pokemon[encounter_index(random)];
-        let level = random.gen_range(pokemon.min..=pokemon.max);
-        SavedPokemon::generate(random, pokemon.id, level, None, None)
-        // match self.encounter {
-        //     Some(encounter) => encounter[get_counter()].generate(),
-        //     None => PokemonInstance::generate(
-        //         super::WILD_RANDOM.gen_range(0..firecore_pokedex::pokedex().len() as u32) as PokemonId + 1,
-        //         1,
-        //         100,
-        //         Some(StatSet::random()),
-        //     ),
-        // }
+    pub fn should_encounter(&self, random: &mut impl Rng) -> bool {
+        random.gen_range(Ratio::MIN..Ratio::MAX) < self.ratio
+    }
+
+    pub fn generate(
+        chances: &WildChances,
+        t: &WildType,
+        entry: &WildEntry,
+        random: &mut impl Rng,
+    ) -> Option<BattleEntry> {
+        if entry.should_encounter(random) {
+            let pokemon = &entry.encounters[encounter_index(chances, t, random)];
+            let level = random.gen_range(pokemon.levels.clone());
+            let pokemon = SavedPokemon::generate(random, pokemon.species, level, None, None);
+            let mut party = Party::new();
+            party.push(pokemon);
+            return Some(BattleEntry {
+                party,
+                active: 1,
+                trainer: None,
+            });
+        }
+        None
     }
 }
 
-fn encounter_index(random: &mut impl Rng) -> usize {
+fn encounter_index(chances: &WildChances, t: &WildType, random: &mut impl Rng) -> usize {
     let chance = random.gen_range(1..100);
     let mut chance_counter = 0;
     let mut counter = 0;
     while chance > chance_counter {
-        chance_counter += CHANCES[counter];
+        chance_counter += chances[t][counter];
         counter += 1;
     }
     counter - 1
 }
 
-const fn default_ratio() -> u8 {
-    21
+#[deprecated]
+pub fn default_chances() -> WildChances {
+    let mut wild_chances = WildChances::with_capacity(6);
+    wild_chances.insert(
+        WildType::Land,
+        vec![20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1],
+    );
+    wild_chances.insert(WildType::Water, vec![60, 30, 5, 4, 1]);
+    wild_chances.insert(WildType::Rock, vec![60, 30, 5, 4, 1]);
+    wild_chances.insert(WildType::Fishing(0), vec![70, 30]);
+    wild_chances.insert(WildType::Fishing(1), vec![60, 20, 20]);
+    wild_chances.insert(WildType::Fishing(2), vec![40, 40, 15, 4, 1]);
+    wild_chances
 }

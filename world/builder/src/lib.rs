@@ -1,18 +1,18 @@
-pub extern crate firecore_world as worldlib;
+pub extern crate firecore_world as world;
 
-use worldlib::{
+use world::{
     map::{chunk::Connection, manager::Maps, warp::WarpEntry, PaletteId},
     serialized::{SerializedTextures, SerializedWorld},
 };
 
-pub mod world;
+pub mod builder;
 
 pub mod bin;
 // mod gba_map;
 
 pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
     println!("Started loading maps and tile textures...");
-    let (maps, mut textures) = world::map::load_world(path.as_ref());
+    let (maps, mut textures) = builder::map::load_world(path.as_ref());
     println!("Finished loading maps and tile textures.");
 
     println!("Verifying palettes, maps, warps...");
@@ -21,16 +21,22 @@ pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
     verify_connections(&maps);
 
     println!("Loading Npc types...");
-    let npc_types = world::npc::npc_type::load_npc_types(path.as_ref());
+    let npcs = builder::npc::group::load_npc_types(path.as_ref());
 
     let data = SerializedWorld {
         maps,
-        npc_types,
+        npcs,
         textures,
         // map_gui_locs,
     };
 
     data
+}
+
+fn filename(path: &std::path::Path) -> String {
+    path.file_stem()
+        .map(|filename| filename.to_string_lossy().to_string())
+        .unwrap_or_else(|| panic!("Could not read the file stem of file at {:?}", path))
 }
 
 fn verify_palettes(maps: &Maps, textures: &mut SerializedTextures) {

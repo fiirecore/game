@@ -1,7 +1,7 @@
 (
     identifier: "channeler",
     sprite: Walk,
-    text_color: Red,
+    message: Red,
     trainer: Some(
         (
             name: "Chaneller",

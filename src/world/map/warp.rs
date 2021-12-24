@@ -1,15 +1,14 @@
-use firecore_world::serialized::Doors;
 use rand::{Rng, SeedableRng};
 use worldlib::{
+    character::player::PlayerCharacter,
     map::{manager::WorldMapManager, TileId},
-    positions::Coordinate, character::player::PlayerCharacter,
+    positions::Coordinate,
 };
 
 use crate::{
     engine::{
-        graphics::{draw_rectangle, Color, DrawParams, Texture},
-        utils::{Entity, Reset, HEIGHT, WIDTH, HashMap},
-        math::Rectangle,
+        graphics::{draw_rectangle, Color},
+        utils::{Entity, Reset, HEIGHT, WIDTH},
         Context,
     },
     world::RenderCoords,
@@ -17,8 +16,6 @@ use crate::{
 
 pub struct WarpTransition {
     alive: bool,
-
-    doors: HashMap<TileId, Texture>,
 
     door: Option<Door>,
     color: Color,
@@ -51,14 +48,10 @@ impl Door {
 impl WarpTransition {
     // const RECT_WIDTH: f32 = WIDTH / 2.0;
 
-    pub fn new(ctx: &mut Context, doors: Doors) -> Self {
+    pub fn new() -> Self {
         Self {
             alive: false,
             door: None,
-            doors: doors.into_iter().flat_map(|(locations, texture)| {
-                let texture = Texture::new(ctx, &texture).unwrap();
-                locations.into_iter().map(move |tile| (tile, texture.clone()))
-            }).collect(),
             color: Color::BLACK,
             faded: false,
             warped: false,
@@ -67,7 +60,12 @@ impl WarpTransition {
         }
     }
 
-    pub fn update<R: Rng + SeedableRng + Clone>(&mut self, world: &mut WorldMapManager<R>, player: &mut PlayerCharacter, delta: f32) -> Option<bool> {
+    pub fn update<R: Rng + SeedableRng + Clone>(
+        &mut self,
+        world: &mut WorldMapManager<R>,
+        player: &mut PlayerCharacter,
+        delta: f32,
+    ) -> Option<bool> {
         // returns map change
 
         match self.faded {
@@ -78,15 +76,19 @@ impl WarpTransition {
                     self.faded = false;
                     if self.warped {
                         let coords = self.warp.as_ref().unwrap().0;
-                        let tile = world.get(&player.location).map(|map| map.tile(coords)).flatten().unwrap_or_default();
-                        if self.doors.contains_key(&tile) {
-                            //exit door
-                            self.door = Some(Door::new(tile, coords));
-                        } else if self.warp.as_ref().unwrap().1 {
-                            player.hidden = false;
-                            let direction = player.position.direction;
-                            player.pathing.queue.push(direction);
-                        }
+                        let tile = world
+                            .get(&player.location)
+                            .map(|map| map.tile(coords))
+                            .flatten()
+                            .unwrap_or_default();
+                        // if self.doors.contains_key(&tile) {
+                        //exit door
+                        // self.door = Some(Door::new(tile, coords));
+                        // } else if self.warp.as_ref().unwrap().1 {
+                        player.hidden = false;
+                        let direction = player.position.direction;
+                        player.pathing.queue.push(direction);
+                        // }
                     }
                 }
             }
@@ -168,7 +170,14 @@ impl WarpTransition {
 
     pub fn draw(&self, ctx: &mut Context) {
         if self.alive {
-            draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, Color::rgba(self.color.r, self.color.g, self.color.b, self.color.a));
+            draw_rectangle(
+                ctx,
+                0.0,
+                0.0,
+                WIDTH,
+                HEIGHT,
+                Color::rgba(self.color.r, self.color.g, self.color.b, self.color.a),
+            );
             // if self.switch {
             // draw_rectangle(ctx, 0.0, 0.0, self.rect_width, HEIGHT, Color::BLACK);
             // draw_rectangle(
@@ -187,31 +196,31 @@ impl WarpTransition {
         if self.alive {
             if let Some(door) = &self.door {
                 use worldlib::TILE_SIZE;
-                if let Some(texture) = self.doors.get(&door.tile) {
-                    texture.draw(
-                        ctx,
-                        ((door.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x,
-                        ((door.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y,
-                        DrawParams::source(Rectangle::new(
-                            0.0,
-                            door.accumulator.floor() * TILE_SIZE,
-                            TILE_SIZE,
-                            TILE_SIZE,
-                        )),
-                    )
-                }
+                // if let Some(texture) = self.doors.get(&door.tile) {
+                //     texture.draw(
+                //         ctx,
+                //         ((door.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x,
+                //         ((door.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y,
+                //         DrawParams::source(Rectangle::new(
+                //             0.0,
+                //             door.accumulator.floor() * TILE_SIZE,
+                //             TILE_SIZE,
+                //             TILE_SIZE,
+                //         )),
+                //     )
+                // }
             }
         }
     }
 
     pub fn queue(&mut self, player: &mut PlayerCharacter, tile: TileId, coords: Coordinate) {
-        if self.doors.contains_key(&tile) {
-            // enterance door
-            self.door = Some(Door::new(tile, coords));
-            self.freeze = player.input_frozen;
-            player.input_frozen = true;
-            self.spawn();
-        }
+        // if self.doors.contains_key(&tile) {
+        //     // enterance door
+        //     self.door = Some(Door::new(tile, coords));
+        //     self.freeze = player.input_frozen;
+        //     player.input_frozen = true;
+        //     self.spawn();
+        // }
     }
 }
 

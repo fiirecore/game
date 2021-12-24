@@ -11,7 +11,7 @@ io = ["firecore-engine", "miniquad-cookie"]
 
 [dependencies]
 
-firecore-engine = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "ea35f18", default-features = false, optional = true }
+firecore-engine = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "bce8384", default-features = false, optional = true }
 # firecore-engine = { path = "../../firecore/engine", default-features = false, optional = true }
 
 ### Serialization

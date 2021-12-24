@@ -6,7 +6,7 @@ use crate::engine::{
     Context,
 };
 
-use firecore_world::serialized::Player;
+use firecore_world::serialized::SerializedPlayerTexture;
 use worldlib::{
     character::{player::PlayerCharacter, Character, Movement},
     positions::Direction,
@@ -42,7 +42,7 @@ impl From<Texture> for CharacterTexture {
 }
 
 impl PlayerTexture {
-    pub fn new(ctx: &mut Context, player: Player) -> Result<Self, ImageError> {
+    pub fn new(ctx: &mut Context, player: SerializedPlayerTexture) -> Result<Self, ImageError> {
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
             Movement::Walking,

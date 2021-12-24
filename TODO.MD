@@ -3,17 +3,25 @@
 
 
  - [X] Load asset files from AppData folder
- - [ ] Fix pokemon not getting updated after battle
- - [ ] Fix Battle GUI sucking
- - [ ] Fix higher level pokemon not doing correct damage in battles
- - [ ] Correctly add BattleCloser to BattleGui
- - [ ] Fix player data creating
- - [ ] Actually save player data
- - [ ] Load more tile and location data from world binary
+ - [X] Actually save player data
  - [ ] Move battle intro transition to world code
  - [ ] Reimplement scripts
- - [ ] Fix BattleGui
  - [X] Reimplement loading/copyright screen
+
+ - [ ] Player creation state
+
+ - [ ] Load more tile and location data from world binary
+
+ - [ ] Proper NPC rendering based on their widths and heights
+
+ - [ ] Elevation
+
+ - [ ] Fix Battle GUI sucking
+ - [ ] Fix pokemon not getting updated after battle
+ - [ ] Fix higher level pokemon not doing correct damage in battles
+ - [ ] Reimplement running from battles
+ - [ ] Correctly add BattleCloser to BattleGui
+ - [ ] Fix BattleGui
 
 
 * Figure out if world updating code needs a rewrite

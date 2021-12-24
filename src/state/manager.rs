@@ -53,6 +53,7 @@ impl State for StateManager {
             MainStates::Menu => self.menu.end(ctx),
             MainStates::Game => self.game.end(),
         }
+        self.process(ctx);
     }
     fn update(&mut self, ctx: &mut Context, delta: f32) {
         if let Some(command) = self.console.update(
@@ -73,46 +74,7 @@ impl State for StateManager {
             MainStates::Game => self.game.update(ctx, delta, self.console.alive()),
         }
 
-        for message in self.receiver.try_iter() {
-            match message {
-                StateMessage::UpdateSave(save) => {
-                    self.save = Some(save.uninit());
-                    self.sender.send(StateMessage::WriteSave);
-                }
-                StateMessage::WriteSave => {
-                    if let Some(save) = &self.save {
-                        if let Err(err) = storage::save::<storage::RonSerializer, SavedPlayer>(
-                            save,
-                            crate::PUBLISHER,
-                            crate::APPLICATION,
-                        ) {
-                            error!("Cannot write save with error {}", err);
-                        }
-                    }
-                }
-                StateMessage::LoadSave => {
-                    if let Some(save) = self.save.take().map(|save| save.init(&mut self.random)).flatten() {
-                        self.game.save = Some(save);
-                    }
-                }
-                StateMessage::Goto(state) => {
-                    match self.state {
-                        MainStates::Loading => (),
-                        MainStates::Menu => self.menu.end(ctx),
-                        MainStates::Game => self.game.end(),
-                    }
-                    self.state = state;
-                    match self.state {
-                        MainStates::Loading => self.loading.start(ctx),
-                        MainStates::Menu => self.menu.start(ctx),
-                        MainStates::Game => self.game.start(ctx),
-                    }
-                }
-                StateMessage::Seed(seed) => self.game.seed(seed as _),
-                StateMessage::Exit => ctx.quit(),
-                StateMessage::CommandError(error) => self.console.error(error),
-            }
-        }
+        self.process(ctx);
 
         // Ok(())
     }
@@ -188,4 +150,48 @@ impl StateManager {
             // scaler,
         })
     }
+
+    pub fn process(&mut self, ctx: &mut Context) {
+        for message in self.receiver.try_iter() {
+            match message {
+                StateMessage::UpdateSave(save) => {
+                    self.save = Some(save.uninit());
+                    self.sender.send(StateMessage::WriteSave);
+                }
+                StateMessage::WriteSave => {
+                    if let Some(save) = &self.save {
+                        if let Err(err) = storage::save::<storage::RonSerializer, SavedPlayer>(
+                            save,
+                            crate::PUBLISHER,
+                            crate::APPLICATION,
+                        ) {
+                            error!("Cannot write save with error {}", err);
+                        }
+                    }
+                }
+                StateMessage::LoadSave => {
+                    if let Some(save) = self.save.take().map(|save| save.init(&mut self.random)).flatten() {
+                        self.game.save = Some(save);
+                    }
+                }
+                StateMessage::Goto(state) => {
+                    match self.state {
+                        MainStates::Loading => (),
+                        MainStates::Menu => self.menu.end(ctx),
+                        MainStates::Game => self.game.end(),
+                    }
+                    self.state = state;
+                    match self.state {
+                        MainStates::Loading => self.loading.start(ctx),
+                        MainStates::Menu => self.menu.start(ctx),
+                        MainStates::Game => self.game.start(ctx),
+                    }
+                }
+                StateMessage::Seed(seed) => self.game.seed(seed as _),
+                StateMessage::Exit => ctx.quit(),
+                StateMessage::CommandError(error) => self.console.error(error),
+            }
+        }
+    }
+
 }

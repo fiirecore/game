@@ -1,70 +1,69 @@
-use crate::{
-    engine::{
-        error::ImageError,
-        graphics::{draw_rectangle, Color, DrawParams, Texture},
-        math::Rectangle,
-        Context,
-    },
-    world::npc::{NpcTypeMap, NpcTypes},
-};
-use firecore_battle_gui::pokedex::texture::NpcGroupTextures;
-use firecore_world::{
-    character::{
-        npc::NpcType,
-        sprite::{SpriteIndexType, SpriteIndexes},
-    },
-    serialized::SerializedNpcType,
-};
-use std::collections::HashMap;
+use hashbrown::HashMap;
+
 use worldlib::{
-    character::npc::{Npc, NpcTypeId},
+    character::{
+        npc::{group::{NpcGroupId, NpcGroup}, Npc},
+        sprite::SpriteIndices,
+    },
     positions::Direction,
 };
 
 use crate::world::RenderCoords;
 
-pub type NpcTextures = HashMap<NpcTypeId, Texture>;
+use crate::engine::{
+    error::ImageError,
+    graphics::{DrawParams, Texture},
+    math::Rectangle,
+    Context,
+};
 
-pub struct NpcData {
-    pub npcs: NpcTextures,
-    pub types: NpcTypes,
+pub struct NpcTextures(pub HashMap<NpcGroupId, NpcTexture>);
+
+pub struct NpcTexture {
+    pub texture: Texture,
+    pub indices: SpriteIndices,
     // pub trainer: NpcGroupTextures,
 }
 
-impl NpcData {
-    pub const PLACEHOLDER: &'static NpcTypeId =
-        unsafe { &NpcTypeId::new_unchecked(138296354938823594217663600u128) };
-
-    pub fn new(ctx: &mut Context, npc_types: Vec<SerializedNpcType>) -> Result<Self, ImageError> {
-        let mut npcs = NpcTextures::with_capacity(npc_types.len());
-        let mut types = NpcTypeMap::with_capacity(npc_types.len());
+impl NpcTextures {
+    pub fn new(
+        ctx: &mut Context,
+        textures: HashMap<NpcGroupId, Vec<u8>>,
+    ) -> Result<Self, ImageError> {
+        let mut npcs = HashMap::with_capacity(textures.len());
         // let trainer = NpcGroupTextures::new(Default::default());
-        for npc in npc_types {
-            let texture = Texture::new(ctx, &npc.texture)?;
-            npcs.insert(npc.config.identifier, texture);
-            types.insert(
-                npc.config.identifier,
-                NpcType {
-                    sprite: match npc.config.sprite {
-                        SpriteIndexType::Still => SpriteIndexes::STILL,
-                        SpriteIndexType::Walk => SpriteIndexes::WALK,
-                    },
-                    message: npc.config.text_color,
-                    trainer: npc.config.trainer,
-                },
-            );
+        for (npc, data) in textures {
+            let texture = Texture::new(ctx, &data)?;
+            let indices = if (texture.width() as u16) < 96 {
+                SpriteIndices::STILL
+            } else {
+                SpriteIndices::WALK
+            };
+            npcs.insert(npc, NpcTexture { texture, indices });
             // trainer.insert(
             //     npc.config.identifier,
             //     Texture::new(ctx, &npc.texture).unwrap(),
             // );
         }
 
-        Ok(Self {
+        Ok(Self(
             npcs,
-            types: NpcTypes::new(types),
             // trainer,
-        })
+        ))
     }
+
+    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
+        self.0.get(&npc.group).unwrap_or_else(|| {
+            self.0
+                .get(&NpcGroup::PLACEHOLDER)
+                .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
+        }).draw(ctx, npc, screen);
+    }
+
+    
+}
+
+impl NpcTexture {
 
     pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x
@@ -73,19 +72,15 @@ impl NpcData {
             - screen.focus.y
             + npc.character.offset.y;
 
-        let texture = self.npcs.get(&npc.type_id).unwrap_or_else(|| {
-            self.npcs
-                .get(&Self::PLACEHOLDER)
-                .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
-        }); // {
-        texture.draw(
+         // {
+        self.texture.draw(
             ctx,
             x,
             y,
             DrawParams {
                 flip_x: npc.character.position.direction == Direction::Right,
                 source: Some(Rectangle::new(
-                    current_texture_pos(&self.types, npc),
+                    self.current_texture_pos(npc),
                     0.0,
                     16.0,
                     32.0,
@@ -104,16 +99,15 @@ impl NpcData {
         //     // );
         // }
     }
-}
 
-pub fn current_texture_pos(npc_types: &NpcTypes, npc: &Npc) -> f32 {
-    let index = (npc.character.offset.offset().abs() as usize >> 3) + npc.character.sprite as usize;
+    pub fn current_texture_pos(&self, npc: &Npc) -> f32 {
+        let index =
+            (npc.character.offset.offset().abs() as usize >> 3) + npc.character.sprite as usize;
 
-    let npc_type = npc_types.get(&npc.type_id);
-
-    (match npc.character.position.direction {
-        Direction::Down => npc_type.sprite.down[index],
-        Direction::Up => npc_type.sprite.up[index],
-        _ => npc_type.sprite.side[index],
-    } << 4) as f32
+        (match npc.character.position.direction {
+            Direction::Down => self.indices.down[index],
+            Direction::Up => self.indices.up[index],
+            _ => self.indices.side[index],
+        } << 4) as f32
+    }
 }

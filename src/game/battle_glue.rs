@@ -1,9 +1,14 @@
 use std::fmt::Debug;
 
 use crate::pokedex::pokemon::{owned::SavedPokemon, party::Party};
-use firecore_battle_gui::pokedex::NpcGroupId;
-use firecore_world::character::{npc::NpcId, Worth};
-use worldlib::character::npc::{trainer::TransitionId, BadgeId};
+
+use worldlib::{
+    character::{
+        npc::{trainer::BadgeId, NpcId, group::NpcGroupId},
+        Worth,
+    },
+    map::TransitionId,
+};
 
 /***********************/
 

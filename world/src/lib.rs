@@ -1,4 +1,4 @@
-extern crate firecore_pokedex as pokedex;
+pub extern crate firecore_pokedex as pokedex;
 
 pub mod character;
 pub mod map;
@@ -40,14 +40,16 @@ pub mod actions {
     use firecore_pokedex::item::SavedItemStack;
     use tinystr::TinyStr16;
 
-    use crate::{character::npc::NpcId, map::battle::BattleEntry, positions::Coordinate};
+    use crate::{
+        character::npc::group::MessageColor, map::battle::BattleEntry, positions::Coordinate,
+    };
 
     #[derive(Debug, Clone)]
     pub enum WorldActions {
         PlayMusic(TinyStr16),
         BeginWarpTransition(Coordinate),
         PlayerJump,
-        Message(Option<(NpcId, bool)>, Vec<Vec<String>>, bool),
+        Message(Vec<Vec<String>>, MessageColor),
         Battle(BattleEntry),
         // GivePokemon(SavedPokemon),
         #[deprecated]

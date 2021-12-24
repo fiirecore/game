@@ -1,5 +1,4 @@
 (
     identifier: "woman_3",
-    text_color: Red,
-    sprite: Walk,
+    message: Red,
 )

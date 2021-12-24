@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use std::collections::{HashMap, HashSet};
+use hashbrown::{HashMap, HashSet};
 
 use crate::{
-    character::npc::{BadgeId, Npc, NpcId},
+    character::npc::{trainer::BadgeId, Npc, NpcId},
     map::{battle::TrainerEntry, warp::WarpDestination},
     positions::{Location, LocationId, Position},
     script::{world::WorldAction, ScriptId},
@@ -66,7 +66,7 @@ pub struct WorldNpcData {
     pub timer: f32,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldGlobalWildData {
     pub encounters: bool,
 }
@@ -95,8 +95,7 @@ pub const fn default_position() -> Position {
     }
 }
 
-const DEFAULT_MAP: LocationId =
-    unsafe { LocationId::new_unchecked(0x70616C6C6574u128) };
+const DEFAULT_MAP: LocationId = unsafe { LocationId::new_unchecked(0x70616C6C6574u128) };
 const DEFAULT_INDEX: LocationId =
     unsafe { LocationId::new_unchecked(132299152847616915686911088u128) };
 

@@ -1,7 +1,7 @@
 (
     identifier: "cool_trainer_f",
     sprite: Walk,
-    text_color: Red,
+    message: Red,
     trainer: Some(
         (
             name: "Cool Trainer",

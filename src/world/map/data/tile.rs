@@ -3,32 +3,55 @@ use crate::engine::{
     math::Rectangle,
     Context,
 };
-use firecore_world::serialized::{Animated, Palettes};
+use firecore_world::{map::Palettes, serialized::SerializedPaletteMap};
 use std::collections::HashMap;
 use worldlib::{
     map::{PaletteId, TileId},
     TILE_SIZE,
 };
 
-pub struct TileTextureManager {
-    pub palettes: HashMap<PaletteId, Texture>,
-    animated: HashMap<TileId, Texture>,
+pub struct PaletteTextureManager {
+    pub palettes: HashMap<PaletteId, Palette>,
     accumulator: f32,
 }
 
-impl TileTextureManager {
+pub struct Palette {
+    pub texture: Texture,
+    pub animated: HashMap<TileId, Texture>,
+    pub doors: HashMap<TileId, Texture>,
+    pub size: TileId,
+}
+
+impl PaletteTextureManager {
     const TEXTURE_TICK: f32 = 0.25; // i think its 16/60 not 15/60
 
-    pub fn new(ctx: &mut Context, palettes: Palettes, animated: Animated) -> Self {
+    pub fn new(ctx: &mut Context, palettes: SerializedPaletteMap) -> Self {
         Self {
             palettes: palettes
                 .into_iter()
-                .map(|(id, image)| (id, Texture::new(ctx, &image).unwrap()))
-                .collect::<HashMap<PaletteId, Texture>>(),
-            animated: animated
-                .into_iter()
-                .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
-                .collect::<HashMap<TileId, Texture>>(),
+                .map(|(id, palette)| {
+                    let texture = Texture::new(ctx, &palette.texture).unwrap();
+                    let size = texture.height() as TileId;
+                    (
+                        id,
+                        Palette {
+                            texture,
+                            animated: palette
+                                .animated
+                                .into_iter()
+                                .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
+                                .collect(),
+                            doors: palette
+                                .doors
+                                .into_iter()
+                                .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
+                                .collect(),
+                            size,
+                        },
+                    )
+                })
+                .collect(),
+
             accumulator: 0.0,
         }
     }
@@ -40,44 +63,57 @@ impl TileTextureManager {
         }
     }
 
+    fn get_palette(&self, palettes: &Palettes, tile: TileId) -> Option<(&Palette, TileId)> {
+        self.palettes
+            .get(&palettes[0])
+            .map(|palette| match palette.size > tile {
+                true => Some((palette, tile)),
+                false => self.palettes.get(&palettes[1]).map(|p| (p, tile - palette.size)),
+            })
+            .flatten()
+    }
+
     pub fn draw_tile(
         &self,
         ctx: &mut Context,
-        texture: &Texture,
+        palettes: &Palettes,
         tile: TileId,
         x: f32,
         y: f32,
         color: Color,
     ) {
-        if let Some(texture) = self.animated.get(&tile) {
-            texture.draw(
-                ctx,
-                x,
-                y,
-                DrawParams {
-                    source: Some(Rectangle::new(
-                        0.0,
-                        (self.accumulator / Self::TEXTURE_TICK).floor() * TILE_SIZE,
-                        TILE_SIZE,
-                        TILE_SIZE,
-                    )),
-                    color,
-                    ..Default::default()
-                },
-            );
-        } else {
-            let tx = ((tile % 16) << 4) as f32; // width = 256
-            let ty = ((tile >> 4) << 4) as f32;
-            texture.draw(
-                ctx,
-                x,
-                y,
-                DrawParams {
-                    source: Some(Rectangle::new(tx, ty, TILE_SIZE, TILE_SIZE)),
-                    color,
-                    ..Default::default()
-                },
-            );
+        if let Some((palette, tile)) = self.get_palette(palettes, tile) {
+            match palette.animated.get(&tile) {
+                Some(texture) => texture.draw(
+                    ctx,
+                    x,
+                    y,
+                    DrawParams {
+                        source: Some(Rectangle::new(
+                            0.0,
+                            (self.accumulator / Self::TEXTURE_TICK).floor() * TILE_SIZE,
+                            TILE_SIZE,
+                            TILE_SIZE,
+                        )),
+                        color,
+                        ..Default::default()
+                    },
+                ),
+                None => {
+                    let tx = ((tile % 16) << 4) as f32; // width = 256
+                    let ty = ((tile >> 4) << 4) as f32;
+                    palette.texture.draw(
+                        ctx,
+                        x,
+                        y,
+                        DrawParams {
+                            source: Some(Rectangle::new(tx, ty, TILE_SIZE, TILE_SIZE)),
+                            color,
+                            ..Default::default()
+                        },
+                    );
+                }
+            }
         }
     }
 }

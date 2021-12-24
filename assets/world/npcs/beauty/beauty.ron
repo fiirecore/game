@@ -1,7 +1,5 @@
 (
-    identifier: "beauty",
-    sprite: Walk,
-    text_color: Red,
+    message: Red,
     trainer: Some(
         (
             name: "Beauty",

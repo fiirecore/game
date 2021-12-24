@@ -1,7 +1,5 @@
 (
-    identifier: "battle_girl",
-    sprite: Walk,
-    text_color: Red,
+    message: Red,
     trainer: Some(
         (
             name: "Battle Girl",

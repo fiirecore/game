@@ -1,5 +1,5 @@
 (
     identifier: "fat_man",
-    text_color: Blue,
+    message: Blue,
     sprite: Walk,
 )
