@@ -1,3 +1,5 @@
+use std::{cell::Cell, rc::Rc};
+
 use serde::{Deserialize, Serialize};
 
 use hashbrown::{HashMap, HashSet};
@@ -6,7 +8,7 @@ use crate::{
     character::npc::{trainer::BadgeId, Npc, NpcId},
     map::{battle::TrainerEntry, warp::WarpDestination},
     positions::{Location, LocationId, Position},
-    script::{world::WorldAction, ScriptId},
+    script::ScriptId,
 };
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -25,6 +27,8 @@ pub struct WorldMapState {
     pub heal: Option<(Location, Position)>,
     #[serde(default)]
     pub badges: HashSet<BadgeId>,
+    #[serde(skip)]
+    pub polling: Option<Rc<Cell<bool>>>,
     #[serde(default)]
     pub debug_draw: bool,
 }
@@ -56,7 +60,7 @@ impl WorldBattleState {
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WorldGlobalScriptData {
     pub executed: HashSet<ScriptId>,
-    pub actions: Vec<WorldAction>,
+    // pub actions: Vec<WorldAction>,
     pub npcs: HashMap<NpcId, (Location, Npc)>,
 }
 
@@ -92,10 +96,11 @@ pub const fn default_position() -> Position {
     Position {
         coords: crate::positions::Coordinate { x: 6, y: 6 },
         direction: crate::positions::Direction::Down,
+        elevation: None,
     }
 }
 
-const DEFAULT_MAP: LocationId = unsafe { LocationId::new_unchecked(0x70616C6C6574u128) };
+const DEFAULT_MAP: LocationId = unsafe { LocationId::new_unchecked(127978959561072u128) };
 const DEFAULT_INDEX: LocationId =
     unsafe { LocationId::new_unchecked(132299152847616915686911088u128) };
 

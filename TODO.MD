@@ -7,6 +7,7 @@
  - [ ] Move battle intro transition to world code
  - [ ] Reimplement scripts
  - [X] Reimplement loading/copyright screen
+ - [ ] Reimplement doors
 
  - [ ] Player creation state
 
@@ -14,7 +15,9 @@
 
  - [ ] Proper NPC rendering based on their widths and heights
 
- - [ ] Elevation
+ - [X] Elevation
+
+ - [ ] Replace std::collections::HashMap with hashbrown::HashMap
 
  - [ ] Fix Battle GUI sucking
  - [ ] Fix pokemon not getting updated after battle

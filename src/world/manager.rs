@@ -1,6 +1,5 @@
 use std::rc::Rc;
 
-use crate::saves::GameParty;
 use battlelib::pokedex::Initializable;
 use crossbeam_channel::Receiver;
 use firecore_battle_gui::pokedex::{
@@ -75,7 +74,8 @@ impl WorldManager {
 
     pub fn update(&mut self, ctx: &mut Context, delta: f32, save: &mut PlayerData, console: bool) {
         if self.menu.alive() {
-            self.menu.update(ctx, delta, &mut save.party, &mut save.bag);
+            self.menu
+                .update(ctx, delta, &mut save.character.trainer.party, &mut save.bag);
         } else {
             if pressed(ctx, Control::Start) && !save.character.input_frozen && !console {
                 self.menu.spawn();
@@ -108,22 +108,20 @@ impl WorldManager {
                         save.character.unfreeze();
                     }
                     WorldCommands::GivePokemon(pokemon) => {
-                        if let Some(pokemon) = pokemon.init(
-                            &mut self.random,
-                            crate::dex::pokedex(),
-                            crate::dex::movedex(),
-                            crate::dex::itemdex(),
-                        ) {
-                            save.party.try_push(pokemon);
-                        }
+                        save.character.trainer.party.try_push(pokemon);
                     }
                     WorldCommands::HealPokemon(index) => match index {
                         Some(index) => {
-                            if let Some(p) = save.party.get_mut(index) {
+                            if let Some(p) = save.character.trainer.party.get_mut(index) {
                                 p.heal(None, None);
                             }
                         }
-                        None => save.party.iter_mut().for_each(|p| p.heal(None, None)),
+                        None => save
+                            .character
+                            .trainer
+                            .party
+                            .iter_mut()
+                            .for_each(|p| p.heal(None, None)),
                     },
                     WorldCommands::GiveItem(item) => {
                         if let Some(stack) = item.init(crate::dex::itemdex()) {
@@ -139,6 +137,28 @@ impl WorldManager {
                                 .flatten()
                         );
                     }
+                    WorldCommands::Party(command) => match command {
+                        command::PartyCommand::Info(index) => match index {
+                            Some(index) => {
+                                let pokemon = save.character.trainer.party.get(index);
+                                info!(
+                                    "Pokemon #{}: {:?}",
+                                    index,
+                                    pokemon,
+                                );
+                            }
+                            None => {
+                                for (index, pokemon) in
+                                    save.character.trainer.party.iter().enumerate()
+                                {
+                                    info!(
+                                        "Pokemon #{}: Lv. {}, #{}",
+                                        index, pokemon.level, pokemon.pokemon
+                                    )
+                                }
+                            }
+                        },
+                    },
                 }
             }
 
@@ -150,24 +170,13 @@ impl WorldManager {
             //     drop(events);
             // }
 
-            self.manager.update(
-                ctx,
-                &mut save.character,
-                &mut save.party,
-                &mut save.bag,
-                delta,
-            );
+            self.manager
+                .update(ctx, &mut save.character, &mut save.bag, delta);
         }
     }
 
-    pub fn post_battle(
-        &mut self,
-        player: &mut PlayerCharacter,
-        party: &mut GameParty,
-        winner: bool,
-        trainer: bool,
-    ) {
-        self.manager.post_battle(player, party, winner, trainer)
+    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool, trainer: bool) {
+        self.manager.post_battle(player, winner, trainer)
     }
 
     pub fn draw(&self, ctx: &mut Context, save: &PlayerData) {

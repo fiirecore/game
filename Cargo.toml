@@ -32,16 +32,21 @@ opt-level = "z"
 
 [dependencies]
 # Battle GUI, also re-exports game engine
-firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "bce8384", package = "firecore-battle-gui", default-features = false }
+firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "e9e3073", package = "firecore-battle-gui", default-features = false }
 # firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
 firecore-world = { path = "world" }
 
-firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "69618af", features = [
+firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "e8a2c94", features = [
     "ai",
     "host",
     "default_engine_scripting",
 ] }
+# firecore-battle = { path = "../firecore/battle", features = [#
+#     "ai",
+#     "host",
+#     "default_engine_scripting",
+# ] }
 
 firecore-storage = { path = "storage" }
 
@@ -62,7 +67,7 @@ hashbrown = "0.9"
 
 [build-dependencies]
 
-firecore-pokedex-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-builder", rev = "ed51ebe" }
+firecore-pokedex-builder = { git = "https://github.com/fiirecore-game/pokedex-builder", rev = "5f5643e" }
 firecore-pokedex-engine-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder", rev = "396e79e", default-features = false, features = ["compile"] }
 firecore-battle-builder = { git = "https://github.com/DoNotDoughnut/firecore-battle-builder", rev = "1c253dc" }
 firecore-world-builder = { path = "world/builder" }

@@ -94,7 +94,7 @@ fn verify_connections(maps: &Maps) {
     let mut errors: u32 = 0;
     for map in maps.values() {
         if let Some(chunk) = &map.chunk {
-            for Connection(location, ..) in chunk.connections.values() {
+            for Connection(location, ..) in chunk.connections.values().flatten() {
                 if !maps.contains_key(location) {
                     eprintln!(
                         "Could not get connection \"{}\" for chunk {}",

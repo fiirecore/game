@@ -30,6 +30,7 @@ pub enum WorldCommands {
     DebugDraw,
     Unfreeze,
     Tile,
+    Party(PartyCommand),
 }
 
 pub enum PartyCommand {
@@ -82,16 +83,31 @@ impl CommandProcessor for WorldManager {
                 on_off(self, WorldCommands::NoClip, result.args.next());
             }
             "unfreeze" => {
-                self.commands
-                    .send(WorldCommands::Unfreeze);
+                self.commands.send(WorldCommands::Unfreeze);
             }
             "debugdraw" => {
-                self.commands
-                    .send(WorldCommands::DebugDraw);
-            },
+                self.commands.send(WorldCommands::DebugDraw);
+            }
             "tile" => {
                 self.commands.send(WorldCommands::Tile);
             }
+            "party" => match result.args.next() {
+                Some(arg) => match arg {
+                    "info" => match result.args.next() {
+                        Some(index) => match index.parse::<usize>() {
+                            Ok(index) => self
+                                .commands
+                                .send(WorldCommands::Party(PartyCommand::Info(Some(index)))),
+                            Err(..) => self.error("Cannot parse party index for /party info"),
+                        },
+                        None => self
+                            .commands
+                            .send(WorldCommands::Party(PartyCommand::Info(None))),
+                    },
+                    _ => self.error("Please provide a valid argument for /party")
+                },
+                None => self.error("Please provide an argument for /party"),
+            },
             //         "party" => match result.args.next() {
             //             Some(arg) => match arg {
             //                 "info" => match result.args.next() {

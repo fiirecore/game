@@ -2,12 +2,14 @@ use std::fmt::Debug;
 
 use crate::pokedex::pokemon::{owned::SavedPokemon, party::Party};
 
-use worldlib::{
-    character::{
-        npc::{trainer::BadgeId, NpcId, group::NpcGroupId},
-        Worth,
+use firecore_battle_gui::pokedex::engine::text::MessagePage;
+use worldlib::character::{
+    npc::{
+        group::NpcGroupId,
+        trainer::{BadgeId, TransitionId},
+        NpcId,
     },
-    map::TransitionId,
+    trainer::Worth,
 };
 
 /***********************/
@@ -26,7 +28,7 @@ pub struct BattleTrainerEntry {
     pub badge: Option<BadgeId>,
     pub sprite: NpcGroupId,
     pub transition: TransitionId,
-    pub victory_message: Vec<Vec<String>>,
+    pub defeat: Vec<MessagePage>,
     pub worth: Worth,
 }
 

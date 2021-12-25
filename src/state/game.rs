@@ -135,7 +135,7 @@ impl GameStateManager {
                                 crate::dex::pokedex(),
                                 crate::dex::movedex(),
                                 crate::dex::itemdex(),
-                                save,
+                                &mut save.character,
                                 entry,
                             ) {
                                 self.state = GameStates::Battle;
@@ -174,7 +174,6 @@ impl GameStateManager {
                             let trainer = self.battle.update_data(winner, &mut save.character);
                             self.world.post_battle(
                                 &mut save.character,
-                                &mut save.party,
                                 winner,
                                 trainer,
                             );

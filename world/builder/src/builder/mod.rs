@@ -1,22 +1,24 @@
-use either::Either;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tinystr::TinyStr16;
 
 use world::{
     map::{chunk::Connection, PaletteId, WorldMapSettings},
-    positions::{CoordinateInt, Direction, Location, LocationId},
+    positions::{CoordinateInt, Direction},
 };
+
+use self::location::MapLocation;
 
 pub mod map;
 pub mod textures;
 // pub mod constants;
 
 pub mod npc;
-pub mod script;
+// pub mod script;
 pub mod warp;
 pub mod wild;
-// pub mod mart;
+
+pub mod location;
 
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -38,7 +40,7 @@ pub struct MapConfig {
     pub music: TinyStr16,
 
     #[serde(default)]
-    pub chunk: HashMap<Direction, MapConnection>,
+    pub chunk: HashMap<Direction, Vec<MapConnection>>,
 
     #[serde(default)]
     pub settings: WorldMapSettings,
@@ -49,37 +51,9 @@ pub struct MapConfig {
 #[derive(Serialize, Deserialize)]
 pub struct MapConnection(MapLocation, CoordinateInt);
 
-#[derive(Serialize, Deserialize, Clone, Copy)]
-#[serde(transparent)]
-pub struct MapLocation {
-    #[serde(with = "either::serde_untagged")]
-    inner: Either<LocationId, Location>,
-}
-
-impl From<MapLocation> for Location {
-    fn from(location: MapLocation) -> Self {
-        match location.inner {
-            Either::Left(id) => Location::from(id),
-            Either::Right(loc) => loc,
-        }
-    }
-}
-
-impl From<Location> for MapLocation {
-    fn from(location: Location) -> Self {
-        Self {
-            inner: match location.map.is_some() {
-                true => Either::Right(location),
-                false => Either::Left(location.index),
-            },
-        }
-    }
-}
-
 impl From<MapConnection> for Connection {
     fn from(connection: MapConnection) -> Self {
-        let location = connection.0.into();
-        Self(location, connection.1)
+        Self(connection.0.into(), connection.1)
     }
 }
 

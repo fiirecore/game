@@ -65,12 +65,8 @@ impl BattleCloser for TrainerBattleCloser {
                         //     wait: None,
                         // });
 
-                        for message in trainer.victory_message.iter() {
-                            text.pages.push(MessagePage {
-                                lines: message.clone(),
-                                wait: None,
-                                color: MessagePage::WHITE,
-                            });
+                        for message in trainer.defeat.iter() {
+                            text.pages.push(message.clone());
                         }
 
                         text.pages.push(MessagePage {

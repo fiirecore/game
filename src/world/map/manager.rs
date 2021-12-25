@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use crate::{
     engine::{
         audio,
@@ -11,21 +9,16 @@ use crate::{
         Context,
     },
     game::battle_glue::{BattleEntry as GameBattleEntry, BattleId, BattleTrainerEntry},
-    saves::{GameBag, GameParty},
+    saves::GameBag,
     state::game::GameActions,
 };
 
-use battlelib::pokedex::{
-    item::Item,
-    moves::Move,
-    pokemon::{owned::OwnedPokemon, Pokemon},
-    Initializable,
-};
+use battlelib::pokedex::Initializable;
 
 use rand::prelude::SmallRng;
 
 use worldlib::{
-    actions::WorldActions,
+    actions::{WorldAction, WorldActions},
     character::player::PlayerCharacter,
     events::{split, Receiver, Sender},
     map::{
@@ -57,8 +50,7 @@ pub struct GameWorldMapManager {
     input: PlayerInput,
     // screen: RenderCoords,
     sender: Sender<GameActions>,
-    sender2: Sender<WorldActions>,
-    receiver: Receiver<WorldActions>,
+    receiver: Receiver<WorldAction>,
     // events: EventReceiver<WorldEvents>,
 }
 
@@ -90,14 +82,13 @@ impl GameWorldMapManager {
         };
 
         Ok(Self {
-            world: WorldMapManager::new(data, sender.clone()),
+            world: WorldMapManager::new(data, sender),
 
             data: ClientWorldData::new(ctx, world.textures, textures)?,
             warper: WarpTransition::new(),
             text: TextWindow::new(ctx)?,
             input: PlayerInput::default(),
             sender: actions,
-            sender2: sender,
             // screen: RenderCoords::default(),
             // events,
             receiver,
@@ -116,18 +107,8 @@ impl GameWorldMapManager {
         self.world.seed(seed);
     }
 
-    pub fn post_battle<
-        P: Deref<Target = Pokemon>,
-        M: Deref<Target = Move>,
-        I: Deref<Target = Item>,
-    >(
-        &mut self,
-        player: &mut PlayerCharacter,
-        party: &mut [OwnedPokemon<P, M, I>],
-        winner: bool,
-        trainer: bool,
-    ) {
-        self.world.post_battle(player, party, winner, trainer)
+    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool, trainer: bool) {
+        self.world.post_battle(player, winner, trainer)
     }
 
     pub fn try_warp(&mut self, player: &mut PlayerCharacter, location: Location) -> bool {
@@ -143,7 +124,6 @@ impl GameWorldMapManager {
         &mut self,
         ctx: &mut Context,
         player: &mut PlayerCharacter,
-        party: &mut GameParty,
         bag: &mut GameBag,
         delta: f32,
     ) {
@@ -157,46 +137,57 @@ impl GameWorldMapManager {
         // Input
 
         for action in self.receiver.try_iter() {
-            match action {
+            match action.action {
                 WorldActions::Battle(entry) => {
-                    let (id, t) = if let Some(trainer) = entry.trainer {
-                        let (id, t) = (
-                            BattleId::Trainer(trainer.id),
-                            if let Some(npc) = self
-                                .world
-                                .get(&trainer.location)
-                                .map(|map| map.npcs.get(&trainer.id))
-                                .flatten()
-                            {
-                                let trainer = npc.trainer.as_ref().unwrap();
-                                let group = npc::group(&self.world.data.npcs, &npc.group);
-                                Some(BattleTrainerEntry {
-                                    name: group
-                                        .trainer
-                                        .as_ref()
-                                        .map(|t| format!("{} {}", t.name, npc.character.name))
-                                        .unwrap_or_else(|| npc.character.name.clone()),
-                                    badge: trainer.badge,
-                                    sprite: npc.group,
-                                    transition: trainer.transition,
-                                    victory_message: trainer.defeat.clone(),
-                                    worth: trainer.worth as _,
-                                })
-                            } else {
-                                None
-                            },
-                        );
-                        player.world.battle.battling = Some(trainer);
-                        (id, t)
-                    } else {
-                        (BattleId::Wild, None)
+                    if !player.trainer.party.is_empty() {
+                        player.freeze();
+                        let (id, t) = if let Some(trainer) = entry.trainer {
+                            let (id, t) = (
+                                BattleId::Trainer(trainer.id),
+                                if let Some(npc) = self
+                                    .world
+                                    .get(&trainer.location)
+                                    .map(|map| map.npcs.get(&trainer.id))
+                                    .flatten()
+                                {
+                                    let trainer = npc.trainer.as_ref().unwrap();
+                                    let group = npc::group(&self.world.data.npcs, &npc.group);
+                                    Some(BattleTrainerEntry {
+                                        name: group
+                                            .trainer
+                                            .as_ref()
+                                            .map(|t| format!("{} {}", t.name, npc.character.name))
+                                            .unwrap_or_else(|| npc.character.name.clone()),
+                                        badge: trainer.badge,
+                                        sprite: npc.group,
+                                        transition: trainer.transition,
+                                        defeat: trainer
+                                            .defeat
+                                            .iter()
+                                            .map(|lines| MessagePage {
+                                                lines: lines.clone(),
+                                                wait: None,
+                                                color: npc::color(&group.message),
+                                            })
+                                            .collect(),
+                                        worth: trainer.worth as _,
+                                    })
+                                } else {
+                                    None
+                                },
+                            );
+                            player.world.battle.battling = Some(trainer);
+                            (id, t)
+                        } else {
+                            (BattleId::Wild, None)
+                        };
+                        self.sender.send(GameActions::Battle(GameBattleEntry {
+                            id,
+                            party: entry.party,
+                            trainer: t,
+                            active: entry.active,
+                        }))
                     };
-                    self.sender.send(GameActions::Battle(GameBattleEntry {
-                        id,
-                        party: entry.party,
-                        trainer: t,
-                        active: entry.active,
-                    }))
                 }
                 WorldActions::PlayerJump => self.data.player.jump(player),
                 // WorldActions::GivePokemon(pokemon) => {
@@ -214,66 +205,13 @@ impl GameWorldMapManager {
                         bag.insert(stack);
                     }
                 }
-                // WorldActions::HealPokemon(index) => match index {
-                //     Some(index) => {
-                //         if let Some(pokemon) = party.get_mut(index) {
-                //             pokemon.heal(None, None);
-                //         }
-                //     }
-                //     None => {
-                //         for pokemon in party.iter_mut() {
-                //             pokemon.heal(None, None);
-                //         }
-                //     }
-                // },
-                // WorldActions::Warp(location) => {
-                //     if !self.try_warp(player, party, location) {
-                //         self.sender
-                //             .send(GameActions::CommandError("Unknown location!"));
-                //     }
-                // }
                 WorldActions::Message(pages, color) => {
                     if !self.text.text.alive() {
                         self.text.text.spawn();
                     }
                     self.text.text.pages.clear();
 
-                    // let npc = npc
-                    //     .map(|(npc, music)| {
-                    //         self.world.get(&player.location).map(|map| {
-                    //             map.npcs.get(&npc).map(|npc| {
-                    //                 if music {
-                    //                     if let Some(music) = self
-                    //                         .data
-                    //                         .npc
-                    //                         .types
-                    //                         .get(&npc.type_id)
-                    //                         .trainer
-                    //                         .as_ref()
-                    //                         .map(|trainer| trainer.music)
-                    //                         .flatten()
-                    //                     {
-                    //                         self.sender2.send(WorldActions::PlayMusic(music));
-                    //                     }
-                    //                 }
-                    //                 (
-                    //                     &npc.character,
-                    //                     color(&self.data.npc.types.get(&npc.type_id).message),
-                    //                 )
-                    //             })
-                    //         })
-                    //     })
-                    //     .flatten()
-                    //     .flatten();
-
-                    // let mut color = None;
-
-                    // let npc = npc.map(|(ch, co)| {
-                    //     color = Some(co);
-                    //     ch
-                    // });
-
-                    let mut pages = pages
+                    let pages = pages
                         .into_iter()
                         .map(|lines| MessagePage {
                             lines,
@@ -282,7 +220,6 @@ impl GameWorldMapManager {
                         })
                         .collect::<Vec<_>>();
 
-                    crate::game::text::process_messages(&mut pages, player);
                     self.text.text.pages.extend(pages);
                     player.input_frozen = true;
                 }
@@ -311,6 +248,13 @@ impl GameWorldMapManager {
         }
 
         if self.text.text.alive() {
+            if self.text.text.finished() {
+                if let Some(polling) = &player.world.polling {
+                    polling.set(true);
+                }
+                player.input_frozen = false;
+                self.text.text.despawn();
+            }
             self.text.text.update(ctx, delta);
         }
 
@@ -326,22 +270,14 @@ impl GameWorldMapManager {
         }
 
         if let Some(direction) = self.input.update(player, ctx, delta) {
-            self.world.try_move(player, party, direction);
+            self.world.try_move(player, direction);
         }
-
-        self.world.update(player, delta);
 
         if pressed(ctx, Control::A) {
             self.world.try_interact(player);
         }
 
-        self.world
-            .update_interactions(player, self.text.text.alive(), self.text.text.finished());
-
-        if self.text.text.finished() {
-            player.input_frozen = false;
-            self.text.text.despawn();
-        }
+        self.world.update(player, delta);
     }
 
     // #[deprecated]
@@ -397,15 +333,18 @@ impl GameWorldMapManager {
 
                 match &current.chunk {
                     Some(chunk) => {
-                        for (connection, direction, offset) in chunk.connections.iter().flat_map(
-                            |(direction, Connection(location, offset))| {
+                        for (connection, direction, offset) in chunk
+                            .connections
+                            .iter()
+                            .flat_map(|(d, connections)| connections.iter().map(move |c| (d, c)))
+                            .flat_map(|(direction, Connection(location, offset))| {
                                 self.world
                                     .data
                                     .maps
-                                    .get(location)
+                                    .get(&location)
                                     .map(|map| (map, direction, offset))
-                            },
-                        ) {
+                            })
+                        {
                             fn map_offset(
                                 direction: &Direction,
                                 current: &WorldMap,

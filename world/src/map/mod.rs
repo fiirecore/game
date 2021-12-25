@@ -3,12 +3,11 @@ use serde::{Deserialize, Serialize};
 use crate::{
     character::npc::Npcs,
     positions::{Coordinate, CoordinateInt, Direction, Location},
-    script::world::WorldScript,
 };
 use warp::{WarpDestination, Warps};
 use wild::WildEntries;
 
-use self::{chunk::WorldChunk, movement::MovementResult};
+use self::{chunk::WorldChunk, movement::MapMovementResult};
 
 pub mod chunk;
 pub mod movement;
@@ -25,7 +24,6 @@ pub type PaletteId = u8;
 pub type Palettes = [PaletteId; 2];
 pub type MovementId = movement::MovementId;
 pub type MusicId = tinystr::TinyStr16;
-pub type TransitionId = tinystr::TinyStr8;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldMap {
@@ -54,7 +52,7 @@ pub struct WorldMap {
     pub npcs: Npcs,
 
     // pub objects: HashMap<u8, MapObject>,
-    pub scripts: Vec<WorldScript>,
+    // pub scripts: Vec<WorldScript>,
 
     #[serde(default)]
     pub settings: WorldMapSettings,
@@ -105,13 +103,13 @@ impl WorldMap {
             })
     }
 
-    pub fn chunk_movement(&self, coords: Coordinate) -> MovementResult {
+    pub fn chunk_movement(&self, coords: Coordinate) -> MapMovementResult {
         if let Some(chunk) = self.chunk.as_ref() {
             if coords.x.is_negative() {
                 return chunk
                     .connections
                     .get_key_value(&Direction::Left)
-                    .map(|(d, c)| (d, coords.y, c))
+                    .map(|(d, c)| (d, coords.y, c.as_ref()))
                     .into();
             }
 
@@ -119,7 +117,7 @@ impl WorldMap {
                 return chunk
                     .connections
                     .get_key_value(&Direction::Right)
-                    .map(|(d, c)| (d, coords.y, c))
+                    .map(|(d, c)| (d, coords.y, c.as_ref()))
                     .into();
             }
 
@@ -127,7 +125,7 @@ impl WorldMap {
                 return chunk
                     .connections
                     .get_key_value(&Direction::Up)
-                    .map(|(d, c)| (d, coords.x, c))
+                    .map(|(d, c)| (d, coords.x, c.as_ref()))
                     .into();
             }
 
@@ -135,11 +133,11 @@ impl WorldMap {
                 return chunk
                     .connections
                     .get_key_value(&Direction::Down)
-                    .map(|(d, c)| (d, coords.x, c))
+                    .map(|(d, c)| (d, coords.x, c.as_ref()))
                     .into();
             }
         } else if !self.in_bounds(coords) {
-            return MovementResult::NONE;
+            return MapMovementResult::NONE;
         }
         self.unbounded_movement(coords).into()
     }
@@ -160,6 +158,7 @@ impl WorldMap {
                     chunk
                         .connections
                         .values()
+                        .flatten()
                         .any(|connection| &connection.0 == location)
                 })
                 .unwrap_or_default()

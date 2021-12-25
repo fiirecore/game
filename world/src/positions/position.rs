@@ -1,11 +1,15 @@
 use serde::{Deserialize, Serialize};
 
-use crate::positions::{Coordinate, Destination, Direction};
+use crate::{
+    map::movement::Elevation,
+    positions::{Coordinate, Destination, Direction},
+};
 
 #[derive(Debug, Default, Clone, Copy, Deserialize, Serialize)]
 pub struct Position {
     pub coords: Coordinate,
     pub direction: Direction,
+    pub elevation: Elevation,
 }
 
 impl Position {
@@ -26,5 +30,4 @@ impl Position {
     pub fn forwards(&self) -> Coordinate {
         self.coords.in_direction(self.direction)
     }
-
 }

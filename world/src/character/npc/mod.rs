@@ -2,8 +2,8 @@ use crate::positions::Coordinate;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use self::trainer::Trainer;
 use super::Character;
+use self::trainer::NpcTrainer;
 
 mod interact;
 pub use interact::*;
@@ -32,7 +32,7 @@ pub struct Npc {
     #[serde(default)]
     pub interact: NpcInteract,
 
-    pub trainer: Option<Trainer>,
+    pub trainer: Option<NpcTrainer>,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]

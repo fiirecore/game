@@ -116,20 +116,25 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		
 	}
 
+	#[deprecated]
+	fn fainted(p: &firecore_battle::pokedex::pokemon::owned::SavedPokemon) -> bool {
+		p.hp == Some(0)
+	}
+
 	pub fn battle<'d>(&mut self, 
 		pokedex: &'d dyn Dex<'d, Pokemon, P>,
 	movedex: &'d dyn Dex<'d, Move, M>,
 	itemdex: &'d dyn Dex<'d, Item, I>, 
-	save: &mut OwnedPlayer<P, M, I>, entry: BattleEntry, 
+	player: &mut PlayerCharacter, entry: BattleEntry, 
         ) -> bool { // add battle type parameter
 		self.finished = false;
 		self.state = BattleManagerState::default();
 		self.player.reset();
 		(!(
-			save.party.is_empty() || 
+			player.trainer.party.is_empty() || 
 			entry.party.is_empty() ||
 			// Checks if player has any pokemon in party that aren't fainted (temporary)
-			!save.party.iter().any(|pokemon| !pokemon.fainted())
+			!player.trainer.party.iter().any(|pokemon| !Self::fainted(pokemon))
 		)).then(|| {
 
 				if let Some(trainer) = entry.trainer.as_ref() {
@@ -140,13 +145,8 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 
 				let player = PlayerData {
 					id: BattleId::Player,
-					name: Some(save.character.name.clone()),
-					party: save
-						.party
-						.iter()
-						.cloned()
-						.map(OwnedPokemon::uninit)
-						.collect(),
+					name: Some(player.name.clone()),
+					party: player.trainer.party.clone(),
 					settings: PlayerSettings { gains_exp: true },
 					endpoint: Box::new(self.player.endpoint().clone()),
 				};
@@ -194,7 +194,7 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 	pub fn update<'d>(&mut self, ctx: &mut Context,
 		pokedex: &'d dyn Dex<'d, Pokemon, P>,
 	movedex: &'d dyn Dex<'d, Move, M>,
-	itemdex: &'d dyn Dex<'d, Item, I>, delta: f32, save: &mut OwnedPlayer<P, M, I>) {
+	itemdex: &'d dyn Dex<'d, Item, I>, delta: f32, save: &mut OwnedPlayer<I>) {
 		if ctx.debug() && is_key_pressed(ctx, Key::F1) { // exit shortcut
   				self.end();
   				return;
@@ -263,17 +263,12 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		self.battle.as_ref().map(|b| b.battle.winner()).flatten()
 	}
 
+	#[deprecated]
 	pub fn update_data(&mut self, winner: bool, player: &mut PlayerCharacter) -> bool {
 		self.battle.as_mut().map(|battle| {
 			let trainer = battle.trainer.is_some();
 
         if winner {
-            if let Some(trainer) = battle.trainer.take() {
-                player.worth += trainer.worth as u32;
-                if let Some(badge) = trainer.badge {
-                    player.world.badges.insert(badge);
-                }
-            }
         }
 
         trainer
@@ -299,18 +294,18 @@ impl<P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone, I: Der
 		}
 	}
 
-	pub fn draw(&self, ctx: &mut Context, save: &OwnedPlayer<P, M, I>) {
+	pub fn draw(&self, ctx: &mut Context, save: &OwnedPlayer<I>) {
         if self.battle.is_some() {
 			match self.state {
 				BattleManagerState::Begin => (),
 			    BattleManagerState::Transition => self.transition.draw(ctx),
-			    BattleManagerState::Battle => self.player.draw(ctx, &self.dex, &save.party, &save.bag),
+			    BattleManagerState::Battle => self.player.draw(ctx, &self.dex, &save.bag),
 			    BattleManagerState::Closer(..) => {
 					if !matches!(self.closer.state, TransitionState::End) {
 						if !self.world_active() {
 							self.player.gui.background.draw(ctx, 0.0);
 							self.player.gui.draw_panel(ctx);
-							self.player.draw(ctx, &self.dex, &save.party, &save.bag);
+							self.player.draw(ctx, &self.dex, &save.bag);
 							for active in self.player.local.as_ref().unwrap().renderer.iter() {
 								active.pokemon.draw(ctx, firecore_battle_gui::pokedex::engine::math::Vec2::ZERO, Color::WHITE);
 							}

@@ -1,4 +1,7 @@
-use crate::{map::{World, WorldMap, can_walk}, positions::{Coordinate, Destination, Direction, Path, Position}};
+use crate::{
+    map::WorldMap,
+    positions::{Coordinate, Destination, Direction, Path, Position},
+};
 use indexmap::{
     map::Entry::{Occupied, Vacant},
     IndexMap,
@@ -14,7 +17,7 @@ pub fn pathfind(
     from: &Position,
     destination: Destination,
     player: Coordinate,
-    world: &impl World,
+    world: &WorldMap,
 ) -> Option<Path> {
     let queue = astar(
         &(from.direction, from.coords),
@@ -39,7 +42,10 @@ fn valid_positions(
         .map(|direction| (*direction, coordinate + direction.tile_offset()))
         .filter(|(_, coords)| {
             if world.in_bounds(*coords) && coords != player {
-                world.local_movement(*coords).map(can_walk).unwrap_or_default()
+                world
+                    .local_movement(*coords)
+                    .map(can_walk)
+                    .unwrap_or_default()
             } else {
                 false
             }

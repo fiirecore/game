@@ -3,12 +3,13 @@ use std::ops::{Deref, DerefMut};
 
 use crate::{positions::Location, map::manager::state::WorldMapState};
 
-use super::{Character, npc::{NpcId, Npc}};
+use super::{Character, npc::{NpcId, Npc}, trainer::Trainer};
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]
 pub struct PlayerCharacter {
     pub location: Location,
     pub character: Character,
+    pub trainer: Trainer,
     pub rival: String,
     pub input_frozen: bool,
     pub ignore: bool,

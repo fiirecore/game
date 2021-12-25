@@ -63,7 +63,7 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
                         }
                         if let Some(ext) = file.extension() {
                             if ext == std::ffi::OsString::from("ron") {
-                                match load_maps(&worlds, extension, &file) {
+                                match load_maps(&worlds, &file) {
                                     Ok(map) => {
                                         world_maps.insert(map.id, map);
                                     }
@@ -115,20 +115,10 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
 // pub(crate) type MapGuiPos = Option<(worldlib::map::MapIcon, String, Location)>;
 
 fn load_maps(
-    root_path: &Path,
-    extension: Option<&OsStr>,
+    root: &Path,
     file: &Path,
 ) -> Result<WorldMap, LoadMapError> {
-    println!("Loading map under: {:?}", root_path);
-
-    let file_extension = file
-        .extension()
-        .map(|str| {
-            str.to_str()
-                .unwrap_or_else(|| panic!("Could not read file extension of file at {:?}", file))
-        })
-        .unwrap_or_else(|| panic!("Error: could not get file extension for file at {:?}", file));
-
+    println!("Loading map under: {:?}", root);
     let data = std::fs::read_to_string(file).unwrap_or_else(|err| {
         panic!(
             "Could not read map configuration file at {:?} to string with error {}",
@@ -137,36 +127,27 @@ fn load_maps(
     });
 
     fn load<'de, E: Into<LoadMapError>>(
-        root_path: &Path,
-        extension: Option<&OsStr>,
+        root: &Path,
         func: impl FnOnce(&'de str) -> Result<MapConfig, E>,
         data: &'de str,
     ) -> Result<WorldMap, LoadMapError> {
         match (func)(data).map_err(Into::into) {
-            Ok(config) => Ok(load_map_from_config(root_path, extension, config)?),
+            Ok(config) => Ok(load_map_from_config(root, config)?),
             // Ok(config) => Ok(vec![load_map_from_config(root_path, config.inner, None)?]),
             Err(err) => Err(err),
         }
     }
 
-    match file_extension {
-        "ron" => load(root_path, extension, ron::from_str, &data),
-        // "toml" => load(root_path, extension, toml::from_str, &data),
-        unknown => panic!(
-            "Could not read unknown map config/map list with extension {}. File at {:?}",
-            unknown, file
-        ),
-    }
+    load(root, ron::from_str, &data)
 }
 
 pub fn load_map_from_config<P: AsRef<Path>>(
-    root_path: P,
-    extension: Option<&OsStr>,
+    root: P,
     config: MapConfig,
 ) -> Result<WorldMap, LoadMapError> {
     println!("    Loading map named {}", config.name);
 
-    let root_path = root_path.as_ref();
+    let root_path = root.as_ref();
 
     let id = config.identifier.into();
 
@@ -192,7 +173,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(
     let chunk: ChunkConnections = config
         .chunk
         .into_iter()
-        .map(|(d, c)| (d, c.into()))
+        .map(|(d, c)| (d, c.into_iter().map(Into::into).collect()))
         .collect();
 
     let chunk = (!chunk.is_empty()).then(|| WorldChunk { connections: chunk });
@@ -223,7 +204,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(
         warps: super::warp::load_warp_entries(root_path.join("warps")),
         wild: super::wild::load_wild_entries(root_path.join("wild.ron")),
         npcs: super::npc::load_npc_entries(root_path.join("npcs")),
-        scripts: super::script::load_script_entries(root_path.join("scripts"), extension),
+        // scripts: super::script::load_script_entries(root_path.join("scripts"), extension),
 
         settings: config.settings,
     })

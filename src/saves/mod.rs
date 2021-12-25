@@ -5,12 +5,6 @@ use crate::pokedex::{
         bag::{OwnedBag, SavedBag},
         Item,
     },
-    moves::Move,
-    pokemon::{
-        owned::{OwnedPokemon, SavedPokemon},
-        party::Party,
-        Pokemon,
-    },
     Initializable, Uninitializable,
 };
 use serde::{Deserialize, Serialize};
@@ -24,28 +18,23 @@ use worldlib::{
 
 // pub use list::PlayerSaves;
 
-pub type PlayerData = OwnedPlayer<&'static Pokemon, &'static Move, &'static Item>;
-
-pub type GamePokemon = OwnedPokemon<&'static Pokemon, &'static Move, &'static Item>;
-pub type GameParty = Party<GamePokemon>;
+pub type PlayerData = OwnedPlayer<&'static Item>;
 
 pub type GameBag = OwnedBag<&'static Item>;
 
-pub type SavedPlayer = Player<SavedPokemon, SavedBag>;
-pub type OwnedPlayer<P, M, I> = Player<OwnedPokemon<P, M, I>, OwnedBag<I>>;
+pub type SavedPlayer = Player<SavedBag>;
+pub type OwnedPlayer<I> = Player<OwnedBag<I>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Player<P, B> {
+pub struct Player<B> {
     #[serde(default = "default_id")]
     pub id: u64,
 
-    #[serde(default = "default_character")]
+    #[serde(default = "default_character", rename = "player")]
     pub character: PlayerCharacter,
 
-    #[serde(default = "Party::default")]
-    pub party: Party<P>,
-
     #[serde(default)]
+    #[deprecated]
     pub bag: B,
 }
 
@@ -85,24 +74,14 @@ impl SavedPlayer {
         // movedex: &'d dyn Dex<'d, Move, &'d Move>,
         // itemdex: &'d dyn Dex<'d, Item, &'d Item>,
     ) -> Option<PlayerData> {
-        let mut party = Party::new();
+        // let mut party = Party::new();
 
         let itemdex = crate::dex::itemdex();
-
-        for p in self.party.into_iter() {
-            let p = p.init(
-                random,
-                crate::dex::pokedex(),
-                crate::dex::movedex(),
-                itemdex,
-            )?;
-            party.push(p);
-        }
 
         Some(Player {
             id: self.id,
             character: self.character,
-            party,
+            // party,
             bag: self.bag.init(itemdex)?,
         })
     }
@@ -114,8 +93,8 @@ impl storage::PersistantData for SavedPlayer {
     }
 }
 
-impl<P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = Item>> Uninitializable
-    for OwnedPlayer<P, M, I>
+impl<I: Deref<Target = Item>> Uninitializable
+    for OwnedPlayer<I>
 {
     type Output = SavedPlayer;
 
@@ -123,11 +102,11 @@ impl<P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = Item
         SavedPlayer {
             id: self.id,
             character: self.character,
-            party: self
-                .party
-                .into_iter()
-                .map(Uninitializable::uninit)
-                .collect(),
+            // party: self
+            //     .party
+            //     .into_iter()
+            //     .map(Uninitializable::uninit)
+            //     .collect(),
             bag: self.bag.uninit(),
         }
     }
@@ -137,7 +116,7 @@ impl Default for SavedPlayer {
     fn default() -> Self {
         Self {
             id: default_id(),
-            party: Default::default(),
+            // party: Default::default(),
             character: default_character(),
             bag: Default::default(),
         }
@@ -169,6 +148,7 @@ pub fn default_character() -> PlayerCharacter {
     PlayerCharacter {
         location: default_location(),
         character: Character::new(default_name(), default_position()),
+        trainer: Default::default(),
         input_frozen: false,
         ignore: false,
         world: Default::default(),

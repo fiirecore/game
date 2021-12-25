@@ -2,11 +2,12 @@ use crate::positions::{Destination, Direction, Path, PixelOffset, Position};
 use serde::{Deserialize, Serialize};
 
 pub mod npc;
-// pub mod pathfind;
 pub mod player;
 pub mod sprite;
+pub mod message;
+pub mod trainer;
+// pub mod pathfind;
 
-pub type Worth = u32;
 
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -16,17 +17,14 @@ pub struct Character {
 
     pub position: Position,
 
+    #[serde(skip)]
+    pub offset: PixelOffset,
+
     #[serde(default)]
     pub movement: Movement,
 
     #[serde(default)]
-    pub worth: Worth,
-
-    #[serde(default)]
     pub frozen: bool,
-
-    #[serde(skip)]
-    pub offset: PixelOffset,
 
     #[serde(skip)]
     pub sprite: u8,

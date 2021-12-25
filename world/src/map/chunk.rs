@@ -1,12 +1,12 @@
-use std::collections::HashMap;
-
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
-use crate::positions::{CoordinateInt, Direction, Location, Coordinate};
+use crate::positions::{Coordinate, CoordinateInt, Direction, Location};
 
 use super::WorldMap;
 
-pub type ChunkConnections = HashMap<Direction, Connection>;
+pub type ChunkConnections = HashMap<Direction, Vec<Connection>>;
+pub type ChunkOffset = CoordinateInt;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldChunk {
@@ -14,11 +14,10 @@ pub struct WorldChunk {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Connection(pub Location, pub CoordinateInt);
+pub struct Connection(pub Location, pub ChunkOffset);
 
 impl Connection {
-
-    pub fn offset(direction: Direction, map: &WorldMap, offset: i32) -> Coordinate {
+    pub fn offset(direction: Direction, map: &WorldMap, offset: ChunkOffset) -> Coordinate {
         match direction {
             Direction::Down => Coordinate::new(offset, -1),
             Direction::Up => Coordinate::new(offset, map.height as _),
@@ -26,7 +25,6 @@ impl Connection {
             Direction::Right => Coordinate::new(-1, offset),
         }
     }
-
 }
 
 impl From<ChunkConnections> for WorldChunk {

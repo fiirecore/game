@@ -1,25 +1,25 @@
+use std::rc::Rc;
+
 use firecore_world::events::Sender;
 
-use crate::{
-    saves::{GameBag, GameParty},
+use crate::pokedex::{
+    gui::{bag::BagGui, party::PartyGui},
+    pokemon::owned::SavedPokemon,
+    PokedexClientData,
 };
 
-use std::rc::Rc;
+use crate::{
+    saves::{GameBag, PlayerData},
+    state::game::GameActions,
+};
 
 use crate::engine::{
     gui::Panel,
     input::controls::{pressed, Control},
+    log::info,
     math::Vec2,
     utils::Entity,
     Context,
-};
-use crate::saves::PlayerData;
-use crate::{
-    pokedex::{
-        PokedexClientData,
-        gui::{bag::BagGui, party::PartyGui},
-    },
-    state::game::GameActions,
 };
 
 pub struct StartMenu {
@@ -52,12 +52,13 @@ impl StartMenu {
         }
     }
 
-    pub fn update(&mut self, ctx: &Context, delta: f32, party: &mut GameParty, bag: &GameBag) {
+    pub fn update(&mut self, ctx: &Context, delta: f32, party: &mut [SavedPokemon], bag: &GameBag) {
         if self.bag.alive() {
             self.bag.input(ctx, bag);
             // bag_gui.up
         } else if self.party.alive() {
-            self.party.input(ctx, &self.dex, party);
+            self.party
+                .input(ctx, &self.dex, crate::dex::pokedex(), party);
             self.party.update(delta);
         } else {
             if pressed(ctx, Control::B) || pressed(ctx, Control::Start) {
@@ -113,7 +114,7 @@ impl StartMenu {
             if self.bag.alive() {
                 self.bag.draw(ctx, &self.dex, &save.bag);
             } else if self.party.alive() {
-                self.party.draw(ctx, &save.party);
+                self.party.draw(ctx);
             } else {
                 Panel::draw_text(
                     ctx,
@@ -133,8 +134,14 @@ impl StartMenu {
         self.party.alive() || self.bag.alive()
     }
 
-    pub fn spawn_party(&mut self, party: &GameParty) {
-        self.party.spawn(&self.dex, party, Some(true), true);
+    pub fn spawn_party(&mut self, party: &[SavedPokemon]) {
+        let pokedex = crate::dex::pokedex();
+        if let Err(err) = self
+            .party
+            .spawn(&self.dex, pokedex, party, Some(true), true)
+        {
+            info!("Cannot spawn party GUI with error {}", err)
+        }
     }
 }
 
