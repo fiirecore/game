@@ -35,7 +35,7 @@ opt-level = "z"
 firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "e9e3073", package = "firecore-battle-gui", default-features = false }
 # firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
-firecore-world = { path = "world" }
+firecore-world = { git = "https://github.com/fiirecore/world", rev = "3915b7c" }
 
 firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "e8a2c94", features = [
     "ai",
@@ -67,10 +67,10 @@ hashbrown = "0.9"
 
 [build-dependencies]
 
-firecore-pokedex-builder = { git = "https://github.com/fiirecore-game/pokedex-builder", rev = "5f5643e" }
+firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "3abe7ef", package = "firecore-pokedex-builder" }
 firecore-pokedex-engine-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder", rev = "396e79e", default-features = false, features = ["compile"] }
 firecore-battle-builder = { git = "https://github.com/DoNotDoughnut/firecore-battle-builder", rev = "1c253dc" }
-firecore-world-builder = { path = "world/builder" }
+firecore-world-builder = { git = "https://github.com/fiirecore/world", rev = "3915b7c", package = "firecore-world-builder" }
 firecore-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-builder", rev = "057373a" }
 firecore-audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-audio-builder", rev = "90af8c1", optional = true }
 serde = "1"
@@ -82,7 +82,5 @@ embed-resource = "1"
 
 [workspace]
 members = [
-    "world",
-    "world/builder",
     "storage"
 ]
