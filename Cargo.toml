@@ -1,10 +1,10 @@
 [package]
 name = "pokemon-game"
-version = "0.5.0-beta.2021-12-16"
+version = "0.5.0-beta.2021-12-24"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 description = "Pokemon FireRed Clone"
-repository = "https://github.com/DoNotDoughnut/pokemon-game"
+repository = "https://github.com/fiirecore-game/pokemon-game"
 keywords = ["games", "pokemon"]
 categories = ["games"]
 build = "build/build.rs"
@@ -17,7 +17,7 @@ default = ["audio"]
 audio = [
     "firecore-audio-builder",
     "firecore-battle-gui/audio",
-    "firecore-pokedex-engine-builder/audio"
+    "firecore-pokedex-engine-builder/audio",
 ]
 # discord = ["discord-rich-presence"]
 
@@ -32,7 +32,7 @@ opt-level = "z"
 
 [dependencies]
 # Battle GUI, also re-exports game engine
-firecore-battle-gui = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "e9e3073", package = "firecore-battle-gui", default-features = false }
+firecore-battle-gui = { git = "https://github.com/fiirecore-game/engine", rev = "e9e3073", package = "firecore-battle-gui", default-features = false }
 # firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
 firecore-world = { git = "https://github.com/fiirecore/world", rev = "3915b7c" }
@@ -68,11 +68,13 @@ hashbrown = "0.9"
 [build-dependencies]
 
 firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "3abe7ef", package = "firecore-pokedex-builder" }
-firecore-pokedex-engine-builder = { git = "https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder", rev = "396e79e", default-features = false, features = ["compile"] }
-firecore-battle-builder = { git = "https://github.com/DoNotDoughnut/firecore-battle-builder", rev = "1c253dc" }
+firecore-pokedex-engine-builder = { git = "https://github.com/fiirecore-game/engine", rev = "d8ae339", package = "firecore-pokedex-engine-builder", default-features = false, features = [
+    "compile",
+] }
+firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "ad2d70d", package = "firecore-battle-builder" }
 firecore-world-builder = { git = "https://github.com/fiirecore/world", rev = "3915b7c", package = "firecore-world-builder" }
-firecore-font-builder = { git = "https://github.com/DoNotDoughnut/firecore-font-builder", rev = "057373a" }
-firecore-audio-builder = { git = "https://github.com/DoNotDoughnut/firecore-audio-builder", rev = "90af8c1", optional = true }
+firecore-font-builder = { git = "https://github.com/fiirecore-game/firecore-font-builder", rev = "057373a" }
+firecore-audio-builder = { git = "https://github.com/fiirecore-game/firecore-audio-builder", rev = "90af8c1", optional = true }
 serde = "1"
 firecore-storage = { path = "storage", default-features = false }
 
@@ -81,6 +83,4 @@ embed-resource = "1"
 
 
 [workspace]
-members = [
-    "storage"
-]
+members = ["storage"]
