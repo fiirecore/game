@@ -1,8 +1,8 @@
-mod wild;
 mod trainer;
+mod wild;
 
-pub use wild::WildBattleCloser;
 pub use trainer::TrainerBattleCloser;
+pub use wild::WildBattleCloser;
 
 pub enum Closers {
     Wild,

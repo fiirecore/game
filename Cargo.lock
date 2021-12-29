@@ -249,24 +249,11 @@ dependencies = [
 [[package]]
 name = "firecore-battle"
 version = "0.0.8"
-source = "git+https://github.com/fiirecore/battle?rev=ad2d70d#ad2d70d097ac3735ca4c692c769e6accc5d34766"
+source = "git+https://github.com/fiirecore/battle?rev=621352f#621352fd32cad0cdfcadc2ddade80ef645f2cc87"
 dependencies = [
  "crossbeam-channel",
- "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=fdf002b)",
+ "firecore-pokedex",
  "hashbrown",
- "log",
- "quad-compat-rhai",
- "rand",
- "serde",
-]
-
-[[package]]
-name = "firecore-battle"
-version = "0.0.8"
-source = "git+https://github.com/fiirecore/battle?rev=e8a2c94#e8a2c94785380523ddbd2079d77d422d4820a36f"
-dependencies = [
- "crossbeam-channel",
- "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=fdf002b)",
  "log",
  "quad-compat-rhai",
  "rand",
@@ -276,9 +263,9 @@ dependencies = [
 [[package]]
 name = "firecore-battle-builder"
 version = "0.0.4"
-source = "git+https://github.com/fiirecore/battle?rev=ad2d70d#ad2d70d097ac3735ca4c692c769e6accc5d34766"
+source = "git+https://github.com/fiirecore/battle?rev=621352f#621352fd32cad0cdfcadc2ddade80ef645f2cc87"
 dependencies = [
- "firecore-battle 0.0.8 (git+https://github.com/fiirecore/battle?rev=ad2d70d)",
+ "firecore-battle",
  "hashbrown",
  "ron",
 ]
@@ -286,11 +273,11 @@ dependencies = [
 [[package]]
 name = "firecore-battle-gui"
 version = "0.0.2"
-source = "git+https://github.com/fiirecore-game/engine?rev=e9e3073#e9e307360a32f382960eddfc40acd8eb69b27e7e"
+source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
 dependencies = [
  "arrayvec",
  "crossbeam-channel",
- "firecore-battle 0.0.8 (git+https://github.com/fiirecore/battle?rev=e8a2c94)",
+ "firecore-battle",
  "firecore-pokedex-engine",
  "log",
  "rand",
@@ -299,10 +286,10 @@ dependencies = [
 [[package]]
 name = "firecore-engine"
 version = "0.0.3"
-source = "git+https://github.com/DoNotDoughnut/firecore-engine?rev=e9e3073#e9e307360a32f382960eddfc40acd8eb69b27e7e"
+source = "git+https://github.com/DoNotDoughnut/firecore-engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
 dependencies = [
  "enum-map",
- "firecore-font-builder 0.0.2 (git+https://github.com/DoNotDoughnut/firecore-font-builder?rev=057373a)",
+ "firecore-font-builder",
  "image",
  "macroquad",
  "quad-gamepad",
@@ -313,24 +300,15 @@ dependencies = [
 [[package]]
 name = "firecore-engine"
 version = "0.0.3"
-source = "git+https://github.com/fiirecore-game/engine?rev=e9e3073#e9e307360a32f382960eddfc40acd8eb69b27e7e"
+source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
 dependencies = [
  "enum-map",
- "firecore-font-builder 0.0.2 (git+https://github.com/DoNotDoughnut/firecore-font-builder?rev=057373a)",
+ "firecore-font-builder",
  "image",
  "macroquad",
  "quad-gamepad",
  "serde",
  "tinystr",
-]
-
-[[package]]
-name = "firecore-font-builder"
-version = "0.0.2"
-source = "git+https://github.com/DoNotDoughnut/firecore-font-builder?rev=057373a#057373ad4597ae751c1f8c9a4f8bbdf8a6261bb3"
-dependencies = [
- "ron",
- "serde",
 ]
 
 [[package]]
@@ -344,31 +322,8 @@ dependencies = [
 
 [[package]]
 name = "firecore-pokedex"
-version = "0.0.7"
-source = "git+https://github.com/fiirecore/pokedex?rev=18f1de3#18f1de3df29730894c76e0e72ab62d2aedae09b8"
-dependencies = [
- "arrayvec",
- "rand",
- "serde",
- "tinystr",
-]
-
-[[package]]
-name = "firecore-pokedex"
 version = "0.0.8"
-source = "git+https://github.com/fiirecore/pokedex?rev=3abe7ef#3abe7efa15034bbdfc4007556500b7f225c34837"
-dependencies = [
- "arrayvec",
- "hashbrown",
- "rand",
- "serde",
- "tinystr",
-]
-
-[[package]]
-name = "firecore-pokedex"
-version = "0.0.8"
-source = "git+https://github.com/fiirecore/pokedex?rev=fdf002b#fdf002bd31cd4d292803f1af1f9aa433d5e54def"
+source = "git+https://github.com/fiirecore/pokedex?rev=b5279db#b5279db364f037df91bf69cefafc7541c6380284"
 dependencies = [
  "arrayvec",
  "hashbrown",
@@ -380,42 +335,30 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-builder"
 version = "0.0.6"
-source = "git+https://github.com/fiirecore/pokedex?rev=3abe7ef#3abe7efa15034bbdfc4007556500b7f225c34837"
+source = "git+https://github.com/fiirecore/pokedex?rev=b5279db#b5279db364f037df91bf69cefafc7541c6380284"
 dependencies = [
- "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=3abe7ef)",
+ "firecore-pokedex",
  "ron",
 ]
 
 [[package]]
 name = "firecore-pokedex-engine"
 version = "0.0.3"
-source = "git+https://github.com/fiirecore-game/engine?rev=e9e3073#e9e307360a32f382960eddfc40acd8eb69b27e7e"
+source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
 dependencies = [
  "enum-map",
- "firecore-engine 0.0.3 (git+https://github.com/fiirecore-game/engine?rev=e9e3073)",
- "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=fdf002b)",
- "firecore-pokedex-engine-builder 0.0.4 (git+https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder?rev=396e79e)",
+ "firecore-engine 0.0.3 (git+https://github.com/fiirecore-game/engine?rev=647676a)",
+ "firecore-pokedex-engine-builder",
  "tinystr",
 ]
 
 [[package]]
 name = "firecore-pokedex-engine-builder"
 version = "0.0.4"
-source = "git+https://github.com/DoNotDoughnut/firecore-pokedex-engine-builder?rev=396e79e#396e79e5c7ed8f259002b26fb598136c90d3b8f4"
+source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
 dependencies = [
  "enum-map",
- "firecore-pokedex 0.0.7",
- "serde",
- "tinystr",
-]
-
-[[package]]
-name = "firecore-pokedex-engine-builder"
-version = "0.0.4"
-source = "git+https://github.com/fiirecore-game/engine?rev=d8ae339#d8ae33902833175f18c10227357217988808e975"
-dependencies = [
- "enum-map",
- "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=fdf002b)",
+ "firecore-pokedex",
  "serde",
  "tinystr",
 ]
@@ -424,10 +367,11 @@ dependencies = [
 name = "firecore-storage"
 version = "0.5.0-beta.2021-07-02"
 dependencies = [
+ "base64",
  "bincode",
  "dirs-next",
- "firecore-engine 0.0.3 (git+https://github.com/DoNotDoughnut/firecore-engine?rev=e9e3073)",
- "miniquad-cookie",
+ "firecore-engine 0.0.3 (git+https://github.com/DoNotDoughnut/firecore-engine?rev=647676a)",
+ "quad-storage",
  "ron",
  "serde",
 ]
@@ -435,10 +379,10 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.5.0-beta.2021-12-24"
-source = "git+https://github.com/fiirecore/world?rev=3915b7c#3915b7c69212b2dd317d9527eb56e01ebb4d839c"
+source = "git+https://github.com/fiirecore/world?rev=ba4e94b#ba4e94b9c8055f0bdaeda615ec3924d013c72a04"
 dependencies = [
  "crossbeam-channel",
- "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=fdf002b)",
+ "firecore-pokedex",
  "hashbrown",
  "rand",
  "serde",
@@ -448,7 +392,7 @@ dependencies = [
 [[package]]
 name = "firecore-world-builder"
 version = "0.5.0-beta.2021-12-24"
-source = "git+https://github.com/fiirecore/world?rev=3915b7c#3915b7c69212b2dd317d9527eb56e01ebb4d839c"
+source = "git+https://github.com/fiirecore/world?rev=ba4e94b#ba4e94b9c8055f0bdaeda615ec3924d013c72a04"
 dependencies = [
  "bincode",
  "either",
@@ -595,14 +539,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "miniquad-cookie"
-version = "0.1.0"
-source = "git+https://github.com/DoNotDoughnut/miniquad-cookie#e9b771400a704862ddf5bb72b759d0865865f884"
-dependencies = [
- "sapp-jsutils",
-]
-
-[[package]]
 name = "miniz_oxide"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -610,6 +546,21 @@ checksum = "791daaae1ed6889560f8c4359194f56648355540573244a5448a83ba1ecc7435"
 dependencies = [
  "adler32",
 ]
+
+[[package]]
+name = "nanoserde"
+version = "0.1.29"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2786e3e6331deef0ed595643fb9266686369917bdf99b4169701399c9d262868"
+dependencies = [
+ "nanoserde-derive",
+]
+
+[[package]]
+name = "nanoserde-derive"
+version = "0.1.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "290eec6719d68aef1f5ca0e695f8ad6421adcf8791fc17641c4ccc6c5388fb39"
 
 [[package]]
 name = "ndk-sys"
@@ -681,17 +632,17 @@ dependencies = [
 
 [[package]]
 name = "pokemon-game"
-version = "0.5.0-beta.2021-12-24"
+version = "0.5.0-beta.2021-12-28"
 dependencies = [
  "crossbeam-channel",
  "embed-resource",
  "firecore-audio-builder",
- "firecore-battle 0.0.8 (git+https://github.com/fiirecore/battle?rev=e8a2c94)",
+ "firecore-battle",
  "firecore-battle-builder",
  "firecore-battle-gui",
- "firecore-font-builder 0.0.2 (git+https://github.com/fiirecore-game/firecore-font-builder?rev=057373a)",
+ "firecore-font-builder",
  "firecore-pokedex-builder",
- "firecore-pokedex-engine-builder 0.0.4 (git+https://github.com/fiirecore-game/engine?rev=d8ae339)",
+ "firecore-pokedex-engine-builder",
  "firecore-storage",
  "firecore-world",
  "firecore-world-builder",
@@ -758,6 +709,26 @@ dependencies = [
  "libc",
  "quad-alsa-sys",
  "winapi",
+]
+
+[[package]]
+name = "quad-storage"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e73edba8c792f3b5a45c68a1086f6f8c1bbda34ab9399a7faabd7dc7d4e14a0e"
+dependencies = [
+ "lazy_static",
+ "nanoserde",
+ "quad-storage-sys",
+]
+
+[[package]]
+name = "quad-storage-sys"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1187c77ced2cc6ae79bd6e35cc09e22159164a05c4d867e299bfbf1f801e9157"
+dependencies = [
+ "sapp-jsutils",
 ]
 
 [[package]]

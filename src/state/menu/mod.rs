@@ -1,8 +1,8 @@
 mod manager;
 pub use manager::*;
 
-mod title;
 mod main;
+mod title;
 // pub mod first_scene;
 // pub mod character;
 

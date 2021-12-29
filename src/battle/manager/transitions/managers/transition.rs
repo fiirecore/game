@@ -1,6 +1,7 @@
 use crate::{
+    battle::TransitionState,
     engine::{audio::play_music, Context},
-    game::battle_glue::BattleTrainerEntry, battle::TransitionState,
+    game::battle_glue::BattleTrainerEntry,
 };
 
 use battlelib::data::BattleType;

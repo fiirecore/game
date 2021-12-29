@@ -114,7 +114,13 @@ impl PlayerTexture {
         if !character.hidden {
             if let Some(texture) = self.textures.get(&character.movement) {
                 if self.jumping {
-                    firecore_battle_gui::pokedex::engine::graphics::draw_circle(ctx, SCREEN_X, SCREEN_Y + 24.0, 8.0, Color::BLACK);
+                    firecore_battle_gui::pokedex::engine::graphics::draw_circle(
+                        ctx,
+                        SCREEN_X,
+                        SCREEN_Y + 24.0,
+                        8.0,
+                        Color::BLACK,
+                    );
                 }
                 let (x, width) = current_texture(character);
                 texture.texture.draw(
@@ -132,7 +138,7 @@ impl PlayerTexture {
                                 true => match negative {
                                     true => SCREEN_Y + (TILE_SIZE / 4.0) - o,
                                     false => SCREEN_Y - (TILE_SIZE / 4.0) + o,
-                                } ,
+                                },
                             }
                         }
                         false => SCREEN_Y,

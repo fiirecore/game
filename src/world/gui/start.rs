@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use firecore_world::events::Sender;
+use worldlib::character::trainer::Trainer;
 
 use crate::pokedex::{
     gui::{bag::BagGui, party::PartyGui},
@@ -8,10 +9,7 @@ use crate::pokedex::{
     PokedexClientData,
 };
 
-use crate::{
-    saves::{GameBag, PlayerData},
-    state::game::GameActions,
-};
+use crate::state::game::GameActions;
 
 use crate::engine::{
     gui::Panel,
@@ -52,13 +50,13 @@ impl StartMenu {
         }
     }
 
-    pub fn update(&mut self, ctx: &Context, delta: f32, party: &mut [SavedPokemon], bag: &GameBag) {
+    pub fn update(&mut self, ctx: &Context, delta: f32, user: &mut Trainer) {
         if self.bag.alive() {
-            self.bag.input(ctx, bag);
+            self.bag.input(ctx, &mut user.bag);
             // bag_gui.up
         } else if self.party.alive() {
             self.party
-                .input(ctx, &self.dex, crate::dex::pokedex(), party);
+                .input(ctx, &self.dex, crate::dex::pokedex(), &mut user.party);
             self.party.update(delta);
         } else {
             if pressed(ctx, Control::B) || pressed(ctx, Control::Start) {
@@ -77,7 +75,7 @@ impl StartMenu {
                     }
                     2 => {
                         // Pokemon
-                        self.spawn_party(party);
+                        self.spawn_party(&user.party);
                     }
                     3 => {
                         // Exit to Main Menu
@@ -109,10 +107,10 @@ impl StartMenu {
         }
     }
 
-    pub fn draw<'d>(&self, ctx: &mut Context, save: &PlayerData) {
+    pub fn draw(&self, ctx: &mut Context) {
         if self.alive {
             if self.bag.alive() {
-                self.bag.draw(ctx, &self.dex, &save.bag);
+                self.bag.draw(ctx);
             } else if self.party.alive() {
                 self.party.draw(ctx);
             } else {

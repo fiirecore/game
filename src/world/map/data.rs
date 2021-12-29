@@ -28,7 +28,7 @@ impl ClientWorldData {
             tiles: tile::PaletteTextureManager::new(ctx, textures.palettes),
             npc: npc::NpcTextures::new(ctx, npcs)?,
             player: player::PlayerTexture::new(ctx, textures.player)?,
-            gui: gui::GuiTextures::new(ctx),
+            gui: gui::GuiTextures::new(ctx)?,
         })
     }
 

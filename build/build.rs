@@ -1,6 +1,7 @@
 fn write<S: serde::Serialize>(file: &str, data: &S) {
-
-    let dest = firecore_storage::directory(false, PUBLISHER, APPLICATION).unwrap().join("assets");
+    let dest = firecore_storage::directory(false, PUBLISHER, APPLICATION)
+        .unwrap()
+        .join("assets");
     if !dest.exists() {
         std::fs::create_dir_all(&dest).unwrap();
     }
@@ -57,5 +58,9 @@ fn main() {
     // let ext = ext.as_deref();
 
     #[cfg(windows)]
-    embed_resource::compile("build/resource.rc");
+    if std::env::var("PROFILE").unwrap() == "release" {
+        if std::env::var("CARGO_CFG_WINDOWS").is_ok() {
+            embed_resource::compile("build/resource.rc");
+        }
+    }
 }

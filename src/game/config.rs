@@ -13,11 +13,9 @@ pub struct Configuration {
 }
 
 impl Configuration {
-
     pub fn load(&self, ctx: &mut Context) {
         crate::engine::input::controls::keyboard::set_key_map(ctx, self.controls);
     }
-
 }
 
 impl Default for Configuration {

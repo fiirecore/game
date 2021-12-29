@@ -7,6 +7,3 @@ mod gui;
 mod screen;
 
 pub use screen::RenderCoords;
-
-
-

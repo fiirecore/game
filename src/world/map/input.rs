@@ -17,7 +17,12 @@ pub struct PlayerInput {
 impl PlayerInput {
     const MOVE_WAIT: f32 = 0.12;
 
-    pub fn update(&mut self, player: &mut PlayerCharacter, ctx: &mut Context, delta: f32) -> Option<Direction> {
+    pub fn update(
+        &mut self,
+        player: &mut PlayerCharacter,
+        ctx: &mut Context,
+        delta: f32,
+    ) -> Option<Direction> {
         if !player.moving() && !player.frozen() && !player.input_frozen {
             match down(ctx, Control::B) {
                 true => {

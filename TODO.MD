@@ -1,67 +1,57 @@
 # To - do List
 
 
-
  - [X] Load asset files from AppData folder
  - [X] Actually save player data
  - [ ] Move battle intro transition to world code
- - [ ] Reimplement scripts
  - [X] Reimplement loading/copyright screen
- - [ ] Reimplement doors
 
  - [ ] Player creation state
 
- - [ ] Load more tile and location data from world binary
-
- - [ ] Proper NPC rendering based on their widths and heights
-
- - [X] Elevation
-
  - [ ] Replace std::collections::HashMap with hashbrown::HashMap
 
- - [ ] Fix Battle GUI sucking
- - [ ] Fix pokemon not getting updated after battle
- - [ ] Fix higher level pokemon not doing correct damage in battles
- - [ ] Reimplement running from battles
- - [ ] Correctly add BattleCloser to BattleGui
- - [ ] Fix BattleGui
+ - [ ] Add é to font
 
+## World
 
-* Figure out if world updating code needs a rewrite
-* Move animations through scripting
+ - [X] Elevation
+ - [ ] Reimplement scripts
+ - [ ] Reimplement doors
+ - [X] Load more tile and location data from world binary
+    - [ ] Finished implementing
+ - [ ] Proper NPC rendering based on their widths and heights
 
-* Online battles over discord rich presence?
+ - [X] Reverse render coords for Y-axis so bottom is drawn lower
+ - [ ] Fix npcs getting drawn offscreen and map connections being drawn over main map
 
-* Pokemarts and Pokemon centers implementation
-* Add rhai scripting to world and NPC scripting
-* Maybe world manager gives out more MoveResult
-* Town Map item
+* Pokemarts and Pokemon centers custom implementation
 
-* Persistent moves in battle
+* Maybe day/night cycle?
 
-* Add proper jumping over one way tiles (cliffs)
+## Battle
 
-* Add UNKNOWN pokemon, move and item values
-* Text line wrapping
-
-
-* Command shortcuts and better parsing
 * Moves use PP in battle
-* Running from battle chance and text
+* Persistent moves in battle
+* Better AI
+
+## Battle GUI
+
+* Fix Battle GUI sucking
+* Fix pokemon not getting updated after battle
+* Fix higher level pokemon not doing correct damage in battles
+* Reimplement running from battles
+* Correctly add BattleCloser to BattleGui
+* Move animations
+
+## Engine
+
+* Text line wrapping
+* Support for text scrolling
 
 ## Other
 
-* Maybe day/night cycle?
-* Working Pokemarts
-
-<!-- - [ ] Trainer and Gym Leader Battle AI -->
-
-### Other Goals
-
-* Fixed all warp transitions
-* All Npcs up to Cerulean are added
-* All scripts up to Cerulean are added
-
-### Other Planned Ideas
-
- - [ ] Game server
+* Add rhai scripting to world and NPC scripting
+* Online battles over discord rich presence?
+* Add UNKNOWN pokemon, move and item values
+* Town Map item
+* Multiplayer

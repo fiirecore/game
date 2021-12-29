@@ -2,7 +2,10 @@ use hashbrown::HashMap;
 
 use worldlib::{
     character::{
-        npc::{group::{NpcGroupId, NpcGroup}, Npc},
+        npc::{
+            group::{NpcGroup, NpcGroupId},
+            Npc,
+        },
         sprite::SpriteIndices,
     },
     positions::Direction,
@@ -53,18 +56,18 @@ impl NpcTextures {
     }
 
     pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
-        self.0.get(&npc.group).unwrap_or_else(|| {
-            self.0
-                .get(&NpcGroup::PLACEHOLDER)
-                .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
-        }).draw(ctx, npc, screen);
+        self.0
+            .get(&npc.group)
+            .unwrap_or_else(|| {
+                self.0
+                    .get(&NpcGroup::PLACEHOLDER)
+                    .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
+            })
+            .draw(ctx, npc, screen);
     }
-
-    
 }
 
 impl NpcTexture {
-
     pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
         let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x
             + npc.character.offset.x;
@@ -72,7 +75,7 @@ impl NpcTexture {
             - screen.focus.y
             + npc.character.offset.y;
 
-         // {
+        // {
         self.texture.draw(
             ctx,
             x,

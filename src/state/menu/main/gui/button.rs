@@ -3,9 +3,7 @@ use std::borrow::Cow;
 use crate::engine::{
     graphics::{draw_text_center, Color, DrawParams},
     gui::Panel,
-    input::{
-        controls::{pressed, Control},
-    },
+    input::controls::{pressed, Control},
     math::Vec2,
     text::MessagePage,
     Context,
@@ -43,11 +41,7 @@ impl Button {
         }
     }
 
-    pub fn update(
-        &mut self,
-        ctx: &Context,
-        selected: bool,
-    ) -> bool {
+    pub fn update(&mut self, ctx: &Context, selected: bool) -> bool {
         if selected {
             if pressed(ctx, Control::A) {
                 self.state = ButtonState::Clicked;

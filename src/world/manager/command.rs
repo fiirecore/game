@@ -104,7 +104,7 @@ impl CommandProcessor for WorldManager {
                             .commands
                             .send(WorldCommands::Party(PartyCommand::Info(None))),
                     },
-                    _ => self.error("Please provide a valid argument for /party")
+                    _ => self.error("Please provide a valid argument for /party"),
                 },
                 None => self.error("Please provide an argument for /party"),
             },

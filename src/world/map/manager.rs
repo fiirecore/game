@@ -9,11 +9,8 @@ use crate::{
         Context,
     },
     game::battle_glue::{BattleEntry as GameBattleEntry, BattleId, BattleTrainerEntry},
-    saves::GameBag,
     state::game::GameActions,
 };
-
-use battlelib::pokedex::Initializable;
 
 use rand::prelude::SmallRng;
 
@@ -107,8 +104,8 @@ impl GameWorldMapManager {
         self.world.seed(seed);
     }
 
-    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool, trainer: bool) {
-        self.world.post_battle(player, winner, trainer)
+    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
+        self.world.post_battle(player, winner)
     }
 
     pub fn try_warp(&mut self, player: &mut PlayerCharacter, location: Location) -> bool {
@@ -124,7 +121,6 @@ impl GameWorldMapManager {
         &mut self,
         ctx: &mut Context,
         player: &mut PlayerCharacter,
-        bag: &mut GameBag,
         delta: f32,
     ) {
         // } else if self.world_map.alive() {
@@ -141,7 +137,9 @@ impl GameWorldMapManager {
                 WorldActions::Battle(entry) => {
                     if !player.trainer.party.is_empty() {
                         player.freeze();
-                        let (id, t) = if let Some(trainer) = entry.trainer {
+                        let active = entry.active;
+                        let party = entry.party.clone();
+                        let (id, t) = if let Some(trainer) = entry.trainer.as_ref() {
                             let (id, t) = (
                                 BattleId::Trainer(trainer.id),
                                 if let Some(npc) = self
@@ -158,6 +156,7 @@ impl GameWorldMapManager {
                                             .as_ref()
                                             .map(|t| format!("{} {}", t.name, npc.character.name))
                                             .unwrap_or_else(|| npc.character.name.clone()),
+                                        bag: trainer.bag.clone(),
                                         badge: trainer.badge,
                                         sprite: npc.group,
                                         transition: trainer.transition,
@@ -176,16 +175,16 @@ impl GameWorldMapManager {
                                     None
                                 },
                             );
-                            player.world.battle.battling = Some(trainer);
+                            player.world.battle.battling = Some(entry);
                             (id, t)
                         } else {
                             (BattleId::Wild, None)
                         };
                         self.sender.send(GameActions::Battle(GameBattleEntry {
                             id,
-                            party: entry.party,
+                            party,
                             trainer: t,
-                            active: entry.active,
+                            active,
                         }))
                     };
                 }
@@ -200,11 +199,6 @@ impl GameWorldMapManager {
                 //         party.try_push(pokemon);
                 //     }
                 // }
-                WorldActions::GiveItem(stack) => {
-                    if let Some(stack) = stack.init(crate::dex::itemdex()) {
-                        bag.insert(stack);
-                    }
-                }
                 WorldActions::Message(pages, color) => {
                     if !self.text.text.alive() {
                         self.text.text.spawn();

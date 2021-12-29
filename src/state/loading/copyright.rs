@@ -11,7 +11,7 @@ pub struct CopyrightLoadingScene {
     state: LoadingState,
     accumulator: f32,
     scene_texture: Texture,
-	version: String,
+    version: String,
 }
 
 impl super::LoadingScene for CopyrightLoadingScene {
@@ -23,7 +23,7 @@ impl super::LoadingScene for CopyrightLoadingScene {
                 include_bytes!("../../../build/assets/scenes/loading/copyright.png"),
             )?,
             accumulator: 0.0,
-			version: format!("v{}", crate::VERSION),
+            version: format!("v{}", crate::VERSION),
         })
     }
 

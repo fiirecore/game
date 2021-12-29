@@ -1,6 +1,6 @@
 use firecore_battle_gui::pokedex::engine::Context;
 
-use crate::{command::CommandProcessor, saves::PlayerData};
+use crate::{command::CommandProcessor, saves::Player};
 
 mod manager;
 pub use manager::*;
@@ -15,7 +15,7 @@ mod console;
 pub(crate) enum StateMessage {
     WriteSave,
     LoadSave,
-    UpdateSave(PlayerData),
+    UpdateSave(Player),
     Goto(MainStates),
     Seed(u8),
     CommandError(&'static str),

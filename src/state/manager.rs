@@ -1,4 +1,3 @@
-use battlelib::pokedex::Uninitializable;
 use rand::prelude::SmallRng;
 
 use crate::{
@@ -9,7 +8,7 @@ use crate::{
         log::{error, info},
         Context, State,
     },
-    saves::SavedPlayer,
+    saves::Player,
     state::MainStates,
     LoadContext,
 };
@@ -30,7 +29,7 @@ pub struct StateManager {
 
     console: Console,
 
-    save: Option<SavedPlayer>,
+    save: Option<Player>,
 
     random: SmallRng,
 
@@ -138,7 +137,14 @@ impl StateManager {
 
             loading: LoadingStateManager::new(ctx, sender.clone())?,
             menu: MenuStateManager::new(ctx, sender.clone())?,
-            game: GameStateManager::new(ctx, load.dex, load.btl, load.world, load.battle, sender.clone())?,
+            game: GameStateManager::new(
+                ctx,
+                load.dex,
+                load.btl,
+                load.world,
+                load.battle,
+                sender.clone(),
+            )?,
 
             console: Console::default(),
 
@@ -155,12 +161,12 @@ impl StateManager {
         for message in self.receiver.try_iter() {
             match message {
                 StateMessage::UpdateSave(save) => {
-                    self.save = Some(save.uninit());
+                    self.save = Some(save);
                     self.sender.send(StateMessage::WriteSave);
                 }
                 StateMessage::WriteSave => {
                     if let Some(save) = &self.save {
-                        if let Err(err) = storage::save::<storage::RonSerializer, SavedPlayer>(
+                        if let Err(err) = storage::save::<storage::RonSerializer, Player>(
                             save,
                             crate::PUBLISHER,
                             crate::APPLICATION,
@@ -170,7 +176,7 @@ impl StateManager {
                     }
                 }
                 StateMessage::LoadSave => {
-                    if let Some(save) = self.save.take().map(|save| save.init(&mut self.random)).flatten() {
+                    if let Some(save) = self.save.take() {
                         self.game.save = Some(save);
                     }
                 }
@@ -193,5 +199,4 @@ impl StateManager {
             }
         }
     }
-
 }

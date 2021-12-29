@@ -20,7 +20,7 @@ impl Default for BattleTransitions {
 use worldlib::character::npc::trainer::TransitionId;
 
 impl BattleTransitions {
-    const FLASH: TransitionId = unsafe { TransitionId::new_unchecked(448612363334) }; 
+    const FLASH: TransitionId = unsafe { TransitionId::new_unchecked(448612363334) };
     const TRAINER: TransitionId = unsafe { TransitionId::new_unchecked(32199672233816660) };
 }
 

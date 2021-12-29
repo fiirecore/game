@@ -1,6 +1,9 @@
 use std::fmt::Debug;
 
-use crate::pokedex::pokemon::{owned::SavedPokemon, party::Party};
+use crate::pokedex::{
+    item::bag::SavedBag,
+    pokemon::{owned::SavedPokemon, party::Party},
+};
 
 use firecore_battle_gui::pokedex::engine::text::MessagePage;
 use worldlib::character::{
@@ -25,6 +28,7 @@ pub struct BattleEntry {
 #[derive(Debug, Clone)]
 pub struct BattleTrainerEntry {
     pub name: String,
+    pub bag: SavedBag,
     pub badge: Option<BadgeId>,
     pub sprite: NpcGroupId,
     pub transition: TransitionId,

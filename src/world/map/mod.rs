@@ -1,5 +1,10 @@
-use crate::engine::{graphics::Color, Context};
+use crate::engine::{
+    graphics::{self, Color, DrawParams},
+    log::warn,
+    Context,
+};
 
+use firecore_battle_gui::pokedex::gui::SizedStr;
 use firecore_world::TILE_SIZE;
 use worldlib::map::{manager::state::WorldMapState, WorldMap};
 
@@ -22,13 +27,12 @@ pub fn draw(
     border: bool,
     color: Color,
 ) {
-
-    for yy in screen.top..screen.bottom {
+    for yy in screen.y.clone() {
         let y = yy - screen.offset.y;
         let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
         let row = y.saturating_mul(map.width);
 
-        for xx in screen.left..screen.right {
+        for xx in screen.x.clone() {
             let x = xx - screen.offset.x;
             let render_x = (xx << 4) as f32 - screen.focus.x;
 
@@ -38,44 +42,36 @@ pub fn draw(
                 if world.debug_draw {
                     let num = map.movements[index];
                     // let str = firecore_battle_gui::pokedex::gui::IntegerStr4::new(num as _).unwrap();
-                    let mut str = [0u8; 3];
-                    use std::io::Write;
-                    write!(&mut str as &mut [u8], "{:X}", num).unwrap();
-                    let str = unsafe { std::str::from_utf8_unchecked(&str) };
+                    let str = match SizedStr::<3>::new(format_args!("{:X}", num)) {
+                        Ok(str) => str,
+                        Err(err) => {
+                            warn!(
+                                "Could not create movement id at ({}, {}) with error {}",
+                                x, y, err
+                            );
+                            continue;
+                        }
+                    };
                     let color = match num {
                         1 => Color::BLACK,
                         0xC => Color::WHITE,
                         0x4 => Color::SKYBLUE,
                         _ => Color::RED,
                     };
-                    use firecore_battle_gui::pokedex::engine::graphics::{self, DrawParams};
                     let inverse = Color {
                         r: 1.0 - color.r,
                         g: 1.0 - color.g,
                         b: 1.0 - color.b,
                         a: color.a,
                     };
-                    graphics::draw_rectangle(
-                        ctx,
-                        render_x,
-                        render_y,
-                        TILE_SIZE,
-                        TILE_SIZE,
-                        color,
-                    );
+                    graphics::draw_rectangle(ctx, render_x, render_y, TILE_SIZE, TILE_SIZE, color);
                     graphics::draw_rectangle_lines(
-                        ctx,
-                        render_x,
-                        render_y,
-                        TILE_SIZE,
-                        TILE_SIZE,
-                        1.0,
-                        inverse,
+                        ctx, render_x, render_y, TILE_SIZE, TILE_SIZE, 1.0, inverse,
                     );
                     graphics::draw_text_left(
                         ctx,
                         &0,
-                        str,
+                        &str,
                         render_x + 3.0,
                         render_y + 1.0,
                         DrawParams::color(inverse),

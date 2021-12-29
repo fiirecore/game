@@ -5,7 +5,7 @@ use crate::engine::{
     Context,
 };
 
-use worldlib::{positions::Coordinate, map::WorldMap};
+use worldlib::{map::WorldMap, positions::Coordinate};
 
 use crate::world::RenderCoords;
 
@@ -53,7 +53,8 @@ impl BushRustle {
 
 impl PlayerBushTexture {
     pub fn add(&mut self, coords: Coordinate) {
-        self.instances.push(BushRustle::new(coords, self.texture.clone()));
+        self.instances
+            .push(BushRustle::new(coords, self.texture.clone()));
     }
     pub fn update(&mut self, delta: f32) {
         for (index, rustle) in self.instances.iter_mut().enumerate() {

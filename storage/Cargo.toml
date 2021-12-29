@@ -7,11 +7,11 @@ readme = "README.md"
 
 [features]
 default = ["io"]
-io = ["firecore-engine", "miniquad-cookie"]
+io = ["firecore-engine", "quad-storage", "base64"]
 
 [dependencies]
 
-firecore-engine = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "e9e3073", default-features = false, optional = true }
+firecore-engine = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "647676a", default-features = false, optional = true }
 # firecore-engine = { path = "../../firecore/engine", default-features = false, optional = true }
 
 ### Serialization
@@ -25,4 +25,5 @@ bincode = { version = "1" }
 dirs-next = "2.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-miniquad-cookie = { git = "https://github.com/DoNotDoughnut/miniquad-cookie", optional = true }
+quad-storage = { version = "0.1.3", optional = true }
+base64 = { version = "0.13", optional = true }

@@ -1,26 +1,27 @@
+use std::{
+    iter::Rev,
+    ops::{Range, RangeInclusive},
+};
+
 use crate::engine::{
-    utils::{WIDTH, HEIGHT},
     math::Vec2,
+    utils::{HEIGHT, WIDTH},
 };
 
 use crate::worldlib::{
     character::Character,
-    TILE_SIZE,
     positions::{Coordinate, CoordinateInt},
+    TILE_SIZE,
 };
 
-#[derive(Default, Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct RenderCoords {
-
-    pub left: CoordinateInt,
-    pub right: CoordinateInt,
-    pub top: CoordinateInt,
-    pub bottom: CoordinateInt,
+    pub x: RangeInclusive<CoordinateInt>,
+    pub y: Rev<Range<CoordinateInt>>,
 
     pub focus: Vec2,
 
     pub offset: Coordinate,
-
 }
 
 const HALF_WIDTH: i32 = (WIDTH as i32 + TILE_SIZE as i32) >> 1;
@@ -30,32 +31,31 @@ const HALF_WIDTH_TILE: i32 = HALF_WIDTH >> 4;
 const HALF_HEIGHT_TILE: i32 = (HALF_HEIGHT >> 4) + 2;
 
 impl RenderCoords {
-
     pub fn new(character: &Character) -> Self {
-
         let coords = character.position.coords;
 
         Self {
+            x: coords.x - HALF_WIDTH_TILE..=coords.x + HALF_WIDTH_TILE,
+            y: (coords.y - HALF_HEIGHT_TILE..coords.y + HALF_HEIGHT_TILE).rev(),
 
-            left: coords.x - HALF_WIDTH_TILE,
-            right: coords.x + HALF_WIDTH_TILE + 1,
-            top: coords.y - HALF_HEIGHT_TILE,
-            bottom: coords.y + HALF_HEIGHT_TILE,
-
-            #[deprecated(note = "rounding may fix problem of black spaces between tiles while moving")]
-            focus: Vec2::new(((coords.x + 1) << 4) as f32 + character.offset.x - HALF_WIDTH as f32, ((coords.y + 1) << 4) as f32 + character.offset.y - HALF_HEIGHT as f32)
+            #[deprecated(
+                note = "rounding may fix problem of black spaces between tiles while moving"
+            )]
+            focus: Vec2::new(
+                ((coords.x + 1) << 4) as f32 + character.offset.x - HALF_WIDTH as f32,
+                ((coords.y + 1) << 4) as f32 + character.offset.y - HALF_HEIGHT as f32,
+            )
             .round(),
 
-            ..Default::default()
+            offset: Default::default(),
         }
-
     }
 
-    pub fn offset(&self, offset: Coordinate) -> RenderCoords { // return offset x & y
+    pub fn offset(&self, offset: Coordinate) -> RenderCoords {
+        // return offset x & y
         RenderCoords {
             offset,
-            ..*self
+            ..self.clone()
         }
     }
-
 }

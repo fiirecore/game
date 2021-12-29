@@ -1,6 +1,6 @@
-use crate::engine::{graphics::Texture, Context};
+use crate::engine::{error::ImageError, graphics::Texture, Context};
 
-use std::collections::HashMap;
+use hashbrown::HashMap;
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum GuiTexture {
@@ -20,15 +20,15 @@ impl GuiTextures {
 }
 
 impl GuiTextures {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> Result<Self, ImageError> {
         let mut map = HashMap::with_capacity(1);
         map.insert(
             GuiTexture::Condition,
             Texture::new(
                 ctx,
                 include_bytes!("../../../../assets/world/textures/gui/world/condition.png"),
-            ).unwrap(),
+            )?,
         );
-        Self { textures: map }
+        Ok(Self { textures: map })
     }
 }

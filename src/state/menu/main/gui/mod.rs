@@ -7,6 +7,6 @@ pub use button::*;
 // }
 
 // pub struct MultiStaticList<D: Array> {
-//     pub options: 
+//     pub options:
 //     pub cursor: usize,
 // }

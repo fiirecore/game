@@ -68,7 +68,10 @@ impl PaletteTextureManager {
             .get(&palettes[0])
             .map(|palette| match palette.size > tile {
                 true => Some((palette, tile)),
-                false => self.palettes.get(&palettes[1]).map(|p| (p, tile - palette.size)),
+                false => self
+                    .palettes
+                    .get(&palettes[1])
+                    .map(|p| (p, tile - palette.size)),
             })
             .flatten()
     }

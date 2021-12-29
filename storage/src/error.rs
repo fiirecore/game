@@ -6,13 +6,18 @@ pub enum DataError {
     Bincode(bincode::Error),
     #[cfg(feature = "io")]
     File(engine::error::FileError),
+    // #[cfg(target_arch = "wasm32")]
+    #[cfg(all(feature = "io", target_arch = "wasm32"))]
+    QuadStorageError,
+    #[cfg(all(feature = "io", target_arch = "wasm32"))]
+    Base64(base64::DecodeError),
 }
 
 impl std::error::Error for DataError {}
 
 impl core::fmt::Display for DataError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Debug::fmt(self, f)        
+        std::fmt::Debug::fmt(self, f)
     }
 }
 
@@ -44,5 +49,12 @@ impl From<bincode::Error> for DataError {
 impl From<engine::error::FileError> for DataError {
     fn from(error: engine::error::FileError) -> Self {
         Self::File(error)
+    }
+}
+
+#[cfg(all(feature = "io", target_arch = "wasm32"))]
+impl From<base64::DecodeError> for DataError {
+    fn from(err: base64::DecodeError) -> Self {
+        Self::Base64(err)
     }
 }

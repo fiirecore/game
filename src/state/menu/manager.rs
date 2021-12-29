@@ -1,7 +1,7 @@
 use firecore_battle_gui::pokedex::engine::EngineError;
 
 use crate::{
-    saves::SavedPlayer,
+    saves::Player,
     state::{MainStates, StateMessage},
 };
 use firecore_world::events::{split, Receiver, Sender};
@@ -55,7 +55,7 @@ impl MenuStateManager {
         }
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, save: &mut Option<SavedPlayer>) {
+    pub fn update(&mut self, ctx: &mut Context, delta: f32, save: &mut Option<Player>) {
         match self.current {
             MenuStates::Title => self.title.update(ctx, delta),
             MenuStates::MainMenu => self.main_menu.update(ctx, save),

@@ -1,12 +1,16 @@
 use crate::{
     command::{CommandProcessor, CommandResult},
-    saves::PlayerData, game::battle_glue::BattleId,
+    game::battle_glue::BattleId,
+    saves::Player,
 };
-use battlelib::default_engine::{EngineMoves, scripting::MoveScripts};
+use battlelib::default_engine::{scripting::MoveScripts, EngineMoves};
 use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-use firecore_battle_gui::{context::BattleGuiData, pokedex::{PokedexClientData, engine::audio}};
+use firecore_battle_gui::{
+    context::BattleGuiData,
+    pokedex::{engine::audio, PokedexClientData},
+};
 use std::rc::Rc;
-use worldlib::{serialized::SerializedWorld, events::*};
+use worldlib::{events::*, serialized::SerializedWorld};
 
 use crate::{
     engine::{
@@ -49,7 +53,7 @@ pub(super) struct GameStateManager {
     world: WorldManager,
     battle: BattleManager<&'static Pokemon, &'static Move, &'static Item>,
 
-    pub save: Option<PlayerData>,
+    pub save: Option<Player>,
 
     sender: Sender<StateMessage>,
     receiver: Receiver<GameActions>,
@@ -70,14 +74,7 @@ impl GameStateManager {
 
         let (actions, receiver) = split();
 
-        let world = WorldManager::new(
-            ctx,
-            dex.clone(),
-            party.clone(),
-            bag.clone(),
-            actions,
-            wrld,
-        )?;
+        let world = WorldManager::new(ctx, dex.clone(), party.clone(), bag.clone(), actions, wrld)?;
 
         Ok(Self {
             state: GameStates::default(),
@@ -147,15 +144,16 @@ impl GameStateManager {
                     GameActions::Exit => {
                         audio::stop_music(ctx);
                         self.sender.send(StateMessage::Goto(MainStates::Menu));
-                    },
-                    GameActions::CommandError(error) => self.sender.send(StateMessage::CommandError(error)),
+                    }
+                    GameActions::CommandError(error) => {
+                        self.sender.send(StateMessage::CommandError(error))
+                    }
                 }
             }
 
             match self.state {
                 GameStates::World => {
-                    self.world
-                        .update(ctx, delta, save, console);
+                    self.world.update(ctx, delta, &mut save.character, console);
                 }
                 GameStates::Battle => {
                     self.battle.update(
@@ -164,7 +162,6 @@ impl GameStateManager {
                         crate::dex::movedex(),
                         crate::dex::itemdex(),
                         delta,
-                        save,
                     );
                     if self.battle.finished {
                         save.character.input_frozen = false;
@@ -172,11 +169,7 @@ impl GameStateManager {
                         if let Some(winner) = self.battle.winner() {
                             let winner = winner == &BattleId::Player;
                             let trainer = self.battle.update_data(winner, &mut save.character);
-                            self.world.post_battle(
-                                &mut save.character,
-                                winner,
-                                trainer,
-                            );
+                            self.world.post_battle(&mut save.character, winner);
                         }
                         self.state = GameStates::World;
                         self.world.start(&mut save.character);
@@ -192,12 +185,12 @@ impl GameStateManager {
     pub fn draw(&mut self, ctx: &mut Context) {
         if let Some(save) = self.save.as_ref() {
             match self.state {
-                GameStates::World => self.world.draw(ctx, save),
+                GameStates::World => self.world.draw(ctx, &save.character),
                 GameStates::Battle => {
                     if self.battle.world_active() {
-                        self.world.draw(ctx, save);
+                        self.world.draw(ctx, &save.character);
                     }
-                    self.battle.draw(ctx, save);
+                    self.battle.draw(ctx);
                 }
             }
         }

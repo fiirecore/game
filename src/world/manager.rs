@@ -1,6 +1,5 @@
 use std::rc::Rc;
 
-use battlelib::pokedex::Initializable;
 use crossbeam_channel::Receiver;
 use firecore_battle_gui::pokedex::{
     engine::{
@@ -20,7 +19,7 @@ use worldlib::{
     serialized::SerializedWorld,
 };
 
-use crate::{saves::PlayerData, state::game::GameActions};
+use crate::state::game::GameActions;
 
 use self::command::WorldCommands;
 
@@ -72,12 +71,17 @@ impl WorldManager {
         self.manager.start(player)
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, save: &mut PlayerData, console: bool) {
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        delta: f32,
+        player: &mut PlayerCharacter,
+        console: bool,
+    ) {
         if self.menu.alive() {
-            self.menu
-                .update(ctx, delta, &mut save.character.trainer.party, &mut save.bag);
+            self.menu.update(ctx, delta, &mut player.trainer);
         } else {
-            if pressed(ctx, Control::Start) && !save.character.input_frozen && !console {
+            if pressed(ctx, Control::Start) && !player.input_frozen && !console {
                 self.menu.spawn();
             }
 
@@ -86,71 +90,63 @@ impl WorldManager {
                     // WorldCommands::Battle(_) => todo!(),
                     // WorldCommands::Script(_) => todo!(),
                     WorldCommands::Warp(location) => {
-                        self.manager.try_warp(&mut save.character, location);
+                        self.manager.try_warp(player, location);
                     }
                     WorldCommands::Wild(toggle) => {
-                        save.character.world.wild.encounters = match toggle {
+                        player.world.wild.encounters = match toggle {
                             Some(set) => set,
-                            None => !save.character.world.wild.encounters,
+                            None => !player.world.wild.encounters,
                         }
                     }
                     WorldCommands::NoClip(toggle) => {
-                        save.character.character.noclip = match toggle {
+                        player.character.noclip = match toggle {
                             Some(set) => set,
-                            None => !save.character.character.noclip,
+                            None => !player.character.noclip,
                         }
                     }
                     WorldCommands::DebugDraw => {
-                        save.character.world.debug_draw = !save.character.world.debug_draw;
+                        player.world.debug_draw = !player.world.debug_draw;
                     }
                     WorldCommands::Unfreeze => {
-                        save.character.input_frozen = false;
-                        save.character.unfreeze();
+                        player.input_frozen = false;
+                        player.character.unfreeze();
                     }
                     WorldCommands::GivePokemon(pokemon) => {
-                        save.character.trainer.party.try_push(pokemon);
+                        player.give_pokemon(pokemon);
                     }
                     WorldCommands::HealPokemon(index) => match index {
                         Some(index) => {
-                            if let Some(p) = save.character.trainer.party.get_mut(index) {
+                            if let Some(p) = player.trainer.party.get_mut(index) {
                                 p.heal(None, None);
                             }
                         }
-                        None => save
-                            .character
+                        None => player
                             .trainer
                             .party
                             .iter_mut()
                             .for_each(|p| p.heal(None, None)),
                     },
-                    WorldCommands::GiveItem(item) => {
-                        if let Some(stack) = item.init(crate::dex::itemdex()) {
-                            save.bag.insert(stack);
-                        }
+                    WorldCommands::GiveItem(stack) => {
+                        // player.trainer.bag.insert(stack);
+                        firecore_battle_gui::pokedex::engine::log::warn!("Could not give item: unimplemented");
                     }
                     WorldCommands::Tile => {
                         info!(
                             "{:?}",
                             self.manager
-                                .get(&save.character.location)
-                                .map(|map| map.tile(save.character.position.coords))
+                                .get(&player.location)
+                                .map(|map| map.tile(player.character.position.coords))
                                 .flatten()
                         );
                     }
                     WorldCommands::Party(command) => match command {
                         command::PartyCommand::Info(index) => match index {
                             Some(index) => {
-                                let pokemon = save.character.trainer.party.get(index);
-                                info!(
-                                    "Pokemon #{}: {:?}",
-                                    index,
-                                    pokemon,
-                                );
+                                let pokemon = player.trainer.party.get(index);
+                                info!("Pokemon #{}: {:?}", index, pokemon,);
                             }
                             None => {
-                                for (index, pokemon) in
-                                    save.character.trainer.party.iter().enumerate()
-                                {
+                                for (index, pokemon) in player.trainer.party.iter().enumerate() {
                                     info!(
                                         "Pokemon #{}: Lv. {}, #{}",
                                         index, pokemon.level, pokemon.pokemon
@@ -170,19 +166,18 @@ impl WorldManager {
             //     drop(events);
             // }
 
-            self.manager
-                .update(ctx, &mut save.character, &mut save.bag, delta);
+            self.manager.update(ctx, player, delta);
         }
     }
 
-    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool, trainer: bool) {
-        self.manager.post_battle(player, winner, trainer)
+    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
+        self.manager.post_battle(player, winner)
     }
 
-    pub fn draw(&self, ctx: &mut Context, save: &PlayerData) {
+    pub fn draw(&self, ctx: &mut Context, player: &PlayerCharacter) {
         if !self.menu.fullscreen() {
-            self.manager.draw(ctx, &save.character);
+            self.manager.draw(ctx, player);
         }
-        self.menu.draw(ctx, save)
+        self.menu.draw(ctx)
     }
 }

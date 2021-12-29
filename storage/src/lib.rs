@@ -21,26 +21,34 @@ pub trait PersistantData: Serialize + DeserializeOwned + Default {
 }
 
 pub trait DataSerializer {
-
     fn deserialize<D: serde::de::DeserializeOwned>(data: &[u8]) -> Result<D, error::DataError>;
 
     fn serialize<D: serde::Serialize>(data: &D) -> Result<Vec<u8>, error::DataError>;
 
-    #[cfg(not(target_arch = "wasm32"))]
     fn extension() -> &'static str;
-
 }
 
 #[cfg(feature = "io")]
-pub async fn try_load<S: DataSerializer, D: PersistantData>(publisher: Option<&str>, application: &str) -> Result<D, error::DataError> {
+pub async fn get<T: DeserializeOwned>(
+    path: impl AsRef<std::path::Path>,
+) -> Result<T, error::DataError> {
+    let bytes = read(path).await?;
+    Ok(from_bytes::<T>(&bytes)?)
+}
+
+#[cfg(feature = "io")]
+pub async fn try_load<S: DataSerializer, D: PersistantData>(
+    publisher: Option<&str>,
+    application: &str,
+) -> Result<D, error::DataError> {
+    let path = crate::directory(false, publisher, application)?.join(file::<S, D>());
     #[cfg(not(target_arch = "wasm32"))]
     {
-        let path = crate::directory(false, publisher, application)?.join(file::<S, D>());
         let data = match path.exists() {
             true => {
                 let data = read(&path).await?;
                 S::deserialize(&data)?
-            },
+            }
             false => {
                 let data = D::default();
                 if let Err(err) = save::<S, D>(&data, publisher, application) {
@@ -55,7 +63,22 @@ pub async fn try_load<S: DataSerializer, D: PersistantData>(publisher: Option<&s
     }
     #[cfg(target_arch = "wasm32")]
     {
-        todo!("Loading on WASM")
+        let data = quad_storage::STORAGE
+            .lock()
+            .map_err(|_| error::DataError::QuadStorageError)?
+            .get(D::path());
+        match data {
+            Some(data) => Ok(S::deserialize(&base64::decode(data)?)?),
+            None => {
+                let data = D::default();
+                if let Err(err) = save::<S, D>(&data, publisher, application) {
+                    let name = std::any::type_name::<D>();
+                    let name = name.split("::").last().unwrap_or(name);
+                    warn!("Could not save new {} with error {}", name, err);
+                }
+                Ok(data)
+            }
+        }
     }
 }
 
@@ -84,7 +107,24 @@ pub fn save<S: DataSerializer, D: PersistantData>(
         std::fs::write(&path, data)?;
     }
 
+    #[cfg(target_arch = "wasm32")]
+    {
+        quad_storage::STORAGE
+            .lock()
+            .map_err(|_| error::DataError::QuadStorageError)?
+            .set(D::path(), &base64::encode(data));
+    }
+
     Ok(())
+}
+
+#[cfg(target_arch = "wasm32")]
+pub fn directory(
+    local: bool,
+    publisher: Option<&str>,
+    application: &str,
+) -> Result<PathBuf, error::DataError> {
+    Ok(PathBuf::new())
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -135,16 +175,16 @@ pub struct RonSerializer;
 
 #[cfg(feature = "io")]
 impl DataSerializer for RonSerializer {
-
     fn deserialize<D: serde::de::DeserializeOwned>(data: &[u8]) -> Result<D, error::DataError> {
         ron::from_str(core::str::from_utf8(data)?).map_err(Into::into)
     }
 
     fn serialize<D: serde::Serialize>(data: &D) -> Result<Vec<u8>, error::DataError> {
-        ron::ser::to_string_pretty(data, ron::ser::PrettyConfig::default()).map(String::into_bytes).map_err(Into::into)
+        ron::ser::to_string_pretty(data, ron::ser::PrettyConfig::default())
+            .map(String::into_bytes)
+            .map_err(Into::into)
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
     fn extension() -> &'static str {
         "ron"
     }

@@ -1,6 +1,4 @@
-use crate::{
-    state::menu::{MenuActions, MenuStates},
-};
+use crate::state::menu::{MenuActions, MenuStates};
 
 use firecore_world::events::Sender;
 

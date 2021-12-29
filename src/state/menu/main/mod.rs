@@ -10,7 +10,7 @@ use crate::{
         utils::{HEIGHT, WIDTH},
         Context,
     },
-    saves::SavedPlayer,
+    saves::Player,
 };
 
 use firecore_world::events::Sender;
@@ -56,13 +56,13 @@ impl MainMenuState {
         // Ok(())
     }
 
-    pub fn update(&mut self, ctx: &mut Context, save: &mut Option<SavedPlayer>) {
+    pub fn update(&mut self, ctx: &mut Context, save: &mut Option<Player>) {
         for (index, button) in self.buttons.iter_mut().enumerate() {
             if button.update(ctx, self.cursor == index) {
                 match index {
                     0 => match save.is_some() {
                         true => self.sender.send(MenuActions::StartGame),
-                        false => *save = Some(SavedPlayer::new("Red")),
+                        false => *save = Some(Player::new("Red")),
                     },
                     1 => *save = None,
                     2 => self.sender.send(MenuActions::ExitGame),

@@ -1,11 +1,6 @@
 use std::ops::Deref;
 
-use crate::pokedex::{
-    item::Item,
-    moves::Move,
-    pokemon::{Pokemon},
-    Dex,
-};
+use crate::pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex};
 
 use battlelib::{
     item::engine::ItemEngine,
@@ -14,7 +9,6 @@ use battlelib::{
 };
 
 use rand::{prelude::SmallRng, Rng};
-
 
 use crate::game::battle_glue::{BattleId, BattleTrainerEntry};
 
@@ -38,7 +32,6 @@ impl<
         I: Deref<Target = Item> + Clone,
     > GameBattleWrapper<P, M, I>
 {
-
     pub fn update<'d>(
         &mut self,
         random: &mut (impl Rng + Clone + 'static),

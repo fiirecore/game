@@ -133,13 +133,13 @@ impl WarpTransition {
                         if self.color.a >= 1.0 {
                             self.color.a = 1.0;
                             self.faded = true;
-                            if let Some(destination) = player.world.warp.take() {
-                                player.hidden = destination.transition.move_on_exit;
-                                let change_music = destination.transition.change_music;
-                                world.warp(player, destination);
+                            if let Some(warp) = player.world.warp.take() {
+                                player.hidden = false;//destination.transition.move_on_exit;
+                                let change_music = true;// destination.transition.change_music;
+                                world.warp(player, warp);
                                 self.warp = Some((
-                                    destination.position.coords,
-                                    destination.transition.move_on_exit,
+                                    warp.destination.coords,
+                                    false,//destination.transition.move_on_exit,
                                 ));
                                 self.warped = true;
                                 return Some(change_music);
@@ -195,7 +195,7 @@ impl WarpTransition {
     pub fn draw_door(&self, ctx: &mut Context, screen: &RenderCoords) {
         if self.alive {
             if let Some(door) = &self.door {
-                use worldlib::TILE_SIZE;
+                // use worldlib::TILE_SIZE;
                 // if let Some(texture) = self.doors.get(&door.tile) {
                 //     texture.draw(
                 //         ctx,

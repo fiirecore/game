@@ -5,9 +5,7 @@ pub struct CommandResult<'a> {
 }
 
 pub trait CommandProcessor {
-
     fn process(&mut self, command: CommandResult);
-
 }
 
 impl<'a> core::fmt::Display for CommandResult<'a> {

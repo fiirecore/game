@@ -1,6 +1,6 @@
 use hashbrown::HashMap;
 
-use worldlib::character::npc::group::{NpcGroup, NpcGroupId, MessageColor};
+use worldlib::character::npc::group::{MessageColor, NpcGroup, NpcGroupId};
 
 use crate::engine::graphics::Color;
 

@@ -86,7 +86,10 @@ impl Console {
                     self.position(true);
                 }
 
-                if keyboard::pressed(ctx, Key::Backspace) && self.position <= self.command.len() && self.position > 0 {
+                if keyboard::pressed(ctx, Key::Backspace)
+                    && self.position <= self.command.len()
+                    && self.position > 0
+                {
                     self.command.remove(self.position - 1);
                     self.position(false);
                 }
@@ -111,7 +114,7 @@ impl Console {
                 }
             }
             false => {
-                if keyboard::pressed(ctx, Key::Slash) && ctx.debug() {
+                if keyboard::pressed(ctx, Key::Slash) {
                     self.spawn(ctx, player);
                 }
             }
@@ -132,7 +135,6 @@ impl Console {
     }
 
     pub fn draw(&self, ctx: &mut Context) {
-
         const Y: f32 = HEIGHT - 30.0;
         const Y2: f32 = Y - 20.0;
 
@@ -147,7 +149,7 @@ impl Console {
                 Y,
                 graphics::text_len(ctx, &1, &self.command) + 10.0,
                 18.0,
-                Color::BLACK
+                Color::BLACK,
             );
             graphics::draw_text_left(ctx, &1, "/", 10.0, Y, DrawParams::color(MessagePage::WHITE));
             graphics::draw_text_left(

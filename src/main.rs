@@ -2,7 +2,7 @@ use assets::AssetContext;
 use battlelib::default_engine::{scripting::MoveScripts, EngineMoves};
 pub(crate) use firecore_battle_gui::pokedex;
 pub(crate) use pokedex::engine;
-use saves::SavedPlayer;
+use saves::Player;
 use storage::RonSerializer;
 use worldlib::serialized::SerializedWorld;
 
@@ -53,9 +53,10 @@ fn main() {
         // .show_mouse(true)
         async {
             info!("Loading configuration...");
-            let configuration = storage::try_load::<RonSerializer, Configuration>(PUBLISHER, APPLICATION)
-                .await
-                .unwrap_or_else(|err| panic!("Cannot load configuration with error {}", err));
+            let configuration =
+                storage::try_load::<RonSerializer, Configuration>(PUBLISHER, APPLICATION)
+                    .await
+                    .unwrap_or_else(|err| panic!("Cannot load configuration with error {}", err));
 
             info!("Loading assets (this may take a while)...");
             let assets = AssetContext::load()
@@ -63,7 +64,9 @@ fn main() {
                 .unwrap_or_else(|err| panic!("Could not load assets with error {}", err));
 
             info!("Loading player saves...");
-            let save = storage::try_load::<RonSerializer, SavedPlayer>(PUBLISHER, APPLICATION).await.ok();
+            let save = storage::try_load::<RonSerializer, Player>(PUBLISHER, APPLICATION)
+                .await
+                .ok();
 
             OpenContext {
                 assets,
@@ -176,12 +179,12 @@ fn main() {
 struct OpenContext {
     assets: AssetContext,
     configuration: Configuration,
-    save: Option<SavedPlayer>,
+    save: Option<Player>,
 }
 
 pub(crate) struct LoadContext {
     pub configuration: Configuration,
-    pub save: Option<SavedPlayer>,
+    pub save: Option<Player>,
     pub dex: PokedexClientData,
     pub battle: (EngineMoves, MoveScripts),
     pub btl: BattleGuiData,

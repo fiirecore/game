@@ -70,7 +70,7 @@ impl BattleTransition for FlashBattleTransition {
             // ))
         }
         if self.finished() {
-            
+
             // inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(
             //     inner::prelude::Rect::new(0.0, 0.0, WIDTH, HEIGHT),
             // ));
