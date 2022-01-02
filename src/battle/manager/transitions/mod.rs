@@ -1,7 +1,7 @@
 use crate::pokedex::PokedexClientData;
 
 use crate::{
-    engine::{gui::MessageBox, utils::Completable, Context},
+    engine::{gui::MessageBox, utils::Completable, Context, EngineContext},
     game::battle_glue::{BattleId, BattleTrainerEntry},
 };
 
@@ -29,7 +29,13 @@ pub(crate) trait BattleCloser: Completable {
         text: &mut MessageBox,
     );
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut MessageBox);
+    fn update(
+        &mut self,
+        ctx: &mut Context,
+        eng: &mut EngineContext,
+        delta: f32,
+        text: &mut MessageBox,
+    );
 
     fn draw(&self, ctx: &mut Context);
 

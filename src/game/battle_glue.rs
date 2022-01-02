@@ -6,13 +6,12 @@ use crate::pokedex::{
 };
 
 use firecore_battle_gui::pokedex::engine::text::MessagePage;
-use worldlib::character::{
-    npc::{
-        group::NpcGroupId,
-        trainer::{BadgeId, TransitionId},
-        NpcId,
+use worldlib::{
+    character::{
+        npc::{group::NpcGroupId, trainer::BadgeId, NpcId},
+        trainer::Worth,
     },
-    trainer::Worth,
+    map::TransitionId,
 };
 
 /***********************/

@@ -3,10 +3,10 @@ use crate::{
         audio,
         error::ImageError,
         graphics::{self, Color},
-        input::controls::{pressed, Control},
+        controls::{pressed, Control},
         text::MessagePage,
         utils::{Completable, Entity},
-        Context,
+        Context, EngineContext,
     },
     game::battle_glue::{BattleEntry as GameBattleEntry, BattleId, BattleTrainerEntry},
     state::game::GameActions,
@@ -17,13 +17,9 @@ use rand::prelude::SmallRng;
 use worldlib::{
     actions::{WorldAction, WorldActions},
     character::player::PlayerCharacter,
-    events::{split, Receiver, Sender},
-    map::{
-        chunk::Connection,
-        manager::{state::default_heal_loc, tile::PaletteTileData, WorldMapData, WorldMapManager},
-        Brightness, WorldMap,
-    },
-    positions::{Coordinate, Direction, Location},
+    events::{split, InputEvent, Receiver, Sender},
+    map::{chunk::Connection, manager::WorldMapManager, Brightness, WorldMap},
+    positions::{Coordinate, Direction, Location, Position},
     serialized::SerializedWorld,
 };
 
@@ -61,27 +57,10 @@ impl GameWorldMapManager {
 
         let (sender, receiver) = split();
 
-        let (npcs, textures) = world
-            .npcs
-            .into_iter()
-            .map(|(id, s)| ((id, s.group), (id, s.texture)))
-            .unzip();
-
-        let data = WorldMapData {
-            maps: world.maps,
-            tiles: [0, 2, 14, 15, 40, 43, 59, 60]
-                .into_iter()
-                .map(|i| (i, PaletteTileData::temp_new(i)))
-                .collect(),
-            wild: worldlib::map::wild::default_chances(),
-            npcs,
-            default: default_heal_loc(),
-        };
-
         Ok(Self {
-            world: WorldMapManager::new(data, sender),
+            world: WorldMapManager::new(world.data, sender),
 
-            data: ClientWorldData::new(ctx, world.textures, textures)?,
+            data: ClientWorldData::new(ctx, world.textures)?,
             warper: WarpTransition::new(),
             text: TextWindow::new(ctx)?,
             input: PlayerInput::default(),
@@ -108,6 +87,10 @@ impl GameWorldMapManager {
         self.world.post_battle(player, winner)
     }
 
+    pub fn spawn(&self) -> (Location, Position) {
+        self.world.data.spawn
+    }
+
     pub fn try_warp(&mut self, player: &mut PlayerCharacter, location: Location) -> bool {
         if self.world.contains(&location) {
             self.warp_to_location(player, location);
@@ -117,12 +100,7 @@ impl GameWorldMapManager {
         }
     }
 
-    pub fn update(
-        &mut self,
-        ctx: &mut Context,
-        player: &mut PlayerCharacter,
-        delta: f32,
-    ) {
+    pub fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, player: &mut PlayerCharacter, delta: f32) {
         // } else if self.world_map.alive() {
         //     self.world_map.update(ctx);
         //     if pressed(ctx, Control::A) {
@@ -142,10 +120,10 @@ impl GameWorldMapManager {
                         let (id, t) = if let Some(trainer) = entry.trainer.as_ref() {
                             let (id, t) = (
                                 BattleId::Trainer(trainer.id),
-                                if let Some(npc) = self
+                                if let Some((map, npc)) = self
                                     .world
                                     .get(&trainer.location)
-                                    .map(|map| map.npcs.get(&trainer.id))
+                                    .map(|map| map.npcs.get(&trainer.id).map(|npc| (map, npc)))
                                     .flatten()
                                 {
                                     let trainer = npc.trainer.as_ref().unwrap();
@@ -159,7 +137,7 @@ impl GameWorldMapManager {
                                         bag: trainer.bag.clone(),
                                         badge: trainer.badge,
                                         sprite: npc.group,
-                                        transition: trainer.transition,
+                                        transition: map.settings.transition,
                                         defeat: trainer
                                             .defeat
                                             .iter()
@@ -218,12 +196,12 @@ impl GameWorldMapManager {
                     player.input_frozen = true;
                 }
                 WorldActions::PlayMusic(music) => {
-                    if let Some(playing) = audio::get_current_music(ctx) {
+                    if let Some(playing) = audio::get_current_music(eng) {
                         if playing != &music {
-                            audio::play_music(ctx, &music);
+                            audio::play_music(ctx, eng, &music);
                         }
                     } else {
-                        audio::play_music(ctx, &music);
+                        audio::play_music(ctx, eng, &music);
                     }
                 }
                 WorldActions::BeginWarpTransition(coords) => {
@@ -238,18 +216,23 @@ impl GameWorldMapManager {
                         on_tile(map, player, &mut self.data)
                     }
                 }
+                WorldActions::BreakObject(coordinate) => if let Some(map) = self.world.get(&player.location) {
+                    if let Some(object) = map.object_at(&coordinate) {
+                        self.data.object.add(coordinate, &object.group);
+                    }
+                },
             }
         }
 
         if self.text.text.alive() {
             if self.text.text.finished() {
                 if let Some(polling) = &player.world.polling {
-                    polling.set(true);
+                    polling.update()
                 }
                 player.input_frozen = false;
                 self.text.text.despawn();
             }
-            self.text.text.update(ctx, delta);
+            self.text.text.update(ctx, eng, delta);
         }
 
         self.data.update(delta, player);
@@ -263,11 +246,11 @@ impl GameWorldMapManager {
             player.input_frozen = true;
         }
 
-        if let Some(direction) = self.input.update(player, ctx, delta) {
-            self.world.try_move(player, direction);
+        if let Some(direction) = self.input.update(ctx, eng, player, delta) {
+            self.world.input(player, InputEvent::Move(direction));
         }
 
-        if pressed(ctx, Control::A) {
+        if pressed(ctx, eng, Control::A) {
             self.world.try_interact(player);
         }
 
@@ -305,7 +288,7 @@ impl GameWorldMapManager {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, player: &PlayerCharacter) {
+    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext, player: &PlayerCharacter) {
         let screen = RenderCoords::new(player);
 
         let color = match self.world.get(&player.location) {
@@ -317,6 +300,7 @@ impl GameWorldMapManager {
 
                 super::draw(
                     ctx,
+                    eng,
                     current,
                     &player.world,
                     &self.data,
@@ -355,6 +339,7 @@ impl GameWorldMapManager {
 
                             super::draw(
                                 ctx,
+                                eng,
                                 connection,
                                 &player.world,
                                 &self.data,
@@ -370,9 +355,10 @@ impl GameWorldMapManager {
                 color
             }
             None => {
-                graphics::draw_text_left(ctx, &0, "Cannot get map:", 0.0, 0.0, Default::default());
+                graphics::draw_text_left(ctx, eng, &0, "Cannot get map:", 0.0, 0.0, Default::default());
                 graphics::draw_text_left(
                     ctx,
+                    eng,
                     &0,
                     player.location.map.as_deref().unwrap_or("None"),
                     0.0,
@@ -381,6 +367,7 @@ impl GameWorldMapManager {
                 );
                 graphics::draw_text_left(
                     ctx,
+                    eng,
                     &0,
                     player.location.index.as_str(),
                     0.0,
@@ -394,6 +381,7 @@ impl GameWorldMapManager {
         if player.world.debug_draw {
             graphics::draw_text_left(
                 ctx,
+                eng,
                 &1,
                 player
                     .location
@@ -407,6 +395,7 @@ impl GameWorldMapManager {
             );
             graphics::draw_text_left(
                 ctx,
+                eng,
                 &1,
                 player.location.index.as_str(),
                 5.0,
@@ -415,14 +404,14 @@ impl GameWorldMapManager {
             );
 
             let coordinates = format!("{}", player.character.position.coords);
-            graphics::draw_text_left(ctx, &1, &coordinates, 5.0, 25.0, Default::default());
+            graphics::draw_text_left(ctx, eng, &1, &coordinates, 5.0, 25.0, Default::default());
         }
 
         self.warper.draw_door(ctx, &screen);
         self.data.player.draw(ctx, player, color);
         self.data.player.bush.draw(ctx, &screen);
         self.warper.draw(ctx);
-        self.text.draw(ctx);
+        self.text.draw(ctx, eng);
     }
 }
 

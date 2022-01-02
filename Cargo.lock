@@ -237,6 +237,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "fiirengine"
+version = "0.0.3"
+source = "git+https://github.com/fiirecore-game/engine?rev=0d95a58#0d95a58a618fd23856f0a578b588cd30a661afbe"
+dependencies = [
+ "image",
+ "macroquad",
+ "quad-gamepad",
+]
+
+[[package]]
 name = "firecore-audio-builder"
 version = "0.0.2"
 source = "git+https://github.com/fiirecore-game/firecore-audio-builder?rev=90af8c1#90af8c1aa3b8defeced317c248c10ace962e3017"
@@ -249,7 +259,7 @@ dependencies = [
 [[package]]
 name = "firecore-battle"
 version = "0.0.8"
-source = "git+https://github.com/fiirecore/battle?rev=621352f#621352fd32cad0cdfcadc2ddade80ef645f2cc87"
+source = "git+https://github.com/fiirecore/battle?rev=2809659#28096599c3da7dd7fa1e323400fc66dc0df48422"
 dependencies = [
  "crossbeam-channel",
  "firecore-pokedex",
@@ -263,7 +273,7 @@ dependencies = [
 [[package]]
 name = "firecore-battle-builder"
 version = "0.0.4"
-source = "git+https://github.com/fiirecore/battle?rev=621352f#621352fd32cad0cdfcadc2ddade80ef645f2cc87"
+source = "git+https://github.com/fiirecore/battle?rev=2809659#28096599c3da7dd7fa1e323400fc66dc0df48422"
 dependencies = [
  "firecore-battle",
  "hashbrown",
@@ -273,7 +283,7 @@ dependencies = [
 [[package]]
 name = "firecore-battle-gui"
 version = "0.0.2"
-source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
+source = "git+https://github.com/fiirecore-game/engine?rev=0d95a58#0d95a58a618fd23856f0a578b588cd30a661afbe"
 dependencies = [
  "arrayvec",
  "crossbeam-channel",
@@ -285,28 +295,12 @@ dependencies = [
 
 [[package]]
 name = "firecore-engine"
-version = "0.0.3"
-source = "git+https://github.com/DoNotDoughnut/firecore-engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
+version = "0.1.0"
+source = "git+https://github.com/fiirecore-game/engine?rev=0d95a58#0d95a58a618fd23856f0a578b588cd30a661afbe"
 dependencies = [
  "enum-map",
+ "fiirengine",
  "firecore-font-builder",
- "image",
- "macroquad",
- "quad-gamepad",
- "serde",
- "tinystr",
-]
-
-[[package]]
-name = "firecore-engine"
-version = "0.0.3"
-source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
-dependencies = [
- "enum-map",
- "firecore-font-builder",
- "image",
- "macroquad",
- "quad-gamepad",
  "serde",
  "tinystr",
 ]
@@ -323,7 +317,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex"
 version = "0.0.8"
-source = "git+https://github.com/fiirecore/pokedex?rev=b5279db#b5279db364f037df91bf69cefafc7541c6380284"
+source = "git+https://github.com/fiirecore/pokedex?rev=858d72f#858d72f999b925f0885d5de58be0cbcdec3a06bf"
 dependencies = [
  "arrayvec",
  "hashbrown",
@@ -335,7 +329,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-builder"
 version = "0.0.6"
-source = "git+https://github.com/fiirecore/pokedex?rev=b5279db#b5279db364f037df91bf69cefafc7541c6380284"
+source = "git+https://github.com/fiirecore/pokedex?rev=858d72f#858d72f999b925f0885d5de58be0cbcdec3a06bf"
 dependencies = [
  "firecore-pokedex",
  "ron",
@@ -344,10 +338,10 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-engine"
 version = "0.0.3"
-source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
+source = "git+https://github.com/fiirecore-game/engine?rev=0d95a58#0d95a58a618fd23856f0a578b588cd30a661afbe"
 dependencies = [
  "enum-map",
- "firecore-engine 0.0.3 (git+https://github.com/fiirecore-game/engine?rev=647676a)",
+ "firecore-engine",
  "firecore-pokedex-engine-builder",
  "tinystr",
 ]
@@ -355,7 +349,7 @@ dependencies = [
 [[package]]
 name = "firecore-pokedex-engine-builder"
 version = "0.0.4"
-source = "git+https://github.com/fiirecore-game/engine?rev=647676a#647676aa85ad4c33c75bb8a0d56bcfab897187e2"
+source = "git+https://github.com/fiirecore-game/engine?rev=0d95a58#0d95a58a618fd23856f0a578b588cd30a661afbe"
 dependencies = [
  "enum-map",
  "firecore-pokedex",
@@ -370,7 +364,7 @@ dependencies = [
  "base64",
  "bincode",
  "dirs-next",
- "firecore-engine 0.0.3 (git+https://github.com/DoNotDoughnut/firecore-engine?rev=647676a)",
+ "firecore-engine",
  "quad-storage",
  "ron",
  "serde",
@@ -378,8 +372,8 @@ dependencies = [
 
 [[package]]
 name = "firecore-world"
-version = "0.5.0-beta.2021-12-24"
-source = "git+https://github.com/fiirecore/world?rev=ba4e94b#ba4e94b9c8055f0bdaeda615ec3924d013c72a04"
+version = "0.5.0-beta.2022-01-01"
+source = "git+https://github.com/fiirecore/world?rev=cb5c056#cb5c0563a127ca8a38190aaf95064f05c461428b"
 dependencies = [
  "crossbeam-channel",
  "firecore-pokedex",
@@ -392,7 +386,7 @@ dependencies = [
 [[package]]
 name = "firecore-world-builder"
 version = "0.5.0-beta.2021-12-24"
-source = "git+https://github.com/fiirecore/world?rev=ba4e94b#ba4e94b9c8055f0bdaeda615ec3924d013c72a04"
+source = "git+https://github.com/fiirecore/world?rev=cb5c056#cb5c0563a127ca8a38190aaf95064f05c461428b"
 dependencies = [
  "bincode",
  "either",
@@ -632,7 +626,7 @@ dependencies = [
 
 [[package]]
 name = "pokemon-game"
-version = "0.5.0-beta.2021-12-28"
+version = "0.5.0-beta.2022-01-01"
 dependencies = [
  "crossbeam-channel",
  "embed-resource",
@@ -654,9 +648,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.34"
+version = "1.0.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f84e92c0f7c9d58328b85a78557813e4bd845130db68d7184635344399423b1"
+checksum = "c7342d5883fbccae1cc37a2353b09c87c9b0f3afd73f5fb9bba687a1f733b029"
 dependencies = [
  "unicode-xid",
 ]
@@ -733,9 +727,9 @@ dependencies = [
 
 [[package]]
 name = "quote"
-version = "1.0.10"
+version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38bc8cc6a5f2e3655e0899c1b848643b2562f853f114bfec7be120678e3ace05"
+checksum = "47aa80447ce4daf1717500037052af176af5d38cc3e571d9ec1c7353fc10c87d"
 dependencies = [
  "proc-macro2",
 ]
@@ -857,18 +851,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.132"
+version = "1.0.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b9875c23cf305cd1fd7eb77234cbb705f21ea6a72c637a5c6db5fe4b8e7f008"
+checksum = "97565067517b60e2d1ea8b268e59ce036de907ac523ad83a0475da04e818989a"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.132"
+version = "1.0.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ecc0db5cb2556c0e558887d9bbdcf6ac4471e83ff66cf696e5419024d1606276"
+checksum = "ed201699328568d8d08208fdd080e3ff594e6c422e438b6705905da01005d537"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -907,9 +901,9 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "syn"
-version = "1.0.83"
+version = "1.0.84"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23a1dfb999630e338648c83e91c59a4e9fb7620f520c3194b6b89e276f2f1959"
+checksum = "ecb2e6da8ee5eb9a61068762a32fa9619cc591ceb055b3687f4cd4051ec2e06b"
 dependencies = [
  "proc-macro2",
  "quote",

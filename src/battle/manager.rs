@@ -15,7 +15,8 @@ use crate::{
     engine::{
         graphics::Color,
         input::keyboard::{pressed as is_key_pressed, Key},
-        Context,
+        utils::Reset,
+        Context, EngineContext,
     },
     game::battle_glue::{BattleEntry, BattleId},
 };
@@ -25,7 +26,7 @@ use crate::pokedex::{
     PokedexClientData,
 };
 
-use firecore_battle_gui::{context::BattleGuiData, pokedex::engine::utils::Reset, BattlePlayerGui};
+use firecore_battle_gui::{context::BattleGuiData, BattlePlayerGui};
 
 use super::GameBattleWrapper;
 
@@ -173,7 +174,11 @@ impl<
                 id: entry.id,
                 name: entry.trainer.as_ref().map(|trainer| trainer.name.clone()),
                 party: entry.party,
-                bag: entry.trainer.as_mut().map(|trainer| std::mem::take(&mut trainer.bag)).unwrap_or_default(),
+                bag: entry
+                    .trainer
+                    .as_mut()
+                    .map(|trainer| std::mem::take(&mut trainer.bag))
+                    .unwrap_or_default(),
                 settings: PlayerSettings { gains_exp: false },
                 endpoint: Box::new(ai.endpoint().clone()),
             };
@@ -210,6 +215,7 @@ impl<
     pub fn update<'d>(
         &mut self,
         ctx: &mut Context,
+        eng: &mut EngineContext,
         pokedex: &'d dyn Dex<'d, Pokemon, P>,
         movedex: &'d dyn Dex<'d, Move, M>,
         itemdex: &'d dyn Dex<'d, Item, I>,
@@ -239,23 +245,24 @@ impl<
 
                     // self.player.on_begin(dex);
 
-                    self.update(ctx, pokedex, movedex, itemdex, delta);
+                    self.update(ctx, eng, pokedex, movedex, itemdex, delta);
                 }
                 BattleManagerState::Transition => match self.transition.state {
                     TransitionState::Begin => {
                         self.transition.begin(
                             ctx,
+                            eng,
                             self.player.local.as_ref().unwrap().data.type_,
                             &battle.trainer,
                         );
-                        self.update(ctx, pokedex, movedex, itemdex, delta);
+                        self.update(ctx, eng, pokedex, movedex, itemdex, delta);
                     }
                     TransitionState::Run => self.transition.update(ctx, delta),
                     TransitionState::End => {
                         self.transition.end();
                         self.state = BattleManagerState::Battle;
                         self.player.start(true);
-                        self.update(ctx, pokedex, movedex, itemdex, delta);
+                        self.update(ctx, eng, pokedex, movedex, itemdex, delta);
                     }
                 },
                 BattleManagerState::Battle => {
@@ -270,14 +277,8 @@ impl<
                         );
                     }
 
-                    self.player.update(
-                        ctx,
-                        &self.dex,
-                        pokedex,
-                        movedex,
-                        itemdex,
-                        delta,
-                    );
+                    self.player
+                        .update(ctx, eng, &self.dex, pokedex, movedex, itemdex, delta);
 
                     if let Some(winner) = self.player.winner().flatten() {
                         self.state = BattleManagerState::Closer(*winner);
@@ -295,10 +296,11 @@ impl<
                             battle.trainer.as_ref(),
                             &mut self.player.gui.text,
                         );
-                        self.update(ctx, pokedex, movedex, itemdex, delta);
+                        self.update(ctx, eng, pokedex, movedex, itemdex, delta);
                     }
                     TransitionState::Run => {
-                        self.closer.update(ctx, delta, &mut self.player.gui.text)
+                        self.closer
+                            .update(ctx, eng, delta, &mut self.player.gui.text)
                     }
                     TransitionState::End => {
                         self.closer.end();
@@ -347,18 +349,18 @@ impl<
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut Context, eng: &mut EngineContext) {
         if self.battle.is_some() {
             match self.state {
                 BattleManagerState::Begin => (),
                 BattleManagerState::Transition => self.transition.draw(ctx),
-                BattleManagerState::Battle => self.player.draw(ctx, &self.dex),
+                BattleManagerState::Battle => self.player.draw(ctx, eng, &self.dex),
                 BattleManagerState::Closer(..) => {
                     if !matches!(self.closer.state, TransitionState::End) {
                         if !self.world_active() {
                             self.player.gui.background.draw(ctx, 0.0);
                             self.player.gui.draw_panel(ctx);
-                            self.player.draw(ctx, &self.dex);
+                            self.player.draw(ctx, eng, &self.dex);
                             for active in self.player.local.as_ref().unwrap().renderer.iter() {
                                 active.pokemon.draw(
                                     ctx,
@@ -367,7 +369,7 @@ impl<
                                 );
                             }
                             self.closer.draw_battle(ctx);
-                            self.player.gui.text.draw(ctx);
+                            self.player.gui.text.draw(ctx, eng);
                         }
                         self.closer.draw(ctx);
                     }

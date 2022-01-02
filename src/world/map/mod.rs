@@ -1,12 +1,12 @@
 use crate::engine::{
     graphics::{self, Color, DrawParams},
     log::warn,
-    Context,
+    Context, EngineContext,
 };
 
 use firecore_battle_gui::pokedex::gui::SizedStr;
 use firecore_world::TILE_SIZE;
-use worldlib::map::{manager::state::WorldMapState, WorldMap};
+use worldlib::{map::WorldMap, state::WorldState};
 
 use crate::world::RenderCoords;
 
@@ -20,8 +20,9 @@ pub mod warp;
 
 pub fn draw(
     ctx: &mut Context,
+    eng: &EngineContext,
     map: &WorldMap,
-    world: &WorldMapState,
+    world: &WorldState,
     data: &ClientWorldData,
     screen: &RenderCoords,
     border: bool,
@@ -70,6 +71,7 @@ pub fn draw(
                     );
                     graphics::draw_text_left(
                         ctx,
+                        eng,
                         &0,
                         &str,
                         render_x + 3.0,
@@ -142,6 +144,8 @@ pub fn draw(
     ) {
         data.npc.draw(ctx, npc, screen);
     }
+
+    data.object.draw(ctx, &map.id, &map.objects, &map.items, world, screen);
     // for script in map.scripts.iter() {
     //     if script.alive() {
     //         if let Some(action) = script.actions.front() {

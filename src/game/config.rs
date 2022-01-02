@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 use storage::PersistantData;
 
 use crate::engine::{
-    input::controls::keyboard::{default_key_map, KeyMap},
-    Context,
+    controls::keyboard::{default_key_map, KeyMap},
+    EngineContext,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -13,8 +13,8 @@ pub struct Configuration {
 }
 
 impl Configuration {
-    pub fn load(&self, ctx: &mut Context) {
-        crate::engine::input::controls::keyboard::set_key_map(ctx, self.controls);
+    pub fn load(&self, eng: &mut EngineContext) {
+        crate::engine::controls::keyboard::set_key_map(eng, self.controls);
     }
 }
 

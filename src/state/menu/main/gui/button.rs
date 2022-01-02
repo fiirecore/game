@@ -1,12 +1,12 @@
 use std::borrow::Cow;
 
 use crate::engine::{
+    controls::{pressed, Control},
     graphics::{draw_text_center, Color, DrawParams},
     gui::Panel,
-    input::controls::{pressed, Control},
     math::Vec2,
     text::MessagePage,
-    Context,
+    Context, EngineContext,
 };
 
 pub struct Button {
@@ -41,9 +41,9 @@ impl Button {
         }
     }
 
-    pub fn update(&mut self, ctx: &Context, selected: bool) -> bool {
+    pub fn update(&mut self, ctx: &Context, eng: &EngineContext, selected: bool) -> bool {
         if selected {
-            if pressed(ctx, Control::A) {
+            if pressed(ctx, eng, Control::A) {
                 self.state = ButtonState::Clicked;
                 return true;
             } else {
@@ -55,11 +55,12 @@ impl Button {
         false
     }
 
-    pub fn draw(&self, ctx: &mut Context, origin: Vec2) {
+    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext, origin: Vec2) {
         // draw_rectangle(ctx, origin.x, origin.y, self.size.x, self.size.y);
         // draw_rectangle_lines(ctx, origin.x, origin.y, self.size.x, self.size.y, 2.0, Color::BLACK);
         Panel::draw_color(
             ctx,
+            eng,
             origin.x,
             origin.y,
             self.size.x,
@@ -73,6 +74,7 @@ impl Button {
         let center = origin + self.size / 2.0;
         draw_text_center(
             ctx,
+            eng,
             &1,
             &self.text,
             true,

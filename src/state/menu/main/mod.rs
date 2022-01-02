@@ -4,13 +4,13 @@ use std::borrow::Cow;
 
 use crate::{
     engine::{
+        controls::{pressed, Control},
         graphics::{draw_rectangle, Color},
-        input::controls::{pressed, Control},
         math::Vec2,
         utils::{HEIGHT, WIDTH},
-        Context,
+        Context, EngineContext,
     },
-    saves::Player,
+    saves::{Player, PlayerData},
 };
 
 use firecore_world::events::Sender;
@@ -56,14 +56,21 @@ impl MainMenuState {
         // Ok(())
     }
 
-    pub fn update(&mut self, ctx: &mut Context, save: &mut Option<Player>) {
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        eng: &EngineContext,
+        save: &mut Option<Player>,
+    ) {
         for (index, button) in self.buttons.iter_mut().enumerate() {
-            if button.update(ctx, self.cursor == index) {
+            if button.update(ctx, eng, self.cursor == index) {
                 match index {
-                    0 => match save.is_some() {
-                        true => self.sender.send(MenuActions::StartGame),
-                        false => *save = Some(Player::new("Red")),
-                    },
+                    0 => {
+                        if save.is_none() {
+                            *save = Some(Player::new(PlayerData::None));
+                        }
+                        self.sender.send(MenuActions::StartGame);
+                    }
                     1 => *save = None,
                     2 => self.sender.send(MenuActions::ExitGame),
                     _ => unreachable!(),
@@ -71,26 +78,26 @@ impl MainMenuState {
             }
         }
 
-        if pressed(ctx, Control::B) {
+        if pressed(ctx, eng, Control::B) {
             self.sender.send(MenuActions::Goto(MenuStates::Title));
         }
 
-        if pressed(ctx, Control::Up) && self.cursor > 0 {
+        if pressed(ctx, eng, Control::Up) && self.cursor > 0 {
             self.cursor -= 1;
         }
 
-        if pressed(ctx, Control::Down) && self.cursor < self.buttons.len() - 1 {
+        if pressed(ctx, eng, Control::Down) && self.cursor < self.buttons.len() - 1 {
             self.cursor += 1;
         }
 
         // Ok(())
     }
 
-    pub fn draw(&mut self, ctx: &mut Context) {
+    pub fn draw(&mut self, ctx: &mut Context, eng: &EngineContext) {
         draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, Color::rgb(0.00, 0.32, 0.67));
 
         for (index, save) in self.buttons.iter().enumerate() {
-            save.draw(ctx, Vec2::new(20.0, (5 + index * Self::GAP) as f32));
+            save.draw(ctx, eng, Vec2::new(20.0, (5 + index * Self::GAP) as f32));
             // self.button.draw(ctx, 20.0, y, 206.0, 30.0);
             // draw_text_left(ctx, &1, save, &Message::Black, 31.0, y + 5.0);
         }

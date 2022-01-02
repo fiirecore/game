@@ -1,6 +1,6 @@
 use super::LoadingState;
 
-use crate::engine::{error::ImageError, Context};
+use crate::engine::{error::ImageError, Context, EngineContext};
 
 pub struct PokemonLoadingScene {
     state: LoadingState,
@@ -13,15 +13,15 @@ impl super::LoadingScene for PokemonLoadingScene {
         })
     }
 
-    fn start(&mut self, ctx: &mut Context) {
+    fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         todo!()
     }
 
-    fn update(&mut self, ctx: &mut Context, _delta: f32) {
+    fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, _delta: f32) {
         todo!()
     }
 
-    fn draw(&self, ctx: &mut Context) {
+    fn draw(&self, ctx: &mut Context, eng: &mut EngineContext) {
         todo!()
     }
 

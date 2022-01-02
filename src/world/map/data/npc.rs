@@ -6,7 +6,6 @@ use worldlib::{
             group::{NpcGroup, NpcGroupId},
             Npc,
         },
-        sprite::SpriteIndices,
     },
     positions::Direction,
 };
@@ -20,12 +19,40 @@ use crate::engine::{
     Context,
 };
 
-pub struct NpcTextures(pub HashMap<NpcGroupId, NpcTexture>);
+pub struct NpcTextures(HashMap<NpcGroupId, NpcTexture>);
 
-pub struct NpcTexture {
+struct NpcTexture {
     pub texture: Texture,
-    pub indices: SpriteIndices,
+    pub data: SpriteData,
     // pub trainer: NpcGroupTextures,
+}
+
+struct SpriteData {
+    pub width: f32,
+    pub up: [u8; 4],
+    pub down: [u8; 4],
+    pub side: [u8; 4],
+}
+
+impl SpriteData {
+
+    pub const fn still(width: f32) -> Self {
+        Self {
+            width,
+            up: [1; 4],
+            down: [0; 4],
+            side: [2; 4],
+        }
+    }
+
+    pub const fn walk(width: f32) -> Self {
+        Self {
+            width,
+            up: [1, 5, 1, 6],
+            down: [0, 3, 0, 4],
+            side: [2, 7, 2, 8],
+        }
+    }
 }
 
 impl NpcTextures {
@@ -37,12 +64,16 @@ impl NpcTextures {
         // let trainer = NpcGroupTextures::new(Default::default());
         for (npc, data) in textures {
             let texture = Texture::new(ctx, &data)?;
-            let indices = if (texture.width() as u16) < 96 {
-                SpriteIndices::STILL
+            let w = texture.width() as u16;
+            let data = if w < 96 {
+                SpriteData::still(16.0)
             } else {
-                SpriteIndices::WALK
+                match w > 280 {
+                    true => SpriteData::walk(32.0),
+                    false => SpriteData::walk(16.0),
+                }
             };
-            npcs.insert(npc, NpcTexture { texture, indices });
+            npcs.insert(npc, NpcTexture { texture, data });
             // trainer.insert(
             //     npc.config.identifier,
             //     Texture::new(ctx, &npc.texture).unwrap(),
@@ -69,13 +100,15 @@ impl NpcTextures {
 
 impl NpcTexture {
     pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
-        let x = ((npc.character.position.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x
-            + npc.character.offset.x;
-        let y = ((npc.character.position.coords.y - 1 + screen.offset.y) << 4) as f32
-            - screen.focus.y
-            + npc.character.offset.y;
+        let x = ((npc.character.position.coords.x + 1 + screen.offset.x) << 4) as f32
+            - screen.focus.x
+            + npc.character.offset.x
+            - self.data.width;
 
-        // {
+        let y = ((npc.character.position.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y
+            + npc.character.offset.y
+            - (self.texture.height() - worldlib::TILE_SIZE);
+
         self.texture.draw(
             ctx,
             x,
@@ -85,22 +118,12 @@ impl NpcTexture {
                 source: Some(Rectangle::new(
                     self.current_texture_pos(npc),
                     0.0,
-                    16.0,
-                    32.0,
+                    self.data.width,
+                    self.texture.height(),
                 )),
                 ..Default::default()
             },
         );
-        // } else {
-        //     // draw_rectangle(
-        //     //     ctx,
-        //     //     x,
-        //     //     y + TILE_SIZE,
-        //     //     TILE_SIZE,
-        //     //     TILE_SIZE * 2.0,
-        //     //     Color::rgb(1.0, 0.0, 0.0),
-        //     // );
-        // }
     }
 
     pub fn current_texture_pos(&self, npc: &Npc) -> f32 {
@@ -108,9 +131,9 @@ impl NpcTexture {
             (npc.character.offset.offset().abs() as usize >> 3) + npc.character.sprite as usize;
 
         (match npc.character.position.direction {
-            Direction::Down => self.indices.down[index],
-            Direction::Up => self.indices.up[index],
-            _ => self.indices.side[index],
+            Direction::Down => self.data.down[index],
+            Direction::Up => self.data.up[index],
+            _ => self.data.side[index],
         } << 4) as f32
     }
 }

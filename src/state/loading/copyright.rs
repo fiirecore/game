@@ -2,7 +2,7 @@ use crate::engine::{
     error::ImageError,
     graphics::{draw_text_left, DrawParams, Texture},
     text::MessagePage,
-    Context,
+    Context, EngineContext,
 };
 
 use super::{fade_in_out, LoadingScenes, LoadingState};
@@ -27,19 +27,19 @@ impl super::LoadingScene for CopyrightLoadingScene {
         })
     }
 
-    fn start(&mut self, ctx: &mut Context) {
+    fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         self.state = LoadingState::Continue;
         self.accumulator = 0.0;
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32) {
+    fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
         self.accumulator += delta;
         if self.accumulator > 4.0 {
             self.state = LoadingState::Next(LoadingScenes::Gamefreak);
         }
     }
 
-    fn draw(&self, ctx: &mut Context) {
+    fn draw(&self, ctx: &mut Context, eng: &mut EngineContext) {
         fade_in_out(
             ctx,
             &self.scene_texture,
@@ -51,6 +51,7 @@ impl super::LoadingScene for CopyrightLoadingScene {
         );
         draw_text_left(
             ctx,
+            eng,
             &1,
             &self.version,
             2.0,

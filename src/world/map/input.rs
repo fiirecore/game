@@ -1,6 +1,6 @@
 use crate::engine::{
-    input::controls::{down, Control},
-    Context,
+    controls::{down, Control},
+    Context, EngineContext,
 };
 use worldlib::{
     character::{player::PlayerCharacter, Movement},
@@ -19,12 +19,13 @@ impl PlayerInput {
 
     pub fn update(
         &mut self,
-        player: &mut PlayerCharacter,
         ctx: &mut Context,
+        eng: &mut EngineContext,
+        player: &mut PlayerCharacter,
         delta: f32,
     ) -> Option<Direction> {
         if !player.moving() && !player.frozen() && !player.input_frozen {
-            match down(ctx, Control::B) {
+            match down(ctx, eng, Control::B) {
                 true => {
                     if player.movement == Movement::Walking {
                         player.movement = Movement::Running;
@@ -37,7 +38,7 @@ impl PlayerInput {
                 }
             }
 
-            if down(ctx, Self::keybind(self.first_direction)) {
+            if down(ctx, eng, Self::keybind(self.first_direction)) {
                 if self.wait > Self::MOVE_WAIT {
                     return Some(self.first_direction);
                 } else {
@@ -45,9 +46,14 @@ impl PlayerInput {
                 }
             } else {
                 let mut movdir: Option<Direction> = None;
-                for direction in &Direction::DIRECTIONS {
+                for direction in &[
+                    Direction::Up,
+                    Direction::Down,
+                    Direction::Left,
+                    Direction::Right,
+                ] {
                     let direction = *direction;
-                    if down(ctx, Self::keybind(direction)) {
+                    if down(ctx, eng, Self::keybind(direction)) {
                         movdir = if let Some(dir) = movdir {
                             if dir.inverse() == direction {
                                 None

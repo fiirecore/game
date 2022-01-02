@@ -7,7 +7,7 @@ use crate::{
         input::keyboard::{self, Key},
         text::MessagePage,
         utils::{Reset, HEIGHT},
-        Context,
+        Context, EngineContext,
     },
 };
 
@@ -134,12 +134,12 @@ impl Console {
         self.error = Some(Error::from(error))
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut Context, eng: &mut EngineContext) {
         const Y: f32 = HEIGHT - 30.0;
         const Y2: f32 = Y - 20.0;
 
         if let Some(error) = self.error.as_ref() {
-            graphics::draw_text_left(ctx, &1, error.text, 8.0, Y2, DrawParams::color(Color::RED));
+            graphics::draw_text_left(ctx, eng, &1, error.text, 8.0, Y2, DrawParams::color(Color::RED));
         }
 
         if self.alive {
@@ -147,13 +147,14 @@ impl Console {
                 ctx,
                 8.0,
                 Y,
-                graphics::text_len(ctx, &1, &self.command) + 10.0,
+                graphics::text_len(eng, &1, &self.command) + 10.0,
                 18.0,
                 Color::BLACK,
             );
-            graphics::draw_text_left(ctx, &1, "/", 10.0, Y, DrawParams::color(MessagePage::WHITE));
+            graphics::draw_text_left(ctx, eng, &1, "/", 10.0, Y, DrawParams::color(MessagePage::WHITE));
             graphics::draw_text_left(
                 ctx,
+                eng,
                 &1,
                 &self.command,
                 16.0,
@@ -164,7 +165,7 @@ impl Console {
                 if let Some(text) = self.command.get(..self.position) {
                     graphics::draw_rectangle(
                         ctx,
-                        16.0 + graphics::text_len(ctx, &1, text) as f32,
+                        16.0 + graphics::text_len(eng, &1, text) as f32,
                         Y + 1.0,
                         1.0,
                         14.0,

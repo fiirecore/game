@@ -1,6 +1,6 @@
 use crate::{
     battle::TransitionState,
-    engine::{audio::play_music, Context},
+    engine::{audio::play_music, Context, EngineContext},
     game::battle_glue::BattleTrainerEntry,
 };
 
@@ -33,10 +33,11 @@ impl BattleScreenTransitionManager {
     pub fn begin(
         &mut self,
         ctx: &mut Context,
+        eng: &mut EngineContext,
         battle_type: BattleType,
         trainer: &Option<BattleTrainerEntry>,
     ) {
-        self.play_music(ctx, battle_type);
+        self.play_music(ctx, eng, battle_type);
         match trainer {
             Some(trainer) => self.current = BattleTransitions::from(trainer.transition),
             None => self.current = BattleTransitions::default(),
@@ -61,11 +62,11 @@ impl BattleScreenTransitionManager {
         self.get().draw(ctx);
     }
 
-    fn play_music(&mut self, ctx: &mut Context, battle_type: BattleType) {
+    fn play_music(&mut self, ctx: &mut Context, eng: &mut EngineContext, battle_type: BattleType) {
         match battle_type {
-            BattleType::Wild => play_music(ctx, &"battle_wild".parse().unwrap()),
-            BattleType::Trainer => play_music(ctx, &"battle_trainer".parse().unwrap()),
-            BattleType::GymLeader => play_music(ctx, &"battle_gym".parse().unwrap()),
+            BattleType::Wild => play_music(ctx, eng, &"battle_wild".parse().unwrap()),
+            BattleType::Trainer => play_music(ctx, eng, &"battle_trainer".parse().unwrap()),
+            BattleType::GymLeader => play_music(ctx, eng, &"battle_gym".parse().unwrap()),
         }
     }
 

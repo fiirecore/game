@@ -11,7 +11,7 @@ io = ["firecore-engine", "quad-storage", "base64"]
 
 [dependencies]
 
-firecore-engine = { git = "https://github.com/DoNotDoughnut/firecore-engine", rev = "647676a", default-features = false, optional = true }
+firecore-engine = { git = "https://github.com/fiirecore-game/engine", rev = "0d95a58", default-features = false, optional = true }
 # firecore-engine = { path = "../../firecore/engine", default-features = false, optional = true }
 
 ### Serialization
@@ -22,6 +22,7 @@ bincode = { version = "1" }
 
 ### File management
 
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 dirs-next = "2.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

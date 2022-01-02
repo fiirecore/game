@@ -1,6 +1,6 @@
 use crate::{
     battle::TransitionState,
-    engine::{gui::MessageBox, Context},
+    engine::{gui::MessageBox, Context, EngineContext},
     game::battle_glue::{BattleId, BattleTrainerEntry},
 };
 
@@ -46,9 +46,15 @@ impl BattleCloserManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut MessageBox) {
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        eng: &mut EngineContext,
+        delta: f32,
+        text: &mut MessageBox,
+    ) {
         let current = self.get_mut();
-        current.update(ctx, delta, text);
+        current.update(ctx, eng, delta, text);
         if current.finished() {
             self.state = TransitionState::End;
         }

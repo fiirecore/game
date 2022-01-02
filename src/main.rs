@@ -75,6 +75,7 @@ fn main() {
             }
         },
         move |ctx,
+              eng,
               OpenContext {
                   assets,
                   configuration,
@@ -94,7 +95,7 @@ fn main() {
             info!("Initializing fonts...");
 
             for font in assets.fonts {
-                engine::text::insert_font(ctx, &font).unwrap();
+                engine::text::insert_font(ctx, eng, &font).unwrap();
             }
 
             #[cfg(feature = "audio")]
@@ -104,6 +105,7 @@ fn main() {
 
                 graphics::draw_text_left(
                     ctx,
+                    eng,
                     &0,
                     "Loading audio...",
                     5.0,
@@ -111,7 +113,7 @@ fn main() {
                     DrawParams::color(Color::WHITE),
                 );
                 for (id, data) in assets.audio {
-                    engine::audio::add_music(ctx, id, data);
+                    engine::audio::add_music(ctx, eng, id, data);
                 }
             }
 
@@ -121,7 +123,7 @@ fn main() {
 
             info!("Initializing dex textures and audio...");
 
-            let dex = PokedexClientData::new(ctx, assets.dex)
+            let dex = PokedexClientData::new(ctx, eng, assets.dex)
                 .unwrap_or_else(|err| panic!("Could not initialize dex data with error {}", err));
 
             let btl = BattleGuiData::new(ctx).unwrap_or_else(|err| {
@@ -166,7 +168,6 @@ fn main() {
                 battle: assets.battle,
                 btl,
                 world: assets.world,
-                random,
             }
         },
         StateManager::new,
@@ -189,5 +190,4 @@ pub(crate) struct LoadContext {
     pub battle: (EngineMoves, MoveScripts),
     pub btl: BattleGuiData,
     pub world: SerializedWorld,
-    pub random: SmallRng,
 }

@@ -4,7 +4,7 @@ use crate::engine::{
     gui::MessageBox,
     math::{vec2, Vec2},
     utils::Entity,
-    Context,
+    Context, EngineContext,
 };
 
 pub struct TextWindow {
@@ -26,11 +26,11 @@ impl TextWindow {
         })
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
         if self.text.alive() {
             self.background
                 .draw(ctx, Self::ORIGIN.x, Self::ORIGIN.y, Default::default());
-            self.text.draw(ctx);
+            self.text.draw(ctx, eng);
         }
     }
 }

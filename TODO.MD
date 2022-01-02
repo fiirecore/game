@@ -12,6 +12,14 @@
 
  - [ ] Add é to font
 
+ - [ ] Fix generated text having new line errors
+
+## Engine
+
+- [ ] Fix Bag GUI regression
+- [ ] Text line wrapping
+- [ ] Support for text scrolling
+
 ## World
 
  - [X] Elevation
@@ -42,11 +50,6 @@
 * Reimplement running from battles
 * Correctly add BattleCloser to BattleGui
 * Move animations
-
-## Engine
-
-* Text line wrapping
-* Support for text scrolling
 
 ## Other
 

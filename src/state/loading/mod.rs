@@ -1,4 +1,4 @@
-use crate::engine::{error::ImageError, Context};
+use crate::engine::{error::ImageError, Context, EngineContext};
 
 mod manager;
 pub use manager::LoadingStateManager;
@@ -54,11 +54,11 @@ pub trait LoadingScene {
     where
         Self: Sized;
 
-    fn start(&mut self, ctx: &mut Context);
+    fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext);
 
-    fn update(&mut self, ctx: &mut Context, delta: f32);
+    fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32);
 
-    fn draw(&self, ctx: &mut Context);
+    fn draw(&self, ctx: &mut Context, eng: &mut EngineContext);
 
     fn state(&self) -> LoadingState;
 }

@@ -12,12 +12,12 @@ use crate::pokedex::{
 use crate::state::game::GameActions;
 
 use crate::engine::{
+    controls::{pressed, Control},
     gui::Panel,
-    input::controls::{pressed, Control},
     log::info,
     math::Vec2,
     utils::Entity,
-    Context,
+    Context, EngineContext,
 };
 
 pub struct StartMenu {
@@ -50,20 +50,20 @@ impl StartMenu {
         }
     }
 
-    pub fn update(&mut self, ctx: &Context, delta: f32, user: &mut Trainer) {
+    pub fn update(&mut self, ctx: &Context, eng: &mut EngineContext, delta: f32, user: &mut Trainer) {
         if self.bag.alive() {
-            self.bag.input(ctx, &mut user.bag);
+            self.bag.input(ctx, eng, &mut user.bag);
             // bag_gui.up
         } else if self.party.alive() {
             self.party
-                .input(ctx, &self.dex, crate::dex::pokedex(), &mut user.party);
+                .input(ctx, eng, &self.dex, crate::dex::pokedex(), &mut user.party);
             self.party.update(delta);
         } else {
-            if pressed(ctx, Control::B) || pressed(ctx, Control::Start) {
+            if pressed(ctx, eng, Control::B) || pressed(ctx, eng, Control::Start) {
                 self.despawn();
             }
 
-            if pressed(ctx, Control::A) {
+            if pressed(ctx, eng, Control::A) {
                 match self.cursor {
                     0 => {
                         // Save
@@ -90,14 +90,14 @@ impl StartMenu {
                 }
             }
 
-            if pressed(ctx, Control::Up) {
+            if pressed(ctx, eng, Control::Up) {
                 if self.cursor > 0 {
                     self.cursor -= 1;
                 } else {
                     self.cursor = self.buttons.len() - 1;
                 }
             }
-            if pressed(ctx, Control::Down) {
+            if pressed(ctx, eng, Control::Down) {
                 if self.cursor < self.buttons.len() - 1 {
                     self.cursor += 1;
                 } else {
@@ -107,15 +107,16 @@ impl StartMenu {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
+    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
         if self.alive {
             if self.bag.alive() {
-                self.bag.draw(ctx);
+                self.bag.draw(ctx, eng);
             } else if self.party.alive() {
-                self.party.draw(ctx);
+                self.party.draw(ctx, eng);
             } else {
                 Panel::draw_text(
                     ctx,
+                    eng,
                     self.pos.x,
                     self.pos.y,
                     70.0,

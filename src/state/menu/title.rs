@@ -4,10 +4,10 @@ use firecore_world::events::Sender;
 
 use crate::engine::{
     audio::{play_music, stop_music},
+    controls::{pressed, Control},
     error::ImageError,
     graphics::Texture,
-    input::controls::{pressed, Control},
-    Context,
+    Context, EngineContext,
 };
 
 pub struct TitleState {
@@ -57,17 +57,17 @@ impl TitleState {
 }
 
 impl TitleState {
-    pub fn start(&mut self, ctx: &mut Context) {
-        play_music(ctx, &"title".parse().unwrap());
+    pub fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
+        play_music(ctx, eng, &"title".parse().unwrap());
         self.accumulator = 0.0;
     }
 
-    pub fn end(&mut self, ctx: &mut Context) {
-        stop_music(ctx);
+    pub fn end(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
+        stop_music(ctx, eng);
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
-        if pressed(ctx, Control::A) {
+    pub fn update(&mut self, ctx: &mut Context, eng: &EngineContext, delta: f32) {
+        if pressed(ctx, eng, Control::A) {
             let seed = (self.accumulator as usize % u8::MAX as usize) as u8;
             self.sender.send(MenuActions::Seed(seed));
             // self.action = Some(MenuStateAction::SeedAndGoto(seed, MenuStates::MainMenu));

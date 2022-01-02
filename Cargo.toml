@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-game"
-version = "0.5.0-beta.2021-12-28"
+version = "0.5.0-beta.2022-01-01"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 license = "CC0"
@@ -33,12 +33,13 @@ opt-level = "z"
 
 [dependencies]
 # Battle GUI, also re-exports game engine
-firecore-battle-gui = { git = "https://github.com/fiirecore-game/engine", rev = "647676a", package = "firecore-battle-gui", default-features = false }
+firecore-battle-gui = { git = "https://github.com/fiirecore-game/engine", rev = "0d95a58", package = "firecore-battle-gui", default-features = false }
 # firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
-firecore-world = { git = "https://github.com/fiirecore/world", rev = "ba4e94b" }
+firecore-world = { git = "https://github.com/fiirecore/world", rev = "cb5c056" }
+# firecore-world = { path = "../firecore/world" }
 
-firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "621352f", features = [
+firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "2809659", features = [
     "ai",
     "host",
     "default_engine_scripting",
@@ -68,12 +69,15 @@ hashbrown = "0.9"
 
 [build-dependencies]
 
-firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "b5279db", package = "firecore-pokedex-builder" }
-firecore-pokedex-engine-builder = { git = "https://github.com/fiirecore-game/engine", rev = "647676a", package = "firecore-pokedex-engine-builder", default-features = false, features = [
+firecore-world-builder = { git = "https://github.com/fiirecore/world", rev = "cb5c056", package = "firecore-world-builder" }
+# firecore-world-builder = { path = "../firecore/world/builder" }
+
+firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "858d72f", package = "firecore-pokedex-builder" }
+firecore-pokedex-engine-builder = { git = "https://github.com/fiirecore-game/engine", rev = "0d95a58", package = "firecore-pokedex-engine-builder", default-features = false, features = [
     "compile",
 ] }
-firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "621352f", package = "firecore-battle-builder" }
-firecore-world-builder = { git = "https://github.com/fiirecore/world", rev = "ba4e94b", package = "firecore-world-builder" }
+firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "2809659", package = "firecore-battle-builder" }
+
 firecore-font-builder = { git = "https://github.com/fiirecore-game/firecore-font-builder", rev = "057373a" }
 firecore-audio-builder = { git = "https://github.com/fiirecore-game/firecore-audio-builder", rev = "90af8c1", optional = true }
 serde = "1"

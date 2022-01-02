@@ -6,7 +6,7 @@ use crate::{
         gui::MessageBox,
         text::MessagePage,
         utils::{Completable, Entity, Reset, WIDTH},
-        Context,
+        Context, EngineContext,
     },
     game::battle_glue::{BattleId, BattleTrainerEntry},
 };
@@ -91,9 +91,15 @@ impl BattleCloser for TrainerBattleCloser {
         }
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32, text: &mut MessageBox) {
+    fn update(
+        &mut self,
+        ctx: &mut Context,
+        eng: &mut EngineContext,
+        delta: f32,
+        text: &mut MessageBox,
+    ) {
         if text.alive() {
-            text.update(ctx, delta);
+            text.update(ctx, eng, delta);
             if text.page() == 1 && self.offset > Self::XPOS {
                 self.offset -= 300.0 * delta;
                 if self.offset < Self::XPOS {
@@ -104,7 +110,7 @@ impl BattleCloser for TrainerBattleCloser {
                 text.despawn();
             }
         } else {
-            self.wild.update(ctx, delta, text);
+            self.wild.update(ctx, eng, delta, text);
         }
     }
 

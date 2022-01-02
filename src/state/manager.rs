@@ -1,12 +1,10 @@
-use rand::prelude::SmallRng;
-
 use crate::{
     command::CommandProcessor,
     engine::{
         error::EngineError,
         graphics::{self, Color},
         log::{error, info},
-        Context, State,
+        Context, EngineContext, State,
     },
     saves::Player,
     state::MainStates,
@@ -31,34 +29,32 @@ pub struct StateManager {
 
     save: Option<Player>,
 
-    random: SmallRng,
-
     sender: Sender<StateMessage>,
     receiver: Receiver<StateMessage>,
 }
 
-impl State for StateManager {
-    fn start(&mut self, ctx: &mut Context) {
+impl State<EngineContext> for StateManager {
+    fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         info!("Starting game!");
         match self.state {
             MainStates::Loading => (), //self.loading.start()
-            MainStates::Menu => self.menu.start(ctx),
+            MainStates::Menu => self.menu.start(ctx, eng),
             MainStates::Game => self.game.start(ctx),
         }
     }
-    fn end(&mut self, ctx: &mut Context) {
+    fn end(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         match self.state {
             MainStates::Loading => (),
-            MainStates::Menu => self.menu.end(ctx),
+            MainStates::Menu => self.menu.end(ctx, eng),
             MainStates::Game => self.game.end(),
         }
-        self.process(ctx);
+        self.process(ctx, eng);
     }
-    fn update(&mut self, ctx: &mut Context, delta: f32) {
+    fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
         if let Some(command) = self.console.update(
             ctx,
             delta,
-            self.game.save.as_mut().map(|p| &mut p.character),
+            self.game.save.as_mut().map(|p| p.player.as_mut()).flatten(),
         ) {
             match self.state {
                 MainStates::Loading => (),
@@ -68,24 +64,24 @@ impl State for StateManager {
         }
 
         match self.state {
-            MainStates::Loading => self.loading.update(ctx, delta),
-            MainStates::Menu => self.menu.update(ctx, delta, &mut self.save),
-            MainStates::Game => self.game.update(ctx, delta, self.console.alive()),
+            MainStates::Loading => self.loading.update(ctx, eng, delta),
+            MainStates::Menu => self.menu.update(ctx, eng, delta, &mut self.save),
+            MainStates::Game => self.game.update(ctx, eng, delta, self.console.alive()),
         }
 
-        self.process(ctx);
+        self.process(ctx, eng);
 
         // Ok(())
     }
-    fn draw(&mut self, ctx: &mut Context) {
+    fn draw(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         // graphics::set_canvas(ctx, self.scaler.canvas());
         graphics::clear(ctx, Color::BLACK);
         match self.state {
-            MainStates::Loading => self.loading.draw(ctx),
-            MainStates::Menu => self.menu.draw(ctx),
-            MainStates::Game => self.game.draw(ctx),
+            MainStates::Loading => self.loading.draw(ctx, eng),
+            MainStates::Menu => self.menu.draw(ctx, eng),
+            MainStates::Game => self.game.draw(ctx, eng),
         }
-        self.console.draw(ctx);
+        self.console.draw(ctx, eng);
         // graphics::reset_transform_matrix(ctx);
         // graphics::reset_canvas(ctx);
         // graphics::clear(ctx, Color::BLACK);
@@ -101,7 +97,7 @@ impl State for StateManager {
     // }
 }
 impl StateManager {
-    pub(crate) fn new(ctx: &mut Context, load: LoadContext) -> Self {
+    pub(crate) fn new(ctx: &mut Context, _: &mut EngineContext, load: LoadContext) -> Self {
         Self::try_new(ctx, load)
             .unwrap_or_else(|err| panic!("Could not create state manager with error {}", err))
     }
@@ -149,7 +145,6 @@ impl StateManager {
             console: Console::default(),
 
             save: load.save,
-            random: load.random,
 
             sender,
             receiver,
@@ -157,7 +152,7 @@ impl StateManager {
         })
     }
 
-    pub fn process(&mut self, ctx: &mut Context) {
+    pub fn process(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         for message in self.receiver.try_iter() {
             match message {
                 StateMessage::UpdateSave(save) => {
@@ -183,13 +178,13 @@ impl StateManager {
                 StateMessage::Goto(state) => {
                     match self.state {
                         MainStates::Loading => (),
-                        MainStates::Menu => self.menu.end(ctx),
+                        MainStates::Menu => self.menu.end(ctx, eng),
                         MainStates::Game => self.game.end(),
                     }
                     self.state = state;
                     match self.state {
-                        MainStates::Loading => self.loading.start(ctx),
-                        MainStates::Menu => self.menu.start(ctx),
+                        MainStates::Loading => self.loading.start(ctx, eng),
+                        MainStates::Menu => self.menu.start(ctx, eng),
                         MainStates::Game => self.game.start(ctx),
                     }
                 }

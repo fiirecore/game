@@ -16,7 +16,7 @@ use crate::{
     engine::{
         error::ImageError,
         input::keyboard::{down as is_key_down, Key},
-        Context,
+        Context, EngineContext,
     },
     game::battle_glue::BattleEntry,
     pokedex::gui::{bag::BagGui, party::PartyGui},
@@ -98,8 +98,9 @@ impl GameStateManager {
 impl GameStateManager {
     pub fn start(&mut self, _ctx: &mut Context) {
         if let Some(save) = self.save.as_mut() {
+            save.player.create(self.world.spawn());
             match self.state {
-                GameStates::World => self.world.start(&mut save.character),
+                GameStates::World => self.world.start(save.player.unwrap()),
                 GameStates::Battle => (),
             }
         }
@@ -113,7 +114,13 @@ impl GameStateManager {
         // Ok(())
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, console: bool) {
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        eng: &mut EngineContext,
+        delta: f32,
+        console: bool,
+    ) {
         // Speed game up if spacebar is held down
 
         let delta = delta
@@ -132,7 +139,7 @@ impl GameStateManager {
                                 crate::dex::pokedex(),
                                 crate::dex::movedex(),
                                 crate::dex::itemdex(),
-                                &mut save.character,
+                                save.player.unwrap(),
                                 entry,
                             ) {
                                 self.state = GameStates::Battle;
@@ -142,7 +149,7 @@ impl GameStateManager {
                     },
                     GameActions::Save => self.sender.send(StateMessage::UpdateSave(save.clone())),
                     GameActions::Exit => {
-                        audio::stop_music(ctx);
+                        audio::stop_music(ctx, eng);
                         self.sender.send(StateMessage::Goto(MainStates::Menu));
                     }
                     GameActions::CommandError(error) => {
@@ -153,26 +160,29 @@ impl GameStateManager {
 
             match self.state {
                 GameStates::World => {
-                    self.world.update(ctx, delta, &mut save.character, console);
+                    self.world
+                        .update(ctx, eng, delta, save.player.unwrap(), console);
                 }
                 GameStates::Battle => {
                     self.battle.update(
                         ctx,
+                        eng,
                         crate::dex::pokedex(),
                         crate::dex::movedex(),
                         crate::dex::itemdex(),
                         delta,
                     );
                     if self.battle.finished {
-                        save.character.input_frozen = false;
-                        save.character.unfreeze();
+                        let player = save.player.unwrap();
+                        player.input_frozen = false;
+                        player.unfreeze();
                         if let Some(winner) = self.battle.winner() {
                             let winner = winner == &BattleId::Player;
-                            let trainer = self.battle.update_data(winner, &mut save.character);
-                            self.world.post_battle(&mut save.character, winner);
+                            let trainer = self.battle.update_data(winner, player);
+                            self.world.post_battle(player, winner);
                         }
                         self.state = GameStates::World;
-                        self.world.start(&mut save.character);
+                        self.world.start(player);
                     }
                 }
             }
@@ -182,20 +192,22 @@ impl GameStateManager {
         // Ok(())
     }
 
-    pub fn draw(&mut self, ctx: &mut Context) {
-        if let Some(save) = self.save.as_ref() {
-            match self.state {
-                GameStates::World => self.world.draw(ctx, &save.character),
-                GameStates::Battle => {
-                    if self.battle.world_active() {
-                        self.world.draw(ctx, &save.character);
-                    }
-                    self.battle.draw(ctx);
+    pub fn draw(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
+        match self.state {
+            GameStates::World => {
+                if let Some(player) = self.save.as_ref().map(|p| p.player.as_ref()).flatten() {
+                    self.world.draw(ctx, eng, player);
                 }
             }
+            GameStates::Battle => {
+                if self.battle.world_active() {
+                    if let Some(player) = self.save.as_ref().map(|p| p.player.as_ref()).flatten() {
+                        self.world.draw(ctx, eng, player);
+                    }
+                }
+                self.battle.draw(ctx, eng);
+            }
         }
-
-        // Ok(())
     }
 }
 

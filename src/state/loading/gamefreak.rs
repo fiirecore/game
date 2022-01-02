@@ -4,7 +4,7 @@ use crate::engine::{
     audio::play_music,
     error::ImageError,
     graphics::{draw_rectangle, Color, DrawParams, Texture},
-    Context,
+    Context, EngineContext,
 };
 
 use super::{fade_in, LoadingState};
@@ -41,14 +41,14 @@ impl super::LoadingScene for GamefreakLoadingScene {
         })
     }
 
-    fn start(&mut self, ctx: &mut Context) {
+    fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         self.state = LoadingState::Continue;
         self.accumulator = 0.0;
         self.rect_size = 0.0;
-        play_music(ctx, &tinystr16!("gamefreak"));
+        play_music(ctx, eng, &tinystr16!("gamefreak"));
     }
 
-    fn update(&mut self, ctx: &mut Context, delta: f32) {
+    fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
         self.accumulator += delta;
         if self.rect_size < 96.0 {
             self.rect_size += delta * 480.0;
@@ -61,7 +61,7 @@ impl super::LoadingScene for GamefreakLoadingScene {
         }
     }
 
-    fn draw(&self, ctx: &mut Context) {
+    fn draw(&self, ctx: &mut Context, eng: &mut EngineContext) {
         draw_rectangle(
             ctx,
             0.0,

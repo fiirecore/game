@@ -4,10 +4,10 @@ use crossbeam_channel::Receiver;
 use firecore_battle_gui::pokedex::{
     engine::{
         error::ImageError,
-        input::controls::{pressed, Control},
+        controls::{pressed, Control},
         log::info,
         utils::Entity,
-        Context,
+        Context, EngineContext,
     },
     gui::{bag::BagGui, party::PartyGui},
     PokedexClientData,
@@ -16,6 +16,7 @@ use rand::{prelude::SmallRng, SeedableRng};
 use worldlib::{
     character::player::PlayerCharacter,
     events::{split, Sender},
+    positions::{Location, Position},
     serialized::SerializedWorld,
 };
 
@@ -67,6 +68,10 @@ impl WorldManager {
         self.random = SmallRng::seed_from_u64(seed);
     }
 
+    pub fn spawn(&self) -> (Location, Position) {
+        self.manager.spawn()
+    }
+
     pub fn start(&mut self, player: &mut PlayerCharacter) {
         self.manager.start(player)
     }
@@ -74,14 +79,15 @@ impl WorldManager {
     pub fn update(
         &mut self,
         ctx: &mut Context,
+        eng: &mut EngineContext,
         delta: f32,
         player: &mut PlayerCharacter,
         console: bool,
     ) {
         if self.menu.alive() {
-            self.menu.update(ctx, delta, &mut player.trainer);
+            self.menu.update(ctx, eng, delta, &mut player.trainer);
         } else {
-            if pressed(ctx, Control::Start) && !player.input_frozen && !console {
+            if pressed(ctx, eng, Control::Start) && !player.input_frozen && !console {
                 self.menu.spawn();
             }
 
@@ -127,18 +133,18 @@ impl WorldManager {
                             .for_each(|p| p.heal(None, None)),
                     },
                     WorldCommands::GiveItem(stack) => {
-                        // player.trainer.bag.insert(stack);
-                        firecore_battle_gui::pokedex::engine::log::warn!("Could not give item: unimplemented");
+                        player.trainer.bag.insert_saved(stack);
                     }
-                    WorldCommands::Tile => {
-                        info!(
-                            "{:?}",
-                            self.manager
-                                .get(&player.location)
-                                .map(|map| map.tile(player.character.position.coords))
-                                .flatten()
-                        );
-                    }
+                    WorldCommands::Tile => match self.manager.get(&player.location) {
+                        Some(map) => {
+                            info!(
+                                "Palettes: {:?}, Tile: {:?}",
+                                map.palettes,
+                                map.tile(player.character.position.coords)
+                            );
+                        }
+                        None => info!("Could not get current map!"),
+                    },
                     WorldCommands::Party(command) => match command {
                         command::PartyCommand::Info(index) => match index {
                             Some(index) => {
@@ -166,7 +172,7 @@ impl WorldManager {
             //     drop(events);
             // }
 
-            self.manager.update(ctx, player, delta);
+            self.manager.update(ctx, eng, player, delta);
         }
     }
 
@@ -174,10 +180,10 @@ impl WorldManager {
         self.manager.post_battle(player, winner)
     }
 
-    pub fn draw(&self, ctx: &mut Context, player: &PlayerCharacter) {
+    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext, player: &PlayerCharacter) {
         if !self.menu.fullscreen() {
-            self.manager.draw(ctx, player);
+            self.manager.draw(ctx, eng, player);
         }
-        self.menu.draw(ctx)
+        self.menu.draw(ctx, eng)
     }
 }

@@ -7,10 +7,10 @@ use super::{
 
 use crate::{
     engine::{
+        controls::{pressed, Control},
         error::ImageError,
-        input::controls::{pressed, Control},
         log::info,
-        Context,
+        Context, EngineContext,
     },
     state::{MainStates, StateMessage},
 };
@@ -36,23 +36,23 @@ impl LoadingStateManager {
         })
     }
 
-    pub fn start(&mut self, ctx: &mut Context) {
+    pub fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         self.current = LoadingScenes::Copyright;
-        self.get_mut().start(ctx);
+        self.get_mut().start(ctx, eng);
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
-        if pressed(ctx, Control::A) {
+    pub fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
+        if pressed(ctx, eng, Control::A) {
             self.sender.send(StateMessage::Goto(MainStates::Menu));
         }
 
         match self.get().state() {
             LoadingState::Continue => {
-                self.get_mut().update(ctx, delta);
+                self.get_mut().update(ctx, eng, delta);
             }
             LoadingState::Next(scene) => {
                 self.current = scene;
-                self.get_mut().start(ctx);
+                self.get_mut().start(ctx, eng);
             }
             LoadingState::End => {
                 self.finish();
@@ -60,8 +60,8 @@ impl LoadingStateManager {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
-        self.get().draw(ctx);
+    pub fn draw(&self, ctx: &mut Context, eng: &mut EngineContext) {
+        self.get().draw(ctx, eng);
     }
 
     fn finish(&mut self) {

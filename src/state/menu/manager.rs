@@ -1,12 +1,11 @@
-use firecore_battle_gui::pokedex::engine::EngineError;
-
 use crate::{
     saves::Player,
     state::{MainStates, StateMessage},
 };
+
 use firecore_world::events::{split, Receiver, Sender};
 
-use crate::engine::Context;
+use crate::engine::{Context, EngineContext, EngineError};
 
 use super::{main::MainMenuState, title::TitleState, MenuActions, MenuStates};
 
@@ -40,37 +39,37 @@ impl MenuStateManager {
 }
 
 impl MenuStateManager {
-    pub fn start(&mut self, ctx: &mut Context) {
+    pub fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         match self.current {
-            MenuStates::Title => self.title.start(ctx),
+            MenuStates::Title => self.title.start(ctx, eng),
             MenuStates::MainMenu => self.main_menu.start(),
         }
     }
 
-    pub fn end(&mut self, ctx: &mut Context) {
+    pub fn end(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
         // self.get_mut().end(ctx)
         match self.current {
-            MenuStates::Title => self.title.end(ctx),
+            MenuStates::Title => self.title.end(ctx, eng),
             MenuStates::MainMenu => (),
         }
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32, save: &mut Option<Player>) {
+    pub fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32, save: &mut Option<Player>) {
         match self.current {
-            MenuStates::Title => self.title.update(ctx, delta),
-            MenuStates::MainMenu => self.main_menu.update(ctx, save),
+            MenuStates::Title => self.title.update(ctx, eng, delta),
+            MenuStates::MainMenu => self.main_menu.update(ctx, eng, save),
         }
         for action in self.receiver.try_iter() {
             match action {
                 MenuActions::Seed(seed) => self.sender.send(StateMessage::Seed(seed)),
                 MenuActions::Goto(state) => {
                     match self.current {
-                        MenuStates::Title => self.title.end(ctx),
+                        MenuStates::Title => self.title.end(ctx, eng),
                         MenuStates::MainMenu => (),
                     }
                     self.current = state;
                     match self.current {
-                        MenuStates::Title => self.title.start(ctx),
+                        MenuStates::Title => self.title.start(ctx, eng),
                         MenuStates::MainMenu => self.main_menu.start(),
                     }
                 }
@@ -86,10 +85,10 @@ impl MenuStateManager {
         // Ok(())
     }
 
-    pub fn draw(&mut self, ctx: &mut Context) {
+    pub fn draw(&mut self, ctx: &mut Context, eng: &EngineContext) {
         match self.current {
             MenuStates::Title => self.title.draw(ctx),
-            MenuStates::MainMenu => self.main_menu.draw(ctx),
+            MenuStates::MainMenu => self.main_menu.draw(ctx, eng),
         }
     }
 }

@@ -138,7 +138,7 @@ impl WarpTransition {
                                 let change_music = true;// destination.transition.change_music;
                                 world.warp(player, warp);
                                 self.warp = Some((
-                                    warp.destination.coords,
+                                    warp.position.coords,
                                     false,//destination.transition.move_on_exit,
                                 ));
                                 self.warped = true;

@@ -5,7 +5,7 @@ use crate::{
         graphics::{draw_rectangle, Color},
         gui::MessageBox,
         utils::{Completable, Reset, HEIGHT, WIDTH},
-        Context,
+        Context, EngineContext,
     },
     game::battle_glue::{BattleId, BattleTrainerEntry},
 };
@@ -39,7 +39,13 @@ impl BattleCloser for WildBattleCloser {
     ) {
     }
 
-    fn update(&mut self, _ctx: &mut Context, delta: f32, _text: &mut MessageBox) {
+    fn update(
+        &mut self,
+        _ctx: &mut Context,
+        eng: &mut EngineContext,
+        delta: f32,
+        _text: &mut MessageBox,
+    ) {
         if self.world {
             self.color.a -= 4.5 * delta;
         } else {

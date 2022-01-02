@@ -236,7 +236,6 @@ impl CommandProcessor for WorldManager {
 
                             self.commands
                                 .send(WorldCommands::GivePokemon(SavedPokemon::generate(
-                                    &mut self.random,
                                     id,
                                     level,
                                     None,
