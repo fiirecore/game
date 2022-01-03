@@ -1,7 +1,6 @@
 use crate::pokengine::PokedexClientData;
 
 use crate::{
-    battle_glue::{BattleId, BattleTrainerEntry},
     engine::{
         graphics::{draw_rectangle, Color},
         gui::MessageBox,
@@ -9,6 +8,8 @@ use crate::{
         Context, EngineContext,
     },
 };
+
+use worldcli::battle::*;
 
 use crate::battle_wrapper::manager::transitions::BattleCloser;
 

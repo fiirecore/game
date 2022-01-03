@@ -1,4 +1,4 @@
-use firecore_world::character::player::PlayerCharacter;
+use worldcli::worldlib::character::player::PlayerCharacter;
 
 use crate::{
     command::CommandResult,

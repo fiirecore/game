@@ -1,13 +1,12 @@
-use crossbeam_channel::Receiver;
 use rand::{prelude::SmallRng, SeedableRng};
 use std::rc::Rc;
 
-use worldlib::{
+use worldcli::{worldlib::{
     character::player::PlayerCharacter,
-    events::{split, Sender},
+    events::{split, Sender, Receiver},
     positions::{Location, Position},
     serialized::SerializedWorld,
-};
+}, WorldMetaAction};
 
 use crate::engine::{
     controls::{pressed, Control},
@@ -22,28 +21,29 @@ use crate::pokengine::{
     PokedexClientData,
 };
 
+use worldcli::map::manager::WorldManager;
+
 use crate::state::game::GameActions;
 
-use self::command::WorldCommands;
-
-use super::{gui::StartMenu, map::manager::GameWorldMapManager};
+use self::{command::WorldCommands, start::StartMenu};
 
 mod command;
+mod start;
 
-pub struct WorldManager {
-    manager: GameWorldMapManager,
+pub struct WorldWrapper {
+    manager: WorldManager,
 
     menu: StartMenu,
 
     sender: Sender<GameActions>,
-    commands: Sender<WorldCommands>,
-    receiver: Receiver<WorldCommands>,
+    commands: Vec<WorldCommands>,
+    receiver: Receiver<WorldMetaAction>,
 
     random: SmallRng,
     // events: EventReciver<WorldEvents>,
 }
 
-impl WorldManager {
+impl WorldWrapper {
     pub(crate) fn new(
         ctx: &mut Context,
         dex: Rc<PokedexClientData>,
@@ -53,12 +53,11 @@ impl WorldManager {
         world: SerializedWorld,
     ) -> Result<Self, ImageError> {
         let (actions, receiver) = split();
-        // let events = EventReciver::default();
         Ok(Self {
-            manager: GameWorldMapManager::new(ctx, sender.clone(), world)?,
+            manager: WorldManager::new(ctx, actions.clone(), world)?,
             menu: StartMenu::new(dex, party, bag, sender.clone()),
             sender,
-            commands: actions,
+            commands: Vec::new(),
             receiver,
             random: SmallRng::seed_from_u64(0),
             // events,
@@ -93,8 +92,14 @@ impl WorldManager {
                 self.menu.spawn();
             }
 
-            for command in self.receiver.try_iter() {
-                match command {
+            for action in self.receiver.try_iter() {
+                match action {
+                    WorldMetaAction::Battle(e) => self.sender.send(GameActions::Battle(e)),
+                }
+            }
+
+            while !self.commands.is_empty() {
+                match self.commands.remove(0) {
                     // WorldCommands::Battle(_) => todo!(),
                     // WorldCommands::Script(_) => todo!(),
                     WorldCommands::Warp(location) => {

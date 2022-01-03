@@ -1,3 +1,5 @@
+use worldlib::{map::WorldMap, positions::Coordinate};
+
 use crate::engine::{
     error::ImageError,
     graphics::{DrawParams, Texture},
@@ -5,9 +7,7 @@ use crate::engine::{
     Context,
 };
 
-use worldlib::{map::WorldMap, positions::Coordinate};
-
-use crate::world::RenderCoords;
+use crate::map::RenderCoords;
 
 pub struct PlayerBushTexture {
     pub texture: Texture,
@@ -20,7 +20,7 @@ impl PlayerBushTexture {
         Ok(Self {
             texture: Texture::new(
                 ctx,
-                include_bytes!("../../../../../assets/world/textures/player/bush_temp.png"),
+                include_bytes!("../../../../assets/textures/bush_temp.png"),
             )?,
             instances: Vec::new(),
             in_bush: false,

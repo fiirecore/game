@@ -1,8 +1,6 @@
-extern crate firecore_world as worldlib;
-
 use serde::{Deserialize, Serialize};
-use worldlib::{
-    character::{player::PlayerCharacter}, positions::{Position, Location},
+use worldcli::worldlib::{
+    character::player::PlayerCharacter, positions::{Position, Location},
 };
 
 // mod list;

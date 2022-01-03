@@ -20,7 +20,7 @@ impl TextWindow {
         Ok(Self {
             background: Texture::new(
                 ctx,
-                include_bytes!("../../../assets/world/textures/gui/message.png"),
+                include_bytes!("../../assets/textures/gui/message.png"),
             )?,
             text: MessageBox::new(Self::ORIGIN + Self::TEXT_OFFSET, 1),
         })

@@ -1,6 +1,4 @@
-use crate::engine::{error::ImageError, graphics::Texture, Context};
-
-use hashbrown::HashMap;
+use crate::engine::{error::ImageError, graphics::Texture, Context, utils::HashMap};
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum GuiTexture {
@@ -26,7 +24,7 @@ impl GuiTextures {
             GuiTexture::Condition,
             Texture::new(
                 ctx,
-                include_bytes!("../../../../assets/world/textures/gui/world/condition.png"),
+                include_bytes!("../../../assets/textures/gui/condition.png"),
             )?,
         );
         Ok(Self { textures: map })

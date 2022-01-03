@@ -13,7 +13,7 @@ use crate::{
     saves::{Player, PlayerData},
 };
 
-use firecore_world::events::Sender;
+use worldcli::worldlib::events::Sender;
 
 use gui::Button;
 

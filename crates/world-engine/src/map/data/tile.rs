@@ -1,5 +1,3 @@
-use hashbrown::HashMap;
-
 use worldlib::{
     map::{PaletteId, TileId, Palettes},
     TILE_SIZE,
@@ -10,6 +8,7 @@ use crate::engine::{
     graphics::{Color, DrawParams, Texture},
     math::Rectangle,
     Context,
+    utils::HashMap,
 };
 
 pub struct PaletteTextureManager {

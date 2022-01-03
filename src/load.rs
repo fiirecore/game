@@ -10,11 +10,11 @@ use crate::{config::Configuration, saves::Player};
 
 use crate::pokengine::PokedexClientData;
 
-use crate::battle::default_engine::{scripting::MoveScripts, EngineMoves};
+use battlecli::battle::default_engine::{scripting::MoveScripts, EngineMoves};
 
 use battlecli::BattleGuiData;
 
-use worldlib::serialized::SerializedWorld;
+use worldcli::worldlib::serialized::SerializedWorld;
 
 mod assets;
 use assets::*;

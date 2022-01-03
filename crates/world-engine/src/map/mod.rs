@@ -7,8 +7,6 @@ use crate::pokengine::gui::SizedStr;
 
 use worldlib::{map::WorldMap, state::WorldState, TILE_SIZE};
 
-use crate::world::RenderCoords;
-
 use self::data::ClientWorldData;
 
 pub mod input;
@@ -16,6 +14,9 @@ pub mod manager;
 
 pub mod data;
 pub mod warp;
+
+mod screen;
+pub use screen::RenderCoords;
 
 pub fn draw(
     ctx: &mut Context,

@@ -1,10 +1,11 @@
 use crate::{
     battle_wrapper::TransitionState,
     engine::{music::play_music, Context, EngineContext},
-    battle_glue::BattleTrainerEntry,
 };
 
-use crate::battle::data::BattleType;
+use battlecli::battle::data::BattleType;
+
+use worldcli::battle::*;
 
 use crate::battle_wrapper::manager::transitions::{
     transitions::{BattleTransitions, FlashBattleTransition, TrainerBattleTransition},

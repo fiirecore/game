@@ -11,12 +11,12 @@ use crate::pokedex::{
     item::{ItemStack, SavedItemStack},
     pokemon::{owned::SavedPokemon, stat::StatSet},
 };
-use firecore_world::positions::Location;
-use worldlib::positions::LocationId;
+
+use worldcli::worldlib::positions::{Location, LocationId};
 
 use crate::command::CommandResult;
 
-use super::WorldManager;
+use super::WorldWrapper;
 
 pub enum WorldCommands {
     // Battle(BattleCommand),
@@ -46,23 +46,23 @@ pub enum ScriptCommand {
     List,
 }
 
-impl WorldManager {
+impl WorldWrapper {
     fn error(&self, error: &'static str) {
         self.sender.send(GameActions::CommandError(error))
     }
 }
 
-impl CommandProcessor for WorldManager {
+impl CommandProcessor for WorldWrapper {
     fn process(&mut self, mut result: CommandResult) {
         fn on_off<E: Fn(Option<bool>) -> WorldCommands>(
-            world: &WorldManager,
+            world: &mut WorldWrapper,
             f: E,
             arg: Option<&str>,
         ) {
             match arg {
-                Some("on") => world.commands.send((f)(Some(true))),
-                Some("off") => world.commands.send((f)(Some(false))),
-                None => world.commands.send((f)(None)),
+                Some("on") => world.commands.push((f)(Some(true))),
+                Some("off") => world.commands.push((f)(Some(false))),
+                None => world.commands.push((f)(None)),
                 _ => world.error("Please provide an on/off command"),
             }
         }
@@ -75,7 +75,7 @@ impl CommandProcessor for WorldManager {
             //         // "fly_temp" => {
             //         //     self.world_map.spawn();
             //         // }
-            "heal" => self.commands.send(WorldCommands::HealPokemon(None)),
+            "heal" => self.commands.push(WorldCommands::HealPokemon(None)),
             "wild" => {
                 on_off(self, WorldCommands::Wild, result.args.next());
             }
@@ -83,13 +83,13 @@ impl CommandProcessor for WorldManager {
                 on_off(self, WorldCommands::NoClip, result.args.next());
             }
             "unfreeze" => {
-                self.commands.send(WorldCommands::Unfreeze);
+                self.commands.push(WorldCommands::Unfreeze);
             }
             "debugdraw" => {
-                self.commands.send(WorldCommands::DebugDraw);
+                self.commands.push(WorldCommands::DebugDraw);
             }
             "tile" => {
-                self.commands.send(WorldCommands::Tile);
+                self.commands.push(WorldCommands::Tile);
             }
             "party" => match result.args.next() {
                 Some(arg) => match arg {
@@ -97,12 +97,12 @@ impl CommandProcessor for WorldManager {
                         Some(index) => match index.parse::<usize>() {
                             Ok(index) => self
                                 .commands
-                                .send(WorldCommands::Party(PartyCommand::Info(Some(index)))),
+                                .push(WorldCommands::Party(PartyCommand::Info(Some(index)))),
                             Err(..) => self.error("Cannot parse party index for /party info"),
                         },
                         None => self
                             .commands
-                            .send(WorldCommands::Party(PartyCommand::Info(None))),
+                            .push(WorldCommands::Party(PartyCommand::Info(None))),
                     },
                     _ => self.error("Please provide a valid argument for /party"),
                 },
@@ -204,68 +204,66 @@ impl CommandProcessor for WorldManager {
                     } else {
                         Location::from(map_or_index)
                     };
-                    self.commands.send(WorldCommands::Warp(location));
+                    self.commands.push(WorldCommands::Warp(location));
                 } else {
                     self.error("Please provide a location!");
                 }
             }
-            "give" => match result.args.next() {
-                Some(arg) => match arg {
-                    "pokemon" => match result
-                        .args
-                        .next()
-                        .map(|arg| arg.parse::<PokemonId>().ok())
-                        // .map(|arg| arg.parse::<PokemonId>().map(Either::Left).ok().or_else(|| arg.parse::<TinyStr16>().map(Either::Right).ok()))
-                        .flatten()
-                    {
-                        Some(id) => {
-                            let level = result
-                                .args
-                                .next()
-                                .map(|arg| arg.parse::<Level>().ok())
-                                .flatten()
-                                .unwrap_or(5);
-
-                            let ivs = result
-                                .args
-                                .next()
-                                .map(|arg| arg.parse::<Stat>().ok())
-                                .flatten()
-                                .map(StatSet::uniform)
-                                .unwrap_or_default();
-
-                            self.commands
-                                .send(WorldCommands::GivePokemon(SavedPokemon::generate(
-                                    id,
-                                    level,
-                                    None,
-                                    Some(ivs),
-                                )));
-                        }
-                        None => self.error("Please provide a valid pokemon ID!"),
-                    },
-                    "item" => {
-                        if let Some(item) = result
+            "give" => {
+                match result.args.next() {
+                    Some(arg) => match arg {
+                        "pokemon" => match result
                             .args
                             .next()
-                            .map(|item| item.parse::<ItemId>().ok())
+                            .map(|arg| arg.parse::<PokemonId>().ok())
+                            // .map(|arg| arg.parse::<PokemonId>().map(Either::Left).ok().or_else(|| arg.parse::<TinyStr16>().map(Either::Right).ok()))
                             .flatten()
                         {
-                            let count = result
+                            Some(id) => {
+                                let level = result
+                                    .args
+                                    .next()
+                                    .map(|arg| arg.parse::<Level>().ok())
+                                    .flatten()
+                                    .unwrap_or(5);
+
+                                let ivs = result
+                                    .args
+                                    .next()
+                                    .map(|arg| arg.parse::<Stat>().ok())
+                                    .flatten()
+                                    .map(StatSet::uniform)
+                                    .unwrap_or_default();
+
+                                self.commands.push(WorldCommands::GivePokemon(
+                                    SavedPokemon::generate(id, level, None, Some(ivs)),
+                                ));
+                            }
+                            None => self.error("Please provide a valid pokemon ID!"),
+                        },
+                        "item" => {
+                            if let Some(item) = result
                                 .args
                                 .next()
-                                .map(|count| count.parse::<usize>().ok())
+                                .map(|item| item.parse::<ItemId>().ok())
                                 .flatten()
-                                .unwrap_or(1);
+                            {
+                                let count = result
+                                    .args
+                                    .next()
+                                    .map(|count| count.parse::<usize>().ok())
+                                    .flatten()
+                                    .unwrap_or(1);
 
-                            self.commands
-                                .send(WorldCommands::GiveItem(ItemStack { item, count }));
+                                self.commands
+                                    .push(WorldCommands::GiveItem(ItemStack { item, count }));
+                            }
                         }
-                    }
-                    _ => self.error("Please provide an item ID"),
-                },
-                None => self.error("Please provide an argument for /give: pokemon, item"),
-            },
+                        _ => self.error("Please provide an item ID"),
+                    },
+                    None => self.error("Please provide an argument for /give: pokemon, item"),
+                }
+            }
             _ => self.error("Unknown command."),
         }
     }

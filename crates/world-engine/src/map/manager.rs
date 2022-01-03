@@ -8,8 +8,6 @@ use crate::{
         utils::{Completable, Entity},
         Context, EngineContext,
     },
-    battle_glue::{BattleEntry as GameBattleEntry, BattleId, BattleTrainerEntry},
-    state::game::GameActions,
 };
 
 use rand::prelude::SmallRng;
@@ -23,17 +21,18 @@ use worldlib::{
     serialized::SerializedWorld,
 };
 
-use crate::world::{
+use crate::{
     gui::TextWindow,
-    map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition},
-    RenderCoords,
+    map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition, RenderCoords},
+    battle::{BattleEntry, BattleId, BattleTrainerEntry},
+    WorldMetaAction,
 };
 
 mod npc;
 
 // pub mod script;
 
-pub struct GameWorldMapManager {
+pub struct WorldManager {
     world: WorldMapManager<SmallRng>,
 
     data: ClientWorldData,
@@ -42,15 +41,15 @@ pub struct GameWorldMapManager {
     text: TextWindow,
     input: PlayerInput,
     // screen: RenderCoords,
-    sender: Sender<GameActions>,
+    sender: Sender<WorldMetaAction>,
     receiver: Receiver<WorldAction>,
     // events: EventReceiver<WorldEvents>,
 }
 
-impl GameWorldMapManager {
-    pub(crate) fn new(
+impl WorldManager {
+    pub fn new(
         ctx: &mut Context,
-        actions: Sender<GameActions>,
+        actions: Sender<WorldMetaAction>,
         world: SerializedWorld,
     ) -> Result<Self, ImageError> {
         // let events = Default::default();
@@ -153,12 +152,12 @@ impl GameWorldMapManager {
                                     None
                                 },
                             );
-                            player.world.battle.battling = Some(entry);
                             (id, t)
                         } else {
                             (BattleId::Wild, None)
                         };
-                        self.sender.send(GameActions::Battle(GameBattleEntry {
+                        player.world.battle.battling = Some(entry);
+                        self.sender.send(WorldMetaAction::Battle(BattleEntry {
                             id,
                             party,
                             trainer: t,

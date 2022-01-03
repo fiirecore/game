@@ -3,7 +3,7 @@ use crate::{
     state::{MainStates, StateMessage},
 };
 
-use firecore_world::events::{split, Receiver, Sender};
+use worldcli::worldlib::events::{split, Receiver, Sender};
 
 use crate::engine::{Context, EngineContext, EngineError};
 

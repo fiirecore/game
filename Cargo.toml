@@ -36,12 +36,9 @@ panic = "abort"
 opt-level = "z"
 
 [dependencies]
-# Battle GUI, also re-exports game engine
-firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = ["host", "ai", "default_engine_scripting"] }
-# firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
-firecore-world = { git = "https://github.com/fiirecore/world", rev = "cb5c056" }
-# firecore-world = { path = "../firecore/world" }
+firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = ["host", "ai", "default_engine_scripting"] }
+firecore-world-engine = { path = "crates/world-engine", default-features = false }
 
 firecore-storage = { path = "crates/storage", features = ["io"] }
 
@@ -50,8 +47,6 @@ firecore-storage = { path = "crates/storage", features = ["io"] }
 serde = { version = "1.0", features = ["derive"] }
 rand = { version = "0.8", features = ["small_rng"], default-features = false }
 tinystr = { version = "0.4", features = ["serde"], default-features = false }
-crossbeam-channel = "0.5"
-hashbrown = "0.9"
 
 # discord-rich-presence = { version = "0.1", optional = true }
 

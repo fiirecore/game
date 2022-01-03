@@ -1,7 +1,8 @@
 use std::rc::Rc;
 
-use firecore_world::events::Sender;
-use worldlib::character::trainer::Trainer;
+use worldcli::worldlib::events::Sender;
+
+use worldcli::worldlib::character::trainer::Trainer;
 
 use crate::pokedex::pokemon::owned::SavedPokemon;
 

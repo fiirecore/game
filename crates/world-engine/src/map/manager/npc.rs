@@ -1,8 +1,6 @@
-use hashbrown::HashMap;
-
 use worldlib::character::npc::group::{MessageColor, NpcGroup, NpcGroupId};
 
-use crate::engine::graphics::Color;
+use crate::engine::{graphics::Color, utils::HashMap};
 
 // pub type NpcTypeMap = HashMap<NpcTypeId, NpcType>;
 

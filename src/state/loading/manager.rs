@@ -1,4 +1,4 @@
-use firecore_world::events::Sender;
+use worldcli::worldlib::events::Sender;
 
 use super::{
     copyright::CopyrightLoadingScene, gamefreak::GamefreakLoadingScene,

@@ -1,9 +1,8 @@
 use std::rc::Rc;
 
-use crate::battle::{
-    default_engine::{scripting::MoveScripts, EngineMoves},
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
-};
+use crate::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
+
+use battlecli::battle::default_engine::{scripting::MoveScripts, EngineMoves};
 
 use crate::engine::music;
 
@@ -14,7 +13,10 @@ use crate::pokengine::{
 
 use battlecli::BattleGuiData;
 
-use worldlib::{events::*, serialized::SerializedWorld};
+use worldcli::{
+    battle::{BattleEntry, BattleId},
+    worldlib::{events::*, serialized::SerializedWorld},
+};
 
 use crate::{
     command::{CommandProcessor, CommandResult},
@@ -23,13 +25,13 @@ use crate::{
         input::keyboard::{down as is_key_down, Key},
         Context, EngineContext,
     },
-    battle_glue::{BattleEntry, BattleId},
     saves::Player,
 };
 
 use crate::engine::log::warn;
 
-use crate::{battle_wrapper::BattleManager, world::manager::WorldManager};
+use crate::battle_wrapper::BattleManager;
+use crate::world_wrapper::WorldWrapper;
 
 use super::{MainStates, StateMessage};
 
@@ -55,7 +57,7 @@ pub enum GameActions {
 pub(super) struct GameStateManager {
     state: GameStates,
 
-    world: WorldManager,
+    world: WorldWrapper,
     battle: BattleManager<&'static Pokemon, &'static Move, &'static Item>,
 
     pub save: Option<Player>,
@@ -79,7 +81,7 @@ impl GameStateManager {
 
         let (actions, receiver) = split();
 
-        let world = WorldManager::new(ctx, dex.clone(), party.clone(), bag.clone(), actions, wrld)?;
+        let world = WorldWrapper::new(ctx, dex.clone(), party.clone(), bag.clone(), actions, wrld)?;
 
         Ok(Self {
             state: GameStates::default(),

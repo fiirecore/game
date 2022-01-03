@@ -408,6 +408,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "firecore-world-engine"
+version = "0.1.0"
+dependencies = [
+ "firecore-pokedex-engine",
+ "firecore-world",
+ "rand",
+]
+
+[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -739,7 +748,6 @@ dependencies = [
 name = "pokemon-game"
 version = "0.5.0-beta.2022-01-01"
 dependencies = [
- "crossbeam-channel",
  "embed-resource",
  "firecore-audio-builder",
  "firecore-battle-builder",
@@ -748,9 +756,8 @@ dependencies = [
  "firecore-pokedex-builder",
  "firecore-pokedex-engine-builder",
  "firecore-storage",
- "firecore-world",
  "firecore-world-builder",
- "hashbrown",
+ "firecore-world-engine",
  "rand",
  "serde",
  "tinystr",

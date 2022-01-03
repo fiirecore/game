@@ -1,26 +1,26 @@
-use hashbrown::HashMap;
 use rand::{prelude::SmallRng, RngCore, SeedableRng};
 use std::{ops::Deref, rc::Rc};
 
-use crate::battle::{
+use battlecli::battle::{
     default_engine::{scripting::MoveScripts, EngineMoves},
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
     prelude::{
         Battle, BattleAi, BattleData, BattleType, DefaultEngine, PlayerData, PlayerSettings,
     },
 };
-use worldlib::character::player::PlayerCharacter;
+use worldcli::worldlib::character::player::PlayerCharacter;
 
 use crate::{
     engine::{
         graphics::Color,
         input::keyboard::{pressed as is_key_pressed, Key},
         math::Vec2,
-        utils::Reset,
+        utils::{Reset, HashMap},
         Context, EngineContext,
     },
-    battle_glue::{BattleEntry, BattleId},
 };
+
+use worldcli::battle::{BattleEntry, BattleId};
 
 use crate::pokengine::{
     gui::{bag::BagGui, party::PartyGui},

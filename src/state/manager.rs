@@ -11,7 +11,7 @@ use crate::{
     load::LoadContext,
 };
 
-use firecore_world::events::{split, Receiver, Sender};
+use worldcli::worldlib::events::{split, Receiver, Sender};
 
 use super::{
     console::Console, game::GameStateManager, loading::LoadingStateManager, menu::MenuStateManager,

@@ -8,8 +8,9 @@ use crate::{
         utils::{Completable, Entity, Reset, WIDTH},
         Context, EngineContext,
     },
-    battle_glue::{BattleId, BattleTrainerEntry},
 };
+
+use worldcli::battle::*;
 
 use crate::battle_wrapper::manager::transitions::BattleCloser;
 

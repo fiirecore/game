@@ -1,5 +1,3 @@
-use hashbrown::HashMap;
-
 use worldlib::{
     character::{
         npc::{
@@ -10,14 +8,15 @@ use worldlib::{
     positions::Direction,
 };
 
-use crate::world::RenderCoords;
-
 use crate::engine::{
     error::ImageError,
     graphics::{DrawParams, Texture},
     math::Rectangle,
     Context,
+    utils::HashMap,
 };
+
+use crate::map::RenderCoords;
 
 pub struct NpcTextures(HashMap<NpcGroupId, NpcTexture>);
 

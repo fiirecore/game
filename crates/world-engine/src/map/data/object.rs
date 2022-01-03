@@ -1,4 +1,3 @@
-use hashbrown::HashMap;
 use worldlib::{
     map::object::{ItemObject, MapObject, ObjectId},
     positions::{Coordinate, Location},
@@ -12,9 +11,11 @@ use crate::{
         graphics::{DrawParams, Texture},
         math::Rectangle,
         Context,
+        utils::HashMap,
     },
-    world::RenderCoords,
 };
+
+use crate::map::RenderCoords;
 
 pub struct ObjectTextures {
     textures: HashMap<ObjectId, Texture>,

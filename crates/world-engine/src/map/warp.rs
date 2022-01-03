@@ -5,14 +5,13 @@ use worldlib::{
     positions::Coordinate,
 };
 
-use crate::{
-    engine::{
-        graphics::{draw_rectangle, Color},
-        utils::{Entity, Reset, HEIGHT, WIDTH},
-        Context,
-    },
-    world::RenderCoords,
+use crate::engine::{
+    graphics::{draw_rectangle, Color},
+    utils::{Entity, Reset, HEIGHT, WIDTH},
+    Context,
 };
+
+use crate::map::RenderCoords;
 
 pub struct WarpTransition {
     alive: bool,
@@ -134,12 +133,12 @@ impl WarpTransition {
                             self.color.a = 1.0;
                             self.faded = true;
                             if let Some(warp) = player.world.warp.take() {
-                                player.hidden = false;//destination.transition.move_on_exit;
-                                let change_music = true;// destination.transition.change_music;
+                                player.hidden = false; //destination.transition.move_on_exit;
+                                let change_music = true; // destination.transition.change_music;
                                 world.warp(player, warp);
                                 self.warp = Some((
                                     warp.position.coords,
-                                    false,//destination.transition.move_on_exit,
+                                    false, //destination.transition.move_on_exit,
                                 ));
                                 self.warped = true;
                                 return Some(change_music);
