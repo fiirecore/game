@@ -1,60 +1,51 @@
 # To - do List
 
+____
 
- - [X] Load asset files from AppData folder
- - [X] Actually save player data
- - [ ] Move battle intro transition to world code
- - [X] Reimplement loading/copyright screen
+## [0.5 Issues](https://github.com/fiirecore-game/pokemon-game/issues?q=is%3Aopen+is%3Aissue+milestone%3A0.5)
 
- - [ ] Player creation state
+## [0.5.1 Issues](https://github.com/fiirecore-game/pokemon-game/issues?q=is%3Aopen+is%3Aissue+milestone%3A0.5.1)
+   ### Other 0.5.1 issues
 
- - [ ] Replace std::collections::HashMap with hashbrown::HashMap
+* Fix generated text having new line errors
 
- - [ ] Add é to font
+## [0.6 Issues](https://github.com/fiirecore-game/pokemon-game/issues?q=is%3Aopen+is%3Aissue+milestone%3A0.6)
 
- - [ ] Fix generated text having new line errors
+   ### Other 0.6 issues
 
-## Engine
+   * Move battle intro transition to world code
 
-- [ ] Fix Bag GUI regression
-- [ ] Text line wrapping
-- [ ] Support for text scrolling
+____
 
-## World
+## Minor issues
 
- - [X] Elevation
- - [ ] Reimplement scripts
- - [ ] Reimplement doors
- - [X] Load more tile and location data from world binary
-    - [ ] Finished implementing
- - [ ] Proper NPC rendering based on their widths and heights
+* Fix npcs getting drawn offscreen and map connections being drawn over main map
+* Add UNKNOWN pokemon, move and item values
 
- - [X] Reverse render coords for Y-axis so bottom is drawn lower
- - [ ] Fix npcs getting drawn offscreen and map connections being drawn over main map
+## Issues from other repositories affecting this one
 
-* Pokemarts and Pokemon centers custom implementation
+#### Engine
 
-* Maybe day/night cycle?
+* Add é to font
 
-## Battle
+#### Battle
 
 * Moves use PP in battle
 * Persistent moves in battle
 * Better AI
 
-## Battle GUI
+#### Battle GUI
 
 * Fix Battle GUI sucking
 * Fix pokemon not getting updated after battle
-* Fix higher level pokemon not doing correct damage in battles
 * Reimplement running from battles
 * Correctly add BattleCloser to BattleGui
 * Move animations
 
-## Other
+## Other potential things to do
 
-* Add rhai scripting to world and NPC scripting
 * Online battles over discord rich presence?
-* Add UNKNOWN pokemon, move and item values
 * Town Map item
+* Pokemarts and Pokemon centers custom implementation
+* Maybe day/night cycle?
 * Multiplayer

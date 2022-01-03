@@ -1,0 +1,17 @@
+[package]
+name = "firecore-pokedex-engine-builder"
+version = "0.0.4"
+edition = "2021"
+
+[features]
+default = ["compile"]
+compile = []
+audio = ["compile"]
+
+[dependencies]
+firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "858d72f" }
+
+serde = { version = "1", features = ["derive"] }
+enum-map = { version = "1", features = ["serde"] }
+tinystr = { version = "0.4", features = ["serde"] }
+hashbrown = { version = "0.9", features = ["serde"] }

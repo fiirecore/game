@@ -11,8 +11,8 @@ io = ["firecore-engine", "quad-storage", "base64"]
 
 [dependencies]
 
-firecore-engine = { git = "https://github.com/fiirecore-game/engine", rev = "0d95a58", default-features = false, optional = true }
-# firecore-engine = { path = "../../firecore/engine", default-features = false, optional = true }
+# fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "41aa3ae", default-features = false, optional = true }
+firecore-engine = { path = "../engine", default-features = false, optional = true }
 
 ### Serialization
 

@@ -1,10 +1,9 @@
 use std::ops::Deref;
 
-use crate::pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex};
-
-use battlelib::{
+use battlelib::battle::{
     item::engine::ItemEngine,
     moves::engine::MoveEngine,
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
     prelude::{Battle, BattleAi},
 };
 

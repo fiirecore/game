@@ -1,10 +1,10 @@
 use crate::{
     battle::TransitionState,
-    engine::{audio::play_music, Context, EngineContext},
+    engine::{music::play_music, Context, EngineContext},
     game::battle_glue::BattleTrainerEntry,
 };
 
-use battlelib::data::BattleType;
+use battlelib::battle::data::BattleType;
 
 use crate::battle::manager::transitions::{
     transitions::{BattleTransitions, FlashBattleTransition, TrainerBattleTransition},

@@ -3,10 +3,9 @@ use crate::engine::{
     log::warn,
     Context, EngineContext,
 };
+use crate::pokedex::gui::SizedStr;
 
-use firecore_battle_gui::pokedex::gui::SizedStr;
-use firecore_world::TILE_SIZE;
-use worldlib::{map::WorldMap, state::WorldState};
+use worldlib::{map::WorldMap, state::WorldState, TILE_SIZE};
 
 use crate::world::RenderCoords;
 

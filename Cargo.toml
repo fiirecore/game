@@ -13,11 +13,15 @@ readme = "README.md"
 include = ["/build", "/assets"]
 publish = false
 
+[workspace]
+members = ["crates/*", "crates/pokedex-engine/builder"]
+# default-members = ["crates/*", "crates/pokedex-engine/builder"]
+
 [features]
 default = ["audio"]
 audio = [
     "firecore-audio-builder",
-    "firecore-battle-gui/audio",
+    "firecore-battle-engine/audio",
     "firecore-pokedex-engine-builder/audio",
 ]
 # discord = ["discord-rich-presence"]
@@ -33,24 +37,13 @@ opt-level = "z"
 
 [dependencies]
 # Battle GUI, also re-exports game engine
-firecore-battle-gui = { git = "https://github.com/fiirecore-game/engine", rev = "0d95a58", package = "firecore-battle-gui", default-features = false }
+firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = ["host", "ai", "default_engine_scripting"] }
 # firecore-battle-gui = { path = "../firecore/engine/crates/battle-gui", default-features = false }
 
 firecore-world = { git = "https://github.com/fiirecore/world", rev = "cb5c056" }
 # firecore-world = { path = "../firecore/world" }
 
-firecore-battle = { git = "https://github.com/fiirecore/battle", rev = "2809659", features = [
-    "ai",
-    "host",
-    "default_engine_scripting",
-] }
-# firecore-battle = { path = "../firecore/battle", features = [#
-#     "ai",
-#     "host",
-#     "default_engine_scripting",
-# ] }
-
-firecore-storage = { path = "storage", features = ["io"] }
+firecore-storage = { path = "crates/storage", features = ["io"] }
 
 ### Other
 
@@ -69,23 +62,19 @@ hashbrown = "0.9"
 
 [build-dependencies]
 
-firecore-world-builder = { git = "https://github.com/fiirecore/world", rev = "cb5c056", package = "firecore-world-builder" }
-# firecore-world-builder = { path = "../firecore/world/builder" }
-
 firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "858d72f", package = "firecore-pokedex-builder" }
-firecore-pokedex-engine-builder = { git = "https://github.com/fiirecore-game/engine", rev = "0d95a58", package = "firecore-pokedex-engine-builder", default-features = false, features = [
+firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "2809659", package = "firecore-battle-builder" }
+
+firecore-pokedex-engine-builder = { path = "crates/pokedex-engine/builder", default-features = false, features = [
     "compile",
 ] }
-firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "2809659", package = "firecore-battle-builder" }
+
+firecore-world-builder = { git = "https://github.com/fiirecore/world", rev = "cb5c056", package = "firecore-world-builder" }
 
 firecore-font-builder = { git = "https://github.com/fiirecore-game/firecore-font-builder", rev = "057373a" }
 firecore-audio-builder = { git = "https://github.com/fiirecore-game/firecore-audio-builder", rev = "90af8c1", optional = true }
 serde = "1"
-firecore-storage = { path = "storage", default-features = false }
+firecore-storage = { path = "crates/storage", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]
 embed-resource = "1"
-
-
-[workspace]
-members = ["storage"]

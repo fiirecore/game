@@ -1,0 +1,28 @@
+[package]
+name = "firecore-engine"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["audio", "gamepad"]
+audio = ["fiirengine/audio"]
+gamepad = ["fiirengine/gamepad"]
+
+[dependencies]
+fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
+
+# Controls 
+
+enum-map = { version = "1", features = ["serde"] }
+serde = { version = "1", features = ["derive"] }
+
+# Audio utils
+
+tinystr = { version = "0.4", features = ["serde"], default-features = false }
+
+# Text rendering
+
+firecore-font-builder = { git = "https://github.com/fiirecore-game/firecore-font-builder", rev = "057373a", default-features = false }
+
+[dev-dependencies]
+bincode = "1.3"

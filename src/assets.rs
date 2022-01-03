@@ -1,7 +1,11 @@
 use crate::engine::{log::info, text::font::FontSheet};
-use battlelib::default_engine::{scripting::MoveScripts, EngineMoves};
-use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex};
-use firecore_battle_gui::pokedex::SerializedPokedexEngine;
+use battlelib::{
+    battle::{
+        default_engine::{scripting::MoveScripts, EngineMoves},
+        pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex},
+    },
+    pokedex::SerializedPokedexEngine,
+};
 use worldlib::serialized::SerializedWorld;
 
 use crate::storage::{self, error::DataError};
@@ -15,8 +19,7 @@ pub struct AssetContext {
     pub dex: SerializedPokedexEngine,
     pub world: SerializedWorld,
     #[cfg(feature = "audio")]
-    pub audio:
-        std::collections::HashMap<firecore_battle_gui::pokedex::engine::audio::MusicId, Vec<u8>>,
+    pub audio: hashbrown::HashMap<crate::engine::music::MusicId, Vec<u8>>,
 }
 
 impl AssetContext {

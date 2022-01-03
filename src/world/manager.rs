@@ -1,10 +1,9 @@
 use std::rc::Rc;
 
-use crossbeam_channel::Receiver;
-use firecore_battle_gui::pokedex::{
+use crate::pokedex::{
     engine::{
-        error::ImageError,
         controls::{pressed, Control},
+        error::ImageError,
         log::info,
         utils::Entity,
         Context, EngineContext,
@@ -12,6 +11,7 @@ use firecore_battle_gui::pokedex::{
     gui::{bag::BagGui, party::PartyGui},
     PokedexClientData,
 };
+use crossbeam_channel::Receiver;
 use rand::{prelude::SmallRng, SeedableRng};
 use worldlib::{
     character::player::PlayerCharacter,

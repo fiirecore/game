@@ -1,11 +1,12 @@
 use std::fmt::Debug;
 
+use crate::engine::text::MessagePage;
+
 use crate::pokedex::{
     item::bag::SavedBag,
     pokemon::{owned::SavedPokemon, party::Party},
 };
 
-use firecore_battle_gui::pokedex::engine::text::MessagePage;
 use worldlib::{
     character::{
         npc::{group::NpcGroupId, trainer::BadgeId, NpcId},

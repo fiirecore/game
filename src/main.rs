@@ -1,12 +1,29 @@
-use assets::AssetContext;
-use battlelib::default_engine::{scripting::MoveScripts, EngineMoves};
-pub(crate) use firecore_battle_gui::pokedex;
+extern crate firecore_battle_engine as battlelib;
+extern crate firecore_storage as storage;
+extern crate firecore_world as worldlib;
+
+pub(crate) use battlelib::pokedex;
 pub(crate) use pokedex::engine;
+
+use assets::AssetContext;
+use battlelib::{
+    battle::default_engine::{scripting::MoveScripts, EngineMoves},
+    context::BattleGuiData,
+    pokedex::engine::{
+        graphics::{self, Color, DrawParams},
+        utils::{HEIGHT, WIDTH},
+        ContextBuilder,
+    },
+};
+use engine::log::info;
+use game::config::Configuration;
+use pokedex::PokedexClientData;
+use rand::prelude::{SeedableRng, SmallRng};
 use saves::Player;
+use state::StateManager;
 use storage::RonSerializer;
 use worldlib::serialized::SerializedWorld;
 
-// mod args;
 mod assets;
 mod battle;
 mod command;
@@ -15,28 +32,6 @@ mod game;
 mod saves;
 mod state;
 mod world;
-
-extern crate firecore_storage as storage;
-
-use rand::prelude::{SeedableRng, SmallRng};
-
-use game::config::Configuration;
-
-use firecore_battle_gui::{
-    context::BattleGuiData,
-    pokedex::engine::{
-        graphics::{self, Color, DrawParams},
-        utils::{HEIGHT, WIDTH},
-        ContextBuilder,
-    },
-};
-
-use crate::engine::log::info;
-use pokedex::PokedexClientData;
-use state::StateManager;
-
-extern crate firecore_battle as battlelib;
-extern crate firecore_world as worldlib;
 
 const TITLE: &str = "Pokemon FireRed";
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
@@ -113,7 +108,7 @@ fn main() {
                     DrawParams::color(Color::WHITE),
                 );
                 for (id, data) in assets.audio {
-                    engine::audio::add_music(ctx, eng, id, data);
+                    engine::music::add_music(ctx, eng, id, data);
                 }
             }
 

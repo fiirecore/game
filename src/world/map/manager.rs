@@ -1,6 +1,6 @@
 use crate::{
     engine::{
-        audio,
+        music,
         error::ImageError,
         graphics::{self, Color},
         controls::{pressed, Control},
@@ -196,12 +196,12 @@ impl GameWorldMapManager {
                     player.input_frozen = true;
                 }
                 WorldActions::PlayMusic(music) => {
-                    if let Some(playing) = audio::get_current_music(eng) {
+                    if let Some(playing) = music::get_current_music(eng) {
                         if playing != &music {
-                            audio::play_music(ctx, eng, &music);
+                            music::play_music(ctx, eng, &music);
                         }
                     } else {
-                        audio::play_music(ctx, eng, &music);
+                        music::play_music(ctx, eng, &music);
                     }
                 }
                 WorldActions::BeginWarpTransition(coords) => {

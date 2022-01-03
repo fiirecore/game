@@ -1,0 +1,26 @@
+[package]
+name = "firecore-battle-engine"
+description = "Battle client for firecore-battle"
+version = "0.0.2"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
+edition = "2021"
+repository = "https://github.com/fiirecore/engine"
+license = "CC0"
+readme = "README.md"
+keywords = ["battle", "gamedev"]
+categories = ["game-development"]
+
+[features]
+default = ["audio"]
+audio = ["firecore-pokedex-engine/audio"]
+host = ["firecore-battle/host"]
+ai = ["firecore-battle/ai"]
+default_engine_scripting = ["firecore-battle/default_engine_scripting"]
+
+[dependencies]
+log = "0.4"
+firecore-battle = { version = "0.0.8", git = "https://github.com/fiirecore/battle", rev = "2809659", default-features = false, features = ["mpsc_endpoint"] }
+# firecore-battle = { path = "../../../battle", default-features = false, features = ["mpsc_endpoint"] }
+firecore-pokedex-engine = { path = "../pokedex-engine", default-features = false }
+rand = { version = "0.8", default-features = false }
+crossbeam-channel = "0.5"

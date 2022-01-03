@@ -1,7 +1,7 @@
 use tinystr::tinystr16;
 
 use crate::engine::{
-    audio::play_music,
+    music::play_music,
     error::ImageError,
     graphics::{draw_rectangle, Color, DrawParams, Texture},
     Context, EngineContext,

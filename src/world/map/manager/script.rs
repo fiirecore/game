@@ -444,7 +444,7 @@ pub(crate) fn update_script(
     // }
 }
 
-use std::collections::HashMap;
+use hashbrown::HashMap;
 use worldlib::{
     character::npc::{Npc, NpcId, Npcs},
     positions::Location,

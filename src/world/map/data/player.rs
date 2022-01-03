@@ -1,6 +1,6 @@
 use crate::engine::{
     error::ImageError,
-    graphics::{Color, DrawParams, Texture},
+    graphics::{Color, DrawParams, Texture, self},
     math::Rectangle,
     utils::{HashMap, HEIGHT, WIDTH},
     Context,
@@ -114,7 +114,7 @@ impl PlayerTexture {
         if !character.hidden {
             if let Some(texture) = self.textures.get(&character.movement) {
                 if self.jumping {
-                    firecore_battle_gui::pokedex::engine::graphics::draw_circle(
+                    graphics::draw_circle(
                         ctx,
                         SCREEN_X,
                         SCREEN_Y + 24.0,

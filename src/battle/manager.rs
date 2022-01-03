@@ -1,10 +1,10 @@
+use hashbrown::HashMap;
 use rand::{prelude::SmallRng, RngCore, SeedableRng};
 use std::{ops::Deref, rc::Rc};
 
-use crate::pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex};
-
-use battlelib::{
+use battlelib::battle::{
     default_engine::{scripting::MoveScripts, EngineMoves},
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
     prelude::{
         Battle, BattleAi, BattleData, BattleType, DefaultEngine, PlayerData, PlayerSettings,
     },
@@ -15,6 +15,7 @@ use crate::{
     engine::{
         graphics::Color,
         input::keyboard::{pressed as is_key_pressed, Key},
+        math::Vec2,
         utils::Reset,
         Context, EngineContext,
     },
@@ -26,7 +27,7 @@ use crate::pokedex::{
     PokedexClientData,
 };
 
-use firecore_battle_gui::{context::BattleGuiData, BattlePlayerGui};
+use firecore_battle_engine::{context::BattleGuiData, BattlePlayerGui};
 
 use super::GameBattleWrapper;
 
@@ -153,8 +154,7 @@ impl<
                 .any(|pokemon| !pokemon.fainted())))
         .then(|| {
             if let Some(trainer) = entry.trainer.as_ref() {
-                let mut sprites: firecore_battle_gui::pokedex::engine::utils::HashMap<_, _> =
-                    Default::default();
+                let mut sprites: HashMap<_, _> = Default::default();
                 sprites.insert(entry.id, trainer.sprite);
                 self.player.set_next_groups(sprites);
             }
@@ -362,11 +362,7 @@ impl<
                             self.player.gui.draw_panel(ctx);
                             self.player.draw(ctx, eng, &self.dex);
                             for active in self.player.local.as_ref().unwrap().renderer.iter() {
-                                active.pokemon.draw(
-                                    ctx,
-                                    firecore_battle_gui::pokedex::engine::math::Vec2::ZERO,
-                                    Color::WHITE,
-                                );
+                                active.pokemon.draw(ctx, Vec2::ZERO, Color::WHITE);
                             }
                             self.closer.draw_battle(ctx);
                             self.player.gui.text.draw(ctx, eng);

@@ -1,25 +1,28 @@
-use crate::{
-    command::{CommandProcessor, CommandResult},
-    game::battle_glue::BattleId,
-    saves::Player,
-};
-use battlelib::default_engine::{scripting::MoveScripts, EngineMoves};
-use firecore_battle::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-use firecore_battle_gui::{
+use battlelib::{
+    battle::{
+        default_engine::{scripting::MoveScripts, EngineMoves},
+        pokedex::{item::Item, moves::Move, pokemon::Pokemon},
+    },
     context::BattleGuiData,
-    pokedex::{engine::audio, PokedexClientData},
+    pokedex::{
+        engine::music,
+        gui::{bag::BagGui, party::PartyGui},
+        PokedexClientData,
+    },
 };
+
 use std::rc::Rc;
 use worldlib::{events::*, serialized::SerializedWorld};
 
 use crate::{
+    command::{CommandProcessor, CommandResult},
     engine::{
         error::ImageError,
         input::keyboard::{down as is_key_down, Key},
         Context, EngineContext,
     },
-    game::battle_glue::BattleEntry,
-    pokedex::gui::{bag::BagGui, party::PartyGui},
+    game::battle_glue::{BattleEntry, BattleId},
+    saves::Player,
 };
 
 use crate::engine::log::warn;
@@ -149,7 +152,7 @@ impl GameStateManager {
                     },
                     GameActions::Save => self.sender.send(StateMessage::UpdateSave(save.clone())),
                     GameActions::Exit => {
-                        audio::stop_music(ctx, eng);
+                        music::stop_music(ctx, eng);
                         self.sender.send(StateMessage::Goto(MainStates::Menu));
                     }
                     GameActions::CommandError(error) => {

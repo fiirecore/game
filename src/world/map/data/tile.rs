@@ -1,13 +1,15 @@
+use hashbrown::HashMap;
+
+use worldlib::{
+    map::{PaletteId, TileId, Palettes},
+    TILE_SIZE,
+    serialized::SerializedPaletteMap
+};
+
 use crate::engine::{
     graphics::{Color, DrawParams, Texture},
     math::Rectangle,
     Context,
-};
-use firecore_world::{map::Palettes, serialized::SerializedPaletteMap};
-use std::collections::HashMap;
-use worldlib::{
-    map::{PaletteId, TileId},
-    TILE_SIZE,
 };
 
 pub struct PaletteTextureManager {
