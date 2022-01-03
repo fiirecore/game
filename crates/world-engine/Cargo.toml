@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bevy_ecs = { git = "https://github.com/bevyengine/bevy", rev = "d44c3cd", default-features = false }
+
 firecore-world = { path = "../world" }
 # firecore-world = { path = "../firecore/world" }
 

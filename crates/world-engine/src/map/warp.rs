@@ -61,7 +61,7 @@ impl WarpTransition {
 
     pub fn update<R: Rng + SeedableRng + Clone>(
         &mut self,
-        world: &mut WorldMapManager<R>,
+        // world: &mut WorldMapManager<R>,
         player: &mut PlayerCharacter,
         delta: f32,
     ) -> Option<bool> {

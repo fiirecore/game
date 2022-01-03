@@ -9,6 +9,7 @@ edition = "2021"
 # manager = []
 
 [dependencies]
+bevy_ecs = { git = "https://github.com/bevyengine/bevy", rev = "d44c3cd", default-features = false }
 
 serde = { version = "1", features = ["derive"] }
 tinystr = { version = "0.4", features = ["serde"], default-features = false }

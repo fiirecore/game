@@ -4,7 +4,6 @@ use hashbrown::{HashMap, HashSet};
 
 use crate::{
     character::npc::{trainer::BadgeId, Npc, NpcId},
-    events::Wait,
     map::{battle::BattleEntry, warp::WarpDestination},
     positions::{Coordinate, Location, Position},
     script::ScriptId,
@@ -28,8 +27,6 @@ pub struct WorldState {
     pub heal: Option<(Location, Position)>,
     #[serde(default)]
     pub badges: HashSet<BadgeId>,
-    #[serde(skip)]
-    pub polling: Option<Wait>,
     #[serde(default)]
     pub debug_draw: bool,
 }

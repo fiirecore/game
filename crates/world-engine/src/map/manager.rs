@@ -13,10 +13,10 @@ use crate::{
 use rand::prelude::SmallRng;
 
 use worldlib::{
-    actions::{WorldAction, WorldActions},
+    events::{WorldActions},
     character::player::PlayerCharacter,
-    events::{split, InputEvent, Receiver, Sender},
-    map::{chunk::Connection, manager::WorldMapManager, Brightness, WorldMap},
+    events::{InputEvent},
+    map::{chunk::Connection, manager::{WorldMapData, WorldMapManager}, Brightness, WorldMap},
     positions::{Coordinate, Direction, Location, Position},
     serialized::SerializedWorld,
 };
@@ -33,7 +33,8 @@ mod npc;
 // pub mod script;
 
 pub struct WorldManager {
-    world: WorldMapManager<SmallRng>,
+    // world: WorldMapData<SmallRng>,
+    world:
 
     data: ClientWorldData,
 
