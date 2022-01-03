@@ -3,9 +3,10 @@ use std::rc::Rc;
 use firecore_world::events::Sender;
 use worldlib::character::trainer::Trainer;
 
-use crate::pokedex::{
+use crate::pokedex::pokemon::owned::SavedPokemon;
+
+use crate::pokengine::{
     gui::{bag::BagGui, party::PartyGui},
-    pokemon::owned::SavedPokemon,
     PokedexClientData,
 };
 

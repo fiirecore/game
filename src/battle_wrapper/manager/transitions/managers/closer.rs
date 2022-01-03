@@ -1,14 +1,14 @@
-use battlelib::battle::data::BattleType;
+use crate::battle::data::BattleType;
 
-use crate::pokedex::PokedexClientData;
+use crate::pokengine::PokedexClientData;
 
 use crate::{
-    battle::TransitionState,
+    battle_wrapper::TransitionState,
     engine::{gui::MessageBox, Context, EngineContext},
-    game::battle_glue::{BattleId, BattleTrainerEntry},
+    battle_glue::{BattleId, BattleTrainerEntry},
 };
 
-use crate::battle::manager::transitions::{
+use crate::battle_wrapper::manager::transitions::{
     closers::{Closers, TrainerBattleCloser, WildBattleCloser},
     BattleCloser,
 };

@@ -3,8 +3,6 @@ pub extern crate firecore_pokedex_engine as pokedex;
 
 use std::{fmt::Debug, hash::Hash, ops::Deref, rc::Rc};
 
-use context::BattleGuiData;
-
 use pokedex::{
     engine::{log::{self, debug, warn}, EngineContext},
     item::ItemCategory,
@@ -46,7 +44,9 @@ use self::{
     view::PlayerView,
 };
 
-pub mod context;
+mod context;
+pub use context::*;
+
 pub mod ui;
 pub mod view;
 

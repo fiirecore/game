@@ -1,17 +1,19 @@
-use battlelib::{
-    battle::{
-        default_engine::{scripting::MoveScripts, EngineMoves},
-        pokedex::{item::Item, moves::Move, pokemon::Pokemon},
-    },
-    context::BattleGuiData,
-    pokedex::{
-        engine::music,
-        gui::{bag::BagGui, party::PartyGui},
-        PokedexClientData,
-    },
+use std::rc::Rc;
+
+use crate::battle::{
+    default_engine::{scripting::MoveScripts, EngineMoves},
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
 };
 
-use std::rc::Rc;
+use crate::engine::music;
+
+use crate::pokengine::{
+    gui::{bag::BagGui, party::PartyGui},
+    PokedexClientData,
+};
+
+use battlecli::BattleGuiData;
+
 use worldlib::{events::*, serialized::SerializedWorld};
 
 use crate::{
@@ -21,13 +23,13 @@ use crate::{
         input::keyboard::{down as is_key_down, Key},
         Context, EngineContext,
     },
-    game::battle_glue::{BattleEntry, BattleId},
+    battle_glue::{BattleEntry, BattleId},
     saves::Player,
 };
 
 use crate::engine::log::warn;
 
-use crate::{battle::BattleManager, world::manager::WorldManager};
+use crate::{battle_wrapper::BattleManager, world::manager::WorldManager};
 
 use super::{MainStates, StateMessage};
 

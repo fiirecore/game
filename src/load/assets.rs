@@ -1,10 +1,10 @@
 use crate::engine::{log::info, text::font::FontSheet};
-use battlelib::{
+use crate::{
     battle::{
         default_engine::{scripting::MoveScripts, EngineMoves},
         pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex},
     },
-    pokedex::SerializedPokedexEngine,
+    pokengine::SerializedPokedexEngine,
 };
 use worldlib::serialized::SerializedWorld;
 

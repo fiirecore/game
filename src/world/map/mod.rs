@@ -3,7 +3,7 @@ use crate::engine::{
     log::warn,
     Context, EngineContext,
 };
-use crate::pokedex::gui::SizedStr;
+use crate::pokengine::gui::SizedStr;
 
 use worldlib::{map::WorldMap, state::WorldState, TILE_SIZE};
 

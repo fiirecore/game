@@ -4,7 +4,7 @@ use crate::engine::{
     Context,
 };
 
-use crate::battle::manager::transitions::BattleTransition;
+use crate::battle_wrapper::manager::transitions::BattleTransition;
 
 pub struct TrainerBattleTransition {
     rect_width: f32,

@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use battlelib::battle::{
+use crate::battle::{
     item::engine::ItemEngine,
     moves::engine::MoveEngine,
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
@@ -9,7 +9,7 @@ use battlelib::battle::{
 
 use rand::{prelude::SmallRng, Rng};
 
-use crate::game::battle_glue::{BattleId, BattleTrainerEntry};
+use crate::battle_glue::{BattleId, BattleTrainerEntry};
 
 mod manager;
 

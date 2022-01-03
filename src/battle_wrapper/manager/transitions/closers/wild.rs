@@ -1,16 +1,16 @@
-use crate::pokedex::PokedexClientData;
+use crate::pokengine::PokedexClientData;
 
 use crate::{
+    battle_glue::{BattleId, BattleTrainerEntry},
     engine::{
         graphics::{draw_rectangle, Color},
         gui::MessageBox,
         utils::{Completable, Reset, HEIGHT, WIDTH},
         Context, EngineContext,
     },
-    game::battle_glue::{BattleId, BattleTrainerEntry},
 };
 
-use crate::battle::manager::transitions::BattleCloser;
+use crate::battle_wrapper::manager::transitions::BattleCloser;
 
 pub struct WildBattleCloser {
     color: Color,

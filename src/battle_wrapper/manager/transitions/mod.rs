@@ -1,8 +1,8 @@
-use crate::pokedex::PokedexClientData;
+use crate::pokengine::PokedexClientData;
 
 use crate::{
     engine::{gui::MessageBox, utils::Completable, Context, EngineContext},
-    game::battle_glue::{BattleId, BattleTrainerEntry},
+    battle_glue::{BattleId, BattleTrainerEntry},
 };
 
 pub mod managers;

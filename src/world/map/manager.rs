@@ -8,7 +8,7 @@ use crate::{
         utils::{Completable, Entity},
         Context, EngineContext,
     },
-    game::battle_glue::{BattleEntry as GameBattleEntry, BattleId, BattleTrainerEntry},
+    battle_glue::{BattleEntry as GameBattleEntry, BattleId, BattleTrainerEntry},
     state::game::GameActions,
 };
 

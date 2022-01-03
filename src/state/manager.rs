@@ -8,7 +8,7 @@ use crate::{
     },
     saves::Player,
     state::MainStates,
-    LoadContext,
+    load::LoadContext,
 };
 
 use firecore_world::events::{split, Receiver, Sender};

@@ -7,7 +7,7 @@ use crate::{
 };
 
 use crate::command::CommandProcessor;
-use battlelib::pokedex::{
+use crate::pokedex::{
     item::{ItemStack, SavedItemStack},
     pokemon::{owned::SavedPokemon, stat::StatSet},
 };

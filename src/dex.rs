@@ -1,4 +1,4 @@
-use battlelib::pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex};
+use crate::pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex};
 
 pub static mut POKEDEX: Option<BasicDex<Pokemon>> = None;
 pub static mut MOVEDEX: Option<BasicDex<Move>> = None;

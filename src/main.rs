@@ -1,34 +1,24 @@
-extern crate firecore_battle_engine as battlelib;
+extern crate firecore_battle_engine as battlecli;
 extern crate firecore_storage as storage;
 extern crate firecore_world as worldlib;
 
-pub(crate) use battlelib::pokedex;
-pub(crate) use pokedex::engine;
+pub(crate) use battlecli::battle;
+pub(crate) use battle::pokedex;
+pub(crate) use battlecli::pokedex::engine;
+pub(crate) use battlecli::pokedex as pokengine;
 
-use assets::AssetContext;
-use battlelib::{
-    battle::default_engine::{scripting::MoveScripts, EngineMoves},
-    context::BattleGuiData,
-    pokedex::engine::{
-        graphics::{self, Color, DrawParams},
-        utils::{HEIGHT, WIDTH},
-        ContextBuilder,
-    },
+use engine::{
+    utils::{HEIGHT, WIDTH},
+    ContextBuilder,
 };
-use engine::log::info;
-use game::config::Configuration;
-use pokedex::PokedexClientData;
-use rand::prelude::{SeedableRng, SmallRng};
-use saves::Player;
 use state::StateManager;
-use storage::RonSerializer;
-use worldlib::serialized::SerializedWorld;
 
-mod assets;
-mod battle;
+mod battle_wrapper;
+mod battle_glue;
 mod command;
+mod config;
 mod dex;
-mod game;
+mod load;
 mod saves;
 mod state;
 mod world;
@@ -46,143 +36,8 @@ fn main() {
     engine::run(
         ContextBuilder::new(TITLE, (WIDTH * SCALE) as _, (HEIGHT * SCALE) as _), // .resizable(true)
         // .show_mouse(true)
-        async {
-            info!("Loading configuration...");
-            let configuration =
-                storage::try_load::<RonSerializer, Configuration>(PUBLISHER, APPLICATION)
-                    .await
-                    .unwrap_or_else(|err| panic!("Cannot load configuration with error {}", err));
-
-            info!("Loading assets (this may take a while)...");
-            let assets = AssetContext::load()
-                .await
-                .unwrap_or_else(|err| panic!("Could not load assets with error {}", err));
-
-            info!("Loading player saves...");
-            let save = storage::try_load::<RonSerializer, Player>(PUBLISHER, APPLICATION)
-                .await
-                .ok();
-
-            OpenContext {
-                assets,
-                configuration,
-                save,
-            }
-        },
-        move |ctx,
-              eng,
-              OpenContext {
-                  assets,
-                  configuration,
-                  save,
-              }| {
-            info!("Starting {} v{}", TITLE, VERSION);
-            info!("By {}", AUTHORS);
-
-            unsafe {
-                dex::POKEDEX = Some(assets.pokedex);
-
-                dex::MOVEDEX = Some(assets.movedex);
-
-                dex::ITEMDEX = Some(assets.itemdex);
-            }
-
-            info!("Initializing fonts...");
-
-            for font in assets.fonts {
-                engine::text::insert_font(ctx, eng, &font).unwrap();
-            }
-
-            #[cfg(feature = "audio")]
-            {
-                info!("Initializing audio...");
-                //Load audio files and setup audio
-
-                graphics::draw_text_left(
-                    ctx,
-                    eng,
-                    &0,
-                    "Loading audio...",
-                    5.0,
-                    5.0,
-                    DrawParams::color(Color::WHITE),
-                );
-                for (id, data) in assets.audio {
-                    engine::music::add_music(ctx, eng, id, data);
-                }
-            }
-
-            graphics::clear(ctx, Color::BLACK);
-
-            let random = SmallRng::seed_from_u64(engine::utils::seed());
-
-            info!("Initializing dex textures and audio...");
-
-            let dex = PokedexClientData::new(ctx, eng, assets.dex)
-                .unwrap_or_else(|err| panic!("Could not initialize dex data with error {}", err));
-
-            let btl = BattleGuiData::new(ctx).unwrap_or_else(|err| {
-                panic!("Could not initialize battle data with error {}", err)
-            });
-
-            #[cfg(feature = "discord")]
-            use discord_rich_presence::{activity::Activity, new_client, DiscordIpc};
-
-            #[cfg(feature = "discord")]
-            let mut client = {
-                let mut client = new_client("862413316420665386").unwrap_or_else(|err| {
-                    panic!("Could not create discord IPC client with error {}", err)
-                });
-                client.connect().unwrap_or_else(|err| {
-                    panic!("Could not connect to discord with error {}", err)
-                });
-                client
-                    .set_activity(Activity::new().state("test state").details("test details"))
-                    .unwrap_or_else(|err| {
-                        panic!("Could not set client activity with error {}", err)
-                    });
-                client
-            };
-
-            // {
-            //     if args.contains(&Args::Debug) {
-            //         set_debug(true);
-            //     }
-
-            //     if is_debug() {
-            //         info!("Running in debug mode");
-            //     }
-            // }
-
-            info!("Initialized game context!");
-
-            LoadContext {
-                configuration,
-                save,
-                dex,
-                battle: assets.battle,
-                btl,
-                world: assets.world,
-            }
-        },
+        load::OpenContext::load(),
+            load::LoadContext::load,
         StateManager::new,
     );
-
-    #[cfg(feature = "discord")]
-    client.close().unwrap();
-}
-
-struct OpenContext {
-    assets: AssetContext,
-    configuration: Configuration,
-    save: Option<Player>,
-}
-
-pub(crate) struct LoadContext {
-    pub configuration: Configuration,
-    pub save: Option<Player>,
-    pub dex: PokedexClientData,
-    pub battle: (EngineMoves, MoveScripts),
-    pub btl: BattleGuiData,
-    pub world: SerializedWorld,
 }

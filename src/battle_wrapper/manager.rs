@@ -2,7 +2,7 @@ use hashbrown::HashMap;
 use rand::{prelude::SmallRng, RngCore, SeedableRng};
 use std::{ops::Deref, rc::Rc};
 
-use battlelib::battle::{
+use crate::battle::{
     default_engine::{scripting::MoveScripts, EngineMoves},
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
     prelude::{
@@ -19,15 +19,15 @@ use crate::{
         utils::Reset,
         Context, EngineContext,
     },
-    game::battle_glue::{BattleEntry, BattleId},
+    battle_glue::{BattleEntry, BattleId},
 };
 
-use crate::pokedex::{
+use crate::pokengine::{
     gui::{bag::BagGui, party::PartyGui},
     PokedexClientData,
 };
 
-use firecore_battle_engine::{context::BattleGuiData, BattlePlayerGui};
+use firecore_battle_engine::{BattleGuiData, BattlePlayerGui};
 
 use super::GameBattleWrapper;
 

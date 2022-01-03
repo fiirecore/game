@@ -1,4 +1,4 @@
-use crate::pokedex::PokedexClientData;
+use crate::pokengine::PokedexClientData;
 
 use crate::{
     engine::{
@@ -8,10 +8,10 @@ use crate::{
         utils::{Completable, Entity, Reset, WIDTH},
         Context, EngineContext,
     },
-    game::battle_glue::{BattleId, BattleTrainerEntry},
+    battle_glue::{BattleId, BattleTrainerEntry},
 };
 
-use crate::battle::manager::transitions::BattleCloser;
+use crate::battle_wrapper::manager::transitions::BattleCloser;
 
 use super::wild::WildBattleCloser;
 
