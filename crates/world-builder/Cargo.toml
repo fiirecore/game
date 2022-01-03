@@ -1,0 +1,27 @@
+[package]
+name = "firecore-world-builder"
+version = "0.5.0-beta.2021-12-24"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+### Map specifications
+
+firecore-world = { path = "../world" }
+
+### Serialization
+
+serde = { version = "1", features = ["derive"] }
+ron = "0.7"
+bincode = "1"
+either = { version = "1", features = ["serde"] }
+hashbrown = { version = "0.9", features = ["serde"] }
+
+tinystr = { version = "0.4" }
+image = { version = "0.23.12", default-features = false, features = [
+    "png",
+    "tga",
+] }

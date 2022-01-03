@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-firecore-world = { git = "https://github.com/fiirecore/world", rev = "cb5c056" }
+firecore-world = { path = "../world" }
 # firecore-world = { path = "../firecore/world" }
 
 firecore-pokedex-engine = { path = "../pokedex-engine", default-features = false }

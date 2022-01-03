@@ -14,7 +14,7 @@ include = ["/build", "/assets"]
 publish = false
 
 [workspace]
-members = ["crates/*", "crates/pokedex-engine/builder"]
+members = ["crates/*"]
 # default-members = ["crates/*", "crates/pokedex-engine/builder"]
 
 [features]
@@ -60,11 +60,11 @@ tinystr = { version = "0.4", features = ["serde"], default-features = false }
 firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "858d72f", package = "firecore-pokedex-builder" }
 firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "2809659", package = "firecore-battle-builder" }
 
-firecore-pokedex-engine-builder = { path = "crates/pokedex-engine/builder", default-features = false, features = [
+firecore-pokedex-engine-builder = { path = "crates/pokedex-engine-builder", default-features = false, features = [
     "compile",
 ] }
 
-firecore-world-builder = { git = "https://github.com/fiirecore/world", rev = "cb5c056", package = "firecore-world-builder" }
+firecore-world-builder = { path = "crates/world-builder", package = "firecore-world-builder" }
 
 firecore-font-builder = { git = "https://github.com/fiirecore-game/firecore-font-builder", rev = "057373a" }
 firecore-audio-builder = { git = "https://github.com/fiirecore-game/firecore-audio-builder", rev = "90af8c1", optional = true }

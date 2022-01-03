@@ -382,7 +382,6 @@ dependencies = [
 [[package]]
 name = "firecore-world"
 version = "0.5.0-beta.2022-01-01"
-source = "git+https://github.com/fiirecore/world?rev=cb5c056#cb5c0563a127ca8a38190aaf95064f05c461428b"
 dependencies = [
  "crossbeam-channel",
  "firecore-pokedex",
@@ -395,7 +394,6 @@ dependencies = [
 [[package]]
 name = "firecore-world-builder"
 version = "0.5.0-beta.2021-12-24"
-source = "git+https://github.com/fiirecore/world?rev=cb5c056#cb5c0563a127ca8a38190aaf95064f05c461428b"
 dependencies = [
  "bincode",
  "either",

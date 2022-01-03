@@ -1,0 +1,25 @@
+[package]
+name = "firecore-world"
+version = "0.5.0-beta.2022-01-01"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
+edition = "2021"
+
+# [features]
+# default = ["manager"]
+# manager = []
+
+[dependencies]
+
+serde = { version = "1", features = ["derive"] }
+tinystr = { version = "0.4", features = ["serde"], default-features = false }
+rand = { version = "0.8", default-features = false }
+hashbrown = { version = "0.9", features = ["serde"] }
+
+firecore-pokedex = { version = "0.0.8", git = "https://github.com/fiirecore/pokedex", rev = "858d72f" }
+# firecore-pokedex = { path = "../../firecore/pokedex" }
+
+crossbeam-channel = "0.5"
+
+### Pathfinding
+
+# indexmap = "1.6"
