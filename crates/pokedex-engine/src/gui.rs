@@ -1,4 +1,3 @@
-use core::cell::Cell;
 use std::ops::Deref;
 
 pub mod bag;
@@ -30,12 +29,4 @@ impl<const S: usize> Deref for SizedStr<S> {
     fn deref(&self) -> &Self::Target {
         unsafe { std::str::from_utf8_unchecked(&self.0) }
     }
-}
-
-fn cellref<'a, T>(cell: &'a Cell<T>) -> &'a T {
-    unsafe { &*cell.as_ptr() }
-}
-
-fn cellmut<'a, T>(cell: &'a Cell<T>) -> &'a mut T {
-    unsafe { &mut *cell.as_ptr() }
 }

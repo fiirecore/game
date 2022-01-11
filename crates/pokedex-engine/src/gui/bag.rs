@@ -17,7 +17,7 @@ use crate::pokedex::{
 
 use crate::data::PokedexClientData;
 
-use super::{cellref, SizedStr};
+use super::SizedStr;
 
 // const WORLD_OPTIONS: &[&'static str] = &[
 //     "Use",
@@ -30,23 +30,23 @@ type TextOption = &'static [&'static str];
 const BATTLE_OPTIONS: TextOption = &["Use"];
 
 pub struct BagGui {
-    alive: Cell<bool>,
+    alive: bool,
 
     background: Texture,
-    cells: [Cell<Option<BagCell>>; 8],
-    hover: Cell<Option<HoverCell>>,
+    cells: [Option<BagCell>; 8],
+    hover: Option<HoverCell>,
 
-    offset: Cell<usize>,
-    cursor: Cell<usize>,
+    offset: usize,
+    cursor: usize,
 
-    selecting: Cell<bool>,
+    selecting: bool,
 
     /// select menu cursor
-    select_cursor: Cell<usize>,
+    select_cursor: usize,
 
-    update: Cell<bool>,
+    update: bool,
 
-    selected: Cell<Option<ItemId>>,
+    selected: Option<ItemId>,
 }
 
 struct BagCell {
@@ -81,25 +81,25 @@ impl BagGui {
     // fn update_cells<I>(&self, bag: &Bag<I>) {
     //     for cell in self.cells.iter() {}
     //     bag.iter()
-    //         .skip(self.offset.get())
+    //         .skip(self.offset)
     //         .take(Self::SIZE)
     //         .enumerate()
     // }
 
-    pub fn input<I>(&self, ctx: &Context, eng: &EngineContext, items: &mut Bag<I>) {
-        match self.selecting.get() {
+    pub fn input<I>(&mut self, ctx: &Context, eng: &EngineContext, items: &mut Bag<I>) {
+        match self.selecting {
             true => {
                 // match self.select_text {
                 // Some(text) => {
-                let cursor = self.cursor.get();
+                let cursor = self.cursor;
                 if pressed(ctx, eng, Control::B) {
-                    self.selecting.set(false);
+                    self.selecting = false;
                 }
                 if pressed(ctx, eng, Control::Up) && cursor > 0 {
-                    self.select_cursor.set(self.select_cursor.get() - 1);
+                    self.select_cursor = self.select_cursor - 1;
                 }
                 if pressed(ctx, eng, Control::Down) && cursor < BATTLE_OPTIONS.len() {
-                    self.select_cursor.set(self.select_cursor.get() + 1);
+                    self.select_cursor = self.select_cursor + 1;
                 }
                 if pressed(ctx, eng, Control::A) {
                     match cursor {
@@ -107,7 +107,7 @@ impl BagGui {
                         1 => (), // cancel
                         _ => unreachable!("Selected an option that is not use/cancel"),
                     }
-                    self.selecting.set(false);
+                    self.selecting = false;
                 }
 
                 // }
@@ -118,7 +118,7 @@ impl BagGui {
                 if pressed(ctx, eng, Control::B) {
                     self.despawn();
                 }
-                let cursor = self.cursor.get();
+                let cursor = self.cursor;
                 if pressed(ctx, eng, Control::A) {
                     if cursor < items.len() {
                         self.spawn_select();
@@ -127,10 +127,10 @@ impl BagGui {
                     }
                 }
                 if pressed(ctx, eng, Control::Up) && cursor > 0 {
-                    self.cursor.set(cursor - 1);
+                    self.cursor -= 1;
                 }
                 if pressed(ctx, eng, Control::Down) && cursor < items.len() {
-                    self.cursor.set(cursor + 1);
+                    self.cursor += 1;
                 }
             }
         }
@@ -145,7 +145,7 @@ impl BagGui {
     }
 
     pub fn update_cells_init<I: Deref<Target = Item>>(
-        &self,
+        &mut self,
         ctx: &PokedexClientData,
         bag: &Bag<I>,
     ) {
@@ -161,27 +161,26 @@ impl BagGui {
             })
         }
 
-        let cursor = self.cursor.get();
+        let cursor = self.cursor;
 
         if self
             .cells
-            .get(cursor - self.offset.get())
-            .map(cellref)
+            .get(cursor - self.offset)
             .map(Option::as_ref)
             .flatten()
             .is_some()
         {
-            self.hover.set(create(ctx, bag, cursor));
+            self.hover = create(ctx, bag, cursor);
         } else {
-            self.hover.set(None);
+            self.hover = None;
         }
     }
 
     pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
         self.background.draw(ctx, 0.0, 0.0, Default::default());
-        let cursor = self.cursor.get();
+        let cursor = self.cursor;
         for (index, cell) in self.cells.iter().enumerate() {
-            if let Some(cell) = super::cellref(cell).as_ref() {
+            if let Some(cell) = cell {
                 let y = 11.0 + (index << 4) as f32;
                 let color = DrawParams::color(MessagePage::BLACK);
                 draw_text_left(ctx, eng, &1, &cell.name, 98.0, y, color);
@@ -198,7 +197,7 @@ impl BagGui {
             11.0 + (self
                 .cells
                 .iter()
-                .filter(|c| super::cellref(c).is_some())
+                .filter(|c| c.is_some())
                 .count()
                 << 4) as f32,
             DrawParams::color(MessagePage::BLACK),
@@ -221,17 +220,23 @@ impl BagGui {
         //         );
         //     }
         // }
-        draw_cursor(ctx, eng, 91.0, 13.0 + (cursor << 4) as f32, Default::default());
-        if self.selecting.get() {
+        draw_cursor(
+            ctx,
+            eng,
+            91.0,
+            13.0 + (cursor << 4) as f32,
+            Default::default(),
+        );
+        if self.selecting {
             // if let Some(text) = self.select_text {
             Panel::draw_text(
                 ctx,
-                eng, 
+                eng,
                 146.0,
                 HEIGHT,
                 94.0,
                 BATTLE_OPTIONS,
-                self.select_cursor.get(),
+                self.select_cursor,
                 true,
                 true,
             )
@@ -239,22 +244,22 @@ impl BagGui {
         }
     }
 
-    fn spawn_select(&self) {
-        self.selecting.set(true);
-        self.select_cursor.set(0);
+    fn spawn_select(&mut self) {
+        self.selecting = true;
+        self.select_cursor = 0;
     }
 
     // fn set_cell<'d>(&self, index: usize, stack: Option<&ItemRefStack<'d>>) {
     //     if let Some(cell) = self.items.get(index) {
-    //         cell.set(stack.map(|stack| to_ascii4(stack.count).ok()).flatten())
+    //         cell = stack.map(|stack| to_ascii4(stack.count).ok()).flatten())
     //     }
     // }
 
-    pub fn take_selected_despawn<I: Clone>(&self, bag: &mut Bag<I>) -> Option<I> {
-        let selected = self.selected.get();
+    pub fn take_selected_despawn<I: Clone>(&mut self, bag: &mut Bag<I>) -> Option<I> {
+        let selected = self.selected;
         selected
             .map(|selected| {
-                self.selected.set(None);
+                self.selected = None;
                 let item = bag.try_take(&selected, 1).map(|stack| stack.item);
                 self.despawn();
                 item
@@ -262,17 +267,17 @@ impl BagGui {
             .flatten()
     }
 
-    pub fn spawn(&self) {
-        self.alive.set(true);
-        // self.select_text.set(Some(BATTLE_OPTIONS));
+    pub fn spawn(&mut self) {
+        self.alive = true;
+        // self.select_text = Some(BATTLE_OPTIONS));
     }
 
-    pub fn despawn(&self) {
-        self.alive.set(false);
+    pub fn despawn(&mut self) {
+        self.alive = false;
         // self.items.clear()
     }
 
     pub fn alive(&self) -> bool {
-        self.alive.get()
+        self.alive
     }
 }

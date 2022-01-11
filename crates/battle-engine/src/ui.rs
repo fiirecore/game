@@ -17,7 +17,7 @@ use self::{
 };
 
 use super::transition::{
-    introduction::BattleIntroductionManager, opener::BattleOpenerManager, trainer::PokemonCount,
+    introduction::BattleIntroductionManager, trainer::PokemonCount,
 };
 // use self::panels::level_up::LevelUpMovePanel;
 
@@ -63,16 +63,13 @@ impl BattleGuiPositionIndex {
 pub struct BattleGui<M: Deref<Target = Move> + Clone> {
     pub background: BattleBackground,
 
-    pub party: Rc<PartyGui>,
-    pub bag: Rc<BagGui>,
-
     pub panel: BattlePanel<M>,
 
     pub text: MessageBox,
 
     pub bounce: PlayerBounce,
 
-    pub opener: BattleOpenerManager,
+    // pub opener: BattleOpenerManager,
     pub introduction: BattleIntroductionManager,
     pub trainer: PokemonCount,
     pub level_up: LevelUpMovePanel<M>,
@@ -82,13 +79,9 @@ impl<M: Deref<Target = Move> + Clone> BattleGui<M> {
     pub fn new(
         ctx: &mut Context,
         btl: &BattleGuiData,
-        party: Rc<PartyGui>,
-        bag: Rc<BagGui>,
     ) -> Self {
         Self {
             background: BattleBackground::new(ctx, btl),
-            party,
-            bag,
 
             panel: BattlePanel::new(),
 
@@ -96,17 +89,11 @@ impl<M: Deref<Target = Move> + Clone> BattleGui<M> {
 
             bounce: PlayerBounce::new(),
 
-            opener: BattleOpenerManager::new(ctx, btl),
+            // opener: BattleOpenerManager::new(ctx, btl),
             introduction: BattleIntroductionManager::new(btl),
             trainer: PokemonCount::new(btl),
             level_up: LevelUpMovePanel::new(),
         }
-    }
-
-    pub fn draw_panel(&self, ctx: &mut Context) {
-        self.background
-            .panel
-            .draw(ctx, 0.0, PANEL_Y, Default::default());
     }
 
     pub fn reset(&mut self) {

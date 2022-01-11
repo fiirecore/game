@@ -5,7 +5,13 @@ use pokedex::engine::{
     Context,
 };
 
-use crate::{context::BattleGuiData, transition::TransitionState};
+use crate::{context::BattleGuiData};
+
+enum TransitionState {
+    In,
+    Stay,
+    Out,
+}
 
 pub struct PokemonCount {
     state: Option<TransitionState>,
@@ -40,7 +46,7 @@ impl PokemonCount {
     pub fn update(&mut self, delta: f32) {
         if let Some(state) = &self.state {
             match state {
-                TransitionState::Begin => match self.bar_position < 0.0 {
+                TransitionState::In => match self.bar_position < 0.0 {
                     true => {
                         self.bar_position += 240.0 * delta;
                         if self.bar_position > 0.0 {
@@ -56,15 +62,15 @@ impl PokemonCount {
                         }
                         false => {
                             match self.counter == 6 {
-                                true => self.state = Some(TransitionState::Run),
+                                true => self.state = Some(TransitionState::Stay),
                                 false => self.counter += 1,
                             }
                             self.ball_position = -Self::RIGHT_BALL_POSITION;
                         }
                     },
                 },
-                TransitionState::Run => (),
-                TransitionState::End => {
+                TransitionState::Stay => (),
+                TransitionState::Out => {
                     self.bar_position += delta * 240.0;
                 }
             }
@@ -77,14 +83,14 @@ impl PokemonCount {
                 1.0,
                 1.0,
                 1.0,
-                if matches!(self.state, Some(TransitionState::End)) {
+                if matches!(self.state, Some(TransitionState::Out)) {
                     (1.0 - self.bar_position / Self::OPACITY_LEN).max(0.0)
                 } else {
                     1.0
                 },
             );
 
-            let distance = if matches!(self.state, Some(TransitionState::End)) {
+            let distance = if matches!(self.state, Some(TransitionState::Out)) {
                 10 + (self.bar_position / 6.0) as u16
             } else {
                 10
@@ -198,17 +204,17 @@ impl PokemonCount {
     }
 
     pub fn end(&mut self) {
-        self.state = Some(TransitionState::End);
+        self.state = Some(TransitionState::Out);
     }
 
     pub fn ending(&self) -> bool {
-        matches!(self.state, Some(TransitionState::End))
+        matches!(self.state, Some(TransitionState::Out))
     }
 
     pub fn spawn(&mut self, player: usize, opponent: usize) {
         self.player = player as u8;
         self.opponent = opponent as u8;
-        self.state = Some(TransitionState::Begin);
+        self.state = Some(TransitionState::In);
         self.reset();
     }
 

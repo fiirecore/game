@@ -1,4 +1,5 @@
 use core::ops::Deref;
+use bevy_ecs::prelude::*;
 use pokedex::{engine::utils::HashMap, item::Item, moves::Move, pokemon::Pokemon};
 
 use pokedex::{engine::Context, PokedexClientData};
@@ -7,7 +8,6 @@ use battle::data::BattleType;
 
 use crate::{
     context::BattleGuiData,
-    transition::TransitionState,
     ui::view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer},
 };
 
@@ -68,11 +68,9 @@ impl BattleOpenerManager {
     >(
         &mut self,
         ctx: &PokedexClientData,
-        state: &mut TransitionState,
         local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
     ) {
-        *state = TransitionState::Run;
         self.current = match local.data.type_ {
             BattleType::Wild => Openers::Wild,
             BattleType::Trainer => Openers::Trainer,
@@ -88,19 +86,19 @@ impl BattleOpenerManager {
     // }
 
     pub fn update<
-        ID,
+        ID: Component + Eq + std::hash::Hash + Clone + std::fmt::Debug,
         P: Deref<Target = Pokemon>,
         M: Deref<Target = Move>,
         I: Deref<Target = Item>,
     >(
         &mut self,
-        state: &mut TransitionState,
+        state: &mut State<crate::state::BattlePlayerState<ID>>,
         delta: f32,
     ) {
         let current = self.get_mut::<ID, P, M, I>();
         current.update(delta);
         if current.finished() {
-            *state = TransitionState::End;
+            state.pop();
         }
     }
 

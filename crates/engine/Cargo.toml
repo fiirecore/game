@@ -9,7 +9,8 @@ audio = ["fiirengine/audio"]
 gamepad = ["fiirengine/gamepad"]
 
 [dependencies]
-fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
+# fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
+fiirengine = { path = "../../../firecore/engine", default-features = false }
 
 # Controls 
 

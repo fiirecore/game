@@ -1,19 +1,19 @@
-use core::{cell::Cell, ops::Deref};
+use core::ops::Deref;
 
 use crate::{
     get::GetPokemonData,
-    gui::{cellref, party::PartyCell, pokemon::PokemonTypeDisplay, SizedStr, LEVEL_PREFIX},
+    gui::{party::PartyCell, pokemon::PokemonTypeDisplay, SizedStr, LEVEL_PREFIX},
     texture::PokemonTexture::Front,
     PokedexClientData,
 };
 
 use engine::{
+    controls::{pressed, Control},
     graphics::{
         draw_circle, draw_rectangle, draw_straight_line, draw_text_center, draw_text_left, Color,
         DrawParams, Texture,
     },
     gui::Panel,
-    controls::{pressed, Control},
     text::MessagePage,
     utils::WIDTH,
     Context,
@@ -25,23 +25,23 @@ use crate::pokedex::{pokemon::Pokemon, Dex};
 use super::PartyError;
 
 pub struct SummaryGui {
-    pub alive: Cell<bool>,
+    pub alive: bool,
 
-    page: Cell<usize>,
+    page: usize,
     headers: [&'static str; Self::PAGES],
     pages: [Texture; Self::PAGES],
     pokemon_background: Texture,
 
     offset: Offset,
 
-    pokemon: Cell<Option<SummaryPokemon>>,
+    pokemon: Option<SummaryPokemon>,
 }
 
 #[derive(Default)]
 struct Offset {
-    int: Cell<u8>,
-    boolean: Cell<bool>,
-    float: Cell<f32>,
+    int: u8,
+    boolean: bool,
+    float: f32,
 }
 
 impl SummaryGui {
@@ -64,13 +64,13 @@ impl SummaryGui {
         }
     }
 
-    pub fn input(&self, ctx: &Context, eng: &EngineContext) {
-        let page = self.page.get();
+    pub fn input(&mut self, ctx: &Context, eng: &EngineContext) {
+        let page = self.page;
         if pressed(ctx, eng, Control::Left) && page > 0 {
-            self.page.set(page - 1);
+            self.page -= 1;
         }
         if pressed(ctx, eng, Control::Right) && page < Self::PAGES - 1 {
-            self.page.set(page + 1);
+            self.page += 1;
         }
         if pressed(ctx, eng, Control::B) {
             self.despawn();
@@ -78,7 +78,7 @@ impl SummaryGui {
     }
 
     pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
-        let current_page = self.page.get();
+        let current_page = self.page;
         let w = 114.0 + (current_page << 4) as f32;
         let rw = WIDTH - w;
         draw_rectangle(ctx, 0.0, 1.0, w, 15.0, Self::HEADER_LEFT);
@@ -103,13 +103,13 @@ impl SummaryGui {
             };
             draw_circle(ctx, 106.0 + (page << 4) as f32, 9.0, 6.0, color);
         }
-        if let Some(summary) = cellref(&self.pokemon) {
+        if let Some(summary) = &self.pokemon {
             self.pokemon_background
                 .draw(ctx, 0.0, 17.0, DrawParams::default());
             summary.front.draw(
                 ctx,
                 28.0,
-                summary.pos + self.offset.float.get(),
+                summary.pos + self.offset.float,
                 DrawParams::default(),
             );
             draw_text_left(
@@ -140,7 +140,7 @@ impl SummaryGui {
                 DrawParams::color(MessagePage::WHITE),
             );
             const TOP: f32 = 17.0;
-            match self.page.get() {
+            match self.page {
                 0 => {
                     self.pages[0].draw(ctx, 0.0, TOP, Default::default());
                     draw_text_left(
@@ -191,22 +191,22 @@ impl SummaryGui {
         }
     }
 
-    pub fn update(&self, delta: f32) {
-        let int = self.offset.int.get();
+    pub fn update(&mut self, delta: f32) {
+        let int = self.offset.int;
         if int < 2 {
-            let float = self.offset.float.get();
-            match self.offset.boolean.get() {
+            let float = self.offset.float;
+            match self.offset.boolean {
                 false => {
-                    self.offset.float.set(float - delta * 120.0);
+                    self.offset.float -= delta * 120.0;
                     if float < -10.0 {
-                        self.offset.boolean.set(true);
+                        self.offset.boolean = true;
                     }
                 }
                 true => {
-                    self.offset.float.set(float + delta * 120.0);
+                    self.offset.float += delta * 120.0;
                     if float > 0.0 {
-                        self.offset.int.set(int + 1);
-                        self.offset.boolean.set(false);
+                        self.offset.int += 1;
+                        self.offset.boolean = false;
                     }
                 }
             }
@@ -214,7 +214,7 @@ impl SummaryGui {
     }
 
     pub fn spawn<'d, P: Deref<Target = Pokemon>, I: GetPokemonData>(
-        &self,
+        &mut self,
         ctx: &PokedexClientData,
         pokedex: &'d dyn Dex<'d, Pokemon, P>,
         pokemon: &I,
@@ -222,11 +222,11 @@ impl SummaryGui {
     ) {
         match SummaryPokemon::new(ctx, pokedex, pokemon, cell) {
             Ok(pokemon) => {
-                self.alive.set(true);
-                self.offset.int.set(Default::default());
-                self.offset.boolean.set(Default::default());
-                self.offset.float.set(Default::default());
-                self.pokemon.set(Some(pokemon))
+                self.alive = true;
+                self.offset.int = Default::default();
+                self.offset.boolean = Default::default();
+                self.offset.float = Default::default();
+                self.pokemon = Some(pokemon);
             }
             Err(err) => {
                 engine::log::error!("Cannot create summary gui pokemon with error: {}", err)
@@ -234,12 +234,12 @@ impl SummaryGui {
         }
     }
 
-    pub fn despawn(&self) {
-        self.alive.set(false)
+    pub fn despawn(&mut self) {
+        self.alive = false;
     }
 
     pub fn alive(&self) -> bool {
-        self.alive.get()
+        self.alive
     }
 }
 
@@ -270,7 +270,10 @@ impl SummaryPokemon {
             .ok_or(PartyError::MissingTexture)?;
         Ok(Self {
             id: SizedStr::new(pokemon.id)?,
-            name: instance.name().unwrap_or_else(|| pokemon.name.as_ref()).to_owned(),
+            name: instance
+                .name()
+                .unwrap_or_else(|| pokemon.name.as_ref())
+                .to_owned(),
             front: texture.clone(),
             types: [
                 Some(PokemonTypeDisplay::new(pokemon.types.primary)),

@@ -25,8 +25,6 @@ use crate::{
     ui::view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer},
 };
 
-use super::TransitionState;
-
 mod basic;
 mod trainer;
 
@@ -138,12 +136,10 @@ impl BattleIntroductionManager {
     >(
         &mut self,
         ctx: &PokedexClientData,
-        state: &mut TransitionState,
         local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
         text: &mut MessageBox,
     ) {
-        *state = TransitionState::Run;
         match local.data.type_ {
             BattleType::Wild => self.current = Introductions::Basic,
             _ => self.current = Introductions::Trainer,
@@ -160,13 +156,13 @@ impl BattleIntroductionManager {
     }
 
     pub fn update<
-        ID,
+        ID: bevy_ecs::prelude::Component + Clone + Eq + std::hash::Hash + std::fmt::Debug,
         P: Deref<Target = Pokemon>,
         M: Deref<Target = Move>,
         I: Deref<Target = Item>,
     >(
         &mut self,
-        state: &mut TransitionState,
+        state: &mut bevy_ecs::schedule::State<crate::state::BattlePlayerState<ID>>,
         ctx: &mut Context,
         eng: &mut EngineContext,
         delta: f32,
@@ -177,7 +173,7 @@ impl BattleIntroductionManager {
         let current = self.get_mut::<ID, P, M, I>();
         current.update(ctx, eng, delta, player, opponent, text);
         if current.finished() {
-            *state = TransitionState::End;
+            state.pop();
         }
     }
 

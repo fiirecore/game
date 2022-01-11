@@ -18,6 +18,7 @@ ai = ["firecore-battle/ai"]
 default_engine_scripting = ["firecore-battle/default_engine_scripting"]
 
 [dependencies]
+bevy_ecs = { version = "0.6" }
 log = "0.4"
 firecore-battle = { version = "0.0.8", git = "https://github.com/fiirecore/battle", rev = "2809659", default-features = false, features = ["mpsc_endpoint"] }
 # firecore-battle = { path = "../../../battle", default-features = false, features = ["mpsc_endpoint"] }
