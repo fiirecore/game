@@ -1,3 +1,4 @@
+use enum_map::EnumMap;
 use serde::{Deserialize, Serialize};
 
 use hashbrown::HashMap;
@@ -5,7 +6,7 @@ use hashbrown::HashMap;
 use crate::{
     character::{
         npc::{group::NpcGroupId, Npc, NpcId},
-        Movement,
+        MovementType,
     },
     map::{manager::WorldMapData, PaletteId, TileId, object::ObjectId}, script::WorldScriptData,
     // positions::Location,
@@ -30,7 +31,7 @@ pub struct SerializedNpc {
 }
 
 pub type SerializedPaletteMap = HashMap<PaletteId, SerializedPalette>;
-pub type SerializedPlayerTexture = HashMap<Movement, Texture>;
+pub type SerializedPlayerTexture = EnumMap<MovementType, Texture>;
 pub type SerializedNpcGroupTextures = HashMap<NpcGroupId, Texture>;
 pub type SerializedObjectTextures = HashMap<ObjectId, Texture>;
 

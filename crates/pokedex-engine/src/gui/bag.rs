@@ -4,7 +4,7 @@ use engine::{
     controls::{pressed, Control},
     graphics::{draw_cursor, draw_text_left, DrawParams, Texture},
     gui::Panel,
-    text::MessagePage,
+    text::TextColor,
     utils::HEIGHT,
     Context,
 };
@@ -17,7 +17,7 @@ use crate::pokedex::{
 
 use crate::data::PokedexClientData;
 
-use super::{cellref, SizedStr};
+use super::SizedStr;
 
 // const WORLD_OPTIONS: &[&'static str] = &[
 //     "Use",
@@ -160,7 +160,9 @@ impl BagGui {
             .get(self.cursor - self.offset)
             .map(Option::as_ref)
             .flatten()
-            .is_some().then(|| create(ctx, bag, self.cursor)).flatten();
+            .is_some()
+            .then(|| create(ctx, bag, self.cursor))
+            .flatten();
     }
 
     pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
@@ -168,7 +170,7 @@ impl BagGui {
         for (index, cell) in self.cells.iter().enumerate() {
             if let Some(cell) = cell {
                 let y = 11.0 + (index << 4) as f32;
-                let color = DrawParams::color(MessagePage::BLACK);
+                let color = DrawParams::color(TextColor::BLACK);
                 draw_text_left(ctx, eng, &1, &cell.name, 98.0, y, color);
                 draw_text_left(ctx, eng, &1, "x", 200.0, y, color);
                 draw_text_left(ctx, eng, &1, &cell.count, 208.0, y, color);
@@ -180,13 +182,8 @@ impl BagGui {
             &1,
             "Cancel",
             98.0,
-            11.0 + (self
-                .cells
-                .iter()
-                .filter(|c| c.is_some())
-                .count()
-                << 4) as f32,
-            DrawParams::color(MessagePage::BLACK),
+            11.0 + (self.cells.iter().filter(|c| c.is_some()).count() << 4) as f32,
+            DrawParams::color(TextColor::BLACK),
         );
         // if let Some(stack) = self.get_item_at_cursor(bag).map(|id| bag.get(id)).flatten() {
         //     if let Some(texture) = dex.item_textures.try_get(&stack.item.id) {
@@ -200,18 +197,24 @@ impl BagGui {
         //             41.0,
         //             117.0 + (index * 14) as f32,
         //             DrawParams {
-        //                 color: MessagePage::WHITE,
+        //                 color: TextColor::WHITE,
         //                 ..Default::default()
         //             },
         //         );
         //     }
         // }
-        draw_cursor(ctx, eng, 91.0, 13.0 + (self.cursor << 4) as f32, Default::default());
+        draw_cursor(
+            ctx,
+            eng,
+            91.0,
+            13.0 + (self.cursor << 4) as f32,
+            Default::default(),
+        );
         if self.selecting {
             // if let Some(text) = self.select_text {
             Panel::draw_text(
                 ctx,
-                eng, 
+                eng,
                 146.0,
                 HEIGHT,
                 94.0,

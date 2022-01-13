@@ -1,7 +1,8 @@
 use crate::pokengine::PokedexClientData;
 
-use crate::engine::{gui::MessageBox, utils::Completable, Context, EngineContext};
+use crate::engine::{utils::Completable, Context, EngineContext};
 
+use firecore_battle_engine::ui::text::BattleText;
 use worldcli::battle::*;
 
 pub mod managers;
@@ -25,7 +26,7 @@ pub(crate) trait BattleCloser: Completable {
         player_name: &str,
         winner: Option<&BattleId>,
         trainer_entry: Option<&BattleTrainerEntry>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     );
 
     fn update(
@@ -33,7 +34,7 @@ pub(crate) trait BattleCloser: Completable {
         ctx: &mut Context,
         eng: &mut EngineContext,
         delta: f32,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     );
 
     fn draw(&self, ctx: &mut Context);

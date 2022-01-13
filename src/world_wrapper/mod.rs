@@ -5,7 +5,7 @@ use worldcli::{worldlib::{
     character::player::PlayerCharacter,
     events::{split, Sender, Receiver},
     serialized::SerializedWorld,
-}, WorldMetaAction};
+}, WorldMetaAction, map::input::PlayerInput};
 
 use crate::engine::{
     controls::{pressed, Control},
@@ -16,7 +16,6 @@ use crate::engine::{
 };
 
 use crate::pokengine::{
-    gui::{bag::BagGui, party::PartyGui},
     PokedexClientData,
 };
 
@@ -72,12 +71,11 @@ impl WorldWrapper {
         eng: &mut EngineContext,
         delta: f32,
         player: &mut PlayerCharacter,
-        console: bool,
     ) {
         if self.menu.alive() {
             self.menu.update(ctx, eng, delta, &mut player.trainer);
         } else {
-            if pressed(ctx, eng, Control::Start) && !player.input_frozen && !console {
+            if pressed(ctx, eng, Control::Start) && !player.character.flags.contains(&PlayerInput::INPUT_LOCK) {
                 self.menu.spawn();
             }
 
@@ -112,8 +110,8 @@ impl WorldWrapper {
                         player.world.debug_draw = !player.world.debug_draw;
                     }
                     WorldCommands::Unfreeze => {
-                        player.input_frozen = false;
-                        player.character.unfreeze();
+                        player.character.flags.remove(&PlayerInput::INPUT_LOCK);
+                        player.character.locked.reset();
                     }
                     WorldCommands::GivePokemon(pokemon) => {
                         player.give_pokemon(pokemon);

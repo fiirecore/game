@@ -1,6 +1,6 @@
 use core::ops::Deref;
 use pokedex::{
-    engine::{utils::HashMap, EngineContext},
+    engine::{utils::HashMap, EngineContext, text::{TextColor, MessageState}},
     item::Item,
     moves::Move,
     pokemon::Pokemon,
@@ -9,7 +9,6 @@ use pokedex::{
 use pokedex::{
     engine::{
         graphics::{Color, DrawParams, Texture},
-        gui::MessageBox,
         math::{vec2, Rectangle},
         text::MessagePage,
         utils::{Completable, Entity, Reset},
@@ -24,7 +23,7 @@ use crate::{
     context::BattleGuiData,
     ui::{
         pokemon::PokemonStatusGui,
-        view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer},
+        view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer}, text::BattleText,
     },
     view::BasePokemonView,
 };
@@ -87,13 +86,14 @@ impl BasicBattleIntroduction {
         I: Deref<Target = Item>,
     >(
         &mut self,
-        text: &mut MessageBox,
+        text: &mut BattleText,
         local: &GuiLocalPlayer<ID, P, M, I>,
     ) {
+        let text = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
         text.pages.push(MessagePage {
             lines: vec![format!("Go! {}!", Self::concatenate(&local.player))],
             wait: Some(0.5),
-            color: MessagePage::WHITE,
+            color: TextColor::WHITE,
         });
     }
 
@@ -169,14 +169,14 @@ impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = 
         _: &PokedexClientData,
         local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         let remote = &opponents.values().next().unwrap().player;
-        text.pages.clear();
-        text.pages.push(MessagePage {
+        let state = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
+        state.pages.push(MessagePage {
             lines: vec![format!("Wild {} appeared!", Self::concatenate(remote))],
             wait: None,
-            color: MessagePage::WHITE,
+            color: TextColor::WHITE,
         });
         self.common_setup(text, local);
     }
@@ -188,20 +188,18 @@ impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = 
         delta: f32,
         local: &mut GuiLocalPlayer<ID, P, M, I>,
         opponent: &mut GuiRemotePlayer<ID, P>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
-        if !text.finished() {
-            text.update(ctx, eng, delta);
-        }
+        text.update(ctx, eng, delta);
 
-        if text.page() + 1 == text.pages() && self.counter < Self::PLAYER_DESPAWN {
+        if text.page().map(|page| page + 1) == text.pages() && self.counter < Self::PLAYER_DESPAWN {
             self.counter += delta * 180.0;
         }
 
         if let Some(active) = opponent.renderer.get(0) {
             if active.status.alive() {
                 self.offsets0(delta);
-            } else if text.waiting() && text.page() >= text.pages() - 2 {
+            } else if text.waiting() && text.page() >= text.pages().map(|pages| pages - 2) {
                 for active in opponent.renderer.iter_mut() {
                     active.status.spawn();
                 }

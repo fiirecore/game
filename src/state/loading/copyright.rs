@@ -1,7 +1,7 @@
 use crate::engine::{
     error::ImageError,
     graphics::{draw_text_left, DrawParams, Texture},
-    text::MessagePage,
+    text::TextColor,
     Context, EngineContext,
 };
 
@@ -56,7 +56,7 @@ impl super::LoadingScene for CopyrightLoadingScene {
             &self.version,
             2.0,
             0.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
     }
 

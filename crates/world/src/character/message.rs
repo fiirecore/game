@@ -1,7 +1,7 @@
 use super::{player::PlayerCharacter, Character};
 
 pub const SELF_ID: &str = "%s";
-pub const PLAYER_ID: &str = "&p";
+pub const PLAYER_ID: &str = "%p";
 pub const RIVAL_ID: &str = "%r";
 
 // pub fn process_messages(pages: &Vec<Vec<String>>, character: &Character) -> Vec<Vec<String>> {

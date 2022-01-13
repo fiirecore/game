@@ -1,11 +1,18 @@
-use crate::positions::{Destination, Direction, Path, PixelOffset, Position};
+use crate::positions::{Destination, Direction, PixelOffset, Position};
+use enum_map::Enum;
+use hashbrown::HashSet;
 use serde::{Deserialize, Serialize};
 
+use self::action::{ActionQueue, Actions};
+
+pub mod action;
 pub mod message;
 pub mod npc;
 pub mod player;
 pub mod trainer;
 // pub mod pathfind;
+
+pub type CharacterFlag = tinystr::TinyStr8;
 
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -14,36 +21,51 @@ pub struct Character {
 
     pub position: Position,
 
-    #[serde(skip)]
+    #[serde(default)]
     pub offset: PixelOffset,
 
     #[serde(default)]
-    pub movement: Movement,
+    pub movement: MovementType,
 
     #[serde(default)]
-    pub frozen: bool,
-
-    #[serde(skip)]
     pub sprite: u8,
 
-    #[serde(skip)]
-    pub noclip: bool,
+    #[serde(default)]
+    pub locked: Counter,
 
-    #[serde(skip)]
+    #[serde(default)]
     pub hidden: bool,
 
-    #[serde(skip)]
-    pub pathing: Path,
+    #[serde(default)]
+    pub noclip: bool,
+
+    #[serde(default)]
+    pub actions: Actions,
+
+    #[serde(default)]
+    pub flags: HashSet<CharacterFlag>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
-pub enum Movement {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Enum, Deserialize, Serialize)]
+pub enum MovementType {
     Walking,
     Running,
     Swimming,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum DoMoveResult {
+    Finished,
+    Interact,
+}
+
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+pub struct Counter(u8);
+
 impl Character {
+
+    // pub const INTERACT_LOCK: CharacterFlag = unsafe { CharacterFlag::new_unchecked(8386654075050290793) };
+
     pub fn new<S: Into<String>>(name: S, position: Position) -> Self {
         Self {
             name: name.into(),
@@ -53,7 +75,7 @@ impl Character {
     }
 
     pub fn moving(&self) -> bool {
-        !self.pathing.queue.is_empty() || !self.offset.is_zero()
+        !self.actions.queue.is_empty() || !self.offset.is_zero()
     }
 
     pub fn update_sprite(&mut self) {
@@ -68,23 +90,12 @@ impl Character {
         self.offset.reset();
     }
 
-    pub fn freeze(&mut self) {
-        if !self.noclip {
-            self.frozen = true;
-            self.stop_move();
-        }
-    }
-
-    pub fn unfreeze(&mut self) {
-        self.frozen = false;
-    }
-
-    pub fn frozen(&self) -> bool {
-        self.frozen && !self.noclip
+    pub fn locked(&self) -> bool {
+        self.locked.active()
     }
 
     pub fn pathfind(&mut self, destination: Destination) {
-        self.pathing.extend(&self.position, destination);
+        self.actions.extend(&self.position, destination);
         // match pathfind {
         //     true => {
         //         if let Some(path) = pathfind::pathfind(&self.position, destination, player, world) {
@@ -95,22 +106,23 @@ impl Character {
         // }
     }
 
-    pub fn do_move(&mut self, delta: f32) -> bool {
-        if !self.frozen() {
+    pub fn do_move(&mut self, delta: f32) -> Option<DoMoveResult> {
+        if !self.locked() {
             match self.offset.is_zero() {
                 true => {
-                    match self.pathing.queue.pop() {
-                        Some(direction) => {
-                            self.position.direction = direction;
-                            self.offset = direction.pixel_offset(self.speed() * 60.0 * delta);
-                        }
-                        None => {
-                            if let Some(direction) = self.pathing.turn.take() {
+                    if let Some(path) = (!self.actions.queue.is_empty()).then(|| self.actions.queue.remove(0)) {
+                        match path {
+                            ActionQueue::Move(direction) => {
+                                self.position.direction = direction;
+                                self.offset = direction.pixel_offset(self.speed() * 60.0 * delta);
+                            }
+                            ActionQueue::Look(direction) => {
                                 self.position.direction = direction;
                             }
+                            ActionQueue::Interact => return Some(DoMoveResult::Interact),
                         }
                     }
-                    false
+                    None
                 }
                 false => {
                     if self
@@ -119,14 +131,14 @@ impl Character {
                     {
                         self.position.coords += self.position.direction.tile_offset();
                         self.update_sprite();
-                        true
+                        Some(DoMoveResult::Finished)
                     } else {
-                        false
+                        None
                     }
                 }
             }
         } else {
-            false
+            None
         }
     }
 
@@ -172,16 +184,105 @@ impl Character {
         false
     }
 
+    pub fn queue_interact(&mut self, now: bool) {
+        match now {
+            true => self.actions.queue.insert(0, ActionQueue::Interact),
+            false => self.actions.queue.push(ActionQueue::Interact),
+        }
+    }
+
+    pub fn on_interact(&mut self) {
+        self.locked.increment();
+        self.stop_move();
+        self.actions.clear();
+    }
+
+    pub fn end_interact(&mut self) {
+        self.locked.decrement();
+    }
+
+    pub fn interact_from(&mut self, position: &Position) -> bool {
+        self.can_interact_from(position)
+            .map(|dir| {
+                self.position.direction = dir;
+                self.queue_interact(false);
+                true
+            })
+            .unwrap_or_default()
+    }
+
+    pub fn can_interact_from(&self, position: &Position) -> Option<Direction> {
+        if position.coords.x == self.position.coords.x {
+            match position.direction {
+                Direction::Up => {
+                    if position.coords.y - 1 == self.position.coords.y {
+                        Some(Direction::Down)
+                    } else {
+                        None
+                    }
+                }
+                Direction::Down => {
+                    if position.coords.y + 1 == self.position.coords.y {
+                        Some(Direction::Up)
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            }
+        } else if position.coords.y == self.position.coords.y {
+            match position.direction {
+                Direction::Right => {
+                    if position.coords.x + 1 == self.position.coords.x {
+                        Some(Direction::Left)
+                    } else {
+                        None
+                    }
+                }
+                Direction::Left => {
+                    if position.coords.x - 1 == self.position.coords.x {
+                        Some(Direction::Right)
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            }
+        } else {
+            None
+        }
+    }
+
     pub fn speed(&self) -> f32 {
         match self.movement {
-            Movement::Walking => 1.0,
-            Movement::Running | Movement::Swimming => 2.0,
+            MovementType::Walking => 1.0,
+            MovementType::Running | MovementType::Swimming => 2.0,
         }
     }
 }
 
-impl Default for Movement {
+impl Default for MovementType {
     fn default() -> Self {
-        Movement::Walking
+        Self::Walking
     }
+}
+
+impl Counter {
+
+    pub fn increment(&mut self) {
+        self.0 = self.0.saturating_add(1);
+    }
+
+    pub fn decrement(&mut self) {
+        self.0 = self.0.saturating_sub(1);
+    }
+
+    pub fn reset(&mut self) {
+        self.0 = 0;
+    }
+
+    pub fn active(&self) -> bool {
+        self.0 != 0
+    }
+
 }

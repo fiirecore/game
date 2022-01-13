@@ -1,8 +1,9 @@
+use enum_map::Enum;
 use serde::{Deserialize, Serialize};
 
 use crate::positions::{Coordinate, PixelOffset};
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Enum, Deserialize, Serialize)]
 pub enum Direction {
     Down,
     Up,

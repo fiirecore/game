@@ -1,11 +1,11 @@
-use worldcli::worldlib::character::player::PlayerCharacter;
+use worldcli::{worldlib::character::player::PlayerCharacter, map::input::PlayerInput};
 
 use crate::{
     command::CommandResult,
     engine::{
         graphics::{self, Color, DrawParams},
         input::keyboard::{self, Key},
-        text::MessagePage,
+        text::TextColor,
         utils::{Reset, HEIGHT},
         Context, EngineContext,
     },
@@ -36,20 +36,16 @@ impl Console {
     pub fn spawn(&mut self, ctx: &mut Context, player: Option<&mut PlayerCharacter>) {
         while keyboard::get_char_queue(ctx).is_some() {}
         if let Some(player) = player {
-            player.input_frozen = true;
+            player.character.flags.insert(PlayerInput::INPUT_LOCK);
         }
         self.alive = true;
         self.reset();
     }
 
-    pub fn alive(&self) -> bool {
-        self.alive
-    }
-
     pub fn despawn(&mut self, player: Option<&mut PlayerCharacter>) {
         self.alive = false;
         if let Some(player) = player {
-            player.input_frozen = false;
+            player.character.flags.remove(&PlayerInput::INPUT_LOCK);
         }
     }
 
@@ -151,7 +147,7 @@ impl Console {
                 18.0,
                 Color::BLACK,
             );
-            graphics::draw_text_left(ctx, eng, &1, "/", 10.0, Y, DrawParams::color(MessagePage::WHITE));
+            graphics::draw_text_left(ctx, eng, &1, "/", 10.0, Y, DrawParams::color(TextColor::WHITE));
             graphics::draw_text_left(
                 ctx,
                 eng,
@@ -159,7 +155,7 @@ impl Console {
                 &self.command,
                 16.0,
                 Y,
-                DrawParams::color(MessagePage::WHITE),
+                DrawParams::color(TextColor::WHITE),
             );
             if self.flicker >= 1.0 {
                 if let Some(text) = self.command.get(..self.position) {

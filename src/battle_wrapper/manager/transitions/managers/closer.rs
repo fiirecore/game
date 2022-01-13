@@ -1,10 +1,11 @@
 use battlecli::battle::data::BattleType;
+use firecore_battle_engine::ui::text::BattleText;
 
 use crate::pokengine::PokedexClientData;
 
 use crate::{
     battle_wrapper::TransitionState,
-    engine::{gui::MessageBox, Context, EngineContext},
+    engine::{Context, EngineContext},
 };
 
 use worldcli::battle::*;
@@ -32,7 +33,7 @@ impl BattleCloserManager {
         player_name: &str,
         winner: Option<&BattleId>,
         trainer_entry: Option<&BattleTrainerEntry>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         self.state = TransitionState::Run;
         match battle_type {
@@ -53,7 +54,7 @@ impl BattleCloserManager {
         ctx: &mut Context,
         eng: &mut EngineContext,
         delta: f32,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         let current = self.get_mut();
         current.update(ctx, eng, delta, text);

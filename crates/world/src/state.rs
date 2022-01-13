@@ -1,10 +1,10 @@
+use firecore_text::{FontId, MessageState};
 use serde::{Deserialize, Serialize};
 
 use hashbrown::{HashMap, HashSet};
 
 use crate::{
-    character::npc::{trainer::BadgeId, Npc, NpcId},
-    events::Wait,
+    character::npc::{group::MessageColor, trainer::BadgeId, Npc, NpcId},
     map::{battle::BattleEntry, warp::WarpDestination},
     positions::{Coordinate, Location, Position},
     script::{ScriptEnvironment, ScriptFlag, ScriptId, VariableName},
@@ -15,33 +15,33 @@ pub struct WorldState {
     #[serde(default)]
     pub objects: HashMap<Location, Vec<Coordinate>>,
     #[serde(default)]
-    pub battle: WorldBattleState,
+    pub battle: GlobalBattleState,
     #[serde(default)]
-    pub npc: WorldNpcData,
+    pub message: Option<MessageState<FontId, MessageColor>>,
+    #[serde(default)]
+    pub npc: GlobalNpcData,
     #[serde(default)]
     pub warp: Option<WarpDestination>,
     #[serde(default)]
-    pub scripts: WorldGlobalScriptData,
+    pub scripts: GlobalScriptData,
     #[serde(default)]
-    pub wild: WorldGlobalWildData,
+    pub wild: GlobalWildData,
     #[serde(default)]
     pub heal: Option<(Location, Position)>,
     #[serde(default)]
     pub badges: HashSet<BadgeId>,
-    #[serde(skip)]
-    pub polling: Option<Wait>,
     #[serde(default)]
     pub debug_draw: bool,
 }
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
-pub struct WorldBattleState {
+pub struct GlobalBattleState {
     pub battled: HashMap<Location, HashSet<NpcId>>,
     pub battling: Option<BattleEntry>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct WorldGlobalScriptData {
+pub struct GlobalScriptData {
     pub executed: HashSet<ScriptId>,
     pub npcs: HashMap<NpcId, (Location, Npc)>,
     pub flags: HashMap<VariableName, ScriptFlag>,
@@ -49,13 +49,12 @@ pub struct WorldGlobalScriptData {
 }
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
-pub struct WorldNpcData {
-    pub active: Option<NpcId>,
+pub struct GlobalNpcData {
     pub timer: f32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WorldGlobalWildData {
+pub struct GlobalWildData {
     pub encounters: bool,
 }
 
@@ -76,7 +75,7 @@ impl WorldState {
     }
 }
 
-impl WorldBattleState {
+impl GlobalBattleState {
     pub fn insert(&mut self, location: &Location, npc: NpcId) {
         if let Some(battled) = self.battled.get_mut(location) {
             battled.insert(npc);
@@ -95,7 +94,7 @@ impl WorldBattleState {
     }
 }
 
-impl Default for WorldGlobalWildData {
+impl Default for GlobalWildData {
     fn default() -> Self {
         Self { encounters: true }
     }

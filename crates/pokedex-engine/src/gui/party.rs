@@ -11,7 +11,7 @@ use engine::{
         draw_line, draw_rectangle, draw_text_left, draw_text_right, Color, DrawParams, Texture,
     },
     math::{Rectangle, Vec2},
-    text::MessagePage,
+    text::TextColor,
     Context,
 };
 use firecore_engine::EngineContext;
@@ -258,7 +258,7 @@ impl PartyGui {
             &cell.name,
             33.0,
             36.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         draw_text_left(
             ctx,
@@ -267,7 +267,7 @@ impl PartyGui {
             LEVEL_PREFIX,
             41.0,
             45.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         draw_text_left(
             ctx,
@@ -276,7 +276,7 @@ impl PartyGui {
             &cell.level,
             51.0,
             45.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         self.draw_health(ctx, eng, cell, 17.0, 57.0);
     }
@@ -351,7 +351,7 @@ impl PartyGui {
             &cell.name,
             119.0,
             offset,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         draw_text_left(
             ctx,
@@ -360,7 +360,7 @@ impl PartyGui {
             LEVEL_PREFIX,
             129.0,
             offset + 9.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         draw_text_left(
             ctx,
@@ -369,7 +369,7 @@ impl PartyGui {
             &cell.level,
             139.0,
             offset + 9.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         self.draw_health(ctx, eng, cell, 170.0, offset + 6.0);
     }
@@ -448,7 +448,7 @@ impl PartyGui {
             &cell.health.current,
             x + 25.0,
             y + 5.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         draw_text_left(
             ctx,
@@ -457,7 +457,7 @@ impl PartyGui {
             "/",
             x + 35.0,
             y + 5.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
         draw_text_left(
             ctx,
@@ -466,7 +466,7 @@ impl PartyGui {
             &cell.health.maximum,
             x + 40.0,
             y + 5.0,
-            DrawParams::color(MessagePage::WHITE),
+            DrawParams::color(TextColor::WHITE),
         );
     }
 

@@ -5,7 +5,7 @@ use crate::engine::{
     graphics::{draw_text_center, Color, DrawParams},
     gui::Panel,
     math::Vec2,
-    text::MessagePage,
+    text::TextColor,
     Context, EngineContext,
 };
 
@@ -80,7 +80,7 @@ impl Button {
             true,
             center.x,
             center.y,
-            DrawParams::color(MessagePage::BLACK),
+            DrawParams::color(TextColor::BLACK),
         );
     }
 }

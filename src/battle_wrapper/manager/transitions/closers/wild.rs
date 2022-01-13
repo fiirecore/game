@@ -3,12 +3,12 @@ use crate::pokengine::PokedexClientData;
 use crate::{
     engine::{
         graphics::{draw_rectangle, Color},
-        gui::MessageBox,
         utils::{Completable, Reset, HEIGHT, WIDTH},
         Context, EngineContext,
     },
 };
 
+use firecore_battle_engine::ui::text::BattleText;
 use worldcli::battle::*;
 
 use crate::battle_wrapper::manager::transitions::BattleCloser;
@@ -36,16 +36,16 @@ impl BattleCloser for WildBattleCloser {
         _: Option<&BattleId>,
         // _: Option<&TrainerData>,
         _: Option<&BattleTrainerEntry>,
-        _text: &mut MessageBox,
+        _text: &mut BattleText,
     ) {
     }
 
     fn update(
         &mut self,
-        _ctx: &mut Context,
-        eng: &mut EngineContext,
+        _: &mut Context,
+        _: &mut EngineContext,
         delta: f32,
-        _text: &mut MessageBox,
+        _: &mut BattleText,
     ) {
         if self.world {
             self.color.a -= 4.5 * delta;

@@ -3,13 +3,20 @@ use std::ops::{Deref, DerefMut};
 use hashbrown::HashSet;
 use serde::{Deserialize, Serialize};
 
-use crate::{character::{npc::NpcId, trainer::Trainer, Character}, positions::Destination};
+use crate::{
+    character::{npc::NpcId, trainer::Trainer, Character},
+    positions::Destination,
+};
+
+use super::group::TrainerGroupId;
 
 pub type BadgeId = tinystr::TinyStr16;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct NpcTrainer {
+    pub group: TrainerGroupId,
+
     pub character: Trainer,
 
     /// The trainer tracks a certain amount of tiles in front of them
@@ -33,23 +40,22 @@ pub enum TrainerDisable {
 }
 
 impl NpcTrainer {
-
     pub fn find_character(&self, character: &mut Character, find: &mut Character) -> bool {
-        if self.sight
+        if self
+            .sight
             .map(|sight| character.sees(sight, &find.position))
             .unwrap_or_default()
         {
-            character.pathing.extend(
+            character.actions.extend(
                 &character.position,
                 Destination::next_to(&character.position, find.position.coords),
             );
-            character.freeze();
+            character.queue_interact(false);
             true
         } else {
             false
         }
     }
-
 }
 
 impl Default for TrainerDisable {

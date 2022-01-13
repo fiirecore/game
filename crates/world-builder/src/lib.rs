@@ -59,7 +59,7 @@ pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
     verify_connections(&maps);
 
     println!("Loading Npc types...");
-    let (npcs, npc_textures) = builder::npc::group::load_npc_types(path.as_ref());
+    let (npc, npc_textures) = builder::npc::group::load_npc_groups(path.as_ref());
 
     textures.npcs = npc_textures;
 
@@ -67,7 +67,7 @@ pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
         data: WorldMapData {
             maps,
             palettes,
-            npcs,
+            npc,
             wild,
             spawn,
         },

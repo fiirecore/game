@@ -1,0 +1,4 @@
+(
+    prefix: "Rival",
+    music: Some("encounter_rival"),
+)

@@ -12,6 +12,6 @@ audio = ["compile"]
 firecore-pokedex = { git = "https://github.com/fiirecore/pokedex", rev = "858d72f" }
 
 serde = { version = "1", features = ["derive"] }
-enum-map = { version = "1", features = ["serde"] }
+enum-map = { version = "2", features = ["serde"] }
 tinystr = { version = "0.4", features = ["serde"] }
 hashbrown = { version = "0.9", features = ["serde"] }

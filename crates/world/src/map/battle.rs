@@ -8,7 +8,7 @@ use pokedex::{
 use crate::{
     character::npc::{Npc, NpcId},
     positions::Location,
-    state::WorldBattleState,
+    state::GlobalBattleState,
 };
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -27,7 +27,7 @@ pub struct TrainerEntry {
 
 impl BattleEntry {
     pub fn trainer(
-        world: &mut WorldBattleState,
+        world: &mut GlobalBattleState,
         map: &Location,
         id: &NpcId,
         npc: &Npc,

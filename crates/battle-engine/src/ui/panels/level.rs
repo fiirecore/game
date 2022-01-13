@@ -3,14 +3,14 @@ use core::ops::Deref;
 use pokedex::{
     engine::{
         controls::{pressed, Control},
-        gui::MessageBox,
-        text::MessagePage,
-        utils::{Completable, Entity},
+        text::{MessagePage, TextColor, MessageState},
         Context, EngineContext,
     },
     moves::{owned::OwnedMove, set::OwnedMoveSet, Move},
     pokemon::{owned::OwnablePokemon, Pokemon},
 };
+
+use crate::ui::text::BattleText;
 
 use super::moves::MovePanel;
 
@@ -40,20 +40,18 @@ impl<M: Deref<Target = Move> + Clone> LevelUpMovePanel<M> {
     pub fn spawn<P, MSET: Deref<Target = [OwnedMove<M>]>, I, G, N, H>(
         &mut self,
         instance: &OwnablePokemon<P, MSET, I, G, N, H>,
-        text: &mut MessageBox,
         moves: Vec<M>,
     ) {
         self.state = LevelUpState::Text;
         self.moves = moves;
         self.move_panel.update_names(instance);
-        text.despawn();
     }
 
     pub fn update<P: Deref<Target = Pokemon>, I, G, N, H>(
         &mut self,
         ctx: &Context,
         eng: &EngineContext,
-        text: &mut MessageBox,
+        text: &mut BattleText,
         delta: f32,
         pokemon: &mut OwnablePokemon<P, OwnedMoveSet<M>, I, G, N, H>,
     ) -> Option<(usize, M)> {
@@ -61,22 +59,21 @@ impl<M: Deref<Target = Move> + Clone> LevelUpMovePanel<M> {
             LevelUpState::Text => match text.alive() {
                 true => {
                     text.update(ctx, eng, delta);
-                    if text.finished() {
+                    if !text.alive() {
                         self.state = LevelUpState::Moves;
-                        text.despawn();
                     }
                     None
                 }
                 false => match self.moves.first() {
                     Some(move_ref) => {
-                        text.spawn();
-                        text.pages.push(MessagePage {
+                        let state = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
+                        state.pages.push(MessagePage {
                             lines: vec![
                                 format!("{} is trying to", pokemon.name()),
                                 format!("learn {}", move_ref.name),
                             ],
                             wait: None,
-                            color: MessagePage::BLACK,
+                            color: TextColor::BLACK,
                         });
                         self.update(ctx, eng, text, delta, pokemon)
                     }
@@ -94,7 +91,7 @@ impl<M: Deref<Target = Move> + Clone> LevelUpMovePanel<M> {
                     let pokemon_move = self.moves.remove(0);
                     if a {
                         self.move_panel.names[self.move_panel.cursor] =
-                            Some((pokemon_move.clone(), MessagePage::BLACK));
+                            Some((pokemon_move.clone(), TextColor::BLACK));
                         pokemon
                             .moves
                             .add(Some(self.move_panel.cursor), pokemon_move.clone());

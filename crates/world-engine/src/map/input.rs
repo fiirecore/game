@@ -3,7 +3,7 @@ use crate::engine::{
     Context, EngineContext,
 };
 use worldlib::{
-    character::{player::PlayerCharacter, Movement},
+    character::{player::PlayerCharacter, MovementType, CharacterFlag},
     positions::Direction,
 };
 
@@ -15,6 +15,8 @@ pub struct PlayerInput {
 }
 
 impl PlayerInput {
+    pub const INPUT_LOCK: CharacterFlag = unsafe { CharacterFlag::new_unchecked(500186508905) };
+
     const MOVE_WAIT: f32 = 0.12;
 
     pub fn update(
@@ -24,16 +26,16 @@ impl PlayerInput {
         player: &mut PlayerCharacter,
         delta: f32,
     ) -> Option<Direction> {
-        if !player.moving() && !player.frozen() && !player.input_frozen {
+        if !player.character.moving() && !player.character.flags.contains(&Self::INPUT_LOCK) {
             match down(ctx, eng, Control::B) {
                 true => {
-                    if player.movement == Movement::Walking {
-                        player.movement = Movement::Running;
+                    if player.movement == MovementType::Walking {
+                        player.movement = MovementType::Running;
                     }
                 }
                 false => {
-                    if player.movement == Movement::Running {
-                        player.movement = Movement::Walking;
+                    if player.movement == MovementType::Running {
+                        player.movement = MovementType::Walking;
                     }
                 }
             }

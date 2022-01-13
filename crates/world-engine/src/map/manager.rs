@@ -5,14 +5,14 @@ use crate::engine::{
     math::{ivec2, IVec2},
     music,
     text::MessagePage,
-    utils::{Completable, Entity},
+    utils::Entity,
     Context, EngineContext,
 };
 
 use rand::prelude::SmallRng;
 
 use worldlib::{
-    actions::{WorldAction, WorldActions},
+    actions::WorldActions,
     character::player::PlayerCharacter,
     events::{split, InputEvent, Receiver, Sender},
     map::{
@@ -43,7 +43,7 @@ pub struct WorldManager {
     input: PlayerInput,
     // screen: RenderCoords,
     sender: Sender<WorldMetaAction>,
-    receiver: Receiver<WorldAction>,
+    receiver: Receiver<WorldActions>,
     // events: EventReceiver<WorldEvents>,
 }
 
@@ -111,13 +111,15 @@ impl WorldManager {
                                         .map(|lines| MessagePage {
                                             lines: lines.clone(),
                                             wait: None,
-                                            color: npc::color(&self
-                                                .world
-                                                .data
-                                                .npcs
-                                                .get(&npc.group)
-                                                .map(|group| group.message)
-                                                .unwrap_or_default()),
+                                            color: npc::color(
+                                                self.world
+                                                    .data
+                                                    .npc
+                                                    .groups
+                                                    .get(&npc.group)
+                                                    .map(|group| group.message)
+                                                    .unwrap_or_default(),
+                                            ),
                                         })
                                         .collect(),
                                     worth: trainer.worth,
@@ -172,16 +174,7 @@ impl WorldManager {
         //         }
         //     }
 
-        if self.text.text.alive() {
-            if self.text.text.finished() {
-                if let Some(polling) = &player.world.polling {
-                    polling.update()
-                }
-                player.input_frozen = false;
-                self.text.text.despawn();
-            }
-            self.text.text.update(ctx, eng, delta);
-        }
+        self.text.update(ctx, eng, delta, player);
 
         self.data.update(delta, player);
 
@@ -191,24 +184,24 @@ impl WorldManager {
             }
         } else if player.world.warp.is_some() {
             self.warper.spawn();
-            player.input_frozen = true;
+            player.character.flags.insert(PlayerInput::INPUT_LOCK);
         }
 
         if let Some(direction) = self.input.update(ctx, eng, player, delta) {
             self.world.input(player, InputEvent::Move(direction));
         }
 
-        if pressed(ctx, eng, Control::A) {
+        if pressed(ctx, eng, Control::A) && !player.character.flags.contains(&PlayerInput::INPUT_LOCK) {        
             self.world.input(player, InputEvent::Interact);
         }
 
         self.world.update(player, delta);
 
         for action in self.receiver.try_iter() {
-            match action.action {
+            match action {
                 WorldActions::Battle(entry) => {
                     if !player.trainer.party.is_empty() {
-                        player.freeze();
+                        player.character.locked.increment();
                         let active = entry.active;
                         let party = entry.party.clone();
                         let (id, t) = if let Some(trainer) = entry.trainer.as_ref() {
@@ -221,13 +214,11 @@ impl WorldManager {
                                     .flatten()
                                 {
                                     let trainer = npc.trainer.as_ref().unwrap();
-                                    let group = npc::group(&self.world.data.npcs, &npc.group);
+                                    let group = npc::group(&self.world.data.npc.groups, &npc.group);
+                                    let tgroup =
+                                        npc::trainer(&self.world.data.npc.trainers, &trainer.group);
                                     Some(BattleTrainerEntry {
-                                        name: group
-                                            .trainer
-                                            .as_ref()
-                                            .map(|t| format!("{} {}", t.name, npc.character.name))
-                                            .unwrap_or_else(|| npc.character.name.clone()),
+                                        name: format!("{} {}", tgroup.prefix, npc.character.name),
                                         bag: trainer.bag.clone(),
                                         badge: trainer.badge,
                                         sprite: npc.group,
@@ -238,7 +229,7 @@ impl WorldManager {
                                             .map(|lines| MessagePage {
                                                 lines: lines.clone(),
                                                 wait: None,
-                                                color: npc::color(&group.message),
+                                                color: npc::color(group.message),
                                             })
                                             .collect(),
                                         worth: trainer.worth as _,
@@ -271,24 +262,6 @@ impl WorldManager {
                 //         party.try_push(pokemon);
                 //     }
                 // }
-                WorldActions::Message(pages, color) => {
-                    if !self.text.text.alive() {
-                        self.text.text.spawn();
-                    }
-                    self.text.text.pages.clear();
-
-                    let pages = pages
-                        .into_iter()
-                        .map(|lines| MessagePage {
-                            lines,
-                            wait: None,
-                            color: npc::color(&color),
-                        })
-                        .collect::<Vec<_>>();
-
-                    self.text.text.pages.extend(pages);
-                    player.input_frozen = true;
-                }
                 WorldActions::PlayMusic(music) => {
                     if let Some(playing) = music::get_current_music(eng) {
                         if playing != &music {
@@ -517,7 +490,7 @@ impl WorldManager {
             self.data.player.bush.draw(ctx, &screen);
             self.warper.draw(ctx);
         }
-        self.text.draw(ctx, eng);
+        self.text.draw(ctx, eng, player);
     }
 }
 

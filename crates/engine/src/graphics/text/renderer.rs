@@ -48,6 +48,10 @@ impl TextRenderer {
         Ok(())
     }
 
+    pub fn get(&self, id: &FontId) -> Option<&Font> {
+        self.fonts.get(id)
+    }
+
     pub fn draw_text_left(
         &self,
         ctx: &mut Context,

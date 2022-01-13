@@ -314,20 +314,6 @@ impl<
         self.battle.as_ref().map(|b| b.battle.winner()).flatten()
     }
 
-    #[deprecated]
-    pub fn update_data(&mut self, winner: bool, player: &mut PlayerCharacter) -> bool {
-        self.battle
-            .as_mut()
-            .map(|battle| {
-                let trainer = battle.trainer.is_some();
-
-                if winner {}
-
-                trainer
-            })
-            .unwrap_or_default()
-    }
-
     pub fn world_active(&self) -> bool {
         matches!(self.state, BattleManagerState::Transition) || self.closer.world_active()
     }

@@ -7,7 +7,6 @@ use battlecli::battle::default_engine::{scripting::MoveScripts, EngineMoves};
 use crate::engine::music;
 
 use crate::pokengine::{
-    gui::{bag::BagGui, party::PartyGui},
     PokedexClientData,
 };
 
@@ -76,8 +75,6 @@ impl GameStateManager {
         sender: Sender<StateMessage>,
     ) -> Result<Self, ImageError> {
         let dex = Rc::new(dex);
-        let party = Rc::new(PartyGui::new(&dex));
-        let bag = Rc::new(BagGui::new(&dex));
 
         let (actions, receiver) = split();
 
@@ -126,7 +123,6 @@ impl GameStateManager {
         ctx: &mut Context,
         eng: &mut EngineContext,
         delta: f32,
-        console: bool,
     ) {
         // Speed game up if spacebar is held down
 
@@ -168,7 +164,7 @@ impl GameStateManager {
             match self.state {
                 GameStates::World => {
                     self.world
-                        .update(ctx, eng, delta, save.player.unwrap(), console);
+                        .update(ctx, eng, delta, save.player.unwrap());
                 }
                 GameStates::Battle => {
                     self.battle.update(
@@ -181,11 +177,8 @@ impl GameStateManager {
                     );
                     if self.battle.finished {
                         let player = save.player.unwrap();
-                        player.input_frozen = false;
-                        player.unfreeze();
                         if let Some(winner) = self.battle.winner() {
                             let winner = winner == &BattleId::Player;
-                            let trainer = self.battle.update_data(winner, player);
                             self.world.manager.post_battle(player, winner);
                         }
                         self.state = GameStates::World;

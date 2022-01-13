@@ -1,11 +1,3 @@
 (
-    identifier: "rival",
-    sprite: Walk,
     message: Blue,
-    trainer: Some(
-        (
-            name: "Rival",
-            music: Some("encounter_rival"),
-        )
-    )
 )

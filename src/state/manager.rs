@@ -66,7 +66,7 @@ impl State<EngineContext> for StateManager {
         match self.state {
             MainStates::Loading => self.loading.update(ctx, eng, delta),
             MainStates::Menu => self.menu.update(ctx, eng, delta, &mut self.save),
-            MainStates::Game => self.game.update(ctx, eng, delta, self.console.alive()),
+            MainStates::Game => self.game.update(ctx, eng, delta),
         }
 
         self.process(ctx, eng);

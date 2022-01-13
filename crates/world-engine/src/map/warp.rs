@@ -1,5 +1,5 @@
 use worldlib::{
-    character::player::PlayerCharacter,
+    character::{action::ActionQueue, player::PlayerCharacter},
     map::{
         manager::{tile::WarpTile, WorldMapData},
         PaletteId, TileId,
@@ -16,7 +16,7 @@ use crate::engine::{
 
 use crate::map::RenderCoords;
 
-use super::data::tile::PaletteTextureManager;
+use super::{data::tile::PaletteTextureManager, input::PlayerInput};
 
 pub struct WarpTransition {
     alive: bool,
@@ -100,7 +100,7 @@ impl WarpTransition {
                                 {
                                     // world.try_move(player.position.direction, delta);
                                     let direction = player.position.direction;
-                                    player.pathing.queue.push(direction);
+                                    player.actions.queue.push(ActionQueue::Move(direction));
                                 }
                                 door.open = true;
                                 if self.warped {
@@ -131,8 +131,11 @@ impl WarpTransition {
                     }
                     true => {
                         self.despawn();
-                        player.unfreeze();
-                        player.input_frozen = self.freeze;
+                        let flags = &mut player.character.flags;
+                        match self.freeze {
+                            true => flags.insert(PlayerInput::INPUT_LOCK),
+                            false => flags.remove(&PlayerInput::INPUT_LOCK),
+                        };
                         // if let Some(destination) = self.warp.take() {
                         //     if destination.transition.move_on_exit {
                         //         world.try_move(
@@ -180,7 +183,7 @@ impl WarpTransition {
                                     WarpTile::Stair | WarpTile::Other => {
                                         player.hidden = false;
                                         let direction = player.position.direction;
-                                        player.pathing.queue.push(direction);
+                                        player.actions.queue.push(ActionQueue::Move(direction));
                                     }
                                 };
                             } else {
@@ -263,8 +266,8 @@ impl WarpTransition {
                 match warptile {
                     WarpTile::Door => {
                         self.door = Some(Door::new(palette, tile, coords));
-                        self.freeze = player.input_frozen;
-                        player.input_frozen = true;
+                        self.freeze = player.character.flags.contains(&PlayerInput::INPUT_LOCK);
+                        player.character.flags.insert(PlayerInput::INPUT_LOCK);
                         self.spawn();
                     }
                     _ => (),

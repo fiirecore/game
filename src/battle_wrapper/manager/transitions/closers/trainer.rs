@@ -1,16 +1,14 @@
 use crate::pokengine::PokedexClientData;
 
-use crate::{
-    engine::{
-        graphics::Texture,
-        gui::MessageBox,
-        text::MessagePage,
-        utils::{Completable, Entity, Reset, WIDTH},
-        Context, EngineContext,
-    },
+use crate::engine::{
+    graphics::Texture,
+    text::MessagePage,
+    utils::{Completable, Reset, WIDTH},
+    Context, EngineContext,
 };
 
-use worldcli::battle::*;
+use firecore_battle_engine::ui::text::BattleText;
+use worldcli::{battle::*, engine::text::{TextColor, MessageState}};
 
 use crate::battle_wrapper::manager::transitions::BattleCloser;
 
@@ -44,7 +42,7 @@ impl BattleCloser for TrainerBattleCloser {
         player_name: &str,
         winner: Option<&BattleId>,
         trainer_entry: Option<&BattleTrainerEntry>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         match winner {
             Some(winner) => match winner == player {
@@ -66,6 +64,8 @@ impl BattleCloser for TrainerBattleCloser {
                         //     wait: None,
                         // });
 
+                        let text = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
+
                         for message in trainer.defeat.iter() {
                             text.pages.push(message.clone());
                         }
@@ -76,19 +76,13 @@ impl BattleCloser for TrainerBattleCloser {
                                 String::from("for winning!"),
                             ],
                             wait: None,
-                            color: MessagePage::WHITE,
+                            color: TextColor::WHITE,
                         });
-
-                        text.spawn();
                     }
                 }
-                false => {
-                    text.despawn();
-                }
+                false => {}
             },
-            None => {
-                text.despawn();
-            }
+            None => {}
         }
     }
 
@@ -97,18 +91,15 @@ impl BattleCloser for TrainerBattleCloser {
         ctx: &mut Context,
         eng: &mut EngineContext,
         delta: f32,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         if text.alive() {
             text.update(ctx, eng, delta);
-            if text.page() == 1 && self.offset > Self::XPOS {
+            if text.page() == Some(1) && self.offset > Self::XPOS {
                 self.offset -= 300.0 * delta;
                 if self.offset < Self::XPOS {
                     self.offset = Self::XPOS;
                 }
-            }
-            if text.finished() {
-                text.despawn();
             }
         } else {
             self.wild.update(ctx, eng, delta, text);

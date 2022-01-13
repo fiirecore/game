@@ -14,9 +14,12 @@ serde = { version = "1", features = ["derive"] }
 tinystr = { version = "0.4", features = ["serde"], default-features = false }
 rand = { version = "0.8", default-features = false }
 hashbrown = { version = "0.9", features = ["serde"] }
+enum-map = { version = "2" }
 
 firecore-pokedex = { version = "0.0.8", git = "https://github.com/fiirecore/pokedex", rev = "858d72f" }
 # firecore-pokedex = { path = "../../firecore/pokedex" }
+
+firecore-text = { path = "../text" }
 
 crossbeam-channel = "0.5"
 

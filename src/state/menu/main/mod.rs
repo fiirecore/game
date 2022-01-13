@@ -136,7 +136,7 @@ impl MainMenuState {
         //     },
         //     5.0,
         //     145.0,
-        //     DrawParams::color(MessagePage::BLACK),
+        //     DrawParams::color(TextColor::BLACK),
         // );
 
         // Ok(())

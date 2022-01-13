@@ -1,6 +1,6 @@
 use core::ops::Deref;
 use pokedex::{
-    engine::{utils::HashMap, EngineContext},
+    engine::{utils::HashMap, EngineContext, text::{TextColor, MessageState}},
     item::Item,
     moves::Move,
     pokemon::Pokemon,
@@ -9,7 +9,6 @@ use pokedex::{
 use pokedex::{
     engine::{
         graphics::Texture,
-        gui::MessageBox,
         text::MessagePage,
         utils::{Completable, Reset},
         Context,
@@ -19,7 +18,7 @@ use pokedex::{
 
 use crate::{
     context::BattleGuiData,
-    ui::view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer},
+    ui::{view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer}, text::BattleText},
 };
 
 use super::{basic::BasicBattleIntroduction, BattleIntroduction};
@@ -53,19 +52,19 @@ impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = 
         ctx: &PokedexClientData,
         local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
-        text.pages.clear();
 
         if let Some(opponent) = opponents.values().next() {
             if let Some(id) = opponent.trainer.as_ref() {
                 self.texture = ctx.trainer_group_textures.get(id).cloned();
             }
+            let text = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
             if let Some(name) = &opponent.player.name {
                 text.pages.push(MessagePage {
                     lines: vec![name.to_owned(), "would like to battle!".to_owned()],
                     wait: None,
-                    color: MessagePage::WHITE,
+                    color: TextColor::WHITE,
                 });
     
                 text.pages.push(MessagePage {
@@ -77,13 +76,13 @@ impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = 
                         ),
                     ],
                     wait: Some(0.5),
-                    color: MessagePage::WHITE,
+                    color: TextColor::WHITE,
                 });
             } else {
                 text.pages.push(MessagePage {
                     lines: vec![String::from("No trainer data found!")],
                     wait: None,
-                    color: MessagePage::WHITE,
+                    color: TextColor::WHITE,
                 });
             }
         }
@@ -98,11 +97,11 @@ impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = 
         delta: f32,
         player: &mut GuiLocalPlayer<ID, P, M, I>,
         opponent: &mut GuiRemotePlayer<ID, P>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         self.introduction
             .update(ctx, eng, delta, player, opponent, text);
-        if text.waiting() && text.page() == text.pages() - 2 {
+        if text.waiting() && text.page() >= text.pages().map(|s| s - 2) {
             self.leaving = true;
         }
         if self.leaving && self.offset < Self::FINAL_TRAINER_OFFSET {

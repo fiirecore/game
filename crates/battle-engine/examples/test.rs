@@ -3,10 +3,9 @@ use firecore_battle_engine::pokedex::engine::{
     graphics::{self, Color, ScalingMode},
     gui::{MessageBox, Panel},
     text::MessagePage,
-    utils::{Completable, Entity},
     Context, ContextBuilder, State,
 };
-use firecore_pokedex_engine::engine::EngineContext;
+use firecore_pokedex_engine::engine::{EngineContext, text::{MessageState, FontId}};
 
 const SCALE: f32 = 2.0;
 
@@ -25,48 +24,46 @@ fn main() {
 
 struct Game {
     messagebox: MessageBox,
+    state: Option<MessageState<FontId, Color>>,
 }
 
 impl Game {
     pub fn new() -> Self {
         Self {
-            messagebox: MessageBox::new(Default::default(), 0),
+            messagebox: MessageBox::new(Default::default()),
+            state: None,
         }
     }
 }
 
 impl State<EngineContext> for Game {
     fn start(&mut self, ctx: &mut Context, _: &mut EngineContext) {
-        graphics::set_scaling_mode(ctx, ScalingMode::Stretch, Some(SCALE));
+        engine::graphics::set_scaling_mode(ctx, ScalingMode::Stretch, Some(SCALE));
 
         //-> Result {
         let page = MessagePage {
             lines: vec![
-                "Test Page Test Page".to_owned(),
-                "Page Test Page Test".to_owned(),
+                "Test Pagé Test Page".to_owned(),
+                "Pagé Test Page Test".to_owned(),
             ],
             wait: None,
-            color: MessagePage::BLACK,
+            color: Color::RED,
         };
         let page2 = MessagePage {
             lines: page.lines.clone(),
             wait: Some(1.0),
-            color: MessagePage::BLACK,
+            color: Color::GOLD,
         };
-        self.messagebox.pages.extend([page, page2]);
-        self.messagebox.spawn();
+
+        self.state = Some(MessageState::new(1, vec![page, page2]));
+
         // Ok(())
     }
 
     fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
         //-> Result {
-        if !self.messagebox.alive() {
-            ctx.quit();
-        } else {
-            self.messagebox.update(ctx, eng, delta);
-            if self.messagebox.finished() {
-                self.messagebox.despawn();
-            }
+        if self.state.is_some() {
+            self.messagebox.update(ctx, eng, delta, &mut self.state);
         }
         // Ok(())
     }
@@ -82,7 +79,7 @@ impl State<EngineContext> for Game {
             engine::utils::WIDTH - 20.0,
             engine::utils::HEIGHT - 20.0,
         );
-        self.messagebox.draw(ctx, eng);
+        self.messagebox.draw(ctx, eng, self.state.as_ref());
         // Ok(())
     }
 }

@@ -2,8 +2,14 @@ use crate::{text::font::FontId, EngineContext};
 
 use fiirengine::{graphics::DrawParams, Context};
 
+pub use font::Font;
+
 pub(crate) mod font;
 pub(crate) mod renderer;
+
+pub fn font<'c>(eng: &'c EngineContext, font: &FontId) -> Option<&'c Font> {
+    eng.text.get(font)
+}
 
 pub fn draw_text_left(
     ctx: &mut Context,

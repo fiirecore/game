@@ -16,4 +16,4 @@ audio = ["firecore-engine/audio"]
 firecore-engine = { path = "../engine", default-features = false }
 firecore-pokedex-engine-builder = { path = "../pokedex-engine-builder", default-features = false }
 tinystr = { version = "0.4", features = ["serde"], default-features = false }
-enum-map = { version = "1", features = ["serde"] }
+enum-map = { version = "2", features = ["serde"] }

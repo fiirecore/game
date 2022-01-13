@@ -5,7 +5,7 @@ use pokedex::engine::{
     graphics::{draw_cursor, draw_text_left, DrawParams},
     gui::Panel,
     controls::{pressed, Control},
-    text::MessagePage,
+    text::TextColor,
     utils::Reset,
     Context,
 };
@@ -64,7 +64,7 @@ impl TargetPanel {
                 name.as_ref().map(|name| name.as_str()).unwrap_or("None"),
                 16.0 + x_offset,
                 121.0 + y_offset,
-                DrawParams::color(MessagePage::BLACK),
+                DrawParams::color(TextColor::BLACK),
             );
             if index == self.cursor {
                 draw_cursor(ctx, eng, 10.0 + x_offset, 123.0 + y_offset, Default::default());

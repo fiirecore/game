@@ -134,11 +134,11 @@ pub fn draw(
             .filter(|(loc, ..)| loc == &map.id)
             .map(|(.., n)| n),
     ) {
-        data.npc.draw(ctx, npc, screen);
+        data.npc.draw(ctx, npc, screen, color);
     }
 
     data.object
-        .draw(ctx, &map.id, &map.objects, &map.items, world, screen);
+        .draw(ctx, &map.id, &map.objects, &map.items, world, screen, color);
     // for script in map.scripts.iter() {
     //     if script.alive() {
     //         if let Some(action) = script.actions.front() {

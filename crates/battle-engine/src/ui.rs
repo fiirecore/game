@@ -2,10 +2,11 @@ use core::ops::Deref;
 
 use pokedex::{
     gui::{bag::BagGui, party::PartyGui},
-    moves::Move, PokedexClientData,
+    moves::Move,
+    PokedexClientData,
 };
 
-use pokedex::engine::{gui::MessageBox, Context};
+use pokedex::engine::Context;
 
 use crate::context::BattleGuiData;
 
@@ -13,6 +14,7 @@ use self::{
     background::BattleBackground,
     panels::{level::LevelUpMovePanel, BattlePanel},
     pokemon::bounce::PlayerBounce,
+    text::BattleText,
 };
 
 use super::transition::{
@@ -67,7 +69,7 @@ pub struct BattleGui<M: Deref<Target = Move> + Clone> {
 
     pub panel: BattlePanel<M>,
 
-    pub text: MessageBox,
+    pub text: BattleText,
 
     pub bounce: PlayerBounce,
 
@@ -78,11 +80,7 @@ pub struct BattleGui<M: Deref<Target = Move> + Clone> {
 }
 
 impl<M: Deref<Target = Move> + Clone> BattleGui<M> {
-    pub fn new(
-        ctx: &mut Context,
-        dex: &PokedexClientData,
-        btl: &BattleGuiData,
-    ) -> Self {
+    pub fn new(ctx: &mut Context, dex: &PokedexClientData, btl: &BattleGuiData) -> Self {
         Self {
             background: BattleBackground::new(ctx, btl),
             party: PartyGui::new(dex),
@@ -90,7 +88,7 @@ impl<M: Deref<Target = Move> + Clone> BattleGui<M> {
 
             panel: BattlePanel::new(),
 
-            text: self::text::new(),
+            text: BattleText::new(),
 
             bounce: PlayerBounce::new(),
 

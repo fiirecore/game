@@ -4,8 +4,7 @@ use pokedex::{
     engine::{
         graphics::{draw_text_left, draw_text_right, DrawParams},
         gui::Panel,
-        text::MessagePage,
-        Context, EngineContext,
+        Context, EngineContext, text::TextColor,
     },
     moves::{owned::OwnedMove, Move},
 };
@@ -33,7 +32,7 @@ impl MoveInfoPanel {
 
     pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
         Panel::draw(ctx, eng, 160.0, 113.0, 80.0, 47.0);
-        let p = DrawParams::color(MessagePage::BLACK);
+        let p = DrawParams::color(TextColor::BLACK);
         draw_text_left(ctx, eng, &0, "PP", 168.0, 124.0, p);
         draw_text_left(ctx, eng, &0, &self.move_type, 168.0, 140.0, p);
         draw_text_right(ctx, eng, &0, &self.pp, 232.0, 124.0, p);

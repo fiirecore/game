@@ -1,3 +1,4 @@
+use firecore_text::{MessagePage, MessageState};
 use hashbrown::HashMap;
 use rand::{prelude::IteratorRandom, Rng, SeedableRng};
 use serde::{Deserialize, Serialize};
@@ -5,15 +6,17 @@ use serde::{Deserialize, Serialize};
 use pokedex::moves::MoveId;
 
 use crate::{
-    actions::{WorldAction, WorldActions},
+    actions::WorldActions,
     character::{
+        action::ActionQueue,
+        message::process_str_player,
         npc::{
-            group::{MessageColor, NpcGroup, NpcGroupId},
+            group::{MessageColor, NpcGroup, NpcGroupId, TrainerGroup, TrainerGroupId},
             trainer::TrainerDisable,
-            NpcInteract,
+            Npc, NpcInteract,
         },
         player::PlayerCharacter,
-        Movement,
+        DoMoveResult, MovementType,
     },
     events::{InputEvent, Sender},
     map::{object::ObjectId, MovementId, WarpDestination, WorldMap},
@@ -39,7 +42,7 @@ pub type Maps = HashMap<Location, WorldMap>;
 pub struct WorldMapManager<R: Rng + SeedableRng + Clone> {
     pub data: WorldMapData,
     pub scripts: WorldScriptData,
-    sender: Sender<WorldAction>,
+    sender: Sender<WorldActions>,
     randoms: WorldRandoms<R>,
 }
 
@@ -47,13 +50,19 @@ pub struct WorldMapManager<R: Rng + SeedableRng + Clone> {
 pub struct WorldMapData {
     pub maps: Maps,
     pub palettes: PaletteDataMap,
-    pub npcs: HashMap<NpcGroupId, NpcGroup>,
+    pub npc: WorldNpcData,
     pub wild: WildChances,
     pub spawn: (Location, Position),
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct WorldNpcData {
+    pub groups: HashMap<NpcGroupId, NpcGroup>,
+    pub trainers: HashMap<TrainerGroupId, TrainerGroup>,
+}
+
 impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
-    pub fn new(data: WorldMapData, scripts: WorldScriptData, sender: Sender<WorldAction>) -> Self {
+    pub fn new(data: WorldMapData, scripts: WorldScriptData, sender: Sender<WorldActions>) -> Self {
         Self {
             data,
             scripts,
@@ -92,35 +101,32 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
     pub fn input(&mut self, player: &mut PlayerCharacter, input: InputEvent) {
         match input {
             InputEvent::Move(direction) => self.try_move_player(player, direction),
-            InputEvent::Interact => self.try_interact(player),
+            InputEvent::Interact => player.character.queue_interact(true),
         }
     }
 
     pub fn try_interact(&mut self, player: &mut PlayerCharacter) {
+        // if !player.locks.contains(&Character::INTERACT_LOCK) {
         if let Some(map) = self.data.maps.get_mut(&player.location) {
-            if player.world.npc.active.is_none() {
-                let pos = if map
-                    .tile(player.position.coords)
-                    .map(|tile| {
-                        self.data
-                            .palettes
-                            .get(tile.palette(&map.palettes))
-                            .map(|data| (tile.id(), data))
-                    })
-                    .flatten()
-                    .map(|(tile, data)| data.forwarding.contains(&tile))
-                    .unwrap_or_default()
-                {
-                    player.position.in_direction(player.position.direction)
-                } else {
-                    player.position
-                };
-                for (id, npc) in map.npcs.iter_mut() {
-                    if (npc.interact.is_some() || npc.trainer.is_some()) && npc.interact_from(&pos)
-                    {
-                        player.world.npc.active = Some(*id);
-                        break;
-                    }
+            let pos = if map
+                .tile(player.position.coords)
+                .map(|tile| {
+                    self.data
+                        .palettes
+                        .get(tile.palette(&map.palettes))
+                        .map(|data| (tile.id(), data))
+                })
+                .flatten()
+                .map(|(tile, data)| data.forwarding.contains(&tile))
+                .unwrap_or_default()
+            {
+                player.position.in_direction(player.position.direction)
+            } else {
+                player.position
+            };
+            for npc in map.npcs.values_mut() {
+                if npc.character.interact_from(&pos) {
+                    break;
                 }
             }
             let forward = player
@@ -138,7 +144,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                     unsafe { &MoveId::new_unchecked(493254510180952753532786) };
 
                 fn try_break(
-                    sender: &Sender<WorldAction>,
+                    sender: &Sender<WorldActions>,
                     location: &Location,
                     coordinate: Coordinate,
                     id: &MoveId,
@@ -163,14 +169,45 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
             }
 
             if let Some(item) = map.item_at(&forward) {
-                player.world.insert_object(&map.id, forward);
-
-                // fix lol
-
-                let bag = &mut player.trainer.bag;
-
-                bag.insert_saved(item.item);
+                if !player.world.contains_object(&map.id, &forward) {
+                    player.world.insert_object(&map.id, forward);
+                    let bag = &mut player.trainer.bag;
+                    bag.insert_saved(item.item);
+                }
             }
+        }
+    }
+
+    fn npc_interact(
+        scripts: &WorldScriptData,
+        player: &mut PlayerCharacter,
+        npc: &mut Npc,
+        result: Option<DoMoveResult>,
+    ) {
+        match result {
+            Some(result) => match result {
+                DoMoveResult::Finished => (),
+                DoMoveResult::Interact => match &npc.interact {
+                    NpcInteract::Script(script) => {
+                        if !player.world.scripts.environment.running() {
+                            if let Some(instructions) = scripts.scripts.get(script) {
+                                npc.character.on_interact();
+                                let env = &mut player.world.scripts.environment;
+                                env.executor = Some(npc.id);
+                                env.queue = instructions.clone();
+                            } else {
+                                log::warn!(
+                                    "Could not get script with id {} for NPC {}",
+                                    script,
+                                    npc.character.name
+                                );
+                            }
+                        }
+                    }
+                    NpcInteract::Nothing => (),
+                },
+            },
+            None => (),
         }
     }
 
@@ -190,7 +227,8 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
             }
 
             for npc in map.npcs.values_mut() {
-                npc.character.do_move(delta);
+                let r = npc.character.do_move(delta);
+                Self::npc_interact(&self.scripts, player, npc, r);
             }
 
             use crate::character::npc::NpcMovement;
@@ -201,8 +239,8 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
 
                     const NPC_MOVE_CHANCE: f64 = 1.0 / 12.0;
 
-                    for (id, npc) in map.npcs.iter_mut() {
-                        if !npc.character.moving() && player.world.npc.active.as_ref() == Some(id) {
+                    for npc in map.npcs.values_mut() {
+                        if !npc.character.moving() {
                             if self.randoms.npc.gen_bool(NPC_MOVE_CHANCE) {
                                 for movement in npc.movement.iter() {
                                     match movement {
@@ -211,14 +249,6 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                                 directions.iter().choose(&mut self.randoms.npc)
                                             {
                                                 npc.character.position.direction = *direction;
-                                            }
-                                            if let Some(trainer) = npc.trainer.as_ref() {
-                                                player.find_battle(
-                                                    &map.id,
-                                                    &npc.id,
-                                                    trainer,
-                                                    &mut npc.character,
-                                                );
                                             }
                                         }
                                         NpcMovement::Move(area) => {
@@ -230,7 +260,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
 
                                             let bb = BoundingBox::centered(*origin, *area);
 
-                                            if bb.contains(&next) {
+                                            if bb.contains(&next) && next != player.position.coords {
                                                 if let Some(code) = map.movements.get(
                                                     npc.character.position.coords.x as usize
                                                         + npc.character.position.coords.y as usize
@@ -240,10 +270,11 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                                         npc.character.position.elevation,
                                                         *code,
                                                     ) {
-                                                        npc.character
-                                                            .pathing
-                                                            .queue
-                                                            .push(npc.character.position.direction);
+                                                        npc.character.actions.queue.push(
+                                                            ActionQueue::Move(
+                                                                npc.character.position.direction,
+                                                            ),
+                                                        );
                                                     }
                                                 }
                                             }
@@ -255,135 +286,6 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                     }
                 }
                 true => player.world.npc.timer -= delta,
-            }
-        }
-    }
-
-    pub fn update_interactions(&mut self, player: &mut PlayerCharacter) {
-        if let Some(id) = player.world.npc.active.as_ref() {
-            let npc = self
-                .data
-                .maps
-                .get_mut(&player.location)
-                .map(|map| map.npcs.get(&id))
-                .flatten();
-            let npc = if let Some(npc) = npc {
-                Some(npc)
-            } else {
-                // player
-                //     .world
-                //     .scripts
-                //     .npcs
-                //     .get(id)
-                //     .filter(|(location, ..)| &player.location == location)
-                //     .map(|(.., npc)| npc)
-                None
-            };
-            if let Some(npc) = npc {
-                match &player.world.polling {
-                    Some(finished) => {
-                        if finished.get() {
-                            if let Some(battle) = BattleEntry::trainer(
-                                &mut player.world.battle,
-                                &player.location,
-                                id,
-                                npc,
-                            ) {
-                                self.sender.send(WorldActions::Battle(battle));
-                            }
-                            if player.frozen() {
-                                player.unfreeze();
-                            }
-                            player.world.npc.active = None;
-                            player.world.polling = None;
-                        }
-                    }
-                    None => {
-                        if !npc.character.moving() {
-                            if !player.world.battle.battled(&player.location, id) {
-                                if let Some(group) = self.data.npcs.get(&npc.group) {
-                                    if let Some(trainer) = npc.trainer.as_ref() {
-                                        // if trainer.battle_on_interact {
-                                        // Spawn text window
-                                        if let Some(music) = group
-                                            .trainer
-                                            .as_ref()
-                                            .map(|trainer| trainer.music)
-                                            .flatten()
-                                        {
-                                            self.sender.send(WorldActions::PlayMusic(music));
-                                        }
-                                        player.character.position.direction =
-                                            npc.character.position.direction.inverse();
-                                        let message = trainer.encounter.iter().map(|lines| lines.iter().map(|line| {
-                                                let string = crate::character::message::process_str(line, &npc.character);
-                                                crate::character::message::process_str_player(&string, player)
-                                            }).collect()).collect();
-                                        player.world.polling = self.sender.send_polling(
-                                            WorldActions::Message(message, group.message),
-                                        );
-                                        return;
-                                        // }
-                                    }
-                                }
-                            }
-
-                            match &npc.interact {
-                                NpcInteract::Message(pages) => {
-                                    let message = pages
-                                        .iter()
-                                        .map(|lines| {
-                                            lines
-                                                .iter()
-                                                .map(|line| {
-                                                    let string =
-                                                        crate::character::message::process_str(
-                                                            line,
-                                                            &npc.character,
-                                                        );
-                                                    crate::character::message::process_str_player(
-                                                        &string, player,
-                                                    )
-                                                })
-                                                .collect()
-                                        })
-                                        .collect();
-
-                                    let color = self
-                                        .data
-                                        .npcs
-                                        .get(&npc.group)
-                                        .map(|group| group.message)
-                                        .unwrap_or(MessageColor::Black);
-
-                                    player.world.polling = self
-                                        .sender
-                                        .send_polling(WorldActions::Message(message, color));
-
-                                    return player.position.direction =
-                                        npc.character.position.direction.inverse();
-                                }
-                                NpcInteract::Script(id) => {
-                                    if player.world.scripts.environment.queue.is_empty() {
-                                        if let Some(instructions) = self.scripts.scripts.get(id) {
-                                            let env = &mut player.world.scripts.environment;
-                                            env.executor = Some(npc.id);
-                                            env.queue = instructions.clone();
-                                        } else {
-                                            log::warn!(
-                                                "Could not get script with id {} for NPC {}",
-                                                id,
-                                                npc.character.name
-                                            );
-                                        }
-                                        player.world.npc.active = None;
-                                    }
-                                }
-                                NpcInteract::Nothing => (),
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -410,20 +312,25 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
         if let Some(instruction) = queue.first_mut() {
             match instruction {
                 WorldInstruction::End => {
-                    // if env.executor.is_some() {
-                    //     player.world.npc.active = None;
-                    // }
-                    env.executor = None;
+                    if let Some(ref executor) = env.executor.take() {
+                        if let Some(npc) = self
+                            .data
+                            .maps
+                            .get_mut(&player.location)
+                            .map(|map| map.npcs.get_mut(executor).map(|npc| npc))
+                            .flatten()
+                        {
+                            npc.character.end_interact()
+                        }
+                    }
                     queue.remove(0);
                 }
                 WorldInstruction::Lock => {
-                    player.character.freeze();
-                    player.input_frozen = true;
+                    player.character.locked.increment();
                     queue.remove(0);
                 }
                 WorldInstruction::Release => {
-                    player.character.unfreeze();
-                    player.input_frozen = false;
+                    player.character.locked.decrement();
                     queue.remove(0);
                 }
                 WorldInstruction::SetVar(id, var) => {
@@ -501,57 +408,106 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                     {
                         match npc_inst {
                             WorldInstruction::TrainerBattleSingle => {
-                                if let Some(entry) = BattleEntry::trainer(
-                                    &mut player.world.battle,
-                                    map,
-                                    &npc.id,
-                                    npc,
-                                ) {
-                                    self.sender.send(WorldActions::Battle(entry));
-                                } else {
-                                    log::warn!(
-                                        "Could not get trainer for NPC: {}",
-                                        npc.character.name
-                                    );
-                                }
-                                queue.remove(0);
-                            }
-                            WorldInstruction::Msgbox(m_id, msgbox_type) => {
-                                match variables.get("TEMP_MESSAGE") {
-                                    Some(wait) => {
-                                        if let ScriptFlag::Wait = wait {
-                                            if let Some(wait) = player.world.polling.as_ref() {
-                                                match wait.get() {
-                                                    true => {
-                                                        variables.remove("TEMP_MESSAGE");
-                                                        queue.remove(0);
-                                                    }
-                                                    false => (),
-                                                }
-                                            } else {
-                                                variables.remove("TEMP_MESSAGE");
-                                                queue.remove(0);
-                                            }
-                                        } else {
+                                match variables.contains_key("TEMP_MESSAGE") {
+                                    true => {
+                                        if player.world.message.is_none() {
                                             variables.remove("TEMP_MESSAGE");
+                                            if let Some(entry) = BattleEntry::trainer(
+                                                &mut player.world.battle,
+                                                map,
+                                                &npc.id,
+                                                npc,
+                                            ) {
+                                                self.sender.send(WorldActions::Battle(entry));
+                                            }
+                                        //     let this = &mut queue[0];
+                                        //     *this = WorldInstruction::End;
+                                        //     self.update_script(player);
                                             queue.remove(0);
                                         }
                                     }
-                                    None => {
-                                        if let Some(message) = self.scripts.messages.get(m_id) {
-                                            player.world.polling =
-                                                self.sender.send_polling(WorldActions::Message(
-                                                    message.clone(),
-                                                    self.data
-                                                        .npcs
-                                                        .get(&npc.group)
-                                                        .map(|g| g.message)
-                                                        .unwrap_or(MessageColor::Black),
-                                                ));
-                                            variables.insert(
-                                                "TEMP_MESSAGE".to_owned(),
-                                                ScriptFlag::Wait,
+                                    false => {
+                                        if player.trainer.party.is_empty()
+                                            || player.world.battle.battled(map, &npc.id)
+                                        {
+                                            queue.remove(0);
+                                        } else if let Some(trainer) = npc.trainer.as_ref() {
+                                            drop(variables);
+                                            let message = MessageState::new(
+                                                1,
+                                                trainer
+                                                    .encounter
+                                                    .iter()
+                                                    .map(|lines| MessagePage {
+                                                        lines: lines
+                                                            .iter()
+                                                            .map(|str| {
+                                                                process_str_player(str, player)
+                                                            })
+                                                            .collect(),
+                                                        wait: None,
+                                                        color: self
+                                                            .data
+                                                            .npc
+                                                            .groups
+                                                            .get(&npc.group)
+                                                            .map(|g| g.message)
+                                                            .unwrap_or(MessageColor::Black),
+                                                    })
+                                                    .collect::<Vec<_>>(),
                                             );
+                                            player.world.message = Some(message);
+                                            player.world.scripts.flags.insert(
+                                                "TEMP_MESSAGE".to_owned(),
+                                                ScriptFlag::Flag,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                            WorldInstruction::Msgbox(m_id, msgbox_type) => {
+                                
+                                if player.world.message.is_none() {
+                                    match variables.contains_key("TEMP_MESSAGE") {
+                                        true => {
+                                            variables.remove("TEMP_MESSAGE");
+                                            queue.remove(0);
+                                        }
+                                        false => {
+                                            match self.scripts.messages.get(m_id) {
+                                                Some(message) => {
+                                                    let message = MessageState::new(
+                                                        1,
+                                                        message
+                                                            .iter()
+                                                            .map(|lines| MessagePage {
+                                                                lines: lines
+                                                                    .iter()
+                                                                    .map(|str| {
+                                                                        process_str_player(str, player)
+                                                                    })
+                                                                    .collect(),
+                                                                wait: None,
+                                                                color: self
+                                                                    .data
+                                                                    .npc
+                                                                    .groups
+                                                                    .get(&npc.group)
+                                                                    .map(|g| g.message)
+                                                                    .unwrap_or(MessageColor::Black),
+                                                            })
+                                                            .collect::<Vec<_>>(),
+                                                    );
+                                                    player.world.message = Some(message);
+                                                    player.world.scripts.flags.insert(
+                                                        "TEMP_MESSAGE".to_owned(),
+                                                        ScriptFlag::Flag,
+                                                    );
+                                                }
+                                                None => {
+                                                    queue.remove(0);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -570,7 +526,10 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                             queue.remove(0);
                                         }
                                         false => {
-                                            npc.character.pathing.queue.push(*direction);
+                                            npc.character
+                                                .actions
+                                                .queue
+                                                .push(ActionQueue::Move(*direction));
                                             variables.insert("TEMP_0".to_owned(), ScriptFlag::Flag);
                                         }
                                     }
@@ -581,6 +540,8 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                     }
                 }
             }
+        } else if env.executor.is_some() {
+            env.executor = None;
         }
     }
 
@@ -602,7 +563,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                         .unwrap_or_default()
                     {
                         let t = match player.movement {
-                            Movement::Swimming => &WildType::Water,
+                            MovementType::Swimming => &WildType::Water,
                             _ => &WildType::Land,
                         };
                         if let Some(entry) =
@@ -621,11 +582,9 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                 }
             }
 
-            if player.world.npc.active.is_none() {
-                for npc in map.npcs.values_mut() {
-                    if let Some(trainer) = &npc.trainer {
-                        player.find_battle(&map.id, &npc.id, trainer, &mut npc.character);
-                    }
+            for npc in map.npcs.values_mut() {
+                if let Some(trainer) = &npc.trainer {
+                    player.find_battle(&map.id, &npc.id, trainer, &mut npc.character);
                 }
             }
         }
@@ -645,12 +604,15 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
     }
 
     pub fn update(&mut self, player: &mut PlayerCharacter, delta: f32) {
-        if player.do_move(delta) {
-            self.stop_player(player);
+        if let Some(result) = player.do_move(delta) {
+            match result {
+                DoMoveResult::Finished => self.stop_player(player),
+                DoMoveResult::Interact => self.try_interact(player),
+            }
         }
         self.move_npcs(player, delta);
         self.update_script(player);
-        self.update_interactions(player);
+        // self.update_interactions(player);
     }
 
     pub fn try_move_player(&mut self, player: &mut PlayerCharacter, direction: Direction) {
@@ -713,7 +675,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
         fn with_code(player: &mut PlayerCharacter, code: MovementId, direction: Direction) -> bool {
             if WorldMap::can_move(player.position.elevation, code) || player.noclip {
                 if WorldMap::WATER == code {
-                    if player.movement != Movement::Swimming {
+                    if player.movement != MovementType::Swimming {
                         const SURF: &MoveId = unsafe { &MoveId::new_unchecked(1718777203) };
 
                         if player
@@ -724,16 +686,16 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                             .any(|m| &m.0 == SURF)
                             || player.noclip
                         {
-                            player.movement = Movement::Swimming;
+                            player.movement = MovementType::Swimming;
                         } else {
                             return false;
                         }
                     }
-                } else if player.movement == Movement::Swimming {
-                    player.movement = Movement::Walking;
+                } else if player.movement == MovementType::Swimming {
+                    player.movement = MovementType::Walking;
                 }
                 WorldMap::change_elevation(&mut player.position.elevation, code);
-                player.pathing.queue.push(direction);
+                player.actions.queue.push(ActionQueue::Move(direction));
                 return true;
                 // self.player.offset =
                 //     direction.pixel_offset(self.player.speed() * 60.0 * delta);
@@ -772,30 +734,34 @@ impl WorldMapData {
     }
 
     pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
-        player.unfreeze();
+        player.character.locked.decrement();
+        let entry = player.world.battle.battling.take();
         if winner {
-            if let Some(entry) = player.world.battle.battling.take() {
+            if let Some(entry) = entry {
                 if let Some(trainer) = entry.trainer {
                     if let Some(npc) = self
                         .maps
-                        .get(&trainer.location)
-                        .map(|map| map.npcs.get(&trainer.id).map(|npc| npc.trainer.as_ref()))
-                        .flatten()
+                        .get_mut(&trainer.location)
+                        .map(|map| map.npcs.get_mut(&trainer.id))
                         .flatten()
                     {
-                        match &npc.disable {
-                            TrainerDisable::DisableSelf => {
-                                player.world.battle.insert(&trainer.location, trainer.id);
-                            }
-                            TrainerDisable::Many(others) => {
-                                player.world.battle.insert(&trainer.location, trainer.id);
-                                player
-                                    .world
-                                    .battle
-                                    .battled
-                                    .get_mut(&trainer.location)
-                                    .unwrap()
-                                    .extend(others);
+                        player.character.end_interact();
+                        npc.character.end_interact();
+                        if let Some(npc) = &npc.trainer {
+                            match &npc.disable {
+                                TrainerDisable::DisableSelf => {
+                                    player.world.battle.insert(&trainer.location, trainer.id);
+                                }
+                                TrainerDisable::Many(others) => {
+                                    player.world.battle.insert(&trainer.location, trainer.id);
+                                    player
+                                        .world
+                                        .battle
+                                        .battled
+                                        .get_mut(&trainer.location)
+                                        .unwrap()
+                                        .extend(others);
+                                }
                             }
                         }
                     }

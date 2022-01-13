@@ -34,7 +34,14 @@ pub enum ScriptFlag {
     /// Flag that shows that a variable exists
     Flag,
     Var(u16),
-    Wait,
+}
+
+impl ScriptEnvironment {
+
+    pub fn running(&self) -> bool {
+        self.executor.is_some() || !self.queue.is_empty()
+    }
+
 }
 
 // #[derive(Debug, Clone, Serialize, Deserialize)]

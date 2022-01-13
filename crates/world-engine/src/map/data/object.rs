@@ -1,3 +1,4 @@
+use pokengine::engine::graphics::Color;
 use worldlib::{
     map::object::{ItemObject, MapObject, ObjectId},
     positions::{Coordinate, Location},
@@ -69,6 +70,7 @@ impl ObjectTextures {
         items: &HashMap<Coordinate, ItemObject>,
         world: &WorldState,
         screen: &RenderCoords,
+        color: Color,
     ) {
         for (coords, object) in objects.iter().filter(|(coordinate, ..)| {
             !world
@@ -91,6 +93,7 @@ impl ObjectTextures {
                             w: TILE_SIZE,
                             h: TILE_SIZE,
                         }),
+                        color,
                         ..Default::default()
                     },
                 )
@@ -110,11 +113,11 @@ impl ObjectTextures {
             if let Some(texture) = self.textures.get(BALL) {
                 let x = ((coords.x + screen.offset.x) << 4) as f32 - screen.focus.x;
                 let y = ((coords.y + screen.offset.y) << 4) as f32 - screen.focus.y;
-                texture.draw(ctx, x, y, Default::default())
+                texture.draw(ctx, x, y, DrawParams::color(color))
             }
         }
         for anim in self.active.iter() {
-            anim.draw(ctx, screen);
+            anim.draw(ctx, screen, color);
         }
     }
 }
@@ -139,7 +142,7 @@ impl ObjectAnimation {
         self.accumulator > Self::FRAMES
     }
 
-    pub fn draw(&self, ctx: &mut Context, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut Context, screen: &RenderCoords, color: Color) {
         let x = ((self.coordinate.x + screen.offset.x) << 4) as f32 - screen.focus.x;
         let y = ((self.coordinate.y + screen.offset.y) << 4) as f32 - screen.focus.y;
         self.texture.draw(
@@ -153,6 +156,7 @@ impl ObjectAnimation {
                     w: TILE_SIZE,
                     h: TILE_SIZE,
                 }),
+                color,
                 ..Default::default()
             },
         )

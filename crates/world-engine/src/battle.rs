@@ -3,6 +3,7 @@ use crate::pokedex::{
     pokemon::{owned::SavedPokemon, party::Party},
 };
 
+use pokengine::engine::graphics::Color;
 use worldlib::{
     character::{
         npc::{group::NpcGroupId, trainer::BadgeId, NpcId},
@@ -46,7 +47,7 @@ pub struct BattleTrainerEntry {
     pub badge: Option<BadgeId>,
     pub sprite: NpcGroupId,
     pub transition: TransitionId,
-    pub defeat: Vec<MessagePage>,
+    pub defeat: Vec<MessagePage<Color>>,
     pub worth: Worth,
 }
 

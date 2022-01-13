@@ -21,7 +21,6 @@ pub struct PlayerCharacter {
     pub world: WorldState,
 
     pub rival: String,
-    pub input_frozen: bool,
     pub ignore: bool,
 }
 
@@ -53,14 +52,13 @@ impl PlayerCharacter {
             pc: Default::default(),
             world: Default::default(),
             rival: rival.into(),
-            input_frozen: false,
             ignore: false,
         }
     }
 
     pub fn warp(&mut self, destination: WarpDestination) {
         self.position.from_destination(destination.position);
-        self.pathing.clear();
+        self.actions.clear();
         self.location = destination.location;
         self.position.elevation = 0;
     }
@@ -72,11 +70,11 @@ impl PlayerCharacter {
         trainer: &NpcTrainer,
         character: &mut Character,
     ) -> bool {
-        if self.world.npc.active.is_none()
+        if !self.world.scripts.environment.running()
             && !self.world.battle.battled(map, id)
             && trainer.find_character(character, &mut self.character)
         {
-            self.world.npc.active = Some(*id);
+            self.character.locked.increment();
             true
         } else {
             false

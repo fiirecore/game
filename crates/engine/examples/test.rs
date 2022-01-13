@@ -1,11 +1,11 @@
 use engine::{
     graphics::{self, Color, ScalingMode},
     gui::{MessageBox, Panel},
-    text::MessagePage,
-    utils::{Completable, Entity},
-    Context, ContextBuilder, State, EngineContext,
+    text::{MessagePage, MessageState},
+    Context, ContextBuilder, EngineContext, State,
 };
 use firecore_engine as engine;
+use firecore_font_builder::{FontId, FontSheet};
 
 const SCALE: f32 = 2.0;
 
@@ -18,7 +18,7 @@ fn main() {
         ),
         async {},
         |ctx, eng, ()| {
-            let fonts: Vec<_> = firecore_storage::from_bytes(include_bytes!("fonts.bin")).unwrap();
+            let fonts: Vec<FontSheet<Vec<u8>>> = firecore_storage::from_bytes(include_bytes!("fonts.bin")).unwrap();
 
             // let mut audio: engine::context::audio::SerializedAudio =
             //     firecore_storage::from_bytes(include_bytes!("audio.bin")).unwrap();
@@ -41,12 +41,14 @@ fn main() {
 
 struct Game {
     messagebox: MessageBox,
+    state: Option<MessageState<FontId, Color>>,
 }
 
 impl Game {
     pub fn new() -> Self {
         Self {
-            messagebox: MessageBox::new(Default::default(), 0),
+            messagebox: MessageBox::new(Default::default()),
+            state: None,
         }
     }
 }
@@ -60,6 +62,8 @@ impl State<EngineContext> for Game {
             lines: vec![
                 "Test Pagé Test Page".to_owned(),
                 "Pagé Test Page Test".to_owned(),
+                "Test Pagé Test Page 2".to_owned(),
+                "Pagé Test Page Test 2".to_owned(),
             ],
             wait: None,
             color: Color::RED,
@@ -69,21 +73,16 @@ impl State<EngineContext> for Game {
             wait: Some(1.0),
             color: Color::GOLD,
         };
-        // self.messagebox.pages.push(page);
-        self.messagebox.pages.extend([page, page2]);
-        self.messagebox.spawn();
+
+        self.state = Some(MessageState::from(vec![page, page2]));
+
         // Ok(())
     }
 
     fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
         //-> Result {
-        if !self.messagebox.alive() {
-            ctx.quit();
-        } else {
-            self.messagebox.update(ctx, eng, delta);
-            if self.messagebox.finished() {
-                self.messagebox.despawn();
-            }
+        if self.state.is_some() {
+            self.messagebox.update(ctx, eng, delta, &mut self.state);
         }
         // Ok(())
     }
@@ -99,7 +98,7 @@ impl State<EngineContext> for Game {
             engine::utils::WIDTH - 20.0,
             engine::utils::HEIGHT - 20.0,
         );
-        self.messagebox.draw(ctx, eng);
+        self.messagebox.draw(ctx, eng, self.state.as_ref());
         // Ok(())
     }
 }

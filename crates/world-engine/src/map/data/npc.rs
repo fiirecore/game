@@ -1,3 +1,4 @@
+use pokengine::engine::graphics::Color;
 use worldlib::{
     character::{
         npc::{
@@ -85,7 +86,7 @@ impl NpcTextures {
         ))
     }
 
-    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords, color: Color) {
         self.0
             .get(&npc.group)
             .unwrap_or_else(|| {
@@ -93,12 +94,12 @@ impl NpcTextures {
                     .get(&NpcGroup::PLACEHOLDER)
                     .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
             })
-            .draw(ctx, npc, screen);
+            .draw(ctx, npc, screen, color);
     }
 }
 
 impl NpcTexture {
-    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords) {
+    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords, color: Color) {
         let x = ((npc.character.position.coords.x + 1 + screen.offset.x) << 4) as f32
             - screen.focus.x
             + npc.character.offset.x
@@ -120,6 +121,7 @@ impl NpcTexture {
                     self.data.width,
                     self.texture.height(),
                 )),
+                color,
                 ..Default::default()
             },
         );

@@ -69,7 +69,7 @@ impl BattleCloser for TrainerBattleCloser {
                             text.pages.push(MessagePage {
                                 lines: message.clone(),
                                 wait: None,
-                                color: MessagePage::WHITE,
+                                color: TextColor::WHITE,
                             });
                         }
 
@@ -79,7 +79,7 @@ impl BattleCloser for TrainerBattleCloser {
                                 String::from("for winning!"),
                             ],
                             wait: None,
-                            color: MessagePage::WHITE,
+                            color: TextColor::WHITE,
                         });
 
                         text.spawn();

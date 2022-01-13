@@ -1,100 +1,84 @@
 use fiirengine::{graphics::DrawParams, math::Vec2, Context};
+use firecore_text::MessageState;
 
 use crate::{
     controls::{pressed, Control},
     graphics::{draw_button_for_text, draw_text_left},
-    text::{FontId, MessagePage},
-    utils::{Completable, Entity, Reset}, EngineContext,
+    text::FontId,
+    EngineContext,
 };
 
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct MessageBox {
-    alive: bool,
     origin: Vec2,
-
-    pub font: FontId,
-    pub pages: Vec<MessagePage>,
-
     button: Button,
-
-    page: usize,
-    line: usize,
-    accumulator: f32,
-
-    waiting: bool,
-    finished: bool,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Debug, Clone, Copy)]
 struct Button {
     position: f32,
     direction: bool,
 }
 
 impl MessageBox {
-    pub fn new(origin: Vec2, font: FontId) -> Self {
+    pub fn new(origin: Vec2) -> Self {
         Self {
-            alive: false,
             origin,
-            font,
-            pages: Default::default(),
             button: Default::default(),
-            page: 0,
-            line: 0,
-            accumulator: 0.0,
-            waiting: false,
-            finished: false,
         }
     }
 
-    pub fn page(&self) -> usize {
-        self.page
-    }
-
-    pub fn pages(&self) -> usize {
-        self.pages.len()
-    }
-
-    pub fn waiting(&self) -> bool {
-        self.waiting
-    }
-
-    fn reset_page(&mut self) {
-        self.line = 0;
-        self.accumulator = 0.0;
-    }
-
-    pub fn update(&mut self, ctx: &Context, eng: &EngineContext, delta: f32) {
-        if self.alive {
-            match self.pages.get(self.page) {
-                Some(page) => match self.waiting {
+    pub fn update<C: Clone + Into<[f32; 4]>>(
+        &mut self,
+        ctx: &Context,
+        eng: &EngineContext,
+        delta: f32,
+        state: &mut Option<MessageState<FontId, C>>,
+    ) {
+        let mstate = state;
+        if let Some(state) = mstate {
+            match state.pages.get(state.page) {
+                Some(page) => match state.waiting {
                     false => {
-                        if (self.accumulator as usize)
+                        if (state.accumulator as usize)
                             < page
                                 .lines
-                                .get(self.line)
+                                .get(state.line)
                                 .map(String::len)
                                 .unwrap_or_default()
                         {
-                            self.accumulator += delta * 30.0;
+                            state.accumulator += delta * 30.0;
                         } else {
-                            self.accumulator = 0.0;
-                            if self.line < page.lines.len() - 1 {
-                                self.line += 1;
-                            } else {
-                                self.waiting = true;
+                            match state.scroll < (state.line.saturating_sub(1) << 4) as f32 {
+                                true => {
+                                    state.scroll += delta * 32.0;
+                                }
+                                false => {
+                                    state.accumulator = 0.0;
+                                    if state.line < page.lines.len() - 1 {
+                                        state.line += 1;
+                                    } else {
+                                        state.waiting = true;
+                                    }
+                                }
                             }
                         }
                     }
                     true => match page.wait {
                         Some(wait) => {
-                            self.accumulator += delta;
-                            if self.accumulator.abs() >= wait.abs() {
-                                self.finish_waiting();
+                            state.accumulator += delta;
+                            if state.accumulator.abs() >= wait.abs() {
+                                if self.finish_waiting(state) {
+                                    *mstate = None;
+                                }
                             }
                         }
                         None => match pressed(ctx, eng, Control::A) {
-                            true => self.finish_waiting(),
+                            true => {
+                                if self.finish_waiting(state) {
+                                    *mstate = None;
+                                }
+                            }
                             false => {
                                 self.button.position += match self.button.direction {
                                     true => delta,
@@ -108,64 +92,79 @@ impl MessageBox {
                         },
                     },
                 },
-                None => self.finished = true,
+                None => *mstate = None,
             }
         }
     }
 
-    fn finish_waiting(&mut self) {
-        self.waiting = false;
-        match self.page + 1 < self.pages() {
-            false => self.finished = true,
-            true => {
-                self.page += 1;
-                self.reset_page();
+    #[must_use]
+    fn finish_waiting<C: Clone + Into<[f32; 4]>>(
+        &mut self,
+        state: &mut MessageState<FontId, C>,
+    ) -> bool {
+        state.waiting = false;
+        match state.page + 1 >= state.pages() {
+            true => true,
+            false => {
+                state.page += 1;
+                state.reset_page();
+                false
             }
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
-        if self.alive {
-            if let Some(page) = self.pages.get(self.page) {
-                if let Some(line) = page.lines.get(self.line) {
-                    let len = self.accumulator as usize;
+    pub fn draw<C: Clone + Into<[f32; 4]>>(
+        &self,
+        ctx: &mut Context,
+        eng: &EngineContext,
+        state: Option<&MessageState<FontId, C>>,
+    ) {
+        if let Some(state) = state {
+            if let Some(page) = state.pages.get(state.page) {
+                if let Some(line) = page.lines.get(state.line) {
+                    let len = state.accumulator as usize;
 
                     let (string, finished) = line
                         .char_indices()
                         .nth(len)
-                        .filter(|_| !self.waiting)
+                        .filter(|_| !state.waiting)
                         .map(|(len, ..)| line.get(..len).map(|l| (l, false)))
                         .flatten()
-                        .unwrap_or_else(|| (line.as_str(), self.line + 1 >= page.lines.len()));
+                        .unwrap_or_else(|| (line.as_str(), state.line + 1 >= page.lines.len()));
 
-                    let y = (self.line << 4) as f32;
+                    let y = (state.line << 4) as f32 - state.scroll;
+                    let color = page.color.clone().into().into();
+
                     draw_text_left(
                         ctx,
                         eng,
-                        &self.font,
+                        &state.font,
                         string,
                         self.origin.x,
                         self.origin.y + y,
-                        DrawParams::color(page.color),
+                        DrawParams::color(color),
                     );
 
-                    for index in 0..self.line {
-                        draw_text_left(
-                            ctx,
-                            eng,
-                            &self.font,
-                            &page.lines[index],
-                            self.origin.x,
-                            self.origin.y + (index << 4) as f32,
-                            DrawParams::color(page.color),
-                        );
+                    for index in 0..state.line {
+                        let y = (index << 4) as f32 - state.scroll;
+                        if y > -2.0 {
+                            draw_text_left(
+                                ctx,
+                                eng,
+                                &state.font,
+                                &page.lines[index],
+                                self.origin.x,
+                                self.origin.y + y,
+                                DrawParams::color(color),
+                            )
+                        }
                     }
 
                     if finished && page.wait.is_none() {
                         draw_button_for_text(
                             ctx,
                             eng,
-                            &self.font,
+                            &state.font,
                             line,
                             self.origin.x,
                             self.origin.y + 2.0 + self.button.position + y,
@@ -175,37 +174,5 @@ impl MessageBox {
                 }
             }
         }
-    }
-}
-
-impl Reset for MessageBox {
-    fn reset(&mut self) {
-        self.page = 0;
-        self.reset_page();
-        self.finished = false;
-        self.button = Default::default();
-    }
-}
-
-impl Completable for MessageBox {
-    fn finished(&self) -> bool {
-        self.finished || self.pages.is_empty()
-    }
-}
-
-impl Entity for MessageBox {
-    fn spawn(&mut self) {
-        self.alive = true;
-        self.reset();
-    }
-
-    fn despawn(&mut self) {
-        self.alive = false;
-        self.reset();
-        self.pages.clear();
-    }
-
-    fn alive(&self) -> bool {
-        self.alive
     }
 }

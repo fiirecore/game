@@ -1,15 +1,18 @@
-use crate::engine::{
-    error::ImageError,
-    graphics::{Color, DrawParams, Texture, self},
-    math::Rectangle,
-    utils::{HashMap, HEIGHT, WIDTH},
-    Context,
+use crate::{
+    engine::{
+        error::ImageError,
+        graphics::{self, Color, DrawParams, Texture},
+        math::Rectangle,
+        utils::{HashMap, HEIGHT, WIDTH},
+        Context,
+    },
+    map::input::PlayerInput,
 };
 
-use firecore_world::serialized::SerializedPlayerTexture;
 use worldlib::{
-    character::{player::PlayerCharacter, Character, Movement},
+    character::{player::PlayerCharacter, Character, MovementType, action::ActionQueue},
     positions::Direction,
+    serialized::SerializedPlayerTexture,
     TILE_SIZE,
 };
 
@@ -19,7 +22,7 @@ const SCREEN_Y: f32 = ((HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - TIL
 pub mod bush;
 
 pub struct PlayerTexture {
-    pub textures: HashMap<Movement, CharacterTexture>,
+    pub textures: HashMap<MovementType, CharacterTexture>,
 
     pub bush: bush::PlayerBushTexture,
 
@@ -45,18 +48,18 @@ impl PlayerTexture {
     pub fn new(ctx: &mut Context, player: SerializedPlayerTexture) -> Result<Self, ImageError> {
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
-            Movement::Walking,
-            Texture::new(ctx, player.get(&Movement::Walking).unwrap())?.into(),
+            MovementType::Walking,
+            Texture::new(ctx, &player[MovementType::Walking])?.into(),
         );
         textures.insert(
-            Movement::Running,
-            Texture::new(ctx, player.get(&Movement::Running).unwrap())?.into(),
+            MovementType::Running,
+            Texture::new(ctx, &player[MovementType::Running])?.into(),
         );
         textures.insert(
-            Movement::Swimming,
+            MovementType::Swimming,
             CharacterTexture {
                 idle: Some(0.5),
-                texture: Texture::new(ctx, player.get(&Movement::Swimming).unwrap())?,
+                texture: Texture::new(ctx, &player[MovementType::Swimming])?,
             },
         );
 
@@ -69,15 +72,14 @@ impl PlayerTexture {
     }
 
     pub fn jump(&mut self, player: &mut PlayerCharacter) {
-        player.sprite = 0;
-        player.noclip = true;
-        player.input_frozen = true;
+        player.character.sprite = 0;
+        player.character.noclip = true;
+        player.character.flags.insert(PlayerInput::INPUT_LOCK);
         for _ in 0..2 {
-            player
-                .character
-                .pathing
-                .queue
-                .insert(0, player.character.position.direction);
+            player.character.actions.queue.insert(
+                0,
+                ActionQueue::Move(player.character.position.direction),
+            );
         }
         self.accumulator = 0.0;
         self.jumping = true;
@@ -101,7 +103,7 @@ impl PlayerTexture {
             }
             true => {
                 if !player.character.moving() {
-                    player.input_frozen = false;
+                    player.character.flags.remove(&PlayerInput::INPUT_LOCK);
                     player.noclip = false;
                     self.jumping = false;
                     self.accumulator = 0.0;
@@ -114,13 +116,7 @@ impl PlayerTexture {
         if !character.hidden {
             if let Some(texture) = self.textures.get(&character.movement) {
                 if self.jumping {
-                    graphics::draw_circle(
-                        ctx,
-                        SCREEN_X,
-                        SCREEN_Y + 24.0,
-                        8.0,
-                        Color::BLACK,
-                    );
+                    graphics::draw_circle(ctx, SCREEN_X, SCREEN_Y + 24.0, 8.0, Color::BLACK);
                 }
                 let (x, width) = current_texture(character);
                 texture.texture.draw(
@@ -130,7 +126,7 @@ impl PlayerTexture {
                         true => {
                             let negative = matches!(character.position.direction, Direction::Up);
                             let o = character.offset.offset() / 4.0;
-                            match character.pathing.queue.is_empty() {
+                            match character.actions.queue.is_empty() {
                                 false => match negative {
                                     true => SCREEN_Y + o,
                                     false => SCREEN_Y - o,
@@ -193,7 +189,7 @@ fn current_texture(character: &Character) -> (f32, f32) {
 
 pub const fn player_texture_index(character: &Character) -> (&[u8; 4], f32) {
     match character.movement {
-        Movement::Walking => (
+        MovementType::Walking => (
             match character.position.direction {
                 Direction::Up => &[1, 5, 1, 6],
                 Direction::Down => &[0, 3, 0, 4],
@@ -201,7 +197,7 @@ pub const fn player_texture_index(character: &Character) -> (&[u8; 4], f32) {
             },
             16.0,
         ),
-        Movement::Running => (
+        MovementType::Running => (
             match character.position.direction {
                 Direction::Up => &[6, 7, 6, 8],
                 Direction::Down => &[3, 4, 3, 5],
@@ -209,7 +205,7 @@ pub const fn player_texture_index(character: &Character) -> (&[u8; 4], f32) {
             },
             16.0,
         ),
-        Movement::Swimming => (
+        MovementType::Swimming => (
             match character.position.direction {
                 Direction::Up => &[2, 2, 3, 3],
                 Direction::Down => &[0, 0, 1, 1],

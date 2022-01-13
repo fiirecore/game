@@ -1,4 +1,4 @@
-use worldlib::character::npc::group::{MessageColor, NpcGroup, NpcGroupId};
+use worldlib::character::npc::group::{MessageColor, NpcGroup, NpcGroupId, TrainerGroupId, TrainerGroup};
 
 use crate::engine::{graphics::Color, utils::HashMap};
 
@@ -15,11 +15,15 @@ pub fn group<'a>(group: &'a HashMap<NpcGroupId, NpcGroup>, id: &NpcGroupId) -> &
     })
 }
 
-pub fn color(message: &MessageColor) -> Color {
-    match message {
-        MessageColor::Black => Color::rgb(20.0 / 255.0, 20.0 / 255.0, 20.0 / 255.0),
-        MessageColor::White => Color::rgb(240.0 / 255.0, 240.0 / 255.0, 240.0 / 255.0),
-        MessageColor::Red => Color::rgb(0.90, 0.16, 0.22),
-        MessageColor::Blue => Color::rgb(48.0 / 255.0, 80.0 / 255.0, 200.0 / 255.0),
-    }
+pub fn trainer<'a>(group: &'a HashMap<TrainerGroupId, TrainerGroup>, id: &TrainerGroupId) -> &'a TrainerGroup {
+    group.get(id).unwrap_or_else(|| {
+        group
+            .get(&TrainerGroup::PLACEHOLDER)
+            .unwrap_or_else(|| panic!("Cannot get placeholder trainer type!"))
+    })
+}
+
+pub fn color(message: MessageColor) -> Color {
+    let a: [f32; 4] = message.into();
+    a.into()
 }

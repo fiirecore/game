@@ -1,20 +1,13 @@
 use core::ops::Deref;
 use pokedex::{
-    engine::{
-        utils::{HashMap, Reset},
-        EngineContext,
-    },
+    engine::{utils::HashMap, EngineContext},
     item::Item,
     moves::Move,
     pokemon::Pokemon,
 };
 
 use pokedex::{
-    engine::{
-        gui::MessageBox,
-        utils::{Completable, Entity},
-        Context,
-    },
+    engine::{utils::Completable, Context},
     PokedexClientData,
 };
 
@@ -22,7 +15,10 @@ use battle::data::BattleType;
 
 use crate::{
     context::BattleGuiData,
-    ui::view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer},
+    ui::{
+        text::BattleText,
+        view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer},
+    },
 };
 
 use super::TransitionState;
@@ -56,7 +52,7 @@ pub(crate) trait BattleIntroduction<
         ctx: &PokedexClientData,
         local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     );
 
     fn update(
@@ -66,7 +62,7 @@ pub(crate) trait BattleIntroduction<
         delta: f32,
         player: &mut GuiLocalPlayer<ID, P, M, I>,
         opponent: &mut GuiRemotePlayer<ID, P>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     );
 
     fn draw(
@@ -141,7 +137,7 @@ impl BattleIntroductionManager {
         state: &mut TransitionState,
         local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         *state = TransitionState::Run;
         match local.data.type_ {
@@ -151,12 +147,6 @@ impl BattleIntroductionManager {
         let current = self.get_mut();
         current.reset();
         current.spawn(ctx, local, opponents, text);
-        text.spawn();
-    }
-
-    pub fn end(&mut self, text: &mut MessageBox) {
-        text.pages.clear();
-        text.reset();
     }
 
     pub fn update<
@@ -172,7 +162,7 @@ impl BattleIntroductionManager {
         delta: f32,
         player: &mut GuiLocalPlayer<ID, P, M, I>,
         opponent: &mut GuiRemotePlayer<ID, P>,
-        text: &mut MessageBox,
+        text: &mut BattleText,
     ) {
         let current = self.get_mut::<ID, P, M, I>();
         current.update(ctx, eng, delta, player, opponent, text);

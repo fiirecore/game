@@ -1,7 +1,7 @@
 use engine::{
     graphics::{draw_cursor, draw_text_left, DrawParams, Texture},
     controls::{pressed, Control},
-    text::MessagePage,
+    text::TextColor,
     Context,
 };
 use firecore_engine::EngineContext;
@@ -114,7 +114,7 @@ impl PartySelectMenu {
                         line,
                         161.0,
                         93.0 + (index << 4) as f32,
-                        DrawParams::color(MessagePage::BLACK),
+                        DrawParams::color(TextColor::BLACK),
                     )
                 });
             }

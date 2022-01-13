@@ -1,10 +1,13 @@
 pub extern crate firecore_battle as battle;
 pub extern crate firecore_pokedex_engine as pokedex;
 
-use std::{fmt::Debug, hash::Hash, ops::Deref, rc::Rc};
+use std::{fmt::Debug, hash::Hash, ops::Deref};
 
 use pokedex::{
-    engine::{log::{self, debug, warn}, EngineContext},
+    engine::{
+        log::{self, debug, warn},
+        EngineContext,
+    },
     item::ItemCategory,
     TrainerGroupId,
 };
@@ -13,10 +16,9 @@ use pokedex::{
     engine::{
         graphics::Color,
         math::{vec2, Vec2},
-        utils::{Completable, Entity, HashMap, Reset},
+        utils::{Entity, HashMap, Reset},
         Context,
     },
-    gui::{bag::BagGui, party::PartyGui},
     item::{usage::ItemExecution, Item},
     moves::{Move, MoveTarget},
     pokemon::Pokemon,
@@ -233,8 +235,6 @@ impl<
                                         .collect(),
                                     current: None,
                                 });
-                                self.gui.text.pages.clear();
-                                self.gui.text.spawn();
                             }
                         },
                         ServerMessage::Replace(Indexed(pokemon, new)) => match &mut self.state {
@@ -277,7 +277,15 @@ impl<
                             }
                         },
                         ServerMessage::AddRemote(Indexed(target, unknown)) => {
-                            if let Some((party, unknown)) = unknown.init(pokedex).map(|unknown| self.remotes.get_mut(target.team()).map(|party| (party, unknown))).flatten() {
+                            if let Some((party, unknown)) = unknown
+                                .init(pokedex)
+                                .map(|unknown| {
+                                    self.remotes
+                                        .get_mut(target.team())
+                                        .map(|party| (party, unknown))
+                                })
+                                .flatten()
+                            {
                                 party.player.add(target.index(), Some(unknown));
                             } else {
                                 warn!("Could not initialize remote pokemon at {:?}", target);
@@ -380,7 +388,7 @@ impl<
                                 &mut self.gui.text,
                             );
                             self.gui.trainer.update(delta);
-                            if self.gui.text.page() > 0
+                            if self.gui.text.page() > Some(0)
                                 && !self.gui.trainer.ending()
                                 && !matches!(local.data.type_, BattleType::Wild)
                             {
@@ -388,7 +396,6 @@ impl<
                             }
                         }
                         TransitionState::End => {
-                            self.gui.introduction.end(&mut self.gui.text);
                             self.gui.trainer.despawn();
                             self.state = BattlePlayerState::WaitToSelect;
                             self.update(ctx, eng, dex, pokedex, movedex, itemdex, delta);
@@ -556,10 +563,6 @@ impl<
                                         self.state = BattlePlayerState::WaitToSelect;
                                     }
                                     Some(Indexed(user_id, action)) => {
-                                        // log::trace!("set current");
-
-                                        self.gui.text.pages.clear();
-                                        self.gui.text.reset();
 
                                         let user = match user_id.team() == local.player.id() {
                                             true => Some((
@@ -608,8 +611,7 @@ impl<
                                                                                             pp,
                                                                                         );
 
-                                                                                    ui::text::on_move(
-                                                                                        &mut self.gui.text,
+                                                                                    self.gui.text.on_move(
                                                                                         &pokemon_move,
                                                                                         user_active.name(),
                                                                                     );
@@ -658,15 +660,15 @@ impl<
                                                                                                     false => faint.push(target_id),
                                                                                                 }
                                                                                                 if result.effective != Effective::Effective {
-                                                                                                    ui::text::on_effective(&mut self.gui.text, &result.effective)
+                                                                                                    self.gui.text.on_effective(&result.effective)
                                                                                                 }
                                                                                                 if result.crit {
-                                                                                                    ui::text::on_crit(&mut self.gui.text);
+                                                                                                    self.gui.text.on_crit();
                                                                                                 }
                                                                                             }
                                                                                         },
-                                                                                        ClientMoveAction::Error => ui::text::on_fail(&mut self.gui.text, vec![format!("{} cannot use move", target.name()), format!("{}, as there was an error.", pokemon_move.name)]),
-                                                                                        ClientMoveAction::Miss => ui::text::on_miss(&mut self.gui.text, target.name()),
+                                                                                        ClientMoveAction::Error => self.gui.text.on_fail(vec![format!("{} cannot use move", target.name()), format!("{}, as there was an error.", pokemon_move.name)]),
+                                                                                        ClientMoveAction::Miss => self.gui.text.on_miss(target.name()),
                                                                                         ClientMoveAction::SetExp(experience, level) => {
                                                                                             let previous = target.level();
                                                                                             target.set_level(level);
@@ -676,11 +678,11 @@ impl<
                                                                                                 queue.actions.push_front(Indexed(target_id.clone(), BattleClientGuiAction::SetExp(previous, experience, moves)));
                                                                                             }
                                                                                         }
-                                                                                        ClientMoveAction::Flinch => ui::text::on_flinch(&mut self.gui.text, target.name()),
-                                                                                        ClientMoveAction::AddStat(stat, stage) => ui::text::on_stat_stage(&mut self.gui.text, target.name(), stat, stage),
+                                                                                        ClientMoveAction::Flinch => self.gui.text.on_flinch(target.name()),
+                                                                                        ClientMoveAction::AddStat(stat, stage) => self.gui.text.on_stat_stage(target.name(), stat, stage),
                                                                                         ClientMoveAction::Ailment(ailment) => {
                                                                                             target.set_ailment(ailment);
-                                                                                            ui::text::on_status(&mut self.gui.text, target.name(), ailment.ailment);
+                                                                                            self.gui.text.on_status(target.name(), ailment.ailment);
                                                                                         }
                                                                                     }
 
@@ -738,8 +740,7 @@ impl<
                                                                                 // self.messages.push(ClientMessage::RequestPokemon(index));
                                                                                 queue.actions.push_front(Indexed(target.clone(), BattleClientGuiAction::Catch));
                                                                             }
-                                                                            ui::text::on_item(
-                                                                                &mut self.gui.text,
+                                                                            self.gui.text.on_item(
                                                                                 pokemon.name(),
                                                                                 &item,
                                                                             );
@@ -758,8 +759,7 @@ impl<
                                                                         .pokemon(index)
                                                                         .map(|v| v.name())
                                                                         .unwrap_or("Unknown");
-                                                                    ui::text::on_switch(
-                                                                        &mut self.gui.text,
+                                                                    self.gui.text.on_switch(
                                                                         user.active(
                                                                             user_id.index(),
                                                                         )
@@ -780,8 +780,7 @@ impl<
                                                                 .active_mut(user_id.index())
                                                                 .unwrap();
                                                             target.set_hp(0.0);
-                                                            ui::text::on_faint(
-                                                                &mut self.gui.text,
+                                                            self.gui.text.on_faint(
                                                                 matches!(
                                                                     local.data.type_,
                                                                     BattleType::Wild
@@ -804,8 +803,7 @@ impl<
                                                                         .player
                                                                         .active(user_id.index())
                                                                     {
-                                                                        ui::text::on_catch(
-                                                                            &mut self.gui.text,
+                                                                        self.gui.text.on_catch(
                                                                             view::BasePokemonView::name(
                                                                                 pokemon,
                                                                             ),
@@ -833,8 +831,7 @@ impl<
                                                             }
                                                         }
                                                         BattleClientGuiAction::Replace(new) => {
-                                                            ui::text::on_replace(
-                                                                &mut self.gui.text,
+                                                            self.gui.text.on_replace(
                                                                 user.name(),
                                                                 new.map(|index| {
                                                                     user.pokemon(index)
@@ -856,8 +853,7 @@ impl<
                                                         ) => match user.active_mut(user_id.index())
                                                         {
                                                             Some(pokemon) => {
-                                                                ui::text::on_gain_exp(
-                                                                    &mut self.gui.text,
+                                                                self.gui.text.on_gain_exp(
                                                                     pokemon.name(),
                                                                     experience,
                                                                     pokemon.level(),
@@ -899,7 +895,6 @@ impl<
                                                                     false => {
                                                                         self.gui.level_up.spawn(
                                                                             instance,
-                                                                            &mut self.gui.text,
                                                                             moves,
                                                                         );
                                                                         Some(BattleClientGuiCurrent::LevelUp)
@@ -921,8 +916,8 @@ impl<
                                                             Some(Indexed(user_id, action));
                                                     } else {
                                                         self.update(
-                                                            ctx, eng, dex, pokedex, movedex, itemdex,
-                                                            delta,
+                                                            ctx, eng, dex, pokedex, movedex,
+                                                            itemdex, delta,
                                                         );
                                                     }
                                                 }
@@ -951,9 +946,9 @@ impl<
                                         BattleClientGuiCurrent::Move(targets) => {
                                             // log::trace!("update current: client move");
 
-                                            match self.gui.text.finished() {
-                                                false => self.gui.text.update(ctx, eng, delta),
-                                                true =>
+                                            match self.gui.text.alive() {
+                                                true => self.gui.text.update(ctx, eng, delta),
+                                                false =>
                                                 /*if self.gui.text.page() > 0 || self.gui.text.waiting() */
                                                 {
                                                     //&& user_ui[instance.pokemon.index].renderer.moves.finished() {
@@ -995,11 +990,11 @@ impl<
                                             }
                                         }
                                         BattleClientGuiCurrent::Switch(new) => {
-                                            match self.gui.text.finished() {
-                                                false => {
+                                            match self.gui.text.alive() {
+                                                true => {
                                                     self.gui.text.update(ctx, eng, delta);
 
-                                                    if self.gui.text.page() == 1
+                                                    if self.gui.text.page() == Some(1)
                                                         && !user
                                                             .active_eq(user_id.index(), Some(*new))
                                                     {
@@ -1036,11 +1031,11 @@ impl<
                                                         renderer.pokemon.new_pokemon(dex, id);
                                                     }
                                                 }
-                                                true => queue.current = None,
+                                                false => queue.current = None,
                                             }
                                         }
                                         BattleClientGuiCurrent::UseItem(target) => {
-                                            if !self.gui.text.finished() {
+                                            if self.gui.text.alive() {
                                                 self.gui.text.update(ctx, eng, delta)
                                             } else if let Some(p_ui) =
                                                 match target.team() == local.player.id() {
@@ -1065,7 +1060,7 @@ impl<
                                             let ui = &mut user_ui[user_id.index()];
                                             if ui.pokemon.faint.fainting() {
                                                 ui.pokemon.faint.update(delta);
-                                            } else if !self.gui.text.finished() {
+                                            } else if self.gui.text.alive() {
                                                 self.gui.text.update(ctx, eng, delta);
                                             } else {
                                                 drop(user);
@@ -1151,7 +1146,7 @@ impl<
                                         }
                                         BattleClientGuiCurrent::Replace(index, replaced) => {
                                             if self.gui.text.waiting()
-                                                || self.gui.text.finished() && !*replaced
+                                                || !self.gui.text.alive() && !*replaced
                                             {
                                                 if let Some(ui) = user_ui.get_mut(*index) {
                                                     let id = match user.active_mut(user_id.index())
@@ -1180,19 +1175,19 @@ impl<
                                                     *replaced = true;
                                                 }
                                             }
-                                            match self.gui.text.finished() {
-                                                false => self.gui.text.update(ctx, eng, delta),
-                                                true => queue.current = None,
+                                            match self.gui.text.alive() {
+                                                true => self.gui.text.update(ctx, eng, delta),
+                                                false => queue.current = None,
                                             }
                                         }
                                         BattleClientGuiCurrent::Catch => {
-                                            match self.gui.text.finished() {
-                                                false => self.gui.text.update(ctx, eng, delta),
-                                                true => queue.current = None,
+                                            match self.gui.text.alive() {
+                                                true => self.gui.text.update(ctx, eng, delta),
+                                                false => queue.current = None,
                                             }
                                         }
                                         BattleClientGuiCurrent::SetExp => {
-                                            match !self.gui.text.finished()
+                                            match self.gui.text.alive()
                                                 || local.renderer[user_id.index()]
                                                     .status
                                                     .exp_moving()
@@ -1269,9 +1264,12 @@ impl<
     pub fn draw(&self, ctx: &mut Context, eng: &EngineContext, dex: &PokedexClientData) {
         if !matches!(self.state, BattlePlayerState::WaitToStart) {
             self.gui.background.draw(ctx, 0.0);
-            self.remotes
-                .values()
-                .for_each(|remote| remote.renderer.iter().for_each(|active| active.draw(ctx, eng)));
+            self.remotes.values().for_each(|remote| {
+                remote
+                    .renderer
+                    .iter()
+                    .for_each(|active| active.draw(ctx, eng))
+            });
             if let Some(local) = &self.local {
                 match &self.state {
                     BattlePlayerState::WaitToStart => unreachable!(),
@@ -1327,7 +1325,10 @@ impl<
                     //     self.gui.party.draw(ctx)
                     // },
                     BattlePlayerState::WaitToSelect | BattlePlayerState::Moving(..) => {
-                        local.renderer.iter().for_each(|active| active.draw(ctx, eng));
+                        local
+                            .renderer
+                            .iter()
+                            .for_each(|active| active.draw(ctx, eng));
                         self.gui.draw_panel(ctx);
                         self.gui.text.draw(ctx, eng);
                         self.gui.level_up.draw(ctx, eng);
@@ -1336,7 +1337,10 @@ impl<
                         }
                     }
                     BattlePlayerState::GameEnd(..) | BattlePlayerState::PlayerEnd => {
-                        local.renderer.iter().for_each(|active| active.draw(ctx, eng));
+                        local
+                            .renderer
+                            .iter()
+                            .for_each(|active| active.draw(ctx, eng));
                         self.gui.draw_panel(ctx);
                         self.gui.text.draw(ctx, eng);
                     }
