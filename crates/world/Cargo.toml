@@ -20,6 +20,8 @@ firecore-pokedex = { version = "0.0.8", git = "https://github.com/fiirecore/poke
 
 crossbeam-channel = "0.5"
 
+log = "0.4"
+
 ### Pathfinding
 
 # indexmap = "1.6"

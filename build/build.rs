@@ -53,10 +53,6 @@ fn main() {
 
     write("battle", &battle);
 
-    // let ext = Some(std::ffi::OsString::from("bin"));
-
-    // let ext = ext.as_deref();
-
     #[cfg(windows)]
     if std::env::var("PROFILE").unwrap() == "release" {
         if std::env::var("CARGO_CFG_WINDOWS").is_ok() {

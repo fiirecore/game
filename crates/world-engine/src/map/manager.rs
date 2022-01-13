@@ -1,13 +1,12 @@
-use crate::{
-    engine::{
-        music,
-        error::ImageError,
-        graphics::{self, Color},
-        controls::{pressed, Control},
-        text::MessagePage,
-        utils::{Completable, Entity},
-        Context, EngineContext,
-    },
+use crate::engine::{
+    controls::{pressed, Control},
+    error::ImageError,
+    graphics::{self, Color},
+    math::{ivec2, IVec2},
+    music,
+    text::MessagePage,
+    utils::{Completable, Entity},
+    Context, EngineContext,
 };
 
 use rand::prelude::SmallRng;
@@ -16,15 +15,17 @@ use worldlib::{
     actions::{WorldAction, WorldActions},
     character::player::PlayerCharacter,
     events::{split, InputEvent, Receiver, Sender},
-    map::{chunk::Connection, manager::WorldMapManager, Brightness, WorldMap},
-    positions::{Coordinate, Direction, Location, Position},
+    map::{
+        chunk::Connection, manager::WorldMapManager, warp::WarpDestination, Brightness, WorldMap,
+    },
+    positions::{Coordinate, Destination, Direction, Location, Position},
     serialized::SerializedWorld,
 };
 
 use crate::{
+    battle::{BattleId, BattleMessage, BattleTrainerEntry},
     gui::TextWindow,
     map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition, RenderCoords},
-    battle::{BattleEntry, BattleId, BattleTrainerEntry},
     WorldMetaAction,
 };
 
@@ -33,7 +34,7 @@ mod npc;
 // pub mod script;
 
 pub struct WorldManager {
-    world: WorldMapManager<SmallRng>,
+    pub world: WorldMapManager<SmallRng>,
 
     data: ClientWorldData,
 
@@ -57,7 +58,7 @@ impl WorldManager {
         let (sender, receiver) = split();
 
         Ok(Self {
-            world: WorldMapManager::new(world.data, sender),
+            world: WorldMapManager::new(world.data, world.scripts, sender),
 
             data: ClientWorldData::new(ctx, world.textures)?,
             warper: WarpTransition::new(),
@@ -76,6 +77,63 @@ impl WorldManager {
 
     pub fn start(&mut self, player: &mut PlayerCharacter) {
         self.world.on_warp(player);
+        if let Some(battle) = player.world.battle.battling.as_ref() {
+            let (id, trainer) = battle
+                .trainer
+                .as_ref()
+                .map(|e| {
+                    self.world
+                        .get(&e.location)
+                        .map(|map| {
+                            map.npcs
+                                .get(&e.id)
+                                .map(|npc| {
+                                    npc.trainer
+                                        .as_ref()
+                                        .map(|t| (npc, t))
+                                        .map(|(npc, trainer)| (map, npc, trainer))
+                                })
+                                .flatten()
+                        })
+                        .flatten()
+                        .map(|(map, npc, trainer)| {
+                            (
+                                BattleId::Trainer(e.id),
+                                Some(BattleTrainerEntry {
+                                    name: npc.character.name.clone(),
+                                    bag: e.bag.clone(),
+                                    badge: trainer.badge,
+                                    sprite: npc.group,
+                                    transition: map.settings.transition,
+                                    defeat: trainer
+                                        .defeat
+                                        .iter()
+                                        .map(|lines| MessagePage {
+                                            lines: lines.clone(),
+                                            wait: None,
+                                            color: npc::color(&self
+                                                .world
+                                                .data
+                                                .npcs
+                                                .get(&npc.group)
+                                                .map(|group| group.message)
+                                                .unwrap_or_default()),
+                                        })
+                                        .collect(),
+                                    worth: trainer.worth,
+                                }),
+                            )
+                        })
+                })
+                .flatten()
+                .unwrap_or((BattleId::Wild, None));
+            self.sender.send(WorldMetaAction::Battle(BattleMessage {
+                id,
+                party: battle.party.clone(),
+                trainer,
+                active: battle.active,
+            }));
+        }
     }
 
     pub fn seed(&mut self, seed: u64) {
@@ -83,23 +141,29 @@ impl WorldManager {
     }
 
     pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
-        self.world.post_battle(player, winner)
+        self.world.data.post_battle(player, winner)
     }
 
     pub fn spawn(&self) -> (Location, Position) {
         self.world.data.spawn
     }
 
-    pub fn try_warp(&mut self, player: &mut PlayerCharacter, location: Location) -> bool {
+    pub fn try_teleport(&mut self, player: &mut PlayerCharacter, location: Location) -> bool {
         if self.world.contains(&location) {
-            self.warp_to_location(player, location);
+            self.teleport(player, location);
             true
         } else {
             false
         }
     }
 
-    pub fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, player: &mut PlayerCharacter, delta: f32) {
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        eng: &mut EngineContext,
+        player: &mut PlayerCharacter,
+        delta: f32,
+    ) {
         // } else if self.world_map.alive() {
         //     self.world_map.update(ctx);
         //     if pressed(ctx, Control::A) {
@@ -107,7 +171,38 @@ impl WorldManager {
         //             self.warp_to_location(location);
         //         }
         //     }
-        // Input
+
+        if self.text.text.alive() {
+            if self.text.text.finished() {
+                if let Some(polling) = &player.world.polling {
+                    polling.update()
+                }
+                player.input_frozen = false;
+                self.text.text.despawn();
+            }
+            self.text.text.update(ctx, eng, delta);
+        }
+
+        self.data.update(delta, player);
+
+        if self.warper.alive() {
+            if let Some(music) = self.warper.update(&self.world.data, player, delta) {
+                self.world.on_warp(player);
+            }
+        } else if player.world.warp.is_some() {
+            self.warper.spawn();
+            player.input_frozen = true;
+        }
+
+        if let Some(direction) = self.input.update(ctx, eng, player, delta) {
+            self.world.input(player, InputEvent::Move(direction));
+        }
+
+        if pressed(ctx, eng, Control::A) {
+            self.world.input(player, InputEvent::Interact);
+        }
+
+        self.world.update(player, delta);
 
         for action in self.receiver.try_iter() {
             match action.action {
@@ -157,7 +252,7 @@ impl WorldManager {
                             (BattleId::Wild, None)
                         };
                         player.world.battle.battling = Some(entry);
-                        self.sender.send(WorldMetaAction::Battle(BattleEntry {
+                        self.sender.send(WorldMetaAction::Battle(BattleMessage {
                             id,
                             party,
                             trainer: t,
@@ -206,7 +301,10 @@ impl WorldManager {
                 WorldActions::BeginWarpTransition(coords) => {
                     if let Some(map) = self.world.get(&player.location) {
                         if let Some(tile) = map.tile(coords) {
-                            self.warper.queue(player, tile, coords);
+                            let palette = *tile.palette(&map.palettes);
+                            let tile = tile.id();
+                            self.warper
+                                .queue(&self.world.data, player, palette, tile, coords);
                         }
                     }
                 }
@@ -215,45 +313,15 @@ impl WorldManager {
                         on_tile(map, player, &mut self.data)
                     }
                 }
-                WorldActions::BreakObject(coordinate) => if let Some(map) = self.world.get(&player.location) {
-                    if let Some(object) = map.object_at(&coordinate) {
-                        self.data.object.add(coordinate, &object.group);
+                WorldActions::BreakObject(coordinate) => {
+                    if let Some(map) = self.world.get(&player.location) {
+                        if let Some(object) = map.object_at(&coordinate) {
+                            self.data.object.add(coordinate, &object.group);
+                        }
                     }
-                },
-            }
-        }
-
-        if self.text.text.alive() {
-            if self.text.text.finished() {
-                if let Some(polling) = &player.world.polling {
-                    polling.update()
                 }
-                player.input_frozen = false;
-                self.text.text.despawn();
             }
-            self.text.text.update(ctx, eng, delta);
         }
-
-        self.data.update(delta, player);
-
-        if self.warper.alive() {
-            if let Some(_music) = self.warper.update(&mut self.world, player, delta) {
-                self.world.on_warp(player);
-            }
-        } else if player.world.warp.is_some() {
-            self.warper.spawn();
-            player.input_frozen = true;
-        }
-
-        if let Some(direction) = self.input.update(ctx, eng, player, delta) {
-            self.world.input(player, InputEvent::Move(direction));
-        }
-
-        if pressed(ctx, eng, Control::A) {
-            self.world.try_interact(player);
-        }
-
-        self.world.update(player, delta);
     }
 
     // #[deprecated]
@@ -277,13 +345,41 @@ impl WorldManager {
     //     }
     // }
 
-    pub fn warp_to_location(&mut self, player: &mut PlayerCharacter, location: Location) {
+    pub fn teleport(&mut self, player: &mut PlayerCharacter, location: Location) {
         if let Some(map) = self.world.data.maps.get(&location) {
-            player.location = location;
-            let pos = &mut player.position;
-            pos.coords = map.settings.fly_position.unwrap_or_default();
-            pos.direction = Direction::Down;
-            self.world.on_warp(player);
+            let coords = map.settings.fly_position.unwrap_or_else(|| {
+                let mut count = 0u8;
+                let mut first = None;
+                let index = match map.movements.iter().enumerate().find(|(i, tile)| {
+                    if WorldMap::can_move(0, **tile) {
+                        count += 1;
+                        if first.is_none() {
+                            first = Some((*i, **tile));
+                        }
+                        if count == 8 {
+                            return true;
+                        }
+                    }
+                    false
+                }) {
+                    Some((index, ..)) => index,
+                    None => first.map(|(index, ..)| index).unwrap_or_default(),
+                } as i32;
+                let x = index % map.width;
+                let y = index / map.width;
+                Coordinate { x, y }
+            });
+            let location = map.id;
+            self.world.warp(
+                player,
+                WarpDestination {
+                    location,
+                    position: Destination {
+                        coords,
+                        direction: Some(Direction::Down),
+                    },
+                },
+            );
         }
     }
 
@@ -327,12 +423,12 @@ impl WorldManager {
                                 current: &WorldMap,
                                 map: &WorldMap,
                                 offset: i32,
-                            ) -> Coordinate {
+                            ) -> IVec2 {
                                 match direction {
-                                    Direction::Down => Coordinate::new(offset, current.height),
-                                    Direction::Up => Coordinate::new(offset, -map.height),
-                                    Direction::Left => Coordinate::new(-map.width, offset),
-                                    Direction::Right => Coordinate::new(current.width, offset),
+                                    Direction::Down => ivec2(offset, current.height),
+                                    Direction::Up => ivec2(offset, -map.height),
+                                    Direction::Left => ivec2(-map.width, offset),
+                                    Direction::Right => ivec2(current.width, offset),
                                 }
                             }
 
@@ -354,7 +450,15 @@ impl WorldManager {
                 color
             }
             None => {
-                graphics::draw_text_left(ctx, eng, &0, "Cannot get map:", 0.0, 0.0, Default::default());
+                graphics::draw_text_left(
+                    ctx,
+                    eng,
+                    &0,
+                    "Cannot get map:",
+                    0.0,
+                    0.0,
+                    Default::default(),
+                );
                 graphics::draw_text_left(
                     ctx,
                     eng,
@@ -404,12 +508,15 @@ impl WorldManager {
 
             let coordinates = format!("{}", player.character.position.coords);
             graphics::draw_text_left(ctx, eng, &1, &coordinates, 5.0, 25.0, Default::default());
+        } else {
+            self.warper.draw_door(ctx, &self.data.tiles, &screen);
         }
 
-        self.warper.draw_door(ctx, &screen);
         self.data.player.draw(ctx, player, color);
-        self.data.player.bush.draw(ctx, &screen);
-        self.warper.draw(ctx);
+        if !player.world.debug_draw {
+            self.data.player.bush.draw(ctx, &screen);
+            self.warper.draw(ctx);
+        }
         self.text.draw(ctx, eng);
     }
 }

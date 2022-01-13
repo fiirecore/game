@@ -4,19 +4,17 @@ version = "0.5.0-beta.2021-12-24"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 
 ### Map specifications
 
 firecore-world = { path = "../world" }
+firecore-storage = { path = "../storage", default-features = false }
 
 ### Serialization
 
 serde = { version = "1", features = ["derive"] }
 ron = "0.7"
-bincode = "1"
 either = { version = "1", features = ["serde"] }
 hashbrown = { version = "0.9", features = ["serde"] }
 

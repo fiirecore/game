@@ -1,14 +1,14 @@
 use worldlib::{
-    map::{PaletteId, TileId, Palettes},
+    map::{PaletteId, Palettes, TileId, WorldTile},
+    serialized::SerializedPaletteMap,
     TILE_SIZE,
-    serialized::SerializedPaletteMap
 };
 
 use crate::engine::{
     graphics::{Color, DrawParams, Texture},
     math::Rectangle,
-    Context,
     utils::HashMap,
+    Context,
 };
 
 pub struct PaletteTextureManager {
@@ -21,6 +21,11 @@ pub struct Palette {
     pub animated: HashMap<TileId, Texture>,
     pub doors: HashMap<TileId, Texture>,
     pub size: TileId,
+}
+
+pub struct PaletteTile<P> {
+    pub palette: P,
+    pub tile: TileId,
 }
 
 impl PaletteTextureManager {
@@ -64,29 +69,29 @@ impl PaletteTextureManager {
         }
     }
 
-    fn get_palette(&self, palettes: &Palettes, tile: TileId) -> Option<(&Palette, TileId)> {
+    pub fn get<'a>(
+        &'a self,
+        palettes: &Palettes,
+        tile: WorldTile,
+    ) -> Option<PaletteTile<&'a Palette>> {
         self.palettes
-            .get(&palettes[0])
-            .map(|palette| match palette.size > tile {
-                true => Some((palette, tile)),
-                false => self
-                    .palettes
-                    .get(&palettes[1])
-                    .map(|p| (p, tile - palette.size)),
+            .get(tile.palette(palettes))
+            .map(|palette| PaletteTile {
+                palette,
+                tile: tile.id(),
             })
-            .flatten()
     }
 
     pub fn draw_tile(
         &self,
         ctx: &mut Context,
         palettes: &Palettes,
-        tile: TileId,
+        tile: WorldTile,
         x: f32,
         y: f32,
         color: Color,
     ) {
-        if let Some((palette, tile)) = self.get_palette(palettes, tile) {
+        if let Some(PaletteTile { palette, tile }) = self.get(palettes, tile) {
             match palette.animated.get(&tile) {
                 Some(texture) => texture.draw(
                     ctx,

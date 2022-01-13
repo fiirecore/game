@@ -1,6 +1,7 @@
 use crate::engine::{
     graphics::{self, Color, DrawParams},
     log::warn,
+    math::ivec2,
     Context, EngineContext,
 };
 use crate::pokengine::gui::SizedStr;
@@ -106,32 +107,23 @@ pub fn draw(
                     .draw_tile(ctx, &map.palettes, tile, render_x, render_y, color);
             }
 
-            // if world.debug_draw {
-            //     let coordinates = map
-            //         .warps
-            //         .values()
-            //         .flat_map(|entry| entry.location.iter())
-            //         .collect::<Vec<_>>();
-            //     let y = yy - screen.offset.y;
-            //     let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
-            //     // let row = y.saturating_mul(map.width);
-            //     for xx in screen.left..screen.right {
-            //         let x = xx - screen.offset.x;
-            //         let coordinate = Coordinate { x, y };
-            //         if coordinates.contains(&coordinate) {
-            //             let render_x = (xx << 4) as f32 - screen.focus.x;
-            //             firecore_battle_gui::pokedex::engine::graphics::draw_rectangle_lines(
-            //                 ctx,
-            //                 render_x,
-            //                 render_y,
-            //                 TILE_SIZE,
-            //                 TILE_SIZE,
-            //                 1.0,
-            //                 Color::LIME,
-            //             );
-            //         }
-            //     }
-            // }
+            if world.debug_draw {
+                for warp in map.warps.iter() {
+                    for coordinate in warp.area.iter() {
+                        let coordinate = ivec2(coordinate.x, coordinate.y) + screen.offset;
+                        let render = (coordinate * (16)).as_f32() - screen.focus;
+                        graphics::draw_rectangle_lines(
+                            ctx,
+                            render.x,
+                            render.y,
+                            TILE_SIZE,
+                            TILE_SIZE,
+                            2.0,
+                            Color::RED,
+                        )
+                    }
+                }
+            }
         }
     }
     for npc in map.npcs.values().filter(|npc| !npc.character.hidden).chain(
@@ -145,7 +137,8 @@ pub fn draw(
         data.npc.draw(ctx, npc, screen);
     }
 
-    data.object.draw(ctx, &map.id, &map.objects, &map.items, world, screen);
+    data.object
+        .draw(ctx, &map.id, &map.objects, &map.items, world, screen);
     // for script in map.scripts.iter() {
     //     if script.alive() {
     //         if let Some(action) = script.actions.front() {

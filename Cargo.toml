@@ -66,8 +66,8 @@ firecore-pokedex-engine-builder = { path = "crates/pokedex-engine-builder", defa
 
 firecore-world-builder = { path = "crates/world-builder", package = "firecore-world-builder" }
 
-firecore-font-builder = { git = "https://github.com/fiirecore-game/firecore-font-builder", rev = "057373a" }
-firecore-audio-builder = { git = "https://github.com/fiirecore-game/firecore-audio-builder", rev = "90af8c1", optional = true }
+firecore-font-builder = { path = "crates/builder-font" }
+firecore-audio-builder = { path = "crates/builder-audio", optional = true }
 serde = "1"
 firecore-storage = { path = "crates/storage", default-features = false }
 

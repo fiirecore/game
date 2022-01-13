@@ -3,7 +3,7 @@ use pokedex::{
     item::{bag::Bag, Item},
     moves::Move,
     pokemon::Pokemon,
-    NpcGroupId, engine::EngineContext,
+    TrainerGroupId, engine::EngineContext,
 };
 
 use pokedex::{
@@ -36,7 +36,7 @@ pub struct GuiLocalPlayer<ID, P, M: Deref<Target = Move>, I: Deref<Target = Item
 pub struct GuiRemotePlayer<ID, P> {
     pub player: PlayerParty<ID, usize, Option<UnknownPokemon<P>>>,
     pub renderer: Vec<ActivePokemonRenderer>,
-    pub npc: Option<NpcGroupId>,
+    pub trainer: Option<TrainerGroupId>,
 }
 
 #[derive(Clone)]

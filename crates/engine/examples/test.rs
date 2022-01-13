@@ -18,10 +18,10 @@ fn main() {
         ),
         async {},
         |ctx, eng, ()| {
-            let fonts: Vec<_> = bincode::deserialize(include_bytes!("fonts.bin")).unwrap();
+            let fonts: Vec<_> = firecore_storage::from_bytes(include_bytes!("fonts.bin")).unwrap();
 
             // let mut audio: engine::context::audio::SerializedAudio =
-            //     bincode::deserialize(include_bytes!("audio.bin")).unwrap();
+            //     firecore_storage::from_bytes(include_bytes!("audio.bin")).unwrap();
 
             let id = "battle_wild".parse().unwrap();
 

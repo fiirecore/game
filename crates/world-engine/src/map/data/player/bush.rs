@@ -1,4 +1,4 @@
-use worldlib::{map::WorldMap, positions::Coordinate};
+use worldlib::{map::{WorldMap, WorldTile}, positions::Coordinate};
 
 use crate::engine::{
     error::ImageError,
@@ -28,7 +28,7 @@ impl PlayerBushTexture {
     }
 
     pub fn check(&mut self, map: &WorldMap, coords: Coordinate) {
-        self.in_bush = map.tile(coords) == Some(0x0D);
+        self.in_bush = map.tile(coords).map(WorldTile::id) == Some(0x0D);
         if self.in_bush {
             self.add(coords);
         }

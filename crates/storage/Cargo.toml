@@ -18,7 +18,7 @@ firecore-engine = { path = "../engine", default-features = false, optional = tru
 
 serde = "1"
 ron = { version = "0.7" }
-bincode = { version = "1" }
+postcard = { version = "0.7", default-features = false, features = ["alloc"] }
 
 ### File management
 

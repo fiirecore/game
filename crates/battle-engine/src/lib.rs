@@ -6,7 +6,7 @@ use std::{fmt::Debug, hash::Hash, ops::Deref, rc::Rc};
 use pokedex::{
     engine::{log::{self, debug, warn}, EngineContext},
     item::ItemCategory,
-    NpcGroupId,
+    TrainerGroupId,
 };
 
 use pokedex::{
@@ -72,7 +72,7 @@ pub struct BattlePlayerGui<
     pub local: Option<GuiLocalPlayer<ID, P, M, I>>,
     pub remotes: HashMap<ID, GuiRemotePlayer<ID, P>>,
 
-    groups: HashMap<ID, NpcGroupId>,
+    groups: HashMap<ID, TrainerGroupId>,
 
     client: MpscClient<ID>,
     endpoint: MpscEndpoint<ID>,
@@ -85,14 +85,14 @@ impl<
         I: Deref<Target = Item> + Clone,
     > BattlePlayerGui<ID, P, M, I>
 {
-    pub fn new(ctx: &mut Context, btl: &BattleGuiData, party: Rc<PartyGui>, bag: Rc<BagGui>) -> Self
+    pub fn new(ctx: &mut Context, dex: &PokedexClientData, btl: &BattleGuiData) -> Self
     where
         ID: Default,
     {
         let (client, endpoint) = battle::endpoint::create();
 
         Self {
-            gui: BattleGui::new(ctx, btl, party, bag),
+            gui: BattleGui::new(ctx, dex, btl),
             state: BattlePlayerState::WaitToStart,
             should_select: false,
             local: None,
@@ -131,7 +131,7 @@ impl<
         };
     }
 
-    pub fn set_next_groups(&mut self, groups: HashMap<ID, NpcGroupId>) {
+    pub fn set_next_groups(&mut self, groups: HashMap<ID, TrainerGroupId>) {
         self.groups = groups;
     }
 
@@ -168,7 +168,7 @@ impl<
                     GuiRemotePlayer {
                         renderer: GuiRemotePlayer::create(&player, btl, dex),
                         player,
-                        npc: None,
+                        trainer: None,
                     },
                 )
             })
@@ -197,7 +197,7 @@ impl<
 
         for (id, group) in groups.into_iter() {
             if let Some(remote) = self.remotes.get_mut(&id) {
-                remote.npc = Some(group);
+                remote.trainer = Some(group);
             }
         }
 
@@ -277,8 +277,10 @@ impl<
                             }
                         },
                         ServerMessage::AddRemote(Indexed(target, unknown)) => {
-                            if let Some(party) = self.remotes.get_mut(target.team()) {
-                                party.player.add(target.index(), unknown.init(pokedex));
+                            if let Some((party, unknown)) = unknown.init(pokedex).map(|unknown| self.remotes.get_mut(target.team()).map(|party| (party, unknown))).flatten() {
+                                party.player.add(target.index(), Some(unknown));
+                            } else {
+                                warn!("Could not initialize remote pokemon at {:?}", target);
                             }
                         }
                         // ServerMessage::Winner(player) => {

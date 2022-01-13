@@ -132,7 +132,7 @@ impl Character {
 
     pub fn sees(&self, sight: u8, position: &Position) -> bool {
         let tracker = sight as i32;
-        if position.elevation != self.position.elevation {
+        if position.elevation != self.position.elevation && self.position.elevation != 0 {
             return false;
         }
         match self.position.direction {

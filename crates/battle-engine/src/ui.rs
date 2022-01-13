@@ -1,9 +1,8 @@
 use core::ops::Deref;
-use std::rc::Rc;
 
 use pokedex::{
     gui::{bag::BagGui, party::PartyGui},
-    moves::Move,
+    moves::Move, PokedexClientData,
 };
 
 use pokedex::engine::{gui::MessageBox, Context};
@@ -63,8 +62,8 @@ impl BattleGuiPositionIndex {
 pub struct BattleGui<M: Deref<Target = Move> + Clone> {
     pub background: BattleBackground,
 
-    pub party: Rc<PartyGui>,
-    pub bag: Rc<BagGui>,
+    pub party: PartyGui,
+    pub bag: BagGui,
 
     pub panel: BattlePanel<M>,
 
@@ -81,14 +80,13 @@ pub struct BattleGui<M: Deref<Target = Move> + Clone> {
 impl<M: Deref<Target = Move> + Clone> BattleGui<M> {
     pub fn new(
         ctx: &mut Context,
+        dex: &PokedexClientData,
         btl: &BattleGuiData,
-        party: Rc<PartyGui>,
-        bag: Rc<BagGui>,
     ) -> Self {
         Self {
             background: BattleBackground::new(ctx, btl),
-            party,
-            bag,
+            party: PartyGui::new(dex),
+            bag: BagGui::new(dex),
 
             panel: BattlePanel::new(),
 

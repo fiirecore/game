@@ -14,7 +14,7 @@ pub mod texture;
 pub const CRY_ID: tinystr::TinyStr8 = unsafe { tinystr::TinyStr8::new_unchecked(7959107) };
 
 pub use data::PokedexClientData;
-pub use firecore_pokedex_engine_builder::{npc_group::NpcGroupId, SerializedPokedexEngine};
+pub use firecore_pokedex_engine_builder::{trainer_group::TrainerGroupId, SerializedPokedexEngine};
 
 mod get {
     use std::ops::Deref;

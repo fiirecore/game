@@ -18,6 +18,7 @@ use crate::{
     events::{InputEvent, Sender},
     map::{object::ObjectId, MovementId, WarpDestination, WorldMap},
     positions::{BoundingBox, Coordinate, Direction, Location, Position},
+    script::{ScriptFlag, WorldInstruction, WorldScriptData},
 };
 
 use super::{
@@ -27,10 +28,7 @@ use super::{
     wild::{WildChances, WildEntry, WildType},
 };
 
-use self::{
-    random::WorldRandoms,
-    tile::{PaletteTileData, PaletteTileDatas},
-};
+use self::{random::WorldRandoms, tile::PaletteDataMap};
 
 pub mod tile;
 
@@ -40,6 +38,7 @@ pub type Maps = HashMap<Location, WorldMap>;
 
 pub struct WorldMapManager<R: Rng + SeedableRng + Clone> {
     pub data: WorldMapData,
+    pub scripts: WorldScriptData,
     sender: Sender<WorldAction>,
     randoms: WorldRandoms<R>,
 }
@@ -47,16 +46,17 @@ pub struct WorldMapManager<R: Rng + SeedableRng + Clone> {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WorldMapData {
     pub maps: Maps,
-    pub tiles: PaletteTileDatas,
+    pub palettes: PaletteDataMap,
     pub npcs: HashMap<NpcGroupId, NpcGroup>,
     pub wild: WildChances,
     pub spawn: (Location, Position),
 }
 
 impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
-    pub fn new(data: WorldMapData, sender: Sender<WorldAction>) -> Self {
+    pub fn new(data: WorldMapData, scripts: WorldScriptData, sender: Sender<WorldAction>) -> Self {
         Self {
             data,
+            scripts,
             sender,
             randoms: Default::default(),
         }
@@ -91,7 +91,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
 
     pub fn input(&mut self, player: &mut PlayerCharacter, input: InputEvent) {
         match input {
-            InputEvent::Move(direction) => self.try_move(player, direction),
+            InputEvent::Move(direction) => self.try_move_player(player, direction),
             InputEvent::Interact => self.try_interact(player),
         }
     }
@@ -102,9 +102,13 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                 let pos = if map
                     .tile(player.position.coords)
                     .map(|tile| {
-                        PaletteTileData::iter(&self.data.tiles, &map.palettes)
-                            .any(|t| t.forwarding.contains(&tile))
+                        self.data
+                            .palettes
+                            .get(tile.palette(&map.palettes))
+                            .map(|data| (tile.id(), data))
                     })
+                    .flatten()
+                    .map(|(tile, data)| data.forwarding.contains(&tile))
                     .unwrap_or_default()
                 {
                     player.position.in_direction(player.position.direction)
@@ -170,50 +174,6 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
         }
     }
 
-    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
-        player.unfreeze();
-        if winner {
-            if let Some(entry) = player.world.battle.battling.take() {
-                if let Some(trainer) = entry.trainer {
-                    if let Some(npc) = self
-                        .data
-                        .maps
-                        .get(&trainer.location)
-                        .map(|map| map.npcs.get(&trainer.id).map(|npc| npc.trainer.as_ref()))
-                        .flatten()
-                        .flatten()
-                    {
-                        match &npc.disable {
-                            TrainerDisable::DisableSelf => {
-                                player.world.battle.insert(&trainer.location, trainer.id);
-                            }
-                            TrainerDisable::Many(others) => {
-                                player.world.battle.insert(&trainer.location, trainer.id);
-                                player
-                                    .world
-                                    .battle
-                                    .battled
-                                    .get_mut(&trainer.location)
-                                    .unwrap()
-                                    .extend(others);
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            let (loc, pos) = player.world.heal.unwrap_or(self.data.spawn);
-            player.location = loc;
-            player.position = pos;
-            player.location = player.location;
-            player
-                .trainer
-                .party
-                .iter_mut()
-                .for_each(|o| o.heal(None, None));
-        }
-    }
-
     pub fn move_npcs(&mut self, player: &mut PlayerCharacter, delta: f32) {
         if let Some(map) = self.data.maps.get_mut(&player.location) {
             // Move Npcs
@@ -241,47 +201,50 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
 
                     const NPC_MOVE_CHANCE: f64 = 1.0 / 12.0;
 
-                    for npc in map.npcs.values_mut() {
-                        if !npc.character.moving() && self.randoms.npc.gen_bool(NPC_MOVE_CHANCE) {
-                            for movement in npc.movement.iter() {
-                                match movement {
-                                    NpcMovement::Look(directions) => {
-                                        if let Some(direction) =
-                                            directions.iter().choose(&mut self.randoms.npc)
-                                        {
-                                            npc.character.position.direction = *direction;
+                    for (id, npc) in map.npcs.iter_mut() {
+                        if !npc.character.moving() && player.world.npc.active.as_ref() == Some(id) {
+                            if self.randoms.npc.gen_bool(NPC_MOVE_CHANCE) {
+                                for movement in npc.movement.iter() {
+                                    match movement {
+                                        NpcMovement::Look(directions) => {
+                                            if let Some(direction) =
+                                                directions.iter().choose(&mut self.randoms.npc)
+                                            {
+                                                npc.character.position.direction = *direction;
+                                            }
+                                            if let Some(trainer) = npc.trainer.as_ref() {
+                                                player.find_battle(
+                                                    &map.id,
+                                                    &npc.id,
+                                                    trainer,
+                                                    &mut npc.character,
+                                                );
+                                            }
                                         }
-                                        if let Some(trainer) = npc.trainer.as_ref() {
-                                            player.find_battle(
-                                                &map.id,
-                                                &npc.id,
-                                                trainer,
-                                                &mut npc.character,
-                                            );
-                                        }
-                                    }
-                                    NpcMovement::Move(area) => {
-                                        let origin =
-                                            npc.origin.get_or_insert(npc.character.position.coords);
+                                        NpcMovement::Move(area) => {
+                                            let origin = npc
+                                                .origin
+                                                .get_or_insert(npc.character.position.coords);
 
-                                        let next = npc.character.position.forwards();
+                                            let next = npc.character.position.forwards();
 
-                                        let bb = BoundingBox::centered(*origin, *area);
+                                            let bb = BoundingBox::centered(*origin, *area);
 
-                                        if bb.contains(&next) {
-                                            if let Some(code) = map.movements.get(
-                                                npc.character.position.coords.x as usize
-                                                    + npc.character.position.coords.y as usize
-                                                        * map.width as usize,
-                                            ) {
-                                                if WorldMap::can_move(
-                                                    npc.character.position.elevation,
-                                                    *code,
+                                            if bb.contains(&next) {
+                                                if let Some(code) = map.movements.get(
+                                                    npc.character.position.coords.x as usize
+                                                        + npc.character.position.coords.y as usize
+                                                            * map.width as usize,
                                                 ) {
-                                                    npc.character
-                                                        .pathing
-                                                        .queue
-                                                        .push(npc.character.position.direction);
+                                                    if WorldMap::can_move(
+                                                        npc.character.position.elevation,
+                                                        *code,
+                                                    ) {
+                                                        npc.character
+                                                            .pathing
+                                                            .queue
+                                                            .push(npc.character.position.direction);
+                                                    }
                                                 }
                                             }
                                         }
@@ -400,9 +363,220 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                     return player.position.direction =
                                         npc.character.position.direction.inverse();
                                 }
-                                NpcInteract::Script(_) => todo!(),
+                                NpcInteract::Script(id) => {
+                                    if player.world.scripts.environment.queue.is_empty() {
+                                        if let Some(instructions) = self.scripts.scripts.get(id) {
+                                            let env = &mut player.world.scripts.environment;
+                                            env.executor = Some(npc.id);
+                                            env.queue = instructions.clone();
+                                        } else {
+                                            log::warn!(
+                                                "Could not get script with id {} for NPC {}",
+                                                id,
+                                                npc.character.name
+                                            );
+                                        }
+                                        player.world.npc.active = None;
+                                    }
+                                }
                                 NpcInteract::Nothing => (),
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn update_script(&mut self, player: &mut PlayerCharacter) {
+        let env = &mut player.world.scripts.environment;
+        let variables = &mut player.world.scripts.flags;
+        let queue = &mut env.queue;
+
+        fn insert(queue: &mut Vec<WorldInstruction>, script: &Vec<WorldInstruction>) {
+            let cont = script.contains(&WorldInstruction::End);
+            match cont {
+                true => {
+                    *queue = script.clone();
+                }
+                false => {
+                    let mut new = Vec::with_capacity(queue.len() + script.len());
+                    new.extend(script.iter().cloned());
+                    new.append(queue);
+                }
+            };
+        }
+
+        if let Some(instruction) = queue.first_mut() {
+            match instruction {
+                WorldInstruction::End => {
+                    // if env.executor.is_some() {
+                    //     player.world.npc.active = None;
+                    // }
+                    env.executor = None;
+                    queue.remove(0);
+                }
+                WorldInstruction::Lock => {
+                    player.character.freeze();
+                    player.input_frozen = true;
+                    queue.remove(0);
+                }
+                WorldInstruction::Release => {
+                    player.character.unfreeze();
+                    player.input_frozen = false;
+                    queue.remove(0);
+                }
+                WorldInstruction::SetVar(id, var) => {
+                    variables.insert(id.clone(), ScriptFlag::Var(*var));
+                    queue.remove(0);
+                }
+                WorldInstruction::SpecialVar(name, func) => {
+                    match func.as_str() {
+                        "ShouldTryRematchBattle" => {
+                            // to - do: rematches
+                            variables.insert(
+                                name.clone(),
+                                ScriptFlag::Var(match variables.contains_key("REMATCHES") {
+                                    true => 1,
+                                    false => 0,
+                                }),
+                            );
+                        }
+                        _ => (),
+                    }
+                    queue.remove(0);
+                }
+                WorldInstruction::Compare(name, var) => {
+                    if variables.get(name) == Some(&ScriptFlag::Var(*var)) {
+                        variables.insert("EQ".to_owned(), ScriptFlag::Flag);
+                    }
+                    queue.remove(0);
+                }
+                WorldInstruction::GotoIfEq(script) => {
+                    if variables.remove("EQ").is_some() {
+                        match self.scripts.scripts.get(script) {
+                            Some(script) => insert(queue, script),
+                            None => log::warn!(
+                                "Could not get script {} for GotoIfEq instruction",
+                                script,
+                            ),
+                        }
+                    } else {
+                        queue.remove(0);
+                    }
+                }
+                WorldInstruction::GotoIfSet(id, script) => {
+                    if variables.contains_key(id) {
+                        match self.scripts.scripts.get(script) {
+                            Some(script) => insert(queue, script),
+                            None => log::warn!(
+                                "Could not get script {} for GotoIfSet instruction querying {}",
+                                script,
+                                id
+                            ),
+                        }
+                    } else {
+                        queue.remove(0);
+                    }
+                }
+                WorldInstruction::Return => {
+                    if queue.len() == 1 {
+                        queue.push(WorldInstruction::End);
+                    }
+                    queue.remove(0);
+                }
+                /*WorldInstruction::Walk(..) | WorldInstruction::FacePlayer | WorldInstruction::TrainerBattleSingle | WorldInstruction::Msgbox(..) */
+                npc_inst => {
+                    if let Some((map, npc)) = env
+                        .executor
+                        .as_ref()
+                        .map(|id| {
+                            self.data
+                                .maps
+                                .get_mut(&player.location)
+                                .map(|map| map.npcs.get_mut(id).map(|npc| (&map.id, npc)))
+                                .flatten()
+                        })
+                        .flatten()
+                    {
+                        match npc_inst {
+                            WorldInstruction::TrainerBattleSingle => {
+                                if let Some(entry) = BattleEntry::trainer(
+                                    &mut player.world.battle,
+                                    map,
+                                    &npc.id,
+                                    npc,
+                                ) {
+                                    self.sender.send(WorldActions::Battle(entry));
+                                } else {
+                                    log::warn!(
+                                        "Could not get trainer for NPC: {}",
+                                        npc.character.name
+                                    );
+                                }
+                                queue.remove(0);
+                            }
+                            WorldInstruction::Msgbox(m_id, msgbox_type) => {
+                                match variables.get("TEMP_MESSAGE") {
+                                    Some(wait) => {
+                                        if let ScriptFlag::Wait = wait {
+                                            if let Some(wait) = player.world.polling.as_ref() {
+                                                match wait.get() {
+                                                    true => {
+                                                        variables.remove("TEMP_MESSAGE");
+                                                        queue.remove(0);
+                                                    }
+                                                    false => (),
+                                                }
+                                            } else {
+                                                variables.remove("TEMP_MESSAGE");
+                                                queue.remove(0);
+                                            }
+                                        } else {
+                                            variables.remove("TEMP_MESSAGE");
+                                            queue.remove(0);
+                                        }
+                                    }
+                                    None => {
+                                        if let Some(message) = self.scripts.messages.get(m_id) {
+                                            player.world.polling =
+                                                self.sender.send_polling(WorldActions::Message(
+                                                    message.clone(),
+                                                    self.data
+                                                        .npcs
+                                                        .get(&npc.group)
+                                                        .map(|g| g.message)
+                                                        .unwrap_or(MessageColor::Black),
+                                                ));
+                                            variables.insert(
+                                                "TEMP_MESSAGE".to_owned(),
+                                                ScriptFlag::Wait,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                            WorldInstruction::FacePlayer => {
+                                let pos = &mut npc.character.position;
+                                pos.direction =
+                                    pos.coords.towards(player.character.position.coords);
+                                queue.remove(0);
+                            }
+                            WorldInstruction::Walk(direction) => {
+                                if !npc.character.moving() {
+                                    match variables.contains_key("TEMP_0") {
+                                        true => {
+                                            variables.remove("TEMP_0");
+                                            queue.remove(0);
+                                        }
+                                        false => {
+                                            npc.character.pathing.queue.push(*direction);
+                                            variables.insert("TEMP_0".to_owned(), ScriptFlag::Flag);
+                                        }
+                                    }
+                                }
+                            }
+                            _ => unreachable!(),
                         }
                     }
                 }
@@ -420,8 +594,12 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
         if let Some(map) = self.data.maps.get_mut(&player.location) {
             if player.world.wild.encounters {
                 if let Some(current) = map.tile(player.position.coords) {
-                    if PaletteTileData::iter(&self.data.tiles, &map.palettes)
-                        .any(|t| t.wild.contains(&current))
+                    if self
+                        .data
+                        .palettes
+                        .get(current.palette(&map.palettes))
+                        .map(|data| data.wild.contains(&current.id()))
+                        .unwrap_or_default()
                     {
                         let t = match player.movement {
                             Movement::Swimming => &WildType::Water,
@@ -451,57 +629,6 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                 }
             }
         }
-
-        // if let Some(tile_id) = map.tile(player.position.coords) {
-        //     // look for player
-
-        //     // try running scripts
-
-        //     if player.world.scripts.actions.is_empty() {
-        //         'scripts: for script in map.scripts.iter() {
-        //             use worldlib::script::world::Condition;
-        //             for condition in &script.conditions {
-        //                 match condition {
-        //                     Condition::Location(location) => {
-        //                         if !location.in_bounds(&player.position.coords) {
-        //                             continue 'scripts;
-        //                         }
-        //                     }
-        //                     Condition::Activate(direction) => {
-        //                         if player.position.direction.ne(direction) {
-        //                             continue 'scripts;
-        //                         }
-        //                     }
-        //                     Condition::NoRepeat => {
-        //                         if player.world.scripts.executed.contains(&script.identifier) {
-        //                             continue 'scripts;
-        //                         }
-        //                     }
-        //                     Condition::Script(script, happened) => {
-        //                         if player.world.scripts.executed.contains(script).ne(happened) {
-        //                             continue 'scripts;
-        //                         }
-        //                     }
-        //                     Condition::PlayerHasPokemon(is_true) => {
-        //                         if party.is_empty().eq(is_true) {
-        //                             continue 'scripts;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //             player
-        //                 .world
-        //                 .scripts
-        //                 .actions
-        //                 .extend_from_slice(&script.actions);
-        //             player.world.scripts.actions.push(
-        //                 worldlib::script::world::WorldAction::Finish(script.identifier),
-        //             );
-        //             player.world.scripts.actions.reverse();
-        //             break;
-        //         }
-        //     }
-        // }
     }
 
     fn stop_player(&mut self, player: &mut PlayerCharacter) {
@@ -522,11 +649,11 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
             self.stop_player(player);
         }
         self.move_npcs(player, delta);
-
+        self.update_script(player);
         self.update_interactions(player);
     }
 
-    pub fn try_move(&mut self, player: &mut PlayerCharacter, direction: Direction) {
+    pub fn try_move_player(&mut self, player: &mut PlayerCharacter, direction: Direction) {
         player.on_try_move(direction);
 
         let offset = direction.tile_offset();
@@ -546,13 +673,17 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
             if map
                 .tile(coords)
                 .map(|tile| {
-                    PaletteTileData::iter(&self.data.tiles, &map.palettes).any(|t| {
-                        t.cliffs
-                            .get(&direction)
-                            .map(|tiles| tiles.contains(&tile))
-                            .unwrap_or_default()
-                    })
+                    self.data
+                        .palettes
+                        .get(tile.palette(&map.palettes))
+                        .map(|data| {
+                            data.cliffs
+                                .get(&direction)
+                                .map(|tiles| tiles.contains(&tile.id()))
+                        })
                 })
+                .flatten()
+                .flatten()
                 .unwrap_or_default()
                 && !player.noclip
             {
@@ -565,8 +696,9 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                     with_code(player, code.unwrap_or(1), direction);
                 }
                 MapMovementResult::Chunk(direction, offset, connection) => {
-                    if let Some((location, coords, code)) =
-                        self.connection_movement(direction, offset, connection, player)
+                    if let Some((location, coords, code)) = self
+                        .data
+                        .connection_movement(direction, offset, connection, player)
                     {
                         if with_code(player, code, direction) {
                             player.character.position.coords = coords;
@@ -608,14 +740,16 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
             }
             false
         }
-
-        // // check if on unwalkable tile
-        // let stuck = map.local_movement(player.position.coords)
-        //             .map(|code| !can_move(player.movement, code))
-        //             .unwrap_or(false);
-        // println!("{}", stuck);
     }
 
+    pub fn warp(&mut self, player: &mut PlayerCharacter, destination: WarpDestination) {
+        if self.data.warp(player, destination) {
+            self.on_warp(player);
+        }
+    }
+}
+
+impl WorldMapData {
     pub fn connection_movement(
         &self,
         direction: Direction,
@@ -624,8 +758,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
         player: &PlayerCharacter,
     ) -> Option<(Location, Coordinate, MovementId)> {
         connections.iter().find_map(|connection| {
-            self.data
-                .maps
+            self.maps
                 .get(&connection.0)
                 .map(|map| {
                     let o = offset - connection.1;
@@ -638,12 +771,53 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
         })
     }
 
-    pub fn warp(&mut self, player: &mut PlayerCharacter, destination: WarpDestination) -> bool {
-        match self.data.maps.contains_key(&destination.location) {
+    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
+        player.unfreeze();
+        if winner {
+            if let Some(entry) = player.world.battle.battling.take() {
+                if let Some(trainer) = entry.trainer {
+                    if let Some(npc) = self
+                        .maps
+                        .get(&trainer.location)
+                        .map(|map| map.npcs.get(&trainer.id).map(|npc| npc.trainer.as_ref()))
+                        .flatten()
+                        .flatten()
+                    {
+                        match &npc.disable {
+                            TrainerDisable::DisableSelf => {
+                                player.world.battle.insert(&trainer.location, trainer.id);
+                            }
+                            TrainerDisable::Many(others) => {
+                                player.world.battle.insert(&trainer.location, trainer.id);
+                                player
+                                    .world
+                                    .battle
+                                    .battled
+                                    .get_mut(&trainer.location)
+                                    .unwrap()
+                                    .extend(others);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            let (loc, pos) = player.world.heal.unwrap_or(self.spawn);
+            player.location = loc;
+            player.position = pos;
+            player.location = player.location;
+            player
+                .trainer
+                .party
+                .iter_mut()
+                .for_each(|o| o.heal(None, None));
+        }
+    }
+
+    pub fn warp(&self, player: &mut PlayerCharacter, destination: WarpDestination) -> bool {
+        match self.maps.contains_key(&destination.location) {
             true => {
-                player.position.from_destination(destination.position);
-                player.pathing.clear();
-                player.location = destination.location;
+                player.warp(destination);
                 true
             }
             false => false,

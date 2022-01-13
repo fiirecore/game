@@ -9,7 +9,7 @@ use {
 
 use std::path::PathBuf;
 
-pub use bincode::{deserialize as from_bytes, serialize as to_bytes};
+pub use postcard::{from_bytes as from_bytes, to_allocvec as to_bytes};
 pub use ron::{from_str, to_string};
 
 pub mod error;

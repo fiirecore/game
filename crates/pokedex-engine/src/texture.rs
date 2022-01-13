@@ -9,7 +9,7 @@ use engine::{
     Context,
 };
 
-pub type NpcGroupTextures = HashMap<crate::NpcGroupId, Texture>;
+pub type TrainerGroupTextures = HashMap<crate::TrainerGroupId, Texture>;
 pub type ItemTextures = HashMap<ItemId, Texture>;
 
 pub use firecore_pokedex_engine_builder::pokemon::PokemonTexture;

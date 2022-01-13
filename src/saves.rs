@@ -90,11 +90,3 @@ impl Default for Player {
 pub fn default_id() -> u64 {
     crate::engine::utils::seed()
 }
-
-pub fn default_name() -> &'static str {
-    "Red"
-}
-
-pub fn default_rival() -> &'static str {
-    "Gary"
-}

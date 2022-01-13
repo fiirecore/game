@@ -32,7 +32,7 @@ use crate::engine::text::MessagePage;
 // }
 
 #[derive(Debug, Clone)]
-pub struct BattleEntry {
+pub struct BattleMessage {
     pub id: BattleId,
     pub party: Party<SavedPokemon>,
     pub trainer: Option<BattleTrainerEntry>,

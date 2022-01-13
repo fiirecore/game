@@ -1,8 +1,6 @@
 use either::Either;
 use serde::{Deserialize, Serialize};
-use world::positions::{BoundingBox, Coordinate, CoordinateInt, Location, LocationId};
-
-pub type BuilderCoordinate = (CoordinateInt, CoordinateInt);
+use world::positions::{BoundingBox, Coordinate, Location, LocationId};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone, Copy)]
 #[serde(transparent)]
@@ -15,7 +13,7 @@ pub struct BuilderLocation {
 #[serde(transparent)]
 pub struct BuilderArea {
     #[serde(with = "either::serde_untagged")]
-    inner: Either<BuilderCoordinate, BoundingBox>,
+    inner: Either<Coordinate, BoundingBox>,
 }
 
 impl From<BuilderLocation> for Location {
@@ -44,10 +42,7 @@ impl From<Location> for BuilderLocation {
 impl From<BuilderArea> for BoundingBox {
     fn from(area: BuilderArea) -> Self {
         match area.inner {
-            Either::Left(coords) => BoundingBox::from(Coordinate {
-                x: coords.0,
-                y: coords.1,
-            }),
+            Either::Left(coords) => BoundingBox::from(coords),
             Either::Right(bb) => bb,
         }
     }
@@ -58,7 +53,7 @@ impl From<BoundingBox> for BuilderArea {
         Self {
             inner: match area.min != area.max {
                 true => Either::Right(area),
-                false => Either::Left((area.min.x, area.min.y)),
+                false => Either::Left((area.min.x, area.min.y).into()),
             },
         }
     }

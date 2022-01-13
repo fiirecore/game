@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 
 use pokedex::pokemon::owned::SavedPokemon;
 
-use crate::{positions::{Location, Position}, state::WorldState};
+use crate::{positions::{Location, Position}, state::WorldState, map::warp::WarpDestination};
 
 use super::{
     npc::{trainer::NpcTrainer, NpcId},
@@ -56,6 +56,13 @@ impl PlayerCharacter {
             input_frozen: false,
             ignore: false,
         }
+    }
+
+    pub fn warp(&mut self, destination: WarpDestination) {
+        self.position.from_destination(destination.position);
+        self.pathing.clear();
+        self.location = destination.location;
+        self.position.elevation = 0;
     }
 
     pub fn find_battle(

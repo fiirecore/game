@@ -1,14 +1,14 @@
 use hashbrown::HashMap;
 
-pub type NpcGroupId = tinystr::TinyStr16;
+pub type TrainerGroupId = tinystr::TinyStr16;
 
-pub type NpcGroupOutput = HashMap<NpcGroupId, Vec<u8>>;
-
-#[cfg(feature = "compile")]
-pub const NAME: &str = "NPC group";
+pub type TrainerGroupOutput = HashMap<TrainerGroupId, Vec<u8>>;
 
 #[cfg(feature = "compile")]
-pub fn get_npc_groups(path: impl AsRef<std::path::Path>) -> NpcGroupOutput {
+pub const NAME: &str = "Trainer Group";
+
+#[cfg(feature = "compile")]
+pub fn get_npc_groups(path: impl AsRef<std::path::Path>) -> TrainerGroupOutput {
     std::fs::read_dir(path)
         .unwrap_or_else(|err| panic!("Could not read {} directory with error {}", NAME, err))
         .flatten()

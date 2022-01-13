@@ -9,6 +9,7 @@ use crate::{
 pub struct Position {
     pub coords: Coordinate,
     pub direction: Direction,
+    #[serde(default)]
     pub elevation: Elevation,
 }
 

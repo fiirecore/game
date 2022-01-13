@@ -15,8 +15,10 @@ use self::{
 
 pub mod manager;
 
-pub mod chunk;
 pub mod movement;
+pub mod tile;
+
+pub mod chunk;
 
 pub mod object;
 pub mod warp;
@@ -24,11 +26,12 @@ pub mod wild;
 
 pub mod battle;
 
-pub type TileId = u16;
+pub type TileId = tile::TileId;
+pub type WorldTile = tile::WorldTile;
 pub type PaletteId = u8;
 pub type Palettes = [PaletteId; 2];
 pub type MapSize = usize;
-pub type Border = [TileId; 4];
+pub type Border = tile::Border;
 pub type MovementId = movement::MovementId;
 pub type MusicId = tinystr::TinyStr16;
 pub type TransitionId = tinystr::TinyStr8;
@@ -45,7 +48,7 @@ pub struct WorldMap {
 
     pub palettes: Palettes,
 
-    pub tiles: Vec<TileId>,
+    pub tiles: Vec<WorldTile>,
     pub movements: Vec<MovementId>,
 
     pub border: Border, //Border, // border blocks
@@ -89,7 +92,7 @@ impl WorldMap {
             || coords.y >= self.height)
     }
 
-    pub fn tile(&self, coords: Coordinate) -> Option<TileId> {
+    pub fn tile(&self, coords: Coordinate) -> Option<WorldTile> {
         self.in_bounds(coords)
             .then(|| self.tiles[coords.x as usize + coords.y as usize * self.width as usize])
     }

@@ -3,7 +3,7 @@ use engine::{error::ImageError, graphics::Texture, Context};
 use firecore_engine::EngineContext;
 use firecore_pokedex_engine_builder::SerializedPokedexEngine;
 
-use crate::texture::{ItemTextures, NpcGroupTextures, PokemonTextures};
+use crate::texture::{ItemTextures, TrainerGroupTextures, PokemonTextures};
 
 pub struct PokedexClientData {
     pub health_bar: Texture,
@@ -11,7 +11,7 @@ pub struct PokedexClientData {
     pub party: PokedexPartyData,
     pub pokemon_textures: PokemonTextures,
     pub item_textures: ItemTextures,
-    pub npc_group_textures: NpcGroupTextures,
+    pub trainer_group_textures: TrainerGroupTextures,
 }
 
 pub struct PokedexPartyData {
@@ -47,10 +47,10 @@ impl PokedexClientData {
             item_textures.insert(id, Texture::new(ctx, &texture)?);
         }
 
-        let mut npc_group_textures = NpcGroupTextures::with_capacity(data.npc_groups.len());
+        let mut trainer_group_textures = TrainerGroupTextures::with_capacity(data.trainer_groups.len());
 
-        for (id, texture) in data.npc_groups {
-            npc_group_textures.insert(id, Texture::new(ctx, &texture)?);
+        for (id, texture) in data.trainer_groups {
+            trainer_group_textures.insert(id, Texture::new(ctx, &texture)?);
         }
 
         Ok(Self {
@@ -74,7 +74,7 @@ impl PokedexClientData {
             },
             pokemon_textures,
             item_textures,
-            npc_group_textures,
+            trainer_group_textures,
         })
     }
 }

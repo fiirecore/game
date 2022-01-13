@@ -7,7 +7,7 @@ use crate::{
     events::Wait,
     map::{battle::BattleEntry, warp::WarpDestination},
     positions::{Coordinate, Location, Position},
-    script::ScriptId,
+    script::{ScriptEnvironment, ScriptFlag, ScriptId, VariableName},
 };
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -43,8 +43,9 @@ pub struct WorldBattleState {
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WorldGlobalScriptData {
     pub executed: HashSet<ScriptId>,
-    // pub actions: Vec<WorldAction>,
     pub npcs: HashMap<NpcId, (Location, Npc)>,
+    pub flags: HashMap<VariableName, ScriptFlag>,
+    pub environment: ScriptEnvironment,
 }
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]

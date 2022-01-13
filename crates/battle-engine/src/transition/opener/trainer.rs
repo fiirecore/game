@@ -40,8 +40,8 @@ impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = 
         _local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
     ) {
-        if let Some(id) = &opponents.values().next().unwrap().npc {
-            self.trainer = ctx.npc_group_textures.get(id).cloned();
+        if let Some(id) = opponents.values().next().map(|player| player.trainer.as_ref()).flatten() {
+            self.trainer = ctx.trainer_group_textures.get(id).cloned();
         }
     }
 

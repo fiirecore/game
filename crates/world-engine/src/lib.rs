@@ -12,5 +12,5 @@ mod gui;
 
 #[derive(Debug, Clone)]
 pub enum WorldMetaAction {
-    Battle(battle::BattleEntry),
+    Battle(battle::BattleMessage),
 }

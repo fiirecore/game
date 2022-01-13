@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use world::{
-    map::{chunk::Connection, PaletteId, WorldMapSettings, manager::tile::PaletteTileDatas, wild::WildChances, MusicId},
+    map::{chunk::Connection, PaletteId, WorldMapSettings, manager::tile::PaletteDataMap, wild::WildChances, MusicId, TileId},
     positions::{CoordinateInt, Direction, Location, Position},
 };
 
@@ -46,9 +46,13 @@ pub struct MapConfig {
     // pub pokemon_center: bool,
 }
 
+pub struct LoadData {
+    pub sizes: HashMap<PaletteId, TileId>,
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct BuilderWorldData {
-    pub tiles: PaletteTileDatas,
+    pub palettes: PaletteDataMap,
     pub wild: WildChances,
     pub spawn: (Location, Position),
 }

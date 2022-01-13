@@ -14,7 +14,7 @@ use crate::pokengine::{
 use battlecli::BattleGuiData;
 
 use worldcli::{
-    battle::{BattleEntry, BattleId},
+    battle::{BattleMessage, BattleId},
     worldlib::{events::*, serialized::SerializedWorld},
 };
 
@@ -48,7 +48,7 @@ impl Default for GameStates {
 
 #[derive(Clone)]
 pub enum GameActions {
-    Battle(BattleEntry),
+    Battle(BattleMessage),
     CommandError(&'static str),
     Save,
     Exit,
@@ -81,13 +81,13 @@ impl GameStateManager {
 
         let (actions, receiver) = split();
 
-        let world = WorldWrapper::new(ctx, dex.clone(), party.clone(), bag.clone(), actions, wrld)?;
+        let world = WorldWrapper::new(ctx, dex.clone(), actions, wrld)?;
 
         Ok(Self {
             state: GameStates::default(),
 
             world,
-            battle: BattleManager::new(ctx, btl, dex, party, bag, battle),
+            battle: BattleManager::new(ctx, btl, dex, battle),
 
             save: None,
 
@@ -105,9 +105,9 @@ impl GameStateManager {
 impl GameStateManager {
     pub fn start(&mut self, _ctx: &mut Context) {
         if let Some(save) = self.save.as_mut() {
-            save.player.create(self.world.spawn());
+            save.player.create(self.world.manager.spawn());
             match self.state {
-                GameStates::World => self.world.start(save.player.unwrap()),
+                GameStates::World => self.world.manager.start(save.player.unwrap()),
                 GameStates::Battle => (),
             }
         }
@@ -186,10 +186,10 @@ impl GameStateManager {
                         if let Some(winner) = self.battle.winner() {
                             let winner = winner == &BattleId::Player;
                             let trainer = self.battle.update_data(winner, player);
-                            self.world.post_battle(player, winner);
+                            self.world.manager.post_battle(player, winner);
                         }
                         self.state = GameStates::World;
-                        self.world.start(player);
+                        self.world.manager.start(player);
                     }
                 }
             }

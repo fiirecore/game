@@ -37,14 +37,14 @@ pub enum PartyCommand {
     Info(Option<usize>),
 }
 
-pub enum BattleCommand {
-    Random,
-}
+// pub enum BattleCommand {
+//     Random,
+// }
 
-pub enum ScriptCommand {
-    Clear,
-    List,
-}
+// pub enum ScriptCommand {
+//     Clear,
+//     List,
+// }
 
 impl WorldWrapper {
     fn error(&self, error: &'static str) {

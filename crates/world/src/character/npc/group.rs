@@ -18,6 +18,12 @@ pub enum MessageColor {
     Blue,
 }
 
+impl Default for MessageColor {
+    fn default() -> Self {
+        Self::Black
+    }
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct TrainerGroup {

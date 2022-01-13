@@ -19,11 +19,11 @@ use crate::{
 
 // }
 
-pub type PaletteTileDatas = HashMap<PaletteId, PaletteTileData>;
+pub type PaletteDataMap = HashMap<PaletteId, PaletteData>;
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct PaletteTileData {
+pub struct PaletteData {
     // pub bushes: HashMap<BushType, TileId>,
     #[serde(default)]
     pub wild: MapWildType,
@@ -31,22 +31,39 @@ pub struct PaletteTileData {
     pub cliffs: HashMap<Direction, Vec<TileId>>,
     #[serde(default)]
     pub forwarding: Vec<TileId>,
+    #[serde(default)]
+    pub warp: HashMap<TileId, WarpTile>,
 }
 
-impl PaletteTileData {
-    pub fn iter<'a>(
-        tiles: &'a PaletteTileDatas,
-        palettes: &'a [PaletteId; 2],
-    ) -> impl Iterator<Item = &'a PaletteTileData> + 'a {
-        palettes.iter().flat_map(|p| tiles.get(p))
-    }
-}
+// impl PaletteTileData {
+//     pub fn iter<'a>(
+//         tiles: &'a PaletteTileDatas,
+//         palettes: &'a Palettes,
+//     ) -> impl Iterator<Item = &'a PaletteTileData> + 'a {
+//         palettes.iter().flat_map(|p| tiles.get(p))
+//     }
+
+//     pub fn enumerate<'a>(
+//         tiles: &'a PaletteTileDatas,
+//         palettes: &'a Palettes,
+//     ) -> impl Iterator<Item = (PaletteId, &'a PaletteTileData)> + 'a {
+//         palettes.iter().flat_map(|p| tiles.get(p).map(|d| (*p, d)))
+//     }
+
+// }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MapWildType {
     None,
     Some(Vec<TileId>),
     All,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum WarpTile {
+    Door,
+    Stair,
+    Other,
 }
 
 // #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]

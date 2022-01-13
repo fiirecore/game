@@ -4,15 +4,11 @@ use std::{
 };
 
 use crate::engine::{
-    math::Vec2,
+    math::{IVec2, Vec2},
     utils::{HEIGHT, WIDTH},
 };
 
-use crate::worldlib::{
-    character::Character,
-    positions::{Coordinate, CoordinateInt},
-    TILE_SIZE,
-};
+use crate::worldlib::{character::Character, positions::CoordinateInt, TILE_SIZE};
 
 #[derive(Debug, Clone)]
 pub struct RenderCoords {
@@ -21,7 +17,7 @@ pub struct RenderCoords {
 
     pub focus: Vec2,
 
-    pub offset: Coordinate,
+    pub offset: IVec2,
 }
 
 const HALF_WIDTH: i32 = (WIDTH as i32 + TILE_SIZE as i32) >> 1;
@@ -51,7 +47,7 @@ impl RenderCoords {
         }
     }
 
-    pub fn offset(&self, offset: Coordinate) -> RenderCoords {
+    pub fn offset(&self, offset: IVec2) -> RenderCoords {
         // return offset x & y
         RenderCoords {
             offset,

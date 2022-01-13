@@ -20,7 +20,7 @@ use crate::{
     },
 };
 
-use worldcli::battle::{BattleEntry, BattleId};
+use worldcli::battle::{BattleMessage, BattleId};
 
 use crate::pokengine::{
     gui::{bag::BagGui, party::PartyGui},
@@ -100,8 +100,6 @@ impl<
         ctx: &mut Context,
         btl: BattleGuiData,
         dex: Rc<PokedexClientData>,
-        party: Rc<PartyGui>,
-        bag: Rc<BagGui>,
         data: (EngineMoves, MoveScripts),
     ) -> Self {
         let mut engine = DefaultEngine::new::<BattleId, SmallRng>();
@@ -118,7 +116,7 @@ impl<
             transition: BattleScreenTransitionManager::new(ctx),
             closer: BattleCloserManager::default(),
 
-            player: BattlePlayerGui::new(ctx, &btl, party, bag),
+            player: BattlePlayerGui::new(ctx, &dex, &btl),
 
             engine,
 
@@ -138,7 +136,7 @@ impl<
         movedex: &'d dyn Dex<'d, Move, M>,
         itemdex: &'d dyn Dex<'d, Item, I>,
         player: &mut PlayerCharacter,
-        mut entry: BattleEntry,
+        mut entry: BattleMessage,
     ) -> bool {
         // add battle type parameter
         self.finished = false;

@@ -2,8 +2,8 @@
 pub enum DataError {
     IOError(std::io::Error),
     Utf8Error(std::str::Utf8Error),
-    Ron(ron::Error),
-    Bincode(bincode::Error),
+    Text(ron::Error),
+    Bytes(postcard::Error),
     #[cfg(feature = "io")]
     File(engine::error::FileError),
     // #[cfg(target_arch = "wasm32")]
@@ -35,13 +35,13 @@ impl From<std::str::Utf8Error> for DataError {
 
 impl From<ron::Error> for DataError {
     fn from(error: ron::Error) -> Self {
-        Self::Ron(error)
+        Self::Text(error)
     }
 }
 
-impl From<bincode::Error> for DataError {
-    fn from(error: bincode::Error) -> Self {
-        Self::Bincode(error)
+impl From<postcard::Error> for DataError {
+    fn from(error: postcard::Error) -> Self {
+        Self::Bytes(error)
     }
 }
 

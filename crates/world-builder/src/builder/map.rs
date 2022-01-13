@@ -1,11 +1,12 @@
 use std::{ffi::OsStr, fmt::Display, path::Path};
 
 use hashbrown::HashMap;
+use image::GenericImageView;
 use world::{
     map::{
         chunk::{ChunkConnections, WorldChunk},
         manager::Maps,
-        WorldMap,
+        WorldMap, WorldTile,
     },
     positions::Location,
     serialized::SerializedTextures,
@@ -13,7 +14,7 @@ use world::{
 
 use crate::{bin::BinaryMap, builder::textures::get_textures};
 
-use super::MapConfig;
+use super::{LoadData, MapConfig};
 
 pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
     let maps_path = root_path.join("maps");
@@ -25,6 +26,14 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
 
     let textures = get_textures(textures_path);
     println!("Loaded {} palettes", textures.palettes.len(),);
+
+    let sizes = textures
+        .palettes
+        .iter()
+        .flat_map(|(id, p)| image::load_from_memory(&p.texture).map(|i| (*id, i.height() as u16)))
+        .collect();
+
+    let loaddata = LoadData { sizes };
 
     let mut world_maps = Maps::default();
     // let mut map_gui_locs = worldlib::serialized::MapGuiLocs::new();
@@ -46,11 +55,12 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
             })
             .path();
 
-        recurse_dir(&worlds, extension.as_deref(), &mut world_maps);
+        recurse_dir(&worlds, extension.as_deref(), &loaddata, &mut world_maps);
 
         fn recurse_dir(
             worlds: &Path,
             extension: Option<&OsStr>,
+            loaddata: &LoadData,
             world_maps: &mut HashMap<Location, WorldMap>,
         ) {
             if let Ok(dir) = std::fs::read_dir(&worlds) {
@@ -63,7 +73,7 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
                         }
                         if let Some(ext) = file.extension() {
                             if ext == std::ffi::OsString::from("ron") {
-                                match load_maps(&worlds, &file) {
+                                match load_maps(&worlds, loaddata, &file) {
                                     Ok(map) => {
                                         world_maps.insert(map.id, map);
                                     }
@@ -78,14 +88,16 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
                             }
                             if ext == std::ffi::OsString::from("world") {
                                 match std::fs::read(&file) {
-                                    Ok(bytes) => match bincode::deserialize::<WorldMap>(&bytes) {
-                                        Ok(map) => {
-                                            world_maps.insert(map.id, map);
+                                    Ok(bytes) => {
+                                        match firecore_storage::from_bytes::<WorldMap>(&bytes) {
+                                            Ok(map) => {
+                                                world_maps.insert(map.id, map);
+                                            }
+                                            Err(err) => {
+                                                panic!("Could not deserialize map at {:?} with error {}", file, err)
+                                            }
                                         }
-                                        Err(err) => {
-                                            panic!("Could not deserialize map at {:?} with error {}", file, err)
-                                        }
-                                    },
+                                    }
                                     Err(err) => eprintln!(
                                         "Could not read world map file with error {}",
                                         err
@@ -99,7 +111,7 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
                     for entry in std::fs::read_dir(&worlds).unwrap().flatten() {
                         let path = entry.path();
                         if path.is_dir() {
-                            recurse_dir(&path, extension, world_maps)
+                            recurse_dir(&path, extension, loaddata, world_maps)
                         }
                     }
                 }
@@ -114,7 +126,7 @@ pub fn load_world(root_path: &Path) -> (Maps, SerializedTextures) {
 
 // pub(crate) type MapGuiPos = Option<(worldlib::map::MapIcon, String, Location)>;
 
-fn load_maps(root: &Path, file: &Path) -> Result<WorldMap, LoadMapError> {
+fn load_maps(root: &Path, loaddata: &LoadData, file: &Path) -> Result<WorldMap, LoadMapError> {
     println!("Loading map under: {:?}", root);
     let data = std::fs::read_to_string(file).unwrap_or_else(|err| {
         panic!(
@@ -125,22 +137,24 @@ fn load_maps(root: &Path, file: &Path) -> Result<WorldMap, LoadMapError> {
 
     fn load<'de, E: Into<LoadMapError>>(
         root: &Path,
+        loaddata: &LoadData,
         func: impl FnOnce(&'de str) -> Result<MapConfig, E>,
         data: &'de str,
     ) -> Result<WorldMap, LoadMapError> {
         match (func)(data).map_err(Into::into) {
-            Ok(config) => Ok(load_map_from_config(root, config)?),
+            Ok(config) => Ok(load_map_from_config(root, config, loaddata)?),
             // Ok(config) => Ok(vec![load_map_from_config(root_path, config.inner, None)?]),
             Err(err) => Err(err),
         }
     }
 
-    load(root, ron::from_str, &data)
+    load(root, loaddata, ron::from_str, &data)
 }
 
 pub fn load_map_from_config<P: AsRef<Path>>(
     root: P,
     config: MapConfig,
+    data: &LoadData,
 ) -> Result<WorldMap, LoadMapError> {
     println!("    Loading map named {}", config.name);
 
@@ -175,6 +189,26 @@ pub fn load_map_from_config<P: AsRef<Path>>(
 
     let chunk = (!chunk.is_empty()).then(|| WorldChunk { connections: chunk });
 
+    let tiles = map
+        .tiles
+        .into_iter()
+        .map(|tile| {
+            let size = *data.sizes.get(&config.palettes[0]).unwrap();
+            match size > tile {
+                false => WorldTile::Secondary(tile - size),
+                true => WorldTile::Primary(tile),
+            }
+        })
+        .collect();
+
+    let border = map.border.tiles.into_iter().map(|tile| {
+        let size = *data.sizes.get(&config.palettes[0]).unwrap();
+        match size > tile {
+            false => WorldTile::Secondary(tile - size),
+            true => WorldTile::Primary(tile),
+        }
+    }).collect::<Vec<_>>();
+
     Ok(WorldMap {
         id,
 
@@ -186,14 +220,14 @@ pub fn load_map_from_config<P: AsRef<Path>>(
 
         palettes: config.palettes,
 
-        tiles: map.tiles,
+        tiles,
         movements: map.movements,
 
         border: [
-            map.border.tiles[0],
-            map.border.tiles[1],
-            map.border.tiles[2],
-            map.border.tiles[3],
+            border[0],
+            border[1],
+            border[2],
+            border[3],
         ],
 
         chunk,

@@ -1,7 +1,12 @@
 pub extern crate firecore_world as world;
 
 use world::{
-    map::{chunk::Connection, manager::{Maps, WorldMapData}, warp::WarpEntry, PaletteId},
+    map::{
+        chunk::Connection,
+        manager::{Maps, WorldMapData},
+        warp::WarpEntry,
+        PaletteId,
+    },
     serialized::{SerializedTextures, SerializedWorld},
 };
 
@@ -15,7 +20,11 @@ pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
     let (maps, mut textures) = builder::map::load_world(path.as_ref());
     println!("Finished loading maps and tile textures.");
 
-    let builder::BuilderWorldData { tiles, wild, spawn } = {
+    let builder::BuilderWorldData {
+        palettes,
+        wild,
+        spawn,
+    } = {
         let path = path.as_ref().join("data.ron");
         ron::from_str::<builder::BuilderWorldData>(&std::fs::read_to_string(&path).unwrap_or_else(
             |err| {
@@ -33,6 +42,17 @@ pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
         })
     };
 
+    let scripts = {
+        let scripts = path.as_ref().join("scripts.bin");
+        firecore_storage::from_bytes(&std::fs::read(&scripts).unwrap_or_else(|err| {
+            panic!(
+                "Cannot read script binary at {:?} with error {}",
+                scripts, err
+            )
+        }))
+        .unwrap_or_else(|err| panic!("Cannot deserialize script binary with error {}", err))
+    };
+
     println!("Verifying palettes, maps, warps...");
     verify_palettes(&maps, &mut textures);
     verify_warps(&maps);
@@ -46,11 +66,12 @@ pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
     let data = SerializedWorld {
         data: WorldMapData {
             maps,
-            tiles,
+            palettes,
             npcs,
             wild,
             spawn,
         },
+        scripts,
         textures,
     };
 

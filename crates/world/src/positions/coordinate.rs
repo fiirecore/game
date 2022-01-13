@@ -1,12 +1,13 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-use serde::{Deserialize, Serialize};
-
-use crate::{positions::{Direction, Position}, map::movement::Elevation};
+use crate::{
+    map::movement::Elevation,
+    positions::{Direction, Position},
+};
 
 pub type CoordinateInt = i32;
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coordinate {
     pub x: CoordinateInt,
     pub y: CoordinateInt,
@@ -56,6 +57,12 @@ impl Coordinate {
     }
 }
 
+impl From<(CoordinateInt, CoordinateInt)> for Coordinate {
+    fn from(c: (CoordinateInt, CoordinateInt)) -> Self {
+        Self { x: c.0, y: c.1 }
+    }
+}
+
 impl Add for Coordinate {
     type Output = Self;
 
@@ -95,5 +102,23 @@ impl SubAssign for Coordinate {
 impl core::fmt::Display for Coordinate {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Coordinate {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        type C = (CoordinateInt, CoordinateInt);
+        C::deserialize(deserializer).map(Into::into)
+    }
+}
+
+impl serde::Serialize for Coordinate {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer {
+        (self.x, self.y).serialize(serializer)
     }
 }

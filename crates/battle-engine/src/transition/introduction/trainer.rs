@@ -57,36 +57,35 @@ impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = 
     ) {
         text.pages.clear();
 
-        let opponent = opponents.values().next().unwrap();
-
-        if let Some(id) = &opponent.npc {
-            self.texture = ctx.npc_group_textures.get(id).cloned();
-        }
-
-        if let Some(name) = &opponent.player.name {
-            text.pages.push(MessagePage {
-                lines: vec![name.to_owned(), "would like to battle!".to_owned()],
-                wait: None,
-                color: MessagePage::WHITE,
-            });
-
-            text.pages.push(MessagePage {
-                lines: vec![
-                    format!("{} sent", name),
-                    format!(
-                        "out {}",
-                        BasicBattleIntroduction::concatenate(&opponent.player)
-                    ),
-                ],
-                wait: Some(0.5),
-                color: MessagePage::WHITE,
-            });
-        } else {
-            text.pages.push(MessagePage {
-                lines: vec![String::from("No trainer data found!")],
-                wait: None,
-                color: MessagePage::WHITE,
-            });
+        if let Some(opponent) = opponents.values().next() {
+            if let Some(id) = opponent.trainer.as_ref() {
+                self.texture = ctx.trainer_group_textures.get(id).cloned();
+            }
+            if let Some(name) = &opponent.player.name {
+                text.pages.push(MessagePage {
+                    lines: vec![name.to_owned(), "would like to battle!".to_owned()],
+                    wait: None,
+                    color: MessagePage::WHITE,
+                });
+    
+                text.pages.push(MessagePage {
+                    lines: vec![
+                        format!("{} sent", name),
+                        format!(
+                            "out {}",
+                            BasicBattleIntroduction::concatenate(&opponent.player)
+                        ),
+                    ],
+                    wait: Some(0.5),
+                    color: MessagePage::WHITE,
+                });
+            } else {
+                text.pages.push(MessagePage {
+                    lines: vec![String::from("No trainer data found!")],
+                    wait: None,
+                    color: MessagePage::WHITE,
+                });
+            }
         }
 
         self.introduction.common_setup(text, local);

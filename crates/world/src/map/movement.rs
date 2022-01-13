@@ -3,7 +3,7 @@ use crate::positions::Direction;
 use super::chunk::{ChunkOffset, Connection};
 
 pub type MovementId = u8;
-pub type Elevation = Option<u8>;
+pub type Elevation = u8;
 
 pub enum MapMovementResult<'a> {
     Option(Option<MovementId>),
@@ -33,6 +33,7 @@ impl<'a> From<Option<(&'a Direction, i32, &'a [Connection])>> for MapMovementRes
 }
 
 impl super::WorldMap {
+    
     pub const CROSSING: MovementId = 0x0;
     pub const OBSTACLE: MovementId = 0x1;
     /// Height level 0 is used for water.
@@ -50,31 +51,14 @@ impl super::WorldMap {
 
     pub const fn can_move(elevation: Elevation, code: MovementId) -> bool {
         match elevation {
-            None => code % 2 == 0,
-            Some(elevation) => {
-                if code == 0 {
-                    return true;
-                }
-                match elevation {
-                    0 | 2 => matches!(code, Self::WATER | Self::HL2),
-                    1 => code == Self::HL1,
-                    3 => code == Self::HL3,
-                    4 => code == Self::HL4,
-                    _ => false,
-                }
-            }
+            0 | 1 => code % 4 == 0,
+            elevation => elevation << 2 == code || matches!(code, Self::CROSSING | Self::WATER),
         }
     }
 
     pub fn change_elevation(elevation: &mut Elevation, code: MovementId) {
-        *elevation = match code {
-            Self::CROSSING => None,
-            Self::WATER => Some(0),
-            Self::HL1 => Some(1),
-            Self::HL2 => Some(2),
-            Self::HL3 => Some(3),
-            Self::HL4 => Some(4),
-            _ => return,
+        if code % 4 == 0 {
+            *elevation = code >> 2;
         }
     }
 }

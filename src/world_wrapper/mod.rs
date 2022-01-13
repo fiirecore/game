@@ -4,7 +4,6 @@ use std::rc::Rc;
 use worldcli::{worldlib::{
     character::player::PlayerCharacter,
     events::{split, Sender, Receiver},
-    positions::{Location, Position},
     serialized::SerializedWorld,
 }, WorldMetaAction};
 
@@ -31,7 +30,7 @@ mod command;
 mod start;
 
 pub struct WorldWrapper {
-    manager: WorldManager,
+    pub manager: WorldManager,
 
     menu: StartMenu,
 
@@ -47,15 +46,13 @@ impl WorldWrapper {
     pub(crate) fn new(
         ctx: &mut Context,
         dex: Rc<PokedexClientData>,
-        party: Rc<PartyGui>,
-        bag: Rc<BagGui>,
         sender: Sender<GameActions>,
         world: SerializedWorld,
     ) -> Result<Self, ImageError> {
         let (actions, receiver) = split();
         Ok(Self {
             manager: WorldManager::new(ctx, actions.clone(), world)?,
-            menu: StartMenu::new(dex, party, bag, sender.clone()),
+            menu: StartMenu::new(dex, sender.clone()),
             sender,
             commands: Vec::new(),
             receiver,
@@ -67,14 +64,6 @@ impl WorldWrapper {
     pub fn seed(&mut self, seed: u64) {
         self.manager.seed(seed);
         self.random = SmallRng::seed_from_u64(seed);
-    }
-
-    pub fn spawn(&self) -> (Location, Position) {
-        self.manager.spawn()
-    }
-
-    pub fn start(&mut self, player: &mut PlayerCharacter) {
-        self.manager.start(player)
     }
 
     pub fn update(
@@ -92,6 +81,8 @@ impl WorldWrapper {
                 self.menu.spawn();
             }
 
+            self.manager.update(ctx, eng, player, delta);
+
             for action in self.receiver.try_iter() {
                 match action {
                     WorldMetaAction::Battle(e) => self.sender.send(GameActions::Battle(e)),
@@ -103,7 +94,7 @@ impl WorldWrapper {
                     // WorldCommands::Battle(_) => todo!(),
                     // WorldCommands::Script(_) => todo!(),
                     WorldCommands::Warp(location) => {
-                        self.manager.try_warp(player, location);
+                        self.manager.try_teleport(player, location);
                     }
                     WorldCommands::Wild(toggle) => {
                         player.world.wild.encounters = match toggle {
@@ -144,11 +135,12 @@ impl WorldWrapper {
                     }
                     WorldCommands::Tile => match self.manager.get(&player.location) {
                         Some(map) => {
-                            info!(
-                                "Palettes: {:?}, Tile: {:?}",
-                                map.palettes,
-                                map.tile(player.character.position.coords)
-                            );
+                            match map.tile(player.character.position.coords) {
+                                Some(tile) => {
+                                    info!("Palette {}, Tile {}", tile.palette(&map.palettes), tile.id());
+                                },
+                                None => info!("Could not get tile!"),
+                            }
                         }
                         None => info!("Could not get current map!"),
                     },
@@ -170,21 +162,7 @@ impl WorldWrapper {
                     },
                 }
             }
-
-            // {
-            //     let mut events = self.events.0.borrow_mut();
-
-            //     events.flush();
-
-            //     drop(events);
-            // }
-
-            self.manager.update(ctx, eng, player, delta);
         }
-    }
-
-    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
-        self.manager.post_battle(player, winner)
     }
 
     pub fn draw(&self, ctx: &mut Context, eng: &EngineContext, player: &PlayerCharacter) {

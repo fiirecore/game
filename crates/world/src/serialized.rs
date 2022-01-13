@@ -7,7 +7,7 @@ use crate::{
         npc::{group::NpcGroupId, Npc, NpcId},
         Movement,
     },
-    map::{manager::WorldMapData, PaletteId, TileId, object::ObjectId},
+    map::{manager::WorldMapData, PaletteId, TileId, object::ObjectId}, script::WorldScriptData,
     // positions::Location,
 };
 
@@ -18,6 +18,7 @@ type Texture = Vec<u8>;
 #[derive(Deserialize, Serialize)]
 pub struct SerializedWorld {
     pub data: WorldMapData,
+    pub scripts: WorldScriptData,
     // pub map_gui_locs: MapGuiLocs,
     pub textures: SerializedTextures,
 }

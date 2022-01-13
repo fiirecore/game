@@ -28,16 +28,14 @@ pub struct StartMenu {
     buttons: [&'static str; 5],
     cursor: usize,
     dex: Rc<PokedexClientData>,
-    party: Rc<PartyGui>,
-    bag: Rc<BagGui>,
+    party: PartyGui,
+    bag: BagGui,
     actions: Sender<GameActions>,
 }
 
 impl StartMenu {
     pub(crate) fn new(
         dex: Rc<PokedexClientData>,
-        party: Rc<PartyGui>,
-        bag: Rc<BagGui>,
         sender: Sender<GameActions>,
     ) -> Self {
         Self {
@@ -45,9 +43,9 @@ impl StartMenu {
             pos: Vec2::new(169.0, 1.0),
             buttons: ["Save", "Bag", "Pokemon", "Menu", "Cancel"],
             cursor: 0,
+            party: PartyGui::new(&dex),
+            bag: BagGui::new(&dex),
             dex,
-            party,
-            bag,
             actions: sender,
         }
     }
