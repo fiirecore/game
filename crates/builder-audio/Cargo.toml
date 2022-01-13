@@ -1,0 +1,14 @@
+[package]
+name = "firecore-audio-builder"
+version = "0.0.2"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+ron = "0.7"
+serde = { version = "1", features = ["derive"] }
+tinystr = { version = "0.4", features = ["serde"], default-features = false }
+
+[dev-dependencies]
+firecore-storage = { path = "../storage", default-features = false }

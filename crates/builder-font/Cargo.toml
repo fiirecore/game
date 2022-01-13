@@ -1,0 +1,13 @@
+[package]
+name = "firecore-font-builder"
+version = "0.0.2"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
+edition = "2018"
+
+[features]
+default = ["compile"]
+compile = []
+
+[dependencies]
+serde = { version = "1", features = ["derive"] } 
+ron = "0.7"
