@@ -9,8 +9,11 @@ use worldcli::worldlib::{
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Player {
-    #[serde(default = "default_id")]
+    #[serde(default = "Player::default_id")]
     pub id: u64,
+
+    #[serde(default = "Player::default_version")]
+    pub version: String,
 
     #[serde(default)]
     pub player: PlayerData,
@@ -24,6 +27,15 @@ impl Player {
             ..Default::default()
         }
     }
+
+    pub fn default_version() -> String {
+        crate::VERSION.to_owned()
+    }
+    
+    pub fn default_id() -> u64 {
+        crate::engine::utils::seed()
+    }
+    
 
 }
 
@@ -81,12 +93,9 @@ impl storage::PersistantData for Player {
 impl Default for Player {
     fn default() -> Self {
         Self {
-            id: default_id(),
+            id: Self::default_id(),
+            version: Self::default_version(),
             player: Default::default(),
         }
     }
-}
-
-pub fn default_id() -> u64 {
-    crate::engine::utils::seed()
 }

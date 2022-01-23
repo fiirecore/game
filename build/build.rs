@@ -19,6 +19,44 @@ const APPLICATION: &str = env!("CARGO_PKG_NAME");
 fn main() {
     println!("cargo:rerun-if-changed=assets");
 
+    if std::fs::read_dir("assets/game")
+        .map(|d| d.count())
+        .unwrap_or_default()
+        == 0
+    {
+        std::process::Command::new("git")
+            .args(["submodule", "init"])
+            .spawn()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "Could not initialize git submodules using git command with error {}",
+                    err
+                )
+            })
+            .wait()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "Could not wait on git submodule init task to complete with error {}",
+                    err
+                )
+            });
+
+        std::process::Command::new("git")
+            .args(["submodule", "update", "--remote"])
+            .spawn()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "Could not update git submodules using git command with error {}",
+                    err
+                )
+            }).wait().unwrap_or_else(|err| {
+                panic!(
+                    "Could not wait on git submodule update --remote task to complete with error {}",
+                    err
+                )
+            });
+    }
+
     write(
         "fonts",
         &firecore_font_builder::compile("assets/game/fonts"),
