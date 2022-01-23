@@ -161,10 +161,12 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                     }
                 }
 
-                match &object.group {
-                    TREE => try_break(&self.sender, &map.id, forward, CUT, player),
-                    ROCK => try_break(&self.sender, &map.id, forward, ROCK_SMASH, player),
-                    _ => (),
+                if let Some(id) = match &object.group {
+                    TREE => Some(CUT),
+                    ROCK => Some(ROCK_SMASH),
+                    _ => None,
+                } {
+                    try_break(&self.sender, &map.id, forward, id, player)
                 }
             }
 
@@ -260,7 +262,8 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
 
                                             let bb = BoundingBox::centered(*origin, *area);
 
-                                            if bb.contains(&next) && next != player.position.coords {
+                                            if bb.contains(&next) && next != player.position.coords
+                                            {
                                                 if let Some(code) = map.movements.get(
                                                     npc.character.position.coords.x as usize
                                                         + npc.character.position.coords.y as usize
@@ -420,9 +423,9 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                             ) {
                                                 self.sender.send(WorldActions::Battle(entry));
                                             }
-                                        //     let this = &mut queue[0];
-                                        //     *this = WorldInstruction::End;
-                                        //     self.update_script(player);
+                                            //     let this = &mut queue[0];
+                                            //     *this = WorldInstruction::End;
+                                            //     self.update_script(player);
                                             queue.remove(0);
                                         }
                                     }
@@ -466,49 +469,46 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                 }
                             }
                             WorldInstruction::Msgbox(m_id, msgbox_type) => {
-                                
                                 if player.world.message.is_none() {
                                     match variables.contains_key("TEMP_MESSAGE") {
                                         true => {
                                             variables.remove("TEMP_MESSAGE");
                                             queue.remove(0);
                                         }
-                                        false => {
-                                            match self.scripts.messages.get(m_id) {
-                                                Some(message) => {
-                                                    let message = MessageState::new(
-                                                        1,
-                                                        message
-                                                            .iter()
-                                                            .map(|lines| MessagePage {
-                                                                lines: lines
-                                                                    .iter()
-                                                                    .map(|str| {
-                                                                        process_str_player(str, player)
-                                                                    })
-                                                                    .collect(),
-                                                                wait: None,
-                                                                color: self
-                                                                    .data
-                                                                    .npc
-                                                                    .groups
-                                                                    .get(&npc.group)
-                                                                    .map(|g| g.message)
-                                                                    .unwrap_or(MessageColor::Black),
-                                                            })
-                                                            .collect::<Vec<_>>(),
-                                                    );
-                                                    player.world.message = Some(message);
-                                                    player.world.scripts.flags.insert(
-                                                        "TEMP_MESSAGE".to_owned(),
-                                                        ScriptFlag::Flag,
-                                                    );
-                                                }
-                                                None => {
-                                                    queue.remove(0);
-                                                }
+                                        false => match self.scripts.messages.get(m_id) {
+                                            Some(message) => {
+                                                let message = MessageState::new(
+                                                    1,
+                                                    message
+                                                        .iter()
+                                                        .map(|lines| MessagePage {
+                                                            lines: lines
+                                                                .iter()
+                                                                .map(|str| {
+                                                                    process_str_player(str, player)
+                                                                })
+                                                                .collect(),
+                                                            wait: None,
+                                                            color: self
+                                                                .data
+                                                                .npc
+                                                                .groups
+                                                                .get(&npc.group)
+                                                                .map(|g| g.message)
+                                                                .unwrap_or(MessageColor::Black),
+                                                        })
+                                                        .collect::<Vec<_>>(),
+                                                );
+                                                player.world.message = Some(message);
+                                                player.world.scripts.flags.insert(
+                                                    "TEMP_MESSAGE".to_owned(),
+                                                    ScriptFlag::Flag,
+                                                );
                                             }
-                                        }
+                                            None => {
+                                                queue.remove(0);
+                                            }
+                                        },
                                     }
                                 }
                             }

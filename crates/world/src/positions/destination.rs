@@ -24,3 +24,12 @@ impl Destination {
         }
     }
 }
+
+impl From<Position> for Destination {
+    fn from(pos: Position) -> Self {
+        Self {
+            coords: pos.coords,
+            direction: Some(pos.direction),
+        }
+    }
+}
