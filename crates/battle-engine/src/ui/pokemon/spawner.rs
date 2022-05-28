@@ -1,15 +1,20 @@
-use pokedex::{
+use std::ops::Deref;
+
+use pokengine::{
     engine::{
-        sound::play_sound,
-        graphics::{DrawParams, Texture},
+        graphics::Texture,
         math::Vec2,
-        Context, EngineContext,
+        notan::{
+            draw::{Draw, DrawImages, DrawTransform},
+            prelude::{App, Plugins},
+        },
+        sound::{play_sound, SoundVariant},
     },
-    pokemon::PokemonId,
+    pokedex::pokemon::{Pokemon, PokemonId},
     CRY_ID,
 };
 
-use crate::context::BattleGuiData;
+use crate::view::BasePokemonView;
 
 #[derive(Clone)]
 pub struct Spawner {
@@ -33,12 +38,12 @@ impl Spawner {
     const OFFSET: f32 = -5.0;
     const PARABOLA_ORIGIN: f32 = (Self::LEN / 3.0);
 
-    pub fn new(ctx: &BattleGuiData, id: Option<PokemonId>) -> Self {
+    pub fn new(texture: Texture, id: Option<PokemonId>) -> Self {
         Self {
             spawning: SpawnerState::None,
             x: 0.0,
             id,
-            texture: ctx.pokeball.clone(),
+            texture,
         }
     }
 
@@ -46,18 +51,34 @@ impl Spawner {
         0.5 * (x - Self::PARABOLA_ORIGIN).powi(2) - 50.0
     }
 
-    pub fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
+    pub fn spawn(&mut self) {
+        self.spawning = SpawnerState::Start;
+        self.x = 0.0;
+    }
+
+    pub fn update<POK: BasePokemonView<P>, P: Deref<Target = Pokemon>>(
+        &mut self,
+        app: &mut App,
+        plugins: &mut Plugins,
+        pokemon: Option<&POK>,
+    ) {
+        let delta = app.timer.delta_f32();
         match self.spawning {
             SpawnerState::Start => {
                 self.x = Self::ORIGIN;
                 self.spawning = SpawnerState::Throwing;
-                self.update(ctx, eng, delta);
+                self.update(app, plugins, pokemon);
             }
             SpawnerState::Throwing => {
                 self.x += delta * 20.0;
                 if self.x > Self::LEN {
-                    if let Some(id) = self.id {
-                        play_sound(ctx, eng, &CRY_ID, Some(id));
+                    if let Some(pokemon) = pokemon {
+                        play_sound(
+                            app,
+                            plugins,
+                            CRY_ID,
+                            SoundVariant::Num(pokemon.pokemon().id as _),
+                        );
                     }
                     self.spawning = SpawnerState::Spawning;
                     self.x = 0.0;
@@ -73,18 +94,12 @@ impl Spawner {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, origin: Vec2, texture: &Texture) {
+    pub fn draw(&self, draw: &mut Draw, origin: Vec2, texture: &Texture) {
         match self.spawning {
             SpawnerState::Throwing => {
-                self.texture.draw(
-                    ctx,
-                    origin.x + self.x + Self::OFFSET,
-                    origin.y + Self::f(self.x),
-                    DrawParams {
-                        rotation: self.x,
-                        ..Default::default()
-                    },
-                );
+                draw.image(&self.texture)
+                    .position(origin.x + self.x + Self::OFFSET, origin.y + Self::f(self.x))
+                    .rotate(self.x);
             }
             SpawnerState::Spawning => {
                 let h = texture.height() as f32;
@@ -94,7 +109,8 @@ impl Spawner {
                 if y < max {
                     y = max;
                 }
-                texture.draw(ctx, origin.x, y, DrawParams::default()); // change color of texture when spawning here
+                draw.image(texture).position(origin.x, y); // change color of texture when spawning here
+                                                           // texture.draw(ctx, , DrawParams::default());
             }
             SpawnerState::None | SpawnerState::Start => (),
         }

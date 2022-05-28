@@ -1,15 +1,9 @@
-#[derive(Debug, Clone)]
-pub struct CommandResult<'a> {
-    pub command: &'a str,
-    pub args: std::str::SplitAsciiWhitespace<'a>,
-}
+use std::{cell::RefCell, rc::Rc};
 
-pub trait CommandProcessor {
-    fn process(&mut self, command: CommandResult);
-}
+pub type CommandProcessor = Rc<CommandProcessors>;
 
-impl<'a> core::fmt::Display for CommandResult<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {:?}", self.command, self.args)
-    }
+#[derive(Default)]
+pub struct CommandProcessors {
+    pub commands: RefCell<Vec<String>>,
+    pub errors: RefCell<Vec<&'static str>>,
 }

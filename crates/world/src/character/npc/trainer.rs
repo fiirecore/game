@@ -1,10 +1,8 @@
-use std::ops::{Deref, DerefMut};
-
 use hashbrown::HashSet;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    character::{npc::NpcId, trainer::Trainer, Character},
+    character::{npc::NpcId, trainer::SavedTrainer, Character},
     positions::Destination,
 };
 
@@ -17,7 +15,7 @@ pub type BadgeId = tinystr::TinyStr16;
 pub struct NpcTrainer {
     pub group: TrainerGroupId,
 
-    pub character: Trainer,
+    pub character: SavedTrainer,
 
     /// The trainer tracks a certain amount of tiles in front of them
     pub sight: Option<u8>,
@@ -61,19 +59,5 @@ impl NpcTrainer {
 impl Default for TrainerDisable {
     fn default() -> Self {
         Self::DisableSelf
-    }
-}
-
-impl Deref for NpcTrainer {
-    type Target = Trainer;
-
-    fn deref(&self) -> &Self::Target {
-        &self.character
-    }
-}
-
-impl DerefMut for NpcTrainer {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.character
     }
 }

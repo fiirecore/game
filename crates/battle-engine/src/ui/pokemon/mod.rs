@@ -1,17 +1,23 @@
-use pokedex::{
+use std::{ops::Deref, cell::RefCell};
+
+use pokengine::{
     engine::{
-        graphics::{Color, DrawParams, Texture},
-        math::{Rectangle, Vec2},
-        utils::Reset,
-        Context,
+        graphics::{Color, Draw, DrawExt, DrawImages, DrawParams, Texture},
+        math::{Rect, Vec2},
+        utils::HashMap,
     },
-    pokemon::PokemonId,
+    pokedex::{
+        item::Item,
+        moves::Move,
+        pokemon::{Pokemon, PokemonId},
+    },
     texture::PokemonTexture,
     PokedexClientData,
 };
 
 use crate::{
     context::BattleGuiData,
+    players::{GuiLocalPlayer, GuiRemotePlayers},
     ui::{BattleGuiPosition, BattleGuiPositionIndex},
 };
 
@@ -32,48 +38,70 @@ pub mod faint;
 pub mod flicker;
 pub mod spawner;
 
+pub struct PokemonRenderer<D: Deref<Target = PokedexClientData>> {
+    dexengine: D,
+    texture: Texture,
+    sprites: RefCell<HashMap<(bool, usize), PokemonSprite>>,
+}
+
 #[derive(Clone)]
-pub struct PokemonRenderer {
-    // pub moves: MoveRenderer,
-    pub pokemon: Option<Texture>,
-    side: PokemonTexture,
-
-    pub pos: Vec2,
-
+pub struct PokemonSprite {
+    pub current: Option<Texture>,
     pub spawner: Spawner,
     pub faint: Faint,
     pub flicker: Flicker,
 }
 
-impl PokemonRenderer {
-    pub fn new(ctx: &BattleGuiData, index: BattleGuiPositionIndex, side: PokemonTexture) -> Self {
+impl PokemonSprite {
+    const SIZE: f32 = 64.0;
+
+    pub fn new(texture: &Texture) -> Self {
         Self {
-            // moves: MoveRenderer::new(index.position),
-            pokemon: None,
-            side,
-            pos: Self::position(index),
-            spawner: Spawner::new(ctx, None),
+            spawner: Spawner::new(texture.clone(), None),
             faint: Faint::default(),
             flicker: Flicker::default(),
+            current: None,
         }
     }
 
-    pub fn with<'d>(
-        ctx: &BattleGuiData,
-        data: &PokedexClientData,
-        index: BattleGuiPositionIndex,
-        pokemon: Option<PokemonId>,
-        side: PokemonTexture,
-    ) -> Self {
+    pub fn reset(&mut self) {
+        self.faint = Faint::default();
+        self.flicker = Flicker::default();
+        self.spawner.spawning = SpawnerState::None;
+    }
+
+    pub fn flicker(&mut self) {
+        self.flicker.remaining = Flicker::TIMES;
+        self.flicker.accumulator = 0.0;
+    }
+
+    pub fn faint(&mut self) {
+        self.faint.fainting = true;
+        self.faint.remaining = self
+            .current
+            .as_ref()
+            .map(|t| t.height())
+            .unwrap_or(Self::SIZE);
+    }
+}
+
+
+const fn local(local: bool) -> PokemonTexture {
+    match local {
+        true => PokemonTexture::Back,
+        false => PokemonTexture::Front,
+    }
+}
+
+impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
+    pub fn new(dexengine: D, ctx: &BattleGuiData) -> Self {
         Self {
-            pokemon: pokemon
-                .map(|pokemon| data.pokemon_textures.get(&pokemon, side))
-                .flatten()
-                .cloned(),
-            spawner: Spawner::new(ctx, pokemon),
-            ..Self::new(ctx, index, side)
+            dexengine,
+            texture: ctx.pokeball.clone(),
+            sprites: Default::default(),
         }
     }
+
 
     fn position(index: BattleGuiPositionIndex) -> Vec2 {
         let offset = (index.size - 1) as f32 * 32.0 - index.index as f32 * 64.0;
@@ -83,73 +111,124 @@ impl PokemonRenderer {
         }
     }
 
-    pub fn new_pokemon<'d>(&mut self, data: &PokedexClientData, pokemon: Option<PokemonId>) {
-        self.spawner.id = pokemon;
-        self.pokemon = pokemon
-            .map(|pokemon| data.pokemon_textures.get(&pokemon, self.side))
-            .flatten()
-            .cloned();
-        self.reset();
-    }
-
-    pub fn spawn(&mut self) {
-        self.spawner.spawning = SpawnerState::Start;
-        self.spawner.x = 0.0;
-    }
-
-    pub fn faint(&mut self) {
-        if let Some(texture) = self.pokemon.as_ref() {
-            self.faint.fainting = true;
-            self.faint.remaining = texture.height() as f32;
+    pub fn faint(&mut self, position: (bool, usize)) {
+        if let Some(sprite) = self.sprites.borrow_mut().get_mut(&position) {
+            sprite.faint();
         }
     }
 
-    pub fn flicker(&mut self) {
-        self.flicker.remaining = Flicker::TIMES;
-        self.flicker.accumulator = 0.0;
+    pub fn flicker(&mut self, position: (bool, usize)) {
+        if let Some(sprite) = self.sprites.borrow_mut().get_mut(&position) {
+            sprite.flicker();
+        }
     }
 
-    pub fn draw(&self, ctx: &mut Context, offset: Vec2, color: Color) {
-        if let Some(texture) = &self.pokemon {
-            let pos = self.pos + offset;
-            if self.spawner.spawning() {
-                self.spawner.draw(ctx, pos, texture);
-            } else if self.flicker.accumulator < Flicker::HALF {
-                if self.faint.fainting {
-                    if self.faint.remaining > 0.0 {
-                        texture.draw(
-                            ctx,
+    pub fn draw_local<
+        ID,
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
+        &self,
+        draw: &mut Draw,
+        local: &GuiLocalPlayer<ID, P, M, I>,
+        offset: Vec2,
+        color: Color,
+    ) {
+        for (index, pokemon) in local.player.active_iter() {
+            self.draw(
+                &pokemon.pokemon.id,
+                draw,
+                offset,
+                color,
+                (true, index),
+                local.player.active.len(),
+            );
+        }
+    }
+
+    pub fn draw_remotes<ID, P: Deref<Target = Pokemon> + Clone>(
+        &self,
+        draw: &mut Draw,
+        remotes: &GuiRemotePlayers<ID, P>,
+        offset: Vec2,
+        color: Color,
+    ) {
+        if let Some((.., remote)) = remotes.players.get_index(remotes.current) {
+            for (active, pokemon) in remote.active_iter() {
+                if let Some(pokemon) = pokemon.as_ref() {
+                    self.draw(
+                        &pokemon.pokemon.id,
+                        draw,
+                        offset,
+                        color,
+                        (false, active),
+                        remote.active.len(),
+                    );
+                }
+            }
+        }
+    }
+
+    pub fn draw(
+        &self,
+        pokemon: &PokemonId,
+        draw: &mut Draw,
+        offset: Vec2,
+        color: Color,
+        position: (bool, usize),
+        active: usize,
+    ) {
+        if position.1 >= active {
+            return;
+        }
+        let side = local(position.0);
+        if let Some(texture) = self.dexengine.pokemon_textures.get(pokemon, side) {
+            let pos = Self::position(BattleGuiPositionIndex {
+                position: side.into(),
+                index: position.1,
+                size: active,
+            });
+            let pos = pos + offset;
+            let mut sprites = self.sprites.borrow_mut();
+            if !sprites.contains_key(&position) {
+                sprites
+                    .insert(position, PokemonSprite::new(&self.texture));
+            }
+            let sprite = sprites.get_mut(&position).unwrap();
+            if Some(texture.id()) != sprite.current.as_ref().map(|t| t.id()) {
+                sprite.current = Some(texture.clone());
+            }
+            if sprite.spawner.spawning() {
+                sprite.spawner.draw(draw, pos, texture);
+            } else if sprite.flicker.accumulator < Flicker::HALF {
+                if sprite.faint.fainting {
+                    if sprite.faint.remaining > 0.0 {
+                        draw.texture(
+                            texture,
                             pos.x,
-                            pos.y - self.faint.remaining,
+                            pos.y - sprite.faint.remaining,
                             DrawParams {
-                                source: Some(Rectangle::new(
-                                    0.0,
-                                    0.0,
-                                    texture.width() as f32,
-                                    self.faint.remaining,
-                                )),
+                                source: Some(Rect {
+                                    x: 0.0,
+                                    y: 0.0,
+                                    width: texture.width(),
+                                    height: sprite.faint.remaining,
+                                }),
                                 color,
                                 ..Default::default()
                             },
                         );
                     }
                 } else {
-                    texture.draw(
-                        ctx,
-                        pos.x, //+ self.moves.pokemon_x(),
-                        pos.y - texture.height() as f32,
-                        DrawParams::color(color),
-                    );
+                    draw.image(texture)
+                        .position(
+                            pos.x, //+ self.moves.pokemon_x(),
+                            pos.y - texture.height(),
+                        )
+                        .color(color);
                 }
             }
         }
-    }
-}
-
-impl Reset for PokemonRenderer {
-    fn reset(&mut self) {
-        self.faint = Faint::default();
-        self.flicker = Flicker::default();
-        self.spawner.spawning = SpawnerState::None;
     }
 }

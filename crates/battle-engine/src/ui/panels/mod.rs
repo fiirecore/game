@@ -1,137 +1,324 @@
 use core::ops::Deref;
-use pokedex::{item::Item, pokemon::Pokemon, engine::EngineContext};
 
-use pokedex::{
-    engine::{
-        controls::{pressed, Control},
-        utils::{Entity, Reset},
-        Context,
+use battle::{moves::BattleMove, pokemon::Indexed, prelude::BattleType};
+use pokengine::{
+    engine::{egui, utils::Entity, App},
+    gui::{
+        bag::{BagAction, BagGui},
+        party::{PartyAction, PartyGui},
     },
-    item::ItemId,
-    moves::{owned::OwnedMove, Move, MoveTarget},
-    pokemon::owned::OwnablePokemon,
+    pokedex::{
+        item::{Item, ItemId},
+        moves::Move,
+        pokemon::Pokemon,
+    },
+    PokedexClientData,
 };
-
-use crate::view::PlayerView;
-
-use self::{battle::BattleOptions, fight::FightPanel, target::TargetPanel};
 
 pub mod move_info;
 pub mod moves;
 pub mod target;
 
-pub mod battle;
-pub mod fight;
-
 pub mod level;
 
-pub struct BattlePanel<M: Deref<Target = Move> + Clone> {
-    alive: bool,
+use self::{
+    move_info::MoveInfoPanel,
+    moves::{ButtonState, MovePanel},
+    target::TargetPanel,
+};
 
-    pub active: BattlePanels,
+use crate::players::{GuiLocalPlayer, GuiRemotePlayers};
 
-    pub battle: BattleOptions,
-    pub fight: FightPanel<M>,
-    pub targets: TargetPanel,
+pub struct BattlePanel<D: Deref<Target = PokedexClientData> + Clone> {
+    state: BattleOptions,
+    moves: MovePanel,
+    targets: TargetPanel,
+    party: PartyGui<D>,
+    bag: BagGui<D>,
 }
 
-pub enum BattlePanels {
+pub enum BattleOptions {
+    NotAlive,
     Main,
     Fight,
-    Target(MoveTarget, Option<ItemId>),
+    Target(usize, BattleTargetOption),
+    Bag,
+    Pokemon,
+    PartyOnly,
 }
 
-impl Default for BattlePanels {
-    fn default() -> Self {
-        Self::Main
-    }
+#[derive(Clone, Copy)]
+pub enum BattleTargetOption {
+    Pokemon(usize),
+    Item(ItemId),
 }
 
-impl<M: Deref<Target = Move> + Clone> BattlePanel<M> {
-    pub fn new() -> Self {
+pub enum BattleAction<ID> {
+    Action(BattleMove<ID>),
+    Forfeit,
+}
+
+impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
+    pub fn new(data: D) -> Self {
         Self {
-            alive: false,
-            active: BattlePanels::default(),
-            battle: BattleOptions::new(),
-            fight: FightPanel::new(),
-            targets: TargetPanel::new(),
+            state: BattleOptions::NotAlive,
+            moves: MovePanel::default(),
+            targets: TargetPanel::default(),
+            party: PartyGui::new(data.clone()),
+            bag: BagGui::new(data),
         }
     }
 
-    pub fn user<P: Deref<Target = Pokemon>, MSET: Deref<Target = [OwnedMove<M>]>, I, G, N, H>(
-        &mut self,
-        instance: &OwnablePokemon<P, MSET, I, G, N, H>,
-    ) {
-        self.battle.setup(instance);
-        self.fight.user(instance);
-        self.battle.cursor = 0;
-        self.fight.moves.cursor = 0;
-        self.targets.cursor = 0;
-        self.spawn();
+    pub fn spawn(&mut self, party_only: bool) {
+        self.state = match party_only {
+            true => BattleOptions::PartyOnly,
+            false => BattleOptions::Main,
+        };
     }
 
-    pub fn target<ID, P: Deref<Target = Pokemon>, I: Deref<Target = Item>>(
-        &mut self,
-        targets: &dyn PlayerView<ID, P, M, I>,
-    ) {
-        self.targets.update_names(targets);
+    pub fn despawn(&mut self) {
+        self.state = BattleOptions::NotAlive;
     }
 
-    pub fn input<P, MSET: Deref<Target = [OwnedMove<M>]>, I, G, N, H>(
+    pub fn alive(&self) -> bool {
+        !matches!(self.state, BattleOptions::NotAlive)
+    }
+
+    pub fn ui<
+        ID: Clone,
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
         &mut self,
-        ctx: &Context,
-        eng: &EngineContext,
-        pokemon: &OwnablePokemon<P, MSET, I, G, N, H>,
-    ) -> Option<BattlePanels> {
-        if self.alive {
-            match self.active {
-                BattlePanels::Main => {
-                    self.battle.input(ctx, eng);
-                    pressed(ctx, eng, Control::A).then(|| BattlePanels::Main)
-                }
-                BattlePanels::Fight => {
-                    if pressed(ctx, eng, Control::B) {
-                        self.active = BattlePanels::Main;
+        app: &mut App,
+        egui: &egui::Context,
+        local: &mut GuiLocalPlayer<ID, P, M, I>,
+        remotes: &GuiRemotePlayers<ID, P>,
+    ) -> Option<BattleAction<ID>> {
+        match self.state {
+            BattleOptions::Fight => {
+                match local
+                    .selecting
+                    .as_ref()
+                    .and_then(|r| local.player.active(r.start).map(|p| (r.start, p)))
+                {
+                    Some((active, pokemon)) => {
+                        if self.moves.alive() {
+                            egui::Window::new("Moves")
+                                .title_bar(false)
+                                .show(egui, |ui| {
+                                    egui::Grid::new("MoveGrid")
+                                        .show(ui, |ui| {
+                                            if let Some(response) = self.moves.ui(ui, pokemon) {
+                                                match response {
+                                                    ButtonState::Clicked(i)
+                                                    | ButtonState::Hovered(i) => {
+                                                        if let Some(m) = pokemon.moves.get(i) {
+                                                            MoveInfoPanel::ui(ui, m);
+                                                        }
+                                                    }
+                                                }
+                                                if let ButtonState::Clicked(i) = response {
+                                                    match pokemon.moves[i].0.target.needs_input() {
+                                                        true => {
+                                                            self.state = BattleOptions::Target(
+                                                                active,
+                                                                BattleTargetOption::Pokemon(i),
+                                                            );
+                                                            self.targets.spawn();
+                                                        }
+                                                        false => {
+                                                            return Some(
+                                                                BattleAction::<ID>::Action(
+                                                                    BattleMove::Move(i, None),
+                                                                ),
+                                                            )
+                                                        }
+                                                    }
+                                                    // return Some(BattleAction::Move(i, None));
+                                                }
+                                            }
+                                            None
+                                        })
+                                        .inner
+                                })
+                                .and_then(|i| i.inner)
+                                .flatten();
+                        } else {
+                            self.state = BattleOptions::Main;
+                        }
                     }
-                    self.fight.input(ctx, eng, pokemon);
-                    pressed(ctx, eng, Control::A).then(|| BattlePanels::Fight)
-                }
-                BattlePanels::Target(..) => {
-                    if pressed(ctx, eng, Control::B) {
-                        self.active = BattlePanels::Fight;
+                    None => {
+                        self.state = BattleOptions::Main;
                     }
-                    self.targets.input(ctx, eng);
-                    pressed(ctx, eng, Control::A).then(|| std::mem::take(&mut self.active))
                 }
+                None
             }
-        } else {
-            None
-        }
-    }
+            BattleOptions::Target(_, option) => {
+                if self.targets.alive() {
+                    if let Some(id) = self.targets.ui(egui, &local.player, remotes) {
+                        self.state = BattleOptions::Main;
+                        return Some(BattleAction::Action(match option {
+                            BattleTargetOption::Pokemon(index) => BattleMove::Move(index, Some(id)),
+                            BattleTargetOption::Item(item) => {
+                                if let Some(item) = local.bag.get_mut(&item) {
+                                    item.count = item.count.saturating_sub(1);
+                                }
+                                BattleMove::UseItem(Indexed(id, item))
+                            }
+                        }));
+                    }
+                } else {
+                    self.state = match &option {
+                        BattleTargetOption::Pokemon(..) => BattleOptions::Fight,
+                        BattleTargetOption::Item(..) => BattleOptions::Bag,
+                    };
+                }
+                None
+            }
+            BattleOptions::Bag => {
+                if self.bag.alive() {
+                    if let Some(action) = self.bag.ui(egui, &mut local.bag) {
+                        match action {
+                            BagAction::Use(item) => {
+                                if let Some(active) = local.selecting.as_ref().map(|r| r.start) {
+                                    self.state = BattleOptions::Target(
+                                        active,
+                                        BattleTargetOption::Item(item),
+                                    );
+                                    self.targets.spawn();
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    self.state = BattleOptions::Main;
+                }
+                None
+            }
+            BattleOptions::Pokemon => {
+                if self.party.alive() {
+                    if let Some(action) = self.party.ui(app, egui, &mut local.player.pokemon) {
+                        match action {
+                            PartyAction::Select(p) => {
+                                if Some(p) != local.selecting.as_ref().map(|r| r.start) {
+                                    return Some(BattleAction::Action(BattleMove::Switch(p)));
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    self.state = BattleOptions::Main;
+                }
+                None
+            }
+            BattleOptions::NotAlive => None,
+            BattleOptions::Main => egui::Window::new("Battle")
+                .title_bar(false)
+                .anchor(egui::Align2::CENTER_BOTTOM, [0.0; 2])
+                .show(egui, |ui| {
+                    egui::Grid::new("BattlePanel")
+                        .show(ui, |ui| {
+                            if let Some(pokemon) = local
+                                .selecting
+                                .as_ref()
+                                .and_then(|r| local.player.active(r.start))
+                            {
+                                ui.label(format!("What will {} do?", pokemon.name()));
+                            }
 
-    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
-        if self.alive {
-            match self.active {
-                BattlePanels::Main => self.battle.draw(ctx, eng),
-                BattlePanels::Fight => self.fight.draw(ctx, eng),
-                BattlePanels::Target(..) => self.targets.draw(ctx, eng),
+                            egui::Grid::new("BattleOptions")
+                                .show(ui, |ui| {
+                                    if ui.button("Fight").clicked() {
+                                        self.state = BattleOptions::Fight;
+                                        self.moves.spawn();
+                                    }
+                                    if ui.button("Bag").clicked() {
+                                        self.state = BattleOptions::Bag;
+                                        self.bag.spawn();
+                                    }
+                                    ui.end_row();
+                                    if ui.button("Pokemon").clicked() {
+                                        self.state = BattleOptions::Pokemon;
+                                        self.party.spawn();
+                                    }
+                                    if ui
+                                        .button(match local.data.type_ {
+                                            BattleType::Wild => "Run",
+                                            BattleType::Trainer | BattleType::GymLeader => {
+                                                "Forfeit"
+                                            }
+                                        })
+                                        .clicked()
+                                    {
+                                        return Some(BattleAction::Forfeit);
+                                    }
+                                    None
+                                })
+                                .inner
+                        })
+                        .inner
+                })
+                .and_then(|i| i.inner)
+                .flatten(),
+            BattleOptions::PartyOnly => {
+                if self.party.alive() {
+                    if let Some(action) = self.party.ui(app, egui, &mut local.player.pokemon) {
+                        match action {
+                            PartyAction::Select(p) => {
+                                if Some(p) != local.selecting.as_ref().map(|r| r.start) {
+                                    return Some(BattleAction::Action(BattleMove::Switch(p)));
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    self.state = BattleOptions::NotAlive;
+                }
+                None
             }
         }
-    }
-}
 
-impl<M: Deref<Target = Move> + Clone> Entity for BattlePanel<M> {
-    fn spawn(&mut self) {
-        self.alive = true;
-        self.active = BattlePanels::default();
-        self.fight.reset();
-    }
+        // Panel::draw(app, plugins, 120.0, 113.0, 120.0, 47.0);
 
-    fn despawn(&mut self) {
-        self.alive = false;
-    }
+        // draw_text_left(
+        //     ctx,
+        //     eng,
+        //     &1,
+        //     "What will",
+        //     11.0,
+        //     123.0,
+        //     DrawParams::color(TextColor::WHITE),
+        // );
+        // draw_text_left(
+        //     ctx,
+        //     eng,
+        //     &1,
+        //     &self.pokemon_do,
+        //     11.0,
+        //     139.0,
+        //     DrawParams::color(TextColor::WHITE),
+        // );
 
-    fn alive(&self) -> bool {
-        self.alive
+        // for (index, string) in self.buttons.iter().enumerate() {
+        //     draw_text_left(
+        //         ctx,
+        //         eng,
+        //         &0,
+        //         string,
+        //         138.0 + if index % 2 == 0 { 0.0 } else { 56.0 },
+        //         123.0 + if index >> 1 == 0 { 0.0 } else { 16.0 },
+        //         DrawParams::color(TextColor::BLACK),
+        //     )
+        // }
+
+        // draw_cursor(
+        //     ctx,
+        //     eng,
+        //     131.0 + if self.cursor % 2 == 0 { 0.0 } else { 56.0 },
+        //     126.0 + if (self.cursor >> 1) == 0 { 0.0 } else { 16.0 },
+        //     Default::default(),
+        // );
     }
 }

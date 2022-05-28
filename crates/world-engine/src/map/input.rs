@@ -1,7 +1,7 @@
 use crate::engine::{
     controls::{down, Control},
-    Context, EngineContext,
 };
+use pokengine::engine::notan::prelude::{App, Plugins};
 use worldlib::{
     character::{player::PlayerCharacter, MovementType, CharacterFlag},
     positions::Direction,
@@ -15,32 +15,33 @@ pub struct PlayerInput {
 }
 
 impl PlayerInput {
-    pub const INPUT_LOCK: CharacterFlag = unsafe { CharacterFlag::new_unchecked(500186508905) };
+    pub const INPUT_LOCK: CharacterFlag = unsafe { CharacterFlag::from_bytes_unchecked(500186508905u64.to_ne_bytes()) };
+    pub const INPUT_LOCK_VAL: i8 = 0;
 
     const MOVE_WAIT: f32 = 0.12;
 
-    pub fn update(
+    pub fn update<P, B: Default>(
         &mut self,
-        ctx: &mut Context,
-        eng: &mut EngineContext,
-        player: &mut PlayerCharacter,
+        app: &App,
+        plugins: &Plugins,
+        player: &mut PlayerCharacter<P, B>,
         delta: f32,
     ) -> Option<Direction> {
-        if !player.character.moving() && !player.character.flags.contains(&Self::INPUT_LOCK) {
-            match down(ctx, eng, Control::B) {
+        if !player.character.moving() && !player.character.input_lock.active() {
+            match down(app, plugins, Control::B) {
                 true => {
-                    if player.movement == MovementType::Walking {
-                        player.movement = MovementType::Running;
+                    if player.character.movement == MovementType::Walking {
+                        player.character.movement = MovementType::Running;
                     }
                 }
                 false => {
-                    if player.movement == MovementType::Running {
-                        player.movement = MovementType::Walking;
+                    if player.character.movement == MovementType::Running {
+                        player.character.movement = MovementType::Walking;
                     }
                 }
             }
 
-            if down(ctx, eng, Self::keybind(self.first_direction)) {
+            if down(app, plugins, Self::keybind(self.first_direction)) {
                 if self.wait > Self::MOVE_WAIT {
                     return Some(self.first_direction);
                 } else {
@@ -55,7 +56,7 @@ impl PlayerInput {
                     Direction::Right,
                 ] {
                     let direction = *direction;
-                    if down(ctx, eng, Self::keybind(direction)) {
+                    if down(app, plugins, Self::keybind(direction)) {
                         movdir = if let Some(dir) = movdir {
                             if dir.inverse() == direction {
                                 None
@@ -68,7 +69,7 @@ impl PlayerInput {
                     }
                 }
                 if let Some(direction) = movdir {
-                    player.position.direction = direction;
+                    player.character.position.direction = direction;
                     self.first_direction = direction;
                 } else {
                     self.wait = 0.0;

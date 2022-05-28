@@ -1,6 +1,5 @@
-use enum_map::EnumMap;
 use serde::{Deserialize, Serialize};
-
+use enum_map::EnumMap;
 use hashbrown::HashMap;
 
 use crate::{

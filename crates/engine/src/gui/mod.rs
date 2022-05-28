@@ -1,8 +1,7 @@
 mod bar;
-mod panel;
 mod text;
 
-pub use self::{bar::*, panel::*, text::*};
+pub use self::{bar::*, text::*};
 
 // pub struct StaticList<D, const SIZE: usize> {
 //     pub options: [D; SIZE],

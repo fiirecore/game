@@ -1,45 +1,16 @@
-use crate::pokengine::PokedexClientData;
-
-use crate::engine::{utils::Completable, Context, EngineContext};
-
-use firecore_battle_engine::ui::text::BattleText;
-use worldcli::battle::*;
+use crate::engine::graphics::Draw;
 
 pub mod managers;
-
-pub mod closers;
 pub mod transitions;
 
-pub(crate) trait BattleTransition: Completable {
-    fn update(&mut self, ctx: &mut Context, delta: f32);
+pub(crate) trait BattleTransition {
+    fn update(&mut self, delta: f32);
 
-    fn draw(&self, ctx: &mut Context);
+    fn draw(&self, ctx: &mut Draw);
+
+    fn reset(&mut self);
+
+    fn finished(&self) -> bool;
 
     // fn render_below_player(&self);
-}
-
-pub(crate) trait BattleCloser: Completable {
-    fn spawn<'d>(
-        &mut self,
-        ctx: &PokedexClientData,
-        player: &BattleId,
-        player_name: &str,
-        winner: Option<&BattleId>,
-        trainer_entry: Option<&BattleTrainerEntry>,
-        text: &mut BattleText,
-    );
-
-    fn update(
-        &mut self,
-        ctx: &mut Context,
-        eng: &mut EngineContext,
-        delta: f32,
-        text: &mut BattleText,
-    );
-
-    fn draw(&self, ctx: &mut Context);
-
-    fn draw_battle(&self, ctx: &mut Context);
-
-    fn world_active(&self) -> bool;
 }

@@ -1,23 +1,20 @@
 use core::ops::Deref;
 
-use pokedex::{
-    engine::{
-        controls::{pressed, Control},
-        text::{MessagePage, TextColor, MessageState},
-        Context, EngineContext,
+use pokengine::{
+    engine::egui,
+    pokedex::{
+        item::Item,
+        moves::{owned::OwnedMove, Move},
+        pokemon::{owned::OwnedPokemon, Pokemon},
     },
-    moves::{owned::OwnedMove, set::OwnedMoveSet, Move},
-    pokemon::{owned::OwnablePokemon, Pokemon},
 };
 
-use crate::ui::text::BattleText;
-
-use super::moves::MovePanel;
+use super::moves::{ButtonState, MovePanel};
 
 pub struct LevelUpMovePanel<M: Deref<Target = Move> + Clone> {
     state: LevelUpState,
 
-    move_panel: MovePanel<M>,
+    panel: MovePanel,
 
     moves: Vec<M>,
 }
@@ -32,82 +29,93 @@ impl<M: Deref<Target = Move> + Clone> LevelUpMovePanel<M> {
     pub fn new() -> Self {
         Self {
             state: LevelUpState::NotAlive,
-            move_panel: MovePanel::new(),
+            panel: MovePanel::default(),
             moves: Vec::new(),
         }
     }
 
-    pub fn spawn<P, MSET: Deref<Target = [OwnedMove<M>]>, I, G, N, H>(
-        &mut self,
-        instance: &OwnablePokemon<P, MSET, I, G, N, H>,
-        moves: Vec<M>,
-    ) {
+    pub fn spawn(&mut self, moves: Vec<M>) {
         self.state = LevelUpState::Text;
-        self.moves = moves;
-        self.move_panel.update_names(instance);
     }
 
-    pub fn update<P: Deref<Target = Pokemon>, I, G, N, H>(
+    // pub fn update<P: Deref<Target = Pokemon> + Clone, I: Deref<Target = Item> + Clone>(
+    //     &mut self,
+    //     app: &mut App,
+    //     plugins: &mut Plugins,
+    //     text: &mut BattleText,
+    //     delta: f32,
+    //     pokemon: &mut OwnedPokemon<P, M, I>,
+    // ) -> Option<(usize, M)> {
+    //     match self.state {
+    //         LevelUpState::Text => match text.alive() {
+    //             true => {
+    //                 // text.update(app, plugins, delta);
+    //                 if !text.alive() {
+    //                     self.state = LevelUpState::Moves;
+    //                 }
+    //                 None
+    //             }
+    //             false => match self.moves.first() {
+    //                 Some(move_ref) => {
+    //                     let state = text
+    //                         .state
+    //                         .get_or_insert_with(|| MessageState::new(1, Default::default()));
+    //                     state.pages.push(MessagePage {
+    //                         lines: vec![
+    //                             format!("{} is trying to", pokemon.name()),
+    //                             format!("learn {}", move_ref.name),
+    //                         ],
+    //                         wait: None,
+    //                         color: TextColor::BLACK,
+    //                     });
+    //                     self.update(app, plugins, text, delta, pokemon)
+    //                 }
+    //                 None => {
+    //                     self.state = LevelUpState::NotAlive;
+    //                     None
+    //                 }
+    //             },
+    //         },
+    //         LevelUpState::Moves => {
+    //             self.move_panel.input(app, plugins);
+    //             let a = pressed(app, plugins, Control::A);
+    //             if pressed(app, plugins, Control::B) || a {
+    //                 self.state = LevelUpState::Text;
+    //                 let pokemon_move = self.moves.remove(0);
+    //                 if a {
+    //                     self.move_panel.names[self.move_panel.cursor] =
+    //                         Some((pokemon_move.clone(), TextColor::BLACK));
+    //                     pokemon
+    //                         .moves
+    //                         .add(Some(self.move_panel.cursor), pokemon_move.clone());
+    //                     return Some((self.move_panel.cursor, pokemon_move));
+    //                 }
+    //             }
+    //             None
+    //         }
+    //         LevelUpState::NotAlive => None,
+    //     }
+    // }
+
+    pub fn ui<P: Deref<Target = Pokemon> + Clone, I: Deref<Target = Item> + Clone>(
         &mut self,
-        ctx: &Context,
-        eng: &EngineContext,
-        text: &mut BattleText,
-        delta: f32,
-        pokemon: &mut OwnablePokemon<P, OwnedMoveSet<M>, I, G, N, H>,
-    ) -> Option<(usize, M)> {
+        egui: &egui::Context,
+        pokemon: &mut OwnedPokemon<P, M, I>,
+    ) {
         match self.state {
-            LevelUpState::Text => match text.alive() {
-                true => {
-                    text.update(ctx, eng, delta);
-                    if !text.alive() {
-                        self.state = LevelUpState::Moves;
-                    }
-                    None
-                }
-                false => match self.moves.first() {
-                    Some(move_ref) => {
-                        let state = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
-                        state.pages.push(MessagePage {
-                            lines: vec![
-                                format!("{} is trying to", pokemon.name()),
-                                format!("learn {}", move_ref.name),
-                            ],
-                            wait: None,
-                            color: TextColor::BLACK,
-                        });
-                        self.update(ctx, eng, text, delta, pokemon)
-                    }
-                    None => {
-                        self.state = LevelUpState::NotAlive;
-                        None
-                    }
-                },
-            },
+            LevelUpState::NotAlive => (),
             LevelUpState::Moves => {
-                self.move_panel.input(ctx, eng);
-                let a = pressed(ctx, eng, Control::A);
-                if pressed(ctx, eng, Control::B) || a {
-                    self.state = LevelUpState::Text;
-                    let pokemon_move = self.moves.remove(0);
-                    if a {
-                        self.move_panel.names[self.move_panel.cursor] =
-                            Some((pokemon_move.clone(), TextColor::BLACK));
-                        pokemon
-                            .moves
-                            .add(Some(self.move_panel.cursor), pokemon_move.clone());
-                        return Some((self.move_panel.cursor, pokemon_move));
-                    }
-                }
-                None
+                egui::Window::new("Level Up")
+                    .title_bar(false)
+                    .show(egui, |ui| {
+                        if let Some(state) = self.panel.ui(ui, pokemon) {
+                            if let ButtonState::Clicked(index) = state {
+                                pokemon.moves[index] = OwnedMove::from(self.moves.remove(0));
+                            }
+                        }
+                    });
             }
-            LevelUpState::NotAlive => None,
-        }
-    }
-
-    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
-        match self.state {
-            LevelUpState::Moves => self.move_panel.draw(ctx, eng),
-            LevelUpState::Text | LevelUpState::NotAlive => (),
+            LevelUpState::Text => (),
         }
     }
 

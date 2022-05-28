@@ -1,38 +1,28 @@
-use std::rc::Rc;
-
-use crate::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-
-use battlecli::battle::default_engine::{scripting::MoveScripts, EngineMoves};
-
-use crate::engine::music;
-
-use crate::pokengine::{
-    PokedexClientData,
-};
-
-use battlecli::BattleGuiData;
-
-use worldcli::{
-    battle::{BattleMessage, BattleId},
-    worldlib::{events::*, serialized::SerializedWorld},
-};
+use std::{ops::Deref, rc::Rc};
 
 use crate::{
-    command::{CommandProcessor, CommandResult},
-    engine::{
-        error::ImageError,
-        input::keyboard::{down as is_key_down, Key},
-        Context, EngineContext,
-    },
-    saves::Player,
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
+    engine::{graphics::{Graphics, Font}, music::stop_music, App, Plugins},
+    pokengine::{PokedexClientData, SerializedPokedexEngine}
 };
 
-use crate::engine::log::warn;
+use battlecli::{
+    battle::default_engine::{scripting::MoveScripts, EngineMoves},
+    BattleGuiData,
+};
+
+use worldcli::worldlib::{
+    character::player::InitPlayerCharacter, map::battle::BattleId, serialized::SerializedWorld,
+};
+
+use event::EventWriter;
+
+use crate::command::CommandProcessor;
 
 use crate::battle_wrapper::BattleManager;
 use crate::world_wrapper::WorldWrapper;
 
-use super::{MainStates, StateMessage};
+use super::StateMessage;
 
 pub enum GameStates {
     World,
@@ -45,51 +35,42 @@ impl Default for GameStates {
     }
 }
 
-#[derive(Clone)]
-pub enum GameActions {
-    Battle(BattleMessage),
-    CommandError(&'static str),
-    Save,
-    Exit,
-}
-
-pub(super) struct GameStateManager {
+pub(super) struct GameStateManager<
+    P: Deref<Target = Pokemon> + Clone,
+    M: Deref<Target = Move> + Clone,
+    I: Deref<Target = Item> + Clone,
+> {
     state: GameStates,
 
     world: WorldWrapper,
-    battle: BattleManager<&'static Pokemon, &'static Move, &'static Item>,
-
-    pub save: Option<Player>,
-
-    sender: Sender<StateMessage>,
-    receiver: Receiver<GameActions>,
+    battle: BattleManager<P, M, I>,
 }
 
-impl GameStateManager {
+impl<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    > GameStateManager<P, M, I>
+{
     pub fn new(
-        ctx: &mut Context,
-        dex: PokedexClientData,
+        app: &mut App,
+        gfx: &mut Graphics,
+        plugins: &mut Plugins,
+        debug_font: Font,
+        dex: SerializedPokedexEngine,
         btl: BattleGuiData,
         wrld: SerializedWorld,
         battle: (EngineMoves, MoveScripts),
-        sender: Sender<StateMessage>,
-    ) -> Result<Self, ImageError> {
-        let dex = Rc::new(dex);
-
-        let (actions, receiver) = split();
-
-        let world = WorldWrapper::new(ctx, dex.clone(), actions, wrld)?;
+        sender: EventWriter<StateMessage>,
+        commands: CommandProcessor,
+    ) -> Result<Self, String> {
+        
+        let dex = Rc::new(PokedexClientData::build(app, plugins, gfx, dex)?);
 
         Ok(Self {
             state: GameStates::default(),
-
-            world,
-            battle: BattleManager::new(ctx, btl, dex, battle),
-
-            save: None,
-
-            sender,
-            receiver,
+            world: WorldWrapper::new(gfx, dex.clone(), sender, commands, wrld, debug_font)?,
+            battle: BattleManager::new(gfx, btl, dex, battle)?,
         })
     }
 
@@ -99,123 +80,89 @@ impl GameStateManager {
     }
 }
 
-impl GameStateManager {
-    pub fn start(&mut self, _ctx: &mut Context) {
-        if let Some(save) = self.save.as_mut() {
-            save.player.create(self.world.manager.spawn());
-            match self.state {
-                GameStates::World => self.world.manager.start(save.player.unwrap()),
-                GameStates::Battle => (),
-            }
+impl<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    > GameStateManager<P, M, I>
+{
+    pub fn start(&mut self, player: &mut InitPlayerCharacter<P, M, I>) {
+        match self.state {
+            GameStates::World => self.world.manager.start(player),
+            GameStates::Battle => (),
         }
-        // Ok(())
     }
 
-    pub fn end(&mut self) {
-        if let Some(save) = self.save.take() {
-            self.sender.send(StateMessage::UpdateSave(save));
-        }
-        // Ok(())
+    pub fn end(&self, app: &mut App, plugins: &mut Plugins) {
+        stop_music(app, plugins);
     }
 
     pub fn update(
         &mut self,
-        ctx: &mut Context,
-        eng: &mut EngineContext,
-        delta: f32,
+        app: &mut App,
+        plugins: &mut Plugins,
+        pokedex: &impl Dex<Pokemon, Output = P>,
+        movedex: &impl Dex<Move, Output = M>,
+        itemdex: &impl Dex<Item, Output = I>,
+        player: &mut InitPlayerCharacter<P, M, I>,
     ) {
         // Speed game up if spacebar is held down
 
-        let delta = delta
-            * if is_key_down(ctx, Key::Space) {
+        let delta = app.timer.delta_f32()
+            * if app
+                .keyboard
+                .is_down(worldcli::engine::notan::prelude::KeyCode::Space)
+            {
                 4.0
             } else {
                 1.0
             };
 
-        if let Some(save) = self.save.as_mut() {
-            for action in self.receiver.try_iter() {
-                match action {
-                    GameActions::Battle(entry) => match self.state {
-                        GameStates::World => {
-                            if self.battle.battle(
-                                crate::dex::pokedex(),
-                                crate::dex::movedex(),
-                                crate::dex::itemdex(),
-                                save.player.unwrap(),
-                                entry,
-                            ) {
-                                self.state = GameStates::Battle;
-                            }
-                        }
-                        GameStates::Battle => warn!("Cannot start new battle, already in one!"),
-                    },
-                    GameActions::Save => self.sender.send(StateMessage::UpdateSave(save.clone())),
-                    GameActions::Exit => {
-                        music::stop_music(ctx, eng);
-                        self.sender.send(StateMessage::Goto(MainStates::Menu));
-                    }
-                    GameActions::CommandError(error) => {
-                        self.sender.send(StateMessage::CommandError(error))
-                    }
+        match self.state {
+            GameStates::World => {
+                self.world
+                    .update(app, plugins, player, pokedex, movedex, itemdex, delta);
+                if self.battle.battle(pokedex, movedex, itemdex, player) {
+                    self.state = GameStates::Battle;
                 }
             }
-
-            match self.state {
-                GameStates::World => {
-                    self.world
-                        .update(ctx, eng, delta, save.player.unwrap());
-                }
-                GameStates::Battle => {
-                    self.battle.update(
-                        ctx,
-                        eng,
-                        crate::dex::pokedex(),
-                        crate::dex::movedex(),
-                        crate::dex::itemdex(),
-                        delta,
-                    );
-                    if self.battle.finished {
-                        let player = save.player.unwrap();
-                        if let Some(winner) = self.battle.winner() {
-                            let winner = winner == &BattleId::Player;
-                            self.world.manager.post_battle(player, winner);
-                        }
-                        self.state = GameStates::World;
-                        self.world.manager.start(player);
+            GameStates::Battle => {
+                self.battle.update(app, plugins, pokedex, movedex, itemdex);
+                if self.battle.finished {
+                    if let Some(winner) = self.battle.winner() {
+                        let winner = winner == &BattleId::Player;
+                        self.world.manager.post_battle(player, winner);
                     }
+                    self.state = GameStates::World;
+                    self.world.manager.start(player);
                 }
             }
-        } else if self.sender.is_empty() {
-            self.sender.send(StateMessage::Goto(MainStates::Menu));
         }
         // Ok(())
     }
 
-    pub fn draw(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
+    pub fn draw(&self, gfx: &mut Graphics, player: &InitPlayerCharacter<P, M, I>) {
         match self.state {
-            GameStates::World => {
-                if let Some(player) = self.save.as_ref().map(|p| p.player.as_ref()).flatten() {
-                    self.world.draw(ctx, eng, player);
-                }
-            }
+            GameStates::World => self.world.draw(gfx, player),
             GameStates::Battle => {
                 if self.battle.world_active() {
-                    if let Some(player) = self.save.as_ref().map(|p| p.player.as_ref()).flatten() {
-                        self.world.draw(ctx, eng, player);
-                    }
+                    self.world.draw(gfx, player);
                 }
-                self.battle.draw(ctx, eng);
+                self.battle.draw(gfx);
             }
         }
     }
-}
 
-impl CommandProcessor for GameStateManager {
-    fn process(&mut self, command: CommandResult) {
+    pub fn ui(
+        &mut self,
+        app: &mut App,
+        plugins: &mut Plugins,
+        egui: &crate::engine::egui::Context,
+        player: &mut InitPlayerCharacter<P, M, I>,
+    ) {
         match self.state {
-            GameStates::World => self.world.process(command),
-            GameStates::Battle => (), //self.battle.process(result),
+            GameStates::World => self.world.ui(app, plugins, egui, player),
+            GameStates::Battle => self.battle.ui(app, plugins, egui),
         }
     }
 }

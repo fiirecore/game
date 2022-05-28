@@ -1,41 +1,71 @@
 extern crate firecore_battle_engine as battlecli;
-extern crate firecore_storage as storage;
+extern crate firecore_event as event;
 extern crate firecore_world_engine as worldcli;
 
 pub(crate) use battlecli::battle::pokedex;
-pub(crate) use battlecli::pokedex::engine;
-pub(crate) use battlecli::pokedex as pokengine;
+pub(crate) use battlecli::pokengine;
+pub(crate) use battlecli::pokengine::engine;
 
-use engine::{
-    utils::{HEIGHT, WIDTH},
-    ContextBuilder,
-};
 use state::StateManager;
 
 mod battle_wrapper;
 mod world_wrapper;
+
 mod command;
 mod config;
-mod dex;
 mod load;
 mod saves;
 mod state;
+mod touchscreen;
 
-const TITLE: &str = "Pokemon FireRed";
+const TITLE: &str = "Pokemon PC Edition";
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-const PUBLISHER: Option<&str> = Some("fiirecore");
+const PUBLISHER: &str = "fiirecore";
 const APPLICATION: &str = env!("CARGO_PKG_NAME");
 
+const WIDTH: f32 = 240.0;
+const HEIGHT: f32 = 160.0;
 const SCALE: f32 = 3.0;
 
-fn main() {
-    engine::run(
-        ContextBuilder::new(TITLE, (WIDTH * SCALE) as _, (HEIGHT * SCALE) as _), // .resizable(true)
-        // .show_mouse(true)
-        load::OpenContext::load(),
-            load::LoadContext::load,
-        StateManager::new,
-    );
+use engine::notan::prelude::*;
+
+#[notan_main]
+fn main() -> Result<(), String> {
+    engine::notan::init_with(run)
+        .add_config(engine::notan::egui::EguiConfig)
+        .add_config(engine::notan::draw::DrawConfig)
+        .add_config(engine::notan::log::LogConfig::debug())
+        .add_loader(load::asset_loader())
+        .update(update)
+        .draw(draw)
+        .add_config(WindowConfig {
+            title: TITLE.to_string(),
+            width: (WIDTH * SCALE) as _,
+            height: (HEIGHT * SCALE) as _,
+            min_size: Some((WIDTH as _, HEIGHT as _)),
+            vsync: true,
+            canvas_auto_resolution: true,
+            ..Default::default()
+        })
+        .build()?;
+    Ok(())
+}
+
+fn run(assets: &mut Assets, gfx: &mut Graphics, plugins: &mut Plugins) -> StateManager {
+    engine::setup(plugins);
+    use pokedex::{item::Item, moves::Move, pokemon::Pokemon};
+    use std::rc::Rc;
+    let load = load::LoadData::<Rc<Pokemon>, Rc<Move>, Rc<Item>>::load(assets).unwrap();
+    StateManager::new(gfx, load)
+}
+
+fn update(app: &mut App, plugins: &mut Plugins, state: &mut StateManager) {
+    state.update(app, plugins)
+}
+
+fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut StateManager) {
+    state.draw(app, plugins, gfx);
+    app.window().request_frame();
 }

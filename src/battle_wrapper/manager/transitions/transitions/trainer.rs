@@ -1,28 +1,34 @@
-use crate::engine::{
-    graphics::{draw_rectangle, Color, DrawParams, Texture},
-    utils::{Completable, Reset, WIDTH},
-    Context,
+use crate::engine::graphics::{
+    Color, Draw, DrawImages, DrawShapes, DrawTransform, Graphics, Texture,
 };
 
 use crate::battle_wrapper::manager::transitions::BattleTransition;
 
 pub struct TrainerBattleTransition {
     rect_width: f32,
-
+    max_width: f32,
     texture: Texture,
 }
 
 impl BattleTransition for TrainerBattleTransition {
-    fn update(&mut self, _ctx: &mut Context, delta: f32) {
+    fn update(&mut self, delta: f32) {
         self.rect_width += 240.0 * delta;
     }
 
-    fn draw(&self, ctx: &mut Context) {
-        self.draw_lines(ctx, 0.0, false);
-        self.draw_lines(ctx, 32.0, true);
-        self.draw_lines(ctx, 64.0, false);
-        self.draw_lines(ctx, 96.0, true);
-        self.draw_lines(ctx, 128.0, false);
+    fn draw(&self, draw: &mut Draw) {
+        self.draw_lines(draw, 0.0, false);
+        self.draw_lines(draw, 32.0, true);
+        self.draw_lines(draw, 64.0, false);
+        self.draw_lines(draw, 96.0, true);
+        self.draw_lines(draw, 128.0, false);
+    }
+
+    fn reset(&mut self) {
+        self.rect_width = Self::DEF_RECT_WIDTH;
+    }
+
+    fn finished(&self) -> bool {
+        self.rect_width >= self.max_width + 16.0
     }
 }
 
@@ -31,52 +37,36 @@ impl TrainerBattleTransition {
 
     const DEF_RECT_WIDTH: f32 = -16.0;
 
-    pub fn new(ctx: &mut Context) -> Self {
-        Self {
+    pub fn new(gfx: &mut Graphics) -> Result<Self, String> {
+        Ok(Self {
             rect_width: Self::DEF_RECT_WIDTH,
-            texture: Texture::new(
-                ctx,
-                include_bytes!("../../../../../assets/battle/encounter_ball.png"),
-            )
-            .unwrap(),
-        }
+            max_width: gfx.size().0 as f32,
+            texture: gfx
+                .create_texture()
+                .from_image(include_bytes!(
+                    "../../../../../assets/battle/encounter_ball.png"
+                ))
+                .build()?,
+        })
     }
 
-    fn draw_lines(&self, ctx: &mut Context, y: f32, invert: bool) {
+    fn draw_lines(&self, draw: &mut Draw, y: f32, invert: bool) {
         let o = (self.texture.width() / 2.0) as f32;
-        draw_rectangle(
-            ctx,
-            if invert { WIDTH - self.rect_width } else { 0.0 },
-            y,
-            self.rect_width,
-            32.0,
-            Color::BLACK,
-        );
-        self.texture.draw(
-            ctx,
+        let w = draw.width();
+        draw.rect(
+            (if invert { w - self.rect_width } else { 0.0 }, y),
+            (self.rect_width, 32.0),
+        )
+        .color(Color::BLACK);
+        draw.image(&self.texture)
+            .position(
                 if invert {
-                    WIDTH - self.rect_width
+                    w - self.rect_width
                 } else {
                     self.rect_width
                 },
                 y + o,
-                DrawParams {
-                    rotation: (self.rect_width * 2.0).to_radians(),
-                    ..Default::default()
-                }
-            // .origin(Vec2::new(o, o))
-            // .rotation(),
-        );
-    }
-}
-
-impl Reset for TrainerBattleTransition {
-    fn reset(&mut self) {
-        self.rect_width = Self::DEF_RECT_WIDTH;
-    }
-}
-impl Completable for TrainerBattleTransition {
-    fn finished(&self) -> bool {
-        self.rect_width >= WIDTH + 16.0
+            )
+            .rotate((self.rect_width * 2.0).to_radians());
     }
 }

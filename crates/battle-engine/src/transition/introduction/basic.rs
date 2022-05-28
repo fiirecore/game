@@ -1,19 +1,14 @@
 use core::ops::Deref;
-use pokedex::{
-    engine::{utils::HashMap, EngineContext, text::{TextColor, MessageState}},
-    item::Item,
-    moves::Move,
-    pokemon::Pokemon,
-};
 
-use pokedex::{
+use pokengine::{
     engine::{
-        graphics::{Color, DrawParams, Texture},
-        math::{vec2, Rectangle},
-        text::MessagePage,
-        utils::{Completable, Entity, Reset},
-        Context,
+        graphics::{Color, Draw, DrawExt, DrawParams, Texture},
+        math::{vec2, Rect},
+        text::{MessagePage, MessageState},
+        utils::Entity,
+        App, Plugins,
     },
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
     PokedexClientData,
 };
 
@@ -21,9 +16,11 @@ use battle::party::PlayerParty;
 
 use crate::{
     context::BattleGuiData,
+    players::{GuiLocalPlayer, GuiRemotePlayers},
+    trainer::BattleTrainer,
     ui::{
-        pokemon::PokemonStatusGui,
-        view::{ActivePokemonRenderer, GuiLocalPlayer, GuiRemotePlayer}, text::BattleText,
+        pokemon::{PokemonRenderer, PokemonStatusGui},
+        text::BattleMessageState,
     },
     view::BasePokemonView,
 };
@@ -31,8 +28,6 @@ use crate::{
 use super::BattleIntroduction;
 
 pub struct BasicBattleIntroduction {
-    player: Texture,
-    counter: f32,
     offsets: (f32, f32),
 }
 impl BasicBattleIntroduction {
@@ -40,11 +35,6 @@ impl BasicBattleIntroduction {
         -PokemonStatusGui::BATTLE_OFFSET,
         PokemonStatusGui::BATTLE_OFFSET,
     );
-
-    const PLAYER_T1: f32 = 42.0;
-    const PLAYER_T2: f32 = Self::PLAYER_T1 + 18.0;
-    const PLAYER_T3: f32 = Self::PLAYER_T2 + 18.0;
-    const PLAYER_DESPAWN: f32 = 104.0;
 
     pub fn new(ctx: &BattleGuiData) -> Self {
         Self {
@@ -54,91 +44,43 @@ impl BasicBattleIntroduction {
         }
     }
 
-    /// To - do: fix this function
-    pub(crate) fn concatenate<'d, ID, P: Deref<Target = Pokemon>, POKEMON: BasePokemonView<P>>(
-        party: &PlayerParty<ID, usize, POKEMON>,
-    ) -> String {
-        let mut string = String::with_capacity(
-            party
-                .active_iter()
-                .map(|(.., p)| p.name().len() + 2)
-                .sum::<usize>()
-                + 2,
-        );
-        let len = party.active.len();
-        for (index, instance) in party.active_iter() {
-            if index != 0 {
-                if index == len - 2 {
-                    string.push_str(", ");
-                } else if index == len - 1 {
-                    string.push_str(" and ");
-                }
-            }
-            string.push_str(instance.name());
-        }
-        string
-    }
-
     pub(crate) fn common_setup<
         ID,
-        P: Deref<Target = Pokemon>,
-        M: Deref<Target = Move>,
-        I: Deref<Target = Item>,
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
     >(
         &mut self,
-        text: &mut BattleText,
         local: &GuiLocalPlayer<ID, P, M, I>,
+        text: &mut Option<BattleMessageState>,
     ) {
-        let text = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
+        let text = text.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
-            lines: vec![format!("Go! {}!", Self::concatenate(&local.player))],
+            lines: vec![format!(
+                "Go! {}!",
+                Self::concatenate(local.player.active_iter().map(|(.., p)| p.name()))
+            )],
             wait: Some(0.5),
-            color: TextColor::WHITE,
+            ..Default::default()
         });
     }
 
-    pub(crate) fn draw_player(&self, ctx: &mut Context, player: &[ActivePokemonRenderer]) {
-        if self.counter < Self::PLAYER_DESPAWN {
-            self.player.draw(
-                ctx,
-                41.0 + -self.counter,
-                49.0,
-                DrawParams::source(Rectangle::new(
-                    0.0,
-                    if self.counter >= Self::PLAYER_T3 {
-                        // 78.0
-                        256.0
-                    } else if self.counter >= Self::PLAYER_T2 {
-                        // 60.0
-                        192.0
-                    } else if self.counter >= Self::PLAYER_T1 {
-                        // 42.0
-                        128.0
-                    } else if self.counter > 0.0 {
-                        64.0
-                    } else {
-                        0.0
-                    },
-                    64.0,
-                    64.0,
-                )),
-            )
-        } else {
-            for active in player.iter() {
-                active.pokemon.draw(ctx, vec2(0.0, 0.0), Color::WHITE);
-            }
-        }
-    }
-
-    pub(crate) fn draw_opponent(
+    pub(crate) fn draw_local<
+        ID,
+        D: Deref<Target = PokedexClientData>,
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
         &self,
-        ctx: &mut Context,
-        eng: &EngineContext,
-        opponent: &[ActivePokemonRenderer],
+        draw: &mut Draw,
+        pokemonr: &PokemonRenderer<D>,
+        local: Option<&GuiLocalPlayer<ID, P, M, I>>,
     ) {
-        for active in opponent.iter() {
-            active.pokemon.draw(ctx, vec2(0.0, 0.0), Color::WHITE);
-            active.status.draw(ctx, eng, self.offsets.0, 0.0);
+        if self.counter < Self::PLAYER_DESPAWN {
+            
+        } else if let Some(local) = local {
+            pokemonr.draw_local(remotes, offset, color)
         }
     }
 
@@ -161,91 +103,102 @@ impl BasicBattleIntroduction {
     }
 }
 
-impl<ID, P: Deref<Target = Pokemon>, M: Deref<Target = Move>, I: Deref<Target = Item>>
-    BattleIntroduction<ID, P, M, I> for BasicBattleIntroduction
+impl<
+        ID,
+        D: Deref<Target = PokedexClientData>,
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    > BattleIntroduction<ID, D, P, M, I> for BasicBattleIntroduction
 {
     fn spawn(
         &mut self,
         _: &PokedexClientData,
         local: &GuiLocalPlayer<ID, P, M, I>,
-        opponents: &HashMap<ID, GuiRemotePlayer<ID, P>>,
-        text: &mut BattleText,
+        remotes: &GuiRemotePlayers<ID, P>,
+        text: &mut Option<MessageState<[f32; 4]>>,
     ) {
-        let remote = &opponents.values().next().unwrap().player;
-        let state = text.state.get_or_insert_with(|| MessageState::new(1, Default::default()));
-        state.pages.push(MessagePage {
-            lines: vec![format!("Wild {} appeared!", Self::concatenate(remote))],
-            wait: None,
-            color: TextColor::WHITE,
-        });
-        self.common_setup(text, local);
+        if let Some(remote) = remotes.players.get_index(remotes.current).map(|(.., o)| o) {
+            
+        }
+        self.common_setup(local, text);
     }
 
     fn update(
         &mut self,
-        ctx: &mut Context,
-        eng: &mut EngineContext,
-        delta: f32,
+        app: &mut App,
+        plugins: &mut Plugins,
+        pokemonr: &mut PokemonRenderer<D>,
         local: &mut GuiLocalPlayer<ID, P, M, I>,
-        opponent: &mut GuiRemotePlayer<ID, P>,
-        text: &mut BattleText,
+        remotes: &mut GuiRemotePlayers<ID, P>,
+        text: &mut Option<BattleMessageState>,
     ) {
-        text.update(ctx, eng, delta);
+        let delta = app.timer.delta_f32();
 
-        if text.page().map(|page| page + 1) == text.pages() && self.counter < Self::PLAYER_DESPAWN {
+        if text.as_ref().map(|t| t.page() + 1) == text.as_ref().map(|t| t.pages())
+            && self.counter < Self::PLAYER_DESPAWN
+        {
             self.counter += delta * 180.0;
         }
 
-        if let Some(active) = opponent.renderer.get(0) {
-            if active.status.alive() {
-                self.offsets0(delta);
-            } else if text.waiting() && text.page() >= text.pages().map(|pages| pages - 2) {
-                for active in opponent.renderer.iter_mut() {
-                    active.status.spawn();
-                }
-            }
-        } else {
-            self.offsets0(delta);
-        }
+        // if let Some(active) = remotes
+        //     .players
+        //     .get_index(remotes.current)
+        //     .and_then(|(.., r)| r.renderer.get(0))
+        // {
+        //     if active.status.alive() {
+        //         self.offsets0(delta);
+        //     } else if text.as_ref().map(|s| s.waiting).unwrap_or_default()
+        //         && text.as_ref().map(|p| p.page()) >= text.as_ref().map(|p| p.pages() - 2)
+        //     {
+        //         for active in remotes
+        //             .players
+        //             .get_index_mut(remotes.current)
+        //             .into_iter()
+        //             .flat_map(|(.., r)| r.renderer.iter_mut())
+        //         {
+        //             active.status.spawn();
+        //         }
+        //     }
+        // } else {
+        //     self.offsets0(delta);
+        // }
 
-        if let Some(active) = local.renderer.get(0) {
-            if active.pokemon.spawner.spawning() {
-                for active in local.renderer.iter_mut() {
-                    active.pokemon.spawner.update(ctx, eng, delta);
-                }
-            } else if active.status.alive() {
-                self.offsets1(delta);
-            } else if self.counter >= Self::PLAYER_T2 {
-                for active in local.renderer.iter_mut() {
-                    active.pokemon.spawn();
-                    active.status.spawn();
-                }
-            }
-        } else {
-            self.offsets1(delta);
-        }
+        // if let Some(active) = local.renderer.get(0) {
+            // if pokemonr.spawning() {
+                // for active in local.renderer.iter_mut() {
+                //     active.pokemon.spawner.update(app, plugins, delta);
+                // }
+            // } else if active.status.alive() {
+            //     self.offsets1(delta);
+            // } else if self.counter >= Self::PLAYER_T2 {
+            //     for active in local.renderer.iter_mut() {
+            //         active.pokemon.spawn();
+            //         active.status.spawn();
+            //     }
+            // }
+        // } else {
+        //     self.offsets1(delta);
+        // }
     }
 
     fn draw(
         &self,
-        ctx: &mut Context,
-        eng: &EngineContext,
-        local: &[ActivePokemonRenderer],
-        opponent: &[ActivePokemonRenderer],
+        draw: &mut Draw,
+        pokemonr: &mut PokemonRenderer<D>,
+        local: Option<&GuiLocalPlayer<ID, P, M, I>>,
+        remotes: &GuiRemotePlayers<ID, P>,
     ) {
-        self.draw_opponent(ctx, eng, opponent);
-        self.draw_player(ctx, local);
+        pokemonr.draw_remotes(draw, remotes, Default::default(), Color::WHITE);
+        self.draw_local(draw, pokemonr, local);
     }
-}
 
-impl Reset for BasicBattleIntroduction {
     fn reset(&mut self) {
         self.counter = 0.0;
         self.offsets = Self::OFFSETS;
     }
-}
-impl Completable for BasicBattleIntroduction {
+
     fn finished(&self) -> bool {
-        self.counter >= Self::PLAYER_DESPAWN && self.offsets.1 == 0.0
+        self.counter >= Self::PLAYER_DESPAWN //&& self.offsets.1 == 0.0
     }
 }

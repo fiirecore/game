@@ -16,10 +16,10 @@ firecore-storage = { path = "../storage", default-features = false }
 serde = { version = "1", features = ["derive"] }
 ron = "0.7"
 either = { version = "1", features = ["serde"] }
-hashbrown = { version = "0.9", features = ["serde"] }
+hashbrown = { version = "0.12", features = ["serde"] }
 enum-map = { version = "2", features = ["serde"] }
 
-tinystr = { version = "0.4" }
+tinystr = { version = "0.6" }
 image = { version = "0.23.12", default-features = false, features = [
     "png",
     "tga",

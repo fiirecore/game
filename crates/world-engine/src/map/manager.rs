@@ -1,35 +1,36 @@
+use std::ops::Deref;
+
 use crate::engine::{
     controls::{pressed, Control},
-    error::ImageError,
-    graphics::{self, Color},
+    graphics::{Color, Draw, DrawTextSection, Graphics, Font},
+    gui::MessageBox,
     math::{ivec2, IVec2},
-    music,
-    text::MessagePage,
+    music, sound,
     utils::Entity,
-    Context, EngineContext,
+    App, Plugins,
 };
+
+use pokengine::pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex};
 
 use rand::prelude::SmallRng;
 
 use worldlib::{
-    actions::WorldActions,
-    character::player::PlayerCharacter,
-    events::{split, InputEvent, Receiver, Sender},
+    character::player::{InitPlayerCharacter, PlayerCharacter},
     map::{
-        chunk::Connection, manager::WorldMapManager, warp::WarpDestination, Brightness, WorldMap,
+        chunk::Connection,
+        manager::{InputEvent, WorldMapManager},
+        movement::Elevation,
+        warp::WarpDestination,
+        Brightness, WorldMap,
     },
     positions::{Coordinate, Destination, Direction, Location, Position},
     serialized::SerializedWorld,
+    state::WorldEvent,
 };
 
-use crate::{
-    battle::{BattleId, BattleMessage, BattleTrainerEntry},
-    gui::TextWindow,
-    map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition, RenderCoords},
-    WorldMetaAction,
-};
+use crate::map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition, RenderCoords};
 
-mod npc;
+pub mod npc;
 
 // pub mod script;
 
@@ -39,35 +40,28 @@ pub struct WorldManager {
     data: ClientWorldData,
 
     warper: WarpTransition,
-    text: TextWindow,
     input: PlayerInput,
     // screen: RenderCoords,
-    sender: Sender<WorldMetaAction>,
-    receiver: Receiver<WorldActions>,
     // events: EventReceiver<WorldEvents>,
 }
 
 impl WorldManager {
     pub fn new(
-        ctx: &mut Context,
-        actions: Sender<WorldMetaAction>,
+        gfx: &mut Graphics,
         world: SerializedWorld,
-    ) -> Result<Self, ImageError> {
+        debug_font: Font,
+    ) -> Result<Self, String> {
         // let events = Default::default();
 
-        let (sender, receiver) = split();
-
         Ok(Self {
-            world: WorldMapManager::new(world.data, world.scripts, sender),
+            world: WorldMapManager::new(world.data, world.scripts),
 
-            data: ClientWorldData::new(ctx, world.textures)?,
+            data: ClientWorldData::new(gfx, world.textures, debug_font)?,
             warper: WarpTransition::new(),
-            text: TextWindow::new(ctx)?,
+            // text: TextWindow::new(gfx)?,
             input: PlayerInput::default(),
-            sender: actions,
             // screen: RenderCoords::default(),
             // events,
-            receiver,
         })
     }
 
@@ -75,74 +69,36 @@ impl WorldManager {
         self.world.get(location)
     }
 
-    pub fn start(&mut self, player: &mut PlayerCharacter) {
-        self.world.on_warp(player);
-        if let Some(battle) = player.world.battle.battling.as_ref() {
-            let (id, trainer) = battle
-                .trainer
-                .as_ref()
-                .map(|e| {
-                    self.world
-                        .get(&e.location)
-                        .map(|map| {
-                            map.npcs
-                                .get(&e.id)
-                                .map(|npc| {
-                                    npc.trainer
-                                        .as_ref()
-                                        .map(|t| (npc, t))
-                                        .map(|(npc, trainer)| (map, npc, trainer))
-                                })
-                                .flatten()
-                        })
-                        .flatten()
-                        .map(|(map, npc, trainer)| {
-                            (
-                                BattleId::Trainer(e.id),
-                                Some(BattleTrainerEntry {
-                                    name: npc.character.name.clone(),
-                                    bag: e.bag.clone(),
-                                    badge: trainer.badge,
-                                    sprite: npc.group,
-                                    transition: map.settings.transition,
-                                    defeat: trainer
-                                        .defeat
-                                        .iter()
-                                        .map(|lines| MessagePage {
-                                            lines: lines.clone(),
-                                            wait: None,
-                                            color: npc::color(
-                                                self.world
-                                                    .data
-                                                    .npc
-                                                    .groups
-                                                    .get(&npc.group)
-                                                    .map(|group| group.message)
-                                                    .unwrap_or_default(),
-                                            ),
-                                        })
-                                        .collect(),
-                                    worth: trainer.worth,
-                                }),
-                            )
-                        })
-                })
-                .flatten()
-                .unwrap_or((BattleId::Wild, None));
-            self.sender.send(WorldMetaAction::Battle(BattleMessage {
-                id,
-                party: battle.party.clone(),
-                trainer,
-                active: battle.active,
-            }));
+    pub fn start<P, B: Default>(&mut self, player: &mut PlayerCharacter<P, B>) {
+        if player.location == Location::DEFAULT {
+            let (location, position) = self.world.data.spawn;
+            self.world.warp(
+                player,
+                WarpDestination {
+                    location,
+                    position: Destination {
+                        coords: position.coords,
+                        direction: Some(position.direction),
+                    },
+                },
+            );
         }
+        self.world.on_warp(player);
     }
 
     pub fn seed(&mut self, seed: u64) {
         self.world.seed(seed);
     }
 
-    pub fn post_battle(&mut self, player: &mut PlayerCharacter, winner: bool) {
+    pub fn post_battle<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
+        &mut self,
+        player: &mut InitPlayerCharacter<P, M, I>,
+        winner: bool,
+    ) {
         self.world.data.post_battle(player, winner)
     }
 
@@ -150,7 +106,11 @@ impl WorldManager {
         self.world.data.spawn
     }
 
-    pub fn try_teleport(&mut self, player: &mut PlayerCharacter, location: Location) -> bool {
+    pub fn try_teleport<P, B: Default>(
+        &mut self,
+        player: &mut PlayerCharacter<P, B>,
+        location: Location,
+    ) -> bool {
         if self.world.contains(&location) {
             self.teleport(player, location);
             true
@@ -159,11 +119,16 @@ impl WorldManager {
         }
     }
 
-    pub fn update(
+    pub fn update<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
         &mut self,
-        ctx: &mut Context,
-        eng: &mut EngineContext,
-        player: &mut PlayerCharacter,
+        app: &mut App,
+        plugins: &mut Plugins,
+        player: &mut InitPlayerCharacter<P, M, I>,
+        itemdex: &impl Dex<Item, Output = I>,
         delta: f32,
     ) {
         // } else if self.world_map.alive() {
@@ -174,85 +139,37 @@ impl WorldManager {
         //         }
         //     }
 
-        self.text.update(ctx, eng, delta, player);
-
         self.data.update(delta, player);
 
         if self.warper.alive() {
             if let Some(music) = self.warper.update(&self.world.data, player, delta) {
                 self.world.on_warp(player);
             }
-        } else if player.world.warp.is_some() {
+        } else if player.state.warp.is_some() {
             self.warper.spawn();
-            player.character.flags.insert(PlayerInput::INPUT_LOCK);
+            player
+                .character
+                .input_lock.increment();
         }
 
-        if let Some(direction) = self.input.update(ctx, eng, player, delta) {
+        if let Some(direction) = self.input.update(app, plugins, player, delta) {
             self.world.input(player, InputEvent::Move(direction));
         }
 
-        if pressed(ctx, eng, Control::A) && !player.character.flags.contains(&PlayerInput::INPUT_LOCK) {        
+        if pressed(app, plugins, Control::A)
+            && !player
+                .character
+                .input_lock.active()
+        {
             self.world.input(player, InputEvent::Interact);
         }
 
-        self.world.update(player, delta);
+        self.world.update(player, itemdex, delta);
 
-        for action in self.receiver.try_iter() {
+        for action in std::mem::take(&mut player.state.events) {
             match action {
-                WorldActions::Battle(entry) => {
-                    if !player.trainer.party.is_empty() {
-                        player.character.locked.increment();
-                        let active = entry.active;
-                        let party = entry.party.clone();
-                        let (id, t) = if let Some(trainer) = entry.trainer.as_ref() {
-                            let (id, t) = (
-                                BattleId::Trainer(trainer.id),
-                                if let Some((map, npc)) = self
-                                    .world
-                                    .get(&trainer.location)
-                                    .map(|map| map.npcs.get(&trainer.id).map(|npc| (map, npc)))
-                                    .flatten()
-                                {
-                                    let trainer = npc.trainer.as_ref().unwrap();
-                                    let group = npc::group(&self.world.data.npc.groups, &npc.group);
-                                    let tgroup =
-                                        npc::trainer(&self.world.data.npc.trainers, &trainer.group);
-                                    Some(BattleTrainerEntry {
-                                        name: format!("{} {}", tgroup.prefix, npc.character.name),
-                                        bag: trainer.bag.clone(),
-                                        badge: trainer.badge,
-                                        sprite: npc.group,
-                                        transition: map.settings.transition,
-                                        defeat: trainer
-                                            .defeat
-                                            .iter()
-                                            .map(|lines| MessagePage {
-                                                lines: lines.clone(),
-                                                wait: None,
-                                                color: npc::color(group.message),
-                                            })
-                                            .collect(),
-                                        worth: trainer.worth as _,
-                                    })
-                                } else {
-                                    None
-                                },
-                            );
-                            (id, t)
-                        } else {
-                            (BattleId::Wild, None)
-                        };
-                        player.world.battle.battling = Some(entry);
-                        self.sender.send(WorldMetaAction::Battle(BattleMessage {
-                            id,
-                            party,
-                            trainer: t,
-                            active,
-                        }))
-                    };
-                }
-                WorldActions::PlayerJump => self.data.player.jump(player),
-                // WorldActions::GivePokemon(pokemon) => {
+                WorldEvent::PlayerJump => self.data.player.jump(player),
+                // WorldEvent::GivePokemon(pokemon) => {
                 //     if let Some(pokemon) = pokemon.init(
                 //         &mut self.data.randoms.general,
                 //         crate::pokedex(),
@@ -262,16 +179,19 @@ impl WorldManager {
                 //         party.try_push(pokemon);
                 //     }
                 // }
-                WorldActions::PlayMusic(music) => {
-                    if let Some(playing) = music::get_current_music(eng) {
-                        if playing != &music {
-                            music::play_music(ctx, eng, &music);
+                WorldEvent::PlayMusic(music) => {
+                    if let Some(playing) = music::get_current_music(plugins) {
+                        if playing != music {
+                            music::play_music(app, plugins, &music);
                         }
                     } else {
-                        music::play_music(ctx, eng, &music);
+                        music::play_music(app, plugins, &music);
                     }
                 }
-                WorldActions::BeginWarpTransition(coords) => {
+                WorldEvent::PlaySound(sound, variant) => {
+                    sound::play_sound(app, plugins, sound, variant);
+                }
+                WorldEvent::BeginWarpTransition(coords) => {
                     if let Some(map) = self.world.get(&player.location) {
                         if let Some(tile) = map.tile(coords) {
                             let palette = *tile.palette(&map.palettes);
@@ -281,12 +201,12 @@ impl WorldManager {
                         }
                     }
                 }
-                WorldActions::OnTile => {
+                WorldEvent::OnTile => {
                     if let Some(map) = self.world.get(&player.location) {
                         on_tile(map, player, &mut self.data)
                     }
                 }
-                WorldActions::BreakObject(coordinate) => {
+                WorldEvent::BreakObject(coordinate) => {
                     if let Some(map) = self.world.get(&player.location) {
                         if let Some(object) = map.object_at(&coordinate) {
                             self.data.object.add(coordinate, &object.group);
@@ -318,13 +238,17 @@ impl WorldManager {
     //     }
     // }
 
-    pub fn teleport(&mut self, player: &mut PlayerCharacter, location: Location) {
+    pub fn teleport<P, B: Default>(
+        &mut self,
+        player: &mut PlayerCharacter<P, B>,
+        location: Location,
+    ) {
         if let Some(map) = self.world.data.maps.get(&location) {
             let coords = map.settings.fly_position.unwrap_or_else(|| {
                 let mut count = 0u8;
                 let mut first = None;
                 let index = match map.movements.iter().enumerate().find(|(i, tile)| {
-                    if WorldMap::can_move(0, **tile) {
+                    if Elevation::can_move(Elevation(0), **tile) {
                         count += 1;
                         if first.is_none() {
                             first = Some((*i, **tile));
@@ -356,21 +280,30 @@ impl WorldManager {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext, player: &PlayerCharacter) {
-        let screen = RenderCoords::new(player);
+    pub fn ui<P, B: Default>(
+        &mut self,
+        app: &App,
+        plugins: &mut Plugins,
+        egui: &crate::engine::notan::egui::Context,
+        player: &mut PlayerCharacter<P, B>,
+    ) {
+        MessageBox::ui(app, plugins, egui, &mut player.state.message);
+    }
+
+    pub fn draw<P, B: Default>(&self, draw: &mut Draw, player: &PlayerCharacter<P, B>) {
+        let screen = RenderCoords::new(&draw, &player.character);
 
         let color = match self.world.get(&player.location) {
             Some(current) => {
                 let color = match current.settings.brightness {
                     Brightness::Day => Color::WHITE,
-                    Brightness::Night => Color::rgb(0.6, 0.6, 0.6),
+                    Brightness::Night => Color::new(0.6, 0.6, 0.6, 1.0),
                 };
 
                 super::draw(
-                    ctx,
-                    eng,
+                    draw,
                     current,
-                    &player.world,
+                    &player.state,
                     &self.data,
                     &screen,
                     true,
@@ -406,10 +339,9 @@ impl WorldManager {
                             }
 
                             super::draw(
-                                ctx,
-                                eng,
+                                draw,
                                 connection,
-                                &player.world,
+                                &player.state,
                                 &self.data,
                                 &screen.offset(map_offset(direction, current, connection, *offset)),
                                 false,
@@ -423,91 +355,90 @@ impl WorldManager {
                 color
             }
             None => {
-                graphics::draw_text_left(
-                    ctx,
-                    eng,
-                    &0,
-                    "Cannot get map:",
-                    0.0,
-                    0.0,
-                    Default::default(),
-                );
-                graphics::draw_text_left(
-                    ctx,
-                    eng,
-                    &0,
+                draw.text(&self.data.debug_font, "Cannot get map:")
+                    .position(0.0, 0.0)
+                    .color(Color::WHITE)
+                    .h_align_left()
+                    .v_align_top();
+                draw.text(
+                    &self.data.debug_font,
                     player.location.map.as_deref().unwrap_or("None"),
-                    0.0,
-                    8.0,
-                    Default::default(),
-                );
-                graphics::draw_text_left(
-                    ctx,
-                    eng,
-                    &0,
-                    player.location.index.as_str(),
-                    0.0,
-                    16.0,
-                    Default::default(),
-                );
+                )
+                .position(0.0, 8.0)
+                .color(Color::WHITE)
+                .h_align_left()
+                .v_align_top();
+                draw.text(&self.data.debug_font, player.location.index.as_str())
+                    .position(0.0, 16.0)
+                    .color(Color::WHITE)
+                    .h_align_left()
+                    .v_align_top();
                 Color::WHITE
             }
         };
 
-        if player.world.debug_draw {
-            graphics::draw_text_left(
-                ctx,
-                eng,
-                &1,
+        if player.state.debug_draw {
+            draw.text(
+                &self.data.debug_font,
                 player
                     .location
                     .map
                     .as_ref()
                     .map(|s| s.as_str())
                     .unwrap_or("No Base Map ID"),
-                5.0,
-                5.0,
-                Default::default(),
-            );
-            graphics::draw_text_left(
-                ctx,
-                eng,
-                &1,
-                player.location.index.as_str(),
-                5.0,
-                15.0,
-                Default::default(),
-            );
+            )
+            .position(5.0, 5.0)
+            .color(Color::WHITE)
+            .h_align_left()
+            .v_align_top();
 
-            let coordinates = format!("{}", player.character.position.coords);
-            graphics::draw_text_left(ctx, eng, &1, &coordinates, 5.0, 25.0, Default::default());
+            draw.text(&self.data.debug_font, player.location.index.as_str())
+                .position(5.0, 15.0)
+                .color(Color::WHITE)
+                .h_align_left()
+                .v_align_top();
+
+            let mut coordarr = [0u8; 16];
+
+            use std::io::Write;
+
+            if let Ok(..) = write!(
+                &mut coordarr as &mut [u8],
+                "{}",
+                player.character.position.coords
+            ) {
+                if let Ok(text) = std::str::from_utf8(&coordarr) {
+                    draw.text(&self.data.debug_font, text)
+                        .position(5.0, 25.0)
+                        .color(Color::WHITE);
+                }
+            }
         } else {
-            self.warper.draw_door(ctx, &self.data.tiles, &screen);
+            self.warper.draw_door(draw, &self.data.tiles, &screen);
         }
 
-        self.data.player.draw(ctx, player, color);
-        if !player.world.debug_draw {
-            self.data.player.bush.draw(ctx, &screen);
-            self.warper.draw(ctx);
+        self.data.player.draw(draw, &player.character, color);
+        if !player.state.debug_draw {
+            self.data.player.bush.draw(draw, &screen);
+            self.warper.draw(draw);
         }
-        self.text.draw(ctx, eng, player);
     }
 }
 
-fn on_tile(
+fn on_tile<P, B: Default>(
     map: &WorldMap,
-    player: &PlayerCharacter,
+    player: &PlayerCharacter<P, B>,
     data: &mut ClientWorldData,
-    // sender: &Sender<WorldActions>,
+    // sender: &Sender<WorldEvent>,
 ) {
-    data.player.bush.check(map, player.position.coords);
+    data.player.bush.check(map, player.character.position.coords);
     // check for wild encounter
 
     // if let Some(tile_id) = map.tile(player.position.coords) {
 
     //     // try running scripts
 
-    //     if player.world.scripts.actions.is_empty() {
+    //     if player.state.scripts.actions.is_empty() {
     //         'scripts: for script in map.scripts.iter() {
     //             use worldlib::script::world::Condition;
     //             for condition in &script.conditions {
@@ -523,12 +454,12 @@ fn on_tile(
     //                         }
     //                     }
     //                     Condition::NoRepeat => {
-    //                         if player.world.scripts.executed.contains(&script.identifier) {
+    //                         if player.state.scripts.executed.contains(&script.identifier) {
     //                             continue 'scripts;
     //                         }
     //                     }
     //                     Condition::Script(script, happened) => {
-    //                         if player.world.scripts.executed.contains(script).ne(happened) {
+    //                         if player.state.scripts.executed.contains(script).ne(happened) {
     //                             continue 'scripts;
     //                         }
     //                     }
@@ -551,7 +482,7 @@ fn on_tile(
     //                 .push(worldlib::script::world::WorldAction::Finish(
     //                     script.identifier,
     //                 ));
-    //             player.world.scripts.actions.reverse();
+    //             player.state.scripts.actions.reverse();
     //             break;
     //         }
     //     }

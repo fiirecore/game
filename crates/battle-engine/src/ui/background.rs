@@ -1,4 +1,4 @@
-use pokedex::engine::{graphics::Texture, Context};
+use pokengine::engine::graphics::{Draw, DrawImages, Texture};
 
 use crate::context::BattleGuiData;
 
@@ -9,18 +9,17 @@ pub struct BattleBackground {
 }
 
 impl BattleBackground {
-    pub fn new(ctx: &mut Context, gui: &BattleGuiData) -> Self {
+    pub fn new(gui: &BattleGuiData) -> Self {
         Self {
-            background: Texture::new(ctx, include_bytes!("../../assets/background.png")).unwrap(),
-            ground: Texture::new(ctx, include_bytes!("../../assets/ground.png")).unwrap(),
+            background: gui.background.clone(),
+            ground: gui.ground.clone(),
             panel: gui.panel.clone(),
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, offset: f32) {
-        self.background.draw(ctx, 0.0, 1.0, Default::default());
-        self.ground
-            .draw(ctx, 113.0 - offset, 50.0, Default::default());
-        self.ground.draw(ctx, offset, 103.0, Default::default());
+    pub fn draw(&self, draw: &mut Draw, offset: f32) {
+        draw.image(&self.background).position(0.0, 1.0);
+        draw.image(&self.ground).position(113.0 - offset, 50.0);
+        draw.image(&self.ground).position(offset, 103.0);
     }
 }

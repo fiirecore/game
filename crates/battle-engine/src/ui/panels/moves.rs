@@ -1,111 +1,67 @@
 use core::ops::Deref;
 
-use pokedex::{
-    engine::{
-        graphics::{draw_cursor, draw_text_left, Color, DrawParams},
-        gui::Panel,
-        controls::{pressed, Control},
-        text::TextColor,
-        utils::Reset,
-        Context, EngineContext,
+use pokengine::{
+    engine::egui,
+    pokedex::{
+        item::Item,
+        moves::Move,
+        pokemon::{owned::OwnedPokemon, Pokemon},
     },
-    moves::{owned::OwnedMove, Move},
-    pokemon::owned::OwnablePokemon,
 };
 
-pub struct MovePanel<M: Deref<Target = Move> + Clone> {
-    pub cursor: usize,
-    pub names: [Option<(M, Color)>; 4],
+#[derive(Default)]
+pub struct MovePanel {
+    alive: bool,
 }
 
-impl<M: Deref<Target = Move> + Clone> MovePanel<M> {
-    pub fn new() -> Self {
-        Self {
-            cursor: 0,
-            names: Default::default(),
-        }
+pub enum ButtonState {
+    Clicked(usize),
+    Hovered(usize),
+}
+
+impl MovePanel {
+    pub fn spawn(&mut self) {
+        self.alive = true;
     }
 
-    pub fn update_names<P, MSET: Deref<Target = [OwnedMove<M>]>, I, G, N, H>(
+    pub fn despawn(&mut self) {
+        self.alive = false;
+    }
+
+    pub fn alive(&self) -> bool {
+        self.alive
+    }
+
+    pub fn ui<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
         &mut self,
-        instance: &OwnablePokemon<P, MSET, I, G, N, H>,
-    ) {
-        for (index, instance) in instance.moves.iter().enumerate() {
-            self.names[index] = Some((
-                instance.0.clone(),
-                if instance.is_empty() {
-                    Color::RED
-                } else {
-                    TextColor::BLACK
-                },
-            ));
+        ui: &mut egui::Ui,
+        pokemon: &OwnedPokemon<P, M, I>,
+    ) -> Option<ButtonState> {
+        let per_row = (pokemon.moves.len() as f32).sqrt().ceil() as usize;
+        let i = egui::Grid::new("Move Grid")
+            .show(ui, |ui| {
+                let mut b = None;
+                for (i, m) in pokemon.moves.iter().enumerate() {
+                    let button = ui.button(&m.0.name);
+                    if button.clicked() {
+                        b = Some(ButtonState::Clicked(i));
+                    } else if button.hovered() {
+                        b = Some(ButtonState::Hovered(i));
+                    }
+                    if i % per_row == per_row - 1 {
+                        ui.end_row();
+                    }
+                }
+                b
+            })
+            .inner;
+        if ui.button("Back").clicked() {
+            self.despawn();
         }
-    }
-
-    pub fn input(&mut self, ctx: &Context, eng: &EngineContext) -> bool {
-        if if pressed(ctx, eng, Control::Up) {
-            if self.cursor >= 2 {
-                self.cursor -= 2;
-                true
-            } else {
-                false
-            }
-        } else if pressed(ctx, eng, Control::Down) {
-            if self.cursor <= 2 {
-                self.cursor += 2;
-                true
-            } else {
-                false
-            }
-        } else if pressed(ctx, eng, Control::Left) {
-            if self.cursor > 0 {
-                self.cursor -= 1;
-                true
-            } else {
-                false
-            }
-        } else if pressed(ctx, eng, Control::Right) {
-            if self.cursor < 3 {
-                self.cursor += 1;
-                true
-            } else {
-                false
-            }
-        } else {
-            false
-        } {
-            if self.cursor >= self.names.len() {
-                self.cursor = self.names.len() - 1;
-            }
-            true
-        } else {
-            false
-        }
-    }
-
-    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
-        Panel::draw(ctx, eng, 0.0, 113.0, 160.0, 47.0);
-        for (index, (pokemon_move, color)) in self.names.iter().flatten().enumerate() {
-            let x_offset = if index % 2 == 1 { 72.0 } else { 0.0 };
-            let y_offset = if index >> 1 == 1 { 17.0 } else { 0.0 };
-            draw_text_left(
-                ctx,
-                eng,
-                &0,
-                &pokemon_move.name,
-                16.0 + x_offset,
-                121.0 + y_offset,
-                DrawParams::color(*color),
-            );
-            if index == self.cursor {
-                draw_cursor(ctx, eng, 10.0 + x_offset, 123.0 + y_offset, Default::default());
-            }
-        }
-    }
-}
-
-impl<M: Deref<Target = Move> + Clone> Reset for MovePanel<M> {
-    fn reset(&mut self) {
-        self.cursor = 0;
+        i
     }
 }

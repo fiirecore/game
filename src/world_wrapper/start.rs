@@ -1,146 +1,163 @@
-use std::rc::Rc;
+use std::{ops::Deref, rc::Rc};
 
-use worldcli::worldlib::events::Sender;
+use event::EventWriter;
+use worldcli::worldlib::character::trainer::InitTrainer;
 
-use worldcli::worldlib::character::trainer::Trainer;
-
-use crate::pokedex::pokemon::owned::SavedPokemon;
-
-use crate::pokengine::{
-    gui::{bag::BagGui, party::PartyGui},
-    PokedexClientData,
+use crate::{
+    pokengine::{
+        gui::{bag::BagGui, party::PartyGui},
+        pokedex::{item::Item, moves::Move, pokemon::Pokemon},
+        PokedexClientData,
+    },
+    state::{MainStates, StateMessage},
 };
-
-use crate::state::game::GameActions;
 
 use crate::engine::{
     controls::{pressed, Control},
-    gui::Panel,
-    log::info,
-    math::Vec2,
+    notan::egui,
     utils::Entity,
-    Context, EngineContext,
+    App, Plugins,
 };
 
 pub struct StartMenu {
     alive: bool,
-    pos: Vec2,
-    buttons: [&'static str; 5],
     cursor: usize,
-    dex: Rc<PokedexClientData>,
-    party: PartyGui,
-    bag: BagGui,
-    actions: Sender<GameActions>,
+    party: PartyGui<Rc<PokedexClientData>>,
+    bag: BagGui<Rc<PokedexClientData>>,
+    actions: EventWriter<StateMessage>,
 }
 
 impl StartMenu {
-    pub(crate) fn new(
-        dex: Rc<PokedexClientData>,
-        sender: Sender<GameActions>,
-    ) -> Self {
+    pub(crate) fn new(dex: Rc<PokedexClientData>, sender: EventWriter<StateMessage>) -> Self {
         Self {
             alive: false,
-            pos: Vec2::new(169.0, 1.0),
-            buttons: ["Save", "Bag", "Pokemon", "Menu", "Cancel"],
             cursor: 0,
-            party: PartyGui::new(&dex),
-            bag: BagGui::new(&dex),
-            dex,
+            party: PartyGui::new(dex.clone()),
+            bag: BagGui::new(dex),
             actions: sender,
         }
     }
 
-    pub fn update(&mut self, ctx: &Context, eng: &mut EngineContext, delta: f32, user: &mut Trainer) {
-        if self.bag.alive() {
-            self.bag.input(ctx, eng, &mut user.bag);
-            // bag_gui.up
-        } else if self.party.alive() {
-            self.party
-                .input(ctx, eng, &self.dex, crate::dex::pokedex(), &mut user.party);
-            self.party.update(delta);
-        } else {
-            if pressed(ctx, eng, Control::B) || pressed(ctx, eng, Control::Start) {
-                self.despawn();
-            }
+    // #[deprecated]
+    // pub fn update(&mut self, app: &mut App, plugins: &mut Plugins, delta: f32) {
+    //     if self.bag.alive() {
+    //         self.bag.input(app, plugins, &mut user.bag);
+    //         // bag_gui.up
+    //     } else if self.party.alive() {
+    //         // self.party
+    //         //     .input(ctx, eng, &self.dex, crate::dex::pokedex(), &mut user.party);
+    //     } else {
+    //         if pressed(app, plugins, Control::B) || pressed(app, plugins, Control::Start) {
+    //             self.despawn();
+    //         }
 
-            if pressed(ctx, eng, Control::A) {
-                match self.cursor {
-                    0 => {
-                        // Save
-                        self.actions.send(GameActions::Save);
+    //         if pressed(app, plugins, Control::A) {
+    //             match self.cursor {
+    //                 0 => {
+    //                     // Save
+    //                 }
+    //                 1 => {
+    //                     // Bag
+    //                 }
+    //                 2 => {
+    //                     // Pokemon
+    //                 }
+    //                 3 => {
+    //                     // Exit to Main Menu
+
+    //                     self.despawn();
+    //                 }
+    //                 4 => {
+    //                     // Close Menu
+    //                     self.despawn();
+    //                 }
+    //                 _ => unreachable!(),
+    //             }
+    //         }
+
+    //         if pressed(app, plugins, Control::Up) {
+    //             if self.cursor > 0 {
+    //                 self.cursor -= 1;
+    //             } else {
+    //                 self.cursor = self.buttons.len() - 1;
+    //             }
+    //         }
+    //         if pressed(app, plugins, Control::Down) {
+    //             if self.cursor < self.buttons.len() - 1 {
+    //                 self.cursor += 1;
+    //             } else {
+    //                 self.cursor = 0;
+    //             }
+    //         }
+    //     }
+    // }
+
+    pub fn ui<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
+        &mut self,
+        app: &mut App,
+        plugins: &mut Plugins,
+        egui: &egui::Context,
+        user: &mut InitTrainer<P, M, I>,
+    ) {
+        if pressed(app, plugins, Control::Start) {
+            self.alive = !self.alive;
+        }
+        self.bag.ui(egui, &mut user.bag);
+        self.party.ui(app, egui, &mut user.party);
+        if self.alive {
+            egui::Window::new("Menu")
+                .title_bar(false)
+                .anchor(egui::Align2::RIGHT_TOP, [-5.0, 5.0])
+                .show(egui, |ui| {
+                    if ui.button("Save").clicked() {
+                        self.actions.send(StateMessage::SaveToDisk);
                     }
-                    1 => {
-                        // Bag
+                    if ui.button("Bag").clicked() {
                         self.bag.spawn();
                     }
-                    2 => {
-                        // Pokemon
-                        self.spawn_party(&user.party);
+                    if ui.button("Party").clicked() {
+                        self.party.spawn();
                     }
-                    3 => {
-                        // Exit to Main Menu
-                        self.actions.send(GameActions::Exit);
-                        self.despawn();
+                    if ui.button("Exit to Menu").clicked() {
+                        self.actions.send(StateMessage::Goto(MainStates::Menu));
                     }
-                    4 => {
-                        // Close Menu
-                        self.despawn();
+                    if ui.button("Close").clicked() {
+                        self.alive = false;
                     }
-                    _ => unreachable!(),
-                }
-            }
-
-            if pressed(ctx, eng, Control::Up) {
-                if self.cursor > 0 {
-                    self.cursor -= 1;
-                } else {
-                    self.cursor = self.buttons.len() - 1;
-                }
-            }
-            if pressed(ctx, eng, Control::Down) {
-                if self.cursor < self.buttons.len() - 1 {
-                    self.cursor += 1;
-                } else {
-                    self.cursor = 0;
-                }
-            }
-        }
-    }
-
-    pub fn draw(&self, ctx: &mut Context, eng: &EngineContext) {
-        if self.alive {
-            if self.bag.alive() {
-                self.bag.draw(ctx, eng);
-            } else if self.party.alive() {
-                self.party.draw(ctx, eng);
-            } else {
-                Panel::draw_text(
-                    ctx,
-                    eng,
-                    self.pos.x,
-                    self.pos.y,
-                    70.0,
-                    &self.buttons,
-                    self.cursor,
-                    false,
-                    false,
-                );
-            }
-        }
-    }
-
-    pub fn fullscreen(&self) -> bool {
-        self.party.alive() || self.bag.alive()
-    }
-
-    pub fn spawn_party(&mut self, party: &[SavedPokemon]) {
-        let pokedex = crate::dex::pokedex();
-        if let Err(err) = self
-            .party
-            .spawn(&self.dex, pokedex, party, Some(true), true)
-        {
-            info!("Cannot spawn party GUI with error {}", err)
-        }
+                });
+        } else {
+            egui::Window::new("Menu Button")
+                .title_bar(false)
+                .anchor(egui::Align2::RIGHT_TOP, [-5.0, 5.0])
+                .show(egui, |ui| {
+                    if ui.button("Menu").clicked() {
+                        self.alive = true;
+                    }
+                });
+        };
+        // if self.alive {
+        //     if self.bag.alive() {
+        //         self.bag.draw(ctx, eng);
+        //     } else if self.party.alive() {
+        //         self.party.draw(ctx, eng);
+        //     } else {
+        //         Panel::draw_text(
+        //             ctx,
+        //             eng,
+        //             self.pos.x,
+        //             self.pos.y,
+        //             70.0,
+        //             &self.buttons,
+        //             self.cursor,
+        //             false,
+        //             false,
+        //         );
+        //     }
+        // }
     }
 }
 

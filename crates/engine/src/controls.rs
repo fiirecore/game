@@ -1,13 +1,12 @@
-use fiirengine::Context;
 use enum_map::Enum;
+use notan::prelude::{App, Plugins};
 use serde::{Deserialize, Serialize};
 
-use crate::EngineContext;
-
-#[cfg(all(not(target_arch = "wasm32"), feature = "gamepad"))]
-pub mod gamepad;
+// #[cfg(all(not(target_arch = "wasm32"), feature = "gamepad"))]
+// pub mod gamepad;
+pub mod context;
 pub mod keyboard;
-// pub mod touchscreen;
+pub mod touchscreen;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Deserialize, Serialize, Enum)]
 pub enum Control {
@@ -21,51 +20,43 @@ pub enum Control {
     Select,
 }
 
-pub(crate) struct ControlsContext {
-    pub keyboard: keyboard::KeyMap,
-    #[cfg(all(not(target_arch = "wasm32"), feature = "gamepad"))]
-    pub controller: gamepad::ButtonMap,
-    // pub touchscreen: touchscreen::Touchscreen,
+pub fn pressed(app: &App, plugins: &Plugins, control: Control) -> bool {
+    if keyboard::pressed(app, plugins, control) {
+        return true;
+    }
+    if touchscreen::pressed(plugins, control) {
+        return true;
+    }
+    // if gamepad::pressed(ctx, eng, control) {
+    //     return true;
+    // }
+    false
 }
 
-impl Default for ControlsContext {
-    fn default() -> Self {
-        Self {
-            keyboard: keyboard::default_key_map(),
-            #[cfg(all(not(target_arch = "wasm32"), feature = "gamepad"))]
-            controller: gamepad::default_button_map(),
+pub fn down(app: &App, plugins: &Plugins, control: Control) -> bool {
+    if keyboard::down(app, plugins, control) {
+        return true;
+    }
+    if touchscreen::down(plugins, control) {
+        return true;
+    }
+    // if gamepad::down(ctx, eng, control) {
+    //     return true;
+    // }
+    false
+}
+
+impl Control {
+    pub fn name(&self) -> &str {
+        match self {
+            Control::A => "A",
+            Control::B => "B",
+            Control::Up => "Up",
+            Control::Down => "Down",
+            Control::Left => "Left",
+            Control::Right => "Right",
+            Control::Start => "Start",
+            Control::Select => "Select",
         }
     }
-}
-
-pub fn pressed(ctx: &Context, eng: &EngineContext, control: Control) -> bool {
-    if keyboard::pressed(ctx, eng, control) {
-        return true;
-    }
-    #[cfg(all(not(target_arch = "wasm32"), feature = "gamepad"))]
-    if gamepad::pressed(ctx, eng, control) {
-        return true;
-    }
-    // if let Some(controls) = unsafe{touchscreen::TOUCHSCREEN.as_ref()} {
-    //     if controls.pressed(&control) {
-    //         return true;
-    //     }
-    // }
-    false
-}
-
-pub fn down(ctx: &Context, eng: &EngineContext, control: Control) -> bool {
-    if keyboard::down(ctx, eng, control) {
-        return true;
-    }
-    #[cfg(all(not(target_arch = "wasm32"), feature = "gamepad"))]
-    if gamepad::down(ctx, eng, control) {
-        return true;
-    }
-    // if let Some(controls) = unsafe{touchscreen::TOUCHSCREEN.as_ref()} {
-    //     if controls.down(&control) {
-    //         return true;
-    //     }
-    // }
-    false
 }

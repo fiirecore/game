@@ -1,6 +1,9 @@
-pub use fiirengine::*;
-
 mod audio;
+
+pub extern crate firecore_text as text;
+pub extern crate notan;
+
+pub use notan::math;
 
 pub mod music {
     pub use super::audio::{add_music, get_current_music, play_music, stop_music, MusicId};
@@ -13,33 +16,42 @@ pub mod sound {
 pub mod controls;
 pub mod graphics;
 pub mod gui;
-pub mod text;
 pub mod utils;
 
 pub use context::*;
 
+pub use notan::{egui, log};
+
+pub use notan::prelude::{App, Plugins};
+
 mod context {
-    use fiirengine::{graphics::Texture, Context, EngineError, UserContext};
+    use notan::prelude::Plugins;
 
-    use crate::{controls::ControlsContext, graphics::renderer::TextRenderer};
+    use crate::controls::context::ControlsContext;
 
-    pub struct EngineContext {
-        pub(crate) controls: ControlsContext,
-        pub(crate) text: TextRenderer,
-        pub(crate) panel: Texture,
+    pub fn setup(plugins: &mut Plugins) {
+        plugins.add(ControlsContext::default());
         #[cfg(feature = "audio")]
-        pub(crate) audio: crate::audio::backend::AudioContext,
+        plugins.add(crate::audio::backend::AudioContext::default());
     }
 
-    impl UserContext for EngineContext {
-        fn new(ctx: &mut Context) -> Result<Self, EngineError> {
-            Ok(Self {
-                text: TextRenderer::new(ctx)?,
-                controls: ControlsContext::default(),
-                panel: Texture::new(ctx, include_bytes!("../assets/panel.png"))?,
-                #[cfg(feature = "audio")]
-                audio: Default::default(),
-            })
-        }
-    }
+    // pub struct EngineContext {
+    //     pub(crate) controls: ControlsContext,
+    //     // pub(crate) text: TextRenderer,
+    //     // pub(crate) panel: Texture,
+    //     #[cfg(feature = "audio")]
+    //     pub(crate) audio: crate::audio::backend::AudioContext,
+    // }
+
+    // impl UserContext for EngineContext {
+    //     fn new(ctx: &mut Context) -> Result<Self, EngineError> {
+    //         Ok(Self {
+    //             // text: TextRenderer::new(ctx)?,
+    //             controls: ControlsContext::default(),
+    //             panel: gfx.create_texture().from_image(include_bytes!("../assets/panel.png"))?,
+    //             #[cfg(feature = "audio")]
+    //             audio: Default::default(),
+    //         })
+    //     }
+    // }
 }

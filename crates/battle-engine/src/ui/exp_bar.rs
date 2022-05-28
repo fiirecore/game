@@ -1,8 +1,17 @@
 use core::ops::Deref;
 
-use pokedex::{
-    engine::{graphics::draw_rectangle, graphics::Color, gui::ProgressBar, math::Vec2, Context},
-    pokemon::{owned::OwnablePokemon, Experience, Level, Pokemon},
+use pokengine::{
+    engine::{
+        graphics::Color,
+        gui::ProgressBar,
+        math::Vec2,
+        notan::draw::{Draw, DrawShapes},
+    },
+    pokedex::{
+        item::Item,
+        moves::Move,
+        pokemon::{owned::OwnedPokemon, Experience, Level, Pokemon},
+    },
 };
 
 #[derive(Clone, Copy)]
@@ -13,7 +22,7 @@ pub struct ExperienceBar {
 
 impl ExperienceBar {
     pub const WIDTH: f32 = 64.0;
-    pub const COLOR: Color = Color::rgb(64.0 / 255.0, 200.0 / 255.0, 248.0 / 255.0); // To - do: correct texture for exp bar
+    pub const COLOR: Color = Color::new(64.0 / 255.0, 200.0 / 255.0, 248.0 / 255.0, 1.0); // To - do: correct texture for exp bar
     const DEF_REM: (Level, f32) = (0, 0.0);
 
     pub const fn new() -> Self {
@@ -34,10 +43,14 @@ impl ExperienceBar {
         (current as f32 * Self::WIDTH / max as f32).clamp(0.0, Self::WIDTH)
     }
 
-    pub fn update_exp<P: Deref<Target = Pokemon>, M, I, G, N, H>(
+    pub fn update_exp<
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
         &mut self,
         previous: Level,
-        pokemon: &OwnablePokemon<P, M, I, G, N, H>,
+        pokemon: &OwnedPokemon<P, M, I>,
         reset: bool,
     ) {
         let width = Self::width(
@@ -70,15 +83,12 @@ impl ExperienceBar {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, origin: Vec2) {
-        draw_rectangle(
-            ctx,
-            origin.x,
-            origin.y,
-            self.bar.width().abs() % Self::WIDTH,
-            2.0,
-            Self::COLOR,
-        );
+    pub fn draw(&self, draw: &mut Draw, origin: Vec2) {
+        draw.rect(
+            (origin.x, origin.y),
+            (self.bar.width().abs() % Self::WIDTH, 2.0),
+        )
+        .color(Self::COLOR);
     }
 
     pub fn moving(&self) -> bool {

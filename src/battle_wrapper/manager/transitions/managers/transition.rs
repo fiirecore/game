@@ -1,11 +1,15 @@
 use crate::{
     battle_wrapper::TransitionState,
-    engine::{music::play_music, Context, EngineContext},
+    engine::{
+        graphics::{Draw, Graphics},
+        music::play_music,
+        App, Plugins,
+    },
 };
 
 use battlecli::battle::data::BattleType;
 
-use worldcli::battle::*;
+use worldcli::worldlib::map::battle::*;
 
 use crate::battle_wrapper::manager::transitions::{
     transitions::{BattleTransitions, FlashBattleTransition, TrainerBattleTransition},
@@ -21,24 +25,24 @@ pub struct BattleScreenTransitionManager {
 }
 
 impl BattleScreenTransitionManager {
-    pub fn new(ctx: &mut Context) -> Self {
-        Self {
+    pub fn new(gfx: &mut Graphics) -> Result<Self, String> {
+        Ok(Self {
             state: TransitionState::default(),
             current: BattleTransitions::default(),
 
             flash: FlashBattleTransition::default(),
-            trainer: TrainerBattleTransition::new(ctx),
-        }
+            trainer: TrainerBattleTransition::new(gfx)?,
+        })
     }
 
     pub fn begin(
         &mut self,
-        ctx: &mut Context,
-        eng: &mut EngineContext,
+        app: &mut App,
+        plugins: &mut Plugins,
         battle_type: BattleType,
-        trainer: &Option<BattleTrainerEntry>,
+        trainer: &Option<TrainerEntry>,
     ) {
-        self.play_music(ctx, eng, battle_type);
+        self.play_music(app, plugins, battle_type);
         match trainer {
             Some(trainer) => self.current = BattleTransitions::from(trainer.transition),
             None => self.current = BattleTransitions::default(),
@@ -51,23 +55,23 @@ impl BattleScreenTransitionManager {
         self.state = TransitionState::Begin;
     }
 
-    pub fn update(&mut self, ctx: &mut Context, delta: f32) {
+    pub fn update(&mut self, delta: f32) {
         let current = self.get_mut();
-        current.update(ctx, delta);
+        current.update(delta);
         if current.finished() {
             self.state = TransitionState::End;
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
-        self.get().draw(ctx);
+    pub fn draw(&self, draw: &mut Draw) {
+        self.get().draw(draw);
     }
 
-    fn play_music(&mut self, ctx: &mut Context, eng: &mut EngineContext, battle_type: BattleType) {
+    fn play_music(&mut self, app: &mut App, plugins: &mut Plugins, battle_type: BattleType) {
         match battle_type {
-            BattleType::Wild => play_music(ctx, eng, &"battle_wild".parse().unwrap()),
-            BattleType::Trainer => play_music(ctx, eng, &"battle_trainer".parse().unwrap()),
-            BattleType::GymLeader => play_music(ctx, eng, &"battle_gym".parse().unwrap()),
+            BattleType::Wild => play_music(app, plugins, &"battle_wild".parse().unwrap()),
+            BattleType::Trainer => play_music(app, plugins, &"battle_trainer".parse().unwrap()),
+            BattleType::GymLeader => play_music(app, plugins, &"battle_gym".parse().unwrap()),
         }
     }
 

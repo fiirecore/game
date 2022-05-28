@@ -5,10 +5,9 @@ use worldlib::{
 };
 
 use crate::engine::{
-    graphics::{Color, DrawParams, Texture},
-    math::Rectangle,
+    graphics::{Color, Draw, DrawExt, DrawParams, Graphics, Texture},
+    math::Rect,
     utils::HashMap,
-    Context,
 };
 
 pub struct PaletteTextureManager {
@@ -31,35 +30,45 @@ pub struct PaletteTile<P> {
 impl PaletteTextureManager {
     const TEXTURE_TICK: f32 = 0.25; // i think its 16/60 not 15/60
 
-    pub fn new(ctx: &mut Context, palettes: SerializedPaletteMap) -> Self {
-        Self {
-            palettes: palettes
-                .into_iter()
-                .map(|(id, palette)| {
-                    let texture = Texture::new(ctx, &palette.texture).unwrap();
+    pub fn new(gfx: &mut Graphics, palettes: SerializedPaletteMap) -> Result<Self, String> {
+        Ok(Self {
+            palettes: {
+                let mut textures = HashMap::with_capacity(palettes.len());
+                for (id, palette) in palettes {
+                    let texture = gfx.create_texture().from_image(&palette.texture).build()?;
                     let size = texture.height() as TileId;
-                    (
+                    textures.insert(
                         id,
                         Palette {
                             texture,
-                            animated: palette
-                                .animated
-                                .into_iter()
-                                .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
-                                .collect(),
-                            doors: palette
-                                .doors
-                                .into_iter()
-                                .map(|(tile, image)| (tile, Texture::new(ctx, &image).unwrap()))
-                                .collect(),
+                            animated: {
+                                let mut animated = HashMap::with_capacity(palette.animated.len());
+                                for (tile, image) in palette.animated {
+                                    animated.insert(
+                                        tile,
+                                        gfx.create_texture().from_image(&image).build()?,
+                                    );
+                                }
+                                animated
+                            },
+                            doors: {
+                                let mut doors = HashMap::with_capacity(palette.doors.len());
+                                for (tile, image) in palette.doors {
+                                    doors.insert(
+                                        tile,
+                                        gfx.create_texture().from_image(&image).build()?,
+                                    );
+                                }
+                                doors
+                            },
                             size,
                         },
-                    )
-                })
-                .collect(),
-
+                    );
+                }
+                textures
+            },
             accumulator: 0.0,
-        }
+        })
     }
 
     pub fn update(&mut self, delta: f32) {
@@ -84,7 +93,7 @@ impl PaletteTextureManager {
 
     pub fn draw_tile(
         &self,
-        ctx: &mut Context,
+        draw: &mut Draw,
         palettes: &Palettes,
         tile: WorldTile,
         x: f32,
@@ -93,30 +102,36 @@ impl PaletteTextureManager {
     ) {
         if let Some(PaletteTile { palette, tile }) = self.get(palettes, tile) {
             match palette.animated.get(&tile) {
-                Some(texture) => texture.draw(
-                    ctx,
-                    x,
-                    y,
-                    DrawParams {
-                        source: Some(Rectangle::new(
-                            0.0,
-                            (self.accumulator / Self::TEXTURE_TICK).floor() * TILE_SIZE,
-                            TILE_SIZE,
-                            TILE_SIZE,
-                        )),
-                        color,
-                        ..Default::default()
-                    },
-                ),
-                None => {
-                    let tx = ((tile % 16) << 4) as f32; // width = 256
-                    let ty = ((tile >> 4) << 4) as f32;
-                    palette.texture.draw(
-                        ctx,
+                Some(texture) => {
+                    draw.texture(
+                        texture,
                         x,
                         y,
                         DrawParams {
-                            source: Some(Rectangle::new(tx, ty, TILE_SIZE, TILE_SIZE)),
+                            source: Some(Rect {
+                                x: 0.0,
+                                y: (self.accumulator / Self::TEXTURE_TICK).floor() * TILE_SIZE,
+                                width: TILE_SIZE,
+                                height: TILE_SIZE,
+                            }),
+                            ..Default::default()
+                        },
+                    );
+                }
+                None => {
+                    let tx = ((tile % 16) << 4) as f32; // width = 256
+                    let ty = ((tile >> 4) << 4) as f32;
+                    draw.texture(
+                        &palette.texture,
+                        x,
+                        y,
+                        DrawParams {
+                            source: Some(Rect {
+                                x: tx,
+                                y: ty,
+                                width: TILE_SIZE,
+                                height: TILE_SIZE,
+                            }),
                             color,
                             ..Default::default()
                         },

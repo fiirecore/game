@@ -1,9 +1,9 @@
 [package]
 name = "pokemon-game"
-version = "0.5.0-beta.2022-01-01"
+version = "0.5.0-beta.2022-05-27"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
-license = "CC0"
+license = "CC0-1.0"
 description = "Pokemon FireRed Clone"
 repository = "https://github.com/fiirecore-game/pokemon-game"
 keywords = ["games", "pokemon"]
@@ -18,12 +18,6 @@ members = ["crates/*"]
 # default-members = ["crates/*", "crates/pokedex-engine/builder"]
 
 [features]
-default = ["audio"]
-audio = [
-    "firecore-audio-builder",
-    "firecore-battle-engine/audio",
-    "firecore-pokedex-engine-builder/audio",
-]
 # discord = ["discord-rich-presence"]
 
 [profile.dev.package."*"]
@@ -37,21 +31,29 @@ opt-level = "z"
 
 [dependencies]
 
-firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = ["host", "ai", "default_engine_scripting"] }
+firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = ["host", "ai", "default_engine_scripting", "audio"] }
 firecore-world-engine = { path = "crates/world-engine", default-features = false }
 
-firecore-storage = { path = "crates/storage", features = ["io"] }
+firecore-event = { path = "crates/event" }
 
 ### Other
 
 serde = { version = "1.0", features = ["derive"] }
-rand = { version = "0.8", features = ["small_rng"], default-features = false }
-tinystr = { version = "0.4", features = ["serde"], default-features = false }
+rand = { version = "0.8", features = ["small_rng"]}
+tinystr = { version = "0.6", features = ["serde"], default-features = false }
 
 # discord-rich-presence = { version = "0.1", optional = true }
 
 # [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # pico-args = "0.4"
+
+postcard = { version = "0.7", default-features = false, features = ["alloc"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+dirs = "4"
+
+# [target.'cfg(target_arch = "wasm32")'.dependencies]
+general_storage_web = "0.2"
 
 ### Build dependencies
 
@@ -61,13 +63,12 @@ firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev =
 firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "2809659", package = "firecore-battle-builder" }
 
 firecore-pokedex-engine-builder = { path = "crates/pokedex-engine-builder", default-features = false, features = [
-    "compile",
+    "compile", "audio"
 ] }
 
 firecore-world-builder = { path = "crates/world-builder", package = "firecore-world-builder" }
 
-firecore-font-builder = { path = "crates/builder-font" }
-firecore-audio-builder = { path = "crates/builder-audio", optional = true }
+firecore-audio-builder = { path = "crates/builder-audio" }
 serde = "1"
 firecore-storage = { path = "crates/storage", default-features = false }
 

@@ -1,4 +1,7 @@
-use pokengine::engine::graphics::Color;
+use pokengine::engine::{
+    graphics::{Color, Draw, DrawExt, DrawImages, DrawParams, Graphics},
+    math::Rect,
+};
 use worldlib::{
     map::object::{ItemObject, MapObject, ObjectId},
     positions::{Coordinate, Location},
@@ -6,15 +9,7 @@ use worldlib::{
     TILE_SIZE,
 };
 
-use crate::{
-    engine::{
-        error::ImageError,
-        graphics::{DrawParams, Texture},
-        math::Rectangle,
-        Context,
-        utils::HashMap,
-    },
-};
+use crate::engine::{graphics::Texture, utils::HashMap};
 
 use crate::map::RenderCoords;
 
@@ -30,10 +25,10 @@ struct ObjectAnimation {
 }
 
 impl ObjectTextures {
-    pub fn new(ctx: &mut Context, objects: HashMap<ObjectId, Vec<u8>>) -> Result<Self, ImageError> {
+    pub fn new(gfx: &mut Graphics, objects: HashMap<ObjectId, Vec<u8>>) -> Result<Self, String> {
         let mut textures = HashMap::with_capacity(objects.len());
         for (id, data) in objects {
-            let texture = Texture::new(ctx, &data)?;
+            let texture = gfx.create_texture().from_image(&data).build()?;
             textures.insert(id, texture);
         }
         Ok(Self {
@@ -64,7 +59,7 @@ impl ObjectTextures {
 
     pub fn draw(
         &self,
-        ctx: &mut Context,
+        draw: &mut Draw,
         map: &Location,
         objects: &HashMap<Coordinate, MapObject>,
         items: &HashMap<Coordinate, ItemObject>,
@@ -82,21 +77,36 @@ impl ObjectTextures {
             if let Some(texture) = self.textures.get(&object.group) {
                 let x = ((coords.x + screen.offset.x) << 4) as f32 - screen.focus.x;
                 let y = ((coords.y + screen.offset.y) << 4) as f32 - screen.focus.y;
-                texture.draw(
-                    ctx,
+                draw.texture(
+                    texture,
                     x,
                     y,
                     DrawParams {
-                        source: Some(Rectangle {
+                        source: Some(Rect {
                             x: 0.0,
                             y: 0.0,
-                            w: TILE_SIZE,
-                            h: TILE_SIZE,
+                            width: TILE_SIZE,
+                            height: TILE_SIZE,
                         }),
                         color,
                         ..Default::default()
                     },
-                )
+                );
+                // texture.draw(
+                //     ctx,
+                //     x,
+                //     y,
+                //     DrawParams {
+                //         source: Some(Rectangle {
+                //             x: 0.0,
+                //             y: 0.0,
+                //             w: TILE_SIZE,
+                //             h: TILE_SIZE,
+                //         }),
+                //         color,
+                //         ..Default::default()
+                //     },
+                // )
             }
         }
         for (coords, ..) in items.iter().filter(|(coordinate, item)| {
@@ -108,16 +118,17 @@ impl ObjectTextures {
                     .unwrap_or_default()
         }) {
             /// "ball"
-            const BALL: &ObjectId = unsafe { &ObjectId::new_unchecked(1819042146) };
+            const BALL: &ObjectId =
+                unsafe { &ObjectId::from_bytes_unchecked(1819042146u64.to_ne_bytes()) };
 
             if let Some(texture) = self.textures.get(BALL) {
                 let x = ((coords.x + screen.offset.x) << 4) as f32 - screen.focus.x;
                 let y = ((coords.y + screen.offset.y) << 4) as f32 - screen.focus.y;
-                texture.draw(ctx, x, y, DrawParams::color(color))
+                draw.image(texture).position(x, y).color(color);
             }
         }
         for anim in self.active.iter() {
-            anim.draw(ctx, screen, color);
+            anim.draw(draw, screen, color);
         }
     }
 }
@@ -142,23 +153,23 @@ impl ObjectAnimation {
         self.accumulator > Self::FRAMES
     }
 
-    pub fn draw(&self, ctx: &mut Context, screen: &RenderCoords, color: Color) {
+    pub fn draw(&self, draw: &mut Draw, screen: &RenderCoords, color: Color) {
         let x = ((self.coordinate.x + screen.offset.x) << 4) as f32 - screen.focus.x;
         let y = ((self.coordinate.y + screen.offset.y) << 4) as f32 - screen.focus.y;
-        self.texture.draw(
-            ctx,
+        draw.texture(
+            &self.texture,
             x,
             y,
             DrawParams {
-                source: Some(Rectangle {
+                source: Some(Rect {
                     x: 16.0 + self.accumulator.floor() * 16.0,
                     y: 0.0,
-                    w: TILE_SIZE,
-                    h: TILE_SIZE,
+                    width: TILE_SIZE,
+                    height: TILE_SIZE,
                 }),
                 color,
                 ..Default::default()
             },
-        )
+        );
     }
 }

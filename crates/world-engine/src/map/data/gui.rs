@@ -1,4 +1,6 @@
-use crate::engine::{error::ImageError, graphics::Texture, Context, utils::HashMap};
+use pokengine::engine::notan::prelude::Graphics;
+
+use crate::engine::{graphics::Texture, utils::HashMap};
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum GuiTexture {
@@ -18,14 +20,13 @@ impl GuiTextures {
 }
 
 impl GuiTextures {
-    pub fn new(ctx: &mut Context) -> Result<Self, ImageError> {
+    pub fn new(gfx: &mut Graphics) -> Result<Self, String> {
         let mut map = HashMap::with_capacity(1);
         map.insert(
             GuiTexture::Condition,
-            Texture::new(
-                ctx,
-                include_bytes!("../../../assets/textures/gui/condition.png"),
-            )?,
+            gfx.create_texture()
+                .from_image(include_bytes!("../../../assets/textures/gui/condition.png"))
+                .build()?,
         );
         Ok(Self { textures: map })
     }

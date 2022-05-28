@@ -33,7 +33,7 @@ pub type Palettes = [PaletteId; 2];
 pub type MapSize = usize;
 pub type Border = tile::Border;
 pub type MovementId = movement::MovementId;
-pub type MusicId = tinystr::TinyStr16;
+pub type MusicId = audio::MusicId;
 pub type TransitionId = tinystr::TinyStr8;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -97,20 +97,20 @@ impl WorldMap {
             .then(|| self.tiles[coords.x as usize + coords.y as usize * self.width as usize])
     }
 
-    pub fn local_movement(
+    pub fn local_movement<P, B: Default>(
         &self,
         coords: Coordinate,
-        player: &PlayerCharacter,
+        player: &PlayerCharacter<P, B>,
     ) -> Option<MovementId> {
         self.in_bounds(coords)
             .then(|| self.unbounded_movement(coords, player))
             .flatten()
     }
 
-    pub fn unbounded_movement(
+    pub fn unbounded_movement<P, B: Default>(
         &self,
         coords: Coordinate,
-        player: &PlayerCharacter,
+        player: &PlayerCharacter<P, B>,
     ) -> Option<MovementId> {
         self.movements
             .get(coords.x as usize + coords.y as usize * self.width as usize)
@@ -120,13 +120,13 @@ impl WorldMap {
                 let objects = self
                     .objects
                     .keys()
-                    .filter(|coordinate| !player.world.contains_object(&self.id, coordinate))
+                    .filter(|coordinate| !player.state.contains_object(&self.id, coordinate))
                     .copied();
                 let items = self
                     .items
                     .iter()
                     .filter(|(coordinate, object)| {
-                        !object.hidden || !player.world.contains_object(&self.id, coordinate)
+                        !object.hidden || !player.state.contains_object(&self.id, coordinate)
                     })
                     .map(|(c, ..)| *c);
                 // find used locations
@@ -137,10 +137,10 @@ impl WorldMap {
             })
     }
 
-    pub fn chunk_movement(
+    pub fn chunk_movement<P, B: Default>(
         &self,
         coords: Coordinate,
-        player: &PlayerCharacter,
+        player: &PlayerCharacter<P, B>,
     ) -> MapMovementResult {
         if let Some(chunk) = self.chunk.as_ref() {
             if coords.x.is_negative() {

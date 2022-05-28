@@ -3,10 +3,7 @@ use std::{
     ops::{Range, RangeInclusive},
 };
 
-use crate::engine::{
-    math::{IVec2, Vec2},
-    utils::{HEIGHT, WIDTH},
-};
+use crate::engine::{math::{IVec2, Vec2}, graphics::Draw};
 
 use crate::worldlib::{character::Character, positions::CoordinateInt, TILE_SIZE};
 
@@ -20,26 +17,35 @@ pub struct RenderCoords {
     pub offset: IVec2,
 }
 
-const HALF_WIDTH: i32 = (WIDTH as i32 + TILE_SIZE as i32) >> 1;
-const HALF_HEIGHT: i32 = (HEIGHT as i32 + TILE_SIZE as i32) >> 1;
+const fn half_width(w: f32) -> CoordinateInt {
+    (w as CoordinateInt + TILE_SIZE as CoordinateInt) >> 1
+}
 
-const HALF_WIDTH_TILE: i32 = HALF_WIDTH >> 4;
-const HALF_HEIGHT_TILE: i32 = (HALF_HEIGHT >> 4) + 2;
+const fn half_height(h: f32) -> CoordinateInt {
+    (h as CoordinateInt + TILE_SIZE as CoordinateInt) >> 1
+}
+
+const fn half_width_tile(w: CoordinateInt) -> CoordinateInt {
+    w >> 4
+}
+
+const fn half_height_tile(h: CoordinateInt) -> CoordinateInt {
+    (h >> 4) + 2
+}
 
 impl RenderCoords {
-    pub fn new(character: &Character) -> Self {
+    pub fn new(draw: &Draw, character: &Character) -> Self {
         let coords = character.position.coords;
 
-        Self {
-            x: coords.x - HALF_WIDTH_TILE..=coords.x + HALF_WIDTH_TILE,
-            y: (coords.y - HALF_HEIGHT_TILE..coords.y + HALF_HEIGHT_TILE).rev(),
+        let (hw, hh) = (half_width(draw.width()), half_height(draw.height()));
 
-            #[deprecated(
-                note = "rounding may fix problem of black spaces between tiles while moving"
-            )]
+        Self {
+            x: coords.x - half_width_tile(hw)..=coords.x + half_width_tile(hw),
+            y: (coords.y - half_height_tile(hh)..coords.y + half_height_tile(hh)).rev(),
+
             focus: Vec2::new(
-                ((coords.x + 1) << 4) as f32 + character.offset.x - HALF_WIDTH as f32,
-                ((coords.y + 1) << 4) as f32 + character.offset.y - HALF_HEIGHT as f32,
+                ((coords.x + 1) << 4) as f32 + character.offset.x - hw as f32,
+                ((coords.y + 1) << 4) as f32 + character.offset.y - hh as f32,
             )
             .round(),
 

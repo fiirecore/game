@@ -20,8 +20,8 @@ impl TextRenderer {
     pub fn new(ctx: &mut Context) -> Result<Self, ImageError> {
         Ok(Self {
             fonts: Default::default(),
-            button: Texture::new(ctx, include_bytes!("../../../assets/button.png"))?,
-            cursor: Texture::new(ctx, include_bytes!("../../../assets/cursor.png"))?,
+            button: gfx.create_texture().from_image(include_bytes!("../../../assets/button.png"))?,
+            cursor: gfx.create_texture().from_image(include_bytes!("../../../assets/cursor.png"))?,
         })
     }
 

@@ -1,23 +1,23 @@
-use crate::{
-    engine::{
-        error::ImageError,
-        graphics::{self, Color, DrawParams, Texture},
-        math::Rectangle,
-        utils::{HashMap, HEIGHT, WIDTH},
-        Context,
-    },
-    map::input::PlayerInput,
+use crate::engine::{
+    graphics::{Color, Draw, DrawExt, DrawParams, DrawShapes, Graphics, Texture},
+    math::Rect,
+    utils::HashMap,
 };
 
 use worldlib::{
-    character::{player::PlayerCharacter, Character, MovementType, action::ActionQueue},
+    character::{action::ActionQueue, player::PlayerCharacter, Character, MovementType},
     positions::Direction,
     serialized::SerializedPlayerTexture,
     TILE_SIZE,
 };
 
-const SCREEN_X: f32 = (WIDTH as isize >> 1) as f32;
-const SCREEN_Y: f32 = ((HEIGHT as isize - TILE_SIZE as isize) >> 1) as f32 - TILE_SIZE;
+fn screen_x(x: f32) -> f32 {
+    x / 2.0
+}
+
+fn screen_y(y: f32) -> f32 {
+    (y - TILE_SIZE as f32) / 2.0 - TILE_SIZE as f32
+}
 
 pub mod bush;
 
@@ -45,57 +45,67 @@ impl From<Texture> for CharacterTexture {
 }
 
 impl PlayerTexture {
-    pub fn new(ctx: &mut Context, player: SerializedPlayerTexture) -> Result<Self, ImageError> {
+    pub fn new(gfx: &mut Graphics, player: SerializedPlayerTexture) -> Result<Self, String> {
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
             MovementType::Walking,
-            Texture::new(ctx, &player[MovementType::Walking])?.into(),
+            gfx.create_texture()
+                .from_image(&player[MovementType::Walking])
+                .build()?
+                .into(),
         );
         textures.insert(
             MovementType::Running,
-            Texture::new(ctx, &player[MovementType::Running])?.into(),
+            gfx.create_texture()
+                .from_image(&player[MovementType::Running])
+                .build()?
+                .into(),
         );
         textures.insert(
             MovementType::Swimming,
             CharacterTexture {
                 idle: Some(0.5),
-                texture: Texture::new(ctx, &player[MovementType::Swimming])?,
+                texture: gfx
+                    .create_texture()
+                    .from_image(&player[MovementType::Swimming])
+                    .build()?,
             },
         );
 
         Ok(Self {
             textures,
-            bush: bush::PlayerBushTexture::new(ctx)?,
+            bush: bush::PlayerBushTexture::new(gfx)?,
             accumulator: 0.0,
             jumping: false,
         })
     }
 
-    pub fn jump(&mut self, player: &mut PlayerCharacter) {
+    pub fn jump<P, B: Default>(&mut self, player: &mut PlayerCharacter<P, B>) {
         player.character.sprite = 0;
         player.character.noclip = true;
-        player.character.flags.insert(PlayerInput::INPUT_LOCK);
+        player.character.input_lock.increment();
         for _ in 0..2 {
-            player.character.actions.queue.insert(
-                0,
-                ActionQueue::Move(player.character.position.direction),
-            );
+            player
+                .character
+                .actions
+                .queue
+                .insert(0, ActionQueue::Move(player.character.position.direction));
         }
         self.accumulator = 0.0;
         self.jumping = true;
     }
 
-    pub fn update(&mut self, delta: f32, player: &mut PlayerCharacter) {
+    pub fn update<P, B: Default>(&mut self, delta: f32, player: &mut PlayerCharacter<P, B>) {
         self.bush.update(delta);
         match self.jumping {
             false => {
-                if player.offset.is_zero() {
-                    if let Some(texture) = self.textures.get(&player.movement) {
+                if player.character.offset.is_zero() {
+                    if let Some(texture) = self.textures.get(&player.character.movement) {
                         if let Some(idle) = texture.idle {
                             self.accumulator += delta;
                             if self.accumulator > idle {
                                 self.accumulator -= idle;
-                                player.update_sprite();
+                                player.character.update_sprite();
                             }
                         }
                     }
@@ -103,8 +113,8 @@ impl PlayerTexture {
             }
             true => {
                 if !player.character.moving() {
-                    player.character.flags.remove(&PlayerInput::INPUT_LOCK);
-                    player.noclip = false;
+                    player.character.input_lock.decrement();
+                    player.character.noclip = false;
                     self.jumping = false;
                     self.accumulator = 0.0;
                 }
@@ -112,39 +122,48 @@ impl PlayerTexture {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context, character: &Character, color: Color) {
+    pub fn draw(&self, draw: &mut Draw, character: &Character, color: Color) {
         if !character.hidden {
             if let Some(texture) = self.textures.get(&character.movement) {
+                let screen_x = screen_x(draw.width());
+                let screen_y = screen_y(draw.height());
                 if self.jumping {
-                    graphics::draw_circle(ctx, SCREEN_X, SCREEN_Y + 24.0, 8.0, Color::BLACK);
+                    draw.circle(TILE_SIZE / 2.0)
+                        .position(screen_x, screen_y + 24.0)
+                        .color(Color::BLACK);
                 }
                 let (x, width) = current_texture(character);
-                texture.texture.draw(
-                    ctx,
-                    SCREEN_X - width / 2.0,
-                    match self.jumping {
-                        true => {
-                            let negative = matches!(character.position.direction, Direction::Up);
-                            let o = character.offset.offset() / 4.0;
-                            match character.actions.queue.is_empty() {
-                                false => match negative {
-                                    true => SCREEN_Y + o,
-                                    false => SCREEN_Y - o,
-                                },
-                                true => match negative {
-                                    true => SCREEN_Y + (TILE_SIZE / 4.0) - o,
-                                    false => SCREEN_Y - (TILE_SIZE / 4.0) + o,
-                                },
-                            }
+
+                let px = screen_x - width / 2.0;
+
+                let y = match self.jumping {
+                    true => {
+                        let negative = matches!(character.position.direction, Direction::Up);
+                        let o = character.offset.offset() / 4.0;
+                        match character.actions.queue.is_empty() {
+                            false => match negative {
+                                true => screen_y + o,
+                                false => screen_y - o,
+                            },
+                            true => match negative {
+                                true => screen_y + (TILE_SIZE / 4.0) - o,
+                                false => screen_y - (TILE_SIZE / 4.0) + o,
+                            },
                         }
-                        false => SCREEN_Y,
-                    },
+                    }
+                    false => screen_y,
+                };
+
+                draw.texture(
+                    &texture.texture,
+                    px,
+                    y,
                     DrawParams {
-                        source: Some(Rectangle::new(
+                        source: Some(Rect {
                             x,
-                            0.0,
+                            y: 0.0,
                             width,
-                            if !self.bush.in_bush
+                            height: if !self.bush.in_bush
                                 || (character.offset.is_zero()
                                     && character.position.direction.vertical())
                             {
@@ -152,10 +171,9 @@ impl PlayerTexture {
                             } else {
                                 26.0
                             },
-                        )),
+                        }),
                         flip_x: character.position.direction == Direction::Right,
                         color,
-                        ..Default::default()
                     },
                 );
             }

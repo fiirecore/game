@@ -8,7 +8,7 @@ edition = "2018"
 
 ron = "0.7"
 serde = { version = "1", features = ["derive"] }
-tinystr = { version = "0.4", features = ["serde"], default-features = false }
+firecore-audio = { path = "../audio" }
 
 [dev-dependencies]
 firecore-storage = { path = "../storage", default-features = false }

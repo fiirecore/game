@@ -5,7 +5,7 @@ use battle::{
     moves::{ClientMove, ClientMoveAction},
     pokemon::{Indexed, PokemonIdentifier},
 };
-use pokedex::{
+use pokengine::pokedex::{
     moves::Move,
     pokemon::{Experience, Level},
 };

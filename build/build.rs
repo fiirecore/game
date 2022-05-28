@@ -57,21 +57,18 @@ fn main() {
             });
     }
 
-    write(
-        "fonts",
-        &firecore_font_builder::compile("assets/game/fonts"),
-    );
-
     #[cfg(feature = "audio")]
     write("audio", &firecore_audio_builder::compile("assets/music"));
 
-    let dex = firecore_pokedex_builder::compile(
+    let (pokedex, movedex, itemdex) = firecore_pokedex_builder::compile(
         "assets/game/pokedex/pokemon",
         "assets/game/pokedex/moves",
         "assets/game/pokedex/items",
     );
 
-    write("dex", &dex);
+    write("pokedex", &pokedex);
+    write("movedex", &movedex);
+    write("itemdex", &itemdex);
 
     let dex_engine = firecore_pokedex_engine_builder::compile(
         "assets/game/pokedex/client/pokemon",
@@ -92,9 +89,7 @@ fn main() {
     write("battle", &battle);
 
     #[cfg(windows)]
-    if std::env::var("PROFILE").unwrap() == "release" {
-        if std::env::var("CARGO_CFG_WINDOWS").is_ok() {
-            embed_resource::compile("build/resource.rc");
-        }
+    if std::env::var("PROFILE").unwrap() == "release" && std::env::var("CARGO_CFG_WINDOWS").is_ok() {
+        embed_resource::compile("build/resource.rc");
     }
 }

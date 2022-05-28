@@ -1,21 +1,16 @@
-use pokengine::engine::graphics::Color;
+use pokengine::engine::{
+    graphics::{Color, Draw, DrawExt, DrawParams, Graphics, Texture},
+    math::Rect,
+};
 use worldlib::{
-    character::{
-        npc::{
-            group::{NpcGroup, NpcGroupId},
-            Npc,
-        },
+    character::npc::{
+        group::{NpcGroup, NpcGroupId},
+        Npc,
     },
     positions::Direction,
 };
 
-use crate::engine::{
-    error::ImageError,
-    graphics::{DrawParams, Texture},
-    math::Rectangle,
-    Context,
-    utils::HashMap,
-};
+use crate::engine::utils::HashMap;
 
 use crate::map::RenderCoords;
 
@@ -35,7 +30,6 @@ struct SpriteData {
 }
 
 impl SpriteData {
-
     pub const fn still(width: f32) -> Self {
         Self {
             width,
@@ -56,14 +50,11 @@ impl SpriteData {
 }
 
 impl NpcTextures {
-    pub fn new(
-        ctx: &mut Context,
-        textures: HashMap<NpcGroupId, Vec<u8>>,
-    ) -> Result<Self, ImageError> {
+    pub fn new(gfx: &mut Graphics, textures: HashMap<NpcGroupId, Vec<u8>>) -> Result<Self, String> {
         let mut npcs = HashMap::with_capacity(textures.len());
         // let trainer = NpcGroupTextures::new(Default::default());
         for (npc, data) in textures {
-            let texture = Texture::new(ctx, &data)?;
+            let texture = gfx.create_texture().from_image(&data).build()?;
             let w = texture.width() as u16;
             let data = if w < 96 {
                 SpriteData::still(16.0)
@@ -76,7 +67,7 @@ impl NpcTextures {
             npcs.insert(npc, NpcTexture { texture, data });
             // trainer.insert(
             //     npc.config.identifier,
-            //     Texture::new(ctx, &npc.texture).unwrap(),
+            //     gfx.create_texture().from_image(&npc.texture).unwrap(),
             // );
         }
 
@@ -86,7 +77,7 @@ impl NpcTextures {
         ))
     }
 
-    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords, color: Color) {
+    pub fn draw(&self, draw: &mut Draw, npc: &Npc, screen: &RenderCoords, color: Color) {
         self.0
             .get(&npc.group)
             .unwrap_or_else(|| {
@@ -94,12 +85,12 @@ impl NpcTextures {
                     .get(&NpcGroup::PLACEHOLDER)
                     .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
             })
-            .draw(ctx, npc, screen, color);
+            .draw(draw, npc, screen, color);
     }
 }
 
 impl NpcTexture {
-    pub fn draw(&self, ctx: &mut Context, npc: &Npc, screen: &RenderCoords, color: Color) {
+    pub fn draw(&self, draw: &mut Draw, npc: &Npc, screen: &RenderCoords, color: Color) {
         let x = ((npc.character.position.coords.x + 1 + screen.offset.x) << 4) as f32
             - screen.focus.x
             + npc.character.offset.x
@@ -108,21 +99,19 @@ impl NpcTexture {
         let y = ((npc.character.position.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y
             + npc.character.offset.y
             - (self.texture.height() - worldlib::TILE_SIZE);
-
-        self.texture.draw(
-            ctx,
+        draw.texture(
+            &self.texture,
             x,
             y,
             DrawParams {
+                source: Some(Rect {
+                    x: self.current_texture_pos(npc),
+                    y: 1.0,
+                    width: self.data.width,
+                    height: self.texture.height(),
+                }),
                 flip_x: npc.character.position.direction == Direction::Right,
-                source: Some(Rectangle::new(
-                    self.current_texture_pos(npc),
-                    0.0,
-                    self.data.width,
-                    self.texture.height(),
-                )),
                 color,
-                ..Default::default()
             },
         );
     }

@@ -16,6 +16,8 @@ pub type MessageId = String;
 pub type VariableName = String;
 pub type Variable = u16;
 
+pub type Flag = String;
+
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldScriptData {
@@ -29,12 +31,12 @@ pub struct ScriptEnvironment {
     pub queue: Vec<WorldInstruction>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ScriptFlag {
-    /// Flag that shows that a variable exists
-    Flag,
-    Var(u16),
-}
+// #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+// pub enum ScriptVariable {
+//     /// Flag that shows that a variable exists
+//     Flag,
+//     Var(u16),
+// }
 
 impl ScriptEnvironment {
 

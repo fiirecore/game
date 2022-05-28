@@ -1,5 +1,7 @@
 # To - do List
 
+create new enum for initializing things
+
 ____
 
 ## [0.5 Issues](https://github.com/fiirecore-game/pokemon-game/issues?q=is%3Aopen+is%3Aissue+milestone%3A0.5)
@@ -21,6 +23,7 @@ ____
 
 * Fix npcs getting drawn offscreen and map connections being drawn over main map
 * Add UNKNOWN pokemon, move and item values
+* Remove derefs for non smart pointers
 
 ## Issues from other repositories affecting this one
 

@@ -1,4 +1,5 @@
-use fiirengine::error::FileError;
+// use fiirengine::error::FileError;
+use notan::prelude::{Plugin, App};
 
 use crate::utils::HashMap;
 
@@ -7,8 +8,8 @@ use crate::audio::{MusicId, SoundId, SoundVariant};
 pub mod music;
 pub mod sound;
 
-pub type Audio = fiirengine::audio::Sound;
-pub type Handle = fiirengine::audio::SoundHandle;
+pub type Audio = notan::audio::AudioSource;
+pub type Handle = notan::audio::Sound;
 
 type GameAudioMap<K, V = Audio> = HashMap<K, V>;
 
@@ -19,24 +20,17 @@ pub struct AudioContext {
     pub(crate) sounds: GameAudioMap<(SoundId, SoundVariant)>,
 }
 
+impl Plugin for AudioContext {
+
+}
+
 fn add<K: Eq + std::hash::Hash>(
+    ctx: &mut App,
     map: &mut GameAudioMap<K>,
     k: K,
     data: &[u8],
-) -> Result<(), FileError> {
-    let audio = Audio::new(data)?;
+) -> Result<(), String> {
+    let audio = ctx.audio.create_source(data)?;
     map.insert(k, audio);
     Ok(())
 }
-
-// pub struct Audio(pub(crate) macroquad::audio::Sound);
-
-// impl Audio {
-//     pub async fn crate_new(data: &[u8]) -> Result<Self, macroquad::file::FileError> {
-//         macroquad::audio::load_sound_from_bytes(data)
-//             .await
-//             .map(Self)
-//     }
-
-//     pub async fn new() {}
-// }

@@ -1,46 +1,44 @@
-use fiirengine::{error::FileError, audio::{self, PlaySoundParams}};
+use crate::audio::{backend::add, error::PlayAudioError, SoundId, SoundVariant};
 
-use crate::{
-    audio::{
-        backend::{add, GameAudioMap},
-        error::PlayAudioError,
-        SoundId, SoundVariant,
-    },
-    Context, EngineContext,
-};
+use notan::prelude::{App, Plugins};
 
 pub fn add_sound(
-    sounds: &mut GameAudioMap<(SoundId, SoundVariant)>,
+    ctx: &mut App,
+    plugins: &mut Plugins,
+    // sounds: &mut GameAudioMap<(SoundId, SoundVariant)>,
     id: SoundId,
     variant: SoundVariant,
     data: Vec<u8>,
-) -> Result<(), FileError> {
-    add(sounds, (id, variant), &data)
+) -> Result<(), String> {
+    plugins
+        .get_mut::<super::AudioContext>()
+        .map(|mut actx| add(ctx, &mut actx.sounds, (id, variant), &data))
+        .ok_or_else(|| String::from("Could not get audio context to create sound"))?
 }
 
 pub fn play_sound(
-    ctx: &mut Context,
-    eng: &EngineContext,
-    sound: &SoundId,
-    variant: Option<u16>,
+    ctx: &mut App,
+    plugins: &Plugins,
+    sound: SoundId,
+    variant: SoundVariant,
 ) -> Result<(), PlayAudioError> {
-    match eng.audio.sounds.get(&(*sound, variant)) {
-        Some(handle) => {
-            audio::play_sound(ctx, handle, PlaySoundParams {
-                looped: false,
-                volume: 1.0,
-            });
-            Ok(())
-            // match  handle.play(ctx) {
-            //     Ok(instance) => {
-            //         instance.set_volume(0.3);
-            //         Ok(())
-            //     }
-            //     Err(err) => {
-            //         Err(PlayAudioError::TetraError(err))
-            //     }
-            // }
-        }
-        None => Err(PlayAudioError::Missing),
+    match plugins.get::<super::AudioContext>() {
+        Some(actx) => match actx.sounds.get(&(sound, variant)) {
+            Some(handle) => {
+                ctx.audio.play_sound(handle, 0.5, false);
+                Ok(())
+                // match  handle.play(ctx) {
+                //     Ok(instance) => {
+                //         instance.set_volume(0.3);
+                //         Ok(())
+                //     }
+                //     Err(err) => {
+                //         Err(PlayAudioError::TetraError(err))
+                //     }
+                // }
+            }
+            None => Err(PlayAudioError::Missing),
+        },
+        None => Err(PlayAudioError::Uninitialized),
     }
 }

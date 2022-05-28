@@ -1,51 +1,55 @@
-use fiirengine::error::FileError;
+use notan::prelude::{App, Plugins};
 
-use fiirengine::audio::{self, PlaySoundParams};
+use crate::audio::{error::PlayAudioError, MusicId};
 
-use crate::{
-    audio::{error::PlayAudioError, MusicId},
-    Context, EngineContext,
-};
-
-use super::{add, GameAudioMap};
+use super::add;
 
 pub fn add_music(
-    music: &mut GameAudioMap<MusicId>,
+    app: &mut App,
+    plugins: &mut Plugins,
+    // music: &mut GameAudioMap<MusicId>,
     id: MusicId,
     data: Vec<u8>,
-) -> Result<(), FileError> {
-    add(music, id, &data)
+) -> Result<(), String> {
+    plugins
+        .get_mut::<super::AudioContext>()
+        .map(|mut actx| add(app, &mut actx.music, id, &data))
+        .ok_or_else(|| String::from("Could not get audio context to create music"))?
 }
 
-pub fn play_music(ctx: &mut Context, eng: &mut EngineContext, music: &MusicId) -> Result<(), PlayAudioError> {
-    stop_music(ctx, eng);
-    match eng.audio.music.get(music) {
-        Some(audio) => {
-            let handle = audio::play_sound(
-                ctx,
-                audio,
-                PlaySoundParams {
-                    looped: true,
-                    volume: 0.5,
-                },
-            );
-            eng.audio.current_music = Some((*music, handle));
-            Ok(())
-            // match audio.play(ctx) {
-            // Ok(instance) => {
-            //     instance.set_repeating(true);
-            //     instance.set_volume(0.3);
-            //     ctx.audio.current_music = Some((music, instance));
-            //     Ok(())
-            // }
-            // Err(err) => Err(PlayAudioError::TetraError(err)),
-        }
-        None => Err(PlayAudioError::Missing),
+pub fn play_music(
+    ctx: &mut App,
+    plugins: &mut Plugins,
+    music: &MusicId,
+) -> Result<(), PlayAudioError> {
+    stop_music(ctx, plugins);
+    match plugins.get_mut::<super::AudioContext>() {
+        Some(mut actx) => match actx.music.get(music) {
+            Some(audio) => {
+                let handle = ctx.audio.play_sound(audio, 0.5, true);
+                actx.current_music = Some((*music, handle));
+                Ok(())
+                // match audio.play(ctx) {
+                // Ok(instance) => {
+                //     instance.set_repeating(true);
+                //     instance.set_volume(0.3);
+                //     ctx.audio.current_music = Some((music, instance));
+                //     Ok(())
+                // }
+                // Err(err) => Err(PlayAudioError::TetraError(err)),
+            }
+            None => Err(PlayAudioError::Missing),
+        },
+        None => todo!(),
     }
 }
 
-pub fn stop_music(ctx: &mut Context, eng: &mut EngineContext) {
-    if let Some((_, instance)) = eng.audio.current_music.take() {
-        audio::stop_sound(ctx, instance);
+pub fn stop_music(ctx: &mut App, plugins: &mut Plugins) {
+    if let Some((_, instance)) = plugins
+        .get_mut::<super::AudioContext>()
+        .map(|mut audio| audio.current_music.take())
+        .flatten()
+    {
+        ctx.audio.stop(&instance);
     }
 }

@@ -1,6 +1,5 @@
-use crate::positions::{Destination, Direction, PixelOffset, Position};
+use crate::{positions::{Destination, Direction, PixelOffset, Position}, map::movement::Elevation};
 use enum_map::Enum;
-use hashbrown::HashSet;
 use serde::{Deserialize, Serialize};
 
 use self::action::{ActionQueue, Actions};
@@ -34,6 +33,9 @@ pub struct Character {
     pub locked: Counter,
 
     #[serde(default)]
+    pub input_lock: Counter,
+
+    #[serde(default)]
     pub hidden: bool,
 
     #[serde(default)]
@@ -42,8 +44,9 @@ pub struct Character {
     #[serde(default)]
     pub actions: Actions,
 
-    #[serde(default)]
-    pub flags: HashSet<CharacterFlag>,
+    // #[serde(default)]
+    // #[deprecated]
+    // pub flags: HashSet<CharacterFlag>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Enum, Deserialize, Serialize)]
@@ -63,8 +66,6 @@ pub enum DoMoveResult {
 pub struct Counter(u8);
 
 impl Character {
-
-    // pub const INTERACT_LOCK: CharacterFlag = unsafe { CharacterFlag::new_unchecked(8386654075050290793) };
 
     pub fn new<S: Into<String>>(name: S, position: Position) -> Self {
         Self {
@@ -107,6 +108,9 @@ impl Character {
     }
 
     pub fn do_move(&mut self, delta: f32) -> Option<DoMoveResult> {
+
+        
+
         if !self.locked() {
             match self.offset.is_zero() {
                 true => {
@@ -144,7 +148,7 @@ impl Character {
 
     pub fn sees(&self, sight: u8, position: &Position) -> bool {
         let tracker = sight as i32;
-        if position.elevation != self.position.elevation && self.position.elevation != 0 {
+        if position.elevation != self.position.elevation && self.position.elevation != Elevation(0) {
             return false;
         }
         match self.position.direction {
@@ -277,7 +281,7 @@ impl Counter {
         self.0 = self.0.saturating_sub(1);
     }
 
-    pub fn reset(&mut self) {
+    pub fn clear(&mut self) {
         self.0 = 0;
     }
 

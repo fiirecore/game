@@ -1,178 +1,116 @@
-use fiirengine::{graphics::DrawParams, math::Vec2, Context};
-use firecore_text::MessageState;
-
-use crate::{
-    controls::{pressed, Control},
-    graphics::{draw_button_for_text, draw_text_left},
-    text::FontId,
-    EngineContext,
+use notan::{
+    egui,
+    prelude::{App, Plugins},
 };
 
-#[derive(Debug, Default, Clone)]
-pub struct MessageBox {
-    origin: Vec2,
-    button: Button,
-}
+use firecore_text::MessageState;
 
-#[derive(Default, Debug, Clone, Copy)]
-struct Button {
-    position: f32,
-    direction: bool,
-}
+use crate::controls::{pressed, Control};
+
+pub struct MessageBox;
 
 impl MessageBox {
-    pub fn new(origin: Vec2) -> Self {
-        Self {
-            origin,
-            button: Default::default(),
-        }
-    }
-
-    pub fn update<C: Clone + Into<[f32; 4]>>(
-        &mut self,
-        ctx: &Context,
-        eng: &EngineContext,
-        delta: f32,
-        state: &mut Option<MessageState<FontId, C>>,
+    pub fn ui<C: Clone + Into<[f32; 4]>>(
+        app: &App,
+        plugins: &mut Plugins,
+        egui: &egui::Context,
+        state: &mut Option<MessageState<C>>,
     ) {
-        let mstate = state;
-        if let Some(state) = mstate {
-            match state.pages.get(state.page) {
-                Some(page) => match state.waiting {
-                    false => {
-                        if (state.accumulator as usize)
-                            < page
-                                .lines
-                                .get(state.line)
-                                .map(String::len)
-                                .unwrap_or_default()
-                        {
-                            state.accumulator += delta * 30.0;
-                        } else {
-                            match state.scroll < (state.line.saturating_sub(1) << 4) as f32 {
-                                true => {
-                                    state.scroll += delta * 32.0;
-                                }
-                                false => {
-                                    state.accumulator = 0.0;
-                                    if state.line < page.lines.len() - 1 {
-                                        state.line += 1;
-                                    } else {
-                                        state.waiting = true;
+        if state.is_some() {
+            egui::Window::new("Message Box")
+                .title_bar(false)
+                .show(egui, |ui| {
+                    if let Some(message) = state {
+                        if let Some(page) = message.pages.get(message.page) {
+                            if page.lines.len() == 0 {
+                                message.page += 1;
+                                return;
+                            }
+
+                            if !message.waiting {
+                                match (message.text as usize)
+                                    < page
+                                        .lines
+                                        .get(message.line)
+                                        .map(String::len)
+                                        .unwrap_or_default()
+                                {
+                                    true => message.text += app.timer.delta_f32() * 30.0,
+                                    false => {
+                                        message.text = 0.0;
+                                        if message.line < page.lines.len() - 1 {
+                                            message.line += 1;
+                                        } else {
+                                            message.waiting = true;
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }
-                    true => match page.wait {
-                        Some(wait) => {
-                            state.accumulator += delta;
-                            if state.accumulator.abs() >= wait.abs() {
-                                if self.finish_waiting(state) {
-                                    *mstate = None;
+
+                            for line in page
+                                .lines
+                                .get(..message.line)
+                                .into_iter()
+                                .flat_map(|i| i.iter())
+                                .rev()
+                            {
+                                ui.label(line);
+                            }
+
+                            if let Some(line) = page.lines.get(message.line) {
+                                let len = message.text as usize;
+
+                                let (string, finished) = line
+                                    .char_indices()
+                                    .nth(len)
+                                    .filter(|_| !message.waiting)
+                                    .map(|(len, ..)| line.get(..len).map(|l| (l, false)))
+                                    .flatten()
+                                    .unwrap_or_else(|| {
+                                        (line.as_str(), message.line + 1 >= page.lines.len())
+                                    });
+
+                                ui.label(string);
+
+                                if finished || (len != 0 && string.is_empty()) {
+                                    match page.wait {
+                                        Some(wait) => {
+                                            message.wait += app.timer.delta_f32();
+                                            if message.wait.abs() >= wait.abs() {
+                                                message.waiting = false;
+                                                match message.page + 1 >= message.pages() {
+                                                    true => {
+                                                        *state = None;
+                                                        return;
+                                                    }
+                                                    false => {
+                                                        message.page += 1;
+                                                        message.reset_page();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        None => {
+                                            if ui.button("Next").clicked()
+                                                || pressed(app, plugins, Control::A)
+                                            {
+                                                message.waiting = false;
+                                                if message.page + 1 >= message.pages() {
+                                                    *state = None;
+                                                } else {
+                                                    message.page += 1;
+                                                    message.reset_page();
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        None => match pressed(ctx, eng, Control::A) {
-                            true => {
-                                if self.finish_waiting(state) {
-                                    *mstate = None;
-                                }
-                            }
-                            false => {
-                                self.button.position += match self.button.direction {
-                                    true => delta,
-                                    false => -delta,
-                                } * 7.5;
-
-                                if self.button.position.abs() > 3.0 {
-                                    self.button.direction = !self.button.direction;
-                                }
-                            }
-                        },
-                    },
-                },
-                None => *mstate = None,
-            }
-        }
-    }
-
-    #[must_use]
-    fn finish_waiting<C: Clone + Into<[f32; 4]>>(
-        &mut self,
-        state: &mut MessageState<FontId, C>,
-    ) -> bool {
-        state.waiting = false;
-        match state.page + 1 >= state.pages() {
-            true => true,
-            false => {
-                state.page += 1;
-                state.reset_page();
-                false
-            }
-        }
-    }
-
-    pub fn draw<C: Clone + Into<[f32; 4]>>(
-        &self,
-        ctx: &mut Context,
-        eng: &EngineContext,
-        state: Option<&MessageState<FontId, C>>,
-    ) {
-        if let Some(state) = state {
-            if let Some(page) = state.pages.get(state.page) {
-                if let Some(line) = page.lines.get(state.line) {
-                    let len = state.accumulator as usize;
-
-                    let (string, finished) = line
-                        .char_indices()
-                        .nth(len)
-                        .filter(|_| !state.waiting)
-                        .map(|(len, ..)| line.get(..len).map(|l| (l, false)))
-                        .flatten()
-                        .unwrap_or_else(|| (line.as_str(), state.line + 1 >= page.lines.len()));
-
-                    let y = (state.line << 4) as f32 - state.scroll;
-                    let color = page.color.clone().into().into();
-
-                    draw_text_left(
-                        ctx,
-                        eng,
-                        &state.font,
-                        string,
-                        self.origin.x,
-                        self.origin.y + y,
-                        DrawParams::color(color),
-                    );
-
-                    for index in 0..state.line {
-                        let y = (index << 4) as f32 - state.scroll;
-                        if y > -2.0 {
-                            draw_text_left(
-                                ctx,
-                                eng,
-                                &state.font,
-                                &page.lines[index],
-                                self.origin.x,
-                                self.origin.y + y,
-                                DrawParams::color(color),
-                            )
+                        } else {
+                            *state = None;
                         }
                     }
-
-                    if finished && page.wait.is_none() {
-                        draw_button_for_text(
-                            ctx,
-                            eng,
-                            &state.font,
-                            line,
-                            self.origin.x,
-                            self.origin.y + 2.0 + self.button.position + y,
-                            DrawParams::default(),
-                        );
-                    }
-                }
-            }
+                });
         }
     }
 }

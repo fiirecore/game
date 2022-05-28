@@ -108,7 +108,7 @@ fn palette(path: PathBuf) -> (PaletteId, SerializedPalette) {
     }
 }
 
-fn read_folder<I: Hash + Eq + FromStr<Err = E>, E: std::error::Error>(
+fn read_folder<I: Hash + Eq + FromStr<Err = E>, E: core::fmt::Display>(
     path: impl AsRef<Path>,
 ) -> HashMap<I, Vec<u8>> {
     let path = path.as_ref();

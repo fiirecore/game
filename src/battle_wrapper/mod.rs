@@ -1,15 +1,18 @@
 use std::ops::Deref;
 
-use battlecli::battle::{
-    item::engine::ItemEngine,
-    moves::engine::MoveEngine,
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
-    prelude::{Battle, BattleAi},
+use battlecli::{
+    battle::{
+        item::engine::ItemEngine,
+        moves::engine::MoveEngine,
+        pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
+        prelude::{Battle, BattleAi},
+    },
+    BattleTrainer,
 };
 
 use rand::{prelude::SmallRng, Rng};
 
-use worldcli::battle::{BattleId, BattleTrainerEntry};
+use worldcli::worldlib::map::battle::{BattleId, TrainerEntry};
 
 mod manager;
 
@@ -20,9 +23,9 @@ pub struct GameBattleWrapper<
     M: Deref<Target = Move> + Clone,
     I: Deref<Target = Item> + Clone,
 > {
-    battle: Battle<BattleId, P, M, I>,
-    ai: BattleAi<SmallRng, BattleId, P, M, I>,
-    trainer: Option<BattleTrainerEntry>,
+    battle: Battle<BattleId, BattleTrainer, P, M, I>,
+    ai: BattleAi<BattleId, BattleTrainer, SmallRng, P, M, I>,
+    trainer: Option<TrainerEntry>,
 }
 
 impl<
@@ -35,12 +38,11 @@ impl<
         &mut self,
         random: &mut (impl Rng + Clone + 'static),
         engine: &mut (impl MoveEngine + ItemEngine),
-        delta: f32,
-        pokedex: &'d dyn Dex<'d, Pokemon, P>,
-        movedex: &'d dyn Dex<'d, Move, M>,
-        itemdex: &'d dyn Dex<'d, Item, I>,
+        pokedex: &impl Dex<Pokemon, Output = P>,
+        movedex: &impl Dex<Move, Output = M>,
+        itemdex: &impl Dex<Item, Output = I>,
     ) {
-        self.battle.update(random, engine, delta, movedex, itemdex);
+        self.battle.update(random, engine, movedex, itemdex);
         self.ai.update(pokedex, movedex, itemdex);
     }
 }

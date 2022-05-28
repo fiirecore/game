@@ -1,11 +1,7 @@
-use crate::engine::{
-    graphics::{self, Color, DrawParams},
-    log::warn,
-    math::ivec2,
-    Context, EngineContext,
-};
+use crate::engine::{graphics::Color, log::warn, math::ivec2};
 use crate::pokengine::gui::SizedStr;
 
+use pokengine::engine::notan::draw::{Draw, DrawShapes, DrawTextSection};
 use worldlib::{map::WorldMap, state::WorldState, TILE_SIZE};
 
 use self::data::ClientWorldData;
@@ -20,8 +16,7 @@ mod screen;
 pub use screen::RenderCoords;
 
 pub fn draw(
-    ctx: &mut Context,
-    eng: &EngineContext,
+    draw: &mut Draw,
     map: &WorldMap,
     world: &WorldState,
     data: &ClientWorldData,
@@ -57,7 +52,7 @@ pub fn draw(
                     let color = match num {
                         1 => Color::BLACK,
                         0xC => Color::WHITE,
-                        0x4 => Color::SKYBLUE,
+                        0x4 => Color::AQUA,
                         _ => Color::RED,
                     };
                     let inverse = Color {
@@ -66,24 +61,22 @@ pub fn draw(
                         b: 1.0 - color.b,
                         a: color.a,
                     };
-                    graphics::draw_rectangle(ctx, render_x, render_y, TILE_SIZE, TILE_SIZE, color);
-                    graphics::draw_rectangle_lines(
-                        ctx, render_x, render_y, TILE_SIZE, TILE_SIZE, 1.0, inverse,
-                    );
-                    graphics::draw_text_left(
-                        ctx,
-                        eng,
-                        &0,
-                        &str,
-                        render_x + 3.0,
-                        render_y + 1.0,
-                        DrawParams::color(inverse),
-                    );
+
+                    draw.rect((render_x, render_y), (TILE_SIZE, TILE_SIZE))
+                        .color(color);
+                    draw.rect((render_x, render_y), (TILE_SIZE, TILE_SIZE))
+                        .stroke(1.0)
+                        .color(inverse);
+                    draw.text(&data.debug_font, &str)
+                        .position(render_x + 3.0, render_y + 1.0)
+                        .color(inverse)
+                        .h_align_left()
+                        .v_align_top();
                 } else {
                     let tile = map.tiles[index];
 
                     data.tiles
-                        .draw_tile(ctx, &map.palettes, tile, render_x, render_y, color);
+                        .draw_tile(draw, &map.palettes, tile, render_x, render_y, color);
                     // if let Some(door) = door {
                     //     if door.position == index {
                     //         textures.tiles.draw_door(ctx, door, render_x, render_y);
@@ -104,23 +97,17 @@ pub fn draw(
                     3
                 }];
                 data.tiles
-                    .draw_tile(ctx, &map.palettes, tile, render_x, render_y, color);
+                    .draw_tile(draw, &map.palettes, tile, render_x, render_y, color);
             }
 
             if world.debug_draw {
                 for warp in map.warps.iter() {
                     for coordinate in warp.area.iter() {
                         let coordinate = ivec2(coordinate.x, coordinate.y) + screen.offset;
-                        let render = (coordinate * (16)).as_f32() - screen.focus;
-                        graphics::draw_rectangle_lines(
-                            ctx,
-                            render.x,
-                            render.y,
-                            TILE_SIZE,
-                            TILE_SIZE,
-                            2.0,
-                            Color::RED,
-                        )
+                        let render = (coordinate * (16)).as_vec2() - screen.focus;
+                        draw.rect((render.x, render.y), (TILE_SIZE, TILE_SIZE))
+                            .stroke(2.0)
+                            .color(Color::RED);
                     }
                 }
             }
@@ -134,11 +121,18 @@ pub fn draw(
             .filter(|(loc, ..)| loc == &map.id)
             .map(|(.., n)| n),
     ) {
-        data.npc.draw(ctx, npc, screen, color);
+        data.npc.draw(draw, npc, screen, color);
     }
 
-    data.object
-        .draw(ctx, &map.id, &map.objects, &map.items, world, screen, color);
+    data.object.draw(
+        draw,
+        &map.id,
+        &map.objects,
+        &map.items,
+        world,
+        screen,
+        color,
+    );
     // for script in map.scripts.iter() {
     //     if script.alive() {
     //         if let Some(action) = script.actions.front() {

@@ -13,8 +13,8 @@ fn main() {
     engine::run(
         ContextBuilder::new(
             "MessageBox",
-            (SCALE * engine::utils::WIDTH) as _,
-            (SCALE * engine::utils::HEIGHT) as _,
+            (SCALE * 240.0) as _,
+            (SCALE * 160.0) as _,
         ),
         async {},
         move |_, _, _| {},

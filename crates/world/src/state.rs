@@ -1,23 +1,28 @@
-use firecore_text::{FontId, MessageState};
+use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
 
-use hashbrown::{HashMap, HashSet};
+use pokedex::pokemon::owned::SavedPokemon;
+
+use audio::{SoundId, SoundVariant};
+use text::MessageState;
 
 use crate::{
     character::npc::{group::MessageColor, trainer::BadgeId, Npc, NpcId},
-    map::{battle::BattleEntry, warp::WarpDestination},
+    map::{battle::BattleEntry, warp::WarpDestination, MusicId},
     positions::{Coordinate, Location, Position},
-    script::{ScriptEnvironment, ScriptFlag, ScriptId, VariableName},
+    script::{ScriptEnvironment, ScriptId, Variable, VariableName},
 };
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WorldState {
     #[serde(default)]
+    pub events: Vec<WorldEvent>,
+    #[serde(default)]
     pub objects: HashMap<Location, Vec<Coordinate>>,
     #[serde(default)]
     pub battle: GlobalBattleState,
     #[serde(default)]
-    pub message: Option<MessageState<FontId, MessageColor>>,
+    pub message: Option<MessageState<MessageColor>>,
     #[serde(default)]
     pub npc: GlobalNpcData,
     #[serde(default)]
@@ -34,17 +39,34 @@ pub struct WorldState {
     pub debug_draw: bool,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum WorldEvent {
+    PlayMusic(MusicId),
+    PlaySound(SoundId, SoundVariant),
+    BeginWarpTransition(Coordinate),
+    PlayerJump,
+    BreakObject(Coordinate),
+
+    /// Should freeze player and start battle
+    // Battle(BattleEntry),
+    OnTile,
+    // Command(PlayerActions),
+}
+
+pub type Battled = HashSet<NpcId>;
+
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct GlobalBattleState {
-    pub battled: HashMap<Location, HashSet<NpcId>>,
-    pub battling: Option<BattleEntry>,
+    pub battled: HashMap<Location, Battled>,
+    pub battling: Option<BattleEntry<SavedPokemon>>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct GlobalScriptData {
     pub executed: HashSet<ScriptId>,
     pub npcs: HashMap<NpcId, (Location, Npc)>,
-    pub flags: HashMap<VariableName, ScriptFlag>,
+    pub flags: HashSet<VariableName>,
+    pub variables: HashMap<VariableName, Variable>,
     pub environment: ScriptEnvironment,
 }
 

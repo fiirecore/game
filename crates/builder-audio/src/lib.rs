@@ -1,8 +1,7 @@
 use serde::Deserialize;
 
-pub type MusicId = tinystr::TinyStr16;
-pub type SoundId = tinystr::TinyStr8;
-pub type SoundVariant = Option<u16>;
+pub use firecore_audio::{MusicId, SoundId, SoundVariant};
+
 
 use std::{
     fs::{read, read_dir, read_to_string},

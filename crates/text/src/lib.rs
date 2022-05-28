@@ -6,33 +6,35 @@ pub type FontId = u8;
 pub struct MessagePage<C: Clone + Into<[f32; 4]>> {
     pub lines: Vec<String>,
     pub wait: Option<f32>,
-    pub color: C,
+    #[serde(default = "Option::default")]
+    pub color: Option<C>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct MessageState<F, C: Clone + Into<[f32; 4]>> {
-    pub font: F,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MessageState<C: Clone + Into<[f32; 4]>> {
     pub pages: Vec<MessagePage<C>>,
 
     pub page: usize,
     pub line: usize,
-    pub accumulator: f32,
-    pub scroll: f32,
-
+    pub text: f32,
+    
     pub waiting: bool,
+    pub wait: f32,
+
+    // pub scroll: f32,
+    // pub button: f32,
+
 }
 
-impl<F, C: Clone + Into<[f32; 4]>> MessageState<F, C> {
-
-    pub fn new(font: F, pages: Vec<MessagePage<C>>) -> Self {
+impl<C: Clone + Into<[f32; 4]>> MessageState<C> {
+    pub fn new(pages: Vec<MessagePage<C>>) -> Self {
         Self {
-            font,
             pages,
             page: Default::default(),
             line: Default::default(),
-            accumulator: Default::default(),
-            scroll: Default::default(),
+            text: Default::default(),
             waiting: Default::default(),
+            wait: Default::default(),
         }
     }
 
@@ -50,13 +52,28 @@ impl<F, C: Clone + Into<[f32; 4]>> MessageState<F, C> {
 
     pub fn reset_page(&mut self) {
         self.line = 0;
-        self.accumulator = 0.0;
-        self.scroll = 0.0;
+        self.text = 0.0;
+        self.wait = 0.0;
+        // self.button = 0.0;
+        // self.scroll = 0.0;
     }
 }
 
-impl<F: Default, C: Clone + Into<[f32; 4]>> From<Vec<MessagePage<C>>> for MessageState<F, C> {
+impl<C: Clone + Into<[f32; 4]>> From<Vec<MessagePage<C>>> for MessageState<C> {
     fn from(pages: Vec<MessagePage<C>>) -> Self {
-        Self::new(Default::default(), pages)
+        Self::new(pages)
+    }
+}
+
+impl<C: Clone + Into<[f32; 4]>> Default for MessageState<C> {
+    fn default() -> Self {
+        Self {
+            pages: Default::default(),
+            page: Default::default(),
+            line: Default::default(),
+            text: Default::default(),
+            waiting: Default::default(),
+            wait: Default::default(),
+        }
     }
 }

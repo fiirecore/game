@@ -1,108 +1,79 @@
+mod save;
+
+use std::{ops::Deref, rc::Rc};
+
+use event::{EventReader, EventWriter};
+use worldcli::engine::notan::AppState;
+
 use crate::{
-    command::CommandProcessor,
     engine::{
-        error::EngineError,
-        graphics::{self, Color},
-        log::{error, info},
-        Context, EngineContext, State,
+        controls::{pressed, Control},
+        graphics::{Color, CreateDraw, CreateFont, DrawShapes, Graphics},
+        App, Plugins,
     },
+    load::LoadData,
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
     saves::Player,
     state::MainStates,
-    load::LoadContext,
+    touchscreen::Touchscreen,
 };
-
-use worldcli::worldlib::events::{split, Receiver, Sender};
 
 use super::{
-    console::Console, game::GameStateManager, loading::LoadingStateManager, menu::MenuStateManager,
-    StateMessage,
+    console::Console, game::GameStateManager, loading::LoadingStateManager,
+    menu::title::TitleState, StateMessage,
 };
 
-pub struct StateManager {
+use crate::engine::notan;
+
+#[derive(AppState)]
+pub struct StateManager<
+    P: Deref<Target = Pokemon> + Clone + From<Pokemon> + std::fmt::Debug = Rc<Pokemon>,
+    M: Deref<Target = Move> + Clone + From<Move> + std::fmt::Debug = Rc<Move>,
+    I: Deref<Target = Item> + Clone + From<Item> + std::fmt::Debug = Rc<Item>,
+> {
     state: MainStates,
 
     loading: LoadingStateManager,
-    menu: MenuStateManager,
-    game: GameStateManager,
+    title: TitleState,
+    game: GameStateInit<P, M, I>,
 
     console: Console,
 
-    save: Option<Player>,
+    save: save::PlayerSave<P, M, I>,
 
-    sender: Sender<StateMessage>,
-    receiver: Receiver<StateMessage>,
+    data: crate::load::LoadData<P, M, I>,
+
+    sender: EventWriter<StateMessage>,
+    receiver: EventReader<StateMessage>,
 }
 
-impl State<EngineContext> for StateManager {
-    fn start(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
-        info!("Starting game!");
-        match self.state {
-            MainStates::Loading => (), //self.loading.start()
-            MainStates::Menu => self.menu.start(ctx, eng),
-            MainStates::Game => self.game.start(ctx),
-        }
-    }
-    fn end(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
-        match self.state {
-            MainStates::Loading => (),
-            MainStates::Menu => self.menu.end(ctx, eng),
-            MainStates::Game => self.game.end(),
-        }
-        self.process(ctx, eng);
-    }
-    fn update(&mut self, ctx: &mut Context, eng: &mut EngineContext, delta: f32) {
-        if let Some(command) = self.console.update(
-            ctx,
-            delta,
-            self.game.save.as_mut().map(|p| p.player.as_mut()).flatten(),
-        ) {
-            match self.state {
-                MainStates::Loading => (),
-                MainStates::Menu => (),
-                MainStates::Game => self.game.process(command),
-            }
-        }
-
-        match self.state {
-            MainStates::Loading => self.loading.update(ctx, eng, delta),
-            MainStates::Menu => self.menu.update(ctx, eng, delta, &mut self.save),
-            MainStates::Game => self.game.update(ctx, eng, delta),
-        }
-
-        self.process(ctx, eng);
-
-        // Ok(())
-    }
-    fn draw(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
-        // graphics::set_canvas(ctx, self.scaler.canvas());
-        graphics::clear(ctx, Color::BLACK);
-        match self.state {
-            MainStates::Loading => self.loading.draw(ctx, eng),
-            MainStates::Menu => self.menu.draw(ctx, eng),
-            MainStates::Game => self.game.draw(ctx, eng),
-        }
-        self.console.draw(ctx, eng);
-        // graphics::reset_transform_matrix(ctx);
-        // graphics::reset_canvas(ctx);
-        // graphics::clear(ctx, Color::BLACK);
-        // self.scaler.draw(ctx);
-        // Ok(())
-    }
-    // fn event(&mut self, _: &mut GameContext, event: Event) {
-    //     if let Event::Resized { width, height } = event {
-    //         self.scaler.set_outer_size(width, height);
-    //     }
-
-    //     Ok(())
-    // }
+enum GameStateInit<
+    P: Deref<Target = Pokemon> + Clone,
+    M: Deref<Target = Move> + Clone,
+    I: Deref<Target = Item> + Clone,
+> {
+    Uninit(
+        worldcli::engine::graphics::Font,
+        event::EventWriter<StateMessage>,
+        crate::command::CommandProcessor,
+        u8,
+    ),
+    Init(GameStateManager<P, M, I>),
+    None,
 }
-impl StateManager {
-    pub(crate) fn new(ctx: &mut Context, _: &mut EngineContext, load: LoadContext) -> Self {
-        Self::try_new(ctx, load)
+
+impl<
+        P: Deref<Target = Pokemon> + Clone + From<Pokemon> + std::fmt::Debug,
+        M: Deref<Target = Move> + Clone + From<Move> + std::fmt::Debug,
+        I: Deref<Target = Item> + Clone + From<Item> + std::fmt::Debug,
+    > StateManager<P, M, I>
+{
+    pub(crate) fn new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Self {
+        Self::try_new(gfx, load)
             .unwrap_or_else(|err| panic!("Could not create state manager with error {}", err))
     }
 
-    fn try_new(ctx: &mut Context, load: LoadContext) -> Result<Self, EngineError> {
+    fn try_new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Result<Self, String> {
         // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
 
         // let texture = game::graphics::Texture::new(include_bytes!("../build/assets/loading.png"));
@@ -122,75 +93,263 @@ impl StateManager {
         //     })
         // };
 
-        use crate::engine::graphics::{set_scaling_mode, ScalingMode};
+        // use crate::engine::graphics::{set_scaling_mode, ScalingMode};
 
-        set_scaling_mode(ctx, ScalingMode::Stretch, Some(crate::SCALE));
+        // set_scaling_mode(x, ScalingMode::Stretch, Some(crate::SCALE));
 
-        let (sender, receiver) = split();
+        let debug_font = gfx.create_font(include_bytes!("./Ubuntu-B.ttf"))?;
+
+        let (sender, receiver) = event::split();
+
+        let (console, processor) = Console::new();
 
         Ok(Self {
             state: MainStates::default(),
 
-            loading: LoadingStateManager::new(ctx, sender.clone())?,
-            menu: MenuStateManager::new(ctx, sender.clone())?,
-            game: GameStateManager::new(
-                ctx,
-                load.dex,
-                load.btl,
-                load.world,
-                load.battle,
-                sender.clone(),
-            )?,
+            loading: LoadingStateManager::new(gfx, sender.clone(), debug_font)?,
 
-            console: Console::default(),
+            title: TitleState::new(gfx, sender.clone())?,
+            game: GameStateInit::Uninit(debug_font, sender.clone(), processor, 0),
 
-            save: load.save,
+            console,
 
-            sender,
+            save: save::PlayerSave::None,
+            // load
+            //     .save
+            //     .map(save::PlayerSave::Uninit)
+            //     .unwrap_or(save::PlayerSave::None),
+            data: load,
+
             receiver,
+            sender,
             // scaler,
         })
     }
 
-    pub fn process(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
-        for message in self.receiver.try_iter() {
-            match message {
-                StateMessage::UpdateSave(save) => {
-                    self.save = Some(save);
-                    self.sender.send(StateMessage::WriteSave);
+    pub fn start(&mut self, app: &mut App, plugins: &mut Plugins) {
+        match self.state {
+            MainStates::Loading => (), //self.loading.start()
+            MainStates::Title => self.title.start(app, plugins),
+            MainStates::Menu => (),
+            MainStates::Game => {
+                if let LoadData::Data {
+                    pokedex,
+                    movedex,
+                    itemdex,
+                } = &self.data
+                {
+                    if !self
+                        .save
+                        .init(&mut rand::thread_rng(), pokedex, movedex, itemdex)
+                    {
+                        worldcli::engine::log::info!("Could not init player; {:?}", self.save)
+                    }
+                } else {
+                    worldcli::engine::log::info!("Could not init player, no dexes; {:?}", self.save)
                 }
-                StateMessage::WriteSave => {
-                    if let Some(save) = &self.save {
-                        if let Err(err) = storage::save::<storage::RonSerializer, Player>(
-                            save,
-                            crate::PUBLISHER,
-                            crate::APPLICATION,
-                        ) {
-                            error!("Cannot write save with error {}", err);
+
+                if let Some(player) = self.save.as_mut() {
+                    if let GameStateInit::Init(game) = &mut self.game {
+                        game.start(player);
+                    } else {
+                        self.state = MainStates::Menu;
+                    }
+                } else {
+                    self.state = MainStates::Menu;
+                }
+            }
+        }
+    }
+    pub fn end(&mut self, app: &mut App, plugins: &mut Plugins) {
+        match self.state {
+            MainStates::Loading => (),
+            MainStates::Title => self.title.end(app, plugins),
+            MainStates::Menu => (),
+            MainStates::Game => {
+                if let GameStateInit::Init(game) = &mut self.game {
+                    game.end(app, plugins)
+                }
+            }
+        }
+        self.process(app, plugins);
+    }
+
+    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins) {
+        let delta = app.timer.delta_f32();
+
+        match self.state {
+            MainStates::Loading => {
+                if pressed(app, plugins, Control::A) {
+                    self.state = MainStates::Title;
+                }
+
+                self.loading.update(app, plugins, delta);
+            }
+            MainStates::Title => self.title.update(app, plugins),
+            MainStates::Menu => (),
+            MainStates::Game => {
+                if let Some(player) = self.save.as_mut() {
+                    if let LoadData::Data {
+                        pokedex,
+                        movedex,
+                        itemdex,
+                    } = &self.data
+                    {
+                        if let GameStateInit::Init(game) = &mut self.game {
+                            game.update(app, plugins, pokedex, movedex, itemdex, player);
+                        } else {
+                            self.state = MainStates::Menu;
+                        }
+                    }
+                } else {
+                    self.state = MainStates::Menu;
+                }
+            }
+        }
+
+        self.process(app, plugins);
+
+        // Ok(())
+    }
+    pub fn draw(&mut self, app: &mut App, plugins: &mut Plugins, gfx: &mut Graphics) {
+        // graphics::set_canvas(ctx, self.scaler.canvas());
+        // graphics::clear(ctx, Color::BLACK);
+
+        match self.state {
+            MainStates::Loading | MainStates::Title | MainStates::Menu => {
+                if let GameStateInit::Uninit(..) = &self.game {
+                    if let Some(data) = self.data.finish() {
+                        let game = std::mem::replace(&mut self.game, GameStateInit::None);
+                        if let GameStateInit::Uninit(debug_font, sender, processor, seed) = game {
+                            self.game = GameStateInit::Init({
+                                let btl = firecore_battle_engine::BattleGuiData::new(gfx).unwrap();
+                                let mut game = GameStateManager::new(
+                                    app,
+                                    gfx,
+                                    plugins,
+                                    debug_font,
+                                    data.dex,
+                                    btl,
+                                    data.world,
+                                    data.battle,
+                                    sender,
+                                    processor,
+                                )
+                                .unwrap();
+                                game.seed(seed as _);
+                                game
+                            });
                         }
                     }
                 }
-                StateMessage::LoadSave => {
-                    if let Some(save) = self.save.take() {
-                        self.game.save = Some(save);
+            }
+            _ => (),
+        }
+
+        match self.state {
+            MainStates::Loading => self.loading.draw(gfx),
+            MainStates::Title => self.title.draw(gfx),
+            MainStates::Menu => {
+                let mut draw = gfx.create_draw();
+                draw.clear(Color::new(0.00, 0.32, 0.67, 1.0));
+                gfx.render(&draw);
+            }
+            MainStates::Game => {
+                if let Some(player) = self.save.as_mut() {
+                    if let GameStateInit::Init(game) = &self.game {
+                        game.draw(gfx, player);
                     }
                 }
+            }
+        }
+
+        match &self.state {
+            MainStates::Loading | MainStates::Title | MainStates::Menu => {
+                if let LoadData::Load(assets, ..) = &self.data {
+                    let mut draw = gfx.create_draw();
+
+                    draw.rect(
+                        (draw.width() / 5.0, draw.height() - draw.height() / 5.0),
+                        (
+                            draw.width() * 3.0 / 5.0 * assets.progress(),
+                            draw.height() / 15.0,
+                        ),
+                    )
+                    .color(Color::WHITE);
+
+                    gfx.render(&draw);
+                }
+            }
+            _ => (),
+        }
+
+        use crate::engine::notan::egui::{self, EguiPluginSugar};
+        let plugins2 = unsafe { &mut *(plugins as *mut _) };
+        gfx.render(&plugins.egui(|egui| {
+            match self.state {
+                MainStates::Menu => {
+                    egui::Window::new("Menu").show(egui, |ui| {
+                        if ui.button("Play").clicked() {
+                            self.sender.send(StateMessage::Goto(MainStates::Game));
+                        }
+                        if ui.button("New Save / Reset Save").clicked() {
+                            self.sender.send(StateMessage::ResetSave);
+                        }
+                        if ui.button("Exit").clicked() {
+                            self.sender.send(StateMessage::Exit);
+                        }
+                    });
+                }
+                MainStates::Game => {
+                    if let Some(player) = self.save.as_mut() {
+                        if let GameStateInit::Init(game) = &mut self.game {
+                            game.ui(app, plugins2, egui, player);
+                        }
+                    }
+                }
+                _ => (),
+            }
+
+            Touchscreen::ui(egui, plugins2);
+
+            self.console.ui::<P, M, I>(app, egui, self.save.as_mut());
+        }));
+
+        // graphics::reset_transform_matrix(ctx);
+        // graphics::reset_canvas(ctx);
+        // graphics::clear(ctx, Color::BLACK);
+        // self.scaler.draw(ctx);
+        // Ok(())
+    }
+
+    pub fn process(&mut self, app: &mut App, plugins: &mut Plugins) {
+        while let Some(message) = self.receiver.read() {
+            match message {
+                StateMessage::ResetSave => {
+                    self.save = save::PlayerSave::Uninit(Player::new("Red", "Blue"));
+                }
+                StateMessage::SaveToDisk => {
+                    // if let Some(save) = self.save.cloned_uninit() {
+                    //     if let Err(err) = storage::save::<storage::RonSerializer, Player>(
+                    //         &save,
+                    //         crate::PUBLISHER,
+                    //         crate::APPLICATION,
+                    //     ) {
+                    //         error!("Cannot write save with error {}", err);
+                    //     }
+                    // }
+                }
+                StateMessage::Seed(seed) => match &mut self.game {
+                    GameStateInit::Uninit(.., s) => *s = seed,
+                    GameStateInit::Init(game) => game.seed(seed as _),
+                    GameStateInit::None => (),
+                },
                 StateMessage::Goto(state) => {
-                    match self.state {
-                        MainStates::Loading => (),
-                        MainStates::Menu => self.menu.end(ctx, eng),
-                        MainStates::Game => self.game.end(),
-                    }
+                    self.end(app, plugins);
                     self.state = state;
-                    match self.state {
-                        MainStates::Loading => self.loading.start(ctx, eng),
-                        MainStates::Menu => self.menu.start(ctx, eng),
-                        MainStates::Game => self.game.start(ctx),
-                    }
+                    self.start(app, plugins);
                 }
-                StateMessage::Seed(seed) => self.game.seed(seed as _),
-                StateMessage::Exit => ctx.quit(),
-                StateMessage::CommandError(error) => self.console.error(error),
+                StateMessage::Exit => app.exit(),
             }
         }
     }

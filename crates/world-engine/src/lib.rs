@@ -7,10 +7,4 @@ pub use pokengine::engine;
 pub use pokengine::pokedex;
 
 pub mod map;
-pub mod battle;
 mod gui;
-
-#[derive(Debug, Clone)]
-pub enum WorldMetaAction {
-    Battle(battle::BattleMessage),
-}

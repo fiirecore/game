@@ -38,7 +38,6 @@ pub struct Npc {
     pub trainer: Option<trainer::NpcTrainer>,
 }
 
-
 /// to - do: implement non-random npc movement (like spinners)
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub enum NpcMovement {

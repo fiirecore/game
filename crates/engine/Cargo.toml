@@ -5,11 +5,12 @@ edition = "2021"
 
 [features]
 default = ["audio", "gamepad"]
-audio = ["fiirengine/audio"]
-gamepad = ["fiirengine/gamepad"]
+audio = ["notan/audio"]
+gamepad = []#"fiirengine/gamepad"]
 
 [dependencies]
-fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
+# fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
+notan = { version = "0.4", features = ["egui", "log"] }
 
 # Controls 
 
@@ -18,12 +19,17 @@ serde = { version = "1", features = ["derive"] }
 
 # Audio utils
 
-tinystr = { version = "0.4", features = ["serde"], default-features = false }
+
+firecore-audio = { path = "../audio" }
 
 # Text rendering
 
 firecore-text = { path = "../text" }
-firecore-font-builder = { path = "../builder-font", default-features = false }
+
+# Other
+
+tinystr = { version = "0.6", features = ["serde"], default-features = false }
+hashbrown = { version = "0.12" }
 
 [dev-dependencies]
 firecore-storage = { path = "../storage", default-features = false }

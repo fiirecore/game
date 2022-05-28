@@ -5,7 +5,7 @@ use std::ops::RangeInclusive;
 
 use pokedex::pokemon::{owned::SavedPokemon, party::Party, Level, PokemonId};
 
-use super::battle::BattleEntry;
+use super::battle::{BattleEntry, BattleId};
 
 pub type Ratio = u8;
 
@@ -42,7 +42,7 @@ impl WildEntry {
         t: &WildType,
         entry: &WildEntry,
         random: &mut impl Rng,
-    ) -> Option<BattleEntry> {
+    ) -> Option<BattleEntry<SavedPokemon>> {
         if entry.should_encounter(random) {
             let chances = match chances.get(t) {
                 Some(chances) => chances,
@@ -53,10 +53,15 @@ impl WildEntry {
                 None => return None,
             };
             let level = random.gen_range(pokemon.levels.clone());
-            let pokemon = SavedPokemon::generate(pokemon.species, level, None, None);
+            let pokemon = SavedPokemon {
+                pokemon: pokemon.species,
+                level,
+                ..Default::default()
+            };
             let mut party = Party::new();
             party.push(pokemon);
             return Some(BattleEntry {
+                id: BattleId::Wild,
                 party,
                 active: 1,
                 trainer: None,

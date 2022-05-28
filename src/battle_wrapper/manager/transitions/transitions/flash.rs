@@ -1,10 +1,4 @@
-use crate::engine::{
-    graphics::{draw_rectangle, Color},
-    // graphics::{get_transform_matrix, reset_transform_matrix, set_transform_matrix},
-    // math::{Vec2, Vec3},
-    utils::{Completable, Reset, HEIGHT, WIDTH},
-    Context,
-};
+use crate::engine::graphics::{Color, Draw, DrawShapes};
 
 use crate::battle_wrapper::manager::transitions::BattleTransition;
 
@@ -39,7 +33,7 @@ impl Default for FlashBattleTransition {
 }
 
 impl BattleTransition for FlashBattleTransition {
-    fn update(&mut self, _: &mut Context, delta: f32) {
+    fn update(&mut self, delta: f32) {
         if self.waning {
             self.screen.a -= self.fade * 60.0 * delta;
         } else {
@@ -77,12 +71,11 @@ impl BattleTransition for FlashBattleTransition {
         }
     }
 
-    fn draw(&self, ctx: &mut Context) {
-        draw_rectangle(ctx, 0.0, 0.0, WIDTH, HEIGHT, self.screen);
+    fn draw(&self, draw: &mut Draw) {
+        draw.rect((0.0, 0.0), (draw.width(), draw.height()))
+            .color(self.screen).alpha(self.screen.a);
     }
-}
 
-impl Reset for FlashBattleTransition {
     fn reset(&mut self) {
         self.screen = Self::DEFAULT_COLOR;
         self.waning = false;
@@ -91,9 +84,7 @@ impl Reset for FlashBattleTransition {
         self.zoom = false;
         self.zoom_offset = Self::ZOOM_OFFSET;
     }
-}
 
-impl Completable for FlashBattleTransition {
     fn finished(&self) -> bool {
         self.index >= Self::FINAL_INDEX && self.waning
     }

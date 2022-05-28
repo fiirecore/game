@@ -8,34 +8,24 @@ use battlecli::battle::{
         Battle, BattleAi, BattleData, BattleType, DefaultEngine, PlayerData, PlayerSettings,
     },
 };
-use worldcli::worldlib::character::player::PlayerCharacter;
+use worldcli::{engine::text::MessagePage, worldlib::character::player::InitPlayerCharacter};
 
-use crate::{
-    engine::{
-        graphics::Color,
-        input::keyboard::{pressed as is_key_pressed, Key},
-        math::Vec2,
-        utils::{Reset, HashMap},
-        Context, EngineContext,
-    },
+use crate::engine::{
+    graphics::{Color, CreateDraw, Graphics},
+    App, Plugins,
 };
 
-use worldcli::battle::{BattleMessage, BattleId};
+use worldcli::worldlib::map::battle::BattleId;
 
-use crate::pokengine::{
-    gui::{bag::BagGui, party::PartyGui},
-    PokedexClientData,
-};
+use crate::pokengine::PokedexClientData;
 
-use firecore_battle_engine::{BattleGuiData, BattlePlayerGui};
+use firecore_battle_engine::{BattleTrainer, BattleGuiData, BattlePlayerGui};
 
 use super::GameBattleWrapper;
 
 pub mod transitions;
 
-use transitions::managers::{
-    closer::BattleCloserManager, transition::BattleScreenTransitionManager,
-};
+use transitions::managers::transition::BattleScreenTransitionManager;
 
 pub struct BattleManager<
     P: Deref<Target = Pokemon> + Clone,
@@ -52,9 +42,8 @@ pub struct BattleManager<
     btl: BattleGuiData,
 
     transition: BattleScreenTransitionManager,
-    closer: BattleCloserManager,
 
-    player: BattlePlayerGui<BattleId, P, M, I>,
+    player: BattlePlayerGui<BattleId, Rc<PokedexClientData>, P, M, I>,
 
     seed: u64,
 
@@ -81,7 +70,6 @@ pub enum BattleManagerState {
     Begin,
     Transition,
     Battle,
-    Closer(BattleId),
 }
 
 impl Default for BattleManagerState {
@@ -97,26 +85,25 @@ impl<
     > BattleManager<P, M, I>
 {
     pub fn new(
-        ctx: &mut Context,
+        gfx: &mut Graphics,
         btl: BattleGuiData,
         dex: Rc<PokedexClientData>,
         data: (EngineMoves, MoveScripts),
-    ) -> Self {
+    ) -> Result<Self, String> {
         let mut engine = DefaultEngine::new::<BattleId, SmallRng>();
 
         engine.moves = data.0;
 
         engine.scripting.moves = data.1;
 
-        Self {
+        Ok(Self {
             state: BattleManagerState::default(),
 
             battle: None,
 
-            transition: BattleScreenTransitionManager::new(ctx),
-            closer: BattleCloserManager::default(),
+            transition: BattleScreenTransitionManager::new(gfx)?,
 
-            player: BattlePlayerGui::new(ctx, &dex, &btl),
+            player: BattlePlayerGui::new(dex.clone(), &btl),
 
             engine,
 
@@ -127,21 +114,24 @@ impl<
             finished: false,
             dex,
             btl,
-        }
+        })
     }
 
-    pub fn battle<'d>(
+    pub fn battle(
         &mut self,
-        pokedex: &'d dyn Dex<'d, Pokemon, P>,
-        movedex: &'d dyn Dex<'d, Move, M>,
-        itemdex: &'d dyn Dex<'d, Item, I>,
-        player: &mut PlayerCharacter,
-        mut entry: BattleMessage,
+        pokedex: &impl Dex<Pokemon, Output = P>,
+        movedex: &impl Dex<Move, Output = M>,
+        itemdex: &impl Dex<Item, Output = I>,
+        player: &InitPlayerCharacter<P, M, I>,
     ) -> bool {
         // add battle type parameter
         self.finished = false;
         self.state = BattleManagerState::default();
         self.player.reset();
+        let entry = match player.state.battle.battling.as_ref() {
+            Some(entry) => entry,
+            None => return false,
+        };
         let empty = player.trainer.party.is_empty() || entry.party.is_empty();
         (!(empty ||
             // Checks if player has any pokemon in party that aren't fainted (temporary)
@@ -149,21 +139,29 @@ impl<
                 .trainer
                 .party
                 .iter()
-                .any(|pokemon| !pokemon.fainted())))
+                .any(|pokemon| !(pokemon.fainted()))))
         .then(|| {
-            if let Some(trainer) = entry.trainer.as_ref() {
-                let mut sprites: HashMap<_, _> = Default::default();
-                sprites.insert(entry.id, trainer.sprite);
-                self.player.set_next_groups(sprites);
-            }
-
             let player = PlayerData {
                 id: BattleId::Player,
-                name: Some(player.name.clone()),
-                party: player.trainer.party.clone(),
-                bag: player.trainer.bag.clone(),
+                name: Some(player.character.name.clone()),
+                party: player
+                    .trainer
+                    .party
+                    .iter()
+                    .cloned()
+                    .map(|p| p.uninit())
+                    .collect(),
+                bag: player
+                    .trainer
+                    .bag
+                    .iter()
+                    .cloned()
+                    .map(|i| i.uninit())
+                    .collect::<Vec<_>>()
+                    .into(),
                 settings: PlayerSettings { gains_exp: true },
                 endpoint: Box::new(self.player.endpoint().clone()),
+                trainer: None,
             };
 
             let ai = BattleAi::new(SmallRng::seed_from_u64(self.random.next_u64()));
@@ -171,12 +169,25 @@ impl<
             let ai_player = PlayerData {
                 id: entry.id,
                 name: entry.trainer.as_ref().map(|trainer| trainer.name.clone()),
-                party: entry.party,
+                party: entry.party.clone(),
                 bag: entry
                     .trainer
-                    .as_mut()
-                    .map(|trainer| std::mem::take(&mut trainer.bag))
+                    .as_ref()
+                    .map(|trainer| trainer.bag.clone())
                     .unwrap_or_default(),
+                trainer: entry.trainer.as_ref().map(|t| BattleTrainer {
+                    worth: t.worth,
+                    texture: t.sprite,
+                    defeat: t
+                        .defeat
+                        .iter()
+                        .map(|m| MessagePage {
+                            lines: m.lines.clone(),
+                            wait: m.wait,
+                            color: m.color.map(Into::into),
+                        })
+                        .collect(),
+                }),
                 settings: PlayerSettings { gains_exp: false },
                 endpoint: Box::new(ai.endpoint().clone()),
             };
@@ -195,6 +206,7 @@ impl<
                                 }
                             })
                             .unwrap_or(BattleType::Wild),
+                        settings: Default::default(),
                     },
                     &mut self.random,
                     entry.active,
@@ -203,39 +215,35 @@ impl<
                     itemdex,
                     std::iter::once(player).chain(std::iter::once(ai_player)),
                 ),
-                trainer: entry.trainer,
+                trainer: entry.trainer.clone(),
                 ai,
             });
         });
         self.battle.is_some()
     }
 
-    pub fn update<'d>(
+    pub fn update(
         &mut self,
-        ctx: &mut Context,
-        eng: &mut EngineContext,
-        pokedex: &'d dyn Dex<'d, Pokemon, P>,
-        movedex: &'d dyn Dex<'d, Move, M>,
-        itemdex: &'d dyn Dex<'d, Item, I>,
-        delta: f32,
+        app: &mut App,
+        plugins: &mut Plugins,
+        pokedex: &impl Dex<Pokemon, Output = P>,
+        movedex: &impl Dex<Move, Output = M>,
+        itemdex: &impl Dex<Item, Output = I>,
     ) {
-        if is_key_pressed(ctx, Key::F1) {
+        if app
+            .keyboard
+            .was_pressed(worldcli::engine::notan::prelude::KeyCode::F1)
+        {
             // exit shortcut
             self.end();
             return;
         }
         if let Some(battle) = &mut self.battle {
-            self.player.process(
-                &mut self.random,
-                &self.dex,
-                &self.btl,
-                pokedex,
-                movedex,
-                itemdex,
-            );
+            self.player
+                .process(&mut self.random, &self.btl, pokedex, movedex, itemdex);
             match self.state {
                 BattleManagerState::Begin => {
-                    self.player.gui.reset();
+                    self.player.reset_gui();
                     self.state = BattleManagerState::Transition;
                     self.transition.state = TransitionState::Begin;
 
@@ -243,24 +251,24 @@ impl<
 
                     // self.player.on_begin(dex);
 
-                    self.update(ctx, eng, pokedex, movedex, itemdex, delta);
+                    self.update(app, plugins, pokedex, movedex, itemdex);
                 }
                 BattleManagerState::Transition => match self.transition.state {
                     TransitionState::Begin => {
                         self.transition.begin(
-                            ctx,
-                            eng,
-                            self.player.local.as_ref().unwrap().data.type_,
+                            app,
+                            plugins,
+                            self.player.data().unwrap().type_,
                             &battle.trainer,
                         );
-                        self.update(ctx, eng, pokedex, movedex, itemdex, delta);
+                        self.update(app, plugins, pokedex, movedex, itemdex);
                     }
-                    TransitionState::Run => self.transition.update(ctx, delta),
+                    TransitionState::Run => self.transition.update(app.timer.delta_f32()),
                     TransitionState::End => {
                         self.transition.end();
                         self.state = BattleManagerState::Battle;
                         self.player.start(true);
-                        self.update(ctx, eng, pokedex, movedex, itemdex, delta);
+                        self.update(app, plugins, pokedex, movedex, itemdex);
                     }
                 },
                 BattleManagerState::Battle => {
@@ -268,54 +276,37 @@ impl<
                         battle.update(
                             &mut self.random,
                             &mut self.engine,
-                            delta,
+                            // app.timer.delta_f32(),
                             pokedex,
                             movedex,
                             itemdex,
                         );
                     }
 
-                    self.player
-                        .update(ctx, eng, &self.dex, pokedex, movedex, itemdex, delta);
+                    self.player.update(
+                        app,
+                        plugins,
+                        &self.dex,
+                        pokedex,
+                        movedex,
+                        itemdex,
+                        app.timer.delta_f32(),
+                    );
 
-                    if let Some(winner) = self.player.winner().flatten() {
-                        self.state = BattleManagerState::Closer(*winner);
-                    }
-                }
-                BattleManagerState::Closer(winner) => match self.closer.state {
-                    TransitionState::Begin => {
-                        let local = self.player.local.as_ref().unwrap();
-                        self.closer.begin(
-                            &self.dex,
-                            local.data.type_,
-                            local.player.id(),
-                            local.player.name(),
-                            Some(&winner),
-                            battle.trainer.as_ref(),
-                            &mut self.player.gui.text,
-                        );
-                        self.update(ctx, eng, pokedex, movedex, itemdex, delta);
-                    }
-                    TransitionState::Run => {
-                        self.closer
-                            .update(ctx, eng, delta, &mut self.player.gui.text)
-                    }
-                    TransitionState::End => {
-                        self.closer.end();
-                        self.state = BattleManagerState::default();
+                    if self.player.finished() {
                         self.finished = true;
                     }
-                },
+                }
             }
         }
     }
 
     pub fn winner(&self) -> Option<&BattleId> {
-        self.battle.as_ref().map(|b| b.battle.winner()).flatten()
+        self.battle.as_ref().and_then(|b| b.battle.winner())
     }
 
     pub fn world_active(&self) -> bool {
-        matches!(self.state, BattleManagerState::Transition) || self.closer.world_active()
+        matches!(self.state, BattleManagerState::Transition) || self.player.world_active()
     }
 
     pub fn seed(&mut self, seed: u64) {
@@ -328,33 +319,42 @@ impl<
         match self.state {
             BattleManagerState::Begin => (),
             BattleManagerState::Transition => self.transition.state = TransitionState::Begin,
-            BattleManagerState::Battle => self.battle = None,
-            BattleManagerState::Closer(..) => self.closer.state = TransitionState::Begin,
-        }
-    }
-
-    pub fn draw(&self, ctx: &mut Context, eng: &mut EngineContext) {
-        if self.battle.is_some() {
-            match self.state {
-                BattleManagerState::Begin => (),
-                BattleManagerState::Transition => self.transition.draw(ctx),
-                BattleManagerState::Battle => self.player.draw(ctx, eng, &self.dex),
-                BattleManagerState::Closer(..) => {
-                    if !matches!(self.closer.state, TransitionState::End) {
-                        if !self.world_active() {
-                            self.player.gui.background.draw(ctx, 0.0);
-                            self.player.gui.draw_panel(ctx);
-                            self.player.draw(ctx, eng, &self.dex);
-                            for active in self.player.local.as_ref().unwrap().renderer.iter() {
-                                active.pokemon.draw(ctx, Vec2::ZERO, Color::WHITE);
-                            }
-                            self.closer.draw_battle(ctx);
-                            self.player.gui.text.draw(ctx, eng);
-                        }
-                        self.closer.draw(ctx);
-                    }
+            BattleManagerState::Battle => {
+                if let Some(battle) = self.battle.as_mut() {
+                    battle.battle.end(None);
+                } else {
+                    self.player.forfeit();
                 }
             }
         }
+    }
+
+    pub fn ui(
+        &mut self,
+        app: &mut App,
+        plugins: &mut Plugins,
+        egui: &crate::engine::notan::egui::Context,
+    ) {
+        if self.battle.is_some() {
+            match self.state {
+                BattleManagerState::Begin | BattleManagerState::Transition => (),
+                BattleManagerState::Battle => self.player.ui(app, plugins, egui),
+            }
+        }
+    }
+
+    pub fn draw(&self, gfx: &mut Graphics) {
+        let mut draw = gfx.create_draw();
+        let draw = &mut draw;
+        draw.set_size(crate::WIDTH, crate::HEIGHT);
+        draw.clear(Color::BLACK);
+        if self.battle.is_some() {
+            match self.state {
+                BattleManagerState::Begin => (),
+                BattleManagerState::Transition => self.transition.draw(draw),
+                BattleManagerState::Battle => self.player.draw(draw),
+            }
+        }
+        gfx.render(draw);
     }
 }

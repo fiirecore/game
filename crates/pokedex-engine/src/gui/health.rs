@@ -1,10 +1,9 @@
 use engine::{
-    graphics::draw_rectangle,
-    graphics::{Color, DrawParams, Texture},
+    graphics::{Color, Texture},
     gui::ProgressBar,
     math::Vec2,
-    Context,
 };
+use firecore_engine::notan::draw::{Draw, DrawImages, DrawShapes};
 
 use crate::data::PokedexClientData;
 
@@ -25,18 +24,18 @@ impl HealthBar {
     pub const WIDTH: f32 = 48.0;
 
     pub const GREEN: &'static HealthBarColor = &HealthBarColor {
-        upper: Color::rgb(88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0),
-        lower: Color::rgb(112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0),
+        upper: Color::new(88.0 / 255.0, 208.0 / 255.0, 128.0 / 255.0, 1.0),
+        lower: Color::new(112.0 / 255.0, 248.0 / 255.0, 168.0 / 255.0, 1.0),
     };
 
     pub const YELLOW: &'static HealthBarColor = &HealthBarColor {
-        upper: Color::rgb(200.0 / 255.0, 168.0 / 255.0, 8.0 / 255.0),
-        lower: Color::rgb(248.0 / 255.0, 224.0 / 255.0, 56.0 / 255.0),
+        upper: Color::new(200.0 / 255.0, 168.0 / 255.0, 8.0 / 255.0, 1.0),
+        lower: Color::new(248.0 / 255.0, 224.0 / 255.0, 56.0 / 255.0, 1.0),
     };
 
     pub const RED: &'static HealthBarColor = &HealthBarColor {
-        upper: Color::rgb(168.0 / 255.0, 64.0 / 255.0, 72.0 / 255.0),
-        lower: Color::rgb(248.0 / 255.0, 88.0 / 255.0, 56.0 / 255.0),
+        upper: Color::new(168.0 / 255.0, 64.0 / 255.0, 72.0 / 255.0, 1.0),
+        lower: Color::new(248.0 / 255.0, 88.0 / 255.0, 56.0 / 255.0, 1.0),
     };
 
     pub fn new(ctx: &PokedexClientData) -> Self {
@@ -77,13 +76,14 @@ impl HealthBar {
         self.bar.update(delta)
     }
 
-    pub fn draw(&self, ctx: &mut Context, origin: Vec2) {
-        self.draw_width(ctx, origin, self.bar.width().ceil());
+    pub fn draw(&self, draw: &mut Draw, origin: Vec2) {
+        self.draw_width(draw, origin, self.bar.width().ceil());
     }
 
-    pub fn draw_width(&self, ctx: &mut Context, origin: Vec2, width: f32) {
+    pub fn draw_width(&self, draw: &mut Draw, origin: Vec2, width: f32) {
         if let Some(background) = self.background.as_ref() {
-            background.draw(ctx, origin.x, origin.y, DrawParams::default());
+            draw.image(background).position(origin.x, origin.y);
+            // background.draw(ctx, origin.x, origin.y, DrawParams::default());
         }
         let x = origin.x + 15.0;
         let color = if width < Self::WIDTH / 8.0 {
@@ -94,7 +94,11 @@ impl HealthBar {
             Self::GREEN
         };
         let width = width.clamp(0.0, Self::WIDTH);
-        draw_rectangle(ctx, x, origin.y + 2.0, width, 1.0, color.upper);
-        draw_rectangle(ctx, x, origin.y + 3.0, width, 2.0, color.lower);
+        draw.rect((x, origin.y + 2.0), (width, 1.0))
+            .color(color.upper);
+        draw.rect((x, origin.y + 3.0), (width, 2.0))
+            .color(color.lower);
+        // draw_rectangle(ctx, x, origin.y + 2.0, width, 1.0, color.upper);
+        // draw_rectangle(ctx, x, origin.y + 3.0, width, 2.0, color.lower);
     }
 }

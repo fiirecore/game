@@ -3,25 +3,29 @@ pub(crate) mod backend;
 
 pub mod error;
 
-pub type MusicId = tinystr::TinyStr16;
-pub type SoundId = tinystr::TinyStr8;
-pub type SoundVariant = Option<u16>;
+pub use firecore_audio::*;
 
-use crate::{Context, EngineContext};
+use notan::{app::App, prelude::Plugins};
+
+#[cfg(feature = "audio")]
+use notan::log::{error, warn};
 
 #[cfg_attr(not(feature = "audio"), allow(unused_variables))]
-pub fn play_music(ctx: &mut Context, eng: &mut EngineContext, id: &MusicId) {
+pub fn play_music(app: &mut App, plugins: &mut Plugins, id: &MusicId) {
     #[cfg(feature = "audio")]
-    if let Err(err) = backend::music::play_music(ctx, eng, id) {
-        crate::log::warn!("Could not play music id {} with error {}", id, err);
+    if let Err(err) = backend::music::play_music(app, plugins, id) {
+        warn!("Could not play music id {} with error {}", id, err);
     }
 }
 
 #[cfg_attr(not(feature = "audio"), allow(unused_variables))]
-pub fn get_current_music(eng: &EngineContext) -> Option<&MusicId> {
+pub fn get_current_music(plugins: &Plugins) -> Option<MusicId> {
     #[cfg(feature = "audio")]
     {
-        eng.audio.current_music.as_ref().map(|(id, _)| id)
+        plugins
+            .get::<backend::AudioContext>()
+            .map(|actx| actx.current_music.as_ref().map(|(id, _)| *id))
+            .flatten()
     }
     #[cfg(not(feature = "audio"))]
     {
@@ -30,36 +34,40 @@ pub fn get_current_music(eng: &EngineContext) -> Option<&MusicId> {
 }
 
 #[cfg_attr(not(feature = "audio"), allow(unused_variables))]
-pub fn stop_music(ctx: &mut Context, eng: &mut EngineContext) {
+pub fn stop_music(app: &mut App, plugins: &mut Plugins) {
     #[cfg(feature = "audio")]
-    backend::music::stop_music(ctx, eng);
+    backend::music::stop_music(app, plugins);
 }
 
 #[cfg_attr(not(feature = "audio"), allow(unused_variables))]
-pub fn play_sound(ctx: &mut Context, eng: &mut EngineContext, sound: &SoundId, variant: Option<u16>) {
+pub fn play_sound(app: &mut App, plugins: &Plugins, sound: SoundId, variant: SoundVariant) {
     #[cfg(feature = "audio")]
-    if let Err(err) = backend::sound::play_sound(ctx, eng, sound, variant) {
-        crate::log::warn!(
+    if let Err(err) = backend::sound::play_sound(app, plugins, sound, variant) {
+        warn!(
             "Could not play sound {}, variant {:?} with error {}",
-            sound,
-            variant,
-            err
+            sound, variant, err
         );
     }
 }
 
 #[allow(unused_variables)]
-pub fn add_music(ctx: &mut Context, eng: &mut EngineContext, id: MusicId, data: Vec<u8>) {
+pub fn add_music(app: &mut App, plugins: &mut Plugins, id: MusicId, data: Vec<u8>) {
     #[cfg(feature = "audio")]
-    if let Err(err) = backend::music::add_music(&mut eng.audio.music, id, data) {
-        crate::log::error!("Cannot add audio with error {}", err)
+    if let Err(err) = backend::music::add_music(app, plugins, id, data) {
+        error!("Cannot add audio with error {}", err)
     }
 }
 
 #[allow(unused_variables)]
-pub fn add_sound(ctx: &mut Context, eng: &mut EngineContext, id: SoundId, variant: Option<u16>, data: Vec<u8>) {
+pub fn add_sound(
+    app: &mut App,
+    plugins: &mut Plugins,
+    id: SoundId,
+    variant: SoundVariant,
+    data: Vec<u8>,
+) {
     #[cfg(feature = "audio")]
-    if let Err(err) = backend::sound::add_sound(&mut eng.audio.sounds, id, variant, data) {
-        crate::log::error!("Cannot add sound with error {}", err);
+    if let Err(err) = backend::sound::add_sound(app, plugins, id, variant, data) {
+        error!("Cannot add sound with error {}", err);
     }
 }

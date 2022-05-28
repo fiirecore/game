@@ -1,9 +1,5 @@
 #[cfg(feature = "io")]
-extern crate firecore_engine as engine;
-
-#[cfg(feature = "io")]
 use {
-    engine::{fs::read, log::warn},
     serde::{de::DeserializeOwned, Serialize},
 };
 
@@ -29,24 +25,25 @@ pub trait DataSerializer {
 }
 
 #[cfg(feature = "io")]
-pub async fn get<T: DeserializeOwned>(
+pub fn get<T: DeserializeOwned>(
     path: impl AsRef<std::path::Path>,
 ) -> Result<T, error::DataError> {
-    let bytes = read(path).await?;
+    let bytes = std::fs::read(path)?;
     Ok(from_bytes::<T>(&bytes)?)
 }
 
 #[cfg(feature = "io")]
-pub async fn try_load<S: DataSerializer, D: PersistantData>(
+pub fn try_load<S: DataSerializer, D: PersistantData>(
     publisher: Option<&str>,
     application: &str,
 ) -> Result<D, error::DataError> {
+
     let path = crate::directory(false, publisher, application)?.join(file::<S, D>());
     #[cfg(not(target_arch = "wasm32"))]
     {
         let data = match path.exists() {
             true => {
-                let data = read(&path).await?;
+                let data = std::fs::read(&path)?;
                 S::deserialize(&data)?
             }
             false => {
@@ -54,7 +51,6 @@ pub async fn try_load<S: DataSerializer, D: PersistantData>(
                 if let Err(err) = save::<S, D>(&data, publisher, application) {
                     let name = std::any::type_name::<D>();
                     let name = name.split("::").last().unwrap_or(name);
-                    warn!("Could not save new {} with error {}", name, err);
                 }
                 data
             }
@@ -63,18 +59,16 @@ pub async fn try_load<S: DataSerializer, D: PersistantData>(
     }
     #[cfg(target_arch = "wasm32")]
     {
-        let data = quad_storage::STORAGE
-            .lock()
-            .map_err(|_| error::DataError::QuadStorageError)?
-            .get(D::path());
+        use general_storage_web::Storage;
+        let data = general_storage_web::LocalStorage::new().load_raw(D::path());
         match data {
-            Some(data) => Ok(S::deserialize(&base64::decode(data)?)?),
-            None => {
+            Ok(data) => Ok(S::deserialize(&data)?),
+            Err(err) => {
                 let data = D::default();
                 if let Err(err) = save::<S, D>(&data, publisher, application) {
                     let name = std::any::type_name::<D>();
                     let name = name.split("::").last().unwrap_or(name);
-                    warn!("Could not save new {} with error {}", name, err);
+                    // warn!("Could not save new {} with error {}", name, err);
                 }
                 Ok(data)
             }
@@ -93,6 +87,7 @@ pub fn save<S: DataSerializer, D: PersistantData>(
     publisher: Option<&str>,
     application: &str,
 ) -> Result<(), error::DataError> {
+
     let data = S::serialize(data)?;
 
     #[cfg(not(target_arch = "wasm32"))]
@@ -109,10 +104,8 @@ pub fn save<S: DataSerializer, D: PersistantData>(
 
     #[cfg(target_arch = "wasm32")]
     {
-        quad_storage::STORAGE
-            .lock()
-            .map_err(|_| error::DataError::QuadStorageError)?
-            .set(D::path(), &base64::encode(data));
+        use general_storage_web::Storage;
+        general_storage_web::LocalStorage::new().store_raw(D::path(), data);
     }
 
     Ok(())
