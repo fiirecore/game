@@ -3,7 +3,7 @@ use notan::{
     prelude::{App, Plugins},
 };
 
-use firecore_text::MessageState;
+use text::MessageStates;
 
 use crate::controls::{pressed, Control};
 
@@ -14,13 +14,13 @@ impl MessageBox {
         app: &App,
         plugins: &mut Plugins,
         egui: &egui::Context,
-        state: &mut Option<MessageState<C>>,
+        state: &mut MessageStates<C>,
     ) {
-        if state.is_some() {
+        if state.is_running() {
             egui::Window::new("Message Box")
                 .title_bar(false)
                 .show(egui, |ui| {
-                    if let Some(message) = state {
+                    if let MessageStates::Running(message) = state {
                         if let Some(page) = message.pages.get(message.page) {
                             if page.lines.len() == 0 {
                                 message.page += 1;
@@ -80,7 +80,10 @@ impl MessageBox {
                                                 message.waiting = false;
                                                 match message.page + 1 >= message.pages() {
                                                     true => {
-                                                        *state = None;
+                                                        *state = match message.cooldown {
+                                                            Some(cooldown) => MessageStates::Finished(cooldown),
+                                                            None => MessageStates::None,
+                                                        };                                                        
                                                         return;
                                                     }
                                                     false => {
@@ -96,7 +99,10 @@ impl MessageBox {
                                             {
                                                 message.waiting = false;
                                                 if message.page + 1 >= message.pages() {
-                                                    *state = None;
+                                                    *state = match message.cooldown {
+                                                        Some(cooldown) => MessageStates::Finished(cooldown),
+                                                        None => MessageStates::None,
+                                                    }; 
                                                 } else {
                                                     message.page += 1;
                                                     message.reset_page();
@@ -107,7 +113,10 @@ impl MessageBox {
                                 }
                             }
                         } else {
-                            *state = None;
+                            *state = match message.cooldown {
+                                Some(cooldown) => MessageStates::Finished(cooldown),
+                                None => MessageStates::None,
+                            }; 
                         }
                     }
                 });

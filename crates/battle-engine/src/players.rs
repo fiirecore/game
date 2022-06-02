@@ -12,8 +12,6 @@ use crate::BattleTrainer;
 
 type PlayerParty<ID, P> = battle::party::PlayerParty<ID, usize, P, BattleTrainer>;
 
-pub type InitLocalPlayer<ID, P, M, I> = PlayerParty<ID, OwnedPokemon<P, M, I>>;
-
 pub type GuiRemotePlayer<ID, P> = PlayerParty<ID, Option<UnknownPokemon<P>>>;
 
 pub struct GuiLocalPlayer<

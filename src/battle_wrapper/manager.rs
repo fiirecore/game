@@ -1,33 +1,40 @@
 use rand::{prelude::SmallRng, RngCore, SeedableRng};
-use std::{ops::Deref, rc::Rc};
+use std::ops::Deref;
 
 use battlecli::battle::{
     default_engine::{scripting::MoveScripts, EngineMoves},
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
+    pokemon::PokemonIdentifier,
     prelude::{
-        Battle, BattleAi, BattleData, BattleType, DefaultEngine, PlayerData, PlayerSettings,
+        Battle, BattleAi, BattleData, BattleType, DefaultEngine, EndMessage, PlayerData,
+        PlayerSettings,
     },
 };
 use worldcli::{engine::text::MessagePage, worldlib::character::player::InitPlayerCharacter};
 
-use crate::engine::{
-    graphics::{Color, CreateDraw, Graphics},
-    App, Plugins,
+use crate::{
+    command::CommandProcessor,
+    engine::{
+        graphics::{Color, CreateDraw, Graphics},
+        App, Plugins,
+    },
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
 };
 
 use worldcli::worldlib::map::battle::BattleId;
 
 use crate::pokengine::PokedexClientData;
 
-use firecore_battle_engine::{BattleTrainer, BattleGuiData, BattlePlayerGui};
+use firecore_battle_engine::{BattleGuiData, BattlePlayerGui, BattleTrainer};
 
 use super::GameBattleWrapper;
 
+mod command;
 pub mod transitions;
 
 use transitions::managers::transition::BattleScreenTransitionManager;
 
 pub struct BattleManager<
+    D: Deref<Target = PokedexClientData> + Clone,
     P: Deref<Target = Pokemon> + Clone,
     M: Deref<Target = Move> + Clone,
     I: Deref<Target = Item> + Clone,
@@ -38,16 +45,16 @@ pub struct BattleManager<
 
     battle: Option<GameBattleWrapper<P, M, I>>,
 
-    dex: Rc<PokedexClientData>,
     btl: BattleGuiData,
 
     transition: BattleScreenTransitionManager,
 
-    player: BattlePlayerGui<BattleId, Rc<PokedexClientData>, P, M, I>,
+    player: BattlePlayerGui<BattleId, D, P, M, I>,
 
     seed: u64,
-
     random: SmallRng,
+
+    commands: CommandProcessor,
 
     pub finished: bool,
 }
@@ -79,16 +86,18 @@ impl Default for BattleManagerState {
 }
 
 impl<
+        D: Deref<Target = PokedexClientData> + Clone,
         P: Deref<Target = Pokemon> + Clone,
         M: Deref<Target = Move> + Clone,
         I: Deref<Target = Item> + Clone,
-    > BattleManager<P, M, I>
+    > BattleManager<D, P, M, I>
 {
     pub fn new(
         gfx: &mut Graphics,
         btl: BattleGuiData,
-        dex: Rc<PokedexClientData>,
+        dex: D,
         data: (EngineMoves, MoveScripts),
+        commands: CommandProcessor,
     ) -> Result<Self, String> {
         let mut engine = DefaultEngine::new::<BattleId, SmallRng>();
 
@@ -111,8 +120,9 @@ impl<
 
             random: SmallRng::seed_from_u64(0),
 
+            commands,
+
             finished: false,
-            dex,
             btl,
         })
     }
@@ -226,6 +236,7 @@ impl<
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
+        player: &mut InitPlayerCharacter<P, M, I>,
         pokedex: &impl Dex<Pokemon, Output = P>,
         movedex: &impl Dex<Move, Output = M>,
         itemdex: &impl Dex<Item, Output = I>,
@@ -236,7 +247,28 @@ impl<
         {
             // exit shortcut
             self.end();
+            self.player.reset();
+            player.state.battle.battling = None;
+            player.character.locked.clear();
+            player.character.input_lock.clear();
             return;
+        }
+
+        while let Some(command) = self.commands.commands.borrow_mut().pop() {
+            match Self::process(command) {
+                Ok(command) => match command {
+                    command::BattleCommand::Faint(id, index) => {
+                        if let Some(battle) = self.battle.as_mut().map(|b| &mut b.battle) {
+                            match index {
+                                Some(index) => battle.faint(PokemonIdentifier(id, index)),
+                                None => battle.remove(&id, EndMessage::Lose),
+                            }
+                        }
+                    }
+                    command::BattleCommand::End => todo!(),
+                },
+                Err(_) => todo!(),
+            }
         }
         if let Some(battle) = &mut self.battle {
             self.player
@@ -251,7 +283,7 @@ impl<
 
                     // self.player.on_begin(dex);
 
-                    self.update(app, plugins, pokedex, movedex, itemdex);
+                    self.update(app, plugins, player, pokedex, movedex, itemdex);
                 }
                 BattleManagerState::Transition => match self.transition.state {
                     TransitionState::Begin => {
@@ -261,14 +293,14 @@ impl<
                             self.player.data().unwrap().type_,
                             &battle.trainer,
                         );
-                        self.update(app, plugins, pokedex, movedex, itemdex);
+                        self.update(app, plugins, player, pokedex, movedex, itemdex);
                     }
                     TransitionState::Run => self.transition.update(app.timer.delta_f32()),
                     TransitionState::End => {
                         self.transition.end();
                         self.state = BattleManagerState::Battle;
                         self.player.start(true);
-                        self.update(app, plugins, pokedex, movedex, itemdex);
+                        self.update(app, plugins, player, pokedex, movedex, itemdex);
                     }
                 },
                 BattleManagerState::Battle => {
@@ -286,7 +318,6 @@ impl<
                     self.player.update(
                         app,
                         plugins,
-                        &self.dex,
                         pokedex,
                         movedex,
                         itemdex,

@@ -98,6 +98,14 @@ impl<P, B: Default> PlayerCharacter<P, B> {
             None => None,
         };
 
+        if let text::MessageStates::Finished(cooldown) = &mut self.state.message {
+            *cooldown -= delta;
+            if *cooldown <= 0.0 {
+                self.state.message = text::MessageStates::None;
+                self.character.input_lock.decrement();
+            }
+        }
+
         i
     }
 

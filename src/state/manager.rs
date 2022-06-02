@@ -13,9 +13,9 @@ use crate::{
     },
     load::LoadData,
     pokedex::{item::Item, moves::Move, pokemon::Pokemon},
+    pokengine::PokedexClientData,
     saves::Player,
     state::MainStates,
-    touchscreen::Touchscreen,
 };
 
 use super::{
@@ -35,7 +35,7 @@ pub struct StateManager<
 
     loading: LoadingStateManager,
     title: TitleState,
-    game: GameStateInit<P, M, I>,
+    game: GameStateInit<Rc<PokedexClientData>, P, M, I>,
 
     console: Console,
 
@@ -48,6 +48,7 @@ pub struct StateManager<
 }
 
 enum GameStateInit<
+    D: Deref<Target = PokedexClientData> + Clone,
     P: Deref<Target = Pokemon> + Clone,
     M: Deref<Target = Move> + Clone,
     I: Deref<Target = Item> + Clone,
@@ -58,7 +59,7 @@ enum GameStateInit<
         crate::command::CommandProcessor,
         u8,
     ),
-    Init(GameStateManager<P, M, I>),
+    Init(GameStateManager<D, P, M, I>),
     None,
 }
 
@@ -113,7 +114,10 @@ impl<
 
             console,
 
-            save: save::PlayerSave::None,
+            save: firecore_storage::try_load::<firecore_storage::RonSerializer, Player>(
+                Some(crate::PUBLISHER),
+                crate::APPLICATION,
+            ).map_err(|err| err.to_string()).map(save::PlayerSave::Uninit).unwrap_or(save::PlayerSave::None),
             // load
             //     .save
             //     .map(save::PlayerSave::Uninit)
@@ -223,12 +227,16 @@ impl<
                         if let GameStateInit::Uninit(debug_font, sender, processor, seed) = game {
                             self.game = GameStateInit::Init({
                                 let btl = firecore_battle_engine::BattleGuiData::new(gfx).unwrap();
+                                let dex = Rc::new(
+                                    PokedexClientData::build(app, plugins, gfx, data.dex).unwrap(),
+                                );
+                                for (id, data) in data.audio {
+                                    crate::engine::music::add_music(app, plugins, id, data);
+                                }
                                 let mut game = GameStateManager::new(
-                                    app,
                                     gfx,
-                                    plugins,
                                     debug_font,
-                                    data.dex,
+                                    dex,
                                     btl,
                                     data.world,
                                     data.battle,
@@ -239,6 +247,8 @@ impl<
                                 game.seed(seed as _);
                                 game
                             });
+                        } else {
+                            unreachable!();
                         }
                     }
                 }
@@ -310,6 +320,7 @@ impl<
                 _ => (),
             }
 
+            #[cfg(target_arch = "wasm32")]
             Touchscreen::ui(egui, plugins2);
 
             self.console.ui::<P, M, I>(app, egui, self.save.as_mut());
@@ -329,15 +340,23 @@ impl<
                     self.save = save::PlayerSave::Uninit(Player::new("Red", "Blue"));
                 }
                 StateMessage::SaveToDisk => {
-                    // if let Some(save) = self.save.cloned_uninit() {
-                    //     if let Err(err) = storage::save::<storage::RonSerializer, Player>(
-                    //         &save,
-                    //         crate::PUBLISHER,
-                    //         crate::APPLICATION,
-                    //     ) {
-                    //         error!("Cannot write save with error {}", err);
-                    //     }
-                    // }
+                    if let Some(save) = self.save.cloned_uninit() {
+                        use firecore_storage as storage;
+
+                        impl storage::PersistantData for Player {
+                            fn path() -> &'static str {
+                                "save"
+                            }
+                        }
+
+                        if let Err(err) = storage::save::<storage::RonSerializer, Player>(
+                            &save,
+                            Some(crate::PUBLISHER),
+                            crate::APPLICATION,
+                        ) {
+                            crate::engine::log::error!("Cannot write save with error {}", err);
+                        }
+                    }
                 }
                 StateMessage::Seed(seed) => match &mut self.game {
                     GameStateInit::Uninit(.., s) => *s = seed,

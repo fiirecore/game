@@ -15,30 +15,38 @@ use crate::{
     ui::{text::BattleMessageState, BattleGui},
 };
 
-#[derive(Default)]
-pub struct BattleCloser {
+pub struct BattleCloser<D: Deref<Target = PokedexClientData> + Clone> {
+    dexengine: D,
     alive: bool,
     trainer: Option<Texture>,
     offset: f32,
     alpha: f32,
 }
 
-impl BattleCloser {
+impl<D: Deref<Target = PokedexClientData> + Clone> BattleCloser<D> {
     const XPOS: f32 = 172.0; // 144 = pokemon
+
+    pub fn new(dexengine: D) -> Self {
+        Self {
+            dexengine,
+            alive: Default::default(),
+            trainer: Default::default(),
+            offset: Default::default(),
+            alpha: Default::default(),
+        }
+    }
 
     pub fn spawn<
         ID: PartialEq,
-        D: Deref<Target = PokedexClientData> + Clone,
         P: Deref<Target = Pokemon> + Clone,
         M: Deref<Target = Move> + Clone,
         I: Deref<Target = Item> + Clone,
     >(
         &mut self,
-        data: &PokedexClientData,
         local: &GuiLocalPlayer<ID, P, M, I>,
         opponents: &GuiRemotePlayers<ID, P>,
         winner: Option<&ID>,
-        text: &mut Option<BattleMessageState>,
+        text: &mut BattleMessageState,
     ) {
         self.reset();
         self.alive = true;
@@ -63,7 +71,7 @@ impl BattleCloser {
                     Some((.., opponent)) => {
                         if let Some(trainer) = opponent.trainer.as_ref() {
                             self.trainer =
-                                data.trainer_group_textures.get(&trainer.texture).cloned();
+                                self.dexengine.trainer_group_textures.get(&trainer.texture).cloned();
 
                             text.pages.extend_from_slice(&trainer.defeat);
                         }
@@ -91,9 +99,9 @@ impl BattleCloser {
         }
     }
 
-    pub fn update(&mut self, app: &mut App, text: &Option<BattleMessageState>) {
+    pub fn update(&mut self, app: &mut App, text: &BattleMessageState) {
         let delta = app.timer.delta_f32();
-        if let Some(text) = text {
+        if let BattleMessageState::Running(text) = text {
             // text.update(app, plugins, delta);
             if text.page() == 1 && self.offset > Self::XPOS {
                 self.offset += 300.0 * delta;
@@ -112,7 +120,6 @@ impl BattleCloser {
 
     pub fn draw<
         ID,
-        D: Deref<Target = PokedexClientData> + Clone,
         P: Deref<Target = Pokemon> + Clone,
         M: Deref<Target = Move> + Clone,
         I: Deref<Target = Item> + Clone,

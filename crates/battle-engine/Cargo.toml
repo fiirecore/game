@@ -19,8 +19,8 @@ default_engine_scripting = ["firecore-battle/default_engine_scripting"]
 
 [dependencies]
 log = "0.4"
-firecore-battle = { version = "0.0.9", git = "https://github.com/fiirecore/battle", rev = "5f2a664", default-features = false, features = ["mpsc_endpoint"] }
-# firecore-battle = { path = "../../../firecore/battle", default-features = false, features = ["mpsc_endpoint"] }
+# firecore-battle = { version = "0.0.9", git = "https://github.com/fiirecore/battle", rev = "5f2a664", default-features = false, features = ["mpsc_endpoint"] }
+firecore-battle = { path = "../../../firecore/battle", default-features = false, features = ["mpsc_endpoint"] }
 firecore-pokedex-engine = { path = "../pokedex-engine", default-features = false }
 rand = { version = "0.8", default-features = false }
 crossbeam-channel = "0.5"

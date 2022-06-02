@@ -15,7 +15,7 @@ use pokengine::{
     PokedexClientData,
 };
 
-use battle::pokemon::{remote::UnknownPokemon, PokemonIdentifier};
+use battle::pokemon::remote::UnknownPokemon;
 
 use crate::{
     context::BattleGuiData,
@@ -252,16 +252,15 @@ impl PokemonStatusGui {
     }
 
     pub fn ui<
-        ID: core::hash::Hash,
         P: Deref<Target = Pokemon> + Clone,
         M: Deref<Target = Move> + Clone,
         I: Deref<Target = Item> + Clone,
     >(
         ui: &mut egui::Ui,
-        id: &PokemonIdentifier<ID>,
+        hashnum: usize,
         pokemon: &impl GuiPokemonView<P, M, I>,
     ) {
-        egui::Grid::new(id).show(ui, |ui| {
+        egui::Grid::new(("StatusGrid", hashnum)).show(ui, |ui| {
             ui.label(pokemon.name());
             ui.label(format!("{}", pokemon.level()));
             ui.end_row();

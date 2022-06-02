@@ -1,6 +1,5 @@
 use core::ops::Deref;
 
-use battle::pokemon::PokemonIdentifier;
 use pokengine::{
     engine::{
         egui,
@@ -61,16 +60,6 @@ pub struct BattleGuiPositionIndex {
     pub size: usize,
 }
 
-impl BattleGuiPositionIndex {
-    pub const fn new(position: BattleGuiPosition, index: usize, size: usize) -> Self {
-        Self {
-            position,
-            index,
-            size,
-        }
-    }
-}
-
 pub struct BattleGui<
     ID,
     D: Deref<Target = PokedexClientData> + Clone,
@@ -119,18 +108,31 @@ impl<ID, D: Deref<Target = PokedexClientData> + Clone, M: Deref<Target = Move> +
 
     pub fn reset(&mut self) {
         self.bounce.reset();
+        self.panel.reset();
+        self.actions.clear();
+        self.pokemon.reset();
+        self.trainer.reset();
     }
+}
 
-    pub fn status<P: Deref<Target = Pokemon> + Clone, I: Deref<Target = Item> + Clone>(
-        &mut self,
-        egui: &egui::Context,
-        id: &PokemonIdentifier<ID>,
-        pokemon: &impl crate::view::GuiPokemonView<P, M, I>,
-    ) where
+pub struct PokemonStatus;
+
+impl PokemonStatus {
+    pub fn status<
         ID: std::fmt::Display + std::hash::Hash,
-    {
-        egui::Window::new(format!("{}", id))
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+        POK: crate::view::GuiPokemonView<P, M, I>,
+    >(
+        egui: &egui::Context,
+        hashnum: usize,
+        pokemon: &POK,
+    ) {
+        egui::Window::new(format!("Status {}", hashnum))
             .title_bar(false)
-            .show(egui, |ui| pokemon::PokemonStatusGui::ui(ui, id, pokemon));
+            .show(egui, |ui| {
+                pokemon::PokemonStatusGui::ui(ui, hashnum, pokemon)
+            });
     }
 }

@@ -1,13 +1,11 @@
+use std::ops::Deref;
+
 use crate::{
     pokedex::{
-        item::ItemId,
-        pokemon::{stat::Stat, Level, PokemonId},
+        item::{ItemId, ItemStack, SavedItemStack},
+        pokemon::{stat::Stat, Level, PokemonId, owned::SavedPokemon, stat::StatSet},
     },
-};
-
-use crate::pokedex::{
-    item::{ItemStack, SavedItemStack},
-    pokemon::{owned::SavedPokemon, stat::StatSet},
+    pokengine::PokedexClientData,
 };
 
 use worldcli::worldlib::positions::{Location, LocationId};
@@ -43,7 +41,8 @@ pub enum PartyCommand {
 //     List,
 // }
 
-impl WorldWrapper {
+impl<
+D: Deref<Target = PokedexClientData> + Clone,> WorldWrapper<D> {
     pub fn process(result: String) -> Result<WorldCommands, &'static str> {
 
         let mut args = result.split_ascii_whitespace();

@@ -1,4 +1,4 @@
-use std::{ops::Deref, rc::Rc};
+use std::ops::Deref;
 
 use event::EventWriter;
 use worldcli::worldlib::character::trainer::InitTrainer;
@@ -19,16 +19,16 @@ use crate::engine::{
     App, Plugins,
 };
 
-pub struct StartMenu {
+pub struct StartMenu<D: Deref<Target = PokedexClientData> + Clone> {
     alive: bool,
     cursor: usize,
-    party: PartyGui<Rc<PokedexClientData>>,
-    bag: BagGui<Rc<PokedexClientData>>,
+    party: PartyGui<D>,
+    bag: BagGui<D>,
     actions: EventWriter<StateMessage>,
 }
 
-impl StartMenu {
-    pub(crate) fn new(dex: Rc<PokedexClientData>, sender: EventWriter<StateMessage>) -> Self {
+impl<D: Deref<Target = PokedexClientData> + Clone> StartMenu<D> {
+    pub(crate) fn new(dex: D, sender: EventWriter<StateMessage>) -> Self {
         Self {
             alive: false,
             cursor: 0,
@@ -161,7 +161,7 @@ impl StartMenu {
     }
 }
 
-impl Entity for StartMenu {
+impl<D: Deref<Target = PokedexClientData> + Clone> Entity for StartMenu<D> {
     fn spawn(&mut self) {
         self.alive = true;
         self.cursor = 0;

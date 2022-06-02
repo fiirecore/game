@@ -12,7 +12,7 @@ use pokedex::{
     Dex,
 };
 
-use text::{MessagePage, MessageState};
+use text::{MessagePage, MessageState, MessageStates};
 
 use crate::{
     character::{
@@ -170,13 +170,13 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                 const TREE: &ObjectId =
                     unsafe { &ObjectId::from_bytes_unchecked(1701147252u64.to_ne_bytes()) };
                 const CUT: &MoveId =
-                    unsafe { &MoveId::from_bytes_unchecked(7632227u128.to_ne_bytes()) };
+                    unsafe { &MoveId(tinystr::TinyStr16::from_bytes_unchecked(7632227u128.to_ne_bytes())) };
 
                 const ROCK: &ObjectId =
                     unsafe { &ObjectId::from_bytes_unchecked(1801678706u64.to_ne_bytes()) };
                 /// "rock-smash"
                 const ROCK_SMASH: &MoveId = unsafe {
-                    &MoveId::from_bytes_unchecked(493254510180952753532786u128.to_ne_bytes())
+                    &MoveId(tinystr::TinyStr16::from_bytes_unchecked(493254510180952753532786u128.to_ne_bytes()))
                 };
 
                 fn try_break<
@@ -525,7 +525,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                             WorldInstruction::TrainerBattleSingle => {
                                 match player.state.scripts.flags.contains("TEMP_MESSAGE") {
                                     true => {
-                                        if player.state.message.is_none() {
+                                        if !player.state.message.is_running() {
                                             player.state.scripts.flags.remove("TEMP_MESSAGE");
                                             if let Some(entry) = BattleEntry::trainer(
                                                 &mut player.state.battle,
@@ -555,8 +555,8 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                                 .scripts
                                                 .flags
                                                 .insert("TEMP_MESSAGE".to_owned());
-                                            let message = MessageState::new(
-                                                trainer
+                                            let message = MessageState {
+                                                pages: trainer
                                                     .encounter
                                                     .iter()
                                                     .map(|lines| MessagePage {
@@ -575,14 +575,15 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                                             .map(|g| g.message),
                                                     })
                                                     .collect::<Vec<_>>(),
-                                            );
-                                            player.state.message = Some(message);
+                                                    ..Default::default()
+                                                };
+                                            player.state.message = MessageStates::Running(message);
                                         }
                                     }
                                 }
                             }
                             WorldInstruction::Msgbox(m_id, msgbox_type) => {
-                                if player.state.message.is_none() {
+                                if !player.state.message.is_running() {
                                     match player.state.scripts.flags.contains("TEMP_MESSAGE") {
                                         true => {
                                             player.state.scripts.flags.remove("TEMP_MESSAGE");
@@ -590,8 +591,8 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                         }
                                         false => match self.scripts.messages.get(m_id) {
                                             Some(message) => {
-                                                let message = MessageState::new(
-                                                    message
+                                                let message = MessageState {
+                                                    pages: message
                                                         .iter()
                                                         .map(|lines| MessagePage {
                                                             lines: lines
@@ -609,8 +610,9 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                                                 .map(|g| g.message),
                                                         })
                                                         .collect::<Vec<_>>(),
-                                                );
-                                                player.state.message = Some(message);
+                                                        ..Default::default()
+                                                    };
+                                                player.state.message = MessageStates::Running(message);
                                                 player
                                                     .state
                                                     .scripts
@@ -821,7 +823,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                 if Elevation::WATER == code {
                     if player.character.movement != MovementType::Swimming {
                         const SURF: &MoveId =
-                            unsafe { &MoveId::from_bytes_unchecked(1718777203u128.to_ne_bytes()) };
+                            unsafe { &MoveId(tinystr::TinyStr16::from_bytes_unchecked(1718777203u128.to_ne_bytes())) };
 
                         if player
                             .trainer

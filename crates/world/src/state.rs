@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use pokedex::pokemon::owned::SavedPokemon;
 
 use audio::{SoundId, SoundVariant};
-use text::MessageState;
+use text::MessageStates;
 
 use crate::{
     character::npc::{group::MessageColor, trainer::BadgeId, Npc, NpcId},
@@ -22,7 +22,7 @@ pub struct WorldState {
     #[serde(default)]
     pub battle: GlobalBattleState,
     #[serde(default)]
-    pub message: Option<MessageState<MessageColor>>,
+    pub message: MessageStates<MessageColor>,
     #[serde(default)]
     pub npc: GlobalNpcData,
     #[serde(default)]

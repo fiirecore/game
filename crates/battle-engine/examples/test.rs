@@ -1,30 +1,18 @@
-use firecore_battle_engine::pokedex::engine::{
+use firecore_battle_engine::pokengine::engine::{
     self,
-    graphics::{self, Color, ScalingMode},
-    gui::{MessageBox, Panel},
-    text::MessagePage,
-    Context, ContextBuilder, State,
+    graphics::{self, Color, Graphics},
+    gui::MessageBox,
+    text::{MessagePage, MessageState},
 };
-use firecore_pokedex_engine::engine::{EngineContext, text::{MessageState, FontId}};
+use firecore_pokedex_engine::engine::Plugins;
 
 const SCALE: f32 = 2.0;
 
-fn main() {
-    engine::run(
-        ContextBuilder::new(
-            "MessageBox",
-            (SCALE * 240.0) as _,
-            (SCALE * 160.0) as _,
-        ),
-        async {},
-        move |_, _, _| {},
-        |_, _, _| Game::new(),
-    )
-}
+fn main() {}
 
 struct Game {
     messagebox: MessageBox,
-    state: Option<MessageState<FontId, Color>>,
+    state: Option<MessageState<Color>>,
 }
 
 impl Game {
@@ -36,7 +24,7 @@ impl Game {
     }
 }
 
-impl State<EngineContext> for Game {
+impl Game {
     fn start(&mut self, ctx: &mut Context, _: &mut EngineContext) {
         engine::graphics::set_scaling_mode(ctx, ScalingMode::Stretch, Some(SCALE));
 
@@ -47,15 +35,15 @@ impl State<EngineContext> for Game {
                 "Pagé Test Page Test".to_owned(),
             ],
             wait: None,
-            color: Color::RED,
+            color: Some(Color::RED),
         };
         let page2 = MessagePage {
             lines: page.lines.clone(),
             wait: Some(1.0),
-            color: Color::GOLD,
+            color: Some(Color::GOLD),
         };
 
-        self.state = Some(MessageState::new(1, vec![page, page2]));
+        self.state = Some(MessageState::new(vec![page, page2]));
 
         // Ok(())
     }
@@ -68,7 +56,7 @@ impl State<EngineContext> for Game {
         // Ok(())
     }
 
-    fn draw(&mut self, ctx: &mut Context, eng: &mut EngineContext) {
+    pub fn draw(&mut self, plugins: &mut Plugins, gfx: &mut Graphics) {
         //-> Result<(), ()> {
         graphics::clear(ctx, Color::rgb(0.1, 0.2, 0.56));
         Panel::draw(

@@ -1,6 +1,6 @@
 [package]
 name = "pokemon-game"
-version = "0.5.0-beta.2022-05-27"
+version = "0.5.0-beta.2022-06-01"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 license = "CC0-1.0"
@@ -31,15 +31,20 @@ opt-level = "z"
 
 [dependencies]
 
-firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = ["host", "ai", "default_engine_scripting", "audio"] }
+firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = [
+    "host",
+    "ai",
+    "default_engine_scripting",
+    "audio",
+] }
 firecore-world-engine = { path = "crates/world-engine", default-features = false }
-
+firecore-storage = { path = "crates/storage" }
 firecore-event = { path = "crates/event" }
 
 ### Other
 
-serde = { version = "1.0", features = ["derive"] }
-rand = { version = "0.8", features = ["small_rng"]}
+serde = { version = "1", features = ["derive"] }
+rand = { version = "0.8", features = ["small_rng"] }
 tinystr = { version = "0.6", features = ["serde"], default-features = false }
 
 # discord-rich-presence = { version = "0.1", optional = true }
@@ -63,7 +68,8 @@ firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev =
 firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "2809659", package = "firecore-battle-builder" }
 
 firecore-pokedex-engine-builder = { path = "crates/pokedex-engine-builder", default-features = false, features = [
-    "compile", "audio"
+    "compile",
+    "audio",
 ] }
 
 firecore-world-builder = { path = "crates/world-builder", package = "firecore-world-builder" }

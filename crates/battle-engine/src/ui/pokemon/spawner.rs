@@ -1,8 +1,6 @@
-use std::ops::Deref;
-
 use pokengine::{
     engine::{
-        graphics::Texture,
+        graphics::{Color, Texture},
         math::Vec2,
         notan::{
             draw::{Draw, DrawImages, DrawTransform},
@@ -10,26 +8,24 @@ use pokengine::{
         },
         sound::{play_sound, SoundVariant},
     },
-    pokedex::pokemon::{Pokemon, PokemonId},
+    pokedex::pokemon::PokemonId,
     CRY_ID,
 };
 
-use crate::view::BasePokemonView;
-
 #[derive(Clone)]
 pub struct Spawner {
-    pub spawning: SpawnerState,
-    pub texture: Texture,
-    pub id: Option<PokemonId>,
-    pub x: f32,
+    spawning: SpawnerState,
+    pokeball: Texture,
+    id: Option<PokemonId>,
+    x: f32,
 }
 
 #[derive(PartialEq, Clone)]
 pub enum SpawnerState {
-    None,
     Start,
     Throwing,
     Spawning,
+    End,
 }
 
 impl Spawner {
@@ -38,12 +34,12 @@ impl Spawner {
     const OFFSET: f32 = -5.0;
     const PARABOLA_ORIGIN: f32 = (Self::LEN / 3.0);
 
-    pub fn new(texture: Texture, id: Option<PokemonId>) -> Self {
+    pub fn new(pokeball: Texture, id: Option<PokemonId>) -> Self {
         Self {
-            spawning: SpawnerState::None,
+            spawning: SpawnerState::Start,
             x: 0.0,
             id,
-            texture,
+            pokeball,
         }
     }
 
@@ -56,29 +52,19 @@ impl Spawner {
         self.x = 0.0;
     }
 
-    pub fn update<POK: BasePokemonView<P>, P: Deref<Target = Pokemon>>(
-        &mut self,
-        app: &mut App,
-        plugins: &mut Plugins,
-        pokemon: Option<&POK>,
-    ) {
+    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins) -> bool {
         let delta = app.timer.delta_f32();
         match self.spawning {
             SpawnerState::Start => {
                 self.x = Self::ORIGIN;
                 self.spawning = SpawnerState::Throwing;
-                self.update(app, plugins, pokemon);
+                self.update(app, plugins);
             }
             SpawnerState::Throwing => {
                 self.x += delta * 20.0;
                 if self.x > Self::LEN {
-                    if let Some(pokemon) = pokemon {
-                        play_sound(
-                            app,
-                            plugins,
-                            CRY_ID,
-                            SoundVariant::Num(pokemon.pokemon().id as _),
-                        );
+                    if let Some(pokemon) = self.id {
+                        play_sound(app, plugins, CRY_ID, SoundVariant::Num(pokemon as _));
                     }
                     self.spawning = SpawnerState::Spawning;
                     self.x = 0.0;
@@ -87,17 +73,18 @@ impl Spawner {
             SpawnerState::Spawning => {
                 self.x += delta * 1.5;
                 if self.x > 1.0 {
-                    self.spawning = SpawnerState::None;
+                    self.spawning = SpawnerState::End;
                 }
             }
-            SpawnerState::None => (),
+            SpawnerState::End => (),
         }
+        matches!(self.spawning, SpawnerState::End)
     }
 
-    pub fn draw(&self, draw: &mut Draw, origin: Vec2, texture: &Texture) {
+    pub fn draw(&self, draw: &mut Draw, texture: &Texture, origin: Vec2, color: Color) {
         match self.spawning {
             SpawnerState::Throwing => {
-                draw.image(&self.texture)
+                draw.image(&self.pokeball)
                     .position(origin.x + self.x + Self::OFFSET, origin.y + Self::f(self.x))
                     .rotate(self.x);
             }
@@ -112,11 +99,10 @@ impl Spawner {
                 draw.image(texture).position(origin.x, y); // change color of texture when spawning here
                                                            // texture.draw(ctx, , DrawParams::default());
             }
-            SpawnerState::None | SpawnerState::Start => (),
+            SpawnerState::Start => (),
+            SpawnerState::End => {
+                draw.image(texture).position(origin.x, origin.y);
+            }
         }
-    }
-
-    pub fn spawning(&self) -> bool {
-        self.spawning != SpawnerState::None
     }
 }

@@ -3,7 +3,7 @@ use pokengine::{
     engine::{
         egui,
         gui::MessageBox,
-        text::{MessagePage, MessageState},
+        text::{MessagePage, MessageState, MessageStates},
         App, Plugins,
     },
     pokedex::{
@@ -15,18 +15,18 @@ use pokengine::{
     },
 };
 
-pub type BattleMessageState = MessageState<[f32; 4]>;
+pub type BattleMessageState = MessageStates<[f32; 4]>;
 
 pub struct BattleText {
     // text: MessageBox,
-    pub state: Option<BattleMessageState>,
+    pub state: BattleMessageState,
 }
 
 impl BattleText {
     pub fn new() -> Self {
         Self {
             // text: MessageBox::new(vec2(11.0, 11.0 + super::PANEL_Y)),
-            state: None,
+            state: Default::default(),
         }
     }
 
@@ -36,7 +36,7 @@ impl BattleText {
     // }
 
     pub fn alive(&self) -> bool {
-        self.state.is_some()
+        self.state.is_running()
     }
 
     pub fn waiting(&self) -> bool {

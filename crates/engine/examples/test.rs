@@ -1,6 +1,6 @@
 use engine::{
     gui::MessageBox,
-    text::{MessagePage, MessageState},
+    text::{MessagePage, MessageState, MessageStates},
 };
 use firecore_engine as engine;
 use notan::prelude::*;
@@ -46,7 +46,7 @@ fn main() -> Result<(), String> {
 
 #[derive(AppState)]
 struct Game {
-    state: Option<MessageState<Color>>,
+    state: MessageStates<Color>,
 }
 
 impl Game {
@@ -71,7 +71,7 @@ impl Game {
                     color: Some(Color::YELLOW),
                 };
 
-                Some(MessageState::from(vec![page, page2]))
+                MessageStates::Running(MessageState::from(vec![page, page2]))
             },
         }
     }
@@ -80,7 +80,7 @@ impl Game {
 impl Game {
     fn update(app: &mut App, game: &mut Game) {
         //-> Result {
-        if game.state.is_none() {
+        if !game.state.is_running() {
             app.exit();
             // game.messagebox
             //     .update(app, plugins, app.timer.delta_f32(), &mut game.state);

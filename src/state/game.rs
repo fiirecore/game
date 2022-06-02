@@ -1,9 +1,13 @@
-use std::{ops::Deref, rc::Rc};
+use std::ops::Deref;
 
 use crate::{
+    engine::{
+        graphics::{Font, Graphics},
+        music::stop_music,
+        App, Plugins,
+    },
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
-    engine::{graphics::{Graphics, Font}, music::stop_music, App, Plugins},
-    pokengine::{PokedexClientData, SerializedPokedexEngine}
+    pokengine::PokedexClientData,
 };
 
 use battlecli::{
@@ -36,41 +40,38 @@ impl Default for GameStates {
 }
 
 pub(super) struct GameStateManager<
+    D: Deref<Target = PokedexClientData> + Clone,
     P: Deref<Target = Pokemon> + Clone,
     M: Deref<Target = Move> + Clone,
     I: Deref<Target = Item> + Clone,
 > {
     state: GameStates,
 
-    world: WorldWrapper,
-    battle: BattleManager<P, M, I>,
+    world: WorldWrapper<D>,
+    battle: BattleManager<D, P, M, I>,
 }
 
 impl<
+        D: Deref<Target = PokedexClientData> + Clone,
         P: Deref<Target = Pokemon> + Clone,
         M: Deref<Target = Move> + Clone,
         I: Deref<Target = Item> + Clone,
-    > GameStateManager<P, M, I>
+    > GameStateManager<D, P, M, I>
 {
     pub fn new(
-        app: &mut App,
         gfx: &mut Graphics,
-        plugins: &mut Plugins,
         debug_font: Font,
-        dex: SerializedPokedexEngine,
+        dex: D,
         btl: BattleGuiData,
         wrld: SerializedWorld,
         battle: (EngineMoves, MoveScripts),
         sender: EventWriter<StateMessage>,
         commands: CommandProcessor,
     ) -> Result<Self, String> {
-        
-        let dex = Rc::new(PokedexClientData::build(app, plugins, gfx, dex)?);
-
         Ok(Self {
             state: GameStates::default(),
-            world: WorldWrapper::new(gfx, dex.clone(), sender, commands, wrld, debug_font)?,
-            battle: BattleManager::new(gfx, btl, dex, battle)?,
+            world: WorldWrapper::new(gfx, dex.clone(), sender, commands.clone(), wrld, debug_font)?,
+            battle: BattleManager::new(gfx, btl, dex, battle, commands)?,
         })
     }
 
@@ -81,10 +82,11 @@ impl<
 }
 
 impl<
+        D: Deref<Target = PokedexClientData> + Clone,
         P: Deref<Target = Pokemon> + Clone,
         M: Deref<Target = Move> + Clone,
         I: Deref<Target = Item> + Clone,
-    > GameStateManager<P, M, I>
+    > GameStateManager<D, P, M, I>
 {
     pub fn start(&mut self, player: &mut InitPlayerCharacter<P, M, I>) {
         match self.state {
@@ -127,7 +129,8 @@ impl<
                 }
             }
             GameStates::Battle => {
-                self.battle.update(app, plugins, pokedex, movedex, itemdex);
+                self.battle
+                    .update(app, plugins, player, pokedex, movedex, itemdex);
                 if self.battle.finished {
                     if let Some(winner) = self.battle.winner() {
                         let winner = winner == &BattleId::Player;

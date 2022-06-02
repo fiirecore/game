@@ -35,23 +35,6 @@ pub struct PaletteData {
     pub warp: HashMap<TileId, WarpTile>,
 }
 
-// impl PaletteTileData {
-//     pub fn iter<'a>(
-//         tiles: &'a PaletteTileDatas,
-//         palettes: &'a Palettes,
-//     ) -> impl Iterator<Item = &'a PaletteTileData> + 'a {
-//         palettes.iter().flat_map(|p| tiles.get(p))
-//     }
-
-//     pub fn enumerate<'a>(
-//         tiles: &'a PaletteTileDatas,
-//         palettes: &'a Palettes,
-//     ) -> impl Iterator<Item = (PaletteId, &'a PaletteTileData)> + 'a {
-//         palettes.iter().flat_map(|p| tiles.get(p).map(|d| (*p, d)))
-//     }
-
-// }
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MapWildType {
     None,

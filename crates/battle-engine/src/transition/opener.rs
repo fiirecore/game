@@ -50,7 +50,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
     const PLAYER_T1: f32 = 42.0;
     const PLAYER_T2: f32 = Self::PLAYER_T1 + 18.0;
     const PLAYER_T3: f32 = Self::PLAYER_T2 + 18.0;
-    const PLAYER_DESPAWN: f32 = 104.0;
+    const PLAYER_DESPAWN: f32 = -104.0;
     const FINAL_TRAINER_OFFSET: f32 = 126.0;
 
     pub fn new(dexengine: D, ctx: &BattleGuiData) -> Self {
@@ -183,6 +183,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
 
                     },
                     false => {
+                        return true;
                         if let Some((.., remote)) = remotes.players.get_index(remotes.current) {
                             let sent =
                                 Self::concatenate(remote.active_iter().map(|(.., p)| {

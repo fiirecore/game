@@ -1,5 +1,5 @@
 use rand::{prelude::SmallRng, SeedableRng};
-use std::{ops::Deref, rc::Rc};
+use std::ops::Deref;
 
 use worldcli::worldlib::{character::player::InitPlayerCharacter, serialized::SerializedWorld};
 
@@ -28,18 +28,18 @@ use self::{command::WorldCommands, start::StartMenu};
 mod command;
 mod start;
 
-pub struct WorldWrapper {
+pub struct WorldWrapper<D: Deref<Target = PokedexClientData> + Clone> {
     alive: bool,
     pub manager: WorldManager,
-    menu: StartMenu,
+    menu: StartMenu<D>,
     commands: CommandProcessor,
     random: SmallRng,
 }
 
-impl WorldWrapper {
+impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
     pub(crate) fn new(
         gfx: &mut Graphics,
-        dex: Rc<PokedexClientData>,
+        dex: D,
         sender: EventWriter<StateMessage>,
         commands: CommandProcessor,
         world: SerializedWorld,
@@ -76,6 +76,55 @@ impl WorldWrapper {
     ) {
         if pressed(app, plugins, Control::Start) && !player.character.input_lock.active() {
             self.menu.spawn();
+        }
+
+        #[cfg(debug_assertions)]
+        {
+            use crate::engine::notan::prelude::KeyCode;
+            use crate::pokedex::pokemon::owned::SavedPokemon;
+            use rand::Rng;
+            use worldcli::worldlib::map::battle::*;
+            if app.keyboard.was_pressed(KeyCode::F1) {
+                let mut rng = rand::thread_rng();
+                if player.trainer.party.is_empty() {
+                    let pokemon1 = SavedPokemon {
+                        pokemon: rng.gen_range(0..pokedex.len() as u16),
+                        level: 50,
+                        ..Default::default()
+                    };
+                    let pokemon2 = SavedPokemon {
+                        pokemon: rng.gen_range(0..pokedex.len() as u16),
+                        level: 25,
+                        ..Default::default()
+                    };
+                    player
+                        .trainer
+                        .party
+                        .push(pokemon1.init(&mut rng, pokedex, movedex, itemdex).unwrap());
+                    player
+                        .trainer
+                        .party
+                        .push(pokemon2.init(&mut rng, pokedex, movedex, itemdex).unwrap());
+                }
+
+                let pokemon3 = SavedPokemon {
+                    pokemon: rng.gen_range(0..pokedex.len() as u16),
+                    level: 25,
+                    ..Default::default()
+                };
+                let pokemon4 = SavedPokemon {
+                    pokemon: rng.gen_range(0..pokedex.len() as u16),
+                    level: 50,
+                    ..Default::default()
+                };
+
+                player.state.battle.battling = Some(BattleEntry {
+                    id: BattleId::Wild,
+                    party: vec![pokemon3, pokemon4],
+                    active: 2,
+                    trainer: None,
+                });
+            }
         }
 
         self.manager.update(app, plugins, player, itemdex, delta);
@@ -209,7 +258,7 @@ impl WorldWrapper {
     }
 }
 
-impl Entity for WorldWrapper {
+impl<D: Deref<Target = PokedexClientData> + Clone> Entity for WorldWrapper<D> {
     fn spawn(&mut self) {
         self.alive = true;
     }

@@ -70,6 +70,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
     }
 
     pub fn spawn(&mut self, party_only: bool) {
+        self.reset();
         self.state = match party_only {
             true => BattleOptions::PartyOnly,
             false => BattleOptions::Main,
@@ -82,6 +83,10 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
 
     pub fn alive(&self) -> bool {
         !matches!(self.state, BattleOptions::NotAlive)
+    }
+
+    pub fn reset(&mut self) {
+        self.state = BattleOptions::NotAlive;
     }
 
     pub fn ui<
@@ -105,7 +110,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
                 {
                     Some((active, pokemon)) => {
                         if self.moves.alive() {
-                            egui::Window::new("Moves")
+                            return egui::Window::new("Moves")
                                 .title_bar(false)
                                 .show(egui, |ui| {
                                     egui::Grid::new("MoveGrid")
@@ -129,6 +134,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
                                                             self.targets.spawn();
                                                         }
                                                         false => {
+                                                            // println!("untargeted");
                                                             return Some(
                                                                 BattleAction::<ID>::Action(
                                                                     BattleMove::Move(i, None),
