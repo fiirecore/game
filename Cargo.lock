@@ -866,10 +866,11 @@ dependencies = [
 [[package]]
 name = "firecore-battle"
 version = "0.0.9"
+source = "git+https://github.com/fiirecore/battle?rev=54100f1#54100f1758d782206ce6d0f61212ccd707e0655d"
 dependencies = [
  "crossbeam-channel",
  "enum-map",
- "firecore-pokedex 0.0.8",
+ "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=38aa06e)",
  "hashbrown 0.12.1",
  "log",
  "rand",
@@ -921,6 +922,7 @@ version = "0.1.0"
 [[package]]
 name = "firecore-pokedex"
 version = "0.0.8"
+source = "git+https://github.com/fiirecore/pokedex?rev=38aa06e#38aa06ea81fdeff147cd2c512600f7a374300fcb"
 dependencies = [
  "enum-map",
  "hashbrown 0.12.1",
@@ -967,7 +969,7 @@ name = "firecore-pokedex-engine-builder"
 version = "0.0.4"
 dependencies = [
  "enum-map",
- "firecore-pokedex 0.0.8",
+ "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=38aa06e)",
  "hashbrown 0.9.1",
  "serde",
  "tinystr 0.6.0",
@@ -997,7 +999,7 @@ version = "0.5.0-beta.2022-01-01"
 dependencies = [
  "enum-map",
  "firecore-audio",
- "firecore-pokedex 0.0.8",
+ "firecore-pokedex 0.0.8 (git+https://github.com/fiirecore/pokedex?rev=38aa06e)",
  "firecore-text",
  "hashbrown 0.12.1",
  "log",
