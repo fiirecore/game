@@ -52,7 +52,7 @@ tinystr = { version = "0.6", features = ["serde"], default-features = false }
 # [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # pico-args = "0.4"
 
-postcard = { version = "0.7", default-features = false, features = ["alloc"] }
+postcard = { version = "1", default-features = false, features = ["alloc"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 dirs = "4"
@@ -64,8 +64,8 @@ general_storage_web = "0.2"
 
 [build-dependencies]
 
-firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "858d72f", package = "firecore-pokedex-builder" }
-firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "2809659", package = "firecore-battle-builder" }
+firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "4dc9632", package = "firecore-pokedex-builder" }
+firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "d32c6a5", package = "firecore-battle-builder" }
 
 firecore-pokedex-engine-builder = { path = "crates/pokedex-engine-builder", default-features = false, features = [
     "compile",

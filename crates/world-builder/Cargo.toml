@@ -20,7 +20,7 @@ hashbrown = { version = "0.12", features = ["serde"] }
 enum-map = { version = "2", features = ["serde"] }
 
 tinystr = { version = "0.6" }
-image = { version = "0.23", default-features = false, features = [
+image = { version = "0.24", default-features = false, features = [
     "png",
     "tga",
 ] }
