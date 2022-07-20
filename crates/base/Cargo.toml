@@ -1,5 +1,5 @@
 [package]
-name = "firecore-engine"
+name = "firecore-base"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,24 +10,13 @@ gamepad = []#"fiirengine/gamepad"]
 
 [dependencies]
 # fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
-notan = { version = "0.4", features = ["egui", "log"] }
+notan = { features = ["egui", "log"], version = "0.5" }#git = "https://github.com/Nazariglez/notan" }
 
-# Controls 
+firecore-audio = { path = "../audio" }
+firecore-text = { path = "../text" }
 
 enum-map = { version = "2", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
-
-# Audio utils
-
-
-firecore-audio = { path = "../audio" }
-
-# Text rendering
-
-firecore-text = { path = "../text" }
-
-# Other
-
 tinystr = { version = "0.6", features = ["serde"], default-features = false }
 hashbrown = { version = "0.12" }
 

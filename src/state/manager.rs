@@ -69,12 +69,12 @@ impl<
         I: Deref<Target = Item> + Clone + From<Item> + std::fmt::Debug,
     > StateManager<P, M, I>
 {
-    pub(crate) fn new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Self {
+    pub fn new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Self {
         Self::try_new(gfx, load)
             .unwrap_or_else(|err| panic!("Could not create state manager with error {}", err))
     }
 
-    fn try_new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Result<Self, String> {
+    pub fn try_new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Result<Self, String> {
         // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
 
         // let texture = game::graphics::Texture::new(include_bytes!("../build/assets/loading.png"));
@@ -187,7 +187,7 @@ impl<
                     self.state = MainStates::Title;
                 }
 
-                self.loading.update(app, plugins, delta);
+                self.loading.update(app, plugins, delta, self.data.is_loaded() == Some(true));
             }
             MainStates::Title => self.title.update(app, plugins),
             MainStates::Menu => (),
@@ -257,7 +257,7 @@ impl<
         }
 
         match self.state {
-            MainStates::Loading => self.loading.draw(gfx),
+            MainStates::Loading => self.loading.draw(gfx, self.data.percentage()),
             MainStates::Title => self.title.draw(gfx),
             MainStates::Menu => {
                 let mut draw = gfx.create_draw();
@@ -321,7 +321,7 @@ impl<
             }
 
             #[cfg(target_arch = "wasm32")]
-            Touchscreen::ui(egui, plugins2);
+            crate::touchscreen::Touchscreen::ui(egui, plugins2);
 
             self.console.ui::<P, M, I>(app, egui, self.save.as_mut());
         }));

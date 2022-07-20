@@ -5,8 +5,11 @@ use pokengine::{
         egui,
         graphics::{Draw, DrawImages},
     },
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
-    texture::PokemonTexture,
+    pokedex::{
+        item::Item,
+        moves::Move,
+        pokemon::{Pokemon, PokemonTexture},
+    },
     PokedexClientData,
 };
 
@@ -89,7 +92,7 @@ impl<ID, D: Deref<Target = PokedexClientData> + Clone, M: Deref<Target = Move> +
             panel: BattlePanel::new(data.clone()),
             actions: Vec::new(),
 
-            text: BattleText::new(),
+            text: BattleText::default(),
 
             bounce: PlayerBounce::new(),
             pokemon: PokemonRenderer::new(data, btl),

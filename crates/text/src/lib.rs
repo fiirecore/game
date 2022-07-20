@@ -15,15 +15,13 @@ pub struct MessageState<C: Clone + Into<[f32; 4]>> {
     pub page: usize,
     pub line: usize,
     pub text: f32,
-    
+
     pub waiting: bool,
     pub wait: f32,
 
     pub cooldown: Option<f32>,
-
     // pub scroll: f32,
     // pub button: f32,
-
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
@@ -37,7 +35,6 @@ pub struct MessagePage<C: Clone + Into<[f32; 4]>> {
 }
 
 impl<C: Clone + Into<[f32; 4]>> MessageState<C> {
-
     pub const DEFAULT_COOLDOWN: Option<f32> = Some(0.5);
 
     pub fn page(&self) -> usize {
@@ -76,11 +73,14 @@ impl<C: Clone + Into<[f32; 4]>> MessageStates<C> {
     pub fn as_mut(&mut self) -> Option<&mut MessageState<C>> {
         match self {
             MessageStates::Running(state) => Some(state),
-            _ => None
+            _ => None,
         }
     }
 
-    pub fn get_or_insert_with<F: FnOnce() -> MessageState<C>>(&mut self, f: F) -> &mut MessageState<C> {
+    pub fn get_or_insert_with<F: FnOnce() -> MessageState<C>>(
+        &mut self,
+        f: F,
+    ) -> &mut MessageState<C> {
         match self {
             MessageStates::Running(state) => state,
             _ => {
@@ -90,10 +90,9 @@ impl<C: Clone + Into<[f32; 4]>> MessageStates<C> {
                 } else {
                     unreachable!()
                 }
-            },
+            }
         }
     }
-
 }
 
 impl<C: Clone + Into<[f32; 4]>> Default for MessageState<C> {
@@ -113,5 +112,14 @@ impl<C: Clone + Into<[f32; 4]>> Default for MessageState<C> {
 impl<C: Clone + Into<[f32; 4]>> Default for MessageStates<C> {
     fn default() -> Self {
         Self::None
+    }
+}
+
+impl<C: Clone + Into<[f32; 4]>> From<Vec<MessagePage<C>>> for MessageState<C> {
+    fn from(pages: Vec<MessagePage<C>>) -> Self {
+        Self {
+            pages,
+            ..Default::default()
+        }
     }
 }

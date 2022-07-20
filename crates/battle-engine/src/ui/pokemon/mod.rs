@@ -1,6 +1,5 @@
 use std::ops::Deref;
 
-use battle::pokemon::PokemonView;
 use pokengine::{
     engine::{
         graphics::{Color, Draw, DrawImages, Texture},
@@ -11,9 +10,8 @@ use pokengine::{
     pokedex::{
         item::Item,
         moves::Move,
-        pokemon::{Pokemon, PokemonId},
+        pokemon::{Pokemon, PokemonId, PokemonTexture},
     },
-    texture::PokemonTexture,
     PokedexClientData,
 };
 

@@ -41,7 +41,7 @@ impl<
     pub const ITEMDEX: &'static str = "itemdex.bin";
     pub const WORLD: &'static str = "world.bin";
     pub const BATTLE: &'static str = "battle.bin";
-    pub const DEXENGINE: &'static str = "dexengine.bin";
+    pub const DEXENGINE: &'static str = "dex_engine.bin";
     pub const AUDIO: &'static str = "audio.bin";
 
     pub fn load(assets: &mut Assets) -> Result<Self, String> {
@@ -105,6 +105,13 @@ impl<
         match self {
             LoadData::Load(list, ..) => Some(list.is_loaded()),
             _ => None,
+        }
+    }
+
+    pub fn percentage(&self) -> Option<f32> {
+        match self {
+            LoadData::Load(list, ..) => Some(list.progress()),
+            LoadData::Data { .. } => None,
         }
     }
 
@@ -282,7 +289,7 @@ pub fn root() -> Option<PathBuf> {
         }
         #[cfg(target_arch = "wasm32")]
         {
-            Some(Path::new(""))
+            Some(Default::default())
         }
     }
 }

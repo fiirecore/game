@@ -33,10 +33,11 @@ use engine::notan::prelude::*;
 
 #[notan_main]
 fn main() -> Result<(), String> {
-    engine::notan::init_with(run)
-        .add_config(engine::notan::egui::EguiConfig)
-        .add_config(engine::notan::draw::DrawConfig)
-        .add_config(engine::notan::log::LogConfig::debug())
+    use engine::notan;
+    notan::init_with(run)
+        .add_config(notan::egui::EguiConfig)
+        .add_config(notan::draw::DrawConfig)
+        .add_config(notan::log::LogConfig::debug())
         .add_loader(load::asset_loader())
         .update(update)
         .draw(draw)
@@ -54,11 +55,15 @@ fn main() -> Result<(), String> {
 }
 
 fn run(assets: &mut Assets, gfx: &mut Graphics, plugins: &mut Plugins) -> StateManager {
+    try_run(assets, gfx, plugins).unwrap()
+}
+
+fn try_run(assets: &mut Assets, gfx: &mut Graphics, plugins: &mut Plugins) -> Result<StateManager, String> {
     engine::setup(plugins);
     use pokedex::{item::Item, moves::Move, pokemon::Pokemon};
     use std::rc::Rc;
-    let load = load::LoadData::<Rc<Pokemon>, Rc<Move>, Rc<Item>>::load(assets).unwrap();
-    StateManager::new(gfx, load)
+    let load = load::LoadData::<Rc<Pokemon>, Rc<Move>, Rc<Item>>::load(assets)?;
+    StateManager::try_new(gfx, load)
 }
 
 fn update(app: &mut App, plugins: &mut Plugins, state: &mut StateManager) {

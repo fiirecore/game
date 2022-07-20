@@ -1,9 +1,8 @@
 use engine::{
-    graphics::{Color, Texture},
+    graphics::{Color, Draw, DrawImages, DrawShapes, Texture},
     gui::ProgressBar,
     math::Vec2,
 };
-use firecore_engine::notan::draw::{Draw, DrawImages, DrawShapes};
 
 use crate::data::PokedexClientData;
 

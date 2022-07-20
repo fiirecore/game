@@ -156,6 +156,9 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                         player.character.input_lock.clear();
                         player.character.locked.clear();
                     }
+                    WorldCommands::CancelScript => {
+                        player.state.scripts.environment = Default::default();
+                    }
                     WorldCommands::GivePokemon(pokemon) => {
                         if let Some(pokemon) =
                             pokemon.init(&mut self.random, pokedex, movedex, itemdex)

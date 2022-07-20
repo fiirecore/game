@@ -160,9 +160,8 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
                     }
                 }
             }
-            true => match elements.text.state.as_ref() {
+            true => match elements.text.state().as_ref() {
                 Some(text) => {
-
                     if text.waiting() && text.page() >= text.pages() - 2 {
                         self.leaving = true;
                     }
@@ -179,9 +178,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
                     }
                 }
                 None => match self.leaving {
-                    true => {
-
-                    },
+                    true => {}
                     false => {
                         return true;
                         if let Some((.., remote)) = remotes.players.get_index(remotes.current) {
@@ -189,22 +186,17 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
                                 Self::concatenate(remote.active_iter().map(|(.., p)| {
                                     p.as_ref().map(|p| p.name()).unwrap_or("Unknown")
                                 }));
+                            let text = elements.text.state_mut();
                             match &self.type_ {
                                 BattleOpenerType::Wild(_) => {
-                                    let text = elements
-                                        .text
-                                        .state
-                                        .get_or_insert_with(MessageState::default);
+                                    let text = text.get_or_insert_with(MessageState::default);
                                     text.pages.push(MessagePage {
                                         lines: vec![format!("Wild {} appeared!", sent,)],
                                         ..Default::default()
                                     });
                                 }
                                 BattleOpenerType::Trainer(_) => {
-                                    let text = elements
-                                        .text
-                                        .state
-                                        .get_or_insert_with(MessageState::default);
+                                    let text = text.get_or_insert_with(MessageState::default);
                                     text.pages.push(MessagePage {
                                         lines: vec![
                                             remote.name().to_owned(),
@@ -327,7 +319,9 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
     }
 
     /// To - do: fix this function
-    pub(crate) fn concatenate<'a>(mut names: impl DoubleEndedIterator<Item = &'a str> + 'a) -> String {
+    pub(crate) fn concatenate<'a>(
+        mut names: impl DoubleEndedIterator<Item = &'a str> + 'a,
+    ) -> String {
         let last = names.next_back();
         let first = names.next();
         match first {

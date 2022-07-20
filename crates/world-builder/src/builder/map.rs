@@ -1,7 +1,6 @@
 use std::{ffi::OsStr, fmt::Display, path::Path};
 
 use hashbrown::HashMap;
-use image::GenericImageView;
 use world::{
     map::{
         chunk::{ChunkConnections, WorldChunk},

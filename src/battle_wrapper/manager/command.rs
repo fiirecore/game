@@ -18,7 +18,7 @@ impl<
         I: Deref<Target = Item> + Clone,
     > super::BattleManager<D, P, M, I>
 {
-    pub fn process(mut result: String) -> Result<BattleCommand, &'static str> {
+    pub fn process(result: String) -> Result<BattleCommand, &'static str> {
         let mut args = result.split_ascii_whitespace();
 
         let (command, mut args) = if let Some(command) = args.next() {

@@ -12,8 +12,7 @@ pub struct Location {
     pub index: LocationId,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Spot {
     pub location: Location,
     pub position: Position,
@@ -47,4 +46,18 @@ impl Location {
         map: None,
         index: Self::DEFAULT_INDEX,
     };
+}
+
+impl Serialize for Spot {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let spot = (&self.location, &self.position);
+        spot.serialize(serializer)
+    }
+}
+
+impl<'de> Deserialize<'de> for Spot {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        <(Location, Position)>::deserialize(deserializer)
+            .map(|(location, position)| Self { location, position })
+    }
 }

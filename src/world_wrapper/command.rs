@@ -23,6 +23,7 @@ pub enum WorldCommands {
     NoClip(Option<bool>),
     DebugDraw,
     Unfreeze,
+    CancelScript,
     Tile,
     Party(PartyCommand),
     ClearBattle,
@@ -82,6 +83,9 @@ D: Deref<Target = PokedexClientData> + Clone,> WorldWrapper<D> {
             }
             "unfreeze" => {
                 Ok(WorldCommands::Unfreeze)
+            }
+            "cancelscript" => {
+                Ok(WorldCommands::CancelScript)
             }
             "debugdraw" => {
                 Ok(WorldCommands::DebugDraw)

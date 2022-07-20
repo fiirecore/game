@@ -9,7 +9,7 @@ use text::MessageStates;
 use crate::{
     character::npc::{group::MessageColor, trainer::BadgeId, Npc, NpcId},
     map::{battle::BattleEntry, warp::WarpDestination, MusicId},
-    positions::{Coordinate, Location, Position},
+    positions::{Coordinate, Location, Spot},
     script::{ScriptEnvironment, ScriptId, Variable, VariableName},
 };
 
@@ -32,7 +32,7 @@ pub struct WorldState {
     #[serde(default)]
     pub wild: GlobalWildData,
     #[serde(default)]
-    pub heal: Option<(Location, Position)>,
+    pub places: GlobalPlacesData,
     #[serde(default)]
     pub badges: HashSet<BadgeId>,
     #[serde(default)]
@@ -120,4 +120,11 @@ impl Default for GlobalWildData {
     fn default() -> Self {
         Self { encounters: true }
     }
+}
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct GlobalPlacesData {
+    #[serde(default)]
+    pub heal: Option<Spot>,
+    #[serde(default)]
+    pub cave: Option<Spot>,
 }

@@ -1,10 +1,11 @@
 use engine::graphics::Texture;
 
-use firecore_engine::{
+use crate::engine::{
     notan::app::App,
     notan::prelude::{Graphics, Plugin, Plugins},
     sound::SoundVariant,
 };
+
 use firecore_pokedex_engine_builder::SerializedPokedexEngine;
 
 use crate::texture::{ItemTextures, PokemonTextures, TrainerGroupTextures};

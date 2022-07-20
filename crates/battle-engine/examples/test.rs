@@ -11,14 +11,12 @@ const SCALE: f32 = 2.0;
 fn main() {}
 
 struct Game {
-    messagebox: MessageBox,
     state: Option<MessageState<Color>>,
 }
 
 impl Game {
     pub fn new() -> Self {
         Self {
-            messagebox: MessageBox::new(Default::default()),
             state: None,
         }
     }

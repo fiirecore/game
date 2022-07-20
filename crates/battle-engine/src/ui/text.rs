@@ -17,46 +17,41 @@ use pokengine::{
 
 pub type BattleMessageState = MessageStates<[f32; 4]>;
 
-pub struct BattleText {
-    // text: MessageBox,
-    pub state: BattleMessageState,
-}
+#[derive(Default)]
+pub struct BattleText(BattleMessageState);
 
 impl BattleText {
-    pub fn new() -> Self {
-        Self {
-            // text: MessageBox::new(vec2(11.0, 11.0 + super::PANEL_Y)),
-            state: Default::default(),
-        }
+
+    pub fn state(&self) -> &BattleMessageState {
+        &self.0
     }
 
-    // #[deprecated]
-    // pub fn update(&mut self, app: &mut App, plugins: &mut Plugins, delta: f32) {
-    //     self.text.update(app, plugins, delta, &mut self.state)
-    // }
+    pub fn state_mut(&mut self) -> &mut BattleMessageState {
+        &mut self.0
+    }
 
     pub fn alive(&self) -> bool {
-        self.state.is_running()
+        self.0.is_running()
     }
 
     pub fn waiting(&self) -> bool {
-        self.state.as_ref().map(|s| s.waiting).unwrap_or_default()
+        self.0.as_ref().map(|s| s.waiting).unwrap_or_default()
     }
 
     pub fn ui(&mut self, app: &App, plugins: &mut Plugins, egui: &egui::Context) {
-        MessageBox::ui(app, plugins, egui, &mut self.state)
+        MessageBox::ui(app, plugins, egui, &mut self.0)
     }
 
     pub fn page(&self) -> Option<usize> {
-        self.state.as_ref().map(|s| s.page)
+        self.0.as_ref().map(|s| s.page)
     }
 
     pub fn pages(&self) -> Option<usize> {
-        self.state.as_ref().map(|s| s.pages())
+        self.0.as_ref().map(|s| s.pages())
     }
 
     pub(crate) fn on_move(&mut self, pokemon_move: &Move, user: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("{} used {}!", user, pokemon_move.name)],
             wait: Some(0.5),
@@ -65,7 +60,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_effective(&mut self, effective: &Effective) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         if effective != &Effective::Effective {
             text.pages.push(MessagePage {
                 lines: vec![format!(
@@ -84,7 +79,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_crit(&mut self) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec!["It was a critical hit!".to_owned()],
             wait: Some(0.5),
@@ -93,7 +88,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_stat_stage(&mut self, pokemon: &str, stat: BattleStatType, stage: Stage) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![
                 format!("{}'s {} was", pokemon, stat),
@@ -113,7 +108,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_status(&mut self, pokemon: &str, status: Ailment) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![
                 format!("{} was afflicted", pokemon),
@@ -125,7 +120,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_miss(&mut self, pokemon: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("{} missed!", pokemon)],
             wait: Some(0.5),
@@ -134,7 +129,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_item(&mut self, target: &str, item: &Item) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("A {} was used on {}", item.name, target,)],
             wait: Some(0.5),
@@ -143,7 +138,7 @@ impl BattleText {
     }
 
     fn on_leave(&mut self, leaving: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("Come back, {}!", leaving)],
             wait: Some(0.5),
@@ -157,7 +152,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_go(&mut self, coming: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("Go, {}!", coming)],
             wait: Some(0.5),
@@ -170,7 +165,7 @@ impl BattleText {
         //     on_leave(text, leaving);
         // }
         if let Some(coming) = coming {
-            let text = self.state.get_or_insert_with(MessageState::default);
+            let text = self.0.get_or_insert_with(MessageState::default);
             text.pages.push(MessagePage {
                 lines: vec![format!("{} sent out {}!", user, coming)],
                 wait: Some(0.5),
@@ -180,7 +175,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_faint(&mut self, is_wild: bool, is_player: bool, pokemon: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![
                 match is_player {
@@ -202,7 +197,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_catch(&mut self, pokemon: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![String::from("Gotcha!"), format!("{} was caught!", pokemon)],
             wait: None,
@@ -211,7 +206,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_gain_exp(&mut self, pokemon: &str, experience: Experience, level: Level) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![
                 format!("{} gained {} EXP. points", pokemon, experience),
@@ -233,7 +228,7 @@ impl BattleText {
     // }
 
     pub(crate) fn on_fail(&mut self, lines: Vec<String>) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines,
             wait: Some(0.5),
@@ -242,7 +237,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_flinch(&mut self, name: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("{} flinched!", name)],
             wait: Some(0.5),
@@ -251,7 +246,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_sleep(&mut self, name: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("{} is asleep!", name)],
             wait: Some(0.5),
@@ -260,7 +255,7 @@ impl BattleText {
     }
 
     pub(crate) fn on_paralysis(&mut self, name: &str) {
-        let text = self.state.get_or_insert_with(MessageState::default);
+        let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
             lines: vec![format!("{} is paralyzed!", name)],
             wait: Some(0.5),

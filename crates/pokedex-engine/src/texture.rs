@@ -1,6 +1,9 @@
 use enum_map::{enum_map, EnumMap};
 
-use crate::pokedex::{item::ItemId, pokemon::PokemonId};
+use crate::pokedex::{
+    item::ItemId,
+    pokemon::{PokemonId, PokemonTexture},
+};
 
 use engine::{
     egui::{self, EguiRegisterTexture},
@@ -10,8 +13,6 @@ use engine::{
 };
 
 pub type TrainerGroupTextures = HashMap<crate::TrainerGroupId, Texture>;
-
-pub use firecore_pokedex_engine_builder::pokemon::PokemonTexture;
 
 pub struct PokemonTextures {
     textures: HashMap<PokemonId, EnumMap<PokemonTexture, Texture>>,
@@ -83,9 +84,19 @@ impl ItemTextures {
         }
     }
 
-    pub fn insert(&mut self, gfx: &mut Graphics, id: ItemId, texture: Vec<u8>) -> Result<(), String> {
-        let texture = gfx.create_texture().from_image(&texture).with_premultiplied_alpha().build()?;
-        self.egui.insert(id, (gfx.egui_register_texture(&texture), texture.size()));
+    pub fn insert(
+        &mut self,
+        gfx: &mut Graphics,
+        id: ItemId,
+        texture: Vec<u8>,
+    ) -> Result<(), String> {
+        let texture = gfx
+            .create_texture()
+            .from_image(&texture)
+            .with_premultiplied_alpha()
+            .build()?;
+        self.egui
+            .insert(id, (gfx.egui_register_texture(&texture), texture.size()));
         self.textures.insert(id, texture);
         Ok(())
     }

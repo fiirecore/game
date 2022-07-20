@@ -3,7 +3,7 @@ use std::ops::Deref;
 use crate::pokedex::{
     item::Item,
     moves::Move,
-    pokemon::{owned::OwnedPokemon, Pokemon},
+    pokemon::{owned::OwnedPokemon, Pokemon, PokemonTexture},
 };
 
 use engine::{
@@ -12,7 +12,7 @@ use engine::{
     App,
 };
 
-use crate::{texture::PokemonTexture, PokedexClientData};
+use crate::PokedexClientData;
 
 mod select;
 

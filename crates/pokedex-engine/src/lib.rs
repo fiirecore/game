@@ -1,4 +1,4 @@
-pub extern crate firecore_engine as engine;
+pub extern crate firecore_base as engine;
 pub use firecore_pokedex_engine_builder::pokedex;
 // pub use battle::pokedex;
 

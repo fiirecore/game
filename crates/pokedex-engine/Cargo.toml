@@ -10,10 +10,10 @@ license = "MIT"
 
 [features]
 default = ["audio"]
-audio = ["firecore-engine/audio"]
+audio = ["firecore-base/audio"]
 
 [dependencies]
-firecore-engine = { path = "../engine", default-features = false }
+firecore-base = { path = "../base", default-features = false }
 firecore-pokedex-engine-builder = { path = "../pokedex-engine-builder", default-features = false }
 tinystr = { version = "0.6", features = ["serde"], default-features = false }
 enum-map = { version = "2", features = ["serde"] }

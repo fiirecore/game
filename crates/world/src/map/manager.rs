@@ -27,7 +27,7 @@ use crate::{
         DoMoveResult, MovementType,
     },
     map::{object::ObjectId, MovementId, WarpDestination, WorldMap},
-    positions::{BoundingBox, Coordinate, Direction, Location, Position},
+    positions::{BoundingBox, Coordinate, Direction, Location, Spot},
     script::{WorldInstruction, WorldScriptData},
     state::WorldEvent,
 };
@@ -65,7 +65,7 @@ pub struct WorldMapData {
     pub palettes: PaletteDataMap,
     pub npc: WorldNpcData,
     pub wild: WildChances,
-    pub spawn: (Location, Position),
+    pub spawn: Spot,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -108,6 +108,7 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
 
     pub fn on_change<P, B: Default>(&self, map: &WorldMap, player: &mut PlayerCharacter<P, B>) {
         player.state.events.push(WorldEvent::PlayMusic(map.music));
+        // check for cave here and add last spot non cave for escape rope
     }
 
     pub fn input<
@@ -169,14 +170,19 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
             if let Some(object) = map.object_at(&forward) {
                 const TREE: &ObjectId =
                     unsafe { &ObjectId::from_bytes_unchecked(1701147252u64.to_ne_bytes()) };
-                const CUT: &MoveId =
-                    unsafe { &MoveId(tinystr::TinyStr16::from_bytes_unchecked(7632227u128.to_ne_bytes())) };
+                const CUT: &MoveId = unsafe {
+                    &MoveId(tinystr::TinyStr16::from_bytes_unchecked(
+                        7632227u128.to_ne_bytes(),
+                    ))
+                };
 
                 const ROCK: &ObjectId =
                     unsafe { &ObjectId::from_bytes_unchecked(1801678706u64.to_ne_bytes()) };
                 /// "rock-smash"
                 const ROCK_SMASH: &MoveId = unsafe {
-                    &MoveId(tinystr::TinyStr16::from_bytes_unchecked(493254510180952753532786u128.to_ne_bytes()))
+                    &MoveId(tinystr::TinyStr16::from_bytes_unchecked(
+                        493254510180952753532786u128.to_ne_bytes(),
+                    ))
                 };
 
                 fn try_break<
@@ -235,19 +241,23 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                 DoMoveResult::Finished => (),
                 DoMoveResult::Interact => match &npc.interact {
                     NpcInteract::Script(script) => {
-                        if !player.state.scripts.environment.running() {
-                            if let Some(instructions) = scripts.scripts.get(script) {
-                                npc.character.on_interact();
-                                let env = &mut player.state.scripts.environment;
-                                env.executor = Some(npc.id);
-                                env.queue = instructions.clone();
-                            } else {
-                                log::warn!(
-                                    "Could not get script with id {} for NPC {}",
-                                    script,
-                                    npc.character.name
-                                );
-                            }
+                        match player.state.scripts.environment.running() {
+                            false => match scripts.scripts.get(script) {
+                                Some(instructions) => {
+                                    npc.character.on_interact();
+                                    let env = &mut player.state.scripts.environment;
+                                    env.executor = Some(npc.id);
+                                    env.queue = instructions.clone();
+                                }
+                                None => {
+                                    log::warn!(
+                                        "Could not get script with id {} for NPC {}",
+                                        script,
+                                        npc.character.name
+                                    );
+                                }
+                            },
+                            true => log::debug!("Could not run script as one is running already!"),
                         }
                     }
                     NpcInteract::Nothing => (),
@@ -575,8 +585,8 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                                             .map(|g| g.message),
                                                     })
                                                     .collect::<Vec<_>>(),
-                                                    ..Default::default()
-                                                };
+                                                ..Default::default()
+                                            };
                                             player.state.message = MessageStates::Running(message);
                                         }
                                     }
@@ -610,9 +620,10 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
                                                                 .map(|g| g.message),
                                                         })
                                                         .collect::<Vec<_>>(),
-                                                        ..Default::default()
-                                                    };
-                                                player.state.message = MessageStates::Running(message);
+                                                    ..Default::default()
+                                                };
+                                                player.state.message =
+                                                    MessageStates::Running(message);
                                                 player
                                                     .state
                                                     .scripts
@@ -822,8 +833,11 @@ impl<R: Rng + SeedableRng + Clone> WorldMapManager<R> {
             {
                 if Elevation::WATER == code {
                     if player.character.movement != MovementType::Swimming {
-                        const SURF: &MoveId =
-                            unsafe { &MoveId(tinystr::TinyStr16::from_bytes_unchecked(1718777203u128.to_ne_bytes())) };
+                        const SURF: &MoveId = unsafe {
+                            &MoveId(tinystr::TinyStr16::from_bytes_unchecked(
+                                1718777203u128.to_ne_bytes(),
+                            ))
+                        };
 
                         if player
                             .trainer
@@ -931,9 +945,9 @@ impl WorldMapData {
                 }
             }
         } else {
-            let (loc, pos) = player.state.heal.unwrap_or(self.spawn);
-            player.location = loc;
-            player.character.position = pos;
+            let Spot { location, position } = player.state.places.heal.unwrap_or(self.spawn);
+            player.location = location;
+            player.character.position = position;
             player.location = player.location;
             player
                 .trainer

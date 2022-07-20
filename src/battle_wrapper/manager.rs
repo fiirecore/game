@@ -45,8 +45,6 @@ pub struct BattleManager<
 
     battle: Option<GameBattleWrapper<P, M, I>>,
 
-    btl: BattleGuiData,
-
     transition: BattleScreenTransitionManager,
 
     player: BattlePlayerGui<BattleId, D, P, M, I>,
@@ -123,7 +121,6 @@ impl<
             commands,
 
             finished: false,
-            btl,
         })
     }
 
@@ -272,7 +269,7 @@ impl<
         }
         if let Some(battle) = &mut self.battle {
             self.player
-                .process(&mut self.random, &self.btl, pokedex, movedex, itemdex);
+                .process(&mut self.random, pokedex, movedex, itemdex);
             match self.state {
                 BattleManagerState::Begin => {
                     self.player.reset_gui();

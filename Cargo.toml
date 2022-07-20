@@ -15,7 +15,6 @@ publish = false
 
 [workspace]
 members = ["crates/*"]
-# default-members = ["crates/*", "crates/pokedex-engine/builder"]
 
 [features]
 # discord = ["discord-rich-presence"]
@@ -46,18 +45,19 @@ firecore-event = { path = "crates/event" }
 serde = { version = "1", features = ["derive"] }
 rand = { version = "0.8", features = ["small_rng"] }
 tinystr = { version = "0.6", features = ["serde"], default-features = false }
+postcard = { version = "1", default-features = false, features = ["alloc"] }
 
 # discord-rich-presence = { version = "0.1", optional = true }
 
 # [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # pico-args = "0.4"
 
-postcard = { version = "1", default-features = false, features = ["alloc"] }
+### Storage
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 dirs = "4"
 
-# [target.'cfg(target_arch = "wasm32")'.dependencies]
+[target.'cfg(target_arch = "wasm32")'.dependencies]
 general_storage_web = "0.2"
 
 ### Build dependencies
@@ -79,4 +79,4 @@ serde = "1"
 firecore-storage = { path = "crates/storage", default-features = false }
 
 [target.'cfg(windows)'.build-dependencies]
-embed-resource = "1"
+embed-resource = "1.7.3"

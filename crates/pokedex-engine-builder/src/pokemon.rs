@@ -1,6 +1,5 @@
-use enum_map::{enum_map, Enum, EnumMap};
+use enum_map::EnumMap;
 use firecore_pokedex::pokemon::{PokemonId, PokemonTexture};
-use serde::{Deserialize, Serialize};
 use hashbrown::HashMap;
 
 pub type SerializedPokemon = (EnumMap<PokemonTexture, Vec<u8>>, Vec<u8>);
@@ -9,6 +8,7 @@ pub type PokemonOutput = HashMap<PokemonId, SerializedPokemon>;
 
 #[cfg(feature = "compile")]
 pub fn get_pokemon<P: AsRef<std::path::Path>>(path: P) -> PokemonOutput {
+    use enum_map::enum_map;
     let path = path.as_ref();
 
     let readdir = std::fs::read_dir(path).unwrap_or_else(|err| {

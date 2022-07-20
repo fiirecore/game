@@ -2,7 +2,7 @@ use engine::{
     gui::MessageBox,
     text::{MessagePage, MessageState, MessageStates},
 };
-use firecore_engine as engine;
+use firecore_base as engine;
 use notan::prelude::*;
 use notan::{draw::DrawConfig, egui::*};
 
@@ -51,7 +51,7 @@ struct Game {
 
 impl Game {
     pub fn new(plugins: &mut Plugins) -> Self {
-        firecore_engine::setup(plugins);
+        engine::setup(plugins);
         Self {
             state: {
                 let page = MessagePage {
@@ -71,7 +71,10 @@ impl Game {
                     color: Some(Color::YELLOW),
                 };
 
-                MessageStates::Running(MessageState::from(vec![page, page2]))
+                MessageStates::Running(MessageState {
+                    pages: vec![page, page2],
+                    ..Default::default()
+                })
             },
         }
     }

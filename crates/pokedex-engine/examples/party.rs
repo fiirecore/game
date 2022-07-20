@@ -1,15 +1,15 @@
 use std::rc::Rc;
 
-use firecore_engine::{
-    egui::EguiPluginSugar,
-    notan::{
-        self,
-        prelude::{App, Graphics, Plugins},
-        AppState,
-    },
-    utils::Entity,
-};
 use firecore_pokedex_engine::{
+    engine::{
+        egui::EguiPluginSugar,
+        notan::{
+            self,
+            prelude::{App, Graphics, Plugins},
+            AppState,
+        },
+        utils::Entity,
+    },
     gui::party::PartyGui,
     pokedex::{
         item::Item,

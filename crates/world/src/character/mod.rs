@@ -1,4 +1,7 @@
-use crate::{positions::{Destination, Direction, PixelOffset, Position}, map::movement::Elevation};
+use crate::{
+    map::movement::Elevation,
+    positions::{Destination, Direction, PixelOffset, Position},
+};
 use enum_map::Enum;
 use serde::{Deserialize, Serialize};
 
@@ -43,7 +46,6 @@ pub struct Character {
 
     #[serde(default)]
     pub actions: Actions,
-
     // #[serde(default)]
     // #[deprecated]
     // pub flags: HashSet<CharacterFlag>,
@@ -66,7 +68,6 @@ pub enum DoMoveResult {
 pub struct Counter(u8);
 
 impl Character {
-
     pub fn new<S: Into<String>>(name: S, position: Position) -> Self {
         Self {
             name: name.into(),
@@ -108,13 +109,12 @@ impl Character {
     }
 
     pub fn do_move(&mut self, delta: f32) -> Option<DoMoveResult> {
-
-        
-
         if !self.locked() {
             match self.offset.is_zero() {
                 true => {
-                    if let Some(path) = (!self.actions.queue.is_empty()).then(|| self.actions.queue.remove(0)) {
+                    if let Some(path) =
+                        (!self.actions.queue.is_empty()).then(|| self.actions.queue.remove(0))
+                    {
                         match path {
                             ActionQueue::Move(direction) => {
                                 self.position.direction = direction;
@@ -148,7 +148,8 @@ impl Character {
 
     pub fn sees(&self, sight: u8, position: &Position) -> bool {
         let tracker = sight as i32;
-        if position.elevation != self.position.elevation && self.position.elevation != Elevation(0) {
+        if position.elevation != self.position.elevation && self.position.elevation != Elevation(0)
+        {
             return false;
         }
         match self.position.direction {
@@ -272,7 +273,6 @@ impl Default for MovementType {
 }
 
 impl Counter {
-
     pub fn increment(&mut self) {
         self.0 = self.0.saturating_add(1);
     }
@@ -288,5 +288,4 @@ impl Counter {
     pub fn active(&self) -> bool {
         self.0 != 0
     }
-
 }

@@ -850,11 +850,11 @@ impl<
                                 local,
                                 &self.remotes,
                                 Option::as_ref(winner),
-                                &mut self.gui.text.state,
+                                self.gui.text.state_mut(),
                             );
                         }
                         true => {
-                            self.closer.update(app, &mut self.gui.text.state);
+                            self.closer.update(app, self.gui.text.state());
                             if self.closer.finished() {
                                 self.closer.reset();
                                 self.state = BattlePlayerState::End(winner.clone());

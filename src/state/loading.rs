@@ -2,8 +2,8 @@ use event::EventWriter;
 
 use crate::engine::{
     graphics::{
-        Color, CreateDraw, Draw, DrawImages, DrawShapes, DrawTextSection, DrawTransform, Graphics,
-        Texture, Font,
+        Color, CreateDraw, Draw, DrawImages, DrawShapes, DrawTextSection, DrawTransform, Font,
+        Graphics, Texture,
     },
     music::{play_music, MusicId},
     App, Plugins,
@@ -114,12 +114,18 @@ impl LoadingStateManager {
         self.current = state;
     }
 
-    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins, delta: f32) {
+    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins, delta: f32, loaded: bool) {
         match self.current {
             LoadingScenes::Copyright => {
-                self.accumulator += delta;
-                if self.accumulator > 4.0 {
-                    self.reset(app, plugins, LoadingScenes::Gamefreak);
+                if self.accumulator > 2.0 {
+                    if loaded {
+                        if self.accumulator > 4.0 {
+                            self.reset(app, plugins, LoadingScenes::Gamefreak);
+                        }
+                        self.accumulator += delta;
+                    }
+                } else {
+                    self.accumulator += delta;
                 }
             }
             LoadingScenes::Gamefreak => {
@@ -155,7 +161,7 @@ impl LoadingStateManager {
         // }
     }
 
-    pub fn draw(&self, gfx: &mut Graphics) {
+    pub fn draw(&self, gfx: &mut Graphics, progress: Option<f32>) {
         let mut draw = gfx.create_draw();
         draw.set_size(crate::WIDTH, crate::HEIGHT);
         draw.clear(Color::BLACK);
@@ -171,14 +177,21 @@ impl LoadingStateManager {
                     0.5,
                 );
                 draw.text(&self.debug_font, &self.version)
+                    .size(4.0)
                     .position(2.0, 1.0)
                     .color(Color::WHITE)
                     .h_align_left()
                     .v_align_top();
+                if let Some(loaded) = progress {
+                    draw.rect(
+                        (draw.width() / 3.0, draw.height() * 2.0 / 3.0),
+                        (loaded * draw.width() / 3.0, (draw.height() / 10.0).ceil()),
+                    ).color(Color::WHITE);
+                }
             }
             LoadingScenes::Gamefreak => {
                 draw.rect(
-                    (0.0, (crate::HEIGHT - self.rect_size) / 2.0),
+                    (0.0, (draw.height() - self.rect_size) / 2.0),
                     (240.0, self.rect_size),
                 )
                 .color(Self::BACKGROUND);

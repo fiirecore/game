@@ -1,6 +1,10 @@
 # To - do List
 
-create new enum for initializing things
+fix egui size
+fix battle regressions
+fix script regressions
+
+create own game engine
 
 ____
 
