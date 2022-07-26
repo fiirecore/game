@@ -3,37 +3,31 @@ use std::{num::ParseIntError, sync::Arc};
 use dashmap::DashMap;
 use hashbrown::{hash_map::DefaultHashBuilder as RandomState, HashMap};
 
-mod script;
+use bin::BinaryMap;
 
-use firecore_world_builder::{
-    bin::BinaryMap,
-    world::{
-        character::npc::{
-            group::TrainerGroupId,
-            trainer::{NpcTrainer, TrainerDisable},
-            Npc, NpcMovement, Npcs,
-        },
-        map::{
-            chunk::{ChunkConnections, Connection, WorldChunk},
-            movement::Elevation,
-            object::{
-                ItemEntity, ItemEntityData, Items, ObjectEntity, ObjectEntityData, ObjectId,
-                Objects, SignEntity, SignEntityData, Signs,
-            },
-            warp::{WarpDestination, WarpEntry},
-            wild::{WildEntry, WildType},
-            Brightness, PaletteId, WorldMap, WorldMapSettings, WorldTile,
-        },
-        pokedex::{
-            item::{Item, ItemStack},
-            moves::{owned::SavedMove, Move},
-            pokemon::{owned::SavedPokemon, stat::StatSet, Pokemon},
-            trainer::Trainer,
-            BasicDex,
-        },
-        positions::{BoundingBox, Coordinate, Destination, Direction, Location, Position},
-        script::default::*,
+use firecore_world::{
+    character::npc::{
+        group::TrainerGroupId,
+        trainer::{NpcTrainer, TrainerDisable},
+        Npc, NpcMovement, Npcs,
     },
+    map::{
+        chunk::{ChunkConnections, Connection, WorldChunk},
+        movement::Elevation,
+        object::*,
+        warp::{WarpDestination, WarpEntry},
+        wild::{WildEntry, WildType},
+        Brightness, PaletteId, WorldMap, WorldMapSettings, WorldTile,
+    },
+    pokedex::{
+        item::{Item, ItemStack},
+        moves::{owned::SavedMove, Move},
+        pokemon::{owned::SavedPokemon, stat::StatSet, Pokemon},
+        trainer::Trainer,
+        BasicDex,
+    },
+    positions::{BoundingBox, Coordinate, Destination, Direction, Location, Position},
+    script::default::*,
 };
 use map::{
     object::{JsonBgEvent, JsonObjectEvent},
@@ -57,6 +51,11 @@ const PATH: &str = "http://raw.githubusercontent.com/pret/pokefirered/master";
 mod edits;
 mod map;
 mod mapping;
+
+mod script;
+
+mod structs;
+mod bin;
 
 pub use edits::*;
 pub use mapping::*;
@@ -454,9 +453,9 @@ fn into_world_map(
                 .collect(),
             wild: encounters.remove(&map.data.id).map(|(.., v)| v).flatten(),
             npcs,
-            objects: into_world_objects(mappings, &map.data.object_events),
-            items: into_world_items(data, &map.data.bg_events),
-            signs: into_world_signs(data, &map.data.bg_events),
+            // objects: into_world_objects(mappings, &map.data.object_events),
+            // items: into_world_items(data, &map.data.bg_events),
+            // signs: into_world_signs(data, &map.data.bg_events),
             settings: WorldMapSettings {
                 fly_position: None,
                 brightness: match map.data.weather == "WEATHER_SHADE" {
@@ -942,101 +941,101 @@ fn into_world_npcs(
     )
 }
 
-fn into_world_objects(mappings: &NameMappings, events: &[JsonObjectEvent]) -> Objects {
-    events
-        .par_iter()
-        .enumerate()
-        .flat_map(
-            |(index, event)| match mappings.objects.objects.get(&event.graphics_id) {
-                Some(id) => Some({
-                    (
-                        index as _,
-                        ObjectEntity {
-                            data: ObjectEntityData { group: *id },
-                            coordinate: Coordinate {
-                                x: event.x as _,
-                                y: event.y as _,
-                            },
-                        },
-                    )
-                }),
-                None => None,
-            },
-        )
-        .collect()
-}
+// fn into_world_objects(mappings: &NameMappings, events: &[JsonObjectEvent]) -> Objects {
+//     events
+//         .par_iter()
+//         .enumerate()
+//         .flat_map(
+//             |(index, event)| match mappings.objects.objects.get(&event.graphics_id) {
+//                 Some(id) => Some({
+//                     (
+//                         index as _,
+//                         ObjectEntity {
+//                             data: ObjectEntityData { group: *id },
+//                             coordinate: Coordinate {
+//                                 x: event.x as _,
+//                                 y: event.y as _,
+//                             },
+//                         },
+//                     )
+//                 }),
+//                 None => None,
+//             },
+//         )
+//         .collect()
+// }
 
-fn into_world_items(data: &ParsedData, events: &[JsonBgEvent]) -> Items {
-    events
-        .par_iter()
-        .enumerate()
-        .filter(|(_, event)| event.type_ == "hidden_item")
-        .flat_map(|(index, event)| {
-            Some((
-                index as _,
-                ItemEntity {
-                    data: ItemEntityData {
-                        item: ItemStack {
-                            item: {
-                                let id = event.item.as_ref()?[5..]
-                                    .to_ascii_lowercase()
-                                    .parse()
-                                    .ok()?;
-                                firecore_world_builder::world::pokedex::Dex::try_get(
-                                    &data.itemdex,
-                                    &id,
-                                )
-                                .or_else(|| {
-                                    if !id.eq_ignore_ascii_case("NONE") {
-                                        println!(
-                                            "Cannot get item id {} for hidden item",
-                                            id.as_str()
-                                        );
-                                    }
-                                    None
-                                })?
-                                .id
-                            },
-                            count: event.quantity?,
-                        },
-                        hidden: event.underfoot?,
-                    },
-                    coordinate: Coordinate {
-                        x: event.x as _,
-                        y: event.y as _,
-                    },
-                },
-            ))
-        })
-        .collect()
-}
+// fn into_world_items(data: &ParsedData, events: &[JsonBgEvent]) -> Items {
+//     events
+//         .par_iter()
+//         .enumerate()
+//         .filter(|(_, event)| event.type_ == "hidden_item")
+//         .flat_map(|(index, event)| {
+//             Some((
+//                 index as _,
+//                 ItemEntity {
+//                     data: ItemEntityData {
+//                         item: ItemStack {
+//                             item: {
+//                                 let id = event.item.as_ref()?[5..]
+//                                     .to_ascii_lowercase()
+//                                     .parse()
+//                                     .ok()?;
+//                                 firecore_world_builder::world::pokedex::Dex::try_get(
+//                                     &data.itemdex,
+//                                     &id,
+//                                 )
+//                                 .or_else(|| {
+//                                     if !id.eq_ignore_ascii_case("NONE") {
+//                                         println!(
+//                                             "Cannot get item id {} for hidden item",
+//                                             id.as_str()
+//                                         );
+//                                     }
+//                                     None
+//                                 })?
+//                                 .id
+//                             },
+//                             count: event.quantity?,
+//                         },
+//                         hidden: event.underfoot?,
+//                     },
+//                     coordinate: Coordinate {
+//                         x: event.x as _,
+//                         y: event.y as _,
+//                     },
+//                 },
+//             ))
+//         })
+//         .collect()
+// }
 
-fn into_world_signs(data: &ParsedData, events: &[JsonBgEvent]) -> Signs {
-    events
-        .par_iter()
-        .enumerate()
-        .filter(|(.., event)| event.type_ == "sign")
-        .flat_map(|(index, event)| {
-            let script = data.scripts.get(event.script.as_ref()?)?;
-            let msgbox = script
-                .commands
-                .iter()
-                .find(|command| command.command == "msgbox")?;
-            let id = msgbox.arguments.get(0)?;
-            let message = data.messages.get(id)?.clone();
-            Some((
-                index as _,
-                SignEntity {
-                    data: SignEntityData { message },
-                    coordinate: Coordinate {
-                        x: event.x as _,
-                        y: event.y as _,
-                    },
-                },
-            ))
-        })
-        .collect()
-}
+// fn into_world_signs(data: &ParsedData, events: &[JsonBgEvent]) -> Signs {
+//     events
+//         .par_iter()
+//         .enumerate()
+//         .filter(|(.., event)| event.type_ == "sign")
+//         .flat_map(|(index, event)| {
+//             let script = data.scripts.get(event.script.as_ref()?)?;
+//             let msgbox = script
+//                 .commands
+//                 .iter()
+//                 .find(|command| command.command == "msgbox")?;
+//             let id = msgbox.arguments.get(0)?;
+//             let message = data.messages.get(id)?.clone();
+//             Some((
+//                 index as _,
+//                 SignEntity {
+//                     data: SignEntityData { message },
+//                     coordinate: Coordinate {
+//                         x: event.x as _,
+//                         y: event.y as _,
+//                     },
+//                 },
+//             ))
+//         })
+//         .collect()
+// }
 
 fn into_palettes(mappings: &NameMappings, primary: &str, secondary: &str) -> [PaletteId; 2] {
     let primary = mappings

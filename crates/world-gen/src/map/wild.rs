@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use hashbrown::HashMap;
 
-use firecore_world_builder::world::{
+use firecore_world::{
     map::wild::{WildEntry, WildPokemon},
     pokedex::{pokemon::Pokemon, BasicDex},
 };

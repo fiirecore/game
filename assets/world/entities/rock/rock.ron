@@ -1,0 +1,4 @@
+(
+    id: "rock",
+    removable: Capability("rock"),
+)

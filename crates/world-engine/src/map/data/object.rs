@@ -54,61 +54,61 @@ impl ObjectTextures {
 
     pub fn draw(&self, draw: &mut Draw, state: &MapState, camera: &CharacterCamera, color: Color) {
         if let Some(state) = state.entities.get(&state.location) {
-            for object in state.objects.values().filter(|object| !object.removed) {
-                if let Some(texture) = self.textures.get(&object.entity.data.group) {
-                    let x = ((object.entity.coordinate.x + camera.offset.x) << 4) as f32
-                        - camera.focus.x;
-                    let y = ((object.entity.coordinate.y + camera.offset.y) << 4) as f32
-                        - camera.focus.y;
-                    draw.texture(
-                        texture,
-                        x,
-                        y,
-                        DrawParams {
-                            source: Some(Rect {
-                                x: 0.0,
-                                y: 0.0,
-                                width: TILE_SIZE,
-                                height: TILE_SIZE,
-                            }),
-                            color,
-                            ..Default::default()
-                        },
-                    );
-                    // texture.draw(
-                    //     ctx,
-                    //     x,
-                    //     y,
-                    //     DrawParams {
-                    //         source: Some(Rectangle {
-                    //             x: 0.0,
-                    //             y: 0.0,
-                    //             w: TILE_SIZE,
-                    //             h: TILE_SIZE,
-                    //         }),
-                    //         color,
-                    //         ..Default::default()
-                    //     },
-                    // )
-                }
-            }
-            for object in state
-                .items
-                .values()
-                .filter(|object| !object.removed || !object.entity.data.hidden)
-            {
-                /// "ball"
-                const BALL: &ObjectType =
-                    unsafe { &ObjectType::from_bytes_unchecked(1819042146u32.to_ne_bytes()) };
+            // for object in state.objects.values().filter(|object| !object.removed) {
+            //     if let Some(texture) = self.textures.get(&object.entity.data.group) {
+            //         let x = ((object.entity.coordinate.x + camera.offset.x) << 4) as f32
+            //             - camera.focus.x;
+            //         let y = ((object.entity.coordinate.y + camera.offset.y) << 4) as f32
+            //             - camera.focus.y;
+            //         draw.texture(
+            //             texture,
+            //             x,
+            //             y,
+            //             DrawParams {
+            //                 source: Some(Rect {
+            //                     x: 0.0,
+            //                     y: 0.0,
+            //                     width: TILE_SIZE,
+            //                     height: TILE_SIZE,
+            //                 }),
+            //                 color,
+            //                 ..Default::default()
+            //             },
+            //         );
+            //         // texture.draw(
+            //         //     ctx,
+            //         //     x,
+            //         //     y,
+            //         //     DrawParams {
+            //         //         source: Some(Rectangle {
+            //         //             x: 0.0,
+            //         //             y: 0.0,
+            //         //             w: TILE_SIZE,
+            //         //             h: TILE_SIZE,
+            //         //         }),
+            //         //         color,
+            //         //         ..Default::default()
+            //         //     },
+            //         // )
+            //     }
+            // }
+            // for object in state
+            //     .items
+            //     .values()
+            //     .filter(|object| !object.removed || !object.entity.data.hidden)
+            // {
+            //     /// "ball"
+            //     const BALL: &ObjectType =
+            //         unsafe { &ObjectType::from_bytes_unchecked(1819042146u32.to_ne_bytes()) };
 
-                if let Some(texture) = self.textures.get(BALL) {
-                    let x = ((object.entity.coordinate.x + camera.offset.x) << 4) as f32
-                        - camera.focus.x;
-                    let y = ((object.entity.coordinate.y + camera.offset.y) << 4) as f32
-                        - camera.focus.y;
-                    draw.image(texture).position(x, y).color(color);
-                }
-            }
+            //     if let Some(texture) = self.textures.get(BALL) {
+            //         let x = ((object.entity.coordinate.x + camera.offset.x) << 4) as f32
+            //             - camera.focus.x;
+            //         let y = ((object.entity.coordinate.y + camera.offset.y) << 4) as f32
+            //             - camera.focus.y;
+            //         draw.image(texture).position(x, y).color(color);
+            //     }
+            // }
         }
 
         for anim in self.active.iter() {

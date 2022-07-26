@@ -1,0 +1,4 @@
+(
+    id: "tree",
+    removable: Capability("cut"),
+)

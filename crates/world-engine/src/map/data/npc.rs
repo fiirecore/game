@@ -87,7 +87,7 @@ impl NpcTextures {
             .get(&character.group)
             .unwrap_or_else(|| {
                 self.0
-                    .get(&CharacterState::PLACEHOLDER_GROUP)
+                    .get(&CharacterState::PLACEHOLDER)
                     .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
             })
             .draw(draw, character, camera, color);

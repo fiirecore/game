@@ -11,11 +11,12 @@ use crate::{
 use self::{
     chunk::WorldChunk,
     movement::MapMovementResult,
-    object::{ItemEntity, Items, ObjectEntity, Objects, SignEntity, Signs},
+    object::Objects,
     warp::{WarpDestination, Warps},
     wild::WildEntries,
 };
 
+pub mod data;
 pub mod manager;
 
 pub mod movement;
@@ -64,9 +65,9 @@ pub struct WorldMap {
     pub wild: Option<WildEntries>,
 
     pub npcs: Npcs,
-    pub objects: Objects,
-    pub items: Items,
-    pub signs: Signs,
+    // pub objects: Objects,
+    // pub items: Items,
+    // pub signs: Signs,
 
     // pub objects: HashMap<u8, MapObject>,
     // pub scripts: Vec<WorldScript>,
@@ -114,23 +115,23 @@ impl WorldMap {
                 match state.entities.get(&self.id) {
                     Some(entities) => {
                         // Iterators
-                        let npcs = entities
+                        let mut npcs = entities
                             .npcs
                             .values()
                             .filter(|character| !character.hidden)
                             .map(|character| character.position.coords);
-                        let objects = entities
-                            .objects
-                            .values()
-                            .filter(|object| !object.removed)
-                            .map(|object| object.entity.coordinate);
-                        let items = entities
-                            .items
-                            .values()
-                            .filter(|object| !object.entity.data.hidden || !object.removed)
-                            .map(|object| object.entity.coordinate);
+                        // let objects = entities
+                        //     .objects
+                        //     .values()
+                        //     .filter(|object| !object.removed)
+                        //     .map(|object| object.entity.coordinate);
+                        // let items = entities
+                        //     .items
+                        //     .values()
+                        //     .filter(|object| !object.entity.data.hidden || !object.removed)
+                        //     .map(|object| object.entity.coordinate);
                         // find used locations
-                        match npcs.chain(objects).chain(items).any(|c| c == coords) {
+                        match npcs./*chain(objects).chain(items).*/any(|c| c == coords) {
                             true => 1,
                             false => *code,
                         }
@@ -186,23 +187,23 @@ impl WorldMap {
             .map(|entry| &entry.destination)
     }
 
-    pub fn object_at(&self, coordinate: &Coordinate) -> Option<&ObjectEntity> {
-        self.objects
-            .values()
-            .find(|object| &object.coordinate == coordinate)
-    }
+    // pub fn object_at(&self, coordinate: &Coordinate) -> Option<&ObjectEntity> {
+    //     self.objects
+    //         .values()
+    //         .find(|object| &object.coordinate == coordinate)
+    // }
 
-    pub fn item_at(&self, coordinate: &Coordinate) -> Option<&ItemEntity> {
-        self.items
-            .values()
-            .find(|object| &object.coordinate == coordinate)
-    }
+    // pub fn item_at(&self, coordinate: &Coordinate) -> Option<&ItemEntity> {
+    //     self.items
+    //         .values()
+    //         .find(|object| &object.coordinate == coordinate)
+    // }
 
-    pub fn sign_at(&self, coordinate: &Coordinate) -> Option<&SignEntity> {
-        self.signs
-            .values()
-            .find(|object| &object.coordinate == coordinate)
-    }
+    // pub fn sign_at(&self, coordinate: &Coordinate) -> Option<&SignEntity> {
+    //     self.signs
+    //         .values()
+    //         .find(|object| &object.coordinate == coordinate)
+    // }
 
     pub fn contains(&self, location: &Location) -> bool {
         &self.id == location
@@ -221,7 +222,7 @@ impl WorldMap {
 
     pub fn try_wild_battle<R: Rng>(
         &self,
-        data: &manager::WorldMapData,
+        data: &data::WorldMapData,
         state: &mut MapState,
         randoms: &mut WorldRandoms<R>,
     ) {

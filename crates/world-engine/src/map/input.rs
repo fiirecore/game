@@ -1,9 +1,7 @@
-use crate::engine::{
-    controls::{down, Control},
-};
+use crate::engine::controls::{down, Control};
 use pokengine::engine::notan::prelude::{App, Plugins};
 use worldlib::{
-    character::{player::PlayerCharacter, Activity, CharacterFlag},
+    character::{player::PlayerCharacter, Activity},
     positions::Direction,
 };
 
@@ -15,7 +13,7 @@ pub struct PlayerInput {
 }
 
 impl PlayerInput {
-    pub const INPUT_LOCK: CharacterFlag = unsafe { CharacterFlag::from_bytes_unchecked(500186508905u64.to_ne_bytes()) };
+    // pub const INPUT_LOCK: CharacterFlag = unsafe { CharacterFlag::from_bytes_unchecked(500186508905u64.to_ne_bytes()) };
     pub const INPUT_LOCK_VAL: i8 = 0;
 
     const MOVE_WAIT: f32 = 0.12;

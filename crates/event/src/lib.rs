@@ -2,11 +2,13 @@ use std::{cell::RefCell, rc::Rc};
 
 type Inner<T> = Rc<RefCell<Vec<T>>>;
 
+#[deprecated]
 pub fn split<T>() -> (EventWriter<T>, EventReader<T>) {
     let queue: Inner<T> = Default::default();
     (EventWriter(queue.clone()), EventReader(queue))
 }
 
+#[deprecated]
 #[derive(Clone)]
 pub struct EventWriter<T>(Rc<RefCell<Vec<T>>>);
 
@@ -20,6 +22,7 @@ impl<T> EventWriter<T> {
     }
 }
 
+#[deprecated]
 pub struct EventReader<T>(Rc<RefCell<Vec<T>>>);
 
 impl<T> EventReader<T> {

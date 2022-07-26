@@ -42,37 +42,37 @@ impl TitleState {
             title: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../../build/assets/scenes/title/title.png"
+                    "../../../assets/scenes/title/title.png"
                 ))
                 .build()?,
             trademark: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../../build/assets/scenes/title/trademark.png"
+                    "../../../assets/scenes/title/trademark.png"
                 ))
                 .build()?,
             subtitle: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../../build/assets/scenes/title/subtitle.png"
+                    "../../../assets/scenes/title/subtitle.png"
                 ))
                 .build()?,
             charizard: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../../build/assets/scenes/title/charizard.png"
+                    "../../../assets/scenes/title/charizard.png"
                 ))
                 .build()?,
             start: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../../build/assets/scenes/title/start.png"
+                    "../../../assets/scenes/title/start.png"
                 ))
                 .build()?,
             copyright: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../../build/assets/scenes/title/copyright.png"
+                    "../../../assets/scenes/title/copyright.png"
                 ))
                 .build()?,
             sender,

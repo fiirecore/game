@@ -1,17 +1,16 @@
 use dashmap::DashMap;
-use firecore_world_builder::{
-    builder::structs::{BuilderArea, BuilderLocation},
-    world::{
+use firecore_world::{
         character::npc::NpcId,
         map::{
             warp::{WarpDestination, WarpEntry},
             WorldMap,
         },
         positions::{Coordinate, CoordinateInt, Destination, Location},
-    },
-};
+    };
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
+
+use crate::structs::{BuilderArea, BuilderLocation};
 
 #[derive(Deserialize, Serialize)]
 pub struct Edits {

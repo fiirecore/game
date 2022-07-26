@@ -1,24 +1,35 @@
 # To - do List
 
-break object capabilities
-   maybe use a tinystr hashset for capabilities
-   fix break object
+* Objects
+   - Objects need to be reimplemented
 
-fix swim capability
-   learn move callback?
+* World
+   - Fix interaction locking and failing to interact causing a lock
 
-fix deprecated stuff
+* World Scripts
+   - Scripts need to be able to activate on tiles
+   - Finish implementing instructions
 
-fix dex_engine file gen
-   remove extra assets
+* Battle GUI
+   - Fix the regressions
+   - Implement a move graphics script
 
-fix egui size
-fix battle regressions
-fix script regressions
+* Capabilities
+   - Be able to activate and deactivate move capabilities
 
-create own game engine
+* App
+   - Use ```include_bytes!``` for loadable data.
+   - Make the code cleaner
 
-clean up main crate
+* GUI
+   - Increase the size of the egui windows
+   - Create an egui theme
+
+* Engine
+   - Create a custom engine
+
+* Other
+   - Remove/Fix deprecated stuff
 
 ____
 
@@ -60,7 +71,6 @@ ____
 * Fix Battle GUI sucking
 * Fix pokemon not getting updated after battle
 * Reimplement running from battles
-* Correctly add BattleCloser to BattleGui
 * Move animations
 
 ## Other potential things to do

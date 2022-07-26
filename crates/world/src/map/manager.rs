@@ -1,8 +1,6 @@
 use std::ops::Deref;
 
-use hashbrown::HashMap;
 use rand::{prelude::IteratorRandom, Rng};
-use serde::{Deserialize, Serialize};
 
 use pokedex::{
     item::Item,
@@ -13,36 +11,18 @@ use pokedex::{
 };
 
 use crate::{
-    character::{
-        action::ActionQueue,
-        npc::{
-            group::{NpcGroup, TrainerGroup, TrainerGroupId},
-            trainer::TrainerDisable,
-        },
-        player::PlayerCharacter,
-        Activity, CharacterGroupId, DoMoveResult,
-    },
+    character::{action::ActionQueue, player::PlayerCharacter, Activity, DoMoveResult, CharacterState},
     map::{MovementId, WarpDestination, WorldMap},
-    positions::{BoundingBox, Coordinate, Direction, Location, Spot},
+    positions::{BoundingBox, Direction, Location},
     random::WorldRandoms,
     script::WorldScriptingEngine,
-    state::{
-        map::{MapEvent, MapState},
-        WorldState,
-    },
+    state::{map::{MapState, MapEvent}, WorldState},
 };
 
 use super::{
-    chunk::Connection,
+    data::WorldMapData,
     movement::{Elevation, MapMovementResult},
-    wild::WildChances,
 };
-
-use self::tile::PaletteDataMap;
-
-pub mod tile;
-
-pub type Maps = HashMap<Location, WorldMap>;
 
 pub struct WorldMapManager<S: WorldScriptingEngine> {
     pub data: WorldMapData,
@@ -54,21 +34,6 @@ pub struct WorldMapManager<S: WorldScriptingEngine> {
 pub enum InputEvent {
     Move(Direction),
     Interact,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct WorldMapData {
-    pub maps: Maps,
-    pub palettes: PaletteDataMap,
-    pub npc: WorldNpcData,
-    pub wild: WildChances,
-    pub spawn: Spot,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct WorldNpcData {
-    pub groups: HashMap<CharacterGroupId, NpcGroup>,
-    pub trainers: HashMap<TrainerGroupId, TrainerGroup>,
 }
 
 impl<S: WorldScriptingEngine> WorldMapManager<S> {
@@ -101,7 +66,7 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
     }
 
     pub fn on_change(&self, map: &WorldMap, state: &mut MapState) {
-        state.events.push(MapEvent::PlayMusic(map.music));
+        state.events.push(MapEvent::PlayMusic(Some(map.music)));
         state.update_objects(&self.data);
         // check for cave here and add last spot non cave for escape rope
     }
@@ -147,13 +112,13 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
             let forward = state.player.character.position.forwards();
 
-            if let Some(object) = map.object_at(&forward) {
-                state.events.push(MapEvent::BreakObject(forward, false));
-            }
+            // if let Some(object) = map.object_at(&forward) {
+                
+            // }
 
-            if let Some(item) = map.item_at(&forward) {
-                item.pickup(&map.id, forward, state);
-            }
+            // if let Some(item) = map.item_at(&forward) {
+            //     item.pickup(&map.id, forward, state);
+            // }
         }
     }
 
@@ -195,7 +160,14 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
                     {
                         if !character.moving() {
                             if randoms.npc.gen_bool(NPC_MOVE_CHANCE) {
-                                let npc = self.data.maps.get(&state.location).unwrap().npcs.get(id).unwrap();
+                                let npc = self
+                                    .data
+                                    .maps
+                                    .get(&state.location)
+                                    .unwrap()
+                                    .npcs
+                                    .get(id)
+                                    .unwrap();
                                 for movement in npc.movement.iter() {
                                     match movement {
                                         NpcMovement::Look(directions) => {
@@ -249,9 +221,9 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
         randoms: &mut WorldRandoms<R>,
         trainer: &Trainer<P, B>,
     ) {
-        state.events.push(MapEvent::OnTile);
+        // state.events.push(MapEvent::OnTile);
 
-        if !trainer.party.is_empty() && state.player.character.capabilities.encounters {
+        if !trainer.party.is_empty() && state.player.character.capabilities.contains(&CharacterState::ENCOUNTERS) {
             if let Some(map) = self.data.maps.get(&state.location) {
                 map.try_wild_battle(&self.data, state, randoms);
 
@@ -351,7 +323,7 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
                 .flatten()
                 .flatten()
                 .unwrap_or_default()
-                && !state.player.character.capabilities.noclip
+                && !state.player.character.capabilities.contains(&CharacterState::NOCLIP)
             {
                 state.events.push(MapEvent::PlayerJump);
                 return;
@@ -378,7 +350,7 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
         fn with_code(player: &mut PlayerCharacter, code: MovementId, direction: Direction) -> bool {
             if Elevation::can_move(player.character.position.elevation, code)
-                || player.character.capabilities.noclip
+                || player.character.capabilities.contains(&CharacterState::NOCLIP)
             {
                 if Elevation::WATER == code {
                     if player.character.activity != Activity::Swimming {
@@ -388,8 +360,8 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
                             ))
                         };
 
-                        if player.character.capabilities.swim
-                            || player.character.capabilities.noclip
+                        if player.character.capabilities.contains(&CharacterState::SWIM)
+                            || player.character.capabilities.contains(&CharacterState::NOCLIP)
                         {
                             player.character.activity = Activity::Swimming;
                         } else {
@@ -422,98 +394,6 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
     ) {
         if self.data.warp(state, destination) {
             self.on_warp(state, randoms, trainer);
-        }
-    }
-}
-
-impl WorldMapData {
-    pub fn connection_movement(
-        &self,
-        direction: Direction,
-        offset: i32,
-        connections: &[Connection],
-        state: &MapState,
-    ) -> Option<(Location, Coordinate, MovementId)> {
-        connections.iter().find_map(|connection| {
-            self.maps
-                .get(&connection.0)
-                .map(|map| {
-                    let o = offset - connection.1;
-                    let position = Connection::offset(direction, map, o);
-                    let coords = position.in_direction(direction);
-                    map.local_movement(coords, state)
-                        .map(|code| (map.id, position, code))
-                })
-                .flatten()
-        })
-    }
-
-    pub fn post_battle<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        &self,
-        state: &mut MapState,
-        trainer: &mut InitTrainer<P, M, I>,
-        winner: bool,
-    ) {
-        state.player.character.locked.decrement();
-        let entry = state.player.battle.battling.take();
-        if winner {
-            if let Some(entry) = entry {
-                if let Some(trainer) = entry.trainer {
-                    state.player.character.end_interact();
-                    if let Some(character) = state
-                        .entities
-                        .get_mut(&state.location)
-                        .and_then(|state| state.npcs.get_mut(&trainer.id))
-                    {
-                        character.end_interact();
-                    }
-                    if let Some(npc) = self
-                        .maps
-                        .get(&trainer.location)
-                        .and_then(|map| map.npcs.get(&trainer.id))
-                        .and_then(|npc| npc.trainer.as_ref())
-                    {
-                        match &npc.disable {
-                            TrainerDisable::DisableSelf => {
-                                state.player.battle.insert(&trainer.location, trainer.id);
-                            }
-                            TrainerDisable::Many(others) => {
-                                state.player.battle.insert(&trainer.location, trainer.id);
-                                state
-                                    .player
-                                    .battle
-                                    .battled
-                                    .get_mut(&trainer.location)
-                                    .unwrap()
-                                    .extend(others);
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            let Spot { location, position } = state.places.heal.unwrap_or(self.spawn);
-            state.location = location;
-            state.player.character.position = position;
-            trainer.party.iter_mut().for_each(|o| o.heal(None, None));
-        }
-    }
-
-    pub fn warp(&self, state: &mut MapState, destination: WarpDestination) -> bool {
-        match self.maps.contains_key(&destination.location) {
-            true => {
-                MapState::warp(
-                    &mut state.location,
-                    &mut state.player.character,
-                    destination,
-                );
-                true
-            }
-            false => false,
         }
     }
 }

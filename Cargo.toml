@@ -8,9 +8,9 @@ description = "Pokemon FireRed Clone"
 repository = "https://github.com/fiirecore/pokemon-game"
 keywords = ["games", "pokemon"]
 categories = ["games"]
-build = "build/build.rs"
+build = "build.rs"
 readme = "README.md"
-include = ["/build", "/assets"]
+include = ["/assets"]
 publish = false
 
 [workspace]
@@ -46,16 +46,12 @@ serde = { version = "1", features = ["derive"] }
 rand = { version = "0.8", features = ["small_rng"] }
 tinystr = { version = "0.6", features = ["serde"], default-features = false }
 postcard = { version = "1", default-features = false, features = ["alloc"] }
-
-# discord-rich-presence = { version = "0.1", optional = true }
-
-# [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-# pico-args = "0.4"
-
-### Storage
+zip = { version = "0.6" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 dirs = "4"
+# discord-rich-presence = { version = "0.1", optional = true }
+# pico-args = "0.4"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 general_storage_web = "0.2"
@@ -65,18 +61,17 @@ general_storage_web = "0.2"
 [build-dependencies]
 
 firecore-dex-gen = { path = "crates/dex-gen" }
-# firecore-world-gen = { path = "crates/world-gen" }
+firecore-world-gen = { path = "crates/world-gen" }
+firecore-world = { path = "crates/world" }
 
-firecore-pokedex-engine-builder = { path = "crates/pokedex-engine-builder", default-features = false, features = [
-    "compile",
-    "audio",
-] }
-
-firecore-world-builder = { path = "crates/world-builder", package = "firecore-world-builder" }
-
-firecore-audio-builder = { path = "crates/builder-audio" }
+postcard = { version = "1", default-features = false, features = ["alloc"] }
 serde = "1"
-firecore-storage = { path = "crates/storage", default-features = false }
+ron = "0.7"
+hashbrown = { version = "0.12" }
+
+# zip = { version = "0.6" }
+# sha256 = "1"
+
 
 [target.'cfg(windows)'.build-dependencies]
 embed-resource = "1.7.3"

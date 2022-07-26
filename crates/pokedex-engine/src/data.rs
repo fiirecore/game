@@ -6,7 +6,7 @@ use crate::engine::{
     sound::SoundVariant,
 };
 
-use firecore_pokedex_engine_builder::SerializedPokedexEngine;
+use crate::SerializedPokedexEngine;
 
 use crate::texture::{ItemTextures, PokemonTextures, TrainerGroupTextures};
 

@@ -3,7 +3,7 @@ use core::ops::Deref;
 use firecore_pokedex::trainer::InitTrainer;
 use pokedex::{item::Item, moves::Move, pokemon::Pokemon};
 
-use crate::{map::manager::WorldMapData, state::map::MapState, random::WorldRandoms};
+use crate::{map::data::WorldMapData, state::map::MapState, random::WorldRandoms};
 
 pub mod default;
 

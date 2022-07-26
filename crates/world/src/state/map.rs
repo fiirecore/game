@@ -11,11 +11,7 @@ use crate::{
         CharacterState,
     },
     map::{
-        manager::WorldMapData,
-        movement::Elevation,
-        object::{ItemEntityState, ObjectEntityState, ObjectId},
-        warp::WarpDestination,
-        MusicId,
+        data::WorldMapData, movement::Elevation, object::ObjectId, warp::WarpDestination, MusicId,
     },
     message::{MessageColor, MessageTheme},
     positions::{Coordinate, Location, Spot},
@@ -54,15 +50,12 @@ pub struct MapState {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MapEvent {
-    PlayMusic(MusicId),
+    PlayMusic(Option<MusicId>),
     PlaySound(SoundId, SoundVariant),
     BeginWarpTransition(Coordinate),
     PlayerJump,
 
-    #[deprecated]
-    /// Position, skip break test
-    BreakObject(Coordinate, bool),
-    GetItem(SavedItemStack),
+    GiveItem(SavedItemStack),
 
     /// Should freeze player and start battle
     // Battle(BattleEntry),
@@ -74,10 +67,10 @@ pub enum MapEvent {
 pub struct EntityStates {
     #[serde(skip)]
     pub npcs: HashMap<NpcId, CharacterState>,
-    #[serde(default)]
-    pub objects: HashMap<ObjectId, ObjectEntityState>,
-    #[serde(default)]
-    pub items: HashMap<ObjectId, ItemEntityState>,
+    // #[serde(default)]
+    // pub objects: HashMap<ObjectId, ObjectEntityState>,
+    // #[serde(default)]
+    // pub items: HashMap<ObjectId, ItemEntityState>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -124,12 +117,15 @@ impl MapState {
                 );
             }
 
-            for (id, object) in map.objects.iter() {
-                objects.objects.insert(*id, ObjectEntityState {
-                    entity: *object,
-                    removed: false,
-                });
-            }
+            // for (id, object) in map.objects.iter() {
+            //     objects.objects.insert(
+            //         *id,
+            //         ObjectEntityState {
+            //             entity: *object,
+            //             removed: false,
+            //         },
+            //     );
+            // }
         }
     }
 

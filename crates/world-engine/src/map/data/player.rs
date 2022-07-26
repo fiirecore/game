@@ -28,6 +28,7 @@ pub struct PlayerTexture {
 
     accumulator: f32,
     jumping: bool,
+    could_noclip: bool,
 }
 
 pub struct CharacterTexture {
@@ -77,12 +78,14 @@ impl PlayerTexture {
             bush: bush::PlayerBushTexture::new(gfx)?,
             accumulator: 0.0,
             jumping: false,
+            could_noclip: false,
         })
     }
 
     pub fn jump(&mut self, player: &mut PlayerCharacter) {
         player.character.sprite = 0;
-        player.character.capabilities.noclip = true;
+        self.could_noclip = player.character.capabilities.contains(&CharacterState::NOCLIP);
+        player.character.capabilities.remove(&CharacterState::NOCLIP);
         player.character.input_lock.increment();
         for _ in 0..2 {
             player
@@ -114,7 +117,9 @@ impl PlayerTexture {
             true => {
                 if !character.moving() {
                     character.input_lock.decrement();
-                    character.capabilities.noclip = false;
+                    if !self.could_noclip {
+                        character.capabilities.remove(&CharacterState::NOCLIP);
+                    }
                     self.jumping = false;
                     self.accumulator = 0.0;
                 }

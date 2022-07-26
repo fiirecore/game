@@ -1,7 +1,7 @@
 use worldlib::{
     character::{action::ActionQueue, player::PlayerCharacter},
     map::{
-        manager::{tile::WarpTile, WorldMapData},
+        data::{tile::WarpTile, WorldMapData},
         PaletteId, TileId,
     },
     positions::Coordinate,

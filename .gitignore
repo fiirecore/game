@@ -1,9 +1,5 @@
-/target
-
 /.vscode
 
-/build/data/*.bin
+/target
 
-/saves/
-
-SDL2*
+/data

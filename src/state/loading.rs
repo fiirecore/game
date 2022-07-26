@@ -77,7 +77,7 @@ impl LoadingStateManager {
             copyright: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../build/assets/scenes/loading/copyright.png"
+                    "../../assets/scenes/loading/copyright.png"
                 ))
                 .build()?,
             // pokemon: PokemonLoadingScene::new(ctx)?,
@@ -85,15 +85,15 @@ impl LoadingStateManager {
             debug_font,
             star: gfx
                 .create_texture()
-                .from_image(include_bytes!("../../build/assets/scenes/loading/star.png"))
+                .from_image(include_bytes!("../../assets/scenes/loading/star.png"))
                 .build()?,
             logo: gfx
                 .create_texture()
-                .from_image(include_bytes!("../../build/assets/scenes/loading/logo.png"))
+                .from_image(include_bytes!("../../assets/scenes/loading/logo.png"))
                 .build()?,
             text: gfx
                 .create_texture()
-                .from_image(include_bytes!("../../build/assets/scenes/loading/text.png"))
+                .from_image(include_bytes!("../../assets/scenes/loading/text.png"))
                 .build()?,
             sender,
         })

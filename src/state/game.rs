@@ -20,7 +20,7 @@ use battlecli::{
 use worldcli::{
     pokedex::trainer::InitTrainer,
     worldlib::{
-        map::{battle::BattleId, manager::WorldMapData},
+        map::{battle::BattleId, data::WorldMapData},
         random::WorldRandoms,
         script::default::DefaultWorldScriptEngine,
         serialized::SerializedTextures,

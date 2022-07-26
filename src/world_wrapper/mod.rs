@@ -19,7 +19,7 @@ use crate::engine::{
 
 use crate::pokengine::PokedexClientData;
 
-use worldcli::{map::manager::WorldManager, worldlib::{script::default::DefaultWorldScriptEngine, map::manager::{Maps, WorldMapData}, serialized::SerializedTextures, state::map::MapState}, pokedex::trainer::InitTrainer};
+use worldcli::{map::manager::WorldManager, worldlib::{script::default::DefaultWorldScriptEngine, map::data::{Maps, WorldMapData}, serialized::SerializedTextures, state::map::MapState, character::CharacterState}, pokedex::trainer::InitTrainer};
 
 use self::{command::WorldCommands, start::StartMenu};
 
@@ -90,15 +90,17 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                         self.manager.try_teleport(&mut state.map, randoms, trainer, location);
                     }
                     WorldCommands::Wild(toggle) => {
-                        state.map.player.character.capabilities.encounters = match toggle {
-                            Some(set) => set,
-                            None => !state.map.player.character.capabilities.encounters,
+                        if state.map.player.character.capabilities.contains(&CharacterState::ENCOUNTERS) {
+                            state.map.player.character.capabilities.remove(&CharacterState::ENCOUNTERS);
+                        } else {
+                            state.map.player.character.capabilities.insert(CharacterState::ENCOUNTERS);
                         }
                     }
                     WorldCommands::NoClip(toggle) => {
-                        state.map.player.character.capabilities.noclip = match toggle {
-                            Some(set) => set,
-                            None => !state.map.player.character.capabilities.noclip,
+                        if state.map.player.character.capabilities.contains(&CharacterState::NOCLIP) {
+                            state.map.player.character.capabilities.remove(&CharacterState::NOCLIP);
+                        } else {
+                            state.map.player.character.capabilities.insert(CharacterState::NOCLIP);
                         }
                     }
                     WorldCommands::DebugDraw => {

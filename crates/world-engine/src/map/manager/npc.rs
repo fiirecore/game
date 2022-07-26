@@ -13,7 +13,7 @@ use crate::engine::utils::HashMap;
 pub fn group<'a>(group: &'a HashMap<CharacterGroupId, NpcGroup>, id: &CharacterGroupId) -> &'a NpcGroup {
     group.get(id).unwrap_or_else(|| {
         group
-            .get(&CharacterState::PLACEHOLDER_GROUP)
+            .get(&CharacterState::PLACEHOLDER)
             .unwrap_or_else(|| panic!("Cannot get placeholder npc type!"))
     })
 }

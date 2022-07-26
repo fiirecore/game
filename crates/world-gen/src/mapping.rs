@@ -1,16 +1,15 @@
 use std::ops::Deref;
 
-use firecore_world_builder::{
-    builder::structs::BuilderLocation,
-    world::{
-        audio::{SoundId, SoundVariant},
-        character::CharacterGroupId,
-        map::{object::ObjectType, PaletteId, TileId, TransitionId},
-        positions::{Direction, Location},
-    },
+use firecore_world::{
+    audio::{SoundId, SoundVariant},
+    character::CharacterGroupId,
+    map::{object::ObjectType, PaletteId, TileId, TransitionId},
+    positions::{Direction, Location},
 };
 use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
+
+use crate::structs::BuilderLocation;
 
 #[derive(Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]

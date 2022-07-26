@@ -14,7 +14,7 @@ pub mod player;
 // pub mod pathfind;
 
 pub type CharacterGroupId = tinystr::TinyStr16;
-pub type CharacterFlag = tinystr::TinyStr8;
+pub type Capability = tinystr::TinyStr8;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -31,7 +31,7 @@ pub struct CharacterState {
     pub activity: Activity,
 
     #[serde(default)]
-    pub capabilities: Capabilities,
+    pub capabilities: hashbrown::HashSet<Capability>,
 
     #[serde(default)]
     pub sprite: u8,
@@ -78,9 +78,21 @@ pub enum DoMoveResult {
 pub struct Counter(u8);
 
 impl CharacterState {
-    pub const PLACEHOLDER_GROUP: CharacterGroupId = unsafe {
+    pub const PLACEHOLDER: CharacterGroupId = unsafe {
         CharacterGroupId::from_bytes_unchecked(138296354938823594217663600u128.to_ne_bytes())
     };
+
+    pub const RUN: Capability =
+        unsafe { Capability::from_bytes_unchecked([0x72, 0x75, 0x6E, 0, 0, 0, 0, 0]) };
+
+    pub const SWIM: Capability =
+        unsafe { Capability::from_bytes_unchecked([0x73, 0x77, 0x69, 0x6D, 0, 0, 0, 0]) };
+
+    pub const ENCOUNTERS: Capability =
+        unsafe { Capability::from_bytes_unchecked([0x62, 0x61, 0x74, 0x74, 0x6C, 0x65, 0, 0]) };
+
+    pub const NOCLIP: Capability =
+        unsafe { Capability::from_bytes_unchecked([0x6E, 0x6F, 0x63, 0x6C, 0x6A, 0x70, 0, 0]) };
 
     pub fn moving(&self) -> bool {
         !self.actions.queue.is_empty() || !self.offset.is_zero()
@@ -328,5 +340,5 @@ impl Default for Capabilities {
 }
 
 const fn default_group() -> CharacterGroupId {
-    CharacterState::PLACEHOLDER_GROUP
+    CharacterState::PLACEHOLDER
 }

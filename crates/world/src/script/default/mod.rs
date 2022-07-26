@@ -17,11 +17,11 @@ use crate::{
         npc::{Npc, NpcId},
         DoMoveResult,
     },
-    map::{battle::BattleEntry, manager::WorldMapData},
+    map::{battle::BattleEntry, data::WorldMapData},
     message::MessageTheme,
     positions::Location,
     random::WorldRandoms,
-    state::map::{MapEvent, MapState},
+    state::map::{MapState, MapEvent},
 };
 
 use super::WorldScriptingEngine;
@@ -131,13 +131,14 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                                         scriptid,
                                         id
                                     );
+                                    world.player.character.input_lock.decrement();
                                 }
                             },
                             true => {
                                 log::debug!("Could not run script as one is running already!")
                             }
                         }
-                    }
+                    } 
                 }
             }
         }
@@ -279,9 +280,7 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                     queue.remove(0);
                 }
                 WorldInstruction::AddItem(item) => {
-                    world
-                        .events
-                        .push(MapEvent::GetItem(SavedItemStack::from(*item)));
+                    world.events.push(MapEvent::GiveItem(SavedItemStack::from(*item)));
                     queue.remove(0);
                 }
                 WorldInstruction::CheckItemSpace(..) => {

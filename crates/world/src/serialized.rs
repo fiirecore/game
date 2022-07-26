@@ -2,6 +2,8 @@ use enum_map::EnumMap;
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
+pub extern crate enum_map;
+
 use crate::{
     character::{
         npc::{Npc, NpcId},

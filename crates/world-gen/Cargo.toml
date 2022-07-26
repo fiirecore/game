@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 # firecore-world-builder = { git = "https://github.com/fiirecore/pokemon-game", rev = "2c67ed2", package = "firecore-world-builder" }
-firecore-world-builder = { path = "../world-builder" }
+firecore-world = { path = "../world" }
 
 # firecore-dex-gen = { git = "https://github.com/fiirecore/pokedex-gen", rev = "dfdc173" }
 firecore-dex-gen = { path = "../dex-gen" }

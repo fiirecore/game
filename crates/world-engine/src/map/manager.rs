@@ -18,7 +18,8 @@ use worldlib::{
     character::player::PlayerCharacter,
     map::{
         chunk::Connection,
-        manager::{InputEvent, WorldMapData, WorldMapManager},
+        data::WorldMapData,
+        manager::{InputEvent, WorldMapManager},
         movement::Elevation,
         warp::WarpDestination,
         Brightness, WorldMap,
@@ -192,12 +193,14 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
                 //     }
                 // }
                 MapEvent::PlayMusic(music) => {
-                    if let Some(playing) = music::get_current_music(plugins) {
-                        if playing != music {
-                            music::play_music(app, plugins, &music);
-                        }
-                    } else {
-                        music::play_music(app, plugins, &music);
+                    match music {
+                        Some(music) => match music::get_current_music(plugins) {
+                            Some(playing) => if playing != music {
+                                music::play_music(app, plugins, &music);
+                            },
+                            None => music::play_music(app, plugins, &music),
+                        },
+                        None => music::stop_music(app, plugins),
                     }
                 }
                 MapEvent::PlaySound(sound, variant) => {
@@ -223,24 +226,24 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
                         on_tile(map, &state.map.player, &mut self.data)
                     }
                 }
-                MapEvent::BreakObject(coordinate, force) => {
-                    let loc = state.map.location;
-                    if let Some(object) = self
-                        .world
-                        .get(&loc)
-                        .and_then(|map| map.object_at(&coordinate))
-                    {
-                        worldlib::map::object::ObjectEntity::try_break(
-                            &loc,
-                            coordinate,
-                            &object.data.group,
-                            trainer,
-                            &mut state.map,
-                            force,
-                        );
-                    }
-                }
-                MapEvent::GetItem(item) => {
+                // MapEvent::BreakObject(coordinate, force) => {
+                //     let loc = state.map.location;
+                //     if let Some(object) = self
+                //         .world
+                //         .get(&loc)
+                //         .and_then(|map| map.object_at(&coordinate))
+                //     {
+                //         worldlib::map::object::ObjectEntity::try_break(
+                //             &loc,
+                //             coordinate,
+                //             &object.data.group,
+                //             trainer,
+                //             &mut state.map,
+                //             force,
+                //         );
+                //     }
+                // }
+                MapEvent::GiveItem(item) => {
                     if let Some(stack) = item.init(itemdex) {
                         trainer.bag.insert(stack);
                     }

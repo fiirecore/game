@@ -19,7 +19,7 @@ use crate::{
     positions::Location,
 };
 
-use super::{manager::WorldNpcData, WorldMapSettings};
+use super::{data::WorldNpcData, WorldMapSettings};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct BattleEntry<P> {

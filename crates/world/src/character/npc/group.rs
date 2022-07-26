@@ -17,5 +17,5 @@ pub struct TrainerGroup {
 }
 
 impl TrainerGroup {
-    pub const PLACEHOLDER: TrainerGroupId = CharacterState::PLACEHOLDER_GROUP;
+    pub const PLACEHOLDER: TrainerGroupId = CharacterState::PLACEHOLDER;
 }

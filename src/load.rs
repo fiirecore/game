@@ -10,7 +10,7 @@ use crate::{
 };
 
 use battlecli::battle::default_engine::{default_scripting::MoveScripts, EngineMoves};
-use worldcli::worldlib::{map::manager::{Maps, WorldMapData}, script::default::DefaultWorldScriptEngine, serialized::SerializedTextures};
+use worldcli::worldlib::{map::data::{Maps, WorldMapData}, script::default::DefaultWorldScriptEngine, serialized::SerializedTextures};
 
 pub enum LoadData<
     P: Deref<Target = Pokemon> + From<Pokemon>,
@@ -151,10 +151,10 @@ impl<
                     let battle_moves = deser(list, map, Self::BATTLE_MOVES).unwrap();
                     let battle_move_scripts = deser(list, map, Self::BATTLE_MOVE_SCRIPTS).unwrap();
                     let dex = deser(list, map, Self::DEXENGINE).unwrap();
-                    let world = deser(list, map, Self::WORLD).unwrap();
                     let world_scripting = deser(list, map, Self::WORLD_SCRIPTING).unwrap();
                     let world_textures = deser(list, map, Self::WORLD_TEXTURES).unwrap();
                     let audio = deser(list, map, Self::AUDIO).unwrap();
+                    let world = postcard::from_bytes(include_bytes!("../data/world.bin")).unwrap();
 
                     *self = Self::Data {
                         pokedex,
