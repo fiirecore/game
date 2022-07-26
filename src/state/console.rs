@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use worldcli::worldlib::character::player::InitPlayerCharacter;
+use worldcli::worldlib::character::CharacterState;
 
 use crate::{
     command::CommandProcessor,
@@ -56,7 +56,7 @@ impl Console {
         &mut self,
         app: &mut App,
         egui: &egui::Context,
-        player: Option<&mut InitPlayerCharacter<P, M, I>>,
+        character: Option<&mut CharacterState>,
     ) {
         let mut despawn = false;
         if self.alive {
@@ -97,11 +97,11 @@ impl Console {
         {
             self.alive = !self.alive;
             self.reset();
-            if let Some(player) = player {
+            if let Some(character) = character {
                 if self.alive {
-                    player.character.input_lock.increment();
+                    character.input_lock.increment();
                 } else {
-                    player.character.input_lock.decrement();
+                    character.input_lock.decrement();
                 }
             }
         }

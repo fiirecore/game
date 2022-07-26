@@ -9,7 +9,6 @@ pub struct BoundingBox {
 }
 
 impl BoundingBox {
-
     pub fn centered(coords: Coordinate, range: Coordinate) -> Self {
         Self {
             min: coords - range,

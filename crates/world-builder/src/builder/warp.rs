@@ -2,7 +2,7 @@ use std::fs::{read_dir, read_to_string};
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
-use world::map::warp::{WarpDestination, Warps, WarpEntry};
+use world::map::warp::{WarpDestination, WarpEntry, Warps};
 
 use crate::builder::structs::BuilderArea;
 
@@ -42,6 +42,9 @@ pub fn load_warp_entries(warp_path: PathBuf) -> Warps {
 
 impl From<BuilderWarpEntry> for WarpEntry {
     fn from(entry: BuilderWarpEntry) -> Self {
-        Self { area: entry.area.into(), destination: entry.destination }
+        Self {
+            area: entry.area.into(),
+            destination: entry.destination,
+        }
     }
 }

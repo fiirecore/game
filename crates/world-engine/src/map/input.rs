@@ -3,7 +3,7 @@ use crate::engine::{
 };
 use pokengine::engine::notan::prelude::{App, Plugins};
 use worldlib::{
-    character::{player::PlayerCharacter, MovementType, CharacterFlag},
+    character::{player::PlayerCharacter, Activity, CharacterFlag},
     positions::Direction,
 };
 
@@ -20,23 +20,23 @@ impl PlayerInput {
 
     const MOVE_WAIT: f32 = 0.12;
 
-    pub fn update<P, B: Default>(
+    pub fn update(
         &mut self,
         app: &App,
         plugins: &Plugins,
-        player: &mut PlayerCharacter<P, B>,
+        player: &mut PlayerCharacter,
         delta: f32,
     ) -> Option<Direction> {
         if !player.character.moving() && !player.character.input_lock.active() {
             match down(app, plugins, Control::B) {
                 true => {
-                    if player.character.movement == MovementType::Walking {
-                        player.character.movement = MovementType::Running;
+                    if player.character.activity == Activity::Walking {
+                        player.character.activity = Activity::Running;
                     }
                 }
                 false => {
-                    if player.character.movement == MovementType::Running {
-                        player.character.movement = MovementType::Walking;
+                    if player.character.activity == Activity::Running {
+                        player.character.activity = Activity::Walking;
                     }
                 }
             }

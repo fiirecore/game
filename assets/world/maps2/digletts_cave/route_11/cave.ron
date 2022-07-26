@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("digletts_cave"),
-        index: "route_11",
-    ),
-    name: "Diglett's Cave",
-    file: "1.38_DIGLETT'S CAVE.map",
-)

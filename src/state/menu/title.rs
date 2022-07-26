@@ -25,7 +25,7 @@ pub struct TitleState {
 impl TitleState {
     const MUSIC: MusicId = unsafe {
         MusicId::from_bytes_unchecked([
-            0x74, 0x69, 0x74, 0x6C, 0x65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+            0x74, 0x69, 0x74, 0x6C, 0x65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         ])
     };
 
@@ -101,7 +101,6 @@ impl TitleState {
     }
 
     pub fn draw(&mut self, gfx: &mut Graphics) {
-        
         let mut draw = gfx.create_draw();
         draw.set_size(crate::WIDTH, crate::HEIGHT);
         draw.clear(Color::BLACK);
@@ -115,17 +114,15 @@ impl TitleState {
         .color(Self::MIDDLE);
         draw.rect((0.0, draw.height() - vsides), (draw.width(), vsides))
             .color(Self::BOTTOM);
-            
+
         draw.image(&self.title).position(3.0, 3.0);
         draw.image(&self.trademark).position(158.0, 53.0);
         draw.image(&self.subtitle).position(52.0, 57.0);
         if self.accumulator as u8 % 2 == 1 {
-            draw.image(&self.start)
-                .position(44.0, 130.0);
+            draw.image(&self.start).position(44.0, 130.0);
         }
         draw.image(&self.charizard).position(129.0, 49.0);
-        draw.image(&self.copyright)
-            .position(47.0, 152.0);
+        draw.image(&self.copyright).position(47.0, 152.0);
         gfx.render(&draw);
     }
 }

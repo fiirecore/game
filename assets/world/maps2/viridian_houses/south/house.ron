@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("viridian_houses"),
-        index: "south",
-    ),
-    name: "Viridian City",
-    file: "5.2_VIRIDIAN CITY.map",
-)

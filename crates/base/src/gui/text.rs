@@ -10,11 +10,11 @@ use crate::controls::{pressed, Control};
 pub struct MessageBox;
 
 impl MessageBox {
-    pub fn ui<C: Clone + Into<[f32; 4]>>(
+    pub fn ui<C: Clone + Into<[f32; 4]>, T: Default>(
         app: &App,
         plugins: &mut Plugins,
         egui: &egui::Context,
-        state: &mut MessageStates<C>,
+        state: &mut MessageStates<C, T>,
     ) {
         if state.is_running() {
             egui::Window::new("Message Box")
@@ -81,9 +81,11 @@ impl MessageBox {
                                                 match message.page + 1 >= message.pages() {
                                                     true => {
                                                         *state = match message.cooldown {
-                                                            Some(cooldown) => MessageStates::Finished(cooldown),
+                                                            Some(cooldown) => {
+                                                                MessageStates::Finished(cooldown)
+                                                            }
                                                             None => MessageStates::None,
-                                                        };                                                        
+                                                        };
                                                         return;
                                                     }
                                                     false => {
@@ -100,9 +102,11 @@ impl MessageBox {
                                                 message.waiting = false;
                                                 if message.page + 1 >= message.pages() {
                                                     *state = match message.cooldown {
-                                                        Some(cooldown) => MessageStates::Finished(cooldown),
+                                                        Some(cooldown) => {
+                                                            MessageStates::Finished(cooldown)
+                                                        }
                                                         None => MessageStates::None,
-                                                    }; 
+                                                    };
                                                 } else {
                                                     message.page += 1;
                                                     message.reset_page();
@@ -116,7 +120,7 @@ impl MessageBox {
                             *state = match message.cooldown {
                                 Some(cooldown) => MessageStates::Finished(cooldown),
                                 None => MessageStates::None,
-                            }; 
+                            };
                         }
                     }
                 });

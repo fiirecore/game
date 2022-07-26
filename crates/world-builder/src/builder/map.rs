@@ -200,13 +200,18 @@ pub fn load_map_from_config<P: AsRef<Path>>(
         })
         .collect();
 
-    let border = map.border.tiles.into_iter().map(|tile| {
-        let size = *data.sizes.get(&config.palettes[0]).unwrap();
-        match size > tile {
-            false => WorldTile::Secondary(tile - size),
-            true => WorldTile::Primary(tile),
-        }
-    }).collect::<Vec<_>>();
+    let border = map
+        .border
+        .tiles
+        .into_iter()
+        .map(|tile| {
+            let size = *data.sizes.get(&config.palettes[0]).unwrap();
+            match size > tile {
+                false => WorldTile::Secondary(tile - size),
+                true => WorldTile::Primary(tile),
+            }
+        })
+        .collect::<Vec<_>>();
 
     Ok(WorldMap {
         id,
@@ -222,12 +227,7 @@ pub fn load_map_from_config<P: AsRef<Path>>(
         tiles,
         movements: map.movements,
 
-        border: [
-            border[0],
-            border[1],
-            border[2],
-            border[3],
-        ],
+        border: [border[0], border[1], border[2], border[3]],
 
         chunk,
 

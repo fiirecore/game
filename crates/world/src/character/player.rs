@@ -1,68 +1,51 @@
+use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
-use std::ops::Deref;
 
-use pokedex::{
-    item::{
-        bag::{Bag, SavedBag},
-        Item,
-    },
-    moves::Move,
-    pokemon::{
-        owned::{OwnedPokemon, SavedPokemon},
-        Pokemon,
-    },
-    Dex,
-};
+use pokedex::pokemon::owned::SavedPokemon;
 
-use crate::{
-    map::{movement::Elevation, warp::WarpDestination},
-    positions::Location,
-    state::WorldState,
-};
+use crate::{map::battle::BattleEntry, positions::Location};
 
 use super::{
-    npc::{trainer::NpcTrainer, NpcId},
-    trainer::Trainer,
-    Character,
+    npc::{
+        trainer::{BadgeId, NpcTrainer},
+        NpcId,
+    },
+    CharacterState,
 };
 
-pub type SavedPlayerCharacter = PlayerCharacter<SavedPokemon, SavedBag>;
-pub type InitPlayerCharacter<P, M, I> = PlayerCharacter<OwnedPokemon<P, M, I>, Bag<I>>;
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PlayerCharacter {
+    pub name: String,
+    pub character: CharacterState,
 
-#[derive(Default, Clone, Debug, Serialize, Deserialize)]
-pub struct PlayerCharacter<P, B: Default> {
-    pub location: Location,
-    pub character: Character,
-    pub trainer: Trainer<P, B>,
-
-    pub state: WorldState,
+    /// Player State
+    #[serde(default)]
+    pub battle: GlobalBattleState,
+    #[serde(default)]
+    pub badges: HashSet<BadgeId>,
 
     pub cooldown: f32,
     pub rival: String,
 }
 
-impl<P, B: Default> PlayerCharacter<P, B> {
+pub type Battled = HashSet<NpcId>;
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+pub struct GlobalBattleState {
+    pub battled: HashMap<Location, Battled>,
+    pub battling: Option<BattleEntry<SavedPokemon>>,
+}
+
+impl PlayerCharacter {
     pub fn new(name: impl Into<String>, rival: impl Into<String>) -> Self {
         Self {
-            location: Default::default(),
-            character: Character {
-                name: name.into(),
-                ..Default::default()
-            },
-            trainer: Default::default(),
-            state: Default::default(),
-            rival: rival.into(),
+            name: name.into(),
+            character: CharacterState::default(),
+            battle: Default::default(),
+            badges: Default::default(),
             cooldown: Default::default(),
+            rival: rival.into(),
         }
-    }
-
-    pub fn warp(&mut self, destination: WarpDestination) {
-        self.character
-            .position
-            .from_destination(destination.position);
-        self.character.actions.clear();
-        self.location = destination.location;
-        self.character.position.elevation = Elevation(0);
     }
 
     pub fn find_battle(
@@ -70,12 +53,9 @@ impl<P, B: Default> PlayerCharacter<P, B> {
         map: &Location,
         id: &NpcId,
         trainer: &NpcTrainer,
-        character: &mut Character,
+        character: &mut CharacterState,
     ) -> bool {
-        if !self.state.scripts.environment.running()
-            && !self.state.battle.battled(map, id)
-            && trainer.find_character(character, &mut self.character)
-        {
+        if !self.battle.battled(map, id) && trainer.find_character(character, &mut self.character) {
             self.character.locked.increment();
             true
         } else {
@@ -83,7 +63,11 @@ impl<P, B: Default> PlayerCharacter<P, B> {
         }
     }
 
-    pub fn update(&mut self, delta: f32) -> Option<super::DoMoveResult> {
+    pub fn update(
+        &mut self,
+        message: &mut crate::state::map::MapMessage,
+        delta: f32,
+    ) -> Option<super::DoMoveResult> {
         let i = match self.character.do_move(delta) {
             Some(action) => match action {
                 super::DoMoveResult::Interact => {
@@ -98,59 +82,89 @@ impl<P, B: Default> PlayerCharacter<P, B> {
             None => None,
         };
 
-        if let text::MessageStates::Finished(cooldown) = &mut self.state.message {
+        if let text::MessageStates::Finished(cooldown) = message {
             *cooldown -= delta;
             if *cooldown <= 0.0 {
-                self.state.message = text::MessageStates::None;
+                *message = text::MessageStates::None;
                 self.character.input_lock.decrement();
             }
         }
 
         i
     }
+}
 
-    pub fn give_pokemon(&mut self, pokemon: P) {
-        self.trainer.party.push(pokemon);
+impl GlobalBattleState {
+    pub fn insert(&mut self, location: &Location, npc: NpcId) {
+        if let Some(battled) = self.battled.get_mut(location) {
+            battled.insert(npc);
+        } else {
+            let mut battled = HashSet::with_capacity(1);
+            battled.insert(npc);
+            self.battled.insert(*location, battled);
+        }
+    }
+
+    pub fn battled(&self, map: &Location, npc: &NpcId) -> bool {
+        self.battled
+            .get(map)
+            .map(|battled| battled.contains(npc))
+            .unwrap_or_default()
     }
 }
 
-impl SavedPlayerCharacter {
-    pub fn init<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        self,
-        random: &mut impl rand::Rng,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
-    ) -> Option<InitPlayerCharacter<P, M, I>> {
-        Some(PlayerCharacter {
-            location: self.location,
-            character: self.character,
-            trainer: self.trainer.init(random, pokedex, movedex, itemdex)?,
-            state: self.state,
-            rival: self.rival,
-            cooldown: self.cooldown,
-        })
-    }
-}
+// impl SavedPlayerCharacter {
+//     pub fn init<
+//         P: Deref<Target = Pokemon> + Clone,
+//         M: Deref<Target = Move> + Clone,
+//         I: Deref<Target = Item> + Clone,
+//     >(
+//         self,
+//         random: &mut impl rand::Rng,
+//         pokedex: &impl Dex<Pokemon, Output = P>,
+//         movedex: &impl Dex<Move, Output = M>,
+//         itemdex: &impl Dex<Item, Output = I>,
+//     ) -> Option<InitPlayerCharacter<P, M, I>> {
+//         Some(PlayerCharacter {
+//             name: self.name,
+//             character: self.character,
+//             trainer: self.trainer.init(random, pokedex, movedex, itemdex)?,
+//             battle: self.battle,
+//             badges: self.badges,
+//             cooldown: self.cooldown,
+//             rival: self.rival,
+//         })
+//     }
+// }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > InitPlayerCharacter<P, M, I>
-{
-    pub fn uninit(self) -> SavedPlayerCharacter {
-        SavedPlayerCharacter {
-            location: self.location,
-            character: self.character,
-            trainer: self.trainer.uninit(),
-            state: self.state,
-            rival: self.rival,
-            cooldown: self.cooldown,
+// impl<
+//         P: Deref<Target = Pokemon> + Clone,
+//         M: Deref<Target = Move> + Clone,
+//         I: Deref<Target = Item> + Clone,
+//     > InitPlayerCharacter<P, M, I>
+// {
+//     pub fn uninit(self) -> SavedPlayerCharacter {
+//         SavedPlayerCharacter {
+//             name: self.name,
+//             character: self.character,
+//             trainer: self.trainer.uninit(),
+//             battle: self.battle,
+//             badges: self.badges,
+//             cooldown: self.cooldown,
+//             rival: self.rival,
+//         }
+//     }
+// }
+
+impl Default for PlayerCharacter {
+    fn default() -> Self {
+        Self {
+            name: "Red".into(),
+            character: Default::default(),
+            battle: Default::default(),
+            badges: Default::default(),
+            cooldown: Default::default(),
+            rival: "Blue".into(),
         }
     }
 }

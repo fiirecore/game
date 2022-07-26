@@ -16,5 +16,5 @@ pub struct ObjectDestroy {
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum DestroyMethod {
-    Move(MoveId)
+    Move(MoveId),
 }

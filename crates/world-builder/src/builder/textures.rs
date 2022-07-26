@@ -8,7 +8,7 @@ use std::{
 use hashbrown::HashMap;
 
 use world::{
-    character::MovementType,
+    character::Activity,
     map::PaletteId,
     serialized::{SerializedPalette, SerializedPlayerTexture, SerializedTextures},
 };
@@ -139,11 +139,11 @@ fn read_folder<I: Hash + Eq + FromStr<Err = E>, E: core::fmt::Display>(
 
 fn player(path: PathBuf) -> SerializedPlayerTexture {
     enum_map::enum_map! {
-        MovementType::Walking => read(path.join("walking.png"))
+        Activity::Walking => read(path.join("walking.png"))
             .unwrap_or_else(|err| panic!("Cannot read player walking texture with error {}", err)),
-        MovementType::Running => read(path.join("running.png"))
+            Activity::Running => read(path.join("running.png"))
             .unwrap_or_else(|err| panic!("Cannot read player running texture with error {}", err)),
-        MovementType::Swimming => read(path.join("swimming.png"))
+            Activity::Swimming => read(path.join("swimming.png"))
             .unwrap_or_else(|err| panic!("Cannot read player swimming texture with error {}", err)),
     }
 }

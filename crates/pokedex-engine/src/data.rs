@@ -34,7 +34,6 @@ impl Plugin for PokedexClientData {}
 // }
 
 impl PokedexClientData {
-
     pub fn build(
         app: &mut App,
         plugins: &mut Plugins,

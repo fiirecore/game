@@ -1,14 +1,17 @@
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    character::{npc::Npcs, player::PlayerCharacter},
+    character::{npc::Npcs, Activity},
     positions::{Coordinate, CoordinateInt, Direction, Location},
+    random::WorldRandoms,
+    state::map::MapState,
 };
 
 use self::{
     chunk::WorldChunk,
     movement::MapMovementResult,
-    object::{ItemObject, Items, MapObject, Objects, SignObject, Signs},
+    object::{ItemEntity, Items, ObjectEntity, Objects, SignEntity, Signs},
     warp::{WarpDestination, Warps},
     wild::WildEntries,
 };
@@ -34,7 +37,7 @@ pub type MapSize = usize;
 pub type Border = tile::Border;
 pub type MovementId = movement::MovementId;
 pub type MusicId = audio::MusicId;
-pub type TransitionId = tinystr::TinyStr8;
+pub type TransitionId = tinystr::TinyAsciiStr<8>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldMap {
@@ -97,51 +100,47 @@ impl WorldMap {
             .then(|| self.tiles[coords.x as usize + coords.y as usize * self.width as usize])
     }
 
-    pub fn local_movement<P, B: Default>(
-        &self,
-        coords: Coordinate,
-        player: &PlayerCharacter<P, B>,
-    ) -> Option<MovementId> {
+    pub fn local_movement(&self, coords: Coordinate, state: &MapState) -> Option<MovementId> {
         self.in_bounds(coords)
-            .then(|| self.unbounded_movement(coords, player))
+            .then(|| self.unbounded_movement(coords, state))
             .flatten()
     }
 
-    pub fn unbounded_movement<P, B: Default>(
-        &self,
-        coords: Coordinate,
-        player: &PlayerCharacter<P, B>,
-    ) -> Option<MovementId> {
+    /// to - do: change it from requiring whole player state to requiring map state
+    pub fn unbounded_movement(&self, coords: Coordinate, state: &MapState) -> Option<MovementId> {
         self.movements
             .get(coords.x as usize + coords.y as usize * self.width as usize)
             .map(|code| {
-                // Iterators
-                let npcs = self.npcs.values().map(|npc| npc.character.position.coords);
-                let objects = self
-                    .objects
-                    .keys()
-                    .filter(|coordinate| !player.state.contains_object(&self.id, coordinate))
-                    .copied();
-                let items = self
-                    .items
-                    .iter()
-                    .filter(|(coordinate, object)| {
-                        !object.hidden || !player.state.contains_object(&self.id, coordinate)
-                    })
-                    .map(|(c, ..)| *c);
-                // find used locations
-                match npcs.chain(objects).chain(items).any(|c| c == coords) {
-                    true => 1,
-                    false => *code,
+                match state.entities.get(&self.id) {
+                    Some(entities) => {
+                        // Iterators
+                        let npcs = entities
+                            .npcs
+                            .values()
+                            .filter(|character| !character.hidden)
+                            .map(|character| character.position.coords);
+                        let objects = entities
+                            .objects
+                            .values()
+                            .filter(|object| !object.removed)
+                            .map(|object| object.entity.coordinate);
+                        let items = entities
+                            .items
+                            .values()
+                            .filter(|object| !object.entity.data.hidden || !object.removed)
+                            .map(|object| object.entity.coordinate);
+                        // find used locations
+                        match npcs.chain(objects).chain(items).any(|c| c == coords) {
+                            true => 1,
+                            false => *code,
+                        }
+                    }
+                    None => *code,
                 }
             })
     }
 
-    pub fn chunk_movement<P, B: Default>(
-        &self,
-        coords: Coordinate,
-        player: &PlayerCharacter<P, B>,
-    ) -> MapMovementResult {
+    pub fn chunk_movement(&self, coords: Coordinate, state: &MapState) -> MapMovementResult {
         if let Some(chunk) = self.chunk.as_ref() {
             if coords.x.is_negative() {
                 return chunk
@@ -177,7 +176,7 @@ impl WorldMap {
         } else if !self.in_bounds(coords) {
             return MapMovementResult::NONE;
         }
-        self.unbounded_movement(coords, player).into()
+        self.unbounded_movement(coords, state).into()
     }
 
     pub fn warp_at(&self, coordinate: &Coordinate) -> Option<&WarpDestination> {
@@ -187,16 +186,22 @@ impl WorldMap {
             .map(|entry| &entry.destination)
     }
 
-    pub fn object_at(&self, coordinate: &Coordinate) -> Option<&MapObject> {
-        self.objects.get(&coordinate)
+    pub fn object_at(&self, coordinate: &Coordinate) -> Option<&ObjectEntity> {
+        self.objects
+            .values()
+            .find(|object| &object.coordinate == coordinate)
     }
 
-    pub fn sign_at(&self, coordinate: &Coordinate) -> Option<&SignObject> {
-        self.signs.get(coordinate)
+    pub fn item_at(&self, coordinate: &Coordinate) -> Option<&ItemEntity> {
+        self.items
+            .values()
+            .find(|object| &object.coordinate == coordinate)
     }
 
-    pub fn item_at(&self, coordinate: &Coordinate) -> Option<&ItemObject> {
-        self.items.get(coordinate)
+    pub fn sign_at(&self, coordinate: &Coordinate) -> Option<&SignEntity> {
+        self.signs
+            .values()
+            .find(|object| &object.coordinate == coordinate)
     }
 
     pub fn contains(&self, location: &Location) -> bool {
@@ -212,6 +217,35 @@ impl WorldMap {
                         .any(|connection| &connection.0 == location)
                 })
                 .unwrap_or_default()
+    }
+
+    pub fn try_wild_battle<R: Rng>(
+        &self,
+        data: &manager::WorldMapData,
+        state: &mut MapState,
+        randoms: &mut WorldRandoms<R>,
+    ) {
+        use wild::*;
+        if let Some(current) = self.tile(state.player.character.position.coords) {
+            if data
+                .palettes
+                .get(current.palette(&self.palettes))
+                .map(|data| data.wild.contains(&current.id()))
+                .unwrap_or_default()
+            {
+                let t = match &state.player.character.activity {
+                    Activity::Swimming => &WildType::Water,
+                    _ => &WildType::Land,
+                };
+                if let Some(entry) = &self.wild.as_ref().map(|entries| entries.get(t)).flatten() {
+                    if let Some(entry) =
+                        WildEntry::generate(&data.wild, t, entry, &mut randoms.wild)
+                    {
+                        state.player.battle.battling = Some(entry);
+                    }
+                }
+            }
+        }
     }
 }
 

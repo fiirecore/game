@@ -64,7 +64,7 @@ use action::*;
 pub struct BattleTrainer {
     pub worth: Money,
     pub texture: TrainerGroupId,
-    pub defeat: Vec<MessagePage<[f32; 4]>>,
+    pub defeat: Vec<MessagePage<[f32; 4], ()>>,
 }
 
 pub struct BattlePlayerGui<
@@ -580,7 +580,7 @@ impl<
                                                                                         ClientMoveAction::AddStat(stat, stage) => self.gui.text.on_stat_stage(target.name(), stat, stage),
                                                                                         ClientMoveAction::Ailment(ailment) => {
                                                                                             target.set_ailment(ailment);
-                                                                                            self.gui.text.on_status(target.name(), ailment.ailment);
+                                                                                            self.gui.text.on_status(target.name(), ailment.map(|a| a.ailment));
                                                                                         }
                                                                                     }
                                                                                 }

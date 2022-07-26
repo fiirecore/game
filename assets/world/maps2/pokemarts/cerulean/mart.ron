@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("pokemarts"),
-        index: "cerulean",
-    ),
-    name: "Cerulean Pokemart",
-    file: "7.7_CERULEAN CITY.map",
-)

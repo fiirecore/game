@@ -17,6 +17,7 @@ mod load;
 mod saves;
 mod state;
 mod touchscreen;
+mod random;
 
 const TITLE: &str = "Pokemon PC Edition";
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
@@ -58,7 +59,11 @@ fn run(assets: &mut Assets, gfx: &mut Graphics, plugins: &mut Plugins) -> StateM
     try_run(assets, gfx, plugins).unwrap()
 }
 
-fn try_run(assets: &mut Assets, gfx: &mut Graphics, plugins: &mut Plugins) -> Result<StateManager, String> {
+fn try_run(
+    assets: &mut Assets,
+    gfx: &mut Graphics,
+    plugins: &mut Plugins,
+) -> Result<StateManager, String> {
     engine::setup(plugins);
     use pokedex::{item::Item, moves::Move, pokemon::Pokemon};
     use std::rc::Rc;

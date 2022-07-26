@@ -2,7 +2,7 @@ use crate::engine::{graphics::Color, log::warn, math::ivec2};
 use crate::pokengine::gui::SizedStr;
 
 use pokengine::engine::notan::draw::{Draw, DrawShapes, DrawTextSection};
-use worldlib::{map::WorldMap, state::WorldState, TILE_SIZE};
+use worldlib::{map::WorldMap, state::map::MapState, TILE_SIZE};
 
 use self::data::ClientWorldData;
 
@@ -12,31 +12,31 @@ pub mod manager;
 pub mod data;
 pub mod warp;
 
-mod screen;
-pub use screen::RenderCoords;
+mod camera;
+pub use camera::CharacterCamera;
 
 pub fn draw(
     draw: &mut Draw,
     map: &WorldMap,
-    world: &WorldState,
+    state: &MapState,
     data: &ClientWorldData,
-    screen: &RenderCoords,
+    camera: &CharacterCamera,
     border: bool,
     color: Color,
 ) {
-    for yy in screen.y.clone() {
-        let y = yy - screen.offset.y;
-        let render_y = (yy << 4) as f32 - screen.focus.y; // old = y_tile w/ offset - player x pixel
+    for yy in camera.y.clone() {
+        let y = yy - camera.offset.y;
+        let render_y = (yy << 4) as f32 - camera.focus.y; // old = y_tile w/ offset - player x pixel
         let row = y.saturating_mul(map.width);
 
-        for xx in screen.x.clone() {
-            let x = xx - screen.offset.x;
-            let render_x = (xx << 4) as f32 - screen.focus.x;
+        for xx in camera.x.clone() {
+            let x = xx - camera.offset.x;
+            let render_x = (xx << 4) as f32 - camera.focus.x;
 
             if !(x < 0 || y < 0 || y >= map.height as _ || x >= map.width as _) {
                 let index = x as usize + row as usize;
 
-                if world.debug_draw {
+                if state.debug_mode {
                     let num = map.movements[index];
                     // let str = firecore_battle_gui::pokedex::gui::IntegerStr4::new(num as _).unwrap();
                     let str = match SizedStr::<3>::new(format_args!("{:X}", num)) {
@@ -100,11 +100,11 @@ pub fn draw(
                     .draw_tile(draw, &map.palettes, tile, render_x, render_y, color);
             }
 
-            if world.debug_draw {
+            if state.debug_mode {
                 for warp in map.warps.iter() {
                     for coordinate in warp.area.iter() {
-                        let coordinate = ivec2(coordinate.x, coordinate.y) + screen.offset;
-                        let render = (coordinate * (16)).as_vec2() - screen.focus;
+                        let coordinate = ivec2(coordinate.x, coordinate.y) + camera.offset;
+                        let render = (coordinate * (16)).as_vec2() - camera.focus;
                         draw.rect((render.x, render.y), (TILE_SIZE, TILE_SIZE))
                             .stroke(2.0)
                             .color(Color::RED);
@@ -113,24 +113,15 @@ pub fn draw(
             }
         }
     }
-    for npc in map.npcs.values().filter(|npc| !npc.character.hidden).chain(
-        world
-            .scripts
-            .npcs
-            .values()
-            .filter(|(loc, ..)| loc == &map.id)
-            .map(|(.., n)| n),
-    ) {
-        data.npc.draw(draw, npc, screen, color);
+    
+    for character in state.entities.get(&map.id).map(|state| state.npcs.values()).into_iter().flatten() {
+        data.npc.draw(draw, &character, camera, color);
     }
 
     data.object.draw(
         draw,
-        &map.id,
-        &map.objects,
-        &map.items,
-        world,
-        screen,
+        state,
+        camera,
         color,
     );
     // for script in map.scripts.iter() {

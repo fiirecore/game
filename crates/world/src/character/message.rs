@@ -1,4 +1,4 @@
-use super::{player::PlayerCharacter, Character};
+use super::player::PlayerCharacter;
 
 pub const SELF_ID: &str = "%s";
 pub const PLAYER_ID: &str = "%p";
@@ -18,18 +18,18 @@ pub const RIVAL_ID: &str = "%r";
 //         .collect()
 // }
 
-pub fn process_str(string: &str, character: &Character) -> String {
+pub fn process_str(string: &str, name: &str) -> String {
     if string.contains(SELF_ID) {
-        string.replace(SELF_ID, &character.name)
+        string.replace(SELF_ID, name)
     } else {
         string.to_owned()
     }
 }
 
-pub fn process_str_player<P, B: Default>(string: &str, player: &PlayerCharacter<P, B>) -> String {
+pub fn process_str_player(string: &str, player: &PlayerCharacter) -> String {
     let mut string = string.to_owned();
     if string.contains(PLAYER_ID) {
-        string = string.replace(PLAYER_ID, &player.character.name);
+        string = string.replace(PLAYER_ID, &player.name);
     }
     if string.contains(RIVAL_ID) {
         string = string.replace(RIVAL_ID, &player.rival);

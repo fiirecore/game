@@ -3,12 +3,12 @@ use std::ops::Deref;
 use crate::{
     pokedex::{
         item::{ItemId, ItemStack, SavedItemStack},
-        pokemon::{stat::Stat, Level, PokemonId, owned::SavedPokemon, stat::StatSet},
+        pokemon::{owned::SavedPokemon, stat::Stat, stat::StatSet, Level, PokemonId},
     },
     pokengine::PokedexClientData,
 };
 
-use worldcli::worldlib::positions::{Location, LocationId};
+use worldcli::{worldlib::positions::{Location, LocationId}, pokedex::moves::MoveId};
 
 use super::WorldWrapper;
 
@@ -16,6 +16,7 @@ pub enum WorldCommands {
     // Battle(BattleCommand),
     // Script(ScriptCommand),
     GivePokemon(SavedPokemon),
+    GiveMove(MoveId, usize),
     GiveItem(SavedItemStack),
     HealPokemon(Option<usize>),
     Warp(Location),
@@ -42,10 +43,8 @@ pub enum PartyCommand {
 //     List,
 // }
 
-impl<
-D: Deref<Target = PokedexClientData> + Clone,> WorldWrapper<D> {
+impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
     pub fn process(result: String) -> Result<WorldCommands, &'static str> {
-
         let mut args = result.split_ascii_whitespace();
 
         let (command, mut args) = if let Some(command) = args.next() {
@@ -75,24 +74,12 @@ D: Deref<Target = PokedexClientData> + Clone,> WorldWrapper<D> {
             //         //     self.world_map.spawn();
             //         // }
             "heal" => Ok(WorldCommands::HealPokemon(None)),
-            "wild" => {
-                on_off(WorldCommands::Wild, args.next())
-            }
-            "noclip" => {
-                on_off(WorldCommands::NoClip, args.next())
-            }
-            "unfreeze" => {
-                Ok(WorldCommands::Unfreeze)
-            }
-            "cancelscript" => {
-                Ok(WorldCommands::CancelScript)
-            }
-            "debugdraw" => {
-                Ok(WorldCommands::DebugDraw)
-            }
-            "tile" => {
-                Ok(WorldCommands::Tile)
-            }
+            "wild" => on_off(WorldCommands::Wild, args.next()),
+            "noclip" => on_off(WorldCommands::NoClip, args.next()),
+            "unfreeze" => Ok(WorldCommands::Unfreeze),
+            "cancelscript" => Ok(WorldCommands::CancelScript),
+            "debugdraw" => Ok(WorldCommands::DebugDraw),
+            "tile" => Ok(WorldCommands::Tile),
             "party" => match args.next() {
                 Some(arg) => match arg {
                     "info" => match args.next() {
@@ -183,11 +170,9 @@ D: Deref<Target = PokedexClientData> + Clone,> WorldWrapper<D> {
             //             None => warn!("/script requires arguments \"clear\" or \"list\"."),
             //         },
             "warp" | "tp" => {
-                if let Some(map_or_index) = args
-                    .next().and_then(|a| a.parse::<LocationId>().ok())
-                {
-                    let location = if let Some(index) = args
-                        .next().and_then(|a| a.parse::<LocationId>().ok())
+                if let Some(map_or_index) = args.next().and_then(|a| a.parse::<LocationId>().ok()) {
+                    let location = if let Some(index) =
+                        args.next().and_then(|a| a.parse::<LocationId>().ok())
                     {
                         Location {
                             map: Some(map_or_index),
@@ -202,49 +187,58 @@ D: Deref<Target = PokedexClientData> + Clone,> WorldWrapper<D> {
                 }
             }
             "clearbattle" => Ok(WorldCommands::ClearBattle),
-            "give" => {
-                match args.next() {
-                    Some(arg) => match arg {
-                        "pokemon" => match args
-                            .next().and_then(|arg| arg.parse::<PokemonId>().ok())
-                        {
-                            Some(id) => {
-                                let level = args
-                                    .next().and_then(|arg| arg.parse::<Level>().ok())
-                                    .unwrap_or(5);
+            "give" => match args.next() {
+                Some(arg) => match arg {
+                    "pokemon" => match args.next().and_then(|arg| arg.parse::<PokemonId>().ok()) {
+                        Some(id) => {
+                            let level = args
+                                .next()
+                                .and_then(|arg| arg.parse::<Level>().ok())
+                                .unwrap_or(5);
 
-                                let ivs = args
-                                    .next().and_then(|arg| arg.parse::<Stat>().ok())
-                                    .map(StatSet::uniform)
-                                    .unwrap_or_default();
+                            let ivs = args
+                                .next()
+                                .and_then(|arg| arg.parse::<Stat>().ok())
+                                .map(StatSet::uniform)
+                                .unwrap_or_default();
 
-                                Ok(WorldCommands::GivePokemon(SavedPokemon {
-                                    pokemon: id,
-                                    level,
-                                    ivs,
-                                    ..Default::default()
-                                }))
-                            }
-                            None => Err("Please provide a valid pokemon ID!"),
-                        },
-                        "item" => {
-                            if let Some(item) = args
-                                .next().and_then(|item| item.parse::<ItemId>().ok())
-                            {
-                                let count = args
-                                    .next().and_then(|count| count.parse::<usize>().ok())
-                                    .unwrap_or(1);
-
-                                Ok(WorldCommands::GiveItem(ItemStack { item, count }))
-                            } else {
-                                Err("Invalid formatted item ID")
-                            }
+                            Ok(WorldCommands::GivePokemon(SavedPokemon {
+                                pokemon: id,
+                                level,
+                                ivs,
+                                ..Default::default()
+                            }))
                         }
-                        _ => Err("Please provide an item ID"),
+                        None => Err("Please provide a valid pokemon ID!"),
                     },
-                    None => Err("Please provide an argument for /give: pokemon, item"),
-                }
-            }
+                    "move" => match args.next().and_then(|arg| arg.parse::<MoveId>().ok()) {
+                        Some(id) => {
+                            match args.next().and_then(|arg| arg.parse::<usize>().ok()) {
+                                Some(index) => {
+                                    Ok(WorldCommands::GiveMove(id, index))
+                                },
+                                None => Err("Please provide a valid party index!"),
+                            }
+                        },
+                        None => Err("Please provide a valid move ID!"),
+                    }
+                    "item" => {
+                        if let Some(item) = args.next().and_then(|item| item.parse::<ItemId>().ok())
+                        {
+                            let count = args
+                                .next()
+                                .and_then(|count| count.parse::<usize>().ok())
+                                .unwrap_or(1);
+
+                            Ok(WorldCommands::GiveItem(ItemStack { item, count }))
+                        } else {
+                            Err("Invalid formatted item ID")
+                        }
+                    }
+                    _ => Err("Please provide an item ID"),
+                },
+                None => Err("Please provide an argument for /give: pokemon, item"),
+            },
             _ => Err("Unknown command."),
         }
     }

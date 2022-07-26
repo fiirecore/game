@@ -1,0 +1,7 @@
+/target
+/pokedex
+
+/generated
+
+/*.exe
+/*.dll

@@ -70,8 +70,11 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleCloser<D> {
                 match opponents.players.get_index(opponents.current) {
                     Some((.., opponent)) => {
                         if let Some(trainer) = opponent.trainer.as_ref() {
-                            self.trainer =
-                                self.dexengine.trainer_group_textures.get(&trainer.texture).cloned();
+                            self.trainer = self
+                                .dexengine
+                                .trainer_group_textures
+                                .get(&trainer.texture)
+                                .cloned();
 
                             text.pages.extend_from_slice(&trainer.defeat);
                         }

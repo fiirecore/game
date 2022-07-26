@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use event::EventWriter;
-use worldcli::worldlib::character::trainer::InitTrainer;
+use crate::pokedex::trainer::InitTrainer;
 
 use crate::{
     pokengine::{

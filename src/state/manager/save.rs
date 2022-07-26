@@ -1,10 +1,10 @@
 use std::ops::Deref;
 
-use worldcli::worldlib::character::player::InitPlayerCharacter;
+use worldcli::pokedex::trainer::InitTrainer;
 
 use crate::{
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
-    saves::Player,
+    saves::{GameWorldState, Player},
 };
 
 #[derive(Debug)]
@@ -14,7 +14,7 @@ pub enum PlayerSave<
     I: Deref<Target = Item> + Clone,
 > {
     Uninit(Player),
-    Init(InitPlayerCharacter<P, M, I>, String),
+    Init(String, GameWorldState, InitTrainer<P, M, I>),
     None,
 }
 
@@ -44,18 +44,22 @@ impl<
     ) -> bool {
         match self {
             PlayerSave::Uninit(..) => {
-                let (player, version) = match std::mem::take(self) {
-                    PlayerSave::Uninit(Player { player, version }) => (player, version),
+                let (version, world, trainer) = match std::mem::take(self) {
+                    PlayerSave::Uninit(Player {
+                        version,
+                        world,
+                        trainer,
+                    }) => (version, world, trainer),
                     _ => unreachable!(),
                 };
 
-                match player.clone().init(random, pokedex, movedex, itemdex) {
+                match trainer.clone().init(random, pokedex, movedex, itemdex) {
                     Some(init) => {
-                        *self = PlayerSave::Init(init, version);
+                        *self = PlayerSave::Init(version, world, init);
                         true
                     }
                     None => {
-                        *self = PlayerSave::Uninit(Player { player, version });
+                        *self = PlayerSave::Uninit(Player { version, world, trainer });
                         false
                     }
                 }
@@ -68,19 +72,19 @@ impl<
     pub fn cloned_uninit(&self) -> Option<Player> {
         match self {
             PlayerSave::Uninit(player) => Some(player.clone()),
-            PlayerSave::Init(player, version) => Some(Player {
+            PlayerSave::Init(version, world, trainer) => Some(Player {
                 version: version.clone(),
-                player: player.clone().uninit(),
+                world: world.clone(),
+                trainer: trainer.clone().uninit(),
             }),
             PlayerSave::None => None,
         }
     }
 
-    pub fn as_mut(&mut self) -> Option<&mut InitPlayerCharacter<P, M, I>> {
+    pub fn as_mut(&mut self) -> Option<(&mut GameWorldState, &mut InitTrainer<P, M, I>)> {
         match self {
-            PlayerSave::Init(p, ..) => Some(p),
+            PlayerSave::Init(.., w, t) => Some((w, t)),
             _ => None,
         }
     }
-
 }

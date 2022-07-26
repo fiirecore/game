@@ -2,9 +2,11 @@ use hashbrown::HashSet;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    character::{npc::NpcId, trainer::SavedTrainer, Character},
+    character::{npc::NpcId, CharacterState},
     positions::Destination,
 };
+
+use pokedex::trainer::SavedTrainer;
 
 use super::group::TrainerGroupId;
 
@@ -38,7 +40,11 @@ pub enum TrainerDisable {
 }
 
 impl NpcTrainer {
-    pub fn find_character(&self, character: &mut Character, find: &mut Character) -> bool {
+    pub fn find_character(
+        &self,
+        character: &mut CharacterState,
+        find: &mut CharacterState,
+    ) -> bool {
         if self
             .sight
             .map(|sight| character.sees(sight, &find.position))

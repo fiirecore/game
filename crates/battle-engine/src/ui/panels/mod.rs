@@ -139,7 +139,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
                                                                 BattleAction::<ID>::Action(
                                                                     BattleMove::Move(i, None),
                                                                 ),
-                                                            )
+                                                            );
                                                         }
                                                     }
                                                     // return Some(BattleAction::Move(i, None));

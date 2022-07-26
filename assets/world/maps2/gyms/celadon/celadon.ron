@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("gym"),
-        index: "celadon",
-    ),
-    name: "Celadon City Gym",
-    file: "map.map",
-)

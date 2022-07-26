@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("pewter_houses"),
-        index: "east",
-    ),
-    name: "Pewter City",
-    file: "6.4_PEWTER CITY.map",
-)

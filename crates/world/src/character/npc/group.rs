@@ -1,37 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use crate::map::MusicId;
+use crate::{map::MusicId, message::MessageColor, character::{CharacterGroupId, CharacterState}};
 
-pub type NpcGroupId = tinystr::TinyStr16;
-pub type TrainerGroupId = NpcGroupId;
+pub type TrainerGroupId = CharacterGroupId;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NpcGroup {
     pub message: MessageColor,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
-pub enum MessageColor {
-    Black,
-    Red,
-    Blue,
-}
-
-impl Default for MessageColor {
-    fn default() -> Self {
-        Self::Black
-    }
-}
-
-impl From<MessageColor> for [f32; 4] {
-    fn from(message: MessageColor) -> Self {
-        match message {
-            MessageColor::Black => [20.0 / 255.0, 20.0 / 255.0, 20.0 / 255.0, 1.0],
-            // MessageColor::White => [240.0 / 255.0, 240.0 / 255.0, 240.0 / 255.0, 1.0],
-            MessageColor::Red => [0.90, 0.16, 0.22, 1.0],
-            MessageColor::Blue => [48.0 / 255.0, 80.0 / 255.0, 200.0 / 255.0, 1.0],
-        }
-    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -41,12 +16,6 @@ pub struct TrainerGroup {
     pub music: Option<MusicId>,
 }
 
-impl NpcGroup {
-    /// Placeholder Npc Group ID
-    pub const PLACEHOLDER: NpcGroupId =
-        unsafe { NpcGroupId::from_bytes_unchecked(138296354938823594217663600u128.to_ne_bytes()) };
-}
-
 impl TrainerGroup {
-    pub const PLACEHOLDER: TrainerGroupId = NpcGroup::PLACEHOLDER;
+    pub const PLACEHOLDER: TrainerGroupId = CharacterState::PLACEHOLDER_GROUP;
 }

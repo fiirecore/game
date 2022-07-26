@@ -11,15 +11,16 @@ pub mod action;
 pub mod message;
 pub mod npc;
 pub mod player;
-pub mod trainer;
 // pub mod pathfind;
 
+pub type CharacterGroupId = tinystr::TinyStr16;
 pub type CharacterFlag = tinystr::TinyStr8;
 
-#[derive(Default, Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct Character {
-    pub name: String,
+pub struct CharacterState {
+    #[serde(default = "default_group")]
+    pub group: CharacterGroupId,
 
     pub position: Position,
 
@@ -27,7 +28,10 @@ pub struct Character {
     pub offset: PixelOffset,
 
     #[serde(default)]
-    pub movement: MovementType,
+    pub activity: Activity,
+
+    #[serde(default)]
+    pub capabilities: Capabilities,
 
     #[serde(default)]
     pub sprite: u8,
@@ -42,23 +46,29 @@ pub struct Character {
     pub hidden: bool,
 
     #[serde(default)]
-    pub noclip: bool,
-
-    #[serde(default)]
     pub actions: Actions,
-    // #[serde(default)]
-    // #[deprecated]
-    // pub flags: HashSet<CharacterFlag>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Enum, Deserialize, Serialize)]
-pub enum MovementType {
+pub enum Activity {
     Walking,
     Running,
     Swimming,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
+pub struct Capabilities {
+    #[serde(default)]
+    pub run: bool,
+    #[serde(default)]
+    pub swim: bool,
+    #[serde(default = "crate::const_true")]
+    pub encounters: bool,
+    #[serde(default)]
+    pub noclip: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum DoMoveResult {
     Finished,
     Interact,
@@ -67,14 +77,10 @@ pub enum DoMoveResult {
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Counter(u8);
 
-impl Character {
-    pub fn new<S: Into<String>>(name: S, position: Position) -> Self {
-        Self {
-            name: name.into(),
-            position,
-            ..Default::default()
-        }
-    }
+impl CharacterState {
+    pub const PLACEHOLDER_GROUP: CharacterGroupId = unsafe {
+        CharacterGroupId::from_bytes_unchecked(138296354938823594217663600u128.to_ne_bytes())
+    };
 
     pub fn moving(&self) -> bool {
         !self.actions.queue.is_empty() || !self.offset.is_zero()
@@ -118,7 +124,8 @@ impl Character {
                         match path {
                             ActionQueue::Move(direction) => {
                                 self.position.direction = direction;
-                                self.offset = direction.pixel_offset(self.speed() * 60.0 * delta);
+                                self.offset =
+                                    direction.pixel_offset(self.activity.speed() * 60.0 * delta);
                             }
                             ActionQueue::Look(direction) => {
                                 self.position.direction = direction;
@@ -129,10 +136,10 @@ impl Character {
                     None
                 }
                 false => {
-                    if self
-                        .offset
-                        .update(&self.position.direction, delta * self.speed() * 60.0)
-                    {
+                    if self.offset.update(
+                        &self.position.direction,
+                        delta * self.activity.speed() * 60.0,
+                    ) {
                         self.position.coords += self.position.direction.tile_offset();
                         self.update_sprite();
                         Some(DoMoveResult::Finished)
@@ -257,18 +264,14 @@ impl Character {
             None
         }
     }
-
-    pub fn speed(&self) -> f32 {
-        match self.movement {
-            MovementType::Walking => 1.0,
-            MovementType::Running | MovementType::Swimming => 2.0,
-        }
-    }
 }
 
-impl Default for MovementType {
-    fn default() -> Self {
-        Self::Walking
+impl Activity {
+    pub fn speed(&self) -> f32 {
+        match self {
+            Self::Walking => 1.0,
+            Self::Running | Self::Swimming => 2.0,
+        }
     }
 }
 
@@ -288,4 +291,42 @@ impl Counter {
     pub fn active(&self) -> bool {
         self.0 != 0
     }
+}
+
+impl Default for CharacterState {
+    fn default() -> Self {
+        Self {
+            group: default_group(),
+            position: Default::default(),
+            offset: Default::default(),
+            activity: Default::default(),
+            capabilities: Default::default(),
+            sprite: Default::default(),
+            locked: Default::default(),
+            input_lock: Default::default(),
+            hidden: Default::default(),
+            actions: Default::default(),
+        }
+    }
+}
+
+impl Default for Activity {
+    fn default() -> Self {
+        Self::Walking
+    }
+}
+
+impl Default for Capabilities {
+    fn default() -> Self {
+        Self {
+            run: Default::default(),
+            swim: Default::default(),
+            encounters: true,
+            noclip: Default::default(),
+        }
+    }
+}
+
+const fn default_group() -> CharacterGroupId {
+    CharacterState::PLACEHOLDER_GROUP
 }

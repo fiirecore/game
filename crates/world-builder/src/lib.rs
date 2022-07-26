@@ -7,7 +7,7 @@ use world::{
         warp::WarpEntry,
         PaletteId,
     },
-    serialized::{SerializedTextures, SerializedWorld},
+    serialized::SerializedTextures, script::default::DefaultWorldScriptEngine,
 };
 
 pub mod builder;
@@ -15,7 +15,7 @@ pub mod builder;
 pub mod bin;
 // mod gba_map;
 
-pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
+pub fn compile(path: impl AsRef<std::path::Path>) -> (WorldMapData, SerializedTextures, DefaultWorldScriptEngine) {
     println!("Started loading maps and tile textures...");
     let (maps, mut textures) = builder::map::load_world(path.as_ref());
     println!("Finished loading maps and tile textures.");
@@ -63,19 +63,19 @@ pub fn compile(path: impl AsRef<std::path::Path>) -> SerializedWorld {
 
     textures.npcs = npc_textures;
 
-    let data = SerializedWorld {
-        data: WorldMapData {
-            maps,
-            palettes,
-            npc,
-            wild,
-            spawn,
-        },
-        scripts,
-        textures,
+    let data = WorldMapData {
+        maps,
+        palettes,
+        npc,
+        wild,
+        spawn,
     };
 
-    data
+    (
+        data,
+        textures,
+        scripts,
+    )
 }
 
 fn filename(path: &std::path::Path) -> String {

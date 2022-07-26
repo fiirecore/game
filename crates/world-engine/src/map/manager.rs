@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::engine::{
     controls::{pressed, Control},
-    graphics::{Color, Draw, DrawTextSection, Graphics, Font},
+    graphics::{Color, Draw, DrawTextSection, Font, Graphics},
     gui::MessageBox,
     math::{ivec2, IVec2},
     music, sound,
@@ -12,51 +12,59 @@ use crate::engine::{
 
 use pokengine::pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex};
 
-use rand::prelude::SmallRng;
+use rand::Rng;
 
 use worldlib::{
-    character::player::{InitPlayerCharacter, PlayerCharacter},
+    character::player::PlayerCharacter,
     map::{
         chunk::Connection,
-        manager::{InputEvent, WorldMapManager},
+        manager::{InputEvent, WorldMapData, WorldMapManager},
         movement::Elevation,
         warp::WarpDestination,
         Brightness, WorldMap,
     },
-    positions::{Coordinate, Destination, Direction, Location, Position},
-    serialized::SerializedWorld,
-    state::WorldEvent,
+    pokedex::trainer::{InitTrainer, Trainer},
+    positions::{Coordinate, Destination, Direction, Location, Spot},
+    random::WorldRandoms,
+    script::WorldScriptingEngine,
+    serialized::SerializedTextures,
+    state::{
+        map::{MapEvent, MapState},
+        WorldState,
+    },
 };
 
-use crate::map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition, RenderCoords};
+use crate::map::{data::ClientWorldData, input::PlayerInput, warp::WarpTransition};
 
 pub mod npc;
 
 // pub mod script;
 
-pub struct WorldManager {
-    pub world: WorldMapManager<SmallRng>,
+pub struct WorldManager<S: WorldScriptingEngine> {
+    pub world: WorldMapManager<S>,
 
     data: ClientWorldData,
 
     warper: WarpTransition,
     input: PlayerInput,
     // screen: RenderCoords,
-    // events: EventReceiver<WorldEvents>,
+    // events: EventReceiver<MapEvents>,
 }
 
-impl WorldManager {
+impl<S: WorldScriptingEngine> WorldManager<S> {
     pub fn new(
         gfx: &mut Graphics,
-        world: SerializedWorld,
+        data: WorldMapData,
+        scripting: S,
+        textures: SerializedTextures,
         debug_font: Font,
     ) -> Result<Self, String> {
         // let events = Default::default();
 
         Ok(Self {
-            world: WorldMapManager::new(world.data, world.scripts),
+            world: WorldMapManager::new(data, scripting),
 
-            data: ClientWorldData::new(gfx, world.textures, debug_font)?,
+            data: ClientWorldData::new(gfx, textures, debug_font)?,
             warper: WarpTransition::new(),
             // text: TextWindow::new(gfx)?,
             input: PlayerInput::default(),
@@ -69,25 +77,25 @@ impl WorldManager {
         self.world.get(location)
     }
 
-    pub fn start<P, B: Default>(&mut self, player: &mut PlayerCharacter<P, B>) {
-        if player.location == Location::DEFAULT {
-            let (location, position) = self.world.data.spawn;
+    pub fn start<R: Rng, P, B>(
+        &mut self,
+        state: &mut MapState,
+        randoms: &mut WorldRandoms<R>,
+        trainer: &Trainer<P, B>,
+    ) {
+        if state.location == Location::DEFAULT {
+            let Spot { location, position } = self.world.data.spawn;
             self.world.warp(
-                player,
+                state,
+                randoms,
+                trainer,
                 WarpDestination {
                     location,
-                    position: Destination {
-                        coords: position.coords,
-                        direction: Some(position.direction),
-                    },
+                    position: position.into(),
                 },
             );
         }
-        self.world.on_warp(player);
-    }
-
-    pub fn seed(&mut self, seed: u64) {
-        self.world.seed(seed);
+        self.world.on_warp(state, randoms, trainer);
     }
 
     pub fn post_battle<
@@ -96,23 +104,26 @@ impl WorldManager {
         I: Deref<Target = Item> + Clone,
     >(
         &mut self,
-        player: &mut InitPlayerCharacter<P, M, I>,
+        state: &mut MapState,
+        trainer: &mut InitTrainer<P, M, I>,
         winner: bool,
     ) {
-        self.world.data.post_battle(player, winner)
+        self.world.data.post_battle(state, trainer, winner)
     }
 
-    pub fn spawn(&self) -> (Location, Position) {
+    pub fn spawn(&self) -> Spot {
         self.world.data.spawn
     }
 
-    pub fn try_teleport<P, B: Default>(
+    pub fn try_teleport<R: Rng, P, B>(
         &mut self,
-        player: &mut PlayerCharacter<P, B>,
+        state: &mut MapState,
+        randoms: &mut WorldRandoms<R>,
+        trainer: &Trainer<P, B>,
         location: Location,
     ) -> bool {
         if self.world.contains(&location) {
-            self.teleport(player, location);
+            self.teleport(state, randoms, trainer, location);
             true
         } else {
             false
@@ -120,6 +131,7 @@ impl WorldManager {
     }
 
     pub fn update<
+        R: Rng,
         P: Deref<Target = Pokemon> + Clone,
         M: Deref<Target = Move> + Clone,
         I: Deref<Target = Item> + Clone,
@@ -127,7 +139,9 @@ impl WorldManager {
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
-        player: &mut InitPlayerCharacter<P, M, I>,
+        state: &mut WorldState<S>,
+        randoms: &mut WorldRandoms<R>,
+        trainer: &mut InitTrainer<P, M, I>,
         itemdex: &impl Dex<Item, Output = I>,
         delta: f32,
     ) {
@@ -139,37 +153,35 @@ impl WorldManager {
         //         }
         //     }
 
-        self.data.update(delta, player);
+        self.data.update(delta, &mut state.map.player.character);
 
         if self.warper.alive() {
-            if let Some(music) = self.warper.update(&self.world.data, player, delta) {
-                self.world.on_warp(player);
+            if let Some(music) = self.warper.update(&self.world.data, &mut state.map, delta) {
+                self.world.on_warp(&mut state.map, randoms, trainer);
             }
-        } else if player.state.warp.is_some() {
+        } else if state.map.warp.is_some() {
             self.warper.spawn();
-            player
-                .character
-                .input_lock.increment();
+            state.map.player.character.input_lock.increment();
         }
 
-        if let Some(direction) = self.input.update(app, plugins, player, delta) {
-            self.world.input(player, InputEvent::Move(direction));
-        }
-
-        if pressed(app, plugins, Control::A)
-            && !player
-                .character
-                .input_lock.active()
+        if let Some(direction) = self
+            .input
+            .update(app, plugins, &mut state.map.player, delta)
         {
-            self.world.input(player, InputEvent::Interact);
+            self.world
+                .input(&mut state.map, InputEvent::Move(direction));
         }
 
-        self.world.update(player, itemdex, delta);
+        if pressed(app, plugins, Control::A) && !state.map.player.character.input_lock.active() {
+            self.world.input(&mut state.map, InputEvent::Interact);
+        }
 
-        for action in std::mem::take(&mut player.state.events) {
+        self.world.update(state, trainer, randoms, delta);
+
+        for action in std::mem::take(&mut state.map.events) {
             match action {
-                WorldEvent::PlayerJump => self.data.player.jump(player),
-                // WorldEvent::GivePokemon(pokemon) => {
+                MapEvent::PlayerJump => self.data.player.jump(&mut state.map.player),
+                // MapEvent::GivePokemon(pokemon) => {
                 //     if let Some(pokemon) = pokemon.init(
                 //         &mut self.data.randoms.general,
                 //         crate::pokedex(),
@@ -179,7 +191,7 @@ impl WorldManager {
                 //         party.try_push(pokemon);
                 //     }
                 // }
-                WorldEvent::PlayMusic(music) => {
+                MapEvent::PlayMusic(music) => {
                     if let Some(playing) = music::get_current_music(plugins) {
                         if playing != music {
                             music::play_music(app, plugins, &music);
@@ -188,29 +200,49 @@ impl WorldManager {
                         music::play_music(app, plugins, &music);
                     }
                 }
-                WorldEvent::PlaySound(sound, variant) => {
+                MapEvent::PlaySound(sound, variant) => {
                     sound::play_sound(app, plugins, sound, variant);
                 }
-                WorldEvent::BeginWarpTransition(coords) => {
-                    if let Some(map) = self.world.get(&player.location) {
+                MapEvent::BeginWarpTransition(coords) => {
+                    if let Some(map) = self.world.get(&state.map.location) {
                         if let Some(tile) = map.tile(coords) {
                             let palette = *tile.palette(&map.palettes);
                             let tile = tile.id();
-                            self.warper
-                                .queue(&self.world.data, player, palette, tile, coords);
+                            self.warper.queue(
+                                &self.world.data,
+                                &mut state.map.player,
+                                palette,
+                                tile,
+                                coords,
+                            );
                         }
                     }
                 }
-                WorldEvent::OnTile => {
-                    if let Some(map) = self.world.get(&player.location) {
-                        on_tile(map, player, &mut self.data)
+                MapEvent::OnTile => {
+                    if let Some(map) = self.world.get(&state.map.location) {
+                        on_tile(map, &state.map.player, &mut self.data)
                     }
                 }
-                WorldEvent::BreakObject(coordinate) => {
-                    if let Some(map) = self.world.get(&player.location) {
-                        if let Some(object) = map.object_at(&coordinate) {
-                            self.data.object.add(coordinate, &object.group);
-                        }
+                MapEvent::BreakObject(coordinate, force) => {
+                    let loc = state.map.location;
+                    if let Some(object) = self
+                        .world
+                        .get(&loc)
+                        .and_then(|map| map.object_at(&coordinate))
+                    {
+                        worldlib::map::object::ObjectEntity::try_break(
+                            &loc,
+                            coordinate,
+                            &object.data.group,
+                            trainer,
+                            &mut state.map,
+                            force,
+                        );
+                    }
+                }
+                MapEvent::GetItem(item) => {
+                    if let Some(stack) = item.init(itemdex) {
+                        trainer.bag.insert(stack);
                     }
                 }
             }
@@ -238,9 +270,11 @@ impl WorldManager {
     //     }
     // }
 
-    pub fn teleport<P, B: Default>(
+    pub fn teleport<R: Rng, P, B>(
         &mut self,
-        player: &mut PlayerCharacter<P, B>,
+        state: &mut MapState,
+        randoms: &mut WorldRandoms<R>,
+        trainer: &Trainer<P, B>,
         location: Location,
     ) {
         if let Some(map) = self.world.data.maps.get(&location) {
@@ -268,7 +302,9 @@ impl WorldManager {
             });
             let location = map.id;
             self.world.warp(
-                player,
+                state,
+                randoms,
+                trainer,
                 WarpDestination {
                     location,
                     position: Destination {
@@ -280,35 +316,27 @@ impl WorldManager {
         }
     }
 
-    pub fn ui<P, B: Default>(
+    pub fn ui(
         &mut self,
         app: &App,
         plugins: &mut Plugins,
         egui: &crate::engine::notan::egui::Context,
-        player: &mut PlayerCharacter<P, B>,
+        state: &mut MapState,
     ) {
-        MessageBox::ui(app, plugins, egui, &mut player.state.message);
+        MessageBox::ui(app, plugins, egui, &mut state.message);
     }
 
-    pub fn draw<P, B: Default>(&self, draw: &mut Draw, player: &PlayerCharacter<P, B>) {
-        let screen = RenderCoords::new(&draw, &player.character);
+    pub fn draw(&self, draw: &mut Draw, state: &MapState) {
+        let camera = super::CharacterCamera::new(&draw, &state.player.character);
 
-        let color = match self.world.get(&player.location) {
+        let color = match self.world.get(&state.location) {
             Some(current) => {
                 let color = match current.settings.brightness {
                     Brightness::Day => Color::WHITE,
                     Brightness::Night => Color::new(0.6, 0.6, 0.6, 1.0),
                 };
 
-                super::draw(
-                    draw,
-                    current,
-                    &player.state,
-                    &self.data,
-                    &screen,
-                    true,
-                    color,
-                );
+                super::draw(draw, current, state, &self.data, &camera, true, color);
 
                 match &current.chunk {
                     Some(chunk) => {
@@ -341,9 +369,9 @@ impl WorldManager {
                             super::draw(
                                 draw,
                                 connection,
-                                &player.state,
+                                state,
                                 &self.data,
-                                &screen.offset(map_offset(direction, current, connection, *offset)),
+                                &camera.offset(map_offset(direction, current, connection, *offset)),
                                 false,
                                 color,
                             );
@@ -362,13 +390,13 @@ impl WorldManager {
                     .v_align_top();
                 draw.text(
                     &self.data.debug_font,
-                    player.location.map.as_deref().unwrap_or("None"),
+                    state.location.map.as_deref().unwrap_or("None"),
                 )
                 .position(0.0, 8.0)
                 .color(Color::WHITE)
                 .h_align_left()
                 .v_align_top();
-                draw.text(&self.data.debug_font, player.location.index.as_str())
+                draw.text(&self.data.debug_font, state.location.index.as_str())
                     .position(0.0, 16.0)
                     .color(Color::WHITE)
                     .h_align_left()
@@ -377,10 +405,10 @@ impl WorldManager {
             }
         };
 
-        if player.state.debug_draw {
+        if state.debug_mode {
             draw.text(
                 &self.data.debug_font,
-                player
+                state
                     .location
                     .map
                     .as_ref()
@@ -392,7 +420,7 @@ impl WorldManager {
             .h_align_left()
             .v_align_top();
 
-            draw.text(&self.data.debug_font, player.location.index.as_str())
+            draw.text(&self.data.debug_font, state.location.index.as_str())
                 .position(5.0, 15.0)
                 .color(Color::WHITE)
                 .h_align_left()
@@ -405,7 +433,7 @@ impl WorldManager {
             if let Ok(..) = write!(
                 &mut coordarr as &mut [u8],
                 "{}",
-                player.character.position.coords
+                state.player.character.position.coords
             ) {
                 if let Ok(text) = std::str::from_utf8(&coordarr) {
                     draw.text(&self.data.debug_font, text)
@@ -414,24 +442,26 @@ impl WorldManager {
                 }
             }
         } else {
-            self.warper.draw_door(draw, &self.data.tiles, &screen);
+            self.warper.draw_door(draw, &self.data.tiles, &camera);
         }
 
-        self.data.player.draw(draw, &player.character, color);
-        if !player.state.debug_draw {
-            self.data.player.bush.draw(draw, &screen);
+        self.data.player.draw(draw, &state.player.character, color);
+        if !state.debug_mode {
+            self.data.player.bush.draw(draw, &camera);
             self.warper.draw(draw);
         }
     }
 }
 
-fn on_tile<P, B: Default>(
+fn on_tile(
     map: &WorldMap,
-    player: &PlayerCharacter<P, B>,
+    player: &PlayerCharacter,
     data: &mut ClientWorldData,
-    // sender: &Sender<WorldEvent>,
+    // sender: &Sender<MapEvent>,
 ) {
-    data.player.bush.check(map, player.character.position.coords);
+    data.player
+        .bush
+        .check(map, player.character.position.coords);
     // check for wild encounter
 
     // if let Some(tile_id) = map.tile(player.position.coords) {

@@ -1,6 +1,6 @@
 use notan::prelude::Plugins;
 
-use super::{Control, context::ControlsContext};
+use super::{context::ControlsContext, Control};
 
 pub fn pressed(plugins: &Plugins, control: Control) -> bool {
     plugins

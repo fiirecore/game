@@ -1,0 +1,25 @@
+(
+    maps: {
+        "pallet": (
+            npcs: [
+                // Remove("npc_2"), // oak
+            ],
+        ),
+        ("pallet", "player_house"): (
+            warps: [
+                Remove(3, 9),
+                Remove(4, 8),
+                Remove(5, 8),
+                Add((4, 9), 
+                    (
+                        location: "pallet",
+                        position: (
+                            coords: (6, 7),
+                            direction: Some(Down),
+                        )
+                    )
+                ),
+            ]
+        )
+    }
+)

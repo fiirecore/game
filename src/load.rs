@@ -1,14 +1,16 @@
 use std::{ops::Deref, path::PathBuf};
 
 use crate::{
+    engine::{
+        notan::prelude::{AssetList, AssetLoader, Assets},
+        utils::HashMap,
+    },
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex},
-    engine::{notan::prelude::{AssetList, AssetLoader, Assets}, utils::HashMap},
-    pokengine::SerializedPokedexEngine
+    pokengine::SerializedPokedexEngine,
 };
 
-use battlecli::battle::default_engine::{scripting::MoveScripts, EngineMoves};
-
-use worldcli::worldlib::serialized::SerializedWorld;
+use battlecli::battle::default_engine::{default_scripting::MoveScripts, EngineMoves};
+use worldcli::worldlib::{map::manager::{Maps, WorldMapData}, script::default::DefaultWorldScriptEngine, serialized::SerializedTextures};
 
 pub enum LoadData<
     P: Deref<Target = Pokemon> + From<Pokemon>,
@@ -26,7 +28,9 @@ pub enum LoadData<
 pub struct Data {
     pub battle: (EngineMoves, MoveScripts),
     pub dex: SerializedPokedexEngine,
-    pub world: SerializedWorld,
+    pub world: WorldMapData,
+    pub world_scripting: DefaultWorldScriptEngine,
+    pub world_textures: SerializedTextures,
     pub audio: crate::engine::utils::HashMap<crate::engine::music::MusicId, Vec<u8>>,
 }
 
@@ -40,7 +44,10 @@ impl<
     pub const MOVEDEX: &'static str = "movedex.bin";
     pub const ITEMDEX: &'static str = "itemdex.bin";
     pub const WORLD: &'static str = "world.bin";
-    pub const BATTLE: &'static str = "battle.bin";
+    pub const WORLD_SCRIPTING: &'static str = "world_script.bin";
+    pub const WORLD_TEXTURES: &'static str = "world_textures.bin";
+    pub const BATTLE_MOVES: &'static str = "battle_moves.bin";
+    pub const BATTLE_MOVE_SCRIPTS: &'static str = "battle_move_scripts.bin";
     pub const DEXENGINE: &'static str = "dex_engine.bin";
     pub const AUDIO: &'static str = "audio.bin";
 
@@ -67,12 +74,15 @@ impl<
         let movedex = create(map, &root, Self::MOVEDEX);
         let itemdex = create(map, &root, Self::ITEMDEX);
         let world = create(map, &root, Self::WORLD);
+        let world_scripting = create(map, &root, Self::WORLD_SCRIPTING);
+        let world_textures = create(map, &root, Self::WORLD_TEXTURES);
         let dexengine = create(map, &root, Self::DEXENGINE);
-        let battle = create(map, &root, Self::BATTLE);
+        let battle_moves = create(map, &root, Self::BATTLE_MOVES);
+        let battle_move_scripts = create(map, &root, Self::BATTLE_MOVE_SCRIPTS);
         let audio = create(map, &root, Self::AUDIO);
 
         let list = assets.load_list(&[
-            &pokedex, &movedex, &itemdex, &world, &dexengine, &battle, &audio,
+            &pokedex, &movedex, &itemdex, &world, &world_scripting, &world_textures, &dexengine, &battle_moves, &battle_move_scripts, &audio,
         ])?;
 
         Ok(Self::Load(list, map2))
@@ -138,10 +148,12 @@ impl<
                     let pokedex = deser(list, map, Self::POKEDEX).unwrap();
                     let movedex = deser(list, map, Self::MOVEDEX).unwrap();
                     let itemdex = deser(list, map, Self::ITEMDEX).unwrap();
-
-                    let battle = deser(list, map, Self::BATTLE).unwrap();
+                    let battle_moves = deser(list, map, Self::BATTLE_MOVES).unwrap();
+                    let battle_move_scripts = deser(list, map, Self::BATTLE_MOVE_SCRIPTS).unwrap();
                     let dex = deser(list, map, Self::DEXENGINE).unwrap();
                     let world = deser(list, map, Self::WORLD).unwrap();
+                    let world_scripting = deser(list, map, Self::WORLD_SCRIPTING).unwrap();
+                    let world_textures = deser(list, map, Self::WORLD_TEXTURES).unwrap();
                     let audio = deser(list, map, Self::AUDIO).unwrap();
 
                     *self = Self::Data {
@@ -151,10 +163,12 @@ impl<
                     };
 
                     Some(Data {
-                        battle,
+                        battle: (battle_moves, battle_move_scripts),
                         dex,
                         world,
                         audio,
+                        world_scripting,
+                        world_textures,
                     })
                 } else {
                     unreachable!()

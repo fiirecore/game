@@ -2,17 +2,15 @@ use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    character::Character,
-    positions::{Coordinate, Direction},
+    map::object::ObjectId,
+    positions::{Coordinate, Direction, Position},
+    character::CharacterGroupId,
 };
-
-mod interact;
-pub use interact::*;
 
 pub mod group;
 pub mod trainer;
 
-pub type NpcId = tinystr::TinyStr8;
+pub type NpcId = ObjectId; //tinystr::TinyStr8;
 pub type Npcs = HashMap<NpcId, Npc>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -20,20 +18,17 @@ pub type Npcs = HashMap<NpcId, Npc>;
 pub struct Npc {
     pub id: NpcId,
 
-    pub character: Character,
+    pub name: String,
+
+    pub origin: Position,
     /// The NPC's type.
     /// This determines the texture of the NPC,
     /// what color their message text is,
     /// and what song is played on an encounter
     #[serde(rename = "type")]
-    pub group: group::NpcGroupId,
+    pub group: CharacterGroupId,
     #[serde(default)]
     pub movement: Vec<NpcMovement>,
-    #[serde(default)]
-    pub origin: Option<Coordinate>,
-
-    #[serde(default)]
-    pub interact: NpcInteract,
 
     pub trainer: Option<trainer::NpcTrainer>,
 }

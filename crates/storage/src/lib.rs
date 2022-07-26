@@ -1,11 +1,9 @@
 #[cfg(feature = "io")]
-use {
-    serde::{de::DeserializeOwned, Serialize},
-};
+use serde::{de::DeserializeOwned, Serialize};
 
 use std::path::PathBuf;
 
-pub use postcard::{from_bytes as from_bytes, to_allocvec as to_bytes};
+pub use postcard::{from_bytes, to_allocvec as to_bytes};
 pub use ron::{from_str, to_string};
 
 pub mod error;
@@ -25,9 +23,7 @@ pub trait DataSerializer {
 }
 
 #[cfg(feature = "io")]
-pub fn get<T: DeserializeOwned>(
-    path: impl AsRef<std::path::Path>,
-) -> Result<T, error::DataError> {
+pub fn get<T: DeserializeOwned>(path: impl AsRef<std::path::Path>) -> Result<T, error::DataError> {
     let bytes = std::fs::read(path)?;
     Ok(from_bytes::<T>(&bytes)?)
 }
@@ -37,7 +33,6 @@ pub fn try_load<S: DataSerializer, D: PersistantData>(
     publisher: Option<&str>,
     application: &str,
 ) -> Result<D, error::DataError> {
-
     let path = crate::directory(false, publisher, application)?.join(file::<S, D>());
     #[cfg(not(target_arch = "wasm32"))]
     {
@@ -87,7 +82,6 @@ pub fn save<S: DataSerializer, D: PersistantData>(
     publisher: Option<&str>,
     application: &str,
 ) -> Result<(), error::DataError> {
-
     let data = S::serialize(data)?;
 
     #[cfg(not(target_arch = "wasm32"))]

@@ -8,15 +8,23 @@ use crate::{
     },
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
     pokengine::PokedexClientData,
+    random::GameWorldRandoms,
+    saves::GameWorldState,
 };
 
 use battlecli::{
-    battle::default_engine::{scripting::MoveScripts, EngineMoves},
+    battle::default_engine::{default_scripting::MoveScripts, EngineMoves},
     BattleGuiData,
 };
 
-use worldcli::worldlib::{
-    character::player::InitPlayerCharacter, map::battle::BattleId, serialized::SerializedWorld,
+use worldcli::{
+    pokedex::trainer::InitTrainer,
+    worldlib::{
+        map::{battle::BattleId, manager::WorldMapData},
+        random::WorldRandoms,
+        script::default::DefaultWorldScriptEngine,
+        serialized::SerializedTextures,
+    },
 };
 
 use event::EventWriter;
@@ -49,6 +57,8 @@ pub(super) struct GameStateManager<
 
     world: WorldWrapper<D>,
     battle: BattleManager<D, P, M, I>,
+
+    world_randoms: GameWorldRandoms,
 }
 
 impl<
@@ -63,20 +73,32 @@ impl<
         debug_font: Font,
         dex: D,
         btl: BattleGuiData,
-        wrld: SerializedWorld,
+        wrld: WorldMapData,
+        world_script: DefaultWorldScriptEngine,
+        world_tex: SerializedTextures,
         battle: (EngineMoves, MoveScripts),
         sender: EventWriter<StateMessage>,
         commands: CommandProcessor,
     ) -> Result<Self, String> {
         Ok(Self {
             state: GameStates::default(),
-            world: WorldWrapper::new(gfx, dex.clone(), sender, commands.clone(), wrld, debug_font)?,
+            world: WorldWrapper::new(
+                gfx,
+                dex.clone(),
+                sender,
+                commands.clone(),
+                wrld,
+                world_script,
+                world_tex,
+                debug_font,
+            )?,
             battle: BattleManager::new(gfx, btl, dex, battle, commands)?,
+            world_randoms: WorldRandoms::default(),
         })
     }
 
     pub fn seed(&mut self, seed: u64) {
-        self.world.seed(seed);
+        self.world_randoms.seed(seed);
         self.battle.seed(seed);
     }
 }
@@ -88,9 +110,13 @@ impl<
         I: Deref<Target = Item> + Clone,
     > GameStateManager<D, P, M, I>
 {
-    pub fn start(&mut self, player: &mut InitPlayerCharacter<P, M, I>) {
+    pub fn start(&mut self, state: &mut GameWorldState, trainer: &mut InitTrainer<P, M, I>) {
         match self.state {
-            GameStates::World => self.world.manager.start(player),
+            GameStates::World => {
+                self.world
+                    .manager
+                    .start(&mut state.map, &mut self.world_randoms, trainer)
+            }
             GameStates::Battle => (),
         }
     }
@@ -103,10 +129,11 @@ impl<
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
+        state: &mut GameWorldState,
+        trainer: &mut InitTrainer<P, M, I>,
         pokedex: &impl Dex<Pokemon, Output = P>,
         movedex: &impl Dex<Move, Output = M>,
         itemdex: &impl Dex<Item, Output = I>,
-        player: &mut InitPlayerCharacter<P, M, I>,
     ) {
         // Speed game up if spacebar is held down
 
@@ -122,34 +149,60 @@ impl<
 
         match self.state {
             GameStates::World => {
-                self.world
-                    .update(app, plugins, player, pokedex, movedex, itemdex, delta);
-                if self.battle.battle(pokedex, movedex, itemdex, player) {
+                self.world.update(
+                    app,
+                    plugins,
+                    state,
+                    &mut self.world_randoms,
+                    trainer,
+                    pokedex,
+                    movedex,
+                    itemdex,
+                    delta,
+                );
+                if self
+                    .battle
+                    .battle(pokedex, movedex, itemdex, &mut state.map.player, trainer)
+                {
                     self.state = GameStates::Battle;
                 }
             }
             GameStates::Battle => {
-                self.battle
-                    .update(app, plugins, player, pokedex, movedex, itemdex);
+                self.battle.update(
+                    app,
+                    plugins,
+                    &mut state.map.player,
+                    pokedex,
+                    movedex,
+                    itemdex,
+                );
                 if self.battle.finished {
                     if let Some(winner) = self.battle.winner() {
                         let winner = winner == &BattleId::Player;
-                        self.world.manager.post_battle(player, winner);
+                        self.world
+                            .manager
+                            .post_battle(&mut state.map, trainer, winner);
                     }
                     self.state = GameStates::World;
-                    self.world.manager.start(player);
+                    self.world
+                        .manager
+                        .start(&mut state.map, &mut self.world_randoms, trainer);
                 }
             }
         }
         // Ok(())
     }
 
-    pub fn draw(&self, gfx: &mut Graphics, player: &InitPlayerCharacter<P, M, I>) {
+    pub fn draw(
+        &self,
+        gfx: &mut Graphics,
+        state: &GameWorldState,
+    ) {
         match self.state {
-            GameStates::World => self.world.draw(gfx, player),
+            GameStates::World => self.world.draw(gfx, &state.map),
             GameStates::Battle => {
                 if self.battle.world_active() {
-                    self.world.draw(gfx, player);
+                    self.world.draw(gfx, &state.map);
                 }
                 self.battle.draw(gfx);
             }
@@ -161,10 +214,11 @@ impl<
         app: &mut App,
         plugins: &mut Plugins,
         egui: &crate::engine::egui::Context,
-        player: &mut InitPlayerCharacter<P, M, I>,
+        state: &mut GameWorldState,
+        trainer: &mut InitTrainer<P, M, I>,
     ) {
         match self.state {
-            GameStates::World => self.world.ui(app, plugins, egui, player),
+            GameStates::World => self.world.ui(app, plugins, egui, &mut state.map, trainer),
             GameStates::Battle => self.battle.ui(app, plugins, egui),
         }
     }

@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("route_2_houses"),
-        index: "house",
-    ),
-    name: "Route 2 House",
-    file: "15.1_ROUTE 2.map",
-)

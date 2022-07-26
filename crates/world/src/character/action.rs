@@ -1,8 +1,8 @@
 use std::ops::AddAssign;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::positions::{Direction, Position, Destination};
+use crate::positions::{Destination, Direction, Position};
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct Actions {
@@ -29,7 +29,8 @@ impl Actions {
             Direction::Right
         };
 
-        self.queue.extend(vec![ActionQueue::Move(xdir); xlen.abs() as usize]);
+        self.queue
+            .extend(vec![ActionQueue::Move(xdir); xlen.abs() as usize]);
 
         let ylen = destination.coords.y - position.coords.y;
         let ydir = if ylen.is_negative() {
@@ -37,7 +38,8 @@ impl Actions {
         } else {
             Direction::Down
         };
-        self.queue.extend(vec![ActionQueue::Move(ydir); ylen.abs() as usize]);
+        self.queue
+            .extend(vec![ActionQueue::Move(ydir); ylen.abs() as usize]);
         if let Some(direction) = destination.direction {
             self.queue.push(ActionQueue::Look(direction));
         }

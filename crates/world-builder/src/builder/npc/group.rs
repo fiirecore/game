@@ -9,10 +9,10 @@ use hashbrown::HashMap;
 
 use world::{
     character::npc::group::NpcGroup, map::manager::WorldNpcData,
-    serialized::SerializedNpcGroupTextures,
+    serialized::SerializedCharacterGroupTextures,
 };
 
-pub fn load_npc_groups(root_path: &Path) -> (WorldNpcData, SerializedNpcGroupTextures) {
+pub fn load_npc_groups(root_path: &Path) -> (WorldNpcData, SerializedCharacterGroupTextures) {
     let npc_dir = root_path.join("npcs");
     let trainer_dir = root_path.join("trainers");
     let mut npcs = HashMap::new();

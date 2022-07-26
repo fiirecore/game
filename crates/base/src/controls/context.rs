@@ -13,12 +13,10 @@ pub struct ControlsContext {
 #[derive(Default)]
 pub struct TouchscreenContext {
     pub pressed: HashSet<Control>,
-    pub down: HashSet<Control>,    
+    pub down: HashSet<Control>,
 }
 
-impl Plugin for ControlsContext {
-    
-}
+impl Plugin for ControlsContext {}
 
 impl Default for ControlsContext {
     fn default() -> Self {

@@ -186,7 +186,8 @@ impl LoadingStateManager {
                     draw.rect(
                         (draw.width() / 3.0, draw.height() * 2.0 / 3.0),
                         (loaded * draw.width() / 3.0, (draw.height() / 10.0).ceil()),
-                    ).color(Color::WHITE);
+                    )
+                    .color(Color::WHITE);
                 }
             }
             LoadingScenes::Gamefreak => {

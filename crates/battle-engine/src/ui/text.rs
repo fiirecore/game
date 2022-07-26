@@ -15,13 +15,12 @@ use pokengine::{
     },
 };
 
-pub type BattleMessageState = MessageStates<[f32; 4]>;
+pub type BattleMessageState = MessageStates<[f32; 4], ()>;
 
 #[derive(Default)]
 pub struct BattleText(BattleMessageState);
 
 impl BattleText {
-
     pub fn state(&self) -> &BattleMessageState {
         &self.0
     }
@@ -107,13 +106,16 @@ impl BattleText {
         })
     }
 
-    pub(crate) fn on_status(&mut self, pokemon: &str, status: Ailment) {
+    pub(crate) fn on_status(&mut self, pokemon: &str, status: Option<Ailment>) {
         let text = self.0.get_or_insert_with(MessageState::default);
         text.pages.push(MessagePage {
-            lines: vec![
-                format!("{} was afflicted", pokemon),
-                format!("with {:?}", status),
-            ],
+            lines: match status {
+                Some(ailment) => vec![
+                    format!("{} was afflicted", pokemon),
+                    format!("with {:?}", ailment),
+                ],
+                None => vec![format!("{}' status was cleared", pokemon)],
+            },
             wait: Some(0.5),
             ..Default::default()
         })

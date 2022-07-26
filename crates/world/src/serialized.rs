@@ -1,13 +1,13 @@
-use serde::{Deserialize, Serialize};
 use enum_map::EnumMap;
 use hashbrown::HashMap;
+use serde::{Deserialize, Serialize};
 
 use crate::{
     character::{
-        npc::{group::NpcGroupId, Npc, NpcId},
-        MovementType,
+        npc::{Npc, NpcId},
+        Activity, CharacterGroupId,
     },
-    map::{manager::WorldMapData, PaletteId, TileId, object::ObjectId}, script::WorldScriptData,
+    map::{object::ObjectType, PaletteId, TileId},
     // positions::Location,
 };
 
@@ -15,13 +15,13 @@ use crate::{
 
 type Texture = Vec<u8>;
 
-#[derive(Deserialize, Serialize)]
-pub struct SerializedWorld {
-    pub data: WorldMapData,
-    pub scripts: WorldScriptData,
-    // pub map_gui_locs: MapGuiLocs,
-    pub textures: SerializedTextures,
-}
+// #[derive(Deserialize, Serialize)]
+// pub struct SerializedWorld {
+//     // pub data: WorldMapData,
+//     // pub scripts: WorldScriptData,
+//     // pub map_gui_locs: MapGuiLocs,
+//     // pub textures: SerializedTextures,
+// }
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedNpc {
@@ -30,14 +30,14 @@ pub struct SerializedNpc {
 }
 
 pub type SerializedPaletteMap = HashMap<PaletteId, SerializedPalette>;
-pub type SerializedPlayerTexture = EnumMap<MovementType, Texture>;
-pub type SerializedNpcGroupTextures = HashMap<NpcGroupId, Texture>;
-pub type SerializedObjectTextures = HashMap<ObjectId, Texture>;
+pub type SerializedPlayerTexture = EnumMap<Activity, Texture>;
+pub type SerializedCharacterGroupTextures = HashMap<CharacterGroupId, Texture>;
+pub type SerializedObjectTextures = HashMap<ObjectType, Texture>;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedTextures {
     pub palettes: SerializedPaletteMap,
-    pub npcs: SerializedNpcGroupTextures,
+    pub npcs: SerializedCharacterGroupTextures,
     pub objects: SerializedObjectTextures,
     pub player: SerializedPlayerTexture,
 }

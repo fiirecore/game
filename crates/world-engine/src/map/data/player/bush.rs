@@ -9,7 +9,7 @@ use crate::engine::{
     math::Rect,
 };
 
-use crate::map::RenderCoords;
+use crate::map::CharacterCamera;
 
 pub struct PlayerBushTexture {
     pub texture: Texture,
@@ -67,10 +67,10 @@ impl PlayerBushTexture {
             }
         }
     }
-    pub fn draw(&self, draw: &mut Draw, screen: &RenderCoords) {
+    pub fn draw(&self, draw: &mut Draw, camera: &CharacterCamera) {
         for rustle in self.instances.iter() {
-            let x = ((rustle.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x;
-            let y = ((rustle.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y;
+            let x = ((rustle.coords.x + camera.offset.x) << 4) as f32 - camera.focus.x;
+            let y = ((rustle.coords.y + camera.offset.y) << 4) as f32 - camera.focus.y;
             let yimg = if rustle.counter < 0.25 {
                 0.0
             } else if rustle.counter < 0.5 {

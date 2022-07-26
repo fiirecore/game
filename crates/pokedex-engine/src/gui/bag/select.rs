@@ -32,6 +32,8 @@ impl BagSelect {
                     }
                 }
                 None
-            }).and_then(|i| i.inner).flatten()
+            })
+            .and_then(|i| i.inner)
+            .flatten()
     }
 }

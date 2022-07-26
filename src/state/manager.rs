@@ -117,7 +117,10 @@ impl<
             save: firecore_storage::try_load::<firecore_storage::RonSerializer, Player>(
                 Some(crate::PUBLISHER),
                 crate::APPLICATION,
-            ).map_err(|err| err.to_string()).map(save::PlayerSave::Uninit).unwrap_or(save::PlayerSave::None),
+            )
+            .map_err(|err| err.to_string())
+            .map(save::PlayerSave::Uninit)
+            .unwrap_or(save::PlayerSave::None),
             // load
             //     .save
             //     .map(save::PlayerSave::Uninit)
@@ -152,9 +155,9 @@ impl<
                     worldcli::engine::log::info!("Could not init player, no dexes; {:?}", self.save)
                 }
 
-                if let Some(player) = self.save.as_mut() {
+                if let Some((state, trainer)) = self.save.as_mut() {
                     if let GameStateInit::Init(game) = &mut self.game {
-                        game.start(player);
+                        game.start(state, trainer);
                     } else {
                         self.state = MainStates::Menu;
                     }
@@ -187,12 +190,13 @@ impl<
                     self.state = MainStates::Title;
                 }
 
-                self.loading.update(app, plugins, delta, self.data.is_loaded() == Some(true));
+                self.loading
+                    .update(app, plugins, delta, self.data.is_loaded() == Some(true));
             }
             MainStates::Title => self.title.update(app, plugins),
             MainStates::Menu => (),
             MainStates::Game => {
-                if let Some(player) = self.save.as_mut() {
+                if let Some((state, trainer)) = self.save.as_mut() {
                     if let LoadData::Data {
                         pokedex,
                         movedex,
@@ -200,7 +204,7 @@ impl<
                     } = &self.data
                     {
                         if let GameStateInit::Init(game) = &mut self.game {
-                            game.update(app, plugins, pokedex, movedex, itemdex, player);
+                            game.update(app, plugins, state, trainer, pokedex, movedex, itemdex);
                         } else {
                             self.state = MainStates::Menu;
                         }
@@ -239,6 +243,8 @@ impl<
                                     dex,
                                     btl,
                                     data.world,
+                                    data.world_scripting,
+                                    data.world_textures,
                                     data.battle,
                                     sender,
                                     processor,
@@ -265,9 +271,9 @@ impl<
                 gfx.render(&draw);
             }
             MainStates::Game => {
-                if let Some(player) = self.save.as_mut() {
+                if let Some((world, trainer)) = self.save.as_mut() {
                     if let GameStateInit::Init(game) = &self.game {
-                        game.draw(gfx, player);
+                        game.draw(gfx, world);
                     }
                 }
             }
@@ -311,9 +317,9 @@ impl<
                     });
                 }
                 MainStates::Game => {
-                    if let Some(player) = self.save.as_mut() {
+                    if let Some((state, trainer)) = self.save.as_mut() {
                         if let GameStateInit::Init(game) = &mut self.game {
-                            game.ui(app, plugins2, egui, player);
+                            game.ui(app, plugins2, egui, state, trainer);
                         }
                     }
                 }
@@ -323,7 +329,7 @@ impl<
             #[cfg(target_arch = "wasm32")]
             crate::touchscreen::Touchscreen::ui(egui, plugins2);
 
-            self.console.ui::<P, M, I>(app, egui, self.save.as_mut());
+            self.console.ui::<P, M, I>(app, egui, self.save.as_mut().map(|(w, ..)| &mut w.map.player.character));
         }));
 
         // graphics::reset_transform_matrix(ctx);

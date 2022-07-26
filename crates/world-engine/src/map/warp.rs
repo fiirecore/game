@@ -5,6 +5,7 @@ use worldlib::{
         PaletteId, TileId,
     },
     positions::Coordinate,
+    state::map::MapState,
 };
 
 use crate::engine::{
@@ -13,7 +14,7 @@ use crate::engine::{
     utils::Entity,
 };
 
-use crate::map::RenderCoords;
+use crate::map::CharacterCamera;
 
 use super::data::tile::PaletteTextureManager;
 
@@ -65,21 +66,22 @@ impl WarpTransition {
         }
     }
 
-    pub fn update<P, B: Default>(
+    pub fn update(
         &mut self,
         world: &WorldMapData,
-        player: &mut PlayerCharacter<P, B>,
+        state: &mut MapState,
         delta: f32,
     ) -> Option<bool> {
         // returns map change
+        let character = &mut state.player.character;
 
         match self.faded {
             false => match &mut self.door {
                 Some(door) => match door.open {
                     true => {
-                        if !player.character.moving() && door.accumulator >= 0.0 {
+                        if !character.moving() && door.accumulator >= 0.0 {
                             if door.accumulator == Door::DOOR_MAX && !self.warped {
-                                player.character.hidden = true;
+                                character.hidden = true;
                             }
                             door.accumulator -= delta * 6.0;
                             if door.accumulator <= 0.0 {
@@ -98,16 +100,12 @@ impl WarpTransition {
                                     || self.warp.as_ref().map(|d| d.1).unwrap_or_default()
                                 {
                                     // world.try_move(player.position.direction, delta);
-                                    let direction = player.character.position.direction;
-                                    player
-                                        .character
-                                        .actions
-                                        .queue
-                                        .push(ActionQueue::Move(direction));
+                                    let direction = character.position.direction;
+                                    character.actions.queue.push(ActionQueue::Move(direction));
                                 }
                                 door.open = true;
                                 if self.warped {
-                                    player.character.hidden = false;
+                                    character.hidden = false;
                                 }
                             }
                         }
@@ -119,10 +117,10 @@ impl WarpTransition {
                         if self.color.a >= 1.0 {
                             self.color.a = 1.0;
                             self.faded = true;
-                            if let Some(warp) = player.state.warp.take() {
-                                player.character.hidden = false; //destination.transition.move_on_exit;
+                            if let Some(warp) = state.warp.take() {
+                                character.hidden = false; //destination.transition.move_on_exit;
                                 let change_music = true; // destination.transition.change_music;
-                                world.warp(player, warp);
+                                world.warp(state, warp);
                                 self.warp = Some((
                                     warp.position.coords,
                                     false, //destination.transition.move_on_exit,
@@ -135,8 +133,8 @@ impl WarpTransition {
                     true => {
                         self.despawn();
                         match self.freeze {
-                            true => player.character.input_lock.increment(),
-                            false => player.character.input_lock.decrement(),
+                            true => character.input_lock.increment(),
+                            false => character.input_lock.decrement(),
                         };
                         // if let Some(destination) = self.warp.take() {
                         //     if destination.transition.move_on_exit {
@@ -161,7 +159,7 @@ impl WarpTransition {
                         let coords = self.warp.as_ref().unwrap().0;
                         if let Some((palettes, tile)) = world
                             .maps
-                            .get(&player.location)
+                            .get(&state.location)
                             .map(|map| map.tile(coords).map(|tile| (&map.palettes, tile)))
                             .flatten()
                         {
@@ -178,22 +176,18 @@ impl WarpTransition {
                             {
                                 match warptile {
                                     WarpTile::Door => {
-                                        player.character.hidden = true;
+                                        character.hidden = true;
                                         //exit door
                                         self.door = Some(Door::new(*palette, tile, coords));
                                     }
                                     WarpTile::Stair | WarpTile::Other => {
-                                        player.character.hidden = false;
-                                        let direction = player.character.position.direction;
-                                        player
-                                            .character
-                                            .actions
-                                            .queue
-                                            .push(ActionQueue::Move(direction));
+                                        character.hidden = false;
+                                        let direction = character.position.direction;
+                                        character.actions.queue.push(ActionQueue::Move(direction));
                                     }
                                 };
                             } else {
-                                player.character.hidden = false;
+                                character.hidden = false;
                             }
                         }
                     }
@@ -230,7 +224,7 @@ impl WarpTransition {
         &self,
         draw: &mut Draw,
         palettes: &PaletteTextureManager,
-        screen: &RenderCoords,
+        camera: &CharacterCamera,
     ) {
         if self.alive {
             if let Some(door) = &self.door {
@@ -243,8 +237,8 @@ impl WarpTransition {
                 {
                     draw.texture(
                         texture,
-                        ((door.coords.x + screen.offset.x) << 4) as f32 - screen.focus.x,
-                        ((door.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y,
+                        ((door.coords.x + camera.offset.x) << 4) as f32 - camera.focus.x,
+                        ((door.coords.y + camera.offset.y) << 4) as f32 - camera.focus.y,
                         DrawParams {
                             source: Some(Rect {
                                 x: 0.0,
@@ -260,10 +254,10 @@ impl WarpTransition {
         }
     }
 
-    pub fn queue<P, B: Default>(
+    pub fn queue(
         &mut self,
         world: &WorldMapData,
-        player: &mut PlayerCharacter<P, B>,
+        player: &mut PlayerCharacter,
         palette: PaletteId,
         tile: TileId,
         coords: Coordinate,

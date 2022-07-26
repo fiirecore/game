@@ -1,0 +1,25 @@
+[package]
+name = "firecore-world-gen"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+# firecore-world-builder = { git = "https://github.com/fiirecore/pokemon-game", rev = "2c67ed2", package = "firecore-world-builder" }
+firecore-world-builder = { path = "../world-builder" }
+
+# firecore-dex-gen = { git = "https://github.com/fiirecore/pokedex-gen", rev = "dfdc173" }
+firecore-dex-gen = { path = "../dex-gen" }
+
+serde = { version = "1", features = ["derive"] }
+attohttpc = { version = "0.19", features = ["json"] }
+tinystr = "0.6"
+either = { version = "1", features = ["serde"] }
+rayon = "1"
+dashmap = { version = "5", features = ["serde", "rayon"] }
+hashbrown = { version = "0.12", features = ["rayon"] }
+anyhow = "1"
+serde_json = "1"
+
+[dev-dependencies]
+ron = "0.7"
+postcard = { version = "1", features = ["alloc"] }

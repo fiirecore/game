@@ -3,18 +3,13 @@ use pokengine::engine::{
     math::Rect,
 };
 use worldlib::{
-    character::npc::{
-        group::{NpcGroup, NpcGroupId},
-        Npc,
-    },
+    character::{CharacterGroupId, CharacterState},
     positions::Direction,
 };
 
-use crate::engine::utils::HashMap;
+use crate::{engine::utils::HashMap, map::CharacterCamera};
 
-use crate::map::RenderCoords;
-
-pub struct NpcTextures(HashMap<NpcGroupId, NpcTexture>);
+pub struct NpcTextures(HashMap<CharacterGroupId, NpcTexture>);
 
 struct NpcTexture {
     pub texture: Texture,
@@ -50,7 +45,10 @@ impl SpriteData {
 }
 
 impl NpcTextures {
-    pub fn new(gfx: &mut Graphics, textures: HashMap<NpcGroupId, Vec<u8>>) -> Result<Self, String> {
+    pub fn new(
+        gfx: &mut Graphics,
+        textures: HashMap<CharacterGroupId, Vec<u8>>,
+    ) -> Result<Self, String> {
         let mut npcs = HashMap::with_capacity(textures.len());
         // let trainer = NpcGroupTextures::new(Default::default());
         for (npc, data) in textures {
@@ -77,50 +75,64 @@ impl NpcTextures {
         ))
     }
 
-    pub fn draw(&self, draw: &mut Draw, npc: &Npc, screen: &RenderCoords, color: Color) {
+    pub fn draw(
+        &self,
+        draw: &mut Draw,
+        character: &CharacterState,
+        // offset: Option<&PixelOffset>,
+        camera: &CharacterCamera,
+        color: Color,
+    ) {
         self.0
-            .get(&npc.group)
+            .get(&character.group)
             .unwrap_or_else(|| {
                 self.0
-                    .get(&NpcGroup::PLACEHOLDER)
+                    .get(&CharacterState::PLACEHOLDER_GROUP)
                     .unwrap_or_else(|| panic!("Cannot get placeholder NPC texture!"))
             })
-            .draw(draw, npc, screen, color);
+            .draw(draw, character, camera, color);
     }
 }
 
 impl NpcTexture {
-    pub fn draw(&self, draw: &mut Draw, npc: &Npc, screen: &RenderCoords, color: Color) {
-        let x = ((npc.character.position.coords.x + 1 + screen.offset.x) << 4) as f32
-            - screen.focus.x
-            + npc.character.offset.x
-            - self.data.width;
+    pub fn draw(
+        &self,
+        draw: &mut Draw,
+        character: &CharacterState,
+        camera: &CharacterCamera,
+        color: Color,
+    ) {
+        if !character.hidden {
+            let x = ((character.position.coords.x + 1 + camera.offset.x) << 4) as f32
+                - camera.focus.x
+                + character.offset.x
+                - self.data.width;
 
-        let y = ((npc.character.position.coords.y + screen.offset.y) << 4) as f32 - screen.focus.y
-            + npc.character.offset.y
-            - (self.texture.height() - worldlib::TILE_SIZE);
-        draw.texture(
-            &self.texture,
-            x,
-            y,
-            DrawParams {
-                source: Some(Rect {
-                    x: self.current_texture_pos(npc),
-                    y: 1.0,
-                    width: self.data.width,
-                    height: self.texture.height(),
-                }),
-                flip_x: npc.character.position.direction == Direction::Right,
-                color,
-            },
-        );
+            let y = ((character.position.coords.y + camera.offset.y) << 4) as f32 - camera.focus.y
+                + character.offset.y
+                - (self.texture.height() - worldlib::TILE_SIZE);
+            draw.texture(
+                &self.texture,
+                x,
+                y,
+                DrawParams {
+                    source: Some(Rect {
+                        x: self.current_texture_pos(character),
+                        y: 1.0,
+                        width: self.data.width,
+                        height: self.texture.height(),
+                    }),
+                    flip_x: character.position.direction == Direction::Right,
+                    color,
+                },
+            );
+        }
     }
 
-    pub fn current_texture_pos(&self, npc: &Npc) -> f32 {
-        let index =
-            (npc.character.offset.offset().abs() as usize >> 3) + npc.character.sprite as usize;
+    pub fn current_texture_pos(&self, character: &CharacterState) -> f32 {
+        let index = (character.offset.offset().abs() as usize >> 3) + character.sprite as usize;
 
-        (match npc.character.position.direction {
+        (match character.position.direction {
             Direction::Down => self.data.down[index],
             Direction::Up => self.data.up[index],
             _ => self.data.side[index],

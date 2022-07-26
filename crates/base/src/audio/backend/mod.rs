@@ -1,5 +1,5 @@
 // use fiirengine::error::FileError;
-use notan::prelude::{Plugin, App};
+use notan::prelude::{App, Plugin};
 
 use crate::utils::HashMap;
 
@@ -20,9 +20,7 @@ pub struct AudioContext {
     pub(crate) sounds: GameAudioMap<(SoundId, SoundVariant)>,
 }
 
-impl Plugin for AudioContext {
-
-}
+impl Plugin for AudioContext {}
 
 fn add<K: Eq + std::hash::Hash>(
     ctx: &mut App,

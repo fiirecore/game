@@ -1,53 +1,31 @@
-use hashbrown::HashMap;
-use serde::{Deserialize, Serialize};
+use core::ops::Deref;
 
-mod condition;
-mod instructions;
+use firecore_pokedex::trainer::InitTrainer;
+use pokedex::{item::Item, moves::Move, pokemon::Pokemon};
 
-use crate::{character::npc::NpcId};
+use crate::{map::manager::WorldMapData, state::map::MapState, random::WorldRandoms};
 
-pub use self::condition::Condition;
-pub use self::instructions::*;
+pub mod default;
 
+pub trait WorldScriptingEngine {
+    type State: Default + Clone + std::fmt::Debug + serde::Serialize + serde::de::DeserializeOwned;
 
-pub type ScriptId = String;
-pub type MessageId = String;
+    type Error;
 
-pub type VariableName = String;
-pub type Variable = u16;
+    fn on_tile(&self);
 
-pub type Flag = String;
-
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WorldScriptData {
-    pub scripts: HashMap<ScriptId, Vec<WorldInstruction>>,
-    pub messages: HashMap<MessageId, Vec<Vec<String>>>,
+    fn update<
+        R: rand::Rng,
+        P: Deref<Target = Pokemon> + Clone,
+        M: Deref<Target = Move> + Clone,
+        I: Deref<Target = Item> + Clone,
+    >(
+        &self,
+        data: &WorldMapData,
+        map: &mut MapState,
+        trainer: &mut InitTrainer<P, M, I>,
+        randoms: &mut WorldRandoms<R>,
+        state: &mut Self::State,
+    ) where
+        Self: Sized;
 }
-
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct ScriptEnvironment {
-    pub executor: Option<NpcId>,
-    pub queue: Vec<WorldInstruction>,
-}
-
-// #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-// pub enum ScriptVariable {
-//     /// Flag that shows that a variable exists
-//     Flag,
-//     Var(u16),
-// }
-
-impl ScriptEnvironment {
-
-    pub fn running(&self) -> bool {
-        self.executor.is_some() || !self.queue.is_empty()
-    }
-
-}
-
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct WorldScript {
-//     pub identifier: ScriptId,
-//     pub actions: Vec<WorldInstruction>,
-// }

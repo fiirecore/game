@@ -46,7 +46,7 @@ fn main() -> Result<(), String> {
 
 #[derive(AppState)]
 struct Game {
-    state: MessageStates<Color>,
+    state: MessageStates<Color, ()>,
 }
 
 impl Game {
@@ -61,6 +61,7 @@ impl Game {
                     ],
                     wait: None,
                     color: Some(Color::RED),
+                    theme: (),
                 };
                 let page2 = MessagePage {
                     lines: vec![
@@ -69,6 +70,7 @@ impl Game {
                     ],
                     wait: Some(1.0),
                     color: Some(Color::YELLOW),
+                    theme: (),
                 };
 
                 MessageStates::Running(MessageState {

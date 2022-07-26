@@ -1,4 +1,8 @@
-use pokengine::engine::{graphics::{Texture, Draw, DrawExt, DrawParams, Color}, math::{Vec2, Rect}, App};
+use pokengine::engine::{
+    graphics::{Color, Draw, DrawExt, DrawParams, Texture},
+    math::{Rect, Vec2},
+    App,
+};
 
 #[derive(Default, Clone)]
 pub struct Faint {

@@ -1,4 +1,8 @@
-use pokengine::engine::{graphics::{Draw, Texture, DrawImages, Color}, math::Vec2, App};
+use pokengine::engine::{
+    graphics::{Color, Draw, DrawImages, Texture},
+    math::Vec2,
+    App,
+};
 
 #[derive(Clone)]
 pub struct Flicker {
@@ -42,5 +46,4 @@ impl Flicker {
                 .color(color);
         }
     }
-
 }

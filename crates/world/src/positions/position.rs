@@ -31,4 +31,8 @@ impl Position {
     pub fn forwards(&self) -> Coordinate {
         self.coords.in_direction(self.direction)
     }
+
+    pub fn next(&self) -> Position {
+        self.in_direction(self.direction)
+    }
 }

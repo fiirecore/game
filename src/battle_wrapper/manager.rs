@@ -2,14 +2,14 @@ use rand::{prelude::SmallRng, RngCore, SeedableRng};
 use std::ops::Deref;
 
 use battlecli::battle::{
-    default_engine::{scripting::MoveScripts, EngineMoves},
+    default_engine::{default_scripting::MoveScripts, EngineMoves},
     pokemon::PokemonIdentifier,
     prelude::{
         Battle, BattleAi, BattleData, BattleType, DefaultEngine, EndMessage, PlayerData,
         PlayerSettings,
     },
 };
-use worldcli::{engine::text::MessagePage, worldlib::character::player::InitPlayerCharacter};
+use worldcli::{engine::text::MessagePage, pokedex::trainer::InitTrainer, worldlib::character::player::PlayerCharacter};
 
 use crate::{
     command::CommandProcessor,
@@ -29,9 +29,9 @@ use firecore_battle_engine::{BattleGuiData, BattlePlayerGui, BattleTrainer};
 use super::GameBattleWrapper;
 
 mod command;
-pub mod transitions;
+pub mod transition;
 
-use transitions::managers::transition::BattleScreenTransitionManager;
+use transition::manager::BattleScreenTransitionManager;
 
 pub struct BattleManager<
     D: Deref<Target = PokedexClientData> + Clone,
@@ -129,37 +129,35 @@ impl<
         pokedex: &impl Dex<Pokemon, Output = P>,
         movedex: &impl Dex<Move, Output = M>,
         itemdex: &impl Dex<Item, Output = I>,
-        player: &InitPlayerCharacter<P, M, I>,
+        player: &mut PlayerCharacter,
+        trainer: &InitTrainer<P, M, I>,
     ) -> bool {
         // add battle type parameter
         self.finished = false;
         self.state = BattleManagerState::default();
         self.player.reset();
-        let entry = match player.state.battle.battling.as_ref() {
+        let entry = match player.battle.battling.as_ref() {
             Some(entry) => entry,
             None => return false,
         };
-        let empty = player.trainer.party.is_empty() || entry.party.is_empty();
+        let empty = trainer.party.is_empty() || entry.party.is_empty();
         (!(empty ||
             // Checks if player has any pokemon in party that aren't fainted (temporary)
-            !player
-                .trainer
+            !trainer
                 .party
                 .iter()
                 .any(|pokemon| !(pokemon.fainted()))))
         .then(|| {
             let player = PlayerData {
                 id: BattleId::Player,
-                name: Some(player.character.name.clone()),
-                party: player
-                    .trainer
+                name: Some(player.name.clone()),
+                party: trainer
                     .party
                     .iter()
                     .cloned()
                     .map(|p| p.uninit())
                     .collect(),
-                bag: player
-                    .trainer
+                bag: trainer
                     .bag
                     .iter()
                     .cloned()
@@ -192,6 +190,7 @@ impl<
                             lines: m.lines.clone(),
                             wait: m.wait,
                             color: m.color.map(Into::into),
+                            theme: (),
                         })
                         .collect(),
                 }),
@@ -233,7 +232,7 @@ impl<
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
-        player: &mut InitPlayerCharacter<P, M, I>,
+        player: &mut PlayerCharacter,
         pokedex: &impl Dex<Pokemon, Output = P>,
         movedex: &impl Dex<Move, Output = M>,
         itemdex: &impl Dex<Item, Output = I>,
@@ -245,7 +244,7 @@ impl<
             // exit shortcut
             self.end();
             self.player.reset();
-            player.state.battle.battling = None;
+            player.battle.battling = None;
             player.character.locked.clear();
             player.character.input_lock.clear();
             return;

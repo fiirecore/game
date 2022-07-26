@@ -4,12 +4,12 @@ pub extern crate tinystr;
 
 use serde::{Deserialize, Serialize};
 
-use self::{item::ItemOutput, trainer_group::TrainerGroupOutput, pokemon::PokemonOutput};
+use self::{item::ItemOutput, pokemon::PokemonOutput, trainer_group::TrainerGroupOutput};
 
 // pub mod battle;
 pub mod item;
-pub mod trainer_group;
 pub mod pokemon;
+pub mod trainer_group;
 
 #[derive(Deserialize, Serialize)]
 pub struct SerializedPokedexEngine {

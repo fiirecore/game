@@ -1,11 +1,11 @@
 [package]
 name = "pokemon-game"
-version = "0.5.0-beta.2022-06-01"
+version = "0.5.0-beta.2022-07-25"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 license = "CC0-1.0"
 description = "Pokemon FireRed Clone"
-repository = "https://github.com/fiirecore-game/pokemon-game"
+repository = "https://github.com/fiirecore/pokemon-game"
 keywords = ["games", "pokemon"]
 categories = ["games"]
 build = "build/build.rs"
@@ -64,8 +64,8 @@ general_storage_web = "0.2"
 
 [build-dependencies]
 
-firecore-pokedex-builder = { git = "https://github.com/fiirecore/pokedex", rev = "4dc9632", package = "firecore-pokedex-builder" }
-firecore-battle-builder = { git = "https://github.com/fiirecore/battle", rev = "d32c6a5", package = "firecore-battle-builder" }
+firecore-dex-gen = { path = "crates/dex-gen" }
+# firecore-world-gen = { path = "crates/world-gen" }
 
 firecore-pokedex-engine-builder = { path = "crates/pokedex-engine-builder", default-features = false, features = [
     "compile",

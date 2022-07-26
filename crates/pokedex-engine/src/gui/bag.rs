@@ -2,9 +2,7 @@ mod select;
 
 use core::ops::Deref;
 
-use crate::pokedex::{
-    item::{bag::Bag, Item, ItemId},
-};
+use crate::pokedex::item::{bag::Bag, Item, ItemId};
 
 use engine::egui;
 
@@ -23,7 +21,7 @@ pub struct BagGui<D: Deref<Target = PokedexClientData>> {
 }
 
 pub enum BagAction {
-    Use(ItemId),   
+    Use(ItemId),
 }
 
 impl<D: Deref<Target = PokedexClientData>> BagGui<D> {
@@ -33,7 +31,7 @@ impl<D: Deref<Target = PokedexClientData>> BagGui<D> {
         Self {
             alive: Default::default(),
             data,
-            select: Default::default()
+            select: Default::default(),
         }
     }
 
@@ -83,11 +81,10 @@ impl<D: Deref<Target = PokedexClientData>> BagGui<D> {
                     match action {
                         select::SelectAction::Select(item) => {
                             return Some(BagAction::Use(item));
-                        },
+                        }
                     }
                 }
             }
-
         }
         None
         // self.background.draw(ctx, 0.0, 0.0, Default::default());

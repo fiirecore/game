@@ -118,7 +118,8 @@ impl<'de> serde::Deserialize<'de> for Coordinate {
 impl serde::Serialize for Coordinate {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer {
+        S: serde::Serializer,
+    {
         (self.x, self.y).serialize(serializer)
     }
 }

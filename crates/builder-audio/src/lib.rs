@@ -2,7 +2,6 @@ use serde::Deserialize;
 
 pub use firecore_audio::{MusicId, SoundId, SoundVariant};
 
-
 use std::{
     fs::{read, read_dir, read_to_string},
     path::Path,
@@ -46,22 +45,20 @@ pub fn compile(music: impl AsRef<Path>) -> M {
                             path, err
                         )
                     });
-                    let data: MusicData<String> =
-                        ron::from_str(&content).unwrap_or_else(|err| {
-                            panic!(
-                                "Could not deserialize file at {:?} with error {}",
-                                path, err
-                            )
-                        });
-                    let music_bytes =
-                        read(music_folder.join(&data.data)).unwrap_or_else(|err| {
-                            panic!(
-                                "Could not get music file for {} with error {}",
-                                data.id, err
-                            )
-                        });
+                    let data: MusicData<String> = ron::from_str(&content).unwrap_or_else(|err| {
+                        panic!(
+                            "Could not deserialize file at {:?} with error {}",
+                            path, err
+                        )
+                    });
+                    let music_bytes = read(music_folder.join(&data.data)).unwrap_or_else(|err| {
+                        panic!(
+                            "Could not get music file for {} with error {}",
+                            data.id, err
+                        )
+                    });
 
-                    if let Some(..) = music.insert(data.id,music_bytes) {
+                    if let Some(..) = music.insert(data.id, music_bytes) {
                         panic!("Duplicate tracks found with id {}!", data.id);
                     }
                 }

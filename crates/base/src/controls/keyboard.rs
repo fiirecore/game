@@ -4,7 +4,7 @@ use enum_map::EnumMap;
 
 use notan::prelude::{App, KeyCode as Key, Plugins};
 
-use super::{Control, context::ControlsContext};
+use super::{context::ControlsContext, Control};
 
 // pub type KeySet = HashSet<Key>;
 pub type KeyMap = EnumMap<Control, Key>;

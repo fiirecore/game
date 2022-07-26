@@ -1,16 +1,16 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum MessageStates<C: Clone + Into<[f32; 4]>> {
-    Running(MessageState<C>),
+pub enum MessageStates<C: Clone + Into<[f32; 4]>, T: Default> {
+    Running(MessageState<C, T>),
     /// Has cooldown
     Finished(f32),
     None,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MessageState<C: Clone + Into<[f32; 4]>> {
-    pub pages: Vec<MessagePage<C>>,
+pub struct MessageState<C: Clone + Into<[f32; 4]>, T: Default> {
+    pub pages: Vec<MessagePage<C, T>>,
 
     pub page: usize,
     pub line: usize,
@@ -25,16 +25,17 @@ pub struct MessageState<C: Clone + Into<[f32; 4]>> {
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct MessagePage<C: Clone + Into<[f32; 4]>> {
+pub struct MessagePage<C: Clone + Into<[f32; 4]>, T: Default> {
     pub lines: Vec<String>,
     pub wait: Option<f32>,
     #[serde(default = "Option::default")]
     pub color: Option<C>,
+    pub theme: T,
     // #[serde(default = "Option::default")]
     // pub font: Option<F>,
 }
 
-impl<C: Clone + Into<[f32; 4]>> MessageState<C> {
+impl<C: Clone + Into<[f32; 4]>, T: Default> MessageState<C, T> {
     pub const DEFAULT_COOLDOWN: Option<f32> = Some(0.5);
 
     pub fn page(&self) -> usize {
@@ -58,29 +59,29 @@ impl<C: Clone + Into<[f32; 4]>> MessageState<C> {
     }
 }
 
-impl<C: Clone + Into<[f32; 4]>> MessageStates<C> {
+impl<C: Clone + Into<[f32; 4]>, T: Default> MessageStates<C, T> {
     pub fn is_running(&self) -> bool {
         matches!(self, MessageStates::Running(..))
     }
 
-    pub fn as_ref(&self) -> Option<&MessageState<C>> {
+    pub fn as_ref(&self) -> Option<&MessageState<C, T>> {
         match self {
             MessageStates::Running(state) => Some(state),
             _ => None,
         }
     }
 
-    pub fn as_mut(&mut self) -> Option<&mut MessageState<C>> {
+    pub fn as_mut(&mut self) -> Option<&mut MessageState<C, T>> {
         match self {
             MessageStates::Running(state) => Some(state),
             _ => None,
         }
     }
 
-    pub fn get_or_insert_with<F: FnOnce() -> MessageState<C>>(
+    pub fn get_or_insert_with<F: FnOnce() -> MessageState<C, T>>(
         &mut self,
         f: F,
-    ) -> &mut MessageState<C> {
+    ) -> &mut MessageState<C, T> {
         match self {
             MessageStates::Running(state) => state,
             _ => {
@@ -95,7 +96,7 @@ impl<C: Clone + Into<[f32; 4]>> MessageStates<C> {
     }
 }
 
-impl<C: Clone + Into<[f32; 4]>> Default for MessageState<C> {
+impl<C: Clone + Into<[f32; 4]>, T: Default> Default for MessageState<C, T> {
     fn default() -> Self {
         Self {
             pages: Default::default(),
@@ -109,14 +110,14 @@ impl<C: Clone + Into<[f32; 4]>> Default for MessageState<C> {
     }
 }
 
-impl<C: Clone + Into<[f32; 4]>> Default for MessageStates<C> {
+impl<C: Clone + Into<[f32; 4]>, T: Default> Default for MessageStates<C, T> {
     fn default() -> Self {
         Self::None
     }
 }
 
-impl<C: Clone + Into<[f32; 4]>> From<Vec<MessagePage<C>>> for MessageState<C> {
-    fn from(pages: Vec<MessagePage<C>>) -> Self {
+impl<C: Clone + Into<[f32; 4]>, T: Default> From<Vec<MessagePage<C, T>>> for MessageState<C, T> {
+    fn from(pages: Vec<MessagePage<C, T>>) -> Self {
         Self {
             pages,
             ..Default::default()

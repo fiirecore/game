@@ -2,8 +2,11 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use world::{
-    map::{chunk::Connection, PaletteId, WorldMapSettings, manager::tile::PaletteDataMap, wild::WildChances, MusicId, TileId},
-    positions::{CoordinateInt, Direction, Location, Position},
+    map::{
+        chunk::Connection, manager::tile::PaletteDataMap, wild::WildChances, MusicId, PaletteId,
+        TileId, WorldMapSettings,
+    },
+    positions::{CoordinateInt, Direction, Spot},
 };
 
 use self::structs::BuilderLocation;
@@ -54,7 +57,7 @@ pub struct LoadData {
 pub struct BuilderWorldData {
     pub palettes: PaletteDataMap,
     pub wild: WildChances,
-    pub spawn: (Location, Position),
+    pub spawn: Spot,
 }
 
 #[derive(Serialize, Deserialize)]

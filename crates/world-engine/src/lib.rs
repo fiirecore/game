@@ -8,3 +8,8 @@ pub use pokengine::pokedex;
 
 pub mod map;
 mod gui;
+
+pub fn color(message: worldlib::message::MessageColor) -> engine::graphics::Color {
+    let a: [f32; 4] = message.into();
+    a.into()
+}

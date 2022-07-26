@@ -1,5 +1,6 @@
-use firecore_world::{character::player::PlayerCharacter, serialized::SerializedTextures};
+use firecore_world::serialized::SerializedTextures;
 use pokengine::engine::{graphics::Graphics, notan::draw::Font};
+use worldlib::character::CharacterState;
 
 pub mod gui;
 pub mod npc;
@@ -32,9 +33,9 @@ impl ClientWorldData {
         })
     }
 
-    pub fn update<P, B: Default>(&mut self, delta: f32, player: &mut PlayerCharacter<P, B>) {
+    pub fn update(&mut self, delta: f32, character: &mut CharacterState) {
         self.tiles.update(delta);
-        self.player.update(delta, player);
+        self.player.update(delta, character);
         self.object.update(delta);
     }
 }

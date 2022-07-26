@@ -49,7 +49,6 @@ impl Touchscreen {
                 .resizable(false)
                 .show(egui, |ui| {
                     egui::Grid::new("DPadGrid").show(ui, |ui| {
-
                         create_button(ui, "");
                         button(&mut controls, ui, Control::Up);
 

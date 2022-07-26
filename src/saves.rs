@@ -1,11 +1,14 @@
+use rand::prelude::SmallRng;
 use serde::{Deserialize, Serialize};
-use worldcli::worldlib::{
-    character::player::SavedPlayerCharacter,
-};
+use worldcli::{worldlib::{state::WorldState, script::default::DefaultWorldScriptEngine}, pokedex::trainer::SavedTrainer};
+
+use crate::random::GamePseudoRandom;
 
 // mod list;
 
 // pub use list::PlayerSaves;
+
+pub type GameWorldState = WorldState<DefaultWorldScriptEngine>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Player {
@@ -13,14 +16,18 @@ pub struct Player {
     pub version: String,
 
     #[serde(default)]
-    pub player: SavedPlayerCharacter,
+    pub world: GameWorldState,
+
+    #[serde(default)]
+    pub trainer: SavedTrainer,
 }
 
 impl Player {
     pub fn new(name: impl Into<String>, rival: impl Into<String>) -> Self {
         Self {
-            player: SavedPlayerCharacter::new(name, rival),
             version: Self::default_version(),
+            world: GameWorldState::new(name, rival),
+            trainer: Default::default(),
         }
     }
 
@@ -33,7 +40,8 @@ impl Default for Player {
     fn default() -> Self {
         Self {
             version: Self::default_version(),
-            player: Default::default(),
+            world: Default::default(),
+            trainer: Default::default(),
         }
     }
 }

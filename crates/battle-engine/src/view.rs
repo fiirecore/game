@@ -118,7 +118,7 @@ pub trait BasePokemonView<P: Deref<Target = Pokemon>>: PokemonView {
     fn set_hp(&mut self, hp: f32);
     fn percent_hp(&self) -> f32;
 
-    fn set_ailment(&mut self, effect: LiveAilment);
+    fn set_ailment(&mut self, effect: Option<LiveAilment>);
     fn ailment(&mut self) -> Option<&mut LiveAilment>;
 
     fn set_exp(&mut self, experience: Experience);
@@ -158,8 +158,8 @@ impl<
         OwnedPokemon::percent_hp(self)
     }
 
-    fn set_ailment(&mut self, ailment: LiveAilment) {
-        self.ailment = Some(ailment);
+    fn set_ailment(&mut self, ailment: Option<LiveAilment>) {
+        self.ailment = ailment;
     }
 
     fn ailment(&mut self) -> Option<&mut LiveAilment> {
@@ -231,9 +231,9 @@ impl<P: Deref<Target = Pokemon> + Clone> BasePokemonView<P> for Option<UnknownPo
         self.as_ref().map(|v| v.hp).unwrap_or_default()
     }
 
-    fn set_ailment(&mut self, ailment: LiveAilment) {
+    fn set_ailment(&mut self, ailment: Option<LiveAilment>) {
         if let Some(u) = self {
-            u.ailment = Some(ailment);
+            u.ailment = ailment;
         }
     }
 

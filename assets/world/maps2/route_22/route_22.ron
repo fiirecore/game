@@ -1,9 +1,0 @@
-(
-    identifier: "route_22",
-    name: "Route 22",
-    file: "3.41_ROUTE 22.map",
-
-    chunk: {
-        Right: ("viridian", -10),
-    },
-)

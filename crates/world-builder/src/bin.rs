@@ -1,4 +1,4 @@
-use world::map::{MovementId, TileId, MusicId};
+use world::map::{MovementId, MusicId, TileId};
 
 #[derive(Debug, Clone)]
 pub struct BinaryMap {

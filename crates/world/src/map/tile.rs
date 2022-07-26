@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{Palettes, PaletteId};
+use super::{PaletteId, Palettes};
 
 pub type TileId = u16;
 
@@ -23,7 +23,6 @@ impl WorldTile {
             WorldTile::Secondary(..) => &palettes[1],
         }
     }
-
 }
 
 pub type Border = [WorldTile; 4];

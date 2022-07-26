@@ -1,5 +1,5 @@
 // pub use fiirengine::utils::*;
-pub use hashbrown::{HashMap, HashSet, hash_map::DefaultHashBuilder};
+pub use hashbrown::{hash_map::DefaultHashBuilder, HashMap, HashSet};
 
 pub trait Entity {
     fn spawn(&mut self);

@@ -3,22 +3,20 @@ use serde::{Deserialize, Serialize};
 use pokedex::{
     item::bag::SavedBag,
     pokemon::{owned::SavedPokemon, party::Party},
+    Money,
 };
 
 use text::MessagePage;
 
 use crate::{
     character::{
-        npc::{
-            group::{MessageColor, NpcGroupId},
-            trainer::BadgeId,
-            Npc, NpcId,
-        },
-        trainer::Worth,
+        npc::{trainer::BadgeId, Npc, NpcId},
+        player::GlobalBattleState,
+        CharacterGroupId,
     },
     map::TransitionId,
+    message::{MessageColor, MessageTheme},
     positions::Location,
-    state::GlobalBattleState,
 };
 
 use super::{manager::WorldNpcData, WorldMapSettings};
@@ -46,10 +44,10 @@ pub struct TrainerEntry {
     pub name: String,
     pub bag: SavedBag,
     pub badge: Option<BadgeId>,
-    pub sprite: NpcGroupId,
+    pub sprite: CharacterGroupId,
     pub transition: TransitionId,
-    pub defeat: Vec<MessagePage<MessageColor>>,
-    pub worth: Worth,
+    pub defeat: Vec<MessagePage<MessageColor, MessageTheme>>,
+    pub worth: Money,
 }
 
 impl BattleEntry<SavedPokemon> {
@@ -73,8 +71,8 @@ impl BattleEntry<SavedPokemon> {
                         name: data
                             .trainers
                             .get(&trainer.group)
-                            .map(|g| format!("{} {}", g.prefix, npc.character.name))
-                            .unwrap_or_else(|| npc.character.name.clone()),
+                            .map(|g| format!("{} {}", g.prefix, npc.name))
+                            .unwrap_or_else(|| npc.name.clone()),
                         bag: trainer.character.bag.clone(),
                         badge: trainer.badge,
                         sprite: npc.group,
@@ -85,13 +83,11 @@ impl BattleEntry<SavedPokemon> {
                             .map(|lines| MessagePage {
                                 lines: lines.to_owned(),
                                 wait: None,
-                                color: data
-                                    .groups
-                                    .get(&npc.group)
-                                    .map(|g| g.message)
+                                color: data.groups.get(&npc.group).map(|g| g.message),
+                                theme: MessageTheme::default(),
                             })
                             .collect(),
-                        worth: trainer.character.worth,
+                        worth: trainer.character.money,
                     }),
                 });
             }

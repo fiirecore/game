@@ -1,10 +1,24 @@
 # To - do List
 
+break object capabilities
+   maybe use a tinystr hashset for capabilities
+   fix break object
+
+fix swim capability
+   learn move callback?
+
+fix deprecated stuff
+
+fix dex_engine file gen
+   remove extra assets
+
 fix egui size
 fix battle regressions
 fix script regressions
 
 create own game engine
+
+clean up main crate
 
 ____
 

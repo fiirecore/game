@@ -1,8 +1,0 @@
-(
-    identifier: (
-        map: Some("pokemarts"),
-        index: "viridian",
-    ),
-    name: "Viridian Pokemart",
-    file: "5.3_VIRIDIAN CITY.map",
-)

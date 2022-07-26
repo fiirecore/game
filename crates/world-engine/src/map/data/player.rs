@@ -5,7 +5,7 @@ use crate::engine::{
 };
 
 use worldlib::{
-    character::{action::ActionQueue, player::PlayerCharacter, Character, MovementType},
+    character::{action::ActionQueue, player::PlayerCharacter, CharacterState, Activity},
     positions::Direction,
     serialized::SerializedPlayerTexture,
     TILE_SIZE,
@@ -22,7 +22,7 @@ fn screen_y(y: f32) -> f32 {
 pub mod bush;
 
 pub struct PlayerTexture {
-    pub textures: HashMap<MovementType, CharacterTexture>,
+    pub textures: HashMap<Activity, CharacterTexture>,
 
     pub bush: bush::PlayerBushTexture,
 
@@ -48,26 +48,26 @@ impl PlayerTexture {
     pub fn new(gfx: &mut Graphics, player: SerializedPlayerTexture) -> Result<Self, String> {
         let mut textures = HashMap::with_capacity(3);
         textures.insert(
-            MovementType::Walking,
+            Activity::Walking,
             gfx.create_texture()
-                .from_image(&player[MovementType::Walking])
+                .from_image(&player[Activity::Walking])
                 .build()?
                 .into(),
         );
         textures.insert(
-            MovementType::Running,
+            Activity::Running,
             gfx.create_texture()
-                .from_image(&player[MovementType::Running])
+                .from_image(&player[Activity::Running])
                 .build()?
                 .into(),
         );
         textures.insert(
-            MovementType::Swimming,
+            Activity::Swimming,
             CharacterTexture {
                 idle: Some(0.5),
                 texture: gfx
                     .create_texture()
-                    .from_image(&player[MovementType::Swimming])
+                    .from_image(&player[Activity::Swimming])
                     .build()?,
             },
         );
@@ -80,9 +80,9 @@ impl PlayerTexture {
         })
     }
 
-    pub fn jump<P, B: Default>(&mut self, player: &mut PlayerCharacter<P, B>) {
+    pub fn jump(&mut self, player: &mut PlayerCharacter) {
         player.character.sprite = 0;
-        player.character.noclip = true;
+        player.character.capabilities.noclip = true;
         player.character.input_lock.increment();
         for _ in 0..2 {
             player
@@ -95,26 +95,26 @@ impl PlayerTexture {
         self.jumping = true;
     }
 
-    pub fn update<P, B: Default>(&mut self, delta: f32, player: &mut PlayerCharacter<P, B>) {
+    pub fn update(&mut self, delta: f32, character: &mut CharacterState) {
         self.bush.update(delta);
         match self.jumping {
             false => {
-                if player.character.offset.is_zero() {
-                    if let Some(texture) = self.textures.get(&player.character.movement) {
+                if character.offset.is_zero() {
+                    if let Some(texture) = self.textures.get(&character.activity) {
                         if let Some(idle) = texture.idle {
                             self.accumulator += delta;
                             if self.accumulator > idle {
                                 self.accumulator -= idle;
-                                player.character.update_sprite();
+                                character.update_sprite();
                             }
                         }
                     }
                 }
             }
             true => {
-                if !player.character.moving() {
-                    player.character.input_lock.decrement();
-                    player.character.noclip = false;
+                if !character.moving() {
+                    character.input_lock.decrement();
+                    character.capabilities.noclip = false;
                     self.jumping = false;
                     self.accumulator = 0.0;
                 }
@@ -122,9 +122,9 @@ impl PlayerTexture {
         }
     }
 
-    pub fn draw(&self, draw: &mut Draw, character: &Character, color: Color) {
+    pub fn draw(&self, draw: &mut Draw, character: &CharacterState, color: Color) {
         if !character.hidden {
-            if let Some(texture) = self.textures.get(&character.movement) {
+            if let Some(texture) = self.textures.get(&character.activity) {
                 let screen_x = screen_x(draw.width());
                 let screen_y = screen_y(draw.height());
                 if self.jumping {
@@ -181,7 +181,7 @@ impl PlayerTexture {
     }
 }
 
-fn current_texture(character: &Character) -> (f32, f32) {
+fn current_texture(character: &CharacterState) -> (f32, f32) {
     const HALF_TILE_SIZE: f32 = TILE_SIZE / 2.0;
     // x, width
     let (indexes, width) = player_texture_index(character);
@@ -205,9 +205,9 @@ fn current_texture(character: &Character) -> (f32, f32) {
     )
 }
 
-pub const fn player_texture_index(character: &Character) -> (&[u8; 4], f32) {
-    match character.movement {
-        MovementType::Walking => (
+pub const fn player_texture_index(character: &CharacterState) -> (&[u8; 4], f32) {
+    match character.activity {
+        Activity::Walking => (
             match character.position.direction {
                 Direction::Up => &[1, 5, 1, 6],
                 Direction::Down => &[0, 3, 0, 4],
@@ -215,7 +215,7 @@ pub const fn player_texture_index(character: &Character) -> (&[u8; 4], f32) {
             },
             16.0,
         ),
-        MovementType::Running => (
+        Activity::Running => (
             match character.position.direction {
                 Direction::Up => &[6, 7, 6, 8],
                 Direction::Down => &[3, 4, 3, 5],
@@ -223,7 +223,7 @@ pub const fn player_texture_index(character: &Character) -> (&[u8; 4], f32) {
             },
             16.0,
         ),
-        MovementType::Swimming => (
+        Activity::Swimming => (
             match character.position.direction {
                 Direction::Up => &[2, 2, 3, 3],
                 Direction::Down => &[0, 0, 1, 1],
