@@ -1,10 +1,10 @@
 use firecore_engine::{
     events::{EventProcessor, WindowEvents},
-    graphics::Graphics,
+    graphics::{draw::Draw, texture::Texture, Graphics},
 };
 use winit::{
     event_loop::EventLoop,
-    window::{Icon, WindowBuilder},
+    window::{WindowBuilder},
 };
 
 fn main() {
@@ -28,6 +28,12 @@ fn main() {
 
     let mut red = 0.0;
 
+    let texture = Texture::from_bytes(
+        &graphics,
+        include_bytes!("../../../assets/battle/trainers/brock.png"),
+    )
+    .unwrap();
+
     event_loop.run(move |event, b, c| {
         if let Ok(Some(event)) = events.process(event, c, &window, &mut graphics) {
             match event {
@@ -35,7 +41,7 @@ fn main() {
                     if let Some(delta) = should_update {
                         update(delta.as_secs_f32(), &mut red);
                     }
-                    draw(red, &mut graphics);
+                    draw(red, &mut graphics, &texture);
                 }
                 WindowEvents::Exit => {}
             }
@@ -44,34 +50,28 @@ fn main() {
 }
 
 fn update(delta: f32, red: &mut f32) {
-    println!("{delta}");
     *red += delta;
     *red %= 1.0;
 }
 
-fn draw(red: f32, graphics: &mut Graphics) {
-
+fn draw(red: f32, graphics: &mut Graphics, texture: &Texture) {
     let mut output = graphics.create_view().unwrap();
 
-    output.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-        label: Some("Render Pass"),
-        color_attachments: &[
-            Some(wgpu::RenderPassColorAttachment {
-                view: &output.view,
-                resolve_target: None,
-                ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Clear(wgpu::Color {
-                        r: red as _,
-                        g: 0.2,
-                        b: 0.3,
-                        a: 1.0,
-                    }),
-                    store: true,
-                },
-            })
-        ],
-        depth_stencil_attachment: None,
-    });
+    let pass = output.draw(
+        Some("Pass"),
+        Some(wgpu::Color {
+            r: red as _,
+            g: 0.2,
+            b: 0.4,
+            a: 1.0,
+        }),
+    );
+
+    let mut draw = Draw(pass);
+
+    draw.texture(texture, 5.0, 5.0);
+
+    draw.finish();
 
     output.finish(&graphics.queue);
 }

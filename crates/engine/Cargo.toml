@@ -10,8 +10,12 @@ default = []
 audio = []
 
 [dependencies]
+
+# Graphics
 wgpu = { version = "0.13" }
 winit = { version = "0.26" }
+image = { version = "0.24", features = ["png"] }
+bytemuck = "1"
 
 # Math
 glam = "0.21"

@@ -1,8 +1,15 @@
+pub extern crate image;
 pub extern crate wgpu;
 pub extern crate winit;
 
-use winit::{window::Window, dpi::PhysicalSize};
+use std::sync::Arc;
 
+use winit::{dpi::PhysicalSize, window::Window};
+
+use self::texture::pipeline::DefaultTexturePipeline;
+
+pub mod camera;
+pub mod draw;
 pub mod texture;
 pub mod window;
 
@@ -12,12 +19,16 @@ pub struct Graphics {
     pub queue: wgpu::Queue,
     pub config: wgpu::SurfaceConfiguration,
     pub size: winit::dpi::PhysicalSize<u32>,
+    pub camera: camera::Camera,
+    pub texture_pipeline: Arc<DefaultTexturePipeline>,
+    pub clear_color: wgpu::Color,
 }
 
 pub struct SurfaceView {
     pub output: wgpu::SurfaceTexture,
     pub view: wgpu::TextureView,
     pub encoder: wgpu::CommandEncoder,
+    pub clear_color: wgpu::Color,
 }
 
 #[derive(Debug)]
@@ -28,20 +39,21 @@ pub enum GraphicsError {
 
 impl Graphics {
     pub async fn new(window: &Window) -> Result<Self, GraphicsError> {
-
         let size = window.inner_size();
 
         let instance = wgpu::Instance::new(wgpu::Backends::all());
 
         let surface = unsafe { instance.create_surface(window) };
 
-        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::LowPower,
-            force_fallback_adapter: false,
-            compatible_surface: Some(&surface),
-        }).await.ok_or(GraphicsError::NoAdapter)?;
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::LowPower,
+                force_fallback_adapter: false,
+                compatible_surface: Some(&surface),
+            })
+            .await
+            .ok_or(GraphicsError::NoAdapter)?;
 
-        
         let (device, queue) = adapter
             .request_device(
                 &wgpu::DeviceDescriptor {
@@ -57,7 +69,8 @@ impl Graphics {
                 },
                 None, // Trace path
             )
-            .await.map_err(|_| GraphicsError::RequestDeviceError)?;
+            .await
+            .map_err(|_| GraphicsError::RequestDeviceError)?;
 
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
@@ -69,12 +82,24 @@ impl Graphics {
 
         surface.configure(&device, &config);
 
+        let camera = camera::Camera::new(&device);
+
+        let texture_pipeline = DefaultTexturePipeline::new(&device, &config, &camera);
+
         Ok(Self {
             surface,
             device,
             queue,
             config,
             size,
+            camera,
+            texture_pipeline: Arc::new(texture_pipeline),
+            clear_color: wgpu::Color {
+                r: 0.1,
+                g: 0.5,
+                b: 0.2,
+                a: 1.0,
+            },
         })
     }
 
@@ -92,20 +117,38 @@ impl Graphics {
         Ok(SurfaceView {
             view: output.texture.create_view(&Default::default()),
             output,
-            encoder: self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                label: Some("Surface View"),
-            }),
+            encoder: self
+                .device
+                .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                    label: Some("Surface View"),
+                }),
+            clear_color: self.clear_color,
         })
-        
     }
-
 }
 
 impl SurfaceView {
+    pub fn draw(
+        &mut self,
+        label: Option<&str>,
+        clear: Option<wgpu::Color>,
+    ) -> wgpu::RenderPass {
+        self.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label,
+            color_attachments: &[clear.map(|color| wgpu::RenderPassColorAttachment {
+                view: &self.view,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(color),
+                    store: true,
+                },
+            })],
+            depth_stencil_attachment: None,
+        })
+    }
 
     pub fn finish(self, queue: &wgpu::Queue) {
         queue.submit(std::iter::once(self.encoder.finish()));
         self.output.present();
     }
-
 }
