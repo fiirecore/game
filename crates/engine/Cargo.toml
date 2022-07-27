@@ -1,0 +1,23 @@
+[package]
+name = "firecore-engine"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = []
+audio = []
+
+[dependencies]
+wgpu = { version = "0.13" }
+winit = { version = "0.26" }
+
+# Math
+glam = "0.21"
+
+# Async
+pollster = "0.2"
+
+instant = "0.1"
+hashbrown = "0.12"

@@ -5,12 +5,12 @@ edition = "2021"
 
 [features]
 default = ["audio", "gamepad"]
-audio = ["notan/audio"]
-gamepad = []#"fiirengine/gamepad"]
+audio = ["firecore-engine/audio"]
+gamepad = []                   #"fiirengine/gamepad"]
 
 [dependencies]
 # fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
-notan = { features = ["egui", "log"], version = "0.5" }#git = "https://github.com/Nazariglez/notan" }
+firecore-engine = { path = "../engine" }
 
 firecore-audio = { path = "../audio" }
 firecore-text = { path = "../text" }

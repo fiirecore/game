@@ -14,7 +14,7 @@ include = ["/assets"]
 publish = false
 
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "crates/engine/crates/*"]
 
 [features]
 # discord = ["discord-rich-presence"]
