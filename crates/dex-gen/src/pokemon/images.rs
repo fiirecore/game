@@ -9,7 +9,8 @@ pub fn download(pokemon: &str, side: &str) -> Vec<u8> {
     let response = attohttpc::get(&format!(
         "https://raw.githubusercontent.com/pret/pokefirered/master/graphics/pokemon/{}/{}.png",
         pokemon, side
-    )).send()
+    ))
+    .send()
     .unwrap_or_else(|err| panic!("Cannot get icon with error {}", err));
     let bytes = response.bytes().unwrap();
     let mut image = image::load_from_memory_with_format(&bytes, image::ImageFormat::Png)

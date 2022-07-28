@@ -1,7 +1,7 @@
-use std::ops::Deref;
+use std::{ops::Deref, sync::Arc};
 
-use event::EventWriter;
 use crate::pokedex::trainer::InitTrainer;
+use event::EventWriter;
 
 use crate::{
     pokengine::{
@@ -19,16 +19,16 @@ use crate::engine::{
     App, Plugins,
 };
 
-pub struct StartMenu<D: Deref<Target = PokedexClientData> + Clone> {
+pub struct StartMenu {
     alive: bool,
     cursor: usize,
-    party: PartyGui<D>,
-    bag: BagGui<D>,
+    party: PartyGui,
+    bag: BagGui,
     actions: EventWriter<StateMessage>,
 }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> StartMenu<D> {
-    pub(crate) fn new(dex: D, sender: EventWriter<StateMessage>) -> Self {
+impl StartMenu {
+    pub(crate) fn new(dex: Arc<PokedexClientData>, sender: EventWriter<StateMessage>) -> Self {
         Self {
             alive: false,
             cursor: 0,
@@ -92,16 +92,12 @@ impl<D: Deref<Target = PokedexClientData> + Clone> StartMenu<D> {
     //     }
     // }
 
-    pub fn ui<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui(
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
         egui: &egui::Context,
-        user: &mut InitTrainer<P, M, I>,
+        user: &mut InitTrainer,
     ) {
         if pressed(app, plugins, Control::Start) {
             self.alive = !self.alive;
@@ -161,7 +157,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> StartMenu<D> {
     }
 }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> Entity for StartMenu<D> {
+impl Entity for StartMenu {
     fn spawn(&mut self) {
         self.alive = true;
         self.cursor = 0;

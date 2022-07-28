@@ -1,11 +1,7 @@
 use core::ops::Deref;
 
 use pokengine::{
-    engine::{
-        egui,
-        graphics::Texture,
-        math::{const_vec2, vec2, Vec2},
-    },
+    engine::{egui, graphics::Texture, math::Vec2},
     gui::health::HealthBar,
     pokedex::{
         item::Item,
@@ -15,7 +11,7 @@ use pokengine::{
     PokedexClientData,
 };
 
-use battle::pokemon::remote::UnknownPokemon;
+use battle::pokemon::remote::InitUnknownPokemon;
 
 use crate::{
     context::BattleGuiData,
@@ -81,15 +77,11 @@ impl PokemonStatusGui {
         }
     }
 
-    pub fn with_known<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn with_known(
         ctx: &BattleGuiData,
         dex: &PokedexClientData,
         index: BattleGuiPositionIndex,
-        pokemon: Option<&OwnedPokemon<P, M, I>>,
+        pokemon: Option<&OwnedPokemon>,
     ) -> Self {
         let (((background, origin, small), data_pos, hb), position) = Self::attributes(ctx, index);
         Self {
@@ -120,11 +112,11 @@ impl PokemonStatusGui {
         }
     }
 
-    pub fn with_unknown<P: Deref<Target = Pokemon> + Clone>(
+    pub fn with_unknown(
         ctx: &BattleGuiData,
         dex: &PokedexClientData,
         index: BattleGuiPositionIndex,
-        pokemon: Option<&UnknownPokemon<P>>,
+        pokemon: Option<&InitUnknownPokemon>,
     ) -> Self {
         let (((background, origin, small), data_pos, hb), position) = Self::attributes(ctx, index);
         Self {
@@ -153,20 +145,20 @@ impl PokemonStatusGui {
         }
     }
 
-    const TOP_SINGLE: Vec2 = const_vec2!([14.0, 18.0]);
+    const TOP_SINGLE: Vec2 = Vec2::new(14.0, 18.0);
 
-    const BOTTOM_SINGLE: Vec2 = const_vec2!([127.0, 75.0]);
-    const BOTTOM_MANY_WITH_BOTTOM_RIGHT: Vec2 = const_vec2!([240.0, 113.0]);
+    const BOTTOM_SINGLE: Vec2 = Vec2::new(127.0, 75.0);
+    const BOTTOM_MANY_WITH_BOTTOM_RIGHT: Vec2 = Vec2::new(240.0, 113.0);
 
     // const OPPONENT_HEIGHT: f32 = 29.0;
-    const OPPONENT_HEALTH_OFFSET: Vec2 = const_vec2!([24.0, Self::HEALTH_Y]);
+    const OPPONENT_HEALTH_OFFSET: Vec2 = Vec2::new(24.0, Self::HEALTH_Y);
 
     const OPPONENT_POSES: PokemonStatusPos = PokemonStatusPos {
         name: 8.0,
         level: 86.0,
     };
 
-    const EXP_OFFSET: Vec2 = const_vec2!([32.0, 33.0]);
+    const EXP_OFFSET: Vec2 = Vec2::new(32.0, 33.0);
 
     fn attributes(
         ctx: &BattleGuiData,
@@ -220,7 +212,7 @@ impl PokemonStatusGui {
                                 name: 17.0,
                                 level: 95.0,
                             },
-                            vec2(33.0, Self::HEALTH_Y),
+                            Vec2::new(33.0, Self::HEALTH_Y),
                         )
                     } else {
                         let texture = ctx.smallui.clone();
@@ -251,15 +243,7 @@ impl PokemonStatusGui {
         self.health.0.update(delta);
     }
 
-    pub fn ui<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        ui: &mut egui::Ui,
-        hashnum: usize,
-        pokemon: &impl GuiPokemonView<P, M, I>,
-    ) {
+    pub fn ui(ui: &mut egui::Ui, hashnum: usize, pokemon: &impl GuiPokemonView) {
         egui::Grid::new(("StatusGrid", hashnum)).show(ui, |ui| {
             ui.label(pokemon.name());
             ui.label(format!("{}", pokemon.level()));

@@ -13,7 +13,7 @@ default = ["audio"]
 audio = ["firecore-base/audio"]
 
 [dependencies]
-firecore-pokedex = { version = "0.0.9", git = "https://github.com/fiirecore/pokedex", rev = "83e97db" }
+firecore-pokedex = { version = "0.0.9" }#, git = "https://github.com/fiirecore/pokedex", rev = "83e97db" }
 firecore-base = { path = "../base", default-features = false }
 tinystr = { version = "0.6", features = ["serde"], default-features = false }
 enum-map = { version = "2", features = ["serde"] }

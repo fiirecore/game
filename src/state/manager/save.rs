@@ -8,39 +8,25 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub enum PlayerSave<
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
+pub enum PlayerSave {
     Uninit(Player),
-    Init(String, GameWorldState, InitTrainer<P, M, I>),
+    Init(String, GameWorldState, InitTrainer),
     None,
 }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > Default for PlayerSave<P, M, I>
-{
+impl Default for PlayerSave {
     fn default() -> Self {
         Self::None
     }
 }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > PlayerSave<P, M, I>
-{
+impl PlayerSave {
     pub fn init(
         &mut self,
         random: &mut impl rand::Rng,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        pokedex: &Dex<Pokemon>,
+        movedex: &Dex<Move>,
+        itemdex: &Dex<Item>,
     ) -> bool {
         match self {
             PlayerSave::Uninit(..) => {
@@ -59,7 +45,11 @@ impl<
                         true
                     }
                     None => {
-                        *self = PlayerSave::Uninit(Player { version, world, trainer });
+                        *self = PlayerSave::Uninit(Player {
+                            version,
+                            world,
+                            trainer,
+                        });
                         false
                     }
                 }
@@ -81,7 +71,7 @@ impl<
         }
     }
 
-    pub fn as_mut(&mut self) -> Option<(&mut GameWorldState, &mut InitTrainer<P, M, I>)> {
+    pub fn as_mut(&mut self) -> Option<(&mut GameWorldState, &mut InitTrainer)> {
         match self {
             PlayerSave::Init(.., w, t) => Some((w, t)),
             _ => None,

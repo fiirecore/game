@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::{ops::Deref, sync::Arc};
 
 use crate::{
     engine::{
@@ -47,31 +47,20 @@ impl Default for GameStates {
     }
 }
 
-pub(super) struct GameStateManager<
-    D: Deref<Target = PokedexClientData> + Clone,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
+pub(super) struct GameStateManager {
     state: GameStates,
 
-    world: WorldWrapper<D>,
-    battle: BattleManager<D, P, M, I>,
+    world: WorldWrapper,
+    battle: BattleManager,
 
     world_randoms: GameWorldRandoms,
 }
 
-impl<
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > GameStateManager<D, P, M, I>
-{
+impl GameStateManager {
     pub fn new(
         gfx: &mut Graphics,
         debug_font: Font,
-        dex: D,
+        dex: Arc<PokedexClientData>,
         btl: BattleGuiData,
         wrld: WorldMapData,
         world_script: DefaultWorldScriptEngine,
@@ -103,14 +92,8 @@ impl<
     }
 }
 
-impl<
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > GameStateManager<D, P, M, I>
-{
-    pub fn start(&mut self, state: &mut GameWorldState, trainer: &mut InitTrainer<P, M, I>) {
+impl GameStateManager {
+    pub fn start(&mut self, state: &mut GameWorldState, trainer: &mut InitTrainer) {
         match self.state {
             GameStates::World => {
                 self.world
@@ -130,10 +113,10 @@ impl<
         app: &mut App,
         plugins: &mut Plugins,
         state: &mut GameWorldState,
-        trainer: &mut InitTrainer<P, M, I>,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        trainer: &mut InitTrainer,
+        pokedex: &Dex<Pokemon>,
+        movedex: &Dex<Move>,
+        itemdex: &Dex<Item>,
     ) {
         // Speed game up if spacebar is held down
 
@@ -193,11 +176,7 @@ impl<
         // Ok(())
     }
 
-    pub fn draw(
-        &self,
-        gfx: &mut Graphics,
-        state: &GameWorldState,
-    ) {
+    pub fn draw(&self, gfx: &mut Graphics, state: &GameWorldState) {
         match self.state {
             GameStates::World => self.world.draw(gfx, &state.map),
             GameStates::Battle => {
@@ -215,7 +194,7 @@ impl<
         plugins: &mut Plugins,
         egui: &crate::engine::egui::Context,
         state: &mut GameWorldState,
-        trainer: &mut InitTrainer<P, M, I>,
+        trainer: &mut InitTrainer,
     ) {
         match self.state {
             GameStates::World => self.world.ui(app, plugins, egui, &mut state.map, trainer),

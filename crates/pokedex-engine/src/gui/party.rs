@@ -1,10 +1,6 @@
-use std::ops::Deref;
+use std::sync::Arc;
 
-use crate::pokedex::{
-    item::Item,
-    moves::Move,
-    pokemon::{owned::OwnedPokemon, Pokemon, PokemonTexture},
-};
+use crate::pokedex::pokemon::{owned::OwnedPokemon, PokemonTexture};
 
 use engine::{
     notan::egui::{self, Pos2, Rect},
@@ -16,9 +12,9 @@ use crate::PokedexClientData;
 
 mod select;
 
-pub struct PartyGui<D: Deref<Target = PokedexClientData>> {
+pub struct PartyGui {
     alive: bool,
-    data: D,
+    data: Arc<PokedexClientData>,
     select: select::PartySelectMenu,
     swap: Option<usize>,
     accumulator: f32,
@@ -28,8 +24,8 @@ pub enum PartyAction {
     Select(usize),
 }
 
-impl<D: Deref<Target = PokedexClientData>> PartyGui<D> {
-    pub fn new(data: D) -> Self {
+impl PartyGui {
+    pub fn new(data: Arc<PokedexClientData>) -> Self {
         Self {
             alive: Default::default(),
             data,
@@ -39,15 +35,11 @@ impl<D: Deref<Target = PokedexClientData>> PartyGui<D> {
         }
     }
 
-    pub fn ui<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui(
         &mut self,
         app: &mut App,
         egui: &egui::Context,
-        party: &mut [OwnedPokemon<P, M, I>],
+        party: &mut [OwnedPokemon],
     ) -> Option<PartyAction> {
         if self.alive {
             self.accumulator += app.timer.delta_f32();
@@ -139,7 +131,7 @@ impl<D: Deref<Target = PokedexClientData>> PartyGui<D> {
     }
 }
 
-impl<D: Deref<Target = PokedexClientData>> Entity for PartyGui<D> {
+impl Entity for PartyGui {
     fn spawn(&mut self) {
         self.alive = true;
         self.accumulator = 0.0;

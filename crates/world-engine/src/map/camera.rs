@@ -3,7 +3,10 @@ use std::{
     ops::{Range, RangeInclusive},
 };
 
-use crate::engine::{math::{IVec2, Vec2}, graphics::Draw};
+use crate::engine::{
+    graphics::Draw,
+    math::{IVec2, Vec2},
+};
 
 use crate::worldlib::{character::CharacterState, positions::CoordinateInt, TILE_SIZE};
 

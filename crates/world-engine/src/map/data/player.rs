@@ -5,7 +5,7 @@ use crate::engine::{
 };
 
 use worldlib::{
-    character::{action::ActionQueue, player::PlayerCharacter, CharacterState, Activity},
+    character::{action::ActionQueue, player::PlayerCharacter, Activity, CharacterState},
     positions::Direction,
     serialized::SerializedPlayerTexture,
     TILE_SIZE,
@@ -84,8 +84,14 @@ impl PlayerTexture {
 
     pub fn jump(&mut self, player: &mut PlayerCharacter) {
         player.character.sprite = 0;
-        self.could_noclip = player.character.capabilities.contains(&CharacterState::NOCLIP);
-        player.character.capabilities.remove(&CharacterState::NOCLIP);
+        self.could_noclip = player
+            .character
+            .capabilities
+            .contains(&CharacterState::NOCLIP);
+        player
+            .character
+            .capabilities
+            .remove(&CharacterState::NOCLIP);
         player.character.input_lock.increment();
         for _ in 0..2 {
             player

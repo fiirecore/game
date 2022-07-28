@@ -14,9 +14,7 @@ attohttpc = { version = "0.19", features = ["json"] }
 serde = { version = "1", features = ["derive"] }
 
 rayon = "1"
-firecore-battle = { version = "0.0.9", git = "https://github.com/fiirecore/battle", rev = "81f1b91", default-features = false, features = [
-    "default_engine",
-] }
+firecore-battle = { version = "0.0.9" } #, git = "https://github.com/fiirecore/battle", rev = "81f1b91", default-features = false, features = ["default_engine"] }
 hashbrown = { version = "0.12", features = ["rayon", "serde"] }
 enum-map = { version = "2", features = ["serde"] }
 image = { version = "0.24", default-features = false, optional = true, features = [

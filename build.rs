@@ -15,14 +15,19 @@ use firecore_world::{
         wild::WildChances,
         PaletteId,
     },
+    pokedex::{
+        item::{Item, ItemId},
+        moves::{Move, MoveId},
+        pokemon::Pokemon,
+    },
     positions::Spot,
     script::default::DefaultWorldScriptEngine,
     serialized::{
         SerializedCharacterGroupTextures, SerializedPalette, SerializedPlayerTexture,
         SerializedTextures,
-    }, pokedex::{item::{ItemId, Item}, moves::{MoveId, Move}, pokemon::Pokemon},
+    },
 };
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 const POKEMON: Range<i16> = 1..386;
 const MOVES: Range<i16> = 1..559;
@@ -69,7 +74,6 @@ fn main() {
     // }
 
     if readable::<SerializedPokedexEngine, _>(&root, "dex_engine").is_none() {
-
         let dex_engine = SerializedPokedexEngine {
             pokemon: firecore_dex_gen::pokemon::generate_client(&pokemon),
             items: firecore_dex_gen::items::generate_client(client.clone()),

@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use firecore_pokedex_engine::{
     engine::{
@@ -18,9 +18,8 @@ use firecore_pokedex_engine::{
             owned::{OwnedPokemon, SavedPokemon},
             Pokemon,
         },
-        BasicDex, Dex,
+        Dex,
     },
-    PokedexClientData,
 };
 
 fn main() -> Result<(), String> {
@@ -33,8 +32,8 @@ fn main() -> Result<(), String> {
 
 #[derive(AppState)]
 struct State {
-    party: PartyGui<Rc<PokedexClientData>>,
-    pokemon: Vec<OwnedPokemon<Rc<Pokemon>, Rc<Move>, Rc<Item>>>,
+    party: PartyGui,
+    pokemon: Vec<OwnedPokemon>,
 }
 
 impl State {
@@ -45,13 +44,10 @@ impl State {
 
         // let (pdex, mdex, idex) = ;
 
-        let (pokedex, movedex, itemdex): (
-            BasicDex<Pokemon, Rc<_>>,
-            BasicDex<Move, Rc<_>>,
-            BasicDex<Item, Rc<_>>,
-        ) = firecore_storage::from_bytes(include_bytes!("./dex.bin")).unwrap();
+        let (pokedex, movedex, itemdex): (Dex<Pokemon>, Dex<Move>, Dex<Item>) =
+            firecore_storage::from_bytes(include_bytes!("./dex.bin")).unwrap();
 
-        let data = Rc::new(
+        let data = Arc::new(
             firecore_pokedex_engine::PokedexClientData::build(
                 app,
                 plugins,

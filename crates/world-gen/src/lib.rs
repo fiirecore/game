@@ -24,7 +24,7 @@ use firecore_world::{
         moves::{owned::SavedMove, Move},
         pokemon::{owned::SavedPokemon, stat::StatSet, Pokemon},
         trainer::Trainer,
-        BasicDex,
+        Dex,
     },
     positions::{BoundingBox, Coordinate, Destination, Direction, Location, Position},
     script::default::*,
@@ -54,8 +54,8 @@ mod mapping;
 
 mod script;
 
-mod structs;
 mod bin;
+mod structs;
 
 pub use edits::*;
 pub use mapping::*;
@@ -72,9 +72,9 @@ type NpcScripts = DashMap<Location, HashMap<ObjectId, String>>;
 pub struct ParsedData {
     pub maps: Maps,
     pub wild: JsonWildEncounters,
-    pub pokedex: BasicDex<Pokemon, Arc<Pokemon>>,
-    pub movedex: BasicDex<Move, Arc<Move>>,
-    pub itemdex: BasicDex<Item, Arc<Item>>,
+    pub pokedex: Dex<Pokemon>,
+    pub movedex: Dex<Move>,
+    pub itemdex: Dex<Item>,
     pub scripts: Scripts,
     pub messages: Messages,
     pub trainers: Trainers,
@@ -194,14 +194,14 @@ pub fn create_data() -> anyhow::Result<ParsedData> {
     let moves = firecore_dex_gen::moves::generate(client, 1..559);
     let items = firecore_dex_gen::items::generate();
 
-    let pokedex = BasicDex(pokemon.into_iter().map(|p| (p.id, Arc::new(p))).collect());
-    let movedex = BasicDex(moves.into_iter().map(|m| (m.id, Arc::new(m))).collect());
-    let itemdex = BasicDex(items.into_iter().map(|i| (i.id, Arc::new(i))).collect());
+    let pokedex = Dex(pokemon.into_iter().map(|p| (p.id, Arc::new(p))).collect());
+    let movedex = Dex(moves.into_iter().map(|m| (m.id, Arc::new(m))).collect());
+    let itemdex = Dex(items.into_iter().map(|i| (i.id, Arc::new(i))).collect());
 
     // let (pokedex, movedex, itemdex) = firecore_storage::from_bytes::<(
-    //     BasicDex<Pokemon, _>,
-    //     BasicDex<Move, _>,
-    //     BasicDex<Item, _>,
+    //     Dex<Pokemon, _>,
+    //     Dex<Move, _>,
+    //     Dex<Item, _>,
     // )>(&dex)
     // .unwrap();
 

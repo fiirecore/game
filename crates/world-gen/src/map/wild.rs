@@ -4,7 +4,7 @@ use hashbrown::HashMap;
 
 use firecore_world::{
     map::wild::{WildEntry, WildPokemon},
-    pokedex::{pokemon::Pokemon, BasicDex},
+    pokedex::{pokemon::Pokemon, Dex},
 };
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use serde::{Deserialize, Serialize};
@@ -59,7 +59,7 @@ pub struct JsonWildPokemon {
 }
 
 impl JsonWildEncounterType {
-    pub fn into(self, pokedex: &BasicDex<Pokemon, Arc<Pokemon>>) -> WildEntry {
+    pub fn into(self, pokedex: &Dex<Pokemon>) -> WildEntry {
         WildEntry {
             ratio: self.encounter_rate,
             encounters: self
@@ -76,7 +76,8 @@ impl JsonWildEncounterType {
                             }
                         })
                     }
-                    pokedex.try_get_named(&species)
+                    pokedex
+                        .try_get_named(&species)
                         .map(|species| WildPokemon {
                             species: species.id,
                             levels: p.min_level..=p.max_level,
@@ -92,5 +93,4 @@ impl JsonWildEncounterType {
                 .collect(),
         }
     }
-
 }

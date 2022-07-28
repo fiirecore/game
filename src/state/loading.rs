@@ -76,9 +76,7 @@ impl LoadingStateManager {
             version: format!("v{}", crate::VERSION),
             copyright: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../assets/scenes/loading/copyright.png"
-                ))
+                .from_image(include_bytes!("../../assets/scenes/loading/copyright.png"))
                 .build()?,
             // pokemon: PokemonLoadingScene::new(ctx)?,
             rect_size: 0.0,

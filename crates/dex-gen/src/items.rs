@@ -31,7 +31,6 @@ struct JsonItem {
 }
 
 pub fn generate() -> Vec<Item> {
-
     let items = || {
         Some(
             attohttpc::get(ITEMS)
@@ -86,31 +85,26 @@ pub fn generate() -> Vec<Item> {
                 }
             }
 
-            Some(
-                Item {
-                    id,
-                    name,
-                    description: item.description,
-                    category: match item.pocket.as_str() {
-                        "POCKET_POKE_BALLS" => ItemCategory::Pokeballs,
-                        "POCKET_KEY_ITEMS" => ItemCategory::KeyItems,
-                        _ => ItemCategory::Items,
-                    },
-                    price: item.price,
-                    stackable: Default::default(),
-                    consume: true,
-                    usage: Default::default(),
+            Some(Item {
+                id,
+                name,
+                description: item.description,
+                category: match item.pocket.as_str() {
+                    "POCKET_POKE_BALLS" => ItemCategory::Pokeballs,
+                    "POCKET_KEY_ITEMS" => ItemCategory::KeyItems,
+                    _ => ItemCategory::Items,
                 },
-            )
+                price: item.price,
+                stackable: Default::default(),
+                consume: true,
+                usage: Default::default(),
+            })
         })
         .collect()
-
-    
 }
 
 #[cfg(feature = "client-data")]
 pub fn generate_client(client: std::sync::Arc<pokerust::Client>) -> ItemTextures {
-
     let items = || {
         Some(
             attohttpc::get(ITEMS)
@@ -192,9 +186,7 @@ pub fn generate_client(client: std::sync::Arc<pokerust::Client>) -> ItemTextures
                 }
             }
 
-            Some(
-                (id, texture),
-            )
+            Some((id, texture))
         })
         .collect()
 }

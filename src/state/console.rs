@@ -48,11 +48,7 @@ impl Console {
         self.error.clear();
     }
 
-    pub fn ui<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui(
         &mut self,
         app: &mut App,
         egui: &egui::Context,

@@ -1,27 +1,27 @@
-use std::{ops::Deref, path::PathBuf};
+use std::{path::PathBuf, sync::Arc};
 
 use crate::{
     engine::{
         notan::prelude::{AssetList, AssetLoader, Assets},
         utils::HashMap,
     },
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon, BasicDex},
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
     pokengine::SerializedPokedexEngine,
 };
 
 use battlecli::battle::default_engine::{default_scripting::MoveScripts, EngineMoves};
-use worldcli::worldlib::{map::data::{Maps, WorldMapData}, script::default::DefaultWorldScriptEngine, serialized::SerializedTextures};
+use worldcli::worldlib::{
+    map::data::{Maps, WorldMapData},
+    script::default::DefaultWorldScriptEngine,
+    serialized::SerializedTextures,
+};
 
-pub enum LoadData<
-    P: Deref<Target = Pokemon> + From<Pokemon>,
-    M: Deref<Target = Move> + From<Move>,
-    I: Deref<Target = Item> + From<Item>,
-> {
+pub enum LoadData {
     Load(AssetList, HashMap<&'static str, String>),
     Data {
-        pokedex: BasicDex<Pokemon, P>,
-        movedex: BasicDex<Move, M>,
-        itemdex: BasicDex<Item, I>,
+        pokedex: Arc<Dex<Pokemon>>,
+        movedex: Arc<Dex<Move>>,
+        itemdex: Arc<Dex<Item>>,
     },
 }
 
@@ -34,12 +34,7 @@ pub struct Data {
     pub audio: crate::engine::utils::HashMap<crate::engine::music::MusicId, Vec<u8>>,
 }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone + From<Pokemon>,
-        M: Deref<Target = Move> + Clone + From<Move>,
-        I: Deref<Target = Item> + Clone + From<Item>,
-    > LoadData<P, M, I>
-{
+impl LoadData {
     pub const POKEDEX: &'static str = "pokedex.bin";
     pub const MOVEDEX: &'static str = "movedex.bin";
     pub const ITEMDEX: &'static str = "itemdex.bin";
@@ -82,7 +77,16 @@ impl<
         let audio = create(map, &root, Self::AUDIO);
 
         let list = assets.load_list(&[
-            &pokedex, &movedex, &itemdex, &world, &world_scripting, &world_textures, &dexengine, &battle_moves, &battle_move_scripts, &audio,
+            &pokedex,
+            &movedex,
+            &itemdex,
+            &world,
+            &world_scripting,
+            &world_textures,
+            &dexengine,
+            &battle_moves,
+            &battle_move_scripts,
+            &audio,
         ])?;
 
         Ok(Self::Load(list, map2))
@@ -145,9 +149,9 @@ impl<
                         .map_err(|err| err.to_string())
                     }
 
-                    let pokedex = deser(list, map, Self::POKEDEX).unwrap();
-                    let movedex = deser(list, map, Self::MOVEDEX).unwrap();
-                    let itemdex = deser(list, map, Self::ITEMDEX).unwrap();
+                    let pokedex = Arc::new(deser(list, map, Self::POKEDEX).unwrap());
+                    let movedex = Arc::new(deser(list, map, Self::MOVEDEX).unwrap());
+                    let itemdex = Arc::new(deser(list, map, Self::ITEMDEX).unwrap());
                     let battle_moves = deser(list, map, Self::BATTLE_MOVES).unwrap();
                     let battle_move_scripts = deser(list, map, Self::BATTLE_MOVE_SCRIPTS).unwrap();
                     let dex = deser(list, map, Self::DEXENGINE).unwrap();

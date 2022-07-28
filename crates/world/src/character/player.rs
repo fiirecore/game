@@ -115,16 +115,13 @@ impl GlobalBattleState {
 
 // impl SavedPlayerCharacter {
 //     pub fn init<
-//         P: Deref<Target = Pokemon> + Clone,
-//         M: Deref<Target = Move> + Clone,
-//         I: Deref<Target = Item> + Clone,
 //     >(
 //         self,
 //         random: &mut impl rand::Rng,
 //         pokedex: &impl Dex<Pokemon, Output = P>,
 //         movedex: &impl Dex<Move, Output = M>,
 //         itemdex: &impl Dex<Item, Output = I>,
-//     ) -> Option<InitPlayerCharacter<P, M, I>> {
+//     ) -> Option<InitPlayerCharacter> {
 //         Some(PlayerCharacter {
 //             name: self.name,
 //             character: self.character,
@@ -138,10 +135,7 @@ impl GlobalBattleState {
 // }
 
 // impl<
-//         P: Deref<Target = Pokemon> + Clone,
-//         M: Deref<Target = Move> + Clone,
-//         I: Deref<Target = Item> + Clone,
-//     > InitPlayerCharacter<P, M, I>
+//     > InitPlayerCharacter
 // {
 //     pub fn uninit(self) -> SavedPlayerCharacter {
 //         SavedPlayerCharacter {

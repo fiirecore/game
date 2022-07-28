@@ -1,6 +1,9 @@
 use rand::prelude::SmallRng;
 use serde::{Deserialize, Serialize};
-use worldcli::{worldlib::{state::WorldState, script::default::DefaultWorldScriptEngine}, pokedex::trainer::SavedTrainer};
+use worldcli::{
+    pokedex::trainer::SavedTrainer,
+    worldlib::{script::default::DefaultWorldScriptEngine, state::WorldState},
+};
 
 use crate::random::GamePseudoRandom;
 

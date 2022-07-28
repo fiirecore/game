@@ -14,10 +14,10 @@ mod world_wrapper;
 mod command;
 mod config;
 mod load;
+mod random;
 mod saves;
 mod state;
 mod touchscreen;
-mod random;
 
 const TITLE: &str = "Pokemon PC Edition";
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
@@ -65,9 +65,7 @@ fn try_run(
     plugins: &mut Plugins,
 ) -> Result<StateManager, String> {
     engine::setup(plugins);
-    use pokedex::{item::Item, moves::Move, pokemon::Pokemon};
-    use std::rc::Rc;
-    let load = load::LoadData::<Rc<Pokemon>, Rc<Move>, Rc<Item>>::load(assets)?;
+    let load = load::LoadData::load(assets)?;
     StateManager::try_new(gfx, load)
 }
 

@@ -6,19 +6,19 @@ use pokengine::pokedex::moves::Move;
 use crate::action::MoveQueue;
 
 #[derive(Debug)]
-pub enum BattlePlayerState<ID, M: Deref<Target = Move>> {
+pub enum BattlePlayerState<ID> {
     WaitToStart,
     Opening,
     // Introduction(TransitionState),
     WaitToSelect,
     Select,
-    Moving(MoveQueue<ID, M>),
+    Moving(MoveQueue<ID>),
     Lose(EndMessage),
     Closing(Option<ID>),
     End(Option<ID>),
 }
 
-impl<ID, M: Deref<Target = Move>> BattlePlayerState<ID, M> {
+impl<ID> BattlePlayerState<ID> {
     // #[cfg(debug_assertions)]
     // pub fn name(&self) -> &str {
     //     match self {

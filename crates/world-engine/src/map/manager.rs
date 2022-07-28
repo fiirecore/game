@@ -99,16 +99,7 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
         self.world.on_warp(state, randoms, trainer);
     }
 
-    pub fn post_battle<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        &mut self,
-        state: &mut MapState,
-        trainer: &mut InitTrainer<P, M, I>,
-        winner: bool,
-    ) {
+    pub fn post_battle(&mut self, state: &mut MapState, trainer: &mut InitTrainer, winner: bool) {
         self.world.data.post_battle(state, trainer, winner)
     }
 
@@ -131,19 +122,14 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
         }
     }
 
-    pub fn update<
-        R: Rng,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn update<R: Rng>(
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
         state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
-        trainer: &mut InitTrainer<P, M, I>,
-        itemdex: &impl Dex<Item, Output = I>,
+        trainer: &mut InitTrainer,
+        itemdex: &Dex<Item>,
         delta: f32,
     ) {
         // } else if self.world_map.alive() {
@@ -192,17 +178,17 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
                 //         party.try_push(pokemon);
                 //     }
                 // }
-                MapEvent::PlayMusic(music) => {
-                    match music {
-                        Some(music) => match music::get_current_music(plugins) {
-                            Some(playing) => if playing != music {
+                MapEvent::PlayMusic(music) => match music {
+                    Some(music) => match music::get_current_music(plugins) {
+                        Some(playing) => {
+                            if playing != music {
                                 music::play_music(app, plugins, &music);
-                            },
-                            None => music::play_music(app, plugins, &music),
-                        },
-                        None => music::stop_music(app, plugins),
-                    }
-                }
+                            }
+                        }
+                        None => music::play_music(app, plugins, &music),
+                    },
+                    None => music::stop_music(app, plugins),
+                },
                 MapEvent::PlaySound(sound, variant) => {
                     sound::play_sound(app, plugins, sound, variant);
                 }

@@ -56,10 +56,6 @@ ____
 
 ## Issues from other repositories affecting this one
 
-#### Engine
-
-* Add é to font
-
 #### Battle
 
 * Moves use PP in battle

@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use rayon::iter::{ParallelBridge, ParallelIterator};
 use firecore_world_gen::*;
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 const PARSED: &str = "output/parsed.bin";
 
@@ -11,7 +11,9 @@ fn main() -> anyhow::Result<()> {
     let edits = ron::from_str(&std::fs::read_to_string("./edits.ron")?)?;
 
     fn load() -> anyhow::Result<ParsedData> {
-        anyhow::Result::<ParsedData>::Ok(postcard::from_bytes::<ParsedData>(&std::fs::read(PARSED)?)?)
+        anyhow::Result::<ParsedData>::Ok(postcard::from_bytes::<ParsedData>(&std::fs::read(
+            PARSED,
+        )?)?)
     }
 
     let data = load().or_else::<anyhow::Error, _>(|_| {
@@ -37,27 +39,30 @@ fn main() -> anyhow::Result<()> {
 
     std::fs::create_dir_all(&copies)?;
 
-    data.maps.iter().par_bridge().try_for_each::<_, anyhow::Result<()>>(|r| {
-        let location = r.0;
-        let map = r.1;
-        let data = postcard::to_allocvec(&map)?;
+    data.maps
+        .iter()
+        .par_bridge()
+        .try_for_each::<_, anyhow::Result<()>>(|r| {
+            let location = r.0;
+            let map = r.1;
+            let data = postcard::to_allocvec(&map)?;
 
-        let path = match location.map {
-            Some(map) => format!("{}-{}.world", map.as_str(), location.index.as_str()),
-            None => format!("{}.world", location.index.as_str()),
-        };
+            let path = match location.map {
+                Some(map) => format!("{}-{}.world", map.as_str(), location.index.as_str()),
+                None => format!("{}.world", location.index.as_str()),
+            };
 
-        let file = files.join(&path);
+            let file = files.join(&path);
 
-        std::fs::write(file, &data)?;
+            std::fs::write(file, &data)?;
 
-        let copy = copies.join(&path);
+            let copy = copies.join(&path);
 
-        let str = ron::ser::to_string_pretty(&map, Default::default())?;
+            let str = ron::ser::to_string_pretty(&map, Default::default())?;
 
-        std::fs::write(copy, str.as_bytes())?;
-        Ok(())
-    })?;
+            std::fs::write(copy, str.as_bytes())?;
+            Ok(())
+        })?;
 
     let scriptdir = root.join("scripts");
 

@@ -8,7 +8,7 @@ use pokengine::{
 pub struct MoveInfoPanel;
 
 impl MoveInfoPanel {
-    pub fn ui<M: Deref<Target = Move>>(ui: &mut egui::Ui, m: &OwnedMove<M>) {
+    pub fn ui(ui: &mut egui::Ui, m: &OwnedMove) {
         egui::Grid::new("MoveInfoGrid").show(ui, |ui| {
             let mut pp = [0u8; 8];
             if let Ok(()) = write!(&mut pp as &mut [u8], "PP {}/{}", m.pp(), m.0.pp) {

@@ -69,7 +69,7 @@ pub fn generate_client(pokemon: &[Pokemon]) -> PokemonOutput {
             }
             match &name_[..2] {
                 "un" => name_.push_str("/e"),
-        
+
                 _ => (),
             };
 

@@ -1,6 +1,6 @@
 use either::Either;
-use serde::{Deserialize, Serialize};
 use firecore_world::positions::{BoundingBox, Coordinate, Location, LocationId};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone, Copy)]
 #[serde(transparent)]

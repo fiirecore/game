@@ -3,7 +3,7 @@ use core::ops::Deref;
 use firecore_pokedex::trainer::InitTrainer;
 use pokedex::{item::Item, moves::Move, pokemon::Pokemon};
 
-use crate::{map::data::WorldMapData, state::map::MapState, random::WorldRandoms};
+use crate::{map::data::WorldMapData, random::WorldRandoms, state::map::MapState};
 
 pub mod default;
 
@@ -14,16 +14,11 @@ pub trait WorldScriptingEngine {
 
     fn on_tile(&self);
 
-    fn update<
-        R: rand::Rng,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    fn update<R: rand::Rng>(
         &self,
         data: &WorldMapData,
         map: &mut MapState,
-        trainer: &mut InitTrainer<P, M, I>,
+        trainer: &mut InitTrainer,
         randoms: &mut WorldRandoms<R>,
         state: &mut Self::State,
     ) where

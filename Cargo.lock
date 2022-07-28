@@ -1037,20 +1037,8 @@ dependencies = [
 [[package]]
 name = "firecore-battle"
 version = "0.0.9"
-source = "git+https://github.com/fiirecore/battle?rev=81f1b91#81f1b91270c8aaa4e6256dfc831051088d9b934d"
-dependencies = [
- "enum-map",
- "firecore-pokedex",
- "hashbrown",
- "log",
- "rand",
- "serde",
-]
-
-[[package]]
-name = "firecore-battle"
-version = "0.0.9"
-source = "git+https://github.com/fiirecore/battle?rev=8e536b0#8e536b0e4327d17b3844ffc44beb4f19b6ca87a3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a65e3049e86bb293ceaf3d2c99a5bb26528e1d521307271202013e0d654b005e"
 dependencies = [
  "crossbeam-channel",
  "enum-map",
@@ -1067,7 +1055,7 @@ name = "firecore-battle-engine"
 version = "0.0.2"
 dependencies = [
  "crossbeam-channel",
- "firecore-battle 0.0.9 (git+https://github.com/fiirecore/battle?rev=8e536b0)",
+ "firecore-battle",
  "firecore-pokedex-engine",
  "indexmap",
  "log",
@@ -1081,7 +1069,7 @@ version = "0.0.1"
 dependencies = [
  "attohttpc",
  "enum-map",
- "firecore-battle 0.0.9 (git+https://github.com/fiirecore/battle?rev=81f1b91)",
+ "firecore-battle",
  "hashbrown",
  "image",
  "pokerust",
@@ -1098,7 +1086,8 @@ version = "0.1.0"
 [[package]]
 name = "firecore-pokedex"
 version = "0.0.9"
-source = "git+https://github.com/fiirecore/pokedex?rev=83e97db#83e97db4a979263148d8d221fde22124a9d21023"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a0bfc3d8928a78c1ad503e482fcebf691f47492dd1bb8a4b6ac07142d87f3ca"
 dependencies = [
  "enum-map",
  "hashbrown",
@@ -2860,9 +2849,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.15"
+version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "534cfe58d6a18cc17120fbf4635d53d14691c1fe4d951064df9bd326178d7d5a"
+checksum = "fb5a58c1855b4b6819d59012155603f0b22ad30cad752600aadfcb695265519a"
 dependencies = [
  "bitflags",
 ]

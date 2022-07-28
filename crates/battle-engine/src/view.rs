@@ -1,15 +1,14 @@
-use core::ops::Deref;
+use std::sync::Arc;
 
 use pokengine::pokedex::{
     ailment::LiveAilment,
-    item::Item,
     moves::{Move, PP},
     pokemon::{owned::OwnedPokemon, Experience, Health, Level, Pokemon},
 };
 
 use battle::{
     party::{ActivePokemon, PlayerParty},
-    pokemon::{remote::UnknownPokemon, PokemonView},
+    pokemon::{remote::InitUnknownPokemon, PokemonView},
 };
 
 use crate::BattleTrainer;
@@ -17,24 +16,18 @@ use crate::BattleTrainer;
 type Active = usize;
 type PartyIndex = usize;
 
-pub trait PlayerView<
-    ID,
-    P: Deref<Target = Pokemon>,
-    M: Deref<Target = Move>,
-    I: Deref<Target = Item>,
->
-{
+pub trait PlayerView<ID> {
     fn id(&self) -> &ID;
 
     fn name(&self) -> &str;
 
-    fn active(&self, active: Active) -> Option<&dyn GuiPokemonView<P, M, I>>;
+    fn active(&self, active: Active) -> Option<&dyn GuiPokemonView>;
 
-    fn active_mut(&mut self, active: Active) -> Option<&mut dyn GuiPokemonView<P, M, I>>;
+    fn active_mut(&mut self, active: Active) -> Option<&mut dyn GuiPokemonView>;
 
     fn active_eq(&self, active: Active, index: Option<PartyIndex>) -> bool;
 
-    fn pokemon(&self, index: PartyIndex) -> Option<&dyn GuiPokemonView<P, M, I>>;
+    fn pokemon(&self, index: PartyIndex) -> Option<&dyn GuiPokemonView>;
 
     fn replace(&mut self, active: Active, new: Option<PartyIndex>);
 
@@ -42,15 +35,8 @@ pub trait PlayerView<
     fn names(&self) -> Vec<Option<String>>;
 }
 
-impl<
-        'd,
-        ID,
-        A: ActivePokemon,
-        P1: GuiPokemonView<P, M, I>,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > PlayerView<ID, P, M, I> for PlayerParty<ID, A, P1, BattleTrainer>
+impl<ID, A: ActivePokemon, P: GuiPokemonView> PlayerView<ID>
+    for PlayerParty<ID, A, P, BattleTrainer>
 {
     fn id(&self) -> &ID {
         &self.id
@@ -60,11 +46,11 @@ impl<
         self.name.as_deref().unwrap_or("Unknown")
     }
 
-    fn active(&self, active: usize) -> Option<&dyn GuiPokemonView<P, M, I>> {
+    fn active(&self, active: usize) -> Option<&dyn GuiPokemonView> {
         PlayerParty::active(self, active).map(|p| p as _)
     }
 
-    fn active_mut(&mut self, active: usize) -> Option<&mut dyn GuiPokemonView<P, M, I>> {
+    fn active_mut(&mut self, active: usize) -> Option<&mut dyn GuiPokemonView> {
         PlayerParty::active_mut(self, active).map(|p| p as _)
     }
 
@@ -75,7 +61,7 @@ impl<
             .unwrap_or_default()
     }
 
-    fn pokemon(&self, index: usize) -> Option<&dyn GuiPokemonView<P, M, I>> {
+    fn pokemon(&self, index: usize) -> Option<&dyn GuiPokemonView> {
         self.pokemon.get(index).map(|p| p as _)
     }
 
@@ -96,19 +82,14 @@ impl<
     }
 }
 
-pub trait GuiPokemonView<
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
->: BasePokemonView<P>
-{
-    fn base(&self) -> &dyn BasePokemonView<P>;
+pub trait GuiPokemonView: BasePokemonView {
+    fn base(&self) -> &dyn BasePokemonView;
 
-    fn instance(&mut self) -> Option<&mut OwnedPokemon<P, M, I>>;
+    fn instance(&mut self) -> Option<&mut OwnedPokemon>;
 }
 
-pub trait BasePokemonView<P: Deref<Target = Pokemon>>: PokemonView {
-    fn pokemon(&self) -> &P;
+pub trait BasePokemonView: PokemonView {
+    fn pokemon(&self) -> &Arc<Pokemon>;
 
     fn name(&self) -> &str;
 
@@ -128,13 +109,8 @@ pub trait BasePokemonView<P: Deref<Target = Pokemon>>: PokemonView {
     fn decrement_pp(&mut self, pokemon_move: &Move, pp: PP);
 }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > BasePokemonView<P> for OwnedPokemon<P, M, I>
-{
-    fn pokemon(&self) -> &P {
+impl BasePokemonView for OwnedPokemon {
+    fn pokemon(&self) -> &Arc<Pokemon> {
         &self.pokemon
     }
 
@@ -181,23 +157,18 @@ impl<
     }
 }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > GuiPokemonView<P, M, I> for OwnedPokemon<P, M, I>
-{
-    fn base(&self) -> &dyn BasePokemonView<P> {
+impl GuiPokemonView for OwnedPokemon {
+    fn base(&self) -> &dyn BasePokemonView {
         self
     }
 
-    fn instance(&mut self) -> Option<&mut OwnedPokemon<P, M, I>> {
+    fn instance(&mut self) -> Option<&mut OwnedPokemon> {
         Some(self)
     }
 }
 
-impl<P: Deref<Target = Pokemon> + Clone> BasePokemonView<P> for Option<UnknownPokemon<P>> {
-    fn pokemon(&self) -> &P {
+impl BasePokemonView for Option<InitUnknownPokemon> {
+    fn pokemon(&self) -> &Arc<Pokemon> {
         match self {
             Some(u) => &u.pokemon,
             None => todo!(),
@@ -250,17 +221,12 @@ impl<P: Deref<Target = Pokemon> + Clone> BasePokemonView<P> for Option<UnknownPo
     fn decrement_pp(&mut self, _: &Move, _: PP) {}
 }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > GuiPokemonView<P, M, I> for Option<UnknownPokemon<P>>
-{
-    fn base(&self) -> &dyn BasePokemonView<P> {
+impl GuiPokemonView for Option<InitUnknownPokemon> {
+    fn base(&self) -> &dyn BasePokemonView {
         self
     }
 
-    fn instance(&mut self) -> Option<&mut OwnedPokemon<P, M, I>> {
+    fn instance(&mut self) -> Option<&mut OwnedPokemon> {
         None
     }
 }

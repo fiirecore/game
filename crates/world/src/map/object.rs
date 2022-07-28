@@ -31,9 +31,7 @@ pub struct MapObject {
     pub group: Option<ObjectType>,
 }
 
-pub enum Removable {
-
-}
+pub enum Removable {}
 
 // impl ObjectEntity {
 //     const TREE: &'static ObjectType =
@@ -55,14 +53,11 @@ pub enum Removable {
 //     };
 
 //     pub fn try_break<
-//         P: Deref<Target = Pokemon> + Clone,
-//         M: Deref<Target = Move> + Clone,
-//         I: Deref<Target = Item> + Clone,
 //     >(
 //         location: &Location,
 //         coordinate: Coordinate,
 //         group: &ObjectType,
-//         trainer: &mut InitTrainer<P, M, I>,
+//         trainer: &mut InitTrainer,
 //         state: &mut MapState,
 //         force: bool,
 //     ) {

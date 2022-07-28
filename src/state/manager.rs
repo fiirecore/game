@@ -1,6 +1,6 @@
 mod save;
 
-use std::{ops::Deref, rc::Rc};
+use std::{ops::Deref, rc::Rc, sync::Arc};
 
 use event::{EventReader, EventWriter};
 use worldcli::engine::notan::AppState;
@@ -26,55 +26,41 @@ use super::{
 use crate::engine::notan;
 
 #[derive(AppState)]
-pub struct StateManager<
-    P: Deref<Target = Pokemon> + Clone + From<Pokemon> + std::fmt::Debug = Rc<Pokemon>,
-    M: Deref<Target = Move> + Clone + From<Move> + std::fmt::Debug = Rc<Move>,
-    I: Deref<Target = Item> + Clone + From<Item> + std::fmt::Debug = Rc<Item>,
-> {
+pub struct StateManager {
     state: MainStates,
 
     loading: LoadingStateManager,
     title: TitleState,
-    game: GameStateInit<Rc<PokedexClientData>, P, M, I>,
+    game: GameStateInit,
 
     console: Console,
 
-    save: save::PlayerSave<P, M, I>,
+    save: save::PlayerSave,
 
-    data: crate::load::LoadData<P, M, I>,
+    data: crate::load::LoadData,
 
     sender: EventWriter<StateMessage>,
     receiver: EventReader<StateMessage>,
 }
 
-enum GameStateInit<
-    D: Deref<Target = PokedexClientData> + Clone,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
+enum GameStateInit {
     Uninit(
         worldcli::engine::graphics::Font,
         event::EventWriter<StateMessage>,
         crate::command::CommandProcessor,
         u8,
     ),
-    Init(GameStateManager<D, P, M, I>),
+    Init(GameStateManager),
     None,
 }
 
-impl<
-        P: Deref<Target = Pokemon> + Clone + From<Pokemon> + std::fmt::Debug,
-        M: Deref<Target = Move> + Clone + From<Move> + std::fmt::Debug,
-        I: Deref<Target = Item> + Clone + From<Item> + std::fmt::Debug,
-    > StateManager<P, M, I>
-{
-    pub fn new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Self {
+impl StateManager {
+    pub fn new(gfx: &mut Graphics, load: LoadData) -> Self {
         Self::try_new(gfx, load)
             .unwrap_or_else(|err| panic!("Could not create state manager with error {}", err))
     }
 
-    pub fn try_new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Result<Self, String> {
+    pub fn try_new(gfx: &mut Graphics, load: LoadData) -> Result<Self, String> {
         // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
 
         // let texture = game::graphics::Texture::new(include_bytes!("../build/assets/loading.png"));
@@ -231,7 +217,7 @@ impl<
                         if let GameStateInit::Uninit(debug_font, sender, processor, seed) = game {
                             self.game = GameStateInit::Init({
                                 let btl = firecore_battle_engine::BattleGuiData::new(gfx).unwrap();
-                                let dex = Rc::new(
+                                let dex = Arc::new(
                                     PokedexClientData::build(app, plugins, gfx, data.dex).unwrap(),
                                 );
                                 for (id, data) in data.audio {
@@ -329,7 +315,13 @@ impl<
             #[cfg(target_arch = "wasm32")]
             crate::touchscreen::Touchscreen::ui(egui, plugins2);
 
-            self.console.ui::<P, M, I>(app, egui, self.save.as_mut().map(|(w, ..)| &mut w.map.player.character));
+            self.console.ui(
+                app,
+                egui,
+                self.save
+                    .as_mut()
+                    .map(|(w, ..)| &mut w.map.player.character),
+            );
         }));
 
         // graphics::reset_transform_matrix(ctx);

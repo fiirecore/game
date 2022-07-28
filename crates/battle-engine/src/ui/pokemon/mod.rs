@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::sync::Arc;
 
 use pokengine::{
     engine::{
@@ -7,11 +7,7 @@ use pokengine::{
         utils::HashMap,
         App, Plugins,
     },
-    pokedex::{
-        item::Item,
-        moves::Move,
-        pokemon::{Pokemon, PokemonId, PokemonTexture},
-    },
+    pokedex::pokemon::{PokemonId, PokemonTexture},
     PokedexClientData,
 };
 
@@ -34,8 +30,8 @@ pub mod faint;
 pub mod flicker;
 pub mod spawner;
 
-pub struct PokemonRenderer<D: Deref<Target = PokedexClientData>> {
-    dexengine: D,
+pub struct PokemonRenderer {
+    dexengine: Arc<PokedexClientData>,
     pokeball: Texture,
     actions: HashMap<(bool, usize), Vec<PokemonAction>>,
     current: Option<(bool, usize)>,
@@ -54,8 +50,8 @@ const fn local(local: bool) -> PokemonTexture {
     }
 }
 
-impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
-    pub fn new(dexengine: D, ctx: &BattleGuiData) -> Self {
+impl PokemonRenderer {
+    pub fn new(dexengine: Arc<PokedexClientData>, ctx: &BattleGuiData) -> Self {
         Self {
             dexengine,
             pokeball: ctx.pokeball.clone(),
@@ -136,15 +132,10 @@ impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
         }
     }
 
-    pub fn draw_local<
-        ID,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn draw_local<ID>(
         &self,
         draw: &mut Draw,
-        local: &GuiLocalPlayer<ID, P, M, I>,
+        local: &GuiLocalPlayer<ID>,
         offset: Vec2,
         color: Color,
     ) {
@@ -161,10 +152,10 @@ impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
         }
     }
 
-    pub fn draw_remotes<ID, P: Deref<Target = Pokemon> + Clone>(
+    pub fn draw_remotes<ID>(
         &self,
         draw: &mut Draw,
-        remotes: &GuiRemotePlayers<ID, P>,
+        remotes: &GuiRemotePlayers<ID>,
         offset: Vec2,
         color: Color,
     ) {

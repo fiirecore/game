@@ -1,14 +1,9 @@
-use crate::{
-    context::BattleGuiData,
-    players::{GuiLocalPlayer, GuiRemotePlayers},
-    ui::BattleGui,
-};
-use battle::prelude::BattleType;
-use core::ops::Deref;
+use std::sync::Arc;
+
 use pokengine::{
     engine::{
         graphics::{Color, Draw, DrawExt, DrawImages, DrawParams, DrawShapes, Texture},
-        math::{const_vec2, Rect, Vec2},
+        math::{Rect, Vec2},
         text::{MessagePage, MessageState},
         App,
     },
@@ -16,8 +11,16 @@ use pokengine::{
     PokedexClientData,
 };
 
-pub struct BattleOpener<D: Deref<Target = PokedexClientData> + Clone> {
-    dexengine: D,
+use battle::data::BattleType;
+
+use crate::{
+    context::BattleGuiData,
+    players::{GuiLocalPlayer, GuiRemotePlayers},
+    ui::BattleGui,
+};
+
+pub struct BattleOpener {
+    dexengine: Arc<PokedexClientData>,
     type_: BattleOpenerType,
     grass: Texture,
     player: Texture,
@@ -37,10 +40,10 @@ enum BattleOpenerType {
 impl BattleOpenerType {
     const GRASS_WIDTH: f32 = 128.0;
     const GRASS_HEIGHT: f32 = 47.0;
-    pub const WILD: Self = Self::Wild(const_vec2!([Self::GRASS_WIDTH, Self::GRASS_HEIGHT]));
+    pub const WILD: Self = Self::Wild(Vec2::new(Self::GRASS_WIDTH, Self::GRASS_HEIGHT));
 }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
+impl BattleOpener {
     const LIGHTGRAY: Color = Color::new(0.78, 0.78, 0.78, 1.0);
     const RECT_SIZE: f32 = 80.0;
     const SHRINK_BY_DEF: f32 = 1.0;
@@ -53,7 +56,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
     const PLAYER_DESPAWN: f32 = -104.0;
     const FINAL_TRAINER_OFFSET: f32 = 126.0;
 
-    pub fn new(dexengine: D, ctx: &BattleGuiData) -> Self {
+    pub fn new(dexengine: Arc<PokedexClientData>, ctx: &BattleGuiData) -> Self {
         Self {
             dexengine: dexengine,
             type_: BattleOpenerType::None,
@@ -68,17 +71,12 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
     }
 }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
-    pub fn spawn<
-        ID,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+impl BattleOpener {
+    pub fn spawn<ID>(
         &mut self,
-        elements: &mut BattleGui<ID, D, M>,
-        local: &GuiLocalPlayer<ID, P, M, I>,
-        remotes: &GuiRemotePlayers<ID, P>,
+        elements: &mut BattleGui<ID>,
+        local: &GuiLocalPlayer<ID>,
+        remotes: &GuiRemotePlayers<ID>,
     ) {
         match local.data.type_ {
             BattleType::Wild => {
@@ -102,17 +100,12 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
         }
     }
 
-    pub fn update<
-        ID,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn update<ID>(
         &mut self,
         app: &mut App,
-        elements: &mut BattleGui<ID, D, M>,
-        local: &GuiLocalPlayer<ID, P, M, I>,
-        remotes: &GuiRemotePlayers<ID, P>,
+        elements: &mut BattleGui<ID>,
+        local: &GuiLocalPlayer<ID>,
+        remotes: &GuiRemotePlayers<ID>,
     ) -> bool {
         let delta = app.timer.delta_f32();
         let half_finished = ((match &self.type_ {
@@ -225,11 +218,11 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleOpener<D> {
         self.leaving && !elements.text.alive()
     }
 
-    pub fn draw<ID, P: Deref<Target = Pokemon> + Clone, M: Deref<Target = Move> + Clone>(
+    pub fn draw<ID>(
         &self,
         draw: &mut Draw,
-        elements: &BattleGui<ID, D, M>,
-        remotes: &GuiRemotePlayers<ID, P>,
+        elements: &BattleGui<ID>,
+        remotes: &GuiRemotePlayers<ID>,
     ) {
         elements.background.draw(draw, self.offset());
         match &self.type_ {

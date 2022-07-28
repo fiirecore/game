@@ -1,14 +1,14 @@
-use std::ops::Deref;
-
 use crate::{
     pokedex::{
         item::{ItemId, ItemStack, SavedItemStack},
         pokemon::{owned::SavedPokemon, stat::Stat, stat::StatSet, Level, PokemonId},
     },
-    pokengine::PokedexClientData,
 };
 
-use worldcli::{worldlib::positions::{Location, LocationId}, pokedex::moves::MoveId};
+use worldcli::{
+    pokedex::moves::MoveId,
+    worldlib::positions::{Location, LocationId},
+};
 
 use super::WorldWrapper;
 
@@ -43,7 +43,7 @@ pub enum PartyCommand {
 //     List,
 // }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
+impl WorldWrapper {
     pub fn process(result: String) -> Result<WorldCommands, &'static str> {
         let mut args = result.split_ascii_whitespace();
 
@@ -212,16 +212,12 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                         None => Err("Please provide a valid pokemon ID!"),
                     },
                     "move" => match args.next().and_then(|arg| arg.parse::<MoveId>().ok()) {
-                        Some(id) => {
-                            match args.next().and_then(|arg| arg.parse::<usize>().ok()) {
-                                Some(index) => {
-                                    Ok(WorldCommands::GiveMove(id, index))
-                                },
-                                None => Err("Please provide a valid party index!"),
-                            }
+                        Some(id) => match args.next().and_then(|arg| arg.parse::<usize>().ok()) {
+                            Some(index) => Ok(WorldCommands::GiveMove(id, index)),
+                            None => Err("Please provide a valid party index!"),
                         },
                         None => Err("Please provide a valid move ID!"),
-                    }
+                    },
                     "item" => {
                         if let Some(item) = args.next().and_then(|item| item.parse::<ItemId>().ok())
                         {

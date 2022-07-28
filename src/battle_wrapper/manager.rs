@@ -1,5 +1,5 @@
 use rand::{prelude::SmallRng, RngCore, SeedableRng};
-use std::ops::Deref;
+use std::sync::Arc;
 
 use battlecli::battle::{
     default_engine::{default_scripting::MoveScripts, EngineMoves},
@@ -9,7 +9,10 @@ use battlecli::battle::{
         PlayerSettings,
     },
 };
-use worldcli::{engine::text::MessagePage, pokedex::trainer::InitTrainer, worldlib::character::player::PlayerCharacter};
+use worldcli::{
+    engine::text::MessagePage, pokedex::trainer::InitTrainer,
+    worldlib::character::player::PlayerCharacter,
+};
 
 use crate::{
     command::CommandProcessor,
@@ -33,21 +36,16 @@ pub mod transition;
 
 use transition::manager::BattleScreenTransitionManager;
 
-pub struct BattleManager<
-    D: Deref<Target = PokedexClientData> + Clone,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
+pub struct BattleManager {
     state: BattleManagerState,
 
     engine: DefaultEngine,
 
-    battle: Option<GameBattleWrapper<P, M, I>>,
+    battle: Option<GameBattleWrapper>,
 
     transition: BattleScreenTransitionManager,
 
-    player: BattlePlayerGui<BattleId, D, P, M, I>,
+    player: BattlePlayerGui<BattleId>,
 
     seed: u64,
     random: SmallRng,
@@ -83,17 +81,11 @@ impl Default for BattleManagerState {
     }
 }
 
-impl<
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > BattleManager<D, P, M, I>
-{
+impl BattleManager {
     pub fn new(
         gfx: &mut Graphics,
         btl: BattleGuiData,
-        dex: D,
+        dex: Arc<PokedexClientData>,
         data: (EngineMoves, MoveScripts),
         commands: CommandProcessor,
     ) -> Result<Self, String> {
@@ -126,11 +118,11 @@ impl<
 
     pub fn battle(
         &mut self,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        pokedex: &Dex<Pokemon>,
+        movedex: &Dex<Move>,
+        itemdex: &Dex<Item>,
         player: &mut PlayerCharacter,
-        trainer: &InitTrainer<P, M, I>,
+        trainer: &InitTrainer,
     ) -> bool {
         // add battle type parameter
         self.finished = false;
@@ -151,12 +143,7 @@ impl<
             let player = PlayerData {
                 id: BattleId::Player,
                 name: Some(player.name.clone()),
-                party: trainer
-                    .party
-                    .iter()
-                    .cloned()
-                    .map(|p| p.uninit())
-                    .collect(),
+                party: trainer.party.iter().cloned().map(|p| p.uninit()).collect(),
                 bag: trainer
                     .bag
                     .iter()
@@ -233,9 +220,9 @@ impl<
         app: &mut App,
         plugins: &mut Plugins,
         player: &mut PlayerCharacter,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        pokedex: &Dex<Pokemon>,
+        movedex: &Dex<Move>,
+        itemdex: &Dex<Item>,
     ) {
         if app
             .keyboard

@@ -113,17 +113,18 @@ pub fn draw(
             }
         }
     }
-    
-    for character in state.entities.get(&map.id).map(|state| state.npcs.values()).into_iter().flatten() {
+
+    for character in state
+        .entities
+        .get(&map.id)
+        .map(|state| state.npcs.values())
+        .into_iter()
+        .flatten()
+    {
         data.npc.draw(draw, &character, camera, color);
     }
 
-    data.object.draw(
-        draw,
-        state,
-        camera,
-        color,
-    );
+    data.object.draw(draw, state, camera, color);
     // for script in map.scripts.iter() {
     //     if script.alive() {
     //         if let Some(action) = script.actions.front() {

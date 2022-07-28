@@ -1,13 +1,21 @@
-use std::ops::Deref;
-
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
-use crate::{positions::{Location, Spot, Direction, Coordinate}, character::{CharacterGroupId, npc::{group::{TrainerGroupId, TrainerGroup, NpcGroup}, trainer::TrainerDisable}}, state::map::MapState};
+use crate::{
+    character::{
+        npc::{
+            group::{NpcGroup, TrainerGroup, TrainerGroupId},
+            trainer::TrainerDisable,
+        },
+        CharacterGroupId,
+    },
+    positions::{Coordinate, Direction, Location, Spot},
+    state::map::MapState,
+};
 
 use self::tile::PaletteDataMap;
 
-use super::{WorldMap, wild::WildChances, chunk::Connection, MovementId, warp::WarpDestination, object::ObjectType};
+use super::{chunk::Connection, warp::WarpDestination, wild::WildChances, MovementId, WorldMap};
 
 pub mod tile;
 
@@ -52,14 +60,10 @@ impl WorldMapData {
         })
     }
 
-    pub fn post_battle<
-        P: Deref<Target = firecore_pokedex::pokemon::Pokemon> + Clone,
-        M: Deref<Target = firecore_pokedex::moves::Move> + Clone,
-        I: Deref<Target = firecore_pokedex::item::Item> + Clone,
-    >(
+    pub fn post_battle(
         &self,
         state: &mut MapState,
-        trainer: &mut firecore_pokedex::trainer::InitTrainer<P, M, I>,
+        trainer: &mut firecore_pokedex::trainer::InitTrainer,
         winner: bool,
     ) {
         state.player.character.locked.decrement();

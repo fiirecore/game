@@ -21,7 +21,7 @@ use crate::{
     message::MessageTheme,
     positions::Location,
     random::WorldRandoms,
-    state::map::{MapState, MapEvent},
+    state::map::{MapEvent, MapState},
 };
 
 use super::WorldScriptingEngine;
@@ -89,16 +89,11 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
         todo!()
     }
 
-    fn update<
-        R: rand::Rng,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    fn update<R: rand::Rng>(
         &self,
         data: &WorldMapData,
         world: &mut MapState,
-        trainer: &mut InitTrainer<P, M, I>,
+        trainer: &mut InitTrainer,
         randoms: &mut WorldRandoms<R>,
         state: &mut Self::State,
     ) {
@@ -138,7 +133,7 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                                 log::debug!("Could not run script as one is running already!")
                             }
                         }
-                    } 
+                    }
                 }
             }
         }
@@ -280,7 +275,9 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                     queue.remove(0);
                 }
                 WorldInstruction::AddItem(item) => {
-                    world.events.push(MapEvent::GiveItem(SavedItemStack::from(*item)));
+                    world
+                        .events
+                        .push(MapEvent::GiveItem(SavedItemStack::from(*item)));
                     queue.remove(0);
                 }
                 WorldInstruction::CheckItemSpace(..) => {

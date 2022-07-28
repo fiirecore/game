@@ -11,12 +11,17 @@ use pokedex::{
 };
 
 use crate::{
-    character::{action::ActionQueue, player::PlayerCharacter, Activity, DoMoveResult, CharacterState},
+    character::{
+        action::ActionQueue, player::PlayerCharacter, Activity, CharacterState, DoMoveResult,
+    },
     map::{MovementId, WarpDestination, WorldMap},
     positions::{BoundingBox, Direction, Location},
     random::WorldRandoms,
     script::WorldScriptingEngine,
-    state::{map::{MapState, MapEvent}, WorldState},
+    state::{
+        map::{MapEvent, MapState},
+        WorldState,
+    },
 };
 
 use super::{
@@ -113,7 +118,7 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
             let forward = state.player.character.position.forwards();
 
             // if let Some(object) = map.object_at(&forward) {
-                
+
             // }
 
             // if let Some(item) = map.item_at(&forward) {
@@ -223,7 +228,13 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
     ) {
         // state.events.push(MapEvent::OnTile);
 
-        if !trainer.party.is_empty() && state.player.character.capabilities.contains(&CharacterState::ENCOUNTERS) {
+        if !trainer.party.is_empty()
+            && state
+                .player
+                .character
+                .capabilities
+                .contains(&CharacterState::ENCOUNTERS)
+        {
             if let Some(map) = self.data.maps.get(&state.location) {
                 map.try_wild_battle(&self.data, state, randoms);
 
@@ -262,15 +273,10 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
         }
     }
 
-    pub fn update<
-        R: Rng,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn update<R: Rng>(
         &mut self,
         state: &mut WorldState<S>,
-        trainer: &mut InitTrainer<P, M, I>,
+        trainer: &mut InitTrainer,
         randoms: &mut WorldRandoms<R>,
         delta: f32,
     ) {
@@ -323,7 +329,11 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
                 .flatten()
                 .flatten()
                 .unwrap_or_default()
-                && !state.player.character.capabilities.contains(&CharacterState::NOCLIP)
+                && !state
+                    .player
+                    .character
+                    .capabilities
+                    .contains(&CharacterState::NOCLIP)
             {
                 state.events.push(MapEvent::PlayerJump);
                 return;
@@ -350,7 +360,10 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
         fn with_code(player: &mut PlayerCharacter, code: MovementId, direction: Direction) -> bool {
             if Elevation::can_move(player.character.position.elevation, code)
-                || player.character.capabilities.contains(&CharacterState::NOCLIP)
+                || player
+                    .character
+                    .capabilities
+                    .contains(&CharacterState::NOCLIP)
             {
                 if Elevation::WATER == code {
                     if player.character.activity != Activity::Swimming {
@@ -360,8 +373,14 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
                             ))
                         };
 
-                        if player.character.capabilities.contains(&CharacterState::SWIM)
-                            || player.character.capabilities.contains(&CharacterState::NOCLIP)
+                        if player
+                            .character
+                            .capabilities
+                            .contains(&CharacterState::SWIM)
+                            || player
+                                .character
+                                .capabilities
+                                .contains(&CharacterState::NOCLIP)
                         {
                             player.character.activity = Activity::Swimming;
                         } else {

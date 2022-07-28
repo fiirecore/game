@@ -1,4 +1,4 @@
-use rand::prelude::{SmallRng, SeedableRng, RngCore};
+use rand::prelude::{RngCore, SeedableRng, SmallRng};
 use worldcli::worldlib::random::WorldRandoms;
 
 pub type GameWorldRandoms = WorldRandoms<GamePseudoRandom>;

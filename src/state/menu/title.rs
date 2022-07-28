@@ -41,39 +41,27 @@ impl TitleState {
             accumulator: 0.0,
             title: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/title.png"
-                ))
+                .from_image(include_bytes!("../../../assets/scenes/title/title.png"))
                 .build()?,
             trademark: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/trademark.png"
-                ))
+                .from_image(include_bytes!("../../../assets/scenes/title/trademark.png"))
                 .build()?,
             subtitle: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/subtitle.png"
-                ))
+                .from_image(include_bytes!("../../../assets/scenes/title/subtitle.png"))
                 .build()?,
             charizard: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/charizard.png"
-                ))
+                .from_image(include_bytes!("../../../assets/scenes/title/charizard.png"))
                 .build()?,
             start: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/start.png"
-                ))
+                .from_image(include_bytes!("../../../assets/scenes/title/start.png"))
                 .build()?,
             copyright: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/copyright.png"
-                ))
+                .from_image(include_bytes!("../../../assets/scenes/title/copyright.png"))
                 .build()?,
             sender,
         })

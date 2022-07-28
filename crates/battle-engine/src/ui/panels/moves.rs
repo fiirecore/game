@@ -32,15 +32,7 @@ impl MovePanel {
         self.alive
     }
 
-    pub fn ui<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        &mut self,
-        ui: &mut egui::Ui,
-        pokemon: &OwnedPokemon<P, M, I>,
-    ) -> Option<ButtonState> {
+    pub fn ui(&mut self, ui: &mut egui::Ui, pokemon: &OwnedPokemon) -> Option<ButtonState> {
         let per_row = (pokemon.moves.len() as f32).sqrt().ceil() as usize;
         let i = egui::Grid::new("Move Grid")
             .show(ui, |ui| {

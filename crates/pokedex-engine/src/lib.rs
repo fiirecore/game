@@ -17,7 +17,10 @@ pub use data::PokedexClientData;
 
 pub type TrainerGroupId = tinystr::TinyStr16;
 
-pub type SerializedPokemon = (enum_map::EnumMap<pokedex::pokemon::PokemonTexture, Vec<u8>>, Vec<u8>);
+pub type SerializedPokemon = (
+    enum_map::EnumMap<pokedex::pokemon::PokemonTexture, Vec<u8>>,
+    Vec<u8>,
+);
 
 pub type PokemonOutput = engine::utils::HashMap<pokedex::pokemon::PokemonId, SerializedPokemon>;
 

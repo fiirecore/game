@@ -33,7 +33,6 @@ pub struct JsonMapData {
     pub bg_events: Vec<object::JsonBgEvent>,
 }
 
-
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct JsonMapLayout {
     pub id: String,
@@ -47,7 +46,6 @@ pub struct JsonMapLayout {
 
     pub border_filepath: String,
     pub blockdata_filepath: String,
-
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -56,7 +54,6 @@ pub struct JsonConnection {
     pub offset: isize,
     pub direction: String,
 }
-
 
 #[derive(Debug, Deserialize)]
 pub struct JsonMapLayouts {
@@ -71,6 +68,4 @@ pub struct LayoutOrNone {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Nothing {
-
-}
+pub struct Nothing {}

@@ -113,7 +113,7 @@ pub fn parse_message_script(script: &str) -> Result<Vec<Message>, Error> {
                 return Err(Error::ScriptName(line, ScriptNameReason::Name));
             }
             let name = &name[..name.len() - 2];
-            
+
             let location = location(&mut args, line)?;
 
             let mut message_pages = Vec::new();

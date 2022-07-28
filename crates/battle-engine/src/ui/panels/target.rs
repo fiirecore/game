@@ -31,16 +31,11 @@ impl TargetPanel {
         self.alive
     }
 
-    pub fn ui<
-        ID: Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui<ID: Clone>(
         &mut self,
         egui: &egui::Context,
-        local: &PlayerParty<ID, usize, OwnedPokemon<P, M, I>, BattleTrainer>,
-        remotes: &GuiRemotePlayers<ID, P>,
+        local: &PlayerParty<ID, usize, OwnedPokemon, BattleTrainer>,
+        remotes: &GuiRemotePlayers<ID>,
     ) -> Option<PokemonIdentifier<ID>> {
         if self.alive {
             egui::Window::new("Targets")

@@ -129,7 +129,14 @@ pub fn parse_parties(file: &str) -> Result<HashMap<String, Vec<TrainerPokemon>>,
                         let mut words = text.split_ascii_whitespace().skip(4);
                         current_trainer = words.next().map(|s| s[..s.len() - 2].to_owned());
                         if let Some(def) = text.split_once('=').map(|(.., r)| r.trim()) {
-                            party(def, &mut state, &defined, &mut trainers, &mut mons, &mut current_trainer);
+                            party(
+                                def,
+                                &mut state,
+                                &defined,
+                                &mut trainers,
+                                &mut mons,
+                                &mut current_trainer,
+                            );
                         }
                         if current_trainer.is_some() {
                             state = State::Party;
@@ -206,7 +213,6 @@ fn party(
                 let name = current_trainer.take().unwrap();
                 println!("inserting {}", name);
                 trainers.insert(name, pokemon);
-                
             } else {
                 *state = State::Pokemon;
             }

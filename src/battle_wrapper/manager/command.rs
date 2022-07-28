@@ -11,13 +11,7 @@ pub enum BattleCommand {
     End,
 }
 
-impl<
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > super::BattleManager<D, P, M, I>
-{
+impl super::BattleManager {
     pub fn process(result: String) -> Result<BattleCommand, &'static str> {
         let mut args = result.split_ascii_whitespace();
 

@@ -213,7 +213,7 @@ impl SummaryGui {
         }
     }
 
-    pub fn spawn<'d, P: Deref<Target = Pokemon>, I: GetPokemonData>(
+    pub fn spawn<>(
         &mut self,
         ctx: &PokedexClientData,
         pokedex: &'d dyn Dex<'d, Pokemon, P>,
@@ -255,7 +255,7 @@ struct SummaryPokemon {
 }
 
 impl SummaryPokemon {
-    pub fn new<'d, P: Deref<Target = Pokemon>, I: GetPokemonData>(
+    pub fn new<>(
         ctx: &PokedexClientData,
         pokedex: &'d dyn Dex<'d, Pokemon, P>,
         instance: &I,

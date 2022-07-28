@@ -1,4 +1,5 @@
 use core::ops::Deref;
+use std::sync::Arc;
 
 use battle::{moves::BattleMove, pokemon::Indexed, prelude::BattleType};
 use pokengine::{
@@ -29,12 +30,12 @@ use self::{
 
 use crate::players::{GuiLocalPlayer, GuiRemotePlayers};
 
-pub struct BattlePanel<D: Deref<Target = PokedexClientData> + Clone> {
+pub struct BattlePanel {
     state: BattleOptions,
     moves: MovePanel,
     targets: TargetPanel,
-    party: PartyGui<D>,
-    bag: BagGui<D>,
+    party: PartyGui,
+    bag: BagGui,
 }
 
 pub enum BattleOptions {
@@ -58,8 +59,8 @@ pub enum BattleAction<ID> {
     Forfeit,
 }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
-    pub fn new(data: D) -> Self {
+impl BattlePanel {
+    pub fn new(data: Arc<PokedexClientData>) -> Self {
         Self {
             state: BattleOptions::NotAlive,
             moves: MovePanel::default(),
@@ -89,17 +90,12 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattlePanel<D> {
         self.state = BattleOptions::NotAlive;
     }
 
-    pub fn ui<
-        ID: Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui<ID: Clone>(
         &mut self,
         app: &mut App,
         egui: &egui::Context,
-        local: &mut GuiLocalPlayer<ID, P, M, I>,
-        remotes: &GuiRemotePlayers<ID, P>,
+        local: &mut GuiLocalPlayer<ID>,
+        remotes: &GuiRemotePlayers<ID>,
     ) -> Option<BattleAction<ID>> {
         match self.state {
             BattleOptions::Fight => {

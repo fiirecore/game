@@ -1,22 +1,21 @@
-use core::ops::Deref;
+use std::sync::Arc;
 
 use pokengine::{
     engine::egui,
     pokedex::{
-        item::Item,
         moves::{owned::OwnedMove, Move},
-        pokemon::{owned::OwnedPokemon, Pokemon},
+        pokemon::owned::OwnedPokemon,
     },
 };
 
 use super::moves::{ButtonState, MovePanel};
 
-pub struct LevelUpMovePanel<M: Deref<Target = Move> + Clone> {
+pub struct LevelUpMovePanel {
     state: LevelUpState,
 
     panel: MovePanel,
 
-    moves: Vec<M>,
+    moves: Vec<Arc<Move>>,
 }
 
 enum LevelUpState {
@@ -25,7 +24,7 @@ enum LevelUpState {
     Moves,
 }
 
-impl<M: Deref<Target = Move> + Clone> LevelUpMovePanel<M> {
+impl LevelUpMovePanel {
     pub fn new() -> Self {
         Self {
             state: LevelUpState::NotAlive,
@@ -34,17 +33,17 @@ impl<M: Deref<Target = Move> + Clone> LevelUpMovePanel<M> {
         }
     }
 
-    pub fn spawn(&mut self, moves: Vec<M>) {
+    pub fn spawn(&mut self, moves: Vec<Arc<Move>>) {
         self.state = LevelUpState::Text;
     }
 
-    // pub fn update<P: Deref<Target = Pokemon> + Clone, I: Deref<Target = Item> + Clone>(
+    // pub fn update(
     //     &mut self,
     //     app: &mut App,
     //     plugins: &mut Plugins,
     //     text: &mut BattleText,
     //     delta: f32,
-    //     pokemon: &mut OwnedPokemon<P, M, I>,
+    //     pokemon: &mut OwnedPokemon,
     // ) -> Option<(usize, M)> {
     //     match self.state {
     //         LevelUpState::Text => match text.alive() {
@@ -97,11 +96,7 @@ impl<M: Deref<Target = Move> + Clone> LevelUpMovePanel<M> {
     //     }
     // }
 
-    pub fn ui<P: Deref<Target = Pokemon> + Clone, I: Deref<Target = Item> + Clone>(
-        &mut self,
-        egui: &egui::Context,
-        pokemon: &mut OwnedPokemon<P, M, I>,
-    ) {
+    pub fn ui(&mut self, egui: &egui::Context, pokemon: &mut OwnedPokemon) {
         match self.state {
             LevelUpState::NotAlive => (),
             LevelUpState::Moves => {

@@ -4,7 +4,6 @@ use firecore_battle::pokedex::pokemon::PokemonTexture;
 use ron::ser::PrettyConfig;
 
 fn main() {
-
     let client = firecore_dex_gen::client();
 
     let pokemon = firecore_dex_gen::pokemon::generate(client.clone(), 1..5);
@@ -72,7 +71,10 @@ fn main() {
 
     for (id, exec) in execution.into_iter() {
         std::fs::write(
-            format!("generated/battle/moves/{}.ron", &moves.iter().find(|m| m.id == id).unwrap().name),
+            format!(
+                "generated/battle/moves/{}.ron",
+                &moves.iter().find(|m| m.id == id).unwrap().name
+            ),
             ron::ser::to_string_pretty(&exec, Default::default())
                 .unwrap()
                 .as_bytes(),
@@ -109,5 +111,4 @@ fn main() {
     for (id, item) in item_textures {
         std::fs::write(format!("generated/client/items/{}.png", id), &item).unwrap();
     }
-
 }
