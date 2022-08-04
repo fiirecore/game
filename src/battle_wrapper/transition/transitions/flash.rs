@@ -1,6 +1,6 @@
 use crate::engine::graphics::{Color, Draw, DrawShapes};
 
-use crate::battle_wrapper::manager::transition::BattleTransition;
+use crate::battle_wrapper::transition::BattleTransition;
 
 pub struct FlashBattleTransition {
     screen: Color,
@@ -33,7 +33,7 @@ impl Default for FlashBattleTransition {
 }
 
 impl BattleTransition for FlashBattleTransition {
-    fn update(&mut self, delta: f32) {
+    fn update(&mut self, delta: f32) -> bool {
         if self.waning {
             self.screen.a -= self.fade * 60.0 * delta;
         } else {
@@ -63,12 +63,14 @@ impl BattleTransition for FlashBattleTransition {
             //     ),
             // ))
         }
-        if self.finished() {
+        
+        self.index >= Self::FINAL_INDEX && self.waning
+        // if self.finished() {
 
-            // inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(
-            //     inner::prelude::Rect::new(0.0, 0.0, WIDTH, HEIGHT),
-            // ));
-        }
+        //     // inner::prelude::set_camera(&inner::prelude::Camera2D::from_display_rect(
+        //     //     inner::prelude::Rect::new(0.0, 0.0, WIDTH, HEIGHT),
+        //     // ));
+        // }
     }
 
     fn draw(&self, draw: &mut Draw) {
@@ -86,7 +88,4 @@ impl BattleTransition for FlashBattleTransition {
         self.zoom_offset = Self::ZOOM_OFFSET;
     }
 
-    fn finished(&self) -> bool {
-        self.index >= Self::FINAL_INDEX && self.waning
-    }
 }

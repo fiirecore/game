@@ -126,17 +126,18 @@ pub fn generate_client(client: std::sync::Arc<pokerust::Client>) -> ItemTextures
                 .map(|s| s.eq_ignore_ascii_case("?"))
                 .unwrap_or(true)
             {
-                return None;
+                anyhow::bail!(
+                    "Cannot get an item with because it is either empty or has an id of \"?\"!"
+                );
             }
 
-            println!("Creating item entry for {}", item.name);
+            println!("Creating client item entry for {}", item.name);
 
             let idstr = item.item_id[5..].to_ascii_lowercase();
             let id = match idstr.parse() {
                 Ok(id) => id,
                 Err(err) => {
-                    eprintln!("Cannot parse item id {} with error {}", idstr, err);
-                    return None;
+                    anyhow::bail!("Cannot parse item id {idstr} with error {err}");
                 }
             };
 
@@ -161,32 +162,37 @@ pub fn generate_client(client: std::sync::Arc<pokerust::Client>) -> ItemTextures
 
             let url = format!("{}/{}.png", ICONS, idstr);
 
-            let mut texture = match attohttpc::get(url).send().ok()?.bytes() {
+            let mut texture = match attohttpc::get(url).send()?.bytes() {
                 Ok(bytes) => bytes,
                 Err(err) => {
-                    eprintln!("Could not get texture for item {} with error {}", name, err);
-                    return None;
+                    anyhow::bail!("Could not get texture for item {name} with error {err}");
                 }
             };
 
             if texture == "404: Not Found".as_bytes() {
                 let url = idstr.replace('_', "-");
                 match client.get::<pokerust::Item, &str>(&url) {
-                    Ok(item) => match attohttpc::get(item.sprites.default).send().ok()?.bytes() {
+                    Ok(item) => match attohttpc::get(item.sprites.default).send()?.bytes() {
                         Ok(bytes) => texture = bytes,
                         Err(err) => {
-                            eprintln!("Could not get texture for item {} with error {}", name, err);
-                            return None;
+                            anyhow::bail!("Could not get texture for item {name} with error {err}");
                         }
                     },
                     Err(err) => {
-                        eprintln!("Cannot get item {} from PokeAPI with error {}", name, err);
-                        return None;
+                        anyhow::bail!("Cannot get item {name} from PokeAPI with error {err}");
                     }
                 }
             }
 
-            Some((id, texture))
+            let image = image::load_from_memory(&texture)?;
+
+            // image.get
+
+            let mut writer = std::io::Cursor::new(Vec::new());
+
+            image.write_to(&mut writer, image::ImageFormat::Png)?;
+
+            Ok((id, writer.into_inner()))
         })
         .collect()
 }

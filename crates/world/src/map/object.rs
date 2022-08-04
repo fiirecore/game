@@ -1,11 +1,8 @@
-use std::ops::Deref;
-
 use serde::{Deserialize, Serialize};
 
 use pokedex::{
     item::{Item, ItemId, ItemStack},
-    moves::{Move, MoveId},
-    pokemon::Pokemon,
+    moves::MoveId,
     trainer::InitTrainer,
 };
 

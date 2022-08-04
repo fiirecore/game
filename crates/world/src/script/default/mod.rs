@@ -1,11 +1,4 @@
-use std::ops::Deref;
-
-use firecore_pokedex::{
-    item::{Item, SavedItemStack},
-    moves::Move,
-    pokemon::Pokemon,
-    trainer::InitTrainer,
-};
+use firecore_pokedex::trainer::InitTrainer;
 use firecore_text::{MessagePage, MessageState, MessageStates};
 use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
@@ -275,9 +268,10 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                     queue.remove(0);
                 }
                 WorldInstruction::AddItem(item) => {
-                    world
-                        .events
-                        .push(MapEvent::GiveItem(SavedItemStack::from(*item)));
+                    // world
+                    //     .events
+                    //     .push(MapEvent::GiveItem(SavedItemStack::from(*item)));
+                    todo!();
                     queue.remove(0);
                 }
                 WorldInstruction::CheckItemSpace(..) => {

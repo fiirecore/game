@@ -1,17 +1,11 @@
-use std::ops::Deref;
-
-use firecore_battle_engine::pokengine::PokedexClientData;
-use worldcli::{
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
-    worldlib::map::battle::BattleId,
-};
+use worldcli::worldlib::map::battle::BattleId;
 
 pub enum BattleCommand {
     Faint(BattleId, Option<usize>),
     End,
 }
 
-impl super::BattleManager {
+impl super::BattleWrapper {
     pub fn process(result: String) -> Result<BattleCommand, &'static str> {
         let mut args = result.split_ascii_whitespace();
 

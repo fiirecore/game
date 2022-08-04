@@ -7,14 +7,13 @@ use pokengine::{
         utils::HashMap,
         App, Plugins,
     },
-    pokedex::pokemon::{PokemonId, PokemonTexture},
-    PokedexClientData,
+    pokedex::pokemon::{PokemonId, PokemonTexture}, texture::PokemonTextures,
 };
 
 use crate::{
-    context::BattleGuiData,
     players::{GuiLocalPlayer, GuiRemotePlayers},
     ui::{BattleGuiPosition, BattleGuiPositionIndex},
+    InitBattleGuiTextures,
 };
 
 use self::{faint::Faint, flicker::Flicker, spawner::Spawner};
@@ -31,7 +30,7 @@ pub mod flicker;
 pub mod spawner;
 
 pub struct PokemonRenderer {
-    dexengine: Arc<PokedexClientData>,
+    textures: Arc<PokemonTextures>,
     pokeball: Texture,
     actions: HashMap<(bool, usize), Vec<PokemonAction>>,
     current: Option<(bool, usize)>,
@@ -51,9 +50,9 @@ const fn local(local: bool) -> PokemonTexture {
 }
 
 impl PokemonRenderer {
-    pub fn new(dexengine: Arc<PokedexClientData>, ctx: &BattleGuiData) -> Self {
+    pub fn new(textures: Arc<PokemonTextures>, ctx: &InitBattleGuiTextures) -> Self {
         Self {
-            dexengine,
+            textures,
             pokeball: ctx.pokeball.clone(),
             actions: Default::default(),
             current: None,
@@ -88,8 +87,7 @@ impl PokemonRenderer {
         self.insert(
             position,
             PokemonAction::Faint(Faint::new(pokemon.and_then(|pokemon| {
-                self.dexengine
-                    .pokemon_textures
+                self.textures
                     .get(pokemon, local(position.0))
             }))),
         );
@@ -190,7 +188,7 @@ impl PokemonRenderer {
             return;
         }
         let side = local(position.0);
-        if let Some(texture) = self.dexengine.pokemon_textures.get(pokemon, side) {
+        if let Some(texture) = self.textures.get(pokemon, side) {
             let pos = Self::position(BattleGuiPositionIndex {
                 position: side.into(),
                 index: position.1,

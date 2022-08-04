@@ -19,36 +19,36 @@ pub type Execution = hashbrown::HashMap<MoveId, MoveExecution>;
 pub fn generate(client: Arc<pokerust::Client>, range: Range<i16>) -> Vec<Move> {
     range
         .into_par_iter()
-        .map(|index| get_move(index, &client))
+        .map(|index| {
+            get_move(index, &client)
+                .unwrap_or_else(|err| panic!("Could not get move #{index} with error {err}"))
+        })
         .collect()
 }
 
-pub fn generate_battle(client: Arc<pokerust::Client>, range: Range<i16>) -> Execution {
+pub fn generate_battle(
+    client: Arc<pokerust::Client>,
+    range: Range<i16>,
+) -> anyhow::Result<Execution> {
     range
         .into_par_iter()
         .map(|m| {
-            let move_ = client.get::<pokerust::Move, i16>(m).unwrap_or_else(|err| {
-                eprintln!("Could not get move from id {} with error {}", m, err);
-                panic!()
-            });
+            let move_ = client
+                .get::<pokerust::Move, i16>(m)
+                .unwrap_or_else(|err| panic!("Could not get battle move #{m} with error {err}"));
 
             let id = move_
                 .name
                 .parse()
                 .expect("Could not parse move name into ASCII string!");
 
-            (id, get_move_execution(&move_))
+            Ok((id, get_move_execution(&move_)))
         })
         .collect()
 }
 
-fn get_move(index: i16, client: &pokerust::Client) -> Move {
-    let mut move_ = client
-        .get::<pokerust::Move, i16>(index)
-        .unwrap_or_else(|err| {
-            eprintln!("Could not get move from id {} with error {}", index, err);
-            panic!()
-        });
+fn get_move(index: i16, client: &pokerust::Client) -> anyhow::Result<Move> {
+    let mut move_ = client.get::<pokerust::Move, i16>(index)?;
 
     let name = move_.names.remove(7).name;
 
@@ -62,7 +62,7 @@ fn get_move(index: i16, client: &pokerust::Client) -> Move {
 
     println!("Creating move entry for: {}", name);
 
-    Move {
+    Ok(Move {
         id,
         pp: move_
             .pp
@@ -81,7 +81,7 @@ fn get_move(index: i16, client: &pokerust::Client) -> Move {
             .map(|meta| meta.crit_rate)
             .unwrap_or_default(),
         // world: is_world_move(&move_),
-    }
+    })
 }
 
 fn category_from_id(id: i16) -> MoveCategory {

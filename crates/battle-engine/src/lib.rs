@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use pokengine::{
     engine::{
         egui,
-        graphics::{Color, Draw},
+        graphics::{Color, Draw, Graphics, Texture},
         log::{self, debug, warn},
         math::Vec2,
         text::MessagePage,
@@ -26,7 +26,8 @@ use pokengine::{
         types::Effective,
         Dex, Money,
     },
-    PokedexClientData, TrainerGroupId,
+    texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
+    TrainerGroupId,
 };
 
 use battle::{
@@ -48,8 +49,8 @@ use self::{
     view::PlayerView,
 };
 
-mod context;
-pub use context::*;
+mod data;
+pub use data::*;
 
 mod ui;
 mod view;
@@ -86,17 +87,29 @@ pub struct BattlePlayerGui<ID: Eq + Hash + Display + Clone> {
 }
 
 impl<ID: Clone + Debug + Display + Hash + Eq> BattlePlayerGui<ID> {
-    pub fn new(dex: Arc<PokedexClientData>, btl: &BattleGuiData) -> Self
-    where
-        ID: Default,
-    {
+    // pub fn new_and_init(
+    //     pokemon: Arc<PokemonTextures>,
+    //     items: Arc<ItemTextures>,
+    //     trainers: Arc<TrainerGroupTextures>,
+    //     btl: BattleGuiTextures<Vec<u8>>,
+    //     gfx: &mut Graphics,
+    // ) -> Result<Self, String> {
+    //     Ok(Self::new(pokemon, items, trainers, &btl.init(gfx)?))
+    // }
+
+    pub fn new(
+        pokemon: Arc<PokemonTextures>,
+        items: Arc<ItemTextures>,
+        trainers: Arc<TrainerGroupTextures>,
+        btl: &BattleGuiTextures<Texture>,
+    ) -> Self {
         let (client, endpoint) = battle::endpoint::create();
 
         Self {
-            gui: BattleGui::new(dex.clone(), btl),
-            opener: BattleOpener::new(dex.clone(), btl),
+            gui: BattleGui::new(pokemon, items, &btl),
+            opener: BattleOpener::new(trainers.clone(), &btl),
             // introduction: BattleIntroductionManager::new(btl),
-            closer: BattleCloser::new(dex),
+            closer: BattleCloser::new(trainers),
             state: BattlePlayerState::WaitToStart,
             should_select: false,
             should_end: None,

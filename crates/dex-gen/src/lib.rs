@@ -17,45 +17,6 @@ pub fn client() -> Client {
     Arc::new(pokerust::Client::default())
 }
 
-// pub fn generate() -> DexGenerator {
-//     // std::env::set_var("SMOL_THREADS", &std::ffi::OsString::from("10"));
-
-//     let start = std::time::Instant::now();
-
-//     let client = client();
-
-//     let pokerust2 = client.clone();
-
-//     // let client_ = client.clone();
-
-//     let moves_thread = std::thread::spawn(|| {
-//         moves::add_moves(pokerust2)
-//     });
-
-//     let items_thread = std::thread::spawn(|| {
-//         items::add_items(client)
-//     });
-
-//     let (moves, battle_moves) = moves_thread.join().unwrap(); //moves_thread.join().unwrap();
-
-//     let (items, item_textures) = items_thread.join().unwrap();
-
-//     let elapsed = start.elapsed().as_millis() as f64 / 1000.0;
-
-//     println!("Finished in {} seconds!", elapsed);
-
-//     DexGenerator {
-//         moves: GeneratedMoves {
-//             moves,
-//             execution: battle_moves,
-//         },
-//         items: GeneratedItems {
-//             items,
-//             textures: item_textures,
-//         }
-//     }
-// }
-
 #[inline]
 pub(crate) fn capitalize_first(string: &mut String) {
     string[..1].make_ascii_uppercase();

@@ -18,7 +18,7 @@
    - Be able to activate and deactivate move capabilities
 
 * App
-   - Use ```include_bytes!``` for loadable data.
+   - Make loading and title customizable
    - Make the code cleaner
 
 * GUI

@@ -6,10 +6,10 @@ use pokengine::{
         graphics::{Draw, DrawImages},
     },
     pokedex::pokemon::PokemonTexture,
-    PokedexClientData,
+    texture::{ItemTextures, PokemonTextures},
 };
 
-use crate::context::BattleGuiData;
+use crate::InitBattleGuiTextures;
 
 use self::{
     background::BattleBackground,
@@ -75,25 +75,30 @@ pub struct BattleGui<ID> {
 }
 
 impl<ID> BattleGui<ID> {
-    pub fn new(data: Arc<PokedexClientData>, btl: &BattleGuiData) -> Self {
+    pub fn new(
+        pokemon: Arc<PokemonTextures>,
+        items: Arc<ItemTextures>,
+        btl: &InitBattleGuiTextures,
+    ) -> Self {
         Self {
             background: BattleBackground::new(btl),
 
-            panel: BattlePanel::new(data.clone()),
+            panel: BattlePanel::new(pokemon.clone(), items),
             actions: Vec::new(),
 
             text: BattleText::default(),
 
             bounce: PlayerBounce::new(),
-            pokemon: PokemonRenderer::new(data, btl),
+            pokemon: PokemonRenderer::new(pokemon, btl),
 
             trainer: PokemonCount::new(btl),
             level_up: LevelUpMovePanel::new(),
         }
     }
 
+    #[deprecated]
     pub fn draw_panel(&self, draw: &mut Draw) {
-        draw.image(&self.background.panel).position(0.0, PANEL_Y);
+        // draw.image(&self.background.panel).position(0.0, PANEL_Y);
         // self.background
         //     .panel
         //     .draw(ctx, 0.0, PANEL_Y, Default::default());

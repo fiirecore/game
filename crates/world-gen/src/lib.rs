@@ -20,7 +20,7 @@ use firecore_world::{
         Brightness, PaletteId, WorldMap, WorldMapSettings, WorldTile,
     },
     pokedex::{
-        item::{Item, ItemStack},
+        item::Item,
         moves::{owned::SavedMove, Move},
         pokemon::{owned::SavedPokemon, stat::StatSet, Pokemon},
         trainer::Trainer,
@@ -30,10 +30,7 @@ use firecore_world::{
     script::default::*,
 };
 use map::{
-    object::{JsonBgEvent, JsonObjectEvent},
-    warp::JsonWarpEvent,
-    wild::JsonWildEncounters,
-    JsonConnection, JsonMap,
+    object::JsonObjectEvent, warp::JsonWarpEvent, wild::JsonWildEncounters, JsonConnection, JsonMap,
 };
 use rayon::iter::{
     IndexedParallelIterator, IntoParallelIterator, IntoParallelRefIterator, ParallelIterator,
@@ -606,7 +603,7 @@ fn into_instruction(
 enum InstructionError {
     Unknown(ScriptId, String),
     ParseInt(ScriptId, String, ParseIntError),
-    ParseStr(ScriptId, String, tinystr::TinyStrError),
+    // ParseStr(ScriptId, String, tinystr::TinyStrError),
     MissingMapping(ScriptId, String),
 }
 

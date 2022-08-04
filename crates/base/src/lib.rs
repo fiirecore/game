@@ -3,7 +3,7 @@ mod audio;
 pub extern crate firecore_text as text;
 pub extern crate notan;
 
-pub use notan::math;
+pub use notan::{math, AppState};
 
 pub mod music {
     pub use super::audio::{add_music, get_current_music, play_music, stop_music, MusicId};

@@ -1,7 +1,4 @@
-use std::ops::Deref;
-
 use battle::prelude::EndMessage;
-use pokengine::pokedex::moves::Move;
 
 use crate::action::MoveQueue;
 

@@ -1,13 +1,13 @@
-use std::ops::Deref;
+use std::sync::Arc;
 
 use rand::{prelude::IteratorRandom, Rng};
 
 use pokedex::{
     item::Item,
     moves::Move,
-    moves::MoveId,
     pokemon::Pokemon,
     trainer::{InitTrainer, Trainer},
+    Dex,
 };
 
 use crate::{
@@ -33,6 +33,10 @@ pub struct WorldMapManager<S: WorldScriptingEngine> {
     pub data: WorldMapData,
     /// Scripting engine
     pub scripting: S,
+
+    pub pokedex: Arc<Dex<Pokemon>>,
+    pub movedex: Arc<Dex<Move>>,
+    pub itemdex: Arc<Dex<Item>>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -42,9 +46,6 @@ pub enum InputEvent {
 }
 
 impl<S: WorldScriptingEngine> WorldMapManager<S> {
-    pub fn new(data: WorldMapData, scripting: S) -> Self {
-        Self { data, scripting }
-    }
 
     pub fn contains(&self, location: &Location) -> bool {
         self.data.maps.contains_key(location)
@@ -367,11 +368,6 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
             {
                 if Elevation::WATER == code {
                     if player.character.activity != Activity::Swimming {
-                        const SURF: &MoveId = unsafe {
-                            &MoveId(tinystr::TinyStr16::from_bytes_unchecked(
-                                1718777203u128.to_ne_bytes(),
-                            ))
-                        };
 
                         if player
                             .character

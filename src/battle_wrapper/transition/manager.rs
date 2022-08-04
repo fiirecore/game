@@ -1,24 +1,18 @@
-use crate::{
-    battle_wrapper::TransitionState,
-    engine::{
-        graphics::{Draw, Graphics},
-        music::play_music,
-        App, Plugins,
-    },
+use crate::engine::{
+    graphics::{Draw, Graphics},
+    music::play_music,
+    App, Plugins,
 };
 
 use battlecli::battle::data::BattleType;
 
-use worldcli::worldlib::map::battle::*;
-
-use crate::battle_wrapper::manager::transition::{
+use super::{
     transitions::{BattleTransitions, FlashBattleTransition, TrainerBattleTransition},
     BattleTransition,
 };
 
 pub struct BattleScreenTransitionManager {
-    pub state: TransitionState,
-    current: BattleTransitions,
+    pub current: BattleTransitions,
 
     flash: FlashBattleTransition,
     trainer: TrainerBattleTransition,
@@ -27,7 +21,6 @@ pub struct BattleScreenTransitionManager {
 impl BattleScreenTransitionManager {
     pub fn new(gfx: &mut Graphics) -> Result<Self, String> {
         Ok(Self {
-            state: TransitionState::default(),
             current: BattleTransitions::default(),
 
             flash: FlashBattleTransition::default(),
@@ -40,27 +33,13 @@ impl BattleScreenTransitionManager {
         app: &mut App,
         plugins: &mut Plugins,
         battle_type: BattleType,
-        trainer: &Option<TrainerEntry>,
     ) {
-        self.play_music(app, plugins, battle_type);
-        match trainer {
-            Some(trainer) => self.current = BattleTransitions::from(trainer.transition),
-            None => self.current = BattleTransitions::default(),
-        }
         self.get_mut().reset();
-        self.state = TransitionState::Run;
+        self.play_music(app, plugins, battle_type);
     }
 
-    pub fn end(&mut self) {
-        self.state = TransitionState::Begin;
-    }
-
-    pub fn update(&mut self, delta: f32) {
-        let current = self.get_mut();
-        current.update(delta);
-        if current.finished() {
-            self.state = TransitionState::End;
-        }
+    pub fn update(&mut self, delta: f32) -> bool {
+        self.get_mut().update(delta)
     }
 
     pub fn draw(&self, draw: &mut Draw) {

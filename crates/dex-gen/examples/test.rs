@@ -10,9 +10,11 @@ fn main() {
 
     let client_pokemon = firecore_dex_gen::pokemon::generate_client(&pokemon);
 
-    let moves = firecore_dex_gen::moves::generate(client.clone(), 1..559);
+    image::load_from_memory(&client_pokemon[&2u16].0[PokemonTexture::Front]).unwrap();
 
-    let execution = firecore_dex_gen::moves::generate_battle(client.clone(), 1..559);
+    let moves = firecore_dex_gen::moves::generate(client.clone(), 1..15);
+
+    let execution = firecore_dex_gen::moves::generate_battle(client.clone(), 1..15).unwrap();
 
     let items = firecore_dex_gen::items::generate();
 

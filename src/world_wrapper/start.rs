@@ -1,15 +1,13 @@
-use std::{ops::Deref, sync::Arc};
+use std::{sync::Arc};
+
+use firecore_battle_engine::pokengine::texture::{PokemonTextures, ItemTextures};
 
 use crate::pokedex::trainer::InitTrainer;
-use event::EventWriter;
 
 use crate::{
     pokengine::{
         gui::{bag::BagGui, party::PartyGui},
-        pokedex::{item::Item, moves::Move, pokemon::Pokemon},
-        PokedexClientData,
     },
-    state::{MainStates, StateMessage},
 };
 
 use crate::engine::{
@@ -24,17 +22,15 @@ pub struct StartMenu {
     cursor: usize,
     party: PartyGui,
     bag: BagGui,
-    actions: EventWriter<StateMessage>,
 }
 
 impl StartMenu {
-    pub(crate) fn new(dex: Arc<PokedexClientData>, sender: EventWriter<StateMessage>) -> Self {
+    pub(crate) fn new(pokemon: Arc<PokemonTextures>, items: Arc<ItemTextures>) -> Self {
         Self {
             alive: false,
             cursor: 0,
-            party: PartyGui::new(dex.clone()),
-            bag: BagGui::new(dex),
-            actions: sender,
+            party: PartyGui::new(pokemon),
+            bag: BagGui::new(items),
         }
     }
 
@@ -98,19 +94,19 @@ impl StartMenu {
         plugins: &mut Plugins,
         egui: &egui::Context,
         user: &mut InitTrainer,
-    ) {
+    ) -> Option<super::WorldRequest> {
         if pressed(app, plugins, Control::Start) {
             self.alive = !self.alive;
         }
         self.bag.ui(egui, &mut user.bag);
         self.party.ui(app, egui, &mut user.party);
-        if self.alive {
-            egui::Window::new("Menu")
+        match self.alive {
+            true => egui::Window::new("Menu")
                 .title_bar(false)
                 .anchor(egui::Align2::RIGHT_TOP, [-5.0, 5.0])
                 .show(egui, |ui| {
                     if ui.button("Save").clicked() {
-                        self.actions.send(StateMessage::SaveToDisk);
+                        return Some(super::WorldRequest::Save);
                     }
                     if ui.button("Bag").clicked() {
                         self.bag.spawn();
@@ -119,41 +115,25 @@ impl StartMenu {
                         self.party.spawn();
                     }
                     if ui.button("Exit to Menu").clicked() {
-                        self.actions.send(StateMessage::Goto(MainStates::Menu));
+                        return Some(super::WorldRequest::Exit);
                     }
                     if ui.button("Close").clicked() {
                         self.alive = false;
                     }
-                });
-        } else {
-            egui::Window::new("Menu Button")
+                    None
+                }),
+            false => egui::Window::new("Menu Button")
                 .title_bar(false)
                 .anchor(egui::Align2::RIGHT_TOP, [-5.0, 5.0])
                 .show(egui, |ui| {
                     if ui.button("Menu").clicked() {
                         self.alive = true;
                     }
-                });
-        };
-        // if self.alive {
-        //     if self.bag.alive() {
-        //         self.bag.draw(ctx, eng);
-        //     } else if self.party.alive() {
-        //         self.party.draw(ctx, eng);
-        //     } else {
-        //         Panel::draw_text(
-        //             ctx,
-        //             eng,
-        //             self.pos.x,
-        //             self.pos.y,
-        //             70.0,
-        //             &self.buttons,
-        //             self.cursor,
-        //             false,
-        //             false,
-        //         );
-        //     }
-        // }
+                    None
+                }),
+        }
+        .and_then(|i| i.inner)
+        .flatten()
     }
 }
 

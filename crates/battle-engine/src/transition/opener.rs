@@ -7,20 +7,19 @@ use pokengine::{
         text::{MessagePage, MessageState},
         App,
     },
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
-    PokedexClientData,
+    texture::TrainerGroupTextures,
 };
 
 use battle::data::BattleType;
 
 use crate::{
-    context::BattleGuiData,
     players::{GuiLocalPlayer, GuiRemotePlayers},
     ui::BattleGui,
+    InitBattleGuiTextures,
 };
 
 pub struct BattleOpener {
-    dexengine: Arc<PokedexClientData>,
+    trainers: Arc<TrainerGroupTextures>,
     type_: BattleOpenerType,
     grass: Texture,
     player: Texture,
@@ -56,9 +55,9 @@ impl BattleOpener {
     const PLAYER_DESPAWN: f32 = -104.0;
     const FINAL_TRAINER_OFFSET: f32 = 126.0;
 
-    pub fn new(dexengine: Arc<PokedexClientData>, ctx: &BattleGuiData) -> Self {
+    pub fn new(trainers: Arc<TrainerGroupTextures>, ctx: &InitBattleGuiTextures) -> Self {
         Self {
-            dexengine: dexengine,
+            trainers,
             type_: BattleOpenerType::None,
             grass: ctx.grass.clone(),
             wait: Self::WAIT,
@@ -85,12 +84,8 @@ impl BattleOpener {
             BattleType::Trainer | BattleType::GymLeader => {
                 if let Some((.., remote)) = remotes.players.get_index(remotes.current) {
                     if let Some(trainer) = remote.trainer.as_ref() {
-                        self.type_ = BattleOpenerType::Trainer(
-                            self.dexengine
-                                .trainer_group_textures
-                                .get(&trainer.texture)
-                                .cloned(),
-                        );
+                        self.type_ =
+                            BattleOpenerType::Trainer(self.trainers.get(&trainer.texture).cloned());
                     }
                     elements
                         .trainer

@@ -1,13 +1,15 @@
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
+use pokedex::{moves::MoveId, trainer::InitTrainer};
+
 use crate::{
     character::{
         npc::{
             group::{NpcGroup, TrainerGroup, TrainerGroupId},
             trainer::TrainerDisable,
         },
-        CharacterGroupId,
+        CharacterGroupId, Capability,
     },
     positions::{Coordinate, Direction, Location, Spot},
     state::map::MapState,
@@ -19,16 +21,18 @@ use super::{chunk::Connection, warp::WarpDestination, wild::WildChances, Movemen
 
 pub mod tile;
 
-pub type Maps = HashMap<Location, WorldMap>;
+pub type WorldMaps = HashMap<Location, WorldMap>;
+pub type WorldFieldMoveData = HashMap<MoveId, WorldMoveType>;
 // pub type ObjectData = HashMap<ObjectType, Removable>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WorldMapData {
-    pub maps: Maps,
+    pub maps: WorldMaps,
     // pub objects: ObjectData,
     pub palettes: PaletteDataMap,
     pub npc: WorldNpcData,
     pub wild: WildChances,
+    pub moves: WorldFieldMoveData,
     pub spawn: Spot,
 }
 
@@ -38,7 +42,13 @@ pub struct WorldNpcData {
     pub trainers: HashMap<TrainerGroupId, TrainerGroup>,
 }
 
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum WorldMoveType {
+    Capability(Capability),
+}
+
 impl WorldMapData {
+
     pub fn connection_movement(
         &self,
         direction: Direction,
@@ -67,9 +77,9 @@ impl WorldMapData {
         winner: bool,
     ) {
         state.player.character.locked.decrement();
-        let entry = state.player.battle.battling.take();
         if winner {
-            if let Some(entry) = entry {
+            let entries = std::mem::take(&mut state.player.battle.battling);
+            for entry in entries {
                 if let Some(trainer) = entry.trainer {
                     state.player.character.end_interact();
                     if let Some(character) = state
@@ -104,11 +114,15 @@ impl WorldMapData {
                 }
             }
         } else {
-            let Spot { location, position } = state.places.heal.unwrap_or(self.spawn);
-            state.location = location;
-            state.player.character.position = position;
-            trainer.party.iter_mut().for_each(|o| o.heal(None, None));
+            self.whiteout(state, trainer);
         }
+    }
+
+    pub fn whiteout(&self, state: &mut MapState, trainer: &mut InitTrainer) {
+        let Spot { location, position } = state.places.heal.unwrap_or(self.spawn);
+        state.location = location;
+        state.player.character.position = position;
+        trainer.party.iter_mut().for_each(|o| o.heal(None, None));
     }
 
     pub fn warp(&self, state: &mut MapState, destination: WarpDestination) -> bool {

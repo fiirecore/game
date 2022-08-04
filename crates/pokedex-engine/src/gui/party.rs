@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::pokedex::pokemon::{owned::OwnedPokemon, PokemonTexture};
+use crate::{pokedex::pokemon::{owned::OwnedPokemon, PokemonTexture}, texture::PokemonTextures};
 
 use engine::{
     notan::egui::{self, Pos2, Rect},
@@ -8,13 +8,11 @@ use engine::{
     App,
 };
 
-use crate::PokedexClientData;
-
 mod select;
 
 pub struct PartyGui {
     alive: bool,
-    data: Arc<PokedexClientData>,
+    textures: Arc<PokemonTextures>,
     select: select::PartySelectMenu,
     swap: Option<usize>,
     accumulator: f32,
@@ -25,10 +23,10 @@ pub enum PartyAction {
 }
 
 impl PartyGui {
-    pub fn new(data: Arc<PokedexClientData>) -> Self {
+    pub fn new(textures: Arc<PokemonTextures>) -> Self {
         Self {
             alive: Default::default(),
-            data,
+            textures,
             select: Default::default(),
             accumulator: Default::default(),
             swap: Default::default(),
@@ -68,8 +66,7 @@ impl PartyGui {
                         .show(ui, |ui| {
                             for (num, pokemon) in party.iter().enumerate() {
                                 let (id, size) = self
-                                    .data
-                                    .pokemon_textures
+                                    .textures
                                     .egui_id(&pokemon.pokemon.id, PokemonTexture::Icon)
                                     .unwrap_or((egui::TextureId::default(), (2.0, 2.0)));
                                 let (a, b) = match self.accumulator > 1.0 {

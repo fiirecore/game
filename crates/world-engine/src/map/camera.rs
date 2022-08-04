@@ -3,10 +3,7 @@ use std::{
     ops::{Range, RangeInclusive},
 };
 
-use crate::engine::{
-    graphics::Draw,
-    math::{IVec2, Vec2},
-};
+use crate::engine::math::{IVec2, Vec2};
 
 use crate::worldlib::{character::CharacterState, positions::CoordinateInt, TILE_SIZE};
 
@@ -38,10 +35,10 @@ const fn half_height_tile(h: CoordinateInt) -> CoordinateInt {
 
 impl CharacterCamera {
     #[deprecated(note = "maybe move to characterstate")]
-    pub fn new(draw: &Draw, character: &CharacterState) -> Self {
+    pub fn new(size: (f32, f32), character: &CharacterState) -> Self {
         let coords = character.position.coords;
 
-        let (hw, hh) = (half_width(draw.width()), half_height(draw.height()));
+        let (hw, hh) = (half_width(size.0), half_height(size.1));
 
         Self {
             x: coords.x - half_width_tile(hw)..=coords.x + half_width_tile(hw),

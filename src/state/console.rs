@@ -1,11 +1,8 @@
-use std::ops::Deref;
-
 use worldcli::worldlib::character::CharacterState;
 
 use crate::{
     command::CommandProcessor,
     engine::{egui, App},
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
 };
 
 pub struct Console {

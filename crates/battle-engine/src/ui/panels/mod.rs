@@ -12,8 +12,7 @@ use pokengine::{
         item::{Item, ItemId},
         moves::Move,
         pokemon::Pokemon,
-    },
-    PokedexClientData,
+    }, texture::{PokemonTextures, ItemTextures},
 };
 
 pub mod move_info;
@@ -60,13 +59,13 @@ pub enum BattleAction<ID> {
 }
 
 impl BattlePanel {
-    pub fn new(data: Arc<PokedexClientData>) -> Self {
+    pub fn new(pokemon: Arc<PokemonTextures>, items: Arc<ItemTextures>) -> Self {
         Self {
             state: BattleOptions::NotAlive,
             moves: MovePanel::default(),
             targets: TargetPanel::default(),
-            party: PartyGui::new(data.clone()),
-            bag: BagGui::new(data),
+            party: PartyGui::new(pokemon),
+            bag: BagGui::new(items),
         }
     }
 

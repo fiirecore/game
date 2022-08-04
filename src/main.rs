@@ -1,25 +1,22 @@
 extern crate firecore_battle_engine as battlecli;
-extern crate firecore_event as event;
 extern crate firecore_world_engine as worldcli;
 
 pub(crate) use battlecli::battle::pokedex;
 pub(crate) use battlecli::pokengine;
 pub(crate) use battlecli::pokengine::engine;
 
-use state::StateManager;
-
 mod battle_wrapper;
 mod world_wrapper;
 
 mod command;
 mod config;
-mod load;
+// mod load;
 mod random;
 mod saves;
 mod state;
 mod touchscreen;
 
-const TITLE: &str = "Pokemon PC Edition";
+const TITLE: &str = "Firecore Game";
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -39,7 +36,7 @@ fn main() -> Result<(), String> {
         .add_config(notan::egui::EguiConfig)
         .add_config(notan::draw::DrawConfig)
         .add_config(notan::log::LogConfig::debug())
-        .add_loader(load::asset_loader())
+        // .add_loader(asset_loader())
         .update(update)
         .draw(draw)
         .add_config(WindowConfig {
@@ -55,25 +52,23 @@ fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn run(assets: &mut Assets, gfx: &mut Graphics, plugins: &mut Plugins) -> StateManager {
-    try_run(assets, gfx, plugins).unwrap()
-}
+// fn asset_loader() -> AssetLoader {
+//     fn parse(_: &str, data: Vec<u8>) -> Result<Vec<u8>, String> {
+//         Ok(data)
+//     }
+//     AssetLoader::new().use_parser(parse).extension("bin")
+// }
 
-fn try_run(
-    assets: &mut Assets,
-    gfx: &mut Graphics,
-    plugins: &mut Plugins,
-) -> Result<StateManager, String> {
+fn run(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins) -> state::Game {
     engine::setup(plugins);
-    let load = load::LoadData::load(assets)?;
-    StateManager::try_new(gfx, load)
+    state::Game::new(app, plugins, gfx)
 }
 
-fn update(app: &mut App, plugins: &mut Plugins, state: &mut StateManager) {
+fn update(app: &mut App, plugins: &mut Plugins, state: &mut state::Game) {
     state.update(app, plugins)
 }
 
-fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut StateManager) {
+fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut state::Game) {
     state.draw(app, plugins, gfx);
     app.window().request_frame();
 }

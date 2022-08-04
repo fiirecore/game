@@ -2,11 +2,9 @@ mod select;
 
 use std::sync::Arc;
 
-use crate::pokedex::item::{bag::InitBag, ItemId};
+use crate::{pokedex::item::{bag::InitBag, ItemId}, texture::ItemTextures};
 
 use engine::egui;
-
-use crate::data::PokedexClientData;
 
 // const WORLD_OPTIONS: &[&'static str] = &[
 //     "Use",
@@ -16,7 +14,7 @@ use crate::data::PokedexClientData;
 
 pub struct BagGui {
     alive: bool,
-    data: Arc<PokedexClientData>,
+    textures: Arc<ItemTextures>,
     select: select::BagSelect,
 }
 
@@ -27,10 +25,10 @@ pub enum BagAction {
 impl BagGui {
     pub const SIZE: usize = 8;
 
-    pub fn new(data: Arc<PokedexClientData>) -> Self {
+    pub fn new(textures: Arc<ItemTextures>) -> Self {
         Self {
             alive: Default::default(),
-            data,
+            textures,
             select: Default::default(),
         }
     }
@@ -41,8 +39,7 @@ impl BagGui {
                 egui::Grid::new("Items").show(ui, |ui| {
                     for stack in bag.iter().filter(|stack| stack.count != 0) {
                         let (id, size) = self
-                            .data
-                            .item_textures
+                            .textures
                             .egui_id(&stack.item.id)
                             .copied()
                             .unwrap_or((Default::default(), (2.0, 2.0)));

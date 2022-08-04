@@ -4,7 +4,7 @@ use pokengine::engine::{
     notan::draw::{Draw, DrawImages, DrawTransform},
 };
 
-use crate::context::BattleGuiData;
+use crate::InitBattleGuiTextures;
 
 #[derive(Debug)]
 enum TransitionState {
@@ -36,11 +36,11 @@ impl PokemonCount {
     const RIGHT_BALL_POSITION: f32 = 76.0;
     const OPACITY_LEN: f32 = 128.0;
 
-    pub fn new(btl: &BattleGuiData) -> Self {
+    pub fn new(btl: &InitBattleGuiTextures) -> Self {
         Self {
             state: None,
             bar: btl.bar.clone(),
-            ball: btl.ball.clone(),
+            ball: btl.pokeball.clone(),
             player: 0,
             opponent: 0,
             counter: 0,

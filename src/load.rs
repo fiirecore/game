@@ -11,19 +11,9 @@ use crate::{
 
 use battlecli::battle::default_engine::{default_scripting::MoveScripts, EngineMoves};
 use worldcli::worldlib::{
-    map::data::{Maps, WorldMapData},
-    script::default::DefaultWorldScriptEngine,
+    map::data::WorldMapData, script::default::DefaultWorldScriptEngine,
     serialized::SerializedTextures,
 };
-
-pub enum LoadData {
-    Load(AssetList, HashMap<&'static str, String>),
-    Data {
-        pokedex: Arc<Dex<Pokemon>>,
-        movedex: Arc<Dex<Move>>,
-        itemdex: Arc<Dex<Item>>,
-    },
-}
 
 pub struct Data {
     pub battle: (EngineMoves, MoveScripts),
@@ -339,10 +329,33 @@ pub fn load(assets: &mut Assets, path: &str) -> Result<String, String> {
     }
 }
 
-pub fn asset_loader() -> AssetLoader {
-    AssetLoader::new().use_parser(parse).extension("bin")
+
+enum LoadableState<S> {
+    None,
+    Assets(AssetList),
+    State(S),
 }
 
-fn parse(_: &str, data: Vec<u8>) -> Result<Vec<u8>, String> {
-    Ok(data)
+impl<S> LoadableState<S> {
+    pub fn as_ref(&self) -> Option<&S> {
+        match self {
+            LoadableState::State(s) => Some(s),
+            _ => None,
+        }
+    }
+
+    pub fn as_mut(&mut self) -> Option<&mut S> {
+        match self {
+            LoadableState::State(s) => Some(s),
+            _ => None,
+        }
+    }
+
+    pub fn loaded(&self) -> bool {
+        match self {
+            LoadableState::None => false,
+            LoadableState::Assets(assets) => assets.is_loaded(),
+            LoadableState::State(..) => true,
+        }
+    }
 }

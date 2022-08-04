@@ -54,18 +54,6 @@ impl Door {
 impl WarpTransition {
     // const RECT_WIDTH: f32 = WIDTH / 2.0;
 
-    pub fn new() -> Self {
-        Self {
-            alive: false,
-            door: None,
-            color: Color::BLACK,
-            faded: false,
-            warped: false,
-            warp: None,
-            freeze: false,
-        }
-    }
-
     pub fn update(
         &mut self,
         world: &WorldMapData,
@@ -301,5 +289,19 @@ impl Entity for WarpTransition {
 
     fn alive(&self) -> bool {
         self.alive
+    }
+}
+
+impl Default for WarpTransition {
+    fn default() -> Self {
+        Self {
+            alive: false,
+            door: None,
+            color: Color::BLACK,
+            faded: false,
+            warped: false,
+            warp: None,
+            freeze: false,
+        }
     }
 }

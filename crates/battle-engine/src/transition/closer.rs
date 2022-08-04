@@ -6,8 +6,7 @@ use pokengine::{
         text::{MessagePage, MessageState},
         App,
     },
-    pokedex::Money,
-    PokedexClientData,
+    pokedex::Money, texture::TrainerGroupTextures,
 };
 
 use crate::{
@@ -16,7 +15,7 @@ use crate::{
 };
 
 pub struct BattleCloser {
-    dexengine: Arc<PokedexClientData>,
+    trainers: Arc<TrainerGroupTextures>,
     alive: bool,
     trainer: Option<Texture>,
     offset: f32,
@@ -26,9 +25,9 @@ pub struct BattleCloser {
 impl BattleCloser {
     const XPOS: f32 = 172.0; // 144 = pokemon
 
-    pub fn new(dexengine: Arc<PokedexClientData>) -> Self {
+    pub fn new(trainers: Arc<TrainerGroupTextures>) -> Self {
         Self {
-            dexengine,
+            trainers,
             alive: Default::default(),
             trainer: Default::default(),
             offset: Default::default(),
@@ -66,8 +65,7 @@ impl BattleCloser {
                     Some((.., opponent)) => {
                         if let Some(trainer) = opponent.trainer.as_ref() {
                             self.trainer = self
-                                .dexengine
-                                .trainer_group_textures
+                                .trainers
                                 .get(&trainer.texture)
                                 .cloned();
 

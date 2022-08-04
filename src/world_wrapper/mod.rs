@@ -1,15 +1,6 @@
-use rand::{prelude::SmallRng, SeedableRng};
-use std::{ops::Deref, sync::Arc};
+use std::sync::Arc;
 
-use crate::{
-    command::CommandProcessor,
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
-    random::GameWorldRandoms,
-    saves::GameWorldState,
-    state::StateMessage,
-};
-
-use event::EventWriter;
+use crate::{command::CommandProcessor, random::GameWorldRandoms, saves::GameWorldState};
 
 use crate::engine::{
     controls::{pressed, Control},
@@ -19,16 +10,13 @@ use crate::engine::{
     App, Plugins,
 };
 
-use crate::pokengine::PokedexClientData;
-
+use firecore_battle_engine::pokengine::texture::{PokemonTextures, ItemTextures};
 use worldcli::{
-    map::manager::WorldManager,
-    pokedex::trainer::InitTrainer,
+    map::{data::ClientWorldData, manager::WorldManager},
+    pokedex::{moves::owned::OwnedMove, trainer::InitTrainer},
     worldlib::{
-        character::CharacterState,
-        map::data::{Maps, WorldMapData},
-        script::default::DefaultWorldScriptEngine,
-        serialized::SerializedTextures,
+        character::CharacterState, map::manager::WorldMapManager,
+        script::default::DefaultWorldScriptEngine, serialized::SerializedTextures,
         state::map::MapState,
     },
 };
@@ -43,29 +31,44 @@ pub struct WorldWrapper {
     pub manager: WorldManager<DefaultWorldScriptEngine>,
     menu: StartMenu,
     commands: CommandProcessor,
-    #[deprecated]
-    random: SmallRng,
+    randoms: GameWorldRandoms,
+}
+
+pub enum WorldRequest {
+    Save,
+    Exit,
 }
 
 impl WorldWrapper {
     pub(crate) fn new(
-        gfx: &mut Graphics,
-        dex: Arc<PokedexClientData>,
-        sender: EventWriter<StateMessage>,
+        world: WorldMapManager<DefaultWorldScriptEngine>,
+        data: ClientWorldData,
+        pokemon: Arc<PokemonTextures>,
+        items: Arc<ItemTextures>,
         commands: CommandProcessor,
-        world: WorldMapData,
-        scripting: DefaultWorldScriptEngine,
-        textures: SerializedTextures,
-        debug_font: Font,
-    ) -> Result<Self, String> {
-        Ok(Self {
+    ) -> Self {
+        Self {
             alive: false,
-            manager: WorldManager::new(gfx, world, scripting, textures, debug_font)?,
-            menu: StartMenu::new(dex, sender),
+            manager: WorldManager {
+                world,
+                data,
+                warper: Default::default(),
+                input: Default::default(),
+            },
+            menu: StartMenu::new(pokemon, items),
             commands,
-            random: SmallRng::seed_from_u64(0),
+            randoms: Default::default(),
             // events,
-        })
+        }
+    }
+
+    pub fn seed(&mut self, seed: u64) {
+        self.randoms.seed(seed);
+    }
+
+    pub fn start(&mut self, state: &mut GameWorldState, trainer: &mut InitTrainer) {
+        self.manager
+            .start(&mut state.map, &mut self.randoms, trainer)
     }
 
     pub fn update(
@@ -73,11 +76,7 @@ impl WorldWrapper {
         app: &mut App,
         plugins: &mut Plugins,
         state: &mut GameWorldState,
-        randoms: &mut GameWorldRandoms,
         trainer: &mut InitTrainer,
-        pokedex: &Dex<Pokemon>,
-        movedex: &Dex<Move>,
-        itemdex: &Dex<Item>,
         delta: f32,
     ) {
         if pressed(app, plugins, Control::Start) && !state.map.player.character.input_lock.active()
@@ -86,10 +85,10 @@ impl WorldWrapper {
         }
 
         #[cfg(debug_assertions)]
-        self.test_battle(app, state, trainer, pokedex, movedex, itemdex);
+        self.test_battle(app, state, trainer);
 
         self.manager
-            .update(app, plugins, state, randoms, trainer, itemdex, delta);
+            .update(app, plugins, state, &mut self.randoms, trainer, delta);
 
         while let Some(result) = self.commands.commands.borrow_mut().pop() {
             match Self::process(result) {
@@ -97,8 +96,12 @@ impl WorldWrapper {
                     // WorldCommands::Battle(_) => todo!(),
                     // WorldCommands::Script(_) => todo!(),
                     WorldCommands::Warp(location) => {
-                        self.manager
-                            .try_teleport(&mut state.map, randoms, trainer, location);
+                        self.manager.try_teleport(
+                            &mut state.map,
+                            &mut self.randoms,
+                            trainer,
+                            location,
+                        );
                     }
                     WorldCommands::Wild(toggle) => {
                         if state
@@ -157,10 +160,14 @@ impl WorldWrapper {
                         state.scripts.stop();
                     }
                     WorldCommands::GivePokemon(pokemon) => {
-                        if let Some(pokemon) =
-                            pokemon.init(&mut self.random, pokedex, movedex, itemdex)
-                        {
-                            trainer.party.push(pokemon);
+                        match pokemon.init(
+                            &mut self.randoms.general,
+                            &self.manager.world.pokedex,
+                            &self.manager.world.movedex,
+                            &self.manager.world.itemdex,
+                        ) {
+                            Some(pokemon) => trainer.party.push(pokemon),
+                            None => info!("Could not initialize pokemon!"),
                         }
                         // player.give_pokemon(pokemon);
                     }
@@ -173,7 +180,7 @@ impl WorldWrapper {
                         None => trainer.party.iter_mut().for_each(|p| p.heal(None, None)),
                     },
                     WorldCommands::GiveItem(stack) => {
-                        match stack.init(itemdex) {
+                        match stack.init(&self.manager.world.itemdex) {
                             Some(stack) => trainer.bag.insert(stack),
                             None => info!("Could not initialize item!"),
                         }
@@ -217,11 +224,9 @@ impl WorldWrapper {
                     },
                     WorldCommands::ClearBattle => state.map.player.battle.battling = None,
                     WorldCommands::GiveMove(id, index) => {
-                        if let Some(m) = movedex.try_get(&id) {
+                        if let Some(m) = self.manager.world.movedex.try_get(&id) {
                             if let Some(pokemon) = trainer.party.get_mut(index) {
-                                pokemon.moves.push(
-                                    worldcli::pokedex::moves::owned::OwnedMove::from(m.clone()),
-                                );
+                                pokemon.moves.push(OwnedMove::from(m.clone()));
                             } else {
                                 info!("No pokemon at index {}", index);
                             }
@@ -248,9 +253,9 @@ impl WorldWrapper {
         egui: &crate::engine::egui::Context,
         state: &mut MapState,
         trainer: &mut InitTrainer,
-    ) {
-        self.menu.ui(app, plugins, egui, trainer);
+    ) -> Option<WorldRequest> {
         self.manager.ui(app, plugins, egui, state);
+        self.menu.ui(app, plugins, egui, trainer)
     }
 
     #[cfg(debug_assertions)]
@@ -259,9 +264,6 @@ impl WorldWrapper {
         app: &mut App,
         state: &mut GameWorldState,
         trainer: &mut InitTrainer,
-        pokedex: &Dex<Pokemon>,
-        movedex: &Dex<Move>,
-        itemdex: &Dex<Item>,
     ) {
         {
             use crate::engine::notan::prelude::KeyCode;
@@ -272,30 +274,44 @@ impl WorldWrapper {
                 let mut rng = rand::thread_rng();
                 if trainer.party.is_empty() {
                     let pokemon1 = SavedPokemon {
-                        pokemon: rng.gen_range(0..pokedex.len() as u16),
+                        pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                         level: 50,
                         ..Default::default()
                     };
                     let pokemon2 = SavedPokemon {
-                        pokemon: rng.gen_range(0..pokedex.len() as u16),
+                        pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                         level: 25,
                         ..Default::default()
                     };
-                    trainer
-                        .party
-                        .push(pokemon1.init(&mut rng, pokedex, movedex, itemdex).unwrap());
-                    trainer
-                        .party
-                        .push(pokemon2.init(&mut rng, pokedex, movedex, itemdex).unwrap());
+                    trainer.party.push(
+                        pokemon1
+                            .init(
+                                &mut rng,
+                                &self.manager.world.pokedex,
+                                &self.manager.world.movedex,
+                                &self.manager.world.itemdex,
+                            )
+                            .unwrap(),
+                    );
+                    trainer.party.push(
+                        pokemon2
+                            .init(
+                                &mut rng,
+                                &self.manager.world.pokedex,
+                                &self.manager.world.movedex,
+                                &self.manager.world.itemdex,
+                            )
+                            .unwrap(),
+                    );
                 }
 
                 let pokemon3 = SavedPokemon {
-                    pokemon: rng.gen_range(0..pokedex.len() as u16),
+                    pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                     level: 25,
                     ..Default::default()
                 };
                 let pokemon4 = SavedPokemon {
-                    pokemon: rng.gen_range(0..pokedex.len() as u16),
+                    pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                     level: 50,
                     ..Default::default()
                 };

@@ -2,7 +2,7 @@ use crate::engine::graphics::{
     Color, Draw, DrawImages, DrawShapes, DrawTransform, Graphics, Texture,
 };
 
-use crate::battle_wrapper::manager::transition::BattleTransition;
+use crate::battle_wrapper::transition::BattleTransition;
 
 pub struct TrainerBattleTransition {
     rect_width: f32,
@@ -11,8 +11,9 @@ pub struct TrainerBattleTransition {
 }
 
 impl BattleTransition for TrainerBattleTransition {
-    fn update(&mut self, delta: f32) {
+    fn update(&mut self, delta: f32) -> bool {
         self.rect_width += 240.0 * delta;
+        self.rect_width >= self.max_width + 16.0
     }
 
     fn draw(&self, draw: &mut Draw) {
@@ -25,10 +26,6 @@ impl BattleTransition for TrainerBattleTransition {
 
     fn reset(&mut self) {
         self.rect_width = Self::DEF_RECT_WIDTH;
-    }
-
-    fn finished(&self) -> bool {
-        self.rect_width >= self.max_width + 16.0
     }
 }
 
@@ -44,7 +41,7 @@ impl TrainerBattleTransition {
             texture: gfx
                 .create_texture()
                 .from_image(include_bytes!(
-                    "../../../../../assets/battle/encounter_ball.png"
+                    "../../../../assets/battle/encounter_ball.png"
                 ))
                 .build()?,
         })

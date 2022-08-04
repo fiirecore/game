@@ -1,8 +1,6 @@
 use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
 
-use pokedex::pokemon::owned::SavedPokemon;
-
 use crate::{map::battle::BattleEntry, positions::Location};
 
 use super::{
@@ -33,7 +31,7 @@ pub type Battled = HashSet<NpcId>;
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct GlobalBattleState {
     pub battled: HashMap<Location, Battled>,
-    pub battling: Option<BattleEntry<SavedPokemon>>,
+    pub battling: Option<BattleEntry>,
 }
 
 impl PlayerCharacter {
