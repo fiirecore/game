@@ -4,8 +4,6 @@ use engine::{
     math::Vec2,
 };
 
-use crate::data::PokedexClientData;
-
 use crate::pokedex::pokemon::Health;
 
 #[derive(Default, Clone)]
@@ -37,23 +35,23 @@ impl HealthBar {
         lower: Color::new(248.0 / 255.0, 88.0 / 255.0, 56.0 / 255.0, 1.0),
     };
 
-    pub fn new(ctx: &PokedexClientData) -> Self {
-        Self {
-            background: Some(Self::texture(ctx).clone()),
-            bar: ProgressBar::new(Self::WIDTH),
-        }
-    }
+    // pub fn new(ctx: &PokedexClientData) -> Self {
+    //     Self {
+    //         background: Some(Self::texture(ctx).clone()),
+    //         bar: ProgressBar::new(Self::WIDTH),
+    //     }
+    // }
 
-    pub fn with_size(ctx: &PokedexClientData, width: f32) -> Self {
-        Self {
-            background: Some(Self::texture(ctx).clone()),
-            bar: ProgressBar::new(width),
-        }
-    }
+    // pub fn with_size(ctx: &PokedexClientData, width: f32) -> Self {
+    //     Self {
+    //         background: Some(Self::texture(ctx).clone()),
+    //         bar: ProgressBar::new(width),
+    //     }
+    // }
 
-    pub fn texture(ctx: &PokedexClientData) -> &Texture {
-        &ctx.health_bar
-    }
+    // pub fn texture(ctx: &PokedexClientData) -> &Texture {
+    //     &ctx.health_bar
+    // }
 
     pub fn width(percent_hp: f32) -> f32 {
         percent_hp as f32 * Self::WIDTH

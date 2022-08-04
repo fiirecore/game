@@ -1,11 +1,8 @@
-use std::ops::Deref;
-
 use worldcli::worldlib::character::CharacterState;
 
 use crate::{
     command::CommandProcessor,
-    engine::{egui, App},
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
+    engine::{egui, App, controls::keyboard::Key},
 };
 
 pub struct Console {
@@ -48,11 +45,7 @@ impl Console {
         self.error.clear();
     }
 
-    pub fn ui<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui(
         &mut self,
         app: &mut App,
         egui: &egui::Context,
@@ -92,7 +85,7 @@ impl Console {
         }
         if app
             .keyboard
-            .was_pressed(worldcli::engine::notan::prelude::KeyCode::Slash)
+            .was_pressed(Key::Slash)
             || despawn
         {
             self.alive = !self.alive;

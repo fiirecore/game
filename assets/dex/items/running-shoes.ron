@@ -1,0 +1,9 @@
+(
+    id: "running-shoes",
+    name: "Running Shoes",
+    description: "Lets you run",
+    category: KeyItems,
+    price: 1000,
+    stackable: Singular,
+    consume: false,
+)

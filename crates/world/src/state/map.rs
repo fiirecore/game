@@ -1,17 +1,16 @@
-use firecore_audio::{SoundId, SoundVariant};
-use firecore_pokedex::item::SavedItemStack;
-use firecore_text::MessageStates;
-use hashbrown::{HashMap, HashSet};
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
+use audio::{SoundId, SoundVariant};
+use text::MessageStates;
+
 use crate::{
-    character::{
-        npc::{Npc, NpcId},
-        player::PlayerCharacter,
-        CharacterState,
-    },
+    character::{npc::NpcId, player::PlayerCharacter, CharacterState},
     map::{
-        data::WorldMapData, movement::Elevation, object::ObjectId, warp::WarpDestination, MusicId,
+        data::{WorldMapData},
+        movement::Elevation,
+        warp::WarpDestination,
+        MusicId,
     },
     message::{MessageColor, MessageTheme},
     positions::{Coordinate, Location, Spot},
@@ -54,12 +53,7 @@ pub enum MapEvent {
     PlaySound(SoundId, SoundVariant),
     BeginWarpTransition(Coordinate),
     PlayerJump,
-
-    GiveItem(SavedItemStack),
-
-    /// Should freeze player and start battle
     // Battle(BattleEntry),
-    OnTile,
     // Command(PlayerActions),
 }
 

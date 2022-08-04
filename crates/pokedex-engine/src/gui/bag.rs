@@ -1,12 +1,10 @@
 mod select;
 
-use core::ops::Deref;
+use std::sync::Arc;
 
-use crate::pokedex::item::{bag::Bag, Item, ItemId};
+use crate::{pokedex::item::{bag::InitBag, ItemId}, texture::ItemTextures};
 
 use engine::egui;
-
-use crate::data::PokedexClientData;
 
 // const WORLD_OPTIONS: &[&'static str] = &[
 //     "Use",
@@ -14,9 +12,9 @@ use crate::data::PokedexClientData;
 //     "Toss",
 // ];
 
-pub struct BagGui<D: Deref<Target = PokedexClientData>> {
+pub struct BagGui {
     alive: bool,
-    data: D,
+    textures: Arc<ItemTextures>,
     select: select::BagSelect,
 }
 
@@ -24,29 +22,24 @@ pub enum BagAction {
     Use(ItemId),
 }
 
-impl<D: Deref<Target = PokedexClientData>> BagGui<D> {
+impl BagGui {
     pub const SIZE: usize = 8;
 
-    pub fn new(data: D) -> Self {
+    pub fn new(textures: Arc<ItemTextures>) -> Self {
         Self {
             alive: Default::default(),
-            data,
+            textures,
             select: Default::default(),
         }
     }
 
-    pub fn ui<I: Deref<Target = Item>>(
-        &mut self,
-        egui: &egui::Context,
-        bag: &mut Bag<I>,
-    ) -> Option<BagAction> {
+    pub fn ui(&mut self, egui: &egui::Context, bag: &mut InitBag) -> Option<BagAction> {
         if self.alive {
             egui::Window::new("Bag").show(egui, |ui| {
                 egui::Grid::new("Items").show(ui, |ui| {
                     for stack in bag.iter().filter(|stack| stack.count != 0) {
                         let (id, size) = self
-                            .data
-                            .item_textures
+                            .textures
                             .egui_id(&stack.item.id)
                             .copied()
                             .unwrap_or((Default::default(), (2.0, 2.0)));

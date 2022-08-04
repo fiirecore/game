@@ -1,6 +1,5 @@
 mod manager;
 pub use manager::*;
-use worldcli::engine::graphics::Draw;
 
 pub mod game;
 pub mod loading;
@@ -17,12 +16,14 @@ pub(crate) enum StateMessage {
     Exit,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum MainStates {
+    // Boot,
     Loading,
     Title,
     Menu,
     Game,
+    Error(&'static str),
 }
 
 impl Default for MainStates {
@@ -31,8 +32,21 @@ impl Default for MainStates {
     }
 }
 
-pub trait MainState {
-    fn draw(&self, draw: &mut Draw);
+#[derive(Debug, Default)]
+struct StateManager<S> {
+    current: S,
+    next: Option<S>,
+}
 
-    fn end(&mut self, ctx: &mut Draw);
+impl<S> StateManager<S> {
+    pub fn queue(&mut self, state: S) {
+        self.next = Some(state);
+    }
+
+    /// Next is taken and given back to state manager in this function
+    pub fn update(&mut self, next: S) {
+        self.current = next;
+        self.next = None;
+    }
+
 }

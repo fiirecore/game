@@ -1,26 +1,40 @@
-use std::ops::Deref;
-
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
-use crate::{positions::{Location, Spot, Direction, Coordinate}, character::{CharacterGroupId, npc::{group::{TrainerGroupId, TrainerGroup, NpcGroup}, trainer::TrainerDisable}}, state::map::MapState};
+use pokedex::{item::ItemId, moves::MoveId, trainer::InitTrainer};
+
+use crate::{
+    character::{
+        npc::{
+            group::{NpcGroup, TrainerGroup, TrainerGroupId},
+            trainer::TrainerDisable,
+        },
+        Capability, CharacterGroupId, CharacterState,
+    },
+    positions::{Coordinate, Direction, Location, Spot},
+    state::map::MapState,
+};
 
 use self::tile::PaletteDataMap;
 
-use super::{WorldMap, wild::WildChances, chunk::Connection, MovementId, warp::WarpDestination, object::ObjectType};
+use super::{chunk::Connection, warp::WarpDestination, wild::WildChances, MovementId, WorldMap};
 
 pub mod tile;
 
-pub type Maps = HashMap<Location, WorldMap>;
+pub type WorldMaps = HashMap<Location, WorldMap>;
+pub type FieldMoveData = HashMap<MoveId, FieldType>;
+pub type FieldItemData = HashMap<ItemId, FieldType>;
 // pub type ObjectData = HashMap<ObjectType, Removable>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WorldMapData {
-    pub maps: Maps,
+    pub maps: WorldMaps,
     // pub objects: ObjectData,
     pub palettes: PaletteDataMap,
     pub npc: WorldNpcData,
     pub wild: WildChances,
+    pub moves: FieldMoveData,
+    pub items: FieldItemData,
     pub spawn: Spot,
 }
 
@@ -30,7 +44,48 @@ pub struct WorldNpcData {
     pub trainers: HashMap<TrainerGroupId, TrainerGroup>,
 }
 
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum FieldType {
+    Capability(Capability),
+}
+
 impl WorldMapData {
+    pub fn update_capabilities(&self, character: &mut CharacterState, trainer: &mut InitTrainer) {
+        fn set(can: bool, character: &mut CharacterState, t: &FieldType) {
+            match can {
+                true => match t {
+                    FieldType::Capability(capability) => {
+                        character.capabilities.insert(*capability);
+                    }
+                },
+                false => match t {
+                    FieldType::Capability(capability) => {
+                        character.capabilities.remove(capability);
+                    }
+                },
+            }
+        }
+
+        for (id, t) in self.moves.iter() {
+            set(
+                trainer
+                    .party
+                    .iter()
+                    .any(|p| p.moves.iter().any(|m| &m.0.id == id)),
+                character,
+                t,
+            );
+        }
+
+        for (id, t) in self.items.iter() {
+            set(
+                trainer.bag.iter().any(|stack| &stack.item.id == id),
+                character,
+                t,
+            );
+        }
+    }
+
     pub fn connection_movement(
         &self,
         direction: Direction,
@@ -52,20 +107,11 @@ impl WorldMapData {
         })
     }
 
-    pub fn post_battle<
-        P: Deref<Target = firecore_pokedex::pokemon::Pokemon> + Clone,
-        M: Deref<Target = firecore_pokedex::moves::Move> + Clone,
-        I: Deref<Target = firecore_pokedex::item::Item> + Clone,
-    >(
-        &self,
-        state: &mut MapState,
-        trainer: &mut firecore_pokedex::trainer::InitTrainer<P, M, I>,
-        winner: bool,
-    ) {
+    pub fn post_battle(&self, state: &mut MapState, trainer: &mut InitTrainer, winner: bool) {
         state.player.character.locked.decrement();
-        let entry = state.player.battle.battling.take();
+        let entries = std::mem::take(&mut state.player.battle.battling);
         if winner {
-            if let Some(entry) = entry {
+            for entry in entries {
                 if let Some(trainer) = entry.trainer {
                     state.player.character.end_interact();
                     if let Some(character) = state
@@ -100,11 +146,16 @@ impl WorldMapData {
                 }
             }
         } else {
-            let Spot { location, position } = state.places.heal.unwrap_or(self.spawn);
-            state.location = location;
-            state.player.character.position = position;
-            trainer.party.iter_mut().for_each(|o| o.heal(None, None));
+            self.whiteout(state, trainer);
         }
+        self.update_capabilities(&mut state.player.character, trainer);
+    }
+
+    pub fn whiteout(&self, state: &mut MapState, trainer: &mut InitTrainer) {
+        let Spot { location, position } = state.places.heal.unwrap_or(self.spawn);
+        state.location = location;
+        state.player.character.position = position;
+        trainer.party.iter_mut().for_each(|o| o.heal(None, None));
     }
 
     pub fn warp(&self, state: &mut MapState, destination: WarpDestination) -> bool {

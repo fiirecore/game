@@ -177,7 +177,11 @@ impl std::fmt::Display for TrainerError {
             TrainerError::UnknownMacro(line, macro_) => {
                 write!(f, "Found unknown macro \"{}\" at line {}", macro_, line)
             }
-            TrainerError::DefineError(line, error) => write!(f, "Cannot parse define macro at {} with error \"{}\"", line, error),
+            TrainerError::DefineError(line, error) => write!(
+                f,
+                "Cannot parse define macro at {} with error \"{}\"",
+                line, error
+            ),
         }
     }
 }

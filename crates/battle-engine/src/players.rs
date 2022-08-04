@@ -1,37 +1,28 @@
-use std::ops::{Deref, Range};
+use std::ops::Range;
 
-use pokengine::pokedex::{
-    item::{bag::Bag, Item},
-    moves::Move,
-    pokemon::{owned::OwnedPokemon, Pokemon},
-};
+use pokengine::pokedex::{item::bag::InitBag, pokemon::owned::OwnedPokemon};
 
-use battle::{pokemon::remote::UnknownPokemon, prelude::BattleData};
+use battle::{pokemon::remote::InitUnknownPokemon, prelude::BattleData};
 
 use crate::BattleTrainer;
 
 type PlayerParty<ID, P> = battle::party::PlayerParty<ID, usize, P, BattleTrainer>;
 
-pub type GuiRemotePlayer<ID, P> = PlayerParty<ID, Option<UnknownPokemon<P>>>;
+pub type GuiRemotePlayer<ID> = PlayerParty<ID, Option<InitUnknownPokemon>>;
 
-pub struct GuiLocalPlayer<
-    ID,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
-    pub player: PlayerParty<ID, OwnedPokemon<P, M, I>>,
+pub struct GuiLocalPlayer<ID> {
+    pub player: PlayerParty<ID, OwnedPokemon>,
     pub selecting: Option<Range<usize>>,
-    pub bag: Bag<I>,
+    pub bag: InitBag,
     pub data: BattleData,
 }
 
-pub struct GuiRemotePlayers<ID, P> {
+pub struct GuiRemotePlayers<ID> {
     pub current: usize,
-    pub players: indexmap::IndexMap<ID, GuiRemotePlayer<ID, P>>,
+    pub players: indexmap::IndexMap<ID, GuiRemotePlayer<ID>>,
 }
 
-impl<ID, P> Default for GuiRemotePlayers<ID, P> {
+impl<ID> Default for GuiRemotePlayers<ID> {
     fn default() -> Self {
         Self {
             current: Default::default(),

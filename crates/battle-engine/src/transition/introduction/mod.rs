@@ -10,7 +10,7 @@ use battle::data::BattleType;
 use crate::{
     context::BattleGuiData,
     players::{GuiLocalPlayer, GuiRemotePlayers},
-    ui::{text::BattleMessageState, pokemon::PokemonRenderer},
+    ui::{pokemon::PokemonRenderer, text::BattleMessageState},
 };
 
 use super::TransitionState;
@@ -32,14 +32,7 @@ impl Default for Introductions {
     }
 }
 
-pub(crate) trait BattleIntroduction<
-    ID,
-    D: Deref<Target = PokedexClientData>,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
->
-{
+pub(crate) trait BattleIntroduction<ID> {
     fn spawn(
         &mut self,
         ctx: &PokedexClientData,
@@ -125,13 +118,7 @@ impl BattleIntroductionManager {
     //     }
     // }
 
-    pub fn begin<
-        ID,
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn begin<ID>(
         &mut self,
         ctx: &PokedexClientData,
         state: &mut TransitionState,
@@ -150,13 +137,7 @@ impl BattleIntroductionManager {
         current.spawn(ctx, local, opponents, text);
     }
 
-    pub fn update<
-        ID,
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn update<ID>(
         &mut self,
         state: &mut TransitionState,
         app: &mut App,
@@ -174,46 +155,25 @@ impl BattleIntroductionManager {
         }
     }
 
-    pub fn draw<
-        ID,
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn draw<ID>(
         &self,
         draw: &mut Draw,
         pokemon: &mut PokemonRenderer<D>,
         player: Option<&GuiLocalPlayer<ID, P, M, I>>,
         opponent: &GuiRemotePlayers<ID, P>,
     ) {
-        self.get::<ID, D, P, M, I>().draw(draw, pokemon, player, opponent);
+        self.get::<ID, D, P, M, I>()
+            .draw(draw, pokemon, player, opponent);
     }
 
-    fn get<
-        ID,
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        &self,
-    ) -> &dyn BattleIntroduction<ID, D, P, M, I> {
+    fn get<ID>(&self) -> &dyn BattleIntroduction<ID, D, P, M, I> {
         match self.current {
             Introductions::Basic => &self.basic,
             Introductions::Trainer => &self.trainer,
         }
     }
 
-    fn get_mut<
-        ID,
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        &mut self,
-    ) -> &mut dyn BattleIntroduction<ID, D, P, M, I> {
+    fn get_mut<ID>(&mut self) -> &mut dyn BattleIntroduction<ID, D, P, M, I> {
         match self.current {
             Introductions::Basic => &mut self.basic,
             Introductions::Trainer => &mut self.trainer,

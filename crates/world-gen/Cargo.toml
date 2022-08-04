@@ -11,7 +11,7 @@ firecore-world = { path = "../world" }
 firecore-dex-gen = { path = "../dex-gen" }
 
 serde = { version = "1", features = ["derive"] }
-attohttpc = { version = "0.19", features = ["json"] }
+attohttpc = { version = "0.20", features = ["json"] }
 tinystr = "0.6"
 either = { version = "1", features = ["serde"] }
 rayon = "1"

@@ -26,7 +26,6 @@ pub struct TrainerBattleIntroduction {
 }
 
 impl TrainerBattleIntroduction {
-
     pub fn new(ctx: &BattleGuiData) -> Self {
         Self {
             introduction: BasicBattleIntroduction::new(ctx),
@@ -37,14 +36,7 @@ impl TrainerBattleIntroduction {
     }
 }
 
-impl<
-        ID,
-        D: Deref<Target = PokedexClientData>,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > BattleIntroduction<ID, D, P, M, I> for TrainerBattleIntroduction
-{
+impl<ID> BattleIntroduction<ID> for TrainerBattleIntroduction {
     fn spawn(
         &mut self,
         ctx: &PokedexClientData,
@@ -52,7 +44,6 @@ impl<
         opponents: &GuiRemotePlayers<ID, P>,
         text: &mut Option<BattleMessageState>,
     ) {
-
         self.introduction.common_setup(local, text);
     }
 

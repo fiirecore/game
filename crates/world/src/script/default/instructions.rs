@@ -2,7 +2,7 @@ use audio::{SoundId, SoundVariant};
 use pokedex::item::ItemId;
 use serde::{Deserialize, Serialize};
 
-use crate::{map::object::ObjectId, positions::Direction};
+use crate::{map::object::ObjectId, positions::Direction, character::npc::NpcMovement};
 
 use super::{Flag, MessageId, ScriptId, Variable, VariableName};
 
@@ -34,6 +34,13 @@ pub enum WorldInstruction {
     /// Goto script if set
     GotoIfSet(VariableName, ScriptId),
 
+    /// 0x4F
+    /// Applies the movement data at movements to the specified (index) Person event. Also closes any standard message boxes that are still open.
+
+    /// Indices 0xFF and 0x7F refer to the player and the camera, respectively. 
+    /// Running this command from a Script event will crash the game unless that Script event's "Unknown" field (in AdvanceMap) is "$0003" and its "Var number" field refers to a valid script variable.
+    ApplyMovement(ObjectId, Vec<(Direction, bool)>),
+
     /// 0x51
     ///
     WaitMovement(ObjectId),
@@ -42,15 +49,24 @@ pub enum WorldInstruction {
     /// Makes executor NPC face player
     FacePlayer,
 
+    /// 0x69
+    /// Ceases movement for all OWs on-screen.
+    LockAll,
     /// 0x6A
     /// If the script was called by a Person event, then that Person's movement will cease.
     Lock,
+    /// 0x6B
+    /// Resumes normal movement for all OWs on-screen, and closes any standard message boxes that are still open.
+    ReleaseAll,
     /// 0x6C
     /// If the script was called by a Person event, then that Person's movement will resume.
     /// This command also closes any standard message boxes that are still open.
     Release,
+    
     /// Npc walks in a direction
     Walk(Direction),
+
+    Look(Direction),
 
     /// Start trainer battle
     TrainerBattleSingle,

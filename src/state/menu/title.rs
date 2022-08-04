@@ -1,4 +1,4 @@
-use event::EventWriter;
+use serde::{Serialize, Deserialize};
 
 use crate::engine::{
     controls::{pressed, Control},
@@ -6,8 +6,6 @@ use crate::engine::{
     music::{play_music, stop_music, MusicId},
     App, Plugins,
 };
-
-use crate::state::{MainStates, StateMessage};
 
 pub struct TitleState {
     accumulator: f32,
@@ -18,11 +16,21 @@ pub struct TitleState {
     charizard: Texture,
     start: Texture,
     copyright: Texture,
+}
 
-    sender: EventWriter<StateMessage>,
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TitleAsset {
+    title: Vec<u8>,
+    trademark: Vec<u8>,
+    subtitle: Vec<u8>,
+    charizard: Vec<u8>,
+    start: Vec<u8>,
+    copyright: Vec<u8>,
 }
 
 impl TitleState {
+
     const MUSIC: MusicId = unsafe {
         MusicId::from_bytes_unchecked([
             0x74, 0x69, 0x74, 0x6C, 0x65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -33,49 +41,33 @@ impl TitleState {
     const MIDDLE: Color = Color::new(64.0 / 255.0, 176.0 / 255.0, 160.0 / 255.0, 1.0);
     const BOTTOM: Color = Color::new(136.0 / 255.0, 0.0, 0.0, 1.0);
 
-    pub(crate) fn new(
-        gfx: &mut Graphics,
-        sender: EventWriter<StateMessage>,
-    ) -> Result<Self, String> {
+    pub(crate) fn new(gfx: &mut Graphics, asset: TitleAsset) -> Result<Self, String> {
         Ok(Self {
             accumulator: 0.0,
             title: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/title.png"
-                ))
+                .from_image(&asset.title)
                 .build()?,
             trademark: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/trademark.png"
-                ))
+                .from_image(&asset.trademark)
                 .build()?,
             subtitle: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/subtitle.png"
-                ))
+                .from_image(&asset.subtitle)
                 .build()?,
             charizard: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/charizard.png"
-                ))
+                .from_image(&asset.charizard)
                 .build()?,
             start: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/start.png"
-                ))
+                .from_image(&asset.start)
                 .build()?,
             copyright: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../../assets/scenes/title/copyright.png"
-                ))
+                .from_image(&asset.copyright)
                 .build()?,
-            sender,
         })
     }
 }
@@ -90,14 +82,11 @@ impl TitleState {
         stop_music(app, plugins);
     }
 
-    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins) {
+    #[must_use]
+    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins) -> Option<u8> {
         self.accumulator += app.timer.delta_f32();
-        if pressed(app, plugins, Control::A) || app.mouse.left_was_pressed() {
-            let seed = (self.accumulator as usize % u8::MAX as usize) as u8;
-            self.sender.send(StateMessage::Seed(seed));
-            // self.action = Some(MenuStateAction::SeedAndGoto(seed, MenuStates::MainMenu));
-            self.sender.send(StateMessage::Goto(MainStates::Menu));
-        }
+        (pressed(app, plugins, Control::A) || app.mouse.left_was_pressed())
+            .then(|| (self.accumulator as usize % u8::MAX as usize) as u8)
     }
 
     pub fn draw(&mut self, gfx: &mut Graphics) {

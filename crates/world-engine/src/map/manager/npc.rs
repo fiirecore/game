@@ -3,14 +3,17 @@ use worldlib::character::{
     CharacterGroupId, CharacterState,
 };
 
-use crate::engine::utils::HashMap;
+use crate::engine::HashMap;
 
 // pub type NpcTypeMap = HashMap<NpcTypeId, NpcType>;
 
 // #[derive(Debug, Clone)]
 // pub struct NpcTypes(NpcTypeMap);
 
-pub fn group<'a>(group: &'a HashMap<CharacterGroupId, NpcGroup>, id: &CharacterGroupId) -> &'a NpcGroup {
+pub fn group<'a>(
+    group: &'a HashMap<CharacterGroupId, NpcGroup>,
+    id: &CharacterGroupId,
+) -> &'a NpcGroup {
     group.get(id).unwrap_or_else(|| {
         group
             .get(&CharacterState::PLACEHOLDER)

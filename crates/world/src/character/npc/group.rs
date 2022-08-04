@@ -1,6 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{map::MusicId, message::MessageColor, character::{CharacterGroupId, CharacterState}};
+use crate::{
+    character::{CharacterGroupId, CharacterState},
+    map::MusicId,
+    message::MessageColor,
+};
 
 pub type TrainerGroupId = CharacterGroupId;
 

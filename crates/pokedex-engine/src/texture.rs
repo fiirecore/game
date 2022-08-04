@@ -1,5 +1,7 @@
 use enum_map::{enum_map, EnumMap};
 
+use firecore_pokedex_engine_core::PokemonOutput;
+
 use crate::pokedex::{
     item::ItemId,
     pokemon::{PokemonId, PokemonTexture},
@@ -7,25 +9,39 @@ use crate::pokedex::{
 
 use engine::{
     egui::{self, EguiRegisterTexture},
-    graphics::Graphics,
-    graphics::Texture,
-    utils::HashMap,
+    graphics::{Graphics, Texture},
+    HashMap,
 };
 
 pub type TrainerGroupTextures = HashMap<crate::TrainerGroupId, Texture>;
 
+#[derive(Default)]
 pub struct PokemonTextures {
     textures: HashMap<PokemonId, EnumMap<PokemonTexture, Texture>>,
     egui_icons: HashMap<PokemonId, (egui::TextureId, (f32, f32))>,
     egui_front: HashMap<PokemonId, (egui::TextureId, (f32, f32))>,
 }
 
+#[derive(Default)]
 pub struct ItemTextures {
     textures: HashMap<ItemId, Texture>,
     egui: HashMap<ItemId, (egui::TextureId, (f32, f32))>,
 }
 
 impl PokemonTextures {
+    pub fn new(
+        gfx: &mut Graphics,
+        pokemon: PokemonOutput,
+    ) -> Result<(Self, HashMap<PokemonId, Vec<u8>>), String> {
+        let mut this = Self::default();
+        let mut cries = HashMap::default();
+        for (id, (textures, cry)) in pokemon {
+            this.insert(gfx, id, textures)?;
+            cries.insert(id, cry);
+        }
+        Ok((this, cries))
+    }
+
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             textures: HashMap::with_capacity(capacity),
@@ -77,6 +93,14 @@ impl PokemonTextures {
 }
 
 impl ItemTextures {
+    pub fn new(gfx: &mut Graphics, items: HashMap<ItemId, Vec<u8>>) -> Result<Self, String> {
+        let mut this = Self::default();
+        for (id, texture) in items {
+            this.insert(gfx, id, &texture)?;
+        }
+        Ok(this)
+    }
+
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             textures: HashMap::with_capacity(capacity),
@@ -88,7 +112,7 @@ impl ItemTextures {
         &mut self,
         gfx: &mut Graphics,
         id: ItemId,
-        texture: Vec<u8>,
+        texture: &[u8],
     ) -> Result<(), String> {
         let texture = gfx
             .create_texture()

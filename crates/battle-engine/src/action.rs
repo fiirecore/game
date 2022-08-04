@@ -1,5 +1,4 @@
-use core::ops::Deref;
-use std::collections::VecDeque;
+use std::{collections::VecDeque, sync::Arc};
 
 use battle::{
     moves::{ClientMove, ClientMoveAction},
@@ -11,17 +10,17 @@ use pokengine::pokedex::{
 };
 
 #[derive(Debug)]
-pub struct MoveQueue<ID, M: Deref<Target = Move>> {
-    pub actions: VecDeque<Indexed<ID, BattleClientGuiAction<ID, M>>>,
+pub struct MoveQueue<ID> {
+    pub actions: VecDeque<Indexed<ID, BattleClientGuiAction<ID>>>,
     pub current: Option<Indexed<ID, BattleClientGuiCurrent<ID>>>,
 }
 
 #[derive(Debug, Clone)]
-pub enum BattleClientGuiAction<ID, M: Deref<Target = Move>> {
+pub enum BattleClientGuiAction<ID> {
     Action(ClientMove<ID>),
     Catch,
-    SetExp(Level, Experience, Vec<M>),
-    LevelUp(Vec<M>),
+    SetExp(Level, Experience, Vec<Arc<Move>>),
+    LevelUp(Vec<Arc<Move>>),
     Replace(Option<usize>),
 }
 

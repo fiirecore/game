@@ -2,9 +2,9 @@ use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    character::CharacterGroupId,
     map::object::ObjectId,
     positions::{Coordinate, Direction, Position},
-    character::CharacterGroupId,
 };
 
 pub mod group;

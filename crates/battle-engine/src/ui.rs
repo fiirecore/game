@@ -1,19 +1,12 @@
-use core::ops::Deref;
+use std::sync::Arc;
 
 use pokengine::{
-    engine::{
-        egui,
-        graphics::{Draw, DrawImages},
-    },
-    pokedex::{
-        item::Item,
-        moves::Move,
-        pokemon::{Pokemon, PokemonTexture},
-    },
-    PokedexClientData,
+    engine::{egui, graphics::Draw},
+    pokedex::pokemon::PokemonTexture,
+    texture::{ItemTextures, PokemonTextures},
 };
 
-use crate::context::BattleGuiData;
+use crate::InitBattleGuiTextures;
 
 use self::{
     background::BattleBackground,
@@ -63,47 +56,46 @@ pub struct BattleGuiPositionIndex {
     pub size: usize,
 }
 
-pub struct BattleGui<
-    ID,
-    D: Deref<Target = PokedexClientData> + Clone,
-    M: Deref<Target = Move> + Clone,
-> {
+pub struct BattleGui<ID> {
     pub background: BattleBackground,
 
-    pub panel: BattlePanel<D>,
+    pub panel: BattlePanel,
     pub actions: Vec<BattleAction<ID>>,
 
     pub text: BattleText,
 
     pub bounce: PlayerBounce,
-    pub pokemon: PokemonRenderer<D>,
+    pub pokemon: PokemonRenderer,
 
     pub trainer: PokemonCount,
-    pub level_up: LevelUpMovePanel<M>,
+    pub level_up: LevelUpMovePanel,
 }
 
-impl<ID, D: Deref<Target = PokedexClientData> + Clone, M: Deref<Target = Move> + Clone>
-    BattleGui<ID, D, M>
-{
-    pub fn new(data: D, btl: &BattleGuiData) -> Self {
+impl<ID> BattleGui<ID> {
+    pub fn new(
+        pokemon: Arc<PokemonTextures>,
+        items: Arc<ItemTextures>,
+        btl: &InitBattleGuiTextures,
+    ) -> Self {
         Self {
             background: BattleBackground::new(btl),
 
-            panel: BattlePanel::new(data.clone()),
+            panel: BattlePanel::new(pokemon.clone(), items),
             actions: Vec::new(),
 
             text: BattleText::default(),
 
             bounce: PlayerBounce::new(),
-            pokemon: PokemonRenderer::new(data, btl),
+            pokemon: PokemonRenderer::new(pokemon, btl),
 
             trainer: PokemonCount::new(btl),
             level_up: LevelUpMovePanel::new(),
         }
     }
 
+    #[deprecated]
     pub fn draw_panel(&self, draw: &mut Draw) {
-        draw.image(&self.background.panel).position(0.0, PANEL_Y);
+        // draw.image(&self.background.panel).position(0.0, PANEL_Y);
         // self.background
         //     .panel
         //     .draw(ctx, 0.0, PANEL_Y, Default::default());
@@ -121,16 +113,10 @@ impl<ID, D: Deref<Target = PokedexClientData> + Clone, M: Deref<Target = Move> +
 pub struct PokemonStatus;
 
 impl PokemonStatus {
-    pub fn status<
-        ID: std::fmt::Display + std::hash::Hash,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-        POK: crate::view::GuiPokemonView<P, M, I>,
-    >(
+    pub fn status(
         egui: &egui::Context,
         hashnum: usize,
-        pokemon: &POK,
+        pokemon: &impl crate::view::GuiPokemonView,
     ) {
         egui::Window::new(format!("Status {}", hashnum))
             .title_bar(false)

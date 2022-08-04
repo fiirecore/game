@@ -1,15 +1,6 @@
-use std::ops::Deref;
-
 use battle::{party::PlayerParty, pokemon::PokemonIdentifier};
 
-use pokengine::{
-    engine::egui,
-    pokedex::{
-        item::Item,
-        moves::Move,
-        pokemon::{owned::OwnedPokemon, Pokemon},
-    },
-};
+use pokengine::{engine::egui, pokedex::pokemon::owned::OwnedPokemon};
 
 use crate::{players::GuiRemotePlayers, BattleTrainer};
 
@@ -31,16 +22,11 @@ impl TargetPanel {
         self.alive
     }
 
-    pub fn ui<
-        ID: Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui<ID: Clone>(
         &mut self,
         egui: &egui::Context,
-        local: &PlayerParty<ID, usize, OwnedPokemon<P, M, I>, BattleTrainer>,
-        remotes: &GuiRemotePlayers<ID, P>,
+        local: &PlayerParty<ID, usize, OwnedPokemon, BattleTrainer>,
+        remotes: &GuiRemotePlayers<ID>,
     ) -> Option<PokemonIdentifier<ID>> {
         if self.alive {
             egui::Window::new("Targets")

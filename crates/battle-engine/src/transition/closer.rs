@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::sync::Arc;
 
 use pokengine::{
     engine::{
@@ -6,8 +6,7 @@ use pokengine::{
         text::{MessagePage, MessageState},
         App,
     },
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Money},
-    PokedexClientData,
+    pokedex::Money, texture::TrainerGroupTextures,
 };
 
 use crate::{
@@ -15,20 +14,20 @@ use crate::{
     ui::{text::BattleMessageState, BattleGui},
 };
 
-pub struct BattleCloser<D: Deref<Target = PokedexClientData> + Clone> {
-    dexengine: D,
+pub struct BattleCloser {
+    trainers: Arc<TrainerGroupTextures>,
     alive: bool,
     trainer: Option<Texture>,
     offset: f32,
     alpha: f32,
 }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> BattleCloser<D> {
+impl BattleCloser {
     const XPOS: f32 = 172.0; // 144 = pokemon
 
-    pub fn new(dexengine: D) -> Self {
+    pub fn new(trainers: Arc<TrainerGroupTextures>) -> Self {
         Self {
-            dexengine,
+            trainers,
             alive: Default::default(),
             trainer: Default::default(),
             offset: Default::default(),
@@ -36,15 +35,10 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleCloser<D> {
         }
     }
 
-    pub fn spawn<
-        ID: PartialEq,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn spawn<ID: PartialEq>(
         &mut self,
-        local: &GuiLocalPlayer<ID, P, M, I>,
-        opponents: &GuiRemotePlayers<ID, P>,
+        local: &GuiLocalPlayer<ID>,
+        opponents: &GuiRemotePlayers<ID>,
         winner: Option<&ID>,
         text: &mut BattleMessageState,
     ) {
@@ -71,8 +65,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleCloser<D> {
                     Some((.., opponent)) => {
                         if let Some(trainer) = opponent.trainer.as_ref() {
                             self.trainer = self
-                                .dexengine
-                                .trainer_group_textures
+                                .trainers
                                 .get(&trainer.texture)
                                 .cloned();
 
@@ -121,16 +114,11 @@ impl<D: Deref<Target = PokedexClientData> + Clone> BattleCloser<D> {
         self.alpha > 1.0
     }
 
-    pub fn draw<
-        ID,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn draw<ID>(
         &self,
         draw: &mut Draw,
-        elements: &BattleGui<ID, D, M>,
-        local: Option<&GuiLocalPlayer<ID, P, M, I>>,
+        elements: &BattleGui<ID>,
+        local: Option<&GuiLocalPlayer<ID>>,
     ) {
         elements.background.draw(draw, 0.0);
         elements.draw_panel(draw);

@@ -3,7 +3,9 @@ mod audio;
 pub extern crate firecore_text as text;
 pub extern crate notan;
 
-pub use notan::math;
+pub use hashbrown::{HashMap, HashSet, hash_map::DefaultHashBuilder as RandomState};
+
+pub use notan::{math, AppState};
 
 pub mod music {
     pub use super::audio::{add_music, get_current_music, play_music, stop_music, MusicId};
@@ -16,7 +18,6 @@ pub mod sound {
 pub mod controls;
 pub mod graphics;
 pub mod gui;
-pub mod utils;
 
 pub use context::*;
 
@@ -34,6 +35,9 @@ mod context {
         #[cfg(feature = "audio")]
         plugins.add(crate::audio::backend::AudioContext::default());
     }
+
+    #[cfg(feature = "audio")]
+    pub use crate::audio::backend::AudioContext;
 
     // pub struct EngineContext {
     //     pub(crate) controls: ControlsContext,

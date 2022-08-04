@@ -1,24 +1,19 @@
-use std::ops::Deref;
+use std::sync::Arc;
 
 use pokengine::{
     engine::{
         graphics::{Color, Draw, DrawImages, Texture},
         math::Vec2,
-        utils::HashMap,
-        App, Plugins,
+        App, HashMap, Plugins,
     },
-    pokedex::{
-        item::Item,
-        moves::Move,
-        pokemon::{Pokemon, PokemonId, PokemonTexture},
-    },
-    PokedexClientData,
+    pokedex::pokemon::{PokemonId, PokemonTexture},
+    texture::PokemonTextures,
 };
 
 use crate::{
-    context::BattleGuiData,
     players::{GuiLocalPlayer, GuiRemotePlayers},
     ui::{BattleGuiPosition, BattleGuiPositionIndex},
+    InitBattleGuiTextures,
 };
 
 use self::{faint::Faint, flicker::Flicker, spawner::Spawner};
@@ -34,8 +29,8 @@ pub mod faint;
 pub mod flicker;
 pub mod spawner;
 
-pub struct PokemonRenderer<D: Deref<Target = PokedexClientData>> {
-    dexengine: D,
+pub struct PokemonRenderer {
+    textures: Arc<PokemonTextures>,
     pokeball: Texture,
     actions: HashMap<(bool, usize), Vec<PokemonAction>>,
     current: Option<(bool, usize)>,
@@ -54,10 +49,10 @@ const fn local(local: bool) -> PokemonTexture {
     }
 }
 
-impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
-    pub fn new(dexengine: D, ctx: &BattleGuiData) -> Self {
+impl PokemonRenderer {
+    pub fn new(textures: Arc<PokemonTextures>, ctx: &InitBattleGuiTextures) -> Self {
         Self {
-            dexengine,
+            textures,
             pokeball: ctx.pokeball.clone(),
             actions: Default::default(),
             current: None,
@@ -91,11 +86,9 @@ impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
     pub fn faint(&mut self, position: (bool, usize), pokemon: Option<&PokemonId>) {
         self.insert(
             position,
-            PokemonAction::Faint(Faint::new(pokemon.and_then(|pokemon| {
-                self.dexengine
-                    .pokemon_textures
-                    .get(pokemon, local(position.0))
-            }))),
+            PokemonAction::Faint(Faint::new(
+                pokemon.and_then(|pokemon| self.textures.get(pokemon, local(position.0))),
+            )),
         );
     }
 
@@ -136,15 +129,10 @@ impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
         }
     }
 
-    pub fn draw_local<
-        ID,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn draw_local<ID>(
         &self,
         draw: &mut Draw,
-        local: &GuiLocalPlayer<ID, P, M, I>,
+        local: &GuiLocalPlayer<ID>,
         offset: Vec2,
         color: Color,
     ) {
@@ -161,10 +149,10 @@ impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
         }
     }
 
-    pub fn draw_remotes<ID, P: Deref<Target = Pokemon> + Clone>(
+    pub fn draw_remotes<ID>(
         &self,
         draw: &mut Draw,
-        remotes: &GuiRemotePlayers<ID, P>,
+        remotes: &GuiRemotePlayers<ID>,
         offset: Vec2,
         color: Color,
     ) {
@@ -199,7 +187,7 @@ impl<D: Deref<Target = PokedexClientData>> PokemonRenderer<D> {
             return;
         }
         let side = local(position.0);
-        if let Some(texture) = self.dexengine.pokemon_textures.get(pokemon, side) {
+        if let Some(texture) = self.textures.get(pokemon, side) {
             let pos = Self::position(BattleGuiPositionIndex {
                 position: side.into(),
                 index: position.1,

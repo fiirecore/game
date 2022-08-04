@@ -5,6 +5,7 @@
 
 * World
    - Fix interaction locking and failing to interact causing a lock
+   - Make coordinate based events use elevation
 
 * World Scripts
    - Scripts need to be able to activate on tiles
@@ -13,12 +14,13 @@
 * Battle GUI
    - Fix the regressions
    - Implement a move graphics script
+   - Create Gen 5 / Gen 6 battle scene
 
 * Capabilities
    - Be able to activate and deactivate move capabilities
 
 * App
-   - Use ```include_bytes!``` for loadable data.
+   - Make loading and title customizable
    - Make the code cleaner
 
 * GUI
@@ -55,10 +57,6 @@ ____
 * Remove derefs for non smart pointers
 
 ## Issues from other repositories affecting this one
-
-#### Engine
-
-* Add é to font
 
 #### Battle
 

@@ -43,16 +43,7 @@ impl ExperienceBar {
         (current as f32 * Self::WIDTH / max as f32).clamp(0.0, Self::WIDTH)
     }
 
-    pub fn update_exp<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
-        &mut self,
-        previous: Level,
-        pokemon: &OwnedPokemon<P, M, I>,
-        reset: bool,
-    ) {
+    pub fn update_exp(&mut self, previous: Level, pokemon: &OwnedPokemon, reset: bool) {
         let width = Self::width(
             pokemon.experience,
             pokemon.pokemon.training.growth.max_exp(pokemon.level),

@@ -4,15 +4,16 @@ pub extern crate firecore_pokedex_engine as pokengine;
 use std::{
     fmt::{Debug, Display},
     hash::Hash,
-    ops::Deref,
+    sync::Arc,
 };
 
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 use pokengine::{
     engine::{
         egui,
-        graphics::{Color, Draw},
+        graphics::{Color, Draw, Graphics, Texture},
         log::{self, debug, warn},
         math::Vec2,
         text::MessagePage,
@@ -25,7 +26,8 @@ use pokengine::{
         types::Effective,
         Dex, Money,
     },
-    PokedexClientData, TrainerGroupId,
+    texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
+    TrainerGroupId,
 };
 
 use battle::{
@@ -47,8 +49,8 @@ use self::{
     view::PlayerView,
 };
 
-mod context;
-pub use context::*;
+mod data;
+pub use data::*;
 
 mod ui;
 mod view;
@@ -67,48 +69,47 @@ pub struct BattleTrainer {
     pub defeat: Vec<MessagePage<[f32; 4], ()>>,
 }
 
-pub struct BattlePlayerGui<
-    ID: Eq + Hash + Display + Clone,
-    D: Deref<Target = PokedexClientData> + Clone,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
-    state: BattlePlayerState<ID, M>,
+pub struct BattlePlayerGui<ID: Eq + Hash + Display + Clone> {
+    state: BattlePlayerState<ID>,
     should_select: bool,
     should_end: Option<Option<ID>>,
 
-    opener: BattleOpener<D>,
+    opener: BattleOpener,
     // introduction: BattleIntroductionManager,
-    closer: BattleCloser<D>,
-    gui: BattleGui<ID, D, M>,
+    closer: BattleCloser,
+    gui: BattleGui<ID>,
 
-    local: Option<GuiLocalPlayer<ID, P, M, I>>,
-    remotes: GuiRemotePlayers<ID, P>,
+    local: Option<GuiLocalPlayer<ID>>,
+    remotes: GuiRemotePlayers<ID>,
 
     client: MpscClient<ID, BattleTrainer>,
     endpoint: MpscEndpoint<ID, BattleTrainer>,
 }
 
-impl<
-        ID: Clone + Debug + Display + Hash + Eq,
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > BattlePlayerGui<ID, D, P, M, I>
-{
-    pub fn new(dex: D, btl: &BattleGuiData) -> Self
-    where
-        ID: Default,
-    {
+impl<ID: Clone + Debug + Display + Hash + Eq> BattlePlayerGui<ID> {
+    // pub fn new_and_init(
+    //     pokemon: Arc<PokemonTextures>,
+    //     items: Arc<ItemTextures>,
+    //     trainers: Arc<TrainerGroupTextures>,
+    //     btl: BattleGuiTextures<Vec<u8>>,
+    //     gfx: &mut Graphics,
+    // ) -> Result<Self, String> {
+    //     Ok(Self::new(pokemon, items, trainers, &btl.init(gfx)?))
+    // }
+
+    pub fn new(
+        pokemon: Arc<PokemonTextures>,
+        items: Arc<ItemTextures>,
+        trainers: Arc<TrainerGroupTextures>,
+        btl: &BattleGuiTextures<Texture>,
+    ) -> Self {
         let (client, endpoint) = battle::endpoint::create();
 
         Self {
-            gui: BattleGui::new(dex.clone(), btl),
-            opener: BattleOpener::new(dex.clone(), btl),
+            gui: BattleGui::new(pokemon, items, &btl),
+            opener: BattleOpener::new(trainers.clone(), &btl),
             // introduction: BattleIntroductionManager::new(btl),
-            closer: BattleCloser::new(dex),
+            closer: BattleCloser::new(trainers),
             state: BattlePlayerState::WaitToStart,
             should_select: false,
             should_end: None,
@@ -149,13 +150,13 @@ impl<
         self.client.send(ClientMessage::Forfeit);
     }
 
-    fn begin_with<'d>(
+    fn begin_with<R: Rng>(
         &mut self,
         client: ClientPlayerData<ID, BattleTrainer>,
-        random: &mut impl rand::Rng,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        random: &mut R,
+        pokedex: &Dex<Pokemon>,
+        movedex: &Dex<Move>,
+        itemdex: &Dex<Item>,
     ) {
         self.remotes = GuiRemotePlayers {
             current: 0,
@@ -202,12 +203,12 @@ impl<
         self.local = Some(local);
     }
 
-    pub fn process<'d>(
+    pub fn process<R: Rng>(
         &mut self,
-        random: &mut impl rand::Rng,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        random: &mut R,
+        pokedex: &Dex<Pokemon>,
+        movedex: &Dex<Move>,
+        itemdex: &Dex<Item>,
     ) {
         while let Ok(message) = self.client.receiver.try_recv() {
             match message {
@@ -369,9 +370,9 @@ impl<
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        pokedex: &Dex<Pokemon>,
+        movedex: &Dex<Move>,
+        itemdex: &Dex<Item>,
         delta: f32,
     ) {
         match &mut self.state {
@@ -462,10 +463,9 @@ impl<
                                     }
                                     Some(Indexed(user_id, action)) => {
                                         let user = match user_id.team() == local.player.id() {
-                                            true => Some(
-                                                &mut local.player
-                                                    as &mut dyn PlayerView<ID, P, M, I>,
-                                            ),
+                                            true => {
+                                                Some(&mut local.player as &mut dyn PlayerView<ID>)
+                                            }
                                             false => self
                                                 .remotes
                                                 .players
@@ -529,7 +529,7 @@ impl<
                                                                                             .player
                                                                                             .id();
                                                                                 let target = match is_local {
-                                                                                true => local.player.active_mut(target_id.index()).map(|p| p as &mut dyn view::GuiPokemonView<P, M, I>),
+                                                                                true => local.player.active_mut(target_id.index()).map(|p| p as &mut dyn view::GuiPokemonView),
                                                                                 false => self.remotes.players.get_mut(target_id.team()).map(|remote| {
                                                                                     remote.active_mut(target_id.index()).map(|p| p as _)
                                                                                 }).flatten(),
@@ -774,7 +774,7 @@ impl<
                                 // log::trace!("update current");
 
                                 let user = if user_id.team() == local.player.id() {
-                                    Some(&mut local.player as &mut dyn PlayerView<ID, P, M, I>)
+                                    Some(&mut local.player as &mut dyn PlayerView<ID>)
                                 } else {
                                     self.remotes.players.get_mut(user_id.team()).map(|p| p as _)
                                 };
@@ -846,7 +846,7 @@ impl<
                     BattlePlayerState::Closing(winner) => match self.closer.alive() {
                         false => {
                             self.closer.reset();
-                            self.closer.spawn::<ID, P, M, I>(
+                            self.closer.spawn::<ID>(
                                 local,
                                 &self.remotes,
                                 Option::as_ref(winner),
@@ -873,11 +873,7 @@ impl<
         match &self.state {
             BattlePlayerState::Select => {
                 if let Some(local) = self.local.as_mut() {
-                    if let Some(action) =
-                        self.gui
-                            .panel
-                            .ui::<ID, _, _, _>(app, egui, local, &self.remotes)
-                    {
+                    if let Some(action) = self.gui.panel.ui::<ID>(app, egui, local, &self.remotes) {
                         self.gui.actions.push(action);
                     }
                 }
@@ -905,13 +901,13 @@ impl<
             let mut index = 0;
             if let Some(local) = self.local.as_ref() {
                 for (.., pokemon) in local.player.active_iter() {
-                    ui::PokemonStatus::status::<ID, _, _, _, _>(egui, index, pokemon);
+                    ui::PokemonStatus::status(egui, index, pokemon);
                     index += 1;
                 }
             }
             if let Some((.., remote)) = self.remotes.players.get_index(self.remotes.current) {
                 for (.., pokemon) in remote.active_iter() {
-                    ui::PokemonStatus::status::<ID, P, M, I, _>(egui, index, pokemon);
+                    ui::PokemonStatus::status(egui, index, pokemon);
                     index += 1;
                 }
             }
@@ -922,7 +918,7 @@ impl<
         match &self.state {
             BattlePlayerState::WaitToStart => (),
             BattlePlayerState::Opening => {
-                self.opener.draw::<ID, P, M>(draw, &self.gui, &self.remotes);
+                self.opener.draw::<ID>(draw, &self.gui, &self.remotes);
             }
             BattlePlayerState::Select => {
                 self.gui.background.draw(draw, Default::default());

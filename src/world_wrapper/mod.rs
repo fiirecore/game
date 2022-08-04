@@ -1,85 +1,94 @@
-use rand::{prelude::SmallRng, SeedableRng};
-use std::ops::Deref;
+use std::{sync::Arc, rc::Rc};
 
-use crate::{
-    command::CommandProcessor,
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
-    state::StateMessage, saves::GameWorldState, random::GameWorldRandoms,
-};
-
-use event::EventWriter;
+use crate::{command::CommandProcessor, random::GameWorldRandoms, saves::GameWorldState, settings::Settings};
 
 use crate::engine::{
     controls::{pressed, Control},
-    graphics::{Color, CreateDraw, Font, Graphics},
+    graphics::{Color, CreateDraw, Graphics},
     log::{self, info},
-    utils::Entity,
     App, Plugins,
 };
 
-use crate::pokengine::PokedexClientData;
-
-use worldcli::{map::manager::WorldManager, worldlib::{script::default::DefaultWorldScriptEngine, map::data::{Maps, WorldMapData}, serialized::SerializedTextures, state::map::MapState, character::CharacterState}, pokedex::trainer::InitTrainer};
+use firecore_battle_engine::pokengine::texture::{PokemonTextures, ItemTextures};
+use worldcli::{
+    map::{data::ClientWorldData, manager::WorldManager},
+    pokedex::{moves::owned::OwnedMove, trainer::InitTrainer},
+    worldlib::{
+        character::CharacterState, map::manager::WorldMapManager,
+        script::default::DefaultWorldScriptEngine,
+        state::map::MapState,
+    },
+};
 
 use self::{command::WorldCommands, start::StartMenu};
 
 mod command;
 mod start;
 
-pub struct WorldWrapper<D: Deref<Target = PokedexClientData> + Clone> {
+pub struct WorldWrapper {
     alive: bool,
     pub manager: WorldManager<DefaultWorldScriptEngine>,
-    menu: StartMenu<D>,
+    menu: StartMenu,
     commands: CommandProcessor,
-    #[deprecated]
-    random: SmallRng,
+    randoms: GameWorldRandoms,
 }
 
-impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
+pub enum WorldRequest {
+    Save,
+    Exit,
+}
+
+impl WorldWrapper {
     pub(crate) fn new(
-        gfx: &mut Graphics,
-        dex: D,
-        sender: EventWriter<StateMessage>,
+        world: WorldMapManager<DefaultWorldScriptEngine>,
+        data: ClientWorldData,
+        settings: Rc<Settings>,
+        pokemon: Arc<PokemonTextures>,
+        items: Arc<ItemTextures>,
         commands: CommandProcessor,
-        world: WorldMapData,
-        scripting: DefaultWorldScriptEngine,
-        textures: SerializedTextures,
-        debug_font: Font,
-    ) -> Result<Self, String> {
-        Ok(Self {
+    ) -> Self {
+        Self {
             alive: false,
-            manager: WorldManager::new(gfx, world, scripting, textures, debug_font)?,
-            menu: StartMenu::new(dex, sender),
+            manager: WorldManager {
+                world,
+                data,
+                warper: Default::default(),
+                input: Default::default(),
+            },
+            menu: StartMenu::new(settings, pokemon, items),
             commands,
-            random: SmallRng::seed_from_u64(0),
+            randoms: Default::default(),
             // events,
-        })
+        }
     }
 
-    pub fn update<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn seed(&mut self, seed: u64) {
+        self.randoms.seed(seed);
+    }
+
+    pub fn start(&mut self, state: &mut GameWorldState, trainer: &mut InitTrainer) {
+        self.manager
+            .start(state, &mut self.randoms, trainer)
+    }
+
+    pub fn update(
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
         state: &mut GameWorldState,
-        randoms: &mut GameWorldRandoms,
-        trainer: &mut InitTrainer<P, M, I>,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        trainer: &mut InitTrainer,
         delta: f32,
     ) {
-        if pressed(app, plugins, Control::Start) && !state.map.player.character.input_lock.active() {
+        if pressed(app, plugins, Control::Start) && !state.map.player.character.input_lock.active()
+        {
             self.menu.spawn();
         }
 
         #[cfg(debug_assertions)]
-        self.test_battle(app, state, trainer, pokedex, movedex, itemdex);
+        self.test_battle(app, state, trainer);
 
-        self.manager.update(app, plugins, state, randoms, trainer, itemdex, delta);
+        self.manager
+            .update(app, plugins, state, &mut self.randoms, trainer, delta);
 
         while let Some(result) = self.commands.commands.borrow_mut().pop() {
             match Self::process(result) {
@@ -87,20 +96,57 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                     // WorldCommands::Battle(_) => todo!(),
                     // WorldCommands::Script(_) => todo!(),
                     WorldCommands::Warp(location) => {
-                        self.manager.try_teleport(&mut state.map, randoms, trainer, location);
+                        self.manager.try_teleport(
+                            state,
+                            &mut self.randoms,
+                            trainer,
+                            location,
+                        );
                     }
                     WorldCommands::Wild(toggle) => {
-                        if state.map.player.character.capabilities.contains(&CharacterState::ENCOUNTERS) {
-                            state.map.player.character.capabilities.remove(&CharacterState::ENCOUNTERS);
+                        if state
+                            .map
+                            .player
+                            .character
+                            .capabilities
+                            .contains(&CharacterState::ENCOUNTERS)
+                        {
+                            state
+                                .map
+                                .player
+                                .character
+                                .capabilities
+                                .remove(&CharacterState::ENCOUNTERS);
                         } else {
-                            state.map.player.character.capabilities.insert(CharacterState::ENCOUNTERS);
+                            state
+                                .map
+                                .player
+                                .character
+                                .capabilities
+                                .insert(CharacterState::ENCOUNTERS);
                         }
                     }
                     WorldCommands::NoClip(toggle) => {
-                        if state.map.player.character.capabilities.contains(&CharacterState::NOCLIP) {
-                            state.map.player.character.capabilities.remove(&CharacterState::NOCLIP);
+                        if state
+                            .map
+                            .player
+                            .character
+                            .capabilities
+                            .contains(&CharacterState::NOCLIP)
+                        {
+                            state
+                                .map
+                                .player
+                                .character
+                                .capabilities
+                                .remove(&CharacterState::NOCLIP);
                         } else {
-                            state.map.player.character.capabilities.insert(CharacterState::NOCLIP);
+                            state
+                                .map
+                                .player
+                                .character
+                                .capabilities
+                                .insert(CharacterState::NOCLIP);
                         }
                     }
                     WorldCommands::DebugDraw => {
@@ -114,10 +160,14 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                         state.scripts.stop();
                     }
                     WorldCommands::GivePokemon(pokemon) => {
-                        if let Some(pokemon) =
-                            pokemon.init(&mut self.random, pokedex, movedex, itemdex)
-                        {
-                            trainer.party.push(pokemon);
+                        match pokemon.init(
+                            &mut self.randoms.general,
+                            &self.manager.world.pokedex,
+                            &self.manager.world.movedex,
+                            &self.manager.world.itemdex,
+                        ) {
+                            Some(pokemon) => trainer.party.push(pokemon),
+                            None => info!("Could not initialize pokemon!"),
                         }
                         // player.give_pokemon(pokemon);
                     }
@@ -127,14 +177,14 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                                 p.heal(None, None);
                             }
                         }
-                        None => trainer
-                            .party
-                            .iter_mut()
-                            .for_each(|p| p.heal(None, None)),
+                        None => trainer.party.iter_mut().for_each(|p| p.heal(None, None)),
                     },
                     WorldCommands::GiveItem(stack) => {
-                        match stack.init(itemdex) {
-                            Some(stack) => trainer.bag.insert(stack),
+                        match stack.init(&self.manager.world.itemdex) {
+                            Some(stack) => {
+                                trainer.bag.insert(stack);
+                                self.manager.update_capabilities(&mut state.map.player.character, trainer);
+                            },
                             None => info!("Could not initialize item!"),
                         }
                         // player.trainer.bag.insert_saved(stack);
@@ -177,13 +227,23 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                     },
                     WorldCommands::ClearBattle => state.map.player.battle.battling = None,
                     WorldCommands::GiveMove(id, index) => {
-                        if let Some(m) = movedex.try_get(&id) {
+                        if let Some(m) = self.manager.world.movedex.try_get(&id) {
                             if let Some(pokemon) = trainer.party.get_mut(index) {
-                                pokemon.moves.push(worldcli::pokedex::moves::owned::OwnedMove::from(m.clone()));
+                                pokemon.moves.push(OwnedMove::from(m.clone()));
+                                self.manager.update_capabilities(&mut state.map.player.character, trainer);
                             } else {
                                 info!("No pokemon at index {}", index);
                             }
                         }
+                    }
+                    WorldCommands::ToggleCapability(capability) => {
+                        match state.map.player.character.capabilities.contains(&capability) {
+                            true => state.map.player.character.capabilities.remove(&capability),
+                            false => state.map.player.character.capabilities.insert(capability),
+                        };
+                    },
+                    WorldCommands::Capabilities => {
+                        info!("Capabilities: {:?}", state.map.player.character.capabilities.iter());
                     },
                 },
                 Err(err) => self.commands.errors.borrow_mut().push(err),
@@ -191,11 +251,7 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
         }
     }
 
-    pub fn draw(
-        &self,
-        gfx: &mut Graphics,
-        state: &MapState,
-    ) {
+    pub fn draw(&self, gfx: &mut Graphics, state: &MapState) {
         let mut draw = gfx.create_draw();
         draw.set_size(crate::WIDTH, crate::HEIGHT);
         draw.clear(Color::BLACK);
@@ -203,37 +259,25 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
         gfx.render(&draw);
     }
 
-    pub fn ui<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn ui(
         &mut self,
         app: &mut App,
         plugins: &mut Plugins,
         egui: &crate::engine::egui::Context,
         state: &mut MapState,
-        trainer: &mut InitTrainer<P, M, I>,
-    ) {
-        self.menu.ui(app, plugins, egui, trainer);
+        trainer: &mut InitTrainer,
+    ) -> Option<WorldRequest> {
         self.manager.ui(app, plugins, egui, state);
+        self.menu.ui(app, plugins, egui, trainer)
     }
 
     #[cfg(debug_assertions)]
-    fn test_battle<
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    fn test_battle(
         &mut self,
         app: &mut App,
         state: &mut GameWorldState,
-        trainer: &mut InitTrainer<P, M, I>,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
+        trainer: &mut InitTrainer,
     ) {
-
         {
             use crate::engine::notan::prelude::KeyCode;
             use crate::pokedex::pokemon::owned::SavedPokemon;
@@ -243,30 +287,44 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
                 let mut rng = rand::thread_rng();
                 if trainer.party.is_empty() {
                     let pokemon1 = SavedPokemon {
-                        pokemon: rng.gen_range(0..pokedex.len() as u16),
+                        pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                         level: 50,
                         ..Default::default()
                     };
                     let pokemon2 = SavedPokemon {
-                        pokemon: rng.gen_range(0..pokedex.len() as u16),
+                        pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                         level: 25,
                         ..Default::default()
                     };
-                    trainer
-                        .party
-                        .push(pokemon1.init(&mut rng, pokedex, movedex, itemdex).unwrap());
-                    trainer
-                        .party
-                        .push(pokemon2.init(&mut rng, pokedex, movedex, itemdex).unwrap());
+                    trainer.party.push(
+                        pokemon1
+                            .init(
+                                &mut rng,
+                                &self.manager.world.pokedex,
+                                &self.manager.world.movedex,
+                                &self.manager.world.itemdex,
+                            )
+                            .unwrap(),
+                    );
+                    trainer.party.push(
+                        pokemon2
+                            .init(
+                                &mut rng,
+                                &self.manager.world.pokedex,
+                                &self.manager.world.movedex,
+                                &self.manager.world.itemdex,
+                            )
+                            .unwrap(),
+                    );
                 }
 
                 let pokemon3 = SavedPokemon {
-                    pokemon: rng.gen_range(0..pokedex.len() as u16),
+                    pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                     level: 25,
                     ..Default::default()
                 };
                 let pokemon4 = SavedPokemon {
-                    pokemon: rng.gen_range(0..pokedex.len() as u16),
+                    pokemon: rng.gen_range(0..self.manager.world.pokedex.len() as u16),
                     level: 50,
                     ..Default::default()
                 };
@@ -280,18 +338,15 @@ impl<D: Deref<Target = PokedexClientData> + Clone> WorldWrapper<D> {
             }
         }
     }
-}
-
-impl<D: Deref<Target = PokedexClientData> + Clone> Entity for WorldWrapper<D> {
-    fn spawn(&mut self) {
+    pub fn spawn(&mut self) {
         self.alive = true;
     }
 
-    fn despawn(&mut self) {
+    pub fn despawn(&mut self) {
         self.alive = false;
     }
 
-    fn alive(&self) -> bool {
+    pub fn alive(&self) -> bool {
         self.alive
     }
 }

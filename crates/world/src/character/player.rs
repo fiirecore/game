@@ -1,8 +1,6 @@
 use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
 
-use pokedex::pokemon::owned::SavedPokemon;
-
 use crate::{map::battle::BattleEntry, positions::Location};
 
 use super::{
@@ -33,14 +31,22 @@ pub type Battled = HashSet<NpcId>;
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct GlobalBattleState {
     pub battled: HashMap<Location, Battled>,
-    pub battling: Option<BattleEntry<SavedPokemon>>,
+    pub battling: Option<BattleEntry>,
 }
 
 impl PlayerCharacter {
     pub fn new(name: impl Into<String>, rival: impl Into<String>) -> Self {
         Self {
             name: name.into(),
-            character: CharacterState::default(),
+            character: CharacterState {
+                group: "player".parse().unwrap(),
+                capabilities: {
+                    let mut set = HashSet::with_capacity(1);
+                    set.insert(CharacterState::ENCOUNTERS);
+                    set
+                },
+                ..Default::default()
+            },
             battle: Default::default(),
             badges: Default::default(),
             cooldown: Default::default(),
@@ -115,16 +121,13 @@ impl GlobalBattleState {
 
 // impl SavedPlayerCharacter {
 //     pub fn init<
-//         P: Deref<Target = Pokemon> + Clone,
-//         M: Deref<Target = Move> + Clone,
-//         I: Deref<Target = Item> + Clone,
 //     >(
 //         self,
 //         random: &mut impl rand::Rng,
 //         pokedex: &impl Dex<Pokemon, Output = P>,
 //         movedex: &impl Dex<Move, Output = M>,
 //         itemdex: &impl Dex<Item, Output = I>,
-//     ) -> Option<InitPlayerCharacter<P, M, I>> {
+//     ) -> Option<InitPlayerCharacter> {
 //         Some(PlayerCharacter {
 //             name: self.name,
 //             character: self.character,
@@ -138,10 +141,7 @@ impl GlobalBattleState {
 // }
 
 // impl<
-//         P: Deref<Target = Pokemon> + Clone,
-//         M: Deref<Target = Move> + Clone,
-//         I: Deref<Target = Item> + Clone,
-//     > InitPlayerCharacter<P, M, I>
+//     > InitPlayerCharacter
 // {
 //     pub fn uninit(self) -> SavedPlayerCharacter {
 //         SavedPlayerCharacter {

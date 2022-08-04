@@ -1,42 +1,15 @@
-use event::EventWriter;
-
 use crate::engine::{
-    graphics::{
-        Color, CreateDraw, Draw, DrawImages, DrawShapes, DrawTextSection, DrawTransform, Font,
-        Graphics, Texture,
-    },
+    controls::{pressed, Control},
+    graphics::{Color, CreateDraw, Draw, DrawImages, DrawShapes, DrawTransform, Graphics, Texture},
     music::{play_music, MusicId},
     App, Plugins,
 };
-
-use super::{MainStates, StateMessage};
-
-// pub async fn load_coroutine(ctx: &mut Context) {
-//     use crate::engine::input::controls::{pressed, Control};
-//     use crate::engine::macroquad::prelude::{clear_background, get_frame_time, next_frame, BLACK};
-
-//     info!("Starting loading scene coroutine");
-
-//     let mut manager = manager::LoadingSceneManager::new(ctx).unwrap();
-
-//     while !manager.finished {
-//         if LOADING_FINISHED.get() {
-//             if pressed(ctx, Control::A) {
-//                 manager.finished = true;
-//             }
-//         }
-
-//         manager.update(ctx, delta);
-//         clear_background(BLACK);
-//         manager.render(ctx);
-//         next_frame().await;
-//     }
-// }
 
 pub enum LoadingScenes {
     Copyright,
     Gamefreak,
     Pokemon,
+    WaitLoading,
 }
 
 pub struct LoadingStateManager {
@@ -46,14 +19,13 @@ pub struct LoadingStateManager {
 
     version: String,
 
-    debug_font: Font,
     copyright: Texture,
     rect_size: f32,
     star: Texture,
     logo: Texture,
     text: Texture,
+    loading: Texture,
 
-    sender: EventWriter<StateMessage>,
 }
 
 impl LoadingStateManager {
@@ -65,24 +37,17 @@ impl LoadingStateManager {
 
     const BACKGROUND: Color = Color::new(24.0 / 255.0, 40.0 / 255.0, 72.0 / 255.0, 1.0);
 
-    pub(crate) fn new(
-        gfx: &mut Graphics,
-        sender: EventWriter<StateMessage>,
-        debug_font: Font,
-    ) -> Result<Self, String> {
+    pub(crate) fn new(gfx: &mut Graphics) -> Result<Self, String> {
         Ok(Self {
             current: LoadingScenes::default(),
             accumulator: 0.0,
             version: format!("v{}", crate::VERSION),
             copyright: gfx
                 .create_texture()
-                .from_image(include_bytes!(
-                    "../../assets/scenes/loading/copyright.png"
-                ))
+                .from_image(include_bytes!("../../assets/scenes/loading/copyright.png"))
                 .build()?,
             // pokemon: PokemonLoadingScene::new(ctx)?,
             rect_size: 0.0,
-            debug_font,
             star: gfx
                 .create_texture()
                 .from_image(include_bytes!("../../assets/scenes/loading/star.png"))
@@ -95,11 +60,14 @@ impl LoadingStateManager {
                 .create_texture()
                 .from_image(include_bytes!("../../assets/scenes/loading/text.png"))
                 .build()?,
-            sender,
+            loading: gfx
+                .create_texture()
+                .from_image(include_bytes!("../../assets/scenes/loading/loading.png"))
+                .build()?,
         })
     }
 
-    pub fn reset(&mut self, app: &mut App, plugins: &mut Plugins, state: LoadingScenes) {
+    fn queue(&mut self, app: &mut App, plugins: &mut Plugins, state: LoadingScenes) {
         match state {
             LoadingScenes::Copyright => {
                 self.accumulator = 0.0;
@@ -110,17 +78,20 @@ impl LoadingStateManager {
                 play_music(app, plugins, &Self::MUSIC);
             }
             LoadingScenes::Pokemon => todo!(),
+            LoadingScenes::WaitLoading => {
+                self.accumulator = 0.0;
+            }
         }
         self.current = state;
     }
 
-    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins, delta: f32, loaded: bool) {
+    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins, delta: f32, loaded: bool) -> bool {
         match self.current {
             LoadingScenes::Copyright => {
                 if self.accumulator > 2.0 {
                     if loaded {
                         if self.accumulator > 4.0 {
-                            self.reset(app, plugins, LoadingScenes::Gamefreak);
+                            self.queue(app, plugins, LoadingScenes::Gamefreak);
                         }
                         self.accumulator += delta;
                     }
@@ -137,28 +108,22 @@ impl LoadingStateManager {
                     }
                 }
                 if self.accumulator > 8.5 {
-                    self.reset(app, plugins, LoadingScenes::Copyright);
-                    self.sender.send(StateMessage::Goto(MainStates::Title));
+                    self.queue(app, plugins, LoadingScenes::Copyright);
+                    return true;
                 }
             }
             LoadingScenes::Pokemon => {
-                self.reset(app, plugins, LoadingScenes::Copyright);
+                self.queue(app, plugins, LoadingScenes::Copyright);
                 // self.finish();
+            }
+            LoadingScenes::WaitLoading => {
+                if self.accumulator > 3.0 {
+                    self.accumulator -= 3.0;
+                }
             }
         }
 
-        // match self.get().state() {
-        //     LoadingState::Continue => {
-        //         self.get_mut().update(ctx, eng, delta);
-        //     }
-        //     LoadingState::Next(scene) => {
-        //         self.current = scene;
-        //         self.get_mut().start(ctx, eng);
-        //     }
-        //     LoadingState::End => {
-        //         self.finish();
-        //     }
-        // }
+        pressed(app, plugins, Control::A) && loaded
     }
 
     pub fn draw(&self, gfx: &mut Graphics, progress: Option<f32>) {
@@ -176,12 +141,6 @@ impl LoadingStateManager {
                     3.0,
                     0.5,
                 );
-                draw.text(&self.debug_font, &self.version)
-                    .size(4.0)
-                    .position(2.0, 1.0)
-                    .color(Color::WHITE)
-                    .h_align_left()
-                    .v_align_top();
                 if let Some(loaded) = progress {
                     draw.rect(
                         (draw.width() / 3.0, draw.height() * 2.0 / 3.0),
@@ -224,6 +183,18 @@ impl LoadingStateManager {
                 ); //51x, 41y
             }
             LoadingScenes::Pokemon => todo!(),
+            LoadingScenes::WaitLoading => {
+                const WHITE: Color = Color::new(216.0 / 255.0, 216.0 / 255.0, 216.0 / 255.0, 1.0);
+
+                draw.image(&self.loading).position(6.0, 149.0);
+                draw.rect((63.0, 152.0), (2.0, 2.0)).color(WHITE);
+                if self.accumulator > 1.0 {
+                    draw.rect((68.0, 152.0), (2.0, 2.0)).color(WHITE);
+                }
+                if self.accumulator > 2.0 {
+                    draw.rect((73.0, 152.0), (2.0, 2.0)).color(WHITE);
+                }
+            }
         }
         gfx.render(&draw);
     }

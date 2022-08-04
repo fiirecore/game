@@ -1,22 +1,27 @@
-use std::ops::Deref;
+use std::sync::Arc;
 
 use rand::{prelude::IteratorRandom, Rng};
 
 use pokedex::{
     item::Item,
     moves::Move,
-    moves::MoveId,
     pokemon::Pokemon,
     trainer::{InitTrainer, Trainer},
+    Dex,
 };
 
 use crate::{
-    character::{action::ActionQueue, player::PlayerCharacter, Activity, DoMoveResult, CharacterState},
+    character::{
+        action::ActionQueue, player::PlayerCharacter, Activity, CharacterState, DoMoveResult,
+    },
     map::{MovementId, WarpDestination, WorldMap},
     positions::{BoundingBox, Direction, Location},
     random::WorldRandoms,
     script::WorldScriptingEngine,
-    state::{map::{MapState, MapEvent}, WorldState},
+    state::{
+        map::{MapEvent, MapState},
+        WorldState,
+    },
 };
 
 use super::{
@@ -28,6 +33,10 @@ pub struct WorldMapManager<S: WorldScriptingEngine> {
     pub data: WorldMapData,
     /// Scripting engine
     pub scripting: S,
+
+    pub pokedex: Arc<Dex<Pokemon>>,
+    pub movedex: Arc<Dex<Move>>,
+    pub itemdex: Arc<Dex<Item>>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -37,10 +46,6 @@ pub enum InputEvent {
 }
 
 impl<S: WorldScriptingEngine> WorldMapManager<S> {
-    pub fn new(data: WorldMapData, scripting: S) -> Self {
-        Self { data, scripting }
-    }
-
     pub fn contains(&self, location: &Location) -> bool {
         self.data.maps.contains_key(location)
     }
@@ -51,11 +56,11 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
     pub fn on_warp<R: Rng, P, B>(
         &self,
-        state: &mut MapState,
+        state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
         trainer: &Trainer<P, B>,
     ) {
-        self.on_map_change(state);
+        self.on_map_change(&mut state.map);
         self.on_tile(state, randoms, trainer);
     }
 
@@ -69,6 +74,10 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
         state.events.push(MapEvent::PlayMusic(Some(map.music)));
         state.update_objects(&self.data);
         // check for cave here and add last spot non cave for escape rope
+    }
+
+    pub fn update_capabilities(&self, character: &mut CharacterState, trainer: &mut InitTrainer) {
+        self.data.update_capabilities(character, trainer);
     }
 
     pub fn input(&self, state: &mut MapState, input: InputEvent) {
@@ -113,7 +122,7 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
             let forward = state.player.character.position.forwards();
 
             // if let Some(object) = map.object_at(&forward) {
-                
+
             // }
 
             // if let Some(item) = map.item_at(&forward) {
@@ -217,24 +226,35 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
     pub fn on_tile<R: Rng, P, B>(
         &self,
-        state: &mut MapState,
+        state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
         trainer: &Trainer<P, B>,
     ) {
         // state.events.push(MapEvent::OnTile);
+        self.scripting
+            .on_tile(&mut state.map, &mut state.scripts);
 
-        if !trainer.party.is_empty() && state.player.character.capabilities.contains(&CharacterState::ENCOUNTERS) {
-            if let Some(map) = self.data.maps.get(&state.location) {
-                map.try_wild_battle(&self.data, state, randoms);
+        if !trainer.party.is_empty()
+            && state
+                .map
+                .player
+                .character
+                .capabilities
+                .contains(&CharacterState::ENCOUNTERS)
+        {
+            if let Some(map) = self.data.maps.get(&state.map.location) {
+                map.try_wild_battle(&self.data, &mut state.map, randoms);
 
                 for (id, npc) in map.npcs.iter() {
                     if let Some(trainer) = &npc.trainer {
                         if let Some(character) = state
+                            .map
                             .entities
-                            .get_mut(&state.location)
+                            .get_mut(&state.map.location)
                             .and_then(|state| state.npcs.get_mut(id))
                         {
                             state
+                                .map
                                 .player
                                 .find_battle(&map.id, &npc.id, trainer, character);
                         }
@@ -246,37 +266,32 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
     fn stop_player<R: Rng, P, B>(
         &self,
-        state: &mut MapState,
+        state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
-        trainer: &Trainer<P, B>,
+        trainer: &mut Trainer<P, B>,
     ) {
-        state.player.character.stop_move();
+        state.map.player.character.stop_move();
 
-        if let Some(map) = self.data.maps.get(&state.location) {
-            if let Some(destination) = map.warp_at(&state.player.character.position.coords) {
+        if let Some(map) = self.data.maps.get(&state.map.location) {
+            if let Some(destination) = map.warp_at(&state.map.player.character.position.coords) {
                 // Warping does not trigger tile actions!
-                state.warp = Some(*destination);
-            } else if map.in_bounds(state.player.character.position.coords) {
+                state.map.warp = Some(*destination);
+            } else if map.in_bounds(state.map.player.character.position.coords) {
                 self.on_tile(state, randoms, trainer);
             }
         }
     }
 
-    pub fn update<
-        R: Rng,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub fn update<R: Rng>(
         &mut self,
         state: &mut WorldState<S>,
-        trainer: &mut InitTrainer<P, M, I>,
+        trainer: &mut InitTrainer,
         randoms: &mut WorldRandoms<R>,
         delta: f32,
     ) {
         if let Some(result) = state.map.player.update(&mut state.map.message, delta) {
             match result {
-                DoMoveResult::Finished => self.stop_player(&mut state.map, randoms, trainer),
+                DoMoveResult::Finished => self.stop_player(state, randoms, trainer),
                 DoMoveResult::Interact => self.try_interact(&mut state.map),
             }
         }
@@ -323,7 +338,11 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
                 .flatten()
                 .flatten()
                 .unwrap_or_default()
-                && !state.player.character.capabilities.contains(&CharacterState::NOCLIP)
+                && !state
+                    .player
+                    .character
+                    .capabilities
+                    .contains(&CharacterState::NOCLIP)
             {
                 state.events.push(MapEvent::PlayerJump);
                 return;
@@ -350,18 +369,21 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
         fn with_code(player: &mut PlayerCharacter, code: MovementId, direction: Direction) -> bool {
             if Elevation::can_move(player.character.position.elevation, code)
-                || player.character.capabilities.contains(&CharacterState::NOCLIP)
+                || player
+                    .character
+                    .capabilities
+                    .contains(&CharacterState::NOCLIP)
             {
                 if Elevation::WATER == code {
                     if player.character.activity != Activity::Swimming {
-                        const SURF: &MoveId = unsafe {
-                            &MoveId(tinystr::TinyStr16::from_bytes_unchecked(
-                                1718777203u128.to_ne_bytes(),
-                            ))
-                        };
-
-                        if player.character.capabilities.contains(&CharacterState::SWIM)
-                            || player.character.capabilities.contains(&CharacterState::NOCLIP)
+                        if player
+                            .character
+                            .capabilities
+                            .contains(&CharacterState::SWIM)
+                            || player
+                                .character
+                                .capabilities
+                                .contains(&CharacterState::NOCLIP)
                         {
                             player.character.activity = Activity::Swimming;
                         } else {
@@ -387,12 +409,12 @@ impl<S: WorldScriptingEngine> WorldMapManager<S> {
 
     pub fn warp<R: Rng, P, B>(
         &self,
-        state: &mut MapState,
+        state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
         trainer: &Trainer<P, B>,
         destination: WarpDestination,
     ) {
-        if self.data.warp(state, destination) {
+        if self.data.warp(&mut state.map, destination) {
             self.on_warp(state, randoms, trainer);
         }
     }

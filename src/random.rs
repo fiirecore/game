@@ -1,10 +1,18 @@
-use rand::prelude::{SmallRng, SeedableRng, RngCore};
+use rand::prelude::{RngCore, SeedableRng, SmallRng};
 use worldcli::worldlib::random::WorldRandoms;
 
 pub type GameWorldRandoms = WorldRandoms<GamePseudoRandom>;
 
 #[derive(Debug, Clone)]
 pub struct GamePseudoRandom(SmallRng);
+
+impl GamePseudoRandom {
+
+    pub fn seed(&mut self, seed: u64) {
+        *self = Self::seed_from_u64(seed);
+    }
+
+}
 
 impl RngCore for GamePseudoRandom {
     fn next_u32(&mut self) -> u32 {

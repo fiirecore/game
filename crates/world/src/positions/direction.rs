@@ -61,6 +61,11 @@ impl Direction {
             },
         }
     }
+
+    pub fn iter() -> core::slice::Iter<'static, Self> {
+        [Direction::Up, Direction::Down, Direction::Left, Direction::Right].iter()
+    }
+
 }
 
 impl Default for Direction {

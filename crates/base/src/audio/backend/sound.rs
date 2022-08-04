@@ -25,7 +25,7 @@ pub fn play_sound(
     match plugins.get::<super::AudioContext>() {
         Some(actx) => match actx.sounds.get(&(sound, variant)) {
             Some(handle) => {
-                ctx.audio.play_sound(handle, 0.5, false);
+                ctx.audio.play_sound(handle, actx.volume, false);
                 Ok(())
                 // match  handle.play(ctx) {
                 //     Ok(instance) => {

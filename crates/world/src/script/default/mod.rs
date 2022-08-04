@@ -1,11 +1,4 @@
-use std::ops::Deref;
-
-use firecore_pokedex::{
-    item::{Item, SavedItemStack},
-    moves::Move,
-    pokemon::Pokemon,
-    trainer::InitTrainer,
-};
+use firecore_pokedex::trainer::InitTrainer;
 use firecore_text::{MessagePage, MessageState, MessageStates};
 use hashbrown::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
@@ -19,9 +12,9 @@ use crate::{
     },
     map::{battle::BattleEntry, data::WorldMapData},
     message::MessageTheme,
-    positions::Location,
+    positions::{Coordinate, Location},
     random::WorldRandoms,
-    state::map::{MapState, MapEvent},
+    state::map::{MapEvent, MapState},
 };
 
 use super::WorldScriptingEngine;
@@ -46,6 +39,7 @@ pub struct DefaultScriptState {
     pub npcs: HashMap<NpcId, (Location, Npc)>,
     pub flags: HashSet<VariableName>,
     pub variables: HashMap<VariableName, Variable>,
+    #[deprecated]
     pub executor: Option<NpcId>,
     pub queue: Vec<WorldInstruction>,
 }
@@ -75,9 +69,15 @@ impl DefaultScriptState {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct DefaultWorldScriptEngine {
-    pub npcs: HashMap<Location, HashMap<NpcId, ScriptId>>,
+    pub locations: HashMap<Location, ScriptLocation>,
     pub scripts: HashMap<ScriptId, Vec<WorldInstruction>>,
     pub messages: HashMap<MessageId, Vec<Vec<String>>>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ScriptLocation {
+    pub tiles: HashMap<Coordinate, ScriptId>,
+    pub npcs: HashMap<NpcId, ScriptId>,
 }
 
 impl WorldScriptingEngine for DefaultWorldScriptEngine {
@@ -85,20 +85,25 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
 
     type Error = ();
 
-    fn on_tile(&self) {
-        todo!()
+    fn on_tile(
+        &self,
+        world: &mut MapState,
+        state: &mut Self::State,
+    ) {
+        if let Some(scriptid) = self
+            .locations
+            .get(&world.location)
+            .and_then(|location| location.tiles.get(&world.player.character.position.coords))
+        {
+            self.run(world, state, scriptid, None);
+        }
     }
 
-    fn update<
-        R: rand::Rng,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    fn update<R: rand::Rng>(
         &self,
         data: &WorldMapData,
         world: &mut MapState,
-        trainer: &mut InitTrainer<P, M, I>,
+        trainer: &mut InitTrainer,
         randoms: &mut WorldRandoms<R>,
         state: &mut Self::State,
     ) {
@@ -108,37 +113,12 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                 DoMoveResult::Finished => (),
                 DoMoveResult::Interact => {
                     if let Some(scriptid) = self
-                        .npcs
+                        .locations
                         .get(&world.location)
-                        .and_then(|npcs| npcs.get(&id))
+                        .and_then(|location| location.npcs.get(&id))
                     {
-                        match state.running() {
-                            false => match self.scripts.get(scriptid) {
-                                Some(instructions) => {
-                                    if let Some(character) = world
-                                        .entities
-                                        .get_mut(&world.location)
-                                        .and_then(|state| state.npcs.get_mut(&id))
-                                    {
-                                        character.on_interact();
-                                    }
-                                    state.executor = Some(id);
-                                    state.queue = instructions.clone();
-                                }
-                                None => {
-                                    log::warn!(
-                                        "Could not get script with id {} for NPC id {}",
-                                        scriptid,
-                                        id
-                                    );
-                                    world.player.character.input_lock.decrement();
-                                }
-                            },
-                            true => {
-                                log::debug!("Could not run script as one is running already!")
-                            }
-                        }
-                    } 
+                        self.run(world, state, scriptid, Some(id));
+                    }
                 }
             }
         }
@@ -280,7 +260,10 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                     queue.remove(0);
                 }
                 WorldInstruction::AddItem(item) => {
-                    world.events.push(MapEvent::GiveItem(SavedItemStack::from(*item)));
+                    // world
+                    //     .events
+                    //     .push(MapEvent::GiveItem(SavedItemStack::from(*item)));
+                    log::debug!("additem instruction");
                     queue.remove(0);
                 }
                 WorldInstruction::CheckItemSpace(..) => {
@@ -291,7 +274,7 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                     log::warn!("Add GetItemName instruction!");
                     queue.remove(0);
                 }
-                // WorldInstruction::Walk(..) | WorldInstruction::FacePlayer | WorldInstruction::TrainerBattleSingle | WorldInstruction::Msgbox(..) => {
+                // WorldInstruction::Walk(..) | WorldInstruction::FacePlayer | WorldInstruction::TrainerBattleSingle | WorldInstruction::Msgbox(..) | WorldInstruction::Look(..) => {
                 npc_inst => {
                     if let Some((map, settings, npc)) = state
                         .executor
@@ -307,6 +290,43 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                         .flatten()
                     {
                         match npc_inst {
+                            
+                            WorldInstruction::ApplyMovement(id, movement) => {
+                                log::debug!("applymovement");
+                                queue.remove(0);
+                            },
+                            WorldInstruction::WaitMovement(id) => {
+                                match world.entities.get_mut(&world.location).and_then(|states| {
+                                    states.npcs.get_mut(&id)
+                                }) {
+                                    Some(npc) => {
+                                        if !npc.moving() {
+                                            queue.remove(0);
+                                        }
+                                    },
+                                    None => {
+                                        queue.remove(0);
+                                    },
+                                }
+                            }
+                            WorldInstruction::LockAll => {
+                                world.player.character.input_lock.increment();
+                                if let Some(entities) = world.entities.get_mut(&world.location) {
+                                    for character in entities.npcs.values_mut() {
+                                        character.input_lock.increment();
+                                    }
+                                }
+                                queue.remove(0);
+                            },
+                            WorldInstruction::ReleaseAll => {
+                                world.player.character.input_lock.decrement();
+                                if let Some(entities) = world.entities.get_mut(&world.location) {
+                                    for character in entities.npcs.values_mut() {
+                                        character.input_lock.decrement();
+                                    }
+                                }
+                                queue.remove(0);
+                            },
                             WorldInstruction::TrainerBattleSingle => {
                                 match state.flags.contains("TEMP_MESSAGE") {
                                     true => {
@@ -418,6 +438,17 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
                                 //     pos.coords.towards(player.character.position.coords);
                                 queue.remove(0);
                             }
+                            WorldInstruction::Look(direction) => {
+                                if let Some(character) =
+                                    world.entities.get_mut(&world.location).and_then(|states| {
+                                        states.npcs.get_mut(state.executor.as_ref().unwrap())
+                                    })
+                                {
+                                    if !character.moving() {
+                                        character.position.direction = *direction;
+                                    }
+                                }
+                            }
                             WorldInstruction::Walk(direction) => {
                                 if let Some(character) =
                                     world.entities.get_mut(&world.location).and_then(|states| {
@@ -450,4 +481,37 @@ impl WorldScriptingEngine for DefaultWorldScriptEngine {
             state.executor = None;
         }
     }
+}
+
+impl DefaultWorldScriptEngine {
+
+    fn run(&self, world: &mut MapState, state: &mut <Self as WorldScriptingEngine>::State, scriptid: &str, executor: Option<NpcId>) {
+        match state.running() {
+            false => match self.scripts.get(scriptid) {
+                Some(instructions) => {
+                    if let Some(character) = executor.as_ref().and_then(|id| world
+                        .entities
+                        .get_mut(&world.location)
+                        .and_then(|state| state.npcs.get_mut(&id)))
+                    {
+                        character.on_interact();
+                    }
+                    state.executor = executor;
+                    state.queue = instructions.clone();
+                }
+                None => {
+                    log::warn!(
+                        "Could not get script with id {} for executor id {:?}",
+                        scriptid,
+                        executor
+                    );
+                    world.player.character.input_lock.decrement();
+                }
+            },
+            true => {
+                log::debug!("Could not run script as one is running already!")
+            }
+        }
+    }
+
 }

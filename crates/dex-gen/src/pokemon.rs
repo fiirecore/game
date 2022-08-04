@@ -2,22 +2,18 @@ use battle::pokedex::{
     pokemon::{
         data::{Breeding, GrowthRate, LearnableMove, Training},
         stat::{StatSet, StatType},
-        Pokemon, PokemonId, PokemonTexture,
+        Pokemon,
     },
     types::Types,
 };
 
 use enum_map::{enum_map, EnumMap};
-use hashbrown::HashMap;
 use pokerust::Id;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::ops::Range;
 use std::sync::Arc;
 
 use crate::capitalize_first;
-
-pub type SerializedPokemon = (EnumMap<PokemonTexture, Vec<u8>>, Vec<u8>);
-pub type PokemonOutput = HashMap<PokemonId, SerializedPokemon>;
 
 #[cfg(feature = "client-data")]
 mod cry;
@@ -40,7 +36,7 @@ pub fn generate(client: Arc<pokerust::Client>, range: Range<i16>) -> Vec<Pokemon
 }
 
 #[cfg(feature = "client-data")]
-pub fn generate_client(pokemon: &[Pokemon]) -> PokemonOutput {
+pub fn generate_client(pokemon: &[Pokemon]) -> firecore_pokedex_engine_core::PokemonOutput {
     use rayon::iter::IntoParallelRefIterator;
 
     let tempdir =
@@ -69,7 +65,7 @@ pub fn generate_client(pokemon: &[Pokemon]) -> PokemonOutput {
             }
             match &name_[..2] {
                 "un" => name_.push_str("/e"),
-        
+
                 _ => (),
             };
 
@@ -77,18 +73,14 @@ pub fn generate_client(pokemon: &[Pokemon]) -> PokemonOutput {
             let nc = name.clone();
             let td = tempdir.clone();
 
-            let cry = std::thread::spawn(move || {
-                enable_cry
-                    .then(|| cry::get_cry(td, name))
-                    .unwrap_or_default()
-            });
-
             let mut textures = [FRONT, BACK, ICON]
                 .into_par_iter()
-                .map(move |side| download(&nc, side))
-                .collect::<Vec<_>>();
+                .map(move |side| download(&nc, side).unwrap())
+                .collect::<Vec<Vec<u8>>>();
 
-            let cry = cry.join().unwrap();
+            let cry = enable_cry
+                .then(|| cry::get_cry(td, name))
+                .unwrap_or_default();
 
             (
                 pokemon.id,

@@ -31,3 +31,15 @@ pub struct JsonBgEvent {
     pub player_facing_dir: Option<String>,
     pub script: Option<String>,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct JsonCoordEvent {
+    #[serde(rename = "type")]
+    pub type_: String,
+    pub x: i32,
+    pub y: i32,
+    pub elevation: u8,
+    pub var: String,
+    pub var_value: String,
+    pub script: String,
+}

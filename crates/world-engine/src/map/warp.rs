@@ -11,7 +11,6 @@ use worldlib::{
 use crate::engine::{
     graphics::{Color, Draw, DrawExt, DrawParams, DrawShapes},
     math::Rect,
-    utils::Entity,
 };
 
 use crate::map::CharacterCamera;
@@ -53,18 +52,6 @@ impl Door {
 
 impl WarpTransition {
     // const RECT_WIDTH: f32 = WIDTH / 2.0;
-
-    pub fn new() -> Self {
-        Self {
-            alive: false,
-            door: None,
-            color: Color::BLACK,
-            faded: false,
-            warped: false,
-            warp: None,
-            freeze: false,
-        }
-    }
 
     pub fn update(
         &mut self,
@@ -287,19 +274,30 @@ impl WarpTransition {
         self.faded = false;
         self.warped = false;
     }
-}
-
-impl Entity for WarpTransition {
-    fn spawn(&mut self) {
+    pub fn spawn(&mut self) {
         self.alive = true;
         self.reset();
     }
 
-    fn despawn(&mut self) {
+    pub fn despawn(&mut self) {
         self.alive = false;
     }
 
-    fn alive(&self) -> bool {
+    pub fn alive(&self) -> bool {
         self.alive
+    }
+}
+
+impl Default for WarpTransition {
+    fn default() -> Self {
+        Self {
+            alive: false,
+            door: None,
+            color: Color::BLACK,
+            faded: false,
+            warped: false,
+            warp: None,
+            freeze: false,
+        }
     }
 }

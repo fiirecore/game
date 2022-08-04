@@ -26,7 +26,7 @@ pub fn play_music(
     match plugins.get_mut::<super::AudioContext>() {
         Some(mut actx) => match actx.music.get(music) {
             Some(audio) => {
-                let handle = ctx.audio.play_sound(audio, 0.5, true);
+                let handle = ctx.audio.play_sound(audio, actx.volume, true);
                 actx.current_music = Some((*music, handle));
                 Ok(())
                 // match audio.play(ctx) {

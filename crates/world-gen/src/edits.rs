@@ -1,12 +1,12 @@
 use dashmap::DashMap;
 use firecore_world::{
-        character::npc::NpcId,
-        map::{
-            warp::{WarpDestination, WarpEntry},
-            WorldMap,
-        },
-        positions::{Coordinate, CoordinateInt, Destination, Location},
-    };
+    character::npc::NpcId,
+    map::{
+        warp::{WarpDestination, WarpEntry},
+        WorldMap,
+    },
+    positions::{Coordinate, CoordinateInt, Destination, Location},
+};
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 

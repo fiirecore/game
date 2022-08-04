@@ -42,7 +42,7 @@ impl WildEntry {
         t: &WildType,
         entry: &WildEntry,
         random: &mut impl Rng,
-    ) -> Option<BattleEntry<SavedPokemon>> {
+    ) -> Option<BattleEntry> {
         if entry.should_encounter(random) {
             let chances = match chances.get(t) {
                 Some(chances) => chances,

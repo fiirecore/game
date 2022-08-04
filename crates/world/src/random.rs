@@ -28,6 +28,10 @@ impl<R: Rng + SeedableRng + Clone> WorldRandoms<R> {
 
 impl<R: Rng + Clone> From<R> for WorldRandoms<R> {
     fn from(rand: R) -> Self {
-        Self { general: rand.clone(), wild: rand.clone(), npc: rand }
+        Self {
+            general: rand.clone(),
+            wild: rand.clone(),
+            npc: rand,
+        }
     }
 }

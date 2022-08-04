@@ -1,4 +1,14 @@
 (
+    spawn: (
+        (
+            map: Some("pallet"),
+            index: "player_room",
+        ),
+        (
+            coords: (2, 5),
+            direction: Down,
+        )
+    ),
     palettes: {
         0: (
             cliffs: {
@@ -57,14 +67,13 @@
         Fishing(1): [60, 20, 20],
         Fishing(2): [40, 40, 15, 4, 1],
     },
-    spawn: (
-        (
-            map: Some("pallet"),
-            index: "player_room",
-        ),
-        (
-            coords: (2, 5),
-            direction: Down,
-        )
-    ),
+    moves: {
+        "surf": Capability("swim"),
+        "rock-smash": Capability("rock"),
+        "cut": Capability("cut"),
+    },
+    items: {
+        "bicycle": Capability("cycle"),
+        "running-shoes": Capability("run"),
+    },
 )

@@ -1,27 +1,25 @@
 use image::{DynamicImage, GenericImageView, Pixel};
 
-pub fn download(pokemon: &str, side: &str) -> Vec<u8> {
+pub fn download(pokemon: &str, side: &str) -> anyhow::Result<Vec<u8>> {
     let pokemon = if pokemon == "castform" && side != super::ICON {
         "castform/normal"
     } else {
         pokemon
     };
-    let response = attohttpc::get(&format!(
+    let bytes = attohttpc::get(&format!(
         "https://raw.githubusercontent.com/pret/pokefirered/master/graphics/pokemon/{}/{}.png",
         pokemon, side
-    )).send()
-    .unwrap_or_else(|err| panic!("Cannot get icon with error {}", err));
-    let bytes = response.bytes().unwrap();
-    let mut image = image::load_from_memory_with_format(&bytes, image::ImageFormat::Png)
-        .unwrap_or_else(|err| {
-            panic!(
-                "Could not get {} image for {} with error {}",
-                side, pokemon, err
-            )
-        });
+    ))
+    .send()?
+    .bytes()?;
+    let mut image = image::load_from_memory(&bytes)?;
     let (top, bottom) = get_heights(&image);
-    image = image.crop(0, top, image.width(), bottom - top + 1);
-    image.into_rgba8().into_raw()
+    image.crop(0, top, image.width(), bottom - top + 1);
+
+    let mut writer = std::io::Cursor::new(Vec::new());
+    image.write_to(&mut writer, image::ImageFormat::Png)?;
+
+    Ok(writer.into_inner())
 }
 
 fn get_heights(image: &DynamicImage) -> (u32, u32) {

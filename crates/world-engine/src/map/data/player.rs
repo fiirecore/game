@@ -1,13 +1,15 @@
 use crate::engine::{
     graphics::{Color, Draw, DrawExt, DrawParams, DrawShapes, Graphics, Texture},
     math::Rect,
-    utils::HashMap,
 };
 
 use worldlib::{
-    character::{action::ActionQueue, player::PlayerCharacter, CharacterState, Activity},
+    character::{action::ActionQueue, player::PlayerCharacter, Activity, CharacterState},
     positions::Direction,
-    serialized::SerializedPlayerTexture,
+    serialized::{
+        enum_map::{enum_map, EnumMap},
+        SerializedPlayerTexture,
+    },
     TILE_SIZE,
 };
 
@@ -22,7 +24,7 @@ fn screen_y(y: f32) -> f32 {
 pub mod bush;
 
 pub struct PlayerTexture {
-    pub textures: HashMap<Activity, CharacterTexture>,
+    pub textures: EnumMap<Activity, CharacterTexture>,
 
     pub bush: bush::PlayerBushTexture,
 
@@ -47,31 +49,27 @@ impl From<Texture> for CharacterTexture {
 
 impl PlayerTexture {
     pub fn new(gfx: &mut Graphics, player: SerializedPlayerTexture) -> Result<Self, String> {
-        let mut textures = HashMap::with_capacity(3);
-        textures.insert(
-            Activity::Walking,
-            gfx.create_texture()
+        let textures = enum_map! {
+            Activity::Walking => gfx.create_texture()
                 .from_image(&player[Activity::Walking])
                 .build()?
                 .into(),
-        );
-        textures.insert(
-            Activity::Running,
-            gfx.create_texture()
+            Activity::Running => gfx.create_texture()
                 .from_image(&player[Activity::Running])
                 .build()?
                 .into(),
-        );
-        textures.insert(
-            Activity::Swimming,
-            CharacterTexture {
+            Activity::Swimming => CharacterTexture {
                 idle: Some(0.5),
                 texture: gfx
                     .create_texture()
                     .from_image(&player[Activity::Swimming])
                     .build()?,
             },
-        );
+            Activity::Cycling => gfx.create_texture()
+                .from_image(&player[Activity::Cycling])
+                .build()?
+                .into(),
+        };
 
         Ok(Self {
             textures,
@@ -84,8 +82,14 @@ impl PlayerTexture {
 
     pub fn jump(&mut self, player: &mut PlayerCharacter) {
         player.character.sprite = 0;
-        self.could_noclip = player.character.capabilities.contains(&CharacterState::NOCLIP);
-        player.character.capabilities.remove(&CharacterState::NOCLIP);
+        self.could_noclip = player
+            .character
+            .capabilities
+            .contains(&CharacterState::NOCLIP);
+        player
+            .character
+            .capabilities
+            .remove(&CharacterState::NOCLIP);
         player.character.input_lock.increment();
         for _ in 0..2 {
             player
@@ -103,13 +107,12 @@ impl PlayerTexture {
         match self.jumping {
             false => {
                 if character.offset.is_zero() {
-                    if let Some(texture) = self.textures.get(&character.activity) {
-                        if let Some(idle) = texture.idle {
-                            self.accumulator += delta;
-                            if self.accumulator > idle {
-                                self.accumulator -= idle;
-                                character.update_sprite();
-                            }
+                    let texture = &self.textures[character.activity];
+                    if let Some(idle) = texture.idle {
+                        self.accumulator += delta;
+                        if self.accumulator > idle {
+                            self.accumulator -= idle;
+                            character.update_sprite();
                         }
                     }
                 }
@@ -129,59 +132,58 @@ impl PlayerTexture {
 
     pub fn draw(&self, draw: &mut Draw, character: &CharacterState, color: Color) {
         if !character.hidden {
-            if let Some(texture) = self.textures.get(&character.activity) {
-                let screen_x = screen_x(draw.width());
-                let screen_y = screen_y(draw.height());
-                if self.jumping {
-                    draw.circle(TILE_SIZE / 2.0)
-                        .position(screen_x, screen_y + 24.0)
-                        .color(Color::BLACK);
-                }
-                let (x, width) = current_texture(character);
-
-                let px = screen_x - width / 2.0;
-
-                let y = match self.jumping {
-                    true => {
-                        let negative = matches!(character.position.direction, Direction::Up);
-                        let o = character.offset.offset() / 4.0;
-                        match character.actions.queue.is_empty() {
-                            false => match negative {
-                                true => screen_y + o,
-                                false => screen_y - o,
-                            },
-                            true => match negative {
-                                true => screen_y + (TILE_SIZE / 4.0) - o,
-                                false => screen_y - (TILE_SIZE / 4.0) + o,
-                            },
-                        }
-                    }
-                    false => screen_y,
-                };
-
-                draw.texture(
-                    &texture.texture,
-                    px,
-                    y,
-                    DrawParams {
-                        source: Some(Rect {
-                            x,
-                            y: 0.0,
-                            width,
-                            height: if !self.bush.in_bush
-                                || (character.offset.is_zero()
-                                    && character.position.direction.vertical())
-                            {
-                                32.0
-                            } else {
-                                26.0
-                            },
-                        }),
-                        flip_x: character.position.direction == Direction::Right,
-                        color,
-                    },
-                );
+            let texture = &self.textures[character.activity];
+            let screen_x = screen_x(draw.width());
+            let screen_y = screen_y(draw.height());
+            if self.jumping {
+                draw.circle(TILE_SIZE / 2.0)
+                    .position(screen_x, screen_y + 24.0)
+                    .color(Color::BLACK);
             }
+            let (x, width) = current_texture(character);
+
+            let px = screen_x - width / 2.0;
+
+            let y = match self.jumping {
+                true => {
+                    let negative = matches!(character.position.direction, Direction::Up);
+                    let o = character.offset.offset() / 4.0;
+                    match character.actions.queue.is_empty() {
+                        false => match negative {
+                            true => screen_y + o,
+                            false => screen_y - o,
+                        },
+                        true => match negative {
+                            true => screen_y + (TILE_SIZE / 4.0) - o,
+                            false => screen_y - (TILE_SIZE / 4.0) + o,
+                        },
+                    }
+                }
+                false => screen_y,
+            };
+
+            draw.texture(
+                &texture.texture,
+                px,
+                y,
+                DrawParams {
+                    source: Some(Rect {
+                        x,
+                        y: 0.0,
+                        width,
+                        height: if !self.bush.in_bush
+                            || (character.offset.is_zero()
+                                && character.position.direction.vertical())
+                        {
+                            32.0
+                        } else {
+                            26.0
+                        },
+                    }),
+                    flip_x: character.position.direction == Direction::Right,
+                    color,
+                },
+            );
         }
     }
 }
@@ -233,6 +235,14 @@ pub const fn player_texture_index(character: &CharacterState) -> (&[u8; 4], f32)
                 Direction::Up => &[2, 2, 3, 3],
                 Direction::Down => &[0, 0, 1, 1],
                 _ => &[4, 4, 5, 5],
+            },
+            32.0,
+        ),
+        Activity::Cycling => (
+            match character.position.direction {
+                Direction::Up => &[1, 5, 1, 6],
+                Direction::Down => &[0, 3, 0, 4],
+                _ => &[2, 7, 2, 8],
             },
             32.0,
         ),

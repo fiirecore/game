@@ -1,9 +1,11 @@
+use std::sync::atomic::{AtomicBool, Ordering, AtomicUsize};
+
 use engine::egui;
 
 #[derive(Default)]
 pub struct PartySelectMenu {
-    alive: bool,
-    pub pokemon: usize,
+    alive: AtomicBool,
+    pub pokemon: AtomicUsize,
 }
 
 pub enum SelectAction {
@@ -15,21 +17,21 @@ pub enum SelectAction {
 }
 
 impl PartySelectMenu {
-    pub fn spawn(&mut self, pokemon: usize) {
-        self.alive = true;
-        self.pokemon = pokemon;
+    pub fn spawn(&self, pokemon: usize) {
+        self.alive.store(true, Ordering::Relaxed);
+        self.pokemon.store(pokemon, Ordering::Relaxed);
     }
 
-    pub fn despawn(&mut self) {
-        self.alive = false;
+    pub fn despawn(&self) {
+        self.alive.store(false, Ordering::Relaxed);
     }
 
     pub fn alive(&self) -> bool {
-        self.alive
+        self.alive.load(Ordering::Relaxed)
     }
 
-    pub fn ui(&mut self, egui: &egui::Context) -> Option<SelectAction> {
-        if self.alive {
+    pub fn ui(&self, egui: &egui::Context) -> Option<SelectAction> {
+        if self.alive() {
             egui::Window::new("Select")
                 .title_bar(false)
                 .show(egui, |ui| {

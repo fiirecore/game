@@ -4,16 +4,17 @@ use firecore_battle::pokedex::pokemon::PokemonTexture;
 use ron::ser::PrettyConfig;
 
 fn main() {
-
     let client = firecore_dex_gen::client();
 
     let pokemon = firecore_dex_gen::pokemon::generate(client.clone(), 1..5);
 
     let client_pokemon = firecore_dex_gen::pokemon::generate_client(&pokemon);
 
-    let moves = firecore_dex_gen::moves::generate(client.clone(), 1..559);
+    image::load_from_memory(&client_pokemon[&2u16].0[PokemonTexture::Front]).unwrap();
 
-    let execution = firecore_dex_gen::moves::generate_battle(client.clone(), 1..559);
+    let moves = firecore_dex_gen::moves::generate(client.clone(), 1..15);
+
+    let execution = firecore_dex_gen::moves::generate_battle(client.clone(), 1..15).unwrap();
 
     let items = firecore_dex_gen::items::generate();
 
@@ -72,7 +73,10 @@ fn main() {
 
     for (id, exec) in execution.into_iter() {
         std::fs::write(
-            format!("generated/battle/moves/{}.ron", &moves.iter().find(|m| m.id == id).unwrap().name),
+            format!(
+                "generated/battle/moves/{}.ron",
+                &moves.iter().find(|m| m.id == id).unwrap().name
+            ),
             ron::ser::to_string_pretty(&exec, Default::default())
                 .unwrap()
                 .as_bytes(),
@@ -109,5 +113,4 @@ fn main() {
     for (id, item) in item_textures {
         std::fs::write(format!("generated/client/items/{}.png", id), &item).unwrap();
     }
-
 }

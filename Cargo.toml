@@ -1,14 +1,14 @@
 [package]
-name = "pokemon-game"
-version = "0.5.0-beta.2022-07-25"
+name = "firecore-game"
+version = "0.5.0-beta.2022-08-03"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 license = "CC0-1.0"
 description = "Pokemon FireRed Clone"
-repository = "https://github.com/fiirecore/pokemon-game"
+repository = "https://github.com/fiirecore/game"
 keywords = ["games", "pokemon"]
 categories = ["games"]
-build = "build.rs"
+build = "build/build.rs"
 readme = "README.md"
 include = ["/assets"]
 publish = false
@@ -38,29 +38,19 @@ firecore-battle-engine = { path = "crates/battle-engine", default-features = fal
 ] }
 firecore-world-engine = { path = "crates/world-engine", default-features = false }
 firecore-storage = { path = "crates/storage" }
-firecore-event = { path = "crates/event" }
 
 ### Other
 
 serde = { version = "1", features = ["derive"] }
 rand = { version = "0.8", features = ["small_rng"] }
-tinystr = { version = "0.6", features = ["serde"], default-features = false }
 postcard = { version = "1", default-features = false, features = ["alloc"] }
-zip = { version = "0.6" }
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-dirs = "4"
-# discord-rich-presence = { version = "0.1", optional = true }
-# pico-args = "0.4"
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-general_storage_web = "0.2"
 
 ### Build dependencies
 
 [build-dependencies]
 
 firecore-dex-gen = { path = "crates/dex-gen" }
+firecore-pokedex-engine-core = { path = "crates/pokedex-engine-core" }
 firecore-world-gen = { path = "crates/world-gen" }
 firecore-world = { path = "crates/world" }
 

@@ -5,7 +5,7 @@ use crate::script::WorldScriptingEngine;
 pub mod map;
 
 // pub type SavedWorldState<R, S> = WorldState<R, S, SavedPokemon, SavedBag>;
-// pub type InitWorldState<R, S, P, M, I> = WorldState<R, S, OwnedPokemon<P, M, I>, Bag<I>>;
+// pub type InitWorldState<R, S, P, M, I> = WorldState<R, S, OwnedPokemon, Bag<I>>;
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct WorldState<S: WorldScriptingEngine> {

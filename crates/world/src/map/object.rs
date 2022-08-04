@@ -1,20 +1,17 @@
-use std::ops::Deref;
-
 use serde::{Deserialize, Serialize};
 
-use pokedex::{
-    item::{Item, ItemId, ItemStack},
-    moves::{Move, MoveId},
-    pokemon::Pokemon,
-    trainer::InitTrainer,
-};
+// use pokedex::{
+//     item::{Item, ItemId, ItemStack},
+//     moves::MoveId,
+//     trainer::InitTrainer,
+// };
 
 pub mod group;
 pub use group::*;
 
 use crate::{
     positions::{Coordinate, Location},
-    state::map::MapState,
+    // state::map::MapState,
 };
 
 pub type ObjectId = u16;
@@ -31,9 +28,7 @@ pub struct MapObject {
     pub group: Option<ObjectType>,
 }
 
-pub enum Removable {
-
-}
+pub enum Removable {}
 
 // impl ObjectEntity {
 //     const TREE: &'static ObjectType =
@@ -55,14 +50,11 @@ pub enum Removable {
 //     };
 
 //     pub fn try_break<
-//         P: Deref<Target = Pokemon> + Clone,
-//         M: Deref<Target = Move> + Clone,
-//         I: Deref<Target = Item> + Clone,
 //     >(
 //         location: &Location,
 //         coordinate: Coordinate,
 //         group: &ObjectType,
-//         trainer: &mut InitTrainer<P, M, I>,
+//         trainer: &mut InitTrainer,
 //         state: &mut MapState,
 //         force: bool,
 //     ) {

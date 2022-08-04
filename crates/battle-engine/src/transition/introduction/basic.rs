@@ -46,9 +46,6 @@ impl BasicBattleIntroduction {
 
     pub(crate) fn common_setup<
         ID,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
     >(
         &mut self,
         local: &GuiLocalPlayer<ID, P, M, I>,
@@ -65,20 +62,13 @@ impl BasicBattleIntroduction {
         });
     }
 
-    pub(crate) fn draw_local<
-        ID,
-        D: Deref<Target = PokedexClientData>,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    >(
+    pub(crate) fn draw_local<ID>(
         &self,
         draw: &mut Draw,
         pokemonr: &PokemonRenderer<D>,
         local: Option<&GuiLocalPlayer<ID, P, M, I>>,
     ) {
         if self.counter < Self::PLAYER_DESPAWN {
-            
         } else if let Some(local) = local {
             pokemonr.draw_local(remotes, offset, color)
         }
@@ -103,14 +93,7 @@ impl BasicBattleIntroduction {
     }
 }
 
-impl<
-        ID,
-        D: Deref<Target = PokedexClientData>,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > BattleIntroduction<ID, D, P, M, I> for BasicBattleIntroduction
-{
+impl<ID> BattleIntroduction<ID, D, P, M, I> for BasicBattleIntroduction {
     fn spawn(
         &mut self,
         _: &PokedexClientData,
@@ -118,9 +101,7 @@ impl<
         remotes: &GuiRemotePlayers<ID, P>,
         text: &mut Option<MessageState<[f32; 4]>>,
     ) {
-        if let Some(remote) = remotes.players.get_index(remotes.current).map(|(.., o)| o) {
-            
-        }
+        if let Some(remote) = remotes.players.get_index(remotes.current).map(|(.., o)| o) {}
         self.common_setup(local, text);
     }
 
@@ -165,18 +146,18 @@ impl<
         // }
 
         // if let Some(active) = local.renderer.get(0) {
-            // if pokemonr.spawning() {
-                // for active in local.renderer.iter_mut() {
-                //     active.pokemon.spawner.update(app, plugins, delta);
-                // }
-            // } else if active.status.alive() {
-            //     self.offsets1(delta);
-            // } else if self.counter >= Self::PLAYER_T2 {
-            //     for active in local.renderer.iter_mut() {
-            //         active.pokemon.spawn();
-            //         active.status.spawn();
-            //     }
-            // }
+        // if pokemonr.spawning() {
+        // for active in local.renderer.iter_mut() {
+        //     active.pokemon.spawner.update(app, plugins, delta);
+        // }
+        // } else if active.status.alive() {
+        //     self.offsets1(delta);
+        // } else if self.counter >= Self::PLAYER_T2 {
+        //     for active in local.renderer.iter_mut() {
+        //         active.pokemon.spawn();
+        //         active.status.spawn();
+        //     }
+        // }
         // } else {
         //     self.offsets1(delta);
         // }

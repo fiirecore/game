@@ -69,8 +69,6 @@ pub struct WorldMap {
     // pub items: Items,
     // pub signs: Signs,
 
-    // pub objects: HashMap<u8, MapObject>,
-    // pub scripts: Vec<WorldScript>,
     #[serde(default)]
     pub settings: WorldMapSettings,
     // pub mart: Option<mart::Pokemart>,

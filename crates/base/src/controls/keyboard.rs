@@ -2,9 +2,11 @@ use std::cell::RefMut;
 
 use enum_map::EnumMap;
 
-use notan::prelude::{App, KeyCode as Key, Plugins};
+use notan::prelude::{App, Plugins};
 
 use super::{context::ControlsContext, Control};
+
+pub use notan::prelude::KeyCode as Key;
 
 // pub type KeySet = HashSet<Key>;
 pub type KeyMap = EnumMap<Control, Key>;

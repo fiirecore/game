@@ -20,20 +20,19 @@ use firecore_world::{
         Brightness, PaletteId, WorldMap, WorldMapSettings, WorldTile,
     },
     pokedex::{
-        item::{Item, ItemStack},
+        item::Item,
         moves::{owned::SavedMove, Move},
         pokemon::{owned::SavedPokemon, stat::StatSet, Pokemon},
         trainer::Trainer,
-        BasicDex,
+        Dex,
     },
-    positions::{BoundingBox, Coordinate, Destination, Direction, Location, Position},
+    positions::{
+        BoundingBox, Coordinate, Coordinate3d, Destination, Direction, Location, Position,
+    },
     script::default::*,
 };
 use map::{
-    object::{JsonBgEvent, JsonObjectEvent},
-    warp::JsonWarpEvent,
-    wild::JsonWildEncounters,
-    JsonConnection, JsonMap,
+    object::JsonObjectEvent, warp::JsonWarpEvent, wild::JsonWildEncounters, JsonConnection, JsonMap,
 };
 use rayon::iter::{
     IndexedParallelIterator, IntoParallelIterator, IntoParallelRefIterator, ParallelIterator,
@@ -54,8 +53,8 @@ mod mapping;
 
 mod script;
 
-mod structs;
 mod bin;
+mod structs;
 
 pub use edits::*;
 pub use mapping::*;
@@ -67,14 +66,15 @@ type Messages = DashMap<String, Vec<Vec<String>>, RandomState>;
 type Trainers = HashMap<String, script::trainer::Trainer>;
 type Parties = HashMap<String, Vec<script::trainer::party::TrainerPokemon>>;
 type NpcScripts = DashMap<Location, HashMap<ObjectId, String>>;
+type TileScripts = DashMap<Location, HashMap<Coordinate, String>>;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct ParsedData {
     pub maps: Maps,
     pub wild: JsonWildEncounters,
-    pub pokedex: BasicDex<Pokemon, Arc<Pokemon>>,
-    pub movedex: BasicDex<Move, Arc<Move>>,
-    pub itemdex: BasicDex<Item, Arc<Item>>,
+    pub pokedex: Dex<Pokemon>,
+    pub movedex: Dex<Move>,
+    pub itemdex: Dex<Item>,
     pub scripts: Scripts,
     pub messages: Messages,
     pub trainers: Trainers,
@@ -129,17 +129,17 @@ pub fn compile(
 
     println!("Converting maps...");
 
-    let npc_scripts = DashMap::<Location, _>::new();
+    let locations = DashMap::<Location, ScriptLocation>::new();
 
     data.maps.par_iter().for_each(|map| {
         let map = map.value();
         println!("Converting {}", map.data.name);
-        if let Some((map, scripts)) = into_world_map(&mappings, &data, &encounters, map) {
+        if let Some((map, location)) = into_world_map(&mappings, &data, &encounters, map) {
             let id = map.id;
             if let Some(removed) = new_maps.insert(id, map) {
                 panic!("Duplicate world map id {}", removed.id);
             }
-            if let Some(removed) = npc_scripts.insert(id, scripts) {
+            if let Some(removed) = locations.insert(id, location) {
                 panic!("Duplicate world map id for scripts: {}", id);
             }
         } else {
@@ -165,7 +165,7 @@ pub fn compile(
 
     Ok(WorldData {
         maps: new_maps.into_par_iter().collect(),
-        scripts: create_world_script_data(&mappings, &data.scripts, &data.messages, &npc_scripts),
+        scripts: create_world_script_data(&mappings, &data.scripts, &data.messages, &locations),
     })
 }
 
@@ -194,14 +194,14 @@ pub fn create_data() -> anyhow::Result<ParsedData> {
     let moves = firecore_dex_gen::moves::generate(client, 1..559);
     let items = firecore_dex_gen::items::generate();
 
-    let pokedex = BasicDex(pokemon.into_iter().map(|p| (p.id, Arc::new(p))).collect());
-    let movedex = BasicDex(moves.into_iter().map(|m| (m.id, Arc::new(m))).collect());
-    let itemdex = BasicDex(items.into_iter().map(|i| (i.id, Arc::new(i))).collect());
+    let pokedex = Dex(pokemon.into_iter().map(|p| (p.id, Arc::new(p))).collect());
+    let movedex = Dex(moves.into_iter().map(|m| (m.id, Arc::new(m))).collect());
+    let itemdex = Dex(items.into_iter().map(|i| (i.id, Arc::new(i))).collect());
 
     // let (pokedex, movedex, itemdex) = firecore_storage::from_bytes::<(
-    //     BasicDex<Pokemon, _>,
-    //     BasicDex<Move, _>,
-    //     BasicDex<Item, _>,
+    //     Dex<Pokemon, _>,
+    //     Dex<Move, _>,
+    //     Dex<Item, _>,
     // )>(&dex)
     // .unwrap();
 
@@ -371,7 +371,7 @@ fn into_world_map(
     data: &ParsedData,
     encounters: &DashMap<String, Option<HashMap<WildType, WildEntry>>>,
     map: &JsonMap,
-) -> Option<(WorldMap, HashMap<ObjectId, String>)> {
+) -> Option<(WorldMap, ScriptLocation)> {
     let map_path = format!("{}/{}", PATH, map.layout.blockdata_filepath);
     let border_path = format!("{}/{}", PATH, map.layout.border_filepath);
 
@@ -410,7 +410,14 @@ fn into_world_map(
         })
         .collect::<Vec<_>>();
 
-    let (npcs, scripts) = into_world_npcs(mappings, data, &map.data.object_events);
+    let (npcs, npc_scripts) = into_world_npcs(mappings, data, &map.data.object_events);
+
+    let tile_scripts = map
+        .data
+        .coord_events
+        .par_iter()
+        .map(|e| (Coordinate { x: e.x, y: e.y }, e.script.clone()))
+        .collect();
 
     Some((
         WorldMap {
@@ -471,7 +478,10 @@ fn into_world_map(
             },
             // scripts: Default::default(),
         },
-        scripts,
+        ScriptLocation {
+            npcs: npc_scripts,
+            tiles: tile_scripts,
+        },
     ))
 }
 
@@ -479,7 +489,7 @@ fn create_world_script_data(
     mappings: &NameMappings,
     scripts: &Scripts,
     messages: &Messages,
-    npc_scripts: &NpcScripts,
+    locations: &DashMap<Location, ScriptLocation>,
 ) -> DefaultWorldScriptEngine {
     DefaultWorldScriptEngine {
         scripts: scripts
@@ -510,7 +520,7 @@ fn create_world_script_data(
             .par_iter()
             .map(|r| (r.key().clone(), r.value().clone()))
             .collect(),
-        npcs: npc_scripts
+        locations: locations
             .par_iter()
             .map(|r| (r.key().clone(), r.value().clone()))
             .collect(),
@@ -553,16 +563,30 @@ fn into_instruction(
         "goto_if_set" => {
             WorldInstruction::GotoIfSet(command.arguments[0].clone(), command.arguments[1].clone())
         }
+        // 0x4F
+        "applymovement" => WorldInstruction::ApplyMovement(
+            command.arguments[0].parse().map_err(|err| {
+                InstructionError::ParseInt(id.clone(), command.arguments[0].clone(), err)
+            })?,
+            Default::default(),
+        ),
+        "waitmovement" => {
+            WorldInstruction::WaitMovement(command.arguments[0].parse().map_err(|err| {
+                InstructionError::ParseInt(id.clone(), command.arguments[0].clone(), err)
+            })?)
+        }
         // Player Freezing
         "lock" => WorldInstruction::Lock,
+        "lockall" => WorldInstruction::LockAll,
         "release" => WorldInstruction::Release,
+        "releaseall" => WorldInstruction::ReleaseAll,
         // NPC commands
         "faceplayer" => WorldInstruction::FacePlayer,
         "walk_down" => WorldInstruction::Walk(Direction::Down),
         "walk_up" => WorldInstruction::Walk(Direction::Up),
         "walk_left" => WorldInstruction::Walk(Direction::Left),
         "walk_right" => WorldInstruction::Walk(Direction::Right),
-        "walk_in_place_fastest_up" => WorldInstruction::Walk(Direction::Up),
+        "walk_in_place_fastest_up" => WorldInstruction::Look(Direction::Up),
         // Singular trainer battle
         "trainerbattle_single" => WorldInstruction::TrainerBattleSingle,
         // Message
@@ -606,7 +630,7 @@ fn into_instruction(
 enum InstructionError {
     Unknown(ScriptId, String),
     ParseInt(ScriptId, String, ParseIntError),
-    ParseStr(ScriptId, String, tinystr::TinyStrError),
+    // ParseStr(ScriptId, String, tinystr::TinyStrError),
     MissingMapping(ScriptId, String),
 }
 

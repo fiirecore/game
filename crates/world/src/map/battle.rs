@@ -22,9 +22,9 @@ use crate::{
 use super::{data::WorldNpcData, WorldMapSettings};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct BattleEntry<P> {
+pub struct BattleEntry {
     pub id: BattleId,
-    pub party: Party<P>,
+    pub party: Party<SavedPokemon>,
     pub active: usize,
     pub trainer: Option<TrainerEntry>,
 }
@@ -50,7 +50,7 @@ pub struct TrainerEntry {
     pub worth: Money,
 }
 
-impl BattleEntry<SavedPokemon> {
+impl BattleEntry {
     pub fn trainer(
         world: &mut GlobalBattleState,
         map: &Location,

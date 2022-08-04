@@ -1,40 +1,30 @@
-use std::ops::Deref;
+use std::{cell::RefCell, rc::Rc, sync::Arc};
 
 use crate::{
+    command::CommandProcessor,
     engine::{
         graphics::{Font, Graphics},
         music::stop_music,
         App, Plugins,
     },
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
-    pokengine::PokedexClientData,
-    random::GameWorldRandoms,
-    saves::GameWorldState,
+    random::GamePseudoRandom,
+    saves::{Player, SaveManager},
+    world_wrapper::WorldRequest, settings::Settings,
 };
 
-use battlecli::{
-    battle::default_engine::{default_scripting::MoveScripts, EngineMoves},
-    BattleGuiData,
+use firecore_battle_engine::{
+    battle::default_engine::DefaultBattleEngine,
+    pokengine::texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
+    BattleGuiTextures,
 };
-
 use worldcli::{
-    pokedex::trainer::InitTrainer,
-    worldlib::{
-        map::{battle::BattleId, data::WorldMapData},
-        random::WorldRandoms,
-        script::default::DefaultWorldScriptEngine,
-        serialized::SerializedTextures,
-    },
+    map::data::ClientWorldData,
+    worldlib::map::{battle::BattleId, manager::WorldMapManager},
 };
 
-use event::EventWriter;
-
-use crate::command::CommandProcessor;
-
-use crate::battle_wrapper::BattleManager;
+use crate::battle_wrapper::BattleWrapper;
 use crate::world_wrapper::WorldWrapper;
-
-use super::StateMessage;
 
 pub enum GameStates {
     World,
@@ -47,75 +37,113 @@ impl Default for GameStates {
     }
 }
 
-pub(super) struct GameStateManager<
-    D: Deref<Target = PokedexClientData> + Clone,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
-    state: GameStates,
+pub(super) struct GameStateManager {
+    pub state: GameStates,
 
-    world: WorldWrapper<D>,
-    battle: BattleManager<D, P, M, I>,
+    pub world: WorldWrapper,
+    pub battle: BattleWrapper,
 
-    world_randoms: GameWorldRandoms,
+    pub saves: Rc<RefCell<SaveManager<String>>>,
 }
 
-impl<
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > GameStateManager<D, P, M, I>
-{
-    pub fn new(
-        gfx: &mut Graphics,
-        debug_font: Font,
-        dex: D,
-        btl: BattleGuiData,
-        wrld: WorldMapData,
-        world_script: DefaultWorldScriptEngine,
-        world_tex: SerializedTextures,
-        battle: (EngineMoves, MoveScripts),
-        sender: EventWriter<StateMessage>,
-        commands: CommandProcessor,
-    ) -> Result<Self, String> {
-        Ok(Self {
-            state: GameStates::default(),
-            world: WorldWrapper::new(
-                gfx,
-                dex.clone(),
-                sender,
-                commands.clone(),
-                wrld,
-                world_script,
-                world_tex,
-                debug_font,
-            )?,
-            battle: BattleManager::new(gfx, btl, dex, battle, commands)?,
-            world_randoms: WorldRandoms::default(),
-        })
-    }
-
+impl GameStateManager {
     pub fn seed(&mut self, seed: u64) {
-        self.world_randoms.seed(seed);
+        self.world.seed(seed);
         self.battle.seed(seed);
     }
 }
 
-impl<
-        D: Deref<Target = PokedexClientData> + Clone,
-        P: Deref<Target = Pokemon> + Clone,
-        M: Deref<Target = Move> + Clone,
-        I: Deref<Target = Item> + Clone,
-    > GameStateManager<D, P, M, I>
-{
-    pub fn start(&mut self, state: &mut GameWorldState, trainer: &mut InitTrainer<P, M, I>) {
+impl GameStateManager {
+    pub fn load(
+        gfx: &mut Graphics,
+        saves: Rc<RefCell<SaveManager<String>>>,
+        settings: Rc<Settings>,
+        pokedex: Arc<Dex<Pokemon>>,
+        movedex: Arc<Dex<Move>>,
+        itemdex: Arc<Dex<Item>>,
+        pokemon: Arc<PokemonTextures>,
+        items: Arc<ItemTextures>,
+        trainers: Arc<TrainerGroupTextures>,
+        debug_font: Font,
+        commands: CommandProcessor,
+    ) -> Result<Self, String> {
+        let btl = postcard::from_bytes::<BattleGuiTextures<Vec<u8>>>(include_bytes!(concat!(
+            env!("OUT_DIR"),
+            "/battle_gui.bin"
+        )))
+        .map_err(|err| err.to_string())?
+        .init(gfx)?;
+
+        Ok(Self {
+            state: Default::default(),
+            saves,
+            world: WorldWrapper::new(
+                WorldMapManager {
+                    data: firecore_storage::from_bytes(include_bytes!(concat!(
+                        env!("OUT_DIR"),
+                        "/world.bin"
+                    )))
+                    .map_err(|err| err.to_string())?,
+                    scripting: postcard::from_bytes(include_bytes!(concat!(
+                        env!("OUT_DIR"),
+                        "/world_script.bin"
+                    )))
+                    .map_err(|err| err.to_string())?,
+                    pokedex: pokedex.clone(),
+                    movedex: movedex.clone(),
+                    itemdex: itemdex.clone(),
+                },
+                ClientWorldData::new(
+                    gfx,
+                    firecore_storage::from_bytes(include_bytes!(concat!(
+                        env!("OUT_DIR"),
+                        "/world_textures.bin"
+                    )))
+                    .map_err(|err| err.to_string())?,
+                    debug_font,
+                )?,
+                settings,
+                pokemon.clone(),
+                items.clone(),
+                commands.clone(),
+            ),
+            battle: BattleWrapper::new(
+                gfx,
+                pokedex,
+                movedex,
+                itemdex,
+                pokemon,
+                items,
+                trainers,
+                btl,
+                {
+                    let mut engine = DefaultBattleEngine::new::<BattleId, GamePseudoRandom>();
+
+                    engine.moves = postcard::from_bytes(include_bytes!(concat!(
+                        env!("OUT_DIR"),
+                        "/battle_moves.bin"
+                    )))
+                    .map_err(|err| err.to_string())?;
+
+                    engine.scripting.moves = postcard::from_bytes(include_bytes!(concat!(
+                        env!("OUT_DIR"),
+                        "/battle_move_scripts.bin"
+                    )))
+                    .map_err(|err| err.to_string())?;
+
+                    engine
+                },
+                commands,
+            )?,
+        })
+    }
+
+    pub fn start(&mut self) {
         match self.state {
             GameStates::World => {
-                self.world
-                    .manager
-                    .start(&mut state.map, &mut self.world_randoms, trainer)
+                if let Some(save) = self.saves.borrow_mut().current_mut() {
+                    self.world.start(&mut save.world, &mut save.trainer);
+                }
             }
             GameStates::Battle => (),
         }
@@ -125,84 +153,49 @@ impl<
         stop_music(app, plugins);
     }
 
-    pub fn update(
-        &mut self,
-        app: &mut App,
-        plugins: &mut Plugins,
-        state: &mut GameWorldState,
-        trainer: &mut InitTrainer<P, M, I>,
-        pokedex: &impl Dex<Pokemon, Output = P>,
-        movedex: &impl Dex<Move, Output = M>,
-        itemdex: &impl Dex<Item, Output = I>,
-    ) {
-        // Speed game up if spacebar is held down
-
-        let delta = app.timer.delta_f32()
-            * if app
-                .keyboard
-                .is_down(worldcli::engine::notan::prelude::KeyCode::Space)
-            {
-                4.0
-            } else {
-                1.0
-            };
-
-        match self.state {
-            GameStates::World => {
-                self.world.update(
-                    app,
-                    plugins,
-                    state,
-                    &mut self.world_randoms,
-                    trainer,
-                    pokedex,
-                    movedex,
-                    itemdex,
-                    delta,
-                );
-                if self
-                    .battle
-                    .battle(pokedex, movedex, itemdex, &mut state.map.player, trainer)
-                {
-                    self.state = GameStates::Battle;
-                }
-            }
-            GameStates::Battle => {
-                self.battle.update(
-                    app,
-                    plugins,
-                    &mut state.map.player,
-                    pokedex,
-                    movedex,
-                    itemdex,
-                );
-                if self.battle.finished {
-                    if let Some(winner) = self.battle.winner() {
-                        let winner = winner == &BattleId::Player;
-                        self.world
-                            .manager
-                            .post_battle(&mut state.map, trainer, winner);
+    pub fn update(&mut self, app: &mut App, plugins: &mut Plugins, delta: f32) {
+        if let Some(player) = self.saves.borrow_mut().current_mut() {
+            let Player {
+                version,
+                world,
+                trainer,
+            } = player;
+            let state = world;
+            match self.state {
+                GameStates::World => {
+                    self.world.update(app, plugins, state, trainer, delta);
+                    if self.battle.try_battle(&mut state.map.player, trainer) {
+                        self.state = GameStates::Battle;
                     }
-                    self.state = GameStates::World;
-                    self.world
-                        .manager
-                        .start(&mut state.map, &mut self.world_randoms, trainer);
+                }
+                GameStates::Battle => {
+                    if self.battle.update(app, plugins, &mut state.map.player) {
+                        if let Some(winner) = self.battle.winner() {
+                            let winner = winner == &BattleId::Player;
+                            self.world
+                                .manager
+                                .post_battle(&mut state.map, trainer, winner);
+                        }
+                        self.state = GameStates::World;
+                        self.world.start(state, trainer);
+                    }
                 }
             }
         }
-        // Ok(())
     }
 
-    pub fn draw(
-        &self,
-        gfx: &mut Graphics,
-        state: &GameWorldState,
-    ) {
+    pub fn draw(&self, gfx: &mut Graphics) {
         match self.state {
-            GameStates::World => self.world.draw(gfx, &state.map),
+            GameStates::World => {
+                if let Some(player) = self.saves.borrow().current() {
+                    self.world.draw(gfx, &player.world.map);
+                }
+            }
             GameStates::Battle => {
                 if self.battle.world_active() {
-                    self.world.draw(gfx, &state.map);
+                    if let Some(player) = self.saves.borrow().current() {
+                        self.world.draw(gfx, &player.world.map);
+                    }
                 }
                 self.battle.draw(gfx);
             }
@@ -214,11 +207,33 @@ impl<
         app: &mut App,
         plugins: &mut Plugins,
         egui: &crate::engine::egui::Context,
-        state: &mut GameWorldState,
-        trainer: &mut InitTrainer<P, M, I>,
-    ) {
+    ) -> bool {
         match self.state {
-            GameStates::World => self.world.ui(app, plugins, egui, &mut state.map, trainer),
+            GameStates::World => {
+                if let Some(player) = self.saves.borrow_mut().current_mut() {
+                    if let Some(request) = self.world.ui(
+                        app,
+                        plugins,
+                        egui,
+                        &mut player.world.map,
+                        &mut player.trainer,
+                    ) {
+                        match request {
+                            WorldRequest::Save => {
+                                self.saves.borrow_mut().save();
+                                false
+                            }
+                            WorldRequest::Exit => {
+                                return true;
+                            }
+                        }
+                    } else {
+                        false
+                    }
+                } else {
+                    true
+                }
+            }
             GameStates::Battle => self.battle.ui(app, plugins, egui),
         }
     }

@@ -1,327 +1,326 @@
-mod save;
+use std::{cell::RefCell, rc::Rc, sync::Arc};
 
-use std::{ops::Deref, rc::Rc};
-
-use event::{EventReader, EventWriter};
-use worldcli::engine::notan::AppState;
+use firecore_battle_engine::pokengine::{
+    texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
+    TrainerGroupId,
+};
+use worldcli::{
+    engine::{graphics::CreateFont, notan::prelude::KeyCode, HashMap, AppState, music::MusicId},
+    pokedex::Dex,
+};
 
 use crate::{
     engine::{
-        controls::{pressed, Control},
-        graphics::{Color, CreateDraw, CreateFont, DrawShapes, Graphics},
+        graphics::{Color, CreateDraw, Graphics},
         App, Plugins,
     },
-    load::LoadData,
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon},
-    pokengine::PokedexClientData,
-    saves::Player,
-    state::MainStates,
+    saves::SaveManager,
+    state::MainStates, settings::Settings,
 };
 
 use super::{
     console::Console, game::GameStateManager, loading::LoadingStateManager,
-    menu::title::TitleState, StateMessage,
+    menu::title::TitleState, StateManager,
 };
 
 use crate::engine::notan;
 
 #[derive(AppState)]
-pub struct StateManager<
-    P: Deref<Target = Pokemon> + Clone + From<Pokemon> + std::fmt::Debug = Rc<Pokemon>,
-    M: Deref<Target = Move> + Clone + From<Move> + std::fmt::Debug = Rc<Move>,
-    I: Deref<Target = Item> + Clone + From<Item> + std::fmt::Debug = Rc<Item>,
-> {
-    state: MainStates,
+pub struct Game {
+    state: StateManager<MainStates>,
 
     loading: LoadingStateManager,
+
     title: TitleState,
-    game: GameStateInit<Rc<PokedexClientData>, P, M, I>,
+    game: GameStateManager,
+
+    saves: Rc<RefCell<SaveManager<String>>>,
+    
+    settings: Rc<Settings>,
 
     console: Console,
-
-    save: save::PlayerSave<P, M, I>,
-
-    data: crate::load::LoadData<P, M, I>,
-
-    sender: EventWriter<StateMessage>,
-    receiver: EventReader<StateMessage>,
 }
 
-enum GameStateInit<
-    D: Deref<Target = PokedexClientData> + Clone,
-    P: Deref<Target = Pokemon> + Clone,
-    M: Deref<Target = Move> + Clone,
-    I: Deref<Target = Item> + Clone,
-> {
-    Uninit(
-        worldcli::engine::graphics::Font,
-        event::EventWriter<StateMessage>,
-        crate::command::CommandProcessor,
-        u8,
-    ),
-    Init(GameStateManager<D, P, M, I>),
-    None,
-}
-
-impl<
-        P: Deref<Target = Pokemon> + Clone + From<Pokemon> + std::fmt::Debug,
-        M: Deref<Target = Move> + Clone + From<Move> + std::fmt::Debug,
-        I: Deref<Target = Item> + Clone + From<Item> + std::fmt::Debug,
-    > StateManager<P, M, I>
-{
-    pub fn new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Self {
-        Self::try_new(gfx, load)
+impl Game {
+    pub fn new(app: &mut App, plugins: &mut Plugins, gfx: &mut Graphics) -> Self {
+        Self::try_new(app, plugins, gfx)
             .unwrap_or_else(|err| panic!("Could not create state manager with error {}", err))
     }
 
-    pub fn try_new(gfx: &mut Graphics, load: LoadData<P, M, I>) -> Result<Self, String> {
-        // Creates a quick loading screen and then starts the loading scene coroutine (or continues loading screen on wasm32)
-
-        // let texture = game::graphics::Texture::new(include_bytes!("../build/assets/loading.png"));
-
-        // Flash the loading screen once so the screen freezes on this instead of a blank one
-
-        // loading_screen(texture);
-
-        // let loading_coroutine = if cfg!(not(target_arch = "wasm32")) {
-        //     start_coroutine(load_coroutine())
-        // } else {
-        //     start_coroutine(async move {
-        //         loop {
-        //             loading_screen(texture);
-        //             next_frame().await;
-        //         }
-        //     })
-        // };
-
-        // use crate::engine::graphics::{set_scaling_mode, ScalingMode};
-
-        // set_scaling_mode(x, ScalingMode::Stretch, Some(crate::SCALE));
-
-        let debug_font = gfx.create_font(include_bytes!("./Ubuntu-B.ttf"))?;
-
-        let (sender, receiver) = event::split();
-
+    pub fn try_new(
+        app: &mut App,
+        plugins: &mut Plugins,
+        gfx: &mut Graphics,
+    ) -> Result<Self, String> {
         let (console, processor) = Console::new();
 
+        let pokedex: Arc<Dex<_>> = Arc::new(
+            postcard::from_bytes(include_bytes!(concat!(env!("OUT_DIR"), "/pokedex.bin")))
+                .map_err(|err| format!("Could not create pokedex with error {}", err))?,
+        );
+        let movedex: Arc<Dex<_>> = Arc::new(
+            postcard::from_bytes(include_bytes!(concat!(env!("OUT_DIR"), "/movedex.bin")))
+                .map_err(|err| format!("Could not create movedex with error {}", err))?,
+        );
+
+        let itemdex: Arc<Dex<_>> = Arc::new(
+            postcard::from_bytes(include_bytes!(concat!(env!("OUT_DIR"), "/itemdex.bin")))
+                .map_err(|err| format!("Could not create itemdex with error {}", err))?,
+        );
+
+        let (pokemon, cries) = PokemonTextures::new(
+            gfx,
+            postcard::from_bytes(include_bytes!(concat!(
+                env!("OUT_DIR"),
+                "/pokemon_textures.bin"
+            )))
+            .map_err(|err| err.to_string())?,
+        )
+        .map_err(|err| format!("Could not create pokemon textures with error {}", err))?;
+
+        crate::pokengine::add_cries(app, plugins, cries);
+
+        let pokemon = Arc::new(pokemon);
+
+        let items = Arc::new(
+            ItemTextures::new(
+                gfx,
+                postcard::from_bytes(include_bytes!(concat!(
+                    env!("OUT_DIR"),
+                    "/item_textures.bin"
+                )))
+                .map_err(|err| err.to_string())?,
+            )
+            .map_err(|err| format!("Could not create item textures with error {}", err))?,
+        );
+
+        let mut trainer_groups = TrainerGroupTextures::default();
+
+        let trainer_groups_bytes: HashMap<TrainerGroupId, Vec<u8>> = postcard::from_bytes(
+            include_bytes!(concat!(env!("OUT_DIR"), "/trainer_textures.bin")),
+        )
+        .map_err(|err| err.to_string())?;
+
+        for (id, texture) in trainer_groups_bytes {
+            trainer_groups.insert(
+                id,
+                gfx.create_texture()
+                    .from_image(&texture)
+                    .build()
+                    .map_err(|err| {
+                        format!("Could not create trainer texture with error {}", err)
+                    })?,
+            );
+        }
+
+        let trainer_groups = Arc::new(trainer_groups);
+
+        let saves = Rc::new(RefCell::new(SaveManager::new(
+            pokedex.clone(),
+            movedex.clone(),
+            itemdex.clone(),
+        )));
+
+        for (id, music) in
+            postcard::from_bytes::<HashMap<MusicId, Vec<u8>>>(include_bytes!(concat!(env!("OUT_DIR"), "/music.bin")))
+                .map_err(|err| format!("Cannot decode music binary with error {err}"))?
+        {
+            crate::engine::music::add_music(app, plugins, id, music);
+        }
+
+        let debug_font = gfx.create_font(include_bytes!("../../assets/ThaleahFat.ttf"))?;
+
+        let settings = Rc::new(Settings::default());
+
         Ok(Self {
-            state: MainStates::default(),
+            state: Default::default(),
 
-            loading: LoadingStateManager::new(gfx, sender.clone(), debug_font)?,
+            loading: LoadingStateManager::new(gfx)?,
 
-            title: TitleState::new(gfx, sender.clone())?,
-            game: GameStateInit::Uninit(debug_font, sender.clone(), processor, 0),
+            title: TitleState::new(
+                gfx,
+                firecore_storage::from_bytes(include_bytes!(concat!(
+                    env!("OUT_DIR"),
+                    "/title.bin"
+                )))
+                .map_err(|err| err.to_string())?,
+            )?,
+            game: GameStateManager::load(
+                gfx,
+                saves.clone(),
+                settings.clone(),
+                pokedex,
+                movedex,
+                itemdex,
+                pokemon,
+                items,
+                trainer_groups,
+                debug_font,
+                processor.clone(),
+            )?,
+
+            saves,
 
             console,
 
-            save: firecore_storage::try_load::<firecore_storage::RonSerializer, Player>(
-                Some(crate::PUBLISHER),
-                crate::APPLICATION,
-            )
-            .map_err(|err| err.to_string())
-            .map(save::PlayerSave::Uninit)
-            .unwrap_or(save::PlayerSave::None),
-            // load
-            //     .save
-            //     .map(save::PlayerSave::Uninit)
-            //     .unwrap_or(save::PlayerSave::None),
-            data: load,
-
-            receiver,
-            sender,
+            settings,
             // scaler,
         })
     }
 
-    pub fn start(&mut self, app: &mut App, plugins: &mut Plugins) {
-        match self.state {
-            MainStates::Loading => (), //self.loading.start()
-            MainStates::Title => self.title.start(app, plugins),
+    pub fn start(&mut self, state: MainStates, app: &mut App, plugins: &mut Plugins) {
+        match state {
+            MainStates::Loading => (),
+            MainStates::Title => {
+                self.title.start(app, plugins);
+            }
             MainStates::Menu => (),
             MainStates::Game => {
-                if let LoadData::Data {
-                    pokedex,
-                    movedex,
-                    itemdex,
-                } = &self.data
-                {
-                    if !self
-                        .save
-                        .init(&mut rand::thread_rng(), pokedex, movedex, itemdex)
-                    {
-                        worldcli::engine::log::info!("Could not init player; {:?}", self.save)
-                    }
-                } else {
-                    worldcli::engine::log::info!("Could not init player, no dexes; {:?}", self.save)
-                }
-
-                if let Some((state, trainer)) = self.save.as_mut() {
-                    if let GameStateInit::Init(game) = &mut self.game {
-                        game.start(state, trainer);
-                    } else {
-                        self.state = MainStates::Menu;
-                    }
-                } else {
-                    self.state = MainStates::Menu;
-                }
+                self.game.start();
             }
+            MainStates::Error(..) => (),
         }
     }
-    pub fn end(&mut self, app: &mut App, plugins: &mut Plugins) {
-        match self.state {
+    pub fn end(&mut self, state: MainStates, app: &mut App, plugins: &mut Plugins) {
+        match state {
             MainStates::Loading => (),
-            MainStates::Title => self.title.end(app, plugins),
+            MainStates::Title => {
+                self.title.end(app, plugins);
+            }
             MainStates::Menu => (),
             MainStates::Game => {
-                if let GameStateInit::Init(game) = &mut self.game {
-                    game.end(app, plugins)
-                }
+                self.game.end(app, plugins);
             }
+            MainStates::Error(..) => (),
         }
-        self.process(app, plugins);
     }
 
     pub fn update(&mut self, app: &mut App, plugins: &mut Plugins) {
-        let delta = app.timer.delta_f32();
+        let delta = app.timer.delta_f32()
+            * if app.keyboard.is_down(KeyCode::Space) {
+                4.0
+            } else {
+                1.0
+            };
 
-        match self.state {
+        match self.state.current {
             MainStates::Loading => {
-                if pressed(app, plugins, Control::A) {
-                    self.state = MainStates::Title;
+                if self.loading.update(app, plugins, delta, true) {
+                    self.state.queue(MainStates::Title);
                 }
-
-                self.loading
-                    .update(app, plugins, delta, self.data.is_loaded() == Some(true));
             }
-            MainStates::Title => self.title.update(app, plugins),
+            MainStates::Title => {
+                // if let Some(title) = self.title.as_mut() {
+                if let Some(seed) = self.title.update(app, plugins) {
+                    self.state.queue(MainStates::Menu);
+                    self.game.seed(seed as _);
+                }
+                // } else {
+                //     self.state.queue(MainStates::Error(
+                //         "Could not open title screen as it is not loaded!",
+                //     ));
+                // }
+            }
             MainStates::Menu => (),
             MainStates::Game => {
-                if let Some((state, trainer)) = self.save.as_mut() {
-                    if let LoadData::Data {
-                        pokedex,
-                        movedex,
-                        itemdex,
-                    } = &self.data
-                    {
-                        if let GameStateInit::Init(game) = &mut self.game {
-                            game.update(app, plugins, state, trainer, pokedex, movedex, itemdex);
-                        } else {
-                            self.state = MainStates::Menu;
-                        }
-                    }
-                } else {
-                    self.state = MainStates::Menu;
-                }
+                // if let Some(game) = self.game.as_mut() {
+                self.game.update(app, plugins, delta);
+                // }
             }
+            MainStates::Error(..) => (),
         }
 
-        self.process(app, plugins);
-
-        // Ok(())
+        if let Some(next) = self.state.next.take() {
+            self.end(self.state.current, app, plugins);
+            self.start(next, app, plugins);
+            self.state.update(next);
+        }
     }
+
     pub fn draw(&mut self, app: &mut App, plugins: &mut Plugins, gfx: &mut Graphics) {
-        // graphics::set_canvas(ctx, self.scaler.canvas());
-        // graphics::clear(ctx, Color::BLACK);
-
-        match self.state {
-            MainStates::Loading | MainStates::Title | MainStates::Menu => {
-                if let GameStateInit::Uninit(..) = &self.game {
-                    if let Some(data) = self.data.finish() {
-                        let game = std::mem::replace(&mut self.game, GameStateInit::None);
-                        if let GameStateInit::Uninit(debug_font, sender, processor, seed) = game {
-                            self.game = GameStateInit::Init({
-                                let btl = firecore_battle_engine::BattleGuiData::new(gfx).unwrap();
-                                let dex = Rc::new(
-                                    PokedexClientData::build(app, plugins, gfx, data.dex).unwrap(),
-                                );
-                                for (id, data) in data.audio {
-                                    crate::engine::music::add_music(app, plugins, id, data);
-                                }
-                                let mut game = GameStateManager::new(
-                                    gfx,
-                                    debug_font,
-                                    dex,
-                                    btl,
-                                    data.world,
-                                    data.world_scripting,
-                                    data.world_textures,
-                                    data.battle,
-                                    sender,
-                                    processor,
-                                )
-                                .unwrap();
-                                game.seed(seed as _);
-                                game
-                            });
-                        } else {
-                            unreachable!();
-                        }
-                    }
-                }
+        match self.state.current {
+            MainStates::Loading => self.loading.draw(gfx, None),
+            MainStates::Title => {
+                self.title.draw(gfx);
             }
-            _ => (),
-        }
-
-        match self.state {
-            MainStates::Loading => self.loading.draw(gfx, self.data.percentage()),
-            MainStates::Title => self.title.draw(gfx),
             MainStates::Menu => {
                 let mut draw = gfx.create_draw();
                 draw.clear(Color::new(0.00, 0.32, 0.67, 1.0));
                 gfx.render(&draw);
             }
             MainStates::Game => {
-                if let Some((world, trainer)) = self.save.as_mut() {
-                    if let GameStateInit::Init(game) = &self.game {
-                        game.draw(gfx, world);
-                    }
-                }
+                self.game.draw(gfx);
             }
+            MainStates::Error(..) => (),
         }
 
-        match &self.state {
-            MainStates::Loading | MainStates::Title | MainStates::Menu => {
-                if let LoadData::Load(assets, ..) = &self.data {
-                    let mut draw = gfx.create_draw();
+        // match &self.state {
+        //     MainStates::Loading | MainStates::Title | MainStates::Menu => {
+        //         if let LoadData::Load(assets, ..) = &self.data {
+        //             let mut draw = gfx.create_draw();
 
-                    draw.rect(
-                        (draw.width() / 5.0, draw.height() - draw.height() / 5.0),
-                        (
-                            draw.width() * 3.0 / 5.0 * assets.progress(),
-                            draw.height() / 15.0,
-                        ),
-                    )
-                    .color(Color::WHITE);
+        //             draw.rect(
+        //                 (draw.width() / 5.0, draw.height() - draw.height() / 5.0),
+        //                 (
+        //                     draw.width() * 3.0 / 5.0 * assets.progress(),
+        //                     draw.height() / 15.0,
+        //                 ),
+        //             )
+        //             .color(Color::WHITE);
 
-                    gfx.render(&draw);
-                }
-            }
-            _ => (),
-        }
+        //             gfx.render(&draw);
+        //         }
+        //     }
+        //     _ => (),
+        // }
 
         use crate::engine::notan::egui::{self, EguiPluginSugar};
-        let plugins2 = unsafe { &mut *(plugins as *mut _) };
-        gfx.render(&plugins.egui(|egui| {
-            match self.state {
+        let plugins2: &mut Plugins = unsafe { &mut *(plugins as *mut _) };
+        gfx.render(&plugins2.egui(|egui| {
+            match self.state.current {
                 MainStates::Menu => {
+
+                    self.settings.ui(app, plugins, egui);
+
                     egui::Window::new("Menu").show(egui, |ui| {
                         if ui.button("Play").clicked() {
-                            self.sender.send(StateMessage::Goto(MainStates::Game));
+                            if self.saves.borrow().current.is_some() {
+                                self.state.queue(MainStates::Game);
+                            }
                         }
                         if ui.button("New Save / Reset Save").clicked() {
-                            self.sender.send(StateMessage::ResetSave);
+                            let mut saves = self.saves.borrow_mut();
+                            let id = format!(
+                                "{:?}",
+                                std::time::SystemTime::now()
+                                    .duration_since(std::time::UNIX_EPOCH)
+                                    .unwrap()
+                            );
+                            saves.create(id.clone(), "Red", "Blue");
+                            saves.set_current(id);
+                        }
+                        if ui.button("Settings").clicked() {
+                            self.settings.spawn();
                         }
                         if ui.button("Exit").clicked() {
-                            self.sender.send(StateMessage::Exit);
+                            let state = self.state.current;
+                            self.end(state, app, plugins);
+                            app.exit();
                         }
                     });
                 }
                 MainStates::Game => {
-                    if let Some((state, trainer)) = self.save.as_mut() {
-                        if let GameStateInit::Init(game) = &mut self.game {
-                            game.ui(app, plugins2, egui, state, trainer);
-                        }
+                    if self.game.ui(app, plugins, egui) {
+                        self.state.queue(MainStates::Menu);
                     }
+                }
+                MainStates::Error(error) => {
+                    egui::Window::new("Error").show(egui, |ui| {
+                        ui.label(error);
+                        if ui.button("Exit to Loading Screen").clicked() {
+                            self.state.queue(MainStates::Loading);
+                        }
+                    });
                 }
                 _ => (),
             }
@@ -329,7 +328,14 @@ impl<
             #[cfg(target_arch = "wasm32")]
             crate::touchscreen::Touchscreen::ui(egui, plugins2);
 
-            self.console.ui::<P, M, I>(app, egui, self.save.as_mut().map(|(w, ..)| &mut w.map.player.character));
+            self.console.ui(
+                app,
+                egui,
+                self.saves
+                    .borrow_mut()
+                    .current_mut()
+                    .map(|s| &mut s.world.map.player.character),
+            );
         }));
 
         // graphics::reset_transform_matrix(ctx);
@@ -339,43 +345,44 @@ impl<
         // Ok(())
     }
 
-    pub fn process(&mut self, app: &mut App, plugins: &mut Plugins) {
-        while let Some(message) = self.receiver.read() {
-            match message {
-                StateMessage::ResetSave => {
-                    self.save = save::PlayerSave::Uninit(Player::new("Red", "Blue"));
-                }
-                StateMessage::SaveToDisk => {
-                    if let Some(save) = self.save.cloned_uninit() {
-                        use firecore_storage as storage;
+    // #[deprecated]
+    // pub fn process(&mut self, app: &mut App, plugins: &mut Plugins) {
+    //     while let Some(message) = self.receiver.read() {
+    //         match message {
+    //             StateMessage::ResetSave => {
+    //                 self.save = save::PlayerSave::Uninit(Player::new("Red", "Blue"));
+    //             }
+    //             StateMessage::SaveToDisk => {
+    //                 if let Some(save) = self.save.cloned_uninit() {
+    //                     use firecore_storage as storage;
 
-                        impl storage::PersistantData for Player {
-                            fn path() -> &'static str {
-                                "save"
-                            }
-                        }
+    //                     impl storage::PersistantData for Player {
+    //                         fn path() -> &'static str {
+    //                             "save"
+    //                         }
+    //                     }
 
-                        if let Err(err) = storage::save::<storage::RonSerializer, Player>(
-                            &save,
-                            Some(crate::PUBLISHER),
-                            crate::APPLICATION,
-                        ) {
-                            crate::engine::log::error!("Cannot write save with error {}", err);
-                        }
-                    }
-                }
-                StateMessage::Seed(seed) => match &mut self.game {
-                    GameStateInit::Uninit(.., s) => *s = seed,
-                    GameStateInit::Init(game) => game.seed(seed as _),
-                    GameStateInit::None => (),
-                },
-                StateMessage::Goto(state) => {
-                    self.end(app, plugins);
-                    self.state = state;
-                    self.start(app, plugins);
-                }
-                StateMessage::Exit => app.exit(),
-            }
-        }
-    }
+    //                     if let Err(err) = storage::save::<storage::RonSerializer, Player>(
+    //                         &save,
+    //                         Some(crate::PUBLISHER),
+    //                         crate::APPLICATION,
+    //                     ) {
+    //                         crate::engine::log::error!("Cannot write save with error {}", err);
+    //                     }
+    //                 }
+    //             }
+    //             StateMessage::Seed(seed) => match &mut self.game {
+    //                 GameStateInit::Uninit(.., s) => *s = seed,
+    //                 GameStateInit::Init(game) => game.seed(seed as _),
+    //                 GameStateInit::None => (),
+    //             },
+    //             StateMessage::Goto(state) => {
+    //                 self.end(app, plugins);
+    //                 self.state = state;
+    //                 self.start(app, plugins);
+    //             }
+    //             StateMessage::Exit => app.exit(),
+    //         }
+    //     }
+    // }
 }

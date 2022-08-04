@@ -1,6 +1,4 @@
-use pokengine::engine::notan::prelude::Graphics;
-
-use crate::engine::{graphics::Texture, utils::HashMap};
+use crate::engine::{graphics::{Texture, Graphics}, HashMap};
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum GuiTexture {
