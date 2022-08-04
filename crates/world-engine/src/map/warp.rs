@@ -11,7 +11,6 @@ use worldlib::{
 use crate::engine::{
     graphics::{Color, Draw, DrawExt, DrawParams, DrawShapes},
     math::Rect,
-    utils::Entity,
 };
 
 use crate::map::CharacterCamera;
@@ -275,19 +274,16 @@ impl WarpTransition {
         self.faded = false;
         self.warped = false;
     }
-}
-
-impl Entity for WarpTransition {
-    fn spawn(&mut self) {
+    pub fn spawn(&mut self) {
         self.alive = true;
         self.reset();
     }
 
-    fn despawn(&mut self) {
+    pub fn despawn(&mut self) {
         self.alive = false;
     }
 
-    fn alive(&self) -> bool {
+    pub fn alive(&self) -> bool {
         self.alive
     }
 }

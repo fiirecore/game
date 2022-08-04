@@ -1,7 +1,7 @@
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
-use pokedex::{moves::MoveId, trainer::InitTrainer};
+use pokedex::{item::ItemId, moves::MoveId, trainer::InitTrainer};
 
 use crate::{
     character::{
@@ -9,7 +9,7 @@ use crate::{
             group::{NpcGroup, TrainerGroup, TrainerGroupId},
             trainer::TrainerDisable,
         },
-        CharacterGroupId, Capability,
+        Capability, CharacterGroupId, CharacterState,
     },
     positions::{Coordinate, Direction, Location, Spot},
     state::map::MapState,
@@ -22,7 +22,8 @@ use super::{chunk::Connection, warp::WarpDestination, wild::WildChances, Movemen
 pub mod tile;
 
 pub type WorldMaps = HashMap<Location, WorldMap>;
-pub type WorldFieldMoveData = HashMap<MoveId, WorldMoveType>;
+pub type FieldMoveData = HashMap<MoveId, FieldType>;
+pub type FieldItemData = HashMap<ItemId, FieldType>;
 // pub type ObjectData = HashMap<ObjectType, Removable>;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -32,7 +33,8 @@ pub struct WorldMapData {
     pub palettes: PaletteDataMap,
     pub npc: WorldNpcData,
     pub wild: WildChances,
-    pub moves: WorldFieldMoveData,
+    pub moves: FieldMoveData,
+    pub items: FieldItemData,
     pub spawn: Spot,
 }
 
@@ -43,11 +45,46 @@ pub struct WorldNpcData {
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
-pub enum WorldMoveType {
+pub enum FieldType {
     Capability(Capability),
 }
 
 impl WorldMapData {
+    pub fn update_capabilities(&self, character: &mut CharacterState, trainer: &mut InitTrainer) {
+        fn set(can: bool, character: &mut CharacterState, t: &FieldType) {
+            match can {
+                true => match t {
+                    FieldType::Capability(capability) => {
+                        character.capabilities.insert(*capability);
+                    }
+                },
+                false => match t {
+                    FieldType::Capability(capability) => {
+                        character.capabilities.remove(capability);
+                    }
+                },
+            }
+        }
+
+        for (id, t) in self.moves.iter() {
+            set(
+                trainer
+                    .party
+                    .iter()
+                    .any(|p| p.moves.iter().any(|m| &m.0.id == id)),
+                character,
+                t,
+            );
+        }
+
+        for (id, t) in self.items.iter() {
+            set(
+                trainer.bag.iter().any(|stack| &stack.item.id == id),
+                character,
+                t,
+            );
+        }
+    }
 
     pub fn connection_movement(
         &self,
@@ -70,15 +107,10 @@ impl WorldMapData {
         })
     }
 
-    pub fn post_battle(
-        &self,
-        state: &mut MapState,
-        trainer: &mut firecore_pokedex::trainer::InitTrainer,
-        winner: bool,
-    ) {
+    pub fn post_battle(&self, state: &mut MapState, trainer: &mut InitTrainer, winner: bool) {
         state.player.character.locked.decrement();
+        let entries = std::mem::take(&mut state.player.battle.battling);
         if winner {
-            let entries = std::mem::take(&mut state.player.battle.battling);
             for entry in entries {
                 if let Some(trainer) = entry.trainer {
                     state.player.character.end_interact();
@@ -116,6 +148,7 @@ impl WorldMapData {
         } else {
             self.whiteout(state, trainer);
         }
+        self.update_capabilities(&mut state.player.character, trainer);
     }
 
     pub fn whiteout(&self, state: &mut MapState, trainer: &mut InitTrainer) {

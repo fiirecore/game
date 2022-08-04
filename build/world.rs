@@ -1,8 +1,22 @@
-use std::{fs::{read_to_string, read, read_dir}, path::{Path, PathBuf}, str::FromStr};
+use std::{
+    fs::{read, read_dir, read_to_string},
+    path::{Path, PathBuf},
+    str::FromStr,
+};
 
 use firecore_world::{
-    map::{data::{WorldMapData, WorldNpcData, tile::PaletteDataMap, WorldFieldMoveData}, wild::WildChances, PaletteId}, script::default::DefaultWorldScriptEngine,
-    serialized::{SerializedTextures, SerializedCharacterGroupTextures, SerializedPalette, SerializedPlayerTexture}, character::{Activity, npc::group::NpcGroup}, positions::Spot,
+    character::{npc::group::NpcGroup, Activity},
+    map::{
+        data::{tile::PaletteDataMap, FieldItemData, FieldMoveData, WorldMapData, WorldNpcData},
+        wild::WildChances,
+        PaletteId,
+    },
+    positions::Spot,
+    script::default::DefaultWorldScriptEngine,
+    serialized::{
+        SerializedCharacterGroupTextures, SerializedPalette, SerializedPlayerTexture,
+        SerializedTextures,
+    },
 };
 use hashbrown::HashMap;
 
@@ -29,6 +43,7 @@ pub fn build(root: impl AsRef<Path>, assets: &Path) {
             palettes,
             wild,
             moves,
+            items,
             spawn,
         } = ron::from_str(&read_to_string(assets.join("world/data.ron")).unwrap()).unwrap();
 
@@ -39,6 +54,7 @@ pub fn build(root: impl AsRef<Path>, assets: &Path) {
             wild,
             spawn,
             moves,
+            items,
         };
 
         let textures = SerializedTextures {
@@ -58,7 +74,8 @@ pub fn build(root: impl AsRef<Path>, assets: &Path) {
 pub struct BuilderWorldData {
     pub palettes: PaletteDataMap,
     pub wild: WildChances,
-    pub moves: WorldFieldMoveData,
+    pub moves: FieldMoveData,
+    pub items: FieldItemData,
     pub spawn: Spot,
 }
 
@@ -90,11 +107,9 @@ fn palette(path: impl AsRef<Path>) -> hashbrown::HashMap<PaletteId, SerializedPa
                 )
             }
             false => {
-                let id = filename(&path)
-                    .parse::<PaletteId>()
-                    .unwrap_or_else(|err| {
-                        panic!("Could not read palette id at {:?} with error {}", path, err)
-                    });
+                let id = filename(&path).parse::<PaletteId>().unwrap_or_else(|err| {
+                    panic!("Could not read palette id at {:?} with error {}", path, err)
+                });
 
                 let palette = path.join("palette.png");
 
@@ -289,5 +304,7 @@ fn player(path: impl AsRef<Path>) -> SerializedPlayerTexture {
             .unwrap_or_else(|err| panic!("Cannot read player running texture with error {}", err)),
             Activity::Swimming => read(path.join("swimming.png"))
             .unwrap_or_else(|err| panic!("Cannot read player swimming texture with error {}", err)),
+            Activity::Cycling => read(path.join("bike.png"))
+            .unwrap_or_else(|err| panic!("Cannot read player cycling texture with error {}", err)),
     }
 }

@@ -15,6 +15,7 @@ mod random;
 mod saves;
 mod state;
 mod touchscreen;
+mod settings;
 
 const TITLE: &str = "Firecore Game";
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");

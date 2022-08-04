@@ -5,7 +5,7 @@ use firecore_battle_engine::pokengine::{
     TrainerGroupId,
 };
 use worldcli::{
-    engine::{graphics::CreateFont, notan::prelude::KeyCode, utils::HashMap, AppState, music::MusicId},
+    engine::{graphics::CreateFont, notan::prelude::KeyCode, HashMap, AppState, music::MusicId},
     pokedex::Dex,
 };
 
@@ -15,7 +15,7 @@ use crate::{
         App, Plugins,
     },
     saves::SaveManager,
-    state::MainStates,
+    state::MainStates, settings::Settings,
 };
 
 use super::{
@@ -35,6 +35,8 @@ pub struct Game {
     game: GameStateManager,
 
     saves: Rc<RefCell<SaveManager<String>>>,
+    
+    settings: Rc<Settings>,
 
     console: Console,
 }
@@ -76,15 +78,7 @@ impl Game {
         )
         .map_err(|err| format!("Could not create pokemon textures with error {}", err))?;
 
-        for (id, cry) in cries {
-            crate::engine::sound::add_sound(
-                app,
-                plugins,
-                crate::pokengine::CRY_ID,
-                crate::engine::sound::SoundVariant::Num(id as _),
-                cry,
-            );
-        }
+        crate::pokengine::add_cries(app, plugins, cries);
 
         let pokemon = Arc::new(pokemon);
 
@@ -136,6 +130,8 @@ impl Game {
 
         let debug_font = gfx.create_font(include_bytes!("../../assets/ThaleahFat.ttf"))?;
 
+        let settings = Rc::new(Settings::default());
+
         Ok(Self {
             state: Default::default(),
 
@@ -152,6 +148,7 @@ impl Game {
             game: GameStateManager::load(
                 gfx,
                 saves.clone(),
+                settings.clone(),
                 pokedex,
                 movedex,
                 itemdex,
@@ -165,6 +162,8 @@ impl Game {
             saves,
 
             console,
+
+            settings,
             // scaler,
         })
     }
@@ -280,6 +279,9 @@ impl Game {
         gfx.render(&plugins2.egui(|egui| {
             match self.state.current {
                 MainStates::Menu => {
+
+                    self.settings.ui(app, plugins, egui);
+
                     egui::Window::new("Menu").show(egui, |ui| {
                         if ui.button("Play").clicked() {
                             if self.saves.borrow().current.is_some() {
@@ -296,6 +298,9 @@ impl Game {
                             );
                             saves.create(id.clone(), "Red", "Blue");
                             saves.set_current(id);
+                        }
+                        if ui.button("Settings").clicked() {
+                            self.settings.spawn();
                         }
                         if ui.button("Exit").clicked() {
                             let state = self.state.current;

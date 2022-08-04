@@ -4,10 +4,10 @@ use pokengine::{
     engine::{
         graphics::{Color, Draw, DrawImages, Texture},
         math::Vec2,
-        utils::HashMap,
-        App, Plugins,
+        App, HashMap, Plugins,
     },
-    pokedex::pokemon::{PokemonId, PokemonTexture}, texture::PokemonTextures,
+    pokedex::pokemon::{PokemonId, PokemonTexture},
+    texture::PokemonTextures,
 };
 
 use crate::{
@@ -86,10 +86,9 @@ impl PokemonRenderer {
     pub fn faint(&mut self, position: (bool, usize), pokemon: Option<&PokemonId>) {
         self.insert(
             position,
-            PokemonAction::Faint(Faint::new(pokemon.and_then(|pokemon| {
-                self.textures
-                    .get(pokemon, local(position.0))
-            }))),
+            PokemonAction::Faint(Faint::new(
+                pokemon.and_then(|pokemon| self.textures.get(pokemon, local(position.0))),
+            )),
         );
     }
 

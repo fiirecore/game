@@ -3,7 +3,7 @@ use worldlib::character::{
     CharacterGroupId, CharacterState,
 };
 
-use crate::engine::utils::HashMap;
+use crate::engine::HashMap;
 
 // pub type NpcTypeMap = HashMap<NpcTypeId, NpcType>;
 

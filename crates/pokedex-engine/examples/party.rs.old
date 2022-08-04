@@ -44,18 +44,9 @@ impl State {
 
         // let (pdex, mdex, idex) = ;
 
-        let (pokedex, movedex, itemdex): (Dex<Pokemon>, Dex<Move>, Dex<Item>) =
-            firecore_storage::from_bytes(include_bytes!("./dex.bin")).unwrap();
+        let (pokedex, movedex, itemdex): (Dex<Pokemon>, Dex<Move>, Dex<Item>) = Default::default();
 
-        let data = Arc::new(
-            firecore_pokedex_engine::PokedexClientData::build(
-                app,
-                plugins,
-                gfx,
-                firecore_storage::from_bytes(include_bytes!("./dex_engine.bin")).unwrap(),
-            )
-            .unwrap(),
-        );
+        let data = Arc::new(Default::default());
 
         let mut party = PartyGui::new(data);
 

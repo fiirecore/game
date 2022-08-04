@@ -1,4 +1,4 @@
-use std::sync::Arc;
+
 
 use crate::engine::{
     controls::{pressed, Control},
@@ -6,11 +6,9 @@ use crate::engine::{
     gui::MessageBox,
     math::{ivec2, IVec2},
     music, sound,
-    utils::Entity,
     App, Plugins,
 };
 
-use pokengine::pokedex::{Dex, pokemon::Pokemon, moves::Move, item::Item};
 use rand::Rng;
 
 use worldlib::{
@@ -55,11 +53,11 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
 
     pub fn start<R: Rng, P, B>(
         &mut self,
-        state: &mut MapState,
+        state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
         trainer: &Trainer<P, B>,
     ) {
-        if state.location == Location::DEFAULT {
+        if state.map.location == Location::DEFAULT {
             let Spot { location, position } = self.world.data.spawn;
             self.world.warp(
                 state,
@@ -84,7 +82,7 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
 
     pub fn try_teleport<R: Rng, P, B>(
         &mut self,
-        state: &mut MapState,
+        state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
         trainer: &Trainer<P, B>,
         location: Location,
@@ -95,6 +93,10 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
         } else {
             false
         }
+    }
+
+    pub fn update_capabilities(&self, character: &mut worldlib::character::CharacterState, trainer: &mut InitTrainer) {
+        self.world.update_capabilities(character, trainer);
     }
 
     pub fn update<R: Rng>(
@@ -118,7 +120,7 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
 
         if self.warper.alive() {
             if let Some(music) = self.warper.update(&self.world.data, &mut state.map, delta) {
-                self.world.on_warp(&mut state.map, randoms, trainer);
+                self.world.on_warp(state, randoms, trainer);
             }
         } else if state.map.warp.is_some() {
             self.warper.spawn();
@@ -177,7 +179,7 @@ impl<S: WorldScriptingEngine> WorldManager<S> {
 
     pub fn teleport<R: Rng, P, B>(
         &mut self,
-        state: &mut MapState,
+        state: &mut WorldState<S>,
         randoms: &mut WorldRandoms<R>,
         trainer: &Trainer<P, B>,
         location: Location,

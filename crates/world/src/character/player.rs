@@ -38,7 +38,15 @@ impl PlayerCharacter {
     pub fn new(name: impl Into<String>, rival: impl Into<String>) -> Self {
         Self {
             name: name.into(),
-            character: CharacterState::default(),
+            character: CharacterState {
+                group: "player".parse().unwrap(),
+                capabilities: {
+                    let mut set = HashSet::with_capacity(1);
+                    set.insert(CharacterState::ENCOUNTERS);
+                    set
+                },
+                ..Default::default()
+            },
             battle: Default::default(),
             badges: Default::default(),
             cooldown: Default::default(),

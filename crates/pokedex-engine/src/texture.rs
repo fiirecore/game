@@ -9,9 +9,8 @@ use crate::pokedex::{
 
 use engine::{
     egui::{self, EguiRegisterTexture},
-    graphics::Graphics,
-    graphics::Texture,
-    utils::HashMap,
+    graphics::{Graphics, Texture},
+    HashMap,
 };
 
 pub type TrainerGroupTextures = HashMap<crate::TrainerGroupId, Texture>;

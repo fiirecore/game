@@ -29,7 +29,7 @@ pub struct JsonMapData {
     pub connections: Option<Vec<JsonConnection>>,
     pub object_events: Vec<object::JsonObjectEvent>,
     pub warp_events: Vec<warp::JsonWarpEvent>,
-    // pub coord_events: Vec<>,
+    pub coord_events: Vec<object::JsonCoordEvent>,
     pub bg_events: Vec<object::JsonBgEvent>,
 }
 

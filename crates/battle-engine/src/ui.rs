@@ -1,10 +1,7 @@
 use std::sync::Arc;
 
 use pokengine::{
-    engine::{
-        egui,
-        graphics::{Draw, DrawImages},
-    },
+    engine::{egui, graphics::Draw},
     pokedex::pokemon::PokemonTexture,
     texture::{ItemTextures, PokemonTextures},
 };

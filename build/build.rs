@@ -33,7 +33,7 @@ fn main() {
         std::fs::create_dir_all(&root).unwrap();
     }
 
-    let (client, pokemon) = dex::build(&root);
+    let (client, pokemon) = dex::build(&root, assets);
 
     dex_client::build(&root, &assets, client.clone(), pokemon);
 

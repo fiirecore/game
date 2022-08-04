@@ -1,6 +1,5 @@
 mod manager;
 pub use manager::*;
-use worldcli::engine::graphics::Draw;
 
 pub mod game;
 pub mod loading;
@@ -31,12 +30,6 @@ impl Default for MainStates {
     fn default() -> Self {
         Self::Loading
     }
-}
-
-pub trait MainState {
-    fn draw(&self, draw: &mut Draw);
-
-    fn end(&mut self, ctx: &mut Draw);
 }
 
 #[derive(Debug, Default)]

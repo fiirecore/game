@@ -1,13 +1,4 @@
-use core::ops::Deref;
-
-use pokengine::{
-    engine::egui,
-    pokedex::{
-        item::Item,
-        moves::Move,
-        pokemon::{owned::OwnedPokemon, Pokemon},
-    },
-};
+use pokengine::{engine::egui, pokedex::pokemon::owned::OwnedPokemon};
 
 #[derive(Default)]
 pub struct MovePanel {

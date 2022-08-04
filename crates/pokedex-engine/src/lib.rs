@@ -5,7 +5,6 @@ pub use firecore_pokedex_engine_core::*;
 // #[deprecated(note = "add battle moves to battle-gui crate")]
 // pub mod battle_move;
 
-pub(crate) mod data;
 pub mod gui;
 pub mod texture;
 
@@ -14,7 +13,7 @@ pub const CRY_ID: tinystr::TinyStr8 =
     unsafe { tinystr::TinyStr8::from_bytes_unchecked(7959107u64.to_ne_bytes()) };
 
 #[cfg(feature = "audio")]
-pub fn add_cries(app: &mut engine::App, plugins: &mut engine::Plugins, cries: engine::utils::HashMap<pokedex::pokemon::PokemonId, Vec<u8>>) {
+pub fn add_cries(app: &mut engine::App, plugins: &mut engine::Plugins, cries: crate::engine::HashMap<pokedex::pokemon::PokemonId, Vec<u8>>) {
     for (id, cry) in cries {
         if !cry.is_empty() {
             engine::sound::add_sound(

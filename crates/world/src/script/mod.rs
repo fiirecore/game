@@ -9,7 +9,11 @@ pub trait WorldScriptingEngine {
 
     type Error;
 
-    fn on_tile(&self);
+    fn on_tile(
+        &self,
+        map: &mut MapState,
+        state: &mut Self::State,
+    );
 
     fn update<R: rand::Rng>(
         &self,

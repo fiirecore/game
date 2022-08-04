@@ -8,28 +8,23 @@ use battlecli::battle::{
         PlayerSettings,
     },
 };
-use worldcli::{
-    engine::text::MessagePage,
-    pokedex::trainer::InitTrainer,
-    worldlib::{character::player::PlayerCharacter, map::battle::BattleEntry},
-};
+use worldcli::worldlib::{character::player::PlayerCharacter, map::battle::BattleEntry};
 
 use crate::{
     command::CommandProcessor,
     engine::{
         graphics::{Color, CreateDraw, Graphics},
+        text::MessagePage,
         App, Plugins,
     },
-    pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
+    pokedex::{item::Item, moves::Move, pokemon::Pokemon, trainer::InitTrainer, Dex},
+    pokengine::texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
     random::GamePseudoRandom,
 };
 
 use worldcli::worldlib::map::battle::BattleId;
 
-use firecore_battle_engine::{
-    pokengine::texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
-    BattlePlayerGui, BattleTrainer, InitBattleGuiTextures,
-};
+use firecore_battle_engine::{BattlePlayerGui, BattleTrainer, InitBattleGuiTextures};
 
 mod command;
 pub mod transition;
@@ -43,7 +38,7 @@ pub struct BattleWrapper {
     engine: DefaultEngine,
     battle: Option<Battle<BattleId, BattleTrainer>>,
     player: BattlePlayerGui<BattleId>,
-    ai: Vec<BattleAi<BattleId, SmallRng, BattleTrainer>>,
+    ai: Option<BattleAi<BattleId, SmallRng, BattleTrainer>>,
     transition: BattleScreenTransitionManager,
     random: GamePseudoRandom,
     commands: CommandProcessor,
@@ -189,6 +184,8 @@ impl BattleWrapper {
             .as_ref()
             .map(|e| BattleTransitions::from(e.transition))
             .unwrap_or_default();
+
+        self.ai = Some(ai);
     }
 
     pub fn update(
@@ -199,7 +196,7 @@ impl BattleWrapper {
     ) -> bool {
         if app
             .keyboard
-            .was_pressed(worldcli::engine::notan::prelude::KeyCode::F1)
+            .was_pressed(crate::engine::notan::prelude::KeyCode::F1)
         {
             // exit shortcut
             self.end();
@@ -242,7 +239,7 @@ impl BattleWrapper {
                     self.state = BattleManagerState::Transition;
 
                     self.transition
-                        .begin(app, plugins, self.player.data().unwrap().type_);
+                        .begin(app, plugins, battle.data().type_);
 
                     // self.player.on_begin(dex);
 

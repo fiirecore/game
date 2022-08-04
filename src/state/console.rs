@@ -2,7 +2,7 @@ use worldcli::worldlib::character::CharacterState;
 
 use crate::{
     command::CommandProcessor,
-    engine::{egui, App},
+    engine::{egui, App, controls::keyboard::Key},
 };
 
 pub struct Console {
@@ -85,7 +85,7 @@ impl Console {
         }
         if app
             .keyboard
-            .was_pressed(worldcli::engine::notan::prelude::KeyCode::Slash)
+            .was_pressed(Key::Slash)
             || despawn
         {
             self.alive = !self.alive;

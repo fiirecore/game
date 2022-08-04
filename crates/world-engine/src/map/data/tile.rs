@@ -7,7 +7,7 @@ use worldlib::{
 use crate::engine::{
     graphics::{Color, Draw, DrawExt, DrawParams, Graphics, Texture},
     math::Rect,
-    utils::HashMap,
+    HashMap,
 };
 
 pub struct PaletteTextureManager {

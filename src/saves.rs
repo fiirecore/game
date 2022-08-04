@@ -1,16 +1,16 @@
 use serde::{Deserialize, Serialize};
 use std::{hash::Hash, sync::Arc};
 
-use worldcli::{
-    engine::utils::HashMap,
-    pokedex::{
-        item::Item,
-        moves::Move,
-        pokemon::Pokemon,
-        trainer::{InitTrainer, SavedTrainer},
-        Dex,
-    },
-    worldlib::{script::default::DefaultWorldScriptEngine, state::WorldState},
+use crate::engine::HashMap;
+
+use crate::worldcli::worldlib::{script::default::DefaultWorldScriptEngine, state::WorldState};
+
+use crate::pokedex::{
+    item::Item,
+    moves::Move,
+    pokemon::Pokemon,
+    trainer::{InitTrainer, SavedTrainer},
+    Dex,
 };
 
 #[derive(Debug)]
@@ -44,7 +44,6 @@ pub struct Player<T> {
 }
 
 impl<ID: Eq + Hash + Clone> SaveManager<ID> {
-
     pub fn new(
         pokedex: Arc<Dex<Pokemon>>,
         movedex: Arc<Dex<Move>>,
@@ -69,7 +68,8 @@ impl<ID: Eq + Hash + Clone> SaveManager<ID> {
             self.saves.insert(id, player.uninit());
         }
         let new = self.saves.remove(&id);
-        if let Some(new) = new.and_then(|new| new.init(&self.pokedex, &self.movedex, &self.itemdex)) {
+        if let Some(new) = new.and_then(|new| new.init(&self.pokedex, &self.movedex, &self.itemdex))
+        {
             self.current = Some((id, new));
         }
         self.current.is_some()

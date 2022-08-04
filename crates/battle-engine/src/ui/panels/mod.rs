@@ -1,18 +1,14 @@
-use core::ops::Deref;
 use std::sync::Arc;
 
 use battle::{moves::BattleMove, pokemon::Indexed, prelude::BattleType};
 use pokengine::{
-    engine::{egui, utils::Entity, App},
+    engine::{egui, App},
     gui::{
         bag::{BagAction, BagGui},
         party::{PartyAction, PartyGui},
     },
-    pokedex::{
-        item::{Item, ItemId},
-        moves::Move,
-        pokemon::Pokemon,
-    }, texture::{PokemonTextures, ItemTextures},
+    pokedex::item::ItemId,
+    texture::{ItemTextures, PokemonTextures},
 };
 
 pub mod move_info;
@@ -200,7 +196,7 @@ impl BattlePanel {
             }
             BattleOptions::Pokemon => {
                 if self.party.alive() {
-                    if let Some(action) = self.party.ui(app, egui, &mut local.player.pokemon) {
+                    if let Some(action) = self.party.ui(egui, &mut local.player.pokemon, app.timer.delta_f32()) {
                         match action {
                             PartyAction::Select(p) => {
                                 if Some(p) != local.selecting.as_ref().map(|r| r.start) {
@@ -265,7 +261,7 @@ impl BattlePanel {
                 .flatten(),
             BattleOptions::PartyOnly => {
                 if self.party.alive() {
-                    if let Some(action) = self.party.ui(app, egui, &mut local.player.pokemon) {
+                    if let Some(action) = self.party.ui(egui, &mut local.player.pokemon, app.timer.delta_f32()) {
                         match action {
                             PartyAction::Select(p) => {
                                 if Some(p) != local.selecting.as_ref().map(|r| r.start) {

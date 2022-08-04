@@ -7,7 +7,7 @@ use worldlib::{
     positions::Direction,
 };
 
-use crate::{engine::utils::HashMap, map::CharacterCamera};
+use crate::{engine::HashMap, map::CharacterCamera};
 
 pub struct NpcTextures(HashMap<CharacterGroupId, NpcTexture>);
 

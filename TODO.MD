@@ -5,6 +5,7 @@
 
 * World
    - Fix interaction locking and failing to interact causing a lock
+   - Make coordinate based events use elevation
 
 * World Scripts
    - Scripts need to be able to activate on tiles
@@ -13,6 +14,7 @@
 * Battle GUI
    - Fix the regressions
    - Implement a move graphics script
+   - Create Gen 5 / Gen 6 battle scene
 
 * Capabilities
    - Be able to activate and deactivate move capabilities

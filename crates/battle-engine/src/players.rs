@@ -1,10 +1,6 @@
-use std::ops::{Deref, Range};
+use std::ops::Range;
 
-use pokengine::pokedex::{
-    item::{bag::InitBag, Item},
-    moves::Move,
-    pokemon::{owned::OwnedPokemon, Pokemon},
-};
+use pokengine::pokedex::{item::bag::InitBag, pokemon::owned::OwnedPokemon};
 
 use battle::{pokemon::remote::InitUnknownPokemon, prelude::BattleData};
 

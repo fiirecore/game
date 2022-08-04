@@ -2,11 +2,15 @@ use std::{cell::RefCell, rc::Rc, sync::Arc};
 
 use crate::{
     command::CommandProcessor,
-    engine::{graphics::Graphics, music::stop_music, App, Plugins},
+    engine::{
+        graphics::{Font, Graphics},
+        music::stop_music,
+        App, Plugins,
+    },
     pokedex::{item::Item, moves::Move, pokemon::Pokemon, Dex},
     random::GamePseudoRandom,
-    saves::{GameWorldState, Player, SaveManager},
-    world_wrapper::WorldRequest,
+    saves::{Player, SaveManager},
+    world_wrapper::WorldRequest, settings::Settings,
 };
 
 use firecore_battle_engine::{
@@ -15,9 +19,7 @@ use firecore_battle_engine::{
     BattleGuiTextures,
 };
 use worldcli::{
-    engine::graphics::Font,
     map::data::ClientWorldData,
-    pokedex::trainer::InitTrainer,
     worldlib::map::{battle::BattleId, manager::WorldMapManager},
 };
 
@@ -55,6 +57,7 @@ impl GameStateManager {
     pub fn load(
         gfx: &mut Graphics,
         saves: Rc<RefCell<SaveManager<String>>>,
+        settings: Rc<Settings>,
         pokedex: Arc<Dex<Pokemon>>,
         movedex: Arc<Dex<Move>>,
         itemdex: Arc<Dex<Item>>,
@@ -99,6 +102,7 @@ impl GameStateManager {
                     .map_err(|err| err.to_string())?,
                     debug_font,
                 )?,
+                settings,
                 pokemon.clone(),
                 items.clone(),
                 commands.clone(),

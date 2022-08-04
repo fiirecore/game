@@ -54,6 +54,7 @@ pub enum Activity {
     Walking,
     Running,
     Swimming,
+    Cycling,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
@@ -82,12 +83,19 @@ impl CharacterState {
         CharacterGroupId::from_bytes_unchecked(138296354938823594217663600u128.to_ne_bytes())
     };
 
+    /// "run"
     pub const RUN: Capability =
         unsafe { Capability::from_bytes_unchecked([0x72, 0x75, 0x6E, 0, 0, 0, 0, 0]) };
 
+    /// "cycle"
+    pub const CYCLE: Capability =
+        unsafe { Capability::from_bytes_unchecked([0x63, 0x79, 0x63, 0x6C, 0x65, 0, 0, 0]) };
+
+    /// "swim"
     pub const SWIM: Capability =
         unsafe { Capability::from_bytes_unchecked([0x73, 0x77, 0x69, 0x6D, 0, 0, 0, 0]) };
 
+    /// "battle"
     pub const ENCOUNTERS: Capability =
         unsafe { Capability::from_bytes_unchecked([0x62, 0x61, 0x74, 0x74, 0x6C, 0x65, 0, 0]) };
 
@@ -283,6 +291,7 @@ impl Activity {
         match self {
             Self::Walking => 1.0,
             Self::Running | Self::Swimming => 2.0,
+            Self::Cycling => 4.0,
         }
     }
 }

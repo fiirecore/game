@@ -1,5 +1,7 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
+use serde::{Deserialize, Serialize};
+
 use crate::{
     map::movement::Elevation,
     positions::{Direction, Position},
@@ -13,9 +15,10 @@ pub struct Coordinate {
     pub y: CoordinateInt,
 }
 
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct Coordinate3d {
     pub xy: Coordinate,
-    pub elevation: Elevation,
+    pub z: Elevation,
 }
 
 impl Coordinate {
@@ -105,21 +108,15 @@ impl core::fmt::Display for Coordinate {
     }
 }
 
-impl<'de> serde::Deserialize<'de> for Coordinate {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
+impl<'de> Deserialize<'de> for Coordinate {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         type C = (CoordinateInt, CoordinateInt);
         C::deserialize(deserializer).map(Into::into)
     }
 }
 
-impl serde::Serialize for Coordinate {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
+impl Serialize for Coordinate {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         (self.x, self.y).serialize(serializer)
     }
 }

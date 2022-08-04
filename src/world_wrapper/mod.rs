@@ -1,12 +1,11 @@
-use std::sync::Arc;
+use std::{sync::Arc, rc::Rc};
 
-use crate::{command::CommandProcessor, random::GameWorldRandoms, saves::GameWorldState};
+use crate::{command::CommandProcessor, random::GameWorldRandoms, saves::GameWorldState, settings::Settings};
 
 use crate::engine::{
     controls::{pressed, Control},
-    graphics::{Color, CreateDraw, Font, Graphics},
+    graphics::{Color, CreateDraw, Graphics},
     log::{self, info},
-    utils::Entity,
     App, Plugins,
 };
 
@@ -16,7 +15,7 @@ use worldcli::{
     pokedex::{moves::owned::OwnedMove, trainer::InitTrainer},
     worldlib::{
         character::CharacterState, map::manager::WorldMapManager,
-        script::default::DefaultWorldScriptEngine, serialized::SerializedTextures,
+        script::default::DefaultWorldScriptEngine,
         state::map::MapState,
     },
 };
@@ -43,6 +42,7 @@ impl WorldWrapper {
     pub(crate) fn new(
         world: WorldMapManager<DefaultWorldScriptEngine>,
         data: ClientWorldData,
+        settings: Rc<Settings>,
         pokemon: Arc<PokemonTextures>,
         items: Arc<ItemTextures>,
         commands: CommandProcessor,
@@ -55,7 +55,7 @@ impl WorldWrapper {
                 warper: Default::default(),
                 input: Default::default(),
             },
-            menu: StartMenu::new(pokemon, items),
+            menu: StartMenu::new(settings, pokemon, items),
             commands,
             randoms: Default::default(),
             // events,
@@ -68,7 +68,7 @@ impl WorldWrapper {
 
     pub fn start(&mut self, state: &mut GameWorldState, trainer: &mut InitTrainer) {
         self.manager
-            .start(&mut state.map, &mut self.randoms, trainer)
+            .start(state, &mut self.randoms, trainer)
     }
 
     pub fn update(
@@ -97,7 +97,7 @@ impl WorldWrapper {
                     // WorldCommands::Script(_) => todo!(),
                     WorldCommands::Warp(location) => {
                         self.manager.try_teleport(
-                            &mut state.map,
+                            state,
                             &mut self.randoms,
                             trainer,
                             location,
@@ -181,7 +181,10 @@ impl WorldWrapper {
                     },
                     WorldCommands::GiveItem(stack) => {
                         match stack.init(&self.manager.world.itemdex) {
-                            Some(stack) => trainer.bag.insert(stack),
+                            Some(stack) => {
+                                trainer.bag.insert(stack);
+                                self.manager.update_capabilities(&mut state.map.player.character, trainer);
+                            },
                             None => info!("Could not initialize item!"),
                         }
                         // player.trainer.bag.insert_saved(stack);
@@ -227,11 +230,21 @@ impl WorldWrapper {
                         if let Some(m) = self.manager.world.movedex.try_get(&id) {
                             if let Some(pokemon) = trainer.party.get_mut(index) {
                                 pokemon.moves.push(OwnedMove::from(m.clone()));
+                                self.manager.update_capabilities(&mut state.map.player.character, trainer);
                             } else {
                                 info!("No pokemon at index {}", index);
                             }
                         }
                     }
+                    WorldCommands::ToggleCapability(capability) => {
+                        match state.map.player.character.capabilities.contains(&capability) {
+                            true => state.map.player.character.capabilities.remove(&capability),
+                            false => state.map.player.character.capabilities.insert(capability),
+                        };
+                    },
+                    WorldCommands::Capabilities => {
+                        info!("Capabilities: {:?}", state.map.player.character.capabilities.iter());
+                    },
                 },
                 Err(err) => self.commands.errors.borrow_mut().push(err),
             }
@@ -325,18 +338,15 @@ impl WorldWrapper {
             }
         }
     }
-}
-
-impl Entity for WorldWrapper {
-    fn spawn(&mut self) {
+    pub fn spawn(&mut self) {
         self.alive = true;
     }
 
-    fn despawn(&mut self) {
+    pub fn despawn(&mut self) {
         self.alive = false;
     }
 
-    fn alive(&self) -> bool {
+    pub fn alive(&self) -> bool {
         self.alive
     }
 }

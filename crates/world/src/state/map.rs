@@ -2,13 +2,12 @@ use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 
 use audio::{SoundId, SoundVariant};
-use pokedex::trainer::InitTrainer;
 use text::MessageStates;
 
 use crate::{
     character::{npc::NpcId, player::PlayerCharacter, CharacterState},
     map::{
-        data::{WorldMapData, WorldMoveType},
+        data::{WorldMapData},
         movement::Elevation,
         warp::WarpDestination,
         MusicId,
@@ -121,28 +120,6 @@ impl MapState {
             //         },
             //     );
             // }
-        }
-    }
-
-    pub fn update_with_trainer(&mut self, data: &WorldMapData, trainer: &InitTrainer) {
-        for (id, m) in data.moves.iter() {
-            match trainer
-                .party
-                .iter()
-                .flat_map(|p| p.moves.iter())
-                .any(|m| m.id() == id)
-            {
-                true => match m {
-                    WorldMoveType::Capability(capability) => {
-                        self.player.character.capabilities.insert(*capability);
-                    }
-                },
-                false => match m {
-                    WorldMoveType::Capability(capability) => {
-                        self.player.character.capabilities.remove(capability);
-                    }
-                },
-            }
         }
     }
 

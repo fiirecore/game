@@ -68,8 +68,12 @@
         Fishing(2): [40, 40, 15, 4, 1],
     },
     moves: {
-        "surf": Capability("surf"),
+        "surf": Capability("swim"),
         "rock-smash": Capability("rock"),
         "cut": Capability("cut"),
+    },
+    items: {
+        "bicycle": Capability("cycle"),
+        "running-shoes": Capability("run"),
     },
 )

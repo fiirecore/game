@@ -1,17 +1,17 @@
 use serde::{Deserialize, Serialize};
 
-use pokedex::{
-    item::{Item, ItemId, ItemStack},
-    moves::MoveId,
-    trainer::InitTrainer,
-};
+// use pokedex::{
+//     item::{Item, ItemId, ItemStack},
+//     moves::MoveId,
+//     trainer::InitTrainer,
+// };
 
 pub mod group;
 pub use group::*;
 
 use crate::{
     positions::{Coordinate, Location},
-    state::map::MapState,
+    // state::map::MapState,
 };
 
 pub type ObjectId = u16;

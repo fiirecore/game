@@ -1,21 +1,25 @@
-use std::sync::Arc;
-
-use crate::{pokedex::pokemon::{owned::OwnedPokemon, PokemonTexture}, texture::PokemonTextures};
-
-use engine::{
-    notan::egui::{self, Pos2, Rect},
-    utils::Entity,
-    App,
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
 };
 
+use crate::{
+    pokedex::pokemon::{owned::OwnedPokemon, PokemonTexture},
+    texture::PokemonTextures,
+};
+
+use engine::egui::{self, Pos2, Rect};
+
 mod select;
+mod summary;
 
 pub struct PartyGui {
-    alive: bool,
-    textures: Arc<PokemonTextures>,
+    alive: AtomicBool,
     select: select::PartySelectMenu,
-    swap: Option<usize>,
-    accumulator: f32,
+    summary: summary::SummaryGui,
+    swap: Mutex<Option<usize>>,
+    accumulator: Mutex<f32>,
+    textures: Arc<PokemonTextures>,
 }
 
 pub enum PartyAction {
@@ -26,38 +30,46 @@ impl PartyGui {
     pub fn new(textures: Arc<PokemonTextures>) -> Self {
         Self {
             alive: Default::default(),
-            textures,
             select: Default::default(),
             accumulator: Default::default(),
             swap: Default::default(),
+            summary: summary::SummaryGui::new(textures.clone()),
+            textures,
         }
     }
 
     pub fn ui(
-        &mut self,
-        app: &mut App,
+        &self,
         egui: &egui::Context,
         party: &mut [OwnedPokemon],
+        delta: f32,
     ) -> Option<PartyAction> {
-        if self.alive {
-            self.accumulator += app.timer.delta_f32();
-            if self.accumulator > 2.0 {
-                self.accumulator -= 2.0;
+        if self.alive() {
+            if let Ok(mut accumulator) = self.accumulator.try_lock() {
+                *accumulator += delta;
+                if *accumulator > 2.0 {
+                    *accumulator -= 2.0;
+                }
             }
 
             if let Some(action) = self.select.ui(egui) {
                 self.select.despawn();
+                let pokemon = self.select.pokemon.load(Ordering::Relaxed);
                 match action {
-                    select::SelectAction::Select => {
-                        return Some(PartyAction::Select(self.select.pokemon))
-                    }
+                    select::SelectAction::Select => return Some(PartyAction::Select(pokemon)),
                     select::SelectAction::Summary => {
-                        engine::log::warn!("todo: implement summary");
+                        self.summary.spawn(pokemon);
                     }
                     select::SelectAction::Swap => {
-                        return None;
+                        if let Ok(mut swap) = self.swap.try_lock() {
+                            *swap = Some(pokemon);
+                        }
                     }
                 }
+            }
+
+            if let Some(()) = self.summary.ui(egui, party) {
+                self.summary.despawn();
             }
 
             return egui::Window::new("Party GUI")
@@ -69,7 +81,14 @@ impl PartyGui {
                                     .textures
                                     .egui_id(&pokemon.pokemon.id, PokemonTexture::Icon)
                                     .unwrap_or((egui::TextureId::default(), (2.0, 2.0)));
-                                let (a, b) = match self.accumulator > 1.0 {
+                                let (a, b) = match self
+                                    .accumulator
+                                    .try_lock()
+                                    .as_deref()
+                                    .copied()
+                                    .unwrap_or_default()
+                                    > 1.0
+                                {
                                     true => (0.0, 0.5),
                                     false => (0.5, 1.0),
                                 };
@@ -80,14 +99,19 @@ impl PartyGui {
                                     }))
                                     .clicked()
                                 {
-                                    match self.swap {
-                                        Some(swap) => {
-                                            party.swap(swap, self.select.pokemon);
-                                            return None;
-                                        }
-                                        None => {
-                                            if !self.select.alive() {
-                                                self.select.spawn(num);
+                                    if let Ok(mut swap) = self.swap.try_lock() {
+                                        match swap.take() {
+                                            Some(swap) => {
+                                                party.swap(
+                                                    swap,
+                                                    num,
+                                                );
+                                                return None;
+                                            }
+                                            None => {
+                                                if !self.select.alive() {
+                                                    self.select.spawn(num);
+                                                }
                                             }
                                         }
                                     }
@@ -126,19 +150,19 @@ impl PartyGui {
         }
         None
     }
-}
 
-impl Entity for PartyGui {
-    fn spawn(&mut self) {
-        self.alive = true;
-        self.accumulator = 0.0;
+    pub fn spawn(&self) {
+        self.alive.store(true, Ordering::Relaxed);
+        if let Ok(mut accumulator) = self.accumulator.try_lock() {
+            *accumulator = 0.0;
+        }
     }
 
-    fn despawn(&mut self) {
-        self.alive = false;
+    pub fn despawn(&self) {
+        self.alive.store(false, Ordering::Relaxed)
     }
 
-    fn alive(&self) -> bool {
-        self.alive
+    pub fn alive(&self) -> bool {
+        self.alive.load(Ordering::Relaxed)
     }
 }

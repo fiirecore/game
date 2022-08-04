@@ -1,9 +1,6 @@
-use std::{io::Write, ops::Deref};
+use std::io::Write;
 
-use pokengine::{
-    engine::egui,
-    pokedex::moves::{owned::OwnedMove, Move},
-};
+use pokengine::{engine::egui, pokedex::moves::owned::OwnedMove};
 
 pub struct MoveInfoPanel;
 
