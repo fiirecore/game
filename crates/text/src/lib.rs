@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum MessageStates<C: Clone + Into<[f32; 4]>, T: Default> {
+pub enum MessageStates<C: Clone + Into<[f32; 4]>, T: Default = ()> {
     Running(MessageState<C, T>),
     /// Has cooldown
     Finished(f32),
@@ -9,7 +9,7 @@ pub enum MessageStates<C: Clone + Into<[f32; 4]>, T: Default> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MessageState<C: Clone + Into<[f32; 4]>, T: Default> {
+pub struct MessageState<C: Clone + Into<[f32; 4]>, T: Default = ()> {
     pub pages: Vec<MessagePage<C, T>>,
 
     pub page: usize,
@@ -25,7 +25,7 @@ pub struct MessageState<C: Clone + Into<[f32; 4]>, T: Default> {
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct MessagePage<C: Clone + Into<[f32; 4]>, T: Default> {
+pub struct MessagePage<C: Clone + Into<[f32; 4]>, T: Default = ()> {
     pub lines: Vec<String>,
     pub wait: Option<f32>,
     #[serde(default = "Option::default")]

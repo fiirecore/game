@@ -1,5 +1,5 @@
-extern crate firecore_battle_engine as battlecli;
-extern crate firecore_world_engine as worldcli;
+extern crate firecore_battle_client as battlecli;
+extern crate firecore_world_client as worldcli;
 
 pub(crate) use battlecli::battle::pokedex;
 pub(crate) use battlecli::pokengine;
@@ -28,28 +28,35 @@ const WIDTH: f32 = 240.0;
 const HEIGHT: f32 = 160.0;
 const SCALE: f32 = 3.0;
 
-use engine::notan::prelude::*;
+use bevy::prelude::*;
 
-#[notan_main]
+#[bevy_main]
 fn main() -> Result<(), String> {
-    use engine::notan;
-    notan::init_with(run)
-        .add_config(notan::egui::EguiConfig)
-        .add_config(notan::draw::DrawConfig)
-        .add_config(notan::log::LogConfig::debug())
-        // .add_loader(asset_loader())
-        .update(update)
-        .draw(draw)
-        .add_config(WindowConfig {
-            title: TITLE.to_string(),
-            width: (WIDTH * SCALE) as _,
-            height: (HEIGHT * SCALE) as _,
-            min_size: Some((WIDTH as _, HEIGHT as _)),
-            vsync: true,
-            canvas_auto_resolution: true,
-            ..Default::default()
-        })
-        .build()?;
+    App::new().insert_resource(WindowDescriptor {
+        title: TITLE.to_string(),
+        width: (WIDTH * SCALE) as _,
+        height: (HEIGHT * SCALE) as _,
+        ..Default::default()
+    })
+        .add_plugins(DefaultPlugins)
+        .add_plugins(engine::FirecorePlugins)
+        .add_plugin(battlecli::BattleClientPlugin)
+        // .add_plugin(worldcli::)
+        .run();
+    // use engine::notan;
+    // notan::init_with(run)
+    //     .add_config(notan::egui::EguiConfig)
+    //     .add_config(notan::draw::DrawConfig)
+    //     .add_config(notan::log::LogConfig::debug())
+    //     // .add_loader(asset_loader())
+    //     .update(update)
+    //     .draw(draw)
+    //     .add_config(WindowConfig {
+    //         min_size: Some((WIDTH as _, HEIGHT as _)),
+    //         canvas_auto_resolution: true,
+    //         ..Default::default()
+    //     })
+    //     .build()?;
     Ok(())
 }
 
@@ -60,16 +67,16 @@ fn main() -> Result<(), String> {
 //     AssetLoader::new().use_parser(parse).extension("bin")
 // }
 
-fn run(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins) -> state::Game {
-    engine::setup(plugins);
-    state::Game::new(app, plugins, gfx)
-}
+// fn run(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins) -> state::Game {
+//     engine::setup(plugins);
+//     state::Game::new(app, plugins, gfx)
+// }
 
-fn update(app: &mut App, plugins: &mut Plugins, state: &mut state::Game) {
-    state.update(app, plugins)
-}
+// fn update(app: &mut App, plugins: &mut Plugins, state: &mut state::Game) {
+//     state.update(app, plugins)
+// }
 
-fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut state::Game) {
-    state.draw(app, plugins, gfx);
-    app.window().request_frame();
-}
+// fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut state::Game) {
+//     state.draw(app, plugins, gfx);
+//     app.window().request_frame();
+// }

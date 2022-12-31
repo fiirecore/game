@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc, sync::Arc};
 
-use firecore_battle_engine::pokengine::{
+use firecore_battle_client::pokengine::{
     texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
     TrainerGroupId,
 };

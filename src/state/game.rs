@@ -13,7 +13,7 @@ use crate::{
     world_wrapper::WorldRequest, settings::Settings,
 };
 
-use firecore_battle_engine::{
+use firecore_battle_client::{
     battle::default_engine::DefaultBattleEngine,
     pokengine::texture::{ItemTextures, PokemonTextures, TrainerGroupTextures},
     BattleGuiTextures,

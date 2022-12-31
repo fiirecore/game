@@ -2,9 +2,9 @@ use battle::pokedex::{
     pokemon::{
         data::{Breeding, GrowthRate, LearnableMove, Training},
         stat::{StatSet, StatType},
-        Pokemon,
+        Pokemon, PokemonId,
     },
-    types::Types,
+    types::PokemonTypes,
 };
 
 use enum_map::{enum_map, EnumMap};
@@ -36,7 +36,7 @@ pub fn generate(client: Arc<pokerust::Client>, range: Range<i16>) -> Vec<Pokemon
 }
 
 #[cfg(feature = "client-data")]
-pub fn generate_client(pokemon: &[Pokemon]) -> firecore_pokedex_engine_core::PokemonOutput {
+pub fn generate_client(pokemon: &[Pokemon]) -> firecore_pokedex_client_data::PokemonOutput {
     use rayon::iter::IntoParallelRefIterator;
 
     let tempdir =
@@ -149,9 +149,9 @@ fn get_pokemon(index: i16, pokerust: &pokerust::Client) -> Pokemon {
     // evolution.chain.species
 
     Pokemon {
-        id: pokemon.id as u16,
+        id: PokemonId(pokemon.id as _),
         name,
-        types: Types { primary, secondary },
+        types: PokemonTypes { primary, secondary },
         moves,
         base: StatSet(enum_map! {
             StatType::Health => stats[0].base_stat,

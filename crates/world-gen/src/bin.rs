@@ -1,4 +1,4 @@
-use firecore_world::map::{MovementId, MusicId, TileId};
+use firecore_world::{map::{MovementId, TileId}, audio::MusicId};
 
 #[derive(Debug, Clone)]
 pub struct BinaryMap {
@@ -75,7 +75,7 @@ impl BinaryMap {
         let m = m.parse().unwrap_or_else(|err| {
             panic!("Could not get map music id from {} with error {}", m, err)
         });
-        Ok(m)
+        Ok(MusicId(m))
     }
 }
 

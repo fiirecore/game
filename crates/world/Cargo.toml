@@ -1,6 +1,6 @@
 [package]
 name = "firecore-world"
-version = "0.5.0-beta.2022-01-01"
+version = "0.6.0"
 authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 
@@ -11,18 +11,22 @@ edition = "2021"
 [dependencies]
 
 serde = { version = "1", features = ["derive"] }
-tinystr = { version = "0.6", features = ["serde"], default-features = false }
+tinystr = { version = "0.7", features = ["serde"], default-features = false }
 rand = { version = "0.8", default-features = false }
-hashbrown = { version = "0.12", features = ["serde"] }
+hashbrown = { version = "0.13", features = ["serde"] }
 enum-map = { version = "2", features = ["serde"] }
-
-firecore-pokedex = { version = "0.0.9" }#, git = "https://github.com/fiirecore/pokedex", rev = "83e97db" }
-# firecore-pokedex = { path = "../../../firecore/pokedex" }
 
 firecore-text = { path = "../text" }
 firecore-audio = { path = "../audio" }
 
 log = "0.4"
+
+[dependencies.firecore-pokedex]
+version = "0.0.10"
+git = "https://github.com/fiirecore/pokedex"
+rev = "ddfac08"
+# path = ""
+
 
 ### Pathfinding
 

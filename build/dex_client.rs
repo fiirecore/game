@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use firecore_dex_gen::Client;
-use firecore_pokedex_engine_core::{pokedex::pokemon::Pokemon, PokemonOutput, ItemOutput, TrainerGroupOutput};
+use firecore_pokedex_client_data::{pokedex::pokemon::Pokemon, PokemonOutput, ItemOutput, TrainerGroupOutput};
 
 use crate::{readable, write};
 

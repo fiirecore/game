@@ -4,7 +4,7 @@ use std::{
 };
 
 use firecore_dex_gen::Client;
-use firecore_pokedex_engine_core::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
+use firecore_pokedex_client_data::pokedex::{item::Item, moves::Move, pokemon::Pokemon};
 
 use crate::{readable, write, MOVES, POKEMON};
 
@@ -24,12 +24,23 @@ pub fn build(root: impl AsRef<Path>, assets: &Path) -> (Client, Vec<Pokemon>) {
         ),
     };
 
+    let (moves, bmoves) = firecore_dex_gen::moves::generate(client.clone(), MOVES).into_iter().unzip::<_, _, Vec<_>, Vec<_>>();
+
     match readable::<Vec<Move>, _>(&root, "movedex") {
         Some(m) => m,
         None => write(
             &root,
             "movedex",
-            firecore_dex_gen::moves::generate(client.clone(), MOVES),
+            moves,
+        ),
+    };
+
+    match readable::<Vec<_>, _>(&root, "battle_moves") {
+        Some(m) => m,
+        None => write(
+            &root,
+            "battle_moves",
+            bmoves,
         ),
     };
 

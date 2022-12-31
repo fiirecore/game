@@ -1,0 +1,44 @@
+[package]
+name = "firecore-battle-client"
+description = "Battle client for firecore-battle"
+version = "0.0.2"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
+edition = "2021"
+repository = "https://github.com/fiirecore/engine"
+license = "CC0"
+readme = "README.md"
+keywords = ["battle", "gamedev"]
+categories = ["game-development"]
+
+
+[dependencies]
+iyes_loopless = "0.9"
+
+firecore-pokedex-client = { path = "../pokedex-client", default-features = false }
+
+rand = { version = "0.8", default-features = false }
+crossbeam-channel = "0.5"
+serde = { version = "1", features = ["derive"] }
+indexmap = "1.8"
+log = "0.4"
+
+[dependencies.firecore-battle]
+version = "0.0.10"
+git = "https://github.com/fiirecore/battle"
+rev = "f0f5e7a"
+# default-features = false
+features = ["mpsc_endpoint"]
+
+[dependencies.bevy]
+version = "0.9"
+default-features = false
+
+[dev-dependencies]
+firecore-battle-engine = { version = "0.0.0", git = "https://github.com/fiirecore/battle", rev = "f0f5e7a", package = "firecore-battle-engine" }
+rand = { version = "0.8", features = ["small_rng"] }
+firecore-storage = { path = "../storage" }
+hashbrown = "0.13"
+
+[dev-dependencies.bevy]
+version = "0.9"
+default-features = true

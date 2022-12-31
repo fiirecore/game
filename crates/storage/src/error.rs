@@ -2,7 +2,8 @@
 pub enum DataError {
     IOError(std::io::Error),
     Utf8Error(std::str::Utf8Error),
-    Text(ron::Error),
+    RonSerialize(ron::Error),
+    RonDeserialize(ron::error::SpannedError),
     Bytes(postcard::Error),
     // #[cfg(target_arch = "wasm32")]
     #[cfg(all(feature = "io", target_arch = "wasm32"))]
@@ -31,7 +32,13 @@ impl From<std::str::Utf8Error> for DataError {
 
 impl From<ron::Error> for DataError {
     fn from(error: ron::Error) -> Self {
-        Self::Text(error)
+        Self::RonSerialize(error)
+    }
+}
+
+impl From<ron::error::SpannedError> for DataError {
+    fn from(error: ron::error::SpannedError) -> Self {
+        Self::RonDeserialize(error)
     }
 }
 

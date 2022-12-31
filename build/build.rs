@@ -8,15 +8,10 @@ const POKEMON: Range<i16> = 1..386;
 const MOVES: Range<i16> = 1..559;
 
 mod dex;
-
 mod dex_client;
-
 mod world;
-
 mod battle;
-
 mod title;
-
 mod music;
 
 fn main() {
@@ -35,21 +30,21 @@ fn main() {
 
     let (client, pokemon) = dex::build(&root, assets);
 
-    dex_client::build(&root, &assets, client.clone(), pokemon);
+    // dex_client::build(&root, &assets, client.clone(), pokemon);
 
-    world::build(&root, &assets);
+    // world::build(&root, &assets);
 
-    battle::build(&root, &assets, client);
+    // battle::build(&root, &assets, client);
 
-    title::build(&root, assets);
+    // title::build(&root, assets);
 
-    music::build(&root, assets);
+    // music::build(&root, assets);
 
-    #[cfg(windows)]
-    if std::env::var("PROFILE").unwrap() == "release" && std::env::var("CARGO_CFG_WINDOWS").is_ok()
-    {
-        embed_resource::compile(assets.join("resource.rc"));
-    }
+    // #[cfg(windows)]
+    // if std::env::var("PROFILE").unwrap() == "release" && std::env::var("CARGO_CFG_WINDOWS").is_ok()
+    // {
+    //     embed_resource::compile(assets.join("resource.rc"));
+    // }
 }
 
 fn readable<S: serde::de::DeserializeOwned, P: AsRef<Path>>(root: P, file: &str) -> Option<S> {

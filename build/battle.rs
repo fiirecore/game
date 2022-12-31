@@ -1,7 +1,7 @@
 use std::{path::Path, fs::{read_dir, read_to_string, read}};
 
 use firecore_dex_gen::{Client, moves::Execution};
-use firecore_pokedex_engine_core::pokedex::moves::MoveId;
+use firecore_pokedex_client_data::pokedex::moves::MoveId;
 
 use crate::{readable, write};
 
@@ -10,7 +10,7 @@ pub fn build(root: impl AsRef<Path>, assets: &Path, client: Client) {
     if readable::<Execution, _>(&root, "battle_moves").is_none() {
         write(
             &root,
-            "battle_moves",
+            "battle_move_execution",
             firecore_dex_gen::moves::generate_battle(client, crate::MOVES).unwrap(),
         );
     }
@@ -27,7 +27,7 @@ pub fn build(root: impl AsRef<Path>, assets: &Path, client: Client) {
         write(
             &root,
             "battle_gui",
-            battle_engine("crates/battle-engine/assets").unwrap(),
+            battle_client("crates/battle-client/assets").unwrap(),
         );
     }
 }
@@ -87,7 +87,7 @@ fn get_moves<P: AsRef<Path>>(scripts: P) -> Scripts {
         .collect()
 }
 
-fn battle_engine(path: impl AsRef<Path>) -> Result<BattleGuiTextures, std::io::Error> {
+fn battle_client(path: impl AsRef<Path>) -> Result<BattleGuiTextures, std::io::Error> {
     let path = path.as_ref();
     Ok(BattleGuiTextures {
         background: read(path.join("background.png"))?,

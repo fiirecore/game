@@ -11,15 +11,15 @@ firecore-world = { path = "../world" }
 firecore-dex-gen = { path = "../dex-gen" }
 
 serde = { version = "1", features = ["derive"] }
-attohttpc = { version = "0.20", features = ["json"] }
-tinystr = "0.6"
+attohttpc = { version = "0.23", features = ["json"] }
+tinystr = "0.7"
 either = { version = "1", features = ["serde"] }
 rayon = "1"
 dashmap = { version = "5", features = ["serde", "rayon"] }
-hashbrown = { version = "0.12", features = ["rayon"] }
+hashbrown = { version = "0.13", features = ["rayon"] }
 anyhow = "1"
 serde_json = "1"
 
 [dev-dependencies]
-ron = "0.7"
+ron = "0.8"
 postcard = { version = "1", features = ["alloc"] }

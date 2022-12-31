@@ -1,7 +1,7 @@
 [package]
 name = "firecore-storage"
-version = "0.5.0-beta.2021-07-02"
-authors = ["Rhys Holloway <rhyswilliamholloway@gmail.com>"]
+version = "0.6.0"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
 edition = "2021"
 readme = "README.md"
 
@@ -14,7 +14,7 @@ io = ["general_storage_web"]
 ### Serialization
 
 serde = "1"
-ron = { version = "0.7" }
+ron = "0.8"
 postcard = { version = "1", default-features = false, features = ["alloc"] }
 
 ### File management

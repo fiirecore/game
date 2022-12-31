@@ -1,18 +1,18 @@
-use notan::{
-    egui,
-    prelude::{App, Plugins},
-};
-
+use bevy::prelude::*;
+use bevy_egui::egui;
 use text::MessageStates;
 
-use crate::controls::{pressed, Control};
+use crate::controls::Control;
+
+#[derive(Default, Deref, DerefMut, Resource)]
+pub struct GlobalMessageState(pub MessageStates<Color>);
 
 pub struct MessageBox;
 
 impl MessageBox {
     pub fn ui<C: Clone + Into<[f32; 4]>, T: Default>(
-        app: &App,
-        plugins: &mut Plugins,
+        input: &Input<Control>,
+        delta: f32,
         egui: &egui::Context,
         state: &mut MessageStates<C, T>,
     ) {
@@ -35,7 +35,7 @@ impl MessageBox {
                                         .map(String::len)
                                         .unwrap_or_default()
                                 {
-                                    true => message.text += app.timer.delta_f32() * 30.0,
+                                    true => message.text += delta * 30.0,
                                     false => {
                                         message.text = 0.0;
                                         if message.line < page.lines.len() - 1 {
@@ -75,7 +75,7 @@ impl MessageBox {
                                 if finished || (len != 0 && string.is_empty()) {
                                     match page.wait {
                                         Some(wait) => {
-                                            message.wait += app.timer.delta_f32();
+                                            message.wait += delta;
                                             if message.wait.abs() >= wait.abs() {
                                                 message.waiting = false;
                                                 match message.page + 1 >= message.pages() {
@@ -97,7 +97,7 @@ impl MessageBox {
                                         }
                                         None => {
                                             if ui.button("Next").clicked()
-                                                || pressed(app, plugins, Control::A)
+                                                || input.just_pressed(Control::A)
                                             {
                                                 message.waiting = false;
                                                 if message.page + 1 >= message.pages() {

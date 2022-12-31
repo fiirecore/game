@@ -1,12 +1,10 @@
+use bevy::{
+    input::{Input, InputSystem},
+    prelude::{App, CoreStage, KeyCode, Plugin, Res, ResMut, Resource, IntoSystemDescriptor},
+    utils::HashMap,
+};
 use enum_map::Enum;
-use notan::prelude::{App, Plugins};
 use serde::{Deserialize, Serialize};
-
-// #[cfg(all(not(target_arch = "wasm32"), feature = "gamepad"))]
-// pub mod gamepad;
-pub mod context;
-pub mod keyboard;
-pub mod touchscreen;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Deserialize, Serialize, Enum)]
 pub enum Control {
@@ -20,32 +18,6 @@ pub enum Control {
     Select,
 }
 
-pub fn pressed(app: &App, plugins: &Plugins, control: Control) -> bool {
-    if keyboard::pressed(app, plugins, control) {
-        return true;
-    }
-    if touchscreen::pressed(plugins, control) {
-        return true;
-    }
-    // if gamepad::pressed(ctx, eng, control) {
-    //     return true;
-    // }
-    false
-}
-
-pub fn down(app: &App, plugins: &Plugins, control: Control) -> bool {
-    if keyboard::down(app, plugins, control) {
-        return true;
-    }
-    if touchscreen::down(plugins, control) {
-        return true;
-    }
-    // if gamepad::down(ctx, eng, control) {
-    //     return true;
-    // }
-    false
-}
-
 impl Control {
     pub fn name(&self) -> &str {
         match self {
@@ -57,6 +29,56 @@ impl Control {
             Control::Right => "Right",
             Control::Start => "Start",
             Control::Select => "Select",
+        }
+    }
+}
+
+#[derive(Resource)]
+pub struct ControlMappings {
+    pub keys: HashMap<KeyCode, Control>,
+}
+
+impl Default for ControlMappings {
+    fn default() -> Self {
+        Self {
+            keys: {
+                let mut map = HashMap::with_capacity(8);
+                map.insert(KeyCode::X, Control::A);
+                map.insert(KeyCode::Z, Control::B);
+                map.insert(KeyCode::Up, Control::Up);
+                map.insert(KeyCode::Down, Control::Down);
+                map.insert(KeyCode::Left, Control::Left);
+                map.insert(KeyCode::Right, Control::Right);
+                map.insert(KeyCode::A, Control::Start);
+                map.insert(KeyCode::S, Control::Select);
+                map
+            },
+        }
+    }
+}
+
+pub struct ControlsPlugin;
+
+impl Plugin for ControlsPlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<Input<Control>>()
+            .init_resource::<ControlMappings>()
+            .add_system_to_stage(CoreStage::PreUpdate, update.after(InputSystem));
+    }
+}
+
+fn update(
+    mut controls: ResMut<Input<Control>>,
+    mappings: Res<ControlMappings>,
+    keyboard: Res<Input<KeyCode>>,
+) {
+    controls.clear();
+    for (key, control) in mappings.keys.iter() {
+        if keyboard.just_pressed(*key) {
+            controls.press(*control);
+        }
+        if keyboard.just_released(*key) {
+            controls.release(*control);
         }
     }
 }

@@ -9,7 +9,7 @@ use crate::engine::{
     App, Plugins,
 };
 
-use firecore_battle_engine::pokengine::texture::{PokemonTextures, ItemTextures};
+use firecore_battle_client::pokengine::texture::{PokemonTextures, ItemTextures};
 use worldcli::{
     map::{data::ClientWorldData, manager::WorldManager},
     pokedex::{moves::owned::OwnedMove, trainer::InitTrainer},
