@@ -1,6 +1,6 @@
 use std::{sync::Arc, rc::Rc};
 
-use firecore_battle_client::pokengine::texture::{PokemonTextures, ItemTextures};
+use firecore_battle_engine::pokengine::texture::{PokemonTextures, ItemTextures};
 
 use crate::{pokedex::trainer::InitTrainer, settings::Settings};
 

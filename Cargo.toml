@@ -30,8 +30,13 @@ opt-level = "z"
 
 [dependencies]
 
-firecore-battle-client = { path = "crates/battle-client", default-features = false }
-firecore-world-client = { path = "crates/world-client", default-features = false }
+firecore-battle-engine = { path = "crates/battle-engine", default-features = false, features = [
+    "host",
+    "ai",
+    "default_engine_scripting",
+    "audio",
+] }
+firecore-world-engine = { path = "crates/world-engine", default-features = false }
 firecore-storage = { path = "crates/storage" }
 
 ### Other
@@ -40,24 +45,23 @@ serde = { version = "1", features = ["derive"] }
 rand = { version = "0.8", features = ["small_rng"] }
 postcard = { version = "1", default-features = false, features = ["alloc"] }
 
-iyes_loopless = "0.9"
-
-[dependencies.bevy]
-version = "0.9"
-
 ### Build dependencies
 
 [build-dependencies]
 
 firecore-dex-gen = { path = "crates/dex-gen" }
-firecore-pokedex-client-data = { path = "crates/pokedex-client-data" }
+firecore-pokedex-engine-core = { path = "crates/pokedex-engine-core" }
 firecore-world-gen = { path = "crates/world-gen" }
 firecore-world = { path = "crates/world" }
 
 postcard = { version = "1", default-features = false, features = ["alloc"] }
 serde = "1"
-ron = "0.8"
-hashbrown = { version = "0.13" }
+ron = "0.7"
+hashbrown = { version = "0.12" }
+
+# zip = { version = "0.6" }
+# sha256 = "1"
+
 
 [target.'cfg(windows)'.build-dependencies]
 embed-resource = "1.7.3"

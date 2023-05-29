@@ -31,11 +31,11 @@ pub struct TitleAsset {
 
 impl TitleState {
 
-    const MUSIC: MusicId = MusicId(unsafe {
-        MusicName::from_bytes_unchecked([
+    const MUSIC: MusicId = unsafe {
+        MusicId::from_bytes_unchecked([
             0x74, 0x69, 0x74, 0x6C, 0x65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         ])
-    });
+    };
 
     const TOP: Color = Color::new(248.0 / 255.0, 88.0 / 255.0, 0.0, 1.0);
     const MIDDLE: Color = Color::new(64.0 / 255.0, 176.0 / 255.0, 160.0 / 255.0, 1.0);

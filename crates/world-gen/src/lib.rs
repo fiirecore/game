@@ -29,7 +29,7 @@ use firecore_world::{
     positions::{
         BoundingBox, Coordinate, Coordinate3d, Destination, Direction, Location, Position,
     },
-    script::default::*, audio::MusicId,
+    script::default::*,
 };
 use map::{
     object::JsonObjectEvent, warp::JsonWarpEvent, wild::JsonWildEncounters, JsonConnection, JsonMap,
@@ -45,7 +45,7 @@ use crate::{
     script::inc::{Command, Script},
 };
 
-const PATH: &str = "http://raw.githubusercontent.com/pret/pokefirered/49ea462d7f421e75a76b25d7e85c92494c0a9798";
+const PATH: &str = "http://raw.githubusercontent.com/pret/pokefirered/master";
 
 mod edits;
 mod map;
@@ -195,7 +195,7 @@ pub fn create_data() -> anyhow::Result<ParsedData> {
     let items = firecore_dex_gen::items::generate();
 
     let pokedex = Dex(pokemon.into_iter().map(|p| (p.id, Arc::new(p))).collect());
-    let movedex = Dex(moves.into_iter().map(|(m, ..)| (m.id, Arc::new(m))).collect());
+    let movedex = Dex(moves.into_iter().map(|m| (m.id, Arc::new(m))).collect());
     let itemdex = Dex(items.into_iter().map(|i| (i.id, Arc::new(i))).collect());
 
     // let (pokedex, movedex, itemdex) = firecore_storage::from_bytes::<(
@@ -1084,11 +1084,11 @@ fn into_palettes(mappings: &NameMappings, primary: &str, secondary: &str) -> [Pa
     [primary, secondary]
 }
 
-fn into_music(mappings: &NameMappings, music: &str) -> MusicId {
-    MusicId(mappings.music.get(music).copied().unwrap_or_else(|| {
+fn into_music(mappings: &NameMappings, music: &str) -> TinyStr16 {
+    mappings.music.get(music).copied().unwrap_or_else(|| {
         eprintln!("Cannot find music {}", music);
         "pallet".parse().unwrap()
-    }))
+    })
 }
 
 // #[derive(Debug, Deserialize, Default)]

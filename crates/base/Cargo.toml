@@ -4,27 +4,21 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["gamepad"]
-audio = ["bevy/bevy_audio"]
-gamepad = ["bevy/bevy_gilrs"]
+default = ["audio", "gamepad"]
+audio = ["notan/audio"]
+gamepad = []#"fiirengine/gamepad"]
 
 [dependencies]
-bevy_egui = "0.18"
+# fiirengine = { git = "https://github.com/fiirecore-game/engine", rev = "6256024", default-features = false }
+notan = { features = ["egui", "log"], version = "0.5" }#git = "https://github.com/Nazariglez/notan" }
 
 firecore-audio = { path = "../audio" }
 firecore-text = { path = "../text" }
 
 enum-map = { version = "2", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
-tinystr = { version = "0.7", features = ["serde"], default-features = false }
-
-[dependencies.bevy]
-version = "0.9"
-default-features = false
+tinystr = { version = "0.6", features = ["serde"], default-features = false }
+hashbrown = { version = "0.12" }
 
 [dev-dependencies]
 firecore-storage = { path = "../storage", default-features = false }
-
-[dev-dependencies.bevy]
-version = "0.9"
-default-features = true

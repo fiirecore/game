@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tinystr = { version = "0.7", default-features = false, features = ["serde"] }
+tinystr = { version = "0.6", default-features = false, features = ["serde"] }
 serde = { version = "1", features = ["derive"] }

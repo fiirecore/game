@@ -1,8 +1,5 @@
 # To - do List
 
-battle-engine -> battle-client
-world-engine -> world-client
-
 * Objects
    - Objects need to be reimplemented
 

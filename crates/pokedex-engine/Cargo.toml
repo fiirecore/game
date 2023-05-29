@@ -1,0 +1,27 @@
+[package]
+name = "firecore-pokedex-engine"
+description = "GUIs and other graphical things for firecore-pokedex"
+version = "0.0.3"                                                    # "0.5.0-beta.2021-08-16"
+authors = ["Rhys H <donotdoughnut99@gmail.com>"]
+edition = "2021"
+repository = "https://github.com/fiirecore/engine"
+readme = "README.md"
+license = "MIT"
+
+[features]
+default = ["audio"]
+audio = ["firecore-base/audio"]
+
+[dependencies]
+firecore-pokedex-engine-core = { path = "../pokedex-engine-core" }
+firecore-base = { path = "../base", default-features = false }
+tinystr = { version = "0.6", features = ["serde"], default-features = false }
+enum-map = { version = "2", features = ["serde"] }
+serde = { version = "1" }
+
+# Temp
+image = { version = "0.24", default-features = false, features = ["png"] }
+
+[dev-dependencies]
+firecore-storage = { path = "../storage", default-features = false }
+rand = "0.8"

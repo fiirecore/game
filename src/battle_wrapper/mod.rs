@@ -24,7 +24,7 @@ use crate::{
 
 use worldcli::worldlib::map::battle::BattleId;
 
-use firecore_battle_client::{BattlePlayerGui, BattleTrainer, InitBattleGuiTextures};
+use firecore_battle_engine::{BattlePlayerGui, BattleTrainer, InitBattleGuiTextures};
 
 mod command;
 pub mod transition;

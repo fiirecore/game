@@ -1,14 +1,14 @@
+use firecore_battle::pokedex::moves::MoveId;
 use pokerust::Id;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::{ops::Range, sync::Arc};
 
-use firecore_battle_engine::moves::{MoveExecution, MoveUse};
-
 use battle::{
-    moves::*,
+    default_engine::moves::{MoveExecution, MoveUse},
+    moves::damage::DamageKind,
     pokedex::{
         ailment::{Ailment, AilmentLength},
-        moves::{Move, MoveId},
+        moves::{Move, MoveCategory, MoveTarget},
         pokemon::stat::StatType,
     },
     pokemon::stat::BattleStatType,
@@ -16,7 +16,7 @@ use battle::{
 
 pub type Execution = hashbrown::HashMap<MoveId, MoveExecution>;
 
-pub fn generate(client: Arc<pokerust::Client>, range: Range<i16>) -> Vec<(Move, BattleMove)> {
+pub fn generate(client: Arc<pokerust::Client>, range: Range<i16>) -> Vec<Move> {
     range
         .into_par_iter()
         .map(|index| {
@@ -47,7 +47,7 @@ pub fn generate_battle(
         .collect()
 }
 
-fn get_move(index: i16, client: &pokerust::Client) -> anyhow::Result<(Move, BattleMove)> {
+fn get_move(index: i16, client: &pokerust::Client) -> anyhow::Result<Move> {
     let mut move_ = client.get::<pokerust::Move, i16>(index)?;
 
     let name = move_.names.remove(7).name;
@@ -62,29 +62,26 @@ fn get_move(index: i16, client: &pokerust::Client) -> anyhow::Result<(Move, Batt
 
     println!("Creating move entry for: {}", name);
 
-    Ok((Move {
+    Ok(Move {
         id,
         pp: move_
             .pp
             .unwrap_or_else(|| panic!("Could not get PP for pokemon move {}", name)),
         name,
-        // world: is_world_move(&move_),
-    }, BattleMove {
-        id,
         category: category_from_id(move_.damage_class.id()),
         pokemon_type: crate::type_from_id(move_.type_.id()),
         power: move_.power,
         accuracy: move_.accuracy,
         priority: move_.priority,
         target: target_from_id(move_.target.id()),
-        contact: Contact(false),
+        contact: false,
         crit_rate: move_
             .meta
             .as_ref()
             .map(|meta| meta.crit_rate)
             .unwrap_or_default(),
-
-    }))
+        // world: is_world_move(&move_),
+    })
 }
 
 fn category_from_id(id: i16) -> MoveCategory {

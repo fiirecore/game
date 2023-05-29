@@ -96,6 +96,8 @@ pub fn generate() -> Vec<Item> {
                 },
                 price: item.price,
                 stackable: Default::default(),
+                consume: true,
+                usage: Default::default(),
             })
         })
         .collect()
